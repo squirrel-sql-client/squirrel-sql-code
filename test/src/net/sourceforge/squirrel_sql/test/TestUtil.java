@@ -258,6 +258,7 @@ public class TestUtil {
       expect(md.getDatabaseProductVersion()).andReturn("1.0 (2007-04-29)")
                                             .anyTimes();
       expect(md.supportsSchemasInDataManipulation()).andReturn(true).anyTimes();
+      expect(md.supportsSchemasInTableDefinitions()).andStubReturn(true);
       expect(md.supportsCatalogsInDataManipulation()).andReturn(false)
                                                      .anyTimes();
       expect(md.getCatalogSeparator()).andReturn(".").anyTimes();
@@ -277,6 +278,7 @@ public class TestUtil {
          "ESD/P/Linux Intel/Linux 2.4.21-20.ELsmp " +
          "i686/ase150/2179/32-bit/FBO/Mon Feb  6 04:14:19 2006";
       expect(md.getDatabaseProductVersion()).andReturn(version).anyTimes();
+      expect(md.supportsSchemasInTableDefinitions()).andStubReturn(true);
       replay(md);
       return md;
    }
@@ -290,6 +292,7 @@ public class TestUtil {
          "EC ESD/P/Linux Intel/Linux 2.4.21-20.ELsmp i686/" +
          "ase120/2179/32-bit/FBO/Mon Feb  6 04:14:19 2006";
       expect(md.getDatabaseProductVersion()).andReturn(version).anyTimes();
+      expect(md.supportsSchemasInTableDefinitions()).andStubReturn(true);
       replay(md);
       return md;
    }
@@ -333,6 +336,7 @@ public class TestUtil {
       expect(md.supportsSchemasInDataManipulation()).andReturn(true).anyTimes();
       expect(md.supportsCatalogsInDataManipulation()).andReturn(true)
                                                      .anyTimes();
+      expect(md.supportsSchemasInTableDefinitions()).andStubReturn(true);
       expect(md.getCatalogSeparator()).andReturn("").anyTimes();
       expect(md.getIdentifierQuoteString()).andReturn("\"").anyTimes();
       expect(md.getURL()).andReturn(dbURL).anyTimes();

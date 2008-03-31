@@ -136,35 +136,6 @@ public class UpdateUtilImpl implements UpdateUtil {
       return result;
    }
    
-   
-   private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
-         final int port, final String path, final String fileToGet)
-         throws Exception {
-      ChannelXmlBean result = null;
-      BufferedInputStream is = null;
-      String pathToFile = path + fileToGet;
-      
-      try {
-         String server = host;
-         if (server.startsWith(HTTP_PROTOCOL_PREFIX)) {
-            int beginIdx = server.indexOf("://") + 3;
-            server = server.substring(beginIdx, host.length());
-         }
-         URL url = new URL(HTTP_PROTOCOL_PREFIX, server, port, pathToFile);
-         is = new BufferedInputStream(url.openStream());
-         result = serializer.readChannelBean(is);
-      } catch (Exception e) {
-         s_log.error("downloadCurrentRelease: Unexpected exception while "
-               + "attempting to open an HTTP connection to host (" + host
-               + ") " + "to download a file (" + pathToFile + "): "+
-               e.getMessage(), e);
-         throw e;
-      } finally {
-         IOUtilities.closeInputStream(is);
-      }
-      return result;
-   }
-   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadHttpFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
@@ -217,7 +188,11 @@ public class UpdateUtilImpl implements UpdateUtil {
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyFile(java.io.File, java.io.File)
     */
    public void copyFile(final File from, final File to) throws FileNotFoundException, IOException {
-      if (s_log.isDebugEnabled()) {
+      if (!from.exists()) {
+      	s_log.error("Cannot copy from file ("+from.getAbsolutePath()+") which doesn't appear to exist.");
+      	return;
+      }
+   	if (s_log.isDebugEnabled()) {
          s_log.debug("Copying file "+from+" to file " + to);
       }
       FileInputStream in = null;
@@ -331,35 +306,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    	return getDir(getDownloadsDir(), TRANSLATION_ARTIFACT_ID, true);
    }
 
-   
-   /**
-    * @param parent
-    * @param dirName
-    * @param create
-    * @return
-    */
-   File getDir(File parent, String dirName, boolean create) {
-		File result = null;
-		if (dirName != null) {
-			result = new File(parent, dirName);
-		} else {
-			result = parent;
-		}
-		if (!result.isDirectory()) {
-	   	if (result.exists()) {
-	         // If the update dir, is actually a file, log an error.
-				s_log.error(dirName + " directory (" + result.getAbsolutePath()
-					+ ") doesn't appear to be a directory");	   		
-	   	} else {
-	   	   // If the downloads dir doesn't already exist, just create it.
-	   		if (create) {
-	   			result.mkdir();
-	   		}
-	   	}
-		}
-		return result;
-   }
-   
+      
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeListFile()
     */
@@ -499,6 +446,9 @@ public class UpdateUtilImpl implements UpdateUtil {
       _pluginManager = manager;
    }
    
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#checkDir(java.io.File, java.lang.String)
+    */
    public File checkDir(File parent, String child) {
       File dir = new File(parent, child);
       if (!dir.exists()) {
@@ -540,6 +490,14 @@ public class UpdateUtilImpl implements UpdateUtil {
       return new File(installDir, artifactName);
    }
 
+   /**
+    * Writes the specified sourceFile(s) contents to the specified Zip output stream.
+    * 
+    * @param os the Zip OutputStream to write to
+    * @param sourceFiles the files to read from
+    * @throws FileNotFoundException if one of the files could not be found
+    * @throws IOException if and IO error occurs
+    */
    private void zipFileOs(ZipOutputStream os, File[] sourceFiles)
          throws FileNotFoundException, IOException {
       for (File file : sourceFiles) {
@@ -556,6 +514,70 @@ public class UpdateUtilImpl implements UpdateUtil {
             }
          }
       }
+   }
+   
+   /**
+    * @param parent
+    * @param dirName
+    * @param create
+    * @return
+    */
+   private File getDir(File parent, String dirName, boolean create) {
+		File result = null;
+		if (dirName != null) {
+			result = new File(parent, dirName);
+		} else {
+			result = parent;
+		}
+		if (!result.isDirectory()) {
+	   	if (result.exists()) {
+	         // If the update dir, is actually a file, log an error.
+				s_log.error(dirName + " directory (" + result.getAbsolutePath()
+					+ ") doesn't appear to be a directory");	   		
+	   	} else {
+	   	   // If the downloads dir doesn't already exist, just create it.
+	   		if (create) {
+	   			result.mkdir();
+	   		}
+	   	}
+		}
+		return result;
+   }
+   
+   /**
+    * @param host
+    * @param port
+    * @param path
+    * @param fileToGet
+    * @return
+    * @throws Exception
+    */
+   private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
+         final int port, final String path, final String fileToGet)
+         throws Exception {
+      ChannelXmlBean result = null;
+      BufferedInputStream is = null;
+      String pathToFile = path + fileToGet;
+      
+      try {
+         String server = host;
+         if (server.startsWith(HTTP_PROTOCOL_PREFIX)) {
+            int beginIdx = server.indexOf("://") + 3;
+            server = server.substring(beginIdx, host.length());
+         }
+         URL url = new URL(HTTP_PROTOCOL_PREFIX, server, port, pathToFile);
+         is = new BufferedInputStream(url.openStream());
+         result = serializer.readChannelBean(is);
+      } catch (Exception e) {
+         s_log.error("downloadCurrentRelease: Unexpected exception while "
+               + "attempting to open an HTTP connection to host (" + host
+               + ") " + "to download a file (" + pathToFile + "): "+
+               e.getMessage(), e);
+         throw e;
+      } finally {
+         IOUtilities.closeInputStream(is);
+      }
+      return result;
    }
    
 }

@@ -42,7 +42,7 @@ public class DialectTestCase extends BaseSQuirreLTestCase {
     
     protected void testType(int type, HibernateDialect dialect) {
         try {
-            dialect.getTypeName(type);
+            dialect.getTypeName(type, 10, 0, 0);
         } catch (MappingException e) {
             if (type != 0            // NULL
                     && type != 70    // DATALINK

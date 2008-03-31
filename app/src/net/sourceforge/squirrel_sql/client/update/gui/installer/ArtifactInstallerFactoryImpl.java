@@ -35,9 +35,14 @@ public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory
 	}
 
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory#create(net.sourceforge.squirrel_sql.client.update.UpdateUtil, net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
+	 */
 	public ArtifactInstaller create(UpdateUtil util, ChangeListXmlBean changeList) throws FileNotFoundException
 	{
-		ArtifactInstaller result = new ArtifactInstallerImpl(util, changeList);
+		ArtifactInstaller result = new ArtifactInstallerImpl();
+		result.setChangeList(changeList);
+		result.setUpdateUtil(util);
 		result.setInstallStatusEventFactory(installStatusEventFactory);
 		return result;
 	}
