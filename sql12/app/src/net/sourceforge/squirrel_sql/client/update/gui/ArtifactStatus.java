@@ -182,6 +182,33 @@ public class ArtifactStatus implements Serializable {
          return false;
       return true;
    }
+
+	/**
+	  * Constructs a <code>String</code> with all attributes
+	  * in name = value format.
+	  *
+	  * @return a <code>String</code> representation 
+	  * of this object.
+	  */
+	 public String toString()
+	 {
+	     final String TAB = "    ";
+	     
+	     String retValue = "";
+	     
+	     retValue = "ArtifactStatus ( "
+	         + super.toString() + TAB
+	         + "name = " + this.name + TAB
+	         + "type = " + this.type + TAB
+	         + "installed = " + this.installed + TAB
+	         + "displayType = " + this.displayType + TAB
+	         + "artifactAction = " + this.artifactAction + TAB
+	         + " )";
+	 
+	     return retValue;
+	 }
+
+   
    
    
 }
