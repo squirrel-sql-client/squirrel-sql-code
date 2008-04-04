@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -49,6 +50,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeDataTypeComponentFactory;
 
 /**
  * The main controller class for the Postgres plugin.
@@ -111,7 +113,7 @@ public class PostgresPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.20";
+		return "0.21";
 	}
 
 	/**
@@ -187,6 +189,10 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		JMenu sessionMenu = createSessionMenu(col);
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, sessionMenu);
 		super.registerSessionMenu(sessionMenu);
+		
+		CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory(),
+			java.sql.Types.OTHER,
+			"xml");
 	}
 
 	/** 

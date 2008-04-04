@@ -1,6 +1,11 @@
 DB2 Plugin Change Log
 =====================
 
+0.21
+====
+
+- Added support for PostgreSQL(8.3.x) new xml type.
+
 0.20 
 ====
 
