@@ -29,6 +29,7 @@ Oracle Plugin:
  - Added ability to recognize "create package" and "create package body" statements.   
 
 PostgreSQL Plugin:
+ - Added support for PostgreSQL(8.3.x) new xml type.
 
  Contributions from Daniel Regli and Yannick Winiger:
  - Menu: added a new "PostgreSQL" menu to the object tree and the session menu for
