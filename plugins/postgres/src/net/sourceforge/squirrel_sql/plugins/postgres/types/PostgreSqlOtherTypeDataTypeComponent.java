@@ -31,12 +31,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * A custom DatatType implementation of IDataTypeComponent that can handle Postgres' xml type (DataType
- * value of 1111 and type name of 'xml'). 
+ * A custom DatatType implementation of IDataTypeComponent that can handle Postgres' many "other" types (
+ * DataType value of 1111). 
  * 
  * @author manningr
  */
-public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent implements IDataTypeComponent
+public class PostgreSqlOtherTypeDataTypeComponent extends BaseDataTypeComponent implements IDataTypeComponent
 {
 
 	/** Logger for this class. */
@@ -57,6 +57,13 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 		String CELL_ERROR_MSG = s_stringMgr.getString("PostgreSqlXmlTypeDataTypeComponent.cellErrorMsg");
 	}
 
+	/** the type that this component is working for - since it is type code other, it could be anything. */
+	private String typeName;
+
+	public PostgreSqlOtherTypeDataTypeComponent(String typeName) {
+		this.typeName = typeName;
+	}
+	
 	/* IDataTypeComponent interface methods 
 	
 	/**
@@ -99,9 +106,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 			return _colDef.getLabel() + " IS NULL";
 		} else
 		{
-			// This results in "ERROR: operator does not exist: xml = unknown"
-			// So don't use xml type column in where clauses for now.
-			//return _colDef.getLabel() + "='" + SQLUtilities.escapeLine(value.toString(), md) + "'";
+			// We don't know if this type can be used in where clauses so always exclude it.
 			return "";
 		}
 	}
@@ -178,7 +183,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 	{
 		if (value == null)
 		{
-			pstmt.setNull(position, java.sql.Types.OTHER, "xml");
+			pstmt.setNull(position, java.sql.Types.OTHER, typeName);
 		} else
 		{
 			try
