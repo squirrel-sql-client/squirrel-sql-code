@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DatabaseSpecificEscape;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -429,4 +430,28 @@ public class SQLUtilities
 
 	}
 
+	/**
+	 * When strings are used in the WHERE clause, any single quote characters must be
+	 * "escaped" so that they are not confused with the "end of string"
+	 * single quote used by SQL.  The escape sequence is that a single quote
+	 * is represented by two single quotes in a row.
+	 */
+	public static String escapeLine(String s, ISQLDatabaseMetaData md) {
+		String retvalue = s;
+		if (s.indexOf ("'") != -1 ) {
+			StringBuffer hold = new StringBuffer();
+			char c;
+			for(int i=0; i < s.length(); i++ ) {
+				if ((c=s.charAt(i)) == '\'' ) {
+					hold.append ("''");
+				}
+				else {
+					hold.append(c);
+				}
+			}
+			retvalue = hold.toString();
+		}
+		return DatabaseSpecificEscape.escapeSQL(retvalue, md);
+	}
+	
 }

@@ -1226,5 +1226,20 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	{
 		return false;
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getJavaTypeForNativeType(java.lang.String)
+	 */
+	@Override
+	public int getJavaTypeForNativeType(String nativeColumnTypeName)
+	{
+		if ("character_data".equalsIgnoreCase(nativeColumnTypeName)) {
+			return java.sql.Types.CHAR;
+		}
+		if ("cardinal_number".equalsIgnoreCase(nativeColumnTypeName)) {
+			return java.sql.Types.INTEGER;
+		}
+		return super.getJavaTypeForNativeType(nativeColumnTypeName);
+	}
 	
 }

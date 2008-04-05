@@ -211,7 +211,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 				
 				result.add(notNullSql);
 			}
-			addPKSQL.append(info.getColumnName());
+			addPKSQL.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
 			if (i + 1 < columns.length)
 			{
 				addPKSQL.append(", ");
