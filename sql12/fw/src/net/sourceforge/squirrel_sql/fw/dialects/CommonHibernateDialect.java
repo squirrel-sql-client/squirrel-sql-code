@@ -559,6 +559,32 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 */
+	public String getTypeName(TableColumnInfo tcInfo) {
+		int columnSize = tcInfo.getColumnSize();
+		int dataType = tcInfo.getDataType();
+		int precision = getPrecisionDigits(columnSize, dataType);
+		if (dataType == 1111) {
+			dataType = getJavaTypeForNativeType(tcInfo.getTypeName());
+		}
+		
+		return getTypeName(dataType, columnSize, precision, tcInfo.getDecimalDigits());
+	}
+	
+	/**
+	 * This should be overridden by dialects to provide a mapping between native column name and java.sql.Types
+	 * codes. This is particulary helpful for databases with "other" (1111) types.
+	 * 
+	 * @param nativeColumnTypeName the native column type.
+	 * @return the java type code 
+	 */
+	public int getJavaTypeForNativeType(String nativeColumnTypeName) {
+		throw new IllegalStateException("Dialect (" + getDisplayName()
+			+ ") doesn't provide a java type for native type = " + nativeColumnTypeName);
+	}
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getTypeName(int, int, int, int)
 	 */
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException

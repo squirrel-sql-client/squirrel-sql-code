@@ -1092,4 +1092,22 @@ public interface HibernateDialect extends StringTemplateConstants
 	 */
 	boolean supportsDropPrimaryKey();
 
+	
+	/**
+	 * For the given columnInfo, this provides the type name that is used to re-create this column in a new 
+	 * table. This method also delegates to getJavaTypeForNativeType for type OTHER (1111).
+	 * 
+	 * @param tcInfo the TableColumnInfo describing the column
+	 * @return the native column type name
+	 */
+	public String getTypeName(TableColumnInfo tcInfo);
+	
+	/**
+	 * This will return the java.sql.Types constant that the specified native type name can be stored in.
+	 *  
+	 * @param nativeColumnTypeName the native column type name
+	 * @return a java.sql.Types constant representing the java column type this native type is compatible with.  
+	 */
+	public int getJavaTypeForNativeType(String nativeColumnTypeName);	
+
 }

@@ -1670,16 +1670,17 @@ public class DialectUtils implements StringTemplateConstants
 				int dataType = tcInfo.getDataType();
 				String defaultVal = tcInfo.getDefaultValue();
 				int precision = dialect.getPrecisionDigits(columnSize, dataType);
-				String column =
-					dialect.getTypeName(tcInfo.getDataType(),
-						tcInfo.getColumnSize(),
-						precision,
-						tcInfo.getDecimalDigits());
-
+//				String column =
+//					dialect.getTypeName(tcInfo.getDataType(),
+//						tcInfo.getColumnSize(),
+//						precision,
+//						tcInfo.getDecimalDigits());
+				String columnType = dialect.getTypeName(tcInfo);
+				
 				result.append("\n   ");
 				result.append(columnName);
 				result.append(" ");
-				result.append(column);
+				result.append(columnType);
 				String isNullable = tcInfo.isNullable();
 				if (pks.size() == 1 && pks.get(0).equals(columnName))
 				{
