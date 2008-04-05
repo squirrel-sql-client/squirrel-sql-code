@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlOtherTypeDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeDataTypeComponentFactory;
 
 /**
@@ -193,6 +194,10 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory(),
 			java.sql.Types.OTHER,
 			"xml");
+		CellComponentFactory.registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"),
+			java.sql.Types.OTHER,
+			"interval");
+		
 	}
 
 	/** 

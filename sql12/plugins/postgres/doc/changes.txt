@@ -4,7 +4,12 @@ DB2 Plugin Change Log
 0.21
 ====
 
-- Added support for PostgreSQL(8.3.x) new xml type.
+Enhancements:
+ - Added support for PostgreSQL(8.3.x) new xml type.
+
+Bug-Fixes:
+
+1845987: PostgreSQL interval types are not displayed
 
 0.20 
 ====
