@@ -49,8 +49,6 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ArtifactInstallerImpl.class);
 
-	/** Utility which provides path information and abstraction to file operations */
-	private UpdateUtil _util = null;
 
 	/** bean which describes all files that are a part of the change set to be applied */
 	private ChangeListXmlBean _changeListBean = null;
@@ -64,6 +62,20 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 */
 	private File updateDir = null;
 
+	// Download directories
+	
+	/** the downlaods root directory (e.g. /opt/squirrel/update/downloads) */
+	private File downloadsRootDir = null;
+	
+	/** the core sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/core) */
+	private File coreDownloadsDir = null;
+
+	/** the plugin sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/plugin) */
+	private File pluginDownloadsDir = null;
+	
+	/** the i18n sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/i18n) */
+	private File i18nDownloadsDir = null;	
+	
 	// Backup directories
 
 	/** the backup directory (e.g. /opt/squirrel/update/backup) */
@@ -90,43 +102,28 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	private File pluginInstallDir = null;
 
 	/** the lib directory where translation jars are (e.g. /opt/squirrel/lib) */
-	private File translationInstallDir = null;
+	private File i18nInstallDir = null;
+	
+	
+	/* Spring-injected dependencies */
 
-	/** factory for creating install events */
+	/** Spring-injected factory for creating install events */
 	private InstallStatusEventFactory installStatusEventFactory = null;
-
-	/** factory for creating file operation infos */
-	private InstallFileOperationInfoFactory installFileOperationInfoFactory = null;
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#setInstallStatusEventFactory(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory)
-	 */
 	public void setInstallStatusEventFactory(InstallStatusEventFactory installStatusEventFactory)
 	{
 		this.installStatusEventFactory = installStatusEventFactory;
 	}
 
-	/**
-	 * @param installFileOperationInfoFactory
-	 */
+	/** Spring-injected factory for creating file operation infos */
+	private InstallFileOperationInfoFactory installFileOperationInfoFactory = null;
 	public void setInstallFileOperationInfoFactory(
 		InstallFileOperationInfoFactory installFileOperationInfoFactory)
 	{
 		this.installFileOperationInfoFactory = installFileOperationInfoFactory;
 	}
 
-	/**
-	 * @param changeList
-	 * @throws FileNotFoundException
-	 */
-	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
-	{
-		_changeListBean = changeList;
-	}
-
-	/**
-	 * @param util
-	 */
+	/** Utility which provides path information and abstraction to file operations */
+	private UpdateUtil _util = null;
 	public void setUpdateUtil(UpdateUtil util)
 	{
 		this._util = util;
@@ -141,7 +138,21 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 		coreInstallDir = _util.getSquirrelLibraryDir();
 		pluginInstallDir = _util.getSquirrelPluginsDir();
-		translationInstallDir = _util.getSquirrelLibraryDir();
+		i18nInstallDir = _util.getSquirrelLibraryDir();
+		
+		coreDownloadsDir = _util.getCoreDownloadsDir();
+		pluginDownloadsDir = _util.getPluginDownloadsDir();
+		i18nDownloadsDir = _util.getI18nDownloadsDir();
+	}	
+	
+	
+	/**
+	 * @param changeList
+	 * @throws FileNotFoundException
+	 */
+	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
+	{
+		_changeListBean = changeList;
 	}
 
 	/**
@@ -199,7 +210,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			}
 			if (status.isTranslationArtifact())
 			{
-				File translationFile = _util.getFile(translationInstallDir, artifactName);
+				File translationFile = _util.getFile(i18nInstallDir, artifactName);
 				File backupFile = _util.getFile(translationBackupDir, artifactName);
 				if (_util.fileExists(translationFile))
 				{
@@ -234,32 +245,39 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			case INSTALL:
 				if (status.isCoreArtifact())
 				{
-					installDir = _util.getSquirrelLibraryDir();
-					fileToCopy = new File(_util.getCoreDownloadsDir(), artifactName);
-
+					if ("squirrel-sql.jar".equals(status.getName())) {
+						installDir = installRootDir;
+					} else {
+						installDir = coreInstallDir;
+					}
+					fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
 				}
 				if (status.isPluginArtifact())
 				{
-					installDir = _util.getSquirrelPluginsDir();
-					fileToCopy = new File(_util.getPluginDownloadsDir(), artifactName);
+					installDir = pluginInstallDir;
+					fileToCopy = _util.getFile(pluginDownloadsDir, artifactName);
 				}
 				if (status.isTranslationArtifact())
 				{
-					installDir = _util.getSquirrelLibraryDir();
-					fileToCopy = new File(_util.getI18nDownloadsDir(), artifactName);
+					installDir = i18nInstallDir;
+					fileToCopy = _util.getFile(i18nDownloadsDir, artifactName);
 				}
+				InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
+				filesToInstall.add(info);
 				break;
 			case REMOVE:
-
+				if (status.isCoreArtifact()) {
+					s_log.error("Skipping core artifact ("+status.getName()+") that was marked for removal");
+				}
 				break;
 			default:
 				// log error
 			}
-			fileToRemove = new File(installDir, artifactName);
-			filesToRemove.add(fileToRemove);
+			if (installDir != null && artifactName != null) {
+				fileToRemove = _util.getFile(installDir, artifactName);
+				filesToRemove.add(fileToRemove);
+			}
 
-			InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
-			filesToInstall.add(info);
 		}
 		removeOldFiles(filesToRemove);
 		installFiles(filesToInstall);

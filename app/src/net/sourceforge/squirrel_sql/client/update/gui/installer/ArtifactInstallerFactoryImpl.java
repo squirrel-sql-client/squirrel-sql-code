@@ -20,31 +20,35 @@ package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
 import java.io.FileNotFoundException;
 
-import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
-import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
-public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory, ApplicationContextAware
 {
+	private final static String ARTIFACT_INSTALLER_ID = 
+		"net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller";
+	
 
 	/** Spring-injected */
-	private InstallStatusEventFactory installStatusEventFactory;
-	public void setInstallStatusEventFactory(InstallStatusEventFactory installStatusEventFactory)
+	private ApplicationContext applicationContext = null;
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
 	{
-		this.installStatusEventFactory = installStatusEventFactory;
-	}
-
-
+		this.applicationContext = applicationContext;
+	}	
+	
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory#create(net.sourceforge.squirrel_sql.client.update.UpdateUtil, net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory#create(net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
 	 */
-	public ArtifactInstaller create(UpdateUtil util, ChangeListXmlBean changeList) throws FileNotFoundException
+	public ArtifactInstaller create(ChangeListXmlBean changeList) throws FileNotFoundException
 	{
-		ArtifactInstaller result = new ArtifactInstallerImpl();
+		ArtifactInstaller result = 
+			(ArtifactInstaller) applicationContext.getBean(ARTIFACT_INSTALLER_ID);
 		result.setChangeList(changeList);
-		result.setUpdateUtil(util);
-		result.setInstallStatusEventFactory(installStatusEventFactory);
 		return result;
 	}
+
 
 }
