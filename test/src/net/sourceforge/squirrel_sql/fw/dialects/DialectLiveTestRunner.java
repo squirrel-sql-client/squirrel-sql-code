@@ -833,7 +833,7 @@ public class DialectLiveTestRunner {
    private void testAlterNull(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       String tableName = fixIdentifierCase(session, "test3");
-      TableColumnInfo notNullThirdCol = getVarcharColumn("nullvc",
+      TableColumnInfo notNullThirdCol = getVarcharColumn(fixIdentifierCase(session, "nullvc"), 
                                                          tableName,
                                                          false,
                                                          "defVal",
