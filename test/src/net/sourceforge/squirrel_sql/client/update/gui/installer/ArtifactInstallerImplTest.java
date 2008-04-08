@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 
 import java.io.File;
@@ -35,13 +34,12 @@ import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallEve
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEvent;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
+import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfoFactory;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.EasyMockHelper;
@@ -64,6 +62,10 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 
 	private InstallStatusEvent mockBackupCompletedStatusEvent = helper.createMock(InstallStatusEvent.class);
 
+	private InstallStatusEvent mockInstallStartedStatusEvent = helper.createMock(InstallStatusEvent.class);
+
+	private InstallStatusEvent mockInstallCompletedStatusEvent = helper.createMock(InstallStatusEvent.class);
+
 	private InstallFileOperationInfoFactory mockInstallFileOperationInfoFactory =
 		helper.createMock(InstallFileOperationInfoFactory.class);
 
@@ -80,21 +82,9 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String SQUIRREL_SQL_ES_JAR_FILENAME = "squirrel-sql_es.jar";
 
-	// private static final String TEST_SQUIRREL_HOME_DIR_NAME = "/squirrel/updates";
-	// private static final File TEST_UPDATE_DIR = new File(TEST_SQUIRREL_HOME_DIR_NAME);
-	//   
-	// private static final String TEST_BACKUP_ROOT_DIR_NAME =
-	// TEST_SQUIRREL_HOME_DIR_NAME + "/" + UpdateUtil.BACKUP_ROOT_DIR_NAME;
-	// private static final File TEST_BACKUP_ROOT_DIR = new File(TEST_BACKUP_ROOT_DIR_NAME);
-	//   
-	// private static final String TEST_BACKUP_CORE_DIR_NAME =
-	// TEST_BACKUP_ROOT_DIR_NAME + "/" + UpdateUtil.CORE_ARTIFACT_ID;
-	// private static final File TEST_BACKUP_CORE_DIR = new File(TEST_BACKUP_CORE_DIR_NAME);
-	// private static final File TEST_BACKUP_PLUGINS_DIR = new File("/squirrel/updates/backup/plugins");
-
 	private File mockSquirreHomeDirFile = helper.createMock(File.class);
 
-	private File mockSquirreLibDirFile = helper.createMock(File.class);
+	private File mockSquirreLLibDirFile = helper.createMock(File.class);
 
 	private File mockSquirrelPluginsDirFile = helper.createMock(File.class);
 
@@ -124,7 +114,40 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 
 	private File mockInstalledSquirrelSqlEsJarFile = helper.createMock(File.class);
 
+	private File mockInstalledDbCopyZipFile = helper.createMock(File.class);
+	
 	private File mockBackupSquirrelSqlEsJarFile = helper.createMock(File.class);
+
+	private File mockDownloadsCoreDirFile = helper.createMock(File.class);
+
+	private File mockDownloadsPluginDirFile = helper.createMock(File.class);
+
+	private File mockDownloadsFrameworkJarFile = helper.createMock(File.class);
+
+	private File mockDownloadsSquirrelSqlJarFile = helper.createMock(File.class);
+
+	private File mockDownloadsSpringJarFile = helper.createMock(File.class);
+
+	private File mockDownloadsDbCopyPluginZipFile = helper.createMock(File.class);
+	
+	private File mockDownloadsSquirrelSqlEsJarFile = helper.createMock(File.class);
+	
+	private InstallFileOperationInfo mockInstallSquirrelSqlJarOperationInfo =
+		helper.createMock(InstallFileOperationInfo.class);
+
+	private InstallFileOperationInfo mockInstallFrameworkJarOperationInfo =
+		helper.createMock(InstallFileOperationInfo.class);
+
+	private InstallFileOperationInfo mockInstallSpringJarOperationInfo =
+		helper.createMock(InstallFileOperationInfo.class);
+
+	private InstallFileOperationInfo mockInstallDbCopyZipOperationInfo = 
+		helper.createMock(InstallFileOperationInfo.class);
+
+	private InstallFileOperationInfo mockInstallSquirrelSqlEsOperationInfo = 
+		helper.createMock(InstallFileOperationInfo.class);
+	
+	private File mockDownloadsI18nDirFile = helper.createMock(File.class);
 
 	@Before
 	public void setUp() throws Exception
@@ -137,7 +160,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	{
 		expect(mockUpdateUtil.getSquirrelHomeDir()).andReturn(mockSquirreHomeDirFile).anyTimes();
 		expect(mockUpdateUtil.getSquirrelUpdateDir()).andReturn(mockUpdateRootDirFile).anyTimes();
-		expect(mockUpdateUtil.getSquirrelLibraryDir()).andReturn(mockSquirreLibDirFile).anyTimes();
+		expect(mockUpdateUtil.getSquirrelLibraryDir()).andReturn(mockSquirreLLibDirFile).anyTimes();
 		expect(mockUpdateUtil.getSquirrelPluginsDir()).andReturn(mockSquirrelPluginsDirFile).anyTimes();
 
 		implUnderTest = new ArtifactInstallerImpl();
@@ -157,32 +180,40 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	{
 
 		/* expectations that are specific to this test */
-		expect(mockUpdateUtil.checkDir(mockUpdateRootDirFile, UpdateUtil.BACKUP_ROOT_DIR_NAME)).andReturn(mockBackupRootDirFile);
-		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.CORE_ARTIFACT_ID))	.andReturn(mockBackupCoreDirFile);
-		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.PLUGIN_ARTIFACT_ID))	.andReturn(mockBackupPluginDirFile);
-		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.TRANSLATION_ARTIFACT_ID)).andReturn(mockBackupTranslationDirFile);
+		makeCommonUpdateUtilAssertions();
 
-		expect(mockUpdateUtil.getFile(mockSquirreLibDirFile, FW_JAR_FILENAME))	.andReturn(mockInstalledFrameworkJarFile);
-		expect(mockUpdateUtil.getFile(mockBackupCoreDirFile, FW_JAR_FILENAME))	.andReturn(mockBackupFrameworkJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirreLLibDirFile, FW_JAR_FILENAME)).andReturn(
+			mockInstalledFrameworkJarFile);
+		expect(mockUpdateUtil.getFile(mockBackupCoreDirFile, FW_JAR_FILENAME)).andReturn(
+			mockBackupFrameworkJarFile);
 		mockUpdateUtil.copyFile(mockInstalledFrameworkJarFile, mockBackupFrameworkJarFile);
 
-		expect(mockUpdateUtil.getFile(mockSquirreHomeDirFile, SQUIRREL_SQL_JAR_FILENAME)).andReturn(mockInstalledSquirrelSqlJarFile);
-		expect(mockUpdateUtil.getFile(mockBackupCoreDirFile, SQUIRREL_SQL_JAR_FILENAME))	.andReturn(mockBackupSquirrelSqlJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirreHomeDirFile, SQUIRREL_SQL_JAR_FILENAME)).andReturn(
+			mockInstalledSquirrelSqlJarFile);
+		expect(mockUpdateUtil.getFile(mockBackupCoreDirFile, SQUIRREL_SQL_JAR_FILENAME)).andReturn(
+			mockBackupSquirrelSqlJarFile);
 		mockUpdateUtil.copyFile(mockInstalledSquirrelSqlJarFile, mockBackupSquirrelSqlJarFile);
 
-		expect(mockUpdateUtil.getFile(mockBackupPluginDirFile, DBCOPY_ZIP_FILENAME))	.andReturn(mockBackupDbCopyZipFile);
+		expect(mockUpdateUtil.getFile(mockBackupPluginDirFile, DBCOPY_ZIP_FILENAME)).andReturn(
+			mockBackupDbCopyZipFile);
 
-		expect(mockUpdateUtil.getFile(mockSquirrelPluginsDirFile, "dbcopy"))	.andReturn(mockInstalledDbCopyPluginDirFile);
-		expect(mockUpdateUtil.getFile(mockSquirrelPluginsDirFile, "dbcopy.jar")).andReturn(mockInstalledDbCopyPluginJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirrelPluginsDirFile, "dbcopy")).andReturn(
+			mockInstalledDbCopyPluginDirFile);
+		expect(mockUpdateUtil.getFile(mockSquirrelPluginsDirFile, "dbcopy.jar")).andReturn(
+			mockInstalledDbCopyPluginJarFile);
 		mockUpdateUtil.createZipFile(isA(File.class), isA(File[].class));
 
-		expect(mockUpdateUtil.getFile(mockSquirreLibDirFile, SQUIRREL_SQL_ES_JAR_FILENAME))	.andReturn(mockInstalledSquirrelSqlEsJarFile);
-		expect(mockUpdateUtil.getFile(mockBackupTranslationDirFile, SQUIRREL_SQL_ES_JAR_FILENAME)).andReturn(mockBackupSquirrelSqlEsJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirreLLibDirFile, SQUIRREL_SQL_ES_JAR_FILENAME)).andReturn(
+			mockInstalledSquirrelSqlEsJarFile);
+		expect(mockUpdateUtil.getFile(mockBackupTranslationDirFile, SQUIRREL_SQL_ES_JAR_FILENAME)).andReturn(
+			mockBackupSquirrelSqlEsJarFile);
 		expect(mockUpdateUtil.fileExists(mockInstalledSquirrelSqlEsJarFile)).andReturn(true);
 		mockUpdateUtil.copyFile(mockInstalledSquirrelSqlEsJarFile, mockBackupSquirrelSqlEsJarFile);
 
-		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_STARTED))	.andReturn(mockBackupStartedStatusEvent);
-		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_COMPLETE)).andReturn(mockBackupCompletedStatusEvent);
+		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_STARTED)).andReturn(
+			mockBackupStartedStatusEvent);
+		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_COMPLETE)).andReturn(
+			mockBackupCompletedStatusEvent);
 
 		expect(mockChangeListBean.getChanges()).andReturn(buildChangeList());
 
@@ -197,16 +228,120 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
-	@Ignore
 	public final void testInstallFiles() throws IOException
 	{
 		/* expectations that are specific to this test */
+		makeCommonUpdateUtilAssertions();
+
+		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_STARTED)).andReturn(
+			mockInstallStartedStatusEvent);
+		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_COMPLETE)).andReturn(
+			mockInstallCompletedStatusEvent);
+
+		mockInstallStatusListener.handleInstallStatusEvent(mockInstallStartedStatusEvent);
+		mockInstallStatusListener.handleInstallStatusEvent(mockInstallCompletedStatusEvent);
+
+		expect(mockChangeListBean.getChanges()).andReturn(buildChangeList());
+		
+		/* expect getFile for updated files that will be removed */
+		expect(mockUpdateUtil.getFile(mockSquirreHomeDirFile, SQUIRREL_SQL_JAR_FILENAME)).andReturn(
+			mockInstalledSquirrelSqlJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirreLLibDirFile, FW_JAR_FILENAME)).andReturn(
+			mockInstalledFrameworkJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirreLLibDirFile, SPRING_JAR_FILENAME)).andReturn(
+			mockInstalledFrameworkJarFile);
+		expect(mockUpdateUtil.getFile(mockSquirrelPluginsDirFile, DBCOPY_ZIP_FILENAME)).andReturn(
+			mockInstalledDbCopyZipFile);
+		expect(mockUpdateUtil.getFile(mockSquirreLLibDirFile, SQUIRREL_SQL_ES_JAR_FILENAME
+			)).andReturn(
+			mockInstalledDbCopyZipFile);
+
+		
+		/* expect getFile for updated files that were downloaded */
+		expect(mockUpdateUtil.getFile(mockDownloadsCoreDirFile, SQUIRREL_SQL_JAR_FILENAME)).andReturn(
+			mockDownloadsSquirrelSqlJarFile);
+		expect(mockUpdateUtil.getFile(mockDownloadsCoreDirFile, FW_JAR_FILENAME)).andReturn(
+			mockDownloadsFrameworkJarFile);
+		expect(mockUpdateUtil.getFile(mockDownloadsCoreDirFile, SPRING_JAR_FILENAME)).andReturn(
+			mockDownloadsSpringJarFile);
+		expect(mockUpdateUtil.getFile(mockDownloadsPluginDirFile, DBCOPY_ZIP_FILENAME)).andReturn(
+			mockDownloadsDbCopyPluginZipFile);
+		expect(mockUpdateUtil.getFile(mockDownloadsI18nDirFile, SQUIRREL_SQL_ES_JAR_FILENAME)).andReturn(
+			mockDownloadsSquirrelSqlEsJarFile);
+
+		
+		/* expected fileOperationInfos for files that will be installed */
+		expect(
+			mockInstallFileOperationInfoFactory.create(mockDownloadsSquirrelSqlJarFile, mockSquirreHomeDirFile)).andReturn(
+			mockInstallSquirrelSqlJarOperationInfo);
+		expect(mockInstallFileOperationInfoFactory.create(mockDownloadsFrameworkJarFile, mockSquirreLLibDirFile)).andReturn(
+			mockInstallFrameworkJarOperationInfo);
+		expect(mockInstallFileOperationInfoFactory.create(mockDownloadsSpringJarFile, mockSquirreLLibDirFile)).andReturn(
+			mockInstallSpringJarOperationInfo);
+		expect(
+			mockInstallFileOperationInfoFactory.create(mockDownloadsDbCopyPluginZipFile, mockSquirrelPluginsDirFile)).andReturn(
+			mockInstallDbCopyZipOperationInfo);
+		expect(
+			mockInstallFileOperationInfoFactory.create(mockDownloadsSquirrelSqlEsJarFile, mockSquirreLLibDirFile)).andReturn(
+				mockInstallSquirrelSqlEsOperationInfo);
+		
 		
 		helper.replayAll();
+		implUnderTest.setChangeList(mockChangeListBean);
+		implUnderTest.setUpdateUtil(mockUpdateUtil);
 		implUnderTest.installFiles();
 		helper.verifyAll();
 	}
 
+	@Test
+	public void testDisallowCoreTypeFileRemoval() throws Exception {
+		/* expectations that are specific to this test */
+		makeCommonUpdateUtilAssertions();
+
+		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_STARTED)).andReturn(
+			mockInstallStartedStatusEvent);
+		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_COMPLETE)).andReturn(
+			mockInstallCompletedStatusEvent);		
+		
+		mockInstallStatusListener.handleInstallStatusEvent(mockInstallStartedStatusEvent);
+		mockInstallStatusListener.handleInstallStatusEvent(mockInstallCompletedStatusEvent);
+		
+		
+		expect(mockChangeListBean.getChanges()).andReturn(buildRemoveCoreFileChangeList());
+		
+		helper.replayAll();
+		implUnderTest.setChangeList(mockChangeListBean);
+		implUnderTest.setUpdateUtil(mockUpdateUtil);
+		implUnderTest.installFiles();
+		helper.verifyAll();		
+	}
+	
+	private void makeCommonUpdateUtilAssertions()
+	{
+		expect(mockUpdateUtil.checkDir(mockUpdateRootDirFile, UpdateUtil.BACKUP_ROOT_DIR_NAME)).andReturn(
+			mockBackupRootDirFile);
+		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.CORE_ARTIFACT_ID)).andReturn(
+			mockBackupCoreDirFile);
+		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.PLUGIN_ARTIFACT_ID)).andReturn(
+			mockBackupPluginDirFile);
+		expect(mockUpdateUtil.checkDir(mockBackupRootDirFile, UpdateUtil.TRANSLATION_ARTIFACT_ID)).andReturn(
+			mockBackupTranslationDirFile);
+
+		expect(mockUpdateUtil.getCoreDownloadsDir()).andReturn(mockDownloadsCoreDirFile).atLeastOnce();
+		expect(mockUpdateUtil.getPluginDownloadsDir()).andReturn(mockDownloadsPluginDirFile).atLeastOnce();
+		expect(mockUpdateUtil.getI18nDownloadsDir()).andReturn(mockDownloadsI18nDirFile).atLeastOnce();
+	}
+
+	private List<ArtifactStatus> buildRemoveCoreFileChangeList() {
+		ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
+		final String coreType = UpdateUtil.CORE_ARTIFACT_ID;
+		final boolean installed = true;
+		ArtifactStatus squirrelSqlJarToRemove =
+			getArtifactToRemove(SQUIRREL_SQL_JAR_FILENAME, installed, coreType);
+		result.add(squirrelSqlJarToRemove);
+		return result;
+	}
+	
 	private List<ArtifactStatus> buildChangeList()
 	{
 		ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
@@ -242,4 +377,14 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 		return result;
 	}
 
+	private ArtifactStatus getArtifactToRemove(String name, boolean installed, String type)
+	{
+		ArtifactStatus result = new ArtifactStatus();
+		result.setArtifactAction(ArtifactAction.REMOVE);
+		result.setName(name);
+		result.setInstalled(installed);
+		result.setType(type);
+		return result;
+	}
+	
 }
