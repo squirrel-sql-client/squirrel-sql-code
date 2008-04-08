@@ -216,7 +216,7 @@
 				           problem is, there isn't a generic way to determine what
 				           all of the app library files and plugin library files are.
 				  -->
-				<attribute name="Class-Path" value="lib/antlr-2.7.5H3.jar lib/cglib-2.1.3.jar lib/commons-cli.jar lib/commons-collections-2.1.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ejb3-persistence.jar lib/forms.jar lib/fw.jar lib/hibernate3.2.4.sp1.jar lib/hibernate-annotations-3.3.0.jar lib/hibernate-commons-annotations-3.3.0.jar lib/hibernate-entitymanager-3.3.1.jar lib/jxl.jar lib/log4j.jar lib/nanoxml-2.1.jar lib/openide.jar lib/openide-loaders.jar lib/org-netbeans-modules-editor.jar lib/org-netbeans-modules-editor-fold.jar lib/org-netbeans-modules-editor-lib.jar lib/org-netbeans-modules-editor-util.jar lib/syntax.jar lib/stringtemplate-3.1.b1.jar"/>
+				<attribute name="Class-Path" value="lib/antlr-2.7.5H3.jar lib/cglib-2.1.3.jar lib/commons-cli.jar lib/commons-collections-2.1.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ejb3-persistence.jar lib/forms.jar lib/fw.jar lib/hibernate3.2.4.sp1.jar lib/hibernate-annotations-3.3.0.jar lib/hibernate-commons-annotations-3.3.0.jar lib/hibernate-entitymanager-3.3.1.jar lib/jxl.jar lib/log4j-1.2.15.jar lib/nanoxml-2.1.jar lib/openide.jar lib/openide-loaders.jar lib/org-netbeans-modules-editor.jar lib/org-netbeans-modules-editor-fold.jar lib/org-netbeans-modules-editor-lib.jar lib/org-netbeans-modules-editor-util.jar lib/syntax.jar lib/stringtemplate-3.1.b1.jar"/>
 				<attribute name="Main-Class" value="net.sourceforge.squirrel_sql.client.Main"/>
 				<attribute name="Application-Version" value="${appversion}"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -796,7 +796,8 @@
 	==================================================================
 	Runs the JUnit tests against the currently built code
 	placing the result (TEST-net.sourceforge.squirrel_sql.AllTests.txt)
-	in squirrel-sql-dist/squirrel-sql/test/results.
+	in squirrel-sql-dist/squirrel-sql/test/results.  This requires Ant 
+	1.7.0 (with JUnit 4) or later to execute successfully.
 	
 	No parameters.
 	==================================================================
