@@ -33,6 +33,7 @@ import java.sql.Types;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -164,17 +165,18 @@ public class ResultSetColumnReaderTest extends BaseSQuirreLJUnit4TestCase {
         replayAll();
         readerUnderTest = new ResultSetColumnReader(mockResultSet);
         Double value = readerUnderTest.getDouble(index++);
-        assertEquals(123, value);
+        
+        Assert.assertEquals("", new Double(123), value);
         value = readerUnderTest.getDouble(index++);
-        assertEquals(345, value);
+        assertEquals(new Double(345), value);
         value = readerUnderTest.getDouble(index++);
-        assertEquals(123.5, value);
+        assertEquals(new Double(123.5), value);
         value = readerUnderTest.getDouble(index++);
-        assertEquals(127, value);
+        assertEquals(new Double(127), value);
         value = readerUnderTest.getDouble(index++);
-        assertEquals(567, value);
+        assertEquals(new Double(567), value);
         value = readerUnderTest.getDouble(index++);
-        assertEquals(789, value);
+        assertEquals(new Double(789), value);
         
         verifyAll();
     }
@@ -211,21 +213,21 @@ public class ResultSetColumnReaderTest extends BaseSQuirreLJUnit4TestCase {
         replayAll();
         readerUnderTest = new ResultSetColumnReader(mockResultSet);
         Long value = readerUnderTest.getLong(index++);
-        assertEquals(123, value);
+        assertEquals(new Long(123), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(345, value);
+        assertEquals(new Long(345), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(123.5, value);
+        assertEquals(new Long(123), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(127, value);
+        assertEquals(new Long(127), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(567, value);
+        assertEquals(new Long(567), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(789, value);
+        assertEquals(new Long(789), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(1, value);
+        assertEquals(new Long(1), value);
         value = readerUnderTest.getLong(index++);
-        assertEquals(0, value);
+        assertEquals(new Long(0), value);
         
         verifyAll();
     }
