@@ -32,6 +32,7 @@ import java.util.Set;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -588,14 +589,14 @@ public class CopyExecutor extends I18NBaseObject {
                     int sourceColType = sourceInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
-                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i]);
+                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i], prov.getCopySourceSession());
                     sourceColType = getDateReplacement(sourceColType, 
                                                        isSourceOracle);
                     
                     int destColType   = destInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
-                    destColType = DBUtil.replaceOtherDataType(destInfos[i]);
+                    destColType = DBUtil.replaceOtherDataType(destInfos[i], prov.getCopyDestSession());
                     destColType = getDateReplacement(destColType, isDestOracle);
                     
                     
