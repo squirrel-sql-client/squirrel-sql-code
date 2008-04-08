@@ -673,48 +673,50 @@ public class DBUtil extends I18NBaseObject {
     }
     
     /**
-     * Takes the specified colInfo, gets the data type to see if it is 
-     * 1111(OTHER).  If so then get the type name and try to match a jdbc type
-     * with the same name to get it's type code.
-     * 
-     * @param colInfo
-     * @return
-     * @throws MappingException
-     */
-    public static int replaceOtherDataType(TableColumnInfo colInfo) 
-    	throws MappingException 
-    {
-    	int colJdbcType = colInfo.getDataType();
-        if (colJdbcType == java.sql.Types.OTHER) {
-            String typeName = colInfo.getTypeName().toUpperCase();
-            int parenIndex = typeName.indexOf("(");
-            if (parenIndex != -1) {
-                typeName = typeName.substring(0,parenIndex);
-            }
-            colJdbcType = JDBCTypeMapper.getJdbcType(typeName);
-            if (colJdbcType == Types.NULL) {
-                throw new MappingException(
-                        "Encoutered jdbc type OTHER (1111) and couldn't map "+
-                        "the database-specific type name ("+typeName+
-                        ") to a jdbc type");
-            }
-        }
-        return colJdbcType;
-    }
+		 * Takes the specified colInfo, gets the data type to see if it is 1111(OTHER). If so then get the type
+		 * name and try to match a jdbc type with the same name to get it's type code.
+		 * 
+		 * @param colInfo
+		 * @param session
+		 *           TODO
+		 * @return
+		 * @throws MappingException
+		 */
+	public static int replaceOtherDataType(TableColumnInfo colInfo, ISession session) throws MappingException
+	{
+		int colJdbcType = colInfo.getDataType();
+		if (colJdbcType == java.sql.Types.OTHER)
+		{
+			try
+			{
+				HibernateDialect dialect = DialectFactory.getDialect(session.getMetaData());
+				String typeName = colInfo.getTypeName().toUpperCase();
+				int parenIndex = typeName.indexOf("(");
+				if (parenIndex != -1)
+				{
+					typeName = typeName.substring(0, parenIndex);
+				}				
+				colJdbcType = dialect.getJavaTypeForNativeType(colInfo.getTypeName());
+			} catch (Exception e)
+			{
+				log.error("replaceOtherDataType: unexpected exception - " + e.getMessage());
+			}
+		}
+		return colJdbcType;
+	}
     
     /**
-     * Reads the value from the specified ResultSet at column index index, and 
-     * based on the type, calls the appropriate setXXX method on ps with the 
-     * value obtained.
-     *  
-     * @param ps
-     * @param sourceColType 
-     * @param destColType
-     * @param index
-     * @param rs
-     * @return a string representation of the value that was bound.
-     * @throws SQLException
-     */
+		 * Reads the value from the specified ResultSet at column index index, and based on the type, calls the
+		 * appropriate setXXX method on ps with the value obtained.
+		 * 
+		 * @param ps
+		 * @param sourceColType
+		 * @param destColType
+		 * @param index
+		 * @param rs
+		 * @return a string representation of the value that was bound.
+		 * @throws SQLException
+		 */
     public static String bindVariable(PreparedStatement ps, 
                                       int sourceColType,
                                       int destColType,

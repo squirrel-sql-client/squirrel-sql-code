@@ -71,7 +71,7 @@ public class ColTypeMapper {
 
         // If source column is type 1111 (OTHER), try to use the 
         // column type name to find a type that isn't 1111.        
-        colJdbcType = DBUtil.replaceOtherDataType(colInfo);
+        colJdbcType = DBUtil.replaceOtherDataType(colInfo, sourceSession);
         
         // Oracle can only store DECIMAL type numbers.  Since regular non-decimal
         // numbers appear as "decimal", Oracle's decimal numbers can be rather 
