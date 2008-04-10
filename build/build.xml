@@ -14,10 +14,16 @@
 		<tstamp/>
 		<property file="${basedir}/build/build.properties"/>
 		<property name="name" value="squirrel-sql"/>
-		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}"/>
+		<property name="dist_root" value="${basedir}/../squirrel-sql-dist" />
+		<property name="dist_dir" value="${dist_root}/${name}"/>
+	        <property name="release_dir" value="${dist_dir}/../release"/>
+		<property name="release_core_dir" value="${release_dir}/core"/>
+		<property name="release_i18n_dir" value="${release_dir}/i18n"/>
+	        <property name="release_plugin_dir" value="${release_dir}/plugin"/>
+                        
 		<property name="test_dir" value="${dist_dir}/test"/>
 		<property name="html_summary_file" value="${test_dir}/results/summary/junit-noframes.html"/>
-	    <property name="core_dist_dir" value="${dist_dir}/core/dist"/>
+	        <property name="core_dist_dir" value="${dist_dir}/core/dist"/>
 		<property name="core_work_dir" value="${dist_dir}/core/work"/>
 		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
 		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
@@ -26,6 +32,8 @@
 		<property name="plugins_src_dir" value="${basedir}/plugins"/>
 		<property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
 
+		
+		
 		<property name="plugin_build_file_name" value="plugin_build.xml"/>
 		<property name="plugin_build_target_name" value="build"/>
 
@@ -37,7 +45,7 @@
 		<echo message="squirrel.version: ${squirrel.version}"/>
 		<echo message="appversion: ${appversion}"/>
 
-        <condition property="appversion" 
+	        <condition property="appversion" 
         		   value="${squirrel.version}" 
         	       else = "Non-Release Build">
         	
@@ -53,6 +61,10 @@
 		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>	
 		<mkdir dir="${basedir}/../squirrel-sql-dist"/>
 		<mkdir dir="${basedir}/../squirrel-sql-dist/${name}"/>
+		<mkdir dir="${release_dir}"/>
+		<mkdir dir="${release_core_dir}"/>
+		<mkdir dir="${release_i18n_dir}"/>
+		<mkdir dir="${release_plugin_dir}"/>		
 	</target>
 
 	<!--
@@ -492,29 +504,80 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="make_install_jar" depends="clean, compile_app, compile_plugins, jar_source">
+	<target name="make_install_jar" depends="compile_app, compile_plugins, jar_source">
+                <echo message="Creating the installer with izpack" />
+                <echo message="config file template = izpack-super.xml.template" />
+                <echo message="config file = ${izpack.config.file}" />
+                
+                <copy file="${basedir}/build/snapshot/izpack-super.xml.template" 
+                      toFile="${basedir}/build/${izpack.config.file}">
+                    <filterchain>
+                        <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                                <param type="token"
+                                       name="squirrel.version"
+                                       value="${squirrel.version}"/>
+                        </filterreader>
+                    </filterchain>
+                </copy>
+		
+                <!-- copy the core jars (includes libraries) to release core subdir -->
+                <copy todir="${release_core_dir}">
+                        <fileset dir="${core_dist_lib_dir}">
+                            <include name="*.jar"/>
+                                <exclude name="squirrel-sql_*.jar"/>
+                        </fileset>
+                </copy>
+                <!-- copy translation jars to the release i18n subdir -->
+                <copy todir="${release_i18n_dir}">
+                        <fileset dir="${core_dist_lib_dir}" >
+                                <include name="squirrel-sql_*.jar"/>    
+                        </fileset>
+                </copy>
+                <!-- copy the plugin zip archives to the release directory -->
+                <copy todir="${release_plugin_dir}">
+                        <fileset dir="${dist_dir}">
+                                <include name="*.zip"/>
+                        </fileset>
+                </copy>
+		
+                <!-- build the release.xml document -->
+                <java fork="true"  classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
+                        <arg value="snapshot"/>
+                        <arg value="${squirrel.version}"/>
+                        <arg value="${release_dir}"/>
+                    <classpath>
+                        <pathelement location="${release_core_dir}/squirrel-sql.jar"/>
+                        <pathelement location="${release_core_dir}/fw.jar"/>
+                        <pathelement location="${release_core_dir}/commons-cli.jar"/>
+                        <pathelement location="${release_core_dir}/log4j-1.2.15.jar"/>
+                    </classpath>
+                </java>		
+		
 		<java jar="${izpack.home.dir}/lib/compiler.jar"
 	          fork="true"
 	          failonerror="true"
 	          maxmemory="128m"
-	    >
-
-	        <arg value="-HOME"/>
-	        <arg value="${izpack.home.dir}"/>
-
-			<arg value="${basedir}/build/${izpack.config.file}"/>
+	        >
+	            <arg value="${basedir}/build/${izpack.config.file}"/>
+	            <arg value="-h"/>
+	            <arg value="${izpack.home.dir}"/>
 		    <arg value="-b"/>
 		    <arg value="${basedir}/build"/>
 		    <arg value="-k"/>
 		    <arg value="standard-kunststoff"/>
 		    <arg value="-o"/>
-		    <arg value="${basedir}/../squirrel-sql-dist/${name}-${version}-install.jar"/>
+		    <arg value="${dist_root}/${name}-${version}-install.jar"/>
+                    <arg value="-l"/>
+                    <arg value="5"/>
+			
 
 		    <classpath>
 		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
 		        <pathelement path="${java.class.path}"/>
 		    </classpath>
 	    </java>		
+		
+	    <echo message="Install jar: ${dist_root}/${name}-${version}-install.jar" />
 	</target>		
 
 	
@@ -544,7 +607,7 @@
 	<target name="safeclean" depends="init" 
 			description="Removes only files generated by this script">
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${dist_dir}"/>
+			<fileset dir="${dist_root}"/>
 		</delete>		
 	</target>	
 	
