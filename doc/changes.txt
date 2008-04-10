@@ -62,6 +62,10 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+1845987: PostgreSQL interval types are not displayed
+
+1840266: Create Table Script sets varchar columns to 8000
+
 1830649: Focus Loss
 
 1824534: Constraint created twice
