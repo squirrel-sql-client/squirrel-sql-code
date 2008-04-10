@@ -99,7 +99,7 @@
                         <file   targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j.jar"/>
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j-1.2.15.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
                         <file   targetdir="$INSTALL_PATH/lib"
