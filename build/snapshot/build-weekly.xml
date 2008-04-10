@@ -98,7 +98,7 @@
                     </filterchain>
                 </copy>
 
-		<!-- This works with the latest version of IzPack - currently 3.9.0 
+		<!-- This works with the latest version of IzPack - currently 3.11.0 
 		     The arguments are not correct for older versions such as 3.7.0 -->
 		<java jar="${izpack.home.dir}/lib/compiler.jar"
 	              fork="true"
@@ -106,9 +106,9 @@
 	              maxmemory="128m"
 	        >
 		    <arg value="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}"/>
-			<arg value="-h"/>
-	        <arg value="${izpack.home.dir}"/>
-			<arg value="-b"/>
+		    <arg value="-h"/>
+	            <arg value="${izpack.home.dir}"/>
+		    <arg value="-b"/>
 		    <arg value="${cvs.dest.dir}/${project.module}/build"/>
 		    <arg value="-k"/>
 		    <arg value="standard-kunstoff"/>
