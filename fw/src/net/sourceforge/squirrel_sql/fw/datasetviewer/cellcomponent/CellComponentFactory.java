@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -365,10 +366,19 @@ public class CellComponentFactory {
 		// Default behavior if no data type found is to use a restorable text field
 		// with no other special behavior and hope the object has a toString().
 		if (dataTypeObject != null)
+		{
 			textField = dataTypeObject.getJTextField();
-		else textField = new RestorableJTextField();
-		
+		}
+		else
+		{
+			textField = new RestorableJTextField();
+		}
+					
+		// When changing the backgroud color, it helps to set the inner component's border to zero.  Otherwise,
+		// the border can obscure the text and make it hard to see.  This is especially seen when using the
+		// kunstoff l&f.
 		textField.setBackground(Color.yellow);
+		textField.setBorder(new EmptyBorder(0,0,0,0));
 
 		ed = new CellEditorUsingRenderer(textField, dataTypeObject);
 		ed.setClickCountToStart(1);
