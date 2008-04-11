@@ -4,7 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
-Enhancements:
+Enhancements: 
 
  - New Plugin: SQLReplace by Dieter Engelhardt
    This plugin replaces a set of variables before a statement is executed.
@@ -61,6 +61,8 @@ Refactoring Plugin:
    Hibernate dialect.
 
 Bug-Fixes:
+
+Fixed a bug which made it difficult to see text that was being edited in a table.
 
 1845987: PostgreSQL interval types are not displayed
 
