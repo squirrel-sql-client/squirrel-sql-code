@@ -1239,6 +1239,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 		if ("cardinal_number".equalsIgnoreCase(nativeColumnTypeName)) {
 			return java.sql.Types.INTEGER;
 		}
+		if ("xml".equalsIgnoreCase(nativeColumnTypeName)) {
+			return java.sql.Types.VARCHAR;
+		}
 		return super.getJavaTypeForNativeType(nativeColumnTypeName);
 	}
 	
