@@ -283,7 +283,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
     * sub-class implementations
     */
    @Override
-   protected KeyListener getKeyListener() {
+   protected KeyListener getKeyListener(IRestorableTextComponent component) {
        return new KeyTextHandler();
    }
 
