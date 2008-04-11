@@ -183,7 +183,7 @@
 		        <pathelement location="${release.core.dir}/squirrel-sql.jar"/>
 		    	<pathelement location="${release.core.dir}/fw.jar"/>
 		    	<pathelement location="${release.core.dir}/commons-cli.jar"/>
-		    	<pathelement location="${release.core.dir}/log4j.jar"/>
+		    	<pathelement location="${release.core.dir}/log4j-1.2.15.jar"/>
 		    </classpath>
 		</java>
 	</target>
