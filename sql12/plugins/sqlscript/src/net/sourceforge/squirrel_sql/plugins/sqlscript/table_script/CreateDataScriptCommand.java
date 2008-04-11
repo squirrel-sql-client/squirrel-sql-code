@@ -232,6 +232,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       boolean fromResultSet = !_templateScriptOnly && !headerOnly;
 
       sbRows.append("\n\n");
+      Timestamp currentTime = new Timestamp(System.currentTimeMillis());
       while (srcResult.next() || _templateScriptOnly || headerOnly)
       {
          if (_bStop) break;
@@ -272,15 +273,15 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                java.util.Date timestamp = null;
                if (Types.DATE == colInfo[i].sqlType)
                {
-                  timestamp = fromResultSet ? srcResult.getDate(i + 1): new java.util.Date();
+                  timestamp = fromResultSet ? srcResult.getDate(i + 1): currentTime;
                }
                else if (Types.TIME == colInfo[i].sqlType)
                {
-                  timestamp = fromResultSet ? srcResult.getTime(i + 1): new java.util.Date();
+                  timestamp = fromResultSet ? srcResult.getTime(i + 1): currentTime;
                }
                else if (Types.TIMESTAMP == colInfo[i].sqlType)
                {
-                  timestamp = fromResultSet ? srcResult.getTimestamp(i + 1): new java.util.Date();
+                  timestamp = fromResultSet ? srcResult.getTimestamp(i + 1): currentTime;
                }
 
 
