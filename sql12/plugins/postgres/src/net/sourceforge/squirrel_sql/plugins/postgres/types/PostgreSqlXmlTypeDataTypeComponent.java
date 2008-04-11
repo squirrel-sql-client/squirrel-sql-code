@@ -18,12 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.postgres.types;
 
+import java.awt.event.KeyListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.StringFieldKeyTextHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -155,7 +158,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 		try
 		{
 			result = rs.getString(idx);
-			if (result == null)
+			if (result == null || "".equals(result))
 			{
 				return NULL_VALUE_PATTERN;
 			} 
@@ -176,7 +179,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 	public void setPreparedStatementValue(PreparedStatement pstmt, Object value, int position)
 		throws SQLException
 	{
-		if (value == null)
+		if (value == null || "".equals(value))
 		{
 			pstmt.setNull(position, java.sql.Types.OTHER, "xml");
 		} else
@@ -209,4 +212,34 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 		return ((String) obj1).equals(obj2);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent#validateAndConvert(java.lang.String, java.lang.Object, java.lang.StringBuffer)
+	 */
+	@Override
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
+	{
+		// handle null, which is shown as the special string "<null>"
+		if (value.equals("<null>"))
+			return null;
+
+		// Do the conversion into the object in a safe manner
+		return value;	// Special case: the input is exactly the output
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent#getKeyListener(IRestorableTextComponent)
+	 */
+	@Override
+	protected KeyListener getKeyListener(IRestorableTextComponent component)
+	{
+		boolean isNullable = false;
+		int columnSize = -1;
+		if (super._colDef != null) {
+			isNullable = _colDef.isNullable();
+			columnSize = _colDef.getColumnSize();
+		}
+		return new StringFieldKeyTextHandler(component, columnSize, isNullable);
+	}
+
+	
 }
