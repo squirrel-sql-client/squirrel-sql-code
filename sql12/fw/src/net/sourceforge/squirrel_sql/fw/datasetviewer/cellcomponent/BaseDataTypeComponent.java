@@ -100,7 +100,7 @@ public class BaseDataTypeComponent {
         _textArea.setText((String) _renderer.renderObject(value));
 
         // special handling of operations while editing this data type
-        KeyListener keyListener = getKeyListener();
+        KeyListener keyListener = getKeyListener(_textArea);
         if (keyListener != null) {
             _textArea.addKeyListener(keyListener);
         }
@@ -114,7 +114,7 @@ public class BaseDataTypeComponent {
     public JTextField getJTextField() {
         _textField = new RestorableJTextField();
 
-        KeyListener keyListener = getKeyListener();
+        KeyListener keyListener = getKeyListener(_textField);
         if (keyListener != null) {
             // special handling of operations while editing this data type
             _textField.addKeyListener(keyListener);
@@ -156,7 +156,6 @@ public class BaseDataTypeComponent {
      * Null is a valid successful return, so errors are indicated only by
      * existance or not of a message in the messageBuffer.
      */
-    @SuppressWarnings("unused")
     public Object validateAndConvert(final String value, 
                                      final Object originalValue, 
                                      final StringBuffer messageBuffer) {
@@ -179,17 +178,21 @@ public class BaseDataTypeComponent {
         return validateAndConvert(value, originalValue, messageBuffer);
     }    
     
-    /** 
-     * If any custom key handling behavior is required, this can be set by 
-     * sub-class implementations
-     */
-    protected KeyListener getKeyListener() {
-        return null;
-    }
+   /**
+	 * If any custom key handling behavior is required, this can be set by sub-class implementations
+	 * 
+	 * @param component
+	 *           the restorable text component that this key listener will be interacting with 
+	 */
+	protected KeyListener getKeyListener(IRestorableTextComponent component)
+	{
+		return null;
+	}
 
     /**
-     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#exportObject(java.io.FileOutputStream, java.lang.String)     
-     */
+		 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#exportObject(java.io.FileOutputStream,
+		 *      java.lang.String)
+		 */
     public void exportObject(FileOutputStream outStream, String text)
     throws IOException {
         OutputStreamWriter outWriter = null;
