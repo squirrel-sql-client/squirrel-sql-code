@@ -25,7 +25,10 @@ import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
@@ -46,6 +49,13 @@ import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -54,15 +64,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.MessagePanel;
 
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 {
 
@@ -150,8 +154,9 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 				comp.revalidate();
 			}
 		});
+		
 	}
-
+	// ...
 	public void dispose()
 	{
       boolean shouldDispose = true;
@@ -388,10 +393,6 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 		final Container content = getContentPane();
 
-//		_aliasesToolWindow = new AliasesListInternalFrame(_app);
-//		_driversToolWindow = new DriversListInternalFrame(_app);
-
-//		preLoadActions();
 		content.setLayout(new BorderLayout());
 		final JScrollPane sp = new JScrollPane(getDesktopPane());
 		sp.setBorder(BorderFactory.createEmptyBorder());
@@ -412,7 +413,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
             }
          }
       };
-
+      _msgPnl.setName(MessagePanel.class.toString());
 		_msgPnl.setEditable(false);
 
 
