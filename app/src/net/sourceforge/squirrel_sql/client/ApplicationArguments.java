@@ -64,6 +64,8 @@ public class ApplicationArguments
 		String[] NO_SPLASH = { "nos", "no-splash", "Don't display splash screen"};
 		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir",
 								"User settings directory"};
+		String[] UI_DEBUG = {"uidebug", "user-interface-debugging", 
+			"Provides tool-tips and highlighting of UI components for easy identification" }; 
 	}
 
 	/** Only instance of this class. */
@@ -258,6 +260,13 @@ public class ApplicationArguments
 		return _rawArgs;
 	}
 
+	/**
+	 * @return a boolean indicating whether or not to enable user interface debugging mode
+	 */
+	public boolean getUserInterfaceDebugEnabled() {
+		return _cmdLine.hasOption(IOptions.UI_DEBUG[0]);
+	}
+	
 	void printHelp()
 	{
 		HelpFormatter formatter = new HelpFormatter();
@@ -293,6 +302,9 @@ public class ApplicationArguments
 		_options.addOption(opt);
 
 		opt = createAnOptionWithArgument(IOptions.LOG_FILE);
+		_options.addOption(opt);
+		
+		opt = createAnOption(IOptions.UI_DEBUG);
 		_options.addOption(opt);
 	}
 

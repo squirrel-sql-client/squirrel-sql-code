@@ -714,7 +714,7 @@ class Application implements IApplication
                              this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
-		_windowManager = new WindowManager(this);
+		_windowManager = new WindowManager(this, args.getUserInterfaceDebugEnabled());
 
 //		_mainFrame = new MainFrame(this);
 
