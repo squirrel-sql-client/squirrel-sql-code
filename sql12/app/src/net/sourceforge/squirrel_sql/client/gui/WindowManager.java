@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.AWTEvent;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.beans.PropertyVetoException;
 
@@ -33,6 +35,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.*;
@@ -57,6 +60,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
+import net.sourceforge.squirrel_sql.fw.gui.debug.DebugEventListener;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -148,7 +152,7 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
 	 */
-	public WindowManager(IApplication app)
+	public WindowManager(IApplication app, boolean enableUserInterfaceDebug)
 	{
 		super();
 		if (app == null)
@@ -173,6 +177,7 @@ public class WindowManager
 				initialize();
 			}
 		}, true);
+		new DebugEventListener().setEnabled(enableUserInterfaceDebug);
 	}
 
 	/**
