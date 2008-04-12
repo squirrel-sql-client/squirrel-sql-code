@@ -166,6 +166,8 @@ class MainFrameToolBar extends ToolBar
 			setMaximumSize(getPreferredSize());
 
 			app.getDataCache().addAliasesListener(new MyAliasesListener(model, this));
+			
+			this.setName(this.getClass().getCanonicalName());
 		}
 
 		/**
