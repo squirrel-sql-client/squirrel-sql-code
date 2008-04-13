@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
@@ -467,6 +468,44 @@ public class UpdateUtilImpl implements UpdateUtil {
          new ZipOutputStream(new FileOutputStream(zipFile));
       zipFileOs(os, sourceFiles);
       os.close();
+   }
+   
+   /**
+    * @param zipFile
+    * @param outputDirectory
+    * @throws IOException 
+    */
+   public void extractZipFile(File zipFile, File outputDirectory) throws IOException {
+   	FileInputStream fis = null;
+   	ZipInputStream zis = null;
+   	FileOutputStream fos = null; 
+   	try {
+   		fis = new FileInputStream(zipFile);
+	   	zis = new ZipInputStream(fis);
+	   	ZipEntry zipEntry = zis.getNextEntry(); 
+	   	while (zipEntry != null) {
+	   		String name = zipEntry.getName();
+	   		if (zipEntry.isDirectory()) {
+	   			checkDir(outputDirectory, name);
+	   		} else {
+	   			File newFile = new File(outputDirectory, name);
+	   			if (newFile.exists()) {
+	   				s_log.info("Deleting extraction file that already exists:"+newFile.getAbsolutePath());
+	   				newFile.delete();
+	   			}
+	   			fos = new FileOutputStream(newFile); 
+	   			byte[] buffer = new byte[8192];
+	   			while (zis.available() != 0) {
+	   				zis.read(buffer);
+	   				fos.write(buffer);
+	   			}
+	   		   fos.close();
+	   		}
+	   		zipEntry = zis.getNextEntry();
+	   	}
+   	} finally {
+   		IOUtilities.closeOutputStream(fos);
+   	}
    }
    
    /**
