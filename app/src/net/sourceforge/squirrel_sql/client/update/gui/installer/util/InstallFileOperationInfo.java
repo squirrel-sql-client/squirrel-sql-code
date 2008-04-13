@@ -32,4 +32,14 @@ public interface InstallFileOperationInfo {
     */
    File getInstallDir();
 
+	/**
+    * @return the isPlugin
+    */
+   public boolean isPlugin();
+
+	/**
+    * @param isPlugin the isPlugin to set
+    */
+   public void setPlugin(boolean isPlugin);
+
 }

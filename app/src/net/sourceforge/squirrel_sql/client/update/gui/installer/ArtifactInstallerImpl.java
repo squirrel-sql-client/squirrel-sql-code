@@ -240,29 +240,45 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			File fileToCopy = null;
 			File fileToRemove = null;
 			String artifactName = status.getName();
+			boolean isPlugin = false;
 			switch (action)
 			{
 			case INSTALL:
 				if (status.isCoreArtifact())
 				{
+					/* Handle squirrel-sql.jar specially - it lives at the top */
 					if ("squirrel-sql.jar".equals(status.getName())) {
 						installDir = installRootDir;
 					} else {
 						installDir = coreInstallDir;
 					}
 					fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
+					fileToRemove = _util.getFile(installDir, artifactName);
+					filesToRemove.add(fileToRemove);					
 				}
 				if (status.isPluginArtifact())
 				{
+					isPlugin = true;
 					installDir = pluginInstallDir;
+					
+					// no, the file is a zip, need to extract it to the plugins directory.  All zips are packaged
+					// in such a way that the extraction beneath plugins directory is all that is required.
 					fileToCopy = _util.getFile(pluginDownloadsDir, artifactName);
+					
+					// Need to remove the existing jar in the plugins directory 
+					fileToRemove = _util.getFile(installDir, artifactName);
+					filesToRemove.add(fileToRemove);
+					
 				}
 				if (status.isTranslationArtifact())
 				{
 					installDir = i18nInstallDir;
 					fileToCopy = _util.getFile(i18nDownloadsDir, artifactName);
+					fileToRemove = _util.getFile(installDir, artifactName);
+					filesToRemove.add(fileToRemove);
 				}
 				InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
+				info.setPlugin(isPlugin);
 				filesToInstall.add(info);
 				break;
 			case REMOVE:
@@ -273,11 +289,6 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			default:
 				// log error
 			}
-			if (installDir != null && artifactName != null) {
-				fileToRemove = _util.getFile(installDir, artifactName);
-				filesToRemove.add(fileToRemove);
-			}
-
 		}
 		removeOldFiles(filesToRemove);
 		installFiles(filesToInstall);
@@ -288,22 +299,41 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	private void removeOldFiles(List<File> filesToRemove)
 	{
-		// TODO: complete
+		for (File fileToRemove : filesToRemove) {
+			removeOldFile(fileToRemove);			
+		}
 	}
 
 	private void removeOldFile(File fileToRemove)
 	{
-		// TODO: complete
+		if (!fileToRemove.exists()) {
+			if (s_log.isInfoEnabled()) {
+				s_log.info("Skipping delete of file doesn't appear to exist: "+fileToRemove.getAbsolutePath());
+			}
+			return;
+		}
+		try {
+			boolean success = fileToRemove.delete();
+			if (!success) {
+				s_log.error("Delete operation failed for file: "+fileToRemove.getAbsolutePath());
+			}
+		} catch (SecurityException e) {
+			s_log.error("Unexpected security exception: "+e.getMessage());
+		}
 	}
 
 	private void installFiles(List<InstallFileOperationInfo> filesToInstall)
 	{
-		// TODO: complete
+		for (InstallFileOperationInfo info : filesToInstall) {
+			File installDir = info.getInstallDir();
+			File fileToCopy = info.getFileToInstall();
+			installFile(installDir, fileToCopy);
+		}
 	}
 
-	private void installFile(File installDir, File FileToCopy)
+	private void installFile(File installDir, File fileToCopy)
 	{
-		// TODO: complete
+		// TODO: implement.
 	}
 
 	private void sendBackupStarted()

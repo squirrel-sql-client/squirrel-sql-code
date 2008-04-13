@@ -24,6 +24,7 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
 
    private File fileToInstall;
    private File installDir;
+   private boolean isPlugin;
    
    /**
     * @param fileToInstall
@@ -54,6 +55,20 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
       return installDir;
    }
    /**
+    * @return the isPlugin
+    */
+   public boolean isPlugin() {
+   	return isPlugin;
+   }
+
+	/**
+    * @param isPlugin the isPlugin to set
+    */
+   public void setPlugin(boolean isPlugin) {
+   	this.isPlugin = isPlugin;
+   }
+
+	/**
     * @param installDir the installDir to set
     */
    public void setInstallDir(File installDir) {
