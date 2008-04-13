@@ -366,6 +366,10 @@ public class CellComponentFactory {
 		else textField = new RestorableJTextField();
 		
 		textField.setBackground(Color.yellow);
+		// When changing the backgroud color, it helps to set the inner component's border to zero.  Otherwise,
+		// the border can obscure the text and make it hard to see.  This is especially seen when using the
+		// kunstoff l&f.
+		textField.setBorder(new EmptyBorder(0,0,0,0));
 
 		ed = new CellEditorUsingRenderer(textField, dataTypeObject);
 		ed.setClickCountToStart(1);
