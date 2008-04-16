@@ -46,12 +46,14 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_WITH_HEADERS = 1;
 		int COPY_HTML = 2;
 		int COPY_IN_STATEMENT = 3;
-		int COPY_EXPORT_CSV = 4;
-		int SELECT_ALL = 5;
-      int ADOPT_ALL_COL_WIDTHS_ACTION = 6;
-      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 7;
-      int SHOW_ROW_NUMBERS = 8;
-		int LAST_ENTRY = 9;
+		int COPY_WHERE_STATEMENT = 4;
+		int COPY_UPDATE_STATEMENT = 5;
+		int COPY_EXPORT_CSV = 6;
+		int SELECT_ALL = 7;
+      int ADOPT_ALL_COL_WIDTHS_ACTION = 8;
+      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 9;
+      int SHOW_ROW_NUMBERS = 10;
+		int LAST_ENTRY = 11;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -68,6 +70,8 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
+	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
+	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdoptAllColWidthsAction _adoptAllColWidthsAction = new AdoptAllColWidthsAction();
 	private AlwaysAdoptAllColWidthsAction _alwaysAdoptAllColWidthsAction = new AlwaysAdoptAllColWidthsAction();
@@ -113,6 +117,8 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
+		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
+		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
       addSeparator();
       _menuItems[IOptionTypes.ADOPT_ALL_COL_WIDTHS_ACTION] = add(_adoptAllColWidthsAction);
@@ -284,6 +290,38 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				new TableCopyInStatementCommand(_table).execute();
+			}
+		}
+	}
+
+	private class CopyWhereStatementAction extends BaseAction
+	{
+		CopyWhereStatementAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyaswherestatement"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyWhereStatementCommand(_table).execute();
+			}
+		}
+	}
+
+	private class CopyUpdateStatementAction extends BaseAction
+	{
+		CopyUpdateStatementAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyasupdatestatement"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyUpdateStatementCommand(_table).execute();
 			}
 		}
 	}

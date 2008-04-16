@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase implements ICommand
+public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase implements ICommand
 {
    /**
     * The table we are copying data from.
@@ -48,7 +48,7 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
     * @param	table	The <TT>JTable</TT> to get data from.
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyInStatementCommand(JTable table)
+   public TableCopyWhereStatementCommand(JTable table)
    {
       super();
       if (table == null)
@@ -70,38 +70,68 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
       if (selRows.length != 0 && selCols.length != 0)
       {
          StringBuffer buf = new StringBuffer();
-         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+         for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
-            TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
 
-            ColumnDisplayDefinition colDef = null;
-            if(col instanceof ExtTableColumn)
-            {
-               colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
-            }
-
-            int lastLength = buf.length();
-            buf.append("(");
-            for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+            if(1 < nbrSelCols)
             {
                if(0 < rowIdx)
                {
-                  buf.append(",");
-                  if(100 < buf.length() - lastLength)
-                  {
-                     lastLength = buf.length(); 
-                     buf.append("\n");
-                  }
+                  buf.append("OR (");
+               }
+               else
+               {
+                  buf.append("(");
+               }
+            }
+            else
+            {
+               if(0 < rowIdx)
+               {
+                  buf.append("OR ");
+               }
+            }
+
+            for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+            {
+
+               TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
+
+               ColumnDisplayDefinition colDef = null;
+               if(col instanceof ExtTableColumn)
+               {
+                  colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
+               }
+
+               if (0 < colIdx)
+               {
+                  buf.append(" AND ");
                }
 
                final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-               buf.append(getData(colDef, cellObj, StatType.IN));
+               buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.WHERE));
             }
-            buf.append(")\n");
+
+            if(1 < nbrSelCols)
+            {
+               buf.append(")\n");
+            }
+            else
+            {
+               if(100 < buf.length() - buf.toString().lastIndexOf("\n"))
+               {
+                  buf.append("\n");
+               }
+               else
+               {
+                  buf.append(" ");
+               }
+            }
          }
          final StringSelection ss = new StringSelection(buf.toString());
          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
       }
    }
+
 
 }

@@ -35,7 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase implements ICommand
+public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase implements ICommand
 {
    /**
     * The table we are copying data from.
@@ -48,7 +48,7 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
     * @param	table	The <TT>JTable</TT> to get data from.
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyInStatementCommand(JTable table)
+   public TableCopyUpdateStatementCommand(JTable table)
    {
       super();
       if (table == null)
@@ -70,38 +70,37 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
       if (selRows.length != 0 && selCols.length != 0)
       {
          StringBuffer buf = new StringBuffer();
-         for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
+         for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
-            TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
 
-            ColumnDisplayDefinition colDef = null;
-            if(col instanceof ExtTableColumn)
-            {
-               colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
-            }
+            buf.append("SET ");
 
-            int lastLength = buf.length();
-            buf.append("(");
-            for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
+            for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
-               if(0 < rowIdx)
+
+               TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
+
+               ColumnDisplayDefinition colDef = null;
+               if(col instanceof ExtTableColumn)
+               {
+                  colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
+               }
+
+               if (0 < colIdx)
                {
                   buf.append(",");
-                  if(100 < buf.length() - lastLength)
-                  {
-                     lastLength = buf.length(); 
-                     buf.append("\n");
-                  }
                }
 
                final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-               buf.append(getData(colDef, cellObj, StatType.IN));
+               buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.UPDATE));
             }
-            buf.append(")\n");
+
+            buf.append("\n");
          }
          final StringSelection ss = new StringSelection(buf.toString());
          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
       }
    }
+
 
 }
