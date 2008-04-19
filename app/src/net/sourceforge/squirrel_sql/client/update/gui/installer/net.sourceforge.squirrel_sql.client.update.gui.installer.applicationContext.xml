@@ -19,6 +19,7 @@
                 
         <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory"
                 class="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactoryImpl">
+           <property name="updateUtil" ref="net.sourceforge.squirrel_sql.client.update.UpdateUtil"/>
         </bean>
         
         <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller"

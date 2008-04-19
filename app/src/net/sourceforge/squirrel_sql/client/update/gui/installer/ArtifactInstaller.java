@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -38,6 +39,16 @@ public interface ArtifactInstaller
 	 * @throws FileNotFoundException
 	 */
 	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException;
+
+	/**
+	 * @return the changeListFile
+	 */
+	public File getChangeListFile();
+
+	/**
+	 * @param changeListFile the changeListFile to set
+	 */
+	public void setChangeListFile(File changeListFile);
 
 
 }

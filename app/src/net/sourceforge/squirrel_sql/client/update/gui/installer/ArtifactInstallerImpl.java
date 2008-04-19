@@ -104,6 +104,11 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/** the lib directory where translation jars are (e.g. /opt/squirrel/lib) */
 	private File i18nInstallDir = null;
 	
+	/** 
+	 * the file that was used to build a ChangeListXmlBean that we are using to determine which files need to
+	 * be installed/removed
+	 */
+	private File changeListFile = null;
 	
 	/* Spring-injected dependencies */
 
@@ -226,7 +231,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#installFiles()
 	 */
-	public void installFiles()
+	public void installFiles() throws IOException
 	{
 		sendInstallStarted();
 
@@ -241,58 +246,74 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			File fileToRemove = null;
 			String artifactName = status.getName();
 			boolean isPlugin = false;
-			switch (action)
+
+			if (status.isCoreArtifact())
 			{
-			case INSTALL:
-				if (status.isCoreArtifact())
+				if (action == ArtifactAction.REMOVE)
 				{
-					/* Handle squirrel-sql.jar specially - it lives at the top */
-					if ("squirrel-sql.jar".equals(status.getName())) {
-						installDir = installRootDir;
-					} else {
-						installDir = coreInstallDir;
-					}
-					fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
-					fileToRemove = _util.getFile(installDir, artifactName);
-					filesToRemove.add(fileToRemove);					
+					s_log.error("Skipping core artifact (" + status.getName() + ") that was marked for removal");
+					continue;
 				}
-				if (status.isPluginArtifact())
+
+				
+				/* Handle squirrel-sql.jar specially - it lives at the top */
+				if ("squirrel-sql.jar".equals(status.getName()))
 				{
-					isPlugin = true;
-					installDir = pluginInstallDir;
-					
-					// no, the file is a zip, need to extract it to the plugins directory.  All zips are packaged
-					// in such a way that the extraction beneath plugins directory is all that is required.
+					installDir = installRootDir;
+				}
+				else
+				{
+					installDir = coreInstallDir;
+				}
+				fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
+				fileToRemove = _util.getFile(installDir, artifactName);
+				filesToRemove.add(fileToRemove);
+			}
+			if (status.isPluginArtifact())
+			{
+				isPlugin = true;
+				installDir = pluginInstallDir;
+				if (action != ArtifactAction.REMOVE) {
 					fileToCopy = _util.getFile(pluginDownloadsDir, artifactName);
-					
-					// Need to remove the existing jar in the plugins directory 
-					fileToRemove = _util.getFile(installDir, artifactName);
-					filesToRemove.add(fileToRemove);
-					
 				}
-				if (status.isTranslationArtifact())
-				{
-					installDir = i18nInstallDir;
+				
+				// Need to remove the existing jar in the plugins directory and all of the files beneath the
+				// plugin-named directory.
+				String jarFileToRemove = artifactName.replace(".zip", ".jar");
+				String pluginDirectoryToRemove = artifactName.replace(".zip", "");
+
+				filesToRemove.add(_util.getFile(installDir, jarFileToRemove));
+				filesToRemove.add(_util.getFile(installDir, pluginDirectoryToRemove));
+			}
+			if (status.isTranslationArtifact())
+			{
+				installDir = i18nInstallDir;
+				if (action != ArtifactAction.REMOVE) {
 					fileToCopy = _util.getFile(i18nDownloadsDir, artifactName);
-					fileToRemove = _util.getFile(installDir, artifactName);
-					filesToRemove.add(fileToRemove);
 				}
+				fileToRemove = _util.getFile(installDir, artifactName);
+				filesToRemove.add(fileToRemove);
+			}
+			if (fileToCopy != null) {
 				InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
 				info.setPlugin(isPlugin);
 				filesToInstall.add(info);
-				break;
-			case REMOVE:
-				if (status.isCoreArtifact()) {
-					s_log.error("Skipping core artifact ("+status.getName()+") that was marked for removal");
-				}
-				break;
-			default:
-				// log error
 			}
 		}
 		removeOldFiles(filesToRemove);
 		installFiles(filesToInstall);
+		moveChangeListFile();
 		sendInstallComplete();
+	}
+
+	private void moveChangeListFile() throws IOException
+	{
+		if (changeListFile != null) {
+			_util.copyFile(changeListFile, backupRootDir);
+			_util.deleteFile(changeListFile);
+		} else {
+			s_log.info("moveChangeListFile: Changelist file was null.  Skipping move");
+		}
 	}
 
 	// Helper methods
@@ -313,27 +334,36 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			return;
 		}
 		try {
-			boolean success = fileToRemove.delete();
+			boolean success = _util.deleteFile(fileToRemove);
 			if (!success) {
-				s_log.error("Delete operation failed for file: "+fileToRemove.getAbsolutePath());
+				s_log.error("Delete operation failed for file/directory: "+fileToRemove.getAbsolutePath());
 			}
 		} catch (SecurityException e) {
 			s_log.error("Unexpected security exception: "+e.getMessage());
 		}
 	}
 
-	private void installFiles(List<InstallFileOperationInfo> filesToInstall)
+	private void installFiles(List<InstallFileOperationInfo> filesToInstall) throws IOException
 	{
 		for (InstallFileOperationInfo info : filesToInstall) {
 			File installDir = info.getInstallDir();
 			File fileToCopy = info.getFileToInstall();
+
 			installFile(installDir, fileToCopy);
 		}
 	}
 
-	private void installFile(File installDir, File fileToCopy)
+	private void installFile(File installDir, File fileToCopy) throws IOException
 	{
-		// TODO: implement.
+		if (fileToCopy.getAbsolutePath().endsWith(".zip")) {
+			// This file is a zip; it needs to be extracted into the plugins directory. All zips are packaged
+			// in such a way that the extraction beneath plugins directory is all that is required.
+			_util.extractZipFile(fileToCopy, installDir);
+		} else {
+			
+			_util.copyFile(fileToCopy, installDir);
+		}
+				
 	}
 
 	private void sendBackupStarted()
@@ -383,6 +413,24 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		{
 			listener.handleInstallStatusEvent(evt);
 		}
+	}
+
+
+	/**
+	 * @return the changeListFile
+	 */
+	public File getChangeListFile()
+	{
+		return changeListFile;
+	}
+
+
+	/**
+	 * @param changeListFile the changeListFile to set
+	 */
+	public void setChangeListFile(File changeListFile)
+	{
+		this.changeListFile = changeListFile;
 	}
 
 }
