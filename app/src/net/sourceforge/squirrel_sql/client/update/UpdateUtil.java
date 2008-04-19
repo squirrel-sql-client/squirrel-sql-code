@@ -30,40 +30,38 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 
-public interface UpdateUtil {
+public interface UpdateUtil
+{
 
-   /**
-    * The protocol we expect the update site to be using. Only HTTP at the
-    * moment
-    */
-   public static final String HTTP_PROTOCOL_PREFIX = "http";
+	/**
+	 * The protocol we expect the update site to be using. Only HTTP at the moment
+	 */
+	public static final String HTTP_PROTOCOL_PREFIX = "http";
 
-   /**
-    * where we expect to find release.xml, which describes what the user has
-    * installed previously.
-    */
-   public static final String LOCAL_UPDATE_DIR_NAME = "update";
+	/**
+	 * where we expect to find release.xml, which describes what the user has installed previously.
+	 */
+	public static final String LOCAL_UPDATE_DIR_NAME = "update";
 
-   /**
-    * The directory under the local update diretory where previous versions of artifacts are saved for 
-    * recovery purposes or if the user decides to revert to the previous version.               
-    */
-   public static final String BACKUP_ROOT_DIR_NAME = "backup";
-   
-   /**
-    * The name of the release xml file that describes the installed version
-    */
-   public static final String RELEASE_XML_FILENAME = "release.xml";
+	/**
+	 * The directory under the local update diretory where previous versions of artifacts are saved for
+	 * recovery purposes or if the user decides to revert to the previous version.
+	 */
+	public static final String BACKUP_ROOT_DIR_NAME = "backup";
 
-   /** 
-    * The name of the file that stores the user's desired actions with respect 
-    * to a set of available updates.
-    */
-   public static final String CHANGE_LIST_FILENAME = "changeList.xml";
+	/**
+	 * The name of the release xml file that describes the installed version
+	 */
+	public static final String RELEASE_XML_FILENAME = "release.xml";
 
-   /**
-    * This is the directory below the update directory where updated files are downloaded for installation.
-    */
+	/**
+	 * The name of the file that stores the user's desired actions with respect to a set of available updates.
+	 */
+	public static final String CHANGE_LIST_FILENAME = "changeList.xml";
+
+	/**
+	 * This is the directory below the update directory where updated files are downloaded for installation.
+	 */
 	public final static String DOWNLOADS_DIR_NAME = "downloads";
 
 	/** the value for artifact type that identifies it as a core artifact */
@@ -75,183 +73,175 @@ public interface UpdateUtil {
 	/** the value for artifact type that identifies it as a plugin artifact */
 	public static final String TRANSLATION_ARTIFACT_ID = "i18n";
 
-   /**
-    * Downloads the current release available at the specified host and path.
-    * 
-    * @param host
-    *           the host to open an HTTP connection to.
-    * @param port
-    *           the port to open an HTTP connection to.
-    * @param path
-    *           the path on the host's webserver to the file.
-    * @param fileToGet
-    *           the file to get.
-    * @return
-    */
-   ChannelXmlBean downloadCurrentRelease(final String host, final int port,
-         final String path, final String fileToGet) throws Exception;
+	/**
+	 * Downloads the current release available at the specified host and path.
+	 * 
+	 * @param host
+	 *           the host to open an HTTP connection to.
+	 * @param port
+	 *           the port to open an HTTP connection to.
+	 * @param path
+	 *           the path on the host's webserver to the file.
+	 * @param fileToGet
+	 *           the file to get.
+	 * @return
+	 */
+	ChannelXmlBean downloadCurrentRelease(final String host, final int port, final String path,
+		final String fileToGet) throws Exception;
 
-   /**
-    * Loads the channel xml bean from the file system.
-    * 
-    * @param path the directory to find release.xml in
-    * 
-    * @return the ChannelXmlBean that represents the specified path.
-    */
-   ChannelXmlBean loadUpdateFromFileSystem(final String path); 
-   
-   
-   /**
-    * 
-    * @param host
-    * @param fileToGet
-    * @param destDir
-    */
-   boolean downloadHttpFile(String host, String path, String fileToGet,
-         String destDir);
+	/**
+	 * Loads the channel xml bean from the file system.
+	 * 
+	 * @param path
+	 *           the directory to find release.xml in
+	 * @return the ChannelXmlBean that represents the specified path.
+	 */
+	ChannelXmlBean loadUpdateFromFileSystem(final String path);
 
-   /**
-    * Downloads the a file from a local directory into our update downloads
-    * directory.
-    * 
-    * @param fileToGet
-    *           the file to retreive.
-    * 
-    * @param destDir
-    *           the destination directory into which to place the file.
-    * 
-    * @return true if the download succeeded; false otherwise.
-    */
-   boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;   
-   
-   /**
-    * Copies the specified from file to the specified to file.  If "to" is a directory, then this will copy
-    * "from" into that directory and the resulting file will have the same name.
-    * 
-    * @param from
-    *           the file to copy from
-    * @param to
-    *           the file to copy to
-    * 
-    * @return true if the file copy succeeded; false otherwise.
-    */
-   void copyFile(final File from, final File to) throws FileNotFoundException, IOException;
-   
-   /**
-    * Returns an ChannelXmlBean that describes the locally installed release.
-    * 
-    * @param localReleaseFile
-    *           the xml file to decode into an xmlbean.
-    * 
-    * @return a ChannelXmlBean
-    */
-   ChannelXmlBean getLocalReleaseInfo(String localReleaseFile);
+	/**
+	 * @param host
+	 * @param fileToGet
+	 * @param destDir
+	 */
+	boolean downloadHttpFile(String host, String path, String fileToGet, String destDir);
 
-   /**
-    * Returns the top-level directory in which all installed components of 
-    * SQuirreL live under.
-    * 
-    * @return a File representing the home directory of SQuirreL
-    */
-   File getSquirrelHomeDir();
+	/**
+	 * Downloads the a file from a local directory into our update downloads directory.
+	 * 
+	 * @param fileToGet
+	 *           the file to retreive.
+	 * @param destDir
+	 *           the destination directory into which to place the file.
+	 * @return true if the download succeeded; false otherwise.
+	 */
+	boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;
 
-   File getSquirrelPluginsDir();
+	/**
+	 * Copies the specified from file to the specified to file. If "to" is a directory, then this will copy
+	 * "from" into that directory and the resulting file will have the same name.
+	 * 
+	 * @param from
+	 *           the file to copy from
+	 * @param to
+	 *           the file to copy to
+	 * @return true if the file copy succeeded; false otherwise.
+	 */
+	void copyFile(final File from, final File to) throws FileNotFoundException, IOException;
 
-   File getSquirrelLibraryDir();
+	/**
+	 * Returns an ChannelXmlBean that describes the locally installed release.
+	 * 
+	 * @param localReleaseFile
+	 *           the xml file to decode into an xmlbean.
+	 * @return a ChannelXmlBean
+	 */
+	ChannelXmlBean getLocalReleaseInfo(String localReleaseFile);
 
-   /**
-    * Returns the file that represents the list of changes to make when running the prelaunch update
-    * application
-    * 
-    * @return a File representing the change list.
-    */
-   File getChangeListFile();
-   
-   File checkDir(File parent, String child);
-   
-   void createZipFile(File zipFile, File[] sourceFiles)
-      throws FileNotFoundException, IOException;
-   
-   /**
-    * Returns the update directory in which all information about available 
-    * updates and the user's desired actions are located.
-    * 
-    * @return a File representing the update directory.
-    */
-   File getSquirrelUpdateDir();
+	/**
+	 * Returns the top-level directory in which all installed components of SQuirreL live under.
+	 * 
+	 * @return a File representing the home directory of SQuirreL
+	 */
+	File getSquirrelHomeDir();
 
-   /**
-    * Create and save a ChangeListXmlBean to the update directory.
-    * @param changes the list of changes to be persisted
-    * 
-    * @throws FileNotFoundException if the file to be written couldn't be found.
-    */
-   void saveChangeList(List<ArtifactStatus> changes)
-         throws FileNotFoundException;
+	File getSquirrelPluginsDir();
 
-   /**
-    * Retrieves the change list (if one exists) from the update directory.
-    *  
-    * @return a change list bean.
-    *
-    * @throws FileNotFoundException if the file couldn't be found.
-    */
-   ChangeListXmlBean getChangeList() throws FileNotFoundException;
+	File getSquirrelLibraryDir();
 
-   /**
-    * Returns the absolute path to the release xml file that describes what
-    * release the user currently has.
-    * 
-    * @return the absolute path to the release xml file
-    * 
-    * @throws FileNotFoundException if the release xml file couldn't be found.
-    */
-   String getLocalReleaseFile() throws FileNotFoundException;
+	/**
+	 * Returns the file that represents the list of changes to make when running the prelaunch update
+	 * application
+	 * 
+	 * @return a File representing the change list.
+	 */
+	File getChangeListFile();
 
-   List<ArtifactStatus> getArtifactStatus(ChannelXmlBean channelXmlBean);
+	File checkDir(File parent, String child);
 
-   List<ArtifactStatus> getArtifactStatus(ReleaseXmlBean releaseXmlBean);
+	void createZipFile(File zipFile, File[] sourceFiles) throws FileNotFoundException, IOException;
 
-   /**
-    * Returns a set of plugin archive filenames - one for each installed plugin. 
-    */
-   Set<String> getInstalledPlugins();
+	/**
+	 * Returns the update directory in which all information about available updates and the user's desired
+	 * actions are located.
+	 * 
+	 * @return a File representing the update directory.
+	 */
+	File getSquirrelUpdateDir();
 
-   /**
-    * Returns a set of translation filenames - one jar for each translation.
-    * @return
-    */
-   Set<String> getInstalledTranslations();
+	/**
+	 * Create and save a ChangeListXmlBean to the update directory.
+	 * 
+	 * @param changes
+	 *           the list of changes to be persisted
+	 * @throws FileNotFoundException
+	 *            if the file to be written couldn't be found.
+	 */
+	void saveChangeList(List<ArtifactStatus> changes) throws FileNotFoundException;
 
-   /**
-    * @return the _pluginManager
-    */
-   PluginManager getPluginManager();
+	/**
+	 * Retrieves the change list (if one exists) from the update directory.
+	 * 
+	 * @return a change list bean.
+	 * @throws FileNotFoundException
+	 *            if the file couldn't be found.
+	 */
+	ChangeListXmlBean getChangeList() throws FileNotFoundException;
 
-   /**
-    * @param manager the _pluginManager to set
-    */
-   void setPluginManager(PluginManager manager);
+	/**
+	 * Returns the absolute path to the release xml file that describes what release the user currently has.
+	 * 
+	 * @return the absolute path to the release xml file
+	 * @throws FileNotFoundException
+	 *            if the release xml file couldn't be found.
+	 */
+	String getLocalReleaseFile() throws FileNotFoundException;
+
+	List<ArtifactStatus> getArtifactStatus(ChannelXmlBean channelXmlBean);
+
+	List<ArtifactStatus> getArtifactStatus(ReleaseXmlBean releaseXmlBean);
+
+	/**
+	 * Returns a set of plugin archive filenames - one for each installed plugin.
+	 */
+	Set<String> getInstalledPlugins();
+
+	/**
+	 * Returns a set of translation filenames - one jar for each translation.
+	 * 
+	 * @return
+	 */
+	Set<String> getInstalledTranslations();
+
+	/**
+	 * @return the _pluginManager
+	 */
+	PluginManager getPluginManager();
+
+	/**
+	 * @param manager
+	 *           the _pluginManager to set
+	 */
+	void setPluginManager(PluginManager manager);
 
 	/**
 	 * Returns the top-level directory that contains artifact type sub-folders into which downloaded files are
 	 * copied.
-	 *  
+	 * 
 	 * @return a File representing the root directory of the download tree.
 	 */
-	public File getDownloadsDir();
+	File getDownloadsDir();
 
-	public File getCoreDownloadsDir();
+	File getCoreDownloadsDir();
 
-	public File getPluginDownloadsDir();
+	File getPluginDownloadsDir();
 
-	public File getI18nDownloadsDir();
+	File getI18nDownloadsDir();
 
-	public ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
+	ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
 
-   boolean fileExists(File File);
+	boolean fileExists(File File);
 
-   File getFile(File installDir, String artifactName);
+	File getFile(File installDir, String artifactName);
 
 	/**
 	 * This function will recursivly delete directories and files.
@@ -260,13 +250,17 @@ public interface UpdateUtil {
 	 *           File or Directory to be deleted
 	 * @return true indicates success.
 	 */
-	public boolean deleteFile(File path);
+	boolean deleteFile(File path);
 
 	/**
 	 * Extracts the specified zip file to the specified output directory.
+	 * 
 	 * @param zipFile
+	 *           the compressed archive file to extract
 	 * @param outputDirectory
-	 * @throws IOException 
+	 *           the directory into which to extract
+	 * @throws IOException
+	 *            if an error occurs
 	 */
-	public void extractZipFile(File zipFile, File outputDirectory) throws IOException;
+	void extractZipFile(File zipFile, File outputDirectory) throws IOException;
 }

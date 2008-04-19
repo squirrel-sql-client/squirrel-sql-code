@@ -44,7 +44,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.client.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 

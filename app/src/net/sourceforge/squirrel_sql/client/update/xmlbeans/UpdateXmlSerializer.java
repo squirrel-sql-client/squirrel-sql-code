@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
-import net.sourceforge.squirrel_sql.client.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 
 /**
  * This class contains utility methods that can be used to read from and write
