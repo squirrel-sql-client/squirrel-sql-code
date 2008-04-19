@@ -44,14 +44,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import net.sourceforge.squirrel_sql.client.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BinaryDisplayConverter;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
- import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * @author gwg
@@ -726,7 +726,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 						s_stringMgr.getString("popupeditableIoPanel.executeError2"),JOptionPane.ERROR_MESSAGE);
 					return;
 				} finally {
-				    Utilities.closeReader(err);
+				    IOUtilities.closeReader(err);
 				}
 
 				// check for possibly bad return from child
@@ -942,6 +942,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private class LineWrapAction extends BaseAction
 	{
 		LineWrapAction()

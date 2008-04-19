@@ -431,19 +431,39 @@ public class Utilities
    }
    
    /**
-    * Closes the specified Reader which can be null.  Logs an error if 
-    * an exception occurs while closing.
-    * 
-    * @param reader the Reader to close.
-    */
-   public static void closeReader(Reader reader) {
-       if (reader == null) {
-           return;
-       }
-       try {
-           reader.close();
-       } catch (IOException e) {
-           s_log.error("Unable to close Reader: "+e.getMessage(), e);
-       }
-   }
+	 * This is taken from Eammon McManus' blog:
+	 * http://weblogs.java.net/blog/emcmanus/archive/2007/03/getting_rid_of.html This prevents you from having
+	 * to place SuppressWarnings throughout your code.
+	 * 
+	 * @param <T>
+	 *           the return type to cast the object to
+	 * @param x
+	 *           the object to cast.
+	 * @return a type-casted version of the specified object.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T cast(Object x) {
+	    return (T) x;
+	}
+
+	/**
+	 * Checks the specified list of argument to see if any are null and throws a runtime exception if one is.
+	 * 
+	 * @param methodName
+	 *           the name of the method checking it's arguments
+	 * @param arguments
+	 *           the arguments - these should be in name/value pairs
+	 */
+	public static void checkNull(String methodName, Object... arguments) {
+		if (arguments.length % 2 != 0) {
+			throw new IllegalArgumentException("Args must be specified in name/value pairs"); 
+		}
+		for (int i = 0; i < arguments.length-1; i+=2) {
+			String name = (String)arguments[i];
+			Object value = arguments[i+1];
+			if (value == null) {
+				throw new IllegalArgumentException(methodName+": Argument "+name+" cannot be null");
+			}
+		}
+	}
 }
