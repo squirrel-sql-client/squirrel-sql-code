@@ -18,8 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
 import org.springframework.beans.BeansException;
@@ -31,6 +33,7 @@ public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory, A
 	private final static String ARTIFACT_INSTALLER_ID = 
 		"net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller";
 	
+	private UpdateUtil updateUtil;
 
 	/** Spring-injected */
 	private ApplicationContext applicationContext = null;
@@ -48,6 +51,25 @@ public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory, A
 			(ArtifactInstaller) applicationContext.getBean(ARTIFACT_INSTALLER_ID);
 		result.setChangeList(changeList);
 		return result;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory#create(java.io.File)
+	 */
+	public ArtifactInstaller create(File changeList) throws FileNotFoundException
+	{
+		ChangeListXmlBean changeListBean = updateUtil.getChangeList(changeList);
+		ArtifactInstaller result = create(changeListBean);
+		result.setChangeListFile(changeList);
+		return result;
+	}
+
+	/**
+	 * @param updateUtil the updateUtil to set
+	 */
+	public void setUpdateUtil(UpdateUtil updateUtil)
+	{
+		this.updateUtil = updateUtil;
 	}
 
 

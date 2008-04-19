@@ -19,14 +19,12 @@
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.SquirrelLoggerFactory;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListenerImpl;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -72,14 +70,11 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 	/* ----------------------------------- Public API ------------------------------------------------------*/
 	
-	public PreLaunchHelperImpl() {
-		ApplicationArguments.initialize(new String[0]);
+	public PreLaunchHelperImpl() throws IOException {
 		
-		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(false));
+		//initializeLogger(); 
 		s_log = LoggerController.createLogger(PreLaunchHelperImpl.class);
-
-		//updateUtil = new UpdateUtilImpl();
-
+		
 		s_stringMgr = StringManagerFactory.getStringManager(PreLaunchHelperImpl.class);
 
 		// i18n[Updater.message=Updates are ready to be installed. Install them
@@ -143,14 +138,27 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 	/* ------------------------------------- Helper methods ------------------------------------------------*/	
 	
+//	private void initializeLogger() throws IOException
+//	{
+//		String logMessagePattern = "%-4r [%t] %-5p %c %x - %m%n";
+//		Layout layout = new PatternLayout(logMessagePattern);
+//		File userHomeDir = new File(System.getProperty("user.home"));
+//		File squirrelDir = new File(userHomeDir, ".squirrel-sql");
+//		File logsDir = new File(squirrelDir, "logs");
+//		File updateLogFile = new File(logsDir, "updater.log");
+//		
+//		FileAppender appender = new FileAppender(layout, updateLogFile.getAbsolutePath());
+//		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(appender, false));
+//		s_log = LoggerController.createLogger(PreLaunchHelperImpl.class);
+//	}	
+	
 	/**
 	 * @param changeList
 	 * @throws Exception
 	 */
 	private void installUpdates(File changeList) throws Exception
 	{
-	   ChangeListXmlBean changeListBean = updateUtil.getChangeList(changeList);
-		ArtifactInstaller installer = artifactInstallerFactory.create(changeListBean);
+		ArtifactInstaller installer = artifactInstallerFactory.create(changeList);
 		installer.addListener(new InstallStatusListenerImpl());
 		installer.backupFiles();
 		installer.installFiles();
