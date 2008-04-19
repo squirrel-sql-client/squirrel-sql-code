@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.zip.CRC32;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 
 
 /**
