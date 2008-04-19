@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
+
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,43 +18,39 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
  * This is a logger that logs using the Apache log4j package.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class Log4jLogger implements ILogger
 {
 	/** Log4j logger to log to. */
 	private Logger _log;
+
 	private ILoggerListener _listener;
+
 	private Class<?> _clazz;
 
 	/**
-	 * Ctor specifying the object requesting the logger. A
-	 * Log4J <TT>Logger</TT> is created using as a name the
-	 * fully qualified class of <TT>requester</TT>.
-	 *
-	 * @param	clazz	The class requesting a logger.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>clazz</TT> is <TT>null</TT>.
+	 * Ctor specifying the object requesting the logger. A Log4J <TT>Logger</TT> is created using as a name
+	 * the fully qualified class of <TT>requester</TT>.
+	 * 
+	 * @param clazz
+	 *           The class requesting a logger.
+	 * @param listener
+	 *           the ILoggerListener implementation
+	 * @throws IllegalArgumentException
+	 *            Thrown if <TT>clazz</TT> or <TT>listener<TT> are <TT>null</TT>.
 	 */
 	Log4jLogger(Class<?> clazz, ILoggerListener listener)
 	{
-		if (clazz == null)
-		{
-			throw new IllegalArgumentException("Empty requesterClass passed");
-		}
-
-		if (listener == null)
-		{
-			throw new IllegalArgumentException("Empty listener passed");
-		}
-
+		Utilities.checkNull("Log4jLogger.init","clazz", clazz, "listener", listener);
 		_listener = listener;
 		_clazz = clazz;
 		_log = Logger.getLogger(clazz);
@@ -144,21 +141,24 @@ public class Log4jLogger implements ILogger
 	{
 		return _log.isInfoEnabled();
 	}
-    
-    /**
-     * Sets the log level of the logger.  For instance:
-     * 
-     * Level.ALL
-     * Level.DEBUG
-     * Level.ERROR
-     * Level.FATAL
-     * Level.INFO
-     * Level.OFF
-     * Level.WARN
-     *  
-     * @param l the level to set the logger to.
-     */    
-    public void setLevel(Level l) {
-        _log.setLevel(l);
-    }
+
+	/**
+	 * Sets the log level of the logger. For instance:
+	 * <ul>
+	 * <li>Level.ALL</li>
+	 * <li>Level.DEBUG</li>
+	 * <li>Level.ERROR</li>
+	 * <li>Level.FATAL</li>
+	 * <li>Level.INFO</li>
+	 * <li>Level.OFF</li>
+	 * <li>Level.WARN</li>
+	 * </ul>
+	 * 
+	 * @param l
+	 *           the level to set the logger to.
+	 */
+	public void setLevel(Level l)
+	{
+		_log.setLevel(l);
+	}
 }

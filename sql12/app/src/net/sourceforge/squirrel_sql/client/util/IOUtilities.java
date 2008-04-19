@@ -18,11 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.client.util;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -54,7 +54,13 @@ public class IOUtilities {
       }
    }
 
-   public static void closeReader(FileReader reader) {
+   /**
+    * Closes the specified Reader which can be null.  Logs an error if 
+    * an exception occurs while closing.
+    * 
+    * @param reader the Reader to close.
+    */
+   public static void closeReader(Reader reader) {
       if (reader != null) {
          try {
             reader.close();
@@ -65,7 +71,7 @@ public class IOUtilities {
       }
    }
    
-   public static void closeWriter(FileWriter writer) {
+   public static void closeWriter(Writer writer) {
       if (writer != null) {
          try {
             writer.close();
