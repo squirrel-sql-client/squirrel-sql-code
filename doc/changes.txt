@@ -66,6 +66,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Updated Italian translation (Ivo Neri)
+
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
 1845987: PostgreSQL interval types are not displayed
