@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client;
+
 /*
  * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,23 +18,45 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.DateFormat;
-
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Category;
-import org.apache.log4j.PropertyConfigurator;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 public class SquirrelLoggerFactory extends Log4jLoggerFactory
 {
-	public SquirrelLoggerFactory(boolean doStartupLogging) throws IllegalArgumentException
+
+	public SquirrelLoggerFactory(FileAppender fa, boolean doStartupLogging)
 	{
 		super(false);
+		initialize(fa, doStartupLogging);
+	}
+
+	public SquirrelLoggerFactory(boolean doStartupLogging)
+	{
+		try
+		{ 
+			SquirrelAppender fa = new SquirrelAppender();
+			initialize(fa, doStartupLogging);
+		}
+		catch (Exception e)
+		{
+			final ILogger log = createLogger(getClass());
+			log.error("Error occured configuring logging. Now logging to standard output", e);
+			BasicConfigurator.configure();
+		}
+
+	}
+
+	private void initialize(FileAppender fa, boolean doStartupLogging)
+	{
 		String configFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();
 		if (configFileName != null)
 		{
@@ -41,28 +64,17 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 		}
 		else
 		{
-			Category.getRoot().removeAllAppenders();
-			try
-			{
-//				final String logFileName = new ApplicationFiles().getExecutionLogFile().getPath();
-//				final PatternLayout layout = new PatternLayout("%-4r [%t] %-5p %c %x - %m%n");
-//				FileAppender fa = new FileAppender(layout, logFileName);
-//				fa.setFile(logFileName);
-				SquirrelAppender fa = new SquirrelAppender();
-
-				BasicConfigurator.configure(fa);
-				final ILogger log = createLogger(getClass());
-				log.info("No logger configuration file passed on command line arguments. Using default log file: "	+ fa.getFile() );
-			}
-			catch (IOException ex)
-			{
-				final ILogger log = createLogger(getClass());
-				log.error("Error occured configuring logging. Now logging to standard output", ex);
-				BasicConfigurator.configure();
+			Logger.getRootLogger().removeAllAppenders();
+			BasicConfigurator.configure(fa);
+			final ILogger log = createLogger(getClass());
+			if (log.isInfoEnabled()) {
+				log.info("No logger configuration file passed on command line arguments. Using default log file: "
+					+ fa.getFile());
 			}
 		}
-		if (doStartupLogging) {
-		   doStartupLogging();
+		if (doStartupLogging)
+		{
+			doStartupLogging();
 		}
 	}
 
@@ -70,7 +82,7 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 	{
 		final ILogger log = createLogger(getClass());
 		log.info("#############################################################################################################");
-		log.info("# Starting " + Version.getVersion()  + " at " + DateFormat.getInstance().format(new Date()));
+		log.info("# Starting " + Version.getVersion() + " at " + DateFormat.getInstance().format(new Date()));
 		log.info("#############################################################################################################");
 		log.info(Version.getVersion() + " started: " + Calendar.getInstance().getTime());
 		log.info(Version.getCopyrightStatement());
