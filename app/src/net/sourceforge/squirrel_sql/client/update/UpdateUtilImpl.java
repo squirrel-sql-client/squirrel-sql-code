@@ -193,14 +193,18 @@ public class UpdateUtilImpl implements UpdateUtil {
       	s_log.error("Cannot copy from file ("+from.getAbsolutePath()+") which doesn't appear to exist.");
       	return;
       }
+      File destination = to;
+      if (to.isDirectory()) {
+      	destination = getFile(to, from.getName());
+      }
    	if (s_log.isDebugEnabled()) {
-         s_log.debug("Copying file "+from+" to file " + to);
+         s_log.debug("Copying file "+from+" to file " + destination);
       }
       FileInputStream in = null;
       FileOutputStream out = null;
       try {
          in = new FileInputStream(from);
-         out = new FileOutputStream(to);
+         out = new FileOutputStream(destination);
          byte[] buffer = new byte[8192];
          int len;
          while ((len = in.read(buffer)) != -1) {
@@ -426,7 +430,7 @@ public class UpdateUtilImpl implements UpdateUtil {
       HashSet<String> result = new HashSet<String>();
       File libDir = getSquirrelLibraryDir();
       for (String filename : libDir.list()) {
-         if (filename.startsWith(" squirrel-sql_")) {
+         if (filename.startsWith("squirrel-sql_")) {
             result.add(filename);
          }
       }
@@ -470,12 +474,48 @@ public class UpdateUtilImpl implements UpdateUtil {
       os.close();
    }
    
+	/**
+	 * This function will recursivly delete directories and files.
+	 * 
+	 * @param path
+	 *           File or Directory to be deleted
+	 * @return true indicates success.
+	 */
+	public boolean deleteFile(File path)
+	{
+		if (path.exists())
+		{
+			if (path.isDirectory())
+			{
+				File[] files = path.listFiles();
+				for (int i = 0; i < files.length; i++)
+				{
+					if (files[i].isDirectory())
+					{
+						deleteFile(files[i]);
+					}
+					else
+					{
+						files[i].delete();
+					}
+				}
+			}
+		}
+		return (path.delete());
+	}   
+      
    /**
+    * Extracts the specified zip file to the specified output directory.
     * @param zipFile
     * @param outputDirectory
     * @throws IOException 
     */
    public void extractZipFile(File zipFile, File outputDirectory) throws IOException {
+   	if (!outputDirectory.isDirectory()) {
+   		s_log.error("Output directory specified (" + outputDirectory.getAbsolutePath()
+				+ ") doesn't appear to be a directory");
+   		return;
+   	}
    	FileInputStream fis = null;
    	ZipInputStream zis = null;
    	FileOutputStream fos = null; 
@@ -490,7 +530,9 @@ public class UpdateUtilImpl implements UpdateUtil {
 	   		} else {
 	   			File newFile = new File(outputDirectory, name);
 	   			if (newFile.exists()) {
-	   				s_log.info("Deleting extraction file that already exists:"+newFile.getAbsolutePath());
+	   				if (s_log.isInfoEnabled()) {
+	   					s_log.info("Deleting extraction file that already exists:"+newFile.getAbsolutePath());
+	   				}
 	   				newFile.delete();
 	   			}
 	   			fos = new FileOutputStream(newFile); 
@@ -505,6 +547,8 @@ public class UpdateUtilImpl implements UpdateUtil {
 	   	}
    	} finally {
    		IOUtilities.closeOutputStream(fos);
+   		IOUtilities.closeInputStream(fis);
+   		IOUtilities.closeInputStream(zis);
    	}
    }
    
