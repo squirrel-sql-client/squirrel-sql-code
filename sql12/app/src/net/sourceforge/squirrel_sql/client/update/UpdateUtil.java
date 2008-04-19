@@ -125,7 +125,8 @@ public interface UpdateUtil {
    boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;   
    
    /**
-    * Copies the specified from file to the specified to file.
+    * Copies the specified from file to the specified to file.  If "to" is a directory, then this will copy
+    * "from" into that directory and the resulting file will have the same name.
     * 
     * @param from
     *           the file to copy from
@@ -251,4 +252,21 @@ public interface UpdateUtil {
    boolean fileExists(File File);
 
    File getFile(File installDir, String artifactName);
+
+	/**
+	 * This function will recursivly delete directories and files.
+	 * 
+	 * @param path
+	 *           File or Directory to be deleted
+	 * @return true indicates success.
+	 */
+	public boolean deleteFile(File path);
+
+	/**
+	 * Extracts the specified zip file to the specified output directory.
+	 * @param zipFile
+	 * @param outputDirectory
+	 * @throws IOException 
+	 */
+	public void extractZipFile(File zipFile, File outputDirectory) throws IOException;
 }
