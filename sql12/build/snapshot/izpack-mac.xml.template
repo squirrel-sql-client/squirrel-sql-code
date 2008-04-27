@@ -68,8 +68,12 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/cglib-2.1.3.jar"/> 
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
                                         src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
-			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-collections-2.1.1.jar"/> 						    
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-codec-1.3.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-httpclient-3.1.jar"/>                                                    
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-collections-2.1.1.jar"/>                                                    
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-logging-1.0.4.jar"/> 		
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"

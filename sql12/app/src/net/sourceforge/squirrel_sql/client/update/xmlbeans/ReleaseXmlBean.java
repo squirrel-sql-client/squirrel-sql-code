@@ -177,4 +177,32 @@ public class ReleaseXmlBean implements Serializable {
         this.lastModifiedTime = lastModifiedTime;
     }
 
+	/**
+	  * Constructs a <code>String</code> with all attributes
+	  * in name = value format.
+	  *
+	  * @return a <code>String</code> representation 
+	  * of this object.
+	  */
+	 @Override
+	 public String toString()
+	 {
+	     final String TAB = "    ";
+	 
+	     StringBuilder retValue = new StringBuilder();
+	     
+	     retValue.append("ReleaseXmlBean ( ")
+	         .append(super.toString()).append(TAB)
+	         .append("name = ").append(this.name).append(TAB)
+	         .append("version = ").append(this.version).append(TAB)
+	         .append("createTime = ").append(this.createTime).append(TAB)
+	         .append("lastModifiedTime = ").append(this.lastModifiedTime).append(TAB)
+	         .append("modules = ").append(this.modules).append(TAB)
+	         .append("dateFormat = ").append(this.dateFormat).append(TAB)
+	         .append(" )");
+	     
+	     return retValue.toString();
+	 }
+
+    
 }

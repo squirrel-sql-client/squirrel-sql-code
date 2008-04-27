@@ -103,7 +103,8 @@ public interface UpdateUtil
 	 * @param fileToGet
 	 * @param destDir
 	 */
-	boolean downloadHttpFile(String host, String path, String fileToGet, String destDir);
+	String downloadHttpFile(String host, int port, String fileToGet, String destDir)
+		throws Exception;
 
 	/**
 	 * Downloads the a file from a local directory into our update downloads directory.

@@ -25,6 +25,7 @@ import java.beans.Expression;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 
+@SuppressWarnings("unchecked")
 public class EnumPersistenceDelegate extends DefaultPersistenceDelegate {
 
    private static EnumPersistenceDelegate INSTANCE = new EnumPersistenceDelegate();

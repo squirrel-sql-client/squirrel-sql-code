@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -84,7 +83,8 @@ public class UpdateControllerImpl implements UpdateController,
    /** Used to be able to bring the update dialog back up after re-config */
    private static GlobalPrefsListener listener = null;
    
-   
+   /** The class that we use which is responsible for downloading artifacts */ 
+   ArtifactDownloader _downloader = null;
    /**
     * Constructor
     * 
@@ -207,14 +207,16 @@ public class UpdateControllerImpl implements UpdateController,
          }
       }
       
-      ArtifactDownloader downloader = new ArtifactDownloader(newartifactsList);
-      downloader.setUtil(_util);
-      downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
-      downloader.setHost(getUpdateServerName());
-      downloader.setPath(getUpdateServerPath());
-      downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
-      downloader.addDownloadStatusListener(listener);
-      downloader.start();
+      _downloader = new ArtifactDownloader(newartifactsList);
+      _downloader.setUtil(_util);
+      _downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
+      _downloader.setHost(getUpdateServerName());
+      _downloader.setPort(Integer.parseInt(getUpdateServerPort()));
+      _downloader.setPath(getUpdateServerPath());
+      _downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
+      _downloader.addDownloadStatusListener(listener);
+      _downloader.setChannelName(_installedChannelBean.getName());
+      _downloader.start();
    }
 
    /**
@@ -393,7 +395,7 @@ public class UpdateControllerImpl implements UpdateController,
    }
    
    /**
-    * Listener for download events.
+    * Listener for download events and handle them appropriately.
     * 
     * @author manningr
     */
@@ -403,10 +405,16 @@ public class UpdateControllerImpl implements UpdateController,
       int currentFile = 0;
       int totalFiles = 0;
       /**
-       * @see net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener#handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent)
+       * @see net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener#
+       * 	handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent)
        */
       public void handleDownloadStatusEvent(DownloadStatusEvent evt) {
          
+      	if (progressMonitor != null && progressMonitor.isCanceled()) {
+      		_downloader.stopDownload();
+      		return;
+      	}
+      	
          if (evt.getType() == DownloadEventType.DOWNLOAD_STARTED) {
             totalFiles = evt.getFileCountTotal();
             handleDownloadStarted();
@@ -426,12 +434,14 @@ public class UpdateControllerImpl implements UpdateController,
          // When all updates are retrieved, consult the user to see if they want to install now or upon the 
          // next startup.
          if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED) {
+         	// TODO: i18n
             showMessage("Update Download Complete",
                         "Requested updates will be installed when SQuirreL "
                               + "is restarted");
             setProgress(totalFiles);
          }
          if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED) {
+         	// TODO: i18n         	
             showErrorMessage("Update Download Failed",
                              "Please consult the log for details");
             
