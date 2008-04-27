@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,6 +38,8 @@ import java.util.zip.ZipOutputStream;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
+import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
@@ -47,6 +50,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * Low-level utility methods for the UpdateController.  Among other things this class provides file locations
@@ -92,8 +99,11 @@ public class UpdateUtilImpl implements UpdateUtil {
     * the utility class that reads and writes release info from/to the
     * release.xml file
     */
-   private final UpdateXmlSerializer serializer = new UpdateXmlSerializer();
+   private final UpdateXmlSerializer _serializer = new UpdateXmlSerializer();
 
+   /** TODO: Spring-inject when this class is a Spring bean */
+   private PathUtils _pathUtils = new PathUtilsImpl();
+   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadCurrentRelease(java.lang.String, int, java.lang.String, java.lang.String)
     */
@@ -102,7 +112,11 @@ public class UpdateUtilImpl implements UpdateUtil {
             throws Exception
    {
       ChannelXmlBean result = null;
-      result = downloadCurrentReleaseHttp(host, port, path, fileToGet);
+      if (s_log.isDebugEnabled()) {
+      	s_log.debug("downloadCurrentRelease: host=" + host + " port=" + port + " path=" + path
+				+ " fileToGet=" + fileToGet);
+      }
+      result = downloadCurrentReleaseHttp(host, port, path, fileToGet);      
       return result;
    }
    
@@ -124,7 +138,7 @@ public class UpdateUtilImpl implements UpdateUtil {
          } else {
             f = new File(f, RELEASE_XML_FILENAME); 
             is = new BufferedInputStream(new FileInputStream(f));
-            result = serializer.readChannelBean(is);
+            result = _serializer.readChannelBean(is);
          }            
       } catch (IOException e) {
          s_log.error("Unexpected exception while attempting "
@@ -137,37 +151,6 @@ public class UpdateUtilImpl implements UpdateUtil {
       return result;
    }
    
-   /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadHttpFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-    */
-   public boolean downloadHttpFile(String host, String path, String fileToGet,
-         String destDir) {
-      boolean result = false;
-      BufferedInputStream is = null;
-      BufferedOutputStream os = null;
-      try {
-         URL url = new URL(HTTP_PROTOCOL_PREFIX, host, path + fileToGet);
-         is = new BufferedInputStream(url.openStream());
-         File localFile = new File(destDir, fileToGet);
-         os = new BufferedOutputStream(new FileOutputStream(localFile));
-         byte[] buffer = new byte[8192];
-         int length = 0;
-         while ((length = is.read(buffer)) != -1) {
-            os.write(buffer, 0, length);
-         }
-         result = true;
-      } catch (Exception e) {
-         s_log.error("Exception encountered while attempting to "
-               + "download file " + fileToGet + " from host " + host
-               + " and path " + path + " to destDir " + destDir + ": "
-               + e.getMessage(), e);
-      } finally {
-         IOUtilities.closeInputStream(is);
-         IOUtilities.closeOutputStream(os);
-      }
-      return result;
-   }
-
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadLocalFile(java.lang.String, java.lang.String)
     */
@@ -226,7 +209,7 @@ public class UpdateUtilImpl implements UpdateUtil {
                + localReleaseFile);
       }
       try {
-         result = serializer.readChannelBean(localReleaseFile);
+         result = _serializer.readChannelBean(localReleaseFile);
       } catch (IOException e) {
          s_log.error("Unable to read local release file: " + e.getMessage(), e);
       }
@@ -328,14 +311,14 @@ public class UpdateUtilImpl implements UpdateUtil {
          throws FileNotFoundException {
       ChangeListXmlBean changeBean = new ChangeListXmlBean();
       changeBean.setChanges(changes);
-      serializer.write(changeBean, getChangeListFile());
+      _serializer.write(changeBean, getChangeListFile());
    }
    
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeList()
     */
    public ChangeListXmlBean getChangeList() throws FileNotFoundException {
-       return serializer.readChangeListBean(getChangeListFile());
+       return _serializer.readChangeListBean(getChangeListFile());
    }
    
    /**
@@ -556,7 +539,7 @@ public class UpdateUtilImpl implements UpdateUtil {
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeList(java.io.File)
     */
    public ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException {
-      return serializer.readChangeListBean(changeListFile);
+      return _serializer.readChangeListBean(changeListFile);
    }
 
    /**
@@ -636,31 +619,103 @@ public class UpdateUtilImpl implements UpdateUtil {
     * @throws Exception
     */
    private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
-         final int port, final String path, final String fileToGet)
+      final int port, final String path, final String file) throws Exception {
+   	
+   	ChannelXmlBean result = null;
+   	InputStream is = null;
+   	try {
+   		String fileToGet = _pathUtils.buildPath(true, path, file); 
+   		String filename = downloadHttpFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath());
+   		is = new BufferedInputStream(new FileInputStream(filename));
+         result = _serializer.readChannelBean(is);
+   	} finally {
+   		IOUtilities.closeInputStream(is);
+   	}
+   	return result;
+   }
+   
+   
+   /**
+	 * Downloads the specified file from the specified server and stores it by the same name in the specified
+	 * destination directory.
+	 * 
+	 * @param host
+	 *           the name of the server
+    * @param port
+	 *           the port on the server
+    * @param fileToGet
+	 *           the name of the file to download
+	 * @return a string representing the full local path to where the file was downloaded to
+	 * @throws Exception
+	 */
+   public String downloadHttpFile(final String host,
+         final int port, final String fileToGet, String destDir)
          throws Exception {
-      ChannelXmlBean result = null;
       BufferedInputStream is = null;
-      String pathToFile = path + fileToGet;
-      
+      BufferedOutputStream os = null;
+      URL url = null;
+      HttpMethod method = null;
+      int resultCode = -1;
+      String result = null;
       try {
          String server = host;
          if (server.startsWith(HTTP_PROTOCOL_PREFIX)) {
             int beginIdx = server.indexOf("://") + 3;
             server = server.substring(beginIdx, host.length());
          }
-         URL url = new URL(HTTP_PROTOCOL_PREFIX, server, port, pathToFile);
-         is = new BufferedInputStream(url.openStream());
-         result = serializer.readChannelBean(is);
+         
+         if (port == 80) {
+         	url = new URL(HTTP_PROTOCOL_PREFIX, server, fileToGet);
+         } else {
+         	url = new URL(HTTP_PROTOCOL_PREFIX, server, port, fileToGet);
+         }
+                  
+         HttpClient client = new HttpClient();
+         method = new GetMethod(url.toString());
+         method.setFollowRedirects(true);
+         
+         resultCode = client.executeMethod(method);
+         InputStream mis = method.getResponseBodyAsStream();
+         
+         if (s_log.isDebugEnabled()) {
+         	s_log.debug("response code was: "+resultCode);         	
+         }
+         is = new BufferedInputStream(mis);
+			File resultFile = new File(destDir, _pathUtils.getFileFromPath(fileToGet));
+			result = resultFile.getAbsolutePath();
+			if (!resultFile.exists()) {
+				resultFile.createNewFile();
+			}
+			os = new BufferedOutputStream(new FileOutputStream(resultFile));
+			byte[] buffer = new byte[8192];
+			int length = 0;
+			
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("downloadHttpFile: writing http response body to file: "+resultFile);
+			}
+			
+			while ((length = is.read(buffer)) != -1)
+			{
+				os.write(buffer, 0, length);
+			}
+         
       } catch (Exception e) {
          s_log.error("downloadCurrentRelease: Unexpected exception while "
                + "attempting to open an HTTP connection to host (" + host
-               + ") " + "to download a file (" + pathToFile + "): "+
+               + ") on port ("+port+") to download a file (" + fileToGet + "): "+
                e.getMessage(), e);
+         s_log.error("response code was: "+resultCode);
          throw e;
       } finally {
          IOUtilities.closeInputStream(is);
+         IOUtilities.closeOutputStream(os);
+         method.releaseConnection();
       }
       return result;
    }
    
+   public void setPathUtils(PathUtils pathUtils) {
+   	this._pathUtils = pathUtils;
+   }
+      
 }

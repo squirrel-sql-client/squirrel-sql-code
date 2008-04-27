@@ -52,7 +52,7 @@ public class ChannelXmlBean {
         this.currentRelease = currentRelease;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -65,7 +65,7 @@ public class ChannelXmlBean {
         return result;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -89,5 +89,31 @@ public class ChannelXmlBean {
             return false;
         return true;
     }
+
+	/**
+	  * Constructs a <code>String</code> with all attributes
+	  * in name = value format.
+	  *
+	  * @return a <code>String</code> representation 
+	  * of this object.
+	  */
+	 @Override
+	 public String toString()
+	 {
+	     final String TAB = "    ";
+	 
+	     StringBuilder retValue = new StringBuilder();
+	     
+	     retValue.append("ChannelXmlBean ( ")
+	         .append(super.toString()).append(TAB)
+	         .append("name = ").append(this.name).append(TAB)
+	         .append("currentRelease = ").append(this.currentRelease).append(TAB)
+	         .append(" )");
+	     
+	     return retValue.toString();
+	 }
+
+
+    
     
 }
