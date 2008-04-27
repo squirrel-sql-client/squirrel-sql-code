@@ -23,7 +23,7 @@ project.module=sql12
 cvs.tag=HEAD
 
 # What temporary directory to checkout to in order to perform the build in.
-cvs.dest.dir=/home/manningr/weeklybuild
+cvs.dest.dir=<userhome>/weeklybuild
 
 # Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
 # and do a clean.  
@@ -85,14 +85,26 @@ bv.install.dir=/tmp/squirreltest
 # The launch script for the application
 launch.file=${bv.install.dir}/squirrel-sql.sh
 
+#----------------------------------------------------------------------------------------------------------#
+# The following properties are for uploading the release update site files onto a remote host that can then 
+# be pointed to inside of SQuirreL using the software update feature to pull down updates.  These are only 
+# required when using the "publishUpdateSite" Ant target.
+#----------------------------------------------------------------------------------------------------------#
+
+# The remote update site hostname
+remoteUpdateSiteHostname=shell.sourceforge.net
+
+# The username to use for authentication on the update site.
+remoteUpdateSiteUsername=<sfusername>
+
 # The remote directory into which to place the release.zip file which represents the update site.  This will
 # be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
 # archive, so the channel directory should be specified in the path here
-remoteUpdateSiteDir=<sfusername>@shell.sourceforge.net:/home/groups/s/sq/squirrel-sql/htdocs/release/snapshot/
+remoteUpdateSiteDir=/home/groups/s/sq/squirrel-sql/htdocs/release/snapshot/
 
 # The keyfile to use for authentication
 privateKeyFile=<userhome>/.ssh/id_dsa 
 
 # The passphrase to use to unlock the private key identity file that is used to authenticate with SourceForge.
-privateKeyPassPhrase=mypassphrase
+privateKeyPassPhrase=
 
