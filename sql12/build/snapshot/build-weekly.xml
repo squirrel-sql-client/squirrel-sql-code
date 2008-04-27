@@ -20,31 +20,27 @@
 	     and directories -->
 	<target name="init">
 		<property file="${basedir}/build-weekly.properties"/>
-		
 		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
-		<mkdir dir="${dist.dir}"/>
-		
+	        <mkdir dir="${dist.dir}"/>
 		<tstamp>
-		    <format property="touch.time" 
-		    	    pattern="yyyyMMdd_kkmm"
-					unit="hour"
-		    	    timezone="GMT"
-		    />
+		        <format property="touch.time" 
+		    	pattern="yyyyMMdd_kkmm"
+	        	unit="hour"
+		    	timezone="GMT"/>
 		</tstamp>
 		<tstamp>
 			<format property="release.time" 
-				    pattern="yyyy/MM/dd kk:mm z"
-					unit="hour"
-				    timezone="GMT"
-			/>
+			    pattern="yyyy/MM/dd kk:mm z"
+				unit="hour"
+			    timezone="GMT"/>
 		</tstamp>
 		
-		<!-- 
-		We decided to drop the version from the snapshot build. So snapshot builds
-		have a date/time stamp in their version. However, if we aren't configured to 
+	<!-- 
+	We decided to drop the version from the snapshot build. So snapshot builds
+	have a date/time stamp in their version. However, if we aren't configured to 
         replace the version file with a template that accepts the snapshot, then use
         the appversion property to set squirrel.version
-		-->
+	-->
         <condition property="squirrel.version" 
         		   value="Snapshot-${touch.time}" 
         	       else = "${appversion}">
@@ -280,6 +276,26 @@
 		<exec executable="${launch.file}"/>
 	</target>	
 		
+	<!-- Transfers the update site files to the remote download website -->
+	<target name="publishUpdateSite">
+		<!-- zip up the update site files into a single file for tranferring -->
+		<jar destfile="${dist.dir}/release.zip"
+		      basedir="${release.dir}"/>
+		
+		<!-- scp the resulting jar up to the website -->
+		<scp localfile="${dist.dir}/release.zip"
+		     todir="${remoteUpdateSiteUsername}@${remoteUpdateSiteHostname}:${remoteUpdateSiteDir}"
+		     keyfile="${privateKeyFile}"
+	             passphrase="${privateKeyPassPhrase}"/>
+		
+		<!-- extract the zip using sshexec -->
+		<sshexec host="${remoteUpdateSiteHostname}"
+			command="cd ${remoteUpdateSiteDir}; unzip release.zip"
+			keyfile="${privateKeyFile}"
+			passphrase="${privateKeyPassPhrase}"/>
+		         
+	</target>
+	
 	<!-- Replaces the Version.java which comes with the trunk, with one that 
 	     has the snapshot build number in it. -->
 	<target name="replaceversion" if="targettest">
@@ -447,6 +463,8 @@
 		<antcall target="createsourcearchive"/>
 		
 		<antcall target="releaseNotes"/>
+		
+		<antcall target="publishUpdateSite"/>
 	</target>
 		
 </project>
