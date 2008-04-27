@@ -11,11 +11,10 @@ name=squirrel-sql
 
 # version that's used in the name of the installer file - this isn't used if 
 # building a snapshot release (i.e. replace.version is set to true)
-appversion=2.3.1
+appversion=2.7
 
 # cvs repository cvsroot to checkout the source from.
-#project.cvsroot=:pserver:anonymous@cvs.sourceforge.net/cvsroot/squirrel-sql
-project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
+project.cvsroot=:pserver:anonymous@cvs.sourceforge.net/cvsroot/squirrel-sql
 
 # The module in the cvs repository to grab
 project.module=sql12
@@ -86,4 +85,14 @@ bv.install.dir=/tmp/squirreltest
 # The launch script for the application
 launch.file=${bv.install.dir}/squirrel-sql.sh
 
+# The remote directory into which to place the release.zip file which represents the update site.  This will
+# be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
+# archive, so the channel directory should be specified in the path here
+remoteUpdateSiteDir=<sfusername>@shell.sourceforge.net:/home/groups/s/sq/squirrel-sql/htdocs/release/snapshot/
+
+# The keyfile to use for authentication
+privateKeyFile=<userhome>/.ssh/id_dsa 
+
+# The passphrase to use to unlock the private key identity file that is used to authenticate with SourceForge.
+privateKeyPassPhrase=mypassphrase
 
