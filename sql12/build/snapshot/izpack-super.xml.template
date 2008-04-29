@@ -107,6 +107,14 @@
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
                         <file   targetdir="$INSTALL_PATH/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-beans-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-context-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-context-support-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-core.jar"/>
+                        <file   targetdir="$INSTALL_PATH/lib"
                                         src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/stringtemplate-3.1.b1.jar"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell"/>
