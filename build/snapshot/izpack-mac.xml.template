@@ -101,6 +101,14 @@
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
                         <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-beans-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-context-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-context-support-2.5.2.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/spring-core.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
                                         src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/stringtemplate-3.1.b1.jar"/>
 				
 		    <!-- MacOS X plugin always gets installed since this is the MacOS X installer -->
