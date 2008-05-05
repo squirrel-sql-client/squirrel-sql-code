@@ -6,9 +6,13 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
-"Copy as SQL WHERE / UPDATE-SET statement" function in tables
-  Tables offer right mouse menu to copy WHERE or UPDATE-SET clauses of selected data to clip board.
-  Works like the exisiting "Copy as SQL IN statment" function.
+ - A new preference for choosing Locale is available in Global Preferences -> General tab.  This allows you to
+   set your preferred locale, and if an optional translation is installed that corresponds with the preferred
+   locale, then restart and the changes take effect.(No longer necessary to hand edit the start script)
+
+ - Copy as SQL WHERE / UPDATE-SET statement" function in tables
+   Tables offer right mouse menu to copy WHERE or UPDATE-SET clauses of selected data to clip board.
+   Works like the exisiting "Copy as SQL IN statment" function.
 
  - New Plugin: SQLReplace by Dieter Engelhardt
    This plugin replaces a set of variables before a statement is executed.
