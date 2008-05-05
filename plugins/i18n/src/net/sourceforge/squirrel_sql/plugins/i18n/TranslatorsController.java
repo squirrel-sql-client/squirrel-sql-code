@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.i18n;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -151,16 +152,7 @@ public class TranslatorsController
       });
 
 
-      Locale[] availableLocales = Locale.getAvailableLocales();
-
-      Arrays.sort(availableLocales, new Comparator<Locale>()
-      {
-         public int compare(Locale o1, Locale o2)
-         {
-            return o1.toString().compareTo(o2.toString());
-         }
-      });
-
+      Locale[] availableLocales = LocaleUtils.getAvailableLocales();
 
       Locale selectedLocale = Locale.getDefault();
       String prefLocale = Preferences.userRoot().get(PREF_KEY_SELECTED_LOCALE, null);

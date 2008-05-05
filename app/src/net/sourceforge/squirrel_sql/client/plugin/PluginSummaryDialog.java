@@ -99,7 +99,7 @@ public class PluginSummaryDialog extends JDialog
 		contentPane.add(pluginLoc, BorderLayout.NORTH);
 
 		// Table of loaded plugins in centre of dialog.
-		final PluginManager pmgr = _app.getPluginManager();
+		final IPluginManager pmgr = _app.getPluginManager();
 		final PluginInfo[] pluginInfo = pmgr.getPluginInformation();
 		final PluginStatus[] pluginStatus = pmgr.getPluginStatuses();
 		_pluginPnl = new PluginSummaryTable(pluginInfo, pluginStatus);

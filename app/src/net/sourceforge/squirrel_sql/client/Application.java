@@ -38,6 +38,7 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -59,6 +60,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
@@ -84,6 +86,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -113,7 +116,7 @@ class Application implements IApplication
 //	private MainFrame _mainFrame;
 
 	/** Object to manage plugins. */
-	private PluginManager _pluginManager;
+	private IPluginManager _pluginManager;
 
 	private final DummyAppPlugin _dummyPlugin = new DummyAppPlugin();
 
@@ -201,6 +204,7 @@ class Application implements IApplication
 // name to generate properties file name.
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
         _prefs = SquirrelPreferences.load();
+        Locale.setDefault(constructPreferredLocale(_prefs));
         preferencesHaveChanged(null);
         _prefs.addPropertyChangeListener(
             new PropertyChangeListener()
@@ -319,6 +323,24 @@ class Application implements IApplication
     }
 
     /**
+     * Builds a Locale from the user's preferred locale preference.
+     * 
+     * @param prefs the user's preferences
+     * @return a local object.  If no preference is found then US English is the default.
+     */
+    private Locale constructPreferredLocale(SquirrelPreferences prefs) {
+   	 String langCountryPair = prefs.getPreferredLocale();
+   	 if (StringUtilities.isEmpty(langCountryPair)) {
+   		 langCountryPair = "en_US";
+   	 }
+   	 String[] parts = langCountryPair.split("_");
+   	 if (parts.length == 2) {
+   		 return new Locale(parts[0], parts[1]);
+   	 } 
+   	 return new Locale(parts[0]); 
+    }
+    
+    /**
      * 
      */
     private void closeOutputStreams() {
@@ -414,7 +436,7 @@ class Application implements IApplication
 	    return result;
 	}
 
-	public PluginManager getPluginManager()
+	public IPluginManager getPluginManager()
 	{
 		return _pluginManager;
 	}

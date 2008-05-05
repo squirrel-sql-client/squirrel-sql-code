@@ -125,7 +125,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),            
             new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, CLS,
                "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),            
-               
+            new PropertyDescriptor(PREFERRED_LOCALE, CLS,
+                "getPreferredLocale", "setPreferredLocale"),            
          };
       }
    }

@@ -35,8 +35,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
@@ -93,7 +93,7 @@ public class UpdateUtilImpl implements UpdateUtil {
       LoggerController.createLogger(UpdateUtilImpl.class);
    
    /** the PluginManager that tells us what plugins are installed */
-   private PluginManager _pluginManager = null;
+   private IPluginManager _pluginManager = null;
    
    /**
     * the utility class that reads and writes release info from/to the
@@ -423,14 +423,14 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getPluginManager()
     */
-   public PluginManager getPluginManager() {
+   public IPluginManager getPluginManager() {
       return _pluginManager;
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#setPluginManager(net.sourceforge.squirrel_sql.client.plugin.PluginManager)
     */
-   public void setPluginManager(PluginManager manager) {
+   public void setPluginManager(IPluginManager manager) {
       _pluginManager = manager;
    }
    
@@ -616,7 +616,7 @@ public class UpdateUtilImpl implements UpdateUtil {
     * @param path
     * @param fileToGet
     * @return
-    * @throws Exception
+    * @throws Exception if the current release file could not be downloaded
     */
    private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
       final int port, final String path, final String file) throws Exception {
@@ -626,8 +626,13 @@ public class UpdateUtilImpl implements UpdateUtil {
    	try {
    		String fileToGet = _pathUtils.buildPath(true, path, file); 
    		String filename = downloadHttpFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath());
-   		is = new BufferedInputStream(new FileInputStream(filename));
-         result = _serializer.readChannelBean(is);
+   		File releaseXmlFile = new File(filename);
+   		if (releaseXmlFile.exists()) {
+   			is = new BufferedInputStream(new FileInputStream(filename));
+   			result = _serializer.readChannelBean(is);
+   		} else {
+   			throw new FileNotFoundException("Current release file couldn't be downloaded");
+   		}
    	} finally {
    		IOUtilities.closeInputStream(is);
    	}
@@ -675,6 +680,10 @@ public class UpdateUtilImpl implements UpdateUtil {
          method.setFollowRedirects(true);
          
          resultCode = client.executeMethod(method);
+         if (resultCode != 200) {
+         	throw new FileNotFoundException("Failed to download file from url ("+url+
+         		"): HTTP Response Code="+resultCode);
+         }
          InputStream mis = method.getResponseBodyAsStream();
          
          if (s_log.isDebugEnabled()) {

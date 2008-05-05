@@ -21,18 +21,25 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
@@ -125,6 +132,13 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
       private JCheckBox _selectOnRightMouseClick = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.selectOnRightMouseClick"));
       private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
+      private JLabel _localeChooserLabel = new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.localeChooserLabel"));
+      
+      ArrayList<String> localeDisplayStrings = new ArrayList<String>();
+            
+      private JComboBox _localeChooser = new JComboBox(LocaleUtils.getAvailableLocaleStrings());
+	
+      
       
       MyPanel()
 		{
@@ -153,6 +167,11 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
          _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
          _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
+         String preferredLocalString = prefs.getPreferredLocale();
+         if (StringUtilities.isEmpty(preferredLocalString)) {
+         	preferredLocalString = "en_US";
+         }
+         _localeChooser.setSelectedItem(preferredLocalString);
       }
 
       void applyChanges(SquirrelPreferences prefs)
@@ -175,6 +194,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
          prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
          prefs.setShowPleaseWaitDialog(_showPleaseWaitDialog.isSelected());
+         prefs.setPreferredLocale(_localeChooser.getSelectedItem().toString());
       }
 
 		private void createUserInterface()
@@ -279,6 +299,18 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridx = 0;
          gbc.gridy = 7;
          pnl.add(_showPleaseWaitDialog, gbc);
+
+         _localeChooser.setBorder(new EmptyBorder(5, 20, 5, 30));
+         JPanel localePanel = new JPanel();
+         BoxLayout layout = new BoxLayout(localePanel, BoxLayout.X_AXIS);
+         localePanel.setLayout(layout);
+         localePanel.add(_localeChooserLabel);
+         localePanel.add(_localeChooser);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 8;
+         pnl.add(localePanel, gbc);
+         
          
          return pnl;
 		}

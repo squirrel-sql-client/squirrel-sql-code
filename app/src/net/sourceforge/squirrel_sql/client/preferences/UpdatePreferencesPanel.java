@@ -38,6 +38,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateCheckFrequencyComboBoxEntry.Frequency;
+import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
@@ -156,7 +157,7 @@ public class UpdatePreferencesPanel extends JPanel
 
    void loadData(SquirrelPreferences prefs)
    {
-      final UpdateSettings updateSettings = prefs.getUpdateSettings();
+      final IUpdateSettings updateSettings = prefs.getUpdateSettings();
 
       _updateServerName.setText(updateSettings.getUpdateServer());
       _updateServerPort.setText(updateSettings.getUpdateServerPort());
@@ -192,7 +193,7 @@ public class UpdatePreferencesPanel extends JPanel
    void applyChanges(SquirrelPreferences prefs)
    {
       
-      final UpdateSettings updateSettings = new UpdateSettings();
+      final IUpdateSettings updateSettings = new UpdateSettings();
 
       updateSettings.setUpdateServer(_updateServerName.getText());
       updateSettings.setUpdateServerPort(_updateServerPort.getText());

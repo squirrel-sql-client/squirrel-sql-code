@@ -34,8 +34,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
@@ -105,7 +105,7 @@ public class ObjectTreeModel extends DefaultTreeModel
                         boolean foundProcExp = false;
                         boolean foundUDTExp = false;
                         boolean foundDatabaseExp = false;
-                        final PluginManager pmgr = session.getApplication().getPluginManager();
+                        final IPluginManager pmgr = session.getApplication().getPluginManager();
                         for (Iterator<SessionPluginInfo> pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
                         {
                             ISessionPlugin p = (pluginItr.next()).getSessionPlugin();

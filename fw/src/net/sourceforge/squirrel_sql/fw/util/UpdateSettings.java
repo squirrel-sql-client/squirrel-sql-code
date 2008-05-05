@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.util;
 /**
  * Software update settings.
  */
-public class UpdateSettings implements Cloneable
+public class UpdateSettings implements Cloneable, IUpdateSettings
 {
 
 	/** Name of software update server. */
@@ -50,20 +50,26 @@ public class UpdateSettings implements Cloneable
 	
 	private String fileSystemUpdatePath = "";
 	
-	/**
-	 * Return a copy of this object.
-	 */
-	public Object clone()
-	{
-		try
-		{
-			return super.clone();
-		}
-		catch(CloneNotSupportedException ex)
-		{
-			throw new InternalError(ex.getMessage()); // Impossible.
-		}
+	public UpdateSettings() {
 	}
+	
+	/**
+	  * Copy Constructor
+	  *
+	  * @param updateSettings a <code>UpdateSettings</code> object
+	  */
+	 public UpdateSettings(IUpdateSettings updateSettings) 
+	 {
+	     this.updateServer = updateSettings.getUpdateServer();
+	     this.updateServerPort = updateSettings.getUpdateServerPort();
+	     this.updateServerPath = updateSettings.getUpdateServerPath();
+	     this.updateServerChannel = updateSettings.getUpdateServerChannel();
+	     this.enableAutomaticUpdates = updateSettings.isEnableAutomaticUpdates();
+	     this.updateCheckFrequency = updateSettings.getUpdateCheckFrequency();
+	     this.lastUpdateCheckTimeMillis = updateSettings.getLastUpdateCheckTimeMillis();
+	     this.isRemoteUpdateSite = updateSettings.isRemoteUpdateSite();
+	     this.fileSystemUpdatePath = updateSettings.getFileSystemUpdatePath();
+	 }
 
    /**
     * @return the updateServer

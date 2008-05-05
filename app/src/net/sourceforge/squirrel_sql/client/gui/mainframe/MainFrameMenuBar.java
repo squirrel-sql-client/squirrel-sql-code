@@ -38,8 +38,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
@@ -514,7 +514,7 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		if (SystemProperties.isRunningOnOSX())
 		{
-			final PluginManager mgr = _app.getPluginManager();
+			final IPluginManager mgr = _app.getPluginManager();
 			PluginInfo[] ar = mgr.getPluginInformation();
 			for (int i = 0; i < ar.length; ++i)
 			{
