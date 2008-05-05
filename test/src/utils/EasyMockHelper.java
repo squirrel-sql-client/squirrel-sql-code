@@ -39,7 +39,7 @@ public class EasyMockHelper {
    
    public <T> T createMock(Class<T> mockClass) {
       IMocksControl control = null;
-      if (mockClass.getSuperclass() == null) {
+      if (mockClass.isInterface()) {
          // an interface
          control = EasyMock.createControl();
       } else {
