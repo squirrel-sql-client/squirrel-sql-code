@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -93,6 +94,7 @@ public class SquirrelPreferences implements Serializable
       String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";   
       String SELECT_ON_RIGHT_MOUSE_CLICK = "selectOnRightMouseClick";
       String SHOW_PLEASE_WAIT_DIALOG = "showPleaseWaitDialog";
+      String PREFERRED_LOCALE = "preferredLocale";
    }
 
    public interface IJdbcDebugTypes
@@ -180,7 +182,7 @@ public class SquirrelPreferences implements Serializable
 	private ProxySettings _proxySettings = new ProxySettings();
 
 	/** Software update settings */
-	private UpdateSettings _updateSettings = new UpdateSettings();
+	private IUpdateSettings _updateSettings = new UpdateSettings();
 	
 	/** Index in drivers window to be initially selected. */
 	private int _driversSelectedIndex = -1;
@@ -245,7 +247,7 @@ public class SquirrelPreferences implements Serializable
 
 	private boolean _showPleaseWaitDialog;
 
-
+	private String _preferredLocale;
 	
 	/**
 	 * Default ctor.
@@ -606,18 +608,18 @@ public class SquirrelPreferences implements Serializable
 		return (ProxySettings)_proxySettings.clone();
 	}
 
-	public UpdateSettings getUpdateSettings() {
-	   return (UpdateSettings)_updateSettings.clone(); 
+	public IUpdateSettings getUpdateSettings() {
+	   return new UpdateSettings(_updateSettings); 
 	}
 
    // TODO: Only set if changed
-   public synchronized void setUpdateSettings(UpdateSettings data)
+   public synchronized void setUpdateSettings(IUpdateSettings data)
    {
       if (data == null)
       {
          data = new UpdateSettings();
       }
-      final UpdateSettings oldValue = _updateSettings;
+      final IUpdateSettings oldValue = _updateSettings;
       _updateSettings= data;
       getPropertyChangeReporter().firePropertyChange(IPropertyNames.UPDATE,
                                  oldValue, _updateSettings);
@@ -1158,6 +1160,22 @@ public class SquirrelPreferences implements Serializable
 	 */
 	public void setShowPleaseWaitDialog(boolean showPleaseWaitDialog) {
 		this._showPleaseWaitDialog = showPleaseWaitDialog;
+	}
+
+	/**
+	 * @return the preferredLocale
+	 */
+	public String getPreferredLocale()
+	{
+		return _preferredLocale;
+	}
+
+	/**
+	 * @param locale the preferredLocale to set
+	 */
+	public void setPreferredLocale(String locale)
+	{
+		_preferredLocale = locale;
 	}
 	
    

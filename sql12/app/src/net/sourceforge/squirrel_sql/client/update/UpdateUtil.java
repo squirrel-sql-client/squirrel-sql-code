@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
@@ -216,13 +216,13 @@ public interface UpdateUtil
 	/**
 	 * @return the _pluginManager
 	 */
-	PluginManager getPluginManager();
+	IPluginManager getPluginManager();
 
 	/**
 	 * @param manager
 	 *           the _pluginManager to set
 	 */
-	void setPluginManager(PluginManager manager);
+	void setPluginManager(IPluginManager manager);
 
 	/**
 	 * Returns the top-level directory that contains artifact type sub-folders into which downloaded files are

@@ -45,7 +45,7 @@ public class ThreadCheckingRepaintManager extends RepaintManager
 				if (!SwingUtilities.isEventDispatchThread())
 				{
                     // i18n[ThreadCheckingRepaintManager.workinwrongthread=GUI work done in wrong thread]
-					throw new Exception(s_stringMgr.getString("ThreadCheckingRepaintManager.workinwrongthread"));
+					//throw new Exception(s_stringMgr.getString("ThreadCheckingRepaintManager.workinwrongthread"));
 				}
 			}
 		}

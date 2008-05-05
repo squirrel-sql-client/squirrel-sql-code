@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,8 +32,8 @@ import javax.swing.ProgressMonitor;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
@@ -47,13 +48,15 @@ import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
+import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class implements the business logic needed by the view
- * (UpdateManagerDialog), to let the user to install new or updated software
+ * (UpdateManagerDialog), to let the user install new or updated software
  * (the model)
  * 
  * @author manningr
@@ -61,9 +64,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class UpdateControllerImpl implements UpdateController,
       CheckUpdateListener {
 
-   /** Logger for this class. */
+	/** Logger for this class. */
    private static final ILogger s_log =
       LoggerController.createLogger(UpdateControllerImpl.class);
+
+   /** I18n strings for this class */
+   private static final StringManager s_stringMgr = 
+   	StringManagerFactory.getStringManager(UpdateControllerImpl.class);
    
    /** the application and services it provides */
    private IApplication _app = null;
@@ -85,6 +92,49 @@ public class UpdateControllerImpl implements UpdateController,
    
    /** The class that we use which is responsible for downloading artifacts */ 
    ArtifactDownloader _downloader = null;
+   
+   static interface i18n {
+   	
+   	// i18n[UpdateControllerImpl.downloadingUpdatesMsg=Downloading Files]
+   	String DOWNLOADING_UPDATES_MSG = s_stringMgr.getString("UpdateControllerImpl.downloadingUpdatesMsg");
+   	
+   	// i18n[UpdateControllerImpl.exceptionMsg=Exception was: ]
+      String EXCEPTION_MSG = s_stringMgr.getString("UpdateControllerImpl.exceptionMsg");
+
+      // i18n[UpdateControllerImpl.updateCheckFailedTitle=Update Check Failed]
+   	String UPDATE_CHECK_FAILED_TITLE = s_stringMgr.getString("UpdateControllerImpl.updateCheckFailedTitle");
+
+   	//i18n[UpdateControllerImpl.softwareVersionCurrentMsg=This software's version is the most recent]
+   	String SOFTWARE_VERSION_CURRENT_MSG = 
+   		s_stringMgr.getString("UpdateControllerImpl.softwareVersionCurrentMsg");
+
+   	//i18n[UpdateControllerImpl.updateCheckTitle=Update Check]   	
+   	String UPDATE_CHECK_TITLE = s_stringMgr.getString("UpdateControllerImpl.updateCheckTitle");
+   	
+   	//i18n[UpdateControllerImpl.updateDownloadCompleteTitle=Update Download Complete]
+   	String UPDATE_DOWNLOAD_COMPLETE_TITLE = 
+   		s_stringMgr.getString("UpdateControllerImpl.updateDownloadCompleteTitle");
+
+   	//i18n[UpdateControllerImpl.updateDownloadCompleteMsg=Requested updates will be installed when 
+   	//SQuirreL is restarted]
+   	String UPDATE_DOWNLOAD_COMPLETE_MSG = 
+   		s_stringMgr.getString("UpdateControllerImpl.updateDownloadCompleteMsg");
+   	
+   	//i18n[UpdateControllerImpl.updateDownloadFailed=Update Download Failed]
+   	String UPDATE_DOWNLOAD_FAILED_TITLE = 
+   		s_stringMgr.getString("UpdateControllerImpl.updateDownloadFailed");
+   	
+   	//i18n[UpdateControllerImpl.updateDownloadFailedMsg=Please consult the log for details]
+      String UPDATE_DOWNLOAD_FAILED_MSG = 
+      	s_stringMgr.getString("UpdateControllerImpl.updateDownloadFailedMsg");
+
+      //i18n[UpdateControllerImpl.releaseFileDownloadFailedMsg=Release file couldn't be downloaded.  Please 
+      //check your settings.]
+		String RELEASE_FILE_DOWNLOAD_FAILED_MSG = 
+			s_stringMgr.getString("UpdateControllerImpl.releaseFileDownloadFailedMsg");
+   	
+   }
+   
    /**
     * Constructor
     * 
@@ -108,14 +158,12 @@ public class UpdateControllerImpl implements UpdateController,
       _util.setPluginManager(_app.getPluginManager());
    }
    
-   /*
-    * (non-Javadoc)
-    * 
+   /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showUpdateDialog()
     */
    public void showUpdateDialog() {
       JFrame parent = _app.getMainFrame();
-      UpdateSettings settings = getUpdateSettings();
+      IUpdateSettings settings = getUpdateSettings();
       boolean isRemoteUpdateSite = settings.isRemoteUpdateSite();
       UpdateManagerDialog dialog = 
          new UpdateManagerDialog(parent, isRemoteUpdateSite);
@@ -135,8 +183,8 @@ public class UpdateControllerImpl implements UpdateController,
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#isUpToDate()
     */
    public boolean isUpToDate() throws Exception {
-      boolean result = true;
-      UpdateSettings settings = getUpdateSettings();
+
+      IUpdateSettings settings = getUpdateSettings();
       
       // 1. Find the local release.xml file
       String releaseFilename = _util.getLocalReleaseFile();
@@ -181,7 +229,7 @@ public class UpdateControllerImpl implements UpdateController,
     */
    public Set<String> getInstalledPlugins() {
       Set<String> result = new HashSet<String>();
-      PluginManager pmgr = _app.getPluginManager();
+      IPluginManager pmgr = _app.getPluginManager();
       PluginInfo[] infos = pmgr.getPluginInformation();
       for (PluginInfo info : infos) {
          result.add(info.getInternalName());
@@ -296,29 +344,29 @@ public class UpdateControllerImpl implements UpdateController,
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#checkUpToDate()
     */
    public void checkUpToDate() {
-      // TODO: I18n
       try {
          if (isUpToDate()) {
-            showMessage("Update Check", "Software is the latest version.");
-         } else {
-            List<ArtifactStatus> artifactStatusItems = 
-               this._util.getArtifactStatus(_currentChannelBean);
-            UpdateSummaryDialog dialog = new UpdateSummaryDialog(_app.getMainFrame(),
-                                                                 artifactStatusItems,
-                                                                 this);
-            String installedVersion = 
-               _installedChannelBean.getCurrentRelease().getVersion();
-            dialog.setInstalledVersion(installedVersion);
-            
-            String currentVersion =
-               _currentChannelBean.getCurrentRelease().getVersion();
-            dialog.setAvailableVersion(currentVersion);
-            
-            GUIUtils.centerWithinParent(_app.getMainFrame());
-            dialog.setVisible(true);
-         }
+            showMessage(i18n.UPDATE_CHECK_TITLE, i18n.SOFTWARE_VERSION_CURRENT_MSG);
+         } 
+         List<ArtifactStatus> artifactStatusItems = 
+            this._util.getArtifactStatus(_currentChannelBean);
+         UpdateSummaryDialog dialog = new UpdateSummaryDialog(_app.getMainFrame(),
+                                                              artifactStatusItems,
+                                                              this);
+         String installedVersion = 
+            _installedChannelBean.getCurrentRelease().getVersion();
+         dialog.setInstalledVersion(installedVersion);
+         
+         String currentVersion =
+            _currentChannelBean.getCurrentRelease().getVersion();
+         dialog.setAvailableVersion(currentVersion);
+         
+         GUIUtils.centerWithinParent(_app.getMainFrame());
+         dialog.setVisible(true);
+      } catch (FileNotFoundException e) {
+      	showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.RELEASE_FILE_DOWNLOAD_FAILED_MSG);
       } catch (Exception e) {
-         showErrorMessage("Update Check Failed", "Exception was - "
+         showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.EXCEPTION_MSG
                + e.getClass().getName() + ":" + e.getMessage(), e);
       }
    }
@@ -337,7 +385,7 @@ public class UpdateControllerImpl implements UpdateController,
                              new DownloadStatusEventHandler());
          
       } catch (Exception e) {
-         showErrorMessage("Update Failed", "Exception was - "
+         showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.EXCEPTION_MSG
                           + e.getClass().getName() + ":" + e.getMessage(), e);         
       }
       
@@ -359,7 +407,7 @@ public class UpdateControllerImpl implements UpdateController,
     * Returns the UpdateSettings from preferences.
     * @return
     */
-   private UpdateSettings getUpdateSettings() {
+   private IUpdateSettings getUpdateSettings() {
       return _app.getSquirrelPreferences().getUpdateSettings();      
    }
    
@@ -401,7 +449,7 @@ public class UpdateControllerImpl implements UpdateController,
     */
    private class DownloadStatusEventHandler implements DownloadStatusListener {
 
-      ProgressMonitor progressMonitor = null;
+		ProgressMonitor progressMonitor = null;
       int currentFile = 0;
       int totalFiles = 0;
       /**
@@ -434,16 +482,13 @@ public class UpdateControllerImpl implements UpdateController,
          // When all updates are retrieved, consult the user to see if they want to install now or upon the 
          // next startup.
          if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED) {
-         	// TODO: i18n
-            showMessage("Update Download Complete",
-                        "Requested updates will be installed when SQuirreL "
-                              + "is restarted");
+            showMessage(i18n.UPDATE_DOWNLOAD_COMPLETE_TITLE,
+                        i18n.UPDATE_DOWNLOAD_COMPLETE_MSG);
             setProgress(totalFiles);
          }
          if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED) {
-         	// TODO: i18n         	
-            showErrorMessage("Update Download Failed",
-                             "Please consult the log for details");
+            showErrorMessage(i18n.UPDATE_DOWNLOAD_FAILED_TITLE,
+                             i18n.UPDATE_DOWNLOAD_FAILED_MSG);
             
             setProgress(totalFiles);
          }
@@ -472,8 +517,8 @@ public class UpdateControllerImpl implements UpdateController,
                   UpdateControllerImpl.this._app.getMainFrame();
                progressMonitor = 
                   new ProgressMonitor(frame,
-                                      "Downloading Updates",
-                                      "Downloading Updates", 
+                  						  i18n.DOWNLOADING_UPDATES_MSG,
+                  						  i18n.DOWNLOADING_UPDATES_MSG, 
                                       0, 
                                       totalFiles);
                setProgress(0);

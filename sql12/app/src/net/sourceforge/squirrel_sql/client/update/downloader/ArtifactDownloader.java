@@ -100,7 +100,8 @@ public class ArtifactDownloader implements Runnable
 				{
 					sendDownloadFileStarted(status.getName());
 				}
-				String fileToGet = _pathUtils.buildPath(true, _channelName, status.getType(), status.getName());
+				String fileToGet =
+					_pathUtils.buildPath(true, _path, _channelName, status.getType(), status.getName());
 				String destDir = getArtifactDownloadDestDir(status);
 
 				if (fileWasDownloadedPreviously(status)) {
