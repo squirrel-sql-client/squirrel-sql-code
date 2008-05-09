@@ -20,15 +20,23 @@ package net.sourceforge.squirrel_sql.jdbcproxy;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.Array;
+import java.sql.Blob;
 import java.sql.CallableStatement;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.NClob;
 import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
+import java.util.Properties;
 
 public class ProxyConnection implements Connection {
 
@@ -237,5 +245,122 @@ public class ProxyConnection implements Connection {
         ProxyMethodManager.check("ProxyConnection", "prepareStatement");
         return _con.prepareStatement(sql, columnNames);
     }
+
+	/**
+	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+	 */
+	public boolean isWrapperFor(Class<?> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
+	 */
+	public <T> T unwrap(Class<T> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createArrayOf(java.lang.String, java.lang.Object[])
+	 */
+	public Array createArrayOf(String typeName, Object[] elements) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createBlob()
+	 */
+	public Blob createBlob() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createClob()
+	 */
+	public Clob createClob() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createNClob()
+	 */
+	public NClob createNClob() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createSQLXML()
+	 */
+	public SQLXML createSQLXML() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#createStruct(java.lang.String, java.lang.Object[])
+	 */
+	public Struct createStruct(String typeName, Object[] attributes) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#getClientInfo()
+	 */
+	public Properties getClientInfo() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#getClientInfo(java.lang.String)
+	 */
+	public String getClientInfo(String name) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.Connection#isValid(int)
+	 */
+	public boolean isValid(int timeout) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.Connection#setClientInfo(java.util.Properties)
+	 */
+	public void setClientInfo(Properties properties) throws SQLClientInfoException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see java.sql.Connection#setClientInfo(java.lang.String, java.lang.String)
+	 */
+	public void setClientInfo(String name, String value) throws SQLClientInfoException
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 }
