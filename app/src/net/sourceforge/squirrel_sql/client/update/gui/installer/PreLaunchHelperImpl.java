@@ -160,8 +160,11 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	{
 		ArtifactInstaller installer = artifactInstallerFactory.create(changeList);
 		installer.addListener(new InstallStatusListenerImpl());
-		installer.backupFiles();
-		installer.installFiles();
+		if (installer.backupFiles()) {
+			installer.installFiles();
+		} else {
+			// TODO: tell the user that backup of existing files failed - so update is not allowed
+		}
 	}
 	
 	/**

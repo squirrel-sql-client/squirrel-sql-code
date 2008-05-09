@@ -479,6 +479,9 @@ public class UpdateUtilImpl implements UpdateUtil {
 					}
 					else
 					{
+						if (s_log.isInfoEnabled()) {
+							s_log.info("deleteFile: deleting file = "+files[i].getAbsolutePath());
+						}
 						files[i].delete();
 					}
 				}
