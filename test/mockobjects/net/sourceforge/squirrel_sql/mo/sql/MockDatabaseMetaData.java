@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.mo.sql;
 
 import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -993,6 +994,89 @@ public class MockDatabaseMetaData extends
 
 	public String getDriverName() throws SQLException {
 		return "MockDatabaseDriver";
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#autoCommitFailureClosesAllResultSets()
+	 */
+	public boolean autoCommitFailureClosesAllResultSets() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#getClientInfoProperties()
+	 */
+	public ResultSet getClientInfoProperties() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#getFunctionColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern,
+		String columnNamePattern) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#getFunctions(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern)
+		throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#getRowIdLifetime()
+	 */
+	public RowIdLifetime getRowIdLifetime() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#getSchemas(java.lang.String, java.lang.String)
+	 */
+	public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see java.sql.DatabaseMetaData#supportsStoredFunctionsUsingCallSyntax()
+	 */
+	public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+	 */
+	public boolean isWrapperFor(Class<?> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
+	 */
+	public <T> T unwrap(Class<T> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}	
 
 	
