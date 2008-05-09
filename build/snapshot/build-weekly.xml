@@ -277,22 +277,33 @@
 	</target>	
 		
 	<!-- Transfers the update site files to the remote download website -->
-	<target name="publishUpdateSite">
+	<target name="publishUpdateSite" depends="init">
 		<!-- zip up the update site files into a single file for tranferring -->
 		<jar destfile="${dist.dir}/release.zip"
 		      basedir="${release.dir}"/>
+
+		<!-- Clean out the previous release -->
+                <sshexec host="${remoteUpdateSiteHostname}"
+                        username="${remoteUpdateSiteUsername}"
+                        command="rm -rf ${remoteUpdateSiteDir}; mkdir ${remoteUpdateSiteDir}"
+                        password="${remoteUpdateSitePassword}"
+                />		
 		
 		<!-- scp the resulting jar up to the website -->
 		<scp localfile="${dist.dir}/release.zip"
 		     todir="${remoteUpdateSiteUsername}@${remoteUpdateSiteHostname}:${remoteUpdateSiteDir}"
-		     keyfile="${privateKeyFile}"
-	             passphrase="${privateKeyPassPhrase}"/>
+                     password="${remoteUpdateSitePassword}"
+		     trust="true">
+
+		     
+		</scp>
 		
 		<!-- extract the zip using sshexec -->
 		<sshexec host="${remoteUpdateSiteHostname}"
+			username="${remoteUpdateSiteUsername}"
 			command="cd ${remoteUpdateSiteDir}; unzip release.zip"
-			keyfile="${privateKeyFile}"
-			passphrase="${privateKeyPassPhrase}"/>
+			password="${remoteUpdateSitePassword}"
+		/>
 		         
 	</target>
 	
