@@ -113,4 +113,24 @@ public class ProxyResultSetMetaData implements ResultSetMetaData {
 		ProxyMethodManager.check("ProxyResultSetMetaData", "getTableName");
 		return _rsmd.getTableName(column);
 	}
+
+	/**
+	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+	 */
+	public boolean isWrapperFor(Class<?> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
+	 */
+	public <T> T unwrap(Class<T> iface) throws SQLException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+    
 }
