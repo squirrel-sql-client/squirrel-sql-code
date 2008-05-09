@@ -300,57 +300,113 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				filesToInstall.add(info);
 			}
 		}
-		removeOldFiles(filesToRemove);
-		installFiles(filesToInstall);
-		moveChangeListFile();
+		boolean success = removeOldFiles(filesToRemove);
+		success = success && installFiles(filesToInstall);
+		success = success && moveChangeListFile();
+		
+		if (!success) {
+			restoreFilesFromBackup(filesToInstall);
+		} 
+		
 		sendInstallComplete();
 	}
 
-	private void moveChangeListFile() throws IOException
+	private void restoreFilesFromBackup(List<InstallFileOperationInfo> filesToInstall)
 	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private boolean moveChangeListFile()
+	{
+		boolean result = true;
 		if (changeListFile != null) {
-			_util.copyFile(changeListFile, backupRootDir);
-			_util.deleteFile(changeListFile);
+			try {
+				_util.copyFile(changeListFile, backupRootDir);
+				result = _util.deleteFile(changeListFile);
+			} catch (IOException e) {
+				result = false;
+				s_log.error("Unexpected exception: "+e.getMessage(), e);
+			}
 		} else {
-			s_log.info("moveChangeListFile: Changelist file was null.  Skipping move");
+			if (s_log.isInfoEnabled()) {
+				s_log.info("moveChangeListFile: Changelist file was null.  Skipping move");
+			}
 		}
+		return result;
 	}
 
 	// Helper methods
 
-	private void removeOldFiles(List<File> filesToRemove)
+	/**
+	 * Removes the specified list of File objects (can represent either a file or directory)
+	 * 
+	 * @param filesToRemove the files to be removed.
+	 * @return true if the remove operation was successful and false otherwise.
+	 */
+	private boolean removeOldFiles(List<File> filesToRemove)
 	{
+		boolean result = true;
 		for (File fileToRemove : filesToRemove) {
-			removeOldFile(fileToRemove);			
+			result = removeOldFile(fileToRemove);
+			if (!result) {
+				break;
+			}
 		}
+		return result;
 	}
 
-	private void removeOldFile(File fileToRemove)
+	/**
+	 * Removes the old file that will be replaced by the new.
+	 * 
+	 * @param fileToRemove
+	 *           the File that represents the file to be removed
+	 * @return true if the remove operation was successful and false otherwise.
+	 */
+	private boolean removeOldFile(File fileToRemove)
 	{
-		if (!fileToRemove.exists()) {
+		boolean result = true;
+		String absolutePath = fileToRemove.getAbsolutePath();
+		if (s_log.isDebugEnabled()) {
+			s_log.debug("Examining file to remove: "+absolutePath);
+		}
+		if (fileToRemove.exists()) {		
+			try {
+				if (s_log.isDebugEnabled()) {
+					s_log.debug("Attempting to delete file: "+absolutePath);
+				}			
+				result = _util.deleteFile(fileToRemove);
+				if (!result) {
+					s_log.error("Delete operation failed for file/directory: "+absolutePath);
+				}
+			} catch (SecurityException e) {
+				result = false;
+				s_log.error("Unexpected security exception: "+e.getMessage());
+			}
+		} else {
 			if (s_log.isInfoEnabled()) {
-				s_log.info("Skipping delete of file doesn't appear to exist: "+fileToRemove.getAbsolutePath());
+				s_log.info("Skipping delete of file doesn't appear to exist: "+absolutePath);
 			}
-			return;
 		}
-		try {
-			boolean success = _util.deleteFile(fileToRemove);
-			if (!success) {
-				s_log.error("Delete operation failed for file/directory: "+fileToRemove.getAbsolutePath());
-			}
-		} catch (SecurityException e) {
-			s_log.error("Unexpected security exception: "+e.getMessage());
-		}
+		return result;
 	}
 
-	private void installFiles(List<InstallFileOperationInfo> filesToInstall) throws IOException
+	private boolean installFiles(List<InstallFileOperationInfo> filesToInstall) throws IOException
 	{
+		boolean result = true;
 		for (InstallFileOperationInfo info : filesToInstall) {
 			File installDir = info.getInstallDir();
 			File fileToCopy = info.getFileToInstall();
-
-			installFile(installDir, fileToCopy);
+			try {
+				installFile(installDir, fileToCopy);
+			} catch (Exception e) {
+				s_log.error("installFiles: unexpected exception: "+e.getMessage(), e);
+				result = false;
+				break;
+			}
 		}
+		return result;
 	}
 
 	private void installFile(File installDir, File fileToCopy) throws IOException
