@@ -36,14 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
@@ -561,43 +554,21 @@ public class ContentsTab extends BaseTableTab
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
+   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   {
+      return new IDataModelImplementationDetails()
+      {
+         public String getStatementSeparator()
+         {
+            return getSession().getQueryTokenizer().getSQLStatementSeparator();
+         }
+      };
+   }
+
    protected String getDestinationClassName()
    {
       return _dataSetUpdateableTableModel.getDestinationClassName();
    }
    //
    //////////////////////////////////////////////////////////////////////////////////
-
-
-
-   /**
-	 * This inner class defines a pop-up menu with only one item, "insert", which
-	 * allows the user to add a new row to an empty table.
-	 */
-	class EditableContentsTabPopupMenu extends TablePopupMenu
-	{
-	    private static final long serialVersionUID = 1L;
-
-        public EditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
-			super(viewer.isTableEditable(), ContentsTab.this, viewer);
-			removeAll();	// the normal constructor creates a bunch of entries we do not want
-			add(_insertRow);
-		}
-	}
-
-	/**
-	 * This inner class defines a pop-up menu with only one item, "make editable", which
-	 * allows the user to put an empty table into editable mode.
-	 */
-	class UneditableContentsTabPopupMenu extends TablePopupMenu
-	{
-        private static final long serialVersionUID = 1L;
-        
-		public UneditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
-			super(viewer.isTableEditable(), ContentsTab.this, viewer);
-			removeAll();	// the normal constructor creates a bunch of entries we do not want
-			add(_makeEditable);
-		}
-	}
-
 }

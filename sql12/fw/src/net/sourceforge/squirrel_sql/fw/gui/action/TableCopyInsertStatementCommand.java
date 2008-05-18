@@ -35,22 +35,25 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase implements ICommand
+public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase implements ICommand
 {
    /**
     * The table we are copying data from.
     */
    private JTable _table;
+   private String _statementSeparator;
 
    /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
     *
     * @param	table	The <TT>JTable</TT> to get data from.
+    * @param statementSeparatorFromModel
     * @throws	IllegalArgumentException Thrown if <tt>null</tt> <tt>JTable</tt> passed.
     */
-   public TableCopyWhereStatementCommand(JTable table)
+   public TableCopyInsertStatementCommand(JTable table, String statementSeparator)
    {
       super();
+      _statementSeparator = statementSeparator;
       if (table == null)
       {
          throw new IllegalArgumentException("JTable == null");
@@ -69,28 +72,13 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
       int[] selCols = _table.getSelectedColumns();
       if (selRows.length != 0 && selCols.length != 0)
       {
-         StringBuffer buf = new StringBuffer("WHERE ");
+         StringBuffer buf = new StringBuffer();
+
+         StringBuffer colNames = new StringBuffer();
+         StringBuffer vals = new StringBuffer();
+
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
-
-            if(1 < nbrSelCols)
-            {
-               if(0 < rowIdx)
-               {
-                  buf.append("OR (");
-               }
-               else
-               {
-                  buf.append("(");
-               }
-            }
-            else
-            {
-               if(0 < rowIdx)
-               {
-                  buf.append("OR ");
-               }
-            }
 
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
@@ -105,28 +93,38 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
 
                if (0 < colIdx)
                {
-                  buf.append(" AND ");
-               }
-
-               final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-               buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.WHERE));
-            }
-
-            if(1 < nbrSelCols)
-            {
-               buf.append(")\n");
-            }
-            else
-            {
-               if(100 < buf.length() - buf.toString().lastIndexOf("\n"))
-               {
-                  buf.append("\n");
+                  colNames.append(",");
+                  vals.append(",");
                }
                else
                {
-                  buf.append(" ");
+                  colNames.append("INTO (");
+                  vals.append("(");
                }
+
+               Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+
+               colNames.append(colDef.getColumnName());
+               vals.append(getData(colDef, cellObj, StatType.IN));
             }
+
+            colNames.append(")");
+            vals.append(")");
+
+            buf.append(colNames).append(" VALUES ").append(vals);
+
+            if(1 < _statementSeparator.length())
+            {
+               buf.append(" ").append(_statementSeparator).append("\n");
+            }
+            else
+            {
+               buf.append(_statementSeparator).append("\n");
+            }
+
+            colNames.setLength(0);
+            vals.setLength(0);
+
          }
          final StringSelection ss = new StringSelection(buf.toString());
          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);

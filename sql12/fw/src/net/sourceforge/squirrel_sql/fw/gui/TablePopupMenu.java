@@ -48,12 +48,13 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_IN_STATEMENT = 3;
 		int COPY_WHERE_STATEMENT = 4;
 		int COPY_UPDATE_STATEMENT = 5;
-		int COPY_EXPORT_CSV = 6;
-		int SELECT_ALL = 7;
-      int ADOPT_ALL_COL_WIDTHS_ACTION = 8;
-      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 9;
-      int SHOW_ROW_NUMBERS = 10;
-		int LAST_ENTRY = 11;
+      int COPY_INSERT_STATEMENT = 6;
+		int COPY_EXPORT_CSV = 7;
+		int SELECT_ALL = 8;
+      int ADOPT_ALL_COL_WIDTHS_ACTION = 9;
+      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 10;
+      int SHOW_ROW_NUMBERS = 11;
+		int LAST_ENTRY = 12;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -72,6 +73,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
+	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdoptAllColWidthsAction _adoptAllColWidthsAction = new AdoptAllColWidthsAction();
 	private AlwaysAdoptAllColWidthsAction _alwaysAdoptAllColWidthsAction = new AlwaysAdoptAllColWidthsAction();
@@ -119,6 +121,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
+		_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
       addSeparator();
       _menuItems[IOptionTypes.ADOPT_ALL_COL_WIDTHS_ACTION] = add(_adoptAllColWidthsAction);
@@ -228,7 +231,13 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 
 
-	private class CopyAction extends BaseAction
+   private String getStatementSeparatorFromModel()
+   {
+      return _updateableModel.getDataModelImplementationDetails().getStatementSeparator();
+   }
+
+
+   private class CopyAction extends BaseAction
 	{
 		CopyAction()
 		{
@@ -325,6 +334,23 @@ public class TablePopupMenu extends BasePopupMenu
 			}
 		}
 	}
+
+	private class CopyInsertStatementAction extends BaseAction
+	{
+		CopyInsertStatementAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyasinsertstatement"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyInsertStatementCommand(_table, getStatementSeparatorFromModel()).execute();
+			}
+		}
+
+   }
 
    private class ExportCsvAction extends BaseAction
    {

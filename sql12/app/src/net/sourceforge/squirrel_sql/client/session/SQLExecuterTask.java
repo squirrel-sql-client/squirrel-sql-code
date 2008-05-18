@@ -37,10 +37,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -721,6 +718,18 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    {
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
+
+   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   {
+      return new IDataModelImplementationDetails()
+      {
+         public String getStatementSeparator()
+         {
+            return _session.getQueryTokenizer().getSQLStatementSeparator();
+         }
+      };
+   }
+
    //
    //////////////////////////////////////////////////////////////////////////////////
 
