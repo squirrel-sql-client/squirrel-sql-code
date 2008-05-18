@@ -138,7 +138,6 @@ public class CachePlugin extends DefaultSessionPlugin
       super.initialize();
       IApplication app = getApplication();
 
-      PluginManager pmgr = app.getPluginManager();
 
       // Folder within plugins folder that belongs to this
       // plugin.
