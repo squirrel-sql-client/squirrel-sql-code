@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.8 2006-09-16 21:08:43 gerdwagner Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.9 2008-05-18 16:13:13 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -48,7 +48,7 @@ public class ButtonTableHeader extends JTableHeader
       LoggerController.createLogger(ButtonTableHeader.class);
 
 
-   private static final String PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
+   private static final String PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 
    /** Icon for "Sorted ascending". */
    private static Icon s_ascIcon;
@@ -207,33 +207,33 @@ public class ButtonTableHeader extends JTableHeader
       }
    }
 
-   public void adoptAllColWidths(boolean includeColHeaders)
+   public void adjustAllColWidths(boolean includeColHeaders)
    {
       for(int i=0; i < getTable().getColumnModel().getColumnCount(); ++i)
       {
-         adoptColWidth(i, includeColHeaders);
+         adjustColWidth(i, includeColHeaders);
       }
    }
 
-   public static boolean isAlwaysAdoptAllColWidths()
+   public static boolean isAlwaysAdjustAllColWidths()
    {
-      return Preferences.userRoot().getBoolean(PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS, false);
+      return Preferences.userRoot().getBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, false);
    }
 
-   public static void setAlwaysAdoptAllColWidths(boolean b)
+   public static void setAlwaysAdjustAllColWidths(boolean b)
    {
-      Preferences.userRoot().putBoolean(PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS, b);
+      Preferences.userRoot().putBoolean(PREF_KEY_ALWAYS_ADJUST_ALL_COLUMN_HEADERS, b);
    }
 
    public void initColWidths()
    {
-      if (isAlwaysAdoptAllColWidths())
+      if (isAlwaysAdjustAllColWidths())
       {
          SwingUtilities.invokeLater(new Runnable()
          {
             public void run()
             {
-               adoptAllColWidths(true);
+               adjustAllColWidths(true);
             }
          });
       }
@@ -250,7 +250,7 @@ public class ButtonTableHeader extends JTableHeader
    }
 
 
-   private void adoptColWidth(int colIx, boolean includeColHeaders)
+   private void adjustColWidth(int colIx, boolean includeColHeaders)
    {
       int modelIx = getTable().convertColumnIndexToModel(colIx);
 
@@ -356,7 +356,7 @@ public class ButtonTableHeader extends JTableHeader
             }
 
 
-            adoptColWidth(colIx, true);
+            adjustColWidth(colIx, true);
          }
       }
 

@@ -51,8 +51,8 @@ public class TablePopupMenu extends BasePopupMenu
       int COPY_INSERT_STATEMENT = 6;
 		int COPY_EXPORT_CSV = 7;
 		int SELECT_ALL = 8;
-      int ADOPT_ALL_COL_WIDTHS_ACTION = 9;
-      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 10;
+      int ADJUST_ALL_COL_WIDTHS_ACTION = 9;
+      int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
       int SHOW_ROW_NUMBERS = 11;
 		int LAST_ENTRY = 12;
    }
@@ -63,7 +63,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private JTable _table;
 
-	private JCheckBoxMenuItem _alwaysAdoptAllColWidtshActionItem;
+	private JCheckBoxMenuItem _alwaysAdjustAllColWidtshActionItem;
 	private JCheckBoxMenuItem _showRowNumbersItem;
 
 
@@ -75,8 +75,8 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
-   private AdoptAllColWidthsAction _adoptAllColWidthsAction = new AdoptAllColWidthsAction();
-	private AlwaysAdoptAllColWidthsAction _alwaysAdoptAllColWidthsAction = new AlwaysAdoptAllColWidthsAction();
+   private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
+	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
    private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
 
     protected MakeEditableAction _makeEditable = new MakeEditableAction();
@@ -124,12 +124,12 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
       addSeparator();
-      _menuItems[IOptionTypes.ADOPT_ALL_COL_WIDTHS_ACTION] = add(_adoptAllColWidthsAction);
+      _menuItems[IOptionTypes.ADJUST_ALL_COL_WIDTHS_ACTION] = add(_adjustAllColWidthsAction);
 
-      _alwaysAdoptAllColWidtshActionItem = new JCheckBoxMenuItem();
-		_alwaysAdoptAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdoptAllColWidths());
-		_alwaysAdoptAllColWidtshActionItem.setAction(_alwaysAdoptAllColWidthsAction);
-      _menuItems[IOptionTypes.ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION] = add(_alwaysAdoptAllColWidtshActionItem);
+      _alwaysAdjustAllColWidtshActionItem = new JCheckBoxMenuItem();
+		_alwaysAdjustAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdjustAllColWidths());
+		_alwaysAdjustAllColWidtshActionItem.setAction(_alwaysAdjustAllColWidthsAction);
+      _menuItems[IOptionTypes.ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION] = add(_alwaysAdjustAllColWidtshActionItem);
 
       addSeparator();
       
@@ -370,9 +370,9 @@ public class TablePopupMenu extends BasePopupMenu
    }
 
 
-   private class AdoptAllColWidthsAction extends BaseAction
+   private class AdjustAllColWidthsAction extends BaseAction
 	{
-		AdoptAllColWidthsAction()
+		AdjustAllColWidthsAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.adoptAllColWidthsAction"));
 		}
@@ -383,26 +383,26 @@ public class TablePopupMenu extends BasePopupMenu
 			{
             if(_table.getTableHeader() instanceof ButtonTableHeader)
             {
-               ((ButtonTableHeader)_table.getTableHeader()).adoptAllColWidths(true);
+               ((ButtonTableHeader)_table.getTableHeader()).adjustAllColWidths(true);
             }
          }
 		}
 	}
 
 
-   private class AlwaysAdoptAllColWidthsAction extends BaseAction
+   private class AlwaysAdjustAllColWidthsAction extends BaseAction
 	{
-		AlwaysAdoptAllColWidthsAction()
+		AlwaysAdjustAllColWidthsAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.alwaysAdoptAllColWiths"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
 		{
-         ButtonTableHeader.setAlwaysAdoptAllColWidths(_alwaysAdoptAllColWidtshActionItem.isSelected());
-         if (_table != null && _alwaysAdoptAllColWidtshActionItem.isSelected())
+         ButtonTableHeader.setAlwaysAdjustAllColWidths(_alwaysAdjustAllColWidtshActionItem.isSelected());
+         if (_table != null && _alwaysAdjustAllColWidtshActionItem.isSelected())
 			{
-            ((ButtonTableHeader)_table.getTableHeader()).adoptAllColWidths(true);
+            ((ButtonTableHeader)_table.getTableHeader()).adjustAllColWidths(true);
 			}
 		}
 	}

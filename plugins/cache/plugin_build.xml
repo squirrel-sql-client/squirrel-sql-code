@@ -13,7 +13,7 @@
         <property name="optimize" value="off"/>
         <property name="deprecation" value="on"/>
 
-        <!-- adopt these lines to your need -->
+        <!-- adjust these lines to your need -->
        <!--
         <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/cache"/>
         <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist/lib"/>

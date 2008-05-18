@@ -5,7 +5,7 @@ Through code completion you can call join generation functions.
 These functions' names start with '#'. If you want to see which functions
 exist just type # and ctrl+space. Select the function you would like
 to try from the code completion popup list. Code completion will generate
-a template for the function call. Adopt the template to your needs and position
+a template for the function call. Adjust the template to your needs and position
 the cursor at the end of the template. Then hit ctrl+space again and see
 what happens.
 
@@ -15,7 +15,7 @@ INSTALLATION HINTS:
 
 The plugin requires JDK 1.4.x
 
-To build the plugin, edit the plugin-build.xml and adopt
+To build the plugin, edit the plugin-build.xml and adjust
 <property name="p_plugin.work_dir" ...>
 <property name="p_plugin.core_libs_dir" ...>
 <property name="p_plugin.dist_dir" ... >
