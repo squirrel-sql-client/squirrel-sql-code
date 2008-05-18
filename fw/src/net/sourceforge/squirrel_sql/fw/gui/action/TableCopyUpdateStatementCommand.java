@@ -95,7 +95,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
                buf.append(colDef.getColumnName()).append(getData(colDef, cellObj, StatType.UPDATE));
             }
 
-            buf.append("\n");
+            buf.append(" WHERE\n");
          }
          final StringSelection ss = new StringSelection(buf.toString());
          Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);

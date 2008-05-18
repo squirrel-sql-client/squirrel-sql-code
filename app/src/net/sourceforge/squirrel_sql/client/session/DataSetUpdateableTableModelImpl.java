@@ -13,6 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -153,6 +154,18 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    public boolean editModeIsForced()
    {
       return editModeForced;
+   }
+
+
+   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   {
+      return new IDataModelImplementationDetails()
+      {
+         public String getStatementSeparator()
+         {
+            return _session.getQueryTokenizer().getSQLStatementSeparator();
+         }
+      };
    }
 
    /**
