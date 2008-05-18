@@ -608,9 +608,9 @@ public class OsterTextControl extends JTextPane
                   if(null != re.change)
                   {
                      // Only if the text did really changed (null != re.change) Intervals
-                     // must be adopted.
-                     // If the text did not change there is nothing to adopt.
-                     adoptIntervalsToAdjustment(re);
+                     // must be adjusted.
+                     // If the text did not change there is nothing to adjust.
+                     adjustIntervalsToAdjustment(re);
                   }
 
                   colorStartPos = getColorStartPos(re);
@@ -790,7 +790,7 @@ public class OsterTextControl extends JTextPane
 			}
 		}
 
-      private void adoptIntervalsToAdjustment(RecolorEvent re)
+      private void adjustIntervalsToAdjustment(RecolorEvent re)
       {
          for (int i = 0; i < _currentLiteralAndCommentIntervals.size(); i++)
          {

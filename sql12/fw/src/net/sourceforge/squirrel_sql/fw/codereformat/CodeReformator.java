@@ -262,15 +262,15 @@ public class CodeReformator {
             String insBuf = insertList.get(0);
             String valsBuf = valuesList.get(0);
 
-            insert.append('(').append(adoptLength(insBuf, valsBuf));
-            values.append('(').append(adoptLength(valsBuf, insBuf));
+            insert.append('(').append(adjustLength(insBuf, valsBuf));
+            values.append('(').append(adjustLength(valsBuf, insBuf));
 
             for (int i = 1; i < insertList.size(); ++i) {
                 insBuf = insertList.get(i);
                 valsBuf = valuesList.get(i);
 
-                insert.append(',').append(adoptLength(insBuf, valsBuf));
-                values.append(',').append(adoptLength(valsBuf, insBuf));
+                insert.append(',').append(adjustLength(insBuf, valsBuf));
+                values.append(',').append(adjustLength(valsBuf, insBuf));
             }
             insert.append(") VALUES");
             values.append(')');
@@ -293,7 +293,7 @@ public class CodeReformator {
         return ret.toArray(new String[ret.size()]);
     }
 
-    private String adoptLength(String s1, String s2) {
+    private String adjustLength(String s1, String s2) {
         int max = Math.max(s1.length(), s2.length());
 
         if (s1.length() == max) {

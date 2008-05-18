@@ -97,19 +97,19 @@ public class CompleteCodeAction extends SquirrelAction
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
-         adoptCaret(completion);
+         adjustCaret(completion);
 		}
 		else
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
-         adoptCaret(completion);
+         adjustCaret(completion);
 		}
 
    }
 
-   private void adoptCaret(CodeCompletionInfo completion)
+   private void adjustCaret(CodeCompletionInfo completion)
    {
       if(0 < completion.getMoveCarretBackCount())
       {

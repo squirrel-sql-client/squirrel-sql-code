@@ -15,7 +15,7 @@ To build the plugin, edit the plugin-build.xml uncomment the
 <property name="p_plugin.work_dir" ...>
 <property name="p_plugin.core_libs_dir" ...>
 <property name="p_plugin.dist_dir" ... >
-and adopt them to your needs.
+and adjust them to your needs.
 
 When running SQuirrel check the plugins dialog (Menu Plugins --> Summary)
 to see if there is an entry named "SQL Entry Area Enhancements". If not you have
