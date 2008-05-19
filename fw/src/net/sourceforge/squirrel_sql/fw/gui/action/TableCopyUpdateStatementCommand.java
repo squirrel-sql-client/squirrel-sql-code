@@ -75,6 +75,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
 
             buf.append("SET ");
 
+            boolean firstCol = true;
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
 
@@ -85,8 +86,18 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
                {
                   colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
                }
+               else
+               {
+                  continue;
+               }
 
-               if (0 < colIdx)
+
+
+               if (firstCol)
+               {
+                  firstCol = false;
+               }
+               else
                {
                   buf.append(",");
                }

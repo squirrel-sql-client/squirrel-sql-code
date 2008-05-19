@@ -92,6 +92,7 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
                }
             }
 
+            boolean firstCol = true;
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
 
@@ -102,8 +103,16 @@ public class TableCopyWhereStatementCommand extends TableCopySqlPartCommandBase 
                {
                   colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
                }
+               else
+               {
+                  continue;
+               }
 
-               if (0 < colIdx)
+               if(firstCol)
+               {
+                  firstCol = false;
+               }
+               else
                {
                   buf.append(" AND ");
                }

@@ -80,6 +80,7 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
 
+            boolean firstCol = true;
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
 
@@ -90,16 +91,21 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
                {
                   colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
                }
-
-               if (0 < colIdx)
+               else
                {
-                  colNames.append(",");
-                  vals.append(",");
+                  continue;
+               }
+
+               if (firstCol)
+               {
+                  firstCol = false;
+                  colNames.append("INTO (");
+                  vals.append("(");
                }
                else
                {
-                  colNames.append("INTO (");
-                  vals.append("(");
+                  colNames.append(",");
+                  vals.append(",");
                }
 
                Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
