@@ -49,7 +49,7 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_WHERE_STATEMENT = 4;
 		int COPY_UPDATE_STATEMENT = 5;
       int COPY_INSERT_STATEMENT = 6;
-		int COPY_EXPORT_CSV = 7;
+		int EXPORT_CSV = 7;
 		int SELECT_ALL = 8;
       int ADJUST_ALL_COL_WIDTHS_ACTION = 9;
       int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
@@ -79,10 +79,10 @@ public class TablePopupMenu extends BasePopupMenu
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
    private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
 
-    protected MakeEditableAction _makeEditable = new MakeEditableAction();
+   private MakeEditableAction _makeEditable = new MakeEditableAction();
 	private UndoMakeEditableAction _undoMakeEditable = new UndoMakeEditableAction();
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
-	protected InsertRowAction _insertRow = new InsertRowAction();
+	private InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
 	private PrintAction _print = new PrintAction();
 
@@ -122,7 +122,8 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
 		_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
-		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
+      addSeparator();
+		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
       _menuItems[IOptionTypes.ADJUST_ALL_COL_WIDTHS_ACTION] = add(_adjustAllColWidthsAction);
 
