@@ -307,7 +307,7 @@ public class ResultSetReader
                case Types.INTEGER:
                case Types.SMALLINT:
                case Types.TINYINT:
-                  row[i] = readInt(idx);
+                  row[i] = readInt(idx, columnTypeName);
                   break;
 
                // TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
@@ -431,19 +431,47 @@ public class ResultSetReader
       return result;
    }
    
-   private Object readInt(int columnIdx) throws SQLException {
+   /**
+	 * Reads the specified column from the resultset field.
+	 * 
+	 * @param columnIdx
+	 *           the index of the column
+	 * @param columnTypeName
+	 *           the type name of the column according to the ResultSetMetaData
+	 * @return an appropriate object for the value that was read
+	 * @throws SQLException
+	 *            if an exception occurs.
+	 */
+   private Object readInt(int columnIdx, String columnTypeName) throws SQLException {
       Object result = _rs.getObject(columnIdx);
       if (_rs.wasNull()) {
-         result = null;
+         return null;
       }
-      if (result != null && !(result instanceof Integer)) {
-         if (result instanceof Number) {
-            result = Integer.valueOf(((Number) result).intValue());
-         } else {
-            result = new Integer(result.toString());
-         }
+      
+      /*
+		 * Bug 1968270 (Displaying unsigned INT as signed INT in column?)
+		 * 
+		 * If we are working with a signed integer, then it should be ok to store in a Java integer which is 
+		 * always signed.  However, if we are working with an unsigned integer type, Java doesn't have this so 
+		 * use a long instead. Or if the type of the object is Long then use that instead of Integer.
+		 */
+      if (result instanceof Long) {
+      	return result;
       }
-      return result;
+      if ("INTEGER UNSIGNED".equalsIgnoreCase(columnTypeName)) {
+      	return Long.valueOf(result.toString());
+      }
+      
+      if (result instanceof Integer) {
+      	return result;
+      }
+      if (result instanceof Number) {
+         	Number resultNumber = (Number)result;
+         	int intValue = resultNumber.intValue();
+            return Integer.valueOf( intValue );
+      } 
+      
+      return Integer.valueOf(result.toString());
    }
    
    private Object readFloat(int columnIdx) throws SQLException {
