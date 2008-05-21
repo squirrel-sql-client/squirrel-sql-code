@@ -374,10 +374,27 @@ public class DataTypeInteger extends BaseDataTypeComponent
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
 		
-		int data = rs.getInt(index);
-		if (rs.wasNull())
-			return null;
-		else return Integer.valueOf(data);
+		Object result = null;
+		
+		/*
+		 * Bug 1968270 (Displaying unsigned INT as signed INT in column?)
+		 * 
+		 * If we are working with a signed integer, then it should be ok to store in a Java integer which is 
+		 * always signed.  However, if we are working with an unsigned integer type, Java doesn't have this so 
+		 * use a long instead. 
+		 */
+		if (_isSigned) {
+			int data = rs.getInt(index);
+			if (!rs.wasNull()) {
+				result = Integer.valueOf(data);
+			}
+		} else {
+			long data = rs.getLong(index);
+			if (!rs.wasNull()) {
+				result = Long.valueOf(data);
+			}
+		}
+		return result;
 	}
 
 	/**

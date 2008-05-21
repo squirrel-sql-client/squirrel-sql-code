@@ -74,6 +74,8 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+1968270: Displaying unsigned INT as signed INT in column
+
 1845987: PostgreSQL interval types are not displayed
 
 1840266: Create Table Script sets varchar columns to 8000
