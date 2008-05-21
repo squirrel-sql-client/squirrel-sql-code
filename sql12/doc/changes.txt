@@ -8,6 +8,8 @@ Bug-Fixes:
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+1968270: Displaying unsigned INT as signed INT in column
+
 1858937: Encoding parameter in desktop file wrong
 
 1830649: Focus Loss
