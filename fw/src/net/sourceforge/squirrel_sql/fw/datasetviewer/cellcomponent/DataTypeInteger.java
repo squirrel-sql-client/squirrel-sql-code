@@ -192,14 +192,22 @@ public class DataTypeInteger extends BaseDataTypeComponent
 			return null;
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = new Integer(value);
-			return obj;
+		try {			
+			/*
+			 * Bug 1968270 (Displaying unsigned INT as signed INT in column?)
+			 * 
+			 * If we are working with a signed integer, then it should be ok to store in a Java integer which is 
+			 * always signed.  However, if we are working with an unsigned integer type, Java doesn't have this 
+			 * so use a long instead. 
+			 */
+			if (originalValue instanceof Long) {
+				return Long.valueOf(value);
+			} else {
+				return Integer.valueOf(value);
+			}
 		}
 		catch (Exception e) {
 			messageBuffer.append(e.toString()+"\n");
-			//?? do we need the message also, or is it automatically part of the toString()?
-			//messageBuffer.append(e.getMessage());
 			return null;
 		}
 	}
@@ -428,7 +436,11 @@ public class DataTypeInteger extends BaseDataTypeComponent
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
-			pstmt.setInt(position, ((Integer)value).intValue());
+			if (value instanceof Long) {
+				pstmt.setLong(position, (Long)value);
+			} else {
+				pstmt.setInt(position, (Integer)value);
+			}
 		}
 	}
 	
