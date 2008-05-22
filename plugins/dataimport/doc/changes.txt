@@ -1,6 +1,13 @@
 Changes for Dataimport plugin
 =============================
 
+
+0.04
+====
+Bug-Fixes:
+ - 1968807: Unsigned INT problem with IMPORT FILE functionality
+
+
 0.03
 ====
 

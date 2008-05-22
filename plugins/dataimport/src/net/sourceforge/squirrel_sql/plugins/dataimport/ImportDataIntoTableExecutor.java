@@ -242,7 +242,7 @@ public class ImportDataIntoTableExecutor {
     	}
 	}
 
-	private void bindFixedColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, UnsupportedFormatException {
+	private void bindFixedColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, IOException, UnsupportedFormatException {
     	String value = getFixedValue(column);
     	Date d = null;
     	switch (column.getDataType()) {
@@ -255,11 +255,7 @@ public class ImportDataIntoTableExecutor {
     		break;
     	case Types.INTEGER:
     	case Types.NUMERIC:
-    		try {
-    			stmt.setInt(index, Integer.parseInt(value));
-    		} catch (NumberFormatException nfe) {
-    			throw new UnsupportedFormatException();
-    		}
+    		setIntOrUnsignedInt(stmt, index, column);
     		break;
     	case Types.DATE:
     		d = DateUtils.parseSQLFormats(value);
@@ -285,26 +281,56 @@ public class ImportDataIntoTableExecutor {
     }
     
     private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, UnsupportedFormatException, IOException {
-    	switch (column.getDataType()) {
+    	int mappedColumn = getMappedColumn(column);
+		switch (column.getDataType()) {
     	case Types.BIGINT:
-    		stmt.setLong(index, importer.getLong(getMappedColumn(column)));
+    		stmt.setLong(index, importer.getLong(mappedColumn));
     		break;
     	case Types.INTEGER:
     	case Types.NUMERIC:
-    		stmt.setInt(index, importer.getInt(getMappedColumn(column)));
+    		setIntOrUnsignedInt(stmt, index, column);
     		break;
     	case Types.DATE:
-    		stmt.setDate(index, new java.sql.Date(importer.getDate(getMappedColumn(column)).getTime()));
+    		stmt.setDate(index, new java.sql.Date(importer.getDate(mappedColumn).getTime()));
     		break;
     	case Types.TIMESTAMP:
-    		stmt.setTimestamp(index, new java.sql.Timestamp(importer.getDate(getMappedColumn(column)).getTime()));
+    		stmt.setTimestamp(index, new java.sql.Timestamp(importer.getDate(mappedColumn).getTime()));
     		break;
     	case Types.TIME:
-    		stmt.setTime(index, new java.sql.Time(importer.getDate(getMappedColumn(column)).getTime()));
+    		stmt.setTime(index, new java.sql.Time(importer.getDate(mappedColumn).getTime()));
     		break;
     	default:
-    		stmt.setString(index, importer.getString(getMappedColumn(column)));
+    		stmt.setString(index, importer.getString(mappedColumn));
     	}
+    }
+    
+	/*
+	 * 1968807: Unsigned INT problem with IMPORT FILE functionality
+	 * 
+	 * If we are working with a signed integer, then it should be ok to store in a Java integer which is 
+	 * always signed.  However, if we are working with an unsigned integer type, Java doesn't have this so 
+	 * use a long instead.  
+	 */    
+    private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column) 
+    	throws SQLException, UnsupportedFormatException, IOException 
+    {
+   	int mappedColumn = getMappedColumn(column);
+  		String columnTypeName = column.getTypeName(); 
+ 		if (columnTypeName != null 
+ 				&& (columnTypeName.endsWith("UNSIGNED") || columnTypeName.endsWith("unsigned"))) 
+ 		{
+ 			stmt.setLong(index, importer.getLong(mappedColumn));
+ 		}
+ 		
+ 		try {
+ 			stmt.setInt(index, importer.getInt(mappedColumn));
+ 		} catch (UnsupportedFormatException e) {
+ 			log.error("bindColumn: integer storage overflowed.  Exception was "+e.getMessage()+
+ 						 ".  Re-trying as a long.", e);
+ 			/* try it as a long in case the database driver didn't correctly identify an unsigned field */
+ 			stmt.setLong(index, importer.getLong(mappedColumn));
+ 		}
+
     }
     
     private int getMappedColumn(TableColumnInfo column) {
