@@ -163,7 +163,7 @@ public class CSVFileImporter implements IFileImporter {
 		try {
 			return Integer.parseInt(reader.get(column));
 		} catch (NumberFormatException nfe) {
-			throw new UnsupportedFormatException();
+			throw new UnsupportedFormatException(nfe);
 		}
 	}
 	

@@ -63,7 +63,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.03";
+		return "0.04";
 	}
 
 	/**
