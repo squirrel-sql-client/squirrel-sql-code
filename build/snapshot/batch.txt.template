@@ -1,0 +1,4 @@
+cd uploads
+put @OTHER_INSTALL_JAR@
+put @MACOSX_INSTALL_JAR@
+put @SOURCE_ZIP@
