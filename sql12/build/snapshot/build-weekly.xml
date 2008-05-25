@@ -35,27 +35,30 @@
 			    timezone="GMT"/>
 		</tstamp>
 		
-	<!-- 
-	We decided to drop the version from the snapshot build. So snapshot builds
-	have a date/time stamp in their version. However, if we aren't configured to 
-        replace the version file with a template that accepts the snapshot, then use
-        the appversion property to set squirrel.version
-	-->
-        <condition property="squirrel.version" 
-        		   value="Snapshot-${touch.time}" 
-        	       else = "${appversion}">
-        	
-            <istrue value="${replace.version}"/>
-        
-        </condition>
+        	<!-- 
+        	We decided to drop the version from the snapshot build. So snapshot builds
+        	have a date/time stamp in their version. However, if we aren't configured to 
+                replace the version file with a template that accepts the snapshot, then use
+                the appversion property to set squirrel.version
+        	-->
+                <condition property="squirrel.version" 
+                		   value="Snapshot-${touch.time}" 
+                	       else = "${appversion}">
+                	
+                    <istrue value="${replace.version}"/>
+                
+                </condition>
 
-		<!--
-		<property name="install.jar.file.dist" 
-		          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
-		          -->
+                <property name="other.install.jar.file"
+                          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+
+                <property name="macosx.install.jar.file"
+                          value="${dist.dir}/${name}-${squirrel.version}-MacOSX-install.jar"/>
+		
 		<property name="source.zip.file"
 		          value="${dist.dir}/${name}-${squirrel.version}-src.zip"/>
 
+		
 		<property name="release.dir" value="${dist.dir}/release"/>
 		<mkdir dir="${release.dir}"/>
 
@@ -271,13 +274,51 @@
 		</ant>
 	</target>
 	
-	<!-- Launches the application for manual build verification testing -->
+	<!-- Launches the application for manual build verification testing. JAVA_HOME is the environment
+	     variable that the launch.file uses to determine which JVM to use -->
 	<target name="launchsquirrel">
-		<exec executable="${launch.file}"/>
+		<exec executable="JAVA_HOME=${launch.jvm} ${launch.file}"/>
 	</target>	
 		
-	<!-- Transfers the update site files to the remote download website -->
-	<target name="publishUpdateSite" depends="init">
+	<!-- Creates batch.txt from the template file, filtering in the actual names of the files to be 
+	     uploaded using sftp to SourceForge.  Then runs sftp feeding it the batch file to transfer the 
+	     installers and source archives to SourceForge using sftp. -->
+	<target name="uploadInstallersAndSource" depends="init">
+                <copy file="batch.txt.template" toFile="${dist.dir}/batch.txt" overwrite="true">
+                        <filterset>
+                                <filter token="OTHER_INSTALL_JAR" 
+                                	value="${other.install.jar.file}"/>
+                                <filter token="MACOSX_INSTALL_JAR" 
+                                        value="${macosx.install.jar.file}"/>
+                                <filter token="SOURCE_ZIP" 
+                                        value="${source.zip.file}"/>                        	
+                        </filterset>
+                </copy> 
+                
+		<exec executable="sftp" failonerror="true" failifexecutionfails="true" 
+		      logerror="true" output="sftp.log" >
+			
+		        <arg value="-b"/>
+			<arg value="${dist.dir}/batch.txt"/>
+			<arg value="${sftp.username}@frs.sourceforge.net"/>
+		</exec>
+	</target>
+	
+	
+	<!-- Transfers the update site artifact files to the remote download website.  This has to do
+	     alot more work since it deals with many files in multiple sub-directories 
+	-->
+	<target name="publishUpdateSiteWithFtp" depends="init">
+	              <!-- TODO -->
+	</target>
+
+	<!-- Transfers the update site files to the remote download website.  This is no longer used as SF 
+	     doesn't want us to use the web-space to distribute updated software.  It would represent far less
+	     bandwidth consumption, but would not go through their File Release System (which is painful to 
+	     use and doesn't allow direct linking - making it difficult to use for the automated update 
+	     feature).  We have since switched to using a commercially hosted site that allows this, with the
+	     hope that someday SF will reconsider this policy. -->
+	<target name="publishUpdateSiteWithScp" depends="init">
 		<!-- zip up the update site files into a single file for tranferring -->
 		<jar destfile="${dist.dir}/release.zip"
 		      basedir="${release.dir}"/>
@@ -294,8 +335,6 @@
 		     todir="${remoteUpdateSiteUsername}@${remoteUpdateSiteHostname}:${remoteUpdateSiteDir}"
                      password="${remoteUpdateSitePassword}"
 		     trust="true">
-
-		     
 		</scp>
 		
 		<!-- extract the zip using sshexec -->
@@ -356,6 +395,10 @@
 			<fileset dir="${bv.install.dir}" defaultexcludes="no">
 			</fileset>
 		</delete>		
+		
+		<!-- TODO: I just noticed that the value for bv.install.dir (/tmp/squirreltest) is hard-coded
+		           in auto.install.file (autoinstall.xml).  So, we need to setup a template 
+		           (autoinstall.xml.template) that gets the value filtered in. -->
 		
 		<!-- failonerror is false for now because IzPack 3.9.0 has an issue 
 		     processing the shortcut panel (Bug #8912 NPE in Automation) but
@@ -475,7 +518,13 @@
 		
 		<antcall target="releaseNotes"/>
 		
-		<antcall target="publishUpdateSite"/>
+		<antcall target="uploadInstallersAndSource"/>
+		
+		<!-- This is commented out until new ftp-type task is implemented.  We are
+		     switching to a commercial (i.e. non-free) server that will allow us to 
+		     store files in web-space, for direct download and simple upload via ftp/scp. 
+		-->
+		<!-- <antcall target="publishUpdateSite"/> -->
 	</target>
 		
 </project>
