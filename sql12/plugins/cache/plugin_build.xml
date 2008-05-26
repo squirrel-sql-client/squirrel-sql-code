@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    This is an Apache Ant build file to build the SQL script plugin
+    This is an Apache Ant build file to build the Cache plugin
     for distribution.
 -->
 <project name="plugin-cache" default="build" basedir=".">
@@ -12,8 +12,9 @@
         <property name="debug" value="on"/>
         <property name="optimize" value="off"/>
         <property name="deprecation" value="on"/>
+        <property name="targetVM" value="1.5"/>
 
-        <!-- adjust these lines to your need -->
+        <!-- adapt these lines to your need -->
        <!--
         <property name="p_plugin.work_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/cache"/>
         <property name="p_plugin.core_libs_dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist/lib"/>
@@ -50,7 +51,9 @@
                 deprecation="${deprecation}"
                 debug="${debug}"
                 optimize="${optimize}"
-                includeJavaRuntime="yes">
+                includeJavaRuntime="yes"
+                source="${targetVM}"
+                target="${targetVM}">
             <classpath>
                <fileset dir="lib">
                   <include name="**/*.*"/>
@@ -104,9 +107,6 @@
 
        <!--                                                                      -->
        <!--**********************************************************************-->
-
-
-
 
         <jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
             <fileset dir=".">
