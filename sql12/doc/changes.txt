@@ -26,6 +26,9 @@ Enhancements:
 Data Import Plugin: It now warns the user when importing data into an existing table, that it's current data 
                     will be truncated first.
 
+DBCopy Plugin: 
+ - Added support for mapping the DISTINCT source column type for copying data from PostgreSQL
+
 DB2 Plugin: Lars Heller provided a patch to add support for XML column types in SQuirreL via the 
             DB2 Plugin (tested against DB2 v9.5 LUW)
 
