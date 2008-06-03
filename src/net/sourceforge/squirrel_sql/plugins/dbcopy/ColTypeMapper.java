@@ -73,6 +73,9 @@ public class ColTypeMapper {
         // column type name to find a type that isn't 1111.        
         colJdbcType = DBUtil.replaceOtherDataType(colInfo, sourceSession);
         
+        // If the source column is DISTINCT and the session is PostgreSQL, try to get the underlying type.
+        colJdbcType = DBUtil.replaceDistinctDataType(colInfo, sourceSession);
+        
         // Oracle can only store DECIMAL type numbers.  Since regular non-decimal
         // numbers appear as "decimal", Oracle's decimal numbers can be rather 
         // large compared to other databases (precision up to 38).  Other 

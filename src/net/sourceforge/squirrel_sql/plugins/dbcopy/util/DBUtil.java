@@ -705,6 +705,50 @@ public class DBUtil extends I18NBaseObject {
 		return colJdbcType;
 	}
     
+	/**
+	 * This is postgresql specific.  If the session is pg, and the colInfo has a DISTINCT type 
+	 * (Java SQl Type 2001)then this will query the information_schema, looking for the native type name of 
+	 * the column which backs the DISINCT type.  A distinct type is like a type alias - it is defined in SQL-99
+	 * as a UDT. 
+	 * 
+	 * @param colInfo the TableColumnInfo representing the column.
+	 * @param session the session to the database that the column is defined in.
+	 * @return the type code of the matching type, or if not found, the type code is taken from the specified 
+	 * colInfo
+	 */
+	public static int replaceDistinctDataType(TableColumnInfo colInfo, ISession session) {
+		int colJdbcType = colInfo.getDataType();
+		if (colJdbcType == java.sql.Types.DISTINCT && DialectFactory.isPostgreSQL(session.getMetaData())) {
+			Connection con = session.getSQLConnection().getConnection();
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				String sql = 
+					"SELECT data_type " +
+					"FROM information_schema.columns " +
+					"where column_name = ? ";
+				if (colInfo.getSchemaName() != null) {
+					sql += " and table_schema = ? ";
+				}
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, colInfo.getColumnName());
+				if (colInfo.getSchemaName() != null) {
+					pstmt.setString(2, colInfo.getSchemaName());
+				}
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
+					String nativeTypeName = rs.getString(1);
+					colJdbcType = JDBCTypeMapper.getJdbcType(nativeTypeName.toUpperCase(), colJdbcType);
+				}
+			} catch (SQLException e) {
+				log.error("replaceDistinctDataType: Unexpected exception - "+e, e);
+			} finally {
+				SQLUtilities.closeStatement(pstmt);
+			}
+		}
+		return colJdbcType;
+	}
+	
     /**
 		 * Reads the value from the specified ResultSet at column index index, and based on the type, calls the
 		 * appropriate setXXX method on ps with the value obtained.
