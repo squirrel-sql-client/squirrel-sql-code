@@ -61,7 +61,7 @@ public class ScriptSybaseASEViewAction extends SquirrelAction
                 s_log.debug("Running SQL: "+sql);
                 s_log.debug("Bind var value is: "+ti.getSimpleName());
             }
-            ResultSet res = stat.executeQuery(sql);
+            ResultSet res = stat.executeQuery();
 
             while(res.next())
             {
