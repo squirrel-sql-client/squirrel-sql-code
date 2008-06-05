@@ -1,4 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
+
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
+import java.awt.event.MouseEvent;
 /*
  * Copyright (C) 2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -18,10 +22,16 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public interface IAliasesList
+public interface IAliasesList extends IBaseList
 {
 	/**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
 	public SQLAlias getSelectedAlias();
+
+   void sortAliases();
+
+   void requestFocus();
+
+   void deleteSelected();
 }

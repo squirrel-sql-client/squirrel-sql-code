@@ -17,15 +17,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.ListDataEvent;
@@ -49,10 +44,9 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 	{
 		ToolBar getToolBar();
 		BasePopupMenu getPopupMenu();
-		JList getList();
+		IBaseList getList();
 		String getWindowTitle();
 		ICommand getDoubleClickCommand();
-		void enableDisableActions();
 		SquirrelPreferences getPreferences();
 	}
 
@@ -123,37 +117,18 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 	 *
 	 * @param	evt	 The mouse event being processed.
 	 */
-	private void mousePress(MouseEvent evt)
+	private void onMousePress(MouseEvent evt)
 	{
 		if (evt.isPopupTrigger())
 		{
 			
 			// If the user wants to select for Right mouse clicks then change the selection before popup appears
-			if (_uiFactory.getPreferences().getSelectOnRightMouseClick()) {
-				JList list = _uiFactory.getList();
-				int selectEventListIndex = list.locationToIndex(evt.getPoint());
-				if (list.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION) {
-					// Only a single selection can be made at a time.
-					int selectedIndex = list.getSelectedIndex();
-					if (selectedIndex != selectEventListIndex) {
-						_uiFactory.getList().setSelectedIndex(selectEventListIndex);
-					}
-				} else {
-					// More than one selection is allowed - check to see if we should change the selection
-					int[] selectedIndices = list.getSelectedIndices();
-					boolean alreadySelected = false;
-					for (int selectedIndex : selectedIndices) {
-						if (selectedIndex == selectEventListIndex) {
-							alreadySelected = true;
-						}
-					}
-					if (!alreadySelected) {
-						_uiFactory.getList().setSelectedIndex(selectEventListIndex);
-					}
-				}
-			}
-			
-			if (_popupMenu == null)
+         if (_uiFactory.getPreferences().getSelectOnRightMouseClick())
+         {
+            _uiFactory.getList().selectListEntryAtPoint(evt.getPoint());
+         }
+
+         if (_popupMenu == null)
 			{
 				_popupMenu = _uiFactory.getPopupMenu();
 			}
@@ -161,7 +136,29 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 		}
 	}
 
-	private void privateResize()
+   private void onMouseClicked(MouseEvent evt)
+   {
+      if (evt.getClickCount() == 2)
+      {
+         ICommand cmd = _uiFactory.getDoubleClickCommand();
+         if (cmd != null)
+         {
+            try
+            {
+               cmd.execute();
+            }
+            catch (BaseException ex)
+            {
+                      // i18n[BaseListInternalFrame.error.execdoubleclick=Error occured executing doubleclick event]
+               s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
+            }
+         }
+      }
+   }
+
+
+
+   private void privateResize()
 	{
 		if (!_hasBeenSized)
 		{
@@ -200,77 +197,31 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 		setToolBar(_uiFactory.getToolBar());
 
 		// The main list for window.
-		final JList list = _uiFactory.getList();
+		final IBaseList list = _uiFactory.getList();
 
-		// Allow list to scroll.
-		final JScrollPane sp = new JScrollPane();
-		sp.setViewportView(list);
-		sp.setPreferredSize(new Dimension(100, 100));
 
 		// List in the centre of the window.
-		content.add(sp, BorderLayout.CENTER);
+		content.add(list.getComponent(), BorderLayout.CENTER);
 
 		// Add mouse listener for displaying popup menu.
 		list.addMouseListener(new MouseAdapter()
 		{
 			public void mousePressed(MouseEvent evt)
 			{
-				mousePress(evt);
+				onMousePress(evt);
 			}
 			public void mouseReleased(MouseEvent evt)
 			{
-				mousePress(evt);
+				onMousePress(evt);
 			}
+
+         public void mouseClicked(MouseEvent evt)
+         {
+            onMouseClicked(evt);
+         }
+
 		});
 
-		// Add a listener to handle doubleclick events in the list.
-		list.addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent evt)
-			{
-				if (evt.getClickCount() == 2)
-				{
-					ICommand cmd = _uiFactory.getDoubleClickCommand();
-					if (cmd != null)
-					{
-						try
-						{
-							cmd.execute();
-						}
-						catch (BaseException ex)
-						{
-                            // i18n[BaseListInternalFrame.error.execdoubleclick=Error occured executing doubleclick event]
-							s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
-						}
-					}
-				}
-			}
-		});
-
-		// Add listener to listen for items added/removed from list.
-		list.getModel().addListDataListener(new ListDataListener()
-		{
-			public void intervalAdded(ListDataEvent evt)
-			{
-				list.setSelectedIndex(evt.getIndex0()); // select the one just added.
-				_uiFactory.enableDisableActions();
-			}
-			public void intervalRemoved(ListDataEvent evt)
-			{
-				int nextIdx = evt.getIndex0();
-				int lastIdx = list.getModel().getSize() - 1;
-				if (nextIdx > lastIdx)
-				{
-					nextIdx = lastIdx;
-				}
-				list.setSelectedIndex(nextIdx);
-				_uiFactory.enableDisableActions();
-			}
-			public void contentsChanged(ListDataEvent evt)
-			{
-				// Unused.
-			}
-		});
 
 		// When window opened ensure it is wide enough to display the toolbar.
 		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get

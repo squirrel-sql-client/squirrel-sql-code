@@ -22,14 +22,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -118,7 +111,7 @@ public abstract class Resources
 
 
 
-	public JMenuItem addToPopupMenu(Action action, JPopupMenu menu)
+	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu)
 		throws MissingResourceException
 	{
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
@@ -158,7 +151,16 @@ public abstract class Resources
 		return item;
 	}
 
-	public JMenuItem addToMenu(Action action, JMenu menu)
+   public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JPopupMenu popupMenu)
+   {
+      final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
+      popupMenu.add(item);
+      configureMenuItem(action, item);
+      return item;
+   }
+
+
+   public JMenuItem addToMenu(Action action, JMenu menu)
 		throws MissingResourceException
 	{
 		final JMenuItem item = menu.add(action);

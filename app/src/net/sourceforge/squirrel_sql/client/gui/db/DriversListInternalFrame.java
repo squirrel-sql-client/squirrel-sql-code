@@ -79,9 +79,6 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 		_uiFactory.setDriversListInternalFrame(this);
 
-		// Enable/disable actions depending on whether an item is selected in
-		// the list.
-		_uiFactory.enableDisableActions();
 
       addVetoableChangeListener(new VetoableChangeListener()
       {
@@ -122,17 +119,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
    }
 
 
-   /**
-	 * Retrieve the index of the currently selected driver.
-	 *
-	 * @return	index of currently selected driver.
-	 */
-	public int getSelectedIndex()
-	{
-		return _uiFactory._driversList.getSelectedIndex();
-	}
-
-	private final static class UserInterfaceFactory
+   private final static class UserInterfaceFactory
 		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
@@ -178,7 +165,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			return _pm;
 		}
 
-		public JList getList()
+		public IBaseList getList()
 		{
 			return _driversList;
 		}
@@ -199,34 +186,6 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			return cmd;
 		}
 
-		/**
-		 * Enable/disable actions depending on whether an item is selected
-		 * in list.
-		 */
-		public void enableDisableActions()
-		{
-			boolean enable = false;
-			try
-			{
-				enable = _driversList.getSelectedDriver() != null;
-			}
-			catch (Exception ignore)
-			{
-				// Getting an error in the JDK.
-				// Exception occurred during event dispatching:
-				// java.lang.ArrayIndexOutOfBoundsException: 0 >= 0
-				// at java.util.Vector.elementAt(Vector.java:417)
-				// at javax.swing.DefaultListModel.getElementAt(DefaultListModel.java:70)
-				// at javax.swing.JList.getSelectedValue(JList.java:1397)
-				// at net.sourceforge.squirrel_sql.client.gui.mainframe.DriversList.getSelectedDriver(DriversList.java:77)
-			}
-
-			final ActionCollection actions = _app.getActionCollection();
-			actions.get(CopyDriverAction.class).setEnabled(enable);
-			actions.get(DeleteDriverAction.class).setEnabled(enable);
-			actions.get(ModifyDriverAction.class).setEnabled(enable);
-            actions.get(ShowDriverWebsiteAction.class).setEnabled(enable);
-		}
 
 		void setDriversListInternalFrame(DriversListInternalFrame tw)
 		{

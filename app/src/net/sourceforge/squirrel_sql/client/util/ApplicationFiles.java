@@ -128,6 +128,12 @@ public class ApplicationFiles
 		return new File(_userSettingsDir + File.separator + "SQLAliases23.xml");
 	}
 
+   public File getDatabaseAliasesTreeStructureFile()
+   {
+      return new File(_userSettingsDir + File.separator + "SQLAliases23_treeStructure.xml");
+   }
+
+
    public File getDatabaseAliasesFile_before_version_2_3()
    {
       return new File(_userSettingsDir + File.separator + "SQLAliases.xml");

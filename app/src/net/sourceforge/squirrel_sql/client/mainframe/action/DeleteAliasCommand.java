@@ -41,7 +41,7 @@ public class DeleteAliasCommand implements ICommand
       StringManagerFactory.getStringManager(DeleteAliasCommand.class);
 
    /** Application API. */
-   private final IApplication _app;
+   private  IApplication _app;
 
    /** Owner of the maintenance dialog. */
    private Frame _frame;
@@ -62,19 +62,19 @@ public class DeleteAliasCommand implements ICommand
     */
    public DeleteAliasCommand(IApplication app, Frame frame, SQLAlias sqlAlias)
    {
-      super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("Null IApplication passed");
-      }
-      if (sqlAlias == null)
-      {
-         throw new IllegalArgumentException("Null ISQLAlias passed");
-      }
-
-      _app = app;
-      _frame = frame;
-      _sqlAlias = sqlAlias;
+//      super();
+//      if (app == null)
+//      {
+//         throw new IllegalArgumentException("Null IApplication passed");
+//      }
+//      if (sqlAlias == null)
+//      {
+//         throw new IllegalArgumentException("Null ISQLAlias passed");
+//      }
+//
+//      _app = app;
+//      _frame = frame;
+//      _sqlAlias = sqlAlias;
    }
 
    /**
@@ -82,9 +82,9 @@ public class DeleteAliasCommand implements ICommand
     */
    public void execute()
    {
-      if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteAliasCommand.confirm", _sqlAlias.getName())))
-      {
-         _app.getDataCache().removeAlias(_sqlAlias);
-      }
+//      if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteAliasCommand.confirm", _sqlAlias.getName())))
+//      {
+//         _app.getDataCache().removeAlias(_sqlAlias);
+//      }
    }
 }

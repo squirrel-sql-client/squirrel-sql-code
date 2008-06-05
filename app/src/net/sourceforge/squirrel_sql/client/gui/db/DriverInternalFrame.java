@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -255,10 +254,10 @@ public class DriverInternalFrame extends BaseInternalFrame
 			{
 				_app.getDataCache().refreshDriver(_sqlDriver, _app.getMessageHandler());
 			}
-            _app.savePreferences(DRIVER_DEFINITIONS);
-            _app.savePreferences(GLOBAL_PREFERENCES);
-			dispose();
-		}
+
+         _app.savePreferences(DRIVER_DEFINITIONS);
+         dispose();
+      }
 		catch (Throwable th)
 		{
 			displayErrorMessage(th);

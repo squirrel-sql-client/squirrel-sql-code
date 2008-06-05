@@ -37,15 +37,8 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectToAliasAction extends SquirrelAction
+public class ConnectToAliasAction extends AliasAction
 {
-   /** Logger for this class. */
-   private static ILogger s_log =
-      LoggerController.createLogger(ConnectToAliasAction.class);
-
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ConnectToAliasAction.class);
 
    /**
     * List of all the users aliases.
@@ -72,22 +65,11 @@ public class ConnectToAliasAction extends SquirrelAction
     */
    public void actionPerformed(ActionEvent evt)
    {
-      final IApplication app = getApplication();
-      final AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
-      tw.moveToFront();
-      try
-      {
-         tw.setSelected(true);
-      }
-      catch (PropertyVetoException ex)
-      {
-            // i18n[ConnectToAliasAction.error.selectingwindow=Error selecting window]
-         s_log.error(s_stringMgr.getString("ConnectToAliasAction.error.selectingwindow"), ex);
-      }
+      moveToFrontAndSelectAliasFrame();      
       final SQLAlias alias = _aliases.getSelectedAlias();
       if (alias != null)
       {
-         new ConnectToAliasCommand(app, alias).execute();
+         new ConnectToAliasCommand(getApplication(), alias).execute();
       }
    }
 }

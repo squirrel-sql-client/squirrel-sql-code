@@ -35,22 +35,15 @@ import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ModifyAliasAction extends SquirrelAction
+public class ModifyAliasAction extends AliasAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ModifyAliasAction.class);
 
-	/**
+   /**
 	 * List of all the users aliases.
 	 */
 	private IAliasesList _aliases;
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ModifyAliasAction.class);    
-    
-	/**
+   /**
 	 * Ctor specifying the list of aliases.
 	 *
 	 * @param	app		Application API.
@@ -78,18 +71,7 @@ public class ModifyAliasAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		IApplication app = getApplication();
-		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
-		tw.moveToFront();
-		try
-		{
-			tw.setSelected(true);
-		}
-		catch (PropertyVetoException ex)
-		{
-            //i18n[ModifyAliasAction.error.selectingwindow=Error selecting window]
-			s_log.error(s_stringMgr.getString("ModifyAliasAction.error.selectingwindow"), ex);
-		}
+      moveToFrontAndSelectAliasFrame();
 		final ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null)
 		{
