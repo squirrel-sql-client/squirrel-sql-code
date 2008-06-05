@@ -55,9 +55,7 @@ public class SquirrelPreferences implements Serializable
    public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
-      String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
       String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
-      String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
       String FIRST_RUN = "firstRun";
       String JDBC_DEBUG_TYPE = "jdbcDebugtype";
       String LOGIN_TIMEOUT = "loginTimeout";
@@ -639,65 +637,7 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _proxySettings);
 	}
 
-	/**
-	 * Retrieve the index of the selected alias in the aliases window.
-	 *
-	 * @return	the index of the selected alias in the aliases window
-	 * 			or -1 if none selected.
-	 */
-	public int getAliasesSelectedIndex()
-	{
-		return _aliasesSelectedIndex;
-	}
-
-	/**
-	 * Set the index of the selected alias.
-	 *
-	 * @param	idx	the index of the selected alias in the aliases window
-	 * 				or -1 if none selected.
-	 */
-	public synchronized void setAliasesSelectedIndex(int idx)
-	{
-		if (idx != _aliasesSelectedIndex)
-		{
-			final int oldValue = _aliasesSelectedIndex;
-			_aliasesSelectedIndex = idx;
-			getPropertyChangeReporter().firePropertyChange(
-										IPropertyNames.ALIASES_SELECTED_INDEX,
-										oldValue, _aliasesSelectedIndex);
-		}
-	}
-
-	/**
-	 * Retrieve the index of the selected driver in the drivers window.
-	 *
-	 * @return	the index of the selected driver in the drivers window
-	 * 			or -1 if none selected.
-	 */
-	public int getDriversSelectedIndex()
-	{
-		return _driversSelectedIndex;
-	}
-
-	/**
-	 * Set the index of the selected driver.
-	 *
-	 * @param	idx	the index of the selected driver in the drivers window
-	 * 				or -1 if none selected.
-	 */
-	public synchronized void setDriversSelectedIndex(int idx)
-	{
-		if (idx != _driversSelectedIndex)
-		{
-			final int oldValue = _driversSelectedIndex;
-			_driversSelectedIndex = idx;
-			getPropertyChangeReporter().firePropertyChange(
-										IPropertyNames.DRIVERS_SELECTED_INDEX,
-										oldValue, _driversSelectedIndex);
-		}
-	}
-
-	/**
+   /**
 	 * @return	whether only the loaded JDBC drivers are displayed in the
 	 *			Drivers window.
 	 */

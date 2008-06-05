@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -282,8 +281,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 			{
 				_app.getDataCache().addAlias(_sqlAlias);
 			}
-            _app.savePreferences(ALIAS_DEFINITIONS);
-            _app.savePreferences(GLOBAL_PREFERENCES);
+         _app.savePreferences(ALIAS_DEFINITIONS);
 			dispose();
 		}
 		catch (ValidationException ex)

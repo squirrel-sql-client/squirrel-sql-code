@@ -33,17 +33,10 @@ import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class CreateAliasAction extends SquirrelAction
+public class CreateAliasAction extends AliasAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(CreateAliasAction.class);
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(CreateAliasAction.class);    
-    
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	app	Application API.
@@ -60,18 +53,7 @@ public class CreateAliasAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		IApplication app = getApplication();
-		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
-		tw.moveToFront();
-		try
-		{
-			tw.setSelected(true);
-		}
-		catch (PropertyVetoException ex)
-		{
-            //i18n[CreateAliasAction.error.selectingwindow=Error selecting window]
-			s_log.error(s_stringMgr.getString("CreateAliasAction.error.selectingwindow"), ex);
-		}
-		new CreateAliasCommand(getApplication()).execute();
+      moveToFrontAndSelectAliasFrame();
+      new CreateAliasCommand(getApplication()).execute();
 	}
 }

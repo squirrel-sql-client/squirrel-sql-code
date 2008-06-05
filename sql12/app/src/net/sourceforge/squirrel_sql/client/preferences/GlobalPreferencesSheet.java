@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -292,10 +291,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		}
 		finally
 		{
-            _app.savePreferences(GLOBAL_PREFERENCES);
-            _app.savePreferences(DATATYPE_PREFERENCES);
-			cursorChg.restore();
-		}
+         _app.savePreferences(DATATYPE_PREFERENCES);
+         cursorChg.restore();
+      }
 
 		dispose();
       for (GlobalPreferencesActionListener listener : _listeners) {

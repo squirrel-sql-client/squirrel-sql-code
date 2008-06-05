@@ -22,13 +22,9 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -42,9 +38,12 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriversList extends JList implements IDriversList
+public class DriversList extends BaseList implements IDriversList
 {
-	/** Application API. */
+   private static final String PREF_KEY_SELECTED_DRIVER_INDEX = "Squirrel.selDriverIndex";
+
+
+   /** Application API. */
 	private IApplication _app;
 
 	/** Model for this component. */
@@ -53,8 +52,9 @@ public class DriversList extends JList implements IDriversList
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DriversList.class);    
-    
-	/**
+
+
+   /**
 	 * Ctor specifying Application API object.
 	 *
 	 * @param	app		Application API.
@@ -64,32 +64,17 @@ public class DriversList extends JList implements IDriversList
 	 */
 	public DriversList(IApplication app) throws IllegalArgumentException
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
+      super(new DriversListModel(app), app);
 		_app = app;
-		_model = new DriversListModel(_app);
-		setModel(_model);
-		setLayout(new BorderLayout());
-		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		_model = (DriversListModel) getList().getModel();
+
+      getList().setLayout(new BorderLayout());
 
 		SquirrelResources res = _app.getResources();
-		setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
+		getList().setCellRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),res.getIcon("list.driver.notfound")));
 
 		propertiesChanged(null);
 
-		final int selDriverIdx = app.getSquirrelPreferences().getDriversSelectedIndex();
-		final int size = getModel().getSize();
-		if (selDriverIdx > -1 && selDriverIdx < size)
-		{
-			setSelectedIndex(selDriverIdx);
-		}
-		else
-		{
-			setSelectedIndex(0);
-		}
 
 		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
@@ -99,45 +84,6 @@ public class DriversList extends JList implements IDriversList
 				propertiesChanged(propName);
 			}
 		});
-
-		_model.addListDataListener(new ListDataListener()
-		{
-			public void contentsChanged(ListDataEvent evt)
-			{
-				// Unused.
-			}
-			public void intervalAdded(ListDataEvent evt)
-			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run() {
-						clearSelection();
-						setSelectedIndex(idx);
-					}
-				});
-			}
-			public void intervalRemoved(ListDataEvent evt)
-			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						clearSelection();
-						int modelSize = getModel().getSize();
-						if (idx < modelSize)
-						{
-							setSelectedIndex(idx);
-						}
-						else if (modelSize > 0)
-						{
-							setSelectedIndex(modelSize - 1);
-						}
-					}
-				});
-			}
-		});
 	}
 
 	/**
@@ -145,10 +91,10 @@ public class DriversList extends JList implements IDriversList
 	 */
 	public void addNotify()
 	{
-		super.addNotify();
+		getList().addNotify();
 		// Register so that we can display different tooltips depending
 		// which entry in list mouse is over.
-		ToolTipManager.sharedInstance().registerComponent(this);
+		ToolTipManager.sharedInstance().registerComponent(getList());
 	}
 
 	/**
@@ -156,9 +102,9 @@ public class DriversList extends JList implements IDriversList
 	 */
 	public void removeNotify()
 	{
-		super.removeNotify();
+		getList().removeNotify();
 		// Don't need tooltips any more.
-		ToolTipManager.sharedInstance().unregisterComponent(this);
+		ToolTipManager.sharedInstance().unregisterComponent(getList());
 	}
 
 	/**
@@ -174,7 +120,7 @@ public class DriversList extends JList implements IDriversList
 	 */
 	public ISQLDriver getSelectedDriver()
 	{
-		return (ISQLDriver)getSelectedValue();
+		return (ISQLDriver)getList().getSelectedValue();
 	}
 
 	/**
@@ -186,10 +132,10 @@ public class DriversList extends JList implements IDriversList
 	public String getToolTipText(MouseEvent evt)
 	{
 		String tip = null;
-		final int idx = locationToIndex(evt.getPoint());
+		final int idx = getList().locationToIndex(evt.getPoint());
 		if (idx != -1)
 		{
-			tip = ((ISQLDriver)getModel().getElementAt(idx)).getName();
+			tip = ((ISQLDriver)getList().getModel().getElementAt(idx)).getName();
 		}
 		else
 		{
@@ -223,5 +169,10 @@ public class DriversList extends JList implements IDriversList
 			_model.setShowLoadedDriversOnly(show);
 		}
 	}
+
+   public String getSelIndexPrefKey()
+   {
+      return PREF_KEY_SELECTED_DRIVER_INDEX;
+   }
 }
 

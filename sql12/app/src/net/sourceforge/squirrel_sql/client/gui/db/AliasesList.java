@@ -1,21 +1,10 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-
-import net.sourceforge.squirrel_sql.fw.gui.ModifiedDefaultListCellRenderer;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseListener;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -41,149 +30,105 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasesList extends JList implements IAliasesList
+public class AliasesList implements IToogleableAliasesList
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AliasesList.class);
+   private JPanel _pnlContainer = new JPanel(new GridLayout(1,1));
+   private JListAliasesListImpl _jListImpl;
+   private JTreeAliasesListImpl _jTreeImpl;
+   private boolean _viewAsTree;
 
-	/** Application API. */
-	private final IApplication _app;
-
-	/** Model for this component. */
-	private final AliasesListModel _model;
-
-	public AliasesList(IApplication app)
+   public AliasesList(IApplication app)
 	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		_app = app;
-		_model = new AliasesListModel(_app);
-		setModel(_model);
-		setLayout(new BorderLayout());
-		getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      AliasesListModel listModel = new AliasesListModel(app);
+      _jListImpl= new JListAliasesListImpl(app, listModel);
+      _jTreeImpl = new JTreeAliasesListImpl(app, listModel);
+   }
 
-		setCellRenderer(new ModifiedDefaultListCellRenderer());
+   private IAliasesList getCurrentImpl()
+   {
+      if(_viewAsTree)
+      {
+         return _jTreeImpl;
+      }
+      else
+      {
+         return _jListImpl;
+      }
+   }
 
-		final int selAliasIdx = app.getSquirrelPreferences().getAliasesSelectedIndex();
-		final int size = getModel().getSize();
-		if (selAliasIdx > -1 && selAliasIdx < size)
-		{
-			setSelectedIndex(selAliasIdx);
-		}
-		else
-		{
-			setSelectedIndex(0);
-		}
+   public void setViewAsTree(boolean b)
+   {
+      _viewAsTree = b;
 
-		_model.addListDataListener(new ListDataListener()
-		{
-			public void contentsChanged(ListDataEvent evt)
-			{
-				// Not required.
-			}
-			public void intervalAdded(ListDataEvent evt)
-			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						clearSelection();
-						setSelectedIndex(idx);
-					}
-				});
-			}
-			public void intervalRemoved(ListDataEvent evt)
-			{
-				final int idx = evt.getIndex0();
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						clearSelection();
-						int modelSize = getModel().getSize();
-						if (idx < modelSize)
-						{
-							setSelectedIndex(idx);
-						}
-						else if (modelSize > 0)
-						{
-							setSelectedIndex(size - 1);
-						}
-					}
-				});
-			}
-		});
-	}
+      if(_viewAsTree)
+      {
+         _pnlContainer.remove(_jListImpl.getComponent());
+         _pnlContainer.add(_jTreeImpl.getComponent());
+      }
+      else
+      {
+         _pnlContainer.remove(_jTreeImpl.getComponent());
+         _pnlContainer.add(_jListImpl.getComponent());
+      }
 
-	/**
-	 * Component has been added to its parent.
-	 */
-	public void addNotify()
-	{
-		super.addNotify();
-		// Register so that we can display different tooltips depending
-		// which entry in list mouse is over.
-		ToolTipManager.sharedInstance().registerComponent(this);
-	}
+      _pnlContainer.validate();
+      _pnlContainer.repaint();
+   }
 
-	/**
-	 * Component has been removed from its parent.
-	 */
-	public void removeNotify()
-	{
-		super.removeNotify();
-		// Don't need tooltips any more.
-		ToolTipManager.sharedInstance().unregisterComponent(this);
-	}
+   public IAliasTreeInterface getAliasTreeInterface()
+   {
+      return _jTreeImpl;
+   }
 
-	/**
-	 * Return the <TT>AliasesListModel</TT> that controls this list.
-	 */
-	public AliasesListModel getTypedModel()
-	{
-		return _model;
-	}
+   public void deleteSelected()
+   {
+      getCurrentImpl().deleteSelected();
+   }
 
-	/**
+
+   /**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
 	public SQLAlias getSelectedAlias()
 	{
-		return (SQLAlias)getSelectedValue();
-	}
+      return getCurrentImpl().getSelectedAlias();
+   }
 
-	/**
-	 * Return the description for the alias that the mouse is currently
-	 * over as the tooltip text.
-	 *
-	 * @param	event	Used to determine the current mouse position.
-	 */
-	public String getToolTipText(MouseEvent evt)
-	{
-		String tip = null;
-		final int idx = locationToIndex(evt.getPoint());
-		if (idx != -1)
-		{
-			tip = ((ISQLAlias)getModel().getElementAt(idx)).getName();
-		}
-		else
-		{
-			tip = getToolTipText();
-		}
-		return tip;
-	}
+   public void sortAliases()
+   {
+      getCurrentImpl().sortAliases();
+   }
 
-	/**
-	 * Return the tooltip used for this component if the mouse isn't over
-	 * an entry in the list.
-	 */
-	public String getToolTipText()
-	{
-		return s_stringMgr.getString("AliasesList.tooltip");
-	}
+   public void requestFocus()
+   {
+      getCurrentImpl().requestFocus();
+   }
+
+
+   public JComponent getComponent()
+   {
+      return _pnlContainer;
+   }
+
+
+   public void selectListEntryAtPoint(Point point)
+   {
+      getCurrentImpl().selectListEntryAtPoint(point);
+   }
+
+
+   public void addMouseListener(MouseListener mouseListener)
+   {
+      _jListImpl.addMouseListener(mouseListener);
+      _jTreeImpl.addMouseListener(mouseListener);
+   }
+
+   public void removeMouseListener(MouseListener mouseListener)
+   {
+      _jListImpl.removeMouseListener(mouseListener);
+      _jTreeImpl.removeMouseListener(mouseListener);
+   }
+
+
+
 }

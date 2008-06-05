@@ -36,9 +36,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.sql.DriverManager;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -151,12 +149,16 @@ class Application implements IApplication
 	/** Current type of JDBC debug logging that we are doing. */
 	private int _jdbcDebugType = SquirrelPreferences.IJdbcDebugTypes.NONE;
 
-    /** contains info about files and directories used by the application. */
-    private ApplicationFiles _appFiles = null;
-    
-    private EditWhereCols editWhereCols = new EditWhereCols();
-    
-	/**
+   /**
+    * contains info about files and directories used by the application.
+    */
+   private ApplicationFiles _appFiles = null;
+
+   private EditWhereCols editWhereCols = new EditWhereCols();
+
+   private List<ApplicationListener> _listeners = new ArrayList<ApplicationListener>();
+
+   /**
 	 * Default ctor.
 	 */
 	Application()
@@ -284,9 +286,16 @@ class Application implements IApplication
      * Saves off preferences and all state present in the application.
      */
     public void saveApplicationState() {
-        saveGlobalPreferences();
 
-		saveDrivers();
+      _prefs.setFirstRun(false);
+
+
+      for (ApplicationListener l : _listeners.toArray(new ApplicationListener[0]))
+      {
+         l.saveApplicationState();
+      }
+
+      saveDrivers();
 
 		saveAliases();
 
@@ -301,26 +310,10 @@ class Application implements IApplication
 
 		// Save options selected for DataType-specific properties
 		saveDataTypePreferences();
+
+       _prefs.save();
     }
 
-    /**
-     * Remember the currently selected entries in the aliases and drivers 
-     * windows.
-     */
-    private void saveGlobalPreferences() {
-        // JASON: Do in WindowManager and do much better
-        // final MainFrame mf = _windowManager.getMainFrame();
-        
-        int idx = _windowManager.getAliasesListInternalFrame().getSelectedIndex();
-		_prefs.setAliasesSelectedIndex(idx);
-		idx = _windowManager.getDriversListInternalFrame().getSelectedIndex();
-		_prefs.setDriversSelectedIndex(idx);
-
-		// No longer the first run of SQuirrel.
-		_prefs.setFirstRun(false);
-
-		_prefs.save();
-    }
 
     /**
      * Builds a Locale from the user's preferred locale preference.
@@ -1095,9 +1088,6 @@ class Application implements IApplication
             case DRIVER_DEFINITIONS:
                 saveDrivers();
                 break;
-            case GLOBAL_PREFERENCES:
-                saveGlobalPreferences();
-                break;
             case DATATYPE_PREFERENCES:
                 saveDataTypePreferences();
                 break;
@@ -1115,7 +1105,17 @@ class Application implements IApplication
         }
     }
 
-	/**
+   public void addApplicationListener(ApplicationListener l)
+   {
+      _listeners.add(l);
+   }
+
+   public void removeApplicationListener(ApplicationListener l)
+   {
+      _listeners.remove(l);
+   }
+
+   /**
 	 * Setup applications Look and Feel.
 	 */
 	private void setupLookAndFeel(ApplicationArguments args)

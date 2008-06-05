@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.beans.PropertyVetoException;
 
@@ -35,7 +33,6 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.*;
@@ -892,7 +889,7 @@ public class WindowManager
 
 	private void createAliasesListUI()
 	{
-		final AliasesList al = new AliasesList(_app);
+		final IToogleableAliasesList al = new AliasesList(_app);
 
 		final ActionCollection actions = _app.getActionCollection();
 		actions.add(new ModifyAliasAction(_app, al));
@@ -902,9 +899,14 @@ public class WindowManager
 		actions.add(new CreateAliasAction(_app));
 		actions.add(new SortAliasesAction(_app, al));
 		actions.add(new AliasPropertiesAction(_app, al));
+		actions.add(new ToggleTreeViewAction(_app, al));
+		actions.add(new NewAliasFolderAction(_app, al));
+		actions.add(new CutAliasFolderAction(_app, al));
+		actions.add(new PasteAliasFolderAction(_app, al));
 
-		_aliasesListWindow = new AliasesListInternalFrame(_app, al);
-	}
+      _aliasesListWindow = new AliasesListInternalFrame(_app, al);
+
+   }
 
 	private void createDriversListUI()
 	{

@@ -19,34 +19,28 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+import java.util.prefs.Preferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.gui.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+
 /**
  * This window shows all the database aliases defined in the system.
  *
@@ -54,6 +48,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class AliasesListInternalFrame extends BaseListInternalFrame
 {
+
+   private static final String PREF_KEY_VIEW_ALIASES_AS_TREE = "Squirrel.viewAliasesAsTree";
+
 	private static final long serialVersionUID = 1L;
 
 	/** Internationalized strings for this class. */
@@ -66,18 +63,15 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 	/** User Interface facory. */
 	private UserInterfaceFactory _uiFactory;
 
-	/**
+   /**
 	 * ctor.
 	 */
-	public AliasesListInternalFrame(IApplication app, AliasesList list)
+	public AliasesListInternalFrame(IApplication app, IAliasesList list)
 	{
 		super(new UserInterfaceFactory(app, list));
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 
-		// Enable/disable actions depending on whether an item is selected in
-		// the list.
-		_uiFactory.enableDisableActions();
 
       addVetoableChangeListener(new VetoableChangeListener()
       {
@@ -132,20 +126,10 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          }
 
       });
-	}
 
+   }
 
-   /**
-	 * Retrieve the index of the currently selected alias.
-	 *
-	 * @return	index of currently selected alias.
-	 */
-	public int getSelectedIndex()
-	{
-		return _uiFactory._aliasesList.getSelectedIndex();
-	}
-
-	public IAliasesList getAliasesList()
+   public IAliasesList getAliasesList()
 	{
 		return _uiFactory._aliasesList;
 	}
@@ -155,15 +139,20 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
       _app.getMainFrame().setEnabledAliasesMenu(b);
    }
 
+   public void enableDisableActions()
+   {
+      _uiFactory.enableDisableActions();
+   }
+
    private static final class UserInterfaceFactory
 		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
-		private final AliasesList _aliasesList;
+		private final IAliasesList _aliasesList;
 		private ToolBar _tb;
 		private BasePopupMenu _pm = new BasePopupMenu();
 
-		UserInterfaceFactory(IApplication app, AliasesList list)
+		UserInterfaceFactory(IApplication app, IAliasesList list)
 				throws IllegalArgumentException
 		{
 			super();
@@ -186,19 +175,61 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 
 			final ActionCollection actions = _app.getActionCollection();
 			_pm.add(actions.get(ConnectToAliasAction.class));
-			_pm.addSeparator();
+         _pm.addSeparator();
 			_pm.add(actions.get(CreateAliasAction.class));
-			_pm.addSeparator();
 			_pm.add(actions.get(ModifyAliasAction.class));
 			_pm.add(actions.get(CopyAliasAction.class));
-			_pm.add(actions.get(SortAliasesAction.class));
-			_pm.add(actions.get(AliasPropertiesAction.class));
-			_pm.addSeparator();
 			_pm.add(actions.get(DeleteAliasAction.class));
 			_pm.addSeparator();
-		}
+         _pm.add(actions.get(AliasPropertiesAction.class));
+         _pm.addSeparator();
+         _pm.add(actions.get(SortAliasesAction.class));
+         _pm.addSeparator();
+         addToMenuAsCheckBoxMenuItem(_app.getResources(), actions.get(ToggleTreeViewAction.class), _pm);
+         _pm.add(actions.get(NewAliasFolderAction.class));
+         _pm.add(actions.get(CutAliasFolderAction.class));
+         _pm.add(actions.get(PasteAliasFolderAction.class));
 
-		public ToolBar getToolBar()
+         app.addApplicationListener(new ApplicationListener()
+         {
+            public void saveApplicationState()
+            {
+               onSaveApplicationState();
+            }
+         });
+
+         SwingUtilities.invokeLater(
+            new Runnable()
+            {
+               public void run()
+               {
+                  ToggleTreeViewAction actViewAsTree = (ToggleTreeViewAction) actions.get(ToggleTreeViewAction.class);
+                  actViewAsTree.getToggleComponentHolder().setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, false));
+                  actViewAsTree.actionPerformed(new ActionEvent(this, 1, "actionPerformed"));
+                  enableDisableActions();
+               }
+            });
+      }
+
+      private void onSaveApplicationState()
+      {
+         IToggleAction actViewAsTree = (IToggleAction) _app.getActionCollection().get(ToggleTreeViewAction.class);
+         Preferences.userRoot().putBoolean(PREF_KEY_VIEW_ALIASES_AS_TREE, actViewAsTree.getToggleComponentHolder().isSelected());
+      }
+      
+
+      private JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Resources rsrc, Action action, JPopupMenu menu)
+      {
+         JCheckBoxMenuItem mnu = rsrc.addToMenuAsCheckBoxMenuItem(action, menu);
+         if(action instanceof IToggleAction)
+         {
+            ((IToggleAction)action).getToggleComponentHolder().addToggleableComponent(mnu);
+         }
+         return mnu;
+      }
+
+
+      public ToolBar getToolBar()
 		{
 			return _tb;
 		}
@@ -208,7 +239,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			return _pm;
 		}
 
-		public JList getList()
+		public IBaseList getList()
 		{
 			return _aliasesList;
 		}
@@ -234,28 +265,17 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 		 */
 		public void enableDisableActions()
 		{
-			boolean enable = false;
-			try
-			{
-				enable = _aliasesList.getSelectedAlias() != null;
-			}
-			catch (Exception ignore)
-			{
-				// Getting an error in the JDK.
-				// Exception occurred during event dispatching:
-				// java.lang.ArrayIndexOutOfBoundsException: 0 >= 0
-				// at java.util.Vector.elementAt(Vector.java:417)
-				// at javax.swing.DefaultListModel.getElementAt(DefaultListModel.java:70)
-				// at javax.swing.JList.getSelectedValue(JList.java:1397)
-				// at net.sourceforge.squirrel_sql.mainframe.AliasesList.getSelectedAlias(AliasesList.java:77)
-			}
-
 			final ActionCollection actions = _app.getActionCollection();
-			actions.get(ConnectToAliasAction.class).setEnabled(enable);
-			actions.get(CopyAliasAction.class).setEnabled(enable);
-			actions.get(DeleteAliasAction.class).setEnabled(enable);
-			actions.get(ModifyAliasAction.class).setEnabled(enable);
-		}
+
+         ToggleTreeViewAction actViewAsTree = (ToggleTreeViewAction) actions.get(ToggleTreeViewAction.class);
+
+
+         boolean viewAsTree = actViewAsTree.getToggleComponentHolder().isSelected();
+
+         actions.get(NewAliasFolderAction.class).setEnabled(viewAsTree);
+         actions.get(CutAliasFolderAction.class).setEnabled(viewAsTree);
+         actions.get(PasteAliasFolderAction.class).setEnabled(viewAsTree);
+      }
 
 		private void createToolBar()
 		{
@@ -274,9 +294,15 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.add(actions.get(ModifyAliasAction.class));
 			_tb.add(actions.get(CopyAliasAction.class));
 			_tb.add(actions.get(DeleteAliasAction.class));
+         _tb.addSeparator();
          _tb.add(actions.get(AliasPropertiesAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(SortAliasesAction.class));
+         _tb.addSeparator();
+         _tb.addToggleAction((IToggleAction)actions.get(ToggleTreeViewAction.class));
+         _tb.add(actions.get(NewAliasFolderAction.class));
+         _tb.add(actions.get(CutAliasFolderAction.class));
+         _tb.add(actions.get(PasteAliasFolderAction.class));
 		}
 
 		public SquirrelPreferences getPreferences()

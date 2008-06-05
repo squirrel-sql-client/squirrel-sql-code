@@ -227,4 +227,9 @@ public interface IApplication
      */
     public void savePreferences(PreferenceType preferenceType);
     
+
+   void addApplicationListener(ApplicationListener l);
+
+   void removeApplicationListener(ApplicationListener l);
+
 }

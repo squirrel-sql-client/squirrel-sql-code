@@ -1,13 +1,17 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import java.util.Iterator;
+import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.fw.gui.SortedListModel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+
+import javax.swing.*;
 
 /*
  * Copyright (C) 2001-2004 Colin Bell
@@ -84,7 +88,50 @@ public class AliasesListModel extends SortedListModel
 		removeElement(alias);
 	}
 
-	/**
+   public void sortAliases()
+   {
+		Object[] aliases = toArray();
+
+		Arrays.sort(aliases);
+
+		clear();
+
+		for (int i = 0; i < aliases.length; i++)
+		{
+			addElement(aliases[i]);
+		}
+   }
+
+   public int getIndex(SQLAlias alias)
+   {
+      for (int i = 0; i < size(); i++)
+      {
+         if (get(i).equals(alias))
+         {
+            return i;
+         }
+      }
+
+      return -1;
+   }
+
+   public SQLAlias getAlias(IIdentifier aliasIdentifier)
+   {
+      for (int i = 0; i < size(); i++)
+      {
+         SQLAlias alias = (SQLAlias) get(i);
+
+         if (aliasIdentifier.equals(alias.getIdentifier()))
+         {
+            return alias;
+         }
+      }
+
+      return null;
+   }
+
+
+   /**
 	 * Listener to changes in <TT>ObjectCache</TT>. As aliases are
 	 * added to/removed from <TT>DataCache</TT> this model is updated.
 	 */
