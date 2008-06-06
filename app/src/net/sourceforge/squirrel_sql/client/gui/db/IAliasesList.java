@@ -34,4 +34,6 @@ public interface IAliasesList extends IBaseList
    void requestFocus();
 
    void deleteSelected();
+
+   void modifySelected();
 }

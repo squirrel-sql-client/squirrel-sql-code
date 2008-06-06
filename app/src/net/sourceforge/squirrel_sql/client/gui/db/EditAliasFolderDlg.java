@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class EditAliasFolderDlg extends JDialog
 {
@@ -24,10 +25,11 @@ public class EditAliasFolderDlg extends JDialog
    private String _folderName;
 
 
-   public EditAliasFolderDlg(MainFrame mainFrame, String title, String text)
+   public EditAliasFolderDlg(MainFrame mainFrame, String title, String text, String folderName)
    {
       super(mainFrame, title, true);
       createUI(text);
+      _txtFolderName.setText(folderName);
 
       _btnOK.addActionListener(new ActionListener()
       {
@@ -37,6 +39,8 @@ public class EditAliasFolderDlg extends JDialog
          }
       });
 
+      getRootPane().setDefaultButton(_btnOK);
+
       _btnCancel.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -44,6 +48,20 @@ public class EditAliasFolderDlg extends JDialog
             onCancel();
          }
       });
+
+      AbstractAction closeAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            close();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      getRootPane().getActionMap().put("CloseAction", closeAction);
+
 
       setSize(400, 150);
 
@@ -105,7 +123,7 @@ public class EditAliasFolderDlg extends JDialog
       return ret;
    }
 
-   public String getNewFolderName()
+   public String getFolderName()
    {
       return _folderName;
    }

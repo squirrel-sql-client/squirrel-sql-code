@@ -40,7 +40,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
  */
 public class DeleteAliasAction extends AliasAction
 {
-
    private IToogleableAliasesList _aliasesList;
 
    public DeleteAliasAction(IApplication app, IToogleableAliasesList al)
@@ -53,46 +52,4 @@ public class DeleteAliasAction extends AliasAction
    {
       _aliasesList.deleteSelected();
    }
-
-
-
-//   /**
-//    * List of all the users aliases.
-//    */
-//   private IAliasesList _aliases;
-//
-//   /**
-//    * Ctor specifying the list of aliases.
-//    *
-//    * @param	app		Application API.
-//    * @param	list	List of <TT>ISQLAlias</TT> objects.
-//    *
-//    * @throws	IllegalArgumentException
-//    *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
-//    */
-//   public DeleteAliasAction(IApplication app, IAliasesList list)
-//   {
-//      super(app);
-//      if (list == null)
-//      {
-//         throw new IllegalArgumentException("Null AliasesList passed");
-//      }
-//      _aliases = list;
-//   }
-//
-//   /**
-//    * Perform this action. Use the <TT>DeleteAliasCommand</TT>.
-//    *
-//    * @param	evt	 The current event.
-//    */
-//   public void actionPerformed(ActionEvent evt)
-//   {
-//      moveToFrontAndSelectAliasFrame();
-//      SQLAlias alias = _aliases.getSelectedAlias();
-//      if (alias != null)
-//      {
-//         new DeleteAliasCommand(getApplication(), getParentFrame(evt), alias).execute();
-//      }
-//   }
-
 }

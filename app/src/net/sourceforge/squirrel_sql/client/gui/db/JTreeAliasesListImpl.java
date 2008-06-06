@@ -38,7 +38,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private JScrollPane _comp = new JScrollPane(_tree);
    private IApplication _app;
    private AliasesListModel _aliasesListModel;
-   private TreePath _cutPath;
+   private TreePath[] _cutPaths;
 
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
    {
@@ -48,17 +48,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
       root.removeAllChildren();
-      _tree.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      _tree.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       _tree.setToolTipText("init");
 
-
-//      for(int i=0; i < _aliasesListModel.getSize(); ++i)
-//      {
-//         ISQLAlias alias = (ISQLAlias) _aliasesListModel.get(i);
-//         DefaultMutableTreeNode tn = new DefaultMutableTreeNode(alias);
-//         root.add(tn);
-//      }
-//      treeModel.nodeStructureChanged(root);
 
       _aliasesListModel.addListDataListener(new ListDataListener()
       {
@@ -227,7 +219,10 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
       else
       {
-         _tree.setSelectionPath(new TreePath(parent.getPath()));
+         if(parent != _tree.getModel().getRoot())
+         {
+            _tree.setSelectionPath(new TreePath(parent.getPath()));
+         }
       }
    }
 
@@ -367,6 +362,45 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
    }
 
+   public void modifySelected()
+   {
+      TreePath selPath = _tree.getSelectionPath();
+
+      if(null == selPath)
+      {
+         return;
+      }
+
+      DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+
+      if(selNode.getUserObject() instanceof SQLAlias)
+      {
+         _app.getWindowManager().showModifyAliasInternalFrame((ISQLAlias) selNode.getUserObject());
+      }
+      else
+      {
+         String title = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgTitle");
+         String text = s_stringMgr.getString("JTreeAliasesListImpl.EditAliasFolderDlgText");
+         EditAliasFolderDlg dlg = new EditAliasFolderDlg(_app.getMainFrame(), title, text, selNode.getUserObject().toString());
+
+         GUIUtils.centerWithinParent(dlg);
+
+         dlg.setVisible(true);
+
+         String folderName = dlg.getFolderName();
+
+         if(null == folderName)
+         {
+            return;
+         }
+
+         selNode.setUserObject(folderName);
+
+         DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
+         treeModel.nodeChanged(selNode);
+      }
+   }
+
    private void removeAllAliasesFromNode(DefaultMutableTreeNode selNode)
    {
       if(selNode.getUserObject() instanceof SQLAlias)
@@ -451,12 +485,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       String title = s_stringMgr.getString("JTreeAliasesListImpl.NewAliasFolderDlgTitle");
       String text = s_stringMgr.getString("JTreeAliasesListImpl.NewAliasFolderDlgText");
-      EditAliasFolderDlg dlg = new EditAliasFolderDlg(_app.getMainFrame(), title, text);
+      EditAliasFolderDlg dlg = new EditAliasFolderDlg(_app.getMainFrame(), title, text, null);
       GUIUtils.centerWithinParent(dlg);
 
       dlg.setVisible(true);
 
-      String folderName = dlg.getNewFolderName();
+      String folderName = dlg.getFolderName();
 
       if(null == folderName)
       {
@@ -500,14 +534,14 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void cutSelected()
    {
-      _cutPath = _tree.getSelectionPath();
+      _cutPaths = _tree.getSelectionPaths();
    }
 
    public void pasteSelected()
    {
       try
       {
-         if(null == _cutPath)
+         if(null == _cutPaths)
          {
             return;
          }
@@ -517,20 +551,27 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
          TreePath selPath = _tree.getSelectionPath();
 
-         DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) _cutPath.getLastPathComponent();
-         dtm.removeNodeFromParent(cutNode);
+
+         DefaultMutableTreeNode[] cutNodes = new DefaultMutableTreeNode[_cutPaths.length];
+
+         for (int i = 0; i < _cutPaths.length; i++)
+         {
+            cutNodes[i] = (DefaultMutableTreeNode) _cutPaths[i].getLastPathComponent();
+            dtm.removeNodeFromParent(cutNodes[i]);
+
+         }
 
          if(null == selPath)
          {
             DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
-            if(root.isNodeChild(cutNode))
+            for (int i = 0; i < cutNodes.length; i++)
             {
-               return;
+               if (false == root.isNodeChild(cutNodes[i]))
+               {
+                  root.add(cutNodes[i]);
+               }
             }
-
-            root.add(cutNode);
-
             dtm.nodeStructureChanged(root);
          }
          else
@@ -540,24 +581,33 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             if(selNode.isLeaf())
             {
                DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-               parent.insert(cutNode, parent.getIndex(selNode) + 1);
-
+               for (int i = 0; i < cutNodes.length; i++)
+               {
+                  parent.insert(cutNodes[i], parent.getIndex(selNode) + 1);
+               }
                dtm.nodeStructureChanged(parent);
 
             }
             else
             {
-               selNode.add(cutNode);
+               for (int i = 0; i < cutNodes.length; i++)
+               {
+                  selNode.add(cutNodes[i]);
+               }
                dtm.nodeStructureChanged(selNode);
             }
          }
 
-         //_tree.expandPath(new TreePath(cutNode.getPath()));
-         _tree.setSelectionPath(new TreePath(cutNode.getPath()));
+         TreePath[] newSelPaths = new TreePath[cutNodes.length];
+         for (int i = 0; i < newSelPaths.length; i++)
+         {
+            newSelPaths[i] = new TreePath(cutNodes[i].getPath());
+         }
+         _tree.setSelectionPaths(newSelPaths);
       }
       finally
       {
-         _cutPath = null;
+         _cutPaths = null;
       }
 
    }
