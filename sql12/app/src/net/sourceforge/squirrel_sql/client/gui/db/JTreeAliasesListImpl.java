@@ -100,32 +100,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             rdr.load(file);
             AliasFolderState rootState = (AliasFolderState) rdr.iterator().next();
 
-
-            for (AliasFolderState aliasFolderState : rootState.getKids())
-            {
-               aliasFolderState.applyNodes(root, _aliasesListModel);
-            }
-
-            ArrayList<SQLAlias> unknownAliases = new ArrayList<SQLAlias>();
-            for (int i = 0; i < _aliasesListModel.size(); i++)
-            {
-               SQLAlias sqlAlias = (SQLAlias) _aliasesListModel.get(i);
-               if(null == findNode(sqlAlias, root))
-               {
-                  unknownAliases.add(sqlAlias);
-               }
-            }
-
-            for (SQLAlias alias : unknownAliases)
-            {
-               root.add(new DefaultMutableTreeNode(alias));
-            }
-            treeModel.nodeStructureChanged(root);
-
-            for (AliasFolderState aliasFolderState : rootState.getKids())
-            {
-               aliasFolderState.applyExpansionAndSelection(_tree);
-            }
+            applyAliasFolderState(root, rootState);
          }
          else
          {
@@ -135,15 +110,41 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             }
             treeModel.nodeStructureChanged(root);
          }
-
-
-
-
-
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   private void applyAliasFolderState(DefaultMutableTreeNode rootNode, AliasFolderState rootState)
+   {
+      DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
+
+      for (AliasFolderState aliasFolderState : rootState.getKids())
+      {
+         aliasFolderState.applyNodes(rootNode, _aliasesListModel);
+      }
+
+      ArrayList<SQLAlias> unknownAliases = new ArrayList<SQLAlias>();
+      for (int i = 0; i < _aliasesListModel.size(); i++)
+      {
+         SQLAlias sqlAlias = (SQLAlias) _aliasesListModel.get(i);
+         if(null == findNode(sqlAlias, rootNode))
+         {
+            unknownAliases.add(sqlAlias);
+         }
+      }
+
+      for (SQLAlias alias : unknownAliases)
+      {
+         rootNode.add(new DefaultMutableTreeNode(alias));
+      }
+      treeModel.nodeStructureChanged(rootNode);
+
+      for (AliasFolderState aliasFolderState : rootState.getKids())
+      {
+         aliasFolderState.applyExpansionAndSelection(_tree);
       }
    }
 
@@ -322,7 +323,15 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void sortAliases()
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+      AliasFolderState state = new AliasFolderState(root, _tree);
+
+      state.sort();
+
+      root.removeAllChildren();
+
+      applyAliasFolderState(root, state);
    }
 
    public void requestFocus()

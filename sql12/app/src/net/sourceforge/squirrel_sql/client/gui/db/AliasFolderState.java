@@ -6,8 +6,9 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.*;
+import java.util.Arrays;
 
-public class AliasFolderState
+public class AliasFolderState implements Comparable
 {
    private AliasFolderState[] _kids = new AliasFolderState[0];
    private IIdentifier _aliasIdentifier;
@@ -16,11 +17,11 @@ public class AliasFolderState
    private boolean _isExpanded;
 
    /**
-    * DO NOT introduce setter/getter for this member this member should
+    * DO NOT introduce setter/getter for this member these members should
     * not be treated by XMLBeanReader or XMLBeanWriter.
-    * It is just set while apply...() methods are working. 
     */
    private DefaultMutableTreeNode _node;
+   private String _aliasName;
 
    /**
     * To be used by XmlBeanReader only
@@ -45,6 +46,7 @@ public class AliasFolderState
       {
          ISQLAlias alias = (ISQLAlias) dmtn.getUserObject();
          _aliasIdentifier = alias.getIdentifier();
+         _aliasName = alias.getName();
       }
       else
       {
@@ -157,5 +159,26 @@ public class AliasFolderState
       {
          applyExpansionAndSelectionToNode(tree, _node);
       }
+   }
+
+   public void sort()
+   {
+      Arrays.sort(_kids);
+
+      for (AliasFolderState kid : _kids)
+      {
+         kid.sort();
+      }
+   }
+
+   public int compareTo(Object o)
+   {
+      AliasFolderState other = (AliasFolderState) o;
+      return getCompString().compareTo(other.getCompString());
+   }
+
+   private String getCompString()
+   {
+      return null != _folderName ? _folderName : _aliasName;
    }
 }
