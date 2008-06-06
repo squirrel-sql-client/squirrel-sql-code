@@ -85,6 +85,11 @@ public class AliasesList implements IToogleableAliasesList
       getCurrentImpl().deleteSelected();
    }
 
+   public void modifySelected()
+   {
+      getCurrentImpl().modifySelected();
+   }
+
 
    /**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.

@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.IToogleableAliasesList;
+
 /**
  * This <CODE>Action</CODE> allows the user to maintain an <TT>ISQLAlias</TT>.
  *
@@ -37,45 +39,17 @@ import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
  */
 public class ModifyAliasAction extends AliasAction
 {
+   private IToogleableAliasesList _aliasesList;
 
-   /**
-	 * List of all the users aliases.
-	 */
-	private IAliasesList _aliases;
+   public ModifyAliasAction(IApplication app, IToogleableAliasesList al)
+   {
+      super(app);
+      _aliasesList = al;
+   }
 
-   /**
-	 * Ctor specifying the list of aliases.
-	 *
-	 * @param	app		Application API.
-	 * @param	list	List of <TT>ISQLAlias</TT> objects.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
-	 */
-	public ModifyAliasAction(IApplication app, IAliasesList list)
-		throws IllegalArgumentException
-	{
-		super(app);
-		if (list == null)
-		{
-			throw new IllegalArgumentException("Null AliasesList passed");
-		}
-		_aliases = list;
-	}
+   public void actionPerformed(ActionEvent e)
+   {
+      _aliasesList.modifySelected();
+   }
 
-	/**
-	 * Perform this action. Retrieve the current alias from the list and
-	 * allow the user to maintain it.
-	 *
-	 * @param	evt	The current event.
-	 */
-	public void actionPerformed(ActionEvent evt)
-	{
-      moveToFrontAndSelectAliasFrame();
-		final ISQLAlias alias = _aliases.getSelectedAlias();
-		if (alias != null)
-		{
-			new ModifyAliasCommand(getApplication(), alias).execute();
-		}
-	}
 }

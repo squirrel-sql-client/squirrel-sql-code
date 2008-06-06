@@ -154,6 +154,14 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
       }
    }
 
+   public void modifySelected()
+   {
+      if(null != getList().getSelectedValue())
+      {
+         _app.getWindowManager().showModifyAliasInternalFrame((ISQLAlias) getList().getSelectedValue());
+      }
+   }
+
    /**
 	 * Return the description for the alias that the mouse is currently
 	 * over as the tooltip text.
