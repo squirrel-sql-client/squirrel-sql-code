@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes: 
 
+Fix bug which caused scripting views to always fail.
+
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
 1968270: Displaying unsigned INT as signed INT in column

@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+2.6.x
+=====
+
+- Fix bug which caused scripting views to always fail.
+
 0.02
 ====
 - Added new trigger and index nodes beneath tables in the tree.  Also, added 

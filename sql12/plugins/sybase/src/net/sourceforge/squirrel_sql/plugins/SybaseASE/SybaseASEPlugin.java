@@ -97,7 +97,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.02";
+		return "0.02 (2.6.x)";
 	}
 
 	/**
