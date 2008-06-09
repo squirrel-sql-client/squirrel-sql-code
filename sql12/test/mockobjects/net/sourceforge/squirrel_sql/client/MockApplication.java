@@ -217,4 +217,22 @@ public class MockApplication implements IApplication {
         
     }
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.IApplication#addApplicationListener(net.sourceforge.squirrel_sql.client.ApplicationListener)
+	 */
+	public void addApplicationListener(ApplicationListener l)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.IApplication#removeApplicationListener(net.sourceforge.squirrel_sql.client.ApplicationListener)
+	 */
+	public void removeApplicationListener(ApplicationListener l)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
