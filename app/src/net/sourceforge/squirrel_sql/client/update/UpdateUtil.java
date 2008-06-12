@@ -99,12 +99,24 @@ public interface UpdateUtil
 	ChannelXmlBean loadUpdateFromFileSystem(final String path);
 
 	/**
+	 * Downloads the specified file from the specified server and stores it by the same name in the specified
+	 * destination directory.
+	 * 
 	 * @param host
+	 *           the name of the server
+	 * @param port
+	 *           the port on the server
 	 * @param fileToGet
-	 * @param destDir
+	 *           the name of the file to download
+	 * @param fileSize
+	 *           the size of the file in bytes
+	 * @param checksum
+	 *           the checksum of the file
+	 * @return a string representing the full local path to where the file was downloaded to
+	 * @throws Exception
 	 */
-	String downloadHttpFile(String host, int port, String fileToGet, String destDir)
-		throws Exception;
+	String downloadHttpFile(String host, int port, String fileToGet, String destDir, long fileSize,
+		long checksum) throws Exception;
 
 	/**
 	 * Downloads the a file from a local directory into our update downloads directory.
@@ -197,6 +209,14 @@ public interface UpdateUtil
 	 */
 	String getLocalReleaseFile() throws FileNotFoundException;
 
+	/**
+	 * Builds a list of ArtifactStatus objects from the specified ChannelXmlBean
+	 * 
+	 * @param channelXmlBean
+	 *           the bean that represents the channel that the user is pulling updates from.
+	 * @return a list of ArtifactStatus objects that describe all of the available artifacts from the specified
+	 *         channel.
+	 */
 	List<ArtifactStatus> getArtifactStatus(ChannelXmlBean channelXmlBean);
 
 	List<ArtifactStatus> getArtifactStatus(ReleaseXmlBean releaseXmlBean);

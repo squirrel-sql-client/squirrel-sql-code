@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.update.gui;
 import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -49,12 +50,40 @@ public class ArtifactStatus implements Serializable {
       String PLUGIN_LABEL = s_stringMgr.getString("ArtifactStatus.pluginLabel");
    }
       
+   /** the name of the artifact */
    private String name = null;
-   private String type;
-   private boolean installed;
-   private String displayType;
-   private ArtifactAction artifactAction = ArtifactAction.NONE;
    
+   /** the type of the artifact (e.g. Core, Plugin, Translation (I18n)) */
+   private String type;
+   
+   /** boolean indicating whether or not the artifact is currently installed */
+   private boolean installed;
+   
+   private String displayType;
+   
+   /** The action to take with this artifact */
+   private ArtifactAction artifactAction = ArtifactAction.NONE;
+
+   /** The size of the artifact in bytes */
+	private long size;
+
+	/** The checksum of the artifact */
+	private long checksum;
+   
+	public ArtifactStatus() {}
+	
+	/**
+	 * Constructs an ArtifactStatus from the specified ArtifactXmlBean
+	 * 
+	 * @param artifactXmlBean
+	 */
+	public ArtifactStatus(ArtifactXmlBean artifactXmlBean) {
+		this.name = artifactXmlBean.getName();
+		this.installed = artifactXmlBean.isInstalled();
+		this.size = artifactXmlBean.getSize();
+		this.checksum = artifactXmlBean.getChecksum();
+	}
+	
    /**
     * @return the _name
     */
@@ -207,6 +236,44 @@ public class ArtifactStatus implements Serializable {
 	 
 	     return retValue;
 	 }
+	 
+	/**
+	 * Sets the size (in bytes) of the artifact.
+	 * 
+	 * @param size the size of the file.
+	 */
+	public void setSize(long size)
+	{
+		this.size = size;
+	}
+
+	/**
+	 * @return the size
+	 */
+	public long getSize()
+	{
+		return size;
+	}
+	
+	/**
+	 * Sets the checksum of the file.
+	 * 
+	 * @param checksum the checksum of the file.
+	 */
+	public void setChecksum(long checksum)
+	{
+		this.checksum = checksum;
+	}
+
+	/**
+	 * Returns the checksum of the file.
+	 * 
+	 * @return the checksum the checksum of the file.
+	 */
+	public long getChecksum()
+	{
+		return checksum;
+	}
 
    
    

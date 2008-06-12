@@ -25,9 +25,20 @@ import java.io.IOException;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
+/**
+ * Interface for the class that applies changes given in a ChangeListXmlBean to the actual installed files,
+ * using the download files. 
+ * 
+ * @author manningr
+ */
 public interface ArtifactInstaller
 {
 
+	/**
+	 * Adds the specified InstallStatusListener for the purpose of notification using InstallStatusEvents.
+	 * 
+	 * @param listener the listener to add.
+	 */
 	public abstract void addListener(InstallStatusListener listener);
 
 	public abstract boolean backupFiles() throws FileNotFoundException, IOException;
