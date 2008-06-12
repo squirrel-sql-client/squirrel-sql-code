@@ -896,6 +896,9 @@
 				<fileset dir="${core_dist_dir}/plugins">
 					<include name="**/*.jar"/>
 				</fileset>	
+				<fileset dir="${core_obj_dir}">
+				        <include name="**/*applicationContext.xml"/>
+				</fileset>
 				<pathelement path="${test_dir}"/>			
 			</classpath>
 			<formatter type="plain"/>
