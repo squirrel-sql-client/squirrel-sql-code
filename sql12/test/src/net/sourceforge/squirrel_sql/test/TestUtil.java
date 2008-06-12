@@ -473,6 +473,7 @@ public class TestUtil {
                                                      .anyTimes();
       expect(result.isEnabled()).andReturn(true).anyTimes();
       expect(result.getKeyStroke()).andReturn(null).anyTimes();
+      expect(result.getValue(isA(String.class))).andStubReturn(null);
       result.addPropertyChangeListener(isA(PropertyChangeListener.class));
       expectLastCall().anyTimes();
       replay(result);
