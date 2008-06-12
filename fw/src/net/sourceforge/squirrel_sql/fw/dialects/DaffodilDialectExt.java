@@ -81,6 +81,29 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 			registerColumnType(Types.VARCHAR, 4192, "varchar($l)");
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
 			registerColumnType(Types.VARCHAR, "clob(1073741823)");
+			
+			// The registrations below are made in support for new types introduced in Java6 
+			
+			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version 
+			registerColumnType(-8, "integer");
+			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version 
+			registerColumnType(-9, 4192, "varchar($l)");
+			registerColumnType(-9, 1073741823, "clob($l)");
+			registerColumnType(-9, "clob(1073741823)");
+			// Replace "-15" with Types.NCHAR when Java6 is the minimum supported version
+			registerColumnType(-15, 4192, "char($l)");
+			registerColumnType(-15, 1073741823, "clob($l)");
+			registerColumnType(-15, "clob(1073741823)");
+			// Replace "-16" with Types.LONGNVARCHAR when Java6 is the minimum supported version
+			registerColumnType(-16, 1073741823, "long varchar($l)");
+			registerColumnType(-16, "long varchar(1073741823)");
+			// Replace "2009" with Types.SQLXML when Java6 is the minimum supported version
+			registerColumnType(2009, 1073741823, "clob($l)");
+			registerColumnType(2009, "clob(1073741823)");
+			// Replace "2011" with Types.NCLOB when Java6 is the minimum supported version
+			registerColumnType(2011, 1073741823, "clob($l)");
+			registerColumnType(2011, "clob(1073741823)");
+			
 		}
 	}
 
