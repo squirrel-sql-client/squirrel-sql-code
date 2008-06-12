@@ -161,7 +161,25 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#addListener(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#getChangeListFile()
+	 */
+	public File getChangeListFile()
+	{
+		return changeListFile;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#
+	 * setChangeListFile(java.io.File)
+	 */
+	public void setChangeListFile(File changeListFile)
+	{
+		this.changeListFile = changeListFile;
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#
+	 * addListener(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener)
 	 */
 	public void addListener(InstallStatusListener listener)
 	{
@@ -471,22 +489,5 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		}
 	}
 
-
-	/**
-	 * @return the changeListFile
-	 */
-	public File getChangeListFile()
-	{
-		return changeListFile;
-	}
-
-
-	/**
-	 * @param changeListFile the changeListFile to set
-	 */
-	public void setChangeListFile(File changeListFile)
-	{
-		this.changeListFile = changeListFile;
-	}
 
 }

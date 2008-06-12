@@ -359,7 +359,8 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getArtifactStatus(net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#
+    * getArtifactStatus(net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean)
     */
    public List<ArtifactStatus> getArtifactStatus(ReleaseXmlBean releaseXmlBean) {
       Set<String> installedPlugins = getInstalledPlugins();
@@ -370,21 +371,16 @@ public class UpdateUtilImpl implements UpdateUtil {
          Set<ArtifactXmlBean> artifactBeans = module.getArtifacts();
          String moduleName = module.getName();
          for (ArtifactXmlBean artifact: artifactBeans) {
-            String name = artifact.getName();
-            String type = moduleName;
-            boolean installed = artifact.isInstalled();
-            ArtifactStatus status = new ArtifactStatus();
-            status.setName(name);
-            status.setType(type);
-            status.setInstalled(installed);
+            ArtifactStatus status = new ArtifactStatus(artifact);
+            status.setType(moduleName);
             if (status.isCoreArtifact()) {
                status.setInstalled(true);
             }
-            if (status.isPluginArtifact() && installedPlugins.contains(name)) {
+            if (status.isPluginArtifact() && installedPlugins.contains(artifact.getName())) {
                status.setInstalled(true);
             }
             if (status.isTranslationArtifact() 
-                  && installedTranslations.contains(name)) 
+                  && installedTranslations.contains(artifact.getName())) 
             {
                status.setInstalled(true);  
             }
@@ -458,14 +454,15 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
 	/**
-	 * This function will recursivly delete directories and files.
+	 * This function will recursively delete directories and files.
 	 * 
 	 * @param path
 	 *           File or Directory to be deleted
-	 * @return true indicates success.
+	 * @return true indicates successfully deleted the file or directory.
 	 */
 	public boolean deleteFile(File path)
 	{
+		boolean result = false;
 		if (path.exists())
 		{
 			if (path.isDirectory())
@@ -475,19 +472,24 @@ public class UpdateUtilImpl implements UpdateUtil {
 				{
 					if (files[i].isDirectory())
 					{
-						deleteFile(files[i]);
+						result = result && deleteFile(files[i]);
 					}
 					else
 					{
+						boolean fileWasDeletedSuccessfully = files[i].delete();
 						if (s_log.isInfoEnabled()) {
-							s_log.info("deleteFile: deleting file = "+files[i].getAbsolutePath());
+							if (fileWasDeletedSuccessfully) {
+								s_log.info("deleteFile: successfully deleted file = "+files[i].getAbsolutePath());
+							} else {
+								s_log.info("deleteFile: failed to delete file = "+files[i].getAbsolutePath());
+							}
 						}
-						files[i].delete();
+						result = result && fileWasDeletedSuccessfully;
 					}
 				}
 			}
 		}
-		return (path.delete());
+		return result;
 	}   
       
    /**
@@ -628,7 +630,11 @@ public class UpdateUtilImpl implements UpdateUtil {
    	InputStream is = null;
    	try {
    		String fileToGet = _pathUtils.buildPath(true, path, file); 
-   		String filename = downloadHttpFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath());
+   		
+   		// We set expected and checksum to -1 here, since we don't have that information for release.xml file
+   		// TODO: Can HttpClient be used to get the byte-size of release.xml so we can perform this check?
+   		String filename =
+				downloadHttpFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath(), -1, -1);
    		File releaseXmlFile = new File(filename);
    		if (releaseXmlFile.exists()) {
    			is = new BufferedInputStream(new FileInputStream(filename));
@@ -641,24 +647,13 @@ public class UpdateUtilImpl implements UpdateUtil {
    	}
    	return result;
    }
-   
-   
+      
    /**
-	 * Downloads the specified file from the specified server and stores it by the same name in the specified
-	 * destination directory.
-	 * 
-	 * @param host
-	 *           the name of the server
-    * @param port
-	 *           the port on the server
-    * @param fileToGet
-	 *           the name of the file to download
-	 * @return a string representing the full local path to where the file was downloaded to
-	 * @throws Exception
-	 */
-   public String downloadHttpFile(final String host,
-         final int port, final String fileToGet, String destDir)
-         throws Exception {
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadHttpFile(java.lang.String, int, java.lang.String, java.lang.String, long, long)
+    */
+   public String downloadHttpFile(final String host, final int port, final String fileToGet, String destDir,
+		long fileSize, long checksum) throws Exception
+	{
       BufferedInputStream is = null;
       BufferedOutputStream os = null;
       URL url = null;
@@ -677,7 +672,10 @@ public class UpdateUtilImpl implements UpdateUtil {
          } else {
          	url = new URL(HTTP_PROTOCOL_PREFIX, server, port, fileToGet);
          }
-                  
+          
+         if (s_log.isDebugEnabled()) {
+         	s_log.debug("downloadHttpFile: downloading file ("+fileToGet+") from url: "+url);
+         }
          HttpClient client = new HttpClient();
          method = new GetMethod(url.toString());
          method.setFollowRedirects(true);
@@ -690,7 +688,7 @@ public class UpdateUtilImpl implements UpdateUtil {
          InputStream mis = method.getResponseBodyAsStream();
          
          if (s_log.isDebugEnabled()) {
-         	s_log.debug("response code was: "+resultCode);         	
+         	s_log.debug("downloadHttpFile: response code was: "+resultCode);         	
          }
          is = new BufferedInputStream(mis);
 			File resultFile = new File(destDir, _pathUtils.getFileFromPath(fileToGet));
@@ -706,11 +704,13 @@ public class UpdateUtilImpl implements UpdateUtil {
 				s_log.debug("downloadHttpFile: writing http response body to file: "+resultFile);
 			}
 			
+			int totalLength = 0;
 			while ((length = is.read(buffer)) != -1)
 			{
+				totalLength += length;
 				os.write(buffer, 0, length);
 			}
-         
+			verifySize(url, fileSize, totalLength);
       } catch (Exception e) {
          s_log.error("downloadCurrentRelease: Unexpected exception while "
                + "attempting to open an HTTP connection to host (" + host
@@ -726,6 +726,35 @@ public class UpdateUtilImpl implements UpdateUtil {
       return result;
    }
    
+   /**
+	 * Verifies that the byte size of what was downloaded matches the expected size of the artifact.  If 
+	 * expected is -1, this check will be skipped; this is expected in the case where the release.xml file is
+	 * being downloaded and there is no information about big it is. When -1 is expected, then a log message
+	 * is created and this check is skipped.
+	 * 
+	 * @param url
+	 *           the URL that was downloaded from
+	 * @param expected
+	 *           the number of bytes expected to be downloaded
+	 * @param actual
+	 *           the actual number of bytes downloaded
+	 * @throws Exception
+	 *            if the two counts do not match.
+	 */
+   private void verifySize(URL url, long expected, long actual) throws Exception {
+   	if (expected == -1) {
+   		if (s_log.isInfoEnabled()) {
+   			s_log.info("verifySize: expected size was -1.  Skipping check for url: "+url.toString());
+   		}
+   		return;
+   	}
+   	if (expected != actual) {
+   		throw new Exception("Attempt to get file contents from url ("+url.toString()+") resulted in "+actual+
+   			" bytes downloaded, but "+expected+" bytes were expected.");
+   	}
+   }
+
+   /** Dependency-injected */
    public void setPathUtils(PathUtils pathUtils) {
    	this._pathUtils = pathUtils;
    }

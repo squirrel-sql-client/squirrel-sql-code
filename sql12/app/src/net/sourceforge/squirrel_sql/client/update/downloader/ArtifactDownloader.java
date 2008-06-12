@@ -113,7 +113,8 @@ public class ArtifactDownloader implements Runnable
 				{
 					try
 					{
-						_util.downloadHttpFile(_host, _port, fileToGet, destDir);
+						_util.downloadHttpFile(_host, _port, fileToGet, destDir, status.getSize(),
+							status.getChecksum());
 					}
 					catch (Exception e)
 					{
@@ -245,15 +246,15 @@ public class ArtifactDownloader implements Runnable
 		return _path;
 	}
 
-	/**
-	 * @param path
-	 *           the _path to set
-	 */
-	String downloadHttpFile(String host, int port, String path, String fileToGet, String destDir)
-		throws Exception
-	{
-		return _util.downloadHttpFile(host, port, fileToGet, destDir);
-	}
+//	/**
+//	 * @param path
+//	 *           the _path to set
+//	 */
+//	String downloadHttpFile(String host, int port, String path, String fileToGet, String destDir)
+//		throws Exception
+//	{
+//		return _util.downloadHttpFile(host, port, fileToGet, destDir, -1, -1);
+//	}
 
 	public void setPath(String path)
 	{

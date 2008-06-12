@@ -23,9 +23,17 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 
+/**
+ * This bean is a javabean representation of the data in changeList.xml which is captured from the user's 
+ * changes that are made using the update feature. 
+ * 
+ * @author manningr
+ */
 public class ChangeListXmlBean implements Serializable {
 
-   /** the changes to make */
+	private static final long serialVersionUID = -5388272506303651886L;
+
+	/** the changes to make */
    private List<ArtifactStatus> changes = null;
    
    /**
