@@ -93,6 +93,24 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
 			registerColumnType(Types.VARCHAR, "clob(1073741823)");
+			
+			// The registrations below are made in support for new types introduced in Java6 
+			
+			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version 
+			registerColumnType(-8, "int");
+			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version 
+			registerColumnType(-9, 1073741823, "clob($l)");
+			registerColumnType(-9, "clob(1073741823)");
+
+			// Replace "-15" with Types.NCHAR when Java6 is the minimum supported version
+			registerColumnType(-15, "char($l)");
+			// Replace "-16" with Types.LONGNVARCHAR when Java6 is the minimum supported version
+			registerColumnType(-16, "longvarchar");
+			// Replace "2009" with Types.SQLXML when Java6 is the minimum supported version
+			registerColumnType(2009, "clob");
+			// Replace "2011" with Types.NCLOB when Java6 is the minimum supported version
+			registerColumnType(2011, "clob");
+			
 		}
 	}
 
