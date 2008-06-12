@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 
 /**
  * 
@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  * 
  * @author manningr
  */
-public class JDBCTypeMapperTest extends TestCase {
+public class JDBCTypeMapperTest extends BaseSQuirreLTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -54,7 +54,9 @@ public class JDBCTypeMapperTest extends TestCase {
         Field[] fields = java.sql.Types.class.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
-            assertTrue(s.contains(field.getName()));
+            String fieldName = field.getName();
+            assertTrue("JDBCTypeMapper.getJdbcTypeList() did not return an item for type: "+fieldName, 
+            	s.contains(fieldName));
         }
     }
 
@@ -82,9 +84,6 @@ public class JDBCTypeMapperTest extends TestCase {
         assertEquals("Field name=null",
                      Types.NULL, 
                      JDBCTypeMapper.getJdbcType(null));
-        assertEquals("Field name=NVARCHAR",
-                Types.VARCHAR, 
-                JDBCTypeMapper.getJdbcType("NVARCHAR"));
 
     }
 
