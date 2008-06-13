@@ -1,0 +1,88 @@
+####
+#
+# weekly build target properties
+#
+####
+
+# Name and version
+
+# application name that is used in the name of the installer file.
+name=squirrel-sql
+
+# version that's used in the name of the installer file
+appversion=2.6.1
+
+# cvs repository cvsroot to checkout the source from.
+#project.cvsroot=:pserver:anonymous@cvs.sourceforge.net/cvsroot/squirrel-sql
+project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
+
+# The module in the cvs repository to grab
+project.module=sql12
+
+# What tag to use to checkout from CVS
+cvs.tag=squirrel_2_6_branch
+
+# What temporary directory to checkout to in order to perform the build in.
+cvs.dest.dir=/home/manningr/squirrel_2_6_1_build
+
+# Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
+# and do a clean.  
+delete.dest.dir=true
+
+# The Version.java template file that contains a marker for where to insert the
+# snapshot number.
+version.template.filename=Version.java.template
+
+# If true, this replaces the version source file with the template that can be 
+# used to create a snapshot version.  Otherwise, the stock Version.java that's
+# on the CVS trunk is used to compile.
+replace.version=false
+
+# The location in the temp build area for where to place the Version.java file
+# once the template has been filtered. 
+version.dest.filename=${cvs.dest.dir}/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java
+
+# What build target to call on the build script to produce the compiled objects
+# required by the installer.
+build.target=mac_dist
+
+# The build directory where the main build scripts and configuration files are.
+build.file.dest.dir=${cvs.dest.dir}/${project.module}/build
+
+# Directory where IzPack is installed 
+izpack.home.dir=/usr/local/IzPack
+
+#
+# The template file to use to create the Windows/Unix IzPack configuration file
+#
+other.izpack.config.file.template=izpack-super.xml.template
+
+#
+# The template file to use to create the MacOS X IzPack configuration file
+#
+macosx.izpack.config.file.template=izpack-mac.xml.template
+
+#
+# The name of the Windows/Unix IzPack configuration file.
+#
+other.izpack.config.file=izpack-super.xml
+
+#
+# The name of the MacOS X IzPack configuration file.
+#
+macosx.izpack.config.file=izpack-macosx.xml
+
+# The template file to use to create the auto install script
+auto.intall.template=autoinstall.xml.template
+
+# The configuration file to use for autoinstalling using IzPack installer
+auto.install.file=autoinstall.xml
+
+# The directory that the application gets installed into for build verification
+# testing
+bv.install.dir=/tmp/squirreltest
+
+# The launch script for the application
+launch.file=${bv.install.dir}/squirrel-sql.sh
+
+
