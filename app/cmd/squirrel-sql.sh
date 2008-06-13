@@ -42,7 +42,7 @@ fi
 #$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 # Check for updates and prompt to apply if any are available
-$JAVA -cp $TMP_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication
+$JAVA -cp $TMP_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l update-log4j.properties
 
 # Launch SQuirreL application
 $JAVA -Xmx256m -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
