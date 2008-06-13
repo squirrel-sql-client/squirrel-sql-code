@@ -33,8 +33,8 @@ public class Version
 	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
 	private static final int MAJOR_VERSION = 2;
 	private static final int MINOR_VERSION = 6;
-	private static final int RELEASE = 5;
-        private static final String BUGFIX_VERSION="a";
+	private static final int RELEASE = 6;
+        private static final String BUGFIX_VERSION=null;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
 
@@ -57,7 +57,10 @@ public class Version
             buf.append(".");
 			buf.append(RELEASE);
 		}
+                if (BUGFIX_VERSION != null) {
 		buf.append(BUGFIX_VERSION);
+			buf.append(BUGFIX_VERSION);
+		}
 		return buf.toString();
 	}
 
