@@ -462,32 +462,26 @@ public class UpdateUtilImpl implements UpdateUtil {
 	 */
 	public boolean deleteFile(File path)
 	{
-		boolean result = false;
+		boolean result = true;
 		if (path.exists())
 		{
-			if (path.isDirectory())
-			{
+			if (path.isFile()) {
+				result = path.delete();
+				if (s_log.isInfoEnabled()) {
+					if (result) {
+						s_log.info("deleteFile: successfully deleted file = "+path.getAbsolutePath());
+					} else {
+						s_log.info("deleteFile: failed to delete file = "+path.getAbsolutePath());
+					}
+				}
+			} else {
 				File[] files = path.listFiles();
 				for (int i = 0; i < files.length; i++)
 				{
-					if (files[i].isDirectory())
-					{
-						result = result && deleteFile(files[i]);
-					}
-					else
-					{
-						boolean fileWasDeletedSuccessfully = files[i].delete();
-						if (s_log.isInfoEnabled()) {
-							if (fileWasDeletedSuccessfully) {
-								s_log.info("deleteFile: successfully deleted file = "+files[i].getAbsolutePath());
-							} else {
-								s_log.info("deleteFile: failed to delete file = "+files[i].getAbsolutePath());
-							}
-						}
-						result = result && fileWasDeletedSuccessfully;
-					}
+					result = result && deleteFile(files[i]);
 				}
-			}
+				result = result && path.delete();
+			} 
 		}
 		return result;
 	}   
