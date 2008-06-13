@@ -277,7 +277,7 @@
 	<!-- Launches the application for manual build verification testing. JAVA_HOME is the environment
 	     variable that the launch.file uses to determine which JVM to use -->
 	<target name="launchsquirrel">
-		<exec executable="JAVA_HOME=${launch.jvm} ${launch.file}"/>
+		<exec executable="${launch.file}"/>
 	</target>	
 		
 	<!-- Creates batch.txt from the template file, filtering in the actual names of the files to be 
@@ -309,7 +309,25 @@
 	     alot more work since it deals with many files in multiple sub-directories 
 	-->
 	<target name="publishUpdateSiteWithFtp" depends="init">
-	              <!-- TODO -->
+		
+		<ftp action="del"                           
+		     server="${remoteUpdateSiteHostname}"   userid="${remoteUpdateSiteUsername}"
+                     password="${remoteUpdateSitePassword}" remotedir="${remoteUpdateSiteDir}">
+		
+		    <fileset>
+			<include name="**/*.xml"/>
+		        <include name="**/*.jar"/>
+		    	<include name="**/*.zip"/>
+	            </fileset>
+			
+		</ftp>
+		<ftp action="put"
+		     server="${remoteUpdateSiteHostname}"   userid="${remoteUpdateSiteUsername}"
+		     password="${remoteUpdateSitePassword}" remotedir="${remoteUpdateSiteDir}">
+			
+			<fileset dir="${release.dir}" />
+			
+                </ftp>
 	</target>
 
 	<!-- Transfers the update site files to the remote download website.  This is no longer used as SF 
@@ -520,11 +538,8 @@
 		
 		<antcall target="uploadInstallersAndSource"/>
 		
-		<!-- This is commented out until new ftp-type task is implemented.  We are
-		     switching to a commercial (i.e. non-free) server that will allow us to 
-		     store files in web-space, for direct download and simple upload via ftp/scp. 
-		-->
-		<!-- <antcall target="publishUpdateSite"/> -->
+		<antcall target="publishUpdateSiteWithFtp"/> 
+		
 	</target>
 		
 </project>

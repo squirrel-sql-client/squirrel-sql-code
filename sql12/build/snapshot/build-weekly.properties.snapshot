@@ -1,6 +1,6 @@
 ####
 #
-# weekly build target properties
+# Release build properties
 #
 ####
 
@@ -10,11 +10,11 @@
 name=squirrel-sql
 
 # version that's used in the name of the installer file - this isn't used if 
-# building a snapshot release (i.e. replace.version is set to true)
+# building a snapshot release (that is, if replace.version is set to true)
 appversion=2.7
 
 # cvs repository cvsroot to checkout the source from.
-project.cvsroot=:pserver:anonymous@cvs.sourceforge.net/cvsroot/squirrel-sql
+project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
 
 # The module in the cvs repository to grab
 project.module=sql12
@@ -23,7 +23,7 @@ project.module=sql12
 cvs.tag=HEAD
 
 # What temporary directory to checkout to in order to perform the build in.
-cvs.dest.dir=<userhome>/weeklybuild
+cvs.dest.dir=/home/manningr/weeklybuild
 
 # Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
 # and do a clean.  
@@ -50,26 +50,18 @@ build.target=mac_dist
 build.file.dest.dir=${cvs.dest.dir}/${project.module}/build
 
 # Directory where IzPack is installed 
-izpack.home.dir=/usr/local/IzPack_3.10.2
+izpack.home.dir=/opt/IzPack
 
-#
 # The template file to use to create the Windows/Unix IzPack configuration file
-#
 other.izpack.config.file.template=izpack-super.xml.template
 
-#
 # The template file to use to create the MacOS X IzPack configuration file
-#
 macosx.izpack.config.file.template=izpack-mac.xml.template
 
-#
 # The name of the Windows/Unix IzPack configuration file.
-#
 other.izpack.config.file=izpack-super.xml
 
-#
 # The name of the MacOS X IzPack configuration file.
-#
 macosx.izpack.config.file=izpack-macosx.xml
 
 # The template file to use to create the auto install script
@@ -85,6 +77,14 @@ bv.install.dir=/tmp/squirreltest
 # The launch script for the application
 launch.file=${bv.install.dir}/squirrel-sql.sh
 
+# The JVM to launch squirrel with.  This should be a directoy and contain bin/java executable
+launch.jvm=/usr/lib/jvm/java-6-sun
+
+# Sftp username that is used to login to frs.sourceforge.net.  No password is specified for this account
+# as this script only supports the use of public key encryption in which interaction isn't required and the 
+# files can be uploaded in batch.
+sftp.username=manningr
+
 #----------------------------------------------------------------------------------------------------------#
 # The following properties are for uploading the release update site files onto a remote host that can then 
 # be pointed to inside of SQuirreL using the software update feature to pull down updates.  These are only 
@@ -92,19 +92,18 @@ launch.file=${bv.install.dir}/squirrel-sql.sh
 #----------------------------------------------------------------------------------------------------------#
 
 # The remote update site hostname
-remoteUpdateSiteHostname=shell.sourceforge.net
+remoteUpdateSiteHostname=www.squirrel-sql.net
 
 # The username to use for authentication on the update site.
-remoteUpdateSiteUsername=<sfusername>
+remoteUpdateSiteUsername=squirrelftp2
+
+# The password to use when connecting to the remote host
+remoteUpdateSitePassword=qUEd7Rux
 
 # The remote directory into which to place the release.zip file which represents the update site.  This will
 # be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
 # archive, so the channel directory should be specified in the path here
-remoteUpdateSiteDir=/home/groups/s/sq/squirrel-sql/htdocs/release/snapshot/
+remoteUpdateSiteDir=/updates/snapshot
 
-# The keyfile to use for authentication
-privateKeyFile=<userhome>/.ssh/id_dsa 
 
-# The passphrase to use to unlock the private key identity file that is used to authenticate with SourceForge.
-privateKeyPassPhrase=
 
