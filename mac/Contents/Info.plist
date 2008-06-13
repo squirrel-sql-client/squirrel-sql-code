@@ -29,7 +29,6 @@
         <key>ClassPath</key>
         <array>
                 <string>$JAVAROOT/lib/antlr-2.7.5H3.jar</string>
-                <string>$JAVAROOT/lib/antlr-2.7.5H3.jar</string>
                 <string>$JAVAROOT/lib/cglib-2.1.3.jar</string>
                 <string>$JAVAROOT/lib/commons-cli.jar</string>
                 <string>$JAVAROOT/lib/commons-codec-1.3.jar</string>
@@ -65,7 +64,9 @@
                 <string>$JAVAROOT/lib/squirrel-sql_it_IT.jar</string>
                 <string>$JAVAROOT/lib/squirrel-sql_ru.jar</string>
                 <string>$JAVAROOT/lib/squirrel-sql_es.jar</string>
-                <string>$JAVAROOT/squirrel-sql.jar</string>                
+                <string>$JAVAROOT/squirrel-sql.jar</string>
+                <string>$JAVAROOT/log4j.properties</string>
+                <string>$JAVAROOT/updater-log4j.properties</string>                
         </array>
         <key>WorkingDirectory</key>
         <string>$JAVAROOT</string>
