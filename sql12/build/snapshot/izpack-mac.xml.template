@@ -56,6 +56,10 @@
 					src="../../sql12/web-site/faq.html"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources"
 					src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/acorn.icns"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/update-log4j.properties"/>                                  
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"

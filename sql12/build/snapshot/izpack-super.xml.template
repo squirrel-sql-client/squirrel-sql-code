@@ -62,6 +62,8 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.sh"/>
 			<file	targetdir="$INSTALL_PATH"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties"/>
+                        <file   targetdir="$INSTALL_PATH"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/update-log4j.properties"/>					
 			<file	targetdir="$INSTALL_PATH"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
