@@ -63,6 +63,14 @@ public class EditAliasFolderDlg extends JDialog
       getRootPane().getActionMap().put("CloseAction", closeAction);
 
 
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _txtFolderName.requestFocus();
+         }
+      });
+
       setSize(400, 150);
 
    }
