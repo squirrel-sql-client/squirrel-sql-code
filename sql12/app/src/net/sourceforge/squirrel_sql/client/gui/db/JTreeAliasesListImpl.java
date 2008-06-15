@@ -3,13 +3,16 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -26,6 +29,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(JTreeAliasesListImpl.class);
 
+   private static enum PasteMode
+   {
+      COPY, CUT;
+   }
+
 
    JTree _tree = new JTree()
    {
@@ -38,7 +46,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    private JScrollPane _comp = new JScrollPane(_tree);
    private IApplication _app;
    private AliasesListModel _aliasesListModel;
-   private TreePath[] _cutPaths;
+
+   private TreePath[] _pathsToPaste;
+   private PasteMode _pasteMode;
+
+   private boolean _dontReactToAliasAdd = false ;
+
 
    public JTreeAliasesListImpl(IApplication app, AliasesListModel aliasesListModel)
    {
@@ -263,6 +276,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void onAliasAdded(ListDataEvent e)
    {
+      if(_dontReactToAliasAdd)
+      {
+         return;
+      }
+
       SQLAlias newAlias = (SQLAlias) _aliasesListModel.get(e.getIndex0());
       DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newAlias);
 
@@ -566,82 +584,190 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    public void cutSelected()
    {
-      _cutPaths = _tree.getSelectionPaths();
+      _pathsToPaste = _tree.getSelectionPaths();
+      _pasteMode = PasteMode.CUT;
    }
 
    public void pasteSelected()
    {
       try
       {
-         if(null == _cutPaths)
+         if (null == _pathsToPaste)
          {
             return;
          }
 
-         DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
-
-
-         TreePath selPath = _tree.getSelectionPath();
-
-
-         DefaultMutableTreeNode[] cutNodes = new DefaultMutableTreeNode[_cutPaths.length];
-
-         for (int i = 0; i < _cutPaths.length; i++)
+         switch (_pasteMode)
          {
-            cutNodes[i] = (DefaultMutableTreeNode) _cutPaths[i].getLastPathComponent();
-            dtm.removeNodeFromParent(cutNodes[i]);
-
+            case COPY:
+               execCopyToPaste(_pathsToPaste);
+               break;
+            case CUT:
+               execCut(_pathsToPaste);
+               break;
          }
-
-         if(null == selPath)
-         {
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
-
-            for (int i = 0; i < cutNodes.length; i++)
-            {
-               if (false == root.isNodeChild(cutNodes[i]))
-               {
-                  root.add(cutNodes[i]);
-               }
-            }
-            dtm.nodeStructureChanged(root);
-         }
-         else
-         {
-            DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
-
-            if(selNode.isLeaf())
-            {
-               DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-               for (int i = 0; i < cutNodes.length; i++)
-               {
-                  parent.insert(cutNodes[i], parent.getIndex(selNode) + 1);
-               }
-               dtm.nodeStructureChanged(parent);
-
-            }
-            else
-            {
-               for (int i = 0; i < cutNodes.length; i++)
-               {
-                  selNode.add(cutNodes[i]);
-               }
-               dtm.nodeStructureChanged(selNode);
-            }
-         }
-
-         TreePath[] newSelPaths = new TreePath[cutNodes.length];
-         for (int i = 0; i < newSelPaths.length; i++)
-         {
-            newSelPaths[i] = new TreePath(cutNodes[i].getPath());
-         }
-         _tree.setSelectionPaths(newSelPaths);
       }
       finally
       {
-         _cutPaths = null;
+         _pathsToPaste = null;
+      }
+   }
+
+   private void execCopyToPaste(TreePath[] pathsToPaste)
+   {
+      DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
+
+      TreePath selPath = _tree.getSelectionPath();
+
+      DefaultMutableTreeNode[] copiedNodes = new DefaultMutableTreeNode[pathsToPaste.length];
+
+      for (int i = 0; i < pathsToPaste.length; i++)
+      {
+         copiedNodes[i] = createCopy((DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent());
       }
 
+
+      if (null == selPath)
+      {
+         DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
+
+         for (int i = 0; i < copiedNodes.length; i++)
+         {
+            root.add(copiedNodes[i]);
+         }
+         dtm.nodeStructureChanged(root);
+      }
+      else
+      {
+         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+
+         if (selNode.isLeaf())
+         {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
+            for (int i = 0; i < copiedNodes.length; i++)
+            {
+               parent.insert(copiedNodes[i], parent.getIndex(selNode) + 1);
+            }
+            dtm.nodeStructureChanged(parent);
+
+         }
+         else
+         {
+            for (int i = 0; i < copiedNodes.length; i++)
+            {
+               selNode.add(copiedNodes[i]);
+            }
+            dtm.nodeStructureChanged(selNode);
+         }
+      }
+
+      TreePath[] newSelPaths = new TreePath[copiedNodes.length];
+      for (int i = 0; i < newSelPaths.length; i++)
+      {
+         newSelPaths[i] = new TreePath(copiedNodes[i].getPath());
+      }
+      _tree.setSelectionPaths(newSelPaths);
+   }
+
+   private DefaultMutableTreeNode createCopy(DefaultMutableTreeNode nodeToCopy)
+   {
+      try
+      {
+         if(nodeToCopy.getUserObject() instanceof SQLAlias)
+         {
+            SQLAlias source = (SQLAlias) nodeToCopy.getUserObject();
+            final IIdentifierFactory factory = IdentifierFactory.getInstance();
+            SQLAlias newAlias = _app.getDataCache().createAlias(factory.createIdentifier());
+            newAlias.assignFrom(source, false);
+
+            try
+            {
+               _dontReactToAliasAdd = true;
+               _app.getDataCache().addAlias(newAlias);
+            }
+            finally
+            {
+               _dontReactToAliasAdd = false;
+            }
+            return new DefaultMutableTreeNode(newAlias);
+         }
+         else
+         {
+            DefaultMutableTreeNode ret = AliasesTreeUtil.createFolderNode((String) nodeToCopy.getUserObject());
+
+            for (int i = 0; i < nodeToCopy.getChildCount(); i++)
+            {
+               ret.add(createCopy((DefaultMutableTreeNode) nodeToCopy.getChildAt(i)));
+            }
+            return ret;
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private void execCut(TreePath[] pathsToPaste)
+   {
+      DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
+
+      TreePath selPath = _tree.getSelectionPath();
+
+      DefaultMutableTreeNode[] cutNodes = new DefaultMutableTreeNode[pathsToPaste.length];
+
+      for (int i = 0; i < pathsToPaste.length; i++)
+      {
+         cutNodes[i] = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
+         dtm.removeNodeFromParent(cutNodes[i]);
+      }
+
+      if (null == selPath)
+      {
+         DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
+
+         for (int i = 0; i < cutNodes.length; i++)
+         {
+            root.add(cutNodes[i]);
+         }
+         dtm.nodeStructureChanged(root);
+      }
+      else
+      {
+         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+
+         if (selNode.isLeaf())
+         {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
+            for (int i = 0; i < cutNodes.length; i++)
+            {
+               parent.insert(cutNodes[i], parent.getIndex(selNode) + 1);
+            }
+            dtm.nodeStructureChanged(parent);
+
+         }
+         else
+         {
+            for (int i = 0; i < cutNodes.length; i++)
+            {
+               selNode.add(cutNodes[i]);
+            }
+            dtm.nodeStructureChanged(selNode);
+         }
+      }
+
+      TreePath[] newSelPaths = new TreePath[cutNodes.length];
+      for (int i = 0; i < newSelPaths.length; i++)
+      {
+         newSelPaths[i] = new TreePath(cutNodes[i].getPath());
+      }
+      _tree.setSelectionPaths(newSelPaths);
+   }
+
+   public void copyToPasteSelected()
+   {
+      _pathsToPaste = _tree.getSelectionPaths();
+      _pasteMode = PasteMode.COPY;
    }
 
 }

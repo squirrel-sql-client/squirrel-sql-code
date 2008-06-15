@@ -901,6 +901,7 @@ public class WindowManager
 		actions.add(new AliasPropertiesAction(_app, al));
 		actions.add(new ToggleTreeViewAction(_app, al));
 		actions.add(new NewAliasFolderAction(_app, al));
+      actions.add(new CopyToPasteAliasFolderAction(_app, al));
 		actions.add(new CutAliasFolderAction(_app, al));
 		actions.add(new PasteAliasFolderAction(_app, al));
 
