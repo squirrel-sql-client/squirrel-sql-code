@@ -187,6 +187,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _pm.addSeparator();
          addToMenuAsCheckBoxMenuItem(_app.getResources(), actions.get(ToggleTreeViewAction.class), _pm);
          _pm.add(actions.get(NewAliasFolderAction.class));
+         _pm.add(actions.get(CopyToPasteAliasFolderAction.class));
          _pm.add(actions.get(CutAliasFolderAction.class));
          _pm.add(actions.get(PasteAliasFolderAction.class));
 
@@ -273,6 +274,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          boolean viewAsTree = actViewAsTree.getToggleComponentHolder().isSelected();
 
          actions.get(NewAliasFolderAction.class).setEnabled(viewAsTree);
+         actions.get(CopyToPasteAliasFolderAction.class).setEnabled(viewAsTree);
          actions.get(CutAliasFolderAction.class).setEnabled(viewAsTree);
          actions.get(PasteAliasFolderAction.class).setEnabled(viewAsTree);
       }
@@ -301,6 +303,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _tb.addSeparator();
          _tb.addToggleAction((IToggleAction)actions.get(ToggleTreeViewAction.class));
          _tb.add(actions.get(NewAliasFolderAction.class));
+         _tb.add(actions.get(CopyToPasteAliasFolderAction.class));
          _tb.add(actions.get(CutAliasFolderAction.class));
          _tb.add(actions.get(PasteAliasFolderAction.class));
 		}

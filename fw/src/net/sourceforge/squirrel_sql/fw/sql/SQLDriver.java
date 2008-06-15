@@ -85,7 +85,6 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	 */
 	public SQLDriver(IIdentifier id)
 	{
-		super();
 		_id = id;
 		_name = "";
 		_jarFileName = null;
@@ -99,7 +98,6 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	 */
 	public SQLDriver()
 	{
-		super();
 	}
 
 	/**

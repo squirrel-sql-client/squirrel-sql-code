@@ -100,7 +100,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public SQLAlias()
    {
-      super();
    }
 
    /**
@@ -110,7 +109,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public SQLAlias(IIdentifier id)
    {
-      super();
       _id = id;
       _name = "";
       _driverId = null;

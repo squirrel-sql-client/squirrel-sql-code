@@ -7,4 +7,6 @@ public interface IAliasTreeInterface
    void cutSelected();
 
    void pasteSelected();
+
+   void copyToPasteSelected();
 }
