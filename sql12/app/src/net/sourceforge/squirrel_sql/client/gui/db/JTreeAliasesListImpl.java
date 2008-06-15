@@ -690,6 +690,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       _pathsToPaste = _tree.getSelectionPaths();
       _pasteMode = PasteMode.CUT;
+      _tree.repaint();
    }
 
    public void pasteSelected()
