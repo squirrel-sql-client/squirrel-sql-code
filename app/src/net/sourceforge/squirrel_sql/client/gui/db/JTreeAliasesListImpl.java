@@ -21,6 +21,8 @@ import java.awt.*;
 import java.awt.dnd.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.io.File;
 
@@ -63,6 +65,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       root.removeAllChildren();
       _tree.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       _tree.setToolTipText("init");
+
+      initRenderer();
+
       initDnD();
 
 
@@ -95,6 +100,64 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       initTree();
 
+   }
+
+   private void initRenderer()
+   {
+      DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
+      {
+         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
+         {
+            return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
+         }
+      };
+
+      _tree.setCellRenderer(treeCellRenderer);
+
+
+      AbstractAction cancelCutAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
+            {
+               _pathsToPaste = null;
+               _tree.repaint();
+            }
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      _tree.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "cancelCutAction");
+      _tree.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "cancelCutAction");
+      _tree.getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "cancelCutAction");
+      _tree.getActionMap().put("cancelCutAction", cancelCutAction);
+
+   }
+
+   private Component modifyRenderer(Component component, Object node)
+   {
+      JLabel ret = (JLabel) component;
+      ret.setEnabled(true);
+
+
+      if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
+      {
+         DefaultMutableTreeNode dmtn = (DefaultMutableTreeNode) node;
+
+         boolean found = false;
+         for (TreePath treePath : _pathsToPaste)
+         {
+            if(treePath.getLastPathComponent() == dmtn)
+            {
+               found = true;
+               break;
+            }
+         }
+         ret.setEnabled(!found);
+         ret.setDisabledIcon(ret.getIcon());
+      }
+
+      return component;
    }
 
    private void initDnD()
