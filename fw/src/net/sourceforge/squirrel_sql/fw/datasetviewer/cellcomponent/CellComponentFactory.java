@@ -957,7 +957,10 @@ public class CellComponentFactory {
       if (dataTypeComponent == null) {
          switch (colDef.getSqlType()) {
          case Types.NULL: // should never happen
-            //dataTypeComponent = new DataTypeString(table, colDef);
+         	if (s_log.isDebugEnabled()) {
+         		s_log.debug("getGenericDataType: encountered an sql type = Types.NULL for column: "+
+         			colDef.getFullTableColumnName() + ". A DataTypeComponent is not available for this type.");
+         	}
             break;
 
          case Types.BIT:
