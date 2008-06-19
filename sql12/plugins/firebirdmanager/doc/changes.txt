@@ -1,0 +1,11 @@
+Change Log
+==========
+
+1.0
+===
+- Initial release
+-- create database manager
+-- backup and restore database manager
+-- user manager
+-- role manager
+-- grant and revoke manager

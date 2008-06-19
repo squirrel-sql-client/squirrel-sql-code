@@ -1,0 +1,7 @@
+Change Log
+==========
+
+1.0
+===
+- Initial release
+-- Find invalid null values

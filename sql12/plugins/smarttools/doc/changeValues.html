@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Smarttools Plugin - Change values</title>
+</head>
+<body>
+<center><h1>Smarttools Plugin<br>- Change values -</h1></center>
+<br>
+<br>With this module you can change column values over many tables.<br>
+<br>
+<u>To find columns for changing the values, follow these steps:</u><br><br>
+<img src="images/ChangeValues1.jpg">
+<br><br>
+1. Type in a column name, which will be used.<br>
+&emsp;You can input here the wildcard <b>%</b> as last character to use a column name group,<br>
+&emsp;which will be begin with your input without the wildcard.<br>
+<br>
+2. Now choose the data type for your selected column. You can choose between many<br>
+&emsp;of the standard sql data types. You can also select one of the data groups<br>
+&emsp;- <b>Group integer</b> (BIGINT, INTEGER, SMALLINT and TINYINT),<br>
+&emsp;- <b>Group char</b> (CHAR, LONGVARCHAR and VARCHAR) or<br>
+&emsp;- <b>Group numeric</b> (DECIMAL, DOUBLE, FLOAT, NUMERIC and REAL).<br>
+<br>
+3. After selecting the data type, you can choose the operator, you want to use.<br>
+<br>
+4. If you have selected an operator except <b>is null</b> and <b>is not null</b>, you can input your searching value.<br>
+&emsp;If you have selected a character data type, you can use the wildcard <b>%</b> with the value like a normal sql statement.<br>
+<br>
+5. Select <b>displaying only tables with data</b>, if you want only to display tables in the result list<br>
+&emsp;with one or more data rows.<br>
+<br>
+6. Start the searching.<br>
+&emsp;You can terminate searching by clicking the stop button.<br>
+&emsp;The result will be displayed in the table.<br>
+&emsp;On the column <b>records</b> you see as first number the founded rows, as the second number the record count of the table.<br>
+<br>
+<br><br>
+<u>To change the values of the columns in the result table, follow these steps:</u><br><br>
+<img src="images/ChangeValues2.jpg">
+<br><br>
+1. Mark the entries, which data you want to change.<br>
+<br>
+2. You can also use the buttons <b>all</b> or <b>none</b> to mark or demark all entries in the result table.<br>
+<br>
+3. Select <b>enable change button</b>.<br>
+&emsp;The change button and the input field for the new value will be enabled.<br>
+<br>
+4. Now input the new value for all the selected entries.<br>
+<br>
+5. Start changing the selected entries.<br>
+<br>
+6. In the last column, you can see the working status.<br>
+&emsp;- a white circle describe an entry for changing<br>
+&emsp;- a green circle describe an entry with correct changed data<br>
+&emsp;- and a red circle describe an entry with an error on changing to the new value.<br>
+&emsp;&emsp;<b>You must take a look into the log file for details.</b><br>
+<br>
+7. If there is a result displayed in the table, the print button will be activated to print the result.<br><br>
+
+</body>
+</html>

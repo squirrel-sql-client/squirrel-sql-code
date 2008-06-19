@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Smarttools Plugin - Search missing indices</title>
+</head>
+<body>
+<center><h1>Smarttools Plugin<br>- Search missing indices -</h1></center>
+<br>
+<br>With this module you can find all tables without indices, unique indices or primary key.<br>
+<br>
+<u>To find these tables, follow these steps:</u><br><br>
+<img src="images/MissingIndices.jpg">
+<br><br>
+1. Insert the table name, where columns shall be searched. You can use a <b>%</b> as wildcard.<br>
+&emsp;An empty input field means that all tables will be used.<br>
+<br>
+2. Select the type of search.<br>
+&emsp;You can choose between the following types to display the search result:<br>  
+&emsp;<b>- all entries:</b> all checked tables will be displayed with their index and primary key status<br>
+&emsp;<b>- missing primary keys:</b> all tables without a primary key or without a unique index will be displayed<br>
+&emsp;<b>- missing unique indices:</b> all tables without a unique index will be displayed<br>
+<br> 
+3. Start searching for missing indices.<br>
+&emsp;You can terminate the search by clicking on the stop button.<br>
+<br>
+4. Results will be displayed in the table.<br>
+<br>
+5. If there is a result displayed in the table, the <b>print</b> button will be activated to print the result,<br>
+&emsp;the <a href="createIndex.html"><b>ddl</b></a> button is enabled to create a primary key or a unique index for the selected table<br>
+&emsp;and the <b>records</b> button is enabled to determine the record count of all displayed tables.<br><br>
+&emsp;<u><b>Notice:</b></u> After clicking the <b>records</b> button, the record count will be determined<br>
+&emsp;and displayed in the column <b>records</b> of the table.
+<br><br>
+
+</body>
+</html>
