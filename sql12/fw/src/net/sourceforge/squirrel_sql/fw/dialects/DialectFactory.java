@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,6 +67,8 @@ public class DialectFactory {
     private static final FirebirdDialectExt firebirdDialect = new FirebirdDialectExt();
     
     private static final FrontBaseDialectExt frontbaseDialect = new FrontBaseDialectExt();
+    
+    private static final GenericDialectExt genericDialect = new GenericDialectExt();
     
     private static final HADBDialectExt hadbDialect = new HADBDialectExt();
     
@@ -253,22 +254,7 @@ public class DialectFactory {
      * @return a dialect type 
      */
     public static DialectType getDialectType(ISQLDatabaseMetaData md) {
-       HibernateDialect dialect = null;
-       try {
-          dialect = getDialect(md);
-       } catch (UnknownDialectException e) {
-          try {
-             s_log.error("getDialectType: Unknown dialect for product="
-                  + md.getDatabaseProductName() + " version="
-                  + md.getDatabaseProductVersion()+" - "+e.getMessage(), e);
-          } catch (SQLException ex) {
-             s_log.error("getDialectType: unable to get database "
-                  + "product/version: " + ex.getMessage(), ex);
-          }
-       }
-       if (dialect == null) {
-          return DialectType.GENERIC;
-       }
+       HibernateDialect dialect = getDialect(md);
        return dialect.getDialectType();
     }
     
@@ -326,81 +312,34 @@ public class DialectFactory {
      * @return
      */
     public static HibernateDialect getDialect(ISQLDatabaseMetaData md) 
-        throws UnknownDialectException
     {
-        if (isAxion(md)) {
-            return axionDialect;
-        }
-        if (isDaffodil(md)) {
-            return daffodilDialect;
-        }
-        if (isDB2(md)) {
-            return db2Dialect;
-        }
-        if (isDerby(md)) {
-            return derbyDialect;
-        }
-        if (isFirebird(md)) {
-            return firebirdDialect;
-        }
-        if (isFrontBase(md)) {
-            return frontbaseDialect;
-        }
-        if (isHADB(md)) {
-            return hadbDialect;
-        }
-        if (isH2(md)) {
-            return h2Dialect;
-        }
-        if (isHSQL(md)) {
-            return hsqlDialect;
-        }
-        if (isInformix(md)) {
-            return informixDialect;
-        }
-        if (isIngres(md)) {
-            return ingresDialect;
-        }
-        if (isInterbase(md)) {
-            return ingresDialect;
-        }        
-        if (isMaxDB(md)) {
-            return maxDbDialect;
-        }
-        if (isMcKoi(md)) {
-            return mckoiDialect;
-        }
-        if (isMySQL(md)) {
-            return mysqlDialect;
-        }
-        if (isMySQL5(md)) {
-      	   return mysql5Dialect;
-        }
-        if (isMSSQLServer(md)) {
-            return sqlserverDialect;
-        }
-        if (isOracle(md)) {
-            return oracle9iDialect;
-        }
-        if (isPointbase(md)) {
-            return pointbaseDialect;
-        }
-        if (isPostgreSQL(md)) {
-            return postgreSQLDialect;
-        }
-        if (isProgress(md)) {
-            return progressDialect;
-        }
-        if (isSyBase(md)) {
-            return sybaseDialect;
-        }
-        if (isTimesTen(md)) {
-            return timestenDialect;
-        }        
-        if (isIntersystemsCacheDialectExt(md)) {
-            return intersystemsCacheDialectExt;
-        }
-        throw new UnknownDialectException();
+      if (isAxion(md)) { return axionDialect; }
+		if (isDaffodil(md)) { return daffodilDialect; }
+		if (isDB2(md)) { return db2Dialect; }
+		if (isDerby(md)) { return derbyDialect; }
+		if (isFirebird(md)) { return firebirdDialect; }
+		if (isFrontBase(md)) { return frontbaseDialect; }
+		if (isHADB(md)) { return hadbDialect; }
+		if (isH2(md)) { return h2Dialect; }
+		if (isHSQL(md)) { return hsqlDialect; }
+		if (isInformix(md)) { return informixDialect; }
+		if (isIngres(md)) { return ingresDialect; }
+		if (isInterbase(md)) { return ingresDialect; }
+		if (isMaxDB(md)) { return maxDbDialect; }
+		if (isMcKoi(md)) { return mckoiDialect; }
+		if (isMySQL(md)) { return mysqlDialect; }
+		if (isMySQL5(md)) { return mysql5Dialect; }
+		if (isMSSQLServer(md)) { return sqlserverDialect; }
+		if (isOracle(md)) { return oracle9iDialect; }
+		if (isPointbase(md)) { return pointbaseDialect; }
+		if (isPostgreSQL(md)) { return postgreSQLDialect; }
+		if (isProgress(md)) { return progressDialect; }
+		if (isSyBase(md)) { return sybaseDialect; }
+		if (isTimesTen(md)) { return timestenDialect; }
+		if (isIntersystemsCacheDialectExt(md)) { return intersystemsCacheDialectExt; }
+		// GenericDialect must be last, since it will claim that it supports any product/version.  That is also
+		// why there is no isGenericDialect - it would always return true if there was one, making it useless.
+      return genericDialect;  
     }
     
     public static HibernateDialect getDialect(int sessionType,
@@ -414,12 +353,7 @@ public class DialectFactory {
         if (isPromptForDialect) {
             result = showDialectDialog(parent, sessionType);
         } else {
-            try {
-                result = getDialect(md);
-            } catch (UnknownDialectException e) {
-                // Failed to detect the dialect that should be used.  Ask the user.
-                result = showDialectDialog(parent, sessionType);    
-            }       
+            result = getDialect(md);
         }
         return result;
     }

@@ -103,7 +103,7 @@ public class JDBCTypeMapper
 			for (int i = 0; i < fields.length; i++)
 			{
 				Field field = fields[i];
-				if (field.getName().equals(jdbcTypeName)) {
+				if (field.getName().equalsIgnoreCase(jdbcTypeName)) {
 					result = field.getInt(null);
 				}
 			}

@@ -37,7 +37,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UnknownDialectException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -149,7 +148,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         if (_bStop) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ScriptUtil.getTableName(ti);
-                        StringBuffer sql = new StringBuffer();
+                        StringBuilder sql = new StringBuilder();
                         sql.append("select * from ");
                         sql.append(ti.getQualifiedName());
                         
@@ -160,6 +159,10 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                             sql.append(getFirstColumnName(ti));
                             sql.append(" asc ");
                         } 
+                        if (s_log.isDebugEnabled()) {
+                        	s_log.debug("execute: generating insert statements from data retrieved with SQL = "
+										+ sql.toString());
+                        }
                         ResultSet srcResult = stmt.executeQuery(sql.toString());
                         genInserts(srcResult, sTable, sbRows, false);
                      }
@@ -491,18 +494,8 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    private boolean getTimestampFlag() throws SQLException {
    	if (dialectSupportsSubSecondTimestamps == null) {
    		ISQLDatabaseMetaData md = _session.getMetaData();
-      	try {
-      		HibernateDialect dialect = DialectFactory.getDialect(md);
-      		dialectSupportsSubSecondTimestamps = dialect.supportsSubSecondTimestamps();
-      	} catch (UnknownDialectException e) {
-      		/* unknown so, assume that they are */
-      		dialectSupportsSubSecondTimestamps = true;
-      		if (s_log.isDebugEnabled()) {
-      			s_log.debug("getTimestampFlag: database "+md.getDatabaseProductName()+" version "+
-      				md.getDatabaseProductVersion()+" does not have a supported dialect.  Please submit a " +
-      						"feature request to add a dialect for SQuirreL to better support this database.");
-      		}
-      	}   		
+   		HibernateDialect dialect = DialectFactory.getDialect(md);
+   		dialectSupportsSubSecondTimestamps = dialect.supportsSubSecondTimestamps();
    	}
    	return dialectSupportsSubSecondTimestamps;
    }

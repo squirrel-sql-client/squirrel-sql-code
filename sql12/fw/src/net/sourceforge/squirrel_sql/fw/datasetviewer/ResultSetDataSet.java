@@ -23,10 +23,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -317,15 +319,20 @@ public class ResultSetDataSet implements IDataSet {
          } catch (SQLException e) {
             s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
          }
+         
+         String columnName = md.getColumnName(idx);
+         String columnTypeName = md.getColumnTypeName(idx);
+         int columnType = fixColumnType(columnName, md.getColumnType(idx), columnTypeName);
+         
          columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i]
                                                            : md.getColumnDisplaySize(idx),
                                                      fullTableName
                                                            + ":"
                                                            + md.getColumnLabel(idx),
-                                                     md.getColumnName(idx),
+                                                     columnName,
                                                      md.getColumnLabel(idx),
-                                                     md.getColumnType(idx),
-                                                     md.getColumnTypeName(idx),
+                                                     columnType,
+                                                     columnTypeName,
                                                      isNullable,
                                                      md.getColumnDisplaySize(idx),
                                                      precis,
@@ -338,6 +345,46 @@ public class ResultSetDataSet implements IDataSet {
       return columnDefs;
    }
 
+   /**
+    * The following is a synopsis of email conversations with David Crawshaw, who maintains the SQLite JDBC 
+    * driver: 
+    * 
+    * SQLite's JDBC driver returns Types.NULL as the column type if the table has no rows.  Columns don't 
+    * necessarily have a type attribute; the type is associated with the values in the column (this is 
+    * referred to as manifest typing).  Columns can have an affinity (a preferred storage option) which 
+    * looks just like a type in the create table statement; however, it can be whatever the user chooses, and 
+    * not necessarily a standard SQL type.  Even still, SQLite exposes no API call to retrieve the column 
+    * affinity (or storage clause).  However, it does make the type name that the user used available and that
+    * may possibly be a valid standard SQL type.  
+    * 
+    * So, if the specified column type code is Types.NULL, this method attempts to adjust the type code from 
+    * Types.NULL to a sensible Type based on the column type name reported by the driver.  If the column type 
+    * name doesn't match (ignoring case) an existing JDBC type, then this method returns Types.VARCHAR.  
+    * 
+    * @param columnName the name of the column
+    * @param columnType the type code that was given by the jdbc driver.
+    * @param columnTypeName the type name of the column that was given by the jdbc driver
+    * 
+    * @return a type code that is not Types.NULL.
+    */
+   private int fixColumnType(String columnName, int columnType, String columnTypeName) {
+   	int result = columnType;
+   	if (columnType == Types.NULL) {
+   		result = JDBCTypeMapper.getJdbcType(columnTypeName);
+   		if (result == Types.NULL) {
+   			result = Types.VARCHAR;
+   		}
+   	}
+   	if (result != columnType) {
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("Converting type code for column "+columnName+
+					". Original column type code and name were Types.NULL and "+columnTypeName+
+					"; New type code is "+JDBCTypeMapper.getJdbcTypeName(result));
+			}   		
+   	}
+   	return result;
+   }
+   
    private void reset() {
       _iCurrent = -1;
       _currentRow = null;

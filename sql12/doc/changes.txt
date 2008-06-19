@@ -75,6 +75,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Fixed several bugs which made it impossible to work with SQLite.
+
 Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
