@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.For
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UnknownDialectException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -169,10 +168,6 @@ public class TableSourceTab extends FormattedSourceTab
                 tmp.append("\n");
                 tmp.append("\n");
             }
-        } catch (UnknownDialectException e) {
-            s_log.error("createStatement: Unable to determine the dialect "
-                    + "to use");
-            return null;
         } catch (SQLException e) {
             s_log.error("createStatement: Unexpected exception while "
                     + "constructing SQL for table(" + ti.getSimpleName()
