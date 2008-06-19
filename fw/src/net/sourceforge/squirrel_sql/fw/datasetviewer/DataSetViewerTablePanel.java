@@ -165,6 +165,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 */
 	protected final class MyJTable extends JTable
 	{
+		private static final long serialVersionUID = 1L;
 		private final int _multiplier;
 		private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
@@ -369,12 +370,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				// i18n[dataSetViewerTablePanel.textCantBeConverted=The given text cannot be converted into the internal object.\nThe database has not been changed.\nThe conversion error was:\n{0}]
 				String msg = s_stringMgr.getString("dataSetViewerTablePanel.textCantBeConverted", messageBuffer);
 
+				if (s_log.isDebugEnabled()) {
+					s_log.debug("setValueAt: msg from DataTypeComponent was: "+msg);
+				}
+				
 				// display error message and do not update the table
 				JOptionPane.showMessageDialog(this,
 					msg,
 					// i18n[dataSetViewerTablePanel.conversionError=Conversion Error]
 					s_stringMgr.getString("dataSetViewerTablePanel.conversionError"),
 					JOptionPane.ERROR_MESSAGE);
+				
 			}
 			else
 			{
@@ -717,7 +723,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		fontDesent=(int)(g.getFontMetrics().getDescent() * scale);
  
 		tableHeader = _table.getTableHeader();
-		double headerWidth = tableHeader.getWidth() * scale;
+//		double headerWidth = tableHeader.getWidth() * scale;
 		headerHeight = tableHeader.getHeight() +_table.getRowMargin() * scale;
  
 		pageHeight = pageFormat.getImageableHeight();
@@ -813,7 +819,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		g2.scale(1/scale, 1/scale);
  
 		double pageTop =  tableHeightOnFullPage*rowIndex - headerHeight;
-		double pageBottom = pageTop +  clipHeight + headerHeight;
+//		double pageBottom = pageTop +  clipHeight + headerHeight;
 		g2.drawRect(pageLeft, (int)pageTop, pageWidth, (int)(clipHeight+ headerHeight));
 	}
 	
