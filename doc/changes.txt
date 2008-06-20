@@ -6,6 +6,19 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+
+New Plugin: Smarttools by Michael Romankiewicz
+  - Searching for tables that do not have a primary key or unique index or index.
+  - Searching for non nullable columns that contain null values. Some DBs e.g. Firebird can be tricked to have this inconsistency.
+  - Changing values database wide according to specified criteria.
+  For more information see the Plugin's help.
+
+
+New Plugin: Firebird Manager by Michael Romankiewicz
+  - Storing and restoring Firebird DBs
+  - Managing users and roles for the Firebird RDBMS
+  For more information see the Plugin's help.
+
  - Aliases can be displayed as list or as tree.
 
  - A new preference for choosing Locale is available in Global Preferences -> General tab.  This allows you to
