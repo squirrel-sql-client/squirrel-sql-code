@@ -66,6 +66,9 @@ PostgreSQL Plugin:
    the query plan of executed statements.
 
 Refactoring Plugin:
+ - Fixed bug which caused column comment alter statement to be generated even when no column column 
+   change was made.
+
  - Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
    when there is only one table being dropped.
 
