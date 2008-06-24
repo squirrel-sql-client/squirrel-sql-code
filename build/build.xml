@@ -344,6 +344,10 @@
 			<param name="p_internal_name" value="firebird"/>
 			<param name="p_rebuild" value="${rebuild.plugin.firebird}"/>
 		</antcall>
+                <antcall target="build_plugin">
+                        <param name="p_internal_name" value="firebirdmanager"/>
+                        <param name="p_rebuild" value="${rebuild.plugin.firebirdmanager}"/>
+                </antcall>		
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="graph"/>
 			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
@@ -396,6 +400,10 @@
 			<param name="p_internal_name" value="sessionscript"/>
 			<param name="p_rebuild" value="${rebuild.plugin.sessionscript}"/>
 		</antcall>
+                <antcall target="build_plugin">
+                        <param name="p_internal_name" value="smarttools"/>
+                        <param name="p_rebuild" value="${rebuild.plugin.smarttools}"/>
+                </antcall>		
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlbookmark"/>
 			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}"/>

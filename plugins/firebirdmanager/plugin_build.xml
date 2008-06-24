@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    This is an Apache Ant build file to build the SQL script plugin
+    This is an Apache Ant build file to build the Firebird Manager plugin
     for distribution.
 -->
 <project name="plugin-firebirdmanager" default="build" basedir=".">

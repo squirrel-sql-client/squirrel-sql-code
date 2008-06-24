@@ -281,6 +281,18 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript"/>
 		</pack>				
 
+                <pack required="no" preselected="no"
+                        name="Optional Plugin - Smart Tools ">
+                        <description>
+                                This optional plugin aims to help you with helpful routines to improve your 
+                                database
+                        </description>
+                        <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+                                src="../../squirrel-sql-dist/squirrel-sql/plugins/smarttools/dist/smarttools.jar" />
+                        <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+                                src="../../squirrel-sql-dist/squirrel-sql/plugins/smarttools/dist/smarttools" />
+                </pack>
+
 		<pack required="no" preselected="no" name="Optional Plugin - SQL Parametrisation ">
 			<description>This plugin allows you to put variables into your SQL statements </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
