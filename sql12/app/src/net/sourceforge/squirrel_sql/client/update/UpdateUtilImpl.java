@@ -104,6 +104,9 @@ public class UpdateUtilImpl implements UpdateUtil {
    /** TODO: Spring-inject when this class is a Spring bean */
    private PathUtils _pathUtils = new PathUtilsImpl();
    
+   /** The size of the buffer to use when extracting files from a ZIP archive */
+   public final static int ZIP_EXTRACTION_BUFFER_SIZE = 8192;
+   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadCurrentRelease(java.lang.String, int, java.lang.String, java.lang.String)
     */
@@ -518,10 +521,10 @@ public class UpdateUtilImpl implements UpdateUtil {
 	   				newFile.delete();
 	   			}
 	   			fos = new FileOutputStream(newFile); 
-	   			byte[] buffer = new byte[8192];
-	   			while (zis.available() != 0) {
-	   				zis.read(buffer);
-	   				fos.write(buffer);
+	   			byte[] buffer = new byte[ZIP_EXTRACTION_BUFFER_SIZE];
+	   			int n = 0;
+	   			while ((n = zis.read(buffer, 0, ZIP_EXTRACTION_BUFFER_SIZE)) > -1) {
+	   				fos.write(buffer, 0, n);
 	   			}
 	   		   fos.close();
 	   		}
