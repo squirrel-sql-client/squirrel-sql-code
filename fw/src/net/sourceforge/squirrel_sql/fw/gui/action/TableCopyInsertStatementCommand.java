@@ -99,7 +99,7 @@ public class TableCopyInsertStatementCommand extends TableCopySqlPartCommandBase
                if (firstCol)
                {
                   firstCol = false;
-                  colNames.append("INTO (");
+                  colNames.append("INSERT INTO PressCtrlH (");
                   vals.append("(");
                }
                else
