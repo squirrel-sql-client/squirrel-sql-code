@@ -73,7 +73,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
 
-            buf.append("SET ");
+            buf.append("UPDATE PressCtrlH SET ");
 
             boolean firstCol = true;
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
