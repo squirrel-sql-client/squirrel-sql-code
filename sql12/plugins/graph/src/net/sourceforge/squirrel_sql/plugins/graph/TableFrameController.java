@@ -1,8 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.FontMetrics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -92,6 +91,8 @@ public class TableFrameController
    private JMenuItem _mnuAddAllRelatedTables;
    private JMenuItem _mnuRefreshTable;
    private JMenuItem _mnuScriptTable;
+   private JMenuItem _mnuCopyTableName;
+   private JMenuItem _mnuCopyQualifiedTableName;
    private JMenuItem _mnuViewTableInObjectTree;
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
@@ -537,7 +538,27 @@ public class TableFrameController
          }
       });
 
-		// i18n[graph.viewTableInObjectTree=View table in Object tree]
+      _mnuCopyTableName = new JMenuItem(s_stringMgr.getString("graph.copyTableName"));
+      _mnuCopyTableName.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopyTableName(false);
+         }
+      });
+
+      _mnuCopyQualifiedTableName = new JMenuItem(s_stringMgr.getString("graph.copyQualifiedTableName"));
+      _mnuCopyQualifiedTableName.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopyTableName(true);
+         }
+      });
+
+
+
+      // i18n[graph.viewTableInObjectTree=View table in Object tree]
 		_mnuViewTableInObjectTree = new JMenuItem(s_stringMgr.getString("graph.viewTableInObjectTree"));
       _mnuViewTableInObjectTree.addActionListener(new ActionListener()
       {
@@ -595,6 +616,9 @@ public class TableFrameController
       _popUp.add(_mnuAddParentTables);
       _popUp.add(_mnuAddAllRelatedTables);
       _popUp.add(new JSeparator());
+      _popUp.add(_mnuCopyTableName);
+      _popUp.add(_mnuCopyQualifiedTableName);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshTable);
       _popUp.add(_mnuScriptTable);
       _popUp.add(_mnuViewTableInObjectTree);
@@ -619,6 +643,37 @@ public class TableFrameController
       });
 
 
+   }
+
+   private void onCopyTableName(boolean qualified)
+   {
+      String toCopy = "";
+
+      if(qualified)
+      {
+         if(null != _catalog)
+         {
+            toCopy += _catalog + ".";
+         }
+
+         if(null != _schema)
+         {
+            toCopy += _schema + ".";
+         }
+
+         toCopy += _tableName;
+
+      }
+      else
+      {
+         toCopy = _tableName;
+      }
+
+
+
+
+      final StringSelection ss = new StringSelection(toCopy);
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
    }
 
    private void onViewTableInObjectTree()
