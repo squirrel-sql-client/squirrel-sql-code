@@ -174,6 +174,16 @@ public class AliasFolderState implements Comparable
    public int compareTo(Object o)
    {
       AliasFolderState other = (AliasFolderState) o;
+
+      if(null == _aliasIdentifier && null != other._aliasIdentifier)
+      {
+         return -1;
+      }
+      else if(null != _aliasIdentifier && null == other._aliasIdentifier)
+      {
+         return 1;
+      }
+
       return getCompString().compareTo(other.getCompString());
    }
 
