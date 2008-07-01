@@ -190,6 +190,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _pm.add(actions.get(CopyToPasteAliasFolderAction.class));
          _pm.add(actions.get(CutAliasFolderAction.class));
          _pm.add(actions.get(PasteAliasFolderAction.class));
+         _pm.add(actions.get(CollapseAllAliasFolderAction.class));
+         _pm.add(actions.get(ExpandAllAliasFolderAction.class));
 
          app.addApplicationListener(new ApplicationListener()
          {
@@ -277,6 +279,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          actions.get(CopyToPasteAliasFolderAction.class).setEnabled(viewAsTree);
          actions.get(CutAliasFolderAction.class).setEnabled(viewAsTree);
          actions.get(PasteAliasFolderAction.class).setEnabled(viewAsTree);
+         actions.get(CollapseAllAliasFolderAction.class).setEnabled(viewAsTree);
+         actions.get(ExpandAllAliasFolderAction.class).setEnabled(viewAsTree);
       }
 
 		private void createToolBar()
@@ -306,6 +310,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          _tb.add(actions.get(CopyToPasteAliasFolderAction.class));
          _tb.add(actions.get(CutAliasFolderAction.class));
          _tb.add(actions.get(PasteAliasFolderAction.class));
+         _tb.add(actions.get(CollapseAllAliasFolderAction.class));
+         _tb.add(actions.get(ExpandAllAliasFolderAction.class));
 		}
 
 		public SquirrelPreferences getPreferences()

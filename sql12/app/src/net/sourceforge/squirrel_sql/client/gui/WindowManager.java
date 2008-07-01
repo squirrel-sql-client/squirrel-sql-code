@@ -904,6 +904,8 @@ public class WindowManager
       actions.add(new CopyToPasteAliasFolderAction(_app, al));
 		actions.add(new CutAliasFolderAction(_app, al));
 		actions.add(new PasteAliasFolderAction(_app, al));
+		actions.add(new CollapseAllAliasFolderAction(_app, al));
+		actions.add(new ExpandAllAliasFolderAction(_app, al));
 
       _aliasesListWindow = new AliasesListInternalFrame(_app, al);
 

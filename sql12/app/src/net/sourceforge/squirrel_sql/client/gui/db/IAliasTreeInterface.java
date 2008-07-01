@@ -9,4 +9,8 @@ public interface IAliasTreeInterface
    void pasteSelected();
 
    void copyToPasteSelected();
+
+   void collapseAll();
+
+   void expandAll();
 }

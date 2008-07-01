@@ -871,4 +871,20 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _pasteMode = PasteMode.COPY;
    }
 
+   public void collapseAll()
+   {
+      for (int i = 0; i < _tree.getRowCount(); i++)
+      {
+         _tree.collapseRow(i);
+      }
+   }
+
+   public void expandAll()
+   {
+      for (int i = 0; i < _tree.getRowCount(); i++)
+      {
+         _tree.expandRow(i);
+      }
+   }
+
 }
