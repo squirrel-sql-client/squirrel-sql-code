@@ -7,6 +7,9 @@ Not yet released - available from CVS or in the latest snapshot:
 Enhancements: 
 
 
+Graph Plugin:
+ - New entries in table'S popup menu: "Copy table name" and "Copy qualified table name"
+
 New Plugin: Smarttools by Michael Romankiewicz
   - Searching for tables that do not have a primary key or unique index or index.
   - Searching for non nullable columns that contain null values. Some DBs e.g. Firebird can be tricked to have this inconsistency.
