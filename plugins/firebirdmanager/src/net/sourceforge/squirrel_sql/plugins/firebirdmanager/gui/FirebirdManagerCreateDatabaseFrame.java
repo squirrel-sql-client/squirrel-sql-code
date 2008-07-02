@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Michael Romankiewicz
- * mirommail(at)web.de
+ * microm at users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
