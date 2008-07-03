@@ -13,7 +13,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 
 
-public class GraphController
+public class GraphController implements GraphControllerAccessor
 {
    private ISession _session;
    private GraphMainPanelTab _graphPane;
@@ -223,11 +223,11 @@ public class GraphController
 
       if(null == xmlBean)
       {
-         tfc = new TableFrameController(_session, _desktopController, _addTableListener, tableName, schemaName, catalogName, null);
+         tfc = new TableFrameController(_session, _desktopController, this, _addTableListener, tableName, schemaName, catalogName, null);
       }
       else
       {
-         tfc = new TableFrameController(_session, _desktopController, _addTableListener, null, null, null, xmlBean);
+         tfc = new TableFrameController(_session, _desktopController, this ,_addTableListener, null, null, null, xmlBean);
       }
 
       if (_openTableFrameCtrls.contains(tfc))
@@ -248,6 +248,12 @@ public class GraphController
          }
       });
 
+   }
+
+
+   public Vector<TableFrameController> getOpenTableFrameControllers()
+   {
+      return _openTableFrameCtrls;
    }
 
    private void calcPosition(final TableFrameController tfc, Point[] lastCascadePointRef)

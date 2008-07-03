@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -110,15 +109,17 @@ public class TableFrameController
    private ZoomerListener _zoomerListener;
    private Rectangle _adjustBeginBounds;
    private double _adjustBeginZoom;
+   private GraphControllerAccessor _graphControllerAccessor;
 
 
-   public TableFrameController(ISession session, GraphDesktopController desktopController, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
+   public TableFrameController(ISession session, GraphDesktopController desktopController, GraphControllerAccessor graphControllerAccessor, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
    {
       try
       {
          _session = session;
          _desktopController = desktopController;
          _addTablelListener = listener;
+         _graphControllerAccessor = graphControllerAccessor;
 
          TableToolTipProvider toolTipProvider = new TableToolTipProvider()
          {
@@ -183,17 +184,17 @@ public class TableFrameController
          {
             public void componentMoved(ComponentEvent e)
             {
-               recalculateAllConnections();
+               recalculateAllConnections(false);
             }
 
             public void componentResized(ComponentEvent e)
             {
-               recalculateAllConnections();
+               recalculateAllConnections(false);
             }
 
             public void componentShown(ComponentEvent e)
             {
-               recalculateAllConnections();
+               recalculateAllConnections(false);
             }
          });
 
@@ -201,7 +202,7 @@ public class TableFrameController
          {
             public void adjustmentValueChanged(AdjustmentEvent e)
             {
-               recalculateAllConnections();
+               recalculateAllConnections(false);
             }
          });
 
@@ -405,7 +406,7 @@ public class TableFrameController
       bounds.width = (int) (_adjustBeginBounds.width * newZoom / _adjustBeginZoom + 0.5);
       bounds.height = (int) (_adjustBeginBounds.height * newZoom / _adjustBeginZoom + 0.5);;
       _frame.setBounds(bounds);
-      recalculateAllConnections();
+      recalculateAllConnections(false);
 
       if(false == adjusting)
       {
@@ -704,7 +705,7 @@ public class TableFrameController
          if(initFromDB())
          {
             orderColumns();
-            recalculateAllConnections();
+            recalculateAllConnections(true);
             _desktopController.repaint();
          }
          else
@@ -733,7 +734,7 @@ public class TableFrameController
       {
          public void run()
          {
-            recalculateAllConnections();
+            recalculateAllConnections(false);
             fireSortListeners();
          }
       });
@@ -747,7 +748,7 @@ public class TableFrameController
       {
          public void run()
          {
-            recalculateAllConnections();
+            recalculateAllConnections(false);
             fireSortListeners();
          }
       });
@@ -761,7 +762,7 @@ public class TableFrameController
       {
          public void run()
          {
-            recalculateAllConnections();
+            recalculateAllConnections(false);
             fireSortListeners();
          }
       });
@@ -1072,8 +1073,33 @@ public class TableFrameController
    }
 
 
-   private void recalculateAllConnections()
+   private void recalculateAllConnections(boolean checkForNewConnections)
    {
+      if(checkForNewConnections)
+      {
+         Vector<TableFrameController> openTableFrameControllers = _graphControllerAccessor.getOpenTableFrameControllers();
+
+         for (int i = 0; i < openTableFrameControllers.size(); i++)
+         {
+            boolean found = false;
+            for (int j = 0; j < _openFramesConnectedToMe.size(); j++)
+            {
+               if(openTableFrameControllers.get(i) == _openFramesConnectedToMe.get(j))
+               {
+                  found = true;
+                  break;
+               }
+            }
+
+            if(false == found)
+            {
+               tableFrameOpen(openTableFrameControllers.get(i));
+            }
+         }
+      }
+
+
+
       for (int i = 0; i < _openFramesConnectedToMe.size(); i++)
       {
          TableFrameController tableFrameController = _openFramesConnectedToMe.elementAt(i);

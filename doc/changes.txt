@@ -94,6 +94,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Graph Plugin: Referesh didn't work for newly created constraints
+
 Fixed several bugs which made it impossible to work with SQLite.
 
 Updated Italian translation (Ivo Neri)
