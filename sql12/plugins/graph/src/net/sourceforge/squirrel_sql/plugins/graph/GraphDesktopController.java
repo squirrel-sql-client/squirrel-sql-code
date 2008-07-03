@@ -51,6 +51,9 @@ public class GraphDesktopController
    private GraphPlugin _plugin;
    private ZoomPrintController _zoomPrintController;
    private JPanel _graphPanel;
+   private JMenuItem _mnuAllTablesDbOrder;
+   private JMenuItem _mnuAllTablesByNameOrder;
+   private JMenuItem _mnuAllTablesPkConstOrder;
 
 
    public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin)
@@ -202,6 +205,33 @@ public class GraphDesktopController
          }
       });
 
+		_mnuAllTablesDbOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesDbOrderRequested"));
+      _mnuAllTablesDbOrder.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onAllTablesDbOrder();
+         }
+      });
+
+		_mnuAllTablesByNameOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesByNameOrderRequested"));
+      _mnuAllTablesByNameOrder.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onAllTablesByNameOrder();
+         }
+      });
+
+		_mnuAllTablesPkConstOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesPkConstOrderRequested"));
+      _mnuAllTablesPkConstOrder.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onAllTablesPkConstOrder();
+         }
+      });
+
       _popUp.add(_mnuSaveGraph);
       _popUp.add(_mnuRenameGraph);
       _popUp.add(_mnuRemoveGraph);
@@ -209,8 +239,27 @@ public class GraphDesktopController
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
       _popUp.add(new JSeparator());
+      _popUp.add(_mnuAllTablesDbOrder);
+      _popUp.add(_mnuAllTablesByNameOrder);
+      _popUp.add(_mnuAllTablesPkConstOrder);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
       _popUp.add(_mnuZoomPrint);
+   }
+
+   private void onAllTablesPkConstOrder()
+   {
+      _listener.allTablesPkConstOrderRequested();
+   }
+
+   private void onAllTablesByNameOrder()
+   {
+      _listener.allTablesByNameOrderRequested();
+   }
+
+   private void onAllTablesDbOrder()
+   {
+      _listener.allTablesDbOrderRequested();
    }
 
    private void onScriptAllTables()

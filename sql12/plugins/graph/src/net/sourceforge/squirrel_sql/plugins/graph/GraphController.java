@@ -61,6 +61,20 @@ public class GraphController implements GraphControllerAccessor
             scriptAllTables();
          }
 
+         public void allTablesPkConstOrderRequested()
+         {
+            allTablesPkConstOrder();
+         }
+
+         public void allTablesByNameOrderRequested()
+         {
+            allTablesByNameOrder();
+         }
+
+         public void allTablesDbOrderRequested()
+         {
+            allTablesDbOrder();
+         }
       };
 
       _desktopController = new GraphDesktopController(_graphDesktopListener, _session, _plugin);
@@ -115,6 +129,30 @@ public class GraphController implements GraphControllerAccessor
          {
             addTableIntern(null, null, null, null, tableFrameControllerXmls[i]);
          }
+      }
+   }
+
+   private void allTablesDbOrder()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.dbOrder();
+      }
+   }
+
+   private void allTablesByNameOrder()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.nameOrder();
+      }
+   }
+
+   private void allTablesPkConstOrder()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.pkConstraintOrder();
       }
    }
 
