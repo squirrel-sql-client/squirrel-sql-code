@@ -13,12 +13,8 @@ import java.awt.event.MouseEvent;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -575,7 +571,7 @@ public class TableFrameController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onDBOrder();
+            dbOrder();
          }
       });
 
@@ -585,7 +581,7 @@ public class TableFrameController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onNameOrder();
+            nameOrder();
          }
       });
 
@@ -595,7 +591,7 @@ public class TableFrameController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onPkConstraintOrder();
+            pkConstraintOrder();
          }
       });
 
@@ -726,7 +722,7 @@ public class TableFrameController
       _addTablelListener.addTablesRequest(new String[]{columnInfo.getImportedTableName()}, _schema, _catalog);
    }
 
-   private void onPkConstraintOrder()
+   void pkConstraintOrder()
    {
       _columnOrder = ORDER_PK_CONSTRAINT;
       orderColumns();
@@ -740,7 +736,7 @@ public class TableFrameController
       });
    }
 
-   private void onNameOrder()
+   void nameOrder()
    {
       _columnOrder = ORDER_NAME;
       orderColumns();
@@ -754,7 +750,7 @@ public class TableFrameController
       });
    }
 
-   private void onDBOrder()
+   void dbOrder()
    {
       _columnOrder = ORDER_DB;
       orderColumns();
@@ -915,7 +911,7 @@ public class TableFrameController
 
    private void onAddParentTables()
    {
-      List<String> tablesToAdd = new ArrayList<String>();
+      HashSet<String> tablesToAdd = new HashSet<String>();
 
       for (int i = 0; i < _constraintViews.length; i++)
       {

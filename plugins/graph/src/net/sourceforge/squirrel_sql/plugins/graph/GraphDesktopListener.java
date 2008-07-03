@@ -7,4 +7,10 @@ public interface GraphDesktopListener
    void removeRequest();
    void refreshAllTablesRequested();
    void scriptAllTablesRequested();
+
+   void allTablesPkConstOrderRequested();
+
+   void allTablesByNameOrderRequested();
+
+   void allTablesDbOrderRequested();
 }

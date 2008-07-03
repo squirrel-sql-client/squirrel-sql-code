@@ -8,7 +8,8 @@ Enhancements:
 
 
 Graph Plugin:
- - New entries in table'S popup menu: "Copy table name" and "Copy qualified table name"
+ - New entries in table's popup menu: "Copy table name" and "Copy qualified table name".
+ - Columns of all tables in a graph can now be ordered at once. Use the right mouse menu on the graph background.
 
 New Plugin: Smarttools by Michael Romankiewicz
   - Searching for tables that do not have a primary key or unique index or index.
@@ -93,6 +94,9 @@ Refactoring Plugin:
    Hibernate dialect.
 
 Bug-Fixes:
+
+Graph Plugin: Table's right mouse menu "Add Parent tables" did add a parent more
+              than once when more than one foreign key to the parent existed.    
 
 Graph Plugin: Referesh didn't work for newly created constraints
 
