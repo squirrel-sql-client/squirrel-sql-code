@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.6 2007-04-08 11:48:55 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.7 2008-07-03 22:18:55 gerdwagner Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -154,7 +154,7 @@ public class DeleteTablesCommand implements ICommand
                 if (cascadeClause != null && !cascadeClause.equals("")) {
                     buf.append(" ").append(cascadeClause);
                 }
-                buf.append(sqlSep).append(" ").append('\n');
+                buf.append(" ").append(sqlSep).append(" ").append('\n');
             }
             if (buf.length() == 0) {
                 return;
