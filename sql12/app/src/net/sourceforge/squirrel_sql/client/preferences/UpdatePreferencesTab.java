@@ -65,7 +65,9 @@ public class UpdatePreferencesTab implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		((UpdatePreferencesPanel)getPanelComponent()).loadData(_app.getSquirrelPreferences());
+		UpdatePreferencesPanel updatePanel = (UpdatePreferencesPanel)getPanelComponent();
+		updatePanel.setApplication(_app);
+		updatePanel.loadData(_app.getSquirrelPreferences());
 	}
 
    public void uninitialize(IApplication app)

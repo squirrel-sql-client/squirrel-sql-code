@@ -18,15 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -35,21 +40,31 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateCheckFrequencyComboBoxEntry.Frequency;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
 
 public class UpdatePreferencesPanel extends JPanel
 {
-   
-   /** Internationalized strings for this class. */
+	private static final Color CONNECTION_FAILURE_COLOR = Color.RED;
+
+	private static final Color CONNECTION_SUCCESS_COLOR = new Color(67, 181, 118);
+
+	/** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(UpdatePreferencesPanel.class);
 
+   private static final UpdateUtil _updateUtil = new UpdateUtilImpl();
    
    static interface i18n {
 
@@ -89,31 +104,46 @@ public class UpdatePreferencesPanel extends JPanel
       
       // i18n[UpdatePreferencesPanel.server=Server:]
       String SERVER = s_stringMgr.getString("UpdatePreferencesPanel.server");
-      
-      //i18n[UpdatePreferencesPanel.stableChannelLabel=Snapshot]     
-      String SNAPSHOT_CHANNEL_LABEL = 
-         s_stringMgr.getString("UpdatePreferencesPanel.snapshotChannelLabel");
-
-      //i18n[UpdatePreferencesPanel.stableChannelLabel=Stable]
-      String STABLE_CHANNEL_LABEL = 
-         s_stringMgr.getString("UpdatePreferencesPanel.stableChannelLabel");
-      
+            
       //i18n[UpdatePreferencesPanel.weeklyLabel=Weekly]
       String WEEKLY_LABEL = 
          s_stringMgr.getString("UpdatePreferencesPanel.weeklyLabel");
    
+      // i18n[UpdatePreferencesPanel.siteTypeLabel=Site Type:]
+      String SITE_TYPE_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.siteTypeLabel");      
+      
+      // i18n[UpdatePreferencesPanel.testLabel=Test Connection]
+      String TEST_LABEL = 
+      	s_stringMgr.getString("UpdatePreferencesPanel.testLabel");
+
+      // i18n[UpdatePreferencesPanel.urlLabel=Url:]
+		String URL = 
+			s_stringMgr.getString("UpdatePreferencesPanel.urlLabel");
+		
+		// i18n[UpdatePreferencesPanel.statusLableSuccessMsg=Connected Successfully]
+		String STATUS_LABEL_SUCCESS_MSG = s_stringMgr.getString("UpdatePreferencesPanel.statusLableSuccessMsg");
+
+		// i18n[UpdatePreferencesPanel.statusLableFailureMsg=Connection failed. See log for error.]
+		String STATUS_LABEL_FAILURE_MSG = s_stringMgr.getString("UpdatePreferencesPanel.statusLableFailureMsg");
+
+		// i18n[UpdatePreferencesPanel.connectionFailureDialogMsg=Unable to download release.xml from the 
+		// specified location]
+		String CONNECTION_FAILURE_DIALOG_MSG = 
+			s_stringMgr.getString("UpdatePreferencesPanel.connectionFailureDialogMsg");
    }   
    
    private static final long serialVersionUID = 6411907298042579120L;
-   private JLabel serverLabel = null;
-   private JLabel portLabel = null;
-   private JLabel pathLabel = null;
-   private JLabel localPathLabel = null;
-   private JLabel channelLabel = null;
+   private JLabel _serverLabel = null;
+   private JLabel _portLabel = null;
+   private JLabel _pathLabel = null;
+   private JLabel _localPathLabel = null;
+   private JLabel _channelLabel = null;
+   private JLabel _urlLabel = null;
    private JTextField _updateServerName = new JTextField();
    private JTextField _updateServerPort = new JTextField();
    private JTextField _updateServerPath = new JTextField();
    private JTextField _localPath = new JTextField();
+   private JTextField _updateUrl = new JTextField();
    
    private JLabel siteTypeLabel = null;
    private JRadioButton _remoteTypeButton = new JRadioButton("Remote");
@@ -121,12 +151,10 @@ public class UpdatePreferencesPanel extends JPanel
    private ButtonGroup _updateSiteTypeGroup = new ButtonGroup();
    
    private UpdateChannelComboBoxEntry stableChannel = 
-      new UpdateChannelComboBoxEntry(ChannelType.STABLE, 
-                               i18n.STABLE_CHANNEL_LABEL); 
+      new UpdateChannelComboBoxEntry(ChannelType.STABLE, "stable"); 
    
    private UpdateChannelComboBoxEntry snapshotChannel = 
-      new UpdateChannelComboBoxEntry(ChannelType.SNAPSHOT, 
-                               i18n.SNAPSHOT_CHANNEL_LABEL);
+      new UpdateChannelComboBoxEntry(ChannelType.SNAPSHOT, "snapshot");
    
    private JComboBox _updateServerChannel = 
       new JComboBox(new Object[] { stableChannel, snapshotChannel } );
@@ -145,9 +173,16 @@ public class UpdatePreferencesPanel extends JPanel
    private JComboBox _updateCheckFrequency = 
       new JComboBox(new Object[] {checkAtStartup, checkWeekly});
    
+   private JButton _testConnectionButton = 
+   	new JButton(i18n.TEST_LABEL);
+   
+   private JLabel _testConnectionStatusLabel = new JLabel();
+   
    private final Insets SEP_INSETS = new Insets(10, 14, 0, 14);
    private final Insets LABEL_INSETS = new Insets(2, 28, 6, 0);
-   private final Insets FIELD_INSETS = new Insets(2, 8, 6, 28);      
+   private final Insets FIELD_INSETS = new Insets(2, 8, 6, 28);
+
+	private IApplication _app;      
    
    public UpdatePreferencesPanel()
    {
@@ -188,6 +223,7 @@ public class UpdatePreferencesPanel extends JPanel
       }
       _localPath.setText(updateSettings.getFileSystemUpdatePath());
       updateControlStatus();
+      updateUrl();
    }
 
    void applyChanges(SquirrelPreferences prefs)
@@ -251,166 +287,226 @@ public class UpdatePreferencesPanel extends JPanel
       JPanel pnl = new JPanel(new GridBagLayout());
       pnl.setBorder(BorderFactory.createTitledBorder(i18n.UPDATE_SITE_BORDER_LABEL));
 
+      ItemListener urlUpdateItemListener = new UrlItemListener();
+      DocumentListener urlDocumentListener = new UrlDocumentListener();      
       final GridBagConstraints gbc = new GridBagConstraints();
-      gbc.gridx = 0;
-      gbc.gridy = 0;
+      
+      setSeparatorConstraints(gbc, 0);
       gbc.gridwidth = 1;
-      gbc.insets = SEP_INSETS;
+      gbc.weightx = 0;
       gbc.fill = GridBagConstraints.NONE;
       gbc.anchor = GridBagConstraints.EAST;
-      siteTypeLabel = new JLabel("Site Type:", JLabel.RIGHT);
+      siteTypeLabel = new JLabel(i18n.SITE_TYPE_LABEL, JLabel.RIGHT);
       pnl.add(siteTypeLabel, gbc);
       
+      // Site type
+
+      setSeparatorConstraints(gbc, 0);
       gbc.gridx = 1;
-      gbc.gridy = 0;
       gbc.gridwidth = 1;
-      gbc.weightx = 1;
-      gbc.insets = SEP_INSETS;
       gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.WEST;
       pnl.add(getSiteTypePanel(), gbc);
       
-      gbc.gridx = 0;
-      gbc.gridy = 1;
-      gbc.gridwidth = 2;
-      gbc.insets = SEP_INSETS;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.anchor = GridBagConstraints.WEST;
+      setSeparatorConstraints(gbc, 1);
       pnl.add(getSep(), gbc);
-
       
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.gridx = 0;
-      gbc.gridy = 2;
-      gbc.gridwidth = 1;
-      gbc.weightx = 0;
-      gbc.insets = LABEL_INSETS;
-      gbc.anchor = GridBagConstraints.EAST;
-      serverLabel = new JLabel(i18n.SERVER, SwingConstants.RIGHT);
-      pnl.add(serverLabel, gbc);
-
-      gbc.gridx = 1;
-      gbc.gridy = 2;
-      gbc.gridwidth = 1;
-      gbc.weightx = 1;
-      gbc.insets = FIELD_INSETS;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.anchor = GridBagConstraints.WEST;
+      // Update server name
+      
+      setLabelConstraints(gbc, 2);
+      _serverLabel = new JLabel(i18n.SERVER, SwingConstants.RIGHT);
+      pnl.add(_serverLabel, gbc);
+      
+      setFieldConstraints(gbc, 2);
+      _updateServerName.getDocument().addDocumentListener(urlDocumentListener);
       pnl.add(_updateServerName, gbc);
       
-      gbc.gridx = 0;
-      gbc.gridy = 3;
-      gbc.gridwidth = 1;
-      gbc.weightx = 0;
-      gbc.insets = LABEL_INSETS;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.EAST;
-      portLabel = new JLabel(i18n.PORT, SwingConstants.RIGHT);
-      pnl.add(portLabel, gbc);
-
-      gbc.gridx = 1;
-      gbc.gridy = 3;
-      gbc.gridwidth = 1;
-      gbc.weightx = 1;
-      gbc.insets = FIELD_INSETS;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.anchor = GridBagConstraints.WEST;
+      // Update server port
+      
+      setLabelConstraints(gbc, 3);
+      _portLabel = new JLabel(i18n.PORT, SwingConstants.RIGHT);
+      pnl.add(_portLabel, gbc);
+      
+      setFieldConstraints(gbc, 3);
+      _updateServerPort.getDocument().addDocumentListener(urlDocumentListener);
       pnl.add(_updateServerPort, gbc);
 
+      // Path to release.xml
+      
+      setLabelConstraints(gbc, 4);
+      _pathLabel = new JLabel(i18n.PATH, SwingConstants.RIGHT);
+      pnl.add(_pathLabel, gbc);
+
+      setFieldConstraints(gbc, 4);
+      _updateServerPath.getDocument().addDocumentListener(urlDocumentListener);
+      pnl.add(_updateServerPath, gbc);
+      
+      // Channnel combo-box
+      
+      setLabelConstraints(gbc, 5);
+      _channelLabel = new JLabel(i18n.CHANNEL, SwingConstants.RIGHT);
+      pnl.add(_channelLabel, gbc);
+
+      setFieldConstraints(gbc, 5);
+      gbc.fill = GridBagConstraints.NONE;
+      _updateServerChannel.addItemListener(urlUpdateItemListener);
+      pnl.add(_updateServerChannel, gbc);
+      
+      // URL text field
+      
+      setLabelConstraints(gbc, 6);
+      _urlLabel = new JLabel(i18n.URL, SwingConstants.RIGHT);
+      pnl.add(_urlLabel, gbc);
+      
+      setFieldConstraints(gbc, 6);
+      updateUrl();
+      pnl.add(_updateUrl, gbc);
+      
+      // Test Connection Button Panel (Both the button and the status label
+      
+      setFieldConstraints(gbc, 7);
+      
+      Box buttonBox = Box.createHorizontalBox(); 
+      buttonBox.add(_testConnectionButton);
+      buttonBox.add(Box.createHorizontalStrut(20));
+      buttonBox.add(_testConnectionStatusLabel);
+      _testConnectionButton.addActionListener(new TestConnectionButtonListener());      
+      pnl.add(buttonBox, gbc);
+      
+      // Separator
+      
+      setSeparatorConstraints(gbc, 8);
+      pnl.add(getSep(), gbc);
+      
+      // Local update directory
+      
+      setLabelConstraints(gbc, 9);
+      _localPathLabel = new JLabel(i18n.LOCAL_PATH, SwingConstants.RIGHT);
+      pnl.add(_localPathLabel, gbc);         
+      
+      setFieldConstraints(gbc, 9);
+      pnl.add(_localPath, gbc);
+      return pnl;
+   }
+   
+   /**
+    * Sets the specified GridBagConstraints with the specified grid y coordinate and:<br>
+    * <br> grid x = 0 
+    * <br> grid width = 1
+    * <br> weight x = 1
+    * <br> insets = LABEL_INSETS 
+    * <br> fill = GridBagConstraints.NONE
+    * <br> anchor = GridBagConstraints.EAST
+    * 
+    * @param gbc the constraints to set
+    * @param gridy the grid y coordinate
+    */
+   private void setLabelConstraints(GridBagConstraints gbc, int gridy) {
       gbc.gridx = 0;
-      gbc.gridy = 4;
+      gbc.gridy = gridy;
       gbc.gridwidth = 1;
       gbc.weightx = 0;
       gbc.insets = LABEL_INSETS;
       gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.EAST;
-      pathLabel = new JLabel(i18n.PATH, SwingConstants.RIGHT);
-      pnl.add(pathLabel, gbc);
+      gbc.anchor = GridBagConstraints.EAST;   	
+   }
 
+   /**
+    * Sets the specified GridBagConstraints with the specified grid y coordinate and:<br>
+    * <br> grid x = 1 
+    * <br> grid width = 1
+    * <br> weight x = 1
+    * <br> insets = FIELD_INSETS 
+    * <br> fill = GridBagConstraints.HORIZONTAL
+    * <br> anchor = GridBagConstraints.WEST
+    * 
+    * @param gbc the constraints to set
+    * @param gridy the grid y coordinate
+    */
+   private void setFieldConstraints(GridBagConstraints gbc, int gridy) {
       gbc.gridx = 1;
-      gbc.gridy = 4;
+      gbc.gridy = gridy;
       gbc.gridwidth = 1;
       gbc.weightx = 1;
       gbc.insets = FIELD_INSETS;
       gbc.fill = GridBagConstraints.HORIZONTAL;
       gbc.anchor = GridBagConstraints.WEST;
-      pnl.add(_updateServerPath, gbc);
-      
+   	
+   }
+   
+   /**
+    * Sets the specified GridBagConstraints with the specified grid y coordinate and:<br>
+    * <br> grid x = 0 
+    * <br> grid width = 2
+    * <br> weight x = 1
+    * <br> insets = SEP_INSETS 
+    * <br> fill = GridBagConstraints.HORIZONTAL
+    * <br> anchor = GridBagConstraints.WEST
+    * 
+    * @param gbc the constraints to set
+    * @param gridy the grid y coordinate
+    */   
+   private void setSeparatorConstraints(GridBagConstraints gbc, int gridy) {
       gbc.gridx = 0;
-      gbc.gridy = 5;
-      gbc.gridwidth = 1;
-      gbc.weightx = 0;
-      gbc.insets = LABEL_INSETS;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.EAST;
-      channelLabel = new JLabel(i18n.CHANNEL, SwingConstants.RIGHT);
-      pnl.add(channelLabel, gbc);
-
-      gbc.gridx = 1;
-      gbc.gridy = 5;
-      gbc.gridwidth = 1;
-      gbc.weightx = 1;
-      gbc.insets = FIELD_INSETS;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.WEST;
-      pnl.add(_updateServerChannel, gbc);
-      
-      gbc.gridx = 0;
-      gbc.gridy = 6;
+      gbc.gridy = gridy;
       gbc.gridwidth = 2;
+      gbc.weightx = 1;
       gbc.insets = SEP_INSETS;
       gbc.fill = GridBagConstraints.HORIZONTAL;
       gbc.anchor = GridBagConstraints.WEST;
-      pnl.add(getSep(), gbc);
-      
-      gbc.gridx = 0;
-      gbc.gridy = 7;
-      gbc.gridwidth = 1;
-      gbc.weightx = 0;
-      gbc.insets = LABEL_INSETS;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.EAST;
-      localPathLabel = new JLabel(i18n.LOCAL_PATH, SwingConstants.RIGHT);
-      pnl.add(localPathLabel, gbc);         
-      
-      gbc.gridx = 1;
-      gbc.gridy = 7;
-      gbc.gridwidth = 1;
-      gbc.weightx = 1;
-      gbc.insets = FIELD_INSETS;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.anchor = GridBagConstraints.WEST;
-      pnl.add(_localPath, gbc);
-      
-      
-      
-      return pnl;
    }
-
+   
    private void enableRemoteSite() {
       _localPath.setEnabled(false);
-      localPathLabel.setEnabled(false);
+      _localPathLabel.setEnabled(false);
       _updateServerChannel.setEnabled(true);
       _updateServerName.setEnabled(true);
       _updateServerPath.setEnabled(true);
       _updateServerPort.setEnabled(true);
-      serverLabel.setEnabled(true);
-      portLabel.setEnabled(true);
-      pathLabel.setEnabled(true);
-      channelLabel.setEnabled(true);
+      _serverLabel.setEnabled(true);
+      _portLabel.setEnabled(true);
+      _pathLabel.setEnabled(true);
+      _channelLabel.setEnabled(true);
+      _testConnectionButton.setEnabled(true);
+      _testConnectionStatusLabel.setEnabled(true);
+      _updateUrl.setEnabled(true);
+      _urlLabel.setEnabled(true);
    }
    
    private void enableLocalPath() {
       _localPath.setEnabled(true);
-      localPathLabel.setEnabled(true);
+      _localPathLabel.setEnabled(true);
       _updateServerChannel.setEnabled(false);
       _updateServerName.setEnabled(false);
       _updateServerPath.setEnabled(false);
       _updateServerPort.setEnabled(false);
-      serverLabel.setEnabled(false);
-      portLabel.setEnabled(false);
-      pathLabel.setEnabled(false);
-      channelLabel.setEnabled(false);         
+      _serverLabel.setEnabled(false);
+      _portLabel.setEnabled(false);
+      _pathLabel.setEnabled(false);
+      _channelLabel.setEnabled(false);
+      _testConnectionButton.setEnabled(false);
+      _testConnectionStatusLabel.setEnabled(false);
+      _updateUrl.setEnabled(false);
+      _urlLabel.setEnabled(false);
+      
+   }
+   
+   private void updateUrl() {
+   	
+   	String portStr = _updateServerPort.getText();
+   	StringBuilder tmp = new StringBuilder("http://");
+   	tmp.append(_updateServerName.getText());
+   	if (!StringUtilities.isEmpty(portStr)) {
+      	tmp.append(":");
+      	tmp.append(_updateServerPort.getText());   		
+   	}
+   	tmp.append("/");
+   	tmp.append(_updateServerPath.getText());
+   	tmp.append("/");
+   	tmp.append(_updateServerChannel.getSelectedItem().toString());
+   	tmp.append("/release.xml");
+   	_updateUrl.setText(tmp.toString());
+   	_updateUrl.setEditable(false);
+   	_updateUrl.revalidate();
    }
    
    private JPanel getSiteTypePanel() {
@@ -479,5 +575,80 @@ public class UpdatePreferencesPanel extends JPanel
          updateControlStatus();
       }
    }
-        
+
+	/**
+	 * Sets the IApplication that is used to display error messages.
+	 * 
+	 * @param app the IApplication implementation
+	 */
+	public void setApplication(IApplication app)
+	{
+		_app = app; 
+	}
+
+   private class TestConnectionButtonListener implements ActionListener {
+   	public void actionPerformed(ActionEvent e)
+   	{
+   		String serverName = _updateServerName.getText();
+   		
+   		
+   		StringBuilder path = new StringBuilder(_updateServerPath.getText());
+   		path.append("/");
+   		path.append(_updateServerChannel.getSelectedItem().toString());
+   		
+   		String portString = _updateServerPort.getText();
+   		
+   		
+   		try
+			{
+   			int port = 80;
+   			if (!StringUtilities.isEmpty(portString)) {
+   				port = Integer.parseInt(_updateServerPort.getText());
+   			}
+				_updateUtil.downloadCurrentRelease(serverName, port, path.toString(), "release.xml");
+				_testConnectionStatusLabel.setText(i18n.STATUS_LABEL_SUCCESS_MSG);
+				_testConnectionStatusLabel.setForeground(CONNECTION_SUCCESS_COLOR);
+			}
+			catch (Exception e1)
+			{
+				_testConnectionStatusLabel.setText(i18n.STATUS_LABEL_FAILURE_MSG);
+				_testConnectionStatusLabel.setForeground(CONNECTION_FAILURE_COLOR);
+				_app.showErrorDialog(i18n.CONNECTION_FAILURE_DIALOG_MSG, e1);
+				
+			}
+   		
+   	}   	
+   }
+
+   /**
+    * A listener that will update the url whenever the associated document is modified
+    * 
+    * @author manningr
+    */
+   private class UrlDocumentListener implements DocumentListener
+	{
+		public void changedUpdate(DocumentEvent e)
+		{
+			updateUrl();
+		}
+
+		public void insertUpdate(DocumentEvent e)
+		{
+			updateUrl();
+
+		}
+
+		public void removeUpdate(DocumentEvent e)
+		{
+			updateUrl();
+
+		}
+	}
+   
+   private class UrlItemListener implements ItemListener {
+   	public void itemStateChanged(ItemEvent e)
+   	{
+   		updateUrl();
+   	}   	
+   }
 }
