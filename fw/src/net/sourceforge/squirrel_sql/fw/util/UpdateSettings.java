@@ -25,21 +25,21 @@ public class UpdateSettings implements Cloneable, IUpdateSettings
 {
 
 	/** Name of software update server. */
-	private String updateServer = "http://www.squirrelsql.org";
+	private String updateServer = "http://www.squirrel-sql.net";
 
-	/** Port for HTTP Proxy server. */
+	/** Port for software update server. */
 	private String updateServerPort = "80";
 
-	/** User name for HTTP Proxy server. */
-	private String updateServerPath = "releases";
+	/** Path to channel directories on software update server. */
+	private String updateServerPath = "updates";
 
-	/** Password for HTTP Proxy server. */
-	private String updateServerChannel = "STABLE";
+	/** Update channel on the software update server. */
+	private String updateServerChannel = "snapshot";
 
-	/** If <TT>true</TT> use a SOCKS proxy server. */
+	/** Whether or not to periodically check for software updates */
 	private boolean enableAutomaticUpdates = true;
 
-	/** How often to auto check - at startup / weekly */
+	/** How often to check for updates - at startup / weekly */
 	private String updateCheckFrequency = "WEEKLY";
 
 	/** The last time an update check was made in milliseconds */
