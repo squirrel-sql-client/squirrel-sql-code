@@ -106,6 +106,10 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+1958881: (Unable to see source of database views)  Adjusted the query for view source to use 
+underlying system tables instead of INFORMATION_SCHEMA.VIEWS, since this view cannot handle views 
+that are greater than 4000 characters.
+
 1968807: Unsigned INT problem with IMPORT FILE functionality
 
 1968270: Displaying unsigned INT as signed INT in column
