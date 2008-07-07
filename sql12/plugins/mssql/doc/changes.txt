@@ -1,6 +1,12 @@
 Microsoft SQL Server Assistant Plugin Change Log
 ================================================
 
+0.4
+===
+
+Bug 1958881: (Unable to see source of database views)  Adjusted the query for view source to use 
+underlying system tables instead of INFORMATION_SCHEMA.VIEWS, since this view cannot handle views 
+that are greater than 4000 characters.
 
 0.3
 ===
