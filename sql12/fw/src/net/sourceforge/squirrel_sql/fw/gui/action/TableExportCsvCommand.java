@@ -3,9 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.sql.Types;
 import java.util.Calendar;
@@ -337,7 +335,7 @@ public class TableExportCsvCommand
          case Types.DATE:
          case Types.TIMESTAMP:
          case Types.TIME:
-            /* Work arround some UTC and Daylight saving offsets */
+            /* Work around some UTC and Daylight saving offsets */
             long time = (((java.util.Date) cellObj).getTime());
 
             Calendar cal = Calendar.getInstance();
@@ -383,7 +381,7 @@ public class TableExportCsvCommand
       BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ctrl.getCSVCharset()));
 
       String separator = ctrl.getSeparatorChar();
-
+      String lineSeparator = ctrl.getLineSeparator();
 
       if (includeHeaders)
       {
@@ -396,7 +394,7 @@ public class TableExportCsvCommand
                bw.write(separator);
             }
          }
-         bw.write('\n');
+         bw.write(lineSeparator);
       }
 
 
@@ -430,7 +428,7 @@ public class TableExportCsvCommand
                bw.write(separator);
             }
          }
-         bw.write('\n');
+         bw.write(lineSeparator);
       }
 
       bw.flush();
