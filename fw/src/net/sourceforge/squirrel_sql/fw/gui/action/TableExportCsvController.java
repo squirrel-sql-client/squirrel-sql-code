@@ -1,16 +1,26 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.awt.event.*;
-import java.awt.*;
 import java.util.prefs.Preferences;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg.LineSeparator;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvController
 {
@@ -442,7 +452,9 @@ public class TableExportCsvController
    {
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent actionEvent)
          {
             closeDlg();
          }
@@ -480,6 +492,23 @@ public class TableExportCsvController
       {
          return _dlg.txtSeparatorChar.getText();
       }
+   }
+   
+   String getLineSeparator() {
+   	LineSeparator lineSepChoice = (LineSeparator)_dlg._lineSeparators.getSelectedItem();
+   	String result = null;
+   	switch (lineSepChoice) {
+   	case DEFAULT:
+   		result = System.getProperty("line.separator");
+   		break;
+   	case LF:
+   		result = "\n";
+   		break;
+   	case CRLF:
+   		result = "\r\n";
+   		break;
+   	}
+   	return result;
    }
    
    Charset getCSVCharset() {
