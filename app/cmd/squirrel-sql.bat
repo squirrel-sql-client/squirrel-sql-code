@@ -10,26 +10,33 @@ set basedir=%basedir:~0,-1%
 if NOT "%removed%"=="\" goto strip
 set SQUIRREL_SQL_HOME=%basedir%
 
-set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
+@rem build Updater's classpath and parameters and launch it
+SET TMP_CP="%SQUIRREL_SQL_HOME%\update\downloads\core\squirrel-sql.jar"
+dir /b "%SQUIRREL_SQL_HOME%\update\downloads\core\*.*" > %TEMP%\update-lib.tmp
+FOR /F %%I IN (%TEMP%\update-lib.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\update\downloads\core\%%I"
+SET UPDATE_CP=%TMP_CP%
+echo "UPDATE_CP=%UPDATE_CP%"
+SET UPDATE_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\update-log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+"%LOCAL_JAVA%w" -cp %UPDATE_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication %UPDATE_PARAMS%
 
+
+@rem build SQuirreL's classpath
+set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
 dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" > %TEMP%\squirrel-lib.tmp
 FOR /F %%I IN (%TEMP%\squirrel-lib.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
+SET SQUIRREL_CP=%TMP_CP%;"%CLASSPATH%"
+echo "SQUIRREL_CP=%SQUIRREL_CP%"
 
-SET TMP_CP=%TMP_CP%;"%CLASSPATH%"
 SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 @rem Run with a command window.
 @rem "%LOCAL_JAVA%" -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
-
-@rem
 
 @rem To add translation working directories to your classpath edit and uncomment this line:
 @rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem To change the language edit and uncomment this line:
 @rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
-
-"%LOCAL_JAVA%w" -cp %TMP_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication
 
 @rem Run with no command window. This may not work with older versions of Windows. Use the command above then.
 start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
