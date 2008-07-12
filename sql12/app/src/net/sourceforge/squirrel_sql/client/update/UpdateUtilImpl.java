@@ -179,6 +179,17 @@ public class UpdateUtilImpl implements UpdateUtil {
       	s_log.error("Cannot copy from file ("+from.getAbsolutePath()+") which doesn't appear to exist.");
       	return;
       }
+      if (to.exists()) {
+      	long fromCheckSum = IOUtilities.getCheckSum(from);
+      	long toCheckSum = IOUtilities.getCheckSum(to);
+      	if (fromCheckSum == toCheckSum) {
+      		if (s_log.isInfoEnabled()) {
+      			s_log.info("File to be copied("+from.getAbsolutePath()+") has the same checksum("+
+      				fromCheckSum+") as the file to copy to ("+to.getAbsolutePath()+"). Skipping copy.");
+      		}
+      		return;
+      	}
+      }
       File destination = to;
       if (to.isDirectory()) {
       	destination = getFile(to, from.getName());

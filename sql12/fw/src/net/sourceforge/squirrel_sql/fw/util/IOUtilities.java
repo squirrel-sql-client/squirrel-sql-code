@@ -18,11 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.zip.CRC32;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -102,4 +105,28 @@ public class IOUtilities {
          os.write(buffer, 0, length);
       }
    }
+   
+   /**
+    * Computes the CRC32 checksum for the specified file.  This doesn't appear
+    * to be compatible with cksum.
+    * 
+    * @param f the file to compute a checksum for.
+    * 
+    * @return the checksum value for the file specified
+    */
+   public static long getCheckSum(File f) throws IOException {
+       CRC32 result = new CRC32();  
+       FileInputStream fis = null;
+       try {
+           fis = new FileInputStream(f);
+           int b = 0;
+           while ((b = fis.read()) != -1) {
+               result.update(b);
+           }
+       } finally {
+           IOUtilities.closeInputStream(fis);
+       }
+       return result.getValue();
+   }
+   
 }

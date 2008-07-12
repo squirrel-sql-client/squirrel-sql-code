@@ -20,9 +20,8 @@ package net.sourceforge.squirrel_sql.client.update.xmlbeans;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
-import java.util.zip.CRC32;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
@@ -48,7 +47,9 @@ public class XmlBeanUtilities {
      */
     public ChannelXmlBean buildChannelRelease(String channelName, 
                                        String releaseName, 
-                                       String version, String directory) {
+                                       String version, String directory) 
+    	throws IOException 
+    {
         ChannelXmlBean result = new ChannelXmlBean();
         result.setName(channelName);
         ReleaseXmlBean releaseBean = new ReleaseXmlBean(releaseName, version);
@@ -70,7 +71,7 @@ public class XmlBeanUtilities {
                     artifact.setType(type);
                     artifact.setVersion(version);
                     artifact.setSize(a.length());
-                    artifact.setChecksum(getCheckSum(a));
+                    artifact.setChecksum(IOUtilities.getCheckSum(a));
                     module.addArtifact(artifact);
                 }
                 releaseBean.addmodule(module);
@@ -79,31 +80,7 @@ public class XmlBeanUtilities {
         result.setCurrentRelease(releaseBean);
         return result;
     }
-    
-    /**
-     * Computes the CRC32 checksum for the specified file.  This doesn't appear
-     * to be compatible with cksum.
-     * 
-     * @param f
-     * @return
-     */
-    public long getCheckSum(File f) {
-        CRC32 result = new CRC32();  
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(f);
-            int b = 0;
-            while ((b = fis.read()) != -1) {
-                result.update(b);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            IOUtilities.closeInputStream(fis);
-        }
-        return result.getValue();
-    }
-    
+        
     /**
      * This is used by the build script to automate building the release.xml
      * file that describes what is available in a particular release.
