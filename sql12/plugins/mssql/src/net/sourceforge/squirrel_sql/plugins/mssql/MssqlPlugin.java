@@ -282,7 +282,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getVersion() {
-        return "0.3";
+        return "0.4 (2.6.x)";
     }
     @SuppressWarnings("unchecked")
     private void removeActionsOfType(ActionCollection coll,java.lang.Class classType) {

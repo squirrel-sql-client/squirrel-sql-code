@@ -41,13 +41,19 @@ public class ViewSourceTab extends BaseSourceTab
         // i18n[ViewSourceTab.display=Show view source]
 		String HINT = s_stringMgr.getString("ViewSourceTab.display");
 	}
-
-	/** SQL that retrieves the data. */
-	private static final String SQL =
-        "SELECT VIEW_DEFINITION "+ 
-        "FROM INFORMATION_SCHEMA.VIEWS "+ 
-        "WHERE TABLE_CATALOG = ? " +
-        "AND TABLE_NAME = ?";		
+	
+	/** 
+	 * SQLServer's INFORMATION_SCHEMA.VIEWS VIEW_DEFINITION column only supports up to 4000 chars.  This
+	 * query can return a result-set with multiple rows that should be concatenated.  They should be correctly
+	 * ordered by the SYSCOMMENT.COLID field.
+	 */
+	private static final String BIGVIEW_SQL = 
+		"SELECT text  FROM sysobjects o , syscomments c " +
+		"where  o.name = ? " +
+		"and o.id = c.id " +
+		"order by c.colid ";		
+		
+		
     
 	public ViewSourceTab()
 	{
@@ -57,10 +63,9 @@ public class ViewSourceTab extends BaseSourceTab
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
-		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
+		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(BIGVIEW_SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		pstmt.setString(1, doi.getCatalogName());
-		pstmt.setString(2, doi.getSimpleName());
+		pstmt.setString(1, doi.getSimpleName());
 		return pstmt;
 	}
 }
