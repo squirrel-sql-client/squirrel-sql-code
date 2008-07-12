@@ -1,18 +1,32 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.nio.charset.Charset;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
-
-import javax.swing.*;
-import java.awt.*;
-import java.nio.charset.Charset;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvDlg extends JDialog
 {
-   private static final StringManager s_stringMgr =
+	private static final long serialVersionUID = 1L;
+
+	private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TableExportCsvDlg.class);
 
    JTextField txtFile;
@@ -21,9 +35,12 @@ public class TableExportCsvDlg extends JDialog
    JRadioButton radFormatXLS;
    JRadioButton radFormatCSV;
    JLabel lblSeparator;
+   JLabel lblLineSeparator;
    JLabel lblCharset;
    JTextField txtSeparatorChar;
+   JTextField txtLineSeparatorChar;
    JCheckBox chkSeparatorTab;
+   JCheckBox chkPlatformLineSeparator;
    JRadioButton radComplete;
    JRadioButton radSelection;
    JRadioButton radUseGlobalPrefsFormating;
@@ -34,7 +51,25 @@ public class TableExportCsvDlg extends JDialog
    JButton btnOk;
    JButton btnCancel;
    JComboBox charsets;
+	JComboBox _lineSeparators;
 
+	public enum LineSeparator {
+		DEFAULT,
+		CRLF,
+		LF;
+		
+		public String toString() {
+			if (this == DEFAULT) {
+				return s_stringMgr.getString("TableExportCsvDlg.defaultLabel");
+			}
+			if (this == CRLF) {
+				return "CRLF (\\r\\n)";
+			}
+			return "LF (\\n)";
+		}
+	};
+
+	
    public TableExportCsvDlg()
    {
       super(GUIUtils.getMainFrame(), true);
@@ -68,7 +103,7 @@ public class TableExportCsvDlg extends JDialog
       getContentPane().add(getSelelectionPanel(), gbc);
 
       gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
-      getContentPane().add(getFormatingPanel(), gbc);
+      getContentPane().add(getFormattingPanel(), gbc);
 
 
       // i18n[TableExportCsvDlg.executeCommand=Execute command (%file will be replaced by export file name)]
@@ -114,7 +149,7 @@ public class TableExportCsvDlg extends JDialog
       return ret;
    }
 
-   private Component getFormatingPanel()
+   private Component getFormattingPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -217,41 +252,56 @@ public class TableExportCsvDlg extends JDialog
       JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
-
-      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
-      // i18n[TableExportCsvDlg.separator=Separator:]
-      lblSeparator = new JLabel(s_stringMgr.getString("TableExportCsvDlg.separator"));
-      ret.add(lblSeparator, gbc);
-
-
-      txtSeparatorChar = new JTextField(1);
-      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0);
+      int padx = 0;
+      int pady = 0;
+      
+      Insets labelInsets = new Insets(2, 0, 2, 5);
+      Insets fieldInsets = new Insets(2, 5, 2, 0);
+      
+      // Row 1
+      
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, labelInsets, padx, pady);
+      // i18n[TableExportCsvDlg.columnSeparator=Column Separator:]
+      lblSeparator = new JLabel(s_stringMgr.getString("TableExportCsvDlg.columnSeparator"));
+      ret.add(lblSeparator, gbc);      
+      
+      txtSeparatorChar = new JTextField(2);
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
       ret.add(txtSeparatorChar, gbc);
 
       // i18n[TableExportCsvDlg.sepeartorTab=Use tab character]
       chkSeparatorTab = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.sepeartorTab"));
-      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
       ret.add(chkSeparatorTab, gbc);
-
-      gbc = new GridBagConstraints(3, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+            
+      gbc = new GridBagConstraints(3, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
       ret.add(new JPanel(), gbc);
       
+      // Row 2
 
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, labelInsets, padx, pady);
+      //i18n[TableExportCsvDlg.lineSeparatorLabel=Line Separator:]
+      lblLineSeparator = new JLabel(s_stringMgr.getString("TableExportCsvDlg.lineSeparatorLabel"));
+      ret.add(lblLineSeparator, gbc);
+
+      _lineSeparators = new JComboBox(new Object[] {LineSeparator.DEFAULT, LineSeparator.LF, LineSeparator.CRLF});
+		gbc = new GridBagConstraints(1, 1, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
+      ret.add(_lineSeparators, gbc);
+            
+      // Row 3
+      
       charsets = new JComboBox();
       for (String s : Charset.availableCharsets().keySet()) {
     	  charsets.addItem(s);
       }
       
-      gbc = new GridBagConstraints(0, 1, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, labelInsets, padx, pady);
       // i18n[TableExportCsvDlg.charset=Charset:]
       lblCharset = new JLabel(s_stringMgr.getString("TableExportCsvDlg.charset"));
-      ret.add(lblCharset, gbc);
+      ret.add(lblCharset, gbc);          
       
-      gbc = new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(1, 2, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, fieldInsets, padx, pady);
       ret.add(charsets, gbc);
-
-      gbc = new GridBagConstraints(3, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
-      ret.add(new JPanel(), gbc);
 
       return ret;
    }

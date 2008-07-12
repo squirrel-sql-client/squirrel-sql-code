@@ -1,16 +1,26 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
-import java.awt.event.*;
-import java.awt.*;
 import java.util.prefs.Preferences;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg.LineSeparator;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class TableExportCsvController
 {
@@ -19,6 +29,7 @@ public class TableExportCsvController
    private static final String PREF_KEY_WITH_HEADERS = "SquirrelSQL.csvexport.withColumnHeaders";
    private static final String PREF_KEY_SEPERATOR_TAB = "SquirrelSQL.csvexport.sepearatorTab";
    private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
+   private static final String PREF_KEY_LINE_SEPERATOR = "SquirrelSQL.csvexport.lineSeparator";
    private static final String PREF_KEY_EXPORT_COMPLETE = "SquirrelSQL.csvexport.exportcomplete";
    private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
@@ -367,6 +378,7 @@ public class TableExportCsvController
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLS.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
+      Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
       Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
@@ -376,23 +388,24 @@ public class TableExportCsvController
 
    private void initDlg()
    {
-      _dlg.txtFile.setText(Preferences.userRoot().get(PREF_KEY_CSV_FILE, null));
-      _dlg.charsets.setSelectedItem(Preferences.userRoot().get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
-      _dlg.chkWithHeaders.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_WITH_HEADERS, true));
+      Preferences userRoot = Preferences.userRoot();
+		_dlg.txtFile.setText(userRoot.get(PREF_KEY_CSV_FILE, null));
+      _dlg.charsets.setSelectedItem(userRoot.get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
+      _dlg.chkWithHeaders.setSelected(userRoot.getBoolean(PREF_KEY_WITH_HEADERS, true));
 
 
-      _dlg.chkSeparatorTab.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_SEPERATOR_TAB, false));
+      _dlg.chkSeparatorTab.setSelected(userRoot.getBoolean(PREF_KEY_SEPERATOR_TAB, false));
 
       if(false == _dlg.chkSeparatorTab.isSelected())
       {
-         _dlg.txtSeparatorChar.setText(Preferences.userRoot().get(PREF_KEY_SEPERATOR_CHAR, ","));
+         _dlg.txtSeparatorChar.setText(userRoot.get(PREF_KEY_SEPERATOR_CHAR, ","));
       }
 
-      if(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_CSV, true))
+      if(userRoot.getBoolean(PREF_KEY_FORMAT_CSV, true))
       {
          _dlg.radFormatCSV.setSelected(true);
       }
-      else if(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS, false))
+      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XLS, false))
       {
          _dlg.radFormatXLS.setSelected(true);
       }
@@ -406,7 +419,7 @@ public class TableExportCsvController
 
 
 
-      if(Preferences.userRoot().getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
+      if(userRoot.getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
       {
          _dlg.radComplete.setSelected(true);
       }
@@ -415,7 +428,7 @@ public class TableExportCsvController
          _dlg.radSelection.setSelected(true);
       }
 
-      if(Preferences.userRoot().getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, true))
+      if(userRoot.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, true))
       {
          _dlg.radUseGlobalPrefsFormating.setSelected(true);
       }
@@ -425,10 +438,15 @@ public class TableExportCsvController
       }
 
 
-      _dlg.chkExecCommand.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_COMMAND, false));
+      _dlg.chkExecCommand.setSelected(userRoot.getBoolean(PREF_KEY_EXECUTE_COMMAND, false));
       onChkExecCommand();
 
-      _dlg.txtCommand.setText(Preferences.userRoot().get(PREF_KEY_COMMAND, "openoffice.org-2.0 -calc %file"));
+      _dlg.txtCommand.setText(userRoot.get(PREF_KEY_COMMAND, "openoffice.org-2.0 -calc %file"));
+      
+      LineSeparator preferredLineSeparator = 
+      	LineSeparator.valueOf(userRoot.get(PREF_KEY_LINE_SEPERATOR, LineSeparator.DEFAULT.name()));
+      
+      _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
    }
 
    private void onChkExecCommand()
@@ -442,7 +460,9 @@ public class TableExportCsvController
    {
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent actionEvent)
          {
             closeDlg();
          }
@@ -480,6 +500,23 @@ public class TableExportCsvController
       {
          return _dlg.txtSeparatorChar.getText();
       }
+   }
+   
+   String getLineSeparator() {
+   	LineSeparator lineSepChoice = (LineSeparator)_dlg._lineSeparators.getSelectedItem();
+   	String result = null;
+   	switch (lineSepChoice) {
+   	case DEFAULT:
+   		result = System.getProperty("line.separator");
+   		break;
+   	case LF:
+   		result = "\n";
+   		break;
+   	case CRLF:
+   		result = "\r\n";
+   		break;
+   	}
+   	return result;
    }
    
    Charset getCSVCharset() {

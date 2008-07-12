@@ -1,6 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+2.6.7 (??/??/????)
+=================
+
+Bug-Fixes:
+
+2013346: export csv with option "carriage return + linefeed"
+
 2.6.6 (6/13/2008)
 ================
 
