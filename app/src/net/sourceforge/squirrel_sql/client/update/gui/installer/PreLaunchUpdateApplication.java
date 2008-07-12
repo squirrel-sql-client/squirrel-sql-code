@@ -40,9 +40,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class PreLaunchUpdateApplication
 {
 
+	/** The helper that most work is delegated to */
 	private static PreLaunchHelper helper = null;
 	
 	/**
+	 * Entry point of the 
 	 * @param args
 	 */
 	public static void main(String[] args) throws IOException
