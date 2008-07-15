@@ -24,6 +24,9 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class CodeReformator {
     private static final StringManager s_stringMgr = StringManagerFactory
@@ -37,6 +40,11 @@ public class CodeReformator {
 
     private CommentSpec[] _commentSpecs;
 
+    /** Platform-specific line separator string */
+    private String _lineSep = StringUtilities.getEolStr();
+    
+    private static ILogger s_log = LoggerController.createLogger(CodeReformator.class);
+    
     public CodeReformator(String statementSeparator, CommentSpec[] commentSpecs) {
         _statementSeparator = statementSeparator;
         _commentSpecs = commentSpecs;
@@ -57,7 +65,8 @@ public class CodeReformator {
             if (")".equals(pieces[i])) {
                 --braketCount;
             }
-            ret.append(indent(pieces[i], braketCount)).append('\n');
+            ret.append(indent(pieces[i], braketCount));
+            ret.append(_lineSep);
             if ("(".equals(pieces[i])) {
                 ++braketCount;
             }
@@ -85,16 +94,22 @@ public class CodeReformator {
             }
             diffPos.append('^');
 
-            String[] params = new String[] { normalizedBefore, normalizedAfter,
-                    diffPos.toString() };
-
             // i18n[editextras.reformatFailed=Reformat failed, normalized
-            // Strings differ\n{0}\n{1}\n{2}\n]
-            String msg = s_stringMgr.getString("editextras.reformatFailed",
-                    params);
-
-            System.out.println(msg);
-            throw new IllegalStateException(msg);
+            // Strings differ]
+            StringBuilder msg = new StringBuilder(s_stringMgr.getString("editextras.reformatFailed"));
+            msg.append(_lineSep);
+            msg.append(normalizedBefore);
+            msg.append(_lineSep);
+            msg.append(normalizedAfter);
+            msg.append(_lineSep);
+            msg.append(diffPos.toString());
+            msg.append(_lineSep);
+                        
+            if (s_log.isInfoEnabled()) {
+            	s_log.info(msg.toString());
+            }
+            
+            throw new IllegalStateException(msg.toString());
         }
     }
 

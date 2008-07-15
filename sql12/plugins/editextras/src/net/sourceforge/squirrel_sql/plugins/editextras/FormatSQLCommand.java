@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 /**
  * This command will &quot;quote&quot; an SQL string.
  *
@@ -61,7 +62,7 @@ class FormatSQLCommand implements ICommand
 		  new CommentSpec[]
 		  {
 			  new CommentSpec("/*", "*/"),
-			  new CommentSpec("--", "\n")
+			  new CommentSpec("--", StringUtilities.getEolStr())
 		  };
 
 		String statementSep = _session.getQueryTokenizer().getSQLStatementSeparator();
