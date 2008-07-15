@@ -106,6 +106,8 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2018018: (Bug in FormatSql function) Formatter now uses platform-specific EOL char sequence.  
+
 2013346: export csv with option "carriage return + linefeed"
 
 1958881: (Unable to see source of database views)  Adjusted the query for view source to use 
