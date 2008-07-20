@@ -475,13 +475,16 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    	if (!dialectSupportsSubSecondTimestamps) {
    		return "";
    	}
-   	String nanos = ""+(ts.getNanos()/1000);
-   	if (nanos.length() > 3) {
-   		nanos = nanos.substring(3);
-   	} else {
-   		nanos = "";
-   	}   	
-   	return nanos;
+   	
+   	int nanos = ts.getNanos();
+		int micros=nanos/1000%1000;
+		micros+=1000;    /* assert a 4 char string */
+		
+		if (micros > 1000) {
+			return String.valueOf(micros).substring(1);
+		} else {
+			return "";
+		}   	
    }
    
    /**
