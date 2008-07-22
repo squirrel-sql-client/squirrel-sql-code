@@ -37,6 +37,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportFileType;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ImportFileDialog;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.FileImporterFactory;
@@ -51,6 +53,10 @@ public class ImportTableDataCommand implements ICommand {
 	private static final StringManager stringMgr =
 		StringManagerFactory.getStringManager(ImportTableDataCommand.class);
 
+   /** Logger for this class. */
+   private final static ILogger s_log = 
+       LoggerController.createLogger(ImportTableDataCommand.class);
+	
 	private static final String PREFS_KEY_LAST_IMPORT_DIRECTORY = "squirrelsql_dataimport_last_import_directory";
 
 
@@ -142,10 +148,12 @@ public class ImportTableDataCommand implements ICommand {
 				}, true);
 
 			} catch (SQLException e) {
+				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
 				//i18n[ImportTableDataCommand.sqlErrorOccured=An error occured while reading database data.]
 				//i18n[ImportTableDataCommand.error=Error]
 				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.sqlErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
 			} catch (IOException e) {
+				s_log.error("execute: unexpected exception - "+e.getMessage(), e);
 				//i18n[ImportTableDataCommand.ioErrorOccured=An error occured while reading import file data.]
 				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.ioErrorOccured"), stringMgr.getString("ImportTableDataCommand.error"), JOptionPane.ERROR_MESSAGE);
 			}
@@ -155,8 +163,16 @@ public class ImportTableDataCommand implements ICommand {
 	private ImportFileType determineType(File f) {
 		// TODO: Implement this better
 		if (f.getName().toLowerCase().endsWith("xls")) {
+			if (s_log.isInfoEnabled()) {
+				s_log.info("determineType: filename ("+f.getName()+") ends with 'xls'.  Assuming it is an " +
+						"Excel spreadsheet");
+			}
 			return ImportFileType.XLS;
 		}
+		if (s_log.isInfoEnabled()) {
+			s_log.info("determineType: filename ("+f.getName()+") doesn't end with 'xls'.  Assuming it is a " +
+					"CSV file");
+		}		
 		return ImportFileType.CSV;
 	}
 
