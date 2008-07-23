@@ -16,8 +16,15 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.AUTO_INCREMENT;
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.FIXED_VALUE;
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.NULL;
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.SKIP;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Vector;
 
@@ -31,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
@@ -165,10 +173,39 @@ public class ImportFileDialog extends BaseInternalFrame {
 	
 	private void updatePreviewData() {
 		JComboBox editBox = new JComboBox();
-		editBox.addItem(SpecialColumnMapping.SKIP.getVisibleString());
-		editBox.addItem(SpecialColumnMapping.FIXED_VALUE.getVisibleString());
-		editBox.addItem(SpecialColumnMapping.AUTO_INCREMENT.getVisibleString());
-		editBox.addItem(SpecialColumnMapping.NULL.getVisibleString());
+		editBox.addItem(SKIP.getVisibleString());
+		editBox.addItem(FIXED_VALUE.getVisibleString());
+		editBox.addItem(AUTO_INCREMENT.getVisibleString());
+		editBox.addItem(NULL.getVisibleString());
+		
+		editBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				int selectedRow = mappingTable.getSelectedRow();
+				if (selectedRow == -1) {
+					return;
+				}
+				TableModel model = mappingTable.getModel();
+				String comboValue = ((JComboBox)e.getSource()).getSelectedItem().toString();
+				int fixedValueColumnIdx = 2;
+				if (comboValue.equals(AUTO_INCREMENT.getVisibleString())) {
+					// If the user picks auto-increment, auto-fill the "Fixed value" column with 0 for the start 
+					// value if it is currently empty.
+					if (model.getValueAt(selectedRow, fixedValueColumnIdx) == null || 
+						 "".equals(model.getValueAt(selectedRow, fixedValueColumnIdx) )) 
+					{
+						model.setValueAt("0", selectedRow, fixedValueColumnIdx);
+					}
+					
+				} else if (!comboValue.equals(FIXED_VALUE.getVisibleString())) {
+					// If the user chooses neither Fixed value nor Auto-Increment, then clear the "Fixed value" 
+					// field if it has a value.
+					model.setValueAt("", selectedRow, fixedValueColumnIdx);
+				}
+				mappingTable.clearSelection();
+			}
+			
+		});
 		
 		if (previewData != null && previewData.length > 0) {
 			String[] headers = new String[previewData[0].length];
