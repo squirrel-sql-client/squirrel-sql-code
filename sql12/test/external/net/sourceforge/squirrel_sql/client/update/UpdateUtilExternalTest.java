@@ -54,10 +54,10 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
     public void testFileDownload() throws Exception {
         String host = "squirrel-sql.sourceforge.net";
         String file = "firebird_object_tree.jpg";
-        String path = "/downloads/";
+        //String path = "/downloads/";
         int port = 80;
         //UpdateUtil util = new UpdateUtilImpl();
-        utilUnderTest.downloadHttpFile(host, port, file, "/tmp");
+        utilUnderTest.downloadHttpFile(host, port, file, "/tmp", -1, -1);
         verifyFileExistsAndDeleteIt("firebird_object_tree.jpg", false);
     }
     
@@ -65,12 +65,19 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
     public void downloadHttpFile() throws Exception {
         String host = "squirrel-sql.sourceforge.net";
         String file = "release.xml";
-        String path = "/release/snapshot/";
+        //String path = "/release/snapshot/";
         int port = 80;
-        utilUnderTest.downloadHttpFile(host, port, file, "/tmp");
+        utilUnderTest.downloadHttpFile(host, port, file, "/tmp", -1, -1);
         verifyFileExistsAndDeleteIt("release.xml", false);
     }
 
+    @Test
+    public void testExtractZipFile() throws Exception {
+   	 File graphZip = new File("/tmp/graph.zip");
+   	 File extractDir = new File("/tmp/extract");
+   	 utilUnderTest.extractZipFile(graphZip, extractDir);
+    }
+    
     /**
      * Tests the downloadCurrentRelease method by downloading the file: 
      * 
@@ -89,6 +96,8 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
         serializer.write(bean, "/tmp/test.xml");
         verifyFileExistsAndDeleteIt("test.xml", false);
     }
+    
+    
     
     private void verifyFileExistsAndDeleteIt(String filename, boolean delete) throws Exception {
        File downloadFile = new File("/tmp", filename);

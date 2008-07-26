@@ -43,6 +43,10 @@ public class PreLaunchUpdateApplication
 	/** The helper that most work is delegated to */
 	private static PreLaunchHelper helper = null;
 	
+	public static String PROMPT_MODE = "prompt";
+	
+	public static String RESTORE_MODE = "restore";
+	
 	/**
 	 * Entry point of the 
 	 * @param args
@@ -51,9 +55,14 @@ public class PreLaunchUpdateApplication
 	{
 		ApplicationArguments.initialize(args);
 		initializeLogger();
-		boolean prompt = getPromptMode();
+		boolean prompt = getMode(PROMPT_MODE);
+		boolean restore = getMode(RESTORE_MODE);
 		setupSpringContext();
-		helper.installUpdates(prompt);
+		if (!restore) {
+			helper.installUpdates(prompt);
+		} else {
+			helper.restoreFromBackup();
+		}
 	}
 	
 	// Helper methods
@@ -67,15 +76,15 @@ public class PreLaunchUpdateApplication
 		helper = (PreLaunchHelper)ctx.getBean(PreLaunchHelper.class.getName());
 	}
 	
-	private static boolean getPromptMode()
+	private static boolean getMode(String mode)
 	{
 		boolean prompt = false;
-		if (Boolean.getBoolean("prompt")) {
+		if (Boolean.getBoolean(mode)) {
 			prompt = true;
 		}
 		return prompt;
 	}
-	
+		
 	private static void initializeLogger() throws IOException
 	{
 		String logConfigFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();

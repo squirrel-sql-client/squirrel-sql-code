@@ -27,9 +27,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
 /**
  * Interface for the class that applies changes given in a ChangeListXmlBean to the actual installed files,
- * using the download files. 
- * 
- * @author manningr
+ * using the download files. Provision for backing up current version of files and restoring is also provided.
  */
 public interface ArtifactInstaller
 {
@@ -39,27 +37,45 @@ public interface ArtifactInstaller
 	 * 
 	 * @param listener the listener to add.
 	 */
-	public abstract void addListener(InstallStatusListener listener);
+	void addListener(InstallStatusListener listener);
 
-	public abstract boolean backupFiles() throws FileNotFoundException, IOException;
+	/**
+	 * 
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	boolean backupFiles() throws FileNotFoundException, IOException;
 
-	public abstract void installFiles() throws FileNotFoundException, IOException;
+	/**
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	void installFiles() throws FileNotFoundException, IOException;
 
+	/**
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	boolean restoreBackupFiles() throws FileNotFoundException, IOException;
+		
 	/**
 	 * @param changeList
 	 * @throws FileNotFoundException
 	 */
-	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException;
+	void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException;
 
 	/**
 	 * @return the changeListFile
 	 */
-	public File getChangeListFile();
+	File getChangeListFile();
 
 	/**
 	 * @param changeListFile the changeListFile to set
 	 */
-	public void setChangeListFile(File changeListFile);
+	void setChangeListFile(File changeListFile);
 
 
 }

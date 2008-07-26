@@ -46,6 +46,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ArtifactInstallerImpl implements ArtifactInstaller
 {
 
+	/** The SQuirreL jar that contains the core classes in the "app" module */
+	public static final String SQUIRREL_SQL_JAR_FILENAME = "squirrel-sql.jar";
+
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ArtifactInstallerImpl.class);
 
@@ -152,8 +155,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	
 	
 	/**
-	 * @param changeList
-	 * @throws FileNotFoundException
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#setChangeList(
+	 * net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
 	 */
 	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
 	{
@@ -210,12 +213,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			}
 			if (status.isCoreArtifact())
 			{
-
-				File installDir = coreInstallDir;
-				if (artifactName.equals("squirrel-sql.jar"))
-				{
-					installDir = installRootDir;
-				}
+				File installDir = getCoreArtifactLocation(artifactName, installRootDir, coreInstallDir);
 				File coreFile = _util.getFile(installDir, artifactName);
 				File backupFile = _util.getFile(coreBackupDir, artifactName);
 				_util.copyFile(coreFile, backupFile);
@@ -272,17 +270,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 					s_log.error("Skipping core artifact (" + status.getName() + ") that was marked for removal");
 					continue;
 				}
-
+				getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
 				
-				/* Handle squirrel-sql.jar specially - it lives at the top */
-				if ("squirrel-sql.jar".equals(status.getName()))
-				{
-					installDir = installRootDir;
-				}
-				else
-				{
-					installDir = coreInstallDir;
-				}
 				fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
 				fileToRemove = _util.getFile(installDir, artifactName);
 				filesToRemove.add(fileToRemove);
@@ -329,6 +318,53 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		sendInstallComplete();
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#restoreBackupFiles(
+	 * net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
+	 */
+	public boolean restoreBackupFiles() throws FileNotFoundException, IOException
+	{
+		List<ArtifactStatus> changes = _changeListBean.getChanges();
+		for (ArtifactStatus status : changes) {
+			String name = status.getName();
+			File backupDir = null;
+			File installDir = null;
+			
+			if (status.isCoreArtifact()) {
+				backupDir = coreBackupDir;
+				installDir = getCoreArtifactLocation(name, installRootDir, coreInstallDir);
+			}
+			if (status.isPluginArtifact()) {
+				backupDir = pluginBackupDir;
+				installDir = pluginInstallDir;
+			}
+			if (status.isTranslationArtifact()) {
+				backupDir = translationBackupDir;
+				installDir = coreInstallDir; // translations are most likely to be found in core lib dir.
+			}
+			File backupJarPath = _util.getFile(backupDir, name);
+			File installJarPath = _util.getFile(installDir, name);
+			
+			if (!_util.deleteFile(installJarPath)) { 
+				return false;
+			} else {
+				_util.copyFile(backupJarPath, installJarPath);
+			}			
+		}
+		return true;
+	}
+	
+	// Helper methods	
+	
+	/* Handle squirrel-sql.jar specially - it lives at the top */
+	private File getCoreArtifactLocation(String artifactName, File rootDir, File coreDir) {
+		if (SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
+			return rootDir;
+		} else {
+			return coreDir;
+		}
+	}
+	
 	private void restoreFilesFromBackup(List<InstallFileOperationInfo> filesToInstall)
 	{
 		// TODO Auto-generated method stub
@@ -354,8 +390,6 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		}
 		return result;
 	}
-
-	// Helper methods
 
 	/**
 	 * Removes the specified list of File objects (can represent either a file or directory)
@@ -433,8 +467,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			// This file is a zip; it needs to be extracted into the plugins directory. All zips are packaged
 			// in such a way that the extraction beneath plugins directory is all that is required.
 			_util.extractZipFile(fileToCopy, installDir);
-		} else {
-			
+		} else {			
 			_util.copyFile(fileToCopy, installDir);
 		}
 				
@@ -488,6 +521,5 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			listener.handleInstallStatusEvent(evt);
 		}
 	}
-
 
 }

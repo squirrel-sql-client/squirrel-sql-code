@@ -103,6 +103,9 @@ public class UpdateUtilImpl implements UpdateUtil {
 
    /** TODO: Spring-inject when this class is a Spring bean */
    private PathUtils _pathUtils = new PathUtilsImpl();
+   public void setPathUtils(PathUtils pathUtils) {
+   	this._pathUtils = pathUtils;
+   }
    
    /** The size of the buffer to use when extracting files from a ZIP archive */
    public final static int ZIP_EXTRACTION_BUFFER_SIZE = 8192;
@@ -179,29 +182,30 @@ public class UpdateUtilImpl implements UpdateUtil {
       	s_log.error("Cannot copy from file ("+from.getAbsolutePath()+") which doesn't appear to exist.");
       	return;
       }
-      if (to.exists()) {
+      File toFile = to;
+      // Check to see if to is a directory and convert toFile to be the name of the file in that directory.
+      if (to.isDirectory()) {
+      	toFile = getFile(to, from.getName());
+      }
+      if (s_log.isDebugEnabled()) {
+      	s_log.debug("Copying from file ("+from.getAbsolutePath()+") to file ("+toFile.getAbsolutePath()+")");
+      }
+      if (toFile.exists()) {
       	long fromCheckSum = IOUtilities.getCheckSum(from);
-      	long toCheckSum = IOUtilities.getCheckSum(to);
+      	long toCheckSum = IOUtilities.getCheckSum(toFile);
       	if (fromCheckSum == toCheckSum) {
       		if (s_log.isInfoEnabled()) {
       			s_log.info("File to be copied("+from.getAbsolutePath()+") has the same checksum("+
-      				fromCheckSum+") as the file to copy to ("+to.getAbsolutePath()+"). Skipping copy.");
+      				fromCheckSum+") as the file to copy to ("+toFile.getAbsolutePath()+"). Skipping copy.");
       		}
       		return;
       	}
-      }
-      File destination = to;
-      if (to.isDirectory()) {
-      	destination = getFile(to, from.getName());
-      }
-   	if (s_log.isDebugEnabled()) {
-         s_log.debug("Copying file "+from+" to file " + destination);
       }
       FileInputStream in = null;
       FileOutputStream out = null;
       try {
          in = new FileInputStream(from);
-         out = new FileOutputStream(destination);
+         out = new FileOutputStream(toFile);
          byte[] buffer = new byte[8192];
          int len;
          while ((len = in.read(buffer)) != -1) {
@@ -308,6 +312,38 @@ public class UpdateUtilImpl implements UpdateUtil {
    	return getDir(getDownloadsDir(), TRANSLATION_ARTIFACT_ID, true);
    }
 
+   
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getBackupDir()
+	 */
+	public File getBackupDir()
+	{
+		return getDir(getSquirrelUpdateDir(), BACKUP_ROOT_DIR_NAME, false);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCoreBackupDir()
+	 */
+	public File getCoreBackupDir()
+	{
+		return getDir(getBackupDir(), CORE_ARTIFACT_ID, false);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getI18nBackupDir()
+	 */
+	public File getI18nBackupDir()
+	{
+		return getDir(getBackupDir(), TRANSLATION_ARTIFACT_ID, false);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getPluginBackupDir()
+	 */
+	public File getPluginBackupDir()
+	{
+		return getDir(getBackupDir(), PLUGIN_ARTIFACT_ID, false);
+	}   
       
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeListFile()
@@ -762,9 +798,5 @@ public class UpdateUtilImpl implements UpdateUtil {
    	}
    }
 
-   /** Dependency-injected */
-   public void setPathUtils(PathUtils pathUtils) {
-   	this._pathUtils = pathUtils;
-   }
       
 }
