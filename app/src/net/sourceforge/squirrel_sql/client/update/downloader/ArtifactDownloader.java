@@ -104,7 +104,8 @@ public class ArtifactDownloader implements Runnable
 					_pathUtils.buildPath(true, _path, _channelName, status.getType(), status.getName());
 				String destDir = getArtifactDownloadDestDir(status);
 
-				if (fileWasDownloadedPreviously(status)) {
+				if (_util.isPresentInDownloadsDirectory(status)) {
+					sendDownloadFileCompleted(status.getName());
 					continue;
 				}
 				
@@ -154,15 +155,6 @@ public class ArtifactDownloader implements Runnable
 			return;
 		}
 		sendDownloadComplete();
-	}
-
-	private boolean fileWasDownloadedPreviously(ArtifactStatus status)
-	{
-		boolean result = false;
-		
-		// Need to expand interface ArtifactStatus to include file size and/or checksum.
-		
-		return result;
 	}
 
 	private String getArtifactDownloadDestDir(ArtifactStatus status) {
