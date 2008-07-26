@@ -770,6 +770,63 @@ public class UpdateUtilImpl implements UpdateUtil {
       return result;
    }
    
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getDownloadFileLocation(
+	 * net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
+	 */
+	public File getDownloadFileLocation(ArtifactStatus status)
+	{
+		File result = null;
+		if (CORE_ARTIFACT_ID.equals(status.getType())) {
+			result = getFile(getCoreDownloadsDir(), status.getName());
+		}
+		if (PLUGIN_ARTIFACT_ID.equals(status.getType())) {
+			result = getFile(getPluginDownloadsDir(), status.getName());
+		}
+		if (TRANSLATION_ARTIFACT_ID.equals(status.getType())) {
+			result = getFile(getI18nDownloadsDir(), status.getName());
+		}
+		return result;
+	}
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#isPresentInDownloadsDirectory(
+    * net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
+    */
+   public boolean isPresentInDownloadsDirectory(ArtifactStatus status)
+	{
+		boolean result = false;
+
+		File downloadFile = getDownloadFileLocation(status);
+		
+		if (fileExists(downloadFile))
+		{
+			long checkSum = -1;
+			try
+			{
+				checkSum = IOUtilities.getCheckSum(downloadFile);
+			}
+			catch (IOException e)
+			{
+				s_log.error("isPresentInDownloadsDirectory: unexpected exception while attempting to get "
+					+ "the checksum of file (" + downloadFile.getAbsolutePath() + ")");
+				return false;
+			}
+			if (status.getChecksum() == checkSum)
+			{
+				if (downloadFile.length() == status.getSize())
+				{
+					result = true;
+				}
+			}
+		}
+		return result;
+   }
+   
+	
+	
+   /* Helper Methods */
+   
    /**
 	 * Verifies that the byte size of what was downloaded matches the expected size of the artifact.  If 
 	 * expected is -1, this check will be skipped; this is expected in the case where the release.xml file is
@@ -797,6 +854,5 @@ public class UpdateUtilImpl implements UpdateUtil {
    			" bytes downloaded, but "+expected+" bytes were expected.");
    	}
    }
-
       
 }

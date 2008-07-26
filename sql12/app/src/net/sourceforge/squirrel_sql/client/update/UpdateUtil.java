@@ -292,4 +292,15 @@ public interface UpdateUtil
 	 *            if an error occurs
 	 */
 	void extractZipFile(File zipFile, File outputDirectory) throws IOException;
+	
+	/**
+	 * Returns the absolute path to the file in the downloads section for the specified ArtifactStatus
+	 * 
+	 * @param status
+	 *           the ArtifactStatus that describes the type and name of this artifact.
+	 * @return a File object representing the location of the artifact in the downloads directory.
+	 */
+	File getDownloadFileLocation(ArtifactStatus status);
+	
+	boolean isPresentInDownloadsDirectory(ArtifactStatus status);	
 }

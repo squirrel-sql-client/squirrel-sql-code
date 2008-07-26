@@ -20,7 +20,9 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -251,7 +254,7 @@ public class UpdateControllerImpl implements UpdateController,
       
       for (ArtifactStatus status : artifactStatusList) {
          if (status.getArtifactAction() == ArtifactAction.INSTALL) {
-            newartifactsList.add(status);
+         	newartifactsList.add(status);
          }
       }
       
@@ -403,10 +406,13 @@ public class UpdateControllerImpl implements UpdateController,
    
    }
    
+   /* Helper methods */
+      
    /**
-    * Returns the UpdateSettings from preferences.
-    * @return
-    */
+	 * Returns the UpdateSettings from preferences.
+	 * 
+	 * @return
+	 */
    private IUpdateSettings getUpdateSettings() {
       return _app.getSquirrelPreferences().getUpdateSettings();      
    }
