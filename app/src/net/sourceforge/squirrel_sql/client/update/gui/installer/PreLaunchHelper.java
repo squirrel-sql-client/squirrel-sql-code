@@ -18,12 +18,24 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+/**
+ * Interface for the class that does the heavy lifting with regard to checking for and installing any updates
+ * prior to launching the application.
+ */
 public interface PreLaunchHelper
 {
-
 	/**
-	 * @param prompt
+	 * Installs updates that have been downloaded previously.
+	 * 
+	 * @param prompt if true, this will present the user with a dialog asking them whether or not updates 
+	 * should be applied. 
 	 */
 	void installUpdates(boolean prompt);
+
+	/**
+	 * This will prompt the user to be sure they want to revert to the previous version and restore from 
+	 * backup if that is the case.
+	 */
+	void restoreFromBackup();
 
 }

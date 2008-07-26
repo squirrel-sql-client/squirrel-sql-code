@@ -258,6 +258,14 @@ public interface UpdateUtil
 
 	File getI18nDownloadsDir();
 
+	File getBackupDir();
+	
+	File getCoreBackupDir();
+	
+	File getPluginBackupDir();
+	
+	File getI18nBackupDir();
+	
 	ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
 
 	boolean fileExists(File File);

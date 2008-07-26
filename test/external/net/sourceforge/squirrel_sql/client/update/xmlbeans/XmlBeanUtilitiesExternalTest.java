@@ -19,12 +19,7 @@ package net.sourceforge.squirrel_sql.client.update.xmlbeans;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.File;
-
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities;
 
 import org.junit.After;
 import org.junit.Before;
@@ -48,13 +43,7 @@ public class XmlBeanUtilitiesExternalTest extends BaseSQuirreLJUnit4TestCase {
     public void tearDown() {
         utilUnderTest = null;
     }
-    
-    @Test
-    public void testChecksum() {
-        File f = new File("/tmp/update_feature.zip");
-        System.out.println("Checksum="+utilUnderTest.getCheckSum(f));
-    }
-    
+        
     @Test
     public void testBuildRelease() throws Exception {
         String dir = "/home/manningr/weeklybuild/squirrel-sql-dist/release";
