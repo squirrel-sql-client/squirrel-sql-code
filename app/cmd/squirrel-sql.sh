@@ -22,18 +22,27 @@ fi
 TMP_CP=$UNIX_STYLE_HOME/squirrel-sql.jar
 
 # Then add all library jars to the classpath.
-IFS=""
 for a in $UNIX_STYLE_HOME/lib/*; do
 	TMP_CP="$TMP_CP":"$a";
 done
+
+# Set the update app's classpath to use jars in download area first, then the installed jars
+UPDATE_CP=$TMP_CP
+for a in $UNIX_STYLE_HOME/update/downloads/core/*; do
+    UPDATE_CP="$a":"$UPDATE_CP"
+done
+
 
 # Now add the system classpath to the classpath. If running
 # Cygwin we also need to change the classpath to Windows format.
 if $cygwin ; then
 	TMP_CP=`cygpath -w -p $TMP_CP`
+	UPDATE_CP=`cygpath -w -p $UPDATE_CP`
 	TMP_CP=$TMP_CP';'$CLASSPATH
+	UPDATE_CP=$UPDATE_CP';'$CLASSPATH
 else
 	TMP_CP=$TMP_CP:$CLASSPATH
+	UPDATE_CP=$UPDATE_CP:$CLASSPATH
 fi
 
 #To add translation working directories to your classpath edit and uncomment this line:
@@ -43,7 +52,7 @@ fi
 #$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 # Check for updates and prompt to apply if any are available
-$JAVA -cp $TMP_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
+$JAVA -cp $UPDATE_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
 
 # Launch SQuirreL application
 $JAVA -Xmx256m -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
