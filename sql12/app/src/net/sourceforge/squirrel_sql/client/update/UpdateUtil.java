@@ -44,7 +44,7 @@ public interface UpdateUtil
 	public static final String LOCAL_UPDATE_DIR_NAME = "update";
 
 	/**
-	 * The directory under the local update diretory where previous versions of artifacts are saved for
+	 * The directory under the local update directory where previous versions of artifacts are saved for
 	 * recovery purposes or if the user decides to revert to the previous version.
 	 */
 	public static final String BACKUP_ROOT_DIR_NAME = "backup";

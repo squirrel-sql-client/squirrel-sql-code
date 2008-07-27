@@ -197,6 +197,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		boolean result = true;
 		sendBackupStarted();
 
+		File localReleaseFile = new File(_util.getLocalReleaseFile());
+		_util.copyFile(localReleaseFile, _util.getBackupDir());
+		
 		List<ArtifactStatus> stats = _changeListBean.getChanges();
 		for (ArtifactStatus status : stats)
 		{
@@ -351,6 +354,13 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				_util.copyFile(backupJarPath, installJarPath);
 			}			
 		}
+		if (!_util.deleteFile(new File(_util.getLocalReleaseFile()))) {
+			return false;
+		} else {
+			File backupReleaseFile = _util.getFile(_util.getBackupDir(), UpdateUtil.RELEASE_XML_FILENAME);
+			_util.copyFile(backupReleaseFile, updateDir);
+		}
+		
 		return true;
 	}
 	
