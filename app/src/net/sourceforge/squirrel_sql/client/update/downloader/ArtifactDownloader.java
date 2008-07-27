@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatu
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Loops through a list of artifacts and downloads each one into the appropriate directory. Notifies listeners
@@ -40,7 +42,10 @@ import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
  */
 public class ArtifactDownloader implements Runnable
 {
-
+   /** Logger for this class. */
+   private final static ILogger s_log = 
+      LoggerController.createLogger(ArtifactDownloader.class);
+	
 	private List<ArtifactStatus> _artifactStatus = null;
 
 	private volatile boolean _stopped = false;
@@ -119,7 +124,8 @@ public class ArtifactDownloader implements Runnable
 					}
 					catch (Exception e)
 					{
-						e.printStackTrace();
+						s_log.error("run: encountered exception while attempting to download file ("+fileToGet+
+										"): "+e.getMessage(),e);
 						sendDownloadFailed();
 						return;
 					}
