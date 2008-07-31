@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Edit Extras Plugin:
+ - Improved handling and look of Escape date dialog. 
 
 Graph Plugin:
  - New entries in table's popup menu: "Copy table name" and "Copy qualified table name".

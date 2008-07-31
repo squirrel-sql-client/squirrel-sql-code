@@ -54,6 +54,8 @@ public class EscapeDateController
       GUIUtils.centerWithinParent(_frame);
       _frame.setVisible(true);
 
+      _frame.txtYear.requestFocus();
+
    }
 
    private String prefixNulls(String toPrefix, int digitCount)
