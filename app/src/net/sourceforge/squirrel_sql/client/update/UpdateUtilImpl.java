@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -110,8 +111,41 @@ public class UpdateUtilImpl implements UpdateUtil {
    /** The size of the buffer to use when extracting files from a ZIP archive */
    public final static int ZIP_EXTRACTION_BUFFER_SIZE = 8192;
    
+	/**
+	 * Since it can take a while to compute a checksum for large jars, here we cache them for later use.
+	 * The key is the absolute path to the file.  The value is it's checksum
+	 */
+	private HashMap<String, Long> fileChecksumMap = new HashMap<String, Long>();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCheckSum(java.io.File)
+	 */
+	public long getCheckSum(File f) {
+		String absPath = f.getAbsolutePath();
+		
+		Long result = -1L; 
+		if (fileChecksumMap.containsKey(absPath)) {
+			result = fileChecksumMap.get(absPath);
+		} else {
+			try
+			{
+				result = IOUtilities.getCheckSum(f);
+			}
+			catch (IOException e)
+			{
+				s_log.error("getCheckSum: failed to compute the checksum for file ("+f.getAbsolutePath()+
+								"): "+e.getMessage(), e);
+			}
+			// -1 is stored if the checksum operation failed.  This will ensure that comparison with any other
+			// file's checksum will be different - even if they happen to be the same file.
+			fileChecksumMap.put(absPath, result);
+		}
+		return result;
+	}
+   
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadCurrentRelease(java.lang.String, int, java.lang.String, java.lang.String)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadCurrentRelease(java.lang.String, 
+    * int, java.lang.String, java.lang.String)
     */
    public ChannelXmlBean downloadCurrentRelease(final String host,
          final int port, final String path, final String fileToGet)
@@ -191,8 +225,8 @@ public class UpdateUtilImpl implements UpdateUtil {
       	s_log.debug("Copying from file ("+from.getAbsolutePath()+") to file ("+toFile.getAbsolutePath()+")");
       }
       if (toFile.exists()) {
-      	long fromCheckSum = IOUtilities.getCheckSum(from);
-      	long toCheckSum = IOUtilities.getCheckSum(toFile);
+      	long fromCheckSum = getCheckSum(from);
+      	long toCheckSum = getCheckSum(toFile);
       	if (fromCheckSum == toCheckSum) {
       		if (s_log.isInfoEnabled()) {
       			s_log.info("File to be copied("+from.getAbsolutePath()+") has the same checksum("+
@@ -801,17 +835,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 		
 		if (fileExists(downloadFile))
 		{
-			long checkSum = -1;
-			try
-			{
-				checkSum = IOUtilities.getCheckSum(downloadFile);
-			}
-			catch (IOException e)
-			{
-				s_log.error("isPresentInDownloadsDirectory: unexpected exception while attempting to get "
-					+ "the checksum of file (" + downloadFile.getAbsolutePath() + ")");
-				return false;
-			}
+			long checkSum = getCheckSum(downloadFile);
 			if (status.getChecksum() == checkSum)
 			{
 				if (downloadFile.length() == status.getSize())

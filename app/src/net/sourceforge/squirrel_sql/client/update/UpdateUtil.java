@@ -302,5 +302,15 @@ public interface UpdateUtil
 	 */
 	File getDownloadFileLocation(ArtifactStatus status);
 	
-	boolean isPresentInDownloadsDirectory(ArtifactStatus status);	
+	boolean isPresentInDownloadsDirectory(ArtifactStatus status);
+
+	/**
+	 * Get the checksum for the specified file. This has a side effect in that it caches the checksum for
+	 * speedier lookup on subsequent calls.
+	 * 
+	 * @param f
+	 *           the file to get the checksum for
+	 * @return the checksum as a long. If an error occurs, this method will return -1
+	 */
+	public long getCheckSum(File f);	
 }
