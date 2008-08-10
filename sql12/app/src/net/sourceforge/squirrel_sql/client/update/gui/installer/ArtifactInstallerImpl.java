@@ -52,10 +52,12 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ArtifactInstallerImpl.class);
 
-
-	/** bean which describes all files that are a part of the change set to be applied */
-	private ChangeListXmlBean _changeListBean = null;
-
+	/** 
+	 * this list is derived from the changelist xmlbean.  It will only contain the artifacts that need to 
+	 * be change (installed, removed).
+	 */
+	private List<ArtifactStatus> _changeList = null;
+	
 	/** listeners to notify of important install events */
 	private List<InstallStatusListener> _listeners = new ArrayList<InstallStatusListener>();
 
@@ -112,7 +114,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 * be installed/removed
 	 */
 	private File changeListFile = null;
-	
+		
 	/* Spring-injected dependencies */
 
 	/** Spring-injected factory for creating install events */
@@ -160,7 +162,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 */
 	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
 	{
-		_changeListBean = changeList;
+		_changeList = initializeChangeList(changeList);
 	}
 
 	/**
@@ -200,11 +202,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		File localReleaseFile = new File(_util.getLocalReleaseFile());
 		_util.copyFile(localReleaseFile, _util.getBackupDir());
 		
-		List<ArtifactStatus> stats = _changeListBean.getChanges();
-		for (ArtifactStatus status : stats)
+		for (ArtifactStatus status : _changeList)
 		{
 			String artifactName = status.getName();
-			String artifactType = status.getType();
 			// Skip files that are not installed - new files
 			if (!status.isInstalled())
 			{
@@ -257,7 +257,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		List<File> filesToRemove = new ArrayList<File>();
 		List<InstallFileOperationInfo> filesToInstall = new ArrayList<InstallFileOperationInfo>();
 
-		for (ArtifactStatus status : _changeListBean.getChanges())
+		for (ArtifactStatus status : _changeList)
 		{
 			ArtifactAction action = status.getArtifactAction();
 			File installDir = null;
@@ -312,7 +312,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		}
 		boolean success = removeOldFiles(filesToRemove);
 		success = success && installFiles(filesToInstall);
-		success = success && moveChangeListFile();
+		success = success && backupAndDeleteChangeListFile();
+		success = success && installNewReleaseXmlFile();
 		
 		if (!success) {
 			restoreFilesFromBackup(filesToInstall);
@@ -327,8 +328,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 */
 	public boolean restoreBackupFiles() throws FileNotFoundException, IOException
 	{
-		List<ArtifactStatus> changes = _changeListBean.getChanges();
-		for (ArtifactStatus status : changes) {
+		for (ArtifactStatus status : _changeList) {
 			String name = status.getName();
 			File backupDir = null;
 			File installDir = null;
@@ -366,6 +366,59 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	
 	// Helper methods	
 	
+	/**
+	 * Since it possible that some artifacts haven't changed between releases, and it is time-consuming to read
+	 * the contents of the installed file to compute it's checksum, we do that here just once and boil the 
+	 * change list down to just those files that have physically changed, by comparing byte-size and checksum.
+	 */
+	private List<ArtifactStatus> initializeChangeList(ChangeListXmlBean changeListBean) {
+		ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
+		for (ArtifactStatus status : changeListBean.getChanges()) {
+			// Always add plugins - there is not a good way to compare plugin zips and their extracted contents
+			// at the moment.
+			// TODO: Determine the best way to derive the filesize and checksum of the plugin zip that was last 
+			// extracted.  Should we keep it around? How about using the current release.xml file ? Come to 
+			// think of it, perhaps we shouldn't be computing the checksum of *any* existing files, why don't 
+			// we just get it from the current release.xml file?
+			if (status.isPluginArtifact()) {
+				result.add(status);
+				continue;
+			}
+			
+			if (status.getArtifactAction() == ArtifactAction.INSTALL) {
+				File installedFileLocation = null;
+				// Skip the artifact if it is identical to the one that is already installed
+				if (status.isCoreArtifact()) {
+					installedFileLocation = 
+						getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
+				}
+				if (status.isTranslationArtifact()) {
+					installedFileLocation = _util.getFile(coreInstallDir, status.getName());
+				}
+				
+				long installedSize = installedFileLocation.length();
+				if (installedSize == status.getSize()) {
+					long installedCheckSum = _util.getCheckSum(installedFileLocation);
+					if (installedCheckSum == status.getChecksum()) {
+						if (s_log.isDebugEnabled()) {
+							s_log.debug("initializeChangeList: found a core/translation artifact that is not " +
+									"installed: installedSize= "+installedSize+"installedCheckSum="+
+									installedCheckSum+" statusSize="+status.getSize()+" statusChecksum="+
+									status.getChecksum());
+						}
+						continue;
+					}
+				}
+			}
+			
+			// We have a core or translation file that is not already installed - add it 
+			result.add(status);
+		}
+		
+		return result;
+	}
+	
+	
 	/* Handle squirrel-sql.jar specially - it lives at the top */
 	private File getCoreArtifactLocation(String artifactName, File rootDir, File coreDir) {
 		if (SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
@@ -378,11 +431,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	private void restoreFilesFromBackup(List<InstallFileOperationInfo> filesToInstall)
 	{
 		// TODO Auto-generated method stub
-		
 	}
 
-
-	private boolean moveChangeListFile()
+	private boolean backupAndDeleteChangeListFile()
 	{
 		boolean result = true;
 		if (changeListFile != null) {
@@ -401,6 +452,46 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		return result;
 	}
 
+	/**
+	 * Install the downloaded release.xml file into the updates root directory so that the update knows the 
+	 * current release has changed.
+	 * 
+	 * @return true if install was successful; false otherwise.
+	 */
+	private boolean installNewReleaseXmlFile() {
+		boolean result = true;
+				
+		try
+		{
+			final String localReleaseFile = _util.getLocalReleaseFile();
+			_util.deleteFile(new File(localReleaseFile));
+		}
+		catch (FileNotFoundException e)
+		{
+			// strange that release xml file wasn't found; but not a problem at this point - just log it.
+			if (s_log.isInfoEnabled())
+			{
+				s_log.info("installNewReleaseXmlFile: release file to be replaced was missing.");
+			}
+		}
+		File downloadReleaseFile = _util.getFile(downloadsRootDir, UpdateUtil.RELEASE_XML_FILENAME);
+		try
+		{
+			_util.copyFile(downloadReleaseFile, updateDir);
+		}
+		catch (FileNotFoundException e)
+		{
+			result = false;
+			s_log.error("installNewReleaseXmlFile: unexpected exception - "+e.getMessage(), e);
+		}
+		catch (IOException e)
+		{
+			result = false;
+			s_log.error("installNewReleaseXmlFile: unexpected exception - "+e.getMessage(), e);
+		}
+		return result;
+	}
+	
 	/**
 	 * Removes the specified list of File objects (can represent either a file or directory)
 	 * 
