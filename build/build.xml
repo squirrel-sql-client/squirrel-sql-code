@@ -718,24 +718,12 @@
 		</copy>
 		<copy file="doc/images/logo.jpg" todir="${core_jws_dir}"/>
 		<copy file="web-site/jws/squirrel.jnlp" todir="${core_jws_dir}"/>
-<!-- TODO: Get latest version of ant and install on rory -->
-<!--		<signjar alias="squirrel" storepass="password" keystore="build/keystore"> -->
-<!--			<fileset dir="${core_jws_dir}"> -->
-<!--				<include name="**/*.jar"/> -->
-<!--			</fileset> -->
-<!--		</signjar> -->
-		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
-					jar="${core_jws_dir}/fw.jar">
-		</signjar>
-		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
-					jar="${core_jws_dir}/log4j.jar">
-		</signjar>
-		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
-					jar="${core_jws_dir}/nanoxml-2.1.jar">
-		</signjar>
-		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
-					jar="${core_jws_dir}/squirrel-sql.jar">
-		</signjar>
+
+		<signjar alias="squirrel" storepass="squirrel" keystore="build/.keystore" lazy="true"> 
+			<fileset dir="${core_jws_dir}"> 
+				<include name="**/*.jar"/> 
+			</fileset> 
+		</signjar> 
 	</target>
 
 	<!--
