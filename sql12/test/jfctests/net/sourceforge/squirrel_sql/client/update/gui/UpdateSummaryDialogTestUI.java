@@ -7,11 +7,11 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.update.UpdateController;
-import net.sourceforge.squirrel_sql.client.update.UpdateControllerImpl;
 
 public class UpdateSummaryDialogTestUI {
 
@@ -23,20 +23,28 @@ public class UpdateSummaryDialogTestUI {
 
       final JFrame frame = new JFrame("Test UpdateManagerDialog");
       JButton showDialogButton = new JButton("Show UpdateManager Dialog");
+      JLabel installedVersionLabel = new JLabel("InstalledVersion: ");
+      JLabel availableVersionLabel = new JLabel("AvailableVersion: ");
+      final JTextField installedVersionTF = new JTextField("installedVersion", 30);
+      final JTextField availableVersionTF = new JTextField("availableVersion", 30);
       showDialogButton.addActionListener(new ActionListener() {
          UpdateSummaryDialog dialog = null;
 
          public void actionPerformed(ActionEvent e) {
-            if (dialog == null) {
-               dialog = new UpdateSummaryDialog(frame, getArtifacts(),null);
-               dialog.setInstalledVersion("Installed version");
-               dialog.setAvailableVersion("Available Version");
-            }
+            dialog = new UpdateSummaryDialog(frame, getArtifacts(),null);
+            dialog.setInstalledVersion(installedVersionTF.getText());
+            dialog.setAvailableVersion(availableVersionTF.getText());
             dialog.setVisible(true);
          }
       });
       JPanel panel = new JPanel();
+      
+      panel.add(installedVersionLabel);
+      panel.add(installedVersionTF);
+      panel.add(availableVersionLabel);
+      panel.add(availableVersionTF);
       panel.add(showDialogButton);
+      
       frame.getContentPane().add(panel);
       frame.setSize(400, 200);
       frame.setVisible(true);
@@ -52,6 +60,39 @@ public class UpdateSummaryDialogTestUI {
       status.setType("core");
       status.setInstalled(true);
       result.add(status);
+
+      status = new ArtifactStatus();
+      status.setName("squirrel-sql.jar");
+      status.setType("core");
+      status.setInstalled(true);
+      result.add(status);
+      
+      
+      status = new ArtifactStatus();
+      status.setName("dbcopy.jar");
+      status.setType("plugin");
+      status.setInstalled(true);
+      result.add(status);
+
+      status = new ArtifactStatus();
+      status.setName("h2.jar");
+      status.setType("plugin");
+      status.setInstalled(false);
+      result.add(status);      
+      
+      status = new ArtifactStatus();
+      status.setName("squirrel-sql_zh_CN.jar");
+      status.setType("i18n");
+      status.setInstalled(true);
+      result.add(status);
+
+      status = new ArtifactStatus();
+      status.setName("squirrel-sql_bg_BG.jar");
+      status.setType("i18n");
+      status.setInstalled(false);
+      result.add(status);
+      
+      
       return result;
    }
 }

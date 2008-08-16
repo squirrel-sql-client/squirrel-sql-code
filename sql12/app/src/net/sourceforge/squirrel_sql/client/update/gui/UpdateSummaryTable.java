@@ -18,26 +18,32 @@ package net.sourceforge.squirrel_sql.client.update.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction.INSTALL;
+import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction.NONE;
+import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction.REMOVE;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.sourceforge.squirrel_sql.client.update.UpdateController;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
-import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -48,47 +54,29 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * @author manningr
  */
 public class UpdateSummaryTable extends SortableTable {
-   private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 1L;
 
    /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(UpdateSummaryTable.class);
-
+   private static final StringManager s_stringMgr = 
+   	StringManagerFactory.getStringManager(UpdateSummaryTable.class);
+   
    private interface i18n {
-      // i18n[UpdateSummaryTable.yes=yes]
-      String YES_VAL = s_stringMgr.getString("UpdateSummaryTable.yes");
-
-      // i18n[UpdateSummaryTable.no=no]
-      String NO_VAL = s_stringMgr.getString("UpdateSummaryTable.no");
+   	String ALL_TRANSLATIONS_LABEL = "All translations";
+   	String ALL_PLUGINS_LABEL = "All plugins";
+   	String INSTALL_OPTIONS_LABEL = "Install Options";
    }
 
-   private final static String[] s_hdgs = new String[] {
-         s_stringMgr.getString("UpdateSummaryTable.artifactNameLabel"),
-         s_stringMgr.getString("UpdateSummaryTable.typeLabel"),
-         s_stringMgr.getString("UpdateSummaryTable.installedLabel"),
-         s_stringMgr.getString("UpdateSummaryTable.actionLabel"), };
-
-   private final static Class<?>[] s_dataTypes = 
-      new Class[] { 
-         String.class, // ArtifactName
-         String.class, // Type
-         String.class, // Installed?
-         UpdateSummaryTableActionItem.class, // Install/Update/Remove
-   };
-
-   private final static int[] s_columnWidths = new int[] { 150, 100, 100, 50 };
-
-   private JComboBox _actionComboBox = new JComboBox();
-
    private List<ArtifactStatus> _artifacts = null;
-   
-   private UpdateController _updateController = null;
+   private boolean _releaseVersionWillChange = false;
+   private UpdateSummaryTableModel _model = null;
    
    public UpdateSummaryTable(List<ArtifactStatus> artifactStatus, 
-                             UpdateController updateController) {
-      super(new UpdateSummaryTableModel(artifactStatus));
+                             UpdateSummaryTableModel model) {
+      super(model);
+      _model = model;
+      model.setTable(this);
       _artifacts = artifactStatus;
-      this._updateController = updateController;
-      
       setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
       getTableHeader().setResizingAllowed(true);
       getTableHeader().setReorderingAllowed(true);
@@ -96,9 +84,12 @@ public class UpdateSummaryTable extends SortableTable {
       setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN);
 
       final TableColumnModel tcm = new DefaultTableColumnModel();
-      for (int i = 0; i < s_columnWidths.length; ++i) {
-         final TableColumn col = new TableColumn(i, s_columnWidths[i]);
-         col.setHeaderValue(s_hdgs[i]);
+      int[] columnWidths = model.getColumnWidths();
+      String[] headerNames = model.getColumnHeaderNames(); 
+      JComboBox _actionComboBox = new JComboBox();
+		for (int i = 0; i < columnWidths.length; ++i) {
+         final TableColumn col = new TableColumn(i, columnWidths[i]);
+         col.setHeaderValue(headerNames[i]);
          if (i == 3) {
             col.setCellEditor(new DefaultCellEditor(initCbo(_actionComboBox)));
          }
@@ -106,7 +97,6 @@ public class UpdateSummaryTable extends SortableTable {
       }
       setColumnModel(tcm);
       initPopup();
-      
    }
 
    /**
@@ -121,21 +111,47 @@ public class UpdateSummaryTable extends SortableTable {
       }
       return changes;
    }
+
+	/**
+	 * This will adjust the list of artifacts presented to the user based on whether or not the release version
+	 * will change.
+	 * 
+	 * @param releaseVersionWillChange
+	 *           a boolean value indicating whether or not the release version will change - that is, whether
+	 *           or not new core artifacts will be downloaded.
+	 */
+	public void setReleaseVersionWillChange(boolean releaseVersionWillChange)
+	{
+		Iterator<ArtifactStatus> i = _artifacts.iterator();
+		_releaseVersionWillChange = releaseVersionWillChange;
+		if (releaseVersionWillChange) {
+			// All currently installed artifacts will be marked with INSTALL action. 
+			while (i.hasNext()) {
+				ArtifactStatus status = i.next();
+				if (status.isInstalled()) {
+					status.setArtifactAction(ArtifactAction.INSTALL);
+				}
+			}
+			
+		} else {
+			// Remove the core items since they are the most recent, and the user is not allowed to remove them
+			while (i.hasNext()) {
+				ArtifactStatus status = i.next();
+				if (status.isCoreArtifact()) {
+					i.remove();
+				}
+			}
+			
+		}
+		
+		
+	}
+   
    
    private void initPopup() {
-      // TODO: i18n
-      final JPopupMenu popup = new JPopupMenu("Install Options");
-      JMenuItem coreItem = new JMenuItem("All core");
-      coreItem.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-            for (ArtifactStatus status : _artifacts) {
-               if (status.isCoreArtifact()) {
-                  status.setArtifactAction(ArtifactAction.INSTALL);
-               }
-            }
-         }
-      });
-      JMenuItem pluginItem = new JMenuItem("All plugins");
+      final JPopupMenu popup = new JPopupMenu(i18n.INSTALL_OPTIONS_LABEL);
+      
+      JMenuItem pluginItem = new JMenuItem(i18n.ALL_PLUGINS_LABEL);
       pluginItem.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             for (ArtifactStatus status : _artifacts) {
@@ -143,9 +159,10 @@ public class UpdateSummaryTable extends SortableTable {
                   status.setArtifactAction(ArtifactAction.INSTALL);
                }
             }
+            _model.fireTableDataChanged();
          }
       });
-      JMenuItem translationItem = new JMenuItem("All translations");
+      JMenuItem translationItem = new JMenuItem(i18n.ALL_TRANSLATIONS_LABEL);
       translationItem.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             for (ArtifactStatus status : _artifacts) {
@@ -153,23 +170,12 @@ public class UpdateSummaryTable extends SortableTable {
                   status.setArtifactAction(ArtifactAction.INSTALL);
                }
             }
+            _model.fireTableDataChanged();
          }
       });
-      
-      JMenuItem allUpdatesItem = new JMenuItem("All updates");
-      allUpdatesItem.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-            for (ArtifactStatus status : _artifacts) {
-               status.setArtifactAction(ArtifactAction.INSTALL);
-            }
-         }
-      });
-      
-      popup.add(coreItem);
+                  
       popup.add(pluginItem);
       popup.add(translationItem);
-      popup.addSeparator();
-      popup.add(allUpdatesItem);
       
       addMouseListener(new MouseAdapter() {
          public void mousePressed(MouseEvent event){
@@ -185,112 +191,76 @@ public class UpdateSummaryTable extends SortableTable {
         });            
    }
       
-   private JComboBox initCbo(JComboBox cbo) {
+   private JComboBox initCbo(final JComboBox cbo) {
       cbo.setEditable(false);
-
-      cbo.addItem(ArtifactAction.NONE);
-      cbo.addItem(ArtifactAction.INSTALL);
-      cbo.addItem(ArtifactAction.REMOVE);
-
-      cbo.setSelectedIndex(0);
-
-      _actionComboBox.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-            final JComboBox source = (JComboBox)e.getSource();
-            final ArtifactAction action = 
-               (ArtifactAction)(source).getSelectedItem();
-            final int row = UpdateSummaryTable.this.getSelectedRow();
-            final SortableTableModel model = 
-               (SortableTableModel)UpdateSummaryTable.this.getModel();
-
-            
-            if (row == -1) {
-               return;
-            }
-            final ArtifactStatus as = UpdateSummaryTable.this._artifacts.get(row);
-            if (as.isPluginArtifact()) {
-               // TODO: Check to be sure that all core artifacts are either 
-               // installed or are checked to be installed.
-               System.out.println("Need to ensure that core components are up-to-date");
-               return;
-            }
-            if (as.isCoreArtifact() && action == ArtifactAction.REMOVE) {
-               // TODO: i18n
-               _updateController.showErrorMessage("Illegal Action", 
-                                                  "Core artifacts cannot be removed");
-               source.setSelectedIndex(0);
-               model.fireTableDataChanged();
-               return;
-            }
-            // All core artifacts are linked.
-            if (as.isCoreArtifact()) {
-               for (ArtifactStatus status : UpdateSummaryTable.this._artifacts) {
-                  if (status.isInstalled() || status.isCoreArtifact()) {
-                     status.setArtifactAction(action);
-                  }
-               }
-            }
-            as.setArtifactAction(action);
-            model.fireTableDataChanged();  
-         }
+      setModel(cbo, NONE, INSTALL, REMOVE);
+      
+      cbo.addPopupMenuListener(new PopupMenuListener() {
+			public void popupMenuCanceled(PopupMenuEvent e) {}
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e){}
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e)
+			{
+				JComboBox source =(JComboBox) e.getSource();
+				updateDataModel(source);
+			}
       });
       
       return cbo;
    }
+   
+   /**
+    *  We want to adjust the items in the popup menu that are available to the user to select
+    *  based on 1) whether or not the release version will change, and 2) what type of artifact the row 
+    *  is dealing with and 3) whether or not the artifact is already installed   
+    * @param e
+    * @param source
+    */
+   private void updateDataModel(JComboBox source) {
+		final int row = UpdateSummaryTable.this.getEditingRow();
+		if (row == -1) {
+			return;
+		}
+		final ArtifactStatus as = UpdateSummaryTable.this._artifacts.get(row);
+		
+		// is it installed?
+		boolean installed = as.isInstalled();
 
-   private static class UpdateSummaryTableModel extends AbstractTableModel {
-      private static final long serialVersionUID = 1L;
-
-      private List<ArtifactStatus> _artifacts = new ArrayList<ArtifactStatus>();
-
-      UpdateSummaryTableModel(List<ArtifactStatus> artifacts) {
-         _artifacts = artifacts;
-
-      }
-
-      public Object getValueAt(int row, int col) {
-         final ArtifactStatus as = _artifacts.get(row);
-         switch (col) {
-         case 0:
-            return as.getName();
-         case 1:
-            return as.getType();
-         case 2:
-            return as.isInstalled() ? i18n.YES_VAL : i18n.NO_VAL;
-         case 3:
-            return as.getArtifactAction();
-         default:
-            throw new IndexOutOfBoundsException("" + col);
-         }
-      }
-
-      public int getRowCount() {
-         return _artifacts.size();
-      }
-
-      public int getColumnCount() {
-         return s_hdgs.length;
-      }
-
-      public String getColumnName(int col) {
-         return s_hdgs[col];
-      }
-
-      public Class<?> getColumnClass(int col) {
-         return s_dataTypes[col];
-      }
-
-      public boolean isCellEditable(int row, int col) {
-         return col == 3;
-      }
-
-      public void setValueAt(Object value, int row, int col) {
-//         System.out.println("setValueAt: value=" + value + " row=" + row
-//               + " col=" + col);
-         final ArtifactStatus as = _artifacts.get(row);
-         ArtifactAction action = 
-            ArtifactAction.valueOf(value.toString()); 
-         as.setArtifactAction(action);
-      }
+		// get the type of artifact
+		if (as.isCoreArtifact()) {
+			if (_releaseVersionWillChange) {
+				source.setModel(getComboBoxModel(INSTALL));
+			} else {
+				// core artifacts are not displayed
+			}
+		} else {
+			if (_releaseVersionWillChange) {
+				if (installed) {
+					setModel(source, INSTALL, REMOVE);
+				} else {
+					setModel(source, NONE, INSTALL);
+				}
+			} else {
+				if (installed) {
+					setModel(source, NONE, REMOVE);
+				} else {
+					setModel(source, NONE, INSTALL);
+				}
+			}
+		}   
    }
+   
+   private void setModel(JComboBox box, ArtifactAction... actions) {
+   	ComboBoxModel oldModel = box.getModel();
+   	box.setModel(getComboBoxModel(actions));
+   	if (oldModel.getSize() != actions.length) {
+   		box.firePropertyChange("itemCount", oldModel.getSize(), actions.length);
+   	}
+   }
+   
+   private ComboBoxModel getComboBoxModel(ArtifactAction... actions) {
+   	ComboBoxModel result = new DefaultComboBoxModel(actions);
+   	result.setSelectedItem(actions[0]);
+   	return result;
+   }
+
 }
