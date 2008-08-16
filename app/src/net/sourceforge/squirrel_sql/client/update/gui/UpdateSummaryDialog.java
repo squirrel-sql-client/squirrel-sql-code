@@ -53,9 +53,13 @@ public class UpdateSummaryDialog extends JDialog {
 
    private UpdateSummaryTable _updateSummaryTable;
 
-   private JLabel installedVersionLabel = null;
+   private JLabel _installedVersionLabel = null;
    
-   private JLabel availableVersionLabel = null;
+   private JLabel _availableVersionLabel = null;
+   
+   private String _installedVersion = null;
+   
+   private String _availableVersion = null;
    
    static interface i18n {
       // i18n[UpdateSummaryDialog.applyLabel=Apply Changes]
@@ -85,17 +89,28 @@ public class UpdateSummaryDialog extends JDialog {
    }
 
    public void setInstalledVersion(String installedVersion) {
+   	_installedVersion = installedVersion;
       StringBuilder tmp = new StringBuilder(i18n.INSTALLED_VERSION_PREFIX);
       tmp.append(" ");
       tmp.append(installedVersion);
-      installedVersionLabel.setText(tmp.toString());
+      _installedVersionLabel.setText(tmp.toString());
+      setReleaseVersionWillChangeFlag();
    }
    
    public void setAvailableVersion(String availableVersion) {
+   	_availableVersion = availableVersion;
       StringBuilder tmp = new StringBuilder(i18n.AVAILABLE_VERSION_PREFIX);
       tmp.append(" ");
       tmp.append(availableVersion);
-      availableVersionLabel.setText(tmp.toString());      
+      _availableVersionLabel.setText(tmp.toString());   
+      setReleaseVersionWillChangeFlag();
+   }
+   
+   private void setReleaseVersionWillChangeFlag() {
+   	if (_availableVersion == null || _installedVersion == null) {
+   		return;
+   	}
+   	_updateSummaryTable.setReleaseVersionWillChange(!_availableVersion.equals(_installedVersion));
    }
    
    private void createGUI(final List<ArtifactStatus> artifactStatus, 
@@ -105,19 +120,20 @@ public class UpdateSummaryDialog extends JDialog {
       final Container contentPane = getContentPane();
       contentPane.setLayout(new BorderLayout());
 
-      installedVersionLabel = new JLabel();
-      installedVersionLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
+      _installedVersionLabel = new JLabel();
+      _installedVersionLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
       
-      availableVersionLabel = new JLabel();
-      availableVersionLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
+      _availableVersionLabel = new JLabel();
+      _availableVersionLabel.setBorder(BorderFactory.createEmptyBorder(1, 4, 1, 4));
       
       JPanel labelPanel = new JPanel();
-      labelPanel.add(installedVersionLabel);
-      labelPanel.add(availableVersionLabel);
+      labelPanel.add(_installedVersionLabel);
+      labelPanel.add(_availableVersionLabel);
       // Label panel containing the versions for the update at top of dialog.
       contentPane.add(labelPanel, BorderLayout.NORTH);
 
-      _updateSummaryTable = new UpdateSummaryTable(artifactStatus, updateController);
+      UpdateSummaryTableModel model = new UpdateSummaryTableModel(artifactStatus);
+      _updateSummaryTable = new UpdateSummaryTable(artifactStatus, model);
       contentPane.add(new JScrollPane(_updateSummaryTable), BorderLayout.CENTER);
 
       final JPanel btnsPnl = new JPanel();
