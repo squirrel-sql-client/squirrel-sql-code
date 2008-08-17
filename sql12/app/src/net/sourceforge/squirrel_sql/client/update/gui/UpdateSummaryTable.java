@@ -143,8 +143,13 @@ public class UpdateSummaryTable extends SortableTable {
 			}
 			
 		}
-		
-		
+	}
+	
+	/**
+	 * @return a boolean value indicating whether or not the release version will change with this update.
+	 */
+	public boolean getReleaseVersionWillChange() {
+		return _releaseVersionWillChange;
 	}
    
    

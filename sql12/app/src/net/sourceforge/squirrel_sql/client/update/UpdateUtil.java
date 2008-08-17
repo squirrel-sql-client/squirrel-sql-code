@@ -73,6 +73,9 @@ public interface UpdateUtil
 	/** the value for artifact type that identifies it as a plugin artifact */
 	public static final String TRANSLATION_ARTIFACT_ID = "i18n";
 
+	/** The SQuirreL jar that contains the core classes in the "app" module */
+	public static final String SQUIRREL_SQL_JAR_FILENAME = "squirrel-sql.jar";
+
 	/**
 	 * Downloads the current release available at the specified host and path.
 	 * 
@@ -137,10 +140,22 @@ public interface UpdateUtil
 	 *           the file to copy from
 	 * @param to
 	 *           the file to copy to
-	 * @return true if the file copy succeeded; false otherwise.
 	 */
 	void copyFile(final File from, final File to) throws FileNotFoundException, IOException;
 
+	/**
+	 * Lists the specified fromDir and copies all of the files found in that directory to the specified toDir
+	 * directory.
+	 * 
+	 * @param fromDir
+	 *           the directory to copy files from
+	 * @param toDir
+	 *           the directory to copy files to
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	void copyDir(final File fromDir, final File toDir) throws FileNotFoundException, IOException; 
+	
 	/**
 	 * Returns an ChannelXmlBean that describes the locally installed release.
 	 * 
@@ -157,8 +172,19 @@ public interface UpdateUtil
 	 */
 	File getSquirrelHomeDir();
 
+	/**
+	 * Returns the top-level directory in which all installed plugins of SQuirreL live under.
+	 * 
+	 * @return a File representing the plugins directory of SQuirreL
+	 */	
 	File getSquirrelPluginsDir();
 
+	/**
+	 * Returns the top-level directory in which all core libraries (and possibly translations) of SQuirreL 
+	 * live under.
+	 * 
+	 * @return a File representing the core library directory of SQuirreL
+	 */		
 	File getSquirrelLibraryDir();
 
 	/**
@@ -265,6 +291,13 @@ public interface UpdateUtil
 	File getPluginBackupDir();
 	
 	File getI18nBackupDir();
+	
+	/**
+	 * Returns the absolute path to the location of the squirrel-sql.jar file.
+	 * 
+	 * @return a File representing the current installed squirrel-sql.jar file.
+	 */
+	File getInstalledSquirrelMainJarLocation();
 	
 	ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
 

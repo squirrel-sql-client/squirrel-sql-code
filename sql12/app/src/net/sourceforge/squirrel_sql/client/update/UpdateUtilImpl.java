@@ -252,6 +252,25 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
    /**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(java.io.File, java.io.File)
+	 */
+	public void copyDir(File fromDir, File toDir) throws FileNotFoundException, IOException
+	{	
+		if (!fromDir.isDirectory()) {
+			throw new IllegalArgumentException("Expected fromDir("+fromDir.getAbsolutePath()+
+				") to be a directory.");
+		}
+		if (!toDir.isDirectory()) {
+			throw new IllegalArgumentException("Expected toDir("+toDir.getAbsolutePath()+
+				") to be a directory.");
+		}
+		File[] files = toDir.listFiles();
+		for (File sourceFile : files) {
+			copyFile(sourceFile, toDir);
+		}
+	}
+
+	/**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getLocalReleaseInfo(java.lang.String)
     */
    public ChannelXmlBean getLocalReleaseInfo(String localReleaseFile) {
@@ -282,7 +301,17 @@ public class UpdateUtilImpl implements UpdateUtil {
       return squirrelHomeDir;
    }
 
+   
+   
    /**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getInstalledSquirrelMainJarLocation()
+	 */
+	public File getInstalledSquirrelMainJarLocation()
+	{
+		return new File(this.getSquirrelHomeDir(), UpdateUtil.SQUIRREL_SQL_JAR_FILENAME);
+	}
+
+	/**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getSquirrelPluginsDir()
     */
    public File getSquirrelPluginsDir()  {

@@ -83,11 +83,13 @@ public interface UpdateController {
     *    b. shutdown and launch the updater
     *    c. Updater installs updated files
     *    d. SQuirreL starts again.
-    * 
+    *    
     * @param artifactStatusList the list of changes to make to 
     *                           installed/available artifacts. 
+    * @param releaseVersionWillChange a boolean value indicating whether or not the changes being applied will
+    * 										  change the installed release version
     */
-   void applyChanges(List<ArtifactStatus> artifactStatusList);
+   void applyChanges(List<ArtifactStatus> artifactStatusList, boolean releaseVersionWillChange);
    
    /**
     * Returns a boolean value to indicate whether or not the user wants to use 

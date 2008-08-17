@@ -20,9 +20,7 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -375,18 +372,28 @@ public class UpdateControllerImpl implements UpdateController,
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#applyChanges(java.util.List)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#applyChanges(java.util.List, boolean)
     */
-   public void applyChanges(List<ArtifactStatus> artifactStatusList) {
+   public void applyChanges(List<ArtifactStatus> artifactStatusList, boolean releaseVersionWillChange) {
       try {
          // Persists the change list to the update directory.
          _util.saveChangeList(artifactStatusList);
-      
+               
          // Kick off a thread to go and fetch the files one-by-one and register 
          // callback class - DownloadStatusEventHandler
          pullDownUpdateFiles(artifactStatusList,
                              new DownloadStatusEventHandler());
-         
+      
+         // if the release version doesn't change, we won't be pulling down core artifacts.  So, we just 
+         // need to make sure that all core files have been copied from their installed locations into the 
+         // corresponding directory in download, which is in the CLASSPATH of the updater.  This covers the
+         // case where the update is being run for the first time after install, and no new version is 
+         // available, but the user wants to install/remove plugins and/or translations.
+         // TODO: do we need to show the user a progress dialog here ?
+         if (!releaseVersionWillChange) {
+         	_util.copyDir(_util.getSquirrelLibraryDir(), _util.getCoreDownloadsDir());
+         	_util.copyFile(_util.getInstalledSquirrelMainJarLocation(), _util.getCoreDownloadsDir());
+         }
       } catch (Exception e) {
          showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.EXCEPTION_MSG
                           + e.getClass().getName() + ":" + e.getMessage(), e);         
