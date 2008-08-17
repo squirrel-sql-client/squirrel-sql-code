@@ -142,7 +142,7 @@ public class UpdateSummaryDialog extends JDialog {
          public void actionPerformed(ActionEvent evt) {
             List<ArtifactStatus> changes = 
                _updateSummaryTable.getUserRequestedChanges();
-            updateController.applyChanges(changes);
+            updateController.applyChanges(changes, _updateSummaryTable.getReleaseVersionWillChange());
          }
       });
       btnsPnl.add(okBtn);

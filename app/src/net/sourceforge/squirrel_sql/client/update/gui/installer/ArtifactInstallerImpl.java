@@ -46,9 +46,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ArtifactInstallerImpl implements ArtifactInstaller
 {
 
-	/** The SQuirreL jar that contains the core classes in the "app" module */
-	public static final String SQUIRREL_SQL_JAR_FILENAME = "squirrel-sql.jar";
-
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ArtifactInstallerImpl.class);
 
@@ -421,7 +418,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	
 	/* Handle squirrel-sql.jar specially - it lives at the top */
 	private File getCoreArtifactLocation(String artifactName, File rootDir, File coreDir) {
-		if (SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
+		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
 			return rootDir;
 		} else {
 			return coreDir;
