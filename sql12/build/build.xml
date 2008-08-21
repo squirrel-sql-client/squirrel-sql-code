@@ -902,6 +902,7 @@
 			<batchtest fork="yes" todir="${test_dir}/results">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
+					<exclude name="**/Proxy*.java" />
 				</fileset>
 			</batchtest>
 	 	</junit>
