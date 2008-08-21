@@ -27,15 +27,12 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
-import java.sql.NClob;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -333,76 +330,6 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 		
 	}
 
-	/**
-	 * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader, long)
-	 */
-	public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
-	/**
-	 * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader)
-	 */
-	public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setNClob(int, java.sql.NClob)
-	 */
-	public void setNClob(int parameterIndex, NClob value) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader, long)
-	 */
-	public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader)
-	 */
-	public void setNClob(int parameterIndex, Reader reader) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setNString(int, java.lang.String)
-	 */
-	public void setNString(int parameterIndex, String value) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setRowId(int, java.sql.RowId)
-	 */
-	public void setRowId(int parameterIndex, RowId x) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.PreparedStatement#setSQLXML(int, java.sql.SQLXML)
-	 */
-	public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 }

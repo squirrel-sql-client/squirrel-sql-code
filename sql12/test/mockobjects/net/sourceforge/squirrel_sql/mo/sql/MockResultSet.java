@@ -8,14 +8,13 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
-import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.RowId;
+
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.sql.SQLXML;
+
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -161,13 +160,11 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
-    @SuppressWarnings("deprecation")
 	public BigDecimal getBigDecimal(int arg0, int arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-    @SuppressWarnings("deprecation")
 	public BigDecimal getBigDecimal(String arg0, int arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
@@ -457,13 +454,11 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
-    @SuppressWarnings("deprecation")
 	public InputStream getUnicodeStream(int arg0) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-    @SuppressWarnings("deprecation")
 	public InputStream getUnicodeStream(String arg0) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
@@ -874,78 +869,6 @@ public class MockResultSet implements ResultSet {
 	}
 
 	/**
-	 * @see java.sql.ResultSet#getNClob(int)
-	 */
-	public NClob getNClob(int columnIndex) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getNClob(java.lang.String)
-	 */
-	public NClob getNClob(String columnLabel) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getNString(int)
-	 */
-	public String getNString(int columnIndex) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getNString(java.lang.String)
-	 */
-	public String getNString(String columnLabel) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getRowId(int)
-	 */
-	public RowId getRowId(int columnIndex) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getRowId(java.lang.String)
-	 */
-	public RowId getRowId(String columnLabel) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getSQLXML(int)
-	 */
-	public SQLXML getSQLXML(int columnIndex) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.ResultSet#getSQLXML(java.lang.String)
-	 */
-	public SQLXML getSQLXML(String columnLabel) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
 	 * @see java.sql.ResultSet#isClosed()
 	 */
 	public boolean isClosed() throws SQLException
@@ -1134,166 +1057,6 @@ public class MockResultSet implements ResultSet {
 		
 	}
 
-	/**
-	 * @see java.sql.ResultSet#updateNCharacterStream(int, java.io.Reader, long)
-	 */
-	public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
-	/**
-	 * @see java.sql.ResultSet#updateNCharacterStream(int, java.io.Reader)
-	 */
-	public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNCharacterStream(java.lang.String, java.io.Reader, long)
-	 */
-	public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNCharacterStream(java.lang.String, java.io.Reader)
-	 */
-	public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(int, java.sql.NClob)
-	 */
-	public void updateNClob(int columnIndex, NClob clob) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(int, java.io.Reader, long)
-	 */
-	public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(int, java.io.Reader)
-	 */
-	public void updateNClob(int columnIndex, Reader reader) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(java.lang.String, java.sql.NClob)
-	 */
-	public void updateNClob(String columnLabel, NClob clob) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(java.lang.String, java.io.Reader, long)
-	 */
-	public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNClob(java.lang.String, java.io.Reader)
-	 */
-	public void updateNClob(String columnLabel, Reader reader) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNString(int, java.lang.String)
-	 */
-	public void updateNString(int columnIndex, String string) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateNString(java.lang.String, java.lang.String)
-	 */
-	public void updateNString(String columnLabel, String string) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateRowId(int, java.sql.RowId)
-	 */
-	public void updateRowId(int columnIndex, RowId x) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateRowId(java.lang.String, java.sql.RowId)
-	 */
-	public void updateRowId(String columnLabel, RowId x) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateSQLXML(int, java.sql.SQLXML)
-	 */
-	public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.ResultSet#updateSQLXML(java.lang.String, java.sql.SQLXML)
-	 */
-	public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
-	 */
-	public boolean isWrapperFor(Class<?> iface) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
-	 */
-	public <T> T unwrap(Class<T> iface) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

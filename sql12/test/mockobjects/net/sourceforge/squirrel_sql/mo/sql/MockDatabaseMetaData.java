@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.mo.sql;
 
 import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -1035,15 +1034,6 @@ public class MockDatabaseMetaData extends
 	}
 
 	/**
-	 * @see java.sql.DatabaseMetaData#getRowIdLifetime()
-	 */
-	public RowIdLifetime getRowIdLifetime() throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
 	 * @see java.sql.DatabaseMetaData#getSchemas(java.lang.String, java.lang.String)
 	 */
 	public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException
@@ -1052,32 +1042,4 @@ public class MockDatabaseMetaData extends
 		return null;
 	}
 
-	/**
-	 * @see java.sql.DatabaseMetaData#supportsStoredFunctionsUsingCallSyntax()
-	 */
-	public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
-	 */
-	public boolean isWrapperFor(Class<?> iface) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
-	 */
-	public <T> T unwrap(Class<T> iface) throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}	
-
-	
 }
