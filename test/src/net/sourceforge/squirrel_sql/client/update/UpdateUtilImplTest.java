@@ -18,8 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
@@ -33,12 +31,12 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    UpdateUtilImpl underTest = null;
    
    String codeCompletionDir = 
-      "/opt/squirrel/eclipse_build/plugins/refactoring";
+      "../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion";
    String codeCompletionJar = 
-      "/opt/squirrel/eclipse_build/plugins/refactoring.jar";
+      "../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion.jar";
    
    String zipFile = 
-      "/opt/squirrel/eclipse_build/update/backup/plugin/codecompletion.zip";
+      "../squirrel-sql-dist/squirrel-sql/codecompletion.zip";
       
    
    @Before
@@ -52,7 +50,7 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    }
 
    @Test
-   public void testCreateZipFile() throws Exception {
+   public void testCreateZipFile() throws Exception {   	
       File[] files = new File[2];
       files[0] = new File(codeCompletionDir);
       files[1] = new File(codeCompletionJar);
