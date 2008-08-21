@@ -825,7 +825,8 @@
 				optimize="${optimize}"
 				includeJavaRuntime="yes"
 				source="${targetVM}"
-				target="${targetVM}">
+				target="${targetVM}"
+				excludes="**/Proxy*.java">
 			
 			<src path="test/src"/>
 			<src path="test/mockobjects"/>
@@ -902,7 +903,6 @@
 			<batchtest fork="yes" todir="${test_dir}/results">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
-					<exclude name="**/Proxy*.java" />
 				</fileset>
 			</batchtest>
 	 	</junit>
