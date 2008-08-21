@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.jdbcproxy;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 
 public class ProxyDatabaseMetaData implements DatabaseMetaData {
@@ -926,15 +925,6 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern)
 		throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.DatabaseMetaData#getRowIdLifetime()
-	 */
-	public RowIdLifetime getRowIdLifetime() throws SQLException
 	{
 		// TODO Auto-generated method stub
 		return null;

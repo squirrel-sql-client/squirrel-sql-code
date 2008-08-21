@@ -26,12 +26,9 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.NClob;
 import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
@@ -292,24 +289,6 @@ public class ProxyConnection implements Connection {
 	}
 
 	/**
-	 * @see java.sql.Connection#createNClob()
-	 */
-	public NClob createNClob() throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see java.sql.Connection#createSQLXML()
-	 */
-	public SQLXML createSQLXML() throws SQLException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
 	 * @see java.sql.Connection#createStruct(java.lang.String, java.lang.Object[])
 	 */
 	public Struct createStruct(String typeName, Object[] attributes) throws SQLException
@@ -345,22 +324,5 @@ public class ProxyConnection implements Connection {
 		return false;
 	}
 
-	/**
-	 * @see java.sql.Connection#setClientInfo(java.util.Properties)
-	 */
-	public void setClientInfo(Properties properties) throws SQLClientInfoException
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see java.sql.Connection#setClientInfo(java.lang.String, java.lang.String)
-	 */
-	public void setClientInfo(String name, String value) throws SQLClientInfoException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 }
