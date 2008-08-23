@@ -19,6 +19,8 @@
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,6 +34,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ArtifactInstallerImplIntegrationTest extends AbstractJUnit4SpringContextTests
 {	
 
+	static {
+		ApplicationArguments.initialize(new String[] {});
+	}
+	
 	public static final String beanIdToTest = 
 		"net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller";
 	
