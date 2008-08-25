@@ -224,10 +224,24 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				File pluginBackupFile = _util.getFile(pluginBackupDir, artifactName);
 				String pluginDirectory = artifactName.replace(".zip", "");
 				String pluginJarFilename = artifactName.replace(".zip", ".jar");
-				File[] sourceFiles = new File[2];
-				sourceFiles[0] = _util.getFile(pluginInstallDir, pluginDirectory);
-				sourceFiles[1] = _util.getFile(pluginInstallDir, pluginJarFilename);
-				_util.createZipFile(pluginBackupFile, sourceFiles);
+
+				ArrayList<File> filesToZip = new ArrayList<File>();
+				File pluginDirectoryFile = _util.getFile(pluginInstallDir, pluginDirectory);
+				if (pluginDirectoryFile.exists()) {
+					filesToZip.add(pluginDirectoryFile);
+				}
+				File pluginJarFile = _util.getFile(pluginInstallDir, pluginJarFilename);
+				if (pluginJarFile.exists()) {
+					filesToZip.add(pluginJarFile);
+				}
+				if (filesToZip.size() > 0) {
+					_util.createZipFile(pluginBackupFile, filesToZip.toArray(new File[filesToZip.size()]));
+				} else {
+					s_log.error("Plugin ("+status.getName()+") was listed as already installed, but it's " +
+							"files didn't exist and couldn't be backed up: pluginDirectoryFile="+
+							pluginDirectoryFile.getAbsolutePath()+" pluginJarFile="+
+							pluginJarFile.getAbsolutePath());
+				}
 			}
 			if (status.isTranslationArtifact())
 			{
@@ -387,7 +401,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				// Skip the artifact if it is identical to the one that is already installed
 				if (status.isCoreArtifact()) {
 					installedFileLocation = 
-						getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
+						_util.getFile(getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir),
+										  status.getName());
 				}
 				if (status.isTranslationArtifact()) {
 					installedFileLocation = _util.getFile(coreInstallDir, status.getName());
