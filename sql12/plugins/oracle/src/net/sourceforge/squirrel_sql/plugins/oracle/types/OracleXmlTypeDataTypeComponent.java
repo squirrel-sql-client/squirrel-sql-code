@@ -163,7 +163,8 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
      * SQuirreL code.  So we remove this dependency here by using reflection 
      * which doesn't require this library in order to just compile the code.
      * 
-     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#readResultSet(java.sql.ResultSet, int, boolean)
+     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#readResultSet(
+     * java.sql.ResultSet, int, boolean)
      */
     public Object readResultSet(ResultSet rs, int idx, boolean limitDataRead)
             throws SQLException {
@@ -173,8 +174,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
             if (o == null) {
                 return NULL_VALUE_PATTERN;
             } else if ("oracle.sql.OPAQUE".equals(o.getClass().getName())) {
-                XML_TYPE_CLASS = Class.forName(XML_TYPE_CLASSNAME);
-                Method createXmlMethod = XML_TYPE_CLASS.getMethod("createXml",o.getClass());
+                Method createXmlMethod = getCreateXmlMethod(o.getClass());
                 
                 // Below is equivalent to the following:
                 // xmlType = XMLType.createXML(o);
@@ -202,7 +202,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
                 result = o;
             }
         } catch (ClassNotFoundException e) {
-            s_log.error("Perhaps the XDK which contains the class "
+            s_log.error("Perhaps the XDK, which contains the class "
                     + XML_TYPE_CLASSNAME + " is not in the CLASSPATH?", e);
         } catch (Exception e) {
             s_log.error("Unexpected exception while attempting to read " +
@@ -213,6 +213,50 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
         }
         return result;
     }
+
+	/**
+	 * This method attempts to find a method called createXML or createXml in the class oracle.xdb.XMLType 
+	 * using reflection. 
+	 * 
+	 * @param argClasses the classes of the arguments that are used to lookup the method.
+	 * @return the Method object obtained by using reflection.
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 */
+	private Method getCreateXmlMethod(Class<?> ... argClasses) throws ClassNotFoundException, NoSuchMethodException
+	{
+		if (XML_TYPE_CLASS == null) {
+			XML_TYPE_CLASS = Class.forName(XML_TYPE_CLASSNAME);
+		}
+
+		Method createXmlMethod = null;
+		
+		try
+		{
+			createXmlMethod = XML_TYPE_CLASS.getMethod("createXML",argClasses);
+		}
+		catch (SecurityException e) { /* Do nothing - the method could be called createXml instead */ } 
+		catch (NoSuchMethodException e) { /* Do nothing - the method could be called createXml instead */ }
+		 
+		if (createXmlMethod == null) {
+			try {
+				createXmlMethod = XML_TYPE_CLASS.getMethod("createXml",argClasses);
+			}
+			catch (SecurityException e) {
+				s_log.error("getCreateXmlMethod: Unable to get method named createXml or createXML in class " +
+						"oracle.xdb.XMLType: "+ e.getMessage(), e);
+				throw e;
+			} 
+			catch (NoSuchMethodException e) {
+				s_log.error("getCreateXmlMethod: Unable to get method named createXml or createXML in class " +
+						"oracle.xdb.XMLType: "+ e.getMessage(), e);	
+				throw e;
+			}
+			
+		}
+		return createXmlMethod;
+	}
 
     /**
      * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#setPreparedStatementValue(java.sql.PreparedStatement, java.lang.Object, int)
@@ -240,7 +284,8 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
                         String.class  
                 };
                 
-                Method createXmlMethod = XML_TYPE_CLASS.getMethod("createXML", args);
+                Method createXmlMethod = getCreateXmlMethod(args);
+                
                 Object xmlTypeObj = createXmlMethod.invoke(null, pstmt.getConnection(), value.toString());
     
                 // now bind the string..
@@ -267,6 +312,5 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
     public boolean areEqual(Object obj1, Object obj2) {
         return ((String)obj1).equals(obj2);
     }
-    
     
 }
