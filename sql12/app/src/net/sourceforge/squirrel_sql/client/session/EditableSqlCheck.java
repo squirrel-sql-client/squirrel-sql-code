@@ -52,7 +52,7 @@ public class EditableSqlCheck
          }
          else
          {
-            patternBehindTable = Pattern.compile("([A-Z0-9_]+)\\s+");
+            patternBehindTable = Pattern.compile("([A-Z0-9_]+)\\s+|[A-Z0-9_]+$");
          }
 
          matcher = patternBehindTable.matcher(behindTable);

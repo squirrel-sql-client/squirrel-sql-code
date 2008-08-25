@@ -108,6 +108,8 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2049336: Make Editable disappear from SQL/results tab
+
 2018512: DB2 timestamps still don't work when milliseconds are zero. Patch submitted by Daniel Stränger.
 
 2018018: (Bug in FormatSql function) Formatter now uses platform-specific EOL char sequence.  
