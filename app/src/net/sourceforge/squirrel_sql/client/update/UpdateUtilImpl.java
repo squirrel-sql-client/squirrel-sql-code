@@ -557,7 +557,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#createZipFile(java.io.File, java.io.File[])
     */
-   public void createZipFile(File zipFile, File[] sourceFiles) 
+   public void createZipFile(File zipFile, File... sourceFiles) 
       throws FileNotFoundException, IOException  
    {
       ZipOutputStream os = 

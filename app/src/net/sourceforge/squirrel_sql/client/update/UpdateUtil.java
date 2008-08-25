@@ -197,7 +197,7 @@ public interface UpdateUtil
 
 	File checkDir(File parent, String child);
 
-	void createZipFile(File zipFile, File[] sourceFiles) throws FileNotFoundException, IOException;
+	void createZipFile(File zipFile, File... sourceFiles) throws FileNotFoundException, IOException;
 
 	/**
 	 * Returns the update directory in which all information about available updates and the user's desired
