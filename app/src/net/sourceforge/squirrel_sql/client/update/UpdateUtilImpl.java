@@ -437,8 +437,8 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getLocalReleaseFile()
     */
-   public String getLocalReleaseFile() throws FileNotFoundException {
-      String result = null;
+   public File getLocalReleaseFile() throws FileNotFoundException {
+      File result = null;
       try {
          File[] files = getSquirrelHomeDir().listFiles();
          for (File file : files) {
@@ -446,7 +446,7 @@ public class UpdateUtilImpl implements UpdateUtil {
                File[] updateFiles = file.listFiles();
                for (File updateFile : updateFiles) {
                   if (RELEASE_XML_FILENAME.equals(updateFile.getName())) {
-                     result = updateFile.getAbsolutePath();
+                     result = updateFile;
                   }
                }
             }
@@ -655,13 +655,6 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#fileExists(java.io.File)
-    */
-   public boolean fileExists(File file) {
-      return file.exists();
-   }
-
-   /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getFile(java.io.File, java.lang.String)
     */
    public File getFile(File installDir, String artifactName) {
@@ -862,7 +855,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 
 		File downloadFile = getDownloadFileLocation(status);
 		
-		if (fileExists(downloadFile))
+		if (downloadFile.exists())
 		{
 			long checkSum = getCheckSum(downloadFile);
 			if (status.getChecksum() == checkSum)
