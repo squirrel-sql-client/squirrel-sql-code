@@ -187,7 +187,7 @@ public class UpdateControllerImpl implements UpdateController,
       IUpdateSettings settings = getUpdateSettings();
       
       // 1. Find the local release.xml file
-      String releaseFilename = _util.getLocalReleaseFile();
+      String releaseFilename = _util.getLocalReleaseFile().getAbsolutePath();
 
       // 2. Load the local release.xml file as a ChannelXmlBean.
       _installedChannelBean = _util.getLocalReleaseInfo(releaseFilename);

@@ -136,7 +136,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		this._util = util;
 		updateDir = _util.getSquirrelUpdateDir();
 		backupRootDir = _util.checkDir(updateDir, UpdateUtil.BACKUP_ROOT_DIR_NAME);
-
+		downloadsRootDir = _util.checkDir(updateDir, UpdateUtil.DOWNLOADS_DIR_NAME);
+		
 		coreBackupDir = _util.checkDir(backupRootDir, UpdateUtil.CORE_ARTIFACT_ID);
 		pluginBackupDir = _util.checkDir(backupRootDir, UpdateUtil.PLUGIN_ARTIFACT_ID);
 		translationBackupDir = _util.checkDir(backupRootDir, UpdateUtil.TRANSLATION_ARTIFACT_ID);
@@ -196,7 +197,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		boolean result = true;
 		sendBackupStarted();
 
-		File localReleaseFile = new File(_util.getLocalReleaseFile());
+		File localReleaseFile = _util.getLocalReleaseFile();
 		_util.copyFile(localReleaseFile, _util.getBackupDir());
 		
 		for (ArtifactStatus status : _changeList)
@@ -247,7 +248,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			{
 				File translationFile = _util.getFile(i18nInstallDir, artifactName);
 				File backupFile = _util.getFile(translationBackupDir, artifactName);
-				if (_util.fileExists(translationFile))
+				if (translationFile.exists())
 				{
 					_util.copyFile(translationFile, backupFile);
 				}
@@ -364,7 +365,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				_util.copyFile(backupJarPath, installJarPath);
 			}			
 		}
-		if (!_util.deleteFile(new File(_util.getLocalReleaseFile()))) {
+		if (!_util.deleteFile(_util.getLocalReleaseFile())) {
 			return false;
 		} else {
 			File backupReleaseFile = _util.getFile(_util.getBackupDir(), UpdateUtil.RELEASE_XML_FILENAME);
@@ -474,8 +475,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				
 		try
 		{
-			final String localReleaseFile = _util.getLocalReleaseFile();
-			_util.deleteFile(new File(localReleaseFile));
+			_util.deleteFile(_util.getLocalReleaseFile());
 		}
 		catch (FileNotFoundException e)
 		{

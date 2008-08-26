@@ -233,7 +233,7 @@ public interface UpdateUtil
 	 * @throws FileNotFoundException
 	 *            if the release xml file couldn't be found.
 	 */
-	String getLocalReleaseFile() throws FileNotFoundException;
+	File getLocalReleaseFile() throws FileNotFoundException;
 
 	/**
 	 * Builds a list of ArtifactStatus objects from the specified ChannelXmlBean
@@ -300,8 +300,6 @@ public interface UpdateUtil
 	File getInstalledSquirrelMainJarLocation();
 	
 	ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
-
-	boolean fileExists(File File);
 
 	File getFile(File installDir, String artifactName);
 
