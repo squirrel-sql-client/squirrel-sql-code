@@ -284,8 +284,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 					s_log.error("Skipping core artifact (" + status.getName() + ") that was marked for removal");
 					continue;
 				}
-				getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
-				
+				installDir = getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
 				fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
 				fileToRemove = _util.getFile(installDir, artifactName);
 				filesToRemove.add(fileToRemove);
