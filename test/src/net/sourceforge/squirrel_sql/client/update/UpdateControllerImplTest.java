@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.client.update;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
 
-import java.util.Locale;
+import java.io.File;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -41,7 +41,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 
    private static final String FILE_SYSTEM_UPDATE_PATH = "fileSystemUpdatePath";
 
-	private static final String LOCAL_RELEASE_FILE = "release.xml";
+	private static final String LOCAL_RELEASE_FILENAME = "release.xml";
 
 	UpdateControllerImpl underTest = null;
    
@@ -55,7 +55,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    ChannelXmlBean mockInstalledChannelXmlBean = null;
    ChannelXmlBean mockAvailableChannelXmlBean = null;
    IPluginManager mockPluginManager = null;
-   
+   File mockLocalReleaseFile = null;
    
    @Before
    public void setUp() throws Exception {
@@ -66,7 +66,8 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
       mockPluginManager = mockHelper.createMock(IPluginManager.class);
       mockInstalledChannelXmlBean = setupSnapshotChannelXmlBean();
       mockAvailableChannelXmlBean = mockHelper.createMock(ChannelXmlBean.class);
-      
+      mockLocalReleaseFile = mockHelper.createMock("mockLocalReleaseFile", File.class);
+      expect(mockLocalReleaseFile.getAbsolutePath()).andStubReturn(LOCAL_RELEASE_FILENAME);
    }
 
    private IUpdateSettings setupUpdateSettings(boolean isRemoteUpdateSite)
@@ -131,8 +132,8 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 		throws Exception
 	{
 		UpdateUtil mockUpdateUtil = setupUpdateUtil();
-		expect(mockUpdateUtil.getLocalReleaseFile()).andStubReturn(LOCAL_RELEASE_FILE);
-		expect(mockUpdateUtil.getLocalReleaseInfo(LOCAL_RELEASE_FILE)).andStubReturn(installed);
+		expect(mockUpdateUtil.getLocalReleaseFile()).andStubReturn(mockLocalReleaseFile);
+		expect(mockUpdateUtil.getLocalReleaseInfo(LOCAL_RELEASE_FILENAME)).andStubReturn(installed);
 		expect(mockUpdateUtil.loadUpdateFromFileSystem(FILE_SYSTEM_UPDATE_PATH)).andReturn(available);
 		return mockUpdateUtil;
 	}
@@ -141,7 +142,6 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 		throws Exception
 	{
    	UpdateUtil mockUpdateUtil = setupUpdateUtil();
-   	//expect(mockUpdateUtil.)
    	return mockUpdateUtil;
 	}
    
