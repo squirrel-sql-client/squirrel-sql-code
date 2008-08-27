@@ -47,7 +47,11 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappersImpl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -101,12 +105,6 @@ public class UpdateUtilImpl implements UpdateUtil {
     * release.xml file
     */
    private final UpdateXmlSerializer _serializer = new UpdateXmlSerializer();
-
-   /** TODO: Spring-inject when this class is a Spring bean */
-   private PathUtils _pathUtils = new PathUtilsImpl();
-   public void setPathUtils(PathUtils pathUtils) {
-   	this._pathUtils = pathUtils;
-   }
    
    /** The size of the buffer to use when extracting files from a ZIP archive */
    public final static int ZIP_EXTRACTION_BUFFER_SIZE = 8192;
@@ -117,6 +115,23 @@ public class UpdateUtilImpl implements UpdateUtil {
 	 */
 	private HashMap<String, Long> fileChecksumMap = new HashMap<String, Long>();
 
+   /** TODO: Spring-inject when this class is a Spring bean */
+   private PathUtils _pathUtils = new PathUtilsImpl();
+   public void setPathUtils(PathUtils pathUtils) {
+   	this._pathUtils = pathUtils;
+   }
+	
+	/** TODO: Spring-inject when this class is a Spring bean */
+	private FileWrapperFactory _fileWrapperFactory = new FileWrapperFactoryImpl();
+	public void setFileWrapperFactory(FileWrapperFactory factory) {
+		_fileWrapperFactory = factory;
+	}
+	
+	private ApplicationFileWrappers _appFileWrappers = new ApplicationFileWrappersImpl();
+	public void setApplicationFileWrappers(ApplicationFileWrappers appFileWrappers) {
+		_appFileWrappers = appFileWrappers;
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCheckSum(java.io.File)
 	 */
