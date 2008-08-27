@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionLi
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader;
+import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
 import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadEventType;
 import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent;
 import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
@@ -92,6 +93,8 @@ public class UpdateControllerImpl implements UpdateController,
    
    /** The class that we use which is responsible for downloading artifacts */ 
    ArtifactDownloader _downloader = null;
+   
+   private ArtifactDownloaderFactory _downloaderFactory = null;
    
    static interface i18n {
    	
@@ -149,6 +152,13 @@ public class UpdateControllerImpl implements UpdateController,
       }
    }
 
+   /**
+    * @param factory
+    */
+   public void setArtifactDownloaderFactory(ArtifactDownloaderFactory factory) {
+   	this._downloaderFactory = factory;
+   }
+   
    /**
     * Sets the utility class for low-level update routines
     * @param util the Update utility class to use.
@@ -255,7 +265,7 @@ public class UpdateControllerImpl implements UpdateController,
          }
       }
       
-      _downloader = new ArtifactDownloader(newartifactsList);
+      _downloader = _downloaderFactory.create(newartifactsList);
       _downloader.setUtil(_util);
       _downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
       _downloader.setHost(getUpdateServerName());

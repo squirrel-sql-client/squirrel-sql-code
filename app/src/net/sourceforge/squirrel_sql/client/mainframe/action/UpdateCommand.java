@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2007 Rob Manning
+ * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,21 +17,15 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JFrame;
-
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
-import net.sourceforge.squirrel_sql.client.update.UpdateController;
 import net.sourceforge.squirrel_sql.client.update.UpdateControllerImpl;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
-import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
+import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
+import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
- * This <CODE>ICommand</CODE> allows the user to copy an existing
- * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * This <CODE>ICommand</CODE> allows the user to check for updates and apply changes to the currently 
+ * installed software.
  */
 public class UpdateCommand implements ICommand
 {
@@ -62,6 +56,8 @@ public class UpdateCommand implements ICommand
 	public void execute()
 	{
 	   UpdateControllerImpl updateController = new UpdateControllerImpl(_app);
+	   ArtifactDownloaderFactory downloaderFactory = new ArtifactDownloaderFactoryImpl();
+	   updateController.setArtifactDownloaderFactory(downloaderFactory);
 	   updateController.setUpdateUtil(new UpdateUtilImpl());
 	   updateController.showUpdateDialog();
 	}
