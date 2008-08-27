@@ -18,30 +18,34 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
-import java.io.File;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Set;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import utils.EasyMockHelper;
 
 public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
 
    UpdateUtilImpl underTest = null;
    
-   String codeCompletionDir = 
-      "../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion";
-   String codeCompletionJar = 
-      "../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion.jar";
-   
-   String zipFile = 
-      "../squirrel-sql-dist/squirrel-sql/codecompletion.zip";
-      
+   IPluginManager mockPluginManager = null;
+   EasyMockHelper mockHelper = new EasyMockHelper();
    
    @Before
    public void setUp() throws Exception {
       underTest = new UpdateUtilImpl();
+      mockPluginManager = mockHelper.createMock(IPluginManager.class);
+      underTest.setPluginManager(mockPluginManager);
    }
 
    @After
@@ -50,12 +54,24 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    }
 
    @Test
-   public void testCreateZipFile() throws Exception {   	
-      File[] files = new File[2];
-      files[0] = new File(codeCompletionDir);
-      files[1] = new File(codeCompletionJar);
-      File target = new File(zipFile);
-      underTest.createZipFile(target, files);
+   public void testGetInstalledPlugins() {
+   	
+   	PluginInfo[] pluginInfos = new PluginInfo[2];
+   	PluginInfo mockPlugin1 = mockHelper.createMock(PluginInfo.class);
+   	PluginInfo mockPlugin2 = mockHelper.createMock(PluginInfo.class);
+   	EasyMock.expect(mockPlugin1.getInternalName()).andReturn("plugin1");
+   	EasyMock.expect(mockPlugin2.getInternalName()).andReturn("plugin2");
+   	pluginInfos[0] = mockPlugin1;
+   	pluginInfos[1] = mockPlugin2;
+   	
+   	expect(mockPluginManager.getPluginInformation()).andReturn(pluginInfos);
+   	
+   	mockHelper.replayAll();
+   	Set<String> installedPlugins = underTest.getInstalledPlugins();
+   	mockHelper.verifyAll();
+   	
+   	assertEquals(2, installedPlugins.size());
    }
+   
 
 }
