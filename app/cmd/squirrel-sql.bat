@@ -1,4 +1,4 @@
-@rem @echo off
+@echo off
 
 IF "%JAVA_HOME%"=="" SET LOCAL_JAVA=java
 IF NOT "%JAVA_HOME%"=="" SET LOCAL_JAVA=%JAVA_HOME%\bin\java
