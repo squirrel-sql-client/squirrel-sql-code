@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallSta
 import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfoFactory;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -62,55 +62,55 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 * the top-level directory beneath which reside all files needed for updating the application (e.g.
 	 * /opt/squirrel/update)
 	 */
-	private File updateDir = null;
+	private FileWrapper updateDir = null;
 
 	// Download directories
 	
 	/** the downlaods root directory (e.g. /opt/squirrel/update/downloads) */
-	private File downloadsRootDir = null;
+	private FileWrapper downloadsRootDir = null;
 	
 	/** the core sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/core) */
-	private File coreDownloadsDir = null;
+	private FileWrapper coreDownloadsDir = null;
 
 	/** the plugin sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/plugin) */
-	private File pluginDownloadsDir = null;
+	private FileWrapper pluginDownloadsDir = null;
 	
 	/** the i18n sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/i18n) */
-	private File i18nDownloadsDir = null;	
+	private FileWrapper i18nDownloadsDir = null;	
 	
 	// Backup directories
 
 	/** the backup directory (e.g. /opt/squirrel/update/backup) */
-	private File backupRootDir = null;
+	private FileWrapper backupRootDir = null;
 
 	/** the core sub-directory of the backup directory (e.g. /opt/squirrel/update/backup/core) */
-	private File coreBackupDir = null;
+	private FileWrapper coreBackupDir = null;
 
 	/** the plugin sub-directory of the backup directory (e.g. /opt/squirrel/update/backup/plugin) */
-	private File pluginBackupDir = null;
+	private FileWrapper pluginBackupDir = null;
 
 	/** the i18n sub-directory of the backup directory (e.g. /opt/squirrel/update/backup/i18n) */
-	private File translationBackupDir = null;
+	private FileWrapper translationBackupDir = null;
 
 	// Install directories
 
 	/** the top-level SQuirreL installation direction where launch scripts are (e.g. /opt/squirrel) */
-	private File installRootDir = null;
+	private FileWrapper installRootDir = null;
 
 	/** the lib directory where most core jars are (e.g. /opt/squirrel/lib) */
-	private File coreInstallDir = null;
+	private FileWrapper coreInstallDir = null;
 
 	/** the plugins directory where all of the plugin files are (e.g. /opt/squirrel/plugins) */
-	private File pluginInstallDir = null;
+	private FileWrapper pluginInstallDir = null;
 
 	/** the lib directory where translation jars are (e.g. /opt/squirrel/lib) */
-	private File i18nInstallDir = null;
+	private FileWrapper i18nInstallDir = null;
 	
 	/** 
 	 * the file that was used to build a ChangeListXmlBean that we are using to determine which files need to
 	 * be installed/removed
 	 */
-	private File changeListFile = null;
+	private FileWrapper changeListFile = null;
 		
 	/* Spring-injected dependencies */
 
@@ -166,7 +166,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#getChangeListFile()
 	 */
-	public File getChangeListFile()
+	public FileWrapper getChangeListFile()
 	{
 		return changeListFile;
 	}
@@ -175,7 +175,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#
 	 * setChangeListFile(java.io.File)
 	 */
-	public void setChangeListFile(File changeListFile)
+	public void setChangeListFile(FileWrapper changeListFile)
 	{
 		this.changeListFile = changeListFile;
 	}
@@ -197,7 +197,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		boolean result = true;
 		sendBackupStarted();
 
-		File localReleaseFile = _util.getLocalReleaseFile();
+		FileWrapper localReleaseFile = _util.getLocalReleaseFile();
 		_util.copyFile(localReleaseFile, _util.getBackupDir());
 		
 		for (ArtifactStatus status : _changeList)
@@ -214,29 +214,29 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			}
 			if (status.isCoreArtifact())
 			{
-				File installDir = getCoreArtifactLocation(artifactName, installRootDir, coreInstallDir);
-				File coreFile = _util.getFile(installDir, artifactName);
-				File backupFile = _util.getFile(coreBackupDir, artifactName);
+				FileWrapper installDir = getCoreArtifactLocation(artifactName, installRootDir, coreInstallDir);
+				FileWrapper coreFile = _util.getFile(installDir, artifactName);
+				FileWrapper backupFile = _util.getFile(coreBackupDir, artifactName);
 				_util.copyFile(coreFile, backupFile);
 			}
 			if (status.isPluginArtifact())
 			{
 				// artifact name for plugins is <plugin internal name>.zip
-				File pluginBackupFile = _util.getFile(pluginBackupDir, artifactName);
+				FileWrapper pluginBackupFile = _util.getFile(pluginBackupDir, artifactName);
 				String pluginDirectory = artifactName.replace(".zip", "");
 				String pluginJarFilename = artifactName.replace(".zip", ".jar");
 
-				ArrayList<File> filesToZip = new ArrayList<File>();
-				File pluginDirectoryFile = _util.getFile(pluginInstallDir, pluginDirectory);
+				ArrayList<FileWrapper> filesToZip = new ArrayList<FileWrapper>();
+				FileWrapper pluginDirectoryFile = _util.getFile(pluginInstallDir, pluginDirectory);
 				if (pluginDirectoryFile.exists()) {
 					filesToZip.add(pluginDirectoryFile);
 				}
-				File pluginJarFile = _util.getFile(pluginInstallDir, pluginJarFilename);
+				FileWrapper pluginJarFile = _util.getFile(pluginInstallDir, pluginJarFilename);
 				if (pluginJarFile.exists()) {
 					filesToZip.add(pluginJarFile);
 				}
 				if (filesToZip.size() > 0) {
-					_util.createZipFile(pluginBackupFile, filesToZip.toArray(new File[filesToZip.size()]));
+					_util.createZipFile(pluginBackupFile, filesToZip.toArray(new FileWrapper[filesToZip.size()]));
 				} else {
 					s_log.error("Plugin ("+status.getName()+") was listed as already installed, but it's " +
 							"files didn't exist and couldn't be backed up: pluginDirectoryFile="+
@@ -246,8 +246,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			}
 			if (status.isTranslationArtifact())
 			{
-				File translationFile = _util.getFile(i18nInstallDir, artifactName);
-				File backupFile = _util.getFile(translationBackupDir, artifactName);
+				FileWrapper translationFile = _util.getFile(i18nInstallDir, artifactName);
+				FileWrapper backupFile = _util.getFile(translationBackupDir, artifactName);
 				if (translationFile.exists())
 				{
 					_util.copyFile(translationFile, backupFile);
@@ -266,15 +266,15 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		sendInstallStarted();
 
-		List<File> filesToRemove = new ArrayList<File>();
+		List<FileWrapper> filesToRemove = new ArrayList<FileWrapper>();
 		List<InstallFileOperationInfo> filesToInstall = new ArrayList<InstallFileOperationInfo>();
 
 		for (ArtifactStatus status : _changeList)
 		{
 			ArtifactAction action = status.getArtifactAction();
-			File installDir = null;
-			File fileToCopy = null;
-			File fileToRemove = null;
+			FileWrapper installDir = null;
+			FileWrapper fileToCopy = null;
+			FileWrapper fileToRemove = null;
 			String artifactName = status.getName();
 			boolean isPlugin = false;
 
@@ -341,8 +341,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		for (ArtifactStatus status : _changeList) {
 			String name = status.getName();
-			File backupDir = null;
-			File installDir = null;
+			FileWrapper backupDir = null;
+			FileWrapper installDir = null;
 			
 			if (status.isCoreArtifact()) {
 				backupDir = coreBackupDir;
@@ -356,8 +356,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				backupDir = translationBackupDir;
 				installDir = coreInstallDir; // translations are most likely to be found in core lib dir.
 			}
-			File backupJarPath = _util.getFile(backupDir, name);
-			File installJarPath = _util.getFile(installDir, name);
+			FileWrapper backupJarPath = _util.getFile(backupDir, name);
+			FileWrapper installJarPath = _util.getFile(installDir, name);
 			
 			if (!_util.deleteFile(installJarPath)) { 
 				return false;
@@ -368,7 +368,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		if (!_util.deleteFile(_util.getLocalReleaseFile())) {
 			return false;
 		} else {
-			File backupReleaseFile = _util.getFile(_util.getBackupDir(), UpdateUtil.RELEASE_XML_FILENAME);
+			FileWrapper backupReleaseFile = _util.getFile(_util.getBackupDir(), UpdateUtil.RELEASE_XML_FILENAME);
 			_util.copyFile(backupReleaseFile, updateDir);
 		}
 		
@@ -397,7 +397,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			}
 			
 			if (status.getArtifactAction() == ArtifactAction.INSTALL) {
-				File installedFileLocation = null;
+				FileWrapper installedFileLocation = null;
 				// Skip the artifact if it is identical to the one that is already installed
 				if (status.isCoreArtifact()) {
 					installedFileLocation = 
@@ -432,7 +432,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	
 	
 	/* Handle squirrel-sql.jar specially - it lives at the top */
-	private File getCoreArtifactLocation(String artifactName, File rootDir, File coreDir) {
+	private FileWrapper getCoreArtifactLocation(String artifactName, FileWrapper rootDir, FileWrapper coreDir) {
 		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
 			return rootDir;
 		} else {
@@ -485,7 +485,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				s_log.info("installNewReleaseXmlFile: release file to be replaced was missing.");
 			}
 		}
-		File downloadReleaseFile = _util.getFile(downloadsRootDir, UpdateUtil.RELEASE_XML_FILENAME);
+		FileWrapper downloadReleaseFile = _util.getFile(downloadsRootDir, UpdateUtil.RELEASE_XML_FILENAME);
 		try
 		{
 			_util.copyFile(downloadReleaseFile, updateDir);
@@ -509,10 +509,10 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 * @param filesToRemove the files to be removed.
 	 * @return true if the remove operation was successful and false otherwise.
 	 */
-	private boolean removeOldFiles(List<File> filesToRemove)
+	private boolean removeOldFiles(List<FileWrapper> filesToRemove)
 	{
 		boolean result = true;
-		for (File fileToRemove : filesToRemove) {
+		for (FileWrapper fileToRemove : filesToRemove) {
 			result = removeOldFile(fileToRemove);
 			if (!result) {
 				break;
@@ -528,7 +528,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 *           the File that represents the file to be removed
 	 * @return true if the remove operation was successful and false otherwise.
 	 */
-	private boolean removeOldFile(File fileToRemove)
+	private boolean removeOldFile(FileWrapper fileToRemove)
 	{
 		boolean result = true;
 		String absolutePath = fileToRemove.getAbsolutePath();
@@ -560,8 +560,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		boolean result = true;
 		for (InstallFileOperationInfo info : filesToInstall) {
-			File installDir = info.getInstallDir();
-			File fileToCopy = info.getFileToInstall();
+			FileWrapper installDir = info.getInstallDir();
+			FileWrapper fileToCopy = info.getFileToInstall();
 			try {
 				installFile(installDir, fileToCopy);
 			} catch (Exception e) {
@@ -573,7 +573,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		return result;
 	}
 
-	private void installFile(File installDir, File fileToCopy) throws IOException
+	private void installFile(FileWrapper installDir, FileWrapper fileToCopy) throws IOException
 	{
 		if (fileToCopy.getAbsolutePath().endsWith(".zip")) {
 			// This file is a zip; it needs to be extracted into the plugins directory. All zips are packaged

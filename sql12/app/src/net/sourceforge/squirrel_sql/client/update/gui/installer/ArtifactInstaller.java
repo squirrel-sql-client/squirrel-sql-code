@@ -18,12 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 /**
  * Interface for the class that applies changes given in a ChangeListXmlBean to the actual installed files,
@@ -70,12 +71,12 @@ public interface ArtifactInstaller
 	/**
 	 * @return the changeListFile
 	 */
-	File getChangeListFile();
+	FileWrapper getChangeListFile();
 
 	/**
 	 * @param changeListFile the changeListFile to set
 	 */
-	void setChangeListFile(File changeListFile);
+	void setChangeListFile(FileWrapper changeListFile);
 
 
 }

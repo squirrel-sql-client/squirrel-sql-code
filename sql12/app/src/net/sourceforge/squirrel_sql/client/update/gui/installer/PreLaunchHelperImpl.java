@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -26,6 +25,7 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListenerImpl;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -119,7 +119,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	{
 		try
 		{
-			File changeListFile = updateUtil.getChangeListFile();
+			FileWrapper changeListFile = updateUtil.getChangeListFile();
 			if (changeListFile.exists())
 			{
 				logInfo("Pre-launch update app detected a changeListFile to be processed");
@@ -156,8 +156,8 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 		if (showConfirmDialog(RESTORE_FROM_BACKUP_MESSAGE, RESTORE_FROM_BACKUP_TITLE)) {
 			
 			try {
-				File backupDir = updateUtil.getBackupDir();
-				File changeListFile = updateUtil.getFile(backupDir, UpdateUtil.CHANGE_LIST_FILENAME);
+				FileWrapper backupDir = updateUtil.getBackupDir();
+				FileWrapper changeListFile = updateUtil.getFile(backupDir, UpdateUtil.CHANGE_LIST_FILENAME);
 				ChangeListXmlBean changeList = updateUtil.getChangeList(changeListFile);
 			
 				ArtifactInstaller installer = artifactInstallerFactory.create(changeList);
@@ -198,7 +198,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	 * @throws Exception
 	 *            if any error occurs
 	 */
-	private void installUpdates(File changeList) throws Exception
+	private void installUpdates(FileWrapper changeList) throws Exception
 	{
 		ArtifactInstaller installer = artifactInstallerFactory.create(changeList);
 		installer.addListener(new InstallStatusListenerImpl());
