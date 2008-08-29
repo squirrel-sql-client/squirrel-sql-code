@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTe
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -96,6 +97,8 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 	private JCheckBox showAscii = null;
 	private boolean previousShowAscii;
 
+	private IOUtilities _iou = new IOUtilitiesImpl();	
+	
 	class BinaryOptionActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 
@@ -726,7 +729,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 						s_stringMgr.getString("popupeditableIoPanel.executeError2"),JOptionPane.ERROR_MESSAGE);
 					return;
 				} finally {
-				    IOUtilities.closeReader(err);
+				    _iou.closeReader(err);
 				}
 
 				// check for possibly bad return from child
