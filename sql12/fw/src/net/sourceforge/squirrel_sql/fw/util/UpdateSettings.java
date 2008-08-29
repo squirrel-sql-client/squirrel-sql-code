@@ -25,7 +25,7 @@ public class UpdateSettings implements Cloneable, IUpdateSettings
 {
 
 	/** Name of software update server. */
-	private String updateServer = "http://www.squirrel-sql.net";
+	private String updateServer = "www.squirrel-sql.net";
 
 	/** Port for software update server. */
 	private String updateServerPort = "80";
