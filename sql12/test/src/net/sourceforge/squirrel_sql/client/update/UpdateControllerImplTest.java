@@ -20,15 +20,13 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
-
-import java.io.File;
-
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 
 import org.junit.After;
@@ -55,7 +53,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    ChannelXmlBean mockInstalledChannelXmlBean = null;
    ChannelXmlBean mockAvailableChannelXmlBean = null;
    IPluginManager mockPluginManager = null;
-   File mockLocalReleaseFile = null;
+   FileWrapper mockLocalReleaseFile = null;
    
    @Before
    public void setUp() throws Exception {
@@ -66,7 +64,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
       mockPluginManager = mockHelper.createMock(IPluginManager.class);
       mockInstalledChannelXmlBean = setupSnapshotChannelXmlBean();
       mockAvailableChannelXmlBean = mockHelper.createMock(ChannelXmlBean.class);
-      mockLocalReleaseFile = mockHelper.createMock("mockLocalReleaseFile", File.class);
+      mockLocalReleaseFile = mockHelper.createMock("mockLocalReleaseFile", FileWrapper.class);
       expect(mockLocalReleaseFile.getAbsolutePath()).andStubReturn(LOCAL_RELEASE_FILENAME);
    }
 
