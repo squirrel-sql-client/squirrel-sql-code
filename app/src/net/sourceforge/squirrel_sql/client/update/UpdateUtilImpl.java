@@ -18,9 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -47,18 +44,16 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerImpl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappersImpl;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * Low-level utility methods for the UpdateController.  Among other things this class provides file locations
@@ -99,13 +94,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    
    /** the PluginManager that tells us what plugins are installed */
    private IPluginManager _pluginManager = null;
-   
-   /**
-    * the utility class that reads and writes release info from/to the
-    * release.xml file
-    */
-   private final UpdateXmlSerializer _serializer = new UpdateXmlSerializer();
-   
+      
    /** The size of the buffer to use when extracting files from a ZIP archive */
    public final static int ZIP_EXTRACTION_BUFFER_SIZE = 8192;
    
@@ -127,15 +116,33 @@ public class UpdateUtilImpl implements UpdateUtil {
 		_fileWrapperFactory = factory;
 	}
 	
+	/** TODO: Spring-inject when this class is a Spring bean */
 	private ApplicationFileWrappers _appFileWrappers = new ApplicationFileWrappersImpl();
 	public void setApplicationFileWrappers(ApplicationFileWrappers appFileWrappers) {
 		_appFileWrappers = appFileWrappers;
 	}
 	
+	/** TODO: Spring-inject when this class is a Spring bean */
+	private IOUtilities _iou = new IOUtilitiesImpl();
+	public void setIOUtilities(IOUtilities iou) {
+		_iou = iou;
+	}
+	
+   /**
+    * the utility class that reads and writes release info from/to the
+    * release.xml file
+    * 
+    * TODO: Spring-inject when this class is a Spring bean 
+    */
+   private UpdateXmlSerializer _serializer = new UpdateXmlSerializerImpl();
+   public void setUpdateXmlSerializer(UpdateXmlSerializer serializer) {
+   	_serializer = serializer;
+   }
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCheckSum(java.io.File)
 	 */
-	public long getCheckSum(File f) {
+	public long getCheckSum(FileWrapper f) {
 		String absPath = f.getAbsolutePath();
 		
 		Long result = -1L; 
@@ -144,7 +151,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 		} else {
 			try
 			{
-				result = IOUtilities.getCheckSum(f);
+				result = _iou.getCheckSum(f);
 			}
 			catch (IOException e)
 			{
@@ -185,36 +192,32 @@ public class UpdateUtilImpl implements UpdateUtil {
    public ChannelXmlBean loadUpdateFromFileSystem(final String path) 
    {
       ChannelXmlBean result = null;
-      BufferedInputStream is = null;
       try {
-         File f = new File(path);
+         FileWrapper f = _fileWrapperFactory.create(path);
          if (!f.isDirectory()) {
             s_log.error("FileSystem path ("+path+") is not a directory.");
          } else {
-            f = new File(f, RELEASE_XML_FILENAME); 
-            is = new BufferedInputStream(new FileInputStream(f));
-            result = _serializer.readChannelBean(is);
+            f = _fileWrapperFactory.create(f, RELEASE_XML_FILENAME); 
+            result = _serializer.readChannelBean(f);
          }            
       } catch (IOException e) {
          s_log.error("Unexpected exception while attempting "
                + "load updates from filesystem path (" + path + "): "
                + e.getMessage(), e);
-      } finally {
-         IOUtilities.closeInputStream(is);
       }
      
       return result;
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadLocalFile(java.lang.String, java.lang.String)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadLocalUpdateFile(java.lang.String, java.lang.String)
     */
-   public boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException {
+   public boolean downloadLocalUpdateFile(String fileToGet, String destDir) throws FileNotFoundException, IOException {
       boolean result = false;
-      File fromFile = new File(fileToGet);
+      FileWrapper fromFile = _fileWrapperFactory.create(fileToGet);
       if (fromFile.isFile() && fromFile.canRead()) {
          String filename = fromFile.getName();
-         File toFile = new File(destDir, filename);
+         FileWrapper toFile = _fileWrapperFactory.create(destDir, filename);
          copyFile(fromFile, toFile);
          result = true;
       } else {
@@ -224,14 +227,14 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyFile(java.io.File, java.io.File)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyFile(FileWrapper, FileWrapper)
     */
-   public void copyFile(final File from, final File to) throws FileNotFoundException, IOException {
+   public void copyFile(final FileWrapper from, final FileWrapper to) throws FileNotFoundException, IOException {
       if (!from.exists()) {
       	s_log.error("Cannot copy from file ("+from.getAbsolutePath()+") which doesn't appear to exist.");
       	return;
       }
-      File toFile = to;
+      FileWrapper toFile = to;
       // Check to see if to is a directory and convert toFile to be the name of the file in that directory.
       if (to.isDirectory()) {
       	toFile = getFile(to, from.getName());
@@ -250,26 +253,13 @@ public class UpdateUtilImpl implements UpdateUtil {
       		return;
       	}
       }
-      FileInputStream in = null;
-      FileOutputStream out = null;
-      try {
-         in = new FileInputStream(from);
-         out = new FileOutputStream(toFile);
-         byte[] buffer = new byte[8192];
-         int len;
-         while ((len = in.read(buffer)) != -1) {
-            out.write(buffer, 0, len);         
-         }
-      } finally {
-         IOUtilities.closeInputStream(in);
-         IOUtilities.closeOutputStream(out);
-      }
+      _iou.copyFile(from, toFile);
    }
    
    /**
-	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(java.io.File, java.io.File)
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(FileWrapper, FileWrapper)
 	 */
-	public void copyDir(File fromDir, File toDir) throws FileNotFoundException, IOException
+	public void copyDir(FileWrapper fromDir, FileWrapper toDir) throws FileNotFoundException, IOException
 	{	
 		if (!fromDir.isDirectory()) {
 			throw new IllegalArgumentException("Expected fromDir("+fromDir.getAbsolutePath()+
@@ -279,8 +269,8 @@ public class UpdateUtilImpl implements UpdateUtil {
 			throw new IllegalArgumentException("Expected toDir("+toDir.getAbsolutePath()+
 				") to be a directory.");
 		}
-		File[] files = toDir.listFiles();
-		for (File sourceFile : files) {
+		FileWrapper[] files = toDir.listFiles();
+		for (FileWrapper sourceFile : files) {
 			copyFile(sourceFile, toDir);
 		}
 	}
@@ -305,9 +295,8 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getSquirrelHomeDir()
     */
-   public File getSquirrelHomeDir()  {
-      ApplicationFiles appFiles = new ApplicationFiles();
-      File squirrelHomeDir = appFiles.getSquirrelHomeDir();      
+   public FileWrapper getSquirrelHomeDir()  {
+      FileWrapper squirrelHomeDir = _appFileWrappers.getSquirrelHomeDir();      
       if (!squirrelHomeDir.isDirectory()) {
          s_log.error("SQuirreL Home Directory ("
                + squirrelHomeDir.getAbsolutePath()
@@ -321,17 +310,16 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getInstalledSquirrelMainJarLocation()
 	 */
-	public File getInstalledSquirrelMainJarLocation()
+	public FileWrapper getInstalledSquirrelMainJarLocation()
 	{
-		return new File(this.getSquirrelHomeDir(), UpdateUtil.SQUIRREL_SQL_JAR_FILENAME);
+		return _fileWrapperFactory.create(getSquirrelHomeDir(), SQUIRREL_SQL_JAR_FILENAME);
 	}
 
 	/**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getSquirrelPluginsDir()
     */
-   public File getSquirrelPluginsDir()  {
-      ApplicationFiles appFiles = new ApplicationFiles();
-      File squirrelHomeDir = appFiles.getPluginsDirectory();      
+   public FileWrapper getSquirrelPluginsDir()  {
+      FileWrapper squirrelHomeDir = _appFileWrappers.getPluginsDirectory();      
       if (!squirrelHomeDir.isDirectory()) {
          s_log.error("SQuirreL Plugins Directory ("
                + squirrelHomeDir.getAbsolutePath()
@@ -343,9 +331,8 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getSquirrelLibraryDir()
     */
-   public File getSquirrelLibraryDir()  {
-      ApplicationFiles appFiles = new ApplicationFiles();
-      File squirrelLibDir = appFiles.getLibraryDirectory();      
+   public FileWrapper getSquirrelLibraryDir()  {
+      FileWrapper squirrelLibDir = _appFileWrappers.getLibraryDirectory();      
       if (!squirrelLibDir.isDirectory()) {
          s_log.error("SQuirreL Library Directory ("
                + squirrelLibDir.getAbsolutePath()
@@ -357,36 +344,35 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getSquirrelUpdateDir()
     */
-   public File getSquirrelUpdateDir()  {
-      ApplicationFiles appFiles = new ApplicationFiles();
-      return getDir(appFiles.getUpdateDirectory(), null, true);       
+   public FileWrapper getSquirrelUpdateDir()  {
+      return getDir(_appFileWrappers.getUpdateDirectory(), null, true);       
    }   
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getDownloadsDir()
     */
-   public File getDownloadsDir() {
+   public FileWrapper getDownloadsDir() {
    	return getDir(getSquirrelUpdateDir(), DOWNLOADS_DIR_NAME, true);
    }
    
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCoreDownloadsDir()
     */
-   public File getCoreDownloadsDir() {
+   public FileWrapper getCoreDownloadsDir() {
    	return getDir(getDownloadsDir(), CORE_ARTIFACT_ID, true);
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getPluginDownloadsDir()
     */
-   public File getPluginDownloadsDir() {
+   public FileWrapper getPluginDownloadsDir() {
    	return getDir(getDownloadsDir(), PLUGIN_ARTIFACT_ID, true);
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getI18nDownloadsDir()
     */
-   public File getI18nDownloadsDir() {
+   public FileWrapper getI18nDownloadsDir() {
    	return getDir(getDownloadsDir(), TRANSLATION_ARTIFACT_ID, true);
    }
 
@@ -394,7 +380,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getBackupDir()
 	 */
-	public File getBackupDir()
+	public FileWrapper getBackupDir()
 	{
 		return getDir(getSquirrelUpdateDir(), BACKUP_ROOT_DIR_NAME, false);
 	}
@@ -402,7 +388,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCoreBackupDir()
 	 */
-	public File getCoreBackupDir()
+	public FileWrapper getCoreBackupDir()
 	{
 		return getDir(getBackupDir(), CORE_ARTIFACT_ID, false);
 	}
@@ -410,7 +396,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getI18nBackupDir()
 	 */
-	public File getI18nBackupDir()
+	public FileWrapper getI18nBackupDir()
 	{
 		return getDir(getBackupDir(), TRANSLATION_ARTIFACT_ID, false);
 	}
@@ -418,7 +404,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getPluginBackupDir()
 	 */
-	public File getPluginBackupDir()
+	public FileWrapper getPluginBackupDir()
 	{
 		return getDir(getBackupDir(), PLUGIN_ARTIFACT_ID, false);
 	}   
@@ -426,9 +412,9 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeListFile()
     */
-   public File getChangeListFile() {
-       File updateDir = getSquirrelUpdateDir();
-       File changeListFile = new File(updateDir, CHANGE_LIST_FILENAME);
+   public FileWrapper getChangeListFile() {
+       FileWrapper updateDir = getSquirrelUpdateDir();
+       FileWrapper changeListFile = _fileWrapperFactory.create(updateDir, CHANGE_LIST_FILENAME);
        return changeListFile; 
    }
    
@@ -452,14 +438,14 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getLocalReleaseFile()
     */
-   public File getLocalReleaseFile() throws FileNotFoundException {
-      File result = null;
+   public FileWrapper getLocalReleaseFile() throws FileNotFoundException {
+      FileWrapper result = null;
       try {
-         File[] files = getSquirrelHomeDir().listFiles();
-         for (File file : files) {
+         FileWrapper[] files = getSquirrelHomeDir().listFiles();
+         for (FileWrapper file : files) {
             if (LOCAL_UPDATE_DIR_NAME.equals(file.getName())) {
-               File[] updateFiles = file.listFiles();
-               for (File updateFile : updateFiles) {
+               FileWrapper[] updateFiles = file.listFiles();
+               for (FileWrapper updateFile : updateFiles) {
                   if (RELEASE_XML_FILENAME.equals(updateFile.getName())) {
                      result = updateFile;
                   }
@@ -535,7 +521,7 @@ public class UpdateUtilImpl implements UpdateUtil {
     */
    public Set<String> getInstalledTranslations() {
       HashSet<String> result = new HashSet<String>();
-      File libDir = getSquirrelLibraryDir();
+      FileWrapper libDir = getSquirrelLibraryDir();
       for (String filename : libDir.list()) {
          if (filename.startsWith("squirrel-sql_")) {
             result.add(filename);
@@ -559,24 +545,25 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#checkDir(java.io.File, java.lang.String)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#checkDir(FileWrapper, java.lang.String)
     */
-   public File checkDir(File parent, String child) {
-      File dir = new File(parent, child);
-      if (!dir.exists()) {
-         dir.mkdir();
+   public FileWrapper checkDir(FileWrapper parent, String child) {
+      FileWrapper dir = _fileWrapperFactory.create(parent, child);
+      if (!dir.exists() && !dir.mkdir()) {
+         s_log.error("checkDir: Failed to mkdir - "+dir.getAbsolutePath());
       }
       return dir;
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#createZipFile(java.io.File, java.io.File[])
+    * TODO: move to IOUtilities
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#createZipFile(FileWrapper, FileWrapper[])
     */
-   public void createZipFile(File zipFile, File... sourceFiles) 
+   public void createZipFile(FileWrapper zipFile, FileWrapper... sourceFiles) 
       throws FileNotFoundException, IOException  
    {
       ZipOutputStream os = 
-         new ZipOutputStream(new FileOutputStream(zipFile));
+         new ZipOutputStream(new FileOutputStream(zipFile.getAbsolutePath()));
       zipFileOs(os, sourceFiles);
       os.close();
    }
@@ -588,7 +575,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	 *           File or Directory to be deleted
 	 * @return true indicates successfully deleted the file or directory.
 	 */
-	public boolean deleteFile(File path)
+	public boolean deleteFile(FileWrapper path)
 	{
 		boolean result = true;
 		if (path.exists())
@@ -603,7 +590,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 					}
 				}
 			} else {
-				File[] files = path.listFiles();
+				FileWrapper[] files = path.listFiles();
 				for (int i = 0; i < files.length; i++)
 				{
 					result = result && deleteFile(files[i]);
@@ -615,12 +602,13 @@ public class UpdateUtilImpl implements UpdateUtil {
 	}   
       
    /**
+    * TODO: Move this to IOUtilities
     * Extracts the specified zip file to the specified output directory.
     * @param zipFile
     * @param outputDirectory
     * @throws IOException 
     */
-   public void extractZipFile(File zipFile, File outputDirectory) throws IOException {
+   public void extractZipFile(FileWrapper zipFile, FileWrapper outputDirectory) throws IOException {
    	if (!outputDirectory.isDirectory()) {
    		s_log.error("Output directory specified (" + outputDirectory.getAbsolutePath()
 				+ ") doesn't appear to be a directory");
@@ -630,7 +618,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    	ZipInputStream zis = null;
    	FileOutputStream fos = null; 
    	try {
-   		fis = new FileInputStream(zipFile);
+   		fis = new FileInputStream(zipFile.getAbsolutePath());
 	   	zis = new ZipInputStream(fis);
 	   	ZipEntry zipEntry = zis.getNextEntry(); 
 	   	while (zipEntry != null) {
@@ -638,14 +626,14 @@ public class UpdateUtilImpl implements UpdateUtil {
 	   		if (zipEntry.isDirectory()) {
 	   			checkDir(outputDirectory, name);
 	   		} else {
-	   			File newFile = new File(outputDirectory, name);
+	   			FileWrapper newFile = _fileWrapperFactory.create(outputDirectory, name);
 	   			if (newFile.exists()) {
 	   				if (s_log.isInfoEnabled()) {
 	   					s_log.info("Deleting extraction file that already exists:"+newFile.getAbsolutePath());
 	   				}
 	   				newFile.delete();
 	   			}
-	   			fos = new FileOutputStream(newFile); 
+	   			fos = new FileOutputStream(newFile.getAbsolutePath()); 
 	   			byte[] buffer = new byte[ZIP_EXTRACTION_BUFFER_SIZE];
 	   			int n = 0;
 	   			while ((n = zis.read(buffer, 0, ZIP_EXTRACTION_BUFFER_SIZE)) > -1) {
@@ -656,198 +644,55 @@ public class UpdateUtilImpl implements UpdateUtil {
 	   		zipEntry = zis.getNextEntry();
 	   	}
    	} finally {
-   		IOUtilities.closeOutputStream(fos);
-   		IOUtilities.closeInputStream(fis);
-   		IOUtilities.closeInputStream(zis);
+   		_iou.closeOutputStream(fos);
+   		_iou.closeInputStream(fis);
+   		_iou.closeInputStream(zis);
    	}
    }
    
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeList(java.io.File)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeList(FileWrapper)
     */
-   public ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException {
+   public ChangeListXmlBean getChangeList(FileWrapper changeListFile) throws FileNotFoundException {
       return _serializer.readChangeListBean(changeListFile);
    }
 
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getFile(java.io.File, java.lang.String)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getFile(FileWrapper, java.lang.String)
     */
-   public File getFile(File installDir, String artifactName) {
-      return new File(installDir, artifactName);
+   public FileWrapper getFile(FileWrapper installDir, String artifactName) {
+      return _fileWrapperFactory.create(installDir, artifactName);
    }
 
-   /**
-    * Writes the specified sourceFile(s) contents to the specified Zip output stream.
-    * 
-    * @param os the Zip OutputStream to write to
-    * @param sourceFiles the files to read from
-    * @throws FileNotFoundException if one of the files could not be found
-    * @throws IOException if and IO error occurs
-    */
-   private void zipFileOs(ZipOutputStream os, File[] sourceFiles)
-         throws FileNotFoundException, IOException {
-      for (File file : sourceFiles) {
-         if (file.isDirectory()) {
-            zipFileOs(os, file.listFiles());
-         } else {
-            FileInputStream fis = null;
-            try {
-               fis = new FileInputStream(file);
-               os.putNextEntry(new ZipEntry(file.getPath()));
-               IOUtilities.copyBytes(fis, os);
-            } finally {
-               IOUtilities.closeInputStream(fis);
-            }
-         }
-      }
-   }
-   
-   /**
-    * @param parent
-    * @param dirName
-    * @param create
-    * @return
-    */
-   private File getDir(File parent, String dirName, boolean create) {
-		File result = null;
-		if (dirName != null) {
-			result = new File(parent, dirName);
-		} else {
-			result = parent;
-		}
-		if (!result.isDirectory()) {
-	   	if (result.exists()) {
-	         // If the update dir, is actually a file, log an error.
-				s_log.error(dirName + " directory (" + result.getAbsolutePath()
-					+ ") doesn't appear to be a directory");	   		
-	   	} else {
-	   	   // If the downloads dir doesn't already exist, just create it.
-	   		if (create) {
-	   			result.mkdir();
-	   		}
-	   	}
-		}
-		return result;
-   }
-   
-   /**
-    * @param host
-    * @param port
-    * @param path
-    * @param fileToGet
-    * @return
-    * @throws Exception if the current release file could not be downloaded
-    */
-   private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
-      final int port, final String path, final String file) throws Exception {
-   	
-   	ChannelXmlBean result = null;
-   	InputStream is = null;
-   	try {
-   		String fileToGet = _pathUtils.buildPath(true, path, file); 
-   		
-   		// We set expected and checksum to -1 here, since we don't have that information for release.xml file
-   		// TODO: Can HttpClient be used to get the byte-size of release.xml so we can perform this check?
-   		String filename =
-				downloadHttpFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath(), -1, -1);
-   		File releaseXmlFile = new File(filename);
-   		if (releaseXmlFile.exists()) {
-   			is = new BufferedInputStream(new FileInputStream(filename));
-   			result = _serializer.readChannelBean(is);
-   		} else {
-   			throw new FileNotFoundException("Current release file couldn't be downloaded");
-   		}
-   	} finally {
-   		IOUtilities.closeInputStream(is);
-   	}
-   	return result;
-   }
       
    /**
-    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadHttpFile(java.lang.String, int, java.lang.String, java.lang.String, long, long)
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadHttpUpdateFile(java.lang.String, int, java.lang.String, java.lang.String, long, long)
     */
-   public String downloadHttpFile(final String host, final int port, final String fileToGet, String destDir,
+   public String downloadHttpUpdateFile(final String host, final int port, final String fileToGet, String destDir,
 		long fileSize, long checksum) throws Exception
 	{
-      BufferedInputStream is = null;
-      BufferedOutputStream os = null;
-      URL url = null;
-      HttpMethod method = null;
-      int resultCode = -1;
-      String result = null;
-      try {
-         String server = host;
-         if (server.startsWith(HTTP_PROTOCOL_PREFIX)) {
-            int beginIdx = server.indexOf("://") + 3;
-            server = server.substring(beginIdx, host.length());
-         }
-         
-         if (port == 80) {
-         	url = new URL(HTTP_PROTOCOL_PREFIX, server, fileToGet);
-         } else {
-         	url = new URL(HTTP_PROTOCOL_PREFIX, server, port, fileToGet);
-         }
-          
-         if (s_log.isDebugEnabled()) {
-         	s_log.debug("downloadHttpFile: downloading file ("+fileToGet+") from url: "+url);
-         }
-         HttpClient client = new HttpClient();
-         method = new GetMethod(url.toString());
-         method.setFollowRedirects(true);
-         
-         resultCode = client.executeMethod(method);
-         if (resultCode != 200) {
-         	throw new FileNotFoundException("Failed to download file from url ("+url+
-         		"): HTTP Response Code="+resultCode);
-         }
-         InputStream mis = method.getResponseBodyAsStream();
-         
-         if (s_log.isDebugEnabled()) {
-         	s_log.debug("downloadHttpFile: response code was: "+resultCode);         	
-         }
-         is = new BufferedInputStream(mis);
-			File resultFile = new File(destDir, _pathUtils.getFileFromPath(fileToGet));
-			result = resultFile.getAbsolutePath();
-			if (!resultFile.exists()) {
-				resultFile.createNewFile();
-			}
-			os = new BufferedOutputStream(new FileOutputStream(resultFile));
-			byte[] buffer = new byte[8192];
-			int length = 0;
-			
-			if (s_log.isDebugEnabled()) {
-				s_log.debug("downloadHttpFile: writing http response body to file: "+resultFile);
-			}
-			
-			int totalLength = 0;
-			while ((length = is.read(buffer)) != -1)
-			{
-				totalLength += length;
-				os.write(buffer, 0, length);
-			}
-			verifySize(url, fileSize, totalLength);
-      } catch (Exception e) {
-         s_log.error("downloadCurrentRelease: Unexpected exception while "
-               + "attempting to open an HTTP connection to host (" + host
-               + ") on port ("+port+") to download a file (" + fileToGet + "): "+
-               e.getMessage(), e);
-         s_log.error("response code was: "+resultCode);
-         throw e;
-      } finally {
-         IOUtilities.closeInputStream(is);
-         IOUtilities.closeOutputStream(os);
-         method.releaseConnection();
-      }
-      return result;
+		URL url = _iou.constructHttpUrl(host, port, fileToGet);
+		String result = null;
+		FileWrapper resultFile = _fileWrapperFactory.create(destDir, _pathUtils.getFileFromPath(fileToGet));
+		result = resultFile.getAbsolutePath();
+
+		if (s_log.isDebugEnabled()) {
+			s_log.debug("downloadHttpFile: writing http response body to file: " + resultFile);
+		}
+
+		int totalLength = _iou.downloadHttpFile(url, resultFile);
+
+		verifySize(url, fileSize, totalLength);
+		return result;
    }
    
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getDownloadFileLocation(
 	 * net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
 	 */
-	public File getDownloadFileLocation(ArtifactStatus status)
+	public FileWrapper getDownloadFileLocation(ArtifactStatus status)
 	{
-		File result = null;
+		FileWrapper result = null;
 		if (CORE_ARTIFACT_ID.equals(status.getType())) {
 			result = getFile(getCoreDownloadsDir(), status.getName());
 		}
@@ -868,7 +713,7 @@ public class UpdateUtilImpl implements UpdateUtil {
 	{
 		boolean result = false;
 
-		File downloadFile = getDownloadFileLocation(status);
+		FileWrapper downloadFile = getDownloadFileLocation(status);
 		
 		if (downloadFile.exists())
 		{
@@ -915,5 +760,91 @@ public class UpdateUtilImpl implements UpdateUtil {
    			" bytes downloaded, but "+expected+" bytes were expected.");
    	}
    }
-      
+
+   /**
+    * Writes the specified sourceFile(s) contents to the specified Zip output stream.
+    * 
+    * @param os the Zip OutputStream to write to
+    * @param sourceFiles the files to read from
+    * @throws FileNotFoundException if one of the files could not be found
+    * @throws IOException if and IO error occurs
+    */
+   private void zipFileOs(ZipOutputStream os, FileWrapper[] sourceFiles)
+         throws FileNotFoundException, IOException {
+      for (FileWrapper file : sourceFiles) {
+         if (file.isDirectory()) {
+            zipFileOs(os, file.listFiles());
+         } else {
+            FileInputStream fis = null;
+            try {
+               fis = new FileInputStream(file.getAbsolutePath());
+               os.putNextEntry(new ZipEntry(file.getPath()));
+               _iou.copyBytes(fis, os);
+            } finally {
+            	_iou.closeInputStream(fis);
+            }
+         }
+      }
+   }
+   
+   /**
+    * @param parent
+    * @param dirName
+    * @param create
+    * @return
+    */
+   private FileWrapper getDir(FileWrapper parent, String dirName, boolean create) {
+		FileWrapper result = null;
+		if (dirName != null) {
+			result = _fileWrapperFactory.create(parent, dirName);
+		} else {
+			result = parent;
+		}
+		if (!result.isDirectory()) {
+	   	if (result.exists()) {
+	         // If the update dir, is actually a file, log an error.
+				s_log.error(dirName + " directory (" + result.getAbsolutePath()
+					+ ") doesn't appear to be a directory");	   		
+	   	} else {
+	   	   // If the downloads dir doesn't already exist, just create it.
+	   		if (create) {
+	   			result.mkdir();
+	   		}
+	   	}
+		}
+		return result;
+   }
+   
+   /**
+    * @param host
+    * @param port
+    * @param path
+    * @param fileToGet
+    * @return
+    * @throws Exception if the current release file could not be downloaded
+    */
+   private ChannelXmlBean downloadCurrentReleaseHttp(final String host,
+      final int port, final String path, final String file) throws Exception {
+   	
+   	ChannelXmlBean result = null;
+   	InputStream is = null;
+   	try {
+   		String fileToGet = _pathUtils.buildPath(true, path, file); 
+   		
+   		// We set expected and checksum to -1 here, since we don't have that information for release.xml file
+   		// TODO: Can HttpClient be used to get the byte-size of release.xml so we can perform this check?
+   		String filename =
+				downloadHttpUpdateFile(host, port, fileToGet, getDownloadsDir().getAbsolutePath(), -1, -1);
+   		FileWrapper releaseXmlFile = _fileWrapperFactory.create(filename);
+   		if (releaseXmlFile.exists()) {
+   			result = _serializer.readChannelBean(releaseXmlFile);
+   		} else {
+   			throw new FileNotFoundException("Current release file couldn't be downloaded");
+   		}
+   	} finally {
+   		_iou.closeInputStream(is);
+   	}
+   	return result;
+   }
+   
 }

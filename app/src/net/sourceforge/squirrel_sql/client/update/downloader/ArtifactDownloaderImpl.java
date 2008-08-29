@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update.downloader;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatu
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -122,7 +122,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				{
 					try
 					{
-						_util.downloadHttpFile(_host, _port, fileToGet, destDir, status.getSize(),
+						_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
 							status.getChecksum());
 					}
 					catch (Exception e)
@@ -136,7 +136,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				else
 				{
 					fileToGet = _pathUtils.buildPath(false, this._fileSystemUpdatePath,fileToGet);
-					result = _util.downloadLocalFile(fileToGet, destDir);
+					result = _util.downloadLocalUpdateFile(fileToGet, destDir);
 				}
 				if (result == false)
 				{
@@ -168,7 +168,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	private String getArtifactDownloadDestDir(ArtifactStatus status) {
 
-		File destDir = _util.getCoreDownloadsDir();		
+		FileWrapper destDir = _util.getCoreDownloadsDir();		
 		if (UpdateUtil.PLUGIN_ARTIFACT_ID.equals(status.getType()))
 		{
 			destDir = _util.getPluginDownloadsDir();

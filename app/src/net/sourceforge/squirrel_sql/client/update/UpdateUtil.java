@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -29,14 +28,10 @@ import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 public interface UpdateUtil
 {
-
-	/**
-	 * The protocol we expect the update site to be using. Only HTTP at the moment
-	 */
-	public static final String HTTP_PROTOCOL_PREFIX = "http";
 
 	/**
 	 * where we expect to find release.xml, which describes what the user has installed previously.
@@ -118,7 +113,7 @@ public interface UpdateUtil
 	 * @return a string representing the full local path to where the file was downloaded to
 	 * @throws Exception
 	 */
-	String downloadHttpFile(String host, int port, String fileToGet, String destDir, long fileSize,
+	String downloadHttpUpdateFile(String host, int port, String fileToGet, String destDir, long fileSize,
 		long checksum) throws Exception;
 
 	/**
@@ -130,7 +125,7 @@ public interface UpdateUtil
 	 *           the destination directory into which to place the file.
 	 * @return true if the download succeeded; false otherwise.
 	 */
-	boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;
+	boolean downloadLocalUpdateFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;
 
 	/**
 	 * Copies the specified from file to the specified to file. If "to" is a directory, then this will copy
@@ -141,7 +136,7 @@ public interface UpdateUtil
 	 * @param to
 	 *           the file to copy to
 	 */
-	void copyFile(final File from, final File to) throws FileNotFoundException, IOException;
+	void copyFile(final FileWrapper from, final FileWrapper to) throws FileNotFoundException, IOException;
 
 	/**
 	 * Lists the specified fromDir and copies all of the files found in that directory to the specified toDir
@@ -154,7 +149,7 @@ public interface UpdateUtil
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	void copyDir(final File fromDir, final File toDir) throws FileNotFoundException, IOException; 
+	void copyDir(final FileWrapper fromDir, final FileWrapper toDir) throws FileNotFoundException, IOException; 
 	
 	/**
 	 * Returns an ChannelXmlBean that describes the locally installed release.
@@ -170,14 +165,14 @@ public interface UpdateUtil
 	 * 
 	 * @return a File representing the home directory of SQuirreL
 	 */
-	File getSquirrelHomeDir();
+	FileWrapper getSquirrelHomeDir();
 
 	/**
 	 * Returns the top-level directory in which all installed plugins of SQuirreL live under.
 	 * 
 	 * @return a File representing the plugins directory of SQuirreL
 	 */	
-	File getSquirrelPluginsDir();
+	FileWrapper getSquirrelPluginsDir();
 
 	/**
 	 * Returns the top-level directory in which all core libraries (and possibly translations) of SQuirreL 
@@ -185,7 +180,7 @@ public interface UpdateUtil
 	 * 
 	 * @return a File representing the core library directory of SQuirreL
 	 */		
-	File getSquirrelLibraryDir();
+	FileWrapper getSquirrelLibraryDir();
 
 	/**
 	 * Returns the file that represents the list of changes to make when running the prelaunch update
@@ -193,11 +188,11 @@ public interface UpdateUtil
 	 * 
 	 * @return a File representing the change list.
 	 */
-	File getChangeListFile();
+	FileWrapper getChangeListFile();
 
-	File checkDir(File parent, String child);
+	FileWrapper checkDir(FileWrapper parent, String child);
 
-	void createZipFile(File zipFile, File... sourceFiles) throws FileNotFoundException, IOException;
+	void createZipFile(FileWrapper zipFile, FileWrapper... sourceFiles) throws FileNotFoundException, IOException;
 
 	/**
 	 * Returns the update directory in which all information about available updates and the user's desired
@@ -205,7 +200,7 @@ public interface UpdateUtil
 	 * 
 	 * @return a File representing the update directory.
 	 */
-	File getSquirrelUpdateDir();
+	FileWrapper getSquirrelUpdateDir();
 
 	/**
 	 * Create and save a ChangeListXmlBean to the update directory.
@@ -233,7 +228,7 @@ public interface UpdateUtil
 	 * @throws FileNotFoundException
 	 *            if the release xml file couldn't be found.
 	 */
-	File getLocalReleaseFile() throws FileNotFoundException;
+	FileWrapper getLocalReleaseFile() throws FileNotFoundException;
 
 	/**
 	 * Builds a list of ArtifactStatus objects from the specified ChannelXmlBean
@@ -276,32 +271,32 @@ public interface UpdateUtil
 	 * 
 	 * @return a File representing the root directory of the download tree.
 	 */
-	File getDownloadsDir();
+	FileWrapper getDownloadsDir();
 
-	File getCoreDownloadsDir();
+	FileWrapper getCoreDownloadsDir();
 
-	File getPluginDownloadsDir();
+	FileWrapper getPluginDownloadsDir();
 
-	File getI18nDownloadsDir();
+	FileWrapper getI18nDownloadsDir();
 
-	File getBackupDir();
+	FileWrapper getBackupDir();
 	
-	File getCoreBackupDir();
+	FileWrapper getCoreBackupDir();
 	
-	File getPluginBackupDir();
+	FileWrapper getPluginBackupDir();
 	
-	File getI18nBackupDir();
+	FileWrapper getI18nBackupDir();
 	
 	/**
 	 * Returns the absolute path to the location of the squirrel-sql.jar file.
 	 * 
 	 * @return a File representing the current installed squirrel-sql.jar file.
 	 */
-	File getInstalledSquirrelMainJarLocation();
+	FileWrapper getInstalledSquirrelMainJarLocation();
 	
-	ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
+	ChangeListXmlBean getChangeList(FileWrapper changeListFile) throws FileNotFoundException;
 
-	File getFile(File installDir, String artifactName);
+	FileWrapper getFile(FileWrapper installDir, String artifactName);
 
 	/**
 	 * This function will recursivly delete directories and files.
@@ -310,7 +305,7 @@ public interface UpdateUtil
 	 *           File or Directory to be deleted
 	 * @return true indicates success.
 	 */
-	boolean deleteFile(File path);
+	boolean deleteFile(FileWrapper path);
 
 	/**
 	 * Extracts the specified zip file to the specified output directory.
@@ -322,7 +317,7 @@ public interface UpdateUtil
 	 * @throws IOException
 	 *            if an error occurs
 	 */
-	void extractZipFile(File zipFile, File outputDirectory) throws IOException;
+	void extractZipFile(FileWrapper zipFile, FileWrapper outputDirectory) throws IOException;
 	
 	/**
 	 * Returns the absolute path to the file in the downloads section for the specified ArtifactStatus
@@ -331,7 +326,7 @@ public interface UpdateUtil
 	 *           the ArtifactStatus that describes the type and name of this artifact.
 	 * @return a File object representing the location of the artifact in the downloads directory.
 	 */
-	File getDownloadFileLocation(ArtifactStatus status);
+	FileWrapper getDownloadFileLocation(ArtifactStatus status);
 	
 	boolean isPresentInDownloadsDirectory(ArtifactStatus status);
 
@@ -343,5 +338,5 @@ public interface UpdateUtil
 	 *           the file to get the checksum for
 	 * @return the checksum as a long. If an error occurs, this method will return -1
 	 */
-	public long getCheckSum(File f);	
+	public long getCheckSum(FileWrapper f);	
 }
