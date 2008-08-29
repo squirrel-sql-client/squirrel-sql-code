@@ -18,19 +18,19 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.util;
 
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 public interface InstallFileOperationInfo {
 
    /**
     * @return the fileToInstall
     */
-   File getFileToInstall();
+	FileWrapper getFileToInstall();
 
    /**
     * @return the installDir
     */
-   File getInstallDir();
+	FileWrapper getInstallDir();
 
 	/**
     * @return the isPlugin

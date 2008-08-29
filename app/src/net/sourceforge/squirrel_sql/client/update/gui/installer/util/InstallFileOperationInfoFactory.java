@@ -18,9 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.util;
 
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 public interface InstallFileOperationInfoFactory {
 
-   InstallFileOperationInfo create(File fileToCopy, File installDir);
+   InstallFileOperationInfo create(FileWrapper fileToCopy, FileWrapper installDir);
 }

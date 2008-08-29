@@ -18,19 +18,19 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.util;
 
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
 
-   private File fileToInstall;
-   private File installDir;
+   private FileWrapper fileToInstall;
+   private FileWrapper installDir;
    private boolean isPlugin;
    
    /**
     * @param fileToInstall
     * @param installDir
     */
-   public InstallFileOperationInfoImpl(File fileToInstall, File installDir) {
+   public InstallFileOperationInfoImpl(FileWrapper fileToInstall, FileWrapper installDir) {
       super();
       this.fileToInstall = fileToInstall;
       this.installDir = installDir;
@@ -39,19 +39,19 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo#getFileToInstall()
     */
-   public File getFileToInstall() {
+   public FileWrapper getFileToInstall() {
       return fileToInstall;
    }
    /**
     * @param fileToInstall the fileToInstall to set
     */
-   public void setFileToInstall(File fileToInstall) {
+   public void setFileToInstall(FileWrapper fileToInstall) {
       this.fileToInstall = fileToInstall;
    }
    /**
     * @see net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo#getInstallDir()
     */
-   public File getInstallDir() {
+   public FileWrapper getInstallDir() {
       return installDir;
    }
    /**
@@ -71,7 +71,7 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
 	/**
     * @param installDir the installDir to set
     */
-   public void setInstallDir(File installDir) {
+   public void setInstallDir(FileWrapper installDir) {
       this.installDir = installDir;
    } 
 }

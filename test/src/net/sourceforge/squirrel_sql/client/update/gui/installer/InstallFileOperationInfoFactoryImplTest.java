@@ -18,17 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfoFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import utils.EasyMockHelper;
 
 /**
  * Test case for InstallFileOperationInfoFactoryImpl class.
@@ -36,6 +37,8 @@ import org.junit.Test;
 public class InstallFileOperationInfoFactoryImplTest extends BaseSQuirreLJUnit4TestCase
 {
 
+	EasyMockHelper mockHelper = new EasyMockHelper(); 
+	
 	InstallFileOperationInfoFactoryImpl classUnderTest = null;
 	
 	@Before
@@ -53,8 +56,8 @@ public class InstallFileOperationInfoFactoryImplTest extends BaseSQuirreLJUnit4T
 	@Test
 	public void testCreate()
 	{
-		File fileToCopy = new File("/tmp/some.jar");
-		File installDir = new File("/tmp/installdir");
+		FileWrapper fileToCopy = mockHelper.createMock("fileToCopy", FileWrapper.class);
+		FileWrapper installDir = mockHelper.createMock("installDir", FileWrapper.class);
 		InstallFileOperationInfo info = classUnderTest.create(fileToCopy, installDir);
 		assertNotNull(info);
 		assertEquals(fileToCopy, info.getFileToInstall());
@@ -64,14 +67,14 @@ public class InstallFileOperationInfoFactoryImplTest extends BaseSQuirreLJUnit4T
 	@Test (expected = IllegalArgumentException.class)
 	public void testCreate_NullFileToCopy()
 	{
-		File fileToCopy = null;
-		File installDir = new File("/tmp/installdir");
+		FileWrapper fileToCopy = null;
+		FileWrapper installDir = mockHelper.createMock("installDir", FileWrapper.class);
 		classUnderTest.create(fileToCopy, installDir);
 	}
 	
 	public void testCreate_NullInstallDir() {
-		File fileToCopy = new File("/tmp/some.jar");
-		File installDir = null;
+		FileWrapper fileToCopy = mockHelper.createMock("fileToCopy", FileWrapper.class);
+		FileWrapper installDir = null;
 		classUnderTest.create(fileToCopy, installDir);
 	}
 }

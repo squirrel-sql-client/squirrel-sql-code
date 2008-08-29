@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerImpl;
 
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class UpdateXmlSerializerTest extends BaseSQuirreLJUnit4TestCase {
     
     @Before
     public void setUp() throws Exception {
-        serializerUnderTest = new UpdateXmlSerializer();
+        serializerUnderTest = new UpdateXmlSerializerImpl();
         setupXmlBeans();
     }
 
