@@ -20,10 +20,17 @@ package net.sourceforge.squirrel_sql.client.util;
 
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 
+/**
+ * This class wraps access to ApplicationFiles presenting an interface that consists of FileWrappers instead
+ * of Files.
+ * 
+ * @author manningr
+ */
 public class ApplicationFileWrappersImpl implements ApplicationFileWrappers
 {
-	private FileWrapperFactory _fileWrapperFactory = null;
+	private FileWrapperFactory _fileWrapperFactory = new FileWrapperFactoryImpl();
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers#setFileWrapperFactory(net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory)
 	 */
@@ -31,7 +38,7 @@ public class ApplicationFileWrappersImpl implements ApplicationFileWrappers
 		_fileWrapperFactory = factory;
 	}
 	
-	private ApplicationFiles _appFiles = null;
+	private ApplicationFiles _appFiles = new ApplicationFiles();
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers#setApplicationFiles(net.sourceforge.squirrel_sql.client.util.ApplicationFiles)
 	 */
