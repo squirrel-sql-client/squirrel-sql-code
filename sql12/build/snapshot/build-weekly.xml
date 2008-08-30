@@ -15,7 +15,7 @@
 -->
 
 <project name="Squirrel-SQL-Client-WeeklyBuild" default="weeklybuild" basedir=".">
-
+	
 	<!-- Suck in the properties from the properties file and setup some props 
 	     and directories -->
 	<target name="init">
@@ -174,16 +174,16 @@
 		</copy>
 		
 		<!-- build the release.xml document -->
-		<java fork="true"  classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
+		<java fork="true"  
+		      classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
 			<arg value="snapshot"/>
 			<arg value="${squirrel.version}"/>
 			<arg value="${release.dir}"/>
-		    <classpath>
-		        <pathelement location="${release.core.dir}/squirrel-sql.jar"/>
-		    	<pathelement location="${release.core.dir}/fw.jar"/>
-		    	<pathelement location="${release.core.dir}/commons-cli.jar"/>
-		    	<pathelement location="${release.core.dir}/log4j-1.2.15.jar"/>
-		    </classpath>
+			<classpath>
+			    <fileset dir="${release.core.dir}">
+			        <include name="*.jar"/>
+		    	    </fileset>
+		        </classpath>
 		</java>
 	</target>
 	
