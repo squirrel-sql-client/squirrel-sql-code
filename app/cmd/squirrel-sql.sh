@@ -2,6 +2,7 @@
 
 [ ${JAVA_HOME} ] && JAVA=${JAVA_HOME}/bin/java || [ %JAVA_HOME ]  && JAVA=%JAVA_HOME/bin/java  || JAVA=java
 
+
 # Are we running within Cygwin on some version of Windows?
 cygwin=false;
 case "`uname -s`" in
@@ -45,14 +46,16 @@ else
 	UPDATE_CP=$UPDATE_CP:$CLASSPATH
 fi
 
+# Check for updates and prompt to apply if any are available
+if [ -f $UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar -a -f $UNIX_STYLE_HOME/update/changeList.xml ]; then
+        $JAVA -cp $UPDATE_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
+fi
+
 #To add translation working directories to your classpath edit and uncomment this line:
 #$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 #To change the language edit and uncomment this line:
 #$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
-
-# Check for updates and prompt to apply if any are available
-$JAVA -cp $UPDATE_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
 
 # Launch SQuirreL application
 $JAVA -Xmx256m -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
