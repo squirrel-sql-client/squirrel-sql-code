@@ -51,7 +51,7 @@ public class XmlBeanUtilitiesExternalTest extends BaseSQuirreLJUnit4TestCase {
                                                                  "Snapshot",
                                                                  "Snapshot-20071001_0938",
                                                                  dir);
-        UpdateXmlSerializer serializer = new UpdateXmlSerializer();
+        UpdateXmlSerializer serializer = new UpdateXmlSerializerImpl();
         serializer.write(release, dir + "/release.xml");
     }
 }
