@@ -57,7 +57,7 @@ public class ChangeListXmlBeanExternalTest extends BaseSQuirreLJUnit4TestCase {
       ChangeListXmlBean bean = new ChangeListXmlBean();
       bean.setChanges(list);
       
-      UpdateXmlSerializer serializer = new UpdateXmlSerializer();
+      UpdateXmlSerializer serializer = new UpdateXmlSerializerImpl();
       serializer.write(bean, "/tmp/changeList.xml");
    }
 

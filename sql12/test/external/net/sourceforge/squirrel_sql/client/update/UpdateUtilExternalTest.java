@@ -27,6 +27,10 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerImpl;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,11 +42,12 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
 
     UpdateUtil utilUnderTest = new UpdateUtilImpl();
     UpdateXmlSerializer serializer = null;
+    FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl(); 
     
     @Before
     public void setUp() throws Exception {
         //utilUnderTest = ;
-        serializer = new UpdateXmlSerializer();
+        serializer = new UpdateXmlSerializerImpl();
     }
 
     @After
@@ -57,7 +62,7 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
         //String path = "/downloads/";
         int port = 80;
         //UpdateUtil util = new UpdateUtilImpl();
-        utilUnderTest.downloadHttpFile(host, port, file, "/tmp", -1, -1);
+        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1);
         verifyFileExistsAndDeleteIt("firebird_object_tree.jpg", false);
     }
     
@@ -67,14 +72,14 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
         String file = "release.xml";
         //String path = "/release/snapshot/";
         int port = 80;
-        utilUnderTest.downloadHttpFile(host, port, file, "/tmp", -1, -1);
+        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1);
         verifyFileExistsAndDeleteIt("release.xml", false);
     }
 
     @Test
     public void testExtractZipFile() throws Exception {
-   	 File graphZip = new File("/tmp/graph.zip");
-   	 File extractDir = new File("/tmp/extract");
+   	 FileWrapper graphZip = fileWrapperFactory.create("/tmp/graph.zip");
+   	 FileWrapper extractDir = fileWrapperFactory.create("/tmp/extract");
    	 utilUnderTest.extractZipFile(graphZip, extractDir);
     }
     
