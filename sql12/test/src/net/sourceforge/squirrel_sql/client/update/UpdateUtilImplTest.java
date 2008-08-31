@@ -18,17 +18,21 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
+import static junit.framework.Assert.fail;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
 
+import junit.framework.Assert;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
@@ -55,7 +59,8 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
 	private FileWrapper mockUpdateDirectory = null;
    private IOUtilities mockIOUtilities = null;
    private UpdateXmlSerializer mockSerializer = null;
-	
+	private PathUtils mockPathUtils = null;
+   
    @Before
    public void setUp() throws Exception {
       underTest = new UpdateUtilImpl();
@@ -66,6 +71,7 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
       mockApplicationFileWrappers = mockHelper.createMock(ApplicationFileWrappers.class);
       mockIOUtilities = mockHelper.createMock(IOUtilities.class);
       mockSerializer = mockHelper.createMock("UpdateXmlSerializer", UpdateXmlSerializer.class);
+      mockPathUtils = mockHelper.createMock(PathUtils.class);
       
       // inject mocks
       underTest.setPluginManager(mockPluginManager);
@@ -73,6 +79,7 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
       underTest.setApplicationFileWrappers(mockApplicationFileWrappers);
       underTest.setIOUtilities(mockIOUtilities);
       underTest.setUpdateXmlSerializer(mockSerializer);
+      underTest.setPathUtils(mockPathUtils);
       
       // common expectations
       setupAppFileExpectations();
@@ -240,6 +247,62 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    	mockHelper.replayAll();
 		underTest.loadUpdateFromFileSystem(pathToDirectoryThatContainsReleaseXml);
    	mockHelper.verifyAll();   	
+   	
+   }
+   
+   @Test
+   public void testDownloadHttpUpdateFile_verifysuccess() throws Exception {
+   	testDownloadHttpUpdateFile(true);
+   }
+   
+   @Test
+   public void testDownloadHttpUpdateFile_verifyfailure() throws Exception {
+   	testDownloadHttpUpdateFile(false);
+   }   
+   
+   private void testDownloadHttpUpdateFile(boolean simulateSuccess) throws Exception {
+		String host = "somehost.com";
+		int port = 80;
+		String fileToGet = "/updates/snapshot/release.xml";
+		String fileFromPath = "release.xml";
+		String destDir = "/some/dest/directory";
+		int fileSize = 10;
+		long checksum = 10;
+		String absPath = destDir + "/" + fileFromPath;
+		
+		// Cannot mock URLs, they are final and so they cannot be subclassed.
+		URL url = new URL("http", host, fileToGet);
+		
+		expect(mockIOUtilities.constructHttpUrl(host, port, fileToGet)).andReturn(url);
+		
+   	
+   	expect(mockPathUtils.getFileFromPath(fileToGet)).andReturn(fileFromPath);
+   	FileWrapper destFile = mockHelper.createMock(FileWrapper.class);
+   	expect(destFile.getAbsolutePath()).andReturn(absPath);
+   	expect(mockFileWrapperFactory.create(destDir, fileFromPath)).andReturn(destFile);
+   	if (simulateSuccess) {
+   		expect(mockIOUtilities.downloadHttpFile(url, destFile)).andReturn(fileSize);
+   	} else {
+   		expect(mockIOUtilities.downloadHttpFile(url, destFile)).andReturn(fileSize-1);
+   	}
+		
+   	String downloadedPath = null;
+   	mockHelper.replayAll();
+   	try {
+   		downloadedPath =  
+   			underTest.downloadHttpUpdateFile(host, port, fileToGet, destDir, fileSize, checksum);
+			if (!simulateSuccess) {
+				fail("Expected an exception to be thrown for failed filesize verification");
+			}
+   	} catch (Exception e) {
+   		if (simulateSuccess) {
+   			fail("Unexpected exception : "+e.getMessage());
+   		}
+   	}
+   	mockHelper.verifyAll();   
+   	if (simulateSuccess) {
+   		Assert.assertEquals(absPath, downloadedPath);
+   	}
    	
    }
    
