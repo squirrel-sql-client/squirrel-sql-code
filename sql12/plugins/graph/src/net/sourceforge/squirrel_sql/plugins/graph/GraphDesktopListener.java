@@ -13,4 +13,6 @@ public interface GraphDesktopListener
    void allTablesByNameOrderRequested();
 
    void allTablesDbOrderRequested();
+
+   void showQualifiedTableNamesRequested();
 }

@@ -8,6 +8,7 @@ public class GraphControllerXmlBean
    private boolean showConstraintNames;
    private ZoomerXmlBean zoomerXmlBean;
    private PrintXmlBean printXmlBean;
+   private boolean _showQualifiedTableNames;
 
 
    public String getTitle()
@@ -58,5 +59,15 @@ public class GraphControllerXmlBean
    public void setPrintXmlBean(PrintXmlBean printXmlBean)
    {
       this.printXmlBean = printXmlBean;
+   }
+
+   public boolean isShowQualifiedTableNames()
+   {
+      return _showQualifiedTableNames;
+   }
+
+   public void setShowQualifiedTableNames(boolean showQualifiedTableNames)
+   {
+      _showQualifiedTableNames = showQualifiedTableNames;
    }
 }

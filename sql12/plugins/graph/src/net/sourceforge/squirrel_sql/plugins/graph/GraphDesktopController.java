@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+import com.l2fprod.gui.plaf.skin.Window;
 
 
 public class GraphDesktopController
@@ -46,6 +47,7 @@ public class GraphDesktopController
    private JMenuItem _mnuScriptAllTables;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuZoomPrint;
+   private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
    private GraphDesktopListener _listener;
    private ISession _session;
    private GraphPlugin _plugin;
@@ -195,6 +197,16 @@ public class GraphDesktopController
          }
       });
 
+		// i18n[graph.showQualifiedTableNames=Show qualified table names]
+		_mnuShowQualifiedTableNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showQualifiedTableNames"));
+      _mnuShowQualifiedTableNames.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onShowQualifiedTableNames();
+         }
+      });
+
 		// i18n[graph.zoomPrint=Zoom/Print]
 		_mnuZoomPrint = new JCheckBoxMenuItem(s_stringMgr.getString("graph.zoomPrint"));
       _mnuZoomPrint.addActionListener(new ActionListener()
@@ -244,7 +256,14 @@ public class GraphDesktopController
       _popUp.add(_mnuAllTablesPkConstOrder);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
+      _popUp.add(_mnuShowQualifiedTableNames);
+      _popUp.add(new JSeparator());
       _popUp.add(_mnuZoomPrint);
+   }
+
+   private void onShowQualifiedTableNames()
+   {
+      _listener.showQualifiedTableNamesRequested();
    }
 
    private void onAllTablesPkConstOrder()
@@ -497,5 +516,16 @@ public class GraphDesktopController
    public void sessionEnding()
    {
       _zoomPrintController.sessionEnding();
+   }
+
+   public void setShowQualifiedTableNames(boolean showQualifiedTableNames)
+   {
+      _mnuShowQualifiedTableNames.setSelected(showQualifiedTableNames);
+   }
+
+
+   public boolean isShowQualifiedTableNames()
+   {
+      return _mnuShowQualifiedTableNames.isSelected();
    }
 }

@@ -127,21 +127,21 @@ public class TableFrameController
 
          if(null == xmlBean)
          {
-            _tableName = tableName;
-            _frame = new TableFrame(_tableName, null, toolTipProvider, _desktopController.getZoomer());
-
             _catalog = catalogName;
             _schema = schemaName;
+            _tableName = tableName;
+            _frame = new TableFrame(getDisplayName(), null, toolTipProvider, _desktopController.getZoomer());
+
 
             initFromDB();
 
          }
          else
          {
-            _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(_tableName, xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer());
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
+            _tableName = xmlBean.getTablename();
+            _frame = new TableFrame(getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer());
             _columnOrder = xmlBean.getColumOrder();
             _colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
             for (int i = 0; i < _colInfos.length; i++)
@@ -231,6 +231,33 @@ public class TableFrameController
       catch (SQLException e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   private String getDisplayName()
+   {
+      if(_desktopController.isShowQualifiedTableNames())
+      {
+         String ret = "";
+
+         if(null !=_catalog)
+         {
+            ret += _catalog + ".";
+         }
+
+         if(null !=_schema)
+         {
+            ret += _schema + ".";
+         }
+
+         ret += _tableName;
+
+         return ret;
+
+      }
+      else
+      {
+         return _tableName;
       }
    }
 
@@ -763,6 +790,13 @@ public class TableFrameController
          }
       });
    }
+
+   public void refreshTableName()
+   {
+      _frame.setTitle(getDisplayName());
+
+   }
+
 
    private void fireSortListeners()
    {
