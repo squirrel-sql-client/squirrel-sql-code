@@ -6,12 +6,15 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Graph Plugin:
+ - Qualified table names can now be displayed. Use the right mouse menu on graph background.
+
 Edit Extras Plugin:
  - Improved handling and look of Escape date dialog. 
 
 Graph Plugin:
  - New entries in table's popup menu: "Copy table name" and "Copy qualified table name".
- - Columns of all tables in a graph can now be ordered at once. Use the right mouse menu on the graph background.
+ - Columns of all tables in a graph can now be ordered at once. Use the right mouse menu on graph background.
 
 New Plugin: Smarttools by Michael Romankiewicz
   - Searching for tables that do not have a primary key or unique index or index.

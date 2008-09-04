@@ -75,6 +75,11 @@ public class GraphController implements GraphControllerAccessor
          {
             allTablesDbOrder();
          }
+
+         public void showQualifiedTableNamesRequested()
+         {
+            refreshTableNames();
+         }
       };
 
       _desktopController = new GraphDesktopController(_graphDesktopListener, _session, _plugin);
@@ -113,6 +118,7 @@ public class GraphController implements GraphControllerAccessor
          _graphPane.setTitle(graphControllerXmlBean.getTitle());
          _desktopController.initZoomer(graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
          _desktopController.setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
+         _desktopController.setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
       }
       else
       {
@@ -129,6 +135,14 @@ public class GraphController implements GraphControllerAccessor
          {
             addTableIntern(null, null, null, null, tableFrameControllerXmls[i]);
          }
+      }
+   }
+
+   private void refreshTableNames()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.refreshTableName();
       }
    }
 
