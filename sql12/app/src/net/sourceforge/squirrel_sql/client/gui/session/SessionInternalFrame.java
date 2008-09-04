@@ -19,11 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Window;
-import java.awt.event.FocusEvent;
-import java.beans.PropertyVetoException;
-
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
@@ -36,7 +31,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.Version;
 
 public class SessionInternalFrame extends BaseSessionInternalFrame
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
@@ -106,27 +100,6 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 
 		addInternalFrameListener(new InternalFrameAdapter()
 		{
-			// This is to fix a problem with the JDK (up to version 1.3)
-			// where focus events were not generated correctly. The sympton
-			// is being unable to key into the text entry field unless you click
-			// elsewhere after focus is gained by the internal frame.
-			// See bug ID 4309079 on the JavaSoft bug parade (plus others).
-			public void internalFrameActivated(InternalFrameEvent evt)
-			{
-				Window window = SwingUtilities.windowForComponent(
-										SessionInternalFrame.this._sessionPanel.getSQLPanel());
-				Component focusOwner = (window != null)
-											? window.getFocusOwner() : null;
-				if (focusOwner != null)
-				{
-					FocusEvent lost = new FocusEvent(focusOwner, FocusEvent.FOCUS_LOST);
-					FocusEvent gained = new FocusEvent(focusOwner, FocusEvent.FOCUS_GAINED);
-					window.dispatchEvent(lost);
-					window.dispatchEvent(gained);
-					window.dispatchEvent(lost);
-					focusOwner.requestFocus();
-				}
-			}
 			public void internalFrameClosing(InternalFrameEvent evt)
 			{
                 if (!session.isfinishedLoading()) {                         
