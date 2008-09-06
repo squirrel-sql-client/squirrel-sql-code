@@ -288,4 +288,12 @@ public class StringUtilities
         return aString.substring(0, aString.length()-1);
     }
     
+    /**
+     * Returns the platform-specific line separator, or "\n" if it is not defined for some reason.
+     * 
+     * @return the platform-specific line separator.
+     */
+    public static String getEolStr() {
+   	 return System.getProperty("line.separator", "\n");
+    }
 }
