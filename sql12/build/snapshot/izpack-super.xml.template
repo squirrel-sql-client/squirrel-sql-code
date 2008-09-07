@@ -52,10 +52,12 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
 			<file	targetdir="$INSTALL_PATH/doc"
 					src="../../sql12/web-site/faq.html"/>
-                        <file   targetdir="$INSTALL_PATH/doc/images"
-                                        src="../../sql12/web-site/images/*.gif"/>
-                        <file   targetdir="$INSTALL_PATH/doc/images"
-                                        src="../../sql12/web-site/images/*.jpg"/>                                        					
+                        <fileset  targetdir="$INSTALL_PATH/doc/images" dir="../../sql12/web-site/images">
+                                <include name="*.gif"/>
+                        </fileset>
+                        <fileset   targetdir="$INSTALL_PATH/doc/images" dir="../../sql12/web-site/images">
+                                <include name="*.jpg"/>
+                        </fileset>                                					
 			<file	targetdir="$INSTALL_PATH"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/icons"/>
 			<file	targetdir="$INSTALL_PATH"
