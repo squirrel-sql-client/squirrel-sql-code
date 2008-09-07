@@ -117,6 +117,8 @@ bug seen in java5 and java6, where the Alt-RightArrow key shortcut switched sess
 into the foreground without giving them focus.  Thanks goes to Johnathan James for the 
 bug-fix.
 
+2091569: FAQ is missing its images
+
 2049336: Make Editable disappear from SQL/results tab
 
 2018512: DB2 timestamps still don't work when milliseconds are zero. Patch submitted by Daniel Stränger.
