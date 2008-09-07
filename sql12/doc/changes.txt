@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+2091569: FAQ is missing its images
+
 2018018: (Bug in FormatSql function) Formatter now uses platform-specific EOL char sequence.
 
 2092902: Focus remains on hidden session window for Alt-Arrow.  Removed code which was a 

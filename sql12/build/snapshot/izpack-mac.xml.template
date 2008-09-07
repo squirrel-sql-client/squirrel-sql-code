@@ -52,6 +52,10 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/doc"
 					src="../../sql12/web-site/faq.html"/>
+                        <fileset targetdir="$INSTALL_PATH/Contents/Resources/Java/doc/images" 
+                                 dir="../../sql12/web-site/images">
+                                <include name="*"/>
+                        </fileset>			
 			<file	targetdir="$INSTALL_PATH/Contents/Resources"
 					src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/acorn.icns"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java"
