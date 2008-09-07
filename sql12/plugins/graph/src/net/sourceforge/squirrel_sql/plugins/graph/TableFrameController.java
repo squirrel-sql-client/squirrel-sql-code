@@ -238,27 +238,31 @@ public class TableFrameController
    {
       if(_desktopController.isShowQualifiedTableNames())
       {
-         String ret = "";
-
-         if(null !=_catalog)
-         {
-            ret += _catalog + ".";
-         }
-
-         if(null !=_schema)
-         {
-            ret += _schema + ".";
-         }
-
-         ret += _tableName;
-
-         return ret;
-
+         return getQualifiedName();
       }
       else
       {
          return _tableName;
       }
+   }
+
+   private String getQualifiedName()
+   {
+      String ret = "";
+
+      if(null !=_catalog)
+      {
+         ret += _catalog + ".";
+      }
+
+      if(null !=_schema)
+      {
+         ret += _schema + ".";
+      }
+
+      ret += _tableName;
+
+      return ret;
    }
 
    /**
@@ -675,26 +679,12 @@ public class TableFrameController
 
       if(qualified)
       {
-         if(null != _catalog)
-         {
-            toCopy += _catalog + ".";
-         }
-
-         if(null != _schema)
-         {
-            toCopy += _schema + ".";
-         }
-
-         toCopy += _tableName;
-
+         toCopy = getQualifiedName();
       }
       else
       {
          toCopy = _tableName;
       }
-
-
-
 
       final StringSelection ss = new StringSelection(toCopy);
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
