@@ -18,7 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.DOWNLOADS_DIR_NAME;
+import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.PLUGIN_ARTIFACT_ID;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
@@ -57,6 +60,8 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    private FileWrapperFactory mockFileWrapperFactory = null;
    private ApplicationFileWrappers mockApplicationFileWrappers = null;
 	private FileWrapper mockUpdateDirectory = null;
+	private FileWrapper mockDownloadsDirectory = null;
+	private FileWrapper mockDownloadsPluginDirectory = null;
    private IOUtilities mockIOUtilities = null;
    private UpdateXmlSerializer mockSerializer = null;
 	private PathUtils mockPathUtils = null;
@@ -83,12 +88,30 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
       
       // common expectations
       setupAppFileExpectations();
+      setupDirectoryExpectations();
    }
 
    private void setupAppFileExpectations() {
    	mockUpdateDirectory = mockHelper.createMock("mockUpdateDirectory",FileWrapper.class);
+   	expect(mockUpdateDirectory.exists()).andStubReturn(true);
    	expect(mockUpdateDirectory.isDirectory()).andStubReturn(true);
    	expect(mockApplicationFileWrappers.getUpdateDirectory()).andStubReturn(mockUpdateDirectory);
+   }
+   
+   private void setupDirectoryExpectations() {
+   	// downloads directory
+   	mockDownloadsDirectory = mockHelper.createMock("mockDownloadsDirectory",FileWrapper.class);
+   	expect(mockDownloadsDirectory.exists()).andStubReturn(true);
+   	expect(mockDownloadsDirectory.isDirectory()).andStubReturn(true);
+   	expect(mockFileWrapperFactory.create(mockUpdateDirectory, DOWNLOADS_DIR_NAME));
+   	expectLastCall().andStubReturn(mockDownloadsDirectory);
+   	
+   	// downloads/plugin directory
+   	mockDownloadsPluginDirectory = mockHelper.createMock("mockDownloadsPluginDirectory", FileWrapper.class);
+   	expect(mockDownloadsPluginDirectory.exists()).andStubReturn(true);
+   	expect(mockDownloadsPluginDirectory.isDirectory()).andStubReturn(true);
+   	expect(mockFileWrapperFactory.create(mockDownloadsDirectory, PLUGIN_ARTIFACT_ID));
+   	expectLastCall().andStubReturn(mockDownloadsPluginDirectory);
    }
    
    @After
@@ -120,10 +143,10 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    	ArtifactStatus mockArtifactStatus = mockHelper.createMock(ArtifactStatus.class);
    	expect(mockArtifactStatus.getType()).andReturn(UpdateUtil.CORE_ARTIFACT_ID).atLeastOnce();
    	expect(mockArtifactStatus.getName()).andReturn(coreJarFilename);
-   	FileWrapper mockDownloadsDirectory = mockHelper.createMock("mockDownloadsDirectory", FileWrapper.class);
-   	expect(mockDownloadsDirectory.isDirectory()).andStubReturn(true);
-   	expect(mockFileWrapperFactory.create(mockUpdateDirectory, UpdateUtil.DOWNLOADS_DIR_NAME));
-   	expectLastCall().andReturn(mockDownloadsDirectory);
+//   	FileWrapper mockDownloadsDirectory = mockHelper.createMock("mockDownloadsDirectory", FileWrapper.class);
+//   	expect(mockDownloadsDirectory.isDirectory()).andStubReturn(true);
+//   	expect(mockFileWrapperFactory.create(mockUpdateDirectory, UpdateUtil.DOWNLOADS_DIR_NAME));
+//   	expectLastCall().andReturn(mockDownloadsDirectory);
    	FileWrapper mockDownloadsCoreDirectory = mockHelper.createMock("mockDownloadsCoreDirectory", FileWrapper.class);
    	expect(mockDownloadsCoreDirectory.isDirectory()).andReturn(true);
    	expect(mockFileWrapperFactory.create(mockDownloadsDirectory, UpdateUtil.CORE_ARTIFACT_ID));
@@ -249,6 +272,35 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    	mockHelper.verifyAll();   	
    	
    }
+
+   @Test
+   public void testIsPresentInDownloadDirectory() throws IOException {
+   	// Data
+   	String pluginFilename = "aPluginName.zip";
+   	String pluginFileAbsPath = "path/to/plugin/file/"+pluginFilename;
+   	long pluginFileCheckSum = 10L;
+   	long pluginFileByteSize = 20L;
+   	
+   	ArtifactStatus status = mockHelper.createMock(ArtifactStatus.class);
+   	expect(status.getType()).andStubReturn(UpdateUtil.PLUGIN_ARTIFACT_ID);
+   	expect(status.getName()).andReturn(pluginFilename);
+		expect(status.getChecksum()).andReturn(pluginFileCheckSum);
+		expect(status.getSize()).andReturn(pluginFileByteSize);
+		
+   	FileWrapper fileInDownlodDir = mockHelper.createMock("fileInDownlodDir", FileWrapper.class);   	
+		expect(fileInDownlodDir.getAbsolutePath()).andReturn(pluginFileAbsPath);
+   	expect(fileInDownlodDir.exists()).andReturn(true);
+   	expect(fileInDownlodDir.length()).andReturn(pluginFileByteSize);
+   	expect(mockFileWrapperFactory.create(mockDownloadsPluginDirectory, pluginFilename));
+   	expectLastCall().andReturn(fileInDownlodDir);
+   	expect(mockIOUtilities.getCheckSum(fileInDownlodDir)).andReturn(pluginFileCheckSum);
+   	
+   	mockHelper.replayAll();
+		boolean result = underTest.isPresentInDownloadsDirectory(status);
+   	mockHelper.verifyAll();
+   	
+   	assertTrue(result);
+   }   
    
    @Test
    public void testDownloadHttpUpdateFile_verifysuccess() throws Exception {
@@ -259,6 +311,8 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    public void testDownloadHttpUpdateFile_verifyfailure() throws Exception {
    	testDownloadHttpUpdateFile(false);
    }   
+   
+   // Helper methods
    
    private void testDownloadHttpUpdateFile(boolean simulateSuccess) throws Exception {
 		String host = "somehost.com";
