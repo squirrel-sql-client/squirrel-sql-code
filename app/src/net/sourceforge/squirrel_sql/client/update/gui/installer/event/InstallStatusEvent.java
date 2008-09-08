@@ -18,15 +18,25 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
 
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 
+/**
+ * An event implementation that informs the installer of key events that are 
+ * happening during installation.  The ArtifactInstaller generates these events as
+ * it is installing artifacts giving them to any listeners.  The installer UI can 
+ * registers as a listener and updates the UI based on the events that it receives.
+ */
 public class InstallStatusEvent {
 
+	/** The name of the artifact being installed; typically a filename (e.g. fw.jar) */
    String _artifactName;
    
+   /** The type of event that has occurred - see InstallEventType for detailed */
    InstallEventType _type;
    
    public InstallStatusEvent(InstallEventType type) {
+   	Utilities.checkNull("InstallStatusEvent.init", "type", type);
       this._type = type;
    }
 
@@ -41,6 +51,7 @@ public class InstallStatusEvent {
     * @param name the _artifactName to set
     */
    public void setArtifactName(String name) {
+   	Utilities.checkNull("setArtifactName", "name", name);
       _artifactName = name;
    }
 
@@ -55,6 +66,7 @@ public class InstallStatusEvent {
     * @param _type the event type to set
     */
    public void setType(InstallEventType type) {
+   	Utilities.checkNull("setType", "type", type);
       this._type = type;
    }
    
