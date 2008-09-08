@@ -42,6 +42,12 @@
 		<property name="deprecation" value="on"/>
 		<property name="targetVM" value="1.5"/>
 
+		<property name="emma.dir" value="${basedir}/test/lib" />
+		<path id="emma.lib">
+		    <pathelement location="${emma.dir}/emma.jar" />
+		    <pathelement location="${emma.dir}/emma_ant.jar" />
+		</path>
+		
 		<echo message="squirrel.version: ${squirrel.version}"/>
 		<echo message="appversion: ${appversion}"/>
 
@@ -851,6 +857,11 @@
 		
 	</target>
 	
+	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
+	    <property name="emma.enabled" value="true" />
+	  </target>
+	
+	
 	<!--
 	==================================================================
 	Runs the JUnit tests against the currently built code
@@ -876,6 +887,7 @@
 		     temptation to not configure certain tests because they fail.  If a 
 		     test fails, fix it; if it can't be fixed, then remove it.  -->
 		<junit printsummary="true" fork="yes" dir="${test_dir}/results">
+			
 			<classpath>
 				<fileset dir="fw/lib">
 					<include name="**/*.*"/>
@@ -891,17 +903,16 @@
 				</fileset>
 				<fileset dir="${core_dist_dir}/plugins">
 					<include name="**/*.jar"/>
-				</fileset>	
-				<fileset dir="${core_obj_dir}">
-				        <include name="**/*applicationContext.xml"/>
 				</fileset>
-				<pathelement path="${test_dir}"/>			
+				<!-- To pickup all applicationContext.xml files -->
+				<pathelement path="${core_obj_dir}"/>
+				<pathelement path="${test_dir}"/>		
 			</classpath>
 			<formatter type="plain"/>
 			<formatter type="xml"/>			
 			<batchtest fork="yes" todir="${test_dir}/results">
 				<fileset dir="test/src">
-					<include name="**/*Test.java" />
+					<include name="**/ArtifactInstallerImplIntegrationTest.java" />
 				</fileset>
 			</batchtest>
 	 	</junit>
