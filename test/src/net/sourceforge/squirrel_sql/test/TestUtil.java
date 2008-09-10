@@ -52,6 +52,11 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeActio
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -156,6 +161,13 @@ public class TestUtil {
       SessionPanel result = createMock(SessionPanel.class);
       ISQLPanelAPI api = getEasyMockSqlPanelApi();
       expect(result.getSQLPaneAPI()).andReturn(api);
+      ObjectTreePanel mockObjTreePanel = createMock(ObjectTreePanel.class);
+      expect(result.getObjectTreePanel()).andStubReturn(mockObjTreePanel);
+      mockObjTreePanel.addExpander(isA(DatabaseObjectType.class), isA(INodeExpander.class));
+      expectLastCall().anyTimes();
+      mockObjTreePanel.addDetailTab(isA(DatabaseObjectType.class), isA(IObjectTab.class));
+      expectLastCall().anyTimes();
+      replay(mockObjTreePanel);
       replay(result);
       return result;
    }
@@ -164,6 +176,10 @@ public class TestUtil {
       ISQLPanelAPI result = createMock(ISQLPanelAPI.class);
       ISQLEntryPanel panel = getEasyMockSqlEntryPanel();
       expect(result.getSQLEntryPanel()).andReturn(panel).anyTimes();
+      result.addExecuterTabListener(isA(ISQLResultExecuterTabListener.class));
+      expectLastCall().anyTimes();
+      result.addExecutor(isA(ISQLResultExecuter.class));
+      expectLastCall().anyTimes();
       replay(result);
       return result;
    }
