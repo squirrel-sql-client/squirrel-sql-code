@@ -100,6 +100,10 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+SQL Scripts Plugin: On some DBs (e.g. MySQL) "Store result of SQL in table"
+                    did not work for SQLs that returned a lot of rows.   
+
+
 Graph Plugin: Table's right mouse menu "Add Parent tables" did add a parent more
               than once when more than one foreign key to the parent existed.    
 
