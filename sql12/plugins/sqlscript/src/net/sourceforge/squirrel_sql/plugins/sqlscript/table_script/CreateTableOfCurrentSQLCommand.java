@@ -121,6 +121,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 
 
             stmt = conn.createStatement();
+            stmt.setMaxRows(1);
             String sql = qt.nextQuery();
             ResultSet srcResult = stmt.executeQuery(sql);
 
