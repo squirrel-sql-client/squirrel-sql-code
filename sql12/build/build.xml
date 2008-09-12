@@ -47,6 +47,8 @@
 
                 <!-- directory which contains classes that will be reported on in the coverage reports - not instrumented -->
                 <property name="coverage.classes.dir" value="${test_output_root}/target/classes" />
+		<!-- directory which contains classes that will not be reported - the JUnit tests -->
+		<property name="test.classes.dir" value="${test_output_root}/target/test-classes" />
                 <!-- directory which contains source code for all classes that coverage will be reported on -->		
 		<property name="coverage.sources.dir" value="${test_output_root}/target/src" />
 		<!-- directory which emma instrumentation classes will be written to -->
@@ -886,9 +888,10 @@
 			<fileset dir="${test_output_root}"/>
 		</delete>
 		<mkdir dir="${test_output_root}"/>
+		<mkdir dir="${test.classes.dir}"/>
 		
 		<!-- Build the test code -->
-		<javac	destdir="${test_output_root}"
+		<javac	destdir="${test.classes.dir}"
 				deprecation="${deprecation}"
 				debug="${debug}"
 				optimize="${optimize}"
@@ -989,6 +992,12 @@
 		    </instr>
 		</emma>
 		
+		<!-- Copy all applicationContext.xml files -->
+		<copy todir="${instr.dir}" >
+		    <fileset dir="${core_obj_dir}">
+		    	  <include name="**/*.xml"/>
+		    </fileset>
+		</copy>
 		
 		<!-- Runs all tests using the test code just built.  This will find any
 		     class that ends with "Test" and expect that it can run it as a 
@@ -1001,11 +1010,9 @@
 			
 			<classpath>
 				<pathelement path="${instr.dir}"/>
+				<pathelement path="${test.classes.dir}"/>
 				<path refid="test.compile.classpath"/>
 				<path refid="emma.lib" />
-				<!-- To pickup all applicationContext.xml files -->
-				<pathelement path="${core_obj_dir}"/>
-				<pathelement path="${test_output_root}"/>		
 			</classpath>
 			<formatter type="plain"/>
 			<formatter type="xml"/>			
