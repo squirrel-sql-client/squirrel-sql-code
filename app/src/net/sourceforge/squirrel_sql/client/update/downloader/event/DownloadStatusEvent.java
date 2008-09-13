@@ -80,6 +80,27 @@ public class DownloadStatusEvent {
    public void setFileCountTotal(int countTotal) {
       _fileCountTotal = countTotal;
    }
-   
+
+	/**
+	 * Constructs a <code>String</code> with all attributes in name = value format.
+	 * 
+	 * @return a <code>String</code> representation of this object.
+	 */
+	public String toString() {
+		final String TAB = "    ";
+
+		String retValue = "";
+
+		retValue = "DownloadStatusEvent ( "
+            + super.toString() + TAB
+            + "_type = " + this._type + TAB
+            + "_filename = " + this._filename + TAB
+            + "_fileCountTotal = " + this._fileCountTotal + TAB
+            + "_exception = " + this._exception + TAB
+            + " )";
+    
+        return retValue;
+	}
+
    
 }
