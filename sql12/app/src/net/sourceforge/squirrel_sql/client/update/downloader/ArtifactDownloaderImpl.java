@@ -120,16 +120,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				boolean result = true;
 				if (_isRemoteUpdateSite)
 				{
-					try
-					{
-						_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
-							status.getChecksum());
-					}
-					catch (Exception e)
-					{
-						s_log.error("run: encountered exception while attempting to download file ("+fileToGet+
-										"): "+e.getMessage(),e);
-						sendDownloadFailed();
+					if (!attemptFileDownload(fileToGet, destDir, status)){
 						return;
 					}
 				}
@@ -152,20 +143,37 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		catch (FileNotFoundException e)
 		{
 			// TODO: alert the user that downloads failed. Prevent installation
-			e.printStackTrace();
+			s_log.error("run: Unexpected exception: "+e.getMessage(),e);
 			sendDownloadFailed();
 			return;
 		}
 		catch (IOException e)
 		{
 			// TODO: alert the user that downloads failed. Prevent installation
-			e.printStackTrace();
+			s_log.error("run: Unexpected exception: "+e.getMessage(),e);
 			sendDownloadFailed();
 			return;
 		}
 		sendDownloadComplete();
 	}
 
+	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status) {
+		boolean success = true;
+		try
+		{
+			_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
+				status.getChecksum());
+		}
+		catch (Exception e)
+		{
+			s_log.error("run: encountered exception while attempting to download file ("+fileToGet+
+							"): "+e.getMessage(),e);
+			sendDownloadFailed();
+			success = false;
+		}		
+		return success;
+	}
+	
 	private String getArtifactDownloadDestDir(ArtifactStatus status) {
 
 		FileWrapper destDir = _util.getCoreDownloadsDir();		
