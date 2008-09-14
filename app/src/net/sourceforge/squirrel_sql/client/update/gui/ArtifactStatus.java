@@ -59,6 +59,7 @@ public class ArtifactStatus implements Serializable {
    /** boolean indicating whether or not the artifact is currently installed */
    private boolean installed;
    
+   /** The type of this artifact, which is displayed to the user */
    private String displayType;
    
    /** The action to take with this artifact */
@@ -82,6 +83,7 @@ public class ArtifactStatus implements Serializable {
 		this.installed = artifactXmlBean.isInstalled();
 		this.size = artifactXmlBean.getSize();
 		this.checksum = artifactXmlBean.getChecksum();
+		setType(artifactXmlBean.getType());
 	}
 	
    /**
@@ -110,13 +112,16 @@ public class ArtifactStatus implements Serializable {
     */
    public void setType(String type) {
       this.type = type;
-      if (type.equals("i18n")) {
+   	if (type == null) {
+   		return;
+   	}
+      if (type.equals(UpdateUtil.TRANSLATION_ARTIFACT_ID)) {
          this.displayType = i18n.TRANSLATION_LABEL;
       }
-      if (type.equals("core")) {
+      if (type.equals(UpdateUtil.CORE_ARTIFACT_ID)) {
          this.displayType = i18n.CORE_LABEL;
       }
-      if (type.equals("plugin")) {
+      if (type.equals(UpdateUtil.PLUGIN_ARTIFACT_ID)) {
          this.displayType = i18n.PLUGIN_LABEL;
       }      
    }

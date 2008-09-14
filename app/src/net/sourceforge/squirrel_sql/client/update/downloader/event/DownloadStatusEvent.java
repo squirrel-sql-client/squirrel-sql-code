@@ -19,88 +19,103 @@
 package net.sourceforge.squirrel_sql.client.update.downloader.event;
 
 /**
- * Describes something that happened while downloading updates.  This 
- * might be download started/ended, file started/ended, etc.
+ * Describes something that happened while downloading updates. This might be download started/ended, file
+ * started/ended, etc.
+ * 
  * @author manningr
- *
  */
-public class DownloadStatusEvent {
-   
-   private DownloadEventType _type = null;
-   private String _filename = null;
-   private int _fileCountTotal = 0; 
-   private Exception _exception = null;
-   
-   public DownloadStatusEvent(DownloadEventType type) {
-      this._type = type;
-   }
-   
-   public DownloadEventType getType() {
-      return this._type;
-   }
+public class DownloadStatusEvent
+{
 
-   /**
-    * @return the _filename
-    */
-   public String getFilename() {
-      return _filename;
-   }
+	private DownloadEventType _type = null;
 
-   /**
-    * @param _filename the _filename to set
-    */
-   public void setFilename(String _filename) {
-      this._filename = _filename;
-   }
+	private String _filename = null;
 
-   /**
-    * @return the _exception
-    */
-   public Exception getException() {
-      return _exception;
-   }
+	private int _fileCountTotal = 0;
 
-   /**
-    * @param _exception the _exception to set
-    */
-   public void setException(Exception _exception) {
-      this._exception = _exception;
-   }
+	private Exception _exception = null;
 
-   /**
-    * @return the _fileCountTotal
-    */
-   public int getFileCountTotal() {
-      return _fileCountTotal;
-   }
+	public DownloadStatusEvent(DownloadEventType type)
+	{
+		this._type = type;
+	}
 
-   /**
-    * @param countTotal the _fileCountTotal to set
-    */
-   public void setFileCountTotal(int countTotal) {
-      _fileCountTotal = countTotal;
-   }
+	public DownloadEventType getType()
+	{
+		return this._type;
+	}
+
+	/**
+	 * @return the _filename
+	 */
+	public String getFilename()
+	{
+		return _filename;
+	}
+
+	/**
+	 * @param _filename
+	 *           the _filename to set
+	 */
+	public void setFilename(String _filename)
+	{
+		this._filename = _filename;
+	}
+
+	/**
+	 * @return the _exception
+	 */
+	public Exception getException()
+	{
+		return _exception;
+	}
+
+	/**
+	 * @param _exception
+	 *           the _exception to set
+	 */
+	public void setException(Exception _exception)
+	{
+		this._exception = _exception;
+	}
+
+	/**
+	 * @return the _fileCountTotal
+	 */
+	public int getFileCountTotal()
+	{
+		return _fileCountTotal;
+	}
+
+	/**
+	 * @param countTotal
+	 *           the _fileCountTotal to set
+	 */
+	public void setFileCountTotal(int countTotal)
+	{
+		_fileCountTotal = countTotal;
+	}
 
 	/**
 	 * Constructs a <code>String</code> with all attributes in name = value format.
 	 * 
 	 * @return a <code>String</code> representation of this object.
 	 */
-	public String toString() {
+	public String toString()
+	{
 		final String TAB = "    ";
 
 		String retValue = "";
 
 		retValue = "DownloadStatusEvent ( "
-            + super.toString() + TAB
-            + "_type = " + this._type + TAB
-            + "_filename = " + this._filename + TAB
-            + "_fileCountTotal = " + this._fileCountTotal + TAB
-            + "_exception = " + this._exception + TAB
-            + " )";
-    
-        return retValue;
+         + super.toString() + TAB
+         + "_type = " + this._type + TAB
+         + "_filename = " + this._filename + TAB
+         + "_fileCountTotal = " + this._fileCountTotal + TAB
+         + "_exception = " + this._exception + TAB
+         + " )";
+
+		return retValue;
 	}
 
-   
 }
