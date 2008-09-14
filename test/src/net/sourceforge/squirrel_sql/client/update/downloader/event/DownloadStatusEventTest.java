@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,4 +72,11 @@ public class DownloadStatusEventTest extends BaseSQuirreLJUnit4TestCase
 		classUnderTest.setException(expected);
 		assertEquals(expected, classUnderTest.getException());
 	}
+	
+	@Test
+	public void testToString() {
+		classUnderTest = new DownloadStatusEvent(DOWNLOAD_STARTED);
+		Assert.assertNotNull(classUnderTest.toString());
+	}
+	
 }
