@@ -61,4 +61,9 @@ public class ArtifactDownloaderFactoryImplTest extends BaseSQuirreLJUnit4TestCas
 		assertEquals(artifactStatusList.get(0), actualArtifactStatusList.get(0));
 	}
 
+	@Test (expected = IllegalArgumentException.class)
+	public final void testCreateWithEmptyList() {
+		List<ArtifactStatus> artifactStatusList = new ArrayList<ArtifactStatus>();
+		classUnderTest.create(artifactStatusList);
+	}
 }
