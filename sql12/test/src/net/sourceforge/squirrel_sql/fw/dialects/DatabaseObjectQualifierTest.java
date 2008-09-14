@@ -20,12 +20,14 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import static org.junit.Assert.*;
 
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DatabaseObjectQualifierTest
+public class DatabaseObjectQualifierTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	DatabaseObjectQualifier classUnderTest = null;
