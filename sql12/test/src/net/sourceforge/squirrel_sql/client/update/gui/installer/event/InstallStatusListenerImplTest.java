@@ -18,11 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
 
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InstallStatusListenerImplTest
+public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	InstallStatusListenerImpl classUnderTest = null;
