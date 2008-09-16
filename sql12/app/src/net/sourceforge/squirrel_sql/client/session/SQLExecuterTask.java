@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCh
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -153,14 +154,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   .correctlySupportsSetMaxRows();
             if (correctlySupportsMaxRows && props.getSQLLimitRows())
             {
-               try
-               {
-                  _stmt.setMaxRows(props.getSQLNbrRowsToShow());
-               }
-               catch (Exception e)
-               {
-                  s_log.error("Can't Set MaxRows", e);
-               }
+               setMaxRows(props);
             }
             
             if(_tokenizer.getQueryCount() == 0)
@@ -194,23 +188,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   if (!correctlySupportsMaxRows
                         && props.getSQLLimitRows())
                   {
-                     if ("SELECT".length() < querySql.trim()
-                           .length()
-                           && "SELECT".equalsIgnoreCase(querySql
-                                 .trim().substring(0,
-                                       "SELECT".length())))
+                     if (isSelectStatement(querySql))
                      {
                         if (!maxRowsHasBeenSet)
                         {
-                           try
-                           {
-                              _stmt.setMaxRows(props
-                                    .getSQLNbrRowsToShow());
-                           }
-                           catch (Exception e)
-                           {
-                              s_log.error("Can't Set MaxRows", e);
-                           }
+                           setMaxRows(props);
                            maxRowsHasBeenSet = true;
                         }
                      }
@@ -329,6 +311,34 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       }
    }
 
+	private void setMaxRows(final SessionProperties props)
+	{
+		try
+		{
+		   _stmt.setMaxRows(props.getSQLNbrRowsToShow());
+		}
+		catch (Exception e)
+		{
+		   s_log.error("Can't Set MaxRows", e);
+		}
+	}
+
+	/**
+	 * Returns a boolean indicating whether or not the specified querySql appears to be a SELECT statement.
+	 * 
+	 * @param querySql
+	 *           the SQL statement to check
+	 * @return true if it is a SELECT statement; false otherwise.
+	 */
+	private boolean isSelectStatement(String querySql)
+	{
+		return "SELECT".length() < querySql.trim()
+		      .length()
+		      && "SELECT".equalsIgnoreCase(querySql
+		            .trim().substring(0,
+		                  "SELECT".length()));
+	}
+
    public void cancel()
    {
       if(_stopExecution)
@@ -352,7 +362,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    {
       ++_currentQueryIndex;
 
-      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, _stmt.getMaxRows());
+      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, getMaxRows(_stmt));
       boolean firstResultIsResultSet = _stmt.execute(sql);
       exInfo.sqlExecutionComplete();
 
@@ -460,6 +470,28 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return true;
    }
 
+   /**
+    * Some drivers, such as SQLite, don't properly support getMaxRows/setMaxRows for statements.
+    * 
+    * @param stmt the statement to get the max rows that could be returned in a result set for.
+    * 
+    * @return the max number of rows that could be returned by this statement 
+    */
+   private int getMaxRows(Statement stmt) {
+   	int result = 0;
+   	try
+		{
+			result = stmt.getMaxRows();
+		}
+		catch (SQLException e)
+		{
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("Unexpected exception: "+e.getMessage(), e);
+			}
+		}
+		return result;
+   }
+   
    private void fireExecutionListeners(final String sql)
    {
       // This method is called from a thread.
@@ -721,6 +753,18 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    {
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
+
+   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   {
+      return new IDataModelImplementationDetails()
+      {
+         public String getStatementSeparator()
+         {
+            return _session.getQueryTokenizer().getSQLStatementSeparator();
+         }
+      };
+   }
+
    //
    //////////////////////////////////////////////////////////////////////////////////
 
