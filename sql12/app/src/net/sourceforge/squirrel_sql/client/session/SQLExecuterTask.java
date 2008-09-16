@@ -40,7 +40,6 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCh
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -754,16 +753,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
-   public IDataModelImplementationDetails getDataModelImplementationDetails()
-   {
-      return new IDataModelImplementationDetails()
-      {
-         public String getStatementSeparator()
-         {
-            return _session.getQueryTokenizer().getSQLStatementSeparator();
-         }
-      };
-   }
 
    //
    //////////////////////////////////////////////////////////////////////////////////
