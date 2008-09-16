@@ -6,6 +6,10 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+Back-ported fixes for SQLite support from trunk.  Basic support for querying and editing data.  SQL
+generation features are only available on the trunk, as there were too many other changes to make 
+them work properly on this branch.
+
 2091569: FAQ is missing its images
 
 2018018: (Bug in FormatSql function) Formatter now uses platform-specific EOL char sequence.
