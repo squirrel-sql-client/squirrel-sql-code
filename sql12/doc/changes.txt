@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+2.6.8 (?/??/????)
+=================
+
+Bug-Fixes:
+
+2102894: Missing Scale Placeholder in Sql server dialect.  This causes script generation and dbcopy targeting 
+MS-SQL server to produce decimal columns without the scale attribute (that is, decimal(7) instead of 
+decimal(7,5)).
+
 2.6.7 (9/16/2008)
 =================
 

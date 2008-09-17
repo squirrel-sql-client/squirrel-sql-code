@@ -48,13 +48,13 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         registerColumnType(Types.CHAR, "text");
         registerColumnType(Types.CLOB, "text");
         registerColumnType(Types.DATE, "datetime");
-        registerColumnType(Types.DECIMAL, "decimal($p)");
+        registerColumnType(Types.DECIMAL, "decimal($p,$s)");
         registerColumnType(Types.DOUBLE, "float($p)");
         registerColumnType(Types.FLOAT, "float($p)");
         registerColumnType(Types.INTEGER, "int");
         registerColumnType(Types.LONGVARBINARY, "image");
         registerColumnType(Types.LONGVARCHAR, "text");
-        registerColumnType(Types.NUMERIC, "numeric($p)");
+        registerColumnType(Types.NUMERIC, "numeric($p,s$)");
         registerColumnType(Types.REAL, "real");
         registerColumnType(Types.SMALLINT, "smallint");
         registerColumnType(Types.TIME, "datetime");
