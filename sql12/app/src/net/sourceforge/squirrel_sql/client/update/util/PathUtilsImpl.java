@@ -63,9 +63,9 @@ public class PathUtilsImpl implements PathUtils
 	 */
 	public String getFileFromPath(String path)
 	{
-		int slashIndex = path.lastIndexOf("/");
 		if (path.indexOf("/") == -1) { return path; }
-		return path.substring(slashIndex);
+		int slashIndex = path.lastIndexOf("/");
+		return path.substring(slashIndex+1);
 	}
 
 }
