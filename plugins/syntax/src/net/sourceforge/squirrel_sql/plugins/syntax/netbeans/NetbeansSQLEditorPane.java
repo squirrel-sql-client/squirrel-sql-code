@@ -254,6 +254,18 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
    public String getText()
    {
+      // Reasons for this code mailed to Rob by Gerd on 9/20/2008.
+      //
+      // the Problem are methods like
+      //
+      // BaseSQLEntryPanel.getBoundsOfSQLToBeExecuted()
+      // BaseSQLEntryPanel.moveCaretToPreviousSQLBegin()
+      //
+      // They rely on the line break being a single char.
+      // Also I suppose some of our code generation (scripting) functions do the same.
+      // At least I'm pretty sure if \r\n would be preserved
+      // they could produce a mixture of \n and \r\n.
+
       return super.getText().replaceAll("\r\n", "\n");
    }
 
