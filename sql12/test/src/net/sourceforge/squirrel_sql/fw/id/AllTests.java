@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.id;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,15 +18,18 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class AllTests extends TestCase {
-	public static Test suite() {
+public class AllTests extends TestCase
+{
+	public static Test suite()
+	{
 		TestSuite suite = new TestSuite("fw id tests");
-		suite.addTestSuite(UidIdentifierTest.class);
-        suite.addTestSuite(IntegerIdentifierTest.class);
+		suite.addTest(new JUnit4TestAdapter(UidIdentifierTest.class));
+		suite.addTest(new JUnit4TestAdapter(IntegerIdentifierTest.class));
 		return suite;
 	}
 }
