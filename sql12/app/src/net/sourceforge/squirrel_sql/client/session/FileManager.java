@@ -15,8 +15,11 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 
 public class FileManager
@@ -32,6 +35,11 @@ public class FileManager
    
    private HashMap<FileExtensionFilter, String> fileAppenixes = 
        new HashMap<FileExtensionFilter, String>();
+   
+   private IOUtilities ioUtil = new IOUtilitiesImpl();
+   public void setIOUtilities(IOUtilities ioutilities) {
+   	this.ioUtil = ioutilities;
+   }
    
    FileManager(ISQLPanelAPI sqlPanelAPI)
    {
@@ -124,14 +132,8 @@ public class FileManager
       }
       finally
       {
-          if (bis != null)
-          {
-              try { bis.close(); } catch (IOException ignore) {}
-          }
-          if (fis != null) 
-          {
-              try { fis.close(); } catch (IOException ignore) {}
-          }
+      	ioUtil.closeInputStream(bis);
+      	ioUtil.closeInputStream(fis);
       }
    }
 
@@ -255,7 +257,7 @@ public class FileManager
          {
             fos = new FileOutputStream(file);
 
-            String sScript = _sqlPanelAPI.getEntireSQLScript();
+            String sScript = getEntireSQLScriptWithPlatformEolChar();
 
             fos.write(sScript.getBytes());
             setFile(file);
@@ -270,21 +272,30 @@ public class FileManager
          }
          finally
          {
-            if (fos != null)
-            {
-               try
-               {
-                  fos.close();
-               }
-               catch (IOException ignore)
-               {
-               }
-            }
+         	ioUtil.closeOutputStream(fos);
          }
       }
       return true;
    }
 
+   /**
+    * Bug: 2119937 (Windows EOL chars (CRLF) are converted to Linux EOL (LF))
+    * Internally, SQuirreL prefers to represent EOL as "\n".  This is fine for Unix, but in Windows, EOL is 
+    * "\r\n".  So, if the platform-specific EOL isn't "\n", this method will replace all "\n", with "\r\n".
+    * Other editors on Windows will then properly display the EOL characters.
+    *  
+    * @return a String that represents the SQL Script being saved with adjusted (if necessary) EOL characters.
+    */
+   private String getEntireSQLScriptWithPlatformEolChar() {
+      String platformEolStr = StringUtilities.getEolStr();
+
+      String result  = _sqlPanelAPI.getEntireSQLScript();
+      if (result != null && !"".equals(result) && !platformEolStr.equals("\n")) {
+      	result = result.replaceAll("\\n", platformEolStr);
+      }
+      return result;
+   }
+   
    private void setFile(File file)
    {
       _toSaveTo = file;

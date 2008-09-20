@@ -115,6 +115,8 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2119937: Windows EOL chars (CRLF) are converted to Linux EOL (LF).
+
 2102894: Missing Scale Placeholder in Sql server dialect.  This causes script generation and dbcopy 
 targeting MS-SQL server to produce decimal columns without the scale attribute (that is, decimal(7) instead 
 of decimal(7,5))
