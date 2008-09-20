@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.id;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,35 +18,49 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import junit.framework.TestCase;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class UidIdentifierTest extends TestCase {
+public class UidIdentifierTest extends BaseSQuirreLJUnit4TestCase
+{
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+	@Before
+	public void setUp() throws Exception
+	{
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+	}
 
-    public void testEquals() {
-        UidIdentifier uid1 = createIIdentifier();
-        uid1.setString("1");
-        UidIdentifier uid2 = createIIdentifier();
-        uid2.setString("1");
-        UidIdentifier uid3 = createIIdentifier();
-        uid3.setString("2");
-        UidIdentifier uid4 = new UidIdentifier() {
-            private static final long serialVersionUID = 1L;
-        };
-        uid4.setString("1");
-        new EqualsTester(uid1, uid2, uid3, uid4);
-    }
+	@After
+	public void tearDown() throws Exception
+	{
 
-    protected UidIdentifier createIIdentifier() {
-        return new UidIdentifier();
-    }
+	}
+
+	@Test
+	public void testEquals()
+	{
+		UidIdentifier uid1 = createIIdentifier();
+		uid1.setString("1");
+		UidIdentifier uid2 = createIIdentifier();
+		uid2.setString("1");
+		UidIdentifier uid3 = createIIdentifier();
+		uid3.setString("2");
+		UidIdentifier uid4 = new UidIdentifier()
+		{
+			private static final long serialVersionUID = 1L;
+		};
+		uid4.setString("1");
+		new EqualsTester(uid1, uid2, uid3, uid4);
+	}
+
+	protected UidIdentifier createIIdentifier()
+	{
+		return new UidIdentifier();
+	}
+
 }

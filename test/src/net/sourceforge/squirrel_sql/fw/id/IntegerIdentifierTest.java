@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.id;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,32 +18,56 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import junit.framework.TestCase;
+import junit.framework.Assert;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class IntegerIdentifierTest extends TestCase {
+public class IntegerIdentifierTest extends BaseSQuirreLJUnit4TestCase
+{
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+	private IntegerIdentifier classUnderTest = null;
+	
+	private int value = 10;
+	
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new IntegerIdentifier(value);
+	}
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
 
-    public void testEquals() {
-        IntegerIdentifier uid1 = new IntegerIdentifier(1);
+	@Test
+	public void testEquals()
+	{
+		IntegerIdentifier uid1 = new IntegerIdentifier(1);
 
-        IntegerIdentifier uid2 = new IntegerIdentifier(1);
+		IntegerIdentifier uid2 = new IntegerIdentifier(1);
 
-        IntegerIdentifier uid3 = new IntegerIdentifier(2);
+		IntegerIdentifier uid3 = new IntegerIdentifier(2);
 
-        IntegerIdentifier uid4 = new IntegerIdentifier(1) {
-            private static final long serialVersionUID = 1L;
-        };
+		IntegerIdentifier uid4 = new IntegerIdentifier(1)
+		{
+			private static final long serialVersionUID = 1L;
+		};
 
-        new EqualsTester(uid1, uid2, uid3, uid4);
-    }
+		new EqualsTester(uid1, uid2, uid3, uid4);
+	}
 
+	@Test
+	public void testSetString()
+	{
+		Assert.assertEquals(value, classUnderTest.hashCode());
+		classUnderTest.setString("5");
+		Assert.assertEquals(5, classUnderTest.hashCode());
+	}
 }
