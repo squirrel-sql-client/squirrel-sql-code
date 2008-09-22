@@ -28,6 +28,8 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -116,6 +118,11 @@ public class DialectFactory {
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
                   StringManagerFactory.getStringManager(DialectFactory.class);
+    
+    private static IDialogUtils dialogUtils = new DialogUtils();
+    public static void setDialogUtils(IDialogUtils dialogUtils) {
+   	 DialectFactory.dialogUtils = dialogUtils;
+    }
     
     /** 
      * The keys to dbNameDialectMap are displayed to the user in the dialect
@@ -358,17 +365,19 @@ public class DialectFactory {
         return result;
     }
 
-    /**
-     * Shows the user a dialog explaining that we failed to detect the dialect
-     * of the destination database, and we are offering the user the 
-     * opportunity to pick one from our supported dialects list.  If the user
-     * cancels this dialog, null is returned to indicate that the user doesn't
-     * wish to continue the paste operation.
-     * 
-     * @param destSession
-     * @param sessionType TODO
-     * @return
-     */
+	/**
+	 * Shows the user a dialog explaining that we failed to detect the dialect of the destination database, and
+	 * we are offering the user the opportunity to pick one from our supported dialects list. If the user
+	 * cancels this dialog, null is returned to indicate that the user doesn't wish to continue the paste
+	 * operation.
+	 * 
+	 * @param parent
+	 *           the JFrame to use to display the dialog over.
+	 * @param sessionType
+	 *           the type of the session (source or destination). This is a left over from DBCopy Plugin and
+	 *           should be refactored to not need this at some point.
+	 * @return the dialect that the user picked.
+	 */
     private static HibernateDialect showDialectDialog(JFrame parent,
                                                       int sessionType) 
         throws UserCancelledOperationException 
@@ -387,14 +396,11 @@ public class DialectFactory {
         if (isPromptForDialect) {
             message = s_stringMgr.getString("autoDetectDisabledMessage", typeStr);
         } 
-        String dbName = 
-            (String)JOptionPane.showInputDialog(parent,
-                                                message,
-                                                chooserTitle,
-                                                JOptionPane.INFORMATION_MESSAGE, 
-                                                null, 
-                                                dbNames, 
-                                                dbNames[0]);
+        
+        String dbName =
+			dialogUtils.showInputDialog(parent, message, chooserTitle, JOptionPane.INFORMATION_MESSAGE, null,
+				dbNames, dbNames[0]);
+        
         if (dbName == null || "".equals(dbName)) {
             throw new UserCancelledOperationException();
         }
