@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
@@ -93,15 +94,15 @@ public class ObjectTypeExpander implements INodeExpander
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
-		String objFilter =  session.getProperties().getObjectFilter();
+      ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
-		// Add node for each object.
+      // Add node for each object.
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
 		{	
 			pstmt.setString(1, _objectType._objectTypeColumnData);
 			pstmt.setString(2, schemaName);
-			pstmt.setString(3, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
+			pstmt.setString(3, filterMatcher.getSqlLikeMatchString());
 			ResultSet rs = pstmt.executeQuery();
 			try
 			{
@@ -110,8 +111,12 @@ public class ObjectTypeExpander implements INodeExpander
 					IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
 											schemaName, rs.getString(1),
 											_objectType._childDboType, md);
-					childNodes.add(new ObjectTreeNode(session, dbinfo));
-				}
+
+               if(filterMatcher.matches(dbinfo.getSimpleName()))
+               {
+                  childNodes.add(new ObjectTreeNode(session, dbinfo));
+               }
+            }
 			}
 			finally
 			{

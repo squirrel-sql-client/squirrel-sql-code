@@ -28,6 +28,7 @@ import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -702,7 +703,7 @@ public class TableFrameController
 
    ITableInfo getTableInfo()
    {
-      return _session.getSchemaInfo().getITableInfos(_catalog, _schema, _tableName, new String[]{"TABLE"})[0];
+      return _session.getSchemaInfo().getITableInfos(_catalog, _schema, new ObjFilterMatcher(_tableName), new String[]{"TABLE"})[0];
    }
 
 

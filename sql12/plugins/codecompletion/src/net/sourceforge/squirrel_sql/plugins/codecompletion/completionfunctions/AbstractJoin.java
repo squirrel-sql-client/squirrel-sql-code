@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -89,12 +90,12 @@ public abstract class AbstractJoin extends CodeCompletionFunction
                {
                   catalog = _session.getSQLConnection().getCatalog();
                }
-               ITableInfo[] infos = _session.getSchemaInfo().getITableInfos(catalog, null, tables.get(0), new String[]{"TABLE"});
+               ITableInfo[] infos = _session.getSchemaInfo().getITableInfos(catalog, null, new ObjFilterMatcher(tables.get(0)), new String[]{"TABLE"});
 
                if(0 == infos.length)
                {
                   // Needed for example on PostgreSQL
-                  infos = _session.getSchemaInfo().getITableInfos(null, null, tables.get(0), new String[]{"TABLE"});
+                  infos = _session.getSchemaInfo().getITableInfos(null, null, new ObjFilterMatcher(tables.get(0)), new String[]{"TABLE"});
                }
 
                for (int i = 0; i < infos.length; i++)

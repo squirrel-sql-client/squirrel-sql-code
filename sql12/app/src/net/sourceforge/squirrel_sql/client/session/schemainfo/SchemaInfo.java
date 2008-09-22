@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -1014,16 +1015,16 @@ public class SchemaInfo
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String simpleName)
    {
-      return getITableInfos(catalog, schema, simpleName, null);
+      return getITableInfos(catalog, schema, new ObjFilterMatcher(simpleName), null);
    }
 
-   public ITableInfo[] getITableInfos(String catalog, String schema, String tableNamePattern, String[] types)
+   public ITableInfo[] getITableInfos(String catalog, String schema, ObjFilterMatcher filterMatcher, String[] types)
    {
       ArrayList<ITableInfo> ret = new ArrayList<ITableInfo>();
       if (null != types)
       {
          // By default null == types we return only cached types
-         ITableInfo[] tableInfosForUncachedTypes = getTableInfosForUncachedTypes(catalog, schema, tableNamePattern, types);
+         ITableInfo[] tableInfosForUncachedTypes = getTableInfosForUncachedTypes(catalog, schema, filterMatcher, types);
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
@@ -1049,21 +1050,27 @@ public class SchemaInfo
             continue;
          }
 
-         if(null != tableNamePattern && false == tableNamePattern.endsWith("%") && false == iTableInfo.getSimpleName().equals(tableNamePattern))
+         if(filterMatcher.matches(iTableInfo.getSimpleName()))
          {
-            continue;
+            ret.add(iTableInfo);
          }
 
-         if(null != tableNamePattern && tableNamePattern.endsWith("%"))
-         {
-            String tableNameBegin = tableNamePattern.substring(0, tableNamePattern.length() - 1);
-            if(false == iTableInfo.getSimpleName().startsWith(tableNameBegin))
-            {
-               continue;
-            }
-         }
 
-         ret.add(iTableInfo);
+//         if(null != tableNamePattern && false == tableNamePattern.endsWith("%") && false == iTableInfo.getSimpleName().equals(tableNamePattern))
+//         {
+//            continue;
+//         }
+//
+//         if(null != tableNamePattern && tableNamePattern.endsWith("%"))
+//         {
+//            String tableNameBegin = tableNamePattern.substring(0, tableNamePattern.length() - 1);
+//            if(false == iTableInfo.getSimpleName().startsWith(tableNameBegin))
+//            {
+//               continue;
+//            }
+//         }
+//
+//         ret.add(iTableInfo);
       }
 
       return ret.toArray(new ITableInfo[ret.size()]);
@@ -1083,7 +1090,7 @@ public class SchemaInfo
 
    }
 
-   private ITableInfo[] getTableInfosForUncachedTypes(String catalog, String schema, String tableNamePattern, String[] types)
+   private ITableInfo[] getTableInfosForUncachedTypes(String catalog, String schema, ObjFilterMatcher filterMatcher, String[] types)
    {
       try
       {
@@ -1112,7 +1119,7 @@ public class SchemaInfo
                      setProgress(tmp.toString(), 1);
                   }
                };
-               return _dmd.getTables(catalog, schema, tableNamePattern, buf, pcb);
+               return _dmd.getTables(catalog, schema, filterMatcher.getMetaDataMatchString(), buf, pcb);
             }
             finally
             {
@@ -1133,11 +1140,11 @@ public class SchemaInfo
 
    public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema)
    {
-      return getStoredProceduresInfos(catalog, schema, null);
+      return getStoredProceduresInfos(catalog, schema, new ObjFilterMatcher());
    }
 
 
-   public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema, String procNamePattern)
+   public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema, ObjFilterMatcher filterMatcher)
    {
       ArrayList<IProcedureInfo> ret = new ArrayList<IProcedureInfo>();
 
@@ -1156,19 +1163,10 @@ public class SchemaInfo
          {
             toAdd = false;
          }
-
-         if (null != procNamePattern && false == procNamePattern.endsWith("%") && false == iProcInfo.getSimpleName().equals(procNamePattern))
+         
+         if(false == filterMatcher.matches(iProcInfo.getSimpleName()))
          {
             toAdd = false;
-         }
-
-         if (null != procNamePattern && procNamePattern.endsWith("%"))
-         {
-            String tableNameBegin = procNamePattern.substring(0, procNamePattern.length() - 1);
-            if (false == iProcInfo.getSimpleName().startsWith(tableNameBegin))
-            {
-               toAdd = false;
-            }
          }
 
 

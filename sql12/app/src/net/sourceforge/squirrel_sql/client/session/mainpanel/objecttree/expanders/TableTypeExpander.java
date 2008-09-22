@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
@@ -70,11 +71,9 @@ public class TableTypeExpander implements INodeExpander
          final String tableType = parentDbinfo.getSimpleName();
 
 
-         final String objFilter = session.getProperties().getObjectFilter();
-         String tableNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
          String[] types = tableType != null ? new String[]{tableType} : null;
          session.getSchemaInfo().waitTillTablesLoaded();
-         final ITableInfo[] tables = session.getSchemaInfo().getITableInfos(catalogName, schemaName, tableNamePattern, types);
+         final ITableInfo[] tables = session.getSchemaInfo().getITableInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()), types);
 
          if (session.getProperties().getShowRowCount())
          {

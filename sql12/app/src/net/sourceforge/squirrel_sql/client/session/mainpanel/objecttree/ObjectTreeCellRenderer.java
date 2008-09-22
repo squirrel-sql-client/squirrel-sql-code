@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.*;
@@ -44,7 +45,11 @@ public class ObjectTreeCellRenderer extends DefaultTreeCellRenderer
 
    private void onPropertyChanged(PropertyChangeEvent evt)
    {
-      if(SessionProperties.IPropertyNames.OBJECT_FILTER.equals(evt.getPropertyName()))
+      if(
+         SessionProperties.IPropertyNames.OBJECT_FILTER_INCLUDE.equals(evt.getPropertyName()) ||
+         SessionProperties.IPropertyNames.OBJECT_FILTER_EXCLUDE.equals(evt.getPropertyName()) 
+
+         )
       {
          initFilter();
       }
@@ -52,10 +57,34 @@ public class ObjectTreeCellRenderer extends DefaultTreeCellRenderer
 
    private void initFilter()
    {
-      String filter = _session.getProperties().getObjectFilter();
-      if(null != filter && 0 < filter.trim().length())
+      String objectFilterInclude = _session.getProperties().getObjectFilterInclude();
+      String objectFilterExclude = _session.getProperties().getObjectFilterExclude();
+
+      String filterhint = "";
+
+      if(false == StringUtilities.isEmpty(objectFilterInclude))
       {
-         _filterHint = new JLabel("= " + filter);
+         filterhint += "Inc:" + objectFilterInclude;
+      }
+
+      if(false == StringUtilities.isEmpty(objectFilterExclude))
+      {
+         if(0 == filterhint.length())
+         {
+            filterhint += "Exc:" + objectFilterExclude;
+         }
+         else
+         {
+            filterhint += "; Exc:" + objectFilterExclude;
+         }
+      }
+
+
+
+      if(0 < filterhint.length())
+      {
+
+         _filterHint = new JLabel(filterhint);
          final SquirrelResources rsrc = _session.getApplication().getResources();
          final ImageIcon icon = rsrc.getIcon("Filter");
          _filterHint.setIcon(icon);
