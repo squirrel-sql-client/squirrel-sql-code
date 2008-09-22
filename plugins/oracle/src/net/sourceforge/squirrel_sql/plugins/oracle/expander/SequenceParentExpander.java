@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
@@ -76,24 +77,27 @@ public class SequenceParentExpander implements INodeExpander
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
-		final String objFilter =  session.getProperties().getObjectFilter();
+      ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
 
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
+      final PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
 		{
 			pstmt.setString(1, schemaName);
-			pstmt.setString(2, objFilter != null && objFilter.length() > 0 ? objFilter :"%"); 
+			pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
 			ResultSet rs = pstmt.executeQuery();
 			try
 			{
 				while (rs.next())
 				{
-					IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
+               IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
 												schemaName, rs.getString(1),
 												DatabaseObjectType.SEQUENCE, md);
-					childNodes.add(new ObjectTreeNode(session, si));
-				}
+               if(filterMatcher.matches(si.getSimpleName()))
+               {
+                  childNodes.add(new ObjectTreeNode(session, si));
+               }
+            }
 			}
 			finally
 			{

@@ -95,14 +95,23 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
                CLAZZ, "getSqlResultTabLimit", "setSqlResultTabLimit"),
             new PropertyDescriptor(IPropNames.LIMIT_SQL_RESULT_TABS,
                CLAZZ, "getLimitSqlResultTabs", "setLimitSqlResultTabs"),
-            new PropertyDescriptor(IPropNames.SCHEMA_PREFIX_LIST,
-               CLAZZ, "getSchemaPrefixList", "setSchemaPrefixList"),
             new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
                CLAZZ, "getLoadSchemasCatalogs", "setLoadSchemasCatalogs"),
             new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
                CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData"),
-            new PropertyDescriptor(IPropNames.OBJECT_FILTER,
-                CLAZZ, "getObjectFilter", "setObjectFilter")
+
+            new PropertyDescriptor(IPropNames.CATALOG_FILTER_INCLUDE,
+               CLAZZ, "getCatalogFilterInclude", "setCatalogFilterInclude"),
+            new PropertyDescriptor(IPropNames.SCHEMA_FILTER_INCLUDE,
+               CLAZZ, "getSchemaFilterInclude", "setSchemaFilterInclude"),
+            new PropertyDescriptor(IPropNames.OBJECT_FILTER_INCLUDE,
+                CLAZZ, "getObjectFilterInclude", "setObjectFilterInclude"),
+            new PropertyDescriptor(IPropNames.CATALOG_FILTER_EXCLUDE,
+               CLAZZ, "getCatalogFilterExclude", "setCatalogFilterExclude"),
+            new PropertyDescriptor(IPropNames.SCHEMA_FILTER_EXCLUDE,
+               CLAZZ, "getSchemaFilterExclude", "setSchemaFilterExclude"),
+            new PropertyDescriptor(IPropNames.OBJECT_FILTER_EXCLUDE,
+                CLAZZ, "getObjectFilterExclude", "setObjectFilterExclude")
          };
       }
    }

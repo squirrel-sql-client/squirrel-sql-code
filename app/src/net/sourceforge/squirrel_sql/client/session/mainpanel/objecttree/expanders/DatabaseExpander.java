@@ -25,6 +25,9 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaFilterMatcher;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.CatalogFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
@@ -189,25 +192,17 @@ public class DatabaseExpander implements INodeExpander
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
 			final String[] catalogs = md.getCatalogs();
-			final String[] catalogPrefixArray =
-						session.getProperties().getCatalogPrefixArray();
+
+         CatalogFilterMatcher filterMatcher = new CatalogFilterMatcher(session.getProperties());
+
 			for (int i = 0; i < catalogs.length; ++i)
 			{
-				boolean found = (catalogPrefixArray.length > 0) ? false : true;
-				for (int j = 0; j < catalogPrefixArray.length; ++j)
-				{
-					if (catalogs[i].startsWith(catalogPrefixArray[j]))
-					{
-						found = true;
-						break;
-					}
-				}
-				if (found)
-				{
-					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
-												catalogs[i],
-												DatabaseObjectType.CATALOG,
-												md);
+            IDatabaseObjectInfo dbo = new DatabaseObjectInfo(null, null,
+                                 catalogs[i],
+                                 DatabaseObjectType.CATALOG,
+                                 md);
+            if (filterMatcher.matches(dbo.getSimpleName()))
+            {
 					childNodes.add(new ObjectTreeNode(session, dbo));
 				}
 			}
@@ -226,25 +221,16 @@ public class DatabaseExpander implements INodeExpander
          session.getSchemaInfo().waitTillSchemasAndCatalogsLoaded();
          final String[] schemas = session.getSchemaInfo().getSchemas();
 
-         final String[] schemaPrefixArray =
-							session.getProperties().getSchemaPrefixArray();
+         SchemaFilterMatcher filterMatcher = new SchemaFilterMatcher(session.getProperties());
+
 			for (int i = 0; i < schemas.length; ++i)
 			{
-				boolean found = (schemaPrefixArray.length > 0) ? false : true;
-				for (int j = 0; j < schemaPrefixArray.length; ++j)
-				{
-					if (schemas[i].startsWith(schemaPrefixArray[j]))
-					{
-						found = true;
-						break;
-					}
-				}
-				if (found)
-				{
-					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-													schemas[i],
-													DatabaseObjectType.SCHEMA, md);
-					childNodes.add(new ObjectTreeNode(session, dbo));
+            IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
+                                    schemas[i],
+                                    DatabaseObjectType.SCHEMA, md);
+            if(filterMatcher.matches(dbo.getSimpleName()))
+            {
+               childNodes.add(new ObjectTreeNode(session, dbo));
 				}
 			}
 		}

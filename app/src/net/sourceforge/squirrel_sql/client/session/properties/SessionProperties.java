@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 /**
  * This class represents the settings for a session.
  *
@@ -51,19 +51,24 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
       String LOAD_COLUMNS_IN_BACKGROUND = "loadColumnsInBackground";
       String AUTO_COMMIT = "autoCommit";
-      String CATALOG_PREFIX_LIST = "catalogPrefixList";
+
+      String CATALOG_FILTER_INCLUDE = "catalogFilterInclude";
+      String SCHEMA_FILTER_INCLUDE = "schemaFilterInclude";
+      String OBJECT_FILTER_INCLUDE = "objectFilterInclude";
+      String CATALOG_FILTER_EXCLUDE = "catalogFilterExclude";
+      String SCHEMA_FILTER_EXCLUDE = "schemaFilterExclude";
+      String OBJECT_FILTER_EXCLUDE = "objectFilterExclude";
+
       String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
       String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
       String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
       String FONT_INFO = "fontInfo";
-      String OBJECT_FILTER = "objectFilter";
       String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
       String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
       String LOAD_SCHEMAS_CATALOGS = "loadCatalogsSchemas";
       String MAIN_TAB_PLACEMENT = "mainTabPlacement";
       String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
       String OBJECT_TAB_PLACEMENT = "objectTabPlacement";
-      String SCHEMA_PREFIX_LIST = "schemaPrefixList";
       String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
       String SHOW_RESULTS_META_DATA = "showResultsMetaData";
       String SHOW_ROW_COUNT = "showRowCount";
@@ -107,15 +112,22 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    private boolean _loadSchemasCatalogs = true;
 
+
+
    /** Limit schema objects to those in this comma-delimited list.	*/
-   private String _schemaPrefixList = "";
-
+   private String _schemaFilterInclude = "";
    /** Limit catalog objects to those in this comma-delimited list. */
-   private String _catalogPrefixList = "";
-
+   private String _catalogFilterInclude = "";
    /** Object Filter */
+   private String _objectFilterInclude = "";
+   /** Limit schema objects to those in this comma-delimited list.	*/
+   private String _schemaFilterExclude = "";
+   /** Limit catalog objects to those in this comma-delimited list. */
+   private String _catalogFilterExclude = "";
+   /** Object Filter */
+   private String _objectFilterExclude = "";
 
-   private String _objectFilter = "";
+
 
    /** <TT>true</TT> if sql result meta data should be shown. */
    private boolean _showResultsMetaData = true;
@@ -364,43 +376,6 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
    }
 
-   /**
-    * Force a re-build of the GUI when a user makes a table
-    * temporarily editable. The situation is that the current
-    * SessionProperties _tableContentsClassName is a read-only
-    * class (either table or text) and the user has requested that
-    * the information be made editable.
-    * This can only be requested in the ContentsTab
-    * and only when the sqlResults is read-only.
-    * We make the table editable by:
-    *      - setting the underlying data model (e.g. ContentsTab) so that it
-    *	      internally overrides the SessionProperties when getting the
-    *	      output class name, and
-    *      - telling the listeners that the SessionProperties have changed.
-    * This function is called by the underlying data model to tell the
-    * listeners to update the GUI. This is done by pretending that the
-    * SessionPropertied have just changed from being EDITABLE_TABLE to
-    * some read-only class. (We know that the current value of the
-    * _tableContentsClassName is a read-only class.)
-    *
-    * This is not a very nice way to cause the interface to be updated,
-    * but it was the simplest one that I could find. GWG 10/30/02
-    *
-    * CB TODO: (Move this elsewhere).
-    */
-//	public void forceTableContentsOutputClassNameChange()
-//	{
-//		// We need the old value and the new value to be different, or the
-//		// listeners will ignore our property change request (and not rebuild
-//		// the GUI). We know that the current output class is a read-only one
-//		// because this function is only called when the user requests that a
-//		// single table be made editable.
-//		final String oldValue = _tableContentsClassName;
-//		getPropertyChangeReporter().firePropertyChange(
-//			IPropertyNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
-//			IDataSetDestinations.EDITABLE_TABLE,
-//			oldValue);
-//	}
 
    public boolean getAutoCommit()
    {
@@ -847,78 +822,119 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
    }
 
+
+
+
+   /**
+    * Return comma-separated catalog of schema prefixes to display in the
+    * object tree.
+    */
+   public String getCatalogFilterInclude()
+   {
+      return _catalogFilterInclude;
+   }
+
    /**
     * Return comma-separated list of schema prefixes to display in the object
     * tree.
     */
-   public String getSchemaPrefixList()
+   public String getSchemaFilterInclude()
    {
-      return _schemaPrefixList;
+      return _schemaFilterInclude;
+   }
+
+   public String getObjectFilterInclude()
+   {
+      return _objectFilterInclude;
    }
 
    /**
-    * Return array of schema prefixes to display in the object tree.
+    * Set the comma-separated list of catalog prefixes to display in the object tree.
     */
-   public String[] getSchemaPrefixArray()
+   public synchronized void setCatalogFilterInclude(String data)
    {
-      return StringUtilities.split(_schemaPrefixList, ',', true);
+      final String oldValue = _catalogFilterInclude;
+      _catalogFilterInclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_INCLUDE,
+                                    oldValue, _catalogFilterInclude);
    }
 
    /**
     * Set the comma-separated list of schema prefixes to display in the object tree.
     */
-   public synchronized void setSchemaPrefixList(String data)
+   public synchronized void setSchemaFilterInclude(String data)
    {
-      final String oldValue = _schemaPrefixList;
-      _schemaPrefixList = data;
+      final String oldValue = _schemaFilterInclude;
+      _schemaFilterInclude = data;
       getPropertyChangeReporter().firePropertyChange(
-         IPropertyNames.SCHEMA_PREFIX_LIST,
+         IPropertyNames.SCHEMA_FILTER_INCLUDE,
          oldValue,
-         _schemaPrefixList);
+         _schemaFilterInclude);
+   }
+
+   public synchronized void setObjectFilterInclude(String data)
+   {
+      final String oldValue = _objectFilterInclude;
+      _objectFilterInclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.OBJECT_FILTER_INCLUDE, oldValue, _objectFilterInclude);
    }
 
    /**
     * Return comma-separated catalog of schema prefixes to display in the
     * object tree.
     */
-   public String getCatalogPrefixList()
+   public String getCatalogFilterExclude()
    {
-      return _catalogPrefixList;
-   }
-
-   public String getObjectFilter()
-   {
-      return _objectFilter;
+      return _catalogFilterExclude;
    }
 
    /**
-    * Return array of catalog prefixes to display in the object tree.
+    * Return comma-separated list of schema prefixes to display in the object
+    * tree.
     */
-   public String[] getCatalogPrefixArray()
+   public String getSchemaFilterExclude()
    {
-      return StringUtilities.split(_catalogPrefixList, ',', true);
+      return _schemaFilterExclude;
+   }
+
+   public String getObjectFilterExclude()
+   {
+      return _objectFilterExclude;
    }
 
    /**
     * Set the comma-separated list of catalog prefixes to display in the object tree.
     */
-   public synchronized void setCatalogPrefixList(String data)
+   public synchronized void setCatalogFilterExclude(String data)
    {
-      final String oldValue = _catalogPrefixList;
-      _catalogPrefixList = data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_PREFIX_LIST,
-                                    oldValue, _catalogPrefixList);
+      final String oldValue = _catalogFilterExclude;
+      _catalogFilterExclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_FILTER_EXCLUDE,
+                                    oldValue, _catalogFilterExclude);
    }
 
    /**
-    * Set the objectFilter
+    * Set the comma-separated list of schema prefixes to display in the object tree.
     */
-
-   public synchronized void setObjectFilter(String data) {
-      final String oldValue = _objectFilter;
-      _objectFilter = data;
-      getPropertyChangeReporter().firePropertyChange(IPropertyNames.OBJECT_FILTER, oldValue, _objectFilter);
+   public synchronized void setSchemaFilterExclude(String data)
+   {
+      final String oldValue = _schemaFilterExclude;
+      _schemaFilterExclude = data;
+      getPropertyChangeReporter().firePropertyChange(
+         IPropertyNames.SCHEMA_FILTER_EXCLUDE,
+         oldValue,
+         _schemaFilterExclude);
    }
+
+   public synchronized void setObjectFilterExclude(String data)
+   {
+      final String oldValue = _objectFilterExclude;
+      _objectFilterExclude = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.OBJECT_FILTER_EXCLUDE, oldValue, _objectFilterExclude);
+   }
+
+
+
 
    /**
     * Return <CODE>true</CODE> if schemas and catalogs should be loaded into

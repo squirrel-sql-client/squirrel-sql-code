@@ -46,6 +46,7 @@ import javax.swing.table.DefaultTableModel;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -406,22 +407,22 @@ public class GenerateSqlDialog extends JDialog {
             int i;
 
             /* add the tables. */
-            ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog,null,null,new String[] { "TABLE" });
+            ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog,null,new ObjFilterMatcher(),new String[] { "TABLE" });
             for (i = 0; i < tables.length; i++)
                 model.addElement(tables[i]);
             
             /* add the views. */
-            ITableInfo[] views = _session.getSchemaInfo().getITableInfos(catalog,null,null,new String[] { "VIEW" });
+            ITableInfo[] views = _session.getSchemaInfo().getITableInfos(catalog,null,new ObjFilterMatcher(),new String[] { "VIEW" });
             for (i = 0; i < views.length; i++)
                 model.addElement(views[i]);
             
             /* add the procedures. */
             //IProcedureInfo[] procs = metaData.getProcedures(catalog,null,null);
-            IProcedureInfo[] procs = _session.getSchemaInfo().getStoredProceduresInfos(catalog,null,null);
+            IProcedureInfo[] procs = _session.getSchemaInfo().getStoredProceduresInfos(catalog,null,new ObjFilterMatcher());
             for (i = 0; i < procs.length; i++)
                 if (!procs[i].getSimpleName().startsWith("dt_"))
                     model.addElement(procs[i]);
-            
+
             /* add the UDTs. */
             IUDTInfo[] udts = metaData.getUDTs(catalog,null,null,null);
             for (i = 0; i < udts.length; i++)

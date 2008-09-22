@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -56,11 +57,7 @@ public class PackageExpander implements INodeExpander
 										String schemaName)
 	{
 		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
-		IProcedureInfo[] procs = null;
-		final String objFilter = session.getProperties().getObjectFilter();
-      //procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
-      String procNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
-      procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, procNamePattern);
+      IProcedureInfo[] procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()));
 		for (int i = 0; i < procs.length; ++i)
 		{
 			childNodes.add(new ObjectTreeNode(session, procs[i]));

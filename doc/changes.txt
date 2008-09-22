@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Object tree filtering:
+   Multiple (comma separated) Object tree filters can be defined. Filter conditions can be excluding oder including.
+   Better support for placeholders "%" and "_".
+   See "Session Properties"/"New Session Properties" dialogs --> Tab "Object Tree".
+
 Graph Plugin:
  - Qualified table names can now be displayed. Use the right mouse menu on graph background.
 

@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -168,9 +167,12 @@ public class SessionObjectTreePropertiesPanel
 		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
 		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
-		private JTextField _schemaPrefixField = new JTextField(20);
-		private JTextField _catalogPrefixField = new JTextField(20);
-		private JTextField _objectFilterField = new JTextField(20);
+      private JTextField _catalogFilterInclude = new JTextField();
+      private JTextField _catalogFilterExclude = new JTextField();
+		private JTextField _schemaFilterInclude = new JTextField();
+		private JTextField _schemaFilterExclude = new JTextField();
+		private JTextField _objectFilterInclude = new JTextField();
+		private JTextField _objectFilterExclude = new JTextField();
 		// i18n[sessionPropertiesPanel.loadSchemasCatalogs=Load Schemas/Catalogs into object tree]
 		private JCheckBox _loadSchemasCatalogsChk = new JCheckBox(s_stringMgr.getString("sessionPropertiesPanel.loadSchemasCatalogs"));
 
@@ -191,11 +193,13 @@ public class SessionObjectTreePropertiesPanel
 			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
 			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
 			_showRowCountChk.setSelected(props.getShowRowCount());
-			_schemaPrefixField.setText(props.getSchemaPrefixList());
-			_catalogPrefixField.setText(props.getCatalogPrefixList());
-			if (props.getObjectFilter() != null)
-				_objectFilterField.setText(props.getObjectFilter());
 			_loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
+         _catalogFilterInclude.setText(props.getCatalogFilterInclude());
+         _schemaFilterInclude.setText(props.getSchemaFilterInclude());
+         _objectFilterInclude.setText(props.getObjectFilterInclude());
+         _catalogFilterExclude.setText(props.getCatalogFilterExclude());
+         _schemaFilterExclude.setText(props.getSchemaFilterExclude());
+         _objectFilterExclude.setText(props.getObjectFilterExclude());
 
 			updateControlStatus();
 		}
@@ -204,43 +208,54 @@ public class SessionObjectTreePropertiesPanel
 		{
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
-			props.setShowRowCount(_showRowCountChk.isSelected());
-            // detect whether or not the object tree needs refreshing by comparing
-            // old value to new and see if they changed.
-            final String oldSchemaPrefixList = props.getSchemaPrefixList();
-            final String oldCatalogPrefixList = props.getCatalogPrefixList();
-            final String oldObjectFilter = props.getObjectFilter();
-            final boolean oldLoadSchemasCatalogs = 
-                props.getLoadSchemasCatalogs();
-            final String newSchemaPrefixList = _schemaPrefixField.getText();
-            final String newCatalogPrefixList = _catalogPrefixField.getText();
-            final String newObjectFilter = _objectFilterField.getText();
-            final boolean newLoadSchemasCatalogs = 
-                _loadSchemasCatalogsChk.isSelected();
-			props.setSchemaPrefixList(newSchemaPrefixList);
-			props.setCatalogPrefixList(newCatalogPrefixList);
-			props.setObjectFilter(newObjectFilter);
-			props.setLoadSchemasCatalogs(newLoadSchemasCatalogs);
-            _objectTreeRefreshNeeded = false;
-            if (!StringUtilities.areStringsEqual(oldSchemaPrefixList, 
-                                                 newSchemaPrefixList)) 
-            {
-                _objectTreeRefreshNeeded = true;
-            }
-            if (!StringUtilities.areStringsEqual(oldCatalogPrefixList,
-                                                 newCatalogPrefixList)) 
-            {
-                _objectTreeRefreshNeeded = true;
-            }
-            if (!StringUtilities.areStringsEqual(oldObjectFilter,
-                                                 newObjectFilter)) 
-            {
-                _objectTreeRefreshNeeded = true;
-            }
-            if (oldLoadSchemasCatalogs != newLoadSchemasCatalogs) {
-                _objectTreeRefreshNeeded = true;
-            }
-		}
+
+         final boolean oldShowRowCount = props.getShowRowCount();
+         final boolean newShowRowCount = _showRowCountChk.isSelected();
+         props.setShowRowCount(newShowRowCount);
+         // detect whether or not the object tree needs refreshing by comparing
+         // old value to new and see if they changed.
+
+         final boolean oldLoadSchemasCatalogs = props.getLoadSchemasCatalogs();
+         final boolean newLoadSchemasCatalogs = _loadSchemasCatalogsChk.isSelected();
+         props.setLoadSchemasCatalogs(newLoadSchemasCatalogs);
+
+         final String oldSchemaFilterInclude = props.getSchemaFilterInclude();
+         final String oldCatalogFilterInclude = props.getCatalogFilterInclude();
+         final String oldObjectFilterInclude = props.getObjectFilterInclude();
+         final String oldSchemaFilterExclude = props.getSchemaFilterInclude();
+         final String oldCatalogFilterExclude = props.getCatalogFilterInclude();
+         final String oldObjectFilterExclude = props.getObjectFilterInclude();
+         final String newSchemaFilterInclude = _schemaFilterInclude.getText();
+         final String newCatalogFilterInclude = _catalogFilterInclude.getText();
+         final String newObjectFilterInclude = _objectFilterInclude.getText();
+         final String newSchemaFilterExclude = _schemaFilterExclude.getText();
+         final String newCatalogFilterExclude = _catalogFilterExclude.getText();
+         final String newObjectFilterExclude = _objectFilterExclude.getText();
+         props.setCatalogFilterInclude(newCatalogFilterInclude);
+         props.setSchemaFilterInclude(newSchemaFilterInclude);
+         props.setObjectFilterInclude(newObjectFilterInclude);
+         props.setCatalogFilterExclude(newCatalogFilterExclude);
+         props.setSchemaFilterExclude(newSchemaFilterExclude);
+         props.setObjectFilterExclude(newObjectFilterExclude);
+
+
+         _objectTreeRefreshNeeded = false;
+         if (
+               oldLoadSchemasCatalogs != newLoadSchemasCatalogs ||
+               oldShowRowCount != newShowRowCount ||
+
+              !StringUtilities.areStringsEqual(oldCatalogFilterInclude, newCatalogFilterInclude) ||
+              !StringUtilities.areStringsEqual(oldSchemaFilterInclude, newSchemaFilterInclude) ||
+              !StringUtilities.areStringsEqual(oldObjectFilterInclude, newObjectFilterInclude) ||
+
+              !StringUtilities.areStringsEqual(oldCatalogFilterExclude, newCatalogFilterExclude) ||
+              !StringUtilities.areStringsEqual(oldSchemaFilterExclude, newSchemaFilterExclude) ||
+              !StringUtilities.areStringsEqual(oldObjectFilterExclude, newObjectFilterExclude)
+            )
+         {
+            _objectTreeRefreshNeeded = true;
+         }
+      }
 
 		private void updateControlStatus()
 		{
@@ -250,17 +265,18 @@ public class SessionObjectTreePropertiesPanel
 		private void createGUI()
 		{
 			setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4), 0,0);
 			add(createObjectTreePanel(), gbc);
 
-			++gbc.gridy;
+         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4), 0,0);
 			add(createFilterPanel(), gbc);
+
+
+         gbc = new GridBagConstraints(0,2,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4), 0,0);
+			add(new JPanel(), gbc);
 		}
 
 		private JPanel createObjectTreePanel()
@@ -313,32 +329,69 @@ public class SessionObjectTreePropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-         gbc.insets = new Insets(4, 4, 0, 4);
-			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT), gbc);
-         ++gbc.gridy;
-
-         // i18n[SessionObjectTreePropertiesPanel.schemaPrefixNote=(Note: This property only influences Schema display in the Object tree. To configure Schema loading use Alias properties.))
-         gbc.insets = new Insets(0, 4, 4, 4);
-         pnl.add(new MultipleLineLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.schemaPrefixNote")), gbc);
-         ++gbc.gridy;
-
          gbc.insets = new Insets(4, 4, 4, 4);
-			pnl.add(_schemaPrefixField, gbc);
+         pnl.add(new MultipleLineLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.filterNote")), gbc);
 
          ++gbc.gridy;
-			pnl.add(new JLabel(i18n.CATALOG_PREFIX, SwingConstants.RIGHT), gbc);
-			++gbc.gridy;
-			pnl.add(_catalogPrefixField, gbc);
-			++gbc.gridy;
-			// i18n[sessionPropertiesPanel.objectFilterMeans=Object Filter:\n"%" means match any substring of 0 or more characters\n"_" means match any one character]
-			pnl.add(new MultipleLineLabel(s_stringMgr.getString("sessionPropertiesPanel.objectFilterMeans")), gbc);
-			++gbc.gridy;
-			pnl.add(_objectFilterField, gbc);
+         pnl.add(createIncludeExcludePanel(), gbc);
 
 			return pnl;
 		}
 
-		/**
+      private JPanel createIncludeExcludePanel()
+      {
+         JPanel pnl = new JPanel(new GridBagLayout());
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.catalogInclude")), gbc);
+
+         gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.catalogExclude")), gbc);
+
+         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_catalogFilterInclude, gbc);
+
+         gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_catalogFilterExclude, gbc);
+
+
+         gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.schemaInclude")), gbc);
+
+         gbc = new GridBagConstraints(1,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.schemaExclude")), gbc);
+
+         gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_schemaFilterInclude, gbc);
+
+         gbc = new GridBagConstraints(1,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_schemaFilterExclude, gbc);
+
+
+         gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectInclude")), gbc);
+
+         gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,0,4),0,0);
+         pnl.add(new JLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.objectExclude")), gbc);
+
+         gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_objectFilterInclude, gbc);
+
+         gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         pnl.add(_objectFilterExclude, gbc);
+
+
+         gbc = new GridBagConstraints(0,6,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         pnl.add(new JPanel(), gbc);
+         gbc = new GridBagConstraints(1,6,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         pnl.add(new JPanel(), gbc);
+
+         return pnl;
+
+      }
+
+      /**
 		 * This class will update the status of the GUI controls as the user
 		 * makes changes.
 		 */
