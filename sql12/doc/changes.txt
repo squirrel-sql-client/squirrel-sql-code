@@ -6,6 +6,9 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+Import from file to table feature now warns and asks the user to confirm that it is ok to truncate the 
+existing table data (The import feature doesn't yet support merging new data with existing data).
+
 2102894: Missing Scale Placeholder in Sql server dialect.  This causes script generation and dbcopy targeting 
 MS-SQL server to produce decimal columns without the scale attribute (that is, decimal(7) instead of 
 decimal(7,5)).

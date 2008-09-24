@@ -63,7 +63,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.02 (SQuirreL v2.6.6)";
+		return "0.02 (SQuirreL v2.6.8)";
 	}
 
 	/**
