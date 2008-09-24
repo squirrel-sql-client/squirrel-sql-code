@@ -17,6 +17,7 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 
 public class FileManager
@@ -251,12 +252,13 @@ public class FileManager
          prefs.setFilePreviousDir(file.getParent());
 
          FileOutputStream fos = null;
+         
          try
          {
             fos = new FileOutputStream(file);
 
-            String sScript = _sqlPanelAPI.getEntireSQLScript();
-
+            String sScript = getEntireSQLScriptWithPlatformEolChar();            
+            
             fos.write(sScript.getBytes());
             setFile(file);
             // i18n[FileManager.savedfile=Saved to {0}]
@@ -285,6 +287,24 @@ public class FileManager
       return true;
    }
 
+   /**
+    * Bug: 2119937 (Windows EOL chars (CRLF) are converted to Linux EOL (LF))
+    * Internally, SQuirreL prefers to represent EOL as "\n".  This is fine for Unix, but in Windows, EOL is 
+    * "\r\n".  So, if the platform-specific EOL isn't "\n", this method will replace all "\n", with "\r\n".
+    * Other editors on Windows will then properly display the EOL characters.
+    *  
+    * @return a String that represents the SQL Script being saved with adjusted (if necessary) EOL characters.
+    */
+   private String getEntireSQLScriptWithPlatformEolChar() {
+      String platformEolStr = StringUtilities.getEolStr();
+
+      String result  = _sqlPanelAPI.getEntireSQLScript();
+      if (result != null && !"".equals(result) && !platformEolStr.equals("\n")) {
+      	result = result.replaceAll("\\n", platformEolStr);
+      }
+      return result;
+   }   
+   
    private void setFile(File file)
    {
       _toSaveTo = file;
