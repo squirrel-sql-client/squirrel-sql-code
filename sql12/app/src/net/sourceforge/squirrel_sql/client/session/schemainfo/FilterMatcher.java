@@ -1,9 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-
-import java.util.regex.Pattern;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class FilterMatcher
 {
