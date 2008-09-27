@@ -59,10 +59,16 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
         StringManagerFactory.getStringManager(FileEditorDropTargetListener.class); 
     
     private static interface i18n {
+   	 
         //i18n[FileEditorDropTargetListener.oneFileDropMessage=Only one file 
         //may be dropped onto the editor at a time.]
         String ONE_FILE_DROP_MESSAGE = 
             s_stringMgr.getString("FileEditorDropTargetListener.oneFileDropMessage");
+        
+        //i18n[FileEditorDropTargetListener.internalErrorMessage=Internal error occurred. 
+        //See log for details]
+        String INTERNAL_ERROR_MESSAGE = 
+      	  s_stringMgr.getString("FileEditorDropTargetListener.internalErrorMessage");
     }
     
     /** the session we are listening for drops into */
@@ -75,7 +81,6 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
     /**
      * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
      */
-    @SuppressWarnings("unchecked")
     public void drop(DropTargetDropEvent dtde) {
         try {
             DropTargetContext context = dtde.getDropTargetContext();
@@ -120,7 +125,8 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
                         + "text/uri-list data flavor");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            s_log.error("handleUriListFlavor: unexpected excption - "+e.getMessage(), e);
+            
         }                
         return result;
     }
@@ -140,7 +146,6 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
     {
         File result = null;
         
-        @SuppressWarnings("unchecked")
         String transferData = 
             (String)t.getTransferData(DataFlavor.stringFlavor);
         
@@ -195,7 +200,10 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
         List<File> transferData = 
             (List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
         
-        if (transferData.size() > 1) {
+        if (transferData == null || transferData.size() == 0) {
+      	  s_log.error("Transferable.getTransferData returned a null/empty list");
+      	  _session.showErrorMessage(i18n.INTERNAL_ERROR_MESSAGE);
+        } else if (transferData.size() > 1) {
             _session.showErrorMessage(i18n.ONE_FILE_DROP_MESSAGE);
         } else {
             result = transferData.get(0);
