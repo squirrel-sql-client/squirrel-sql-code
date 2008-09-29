@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -250,6 +251,13 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       s_log.error(t);
       _con = null;
       _hqlPanelController.setConnection(null);
+
+      if(Utilities.getDeepestThrowable(t) instanceof StackOverflowError)
+      {
+         String warnMessage = s_stringMgr.getString("hibernate.stackOverFlowMessage");
+         _session.showWarningMessage(warnMessage);
+         s_log.warn(warnMessage);
+      }
 
    }
 

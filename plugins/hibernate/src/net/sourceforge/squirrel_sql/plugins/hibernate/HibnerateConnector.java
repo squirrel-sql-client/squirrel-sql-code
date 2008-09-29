@@ -24,7 +24,7 @@ public class HibnerateConnector
       {
          public void run()
          {
-            doConnect(cfg, session);
+            doConnect(cfg);
          }
       };
 
@@ -42,7 +42,7 @@ public class HibnerateConnector
       });
    }
 
-   private void doConnect(HibernateConfiguration cfg, ISession session)
+   private void doConnect(HibernateConfiguration cfg)
    {
       try
       {
