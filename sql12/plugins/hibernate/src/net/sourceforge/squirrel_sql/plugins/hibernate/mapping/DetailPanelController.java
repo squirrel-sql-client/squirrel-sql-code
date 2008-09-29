@@ -58,6 +58,11 @@ public class DetailPanelController
             DetailAttribute[] attributes = DetailAttribute.createDetailtAttributes(mci.getAttributes());
             _detailPanel.tblDetails.show(new DetailAttributeDataSet(attributes));
          }
+         else if(userObject instanceof PropertyInfoTreeWrapper)
+         {
+            PropertyInfoTreeWrapper propertyInfoTreeWrapper = (PropertyInfoTreeWrapper) userObject;
+            _detailPanel.tblDetails.show(new HashtableDataSet(propertyInfoTreeWrapper.getMappingProperties()));
+         }
       }
       catch (DataSetException e)
       {
