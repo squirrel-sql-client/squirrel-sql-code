@@ -62,12 +62,7 @@ public class BestRowIdentifierAdapterBeanInfo
 				sub[5].setDisplayName(s_stringMgr.getString("BestRowIdentifierAdapterBeanInfo.scope"));
 				sub[6] = new PropertyDescriptor(PSEUDO, clazz, "getPseudoColumn", null);
 				sub[6].setDisplayName(s_stringMgr.getString("BestRowIdentifierAdapterBeanInfo.pseudo"));
-//				PropertyDescriptor[] base = super.getPropertyDescriptors();
 				PropertyDescriptor[] base = new PropertyDescriptor[0];
-				if (base == null)
-				{
-					base = new PropertyDescriptor[0];
-				}
 				s_dscrs = new PropertyDescriptor[base.length + sub.length];
 				System.arraycopy(base, 0, s_dscrs, 0, base.length);
 				System.arraycopy(sub, 0, s_dscrs, base.length, sub.length);
