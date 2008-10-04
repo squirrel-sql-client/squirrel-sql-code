@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.builders;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -27,15 +28,14 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 
 class SquirrelTabbedPane extends JTabbedPane
 {
+	private static final long serialVersionUID = 3663370280049413647L;
+
 	private SquirrelPreferences _prefs;
 
 	private PropsListener _prefsListener;
-   //private IApplication _app;
-   //private static boolean _jdk14SrollWarningWasIssued = false;
 
-   /** Convenient way to refer to Application Preferences property names. */
-	private interface IAppPrefPropertynames
-							extends SquirrelPreferences.IPropertyNames
+	/** Convenient way to refer to Application Preferences property names. */
+	private interface IAppPrefPropertynames extends SquirrelPreferences.IPropertyNames
 	{
 		// Empty block.
 	}
@@ -44,20 +44,16 @@ class SquirrelTabbedPane extends JTabbedPane
 	{
 		super();
 
-		if (prefs == null)
-		{
-			throw new IllegalArgumentException("SquirrelPreferences == null");
-		}
+		if (prefs == null) { throw new IllegalArgumentException("SquirrelPreferences == null"); }
 		_prefs = prefs;
-      //_app = app;
 
-      int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
-      setTabLayoutPolicy(tabLayoutPolicy);
+		int tabLayoutPolicy =
+			_prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+		setTabLayoutPolicy(tabLayoutPolicy);
 	}
 
 	/**
-	 * Component is being added to its parent so add a property change
-	 * listener to application perferences.
+	 * Component is being added to its parent so add a property change listener to application perferences.
 	 */
 	public void addNotify()
 	{
@@ -68,8 +64,8 @@ class SquirrelTabbedPane extends JTabbedPane
 	}
 
 	/**
-	 * Component is being removed from its parent so remove the property change
-	 * listener from the application perferences.
+	 * Component is being removed from its parent so remove the property change listener from the application
+	 * preferences.
 	 */
 	public void removeNotify()
 	{
@@ -85,8 +81,10 @@ class SquirrelTabbedPane extends JTabbedPane
 	{
 		if (propName == null || propName.equals(IAppPrefPropertynames.SCROLLABLE_TABBED_PANES))
 		{
-         int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
-         setTabLayoutPolicy(tabLayoutPolicy);
+			int tabLayoutPolicy =
+				_prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT
+					: JTabbedPane.WRAP_TAB_LAYOUT;
+			setTabLayoutPolicy(tabLayoutPolicy);
 		}
 	}
 
