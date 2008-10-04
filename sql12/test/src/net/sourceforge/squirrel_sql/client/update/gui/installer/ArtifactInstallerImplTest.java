@@ -20,7 +20,9 @@ package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -155,16 +158,16 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	private FileWrapper mockDownloadReleaseFile = helper.createMock("mockDownloadReleaseFile", FileWrapper.class);
 	
 	private InstallFileOperationInfo mockInstallSquirrelSqlJarOperationInfo =
-		helper.createMock(InstallFileOperationInfo.class);
+		helper.createMock("mockInstallSquirrelSqlJarOperationInfo", InstallFileOperationInfo.class);
 
 	private InstallFileOperationInfo mockInstallFrameworkJarOperationInfo =
-		helper.createMock(InstallFileOperationInfo.class);
+		helper.createMock("mockInstallSquirrelSqlJarOperationInfo", InstallFileOperationInfo.class);
 
 	private InstallFileOperationInfo mockInstallSpringJarOperationInfo =
-		helper.createMock(InstallFileOperationInfo.class);
+		helper.createMock("mockInstallSquirrelSqlJarOperationInfo", InstallFileOperationInfo.class);
 
 	private InstallFileOperationInfo mockInstallDbCopyZipOperationInfo = 
-		helper.createMock(InstallFileOperationInfo.class);
+		helper.createMock("mockInstallSquirrelSqlJarOperationInfo", InstallFileOperationInfo.class);
 
 	private InstallFileOperationInfo mockInstallSquirrelSqlEsOperationInfo = 
 		helper.createMock(InstallFileOperationInfo.class);
@@ -415,6 +418,20 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 		helper.verifyAll();
 	}
 	
+	@Test 
+	public final void testGetSetChangeListFile() {
+		
+		FileWrapper mockChangeListFile = helper.createMock(FileWrapper.class); 
+		
+		helper.replayAll();
+		FileWrapper result = implUnderTest.getChangeListFile();
+		assertNull(result);
+		implUnderTest.setChangeListFile(mockChangeListFile);
+		result = implUnderTest.getChangeListFile();
+		Assert.assertNotNull(result);
+		helper.verifyAll();
+	}
+	
 	@Test
 	public final void testInstallFiles() throws IOException
 	{
@@ -539,6 +556,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockInstallFileOperationInfoFactory.create(mockDownloadsSquirrelSqlEsJarFile, mockSquirreLLibDirFile)).andReturn(
 			mockInstallSquirrelSqlEsOperationInfo);
 		mockInstallSquirrelSqlEsOperationInfo.setPlugin(false);
+
 		
 		helper.replayAll();
 		implUnderTest.setUpdateUtil(mockUpdateUtil);
@@ -546,6 +564,40 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 		implUnderTest.installFiles();
 		helper.verifyAll();		
 		
+		
+	}
+	
+	@Test
+	public final void testInstallNewReleaseFile_deletefailed_copyfailed() throws Exception {
+
+		
+		List<ArtifactStatus> changeList = getSquirrelSqlEsJarChangeList();
+		expect(mockChangeListBean.getChanges()).andReturn(changeList);
+		
+		FileWrapper mockChangeListFile = helper.createMock("mockChangeListFile", FileWrapper.class);
+		mockUpdateUtil.copyFile(mockChangeListFile, mockBackupRootDirFile);
+		expect(mockUpdateUtil.deleteFile(mockChangeListFile)).andReturn(true);
+		expect(mockUpdateUtil.getLocalReleaseFile()).andThrow(
+			new FileNotFoundException("simulate local release doesn't exist"));
+
+				
+		mockUpdateUtil.copyFile(mockDownloadReleaseFile, mockUpdateRootDirFile);		
+		expectLastCall().andThrow(new IOException("simulate install new release file failed"));
+		
+		setupInstallEventsAndListener();
+		expect(mockUpdateUtil.getFile(mockDownloadsI18nDirFile, SQUIRREL_SQL_ES_JAR_FILENAME)).andReturn(
+			mockDownloadsSquirrelSqlEsJarFile);
+		expect(mockUpdateUtil.deleteFile(mockInstalledSquirrelSqlEsJarFile)).andReturn(true);
+		setupFileCopyOperationInfo(mockDownloadsSquirrelSqlEsJarFile, mockSquirreLLibDirFile,
+			mockInstallSquirrelSqlEsOperationInfo, false);
+
+		
+		helper.replayAll();
+		implUnderTest.setUpdateUtil(mockUpdateUtil);
+		implUnderTest.setChangeList(mockChangeListBean);
+		implUnderTest.setChangeListFile(mockChangeListFile);
+		implUnderTest.installFiles();
+		helper.verifyAll();		
 		
 	}
 	
