@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -254,25 +256,27 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+      initCodeCompletionSqlEditor(sqlPaneAPI, session);
 
-		initCodeCompletion(sqlPaneAPI, session);
+      initCodeCompletionObjectTreeFind(session, session.getSessionSheet().getObjectTreePanel());
 
-		PluginSessionCallback ret = new PluginSessionCallback()
+      PluginSessionCallback ret = new PluginSessionCallback()
 		{
 			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
 			{
-            initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
+            initCodeCompletionSqlEditor(sqlInternalFrame.getSQLPanelAPI(), sess);
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
+            initCodeCompletionObjectTreeFind(sess, objectTreeInternalFrame.getObjectTreePanel());
 			}
 		};
 
 		return ret;
 	}
 
-	private void initCodeCompletion(final ISQLPanelAPI sqlPaneAPI, final ISession session)
+	private void initCodeCompletionSqlEditor(final ISQLPanelAPI sqlPaneAPI, final ISession session)
 	{
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
@@ -285,7 +289,8 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
                   CodeCompletionPlugin.this,
                   sqlPaneAPI.getSQLEntryPanel(),
                   session,
-                  c);
+                  c,
+                  null);
 
             JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
 
@@ -295,6 +300,32 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
             comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
             sqlPaneAPI.addToToolsPopUp("completecode", cca);
+         }
+
+      });
+   }
+
+	private void initCodeCompletionObjectTreeFind(final ISession session, final ObjectTreePanel objectTreePanel)
+	{
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            ISQLEntryPanel findEntryPanel = objectTreePanel.getFindController().getFindEntryPanel();
+
+            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
+
+            CompleteCodeAction cca =
+               new CompleteCodeAction(session.getApplication(),
+                  CodeCompletionPlugin.this,
+                  findEntryPanel,
+                  session,
+                  c,
+                  objectTreePanel);
+
+
+            JComponent comp = findEntryPanel.getTextComponent();
+            comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
          }
 
       });

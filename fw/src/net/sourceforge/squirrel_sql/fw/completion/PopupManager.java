@@ -16,24 +16,14 @@
 package net.sourceforge.squirrel_sql.fw.completion;
 
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.text.JTextComponent;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
 import javax.swing.JViewport;
-import javax.swing.text.BadLocationException;
 
 
 /**
@@ -45,9 +35,8 @@ import javax.swing.text.BadLocationException;
  */
 public class PopupManager
 {
+   private JComponent _popupParent = null;
 
-	private JComponent popup = null;
-	private JTextComponent textComponent;
 
 	/** Place popup always above cursor */
 	public static final Placement Above = new Placement("Above"); //NOI18N
@@ -67,59 +56,30 @@ public class PopupManager
 	 then popup will be placed above cursor. */
 	public static final Placement BelowPreferred = new Placement("BelowPreferred"); //NOI18N
 
-	private KeyListener keyListener;
+   public PopupManager(JComponent popupParent)
+   {
+      _popupParent = popupParent;
+   }
 
-	private TextComponentListener componentListener;
-
-	/** Creates a new instance of PopupManager */
-	public PopupManager(JTextComponent textComponent)
-	{
-		this.textComponent = textComponent;
-		keyListener = new PopupKeyListener();
-		textComponent.addKeyListener(keyListener);
-		componentListener = new TextComponentListener();
-		textComponent.addComponentListener(componentListener);
-	}
-
-	/** Install popup component to textComponent root pane
-	 *  based on caret coordinates with the <CODE>Largest</CODE> placement.
-	 *  @param popup popup component to be installed into
-	 *  root pane of the text component.
-	 */
-	public void install(JComponent popup)
-	{
-		int caretPos = textComponent.getCaret().getDot();
-		try
-		{
-			Rectangle caretBounds = textComponent.modelToView(caretPos);
-			install(popup, caretBounds, Largest);
-		}
-		catch (BadLocationException e)
-		{
-			// do not install if the caret position is invalid
-		}
-	}
-
-	public void install(
+   public void install(
 		JComponent popup, Rectangle cursorBounds, Placement placement)
 	{
-		this.popup = popup;
 
 		// Update the bounds of the popup
-		Rectangle bounds = computeBounds(this.popup, textComponent,
+		Rectangle bounds = computeBounds(popup, _popupParent,
 			cursorBounds, placement);
 
 		if (bounds != null)
 		{
 			// Convert to layered pane's coordinates
-			bounds = SwingUtilities.convertRectangle(textComponent, bounds,
-				textComponent.getRootPane().getLayeredPane());
-			this.popup.setBounds(bounds);
+			bounds = SwingUtilities.convertRectangle(_popupParent, bounds,
+				_popupParent.getRootPane().getLayeredPane());
+			popup.setBounds(bounds);
 
 		}
 		else
 		{ // can't fit -> hide
-			this.popup.setVisible(false);
+			popup.setVisible(false);
 		}
 
 		/*
@@ -131,27 +91,21 @@ public class PopupManager
 		 * they are the same objects it's necessary
 		 * to cover the workspace switches etc.
 		 */
-		if (this.popup != null)
+		if (popup != null)
 		{
-			removeFromRootPane(this.popup);
+			removeFromRootPane(popup);
 		}
-		if (this.popup != null)
+		if (popup != null)
 		{
-			installToRootPane(this.popup);
+			installToRootPane(popup);
 		}
 	}
 
-	/** Returns installed popup panel component */
-	public JComponent get()
-	{
-		return popup;
-	}
 
-
-	/** Install popup panel to current textComponent root pane */
+   /** Install popup panel to current textComponent root pane */
 	private void installToRootPane(JComponent c)
 	{
-		JRootPane rp = textComponent.getRootPane();
+		JRootPane rp = _popupParent.getRootPane();
 		if (rp != null)
 		{
 			rp.getLayeredPane().add(c, JLayeredPane.POPUP_LAYER, 0);
@@ -352,54 +306,7 @@ public class PopupManager
 	}
 
 
-	/** Popup's key filter */
-	private class PopupKeyListener implements KeyListener
-	{
-		public void keyTyped(KeyEvent e)
-		{
-		}
-
-		public void keyReleased(KeyEvent e)
-		{
-		}
-
-		public void keyPressed(KeyEvent e)
-		{
-			if (e == null) return;
-			if (popup != null && popup.isShowing())
-			{
-
-				// get popup's registered keyboard actions
-				ActionMap am = popup.getActionMap();
-				InputMap im = popup.getInputMap();
-
-				// check whether popup registers keystroke
-				Object obj = im.get(KeyStroke.getKeyStrokeForEvent(e));
-				if (obj != null)
-				{
-					// if yes, gets the popup's action for this keystroke, perform it
-					// and consume key event
-					Action action = am.get(obj);
-					if (action != null)
-					{
-						action.actionPerformed(null);
-						e.consume();
-					}
-				}
-			}
-		}
-
-	}
-
-	private final class TextComponentListener extends ComponentAdapter
-	{
-		public void componentHidden(ComponentEvent evt)
-		{
-			install(null); // hide popup
-		}
-	}
-
-	/** Placement of popup panel specification */
+   /** Placement of popup panel specification */
 	public static final class Placement
 	{
 

@@ -58,7 +58,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		}
 
 		_session = session;
-		_comp = new MyTextArea(session, this);
+		_comp = new MyTextArea(session);
 		
 		dt = new DropTarget(_comp, new FileEditorDropTargetListener(session));
 	}
@@ -350,12 +350,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
    private static class MyTextArea extends JTextArea
 	{
-		private DefaultSQLEntryPanel _pnl;
-
-		private MyTextArea(ISession session, DefaultSQLEntryPanel pnl)
+		private MyTextArea(ISession session)
 		{
-			super();
-			_pnl = pnl;
 			SessionProperties props = session.getProperties();
 			final FontInfo fi = props.getFontInfo();
 			if (fi != null)
@@ -363,18 +359,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 				this.setFont(props.getFontInfo().createFont());
 			}
 		}
-
-//		public void addNotify()
-//		{
-//			super.addNotify();
-//			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
-//		}
-//
-//		public void removeNotify()
-//		{
-//			super.removeNotify();
-//			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
-//		}
 	}
 
     /* (non-Javadoc)

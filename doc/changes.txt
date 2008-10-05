@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Object tree search (Feature request 2004240):
+   Above the Object tree is a text field and a find button.
+   The object's simple name (unqualified name) has to be exact to be found.
+   The text field supports code completion. 
+
 Object tree filtering:
    Multiple (comma separated) Object tree filters can be defined. Filter conditions can be excluding oder including.
    Better support for placeholders "%" and "_".

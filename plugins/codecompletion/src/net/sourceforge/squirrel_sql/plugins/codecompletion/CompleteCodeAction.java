@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -35,22 +35,32 @@ public class CompleteCodeAction extends SquirrelAction
 {
     private static final long serialVersionUID = 1L;
     private ISQLEntryPanel _sqlEntryPanel;
-	transient private Completor _cc;
-    transient private CodeCompletorModel _model;
+	 private Completor _cc;
+    private CodeCompletorModel _model;
 
 
    public CompleteCodeAction(IApplication app,
                              CodeCompletionPlugin plugin,
                              ISQLEntryPanel sqlEntryPanel,
                              ISession session,
-                             CodeCompletionInfoCollection codeCompletionInfos)
+                             CodeCompletionInfoCollection codeCompletionInfos,
+                             JComponent popupParent)
 	{
 		super(app, plugin.getResources());
 		_sqlEntryPanel = sqlEntryPanel;
 
       _model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
-      _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model);
-		_sqlEntryPanel.addSQLTokenListener(_model.getSQLTokenListener());
+
+      if(null != popupParent)
+      {
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, Completor.DEFAULT_POP_UP_BACK_GROUND, false, popupParent);
+      }
+      else
+      {
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, Completor.DEFAULT_POP_UP_BACK_GROUND, false);
+      }
+
+      _sqlEntryPanel.addSQLTokenListener(_model.getSQLTokenListener());
 
 		_cc.addCodeCompletorListener
 		(

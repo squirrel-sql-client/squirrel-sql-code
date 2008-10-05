@@ -69,6 +69,8 @@ public class SquirrelResources extends Resources
 		String LOGS = "logs";
 		String ALIAS_PROPERTIES = "aliasProperties";
 
+      String FIND = "find";
+
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)
