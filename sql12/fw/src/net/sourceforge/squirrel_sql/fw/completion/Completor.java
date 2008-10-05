@@ -30,6 +30,9 @@ import java.util.Vector;
 
 public class Completor
 {
+   public static final Color DEFAULT_POP_UP_BACK_GROUND = new Color(255,255,204);
+
+
 	private Vector<CompletorListener> _listeners = new Vector<CompletorListener>();
 	private ICompletorModel _model;
 	private JPanel _completionPanel;
@@ -64,14 +67,19 @@ public class Completor
 
    private Action[] _originalActions = null;
 
-	public Completor(JTextComponent txtComp, ICompletorModel model)
+   public Completor(JTextComponent txtComp, ICompletorModel model)
 	{
-		this(txtComp, model, new Color(255,255,204), false); // light yellow
+		this(txtComp, model, DEFAULT_POP_UP_BACK_GROUND, false, txtComp); // light yellow
 	}
 
    public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField)
 	{
-		_txtComp = new TextComponentProvider(txtComp, useOwnFilterTextField);
+      this(txtComp, model, popUpBackGround, useOwnFilterTextField, txtComp);
+   }
+
+   public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField, JComponent popupParent)
+	{
+      _txtComp = new TextComponentProvider(txtComp, useOwnFilterTextField);
 
 		_model = model;
 
@@ -124,8 +132,8 @@ public class Completor
 
 		_completionPanel.setVisible(false);
 
-		_popupMan = new PopupManager(txtComp);
-	}
+      _popupMan = new PopupManager(popupParent);
+   }
 
    private void onKeyPressedOnList(KeyEvent e)
 	{

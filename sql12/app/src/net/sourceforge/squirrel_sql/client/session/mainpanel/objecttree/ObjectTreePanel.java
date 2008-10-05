@@ -136,8 +136,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
    
    /** used to save and restore previously selected object tree paths */ 
    private TreePath[] previouslySelectedPaths = null;
-   
-	/**
+
+   private FindInObjectTreeController _findInObjectTreeController;
+
+   /**
 	 * ctor specifying the current session.
 	 *
 	 * @param	session	Current session.
@@ -156,7 +158,9 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		_emptyTabPane = new ObjectTreeTabbedPane(_session);
 
-		createGUI();
+      _findInObjectTreeController = new FindInObjectTreeController(_session);
+
+      createGUI();
 
       session.getApplication().getThreadPool().addTask(new Runnable()
       {
@@ -994,33 +998,24 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_tree.dispose();	
 	}
 
-	private final class LeftPanel extends JPanel
+   public FindInObjectTreeController getFindController()
+   {
+      return _findInObjectTreeController;   
+   }
+
+   private final class LeftPanel extends JPanel
 	{
-		LeftPanel()
+      LeftPanel()
 		{
 			super(new BorderLayout());
-//			add(new TreeHeaderPanel(), BorderLayout.NORTH);
-			final JScrollPane sp = new JScrollPane();
+         add(_findInObjectTreeController.getFindInObjectTreePanel(), BorderLayout.NORTH);
+         JScrollPane sp = new JScrollPane();
 			sp.setBorder(BorderFactory.createEmptyBorder());
 			sp.setViewportView(_tree);
 			sp.setPreferredSize(new Dimension(200, 200));
 			add(sp, BorderLayout.CENTER);
 		}
 	}
-
-//	private final class TreeHeaderPanel extends JPanel
-//	{
-//		JPopupMenu _pop = new JPopupMenu("abc");
-//		TreeHeaderPanel()
-//		{
-//			super(new FlowLayout());
-//			JLabel lbl = new JLabel("DB Explorer");
-//			add(lbl);
-//
-//			_pop.add("Filter...");
-//			add(_pop);
-//		}
-//	}
 
 	/**
 	 * This class listens for changes in the node selected in the tree
