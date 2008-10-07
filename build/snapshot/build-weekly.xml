@@ -72,7 +72,8 @@
 		<mkdir dir="${release.plugin.dir}"/>
 		
 		<property name="target.dir" value="${dist.dir}/squirrel-sql"/>
-		<property name="target.core.dir" value="${target.dir}/core/dist/lib"/>
+		<property name="target.core.lib.dir" value="${target.dir}/core/dist/lib"/>
+		<property name="target.core.doc.dir" value="${target.dir}/core/dist/doc"/>
 		
 	</target>
 
@@ -155,23 +156,29 @@
 	<target name="createupdatesite" depends="init">
 		<!-- copy the core jars (includes libraries) to release core subdir -->
 		<copy todir="${release.core.dir}">
-			<fileset dir="${target.core.dir}">
+			<fileset dir="${target.core.lib.dir}">
 			    <include name="*.jar"/>
 				<exclude name="squirrel-sql_*.jar"/>
 			</fileset>
 		</copy>
 		<!-- copy translation jars to the release i18n subdir -->
 		<copy todir="${release.i18n.dir}">
-			<fileset dir="${target.core.dir}" >
+			<fileset dir="${target.core.lib.dir}" >
 				<include name="squirrel-sql_*.jar"/>	
 			</fileset>
 		</copy>
 		<!-- copy the plugin zip archives to the release directory -->
-		<copy todir="${release.plugin.dir}">
-			<fileset dir="${target.dir}">
-				<include name="*.zip"/>
-			</fileset>
-		</copy>
+                <copy todir="${release.plugin.dir}">
+                        <fileset dir="${target.dir}">
+                                <include name="*.zip"/>
+                        </fileset>
+                </copy>
+		
+                <zip zipfile="${release.core.dir}/doc.zip" compress="true">
+                        <fileset dir="${target.core.doc.dir}">
+                                <include name="**/*.*"/>
+                        </fileset>
+                </zip>
 		
 		<!-- build the release.xml document -->
 		<java fork="true"  
@@ -275,9 +282,11 @@
 	</target>
 	
 	<!-- Launches the application for manual build verification testing. JAVA_HOME is the environment
-	     variable that the launch.file uses to determine which JVM to use -->
+	     variable that the launch.file uses to determine which JVM to use 
+	     TODO: Turn "/tmp/squirreltest" into a property (perhaps 'launch.dir')
+	-->
 	<target name="launchsquirrel">
-		<exec executable="${launch.file}"/>
+		<exec   dir="/tmp/squirreltest" executable="${launch.file}"/>
 	</target>	
 		
 	<!-- Creates batch.txt from the template file, filtering in the actual names of the files to be 
@@ -304,11 +313,16 @@
 		</exec>
 	</target>
 	
+        <!-- Enable Publishing -->
+        <target name="publish.updates" description="turns on publishing files to an external update site" >
+
+            <property name="publish.updates.enabled" value="true" />
+        </target>	
 	
 	<!-- Transfers the update site artifact files to the remote download website.  This has to do
 	     alot more work since it deals with many files in multiple sub-directories 
 	-->
-	<target name="publishUpdateSiteWithFtp" depends="init">
+	<target name="publishUpdateSiteWithFtp" depends="init" if="publish.updates.enabled">
 		
 		<ftp action="del"                           
 		     server="${remoteUpdateSiteHostname}"   userid="${remoteUpdateSiteUsername}"
