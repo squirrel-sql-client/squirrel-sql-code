@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
+import net.sourceforge.squirrel_sql.client.Version;
+
 /**
  * Software update settings.
  */
@@ -34,7 +36,7 @@ public class UpdateSettings implements Cloneable, IUpdateSettings
 	private String updateServerPath = "updates";
 
 	/** Update channel on the software update server. */
-	private String updateServerChannel = "snapshot";
+	private String updateServerChannel = "stable";
 
 	/** Whether or not to periodically check for software updates */
 	private boolean enableAutomaticUpdates = true;
@@ -51,6 +53,9 @@ public class UpdateSettings implements Cloneable, IUpdateSettings
 	private String fileSystemUpdatePath = "";
 	
 	public UpdateSettings() {
+		if (Version.isSnapshotVersion()) {
+			updateServerChannel = "snapshot";
+		}
 	}
 	
 	/**
