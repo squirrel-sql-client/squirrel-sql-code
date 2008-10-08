@@ -68,6 +68,18 @@ public class Version
 		return buf.toString();
 	}
 
+	/**
+	 * Returns a boolean value indicating whether or not this is a snapshot release or a stable release.
+	 * 
+	 * @return true if this is snapshot release; false otherwise.  Note: Since snapshot releases replace this
+	 * version with Version.java.template, this version should always return false.  This makes it possible to 
+	 * determine what channel to use for updates when SQuirreL is installed for the very first time and no 
+	 * preference is set.  After that the channel can be changed by the user at will.
+	 */
+	public static boolean isSnapshotVersion() {
+		return false;
+	}
+	
 	public static String getCopyrightStatement()
 	{
 		return COPYRIGHT;
