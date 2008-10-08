@@ -48,11 +48,9 @@ import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntr
 import net.sourceforge.squirrel_sql.client.preferences.UpdateCheckFrequencyComboBoxEntry.Frequency;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
-import net.sourceforge.squirrel_sql.fw.util.IUpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
 
 public class UpdatePreferencesPanel extends JPanel
 {
