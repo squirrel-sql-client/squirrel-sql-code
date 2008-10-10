@@ -303,7 +303,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
             }
          }
       } finally {
-         close(rs);
+      	SQLUtilities.closeResultSet(rs);
       }
 
       // Some drivers for both MS SQL and Sybase don't return guest as
@@ -488,7 +488,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		finally
 		{
-         close(rs);
+			SQLUtilities.closeResultSet(rs);
 		}
 
 		return list.toArray(new String[list.size()]);
@@ -768,25 +768,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		finally
 		{
-         close(rs);
+         SQLUtilities.closeResultSet(rs);
       }
 		return list.toArray(new DataTypeInfo[list.size()]);
 	}
-
-   private void close(ResultSet rs)
-   {
-      try
-      {
-         if (rs != null)
-         {
-            rs.close();
-         }
-      }
-      catch (Exception e)
-      {
-         s_log.info("closing resultset failed", e);
-      }
-   }
 
    /* (non-Javadoc)
  * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedures(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
@@ -827,8 +812,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	     }
 	     finally
 	     {
-	        close(rs);
-	
+	   	  SQLUtilities.closeResultSet(rs);
 	     }
      }
      return list.toArray(new IProcedureInfo[list.size()]);
@@ -863,7 +847,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			}
 			finally
 			{
-            close(rs);
+				SQLUtilities.closeResultSet(rs);
          }
 		}
 
@@ -1068,8 +1052,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
       }
       finally
       {
-         close(tabResult);
-         close(superTabResult);
+         SQLUtilities.closeResultSet(tabResult);
+         SQLUtilities.closeResultSet(superTabResult);
       }
 
       return list.toArray(new ITableInfo[list.size()]);
@@ -1101,7 +1085,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		finally
 		{
-         close(rs);
+			SQLUtilities.closeResultSet(rs);
       }
 
 		return list.toArray(new IUDTInfo[list.size()]);
@@ -1238,42 +1222,32 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/**
-    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getBestRowIdentifier(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-    */
-	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
-		throws SQLException
-	{
-		final List<BestRowIdentifier> results = 
-            new ArrayList<BestRowIdentifier>();
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getBestRowIdentifier(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 */
+	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti) throws SQLException {
+		final List<BestRowIdentifier> results = new ArrayList<BestRowIdentifier>();
 
-        ResultSet rs = null;
-		try
-		{
-            
-            rs = privateGetJDBCMetaData().getBestRowIdentifier(
-                    ti.getCatalogName(), ti.getSchemaName(),
-                    ti.getSimpleName(),
-                    DatabaseMetaData.bestRowTransaction, true);
-            
+		ResultSet rs = null;
+		try {
+			boolean columnsCanBeNullable = true;
+			rs = privateGetJDBCMetaData().getBestRowIdentifier(
+			   ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
+			   columnsCanBeNullable);
+
 			final String catalog = ti.getCatalogName();
 			final String schema = ti.getSchemaName();
 			final String table = ti.getSimpleName();
 
 			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
-			while (rdr.next())
-			{
-				final BestRowIdentifier rid = new BestRowIdentifier(catalog,
-							schema, table, rdr.getLong(1).intValue(),
-							rdr.getString(2), rdr.getLong(3).shortValue(),
-							rdr.getString(4), rdr.getLong(5).intValue(),
-							rdr.getLong(7).shortValue(),
-							rdr.getLong(8).shortValue(), this);
+			while (rdr.next()) {
+				final BestRowIdentifier rid = new BestRowIdentifier(
+				   catalog, schema, table, rdr.getLong(1).intValue(), rdr.getString(2),
+				   rdr.getLong(3).shortValue(), rdr.getString(4), rdr.getLong(5).intValue(),
+				   rdr.getLong(7).shortValue(), rdr.getLong(8).shortValue(), this);
 				results.add(rid);
 			}
-		}
-		finally
-		{
-            SQLUtilities.closeResultSet(rs);
+		} finally {
+			SQLUtilities.closeResultSet(rs);
 		}
 
 		final BestRowIdentifier[] ar = new BestRowIdentifier[results.size()];
@@ -1471,7 +1445,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		finally
 		{
-         close(rs);
+			SQLUtilities.closeResultSet(rs);
       }
 
 		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
