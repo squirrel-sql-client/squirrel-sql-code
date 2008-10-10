@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,181 +18,232 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import utils.EasyMockHelper;
 
 /**
  * Test case for SQLDatabaseMetaData class.
  * 
  * @author manningr
  */
-public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
+public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 
-	SQLDatabaseMetaData iut = null;
-	
+	private static final String TEST_TABLE = "aTable";
+	private static final String TEST_SCHEMA = "aSchema";
+	private static final String TEST_CATALOG = "aCatalog";
+	private SQLDatabaseMetaData classUnderTest = null;
+	private EasyMockHelper mockHelper = new EasyMockHelper();
+
 	/* Mock Objects */
-	Connection mockConnection = null;
-    ISQLConnection mockSqlConnection = null;
-    DatabaseMetaData mockDatabaseMetaData = null;
-    
-	protected void setUp() throws Exception {
-		super.setUp();
-        
-        mockDatabaseMetaData = createMock(DatabaseMetaData.class);
-        expect(mockDatabaseMetaData.getDatabaseProductName()).andReturn("PostgreSQL");
-        expect(mockDatabaseMetaData.getDatabaseProductVersion()).andReturn("8.1.8");
+	private Connection mockConnection = mockHelper.createMock(Connection.class);
+	private ISQLConnection mockSqlConnection = mockHelper.createMock(ISQLConnection.class);
+	private DatabaseMetaData mockDatabaseMetaData = mockHelper.createMock(DatabaseMetaData.class);
 
-        /* Build the table types returned by PostgreSQL */
-        ResultSet mockTableTypeResultSet = 
-            buildVarcharResultSet(new String[] { "SYSTEM INDEX", 
-                    "SYSTEM VIEW", "SYSTEM TABLE", "SYSTEM TOAST INDEX", 
-                    "SYSTEM TOAST TABLE", "SYSTEM VIEW", "TABLE", 
-                    "TEMPORARY INDEX", "TEMPORARY TABLE", "VIEW"});        
-        expect(mockDatabaseMetaData.getTableTypes()).andReturn(mockTableTypeResultSet);
-        
-        /* The first time that catalogs are asked for, return just one */
-        ResultSet catalogResultSet1 = 
-            buildVarcharResultSet(new String[] { "aCatalog" });
-        expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet1);
-        
-        /* The second time that catalogs are asked for, return two */
-        ResultSet catalogResultSet2 = 
-            buildVarcharResultSet(new String[] { "aCatalog", "aCatalog2" });
-        expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet2);
-        
-        /* The first time that schemas are asked for, return just one */
-        ResultSet schemaResultSet1 = 
-            buildVarcharResultSet(new String[] { "aSchema" });
-        expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet1);
-        
-        /* The second time that schemas are asked for, return two */
-        ResultSet schemaResultSet2 = 
-            buildVarcharResultSet(new String[] { "aSchema", "aSchema2" });
-        expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet2);
-        replay(mockDatabaseMetaData);
+	@Before
+	public void setUp() throws Exception {
 
-        mockConnection = createMock(Connection.class);
-        expect(mockConnection.getMetaData()).andReturn(mockDatabaseMetaData).anyTimes();
-        replay(mockConnection);        
-        
-        mockSqlConnection = createMock(ISQLConnection.class);
-        expect(mockSqlConnection.getConnection()).andReturn(mockConnection).anyTimes();
-        replay(mockSqlConnection);
-        
-        
-        iut = new SQLDatabaseMetaData(mockSqlConnection);
-	}
-
-	public void testGetSchemas() {
+		expect(mockDatabaseMetaData.getDatabaseProductName()).andStubReturn("PostgreSQL");
+		expect(mockDatabaseMetaData.getDatabaseProductVersion()).andStubReturn("8.1.8");
+		expect(mockDatabaseMetaData.supportsSchemasInIndexDefinitions()).andStubReturn(true);
+		expect(mockDatabaseMetaData.supportsSchemasInDataManipulation()).andStubReturn(true);
+		expect(mockDatabaseMetaData.supportsCatalogsInDataManipulation()).andStubReturn(true);
+		expect(mockDatabaseMetaData.supportsSchemasInTableDefinitions()).andStubReturn(true);
+		expect(mockDatabaseMetaData.getCatalogSeparator()).andStubReturn(".");
+		expect(mockDatabaseMetaData.getIdentifierQuoteString()).andStubReturn("\"");
 		
-		try {
-			// Check to be sure we get only one schema
-			String[] currentSchemas = iut.getSchemas();
-			assertEquals(1, currentSchemas.length);
-						
-			// Now, check to be sure we get both schemas.
-			currentSchemas = iut.getSchemas();
-			assertEquals(2, currentSchemas.length);
-		} catch (SQLException e) {
-			fail("Unexpected exception:  "+e.getMessage());
-		}	
-			
+		expect(mockConnection.getMetaData()).andStubReturn(mockDatabaseMetaData);
+		expect(mockSqlConnection.getConnection()).andStubReturn(mockConnection);
+
 	}
 
-	public void testGetCatalogs() {
-		try {
-            // Check to be sure we get only one schema
-			String[] currentCatalogs = iut.getCatalogs();
-			assertEquals(1, currentCatalogs.length);
-            			
-			// Now, check to be sure we get both catalogs.
-			currentCatalogs = iut.getCatalogs();
-			assertEquals(2, currentCatalogs.length);
-		} catch (SQLException e) {
-			fail("Unexpected exception:  "+e.getMessage());
+	@Test
+	public void testGetSchemas() throws SQLException {
+
+		/* The first time that schemas are asked for, return just one */
+		ResultSet schemaResultSet1 = buildVarcharResultSet("schemaResultSet1", new String[] { TEST_SCHEMA });	
+		/* The second time that schemas are asked for, return two */
+		ResultSet schemaResultSet2 = buildVarcharResultSet("schemaResultSet2", new String[] { TEST_SCHEMA, "aSchema2" });
+		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet1);
+		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet2);
+		
+		mockHelper.replayAll();
+		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
+
+		// Check to be sure we get only one schema
+		String[] currentSchemas = classUnderTest.getSchemas();
+		assertEquals(1, currentSchemas.length);
+
+		// Now, check to be sure we get both schemas.
+		currentSchemas = classUnderTest.getSchemas();
+		assertEquals(2, currentSchemas.length);
+
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testGetCatalogs() throws SQLException {
+
+		/* The first time that catalogs are asked for, return just one */
+		ResultSet catalogResultSet1 = buildVarcharResultSet(null, new String[] { TEST_CATALOG });
+		/* The second time that catalogs are asked for, return two */
+		ResultSet catalogResultSet2 = buildVarcharResultSet(null, new String[] { TEST_CATALOG, "aCatalog2" });
+		expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet1);
+		expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet2);
+
+		mockHelper.replayAll();
+		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
+
+		// Check to be sure we get only one schema
+		String[] currentCatalogs = classUnderTest.getCatalogs();
+		assertEquals(1, currentCatalogs.length);
+
+		// Now, check to be sure we get both catalogs.
+		currentCatalogs = classUnderTest.getCatalogs();
+		assertEquals(2, currentCatalogs.length);
+
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testPGGetTableTypes() throws SQLException {
+		/* Build the table types returned by PostgreSQL */
+		ResultSet mockTableTypeResultSet = buildVarcharResultSet("mockTableTypeResultSet", new String[] {
+		      "SYSTEM INDEX", "SYSTEM VIEW", "SYSTEM TABLE", "SYSTEM TOAST INDEX", "SYSTEM TOAST TABLE",
+		      "SYSTEM VIEW", "TABLE", "TEMPORARY INDEX", "TEMPORARY TABLE", "VIEW" });
+		expect(mockDatabaseMetaData.getTableTypes()).andStubReturn(mockTableTypeResultSet);
+
+		mockHelper.replayAll();
+		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
+
+		String[] tableTypes = classUnderTest.getTableTypes();
+		for (int i = 0; i < tableTypes.length; i++) {
+			String type = tableTypes[i];
+			assertFalse(
+			   "'SYSTEM INDEX' is a type returned from " + "SQLDatabaseMetaData.getTableTypes for PostgreSQL - "
+			         + "it should not be.", "SYSTEM INDEX".equals(type));
 		}
+
+		mockHelper.verifyAll();
 	}
 
-    private ResultSet buildVarcharResultSet(String[] values) throws SQLException {
-        ResultSetMetaData rsmd = createMock(ResultSetMetaData.class);
-        expect(rsmd.getColumnCount()).andReturn(1);
-        expect(rsmd.getColumnType(1)).andReturn(java.sql.Types.VARCHAR).anyTimes();
-        expect(rsmd.getColumnTypeName(1)).andReturn("varchar").anyTimes();
-        replay(rsmd);
-        ResultSet rs = createMock(ResultSet.class);
-        expect(rs.getMetaData()).andReturn(rsmd);
-        for (String value : values) {
-            expect(rs.next()).andReturn(true);
-            expect(rs.getString(1)).andReturn(value);    
-            expect(rs.wasNull()).andReturn(false);
-        }
-        expect(rs.next()).andReturn(false);
-        rs.close();
-        replay(rs);
-        return rs;
-    }
+	/**
+	 * Test for bug 1716859 (Can't see data in content tab or row count tab) SQLServer with a dash in the name
+	 * needs to be quoted.
+	 * 
+	 * @throws SQLException
+	 */
+	@Test
+	public void testGetIdentifierQuoteStringMSSQL() throws SQLException {
+		Connection mockCon = mockHelper.createMock(Connection.class);
+		DatabaseMetaData md = mockHelper.createMock(DatabaseMetaData.class);
+		expect(md.getIdentifierQuoteString()).andStubReturn("foo");
+		expect(mockCon.getMetaData()).andStubReturn(md);
+		ISQLConnection sqlcon = mockHelper.createMock(ISQLConnection.class);
+	   expect(sqlcon.getConnection()).andStubReturn(mockCon);
+		SQLDatabaseMetaData sqlmd = new SQLDatabaseMetaData(sqlcon);
+
+		mockHelper.replayAll();
+
+		String quoteString = sqlmd.getIdentifierQuoteString();
+		assertEquals("foo", quoteString);
+		quoteString = sqlmd.getIdentifierQuoteString();
+		assertEquals("foo", quoteString);
+		quoteString = sqlmd.getIdentifierQuoteString();
+		assertEquals("foo", quoteString);
+		quoteString = sqlmd.getIdentifierQuoteString();
+		assertEquals("foo", quoteString);
+
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testGetBestRowIdentifier() throws SQLException {
+		
+		ITableInfo mockTableInfo = mockHelper.createMock(ITableInfo.class);
+		ResultSet mockBestRowIdResultSet = mockHelper.createMock(ResultSet.class);
+		ResultSetMetaData mockResultSetMetaData = mockHelper.createMock(ResultSetMetaData.class);
+		
+		expect(mockTableInfo.getCatalogName()).andStubReturn(TEST_CATALOG);
+		expect(mockTableInfo.getSchemaName()).andStubReturn(TEST_SCHEMA);
+		expect(mockTableInfo.getSimpleName()).andStubReturn(TEST_TABLE);
+		expect(mockDatabaseMetaData.getBestRowIdentifier(TEST_CATALOG, TEST_SCHEMA, TEST_TABLE, 
+			DatabaseMetaData.bestRowTransaction, true));
+		expectLastCall().andReturn(mockBestRowIdResultSet);
+		expect(mockBestRowIdResultSet.getMetaData()).andReturn(mockResultSetMetaData);
+		expect(mockBestRowIdResultSet.getObject(1)).andReturn(1); // scope
+		expect(mockResultSetMetaData.getColumnType(1)).andReturn(Types.BIGINT);
+		expect(mockBestRowIdResultSet.getString(2)).andReturn("aColumn"); // column name
+		expect(mockBestRowIdResultSet.getObject(3)).andReturn(3); // sqlType
+		expect(mockResultSetMetaData.getColumnType(3)).andReturn(Types.SMALLINT);
+		expect(mockBestRowIdResultSet.getString(4)).andReturn("SMALLINT"); // typeName
+		
+		expect(mockBestRowIdResultSet.getObject(5)).andReturn(5); // int precision
+		expect(mockResultSetMetaData.getColumnType(5)).andReturn(Types.INTEGER);
+		
+		expect(mockBestRowIdResultSet.getObject(7)).andReturn(7); // short scale
+		expect(mockResultSetMetaData.getColumnType(7)).andReturn(Types.TINYINT);
+
+		expect(mockBestRowIdResultSet.getObject(8)).andReturn(8); // short pseudocolumn
+		expect(mockResultSetMetaData.getColumnType(8)).andReturn(Types.TINYINT);
+		
+		expect(mockBestRowIdResultSet.next()).andReturn(true);
+		expect(mockBestRowIdResultSet.next()).andReturn(false);
+		mockBestRowIdResultSet.close();
+		
+		
+		
+		mockHelper.replayAll();
+		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
+		
+		BestRowIdentifier[] result = classUnderTest.getBestRowIdentifier(mockTableInfo);
+		
+		assertEquals(1, result.length);
+		BestRowIdentifier rid = result[0];
+		assertEquals(1, rid.getScope());
+		assertEquals("aColumn", rid.getColumnName());
+		assertEquals(3, rid.getSQLDataType());
+		assertEquals("SMALLINT", rid.getTypeName());
+		assertEquals(5, rid.getPrecision());
+		assertEquals(7, rid.getScale());
+		assertEquals(8, rid.getPseudoColumn());
+		
+		mockHelper.verifyAll();
+	}
 	
+	// Helper methods
 	
-    public void testPGGetTableTypes() {
-        try {
-            String[] tableTypes = iut.getTableTypes();
-            for (int i = 0; i < tableTypes.length; i++) {
-                String type = tableTypes[i];
-                assertFalse(
-                    "'SYSTEM INDEX' is a type returned from " +
-                    "SQLDatabaseMetaData.getTableTypes for PostgreSQL - " +
-                    "it should not be.", 
-                    "SYSTEM INDEX".equals(type));
-            }
-        } catch (SQLException e) {
-            fail("Unexpected exception: "+e.getMessage());
-        }
-    }
-    
-    /**
-     * Test for bug 1716859 (Can't see data in content tab or row count tab)
-     * SQLServer with a dash in the name needs to be quoted.
-     * @throws SQLException
-     */
-    public void testGetIdentifierQuoteStringMSSQL() throws SQLException {
-        Connection con = createNiceMock(Connection.class);
-        DatabaseMetaData md = createNiceMock(DatabaseMetaData.class);
-        expect(md.getIdentifierQuoteString()).andReturn("foo").anyTimes();
-        expect(md.getDatabaseProductName())
-                    .andReturn("microsoft")
-                    .andReturn("sybase")
-                    .andReturn("adaptive")
-                    .andReturn("sql server");
-        expect(con.getMetaData()).andReturn(md).anyTimes();
-        replay(con);
-        replay(md);
-        SQLConnection sqlcon = new SQLConnection(con, null, null);
-        SQLDatabaseMetaData sqlmd = new SQLDatabaseMetaData(sqlcon);
-        try {
-            String quoteString = sqlmd.getIdentifierQuoteString();
-            assertEquals("foo", quoteString);
-            quoteString = sqlmd.getIdentifierQuoteString();
-            assertEquals("foo", quoteString);
-            quoteString = sqlmd.getIdentifierQuoteString();
-            assertEquals("foo", quoteString);
-            quoteString = sqlmd.getIdentifierQuoteString();
-            assertEquals("foo", quoteString);
-            
-        } catch (SQLException e) {
-            fail("Unexpected exception: "+e.getMessage());
-        }        
-    }
-    
-    
+	private ResultSet buildVarcharResultSet(String mockName, String[] values) throws SQLException {
+		ResultSetMetaData rsmd = mockHelper.createMock(mockName, ResultSetMetaData.class);
+		expect(rsmd.getColumnCount()).andStubReturn(1);
+		expect(rsmd.getColumnType(1)).andStubReturn(java.sql.Types.VARCHAR);
+		expect(rsmd.getColumnTypeName(1)).andStubReturn("varchar");
+		ResultSet rs = mockHelper.createMock(ResultSet.class);
+		expect(rs.getMetaData()).andStubReturn(rsmd);
+		for (String value : values) {
+			expect(rs.next()).andReturn(true);
+			expect(rs.getString(1)).andReturn(value);
+			expect(rs.wasNull()).andStubReturn(false);
+		}
+		expect(rs.next()).andReturn(false);
+		rs.close();
+		return rs;
+	}
+	
 }
