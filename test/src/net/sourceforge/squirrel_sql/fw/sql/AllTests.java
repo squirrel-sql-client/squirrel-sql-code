@@ -30,7 +30,7 @@ public class AllTests extends TestCase {
         suite.addTestSuite(QueryTokenizerTest.class);
         suite.addTest(new JUnit4TestAdapter(ResultSetReaderTest.class));
         suite.addTest(new JUnit4TestAdapter(ResultSetColumnReaderTest.class));
-        suite.addTestSuite(SQLDatabaseMetaDataTest.class);
+        suite.addTest(new JUnit4TestAdapter(SQLDatabaseMetaDataTest.class));
         suite.addTest(new JUnit4TestAdapter(SQLUtilitiesTest.class));
 		return suite;
 	}
