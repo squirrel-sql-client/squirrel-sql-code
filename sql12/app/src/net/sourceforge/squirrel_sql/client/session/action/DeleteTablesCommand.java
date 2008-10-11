@@ -41,7 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * @version $Id: DeleteTablesCommand.java,v 1.8 2008-10-11 19:29:39 manningr Exp $
+ * @version $Id: DeleteTablesCommand.java,v 1.9 2008-10-11 22:55:54 manningr Exp $
  * @author Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -135,6 +135,14 @@ public class DeleteTablesCommand implements ICommand
 			catch (Exception e)
 			{
 				s_log.error("Unexpected exception while attempting to order tables", e);
+			} finally {
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()				
+					{
+						_cb.setVisible(false);
+					}
+				});
 			}
 			final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 			String cascadeClause = null;
@@ -165,13 +173,11 @@ public class DeleteTablesCommand implements ICommand
 			SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(), null);
 
 			// Execute the sql synchronously
-			executer.run();
-
-			_cb.setVisible(false);
+			executer.run();			
 
 			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
-				public void run()
+				public void run()				
 				{
 					_tree.refreshSelectedNodes();
 				}
