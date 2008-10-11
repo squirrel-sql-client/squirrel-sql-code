@@ -35,10 +35,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.6 2007-04-08 11:48:55 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.6.2.1 2008-10-11 19:36:40 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -125,6 +126,7 @@ public class DeleteTablesCommand implements ICommand
         ProgessCallBackDialog _cb = null;
         
         public DeleteExecuter(ProgessCallBackDialog cb) {
+      	  Utilities.checkNull("DeleteExecuter.init", "cb", cb);
             _cb = cb;
         }
         
@@ -164,6 +166,8 @@ public class DeleteTablesCommand implements ICommand
             
             // Execute the sql synchronously
             executer.run();       
+            
+            _cb.setVisible(false);
             
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
