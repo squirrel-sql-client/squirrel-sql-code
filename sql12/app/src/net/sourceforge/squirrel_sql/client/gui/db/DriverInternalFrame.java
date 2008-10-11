@@ -144,6 +144,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 	/** Button to move entry down in Extra Class path list. */
 	private JButton _extraClasspathDownBtn;
 
+	private File lastExtraClassPathFileSelected = null;
 	/**
 	 * Ctor.
 	 *
@@ -676,6 +677,14 @@ public class DriverInternalFrame extends BaseInternalFrame
 			if (_chooser == null)
 			{
 				_chooser = new JFileChooser();
+				if (lastExtraClassPathFileSelected != null) {
+					if (lastExtraClassPathFileSelected.isDirectory()) {
+						_chooser.setCurrentDirectory(lastExtraClassPathFileSelected);
+					} else {
+						_chooser.setCurrentDirectory(new File(lastExtraClassPathFileSelected.getParent()));
+					}
+				}				
+				_chooser.setFileHidingEnabled(false);
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				_chooser.addChoosableFileFilter(
@@ -796,6 +805,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 	{
 		public void valueChanged(ListSelectionEvent evt)
 		{
+			lastExtraClassPathFileSelected = _extraClassPathList.getSelectedFile();			
 			final int selIdx = _extraClassPathList.getSelectedIndex();
 			final ListModel model = _extraClassPathList.getModel();
 
