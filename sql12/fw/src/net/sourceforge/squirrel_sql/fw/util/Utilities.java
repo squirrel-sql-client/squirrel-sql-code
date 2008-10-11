@@ -446,4 +446,26 @@ public class Utilities
            s_log.error("Unable to close Reader: "+e.getMessage(), e);
        }
    }
+   
+	/**
+	 * Checks the specified list of argument to see if any are null and throws a runtime exception if one is.
+	 * 
+	 * @param methodName
+	 *           the name of the method checking it's arguments
+	 * @param arguments
+	 *           the arguments - these should be in name/value pairs
+	 */
+	public static void checkNull(String methodName, Object... arguments) {
+		if (arguments.length % 2 != 0) {
+			throw new IllegalArgumentException("Args must be specified in name/value pairs"); 
+		}
+		for (int i = 0; i < arguments.length-1; i+=2) {
+			String name = (String)arguments[i];
+			Object value = arguments[i+1];
+			if (value == null) {
+				throw new IllegalArgumentException(methodName+": Argument "+name+" cannot be null");
+			}
+		}
+	}
+   
 }
