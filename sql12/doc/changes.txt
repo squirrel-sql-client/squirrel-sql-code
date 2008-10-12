@@ -1,10 +1,14 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-2.6.8 (?/??/????)
+2.6.8 (10/11/2008)
 =================
 
 Bug-Fixes:
+
+Delete records progress dialog was being left visible after it was no longer needed in some cases.
+
+Hidden directories are now visible to the file chooser for jdbc driver files. 
 
 Import from file to table feature now warns and asks the user to confirm that it is ok to truncate the 
 existing table data (The import feature doesn't yet support merging new data with existing data).
