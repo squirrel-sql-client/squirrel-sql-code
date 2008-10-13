@@ -71,6 +71,9 @@ public interface UpdateUtil
 	/** The SQuirreL jar that contains the core classes in the "app" module */
 	public static final String SQUIRREL_SQL_JAR_FILENAME = "squirrel-sql.jar";
 
+	/** The documentation archive that contains all of core documentation - assume that top directory is doc */
+	public static final String DOCS_ARCHIVE_FILENAME = "doc.zip";
+	
 	/**
 	 * Downloads the current release available at the specified host and path.
 	 * 

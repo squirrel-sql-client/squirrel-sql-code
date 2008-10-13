@@ -287,7 +287,12 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				}
 				installDir = getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
 				fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
-				fileToRemove = _util.getFile(installDir, artifactName);
+				if (UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(status.getName())) {
+					fileToRemove = _util.getFile(installDir, artifactName.replace(".zip", ""));
+				} else {
+					fileToRemove = _util.getFile(installDir, artifactName);
+				}
+				
 				filesToRemove.add(fileToRemove);
 			}
 			if (status.isPluginArtifact())
@@ -431,9 +436,10 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	}
 	
 	
-	/* Handle squirrel-sql.jar specially - it lives at the top */
+	/* Handle squirrel-sql.jar and documentation archive carefully - they live at the top */
 	private FileWrapper getCoreArtifactLocation(String artifactName, FileWrapper rootDir, FileWrapper coreDir) {
-		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)) {
+		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName ) 
+				|| UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(artifactName)) {
 			return rootDir;
 		} else {
 			return coreDir;
@@ -560,10 +566,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		boolean result = true;
 		for (InstallFileOperationInfo info : filesToInstall) {
-			FileWrapper installDir = info.getInstallDir();
-			FileWrapper fileToCopy = info.getFileToInstall();
 			try {
-				installFile(installDir, fileToCopy);
+				installFile(info);
 			} catch (Exception e) {
 				s_log.error("installFiles: unexpected exception: "+e.getMessage(), e);
 				result = false;
@@ -573,12 +577,15 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		return result;
 	}
 
-	private void installFile(FileWrapper installDir, FileWrapper fileToCopy) throws IOException
+	private void installFile(InstallFileOperationInfo info) throws IOException
 	{
+		FileWrapper installDir = info.getInstallDir();
+		FileWrapper fileToCopy = info.getFileToInstall();
+		
 		if (fileToCopy.getAbsolutePath().endsWith(".zip")) {
-			// This file is a zip; it needs to be extracted into the plugins directory. All zips are packaged
-			// in such a way that the extraction beneath plugins directory is all that is required.
-			_util.extractZipFile(fileToCopy, installDir);
+			// This file is a zip; it needs to be extracted into the install directory. All zips are packaged
+			// in such a way that the extraction beneath install directory is all that is required.
+			_util.extractZipFile(fileToCopy, installDir);		
 		} else {			
 			_util.copyFile(fileToCopy, installDir);
 		}
