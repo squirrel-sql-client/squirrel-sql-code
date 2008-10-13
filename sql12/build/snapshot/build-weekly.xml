@@ -174,10 +174,10 @@
                         </fileset>
                 </copy>
 		
-                <zip zipfile="${release.core.dir}/doc.zip" compress="true">
-                        <fileset dir="${target.core.doc.dir}">
+                <zip destfile="${release.core.dir}/doc.zip" compress="true">
+                        <zipfileset dir="${target.core.doc.dir}" prefix="doc">
                                 <include name="**/*.*"/>
-                        </fileset>
+                        </zipfileset>
                 </zip>
 		
 		<!-- build the release.xml document -->
