@@ -52,6 +52,8 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessorDummy;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -139,9 +141,7 @@ class Session implements ISession
 
    private BaseSessionInternalFrame _activeActiveSessionWindow;
    private SessionInternalFrame _sessionInternalFrame;
-   private Hashtable<IIdentifier, ParserEventsProcessor> 
-       _parserEventsProcessorsByEntryPanelIdentifier = 
-       new Hashtable<IIdentifier, ParserEventsProcessor>();
+   private Hashtable<IIdentifier, IParserEventsProcessor>  _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable<IIdentifier, IParserEventsProcessor>();
 
 
    /** flag to track whether or not the table data has been loaded in the object tree */
@@ -258,15 +258,18 @@ class Session implements ISession
          _connLis = null;
 
 
-         ParserEventsProcessor[] procs =
-            _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new ParserEventsProcessor[0]);
+         IParserEventsProcessor[] procs =
+            _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new IParserEventsProcessor[0]);
 
 
          for (int i = 0; i < procs.length; i++)
          {
             try
             {
-               procs[i].endProcessing();
+               if(procs[i] instanceof ParserEventsProcessor)
+               {
+                  ((ParserEventsProcessor)procs[i]).endProcessing();
+               }
             }
             catch(Exception e)
             {
@@ -726,11 +729,22 @@ class Session implements ISession
     */
    public IParserEventsProcessor getParserEventsProcessor(IIdentifier entryPanelIdentifier)
    {
-      ParserEventsProcessor pep = _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
+      IParserEventsProcessor pep = _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
 
       if(null == pep)
       {
-         pep = new ParserEventsProcessor(getSqlPanelApi(entryPanelIdentifier), this);
+         ISQLPanelAPI panelAPI = getSqlPanelApi(entryPanelIdentifier);
+
+         if(null != panelAPI)
+         {
+            pep = new ParserEventsProcessor(panelAPI, this);
+         }
+         else
+         {
+            // If there is no sqlPanelAPI (e.g. the Object tree find editor) we assume no parser is necessary and thus provide a dummy impl.
+            pep = new ParserEventsProcessorDummy();
+         }
+
          _parserEventsProcessorsByEntryPanelIdentifier.put(entryPanelIdentifier, pep);
       }
       return pep;
@@ -756,11 +770,19 @@ class Session implements ISession
          if(frames[i] instanceof SessionInternalFrame)
          {
             ISQLPanelAPI sqlPanelAPI = ((SessionInternalFrame)frames[i]).getSQLPanelAPI();
-            IIdentifier id = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
+            IIdentifier sqlEditorID = sqlPanelAPI.getSQLEntryPanel().getIdentifier();
 
-            if(id.equals(entryPanelIdentifier))
+            if(sqlEditorID.equals(entryPanelIdentifier))
             {
                return sqlPanelAPI;
+            }
+
+            IObjectTreeAPI objectTreeApi = ((SessionInternalFrame)frames[i]).getObjectTreeAPI();
+            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
+
+            if(findEditorID.equals(entryPanelIdentifier))
+            {
+               return null;
             }
          }
       }
