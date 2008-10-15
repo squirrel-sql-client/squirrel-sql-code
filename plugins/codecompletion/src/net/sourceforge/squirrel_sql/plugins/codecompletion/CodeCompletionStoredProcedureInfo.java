@@ -16,6 +16,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    private int _procType;
    private ISession _session;
 	private CodeCompletionPlugin _plugin;
+   private boolean _useCompletionPrefs;
    private String _catalog;
    private String _schema;
 	private int _moveCarretBackCount = 0;
@@ -29,12 +30,13 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	 */
 	private CodeCompletionPreferences _prefs;
 
-   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema)
+   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema, boolean useCompletionPrefs)
    {
       _procName = procName;
       _procType = procType;
       _session = session;
       _plugin = plugin;
+      _useCompletionPrefs = useCompletionPrefs;
       _prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
       _catalog = catalog;
       _schema = schema;
@@ -52,7 +54,14 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    {
       try
       {
-			String ret = "";
+         if(false == _useCompletionPrefs)
+         {
+            _moveCarretBackCount = 0;
+            return _procName;   
+         }
+
+
+         String ret = "";
 
 			int completionConfig = getCopmpletionConfig();
 

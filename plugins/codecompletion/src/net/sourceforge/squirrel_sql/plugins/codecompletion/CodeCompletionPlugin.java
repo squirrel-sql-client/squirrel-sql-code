@@ -282,7 +282,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
       {
          public void run()
          {
-            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
+            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this,  true);
 
             CompleteCodeAction cca =
                new CompleteCodeAction(session.getApplication(),
@@ -313,7 +313,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
          {
             ISQLEntryPanel findEntryPanel = objectTreePanel.getFindController().getFindEntryPanel();
 
-            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
+            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this, false);
 
             CompleteCodeAction cca =
                new CompleteCodeAction(session.getApplication(),
