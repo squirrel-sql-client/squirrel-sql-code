@@ -30,6 +30,7 @@ import javax.swing.event.TreeSelectionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.FindInObjectTreeController;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -280,5 +281,7 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * @throws DataSetException if there was a problem refreshing the component.
     */
    void refreshSelectedTab() throws DataSetException;
-   
+
+
+   FindInObjectTreeController getFindController();
 }
