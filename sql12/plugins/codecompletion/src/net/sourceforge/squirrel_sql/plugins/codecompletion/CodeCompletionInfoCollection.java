@@ -46,16 +46,18 @@ public class CodeCompletionInfoCollection
 
 	private ISession _session;
 	private CodeCompletionPlugin _plugin;
+   private boolean _useCompletionPrefs;
 
    private static final int MAX_COMPLETION_INFOS = 300;
 
 	// i18n[codecompletion.listTruncated=Completion list truncated. Narrow by typing to get missing entries.]
 	private static final String TOO_MANY_COMPLETION_INFOS = s_stringMgr.getString("codecompletion.listTruncated");
 
-	public CodeCompletionInfoCollection(ISession session, CodeCompletionPlugin plugin)
+	public CodeCompletionInfoCollection(ISession session, CodeCompletionPlugin plugin, boolean useCompletionPrefs)
 	{
 		_session = session;
 		_plugin = plugin;
+      _useCompletionPrefs = useCompletionPrefs;
 
       _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
       {
@@ -115,12 +117,13 @@ public class CodeCompletionInfoCollection
          for (int i = 0; i < storedProceduresInfos.length; i++)
          {
             CodeCompletionStoredProcedureInfo buf =
-               new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(), 
-                                                     storedProceduresInfos[i].getProcedureType(),
-                                                     _session,
-						                             _plugin,
-													 catalog,
-                                                     schema);
+               new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(),
+                  storedProceduresInfos[i].getProcedureType(),
+                  _session,
+                  _plugin,
+                  catalog,
+                  schema,
+                  _useCompletionPrefs);
             completionInfos.add(buf);
          }
 

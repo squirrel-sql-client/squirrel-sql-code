@@ -20,6 +20,7 @@ public class FindInObjectTreePanel extends JPanel
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       _btnFind = new JButton(resources.getIcon(SquirrelResources.IImageNames.FIND));
+      _btnFind.setToolTipText("Find in Object tree");
       add(_btnFind, gbc);
 
       Dimension preferredSize = textComponent.getPreferredSize();
