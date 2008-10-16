@@ -147,31 +147,36 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 				start = System.currentTimeMillis();
 			}
 			pnl.applyChanges();
-            if (pnl instanceof SessionObjectTreePropertiesPanel) {
-                SessionObjectTreePropertiesPanel otPanel = 
-                    (SessionObjectTreePropertiesPanel) pnl;
-                if (otPanel.isObjectTreeRefreshNeeded()) {
-                    WindowManager wm = 
-                        _session.getApplication().getWindowManager();
-                    BaseSessionInternalFrame[] frames = 
-                        wm.getAllFramesOfSession(_session.getIdentifier());
-                    for (int i = 0; i < frames.length; i++) {
-                        BaseSessionInternalFrame frame = frames[i];
-                        try {
-                            if (frame instanceof SessionInternalFrame) {
-                                SessionInternalFrame sif = 
-                                    (SessionInternalFrame)frame;
-                                sif.getObjectTreeAPI().refreshSelectedNodes();
-                            }
-                        } catch (Exception e) {
-                            s_log.error(
-                                "Unexpected exception while attempting to " +
-                                "refresh object tree: "+e.getMessage(), e);
-                        }
-                    }
-                }
+         if (pnl instanceof SessionObjectTreePropertiesPanel)
+         {
+            SessionObjectTreePropertiesPanel otPanel = (SessionObjectTreePropertiesPanel) pnl;
+
+            if (otPanel.isObjectTreeRefreshNeeded())
+            {
+               WindowManager wm = _session.getApplication().getWindowManager();
+               BaseSessionInternalFrame[] frames = wm.getAllFramesOfSession(_session.getIdentifier());
+               for (int i = 0; i < frames.length; i++)
+               {
+                  BaseSessionInternalFrame frame = frames[i];
+                  try
+                  {
+                     if (frame instanceof SessionInternalFrame)
+                     {
+                        SessionInternalFrame sif =
+                           (SessionInternalFrame) frame;
+                        sif.getObjectTreeAPI().refreshSelectedNodes();
+                     }
+                  }
+                  catch (Exception e)
+                  {
+                     s_log.error(
+                        "Unexpected exception while attempting to " +
+                           "refresh object tree: " + e.getMessage(), e);
+                  }
+               }
             }
-			if (isDebug)
+         }
+         if (isDebug)
 			{
 				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
 						+ (System.currentTimeMillis() - start) + "ms");

@@ -70,6 +70,7 @@ public class SquirrelResources extends Resources
 		String ALIAS_PROPERTIES = "aliasProperties";
 
       String FIND = "find";
+      String FILTER = "filter";
 
    }
 

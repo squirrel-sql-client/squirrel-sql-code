@@ -46,6 +46,7 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -366,7 +367,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
         IDatabaseObjectInfo info = node.getDatabaseObjectInfo();
         TreePath path = getTreePath(info.getCatalogName(), 
                                     info.getSchemaName(), 
-                                    info.getSimpleName());    
+                                    new FilterMatcher(info.getSimpleName(), null));    
         _tree.fireTreeExpanded(path);
     }
     
@@ -726,13 +727,13 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @param schema null means any schema
     * @return true if the Object was found and selected.
     */
-   public boolean selectInObjectTree(String catalog, String schema, String object)
+   public boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher)
    {
-      if ("".equals(object)) {
+      if ("".equals(objectMatcher.getMetaDataMatchString())) {
           return false;
       }
 
-      TreePath treePath = getTreePath(catalog, schema, object);
+      TreePath treePath = getTreePath(catalog, schema, objectMatcher);
       if(null != treePath)
       {
          _tree.setSelectionPath(treePath);
@@ -752,23 +753,23 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     * @param catalog the catalog that the node is located in - can be null
     * @param schema the schema that the node is located in - can be null
     * @param object display name of the node
-    * 
+    *
     * @return the TreePath to the node with the specified criteria, or the root
     *         node if a node with matching characteristics isn't found.
     */
-   private TreePath getTreePath(String catalog, String schema, String object) {
+   private TreePath getTreePath(String catalog, String schema, FilterMatcher objectMatcher) {
        ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
        TreePath treePath = 
            otm.getPathToDbInfo(catalog, 
                                schema, 
-                               object, 
+                               objectMatcher,
                                (ObjectTreeNode) otm.getRoot(), 
                                false);
        if(null == treePath)
        {
           treePath = otm.getPathToDbInfo(catalog, 
                                          schema, 
-                                         object, 
+                                         objectMatcher,
                                          (ObjectTreeNode) otm.getRoot(), 
                                          true);
        }
@@ -995,7 +996,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 	public void sessionWindowClosing()
 	{
-		_tree.dispose();	
+      _findInObjectTreeController.dispose();
+      _tree.dispose();
 	}
 
    public FindInObjectTreeController getFindController()

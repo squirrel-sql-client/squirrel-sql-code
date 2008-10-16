@@ -212,7 +212,7 @@ class ObjectTree extends JTree
 
 
    }
-   
+
    // Mouse listener used to display popup menu.
    private class ObjectTreeMouseListener extends MouseAdapter {
       public void mousePressed(MouseEvent evt)
@@ -355,7 +355,7 @@ class ObjectTree extends JTree
       ObjectTreeNode root = _model.getRootObjectTreeNode();
       root.removeAllChildren();
       fireObjectTreeCleared();
-      startExpandingTree(root, false, selectedPathNames, false, true);
+      startExpandingTree(root, false, selectedPathNames, false);
       fireObjectTreeRefreshed();
    }
 
@@ -384,12 +384,12 @@ class ObjectTree extends JTree
       if (parent != null)
       {
          parent.removeAllChildren();
-         startExpandingTree((ObjectTreeNode) parent, false, selectedPathNames, true, true);
+         startExpandingTree((ObjectTreeNode) parent, false, selectedPathNames, true);
       }
       else
       {
          nodes[0].removeAllChildren();
-         startExpandingTree(nodes[0], false, selectedPathNames, true, true);
+         startExpandingTree(nodes[0], false, selectedPathNames, true);
       }
    }
 
@@ -521,24 +521,14 @@ class ObjectTree extends JTree
         return result;
     }
         
-	private void startExpandingTree(ObjectTreeNode node, 
-                                    boolean selectNode, 
-                                    Map<String, Object> selectedPathNames, 
-                                    boolean refreshSchemaInfo, 
-                                    boolean startExpandInThread)
+	private void startExpandingTree(ObjectTreeNode node,
+                                   boolean selectNode,
+                                   Map<String, Object> selectedPathNames,
+                                   boolean refreshSchemaInfo
+   )
 	{
 		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames, refreshSchemaInfo);
-
-// This is a potential fix for Bug #1752089. I couldn't fiond any reason for this thread.
-// If this proves to be right over some time remove the threading stuff.
-//		if (SwingUtilities.isEventDispatchThread() && startExpandInThread)
-//		{
-//			_session.getApplication().getThreadPool().addTask(exp);
-//		}
-//		else
-		{
-			exp.run();
-		}
+      exp.run();
 	}
 
 	private void expandNode(ObjectTreeNode node, boolean selectNode)
@@ -882,7 +872,7 @@ class ObjectTree extends JTree
 			final Object parentObj = path.getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				startExpandingTree((ObjectTreeNode)parentObj, false, null, false, _startExpandInThread);
+				startExpandingTree((ObjectTreeNode)parentObj, false, null, false);
 				_expandedPathNames.put(path.toString(), null);
 			}
 		}

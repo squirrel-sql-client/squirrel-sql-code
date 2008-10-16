@@ -27,11 +27,9 @@ import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.FindInObjectTreeController;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -256,10 +254,9 @@ public interface IObjectTreeAPI extends IHasIdentifier
     *
     * @param catalog null means any catalog
     * @param schema null means any schema
-    * @param table, view, ... but not a table or view column
     * @return true if the Object was found and selected.
     */
-   boolean selectInObjectTree(String catalog, String schema, String object);
+   boolean selectInObjectTree(String catalog, String schema, FilterMatcher objectMatcher);
    
    /**
     * Selects the root node of the tree.

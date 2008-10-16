@@ -86,7 +86,7 @@ public class ObjectTreeCellRenderer extends DefaultTreeCellRenderer
 
          _filterHint = new JLabel(filterhint);
          final SquirrelResources rsrc = _session.getApplication().getResources();
-         final ImageIcon icon = rsrc.getIcon("Filter");
+         final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.FILTER);
          _filterHint.setIcon(icon);
       }
       else

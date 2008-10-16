@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.FileCloseAction;
@@ -620,7 +621,7 @@ public class SessionPanel extends JPanel
 		{
 			IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
 			api.refreshTree(true);
-			if (api.selectInObjectTree(selectedCatalog, null, "TABLE"))
+			if (api.selectInObjectTree(selectedCatalog, null, new FilterMatcher("TABLE", null)))
 			{
 				ObjectTreeNode[] nodes = api.getSelectedNodes();
 
