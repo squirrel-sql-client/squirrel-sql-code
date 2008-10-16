@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -48,7 +49,8 @@ public class ObjectTreeSearch
       {
 
          ArrayList<String> catSchemObj = candidates.next();
-         success = objectTree.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), catSchemObj.get(2));
+
+         success = objectTree.selectInObjectTree(catSchemObj.get(0), catSchemObj.get(1), new FilterMatcher(catSchemObj.get(2), null));
          if (success)
          {
             session.selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);

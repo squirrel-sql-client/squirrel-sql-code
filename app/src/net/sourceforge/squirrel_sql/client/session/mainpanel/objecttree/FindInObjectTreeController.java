@@ -8,20 +8,24 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import javax.swing.*;
 import javax.swing.text.Keymap;
 import java.awt.event.*;
+import java.util.prefs.Preferences;
 
 public class FindInObjectTreeController
 {
+   private static final String PREF_KEY_OBJECT_TREE_SEARCH_FILTER = "Squirrel.objTreeSearchFilter";
+
+
    private FindInObjectTreePanel _findInObjectTreePanel;
-   private DefaultSQLEntryPanel _defaultSQLEntryPanel;
+   private DefaultSQLEntryPanel _filterEditSQLEntryPanel;
    private ISession _session;
 
    public FindInObjectTreeController(ISession session)
    {
       _session = session;
-      _defaultSQLEntryPanel = new DefaultSQLEntryPanel(session);
-      _findInObjectTreePanel = new FindInObjectTreePanel(_defaultSQLEntryPanel.getTextComponent(), session.getApplication().getResources());
+      _filterEditSQLEntryPanel = new DefaultSQLEntryPanel(session);
+      _findInObjectTreePanel = new FindInObjectTreePanel(_filterEditSQLEntryPanel.getTextComponent(), session.getApplication().getResources());
 
-      Keymap km = _defaultSQLEntryPanel.getTextComponent().getKeymap();
+      Keymap km = _filterEditSQLEntryPanel.getTextComponent().getKeymap();
 
       Action FindAction = new AbstractAction("ObjectTree.Find")
       {
@@ -36,19 +40,45 @@ public class FindInObjectTreeController
       km.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), FindAction);
 
 
+      boolean filter = Preferences.userRoot().getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
+      _findInObjectTreePanel._btnApplyAsFilter.setSelected(filter);
+
+
       _findInObjectTreePanel._btnFind.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            onFind();
+            onFind(false);
          }
       });
 
+      _findInObjectTreePanel._btnApplyAsFilter.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFind(false == _findInObjectTreePanel._btnApplyAsFilter.isSelected());
+         }
+      });
    }
 
-   private void onFind()
+   private void onFind(boolean unfilterTreeFirst)
    {
-      new ObjectTreeSearch().viewObjectInObjectTree(_defaultSQLEntryPanel.getText(), _session);
+      if(unfilterTreeFirst)
+      {
+         _session.getProperties().setObjectFilterInclude(null);
+         _session.getObjectTreeAPIOfActiveSessionWindow().refreshSelectedNodes();
+      }
+
+      if(_findInObjectTreePanel._btnApplyAsFilter.isSelected())
+      {
+         _session.getProperties().setObjectFilterInclude(_filterEditSQLEntryPanel.getText());
+         _session.getObjectTreeAPIOfActiveSessionWindow().refreshSelectedNodes();
+          new ObjectTreeSearch().viewObjectInObjectTree(_session.getProperties().getObjectFilterInclude(), _session);
+      }
+      else
+      {
+         new ObjectTreeSearch().viewObjectInObjectTree(_filterEditSQLEntryPanel.getText(), _session);
+      }
    }
 
    private void onEnter()
@@ -65,6 +95,11 @@ public class FindInObjectTreeController
 
    public ISQLEntryPanel getFindEntryPanel()
    {
-      return _defaultSQLEntryPanel;
+      return _filterEditSQLEntryPanel;
+   }
+
+   public void dispose()
+   {
+      Preferences.userRoot().putBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, _findInObjectTreePanel._btnApplyAsFilter.isSelected());
    }
 }

@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableTypeExpander;
@@ -270,9 +271,9 @@ public class ObjectTreeModel extends DefaultTreeModel
 		return new RootNode(session);
 	}
 
-   public TreePath getPathToDbInfo(String catalog, String schema, String object, ObjectTreeNode startNode, boolean useExpanders)
+   public TreePath getPathToDbInfo(String catalog, String schema, FilterMatcher objectMatcher, ObjectTreeNode startNode, boolean useExpanders)
    {
-      if(dbObjectInfoEquals(catalog, schema, object, startNode.getDatabaseObjectInfo()))
+      if(dbObjectInfoEquals(catalog, schema, objectMatcher, startNode.getDatabaseObjectInfo()))
       {
          return new TreePath(startNode.getPath());
       }
@@ -318,7 +319,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 
          for(int i=0; i < startNode.getChildCount(); ++i)
          {
-            TreePath ret = getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) startNode.getChildAt(i), useExpanders);
+            TreePath ret = getPathToDbInfo(catalog, schema, objectMatcher, (ObjectTreeNode) startNode.getChildAt(i), useExpanders);
             if(null != ret)
             {
                return ret;
@@ -328,7 +329,7 @@ public class ObjectTreeModel extends DefaultTreeModel
       return null;
    }
 
-   private boolean dbObjectInfoEquals(String catalog, String schema, String object, IDatabaseObjectInfo doi)
+   private boolean dbObjectInfoEquals(String catalog, String schema, FilterMatcher objectMatcher, IDatabaseObjectInfo doi)
    {
       if(null != catalog)
       {
@@ -346,10 +347,10 @@ public class ObjectTreeModel extends DefaultTreeModel
          }
       }
 
-      if(null != object)
+      if(null != objectMatcher.getMetaDataMatchString())
       {
-         if(   false == object.equalsIgnoreCase(doi.getSimpleName())
-            && false == object.equalsIgnoreCase(doi.getQualifiedName()))
+         if(   false == objectMatcher.matches(doi.getSimpleName())
+            && false == objectMatcher.getMetaDataMatchString().equalsIgnoreCase(doi.getQualifiedName()))
          {
             return false;
          }
