@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Hibernate Plugin:
+   - Cleaned up details display in mapped objects tab: Now every tree node displays an appropriate details table.
+   - Added hint to slove StackOverflowError caused by logging that may occur when connecting to a Hibernate configuration.
+
 Object tree search (Feature request 2004240):
    Above the Object tree is a text field and a find button.
    The search string has to be the exaxct simple (unqualified) name of an DB object or may contain placeholders ("%" or "_").
