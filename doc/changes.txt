@@ -8,8 +8,9 @@ Enhancements:
 
 Object tree search (Feature request 2004240):
    Above the Object tree is a text field and a find button.
-   The object's simple name (unqualified name) has to be exact to be found.
-   The text field supports code completion. 
+   The search string has to be the exaxct simple (unqualified) name of an DB object or may contain placeholders ("%" or "_").
+   The text field supports code completion.
+   A filter button allows to apply the search string as Object tree filter. 
 
 Object tree filtering:
    Multiple (comma separated) Object tree filters can be defined. Filter conditions can be excluding oder including.
