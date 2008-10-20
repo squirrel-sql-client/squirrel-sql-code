@@ -41,6 +41,9 @@ public class StringManager
 	private ResourceBundle _rsrcBundle;
 	private String _bundleBaseName;
 	private URL[] _bundleLoaderUrLs = new URL[0];
+	
+	/** a flag to indicate whether or not to throw exception for missing resource string */
+	private static boolean _testMode = false;
 
 	/**
 	 * Ctor specifying the package name. Attempt to load a resource bundle
@@ -87,7 +90,7 @@ public class StringManager
 		}
 		catch (MissingResourceException ex)
 		{
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("No resource string found for key '" + key + "' in bundle " + _bundleBaseName + "\n\n");
 
 			if(0 < _bundleLoaderUrLs.length)
@@ -99,6 +102,9 @@ public class StringManager
 				}
 			}
 			s_log.error(sb.toString());
+			if (_testMode) {
+				throw new IllegalStateException(sb.toString());
+			}
 			return "No resource found for key " + key;
 		}
 	}
@@ -157,5 +163,15 @@ public class StringManager
 			s_log.error(msg, ex);
 			return msg + ": " + ex.toString();
 		}
+	}
+	
+	/**
+	 * Allows the caller to enable/disable test mode which results in an exception being thrown for no 
+	 * resource string defined. 
+	 * 
+	 * @param enabled 
+	 */
+	public static void setTestMode(boolean enabled) {
+		_testMode = enabled;
 	}
 }
