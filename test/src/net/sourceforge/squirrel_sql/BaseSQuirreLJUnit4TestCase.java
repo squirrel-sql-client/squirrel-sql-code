@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql;
 
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -16,6 +17,7 @@ public class BaseSQuirreLJUnit4TestCase
 	public BaseSQuirreLJUnit4TestCase()
 	{
 		ApplicationManager.initApplication();
+		StringManager.setTestMode(true);
 	}
 
 	@SuppressWarnings("unchecked")
