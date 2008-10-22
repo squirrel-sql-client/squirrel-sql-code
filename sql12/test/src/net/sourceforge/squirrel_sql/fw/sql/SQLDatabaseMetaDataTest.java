@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static java.sql.Types.VARCHAR;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
@@ -77,9 +78,9 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 	public void testGetSchemas() throws SQLException {
 
 		/* The first time that schemas are asked for, return just one */
-		ResultSet schemaResultSet1 = buildVarcharResultSet("schemaResultSet1", new String[] { TEST_SCHEMA });	
+		ResultSet schemaResultSet1 = buildVarcharResultSetAsRows("schemaResultSet1", new String[] { TEST_SCHEMA });	
 		/* The second time that schemas are asked for, return two */
-		ResultSet schemaResultSet2 = buildVarcharResultSet("schemaResultSet2", new String[] { TEST_SCHEMA, "aSchema2" });
+		ResultSet schemaResultSet2 = buildVarcharResultSetAsRows("schemaResultSet2", new String[] { TEST_SCHEMA, "aSchema2" });
 		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet1);
 		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet2);
 		
@@ -101,9 +102,9 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 	public void testGetCatalogs() throws SQLException {
 
 		/* The first time that catalogs are asked for, return just one */
-		ResultSet catalogResultSet1 = buildVarcharResultSet(null, new String[] { TEST_CATALOG });
+		ResultSet catalogResultSet1 = buildVarcharResultSetAsRows(null, new String[] { TEST_CATALOG });
 		/* The second time that catalogs are asked for, return two */
-		ResultSet catalogResultSet2 = buildVarcharResultSet(null, new String[] { TEST_CATALOG, "aCatalog2" });
+		ResultSet catalogResultSet2 = buildVarcharResultSetAsRows(null, new String[] { TEST_CATALOG, "aCatalog2" });
 		expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet1);
 		expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet2);
 
@@ -124,7 +125,7 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 	@Test
 	public void testPGGetTableTypes() throws SQLException {
 		/* Build the table types returned by PostgreSQL */
-		ResultSet mockTableTypeResultSet = buildVarcharResultSet("mockTableTypeResultSet", new String[] {
+		ResultSet mockTableTypeResultSet = buildVarcharResultSetAsRows("mockTableTypeResultSet", new String[] {
 		      "SYSTEM INDEX", "SYSTEM VIEW", "SYSTEM TABLE", "SYSTEM TOAST INDEX", "SYSTEM TOAST TABLE",
 		      "SYSTEM VIEW", "TABLE", "TEMPORARY INDEX", "TEMPORARY TABLE", "VIEW" });
 		expect(mockDatabaseMetaData.getTableTypes()).andStubReturn(mockTableTypeResultSet);
@@ -227,23 +228,67 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 		mockHelper.verifyAll();
 	}
 	
+	@Test
+	public void testGetUDTs() throws SQLException {
+		
+		final String javaClassName = "java.lang.String";
+		final String remarkValue = "remark";
+		final String dataType = ""+VARCHAR;
+		final String[] values = new String[] { TEST_CATALOG, TEST_SCHEMA, "JAVA_OBJECT", javaClassName, dataType, remarkValue};
+		final ResultSet mockResultSet = buildVarcharResultSetAsColumns("UDTResultSet", values);
+		mockDatabaseMetaData.getUDTs(TEST_CATALOG, TEST_SCHEMA, TEST_TABLE, null);
+		expectLastCall().andStubReturn(mockResultSet);
+		
+		mockHelper.replayAll();
+		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
+		final IUDTInfo[] result = classUnderTest.getUDTs(TEST_CATALOG, TEST_SCHEMA, TEST_TABLE, null);
+		assertEquals(1, result.length);
+		assertEquals(javaClassName, result[0].getJavaClassName());
+		assertEquals(dataType, result[0].getDataType());
+		assertEquals(remarkValue, result[0].getRemarks());
+		mockHelper.verifyAll();
+	}
+	
 	// Helper methods
 	
-	private ResultSet buildVarcharResultSet(String mockName, String[] values) throws SQLException {
+	private ResultSet buildVarcharResultSetAsColumns(String mockName, String[] values) throws SQLException {
 		ResultSetMetaData rsmd = mockHelper.createMock(mockName, ResultSetMetaData.class);
-		expect(rsmd.getColumnCount()).andStubReturn(1);
-		expect(rsmd.getColumnType(1)).andStubReturn(java.sql.Types.VARCHAR);
-		expect(rsmd.getColumnTypeName(1)).andStubReturn("varchar");
+		expect(rsmd.getColumnCount()).andStubReturn(values.length);
 		ResultSet rs = mockHelper.createMock(ResultSet.class);
 		expect(rs.getMetaData()).andStubReturn(rsmd);
+		
+		// Setup values.length columns
+		int count = 1;
 		for (String value : values) {
+			expect(rs.getString(count)).andStubReturn(value);
+			expect(rs.wasNull()).andStubReturn(false);
+			expect(rsmd.getColumnTypeName(count)).andStubReturn("varchar");
+			expect(rsmd.getColumnType(count++)).andStubReturn(java.sql.Types.VARCHAR);
+		}
+		// Setup one row
+		expect(rs.next()).andReturn(true);
+		expect(rs.next()).andReturn(false);
+		rs.close();
+		return rs;
+	}
+
+	private ResultSet buildVarcharResultSetAsRows(String mockName, String[] values) throws SQLException {
+		ResultSetMetaData rsmd = mockHelper.createMock(mockName, ResultSetMetaData.class);
+		expect(rsmd.getColumnCount()).andStubReturn(values.length);
+		ResultSet rs = mockHelper.createMock(ResultSet.class);
+		expect(rs.getMetaData()).andStubReturn(rsmd);
+		
+		// Setup one column in multiple rows
+		expect(rsmd.getColumnTypeName(1)).andStubReturn("varchar");
+		expect(rsmd.getColumnType(1)).andStubReturn(java.sql.Types.VARCHAR);
+		for (String value : values) {
+			expect(rs.getString(1)).andStubReturn(value);
 			expect(rs.next()).andReturn(true);
-			expect(rs.getString(1)).andReturn(value);
 			expect(rs.wasNull()).andStubReturn(false);
 		}
 		expect(rs.next()).andReturn(false);
 		rs.close();
 		return rs;
 	}
-	
+
 }
