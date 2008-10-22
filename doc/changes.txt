@@ -130,6 +130,9 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2184379: (SQuirrel client 2.6.6 fills up 52 gigs of log file space).  Added a new log 
+appender that is based on file size rather than time.
+
 2119937: Windows EOL chars (CRLF) are converted to Linux EOL (LF).
 
 2102894: Missing Scale Placeholder in Sql server dialect.  This causes script generation and dbcopy 
