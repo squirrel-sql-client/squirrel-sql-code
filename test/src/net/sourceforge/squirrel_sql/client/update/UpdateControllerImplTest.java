@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.client.update;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertFalse;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -102,7 +103,8 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    	expect(mockApplication.getPluginManager()).andReturn(mockPluginManager).anyTimes();
    	expect(mockApplication.getSquirrelPreferences()).andReturn(prefs).anyTimes();
    	expect(prefs.getUpdateSettings()).andReturn(mockUpdateSettings).anyTimes();
-
+   	mockUpdateSettings.setLastUpdateCheckTimeMillis(isA(String.class));
+   	
    	setupSnapshotChannelXmlBean();
    	
    	replayAll();
