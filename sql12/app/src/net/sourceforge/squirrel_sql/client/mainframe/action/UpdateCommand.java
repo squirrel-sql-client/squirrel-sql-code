@@ -18,9 +18,10 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.update.UpdateControllerImpl;
+import net.sourceforge.squirrel_sql.client.update.UpdateController;
+import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactory;
+import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactoryImpl;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
-import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
@@ -32,6 +33,9 @@ public class UpdateCommand implements ICommand
 	/** Application API. */
 	private IApplication _app;
 
+	/** The factory that creates the UpdateController or re-uses the one previously created one */
+	private UpdateControllerFactory updateControllerFactory = new UpdateControllerFactoryImpl();
+	
 	/**
 	 * Ctor.
 	 *
@@ -55,10 +59,9 @@ public class UpdateCommand implements ICommand
 	 */
 	public void execute()
 	{
-	   UpdateControllerImpl updateController = new UpdateControllerImpl(_app);
-	   ArtifactDownloaderFactory downloaderFactory = new ArtifactDownloaderFactoryImpl();
-	   updateController.setArtifactDownloaderFactory(downloaderFactory);
-	   updateController.setUpdateUtil(new UpdateUtilImpl());
+	   UpdateController updateController = 
+	   	updateControllerFactory.createUpdateController(_app,  new ArtifactDownloaderFactoryImpl(),
+	   		new UpdateUtilImpl());
 	   updateController.showUpdateDialog();
 	}
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
@@ -341,5 +342,14 @@ public interface UpdateUtil
 	 *           the file to get the checksum for
 	 * @return the checksum as a long. If an error occurs, this method will return -1
 	 */
-	public long getCheckSum(FileWrapper f);	
+	public long getCheckSum(FileWrapper f);
+
+	/**
+	 * Returns an Enum value representing the users preference for how often to automatically check for 
+	 * updates.
+	 * 
+	 * @param settings the settings to look in.
+	 * @return the Enum value
+	 */
+	public UpdateCheckFrequency getUpdateCheckFrequency(IUpdateSettings settings);	
 }

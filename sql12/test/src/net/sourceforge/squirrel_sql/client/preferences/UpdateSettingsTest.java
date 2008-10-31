@@ -51,7 +51,7 @@ public class UpdateSettingsTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String UPDATE_SERVER = "UpdateServer";
 
-	private UpdateSettings classUnderTest = null;
+	private IUpdateSettings classUnderTest = null;
 	
 	private EasyMockHelper mockHelper = new EasyMockHelper();
 	
