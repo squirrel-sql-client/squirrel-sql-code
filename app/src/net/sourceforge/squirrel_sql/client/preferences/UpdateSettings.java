@@ -152,7 +152,7 @@ public class UpdateSettings implements Cloneable, IUpdateSettings
    public String getUpdateCheckFrequency() {
       return updateCheckFrequency;
    }
-
+   
    /**
     * @param updateCheckFrequency the updateCheckFrequency to set
     */

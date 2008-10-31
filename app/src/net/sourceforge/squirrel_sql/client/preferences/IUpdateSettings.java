@@ -18,6 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
+
+/**
+ * Interface for settings pertaining to software updates. 
+ */
 public interface IUpdateSettings
 {
 

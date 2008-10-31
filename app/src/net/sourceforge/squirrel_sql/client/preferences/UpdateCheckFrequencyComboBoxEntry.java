@@ -18,25 +18,17 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
+import net.sourceforge.squirrel_sql.client.update.UpdateCheckFrequency;
+
 /**
- * An abstraction for update check frequency combobox entries.  This just allows
+ * An abstraction for update check frequency combo-box entries.  This just allows
  * the label to be internationalized, while still allowing for the application
  * to know what the user's preference for update check frequency is.
- * 
- * @author manningr
  */
 public class UpdateCheckFrequencyComboBoxEntry {
-
-   /**
-    * An enumeration that defines the different update check frequencies that 
-    * a user can choose
-    */
-   public enum Frequency {
-      AT_STARTUP, WEEKLY
-   }
    
    /** the frequency with which to check the site for software updates */
-   private Frequency _frequency = null;
+   private UpdateCheckFrequency _frequency = null;
 
    /** the label to show to the user for this software update frequency */
    private String _displayName = null;
@@ -49,12 +41,12 @@ public class UpdateCheckFrequencyComboBoxEntry {
     * @param displayName
     *           the label to show to the user for this software update frequency
     */
-   public UpdateCheckFrequencyComboBoxEntry(Frequency frequency, String displayName) {
+   public UpdateCheckFrequencyComboBoxEntry(UpdateCheckFrequency frequency, String displayName) {
       _frequency = frequency;
       _displayName = displayName;
    }
 
-   /* (non-Javadoc)
+   /**
     * @see java.lang.Object#toString()
     */
    public String toString() {
@@ -62,19 +54,10 @@ public class UpdateCheckFrequencyComboBoxEntry {
    }
 
    /**
-    * @return whether or not this frequency indicates that update checks should
-    *         happen at application startup
+    * @return the UpdateCheckFrequency Enum that is associated with this combo box entry.
     */
-   public boolean isStartup() {
-      return _frequency == Frequency.AT_STARTUP;
+   public UpdateCheckFrequency getUpdateCheckFrequencyEnum() {
+   	return _frequency;
    }
-
-   /**
-    * @return whether or not this frequency indicates that update checks should
-    *         happen approximately weekly
-    */
-   public boolean isWeekly() {
-      return _frequency == Frequency.WEEKLY;
-   }
-
+   
 }

@@ -45,7 +45,7 @@ import javax.swing.event.DocumentListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
-import net.sourceforge.squirrel_sql.client.preferences.UpdateCheckFrequencyComboBoxEntry.Frequency;
+import net.sourceforge.squirrel_sql.client.update.UpdateCheckFrequency;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -103,6 +103,9 @@ public class UpdatePreferencesPanel extends JPanel
       // i18n[UpdatePreferencesPanel.server=Server:]
       String SERVER = s_stringMgr.getString("UpdatePreferencesPanel.server");
             
+		// i18n[UpdatePreferencesPanel.dailyLabel=Daily]
+		String DAILY_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.dailyLabel");
+      
       //i18n[UpdatePreferencesPanel.weeklyLabel=Weekly]
       String WEEKLY_LABEL = 
          s_stringMgr.getString("UpdatePreferencesPanel.weeklyLabel");
@@ -161,15 +164,19 @@ public class UpdatePreferencesPanel extends JPanel
       new JCheckBox(i18n.ENABLE_AUTO_UPDATE);
    
    private UpdateCheckFrequencyComboBoxEntry checkAtStartup = 
-      new UpdateCheckFrequencyComboBoxEntry(Frequency.AT_STARTUP, 
+      new UpdateCheckFrequencyComboBoxEntry(UpdateCheckFrequency.STARTUP, 
                                             i18n.AT_STARTUP_LABEL);
+
+   private UpdateCheckFrequencyComboBoxEntry checkDaily = 
+      new UpdateCheckFrequencyComboBoxEntry(UpdateCheckFrequency.DAILY, 
+                                            i18n.DAILY_LABEL);
    
    private UpdateCheckFrequencyComboBoxEntry checkWeekly = 
-      new UpdateCheckFrequencyComboBoxEntry(Frequency.WEEKLY, 
+      new UpdateCheckFrequencyComboBoxEntry(UpdateCheckFrequency.WEEKLY, 
                                             i18n.WEEKLY_LABEL);
    
    private JComboBox _updateCheckFrequency = 
-      new JComboBox(new Object[] {checkAtStartup, checkWeekly});
+      new JComboBox(new Object[] {checkAtStartup, checkDaily, checkWeekly});
    
    private JButton _testConnectionButton = 
    	new JButton(i18n.TEST_LABEL);
@@ -206,12 +213,19 @@ public class UpdatePreferencesPanel extends JPanel
 
       _enableAutoUpdateChk.setSelected(updateSettings.isEnableAutomaticUpdates());
       
-      String freqStr = updateSettings.getUpdateCheckFrequency();
-      _updateCheckFrequency.setSelectedItem(checkWeekly);
-      if (freqStr != null && freqStr.equals(Frequency.AT_STARTUP.name())) 
-      {
-         _updateCheckFrequency.setSelectedItem(checkAtStartup);
+      UpdateCheckFrequency updateCheckFrequency = 
+      	UpdateCheckFrequency.getEnumForString(updateSettings.getUpdateCheckFrequency());
+
+      if (updateCheckFrequency == UpdateCheckFrequency.DAILY) {
+      	_updateCheckFrequency.setSelectedItem(checkDaily);
       }
+      if (updateCheckFrequency == UpdateCheckFrequency.STARTUP) {
+      	_updateCheckFrequency.setSelectedItem(checkAtStartup);
+      }
+      if (updateCheckFrequency == UpdateCheckFrequency.WEEKLY) {
+      	_updateCheckFrequency.setSelectedItem(checkWeekly);
+      }
+      
       if (updateSettings.isRemoteUpdateSite()) {
          _remoteTypeButton.setSelected(true);
          enableRemoteSite();
@@ -246,11 +260,8 @@ public class UpdatePreferencesPanel extends JPanel
       
       UpdateCheckFrequencyComboBoxEntry freqEntry = 
          (UpdateCheckFrequencyComboBoxEntry)_updateCheckFrequency.getSelectedItem();
-      String freqStr = Frequency.WEEKLY.name();
-      if (freqEntry.isStartup()) {
-         freqStr = Frequency.AT_STARTUP.name();
-      }
-      updateSettings.setUpdateCheckFrequency(freqStr);
+
+      updateSettings.setUpdateCheckFrequency(freqEntry.getUpdateCheckFrequencyEnum().name());
       updateSettings.setRemoteUpdateSite(_remoteTypeButton.isSelected());
       updateSettings.setFileSystemUpdatePath(_localPath.getText());
       

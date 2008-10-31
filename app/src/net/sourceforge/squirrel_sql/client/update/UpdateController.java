@@ -59,12 +59,14 @@ public interface UpdateController {
    int getUpdateServerPortAsInt();
 
    void showMessage(String title, String msg);
-   
-   void showUpdateDialog();
+
+   boolean showConfirmMessage(String title, String msg);   
    
    void showErrorMessage(String title, String msg, Exception e);
    
    void showErrorMessage(String title, String msg);
+   
+   void showUpdateDialog();
    
    /**
     * Ask the UpdateController to check for updated artifacts.
@@ -99,5 +101,16 @@ public interface UpdateController {
     * @return true if remote site; false otherwise.
     */   
    boolean isRemoteUpdateSite();
+
+   /**
+    * 
+    * @return
+    */
+	public boolean isTimeToCheckForUpdates();
+
+	public void promptUserToDownloadAvailableUpdates();
+
+	
+
       
 }

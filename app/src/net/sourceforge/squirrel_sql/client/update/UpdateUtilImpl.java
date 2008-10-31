@@ -35,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
@@ -85,6 +86,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *       + release.xml (describes the release that is currently installed)
  * 
  * @author manningr
+ */
+/**
+ * @author manningr
+ *
  */
 public class UpdateUtilImpl implements UpdateUtil {
 
@@ -843,6 +848,26 @@ public class UpdateUtilImpl implements UpdateUtil {
    		}
    	} finally {
    		_iou.closeInputStream(is);
+   	}
+   	return result;
+   }
+   
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#
+    * getUpdateCheckFrequency(net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings)
+    */
+   public UpdateCheckFrequency getUpdateCheckFrequency(IUpdateSettings settings) {
+   	UpdateCheckFrequency result = UpdateCheckFrequency.STARTUP;
+   	String updateCheckFrequencyStr = settings.getUpdateCheckFrequency(); 
+   	if ("weekly".equalsIgnoreCase(updateCheckFrequencyStr)) {
+   		result = UpdateCheckFrequency.WEEKLY;
+   	}
+   	if ("daily".equalsIgnoreCase(updateCheckFrequencyStr)) {
+   		result = UpdateCheckFrequency.DAILY;
+   	}
+   	if ("startup".equalsIgnoreCase(updateCheckFrequencyStr)) {
+   		result = UpdateCheckFrequency.STARTUP;
    	}
    	return result;
    }
