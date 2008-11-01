@@ -3,7 +3,7 @@ Oracle Change Log
 
 0.20
 ====
-
+ - Bug #1844898 (TIMESTAMP(6) WITH LOCAL TIME ZONE shows <Error>)
  - Added validity (VALID|INVALID) field to trigger details tab for triggers.
  - Added ability to recognize "create package" and "create package body" statements.
  - Allow the user to configure whether or not to show the syntax error offset 

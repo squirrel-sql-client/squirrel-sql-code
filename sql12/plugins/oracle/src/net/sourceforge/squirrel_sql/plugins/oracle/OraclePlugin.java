@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 import javax.swing.SwingUtilities;
 
@@ -64,6 +67,7 @@ import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -466,10 +470,29 @@ public class OraclePlugin extends DefaultSessionPlugin
          }
       });
 
+      setTimezoneForSession(session);
 
       return ret;
    }
 
+   @SuppressWarnings("unchecked")
+	private void setTimezoneForSession(ISession session) {
+   	Connection con = session.getSQLConnection().getConnection();
+   	
+   	
+   	String timezoneStr = TimeZone.getDefault().getID();
+   	try
+		{
+   		Class oraConClass = Class.forName("oracle.jdbc.OracleConnection");
+   		Method setSessionTimeZoneMethod = oraConClass.getMethod("setSessionTimeZone", String.class);
+   		setSessionTimeZoneMethod.invoke(con, timezoneStr);
+		}
+		catch (Exception e)
+		{
+			s_log.error("Unexpected exception while trying to set session timezone: "+e.getMessage(), e);
+		}
+   }
+   
    /**
     * This will check the setting for using timestamps in where clauses and 
     * display a warning message to the user if string literal - which is known 
@@ -667,20 +690,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       }
       finally
       {
-         if (rs != null) try
-         {
-            rs.close();
-         }
-         catch (SQLException e)
-         {
-         }
-         if (stmt != null) try
-         {
-            stmt.close();
-         }
-         catch (SQLException e)
-         {
-         }
+      	SQLUtilities.closeResultSet(rs, true);
       }
       return result;
    }
@@ -720,20 +730,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       }
       finally
       {
-         if (rs != null) try
-         {
-            rs.close();
-         }
-         catch (SQLException e)
-         {
-         }
-         if (stmt != null) try
-         {
-            stmt.close();
-         }
-         catch (SQLException e)
-         {
-         }
+      	SQLUtilities.closeResultSet(rs, true);
       }
       return result;
    }
@@ -762,20 +759,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       }
       finally
       {
-         try
-         {
-            if (rs != null)
-            {
-               rs.close();
-            }
-            if (pstmt != null)
-            {
-               pstmt.close();
-            }
-         }
-         catch (SQLException ex)
-         {
-         }
+      	SQLUtilities.closeResultSet(rs, true);
       }
    }
 
