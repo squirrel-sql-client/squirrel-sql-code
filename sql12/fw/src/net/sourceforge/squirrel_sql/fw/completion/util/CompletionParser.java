@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.completion.util;
 
-import org.apache.log4j.helpers.BoundedFIFO;
-
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
