@@ -941,13 +941,17 @@
                         <include name="**/*.class"/>
                     </patternset>
 
-		    <fileset dir="${dist_dir}">
-		    	<include name="*.zip"/>
-		    </fileset>
+                    <!-- core jars -->
 		    <fileset dir="${core_dist_lib_dir}">
-		    	<include name="squirrel-sql.jar"/>
-		    	<include name="fw.jar"/>
+		        <include name="squirrel-sql.jar"/>
+		        <include name="fw.jar"/>
 		    </fileset>
+			
+                    <!-- plugin jars -->
+                    <fileset dir="${core_dist_dir}/plugins">
+                        <include name="*.jar"/>
+                    </fileset>
+			
 		</unjar>
 		
 		<!--Unzip all previously archived fw, core and plugin src jars that will be reported on. The
