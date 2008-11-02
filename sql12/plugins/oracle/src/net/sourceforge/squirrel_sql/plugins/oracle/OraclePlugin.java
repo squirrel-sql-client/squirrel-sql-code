@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.TimeZone;
 
 import javax.swing.SwingUtilities;
 
@@ -63,7 +62,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimes
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -423,7 +421,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-      IQueryTokenizerPreferenceBean prefs = _prefsManager.getPreferences();
+      OraclePreferenceBean prefs = (OraclePreferenceBean)_prefsManager.getPreferences();
       if (prefs.isInstallCustomQueryTokenizer()) {
           session.setQueryTokenizer(new OracleQueryTokenizer(prefs));
       }
@@ -470,22 +468,36 @@ public class OraclePlugin extends DefaultSessionPlugin
          }
       });
 
-      setTimezoneForSession(session);
+      setTimezoneForSession(session, prefs);
 
       return ret;
    }
 
    @SuppressWarnings("unchecked")
-	private void setTimezoneForSession(ISession session) {
+	private void setTimezoneForSession(ISession session, OraclePreferenceBean prefs) {
+   	if (!prefs.getInitSessionTimezone()) {
+   		if (s_log.isInfoEnabled()) {
+   			s_log.info("setTimezoneForSession: user preference for init session timezone is disabled.  " +
+   					"Local Timezone data types may not be displayed correctly.");
+   		}
+   		return;
+   	}
+   	
    	Connection con = session.getSQLConnection().getConnection();
-   	
-   	
-   	String timezoneStr = TimeZone.getDefault().getID();
+   	String timezoneStr = prefs.getSessionTimezone();
    	try
 		{
+   		if (s_log.isInfoEnabled()) {
+   			s_log.info("setTimezoneForSession: attempting to set the session timezone to : "+timezoneStr);
+   		}
    		Class oraConClass = Class.forName("oracle.jdbc.OracleConnection");
    		Method setSessionTimeZoneMethod = oraConClass.getMethod("setSessionTimeZone", String.class);
-   		setSessionTimeZoneMethod.invoke(con, timezoneStr);
+   		if (setSessionTimeZoneMethod != null) {
+   			setSessionTimeZoneMethod.invoke(con, timezoneStr);
+   		} else {
+   			s_log.error("setTimezoneForSession: setSessionTimeZoneMethod returned by reflection was null.  " +
+   					"Skipped setting session timezone");
+   		}
 		}
 		catch (Exception e)
 		{
