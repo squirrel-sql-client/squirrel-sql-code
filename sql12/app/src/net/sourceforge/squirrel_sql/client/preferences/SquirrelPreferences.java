@@ -180,12 +180,6 @@ public class SquirrelPreferences implements Serializable
 	/** Software update settings */
 	private IUpdateSettings _updateSettings = new UpdateSettings();
 	
-	/** Index in drivers window to be initially selected. */
-	private int _driversSelectedIndex = -1;
-
-	/** Index in aliases window to be initially selected. */
-	private int _aliasesSelectedIndex = -1;
-
 	/** Show loaded drivers only in the Drivers window. */
 	private boolean _showLoadedDriversOnly;
 
@@ -225,19 +219,7 @@ public class SquirrelPreferences implements Serializable
 
     /** Whether or not to change the selection while right-clicking on list or tree node */
     private boolean _selectOnRightMouseClick = true;
-    
-    /** Host to use when checking for and installing updates */
-//    private String _updateHost = "squirrel-sql.sourceforge.net";
-    
-    /** Port to use when checking for and installing updates */
-//    private String _updatePort = "80";
-    
-    /** Path to use when checking for and installing updates */
-//    private String _updatePath = "releases";
-    
-    /** Channel to use when checking for and installing updates */ 
-//    private String _updateChannel = "stable";
-    
+        
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
