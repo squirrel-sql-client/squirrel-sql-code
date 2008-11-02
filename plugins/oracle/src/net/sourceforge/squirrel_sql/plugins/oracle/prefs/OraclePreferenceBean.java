@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.Serializable;
+import java.util.TimeZone;
 
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 
@@ -53,6 +54,10 @@ public class OraclePreferenceBean implements Cloneable,
     private boolean excludeRecycleBinTables = true;
     
     private boolean showErrorOffset = true;
+    
+    private boolean initSessionTimezone = true;
+    
+    private String sessionTimezone = TimeZone.getDefault().getID();
     
     public OraclePreferenceBean() {
         super();
@@ -207,5 +212,37 @@ public class OraclePreferenceBean implements Cloneable,
    public void setShowErrorOffset(boolean showErrorOffset) {
       this.showErrorOffset = showErrorOffset;
    }
+
+	/**
+	 * @param sessionTimezone the sessionTimezone to set
+	 */
+	public void setSessionTimezone(String sessionTimezone)
+	{
+		this.sessionTimezone = sessionTimezone;
+	}
+
+	/**
+	 * @return the sessionTimezone
+	 */
+	public String getSessionTimezone()
+	{
+		return sessionTimezone;
+	}
+
+	/**
+	 * @param initSessionTimezone the initSessionTimezone to set
+	 */
+	public void setInitSessionTimezone(boolean initSessionTimezone)
+	{
+		this.initSessionTimezone = initSessionTimezone;
+	}
+
+	/**
+	 * @return the getInitSessionTimezone
+	 */
+	public boolean getInitSessionTimezone()
+	{
+		return initSessionTimezone;
+	}
 
 }
