@@ -939,6 +939,7 @@
 		<unjar dest="${coverage.classes.dir}">
                     <patternset>
                         <include name="**/*.class"/>
+                    	<exclude name="com/**/*.class"/>
                     </patternset>
 
                     <!-- core jars -->
