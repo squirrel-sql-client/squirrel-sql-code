@@ -158,7 +158,6 @@ public class SybasePreferenceBean implements Cloneable,
     }
 
     /**
-     * This is not implemented at the moment, but will be soon.
      * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#getProcedureSeparator()
      */
     public String getProcedureSeparator() {
@@ -166,7 +165,6 @@ public class SybasePreferenceBean implements Cloneable,
     }
 
     /**
-     * This is not implemented at the moment, but will be soon. 
      * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
      */
     public void setProcedureSeparator(String procedureSeparator) {
