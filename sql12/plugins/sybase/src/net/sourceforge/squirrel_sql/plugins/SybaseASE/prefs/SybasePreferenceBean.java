@@ -40,6 +40,8 @@ public class SybasePreferenceBean implements Cloneable,
     
     private String statementSeparator = "GO";
     
+    private String procedureSeparator = "GO";
+    
     private String lineComment = "--";
     
     private boolean removeMultiLineComments = false;
@@ -160,7 +162,7 @@ public class SybasePreferenceBean implements Cloneable,
      * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#getProcedureSeparator()
      */
     public String getProcedureSeparator() {
-        return null;
+        return procedureSeparator;
     }
 
     /**
@@ -168,7 +170,7 @@ public class SybasePreferenceBean implements Cloneable,
      * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
      */
     public void setProcedureSeparator(String procedureSeparator) {
-        
+        this.procedureSeparator = procedureSeparator;
     }
 
     
