@@ -34,26 +34,10 @@ public class ModuleXmlBean implements Serializable {
 
     private static final long serialVersionUID = -6047289718869161323L;
 
-//    private ModuleType type;
-
     private String name;
     
     private Set<ArtifactXmlBean> artifacts = new HashSet<ArtifactXmlBean>();
     
-//    /**
-//     * @return the type
-//     */
-//    public ModuleType getType() {
-//        return type;
-//    }
-//
-//    /**
-//     * @param type the type to set
-//     */
-//    public void setType(ModuleType type) {
-//        this.type = type;
-//    }
-
     /**
      * @return the name
      */
