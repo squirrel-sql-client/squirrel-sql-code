@@ -19,11 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
 /**
  * This <TT>Action</TT> will allow the user to export configuration information
@@ -33,7 +31,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 public class ExportConfigurationAction extends SquirrelAction 
 {
+	private static final long serialVersionUID = 1L;
+
 	/** Application API. */
+	@SuppressWarnings("unused")
 	private final IApplication _app;
 
 	/** Current plugin. */
@@ -47,7 +48,7 @@ public class ExportConfigurationAction extends SquirrelAction
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>ExportConfigPlugin</TT> passed.
 	 */
 	public ExportConfigurationAction(IApplication app, Resources rsrc,
@@ -73,13 +74,6 @@ public class ExportConfigurationAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-//		try
-//		{
-			new ExportConfigurationCommand(getParentFrame(evt), _plugin).execute();
-//		}
-//		catch (BaseException ex)
-//		{
-//			_app.showErrorDialog("Error exporting", ex);
-//		}
+			new ExportConfigurationCommand(_plugin).execute();
 	}
 }
