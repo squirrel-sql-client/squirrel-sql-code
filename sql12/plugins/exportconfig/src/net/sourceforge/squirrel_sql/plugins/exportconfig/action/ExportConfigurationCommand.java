@@ -17,19 +17,13 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
-
 import javax.swing.JDialog;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.gui.ExportDialog;
 /**
@@ -41,11 +35,9 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.gui.ExportDialog;
 class ExportConfigurationCommand implements ICommand
 {
 	/** Logger for this class. */
+	@SuppressWarnings("unused")
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportConfigurationCommand.class);
-
-	/** Parent frame. */
-	private final Frame _frame;
 
 	/** Current plugin. */
 	private ExportConfigPlugin _plugin;
@@ -57,23 +49,18 @@ class ExportConfigurationCommand implements ICommand
 	 * @param	plugin	Current plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>Frame</TT>,
+	 * 			Thrown if a <TT>null</TT> 
 	 * 			<TT>ExportConfigPlugin</TT> passed.
 	 */
-	public ExportConfigurationCommand(Frame frame, ExportConfigPlugin plugin)
+	public ExportConfigurationCommand(ExportConfigPlugin plugin)
 	{
 		super();
 
-		if (frame == null)
-		{
-			throw new IllegalArgumentException("Frame == null");
-		}
 		if (plugin == null)
 		{
 			throw new IllegalArgumentException("ExportConfigPlugin == null");
 		}
 
-		_frame = frame;
 		_plugin = plugin;
 	}
 
@@ -86,6 +73,6 @@ class ExportConfigurationCommand implements ICommand
 		final JDialog dlog = new ExportDialog(app, _plugin);
 		dlog.pack();
 		GUIUtils.centerWithinParent(dlog);
-		dlog.show();
+		dlog.setVisible(true);
  	}
 }

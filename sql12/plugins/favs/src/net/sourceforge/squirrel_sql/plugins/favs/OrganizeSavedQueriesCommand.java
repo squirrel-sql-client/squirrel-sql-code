@@ -42,6 +42,6 @@ public class OrganizeSavedQueriesCommand {
 		_frame = frame;
 	}
 	public void execute() {
-		new OrganizeSavedQueriesDialog(_app, _cache, _frame).show();
+		new OrganizeSavedQueriesDialog(_app, _cache, _frame).setVisible(true);
 	}
 }
