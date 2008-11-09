@@ -130,6 +130,8 @@ Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2220792: SQLite:  content not editable
+
 2184379: (SQuirrel client 2.6.6 fills up 52 gigs of log file space).  Added a new log 
 appender that is based on file size rather than time.
 
