@@ -131,7 +131,9 @@ public class LAFPreferencesTest extends BaseSQuirreLJUnit4TestCase {
 		LAFPreferences a = new LAFPreferences(id);
 		LAFPreferences b = new LAFPreferences(id);
 		LAFPreferences c = new LAFPreferences(id2);
-		LAFPreferences d = new LAFPreferences(id) {};
+		LAFPreferences d = new LAFPreferences(id) {
+			private static final long serialVersionUID = 1L;
+		};
 		
 		new EqualsTester(a, b, c, d);
 	}
