@@ -108,12 +108,12 @@
 			</fileset>
 		</path>
 
-	        <path id="findbugs.aux.classpath">
-                        <fileset dir="${dist_root}">
-                                <include name="**/lib/*.jar" />
-                        	<exclude name="**/squirrel-sql.jar" />
-                        	<exclude name="**/fw.jar" />
-                        </fileset>
+		<path id="findbugs.aux.classpath">
+			<fileset dir="${dist_root}">
+				<include name="**/lib/*.jar" />
+				<exclude name="**/squirrel-sql.jar" />
+				<exclude name="**/fw.jar" />
+			</fileset>
 		</path>
 
 		<echo message="squirrel.version: ${squirrel.version}" />
@@ -1144,18 +1144,19 @@
 	and store the result in the findbugs report directory.
 	==================================================================
 	-->
-	<target name="findbugs" depends="init" >
+	<target name="findbugs" depends="init">
 		<mkdir dir="${findbugs.report.dir}" />
 
 		<!-- debugging only
 		<property name="fb.classpath" refid="findbugs.aux.classpath"/>
 		<echo message="Findbugs Auxiliary Classpath = ${fb.classpath}"/>
                 -->
-		
+
 		<findbugs home="${findbugs.home}"
 		          output="xml"
-		          outputFile="${findbugs.report.dir}/squirrel-fb.xml">
-			
+		          outputFile="${findbugs.report.dir}/squirrel-fb.xml"
+		          jvmargs="-Xmx512m">
+
 			<auxclasspath refid="findbugs.aux.classpath" />
 			<sourcePath path="${coverage.sources.dir}" />
 			<class location="${coverage.classes.dir}" />
