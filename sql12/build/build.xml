@@ -1155,7 +1155,7 @@
 		<findbugs home="${findbugs.home}"
 		          output="xml"
 		          outputFile="${findbugs.report.dir}/squirrel-fb.xml"
-		          jvmargs="-Xmx512m">
+		          jvmargs="-Xmx512m" timeout="3600000">
 
 			<auxclasspath refid="findbugs.aux.classpath" />
 			<sourcePath path="${coverage.sources.dir}" />
