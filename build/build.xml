@@ -11,117 +11,136 @@
 	===================================================================
 	-->
 	<target name="init">
-		<tstamp/>
-		<property file="${basedir}/build/build.properties"/>
-		<property name="name" value="squirrel-sql"/>
+		<tstamp />
+		<property file="${basedir}/build/build.properties" />
+		<property name="name" value="squirrel-sql" />
 		<property name="dist_root" value="${basedir}/../squirrel-sql-dist" />
-		<property name="test_output_root" value="${basedir}/../squirrel-sql-test"/>
-		<property name="dist_dir" value="${dist_root}/${name}"/>
-	        <property name="release_dir" value="${dist_dir}/../release"/>
-		<property name="release_core_dir" value="${release_dir}/core"/>
-		<property name="release_i18n_dir" value="${release_dir}/i18n"/>
-	        <property name="release_plugin_dir" value="${release_dir}/plugin"/>
-                        
-		
-		<property name="html_summary_file" value="${test_output_root}/reports/junit/junit-noframes.html"/>
-	        <property name="core_dist_dir" value="${dist_dir}/core/dist"/>
-		<property name="core_work_dir" value="${dist_dir}/core/work"/>
-		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
-		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
-		<property name="core_dist_doc_dir" value="${core_dist_dir}/doc"/>
-		<property name="core_jws_dir" value="${dist_dir}/core/jws"/>
-		<property name="plugins_src_dir" value="${basedir}/plugins"/>
-		<property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
+		<property name="test_output_root"
+		          value="${basedir}/../squirrel-sql-test" />
+		<property name="dist_dir" value="${dist_root}/${name}" />
+		<property name="release_dir" value="${dist_dir}/../release" />
+		<property name="release_core_dir" value="${release_dir}/core" />
+		<property name="release_i18n_dir" value="${release_dir}/i18n" />
+		<property name="release_plugin_dir" value="${release_dir}/plugin" />
 
-		
-		
-		<property name="plugin_build_file_name" value="plugin_build.xml"/>
-		<property name="plugin_build_target_name" value="build"/>
 
-		<property name="debug" value="yes"/>
-		<property name="optimize" value="off"/>
-		<property name="deprecation" value="on"/>
-		<property name="targetVM" value="1.5"/>
+		<property name="html_summary_file"
+		          value="${test_output_root}/reports/junit/junit-noframes.html" />
+		<property name="core_dist_dir" value="${dist_dir}/core/dist" />
+		<property name="core_work_dir" value="${dist_dir}/core/work" />
+		<property name="core_obj_dir" value="${core_work_dir}/obj" />
+		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib" />
+		<property name="core_dist_doc_dir" value="${core_dist_dir}/doc" />
+		<property name="core_jws_dir" value="${dist_dir}/core/jws" />
+		<property name="plugins_src_dir" value="${basedir}/plugins" />
+		<property name="plugins_dist_dir" value="${dist_dir}/plugins" />
+
+
+
+		<property name="plugin_build_file_name" value="plugin_build.xml" />
+		<property name="plugin_build_target_name" value="build" />
+
+		<property name="debug" value="yes" />
+		<property name="optimize" value="off" />
+		<property name="deprecation" value="on" />
+		<property name="targetVM" value="1.5" />
 
 		<!-- init test output properties -->
 
-                <!-- directory which contains classes that will be reported on in the coverage reports - not instrumented -->
-                <property name="coverage.classes.dir" value="${test_output_root}/target/classes" />
+		<!-- directory which contains classes that will be reported on in the coverage reports - not instrumented -->
+		<property name="coverage.classes.dir"
+		          value="${test_output_root}/target/classes" />
 		<!-- directory which contains classes that will not be reported - the JUnit tests -->
-		<property name="test.classes.dir" value="${test_output_root}/target/test-classes" />
-                <!-- directory which contains source code for all classes that coverage will be reported on -->		
-		<property name="coverage.sources.dir" value="${test_output_root}/target/src" />
+		<property name="test.classes.dir"
+		          value="${test_output_root}/target/test-classes" />
+		<!-- directory which contains source code for all classes that coverage will be reported on -->
+		<property name="coverage.sources.dir"
+		          value="${test_output_root}/target/src" />
 		<!-- directory which emma instrumentation classes will be written to -->
-		<property name="instr.dir" value="${test_output_root}/target/emmainstr" />    
-                <!-- directory which emma coverage reports will be written to -->
-                <property name="coverage.report.dir" value="${test_output_root}/reports/emma" />     
+		<property name="instr.dir" value="${test_output_root}/target/emmainstr" />
+		<!-- directory which emma coverage reports will be written to -->
+		<property name="coverage.report.dir"
+		          value="${test_output_root}/reports/emma" />
 		<!-- directory which contains reports generated by JUnit -->
-		<property name="junit.report.dir" value="${test_output_root}/reports/junit" />
-	        
+		<property name="junit.report.dir"
+		          value="${test_output_root}/reports/junit" />
+		<!-- directory which contains reports generated by Findbugs -->
+		<property name="findbugs.report.dir"
+		          value="${test_output_root}/reports/findbugs" />
+
 		<!-- init emma task dependencies -->
-		<property name="emma.dir" value="${basedir}/test/lib" /> <!-- directory that contains emma.jar and emma_ant.jar -->
+		<property name="emma.dir" value="${basedir}/test/lib" />
+		<!-- directory that contains emma.jar and emma_ant.jar -->
 		<path id="emma.lib">
-		    <pathelement location="${emma.dir}/emma-2.0.5312.jar" />
-		    <pathelement location="${emma.dir}/emma_ant-2.0.5312.jar" />
+			<pathelement location="${emma.dir}/emma-2.0.5312.jar" />
+			<pathelement location="${emma.dir}/emma_ant-2.0.5312.jar" />
 		</path>
 		<path id="compile.classpath">
-		    <path refid="emma.lib"/>
+			<path refid="emma.lib" />
 		</path>
 		<path id="project.source.code">
-                    <pathelement location="${basedir}/fw/src"/>
-		    <pathelement location="${basedir}/app/src"/>
-		    
+			<pathelement location="${basedir}/fw/src" />
+			<pathelement location="${basedir}/app/src" />
+
 		</path>
-		
-		<!-- Load <emma> and <emmajava> custom tasks so that they can be used in ANT -->
-		<taskdef resource="emma_ant.properties" classpathref="emma.lib" />		
-				
+
+		<!-- Load <emma>, <emmajava> and <findbugs> custom tasks so that they can be used in ANT -->
+		<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+		<taskdef name="findbugs"
+		         classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
+
 		<!-- Classpath that is used to compile tests -->
 		<path id="test.compile.classpath">
-                        <fileset dir="fw/lib">
-                                <include name="**/*.*"/>
-                        </fileset>
-                        <fileset dir="app/lib">
-                                <include name="**/*.*"/>
-                        </fileset>
-                        <fileset dir="test/lib">
-                                <include name="**/*.*"/>
-                        </fileset>
-                        <fileset dir="${core_dist_lib_dir}">
-                                <include name="**/*.*"/>
-                        </fileset>
-                        <fileset dir="${core_dist_dir}/plugins">
-                                <include name="**/*.jar"/>
+			<fileset dir="fw/lib">
+				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="app/lib">
+				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="test/lib">
+				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/*.*" />
+			</fileset>
+			<fileset dir="${core_dist_dir}/plugins">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+
+	        <path id="findbugs.aux.classpath">
+                        <fileset dir="${dist_root}">
+                                <include name="**/lib/*.jar" />
+                        	<exclude name="**/squirrel-sql.jar" />
+                        	<exclude name="**/fw.jar" />
                         </fileset>
 		</path>
-		
 
-		
-		<echo message="squirrel.version: ${squirrel.version}"/>
-		<echo message="appversion: ${appversion}"/>
+		<echo message="squirrel.version: ${squirrel.version}" />
+		<echo message="appversion: ${appversion}" />
 
-	        <condition property="appversion" 
-        		   value="${squirrel.version}" 
-        	       else = "Non-Release Build">
-        	
-            <isset property="squirrel.version"/>
-        
-        </condition>
+		<condition property="appversion"
+		           value="${squirrel.version}"
+		           else="Non-Release Build">
+
+			<isset property="squirrel.version" />
+
+		</condition>
 
 
-		<available property="htmlsummary.present" file="${html_summary_file}"/>
-		
-		<property environment="env"/>
-		<echo message="ANT HOME: ${env.ANT_HOME}"/>
-		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>	
-		<mkdir dir="${basedir}/../squirrel-sql-dist"/>
-		<mkdir dir="${basedir}/../squirrel-sql-dist/${name}"/>
-		<mkdir dir="${release_dir}"/>
-		<mkdir dir="${release_core_dir}"/>
-		<mkdir dir="${release_i18n_dir}"/>
-		<mkdir dir="${release_plugin_dir}"/>		
+		<available property="htmlsummary.present" file="${html_summary_file}" />
+
+		<property environment="env" />
+		<echo message="ANT HOME: ${env.ANT_HOME}" />
+		<echo message="JAVA HOME: ${env.JAVA_HOME}" />
+		<mkdir dir="${basedir}/../squirrel-sql-dist" />
+		<mkdir dir="${basedir}/../squirrel-sql-dist/${name}" />
+		<mkdir dir="${release_dir}" />
+		<mkdir dir="${release_core_dir}" />
+		<mkdir dir="${release_i18n_dir}" />
+		<mkdir dir="${release_plugin_dir}" />
 	</target>
-	
+
 	<!--
 	==================================================================
 	Help on command usage.
@@ -129,40 +148,40 @@
 	==================================================================
 	-->
 	<target name="help" depends="init">
-		<echo message=""/>
-		<echo message="${name} Build tool"/>
-		<echo message="-------------------------------------------------------"/>
-		<echo message=" Usage:"/>
-		<echo message="   build &lt;target&gt;"/>
-		<echo message=""/>
-		<echo message=" Available targets are:"/>
-		<echo message=""/>
-		<echo message="	compile_fw:   Compiles the base framework classes to:"/>
-		<echo message="				  ${core_obj_dir}"/>
-		<echo message=""/>
-		<echo message="	compile_app:  Compiles the SQuirreL client app to:"/>
-		<echo message="				  ${core_obj_dir}"/>
-		<echo message="				  after building compile_fw."/>
-		<echo message=""/>
-		<echo message="	compile_plugins: Compiles all plugins to:"/>
-		<echo message="					 ${plugins_dist_dir}"/>
-		<echo message="					 after building compile_app."/>
-		<echo message=""/>
-		<echo message="	jar_source: Jars the source for the framework and application to:"/>
-		<echo message="					 ${core_dist_dir}/src}"/>
-		<echo message=""/>
-		<echo message=" javadoc: Compiles the javadoc from the app/ and fw/ sources."/>
-		<echo message=""/>
-		<echo message="	make_dist:  Executes jar_source."/>
-		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR."/>
-		<echo message=""/>
-		<echo message=" make_jws:   Creates Java WebStart version."/>
-		<echo message=""/>
-		<echo message="	clean:  Removes class files, old versions of source etc."/>
-		<echo message=""/>		
-		<echo message="	test:  Run the JUnit tests."/>
-		<echo message="--------------------------------------------------------"/>
-		<echo message=""/>
+		<echo message="" />
+		<echo message="${name} Build tool" />
+		<echo message="-------------------------------------------------------" />
+		<echo message=" Usage:" />
+		<echo message="   build &lt;target&gt;" />
+		<echo message="" />
+		<echo message=" Available targets are:" />
+		<echo message="" />
+		<echo message="	compile_fw:   Compiles the base framework classes to:" />
+		<echo message="				  ${core_obj_dir}" />
+		<echo message="" />
+		<echo message="	compile_app:  Compiles the SQuirreL client app to:" />
+		<echo message="				  ${core_obj_dir}" />
+		<echo message="				  after building compile_fw." />
+		<echo message="" />
+		<echo message="	compile_plugins: Compiles all plugins to:" />
+		<echo message="					 ${plugins_dist_dir}" />
+		<echo message="					 after building compile_app." />
+		<echo message="" />
+		<echo message="	jar_source: Jars the source for the framework and application to:" />
+		<echo message="					 ${core_dist_dir}/src}" />
+		<echo message="" />
+		<echo message=" javadoc: Compiles the javadoc from the app/ and fw/ sources." />
+		<echo message="" />
+		<echo message="	make_dist:  Executes jar_source." />
+		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR." />
+		<echo message="" />
+		<echo message=" make_jws:   Creates Java WebStart version." />
+		<echo message="" />
+		<echo message="	clean:  Removes class files, old versions of source etc." />
+		<echo message="" />
+		<echo message="	test:  Run the JUnit tests." />
+		<echo message="--------------------------------------------------------" />
+		<echo message="" />
 	</target>
 
 	<!--
@@ -171,77 +190,78 @@
 	==================================================================
 	-->
 	<target name="setup" depends="init">
-		<mkdir dir="${core_obj_dir}"/>
-		<mkdir dir="${core_jws_dir}"/>
-		<mkdir dir="${core_dist_lib_dir}"/>
-		<mkdir dir="${core_dist_doc_dir}"/>
-		<mkdir dir="${core_dist_dir}/src"/>
-		<mkdir dir="${core_dist_dir}/plugins"/>
+		<mkdir dir="${core_obj_dir}" />
+		<mkdir dir="${core_jws_dir}" />
+		<mkdir dir="${core_dist_lib_dir}" />
+		<mkdir dir="${core_dist_doc_dir}" />
+		<mkdir dir="${core_dist_dir}/src" />
+		<mkdir dir="${core_dist_dir}/plugins" />
 	</target>
 
 	<!-- Enable Emma -->
-	<target name="emma" description="turns on EMMA's instrumentation/reporting" >
+	<target name="emma" description="turns on EMMA's instrumentation/reporting">
 
-	    <property name="emma.enabled" value="true" />
+		<property name="emma.enabled" value="true" />
 
-	    <!-- EMMA instr class output directory (it is important to create this property only when EMMA is enabled) -->
-	    <mkdir dir="${instr.dir}" />
-	    
-	    <!-- this property, if overriden via -Demma.filter=<list of filter specs>
+		<!-- EMMA instr class output directory (it is important to create this property only when EMMA is enabled) -->
+		<mkdir dir="${instr.dir}" />
+
+		<!-- this property, if overriden via -Demma.filter=<list of filter specs>
 	     on ANT's command line, will set the coverage filter; by default,
 	     all classes found in 'emma.coverage.classes' pathref will be instrumented:
 	    -->
-	    <property name="emma.filter" value="" />
+		<property name="emma.filter" value="" />
 
 	</target>
-	
+
 	<!--
 	==================================================================
 	Compile the framework classes.
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_fw" depends="setup"
-		    description="Compiles the framework classes that the app depends on">
-		<echo message="---------------- Framework ----------------"/>
-		<javac	srcdir="fw/src"
-				destdir="${core_obj_dir}"
-				deprecation="${deprecation}"
-				debug="${debug}"
-				optimize="${optimize}"
-				includeJavaRuntime="yes"
-				source="${targetVM}"
-			    target="${targetVM}">
+	<target name="compile_fw"
+	        depends="setup"
+	        description="Compiles the framework classes that the app depends on">
+		<echo message="---------------- Framework ----------------" />
+		<javac srcdir="fw/src"
+		       destdir="${core_obj_dir}"
+		       deprecation="${deprecation}"
+		       debug="${debug}"
+		       optimize="${optimize}"
+		       includeJavaRuntime="yes"
+		       source="${targetVM}"
+		       target="${targetVM}">
 			<classpath>
 				<fileset dir="fw/lib">
-					<include name="**/*.*"/>
+					<include name="**/*.*" />
 				</fileset>
 			</classpath>
 			<!-- <compilerarg value="-Xlint" /> -->
 		</javac>
 
-		<copy todir="${core_obj_dir}" >
-			<fileset dir="fw/src" >
-				<include name="**/*.gif"/>
-				<include name="**/*.jpg"/>
-				<include name="**/*.jpeg"/>
-				<include name="**/*.png"/>
-				<include name="**/*.html"/>
-			    <include name="**/*.xml"/>
-				<include name="**/*.properties"/>
+		<copy todir="${core_obj_dir}">
+			<fileset dir="fw/src">
+				<include name="**/*.gif" />
+				<include name="**/*.jpg" />
+				<include name="**/*.jpeg" />
+				<include name="**/*.png" />
+				<include name="**/*.html" />
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
 			</fileset>
 		</copy>
 
 		<copy todir="${core_dist_lib_dir}">
 			<fileset dir="fw/lib">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
 		<jar jarfile="${core_dist_lib_dir}/fw.jar" compress="false">
 			<fileset dir="${core_obj_dir}">
-				<include name="com/**/*.*"/>
-				<include name="net/sourceforge/squirrel_sql/fw/**/*.*"/>
+				<include name="com/**/*.*" />
+				<include name="net/sourceforge/squirrel_sql/fw/**/*.*" />
 			</fileset>
 		</jar>
 	</target>
@@ -252,94 +272,98 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_app" depends="compile_fw"
-		    description="Compiles the application but doesn't compile any plugins">
-		<echo message="---------------- ${name} ----------------"/>
-		<javac	srcdir="app/src"
-				destdir="${core_obj_dir}"
-				deprecation="${deprecation}"
-				debug="${debug}"
-				optimize="${optimize}"
-				includeJavaRuntime="yes"
-				source="${targetVM}"
-				target="${targetVM}">
-			
+	<target name="compile_app"
+	        depends="compile_fw"
+	        description="Compiles the application but doesn't compile any plugins">
+		<echo message="---------------- ${name} ----------------" />
+		<javac srcdir="app/src"
+		       destdir="${core_obj_dir}"
+		       deprecation="${deprecation}"
+		       debug="${debug}"
+		       optimize="${optimize}"
+		       includeJavaRuntime="yes"
+		       source="${targetVM}"
+		       target="${targetVM}">
+
 			<classpath>
 				<fileset dir="fw/lib">
-					<include name="**/*.*"/>
+					<include name="**/*.*" />
 				</fileset>
 				<fileset dir="app/lib">
-					<include name="**/*.*"/>
+					<include name="**/*.*" />
 				</fileset>
 			</classpath>
 		</javac>
-		<copy todir="${core_obj_dir}" >
-			<fileset dir="app/src" >
-				<include name="**/*.gif"/>
-				<include name="**/*.jpg"/>
-				<include name="**/*.jpeg"/>
-				<include name="**/*.png"/>
-				<include name="**/*.html"/>
-				<include name="**/*.xml"/>
-				<include name="**/*.properties"/>
-				<include name="**/*.txt"/>
+		<copy todir="${core_obj_dir}">
+			<fileset dir="app/src">
+				<include name="**/*.gif" />
+				<include name="**/*.jpg" />
+				<include name="**/*.jpeg" />
+				<include name="**/*.png" />
+				<include name="**/*.html" />
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+				<include name="**/*.txt" />
 			</fileset>
 		</copy>
 
 		<copy todir="${core_dist_lib_dir}">
 			<fileset dir="app/lib">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
 		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false">
-			<manifest> <!-- file="MANIFEST.MF" -->
-				<attribute name="Manifest-Version" value="1.0"/>
+			<manifest>
+				<!-- file="MANIFEST.MF" -->
+				<attribute name="Manifest-Version" value="1.0" />
 				<!-- Todo: It sure would be nice not to have to hard-code this.  The 
 				           problem is, there isn't a generic way to determine what
 				           all of the app library files and plugin library files are.
 				  -->
-				<attribute name="Class-Path" value="lib/antlr-2.7.5H3.jar lib/cglib-2.1.3.jar lib/commons-cli.jar lib/commons-codec-1.3.jar lib/commons-collections-2.1.1.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ejb3-persistence.jar lib/forms.jar lib/fw.jar lib/hibernate3.2.4.sp1.jar lib/hibernate-annotations-3.3.0.jar lib/hibernate-commons-annotations-3.3.0.jar lib/hibernate-entitymanager-3.3.1.jar lib/jxl.jar lib/log4j-1.2.15.jar lib/nanoxml-2.1.jar lib/openide.jar lib/openide-loaders.jar lib/org-netbeans-modules-editor.jar lib/org-netbeans-modules-editor-fold.jar lib/org-netbeans-modules-editor-lib.jar lib/org-netbeans-modules-editor-util.jar lib/syntax.jar lib/stringtemplate-3.1.b1.jar"/>
-				<attribute name="Main-Class" value="net.sourceforge.squirrel_sql.client.Main"/>
-				<attribute name="Application-Version" value="${appversion}"/>
-				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Class-Path"
+				           value="lib/antlr-2.7.5H3.jar lib/cglib-2.1.3.jar lib/commons-cli.jar lib/commons-codec-1.3.jar lib/commons-collections-2.1.1.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ejb3-persistence.jar lib/forms.jar lib/fw.jar lib/hibernate3.2.4.sp1.jar lib/hibernate-annotations-3.3.0.jar lib/hibernate-commons-annotations-3.3.0.jar lib/hibernate-entitymanager-3.3.1.jar lib/jxl.jar lib/log4j-1.2.15.jar lib/nanoxml-2.1.jar lib/openide.jar lib/openide-loaders.jar lib/org-netbeans-modules-editor.jar lib/org-netbeans-modules-editor-fold.jar lib/org-netbeans-modules-editor-lib.jar lib/org-netbeans-modules-editor-util.jar lib/syntax.jar lib/stringtemplate-3.1.b1.jar" />
+				<attribute name="Main-Class"
+				           value="net.sourceforge.squirrel_sql.client.Main" />
+				<attribute name="Application-Version" value="${appversion}" />
+				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
 			<fileset dir="${core_obj_dir}">
-				<include name="net/sourceforge/squirrel_sql/client/**/*.*"/>
+				<include name="net/sourceforge/squirrel_sql/client/**/*.*" />
 			</fileset>
-			
+
 		</jar>
 
-		<copy todir="${core_dist_dir}" >
-			<fileset dir="app/cmd" >
-				<include name="**/*.*"/>
+		<copy todir="${core_dist_dir}">
+			<fileset dir="app/cmd">
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
-		<chmod file="${core_dist_dir}/*.sh" perm="ugo+rx"/>
+		<chmod file="${core_dist_dir}/*.sh" perm="ugo+rx" />
 
-		<copy todir="${core_dist_doc_dir}" >
-			<fileset dir="doc" >
-				<include name="**/*.*"/>
+		<copy todir="${core_dist_doc_dir}">
+			<fileset dir="doc">
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
-		<copy todir="${core_dist_dir}/icons" >
-			<fileset dir="app/icons" >
-				<include name="**/*.*"/>
+		<copy todir="${core_dist_dir}/icons">
+			<fileset dir="app/icons">
+				<include name="**/*.*" />
 			</fileset>
 		</copy>
 
 		<echo message="Unzip your plugins here"
-			file="${core_dist_dir}/plugins/readme.txt">
+		      file="${core_dist_dir}/plugins/readme.txt">
 		</echo>
-		
+
 		<copy todir="${core_dist_lib_dir}">
 			<fileset dir="translations">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
-		</copy>		
+		</copy>
 	</target>
-	
+
 	<!--
 	==================================================================
 	Build the JavaDoc
@@ -347,16 +371,16 @@
 	==================================================================
 	-->
 	<target name="javadoc">
-		<mkdir dir="${basedir}/../javadoc"/>
-		<javadoc	packagenames="net.sourceforge.squirrel_sql.*"
-					sourcepath="${basedir}/app/src;${basedir}/fw/src"
-					destdir="${basedir}/../javadoc">
+		<mkdir dir="${basedir}/../javadoc" />
+		<javadoc packagenames="net.sourceforge.squirrel_sql.*"
+		         sourcepath="${basedir}/app/src;${basedir}/fw/src"
+		         destdir="${basedir}/../javadoc">
 			<classpath>
 				<fileset dir="fw/lib">
-					<include name="**/*.*"/>
+					<include name="**/*.*" />
 				</fileset>
 				<fileset dir="app/lib">
-					<include name="**/*.*"/>
+					<include name="**/*.*" />
 				</fileset>
 			</classpath>
 		</javadoc>
@@ -368,148 +392,149 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_plugins" depends="compile_app"
-			description="Compiles all configured plugins (see build.xml)">
+	<target name="compile_plugins"
+	        depends="compile_app"
+	        description="Compiles all configured plugins (see build.xml)">
 
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="codecompletion"/>
-			<param name="p_rebuild" value="${rebuild.plugin.codecompletion}"/>
+			<param name="p_internal_name" value="codecompletion" />
+			<param name="p_rebuild" value="${rebuild.plugin.codecompletion}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="dataimport"/>
-			<param name="p_rebuild" value="${rebuild.plugin.dataimport}"/>	
+			<param name="p_internal_name" value="dataimport" />
+			<param name="p_rebuild" value="${rebuild.plugin.dataimport}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="derby"/>
-			<param name="p_rebuild" value="${rebuild.plugin.derby}"/>	
+			<param name="p_internal_name" value="derby" />
+			<param name="p_rebuild" value="${rebuild.plugin.derby}" />
 		</antcall>
 		<antcall target="build_plugin">
-		    <param name="p_internal_name" value="dbcopy"/>
-	        <param name="p_rebuild" value="${rebuild.plugin.dbcopy}"/>
+			<param name="p_internal_name" value="dbcopy" />
+			<param name="p_rebuild" value="${rebuild.plugin.dbcopy}" />
 		</antcall>
 		<antcall target="build_plugin">
-		    <param name="p_internal_name" value="dbdiff"/>
-	        <param name="p_rebuild" value="${rebuild.plugin.dbdiff}"/>
-		</antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="dbinfo"/>
-        	<param name="p_rebuild" value="${rebuild.plugin.dbinfo}"/>
+			<param name="p_internal_name" value="dbdiff" />
+			<param name="p_rebuild" value="${rebuild.plugin.dbdiff}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="db2"/>
-        	<param name="p_rebuild" value="${rebuild.plugin.db2}"/>
-		</antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="editextras"/>
-			<param name="p_rebuild" value="${rebuild.plugin.editextras}"/>
+			<param name="p_internal_name" value="dbinfo" />
+			<param name="p_rebuild" value="${rebuild.plugin.dbinfo}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="exportconfig"/>
-			<param name="p_rebuild" value="${rebuild.plugin.exportconfig}"/>
-		</antcall>			
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="favs"/>
-			<param name="p_rebuild" value="${rebuild.plugin.favs}"/>
+			<param name="p_internal_name" value="db2" />
+			<param name="p_rebuild" value="${rebuild.plugin.db2}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="firebird"/>
-			<param name="p_rebuild" value="${rebuild.plugin.firebird}"/>
-		</antcall>
-                <antcall target="build_plugin">
-                        <param name="p_internal_name" value="firebirdmanager"/>
-                        <param name="p_rebuild" value="${rebuild.plugin.firebirdmanager}"/>
-                </antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="graph"/>
-			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
+			<param name="p_internal_name" value="editextras" />
+			<param name="p_rebuild" value="${rebuild.plugin.editextras}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="h2"/>
-			<param name="p_rebuild" value="${rebuild.plugin.h2}"/>
-		</antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="hibernate"/>
-			<param name="p_rebuild" value="${rebuild.plugin.hibernate}"/>
-		</antcall>				
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="informix"/>
-			<param name="p_rebuild" value="${rebuild.plugin.informix}"/>			
-		</antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="isqlj"/>
-			<param name="p_rebuild" value="${rebuild.plugin.isqlj}"/>			
-		</antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="laf"/>
-			<param name="p_rebuild" value="${rebuild.plugin.laf}"/>
+			<param name="p_internal_name" value="exportconfig" />
+			<param name="p_rebuild" value="${rebuild.plugin.exportconfig}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="macosx"/>
-			<param name="p_rebuild" value="${rebuild.plugin.macosx}"/>
+			<param name="p_internal_name" value="favs" />
+			<param name="p_rebuild" value="${rebuild.plugin.favs}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="mssql"/>
-			<param name="p_rebuild" value="${rebuild.plugin.mssql}"/>
+			<param name="p_internal_name" value="firebird" />
+			<param name="p_rebuild" value="${rebuild.plugin.firebird}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="mysql"/>
-			<param name="p_rebuild" value="${rebuild.plugin.mysql}"/>
+			<param name="p_internal_name" value="firebirdmanager" />
+			<param name="p_rebuild" value="${rebuild.plugin.firebirdmanager}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="oracle"/>
-			<param name="p_rebuild" value="${rebuild.plugin.oracle}"/>
+			<param name="p_internal_name" value="graph" />
+			<param name="p_rebuild" value="${rebuild.plugin.graph}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="postgres"/>
-			<param name="p_rebuild" value="${rebuild.plugin.postgres}"/>
+			<param name="p_internal_name" value="h2" />
+			<param name="p_rebuild" value="${rebuild.plugin.h2}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="refactoring"/>
-			<param name="p_rebuild" value="${rebuild.plugin.refactoring}"/>
+			<param name="p_internal_name" value="hibernate" />
+			<param name="p_rebuild" value="${rebuild.plugin.hibernate}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sessionscript"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sessionscript}"/>
-		</antcall>
-                <antcall target="build_plugin">
-                        <param name="p_internal_name" value="smarttools"/>
-                        <param name="p_rebuild" value="${rebuild.plugin.smarttools}"/>
-                </antcall>		
-		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sqlbookmark"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}"/>
+			<param name="p_internal_name" value="informix" />
+			<param name="p_rebuild" value="${rebuild.plugin.informix}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sqlparam"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sqlparam}"/>
+			<param name="p_internal_name" value="isqlj" />
+			<param name="p_rebuild" value="${rebuild.plugin.isqlj}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sqlreplace"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sqlreplace}"/>
+			<param name="p_internal_name" value="laf" />
+			<param name="p_rebuild" value="${rebuild.plugin.laf}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sqlscript"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}"/>
+			<param name="p_internal_name" value="macosx" />
+			<param name="p_rebuild" value="${rebuild.plugin.macosx}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sqlval"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sqlval}"/>
+			<param name="p_internal_name" value="mssql" />
+			<param name="p_rebuild" value="${rebuild.plugin.mssql}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="sybase"/>
-			<param name="p_rebuild" value="${rebuild.plugin.sybase}"/>
+			<param name="p_internal_name" value="mysql" />
+			<param name="p_rebuild" value="${rebuild.plugin.mysql}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="syntax"/>
-			<param name="p_rebuild" value="${rebuild.plugin.syntax}"/>
+			<param name="p_internal_name" value="oracle" />
+			<param name="p_rebuild" value="${rebuild.plugin.oracle}" />
 		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="userscript"/>
-			<param name="p_rebuild" value="${rebuild.plugin.userscript}"/>
-		</antcall>		
+			<param name="p_internal_name" value="postgres" />
+			<param name="p_rebuild" value="${rebuild.plugin.postgres}" />
+		</antcall>
 		<antcall target="build_plugin">
-			<param name="p_internal_name" value="i18n"/>
-			<param name="p_rebuild" value="${rebuild.plugin.i18n}"/>
+			<param name="p_internal_name" value="refactoring" />
+			<param name="p_rebuild" value="${rebuild.plugin.refactoring}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sessionscript" />
+			<param name="p_rebuild" value="${rebuild.plugin.sessionscript}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="smarttools" />
+			<param name="p_rebuild" value="${rebuild.plugin.smarttools}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlbookmark" />
+			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlparam" />
+			<param name="p_rebuild" value="${rebuild.plugin.sqlparam}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlreplace" />
+			<param name="p_rebuild" value="${rebuild.plugin.sqlreplace}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlscript" />
+			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlval" />
+			<param name="p_rebuild" value="${rebuild.plugin.sqlval}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sybase" />
+			<param name="p_rebuild" value="${rebuild.plugin.sybase}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="syntax" />
+			<param name="p_rebuild" value="${rebuild.plugin.syntax}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="userscript" />
+			<param name="p_rebuild" value="${rebuild.plugin.userscript}" />
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="i18n" />
+			<param name="p_rebuild" value="${rebuild.plugin.i18n}" />
 		</antcall>
 	</target>
 
@@ -522,46 +547,46 @@
 	<target name="jar_source" depends="setup">
 		<jar jarfile="${core_dist_dir}/src/fw-src.jar" compress="false">
 			<fileset dir="fw/src">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</jar>
 
 		<jar jarfile="${core_dist_dir}/src/client-src.jar" compress="false">
 			<fileset dir="app/src">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</jar>
 
 		<jar jarfile="${core_dist_dir}/src/build.jar" compress="false">
 			<fileset dir="build">
-				<include name="**/*.*"/>
-				<exclude name="test.jar"/>
+				<include name="**/*.*" />
+				<exclude name="test.jar" />
 			</fileset>
 		</jar>
 
-		<copy todir="${core_dist_dir}/src" >
-			<fileset dir="." >
-				<include name="build.xml"/>
-				<include name="izpack.bat"/>
-				<include name="izpack.xml"/>
+		<copy todir="${core_dist_dir}/src">
+			<fileset dir=".">
+				<include name="build.xml" />
+				<include name="izpack.bat" />
+				<include name="izpack.xml" />
 			</fileset>
 		</copy>
 
 		<zip zipfile="${dist_dir}/${name}-src.zip" compress="true">
 			<fileset dir="${core_dist_dir}/src">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</zip>
 
 		<tar tarfile="${dist_dir}/${name}-src.tar">
 			<tarfileset dir="${core_dist_dir}/src">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</tarfileset>
 		</tar>
 		<gzip zipfile="${dist_dir}/${name}-src.tar.gz"
-			src="${dist_dir}/${name}-src.tar">
+		      src="${dist_dir}/${name}-src.tar">
 		</gzip>
-		<delete file="${dist_dir}/${name}-src.tar"/>
+		<delete file="${dist_dir}/${name}-src.tar" />
 
 	</target>
 
@@ -583,83 +608,84 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="make_install_jar" depends="compile_app, compile_plugins, jar_source">
-                <echo message="Creating the installer with izpack" />
-                <echo message="config file template = izpack-super.xml.template" />
-                <echo message="config file = ${izpack.config.file}" />
-                
-                <copy file="${basedir}/build/snapshot/izpack-super.xml.template" 
-                      toFile="${basedir}/build/${izpack.config.file}">
-                    <filterchain>
-                        <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                                <param type="token"
-                                       name="squirrel.version"
-                                       value="${squirrel.version}"/>
-                        </filterreader>
-                    </filterchain>
-                </copy>
-		
-                <!-- copy the core jars (includes libraries) to release core subdir -->
-                <copy todir="${release_core_dir}">
-                        <fileset dir="${core_dist_lib_dir}">
-                            <include name="*.jar"/>
-                                <exclude name="squirrel-sql_*.jar"/>
-                        </fileset>
-                </copy>
-                <!-- copy translation jars to the release i18n subdir -->
-                <copy todir="${release_i18n_dir}">
-                        <fileset dir="${core_dist_lib_dir}" >
-                                <include name="squirrel-sql_*.jar"/>    
-                        </fileset>
-                </copy>
-                <!-- copy the plugin zip archives to the release directory -->
-                <copy todir="${release_plugin_dir}">
-                        <fileset dir="${dist_dir}">
-                                <include name="*.zip"/>
-                        </fileset>
-                </copy>
-		
-                <!-- build the release.xml document -->
-                <java fork="true"  classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
-                        <arg value="snapshot"/>
-                        <arg value="${squirrel.version}"/>
-                        <arg value="${release_dir}"/>
-                    <classpath>
-                        <pathelement location="${release_core_dir}/squirrel-sql.jar"/>
-                        <pathelement location="${release_core_dir}/fw.jar"/>
-                        <pathelement location="${release_core_dir}/commons-cli.jar"/>
-                        <pathelement location="${release_core_dir}/log4j-1.2.15.jar"/>
-                    </classpath>
-                </java>		
-		
+	<target name="make_install_jar"
+	        depends="compile_app, compile_plugins, jar_source">
+		<echo message="Creating the installer with izpack" />
+		<echo message="config file template = izpack-super.xml.template" />
+		<echo message="config file = ${izpack.config.file}" />
+
+		<copy file="${basedir}/build/snapshot/izpack-super.xml.template"
+		      toFile="${basedir}/build/${izpack.config.file}">
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+					<param type="token"
+					       name="squirrel.version"
+					       value="${squirrel.version}" />
+				</filterreader>
+			</filterchain>
+		</copy>
+
+		<!-- copy the core jars (includes libraries) to release core subdir -->
+		<copy todir="${release_core_dir}">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="*.jar" />
+				<exclude name="squirrel-sql_*.jar" />
+			</fileset>
+		</copy>
+		<!-- copy translation jars to the release i18n subdir -->
+		<copy todir="${release_i18n_dir}">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="squirrel-sql_*.jar" />
+			</fileset>
+		</copy>
+		<!-- copy the plugin zip archives to the release directory -->
+		<copy todir="${release_plugin_dir}">
+			<fileset dir="${dist_dir}">
+				<include name="*.zip" />
+			</fileset>
+		</copy>
+
+		<!-- build the release.xml document -->
+		<java fork="true"
+		      classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
+			<arg value="snapshot" />
+			<arg value="${squirrel.version}" />
+			<arg value="${release_dir}" />
+			<classpath>
+				<pathelement location="${release_core_dir}/squirrel-sql.jar" />
+				<pathelement location="${release_core_dir}/fw.jar" />
+				<pathelement location="${release_core_dir}/commons-cli.jar" />
+				<pathelement location="${release_core_dir}/log4j-1.2.15.jar" />
+			</classpath>
+		</java>
+
 		<java jar="${izpack.home.dir}/lib/compiler.jar"
-	          fork="true"
-	          failonerror="true"
-	          maxmemory="128m"
-	        >
-	            <arg value="${basedir}/build/${izpack.config.file}"/>
-	            <arg value="-h"/>
-	            <arg value="${izpack.home.dir}"/>
-		    <arg value="-b"/>
-		    <arg value="${basedir}/build"/>
-		    <arg value="-k"/>
-		    <arg value="standard-kunststoff"/>
-		    <arg value="-o"/>
-		    <arg value="${dist_root}/${name}-${version}-install.jar"/>
-                    <arg value="-l"/>
-                    <arg value="5"/>
-			
+		      fork="true"
+		      failonerror="true"
+		      maxmemory="128m">
+			<arg value="${basedir}/build/${izpack.config.file}" />
+			<arg value="-h" />
+			<arg value="${izpack.home.dir}" />
+			<arg value="-b" />
+			<arg value="${basedir}/build" />
+			<arg value="-k" />
+			<arg value="standard-kunststoff" />
+			<arg value="-o" />
+			<arg value="${dist_root}/${name}-${version}-install.jar" />
+			<arg value="-l" />
+			<arg value="5" />
 
-		    <classpath>
-		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
-		        <pathelement path="${java.class.path}"/>
-		    </classpath>
-	    </java>		
-		
-	    <echo message="Install jar: ${dist_root}/${name}-${version}-install.jar" />
-	</target>		
 
-	
+			<classpath>
+				<pathelement location="${izpack.home.dir}/lib/compiler.jar" />
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</java>
+
+		<echo message="Install jar: ${dist_root}/${name}-${version}-install.jar" />
+	</target>
+
+
 	<!--
 	==================================================================
 	Clean up.
@@ -668,29 +694,30 @@
 	-->
 	<target name="clean" depends="init">
 		<delete includeEmptyDirs="true">
-			<fileset dir="." includes="**/*~" defaultexcludes="no"/>
-			<fileset dir="." includes="**/#*#" defaultexcludes="no"/>
+			<fileset dir="." includes="**/*~" defaultexcludes="no" />
+			<fileset dir="." includes="**/#*#" defaultexcludes="no" />
 			<fileset dir=".">
-				<include name="**/*.class"/>
-				<include name="**/*.bak"/>
+				<include name="**/*.class" />
+				<include name="**/*.bak" />
 			</fileset>
 		</delete>
 		<delete includeEmptyDirs="true">
-			<fileset dir="${dist_dir}"/>
+			<fileset dir="${dist_dir}" />
 		</delete>
 	</target>
-	
+
 	<!--
 	Only removes the classes in the squirrel-sql-dist directory.
 	-->
-	<target name="safeclean" depends="init" 
-			description="Removes only files generated by this script">
+	<target name="safeclean"
+	        depends="init"
+	        description="Removes only files generated by this script">
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${dist_root}"/>
-		</delete>		
-	</target>	
-	
-	
+			<fileset dir="${dist_root}" />
+		</delete>
+	</target>
+
+
 	<!--
 	==================================================================
 	Builds the plugin, if build.properties has this plugin's rebuild
@@ -700,15 +727,15 @@
 	p_rebuild           - the rebuild property value in build.properties
 	p_internal_name		- internal name of plugin to be build.
 	==================================================================
-	-->	
+	-->
 	<target name="build_plugin">
 		<!-- see if build.properties wants to rebuild this plugin -->
-		<condition property="rebuild.plugin"> 
-			<istrue value="${p_rebuild}"/>
-		</condition>		
+		<condition property="rebuild.plugin">
+			<istrue value="${p_rebuild}" />
+		</condition>
 		<antcall target="plugin_uptodate_check">
-			<param name="p_internal_name" value="${p_internal_name}"/>
-		</antcall>		
+			<param name="p_internal_name" value="${p_internal_name}" />
+		</antcall>
 	</target>
 
 	<!--
@@ -720,22 +747,22 @@
 	
 	p_internal_name		- internal name of plugin to be build.
 	==================================================================
-	-->		
+	-->
 	<target name="plugin_uptodate_check" if="rebuild.plugin">
-		<uptodate property="build.notRequired" 
-			      targetfile="${dist_dir}/${p_internal_name}.tar.gz"
-			      value="true">
-		    <srcfiles dir="${plugins_src_dir}/${p_internal_name}" />
-		</uptodate>	
+		<uptodate property="build.notRequired"
+		          targetfile="${dist_dir}/${p_internal_name}.tar.gz"
+		          value="true">
+			<srcfiles dir="${plugins_src_dir}/${p_internal_name}" />
+		</uptodate>
 		<condition property="uptodate_message"
 		           value="skipping build of ${p_internal_name} - no files have changed since last build"
-				   else="files have changed since last build">
-			<istrue value="${build.notRequired}"/>
+		           else="files have changed since last build">
+			<istrue value="${build.notRequired}" />
 		</condition>
-		<echo message="${uptodate_message}"/>
+		<echo message="${uptodate_message}" />
 		<antcall target="_build_plugin">
-			<param name="p_internal_name" value="${p_internal_name}"/>
-		</antcall>				
+			<param name="p_internal_name" value="${p_internal_name}" />
+		</antcall>
 	</target>
 
 	<!--
@@ -745,56 +772,64 @@
 	p_internal_name		- internal name of plugin to be build.
 	==================================================================
 	-->
-	<target name="_build_plugin" unless="build.notRequired" >
-		<property name="lcl_this_plugin_src_dir" value="${plugins_src_dir}/${p_internal_name}"/>
-		<property name="lcl_this_plugin_dist_dir" value="${plugins_dist_dir}/${p_internal_name}"/>
+	<target name="_build_plugin" unless="build.notRequired">
+		<property name="lcl_this_plugin_src_dir"
+		          value="${plugins_src_dir}/${p_internal_name}" />
+		<property name="lcl_this_plugin_dist_dir"
+		          value="${plugins_dist_dir}/${p_internal_name}" />
 
-		<mkdir dir="${lcl_this_plugin_dist_dir}/work"/>
-		<mkdir dir="${lcl_this_plugin_dist_dir}/dist/${p_internal_name}"/>
-		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
-				antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
-				target="${plugin_build_target_name}">
-			
-			<property name="p_plugin.work_dir" value="${lcl_this_plugin_dist_dir}/work"/>
-			<property name="p_plugin.dist_dir" value="${lcl_this_plugin_dist_dir}/dist"/>
-			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}"/>			
-			
+		<mkdir dir="${lcl_this_plugin_dist_dir}/work" />
+		<mkdir dir="${lcl_this_plugin_dist_dir}/dist/${p_internal_name}" />
+		<ant inheritAll="false"
+		     dir="${lcl_this_plugin_src_dir}"
+		     antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
+		     target="${plugin_build_target_name}">
+
+			<property name="p_plugin.work_dir"
+			          value="${lcl_this_plugin_dist_dir}/work" />
+			<property name="p_plugin.dist_dir"
+			          value="${lcl_this_plugin_dist_dir}/dist" />
+			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}" />
+
 		</ant>
 
 		<zip zipfile="${dist_dir}/${p_internal_name}.zip" compress="true">
 			<fileset dir="${lcl_this_plugin_dist_dir}/dist">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</fileset>
 		</zip>
-		<unzip dest="${core_dist_dir}/plugins" 
-			   src="${dist_dir}/${p_internal_name}.zip"/>
+		<unzip dest="${core_dist_dir}/plugins"
+		       src="${dist_dir}/${p_internal_name}.zip" />
 		<tar tarfile="${dist_dir}/${p_internal_name}.tar">
 			<tarfileset dir="${lcl_this_plugin_dist_dir}/dist">
-				<include name="**/*.*"/>
+				<include name="**/*.*" />
 			</tarfileset>
 		</tar>
 		<gzip zipfile="${dist_dir}/${p_internal_name}.tar.gz"
-			src="${dist_dir}/${p_internal_name}.tar">
+		      src="${dist_dir}/${p_internal_name}.tar">
 		</gzip>
-		<delete file="${dist_dir}/${p_internal_name}.tar"/>
+		<delete file="${dist_dir}/${p_internal_name}.tar" />
 
 	</target>
 
 	<target name="make_jws" depends="compile_app">
-		<echo message="${core_jws_dir}"/>
+		<echo message="${core_jws_dir}" />
 		<copy todir="${core_jws_dir}">
 			<fileset dir="${core_dist_lib_dir}">
-				<include name="**/*.jar"/>
+				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<copy file="doc/images/logo.jpg" todir="${core_jws_dir}"/>
-		<copy file="web-site/jws/squirrel.jnlp" todir="${core_jws_dir}"/>
+		<copy file="doc/images/logo.jpg" todir="${core_jws_dir}" />
+		<copy file="web-site/jws/squirrel.jnlp" todir="${core_jws_dir}" />
 
-		<signjar alias="squirrel" storepass="squirrel" keystore="build/.keystore" lazy="true"> 
-			<fileset dir="${core_jws_dir}"> 
-				<include name="**/*.jar"/> 
-			</fileset> 
-		</signjar> 
+		<signjar alias="squirrel"
+		         storepass="squirrel"
+		         keystore="build/.keystore"
+		         lazy="true">
+			<fileset dir="${core_jws_dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</signjar>
 	</target>
 
 	<!--
@@ -804,64 +839,66 @@
 	==================================================================
 	-->
 	<target name="mac_dist" depends="compile_plugins">
-		<mkdir dir="${dist_dir}/mac"/>
-		<mkdir dir="${dist_dir}/mac/SquirrelSQL"/>
+		<mkdir dir="${dist_dir}/mac" />
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL" />
 		<delete includeEmptyDirs="true" failonerror="false">
 			<fileset dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
 			</fileset>
 		</delete>
-		<mkdir dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app"/>
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" />
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
 			<fileset dir="${basedir}/mac">
-				<include name="**/*"/>
-				<exclude name="**/Info.plist"/>
-                                <exclude name="**/README"/>
+				<include name="**/*" />
+				<exclude name="**/Info.plist" />
+				<exclude name="**/README" />
 			</fileset>
 		</copy>
-                <copy todir="${dist_dir}/mac/SquirrelSQL">
-                        <fileset dir="${basedir}/mac">
-                               <include name="**/README"/>
-                        </fileset>
-                </copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL">
+			<fileset dir="${basedir}/mac">
+				<include name="**/README" />
+			</fileset>
+		</copy>
 		<!--<filter token="SquirrelVersion" value="${version}"/>-->
 
-		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" filtering="true">
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app"
+		      filtering="true">
 			<fileset dir="${basedir}/mac">
-				<include name="**/Info.plist"/>
+				<include name="**/Info.plist" />
 			</fileset>
 		</copy>
-		<chmod file="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx"/>
+		<chmod file="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"
+		       perm="ugo+rx" />
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib">
 			<fileset dir="${core_dist_lib_dir}">
-				<include name="**/*"/>
-				<exclude name="**/squirrel-sql.jar"/>
+				<include name="**/*" />
+				<exclude name="**/squirrel-sql.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java">
 			<fileset dir="${core_dist_lib_dir}">
-				<include name="**/squirrel-sql.jar"/>
+				<include name="**/squirrel-sql.jar" />
 			</fileset>
 		</copy>
-                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins">
-                        <fileset dir="${basedir}/plugins/macosx/deliver">
-                                <include name="**/macosx.jar"/>
-                        </fileset>
-                </copy>
-                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/macosx">
-                        <fileset dir="${basedir}/plugins/macosx/doc">
-                                <include name="**/*.txt"/>
-                        </fileset>
-                </copy>
-                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
-                        <fileset dir="${core_dist_doc_dir}">
-                                <include name="**/*"/>
-                        </fileset>
-                </copy>
-                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
-                        <fileset dir="${basedir}/web-site">
-                                <include name="**/faq.html"/>
-                        </fileset>
-                </copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins">
+			<fileset dir="${basedir}/plugins/macosx/deliver">
+				<include name="**/macosx.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/macosx">
+			<fileset dir="${basedir}/plugins/macosx/doc">
+				<include name="**/*.txt" />
+			</fileset>
+		</copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+			<fileset dir="${core_dist_doc_dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+			<fileset dir="${basedir}/web-site">
+				<include name="**/faq.html" />
+			</fileset>
+		</copy>
 		<!--<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>-->
 		<!--<zip destfile="${dist_dir}/SquirrelSQLMac.zip" basedir="${dist_dir}/mac"/>-->
 		<tar destfile="${dist_dir}/SquirrelSQLMac.tar.gz" compression="gzip">
@@ -872,45 +909,44 @@
 				<include name="**" />
 				<exclude name="**/JavaApplicationStub" />
 			</tarfileset>
-		</tar>		
+		</tar>
 	</target>
-	
+
 	<!--
 	Removes the currently compiled test code and results from previous run. 
 	Compiles the test source code.
 	
 	No Paramters.
 	-->
-	<target name="compile-test" 
-			depends="init">
-		
+	<target name="compile-test" depends="init">
+
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${test_output_root}"/>
+			<fileset dir="${test_output_root}" />
 		</delete>
-		<mkdir dir="${test_output_root}"/>
-		<mkdir dir="${test.classes.dir}"/>
-		
+		<mkdir dir="${test_output_root}" />
+		<mkdir dir="${test.classes.dir}" />
+
 		<!-- Build the test code -->
-		<javac	destdir="${test.classes.dir}"
-				deprecation="${deprecation}"
-				debug="${debug}"
-				optimize="${optimize}"
-				includeJavaRuntime="yes"
-				source="${targetVM}"
-				target="${targetVM}">
-			
-			<src path="test/src"/>
-			<src path="test/mockobjects"/>
-			<src path="test/jfctests"/>
+		<javac destdir="${test.classes.dir}"
+		       deprecation="${deprecation}"
+		       debug="${debug}"
+		       optimize="${optimize}"
+		       includeJavaRuntime="yes"
+		       source="${targetVM}"
+		       target="${targetVM}">
+
+			<src path="test/src" />
+			<src path="test/mockobjects" />
+			<src path="test/jfctests" />
 			<classpath>
-			     <path refid="test.compile.classpath"/>
+				<path refid="test.compile.classpath" />
 			</classpath>
 		</javac>
-		
+
 	</target>
-		
-		
-	
+
+
+
 	<!--
 	==================================================================
 	Runs the JUnit tests against the currently built code
@@ -920,90 +956,89 @@
 	
 	No parameters.
 	==================================================================
-	-->		
-	<target name="test" 
-			description="Runs the JUnit tests" 
-		 	depends="compile-test">
-		
-	        <mkdir dir="${coverage.sources.dir}"/>
-		<mkdir dir="${coverage.classes.dir}"/>
-                <mkdir dir="${coverage.report.dir}"/>
-        	<mkdir dir="${junit.report.dir}"/>
-		
-		<path id="emma.coverage.classes.path" >
-		    <pathelement location="${coverage.classes.dir}" />
+	-->
+	<target name="test"
+	        description="Runs the JUnit tests"
+	        depends="compile-test">
+
+		<mkdir dir="${coverage.sources.dir}" />
+		<mkdir dir="${coverage.classes.dir}" />
+		<mkdir dir="${coverage.report.dir}" />
+		<mkdir dir="${junit.report.dir}" />
+
+		<path id="emma.coverage.classes.path">
+			<pathelement location="${coverage.classes.dir}" />
 		</path>
 
-		
+
 		<!-- Unzip all previously build fw, core and plugin jars that will be instrumented -->
 		<unjar dest="${coverage.classes.dir}">
-                    <patternset>
-                        <include name="**/*.class"/>
-                    	<exclude name="com/**/*.class"/>
-                    </patternset>
+			<patternset>
+				<include name="**/*.class" />
+				<exclude name="com/**/*.class" />
+			</patternset>
 
-                    <!-- core jars -->
-		    <fileset dir="${core_dist_lib_dir}">
-		        <include name="squirrel-sql.jar"/>
-		        <include name="fw.jar"/>
-		    </fileset>
-			
-                    <!-- plugin jars -->
-                    <fileset dir="${core_dist_dir}/plugins">
-                        <include name="*.jar"/>
-                    </fileset>
-			
+			<!-- core jars -->
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="squirrel-sql.jar" />
+				<include name="fw.jar" />
+			</fileset>
+
+			<!-- plugin jars -->
+			<fileset dir="${core_dist_dir}/plugins">
+				<include name="*.jar" />
+			</fileset>
+
 		</unjar>
-		
+
 		<!--Unzip all previously archived fw, core and plugin src jars that will be reported on. The
 		    top-level directory in src jars is "src" so extract them in the parent dir. -->
 		<unjar dest="${coverage.sources.dir}/../">
-                    <patternset>
-                        <include name="**/*.java"/>
-                    </patternset>
-                    <fileset dir="${plugins_dist_dir}">
-                	<include name="**/src.jar"/>
-                    </fileset>
+			<patternset>
+				<include name="**/*.java" />
+			</patternset>
+			<fileset dir="${plugins_dist_dir}">
+				<include name="**/src.jar" />
+			</fileset>
 		</unjar>
-		
+
 		<!-- Copy all fw source files that will be reported on -->
-                <copy todir="${coverage.sources.dir}" >
-                    <fileset dir="${basedir}/fw/src">
-                        <include name="**/*.java"/>
-                    </fileset>
-                </copy>
+		<copy todir="${coverage.sources.dir}">
+			<fileset dir="${basedir}/fw/src">
+				<include name="**/*.java" />
+			</fileset>
+		</copy>
 
 		<!-- Copy all app source files that will be reported on -->
-	        <copy todir="${coverage.sources.dir}" >
-                    <fileset dir="${basedir}/app/src">
-                        <include name="**/*.java"/>
-                    </fileset>
+		<copy todir="${coverage.sources.dir}">
+			<fileset dir="${basedir}/app/src">
+				<include name="**/*.java" />
+			</fileset>
 		</copy>
-		
-		
-		
+
+
+
 		<!-- ======================================================================= -->
 		<!-- EMMA INSTRUMENTATION -->
 		<!-- ======================================================================= -->
 		<!-- Instrument the classes, this takes the normal classes, and makes instrumented classes instead -->
 		<!-- Note that EMMA takes regular ANT path elements as instrumentation input, which is exceedingly convenient -->
 		<emma enabled="${emma.enabled}">
-		    <instr instrpathref="emma.coverage.classes.path"
-		         destdir="${instr.dir}"
-		         metadatafile="${coverage.report.dir}/metadata.emma"
-		         merge="true"
-		    >
-		        <filter value="${emma.filter}" />
-		    </instr>
+			<instr instrpathref="emma.coverage.classes.path"
+			       destdir="${instr.dir}"
+			       metadatafile="${coverage.report.dir}/metadata.emma"
+			       merge="true">
+				<filter value="${emma.filter}" />
+			</instr>
 		</emma>
-		
+
 		<!-- Copy all applicationContext.xml files -->
-		<copy todir="${instr.dir}" >
-		    <fileset dir="${core_obj_dir}">
-		    	  <include name="**/*.xml"/>
-		    </fileset>
+		<copy todir="${instr.dir}">
+			<fileset dir="${core_obj_dir}">
+				<include name="**/*.xml" />
+			</fileset>
 		</copy>
-		
+
 		<!-- Runs all tests using the test code just built.  This will find any
 		     class that ends with "Test" and expect that it can run it as a 
 		     JUnit test.  If that is not the case for any class, pick another 
@@ -1012,61 +1047,57 @@
 		     temptation to not configure certain tests because they fail.  If a 
 		     test fails, fix it; if it can't be fixed, then remove it.  -->
 		<junit printsummary="true" fork="yes" dir="${junit.report.dir}">
-			
+
 			<classpath>
-				<pathelement path="${instr.dir}"/>
-				<pathelement path="${test.classes.dir}"/>
-				<path refid="test.compile.classpath"/>
+				<pathelement path="${instr.dir}" />
+				<pathelement path="${test.classes.dir}" />
+				<path refid="test.compile.classpath" />
 				<path refid="emma.lib" />
 			</classpath>
-			<formatter type="plain"/>
-			<formatter type="xml"/>			
+			<formatter type="plain" />
+			<formatter type="xml" />
 			<batchtest fork="yes" todir="${junit.report.dir}">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
-			
+
 			<jvmarg value="-Demma.coverage.out.file=${coverage.report.dir}/coverage.emma" />
 			<jvmarg value="-Demma.coverage.out.merge=true" />
 
-	 	</junit>
-		
+		</junit>
+
 		<!-- if enabled, generate coverage report(s): -->
-		<emma enabled="${emma.enabled}" >
-		    <report sourcepath="${coverage.sources.dir}"
-		          sort="+block,+name,+method,+class"
-		          metrics="method:70,block:80,line:80,class:100"
-		    >
-		    <!-- collect all EMMA data dumps (metadata and runtime)
+		<emma enabled="${emma.enabled}">
+			<report sourcepath="${coverage.sources.dir}"
+			        sort="+block,+name,+method,+class"
+			        metrics="method:70,block:80,line:80,class:100">
+				<!-- collect all EMMA data dumps (metadata and runtime)
 		         [this can be done via nested <fileset> fileset elements
 		         or <file> elements pointing to a single file]:
 		    -->
-		    <fileset dir="${coverage.report.dir}" >
-		        <include name="*.emma" />
-		    </fileset>
-		    
-		    <!-- for every type of report desired, configure a nested
+				<fileset dir="${coverage.report.dir}">
+					<include name="*.emma" />
+				</fileset>
+
+				<!-- for every type of report desired, configure a nested
 		         element; various report parameters
 		         can be inherited from the parent <report>
 		         and individually overridden for each report type:
 		    -->
-		    <txt outfile="${coverage.report.dir}/coverage.txt"
-		        depth="package"
-		        columns="class,method,block,line,name"
-		    />
-		    <xml outfile="${coverage.report.dir}/coverage.xml"
-		        depth="package"
-		    />
-		    <html outfile="${coverage.report.dir}/coverage.html"
-		        depth="method"
-		        columns="name,class,method,block,line"
-		    />
-		    </report>
+				<txt outfile="${coverage.report.dir}/coverage.txt"
+				     depth="package"
+				     columns="class,method,block,line,name" />
+				<xml outfile="${coverage.report.dir}/coverage.xml"
+				     depth="package" />
+				<html outfile="${coverage.report.dir}/coverage.html"
+				      depth="method"
+				      columns="name,class,method,block,line" />
+			</report>
 		</emma>
-		
-    </target>
-	
+
+	</target>
+
 	<!--
 	==================================================================
 	Compiles an HTML summary and places it in 
@@ -1076,18 +1107,18 @@
 	
 	No parameters.
 	==================================================================
-	-->			
+	-->
 	<target name="compile_report" depends="test">
-		<mkdir dir="${test_output_root}/results/summary"/>
-		
+		<mkdir dir="${test_output_root}/results/summary" />
+
 		<junitreport todir="${test_output_root}/results/summary">
-			<fileset dir="${test_output_root}/results" includes="*TEST-*.xml"/>
-			<report format="noframes" 
-					styledir="${env.ANT_HOME}/etc"
-					todir="${test_output_root}/results/summary"/>
-		</junitreport>		
+			<fileset dir="${test_output_root}/results" includes="*TEST-*.xml" />
+			<report format="noframes"
+			        styledir="${env.ANT_HOME}/etc"
+			        todir="${test_output_root}/results/summary" />
+		</junitreport>
 	</target>
-	
+
 	<!--
 	==================================================================
 	Display the HTML summary report of the outcome of running the JUnit
@@ -1096,17 +1127,44 @@
 	
 	No parameters.
 	==================================================================
-	-->	
-	<target name="show_test_report" 
-			description="Show html summary in browser"
-			depends="compile_report">
-		
+	-->
+	<target name="show_test_report"
+	        description="Show html summary in browser"
+	        depends="compile_report">
+
 		<exec executable="${browser}">
-			<arg line="file://${html_summary_file}"/>
-		</exec>			
-		
+			<arg line="file://${html_summary_file}" />
+		</exec>
+
 	</target>
-	
+
+	<!--
+	==================================================================
+	Run Findbugs against the built files for core as well as plugins 
+	and store the result in the findbugs report directory.
+	==================================================================
+	-->
+	<target name="findbugs" depends="init" >
+		<mkdir dir="${findbugs.report.dir}" />
+
+		<!-- debugging only
+		<property name="fb.classpath" refid="findbugs.aux.classpath"/>
+		<echo message="Findbugs Auxiliary Classpath = ${fb.classpath}"/>
+                -->
+		
+		<findbugs home="${findbugs.home}"
+		          output="xml"
+		          outputFile="${findbugs.report.dir}/squirrel-fb.xml">
+			
+			<auxclasspath refid="findbugs.aux.classpath" />
+			<sourcePath path="${coverage.sources.dir}" />
+			<class location="${coverage.classes.dir}" />
+		</findbugs>
+
+
+
+	</target>
+
 	<!--
 	This can be used to copy modified files to a location where SQuirreL was 
 	installed for testing outside of the IDE. The location is set in 
@@ -1116,179 +1174,180 @@
 	shutdown any SQuirreL instance running from 'squirrel.home.dir' before 
 	deploying or else ClassNotFoundExceptions are likely to result in any 
 	subsequent use (including shutdown) of that SQuirreL instance.
-	--> 	
-	<target name="deploy" depends="compile_plugins"
-		    description="Deploy modified resources to an install location">
-		<copy todir="${squirrel.home.dir}" >
-			<fileset dir="${core_dist_lib_dir}" >
-				<include name="squirrel-sql.jar"/>
+	-->
+	<target name="deploy"
+	        depends="compile_plugins"
+	        description="Deploy modified resources to an install location">
+		<copy todir="${squirrel.home.dir}">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="squirrel-sql.jar" />
 			</fileset>
-		</copy>	
-		<copy todir="${squirrel.home.dir}/lib" >
-			<fileset dir="${core_dist_lib_dir}" >
-				<include name="fw.jar"/>
+		</copy>
+		<copy todir="${squirrel.home.dir}/lib">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="fw.jar" />
 			</fileset>
-		</copy>	
-		<copy todir="${squirrel.home.dir}/doc" >
-			<fileset dir="./doc" >
-				<include name="**/*.*"/>
+		</copy>
+		<copy todir="${squirrel.home.dir}/doc">
+			<fileset dir="./doc">
+				<include name="**/*.*" />
 			</fileset>
-		</copy>	
-		
+		</copy>
+
 		<antcall target="deployplugins">
-			<param name="p_internal_name" value="codecompletion"/>
+			<param name="p_internal_name" value="codecompletion" />
 		</antcall>
 	</target>
-	
+
 	<target name="deployplugins">
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="codecompletion"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.codecompletion}"/>
+			<param name="p_internal_name" value="codecompletion" />
+			<param name="shoulddeploy" value="${rebuild.plugin.codecompletion}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="dataimport"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.dataimport}"/>	
-		</antcall>
-        <antcall target="deploytest">
-		    <param name="p_internal_name" value="dbcopy"/>
-	        <param name="shoulddeploy" value="${rebuild.plugin.dbcopy}"/>
-		</antcall>
-        <antcall target="deploytest">
-		    <param name="p_internal_name" value="dbdiff"/>
-	        <param name="shoulddeploy" value="${rebuild.plugin.dbdiff}"/>
+			<param name="p_internal_name" value="dataimport" />
+			<param name="shoulddeploy" value="${rebuild.plugin.dataimport}" />
 		</antcall>
 		<antcall target="deploytest">
-		    <param name="p_internal_name" value="derby"/>
-	        <param name="shoulddeploy" value="${rebuild.plugin.derby}"/>
+			<param name="p_internal_name" value="dbcopy" />
+			<param name="shoulddeploy" value="${rebuild.plugin.dbcopy}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="dbinfo"/>
-        	<param name="shoulddeploy" value="${rebuild.plugin.dbinfo}"/>
+			<param name="p_internal_name" value="dbdiff" />
+			<param name="shoulddeploy" value="${rebuild.plugin.dbdiff}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="db2"/>
-        	<param name="shoulddeploy" value="${rebuild.plugin.db2}"/>
-		</antcall>		
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="editextras"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.editextras}"/>
+			<param name="p_internal_name" value="derby" />
+			<param name="shoulddeploy" value="${rebuild.plugin.derby}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="exportconfig"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.exportconfig}"/>
-		</antcall>			
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="favs"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.favs}"/>
+			<param name="p_internal_name" value="dbinfo" />
+			<param name="shoulddeploy" value="${rebuild.plugin.dbinfo}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="firebird"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.firebird}"/>
+			<param name="p_internal_name" value="db2" />
+			<param name="shoulddeploy" value="${rebuild.plugin.db2}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="graph"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.graph}"/>
+			<param name="p_internal_name" value="editextras" />
+			<param name="shoulddeploy" value="${rebuild.plugin.editextras}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="hibernate"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.hibernate}"/>			
-		</antcall>				
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="h2"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.h2}"/>			
-		</antcall>		
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="informix"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.informix}"/>			
-		</antcall>		
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="isqlj"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.isqlj}"/>			
-		</antcall>		
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="i18n"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.i18n}"/>			
-		</antcall>				
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="laf"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.laf}"/>
+			<param name="p_internal_name" value="exportconfig" />
+			<param name="shoulddeploy" value="${rebuild.plugin.exportconfig}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="macosx"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.macosx}"/>
+			<param name="p_internal_name" value="favs" />
+			<param name="shoulddeploy" value="${rebuild.plugin.favs}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="mssql"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.mssql}"/>
+			<param name="p_internal_name" value="firebird" />
+			<param name="shoulddeploy" value="${rebuild.plugin.firebird}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="mysql"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.mysql}"/>
+			<param name="p_internal_name" value="graph" />
+			<param name="shoulddeploy" value="${rebuild.plugin.graph}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="oracle"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.oracle}"/>
+			<param name="p_internal_name" value="hibernate" />
+			<param name="shoulddeploy" value="${rebuild.plugin.hibernate}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="postgres"/>
-        	<param name="shoulddeploy" value="${rebuild.plugin.postgres}"/>
-		</antcall>				
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="refactoring"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.refactoring}"/>
+			<param name="p_internal_name" value="h2" />
+			<param name="shoulddeploy" value="${rebuild.plugin.h2}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="sessionscript"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sessionscript}"/>
-		</antcall>
-                <antcall target="deploytest">
-                        <param name="p_internal_name" value="sqlbookmark"/>
-                        <param name="shoulddeploy" value="${rebuild.plugin.sqlbookmark}"/>
-                </antcall>
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="sqlparam"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sqlparam}"/>
-		</antcall>
-                <antcall target="deploytest">
-                        <param name="p_internal_name" value="sqlreplace"/>
-                        <param name="shoulddeploy" value="${rebuild.plugin.sqlreplace}"/>
-                </antcall>
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="sqlscript"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sqlscript}"/>
+			<param name="p_internal_name" value="informix" />
+			<param name="shoulddeploy" value="${rebuild.plugin.informix}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="sqlval"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sqlval}"/>
+			<param name="p_internal_name" value="isqlj" />
+			<param name="shoulddeploy" value="${rebuild.plugin.isqlj}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="sybase"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sybase}"/>
-		</antcall>		
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="syntax"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.syntax}"/>
+			<param name="p_internal_name" value="i18n" />
+			<param name="shoulddeploy" value="${rebuild.plugin.i18n}" />
 		</antcall>
 		<antcall target="deploytest">
-			<param name="p_internal_name" value="userscript"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.userscript}"/>
-		</antcall>		
-	</target>	
-	
-	<target name="deploytest">
-		<condition property="p_deploy">
-			<istrue value="${shoulddeploy}"/>
-		</condition>
-		<antcall target="deployplugin">
-			<param name="p_internal_name" value="${p_internal_name}"/>
+			<param name="p_internal_name" value="laf" />
+			<param name="shoulddeploy" value="${rebuild.plugin.laf}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="macosx" />
+			<param name="shoulddeploy" value="${rebuild.plugin.macosx}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="mssql" />
+			<param name="shoulddeploy" value="${rebuild.plugin.mssql}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="mysql" />
+			<param name="shoulddeploy" value="${rebuild.plugin.mysql}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="oracle" />
+			<param name="shoulddeploy" value="${rebuild.plugin.oracle}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="postgres" />
+			<param name="shoulddeploy" value="${rebuild.plugin.postgres}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="refactoring" />
+			<param name="shoulddeploy" value="${rebuild.plugin.refactoring}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sessionscript" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sessionscript}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlbookmark" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlbookmark}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlparam" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlparam}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlreplace" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlreplace}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlscript" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlscript}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlval" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlval}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sybase" />
+			<param name="shoulddeploy" value="${rebuild.plugin.sybase}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="syntax" />
+			<param name="shoulddeploy" value="${rebuild.plugin.syntax}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="userscript" />
+			<param name="shoulddeploy" value="${rebuild.plugin.userscript}" />
 		</antcall>
 	</target>
-	
+
+	<target name="deploytest">
+		<condition property="p_deploy">
+			<istrue value="${shoulddeploy}" />
+		</condition>
+		<antcall target="deployplugin">
+			<param name="p_internal_name" value="${p_internal_name}" />
+		</antcall>
+	</target>
+
 	<target name="deployplugin" if="p_deploy">
-		<copy todir="${squirrel.home.dir}/plugins" >
-			<fileset dir="${plugins_dist_dir}/${p_internal_name}/dist" >
-				<include name="${p_internal_name}.jar"/>
-			</fileset>																		
-	    </copy>
-	</target>	
+		<copy todir="${squirrel.home.dir}/plugins">
+			<fileset dir="${plugins_dist_dir}/${p_internal_name}/dist">
+				<include name="${p_internal_name}.jar" />
+			</fileset>
+		</copy>
+	</target>
 </project>
