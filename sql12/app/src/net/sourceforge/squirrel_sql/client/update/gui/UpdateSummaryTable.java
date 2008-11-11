@@ -61,6 +61,7 @@ public class UpdateSummaryTable extends SortableTable {
    private static final StringManager s_stringMgr = 
    	StringManagerFactory.getStringManager(UpdateSummaryTable.class);
    
+   /** @TODO: i18n */ 
    private interface i18n {
    	String ALL_TRANSLATIONS_LABEL = "All translations";
    	String ALL_PLUGINS_LABEL = "All plugins";
@@ -75,7 +76,6 @@ public class UpdateSummaryTable extends SortableTable {
                              UpdateSummaryTableModel model) {
       super(model);
       _model = model;
-      model.setTable(this);
       _artifacts = artifactStatus;
       setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
       getTableHeader().setResizingAllowed(true);
@@ -84,12 +84,10 @@ public class UpdateSummaryTable extends SortableTable {
       setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN);
 
       final TableColumnModel tcm = new DefaultTableColumnModel();
-      int[] columnWidths = model.getColumnWidths();
-      String[] headerNames = model.getColumnHeaderNames(); 
       JComboBox _actionComboBox = new JComboBox();
-		for (int i = 0; i < columnWidths.length; ++i) {
-         final TableColumn col = new TableColumn(i, columnWidths[i]);
-         col.setHeaderValue(headerNames[i]);
+		for (int i = 0; i < model.getColumnCount(); ++i) {
+         final TableColumn col = new TableColumn(i, model.getColumnWidth(i));
+         col.setHeaderValue(model.getColumnName(i));
          if (i == 3) {
             col.setCellEditor(new DefaultCellEditor(initCbo(_actionComboBox)));
          }

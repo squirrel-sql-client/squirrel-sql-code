@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.client.update.gui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -29,8 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 /**
- * Model for the UpdateSummaryTable.  This enforces some restrictions about what must be updated.
- *
+ * Model for the UpdateSummaryTable.
  */
 public class UpdateSummaryTableModel extends AbstractTableModel
 {
@@ -38,8 +36,6 @@ public class UpdateSummaryTableModel extends AbstractTableModel
       private static final long serialVersionUID = 1L;
 
       private List<ArtifactStatus> _artifacts = new ArrayList<ArtifactStatus>();
-
-      private UpdateSummaryTable _table = null;
       
       /** Internationalized strings for this class. */
       private static final StringManager s_stringMgr = 
@@ -73,11 +69,10 @@ public class UpdateSummaryTableModel extends AbstractTableModel
       UpdateSummaryTableModel(List<ArtifactStatus> artifacts) {
          _artifacts = artifacts;
       }
-
-      public void setTable(UpdateSummaryTable table) {
-      	_table = table;
-      }
       
+      /**
+       * @see javax.swing.table.TableModel#getValueAt(int, int)
+       */
       public Object getValueAt(int row, int col) {
          final ArtifactStatus as = _artifacts.get(row);
          switch (col) {
@@ -97,26 +92,44 @@ public class UpdateSummaryTableModel extends AbstractTableModel
          }
       }
 
+      /**
+       * @see javax.swing.table.TableModel#getRowCount()
+       */
       public int getRowCount() {
          return _artifacts.size();
       }
 
+      /**
+       * @see javax.swing.table.TableModel#getColumnCount()
+       */
       public int getColumnCount() {
          return s_hdgs.length;
       }
 
+      /**
+       * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+       */
       public String getColumnName(int col) {
          return s_hdgs[col];
       }
 
+      /**
+       * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+       */
       public Class<?> getColumnClass(int col) {
          return s_dataTypes[col];
       }
 
+      /**
+       * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+       */
       public boolean isCellEditable(int row, int col) {
       	return col == 3;      	
       }
 
+      /**
+       * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+       */
       public void setValueAt(Object value, int row, int col) {
          final ArtifactStatus as = _artifacts.get(row);
          ArtifactAction action = 
@@ -125,19 +138,11 @@ public class UpdateSummaryTableModel extends AbstractTableModel
       }
 
 		/**
-		 * @return the s_hdgs
+		 * @return the column width for the specified column
 		 */
-		public String[] getColumnHeaderNames()
+		public int getColumnWidth(int col)
 		{
-			return s_hdgs;
-		}
-
-		/**
-		 * @return the s_columnWidths
-		 */
-		public int[] getColumnWidths()
-		{
-			return s_columnWidths;
+			return s_columnWidths[col];
 		}
    
 	
