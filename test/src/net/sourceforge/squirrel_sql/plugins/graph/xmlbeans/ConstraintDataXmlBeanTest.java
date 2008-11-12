@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  */ 
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class ConstraintDataXmlBeanTest extends BaseSQuirreLJUnit4TestCase {
 	public void testGetColumnInfoXmlBeans() throws Exception
 	{
 		classUnderTest.setColumnInfoXmlBeans(null);
-		assertEquals(null, classUnderTest.getColumnInfoXmlBeans());
+		assertNull(classUnderTest.getColumnInfoXmlBeans());
 	}
 
 }
