@@ -337,6 +337,9 @@ public class DialectUtils implements StringTemplateConstants
 	public static String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
+		if (info == null) {
+			throw new IllegalArgumentException("parameter info cannot be null");
+		}
 		return getColumnCommentAlterSQL(info.getTableName(),
 			info.getColumnName(),
 			info.getRemarks(),
