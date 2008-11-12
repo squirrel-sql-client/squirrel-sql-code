@@ -43,9 +43,9 @@ public class PreLaunchUpdateApplication
 	/** The helper that most work is delegated to */
 	private static PreLaunchHelper helper = null;
 	
-	public static String PROMPT_MODE = "prompt";
+	public static final String PROMPT_MODE = "prompt";
 	
-	public static String RESTORE_MODE = "restore";
+	public static final String RESTORE_MODE = "restore";
 	
 	/**
 	 * Entry point of the 
