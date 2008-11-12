@@ -42,23 +42,23 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 {
 
 	/** The message we show the user in the update dialog that is shown when there are updates to install */
-	private static String INSTALL_UPDATES_MESSAGE;
+	private String INSTALL_UPDATES_MESSAGE;
 
 	/** 
 	 * The title of the dialect that  we show the user in the update dialog that is shown when there are 
 	 * updates to install 
 	 */
-	private static String INSTALL_UPDATES_TITLE;
+	private String INSTALL_UPDATES_TITLE;
 
-	private static String RESTORE_FROM_BACKUP_TITLE;
+	private String RESTORE_FROM_BACKUP_TITLE;
 	
-	private static String RESTORE_FROM_BACKUP_MESSAGE;
+	private String RESTORE_FROM_BACKUP_MESSAGE;
 	
-	private static String RESTORE_FAILED_MESSAGE;
+	private String RESTORE_FAILED_MESSAGE;
 	
-	private static String BACKUP_FAILED_MESSAGE;
+	private String BACKUP_FAILED_MESSAGE;
 	
-	private static String INSTALL_FAILED_MESSAGE;
+	private String INSTALL_FAILED_MESSAGE;
 	
 	/** Internationalized strings for this class */
 	private StringManager s_stringMgr;
