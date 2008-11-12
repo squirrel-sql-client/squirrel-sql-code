@@ -24,12 +24,60 @@ public class InstallStatusListenerImpl implements InstallStatusListener {
     * @see net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener#handleInstallStatusEvent(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEvent)
     */
    public void handleInstallStatusEvent(InstallStatusEvent evt) {
-      if (evt.getType() == InstallEventType.BACKUP_STARTED) {}
-      if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED) {}
-      if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE) {}
-      if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED) {}
-      if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE) {}
-      if (evt.getType() == InstallEventType.BACKUP_COMPLETE) {}
+      if (evt.getType() == InstallEventType.BACKUP_STARTED) {
+      	handleBackupStarted(evt);
+      }
+      if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED) {
+      	handleFileBackupStarted(evt);
+      }
+      if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE) {
+      	handleFileBackupComplete(evt);
+      }
+      if (evt.getType() == InstallEventType.BACKUP_COMPLETE) {
+      	handleBackupComplete(evt);
+      }
+      if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED) {
+      	handleFileInstallStarted(evt);
+      }
+      if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE) {
+      	handleFileInstallComplete(evt);
+      }
    }
+
+	private void handleBackupComplete(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void handleFileInstallComplete(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void handleFileInstallStarted(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void handleFileBackupComplete(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void handleFileBackupStarted(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void handleBackupStarted(InstallStatusEvent evt)
+	{
+		// TODO Auto-generated method stub
+		
+	}
    
 }
