@@ -1,14 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.IApplication;
 
 /**
  * The SQL Script plugin class.
@@ -145,23 +143,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		try
-		{
-			return new PluginSessionCallback()
-			{
-				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-				{
-				}
-
-				public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-				{
-				}
-			};
-		}
-		catch(Exception e)
-		{
-			throw new RuntimeException(e);
-		}
+		return new PluginSessionCallbackAdaptor(this);
 	}
 
 }

@@ -24,6 +24,20 @@ import java.util.Iterator;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,22 +48,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.ConnectAction;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.DisconnectAction;
 import net.sourceforge.squirrel_sql.plugins.sqlval.action.ValidateSQLAction;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 /**
  * This plugin provides an interface to the SQL Validation web service provided
  * by Mimer SQL. See http://sqlvalidator.mimer.com/ for more information.
@@ -256,21 +254,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
       session.getSessionInternalFrame().getSQLPanelAPI().addSQLPanelListener(_lis);
       setupSQLEntryArea(session);
 
-      PluginSessionCallback ret = new PluginSessionCallback()
-      {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-         {
-            // TODO
-            // Plugin supports only the main session window
-         }
-
-         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-         {
-            // TODO
-            // Plugin supports only the main session window
-         }
-      };
-      return ret;
+      return new PluginSessionCallbackAdaptor(this);
 	}
 
 	/**

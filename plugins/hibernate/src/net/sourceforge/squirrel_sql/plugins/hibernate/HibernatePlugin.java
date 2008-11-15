@@ -1,10 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import java.util.HashMap;
+
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -12,8 +13,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePrefsTab;
-
-import java.util.HashMap;
 
 public class HibernatePlugin extends DefaultSessionPlugin
 {
@@ -101,18 +100,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
          session.getSessionSheet().insertMainTab(hibernateTabController, 2, false);
 
-         return new PluginSessionCallback()
-         {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
-
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
-         };
+         return new PluginSessionCallbackAdaptor(this);
 		}
 		catch(Exception e)
 		{
