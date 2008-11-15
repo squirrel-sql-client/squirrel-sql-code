@@ -35,10 +35,16 @@ public class SavedQueriesPlugin extends DefaultPlugin {
 		String QUERIES = "queries";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
+	 */
 	public String getInternalName() {
 		return "favs";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
+	 */
 	public String getDescriptiveName() {
 		return "Saved Queries Plugin";
 	}
@@ -61,6 +67,36 @@ public class SavedQueriesPlugin extends DefaultPlugin {
 		return "Udi Ipalawatte";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
+	 */
+	@Override
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
+	 */
+	@Override
+	public String getHelpFileName()
+	{
+		return "readme.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
+	 */
+	@Override
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#initialize()
+	 */
 	public void initialize() throws PluginException {
 		super.initialize();
 		IApplication app = getApplication();
