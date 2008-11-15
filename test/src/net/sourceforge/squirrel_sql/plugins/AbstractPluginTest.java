@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
  * pickup the common tests.
  *  
  */
-public class AbstractPluginTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractPluginTest extends BaseSQuirreLJUnit4TestCase
 {
 	protected IPlugin classUnderTest = null;
 	protected EasyMockHelper mockHelper = new EasyMockHelper();
