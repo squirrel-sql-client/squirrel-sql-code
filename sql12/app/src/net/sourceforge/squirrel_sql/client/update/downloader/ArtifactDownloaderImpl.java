@@ -94,7 +94,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	public void run()
 	{
 		sendDownloadStarted(_artifactStatus.size());
-
+		long totalBytesDownloaded = 0;
 		try
 		{
 			for (ArtifactStatus status : _artifactStatus)
@@ -137,6 +137,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				else
 				{
 					sendDownloadFileCompleted(status.getName());
+					totalBytesDownloaded += status.getSize();
 				}
 			}
 		}
@@ -153,6 +154,9 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 			s_log.error("run: Unexpected exception: "+e.getMessage(),e);
 			sendDownloadFailed();
 			return;
+		}
+		if (s_log.isInfoEnabled()) {
+			s_log.info("run: Downloaded "+totalBytesDownloaded+" bytes total for all update files.");
 		}
 		sendDownloadComplete();
 	}
