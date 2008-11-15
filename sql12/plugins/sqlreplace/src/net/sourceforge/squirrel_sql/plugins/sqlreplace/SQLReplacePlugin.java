@@ -18,20 +18,17 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -41,244 +38,259 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * Main entry into the SQL Replace plugin.
- * <p/>
- * This plugin allows you to maintain a set of frequently used SQL
- * scripts for easy playback. There is also a parameter replacement
- * syntax available for the SQL files.
- *
- 
+ * Main entry into the SQL Replace plugin. <p/> This plugin allows you to maintain a set of frequently used
+ * SQL scripts for easy playback. There is also a parameter replacement syntax available for the SQL files.
+ * 
  * @author Dieter
- *
  */
-public class SQLReplacePlugin extends DefaultSessionPlugin {
+public class SQLReplacePlugin extends DefaultSessionPlugin
+{
 
-	
 	Map<String, String> cache;
 
-	/** 
-     * Remember which sqlpanelapis we've registered listeners with so that we 
-     * can unregister them when it's time to unload.
-     */
-    HashMap<ISQLPanelAPI, ISQLExecutionListener> panelListenerMap = 
-        new HashMap<ISQLPanelAPI, ISQLExecutionListener>();
+	/**
+	 * Remember which sqlpanelapis we've registered listeners with so that we can unregister them when it's
+	 * time to unload.
+	 */
+	HashMap<ISQLPanelAPI, ISQLExecutionListener> panelListenerMap =
+		new HashMap<ISQLPanelAPI, ISQLExecutionListener>();
 
-    /**
+	/**
 	 * Loggers for this class
 	 */
-	private final static ILogger log = 
-	       LoggerController.createLogger(SQLReplacePlugin.class);  
+	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
 
-	   private static String RESOURCE_PATH =
-	      "net.sourceforge.squirrel_sql.plugins.sqlreplace.sqlreplace";
+	private static String RESOURCE_PATH = "net.sourceforge.squirrel_sql.plugins.sqlreplace.sqlreplace";
 
-	   private static ILogger logger =
-	      LoggerController.createLogger(SQLReplacePlugin.class);
+	private static ILogger logger = LoggerController.createLogger(SQLReplacePlugin.class);
 
-	   /**
-	    * The app folder for this plugin.
-	    */
-	   private File pluginAppFolder;
+	/**
+	 * The app folder for this plugin.
+	 */
+	@SuppressWarnings("unused")
+	private File pluginAppFolder;
 
+	private PluginResources resources;
 
-	   private PluginResources resources;
+	private ReplacementManager replacementManager;
 
-
-	   private ReplacementManager replacementManager; 
-
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getAuthor()
 	 */
-	public String getAuthor() {
+	public String getAuthor()
+	{
 		return "Dieter Engelhardt";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
 	 */
-	public String getDescriptiveName() {
+	public String getDescriptiveName()
+	{
 		return "SQLReplace Plugin";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
 	 */
-	public String getInternalName() {
+	public String getInternalName()
+	{
 		return "sqlreplace";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
 	 */
-	public String getVersion() {
+	public String getVersion()
+	{
 		return "0.0.1";
 	}
 
-	   /**
-	    * Initialize this plugin.
-	    */
-	   public synchronized void initialize() throws PluginException
-	   {
-	      super.initialize();
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
+	 */
+	@Override
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
 
-	      IApplication app = getApplication();
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
+	 */
+	@Override
+	public String getHelpFileName()
+	{
+		return "readme.txt";
+	}
 
-	      // Folder within plugins folder that belongs to this
-	      // plugin.
-	      try
-	      {
-	         pluginAppFolder = getPluginAppSettingsFolder();
-	      }
-	      catch (IOException ex)
-	      {
-	         throw new PluginException(ex);
-	      }
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
+	 */
+	@Override
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
+	}
 
-	      // Load resources such as menu items, etc...
-	      resources = new SQLReplaceResources(RESOURCE_PATH, this);
-	      replacementManager = new ReplacementManager(this);
-	      // Load plugin preferences.
-	      try
-	      {
-	    	  replacementManager.load();
-	      }
-	      catch (IOException e)
-	      {
-	         if (!(e instanceof FileNotFoundException))
-	         {
-	            logger.error("Problem loading replacementManager", e);
-	         }
-	      }
-	
-		   }
+	/**
+	 * Initialize this plugin.
+	 */
+	public synchronized void initialize() throws PluginException
+	{
+		super.initialize();
 
-	   /**
-	    * 
-	    * @return ReplacementManager
-	    */
-	   ReplacementManager getReplacementManager() {
-		   return replacementManager;
-	   }
+		// Folder within plugins folder that belongs to this
+		// plugin.
+		try
+		{
+			pluginAppFolder = getPluginAppSettingsFolder();
+		}
+		catch (IOException ex)
+		{
+			throw new PluginException(ex);
+		}
 
-	  /**
-	    * Get and return a string from the plugin resources.
-	    *
-	    * @param name name of the resource string to return.
-	    * @return resource string.
-	    */
-	   protected String getResourceString(String name)
-	   {
-	      return resources.getString(name);
-	   }
-
-	  /**
-	    * Create and return a preferences object.
-	    *
-	    * @return The global preferences object.
-	    */
-	   public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
-	   {
-	      return new IGlobalPreferencesPanel[]{
-	         new SQLReplacePreferencesController(this)
-	      };
-	   }
-		/* (non-Javadoc)
-		 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
-		 */
-		public PluginSessionCallback sessionStarted(ISession session) {
-			try
+		// Load resources such as menu items, etc...
+		resources = new SQLReplaceResources(RESOURCE_PATH, this);
+		replacementManager = new ReplacementManager(this);
+		// Load plugin preferences.
+		try
+		{
+			replacementManager.load();
+		}
+		catch (IOException e)
+		{
+			if (!(e instanceof FileNotFoundException))
 			{
-				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
-
-				initSQLReplace(sqlPaneAPI, session);
-
-
-	         return new PluginSessionCallback()
-	         {
-	            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-	            {
-	               //plugin supports Session main window only
-	            }
-
-	            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-	            {
-	               //plugin supports Session main window only
-	            }
-	         };
-			}
-			catch(Exception e)
-			{
-	         throw new RuntimeException(e);
+				logger.error("Problem loading replacementManager", e);
 			}
 		}
 
-		
-		/**
-		 * Called on plugin unloading.
-		 */
-		public void unload()
+	}
+
+	/**
+	 * @return ReplacementManager
+	 */
+	ReplacementManager getReplacementManager()
+	{
+		return replacementManager;
+	}
+
+	/**
+	 * Get and return a string from the plugin resources.
+	 * 
+	 * @param name
+	 *           name of the resource string to return.
+	 * @return resource string.
+	 */
+	protected String getResourceString(String name)
+	{
+		return resources.getString(name);
+	}
+
+	/**
+	 * Create and return a preferences object.
+	 * 
+	 * @return The global preferences object.
+	 */
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+	{
+		return new IGlobalPreferencesPanel[] { new SQLReplacePreferencesController(this) };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
+	public PluginSessionCallback sessionStarted(ISession session)
+	{
+		try
 		{
-		   for (ISQLPanelAPI api : panelListenerMap.keySet()) {
-		        api.removeSQLExecutionListener(panelListenerMap.get(api));
-	       }
-		}
-
-		public boolean allowsSessionStartedInBackground()
-		{
-			return true;
-		}
-
-		/**
-		 * Called on session creating by callback.
-		 * 
-		 * @param session The session
-		 */
-		@Override
-		public void sessionCreated(ISession session)
-		{
-			try{
-				replacementManager.load();
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-
-		/**
-		 * Now we register our SQLLIstener to catch the executionevent
-		 * @param sqlPaneAPI
-		 * @param session
-		 */
-		private void initSQLReplace(final ISQLPanelAPI sqlPaneAPI, final ISession session)
-		{
-			final SQLReplacePlugin plugin = this;
-			
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					log.info("Adding SQL execution listener.");
-	                ISQLExecutionListener listener = 
-	                    new SQLReplaceExecutionListener(plugin, session);
-					sqlPaneAPI.addSQLExecutionListener(listener);
-	                panelListenerMap.put(sqlPaneAPI, listener);
-				}
-
-			});
-		}
-
-		/**
-		 * This method is called on session closing an needs to free resources.
-		 * 
-		 * @param session the session to be closed
-		 */
-		@Override
-		public void sessionEnding(ISession session) {
 			ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
-			ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
-			sqlPaneAPI.removeSQLExecutionListener(listener);
+
+			initSQLReplace(sqlPaneAPI, session);
+
+			return new PluginSessionCallbackAdaptor(this);
 		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Called on plugin unloading.
+	 */
+	public void unload()
+	{
+		for (ISQLPanelAPI api : panelListenerMap.keySet())
+		{
+			api.removeSQLExecutionListener(panelListenerMap.get(api));
+		}
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+	 */
+	public boolean allowsSessionStartedInBackground()
+	{
+		return true;
+	}
+
+	/**
+	 * Called on session creating by callback.
+	 * 
+	 * @param session
+	 *           The session
+	 */
+	@Override
+	public void sessionCreated(ISession session)
+	{
+		try
+		{
+			replacementManager.load();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Now we register our SQLLIstener to catch the executionevent
+	 * 
+	 * @param sqlPaneAPI
+	 * @param session
+	 */
+	private void initSQLReplace(final ISQLPanelAPI sqlPaneAPI, final ISession session)
+	{
+		final SQLReplacePlugin plugin = this;
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				log.info("Adding SQL execution listener.");
+				ISQLExecutionListener listener = new SQLReplaceExecutionListener(plugin, session);
+				sqlPaneAPI.addSQLExecutionListener(listener);
+				panelListenerMap.put(sqlPaneAPI, listener);
+			}
+
+		});
+	}
+
+	/**
+	 * This method is called on session closing an needs to free resources.
+	 * 
+	 * @param session
+	 *           the session to be closed
+	 */
+	@Override
+	public void sessionEnding(ISession session)
+	{
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
+		sqlPaneAPI.removeSQLExecutionListener(listener);
+	}
 
 }
