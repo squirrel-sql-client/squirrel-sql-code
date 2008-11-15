@@ -19,9 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  */ 
 
+import static org.junit.Assert.assertNull;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class ConstraintGraphXmlBeanTest extends BaseSQuirreLJUnit4TestCase {
 	public void testGetFoldingPointXmlBeans() throws Exception
 	{
 		classUnderTest.setFoldingPointXmlBeans(null);
-		assertEquals(null, classUnderTest.getFoldingPointXmlBeans());
+		assertNull(classUnderTest.getFoldingPointXmlBeans());
 	}
 
 }
