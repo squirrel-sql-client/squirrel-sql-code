@@ -24,12 +24,11 @@ import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -189,19 +188,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       ActionCollection coll = getApplication().getActionCollection();
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
 
-      PluginSessionCallback ret = new PluginSessionCallback()
-      {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-         {
-         }
-
-         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-         {
-            // Graphs are only supported on the main session window.
-         }
-      };
-
-      return ret;
+      return new PluginSessionCallbackAdaptor(this);
    }
 
 
