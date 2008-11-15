@@ -117,7 +117,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	@Override
 	public String getChangeLogFileName()
 	{
-		return null;
+		return "changes.txt";
 	}
 
 	/**
