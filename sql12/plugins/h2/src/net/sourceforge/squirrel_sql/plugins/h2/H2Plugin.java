@@ -19,11 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.h2;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
@@ -201,18 +200,7 @@ public class H2Plugin extends DefaultSessionPlugin {
                updateTreeApi(session);
            }
        });
-       return new PluginSessionCallback()
-       {
-           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
-
-           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
-       };
+       return new PluginSessionCallbackAdaptor(this);
    }
 
     @Override

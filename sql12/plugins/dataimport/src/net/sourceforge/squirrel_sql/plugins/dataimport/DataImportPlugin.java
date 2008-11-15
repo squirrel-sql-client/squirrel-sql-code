@@ -19,11 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -75,27 +74,42 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 		return "Thorsten Mürell";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getContributors()
+	 */
 	@Override
 	public String getContributors() {
 		return "";
 	}
 
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
+	 */
 	@Override
 	public String getChangeLogFileName() {
 		return "changes.txt";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
+	 */
 	@Override
 	public String getLicenceFileName() {
 		return "licence.txt";
 	}
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
+	 */
 	@Override
 	public String getHelpFileName() {
 		return "readme.html";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#load(net.sourceforge.squirrel_sql.client.IApplication)
+	 */
 	@Override
 	public void load(IApplication app) throws PluginException {
 		super.load(app);
@@ -126,6 +140,9 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 		PreferencesManager.unload();
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+	 */
 	@Override
 	public boolean allowsSessionStartedInBackground()
 	{
@@ -142,26 +159,12 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session) {
 		updateTreeApi(session);
-		return new PluginSessionCallback()
-		{
-			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-			{
-				// Not needed
-			}
-
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-			{
-				/*
-				GUIUtils.processOnSwingEventThread(new Runnable() {
-					public void run() {
-						updateTreeApi(session);
-					}
-				});
-				*/
-			}
-		};
+		return new PluginSessionCallbackAdaptor(this);
 	}
 
+	/**
+	 * @param session
+	 */
 	private void updateTreeApi(ISession session) {
 		IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 		final ActionCollection coll = getApplication().getActionCollection();

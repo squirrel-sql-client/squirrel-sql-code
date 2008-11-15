@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -151,19 +152,7 @@ public class ExamplePlugin extends DefaultSessionPlugin
          otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptDB2ViewAction(getApplication(), _resources, session));
          otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptDB2ProcedureAction(getApplication(), _resources, session));
 
-
-         return new PluginSessionCallback()
-         {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
-
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
-         };
+         return new PluginSessionCallbackAdaptor(this);
 		}
 		catch(Exception e)
 		{

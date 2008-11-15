@@ -19,11 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.informix;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
@@ -200,18 +199,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
        InformixExceptionFormatter formatter = 
            new InformixExceptionFormatter(session);
        session.setExceptionFormatter(formatter);
-       return new PluginSessionCallback()
-       {
-           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
-
-           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
-       };
+       return new PluginSessionCallbackAdaptor(this);
    }
 
     @Override

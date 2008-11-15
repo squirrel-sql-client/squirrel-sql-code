@@ -23,11 +23,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
@@ -46,9 +45,9 @@ import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.IndexDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.db2.tab.TableSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.SequenceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.db2.tab.TableSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.UDFDetailsTab;
@@ -238,20 +237,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 			s_log.error("Problem installing exception formatter: " + e.getMessage());
 		}
 
-		return new PluginSessionCallback()
-		{
-			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-			{
-				// Supports Session main window only
-			}
-
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-				ISession sess)
-			{
-				// Supports Session main window only
-			}
-		};
-
+		return new PluginSessionCallbackAdaptor(this);
 	}
 
 	@Override

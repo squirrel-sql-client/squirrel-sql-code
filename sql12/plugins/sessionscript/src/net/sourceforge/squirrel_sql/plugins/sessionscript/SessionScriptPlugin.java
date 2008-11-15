@@ -20,33 +20,34 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
 import java.io.File;
 import java.io.IOException;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * The plugin class.
  */
 public class SessionScriptPlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
+	@SuppressWarnings("unused")
 	private static ILogger s_log =
 		LoggerController.createLogger(SessionScriptPlugin.class);
 
 	/** The app folder for this plugin. */
+	@SuppressWarnings("unused")
 	private File _pluginAppFolder;
 
 	/** Folder to store user settings in. */
+	@SuppressWarnings("unused")
 	private File _userSettingsFolder;
 
 	/** Cache of session scripts. */
@@ -225,19 +226,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
       {
          return null;
       }
-
-      return new PluginSessionCallback()
-      {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-         {
-            // Supports main Session window only
-         }
-
-         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-         {
-            // Supports main Session window only
-         }
-      };
+		return new PluginSessionCallbackAdaptor(this);
 	}
 
 	/**
