@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.refactoring;
+package net.sourceforge.squirrel_sql.plugins.sqlscript;
 
 import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
 import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
@@ -25,12 +25,12 @@ import org.junit.After;
 import org.junit.Before;
 
 
-public class RefactoringPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
+public class SQLScriptPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
 {	
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new RefactoringPlugin();
+		classUnderTest = new SQLScriptPlugin();
 	}
 
 	@After
