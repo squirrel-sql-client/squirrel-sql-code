@@ -26,7 +26,6 @@ import static org.easymock.classextension.EasyMock.replay;
 
 import javax.swing.Action;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -34,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
@@ -47,7 +47,7 @@ import org.junit.Test;
 
 
 
-public class OraclePluginTest extends BaseSQuirreLJUnit4TestCase {
+public class OraclePluginTest extends AbstractPluginTest {
 
     OraclePlugin pluginUnderTest = null;
     
@@ -73,7 +73,8 @@ public class OraclePluginTest extends BaseSQuirreLJUnit4TestCase {
         app = TestUtil.getEasyMockApplication(col);
         pluginUnderTest.load(app);
         pluginUnderTest.initialize();
-        session = TestUtil.getEasyMockSession(md, true);        
+        session = TestUtil.getEasyMockSession(md, true);       
+        classUnderTest = new OraclePlugin();
     }
 
     @After
@@ -81,6 +82,7 @@ public class OraclePluginTest extends BaseSQuirreLJUnit4TestCase {
         session = null;
         app = null;
         md = null;
+        classUnderTest = null;
     }
 
     /**
