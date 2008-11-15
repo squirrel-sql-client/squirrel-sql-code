@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.mysql;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -21,13 +22,12 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -75,23 +75,22 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tokenizer.MysqlQueryTokenizer;
+
 /**
  * MySQL plugin class.
- *
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class MysqlPlugin extends DefaultSessionPlugin
 {
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(MysqlPlugin.class);
-               
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MysqlPlugin.class);
+
 	/** Logger for this class. */
-    @SuppressWarnings("unused")
-	private final static ILogger s_log = 
-        LoggerController.createLogger(MysqlPlugin.class);
+	@SuppressWarnings("unused")
+	private final static ILogger s_log = LoggerController.createLogger(MysqlPlugin.class);
 
 	/** Plugin resources. */
 	private PluginResources _resources;
@@ -105,31 +104,28 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/** manages our query tokenizing preferences */
 	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
 
-    
-	interface i18n {
-	    // i18n[MysqlPlugin.title=MySQL]
-	    String title = s_stringMgr.getString("MysqlPlugin.title");
+	interface i18n
+	{
+		// i18n[MysqlPlugin.title=MySQL]
+		String title = s_stringMgr.getString("MysqlPlugin.title");
 
-	    // i18n[MysqlPlugin.hint=Preferences for MySQL]
-	    String hint = s_stringMgr.getString("MysqlPlugin.hint");
-        
-        //i18n[MysqlPlugin.showProcedureSource=Show procedure source]
-        String SHOW_PROCEDURE_SOURCE =
-            s_stringMgr.getString("MysqlPlugin.showProcedureSource");
+		// i18n[MysqlPlugin.hint=Preferences for MySQL]
+		String hint = s_stringMgr.getString("MysqlPlugin.hint");
 
-        //i18n[MysqlPlugin.showTriggerSource=Show trigger source]
-        String SHOW_TRIGGER_SOURCE =
-            s_stringMgr.getString("MysqlPlugin.showTriggerSource");
-        
-        //i18n[MysqlPlugin.showViewSource=Show view source]
-        String SHOW_VIEW_SOURCE = 
-            s_stringMgr.getString("MysqlPlugin.showViewSource");
+		// i18n[MysqlPlugin.showProcedureSource=Show procedure source]
+		String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("MysqlPlugin.showProcedureSource");
+
+		// i18n[MysqlPlugin.showTriggerSource=Show trigger source]
+		String SHOW_TRIGGER_SOURCE = s_stringMgr.getString("MysqlPlugin.showTriggerSource");
+
+		// i18n[MysqlPlugin.showViewSource=Show view source]
+		String SHOW_VIEW_SOURCE = s_stringMgr.getString("MysqlPlugin.showViewSource");
 	}
-    
+
 	/**
 	 * Return the internal name of this plugin.
-	 *
-	 * @return	the internal name of this plugin.
+	 * 
+	 * @return the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -138,8 +134,10 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Return the descriptive name of this plugin.
-	 *
-	 * @return	the descriptive name of this plugin.
+	 * 
+	 * @return the descriptive name of this plugin.
+	 * 
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
 	 */
 	public String getDescriptiveName()
 	{
@@ -148,8 +146,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Returns the current version of this plugin.
-	 *
-	 * @return	the current version of this plugin.
+	 * 
+	 * @return the current version of this plugin.
 	 */
 	public String getVersion()
 	{
@@ -158,8 +156,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Returns the authors name.
-	 *
-	 * @return	the authors name.
+	 * 
+	 * @return the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -168,30 +166,18 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Load this plugin.
-	 *
-	 * @param	app	 Application API.
+	 * 
+	 * @param app
+	 *           Application API.
 	 */
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-
-		// Folder to store user settings.
-//		try
-//		{
-//			_userSettingsFolder = getPluginUserSettingsFolder();
-//		}
-//		catch (IOException ex)
-//		{
-//			throw new PluginException(ex);
-//		}
-
 		_resources = new MysqlResources(getClass().getName(), this);
 	}
 
 	/**
-	 * Retrieve the name of the change log.
-	 *
-	 * @return	The name of the change log.
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
 	 */
 	public String getChangeLogFileName()
 	{
@@ -200,8 +186,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Retrieve the name of the help file.
-	 *
-	 * @return	The nane of the help file.
+	 * 
+	 * @return The nane of the help file.
 	 */
 	public String getHelpFileName()
 	{
@@ -210,8 +196,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Retrieve the name of the licence file.
-	 *
-	 * @return	The nane of the licence file.
+	 * 
+	 * @return The nane of the licence file.
 	 */
 	public String getLicenceFileName()
 	{
@@ -221,22 +207,21 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/**
 	 * Create panel for the Global Properties dialog.
 	 * 
-	 * @return  properties panel.
+	 * @return properties panel.
 	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-	    PluginQueryTokenizerPreferencesPanel _prefsPanel = 
-	        new PluginQueryTokenizerPreferencesPanel(_prefsManager,
-	                "MySQL");
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+	{
+		PluginQueryTokenizerPreferencesPanel _prefsPanel =
+			new PluginQueryTokenizerPreferencesPanel(_prefsManager, "MySQL");
 
-	    PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+		PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
 
-	    tab.setHint(i18n.hint);
-	    tab.setTitle(i18n.title);
+		tab.setHint(i18n.hint);
+		tab.setTitle(i18n.title);
 
-	    return new IGlobalPreferencesPanel[] { tab };
+		return new IGlobalPreferencesPanel[] { tab };
 	}
-    
-    
+
 	/**
 	 * Initialize this plugin.
 	 */
@@ -262,171 +247,160 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		coll.add(new CreateDatabaseAction(app, _resources, this));
 		coll.add(new DropDatabaseAction(app, _resources, this));
 		coll.add(new AlterTableAction(app, _resources, this));
-//		coll.add(new CreateTableAction(app, _resources, this));
+		// coll.add(new CreateTableAction(app, _resources, this));
 		coll.add(new CopyTableAction(app, _resources, this));
 
 		_mySQLMenu = createFullMysqlMenu();
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mySQLMenu);
-        super.registerSessionMenu(_mySQLMenu);   
-        
+		super.registerSessionMenu(_mySQLMenu);
 
-        _prefsManager = new PluginQueryTokenizerPreferencesManager();
-        _prefsManager.initialize(this, new MysqlPreferenceBean());
+		_prefsManager = new PluginQueryTokenizerPreferencesManager();
+		_prefsManager.initialize(this, new MysqlPreferenceBean());
 	}
 
 	/**
 	 * Application is shutting down so save preferences.
+	 * 
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#unload()
 	 */
 	public void unload()
 	{
 		super.unload();
 	}
 
-   public boolean allowsSessionStartedInBackground()
-   {
-      return true;
-   }
-
-   /**
-    * Session has been started. If this is a MySQL session
-    * then setup MySQL tabs etc.
-    *
-    * @param	session		Session that has started.
-    *
-    * @return	<TT>true</TT> if session is MySQL in which case this plugin
-    * 			is interested in it.
-    */
-   public PluginSessionCallback sessionStarted(final ISession session)
-   {
-       if (!isPluginSession(session)) {
-           return null;
-       }
-       
-       GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               updateTreeApi(session);
-           }
-       });
-       
-       installMysqlQueryTokenizer(session);
-       
-       PluginSessionCallback ret = new PluginSessionCallback()
-       {
-           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-           {
-               // TODO
-               // Plugin supports only the main session window
-           }
-
-           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-           {
-               // TODO
-               // Plugin supports only the main session window
-           }
-       };
-       return ret;
-   }
-    
-    @Override
-    protected boolean isPluginSession(ISession session) {
-        return DialectFactory.isMySQL(session.getMetaData());
-    }
-    
-    /**
-     * Determines from the user's preference whether or not to install the 
-     * custom query tokenizer, and if so configure installs it.
-     * 
-     * @param session the session to install the custom query tokenizer in.
-     */
-    private void installMysqlQueryTokenizer(ISession session) {
-
-        IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
-        
-        if (_prefs.isInstallCustomQueryTokenizer()) {
-            session.setQueryTokenizer(new MysqlQueryTokenizer(_prefs));
-        }
-        
-    }
-    
-    private void updateTreeApi(ISession session) {
-        _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-        final ActionCollection coll = getApplication().getActionCollection();
-        
-
-        // Show users in the object tee.
-        _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
-        _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
-
-        
-        // Tabs to add to the database node.
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
-
-        // Tabs to add to the catalog nodes.
-        _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
-
-        // Tabs to add to the table nodes.
-        _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
-
-        
-        // Tabs to add to the user nodes.
-        _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
-
-        // Options in popup menu.
-        _treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
-
-//              _treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
-//              _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
-        _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
-
-        _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());  
-        
-        updateTreeApiForMysql5(session);
-    }
-    
-    private void updateTreeApiForMysql5(ISession session) {
-        if (!DialectFactory.isMySQL5(session.getMetaData())) {
-            return;
-        }
-        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
-        
-        MysqlProcedureSourceTab procSourceTab =
-            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE);
-        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
-        
-        // Tab to add to view nodes.
-        MysqlViewSourceTab viewSourceTab = 
-            new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
-        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);  
-        
-        // Show triggers for tables
-        TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
-        trigExp.setTableTriggerExtractor(new MysqlTableTriggerExtractorImpl());
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);        
-        
-        // tabs for triggers
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
-                              new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
-                              new MysqlTriggerDetailsTab());
-        MysqlTriggerSourceTab trigSourceTab = 
-            new MysqlTriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep);
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, trigSourceTab);
-        
-    }
-    
 	/**
-	 * Create menu containing actions relevant for table nodes in the object
-	 * tree.
-	 *
-	 * @return	The menu object.
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+	 */
+	public boolean allowsSessionStartedInBackground()
+	{
+		return true;
+	}
+
+	/**
+	 * Session has been started. If this is a MySQL session then setup MySQL tabs etc.
+	 * 
+	 * @param session
+	 *           Session that has started.
+	 * @return <TT>true</TT> if session is MySQL in which case this plugin is interested in it.
+	 */
+	public PluginSessionCallback sessionStarted(final ISession session)
+	{
+		if (!isPluginSession(session)) { return null; }
+
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				updateTreeApi(session);
+			}
+		});
+
+		installMysqlQueryTokenizer(session);
+
+		return new PluginSessionCallbackAdaptor(this);
+	}
+
+	/**
+	 * Returns true for any version of MySQL.
+	 * 
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#
+	 *      isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
+	@Override
+	protected boolean isPluginSession(ISession session)
+	{
+		return DialectFactory.isMySQL(session.getMetaData()) || DialectFactory.isMySQL5(session.getMetaData());
+	}
+
+	/**
+	 * Determines from the user's preference whether or not to install the custom query tokenizer, and if so
+	 * configure installs it.
+	 * 
+	 * @param session
+	 *           the session to install the custom query tokenizer in.
+	 */
+	private void installMysqlQueryTokenizer(ISession session)
+	{
+
+		IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
+
+		if (_prefs.isInstallCustomQueryTokenizer())
+		{
+			session.setQueryTokenizer(new MysqlQueryTokenizer(_prefs));
+		}
+
+	}
+
+	private void updateTreeApi(ISession session)
+	{
+		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+		final ActionCollection coll = getApplication().getActionCollection();
+
+		// Show users in the object tee.
+		_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
+		_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+
+		// Tabs to add to the database node.
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
+
+		// Tabs to add to the catalog nodes.
+		_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
+
+		// Tabs to add to the table nodes.
+		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
+
+		// Tabs to add to the user nodes.
+		_treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
+
+		// Options in popup menu.
+		_treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
+
+		// _treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
+		// _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
+		_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
+
+		_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
+
+		updateTreeApiForMysql5(session);
+	}
+
+	private void updateTreeApiForMysql5(ISession session)
+	{
+		if (!DialectFactory.isMySQL5(session.getMetaData())) { return; }
+		String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+
+		MysqlProcedureSourceTab procSourceTab = new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE);
+		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
+
+		// Tab to add to view nodes.
+		MysqlViewSourceTab viewSourceTab = new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
+		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
+
+		// Show triggers for tables
+		TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
+		trigExp.setTableTriggerExtractor(new MysqlTableTriggerExtractorImpl());
+		_treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
+
+		// tabs for triggers
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new MysqlTriggerDetailsTab());
+		MysqlTriggerSourceTab trigSourceTab = new MysqlTriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep);
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, trigSourceTab);
+
+	}
+
+	/**
+	 * Create menu containing actions relevant for table nodes in the object tree.
+	 * 
+	 * @return The menu object.
 	 */
 	private JMenu createMysqlTableMenu()
 	{
@@ -459,8 +433,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Create menu containing all MYSQL actions.
-	 *
-	 * @return	The menu object.
+	 * 
+	 * @return The menu object.
 	 */
 	private JMenu createFullMysqlMenu()
 	{
@@ -470,10 +444,10 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
 
 		_resources.addToMenu(coll.get(CreateDatabaseAction.class), mysqlMenu);
-//		_resources.addToMenu(coll.get(DropDatabaseAction.class), mysqlMenu);
+		// _resources.addToMenu(coll.get(DropDatabaseAction.class), mysqlMenu);
 
 		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
-//		_resources.addToMenu(coll.get(CreateTableAction.class), mysqlMenu);
+		// _resources.addToMenu(coll.get(CreateTableAction.class), mysqlMenu);
 
 		_resources.addToMenu(coll.get(AnalyzeTableAction.class), mysqlMenu);
 		_resources.addToMenu(coll.get(ExplainTableAction.class), mysqlMenu);
