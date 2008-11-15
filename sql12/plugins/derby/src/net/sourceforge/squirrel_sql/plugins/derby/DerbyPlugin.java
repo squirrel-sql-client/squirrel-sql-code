@@ -25,12 +25,11 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -215,6 +214,9 @@ public class DerbyPlugin extends DefaultSessionPlugin {
       super.unload();
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+    */
    public boolean allowsSessionStartedInBackground() {
       return true;
    }
@@ -248,25 +250,20 @@ public class DerbyPlugin extends DefaultSessionPlugin {
          }
       });
 
-      return new PluginSessionCallback() {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame,
-               ISession sess) {
-            // Supports Session main window only
-         }
-
-         public void objectTreeInternalFrameOpened(
-               ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess) {
-            // Supports Session main window only
-         }
-      };
-
+      return new PluginSessionCallbackAdaptor(this);
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+    */
    @Override
    protected boolean isPluginSession(ISession session) {
       return DialectFactory.isDerby(session.getMetaData());
    }
 
+   /**
+    * @param session
+    */
    private void updateTreeApi(ISession session) {
 
       _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
