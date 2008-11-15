@@ -43,8 +43,6 @@ import javax.swing.border.LineBorder;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * The dialog that presents the user with the option to check for updates.
@@ -52,10 +50,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class UpdateManagerDialog extends JDialog {
    private static final long serialVersionUID = 1L;
-
-   /** Logger for this class. */
-   private final static ILogger s_log = 
-      LoggerController.createLogger(UpdateManagerDialog.class);
 
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = 
@@ -72,9 +66,6 @@ public class UpdateManagerDialog extends JDialog {
    /** Close button for dialog. */
    private JButton _closeBtn = null;
 
-   /** The parent frame for this dialog */
-   private JFrame _parent = null;
-   
    /** server hostname textfield */
    private JTextField _updateServerNameTF = null;
    
@@ -134,7 +125,6 @@ public class UpdateManagerDialog extends JDialog {
    public UpdateManagerDialog(JFrame parent, boolean isRemoteUpdateSite) {
       super(parent, i18n.TITLE, true);
       setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-      this._parent = parent;
       this.isRemoteUpdateSite = isRemoteUpdateSite;
       init();
    }
@@ -254,7 +244,6 @@ public class UpdateManagerDialog extends JDialog {
    private JPanel getLocalUpdateSitePanel() {
       EmptyBorder border = new EmptyBorder(new Insets(5, 5, 5, 5));
       Dimension mediumField = new Dimension(200, 20);
-      Dimension portField = new Dimension(50, 20);
 
       JPanel locationPanel = new JPanel();
       locationPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
