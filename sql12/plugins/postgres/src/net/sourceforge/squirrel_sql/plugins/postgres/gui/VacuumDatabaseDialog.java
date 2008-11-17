@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.postgres.gui;
+
 /*
 * Copyright (C) 2007 Daniel Regli & Yannick Winiger
 * http://sourceforge.net/projects/squirrel-sql
@@ -18,91 +19,94 @@ package net.sourceforge.squirrel_sql.plugins.postgres.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
+public class VacuumDatabaseDialog extends AbstractPostgresDialog
+{
 
-public class VacuumDatabaseDialog extends AbstractPostgresDialog {
-    /** Name of the database/catalog. */
-    protected String _catalogName;
+	private static final long serialVersionUID = 1L;
 
-    /** Some GUI elements */
-    protected JCheckBox _fullCheckBox;
-    protected JCheckBox _analyzeCheckBox;
+	/** Name of the database/catalog. */
+	protected String _catalogName;
 
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(VacuumDatabaseDialog.class);
+	/** Some GUI elements */
+	protected JCheckBox _fullCheckBox;
 
-    static interface i18n {
-        String TITLE = s_stringMgr.getString("VacuumDatabaseDialog.title");
-        String CATALOG_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.catalogLabel");
-        String FULL_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.fullLabel");
-        String FULL_TOOLTIP = s_stringMgr.getString("VacuumDatabaseDialog.fullTooltip");
-        String ANALYZE_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.analyzeLabel");
-        String ANALYZE_TOOLTIP = s_stringMgr.getString("VacuumDatabaseDialog.analyzeTooltip");
-    }
+	protected JCheckBox _analyzeCheckBox;
 
+	/** Internationalized strings for this class */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(VacuumDatabaseDialog.class);
 
-    public VacuumDatabaseDialog(String catalogName) {
-        _catalogName = catalogName;
-        setTitle(VacuumDatabaseDialog.i18n.TITLE);
-        init();
-    }
+	static interface i18n
+	{
+		String TITLE = s_stringMgr.getString("VacuumDatabaseDialog.title");
 
+		String CATALOG_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.catalogLabel");
 
-    protected void init() {
-        defaultInit();
+		String FULL_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.fullLabel");
 
-        // Catalog
-        JLabel catalogLabel = getBorderedLabel(VacuumDatabaseDialog.i18n.CATALOG_LABEL + " ", _emptyBorder);
-        _panel.add(catalogLabel, getLabelConstraints(_gbc));
+		String FULL_TOOLTIP = s_stringMgr.getString("VacuumDatabaseDialog.fullTooltip");
 
-        JTextField catalogTextField = getSizedTextField(_mediumField);
-        catalogTextField.setEditable(false);
-        if (_catalogName != null) catalogTextField.setText(_catalogName);
-        _panel.add(catalogTextField, getFieldConstraints(_gbc));
+		String ANALYZE_LABEL = s_stringMgr.getString("VacuumDatabaseDialog.analyzeLabel");
 
-        // Options:
-        // FULL Checkbox
-        JLabel fullLabel = new JLabel(VacuumDatabaseDialog.i18n.FULL_LABEL);
-        fullLabel.setBorder(_emptyBorder);
-        _panel.add(fullLabel, getLabelConstraints(_gbc));
+		String ANALYZE_TOOLTIP = s_stringMgr.getString("VacuumDatabaseDialog.analyzeTooltip");
+	}
 
-        _fullCheckBox = new JCheckBox();
-        _fullCheckBox.setToolTipText(VacuumDatabaseDialog.i18n.FULL_TOOLTIP);
-        _fullCheckBox.setPreferredSize(_mediumField);
-        _panel.add(_fullCheckBox, getFieldConstraints(_gbc));
+	public VacuumDatabaseDialog(String catalogName)
+	{
+		_catalogName = catalogName;
+		setTitle(VacuumDatabaseDialog.i18n.TITLE);
+		init();
+	}
 
-        // ANALYZE Checkbox
-        JLabel analyzeLabel = new JLabel(VacuumDatabaseDialog.i18n.ANALYZE_LABEL);
-        analyzeLabel.setBorder(_emptyBorder);
-        _panel.add(analyzeLabel, getLabelConstraints(_gbc));
+	protected void init()
+	{
+		defaultInit();
 
-        _analyzeCheckBox = new JCheckBox();
-        _analyzeCheckBox.setToolTipText(VacuumDatabaseDialog.i18n.ANALYZE_TOOLTIP);
-        _analyzeCheckBox.setPreferredSize(_mediumField);
-        _panel.add(_analyzeCheckBox, getFieldConstraints(_gbc));
-    }
+		// Catalog
+		JLabel catalogLabel = getBorderedLabel(VacuumDatabaseDialog.i18n.CATALOG_LABEL + " ", _emptyBorder);
+		_panel.add(catalogLabel, getLabelConstraints(_gbc));
 
+		JTextField catalogTextField = getSizedTextField(_mediumField);
+		catalogTextField.setEditable(false);
+		if (_catalogName != null) catalogTextField.setText(_catalogName);
+		_panel.add(catalogTextField, getFieldConstraints(_gbc));
 
-    private String[] getSimpleNames(ITableInfo[] infos) {
-        String[] result = new String[infos.length];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = infos[i].getSimpleName();
-        }
-        return result;
-    }
+		// Options:
+		// FULL Checkbox
+		JLabel fullLabel = new JLabel(VacuumDatabaseDialog.i18n.FULL_LABEL);
+		fullLabel.setBorder(_emptyBorder);
+		_panel.add(fullLabel, getLabelConstraints(_gbc));
 
+		_fullCheckBox = new JCheckBox();
+		_fullCheckBox.setToolTipText(VacuumDatabaseDialog.i18n.FULL_TOOLTIP);
+		_fullCheckBox.setPreferredSize(_mediumField);
+		_panel.add(_fullCheckBox, getFieldConstraints(_gbc));
 
-    public boolean getFullOption() {
-        return _fullCheckBox.isSelected();
-    }
+		// ANALYZE Checkbox
+		JLabel analyzeLabel = new JLabel(VacuumDatabaseDialog.i18n.ANALYZE_LABEL);
+		analyzeLabel.setBorder(_emptyBorder);
+		_panel.add(analyzeLabel, getLabelConstraints(_gbc));
 
+		_analyzeCheckBox = new JCheckBox();
+		_analyzeCheckBox.setToolTipText(VacuumDatabaseDialog.i18n.ANALYZE_TOOLTIP);
+		_analyzeCheckBox.setPreferredSize(_mediumField);
+		_panel.add(_analyzeCheckBox, getFieldConstraints(_gbc));
+	}
 
-    public boolean getAnalyzeOption() {
-        return _analyzeCheckBox.isSelected();
-    }
+	public boolean getFullOption()
+	{
+		return _fullCheckBox.isSelected();
+	}
+
+	public boolean getAnalyzeOption()
+	{
+		return _analyzeCheckBox.isSelected();
+	}
 }
