@@ -619,7 +619,7 @@ public class SQLTokenContext extends TokenContext
 
    public static final TokenContextPath contextPath = context.getContextPath();
 
-   private static final HashMap str2kwd = new HashMap();
+   private static final HashMap<String, BaseImageTokenID> str2kwd = new HashMap<String, BaseImageTokenID>();
 
    static
    {
@@ -654,7 +654,7 @@ public class SQLTokenContext extends TokenContext
     */
    public static boolean isType(String s)
    {
-      return isType((TokenID) str2kwd.get(s));
+      return isType(str2kwd.get(s));
    }
 
    /**
@@ -673,7 +673,7 @@ public class SQLTokenContext extends TokenContext
     */
    public static boolean isTypeOrVoid(String s)
    {
-      return isTypeOrVoid((TokenID) str2kwd.get(s));
+      return isTypeOrVoid(str2kwd.get(s));
    }
 
    /**
@@ -681,7 +681,7 @@ public class SQLTokenContext extends TokenContext
     */
    public static TokenID getKeyword(String s)
    {
-      return (TokenID) str2kwd.get(s);
+      return str2kwd.get(s);
    }
 
    private SQLTokenContext()
