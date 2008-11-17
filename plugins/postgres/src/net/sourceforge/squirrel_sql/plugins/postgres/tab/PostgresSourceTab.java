@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.postgres.tab;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -29,106 +30,106 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * 
+ * Base source tab providing common functionality for PostgreSQL source tabs.
+ *  
  * @author manningr
- *
  */
-public abstract class PostgresSourceTab extends BaseSourceTab {
+public abstract class PostgresSourceTab extends BaseSourceTab
+{
 
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PostgresSourceTab.class);
+	public static final int VIEW_TYPE = 0;
 
-    public static final int VIEW_TYPE = 0;
-    public static final int STORED_PROC_TYPE = 1;
-    public static final int TRIGGER_TYPE = 2;
-    
-    protected int sourceType = VIEW_TYPE;
+	public static final int STORED_PROC_TYPE = 1;
 
-    /** Logger for this class. */
-    private final static ILogger s_log =
-        LoggerController.createLogger(PostgresSourceTab.class);
+	public static final int TRIGGER_TYPE = 2;
 
-    private static CommentSpec[] commentSpecs =
-          new CommentSpec[]
-          {
-              new CommentSpec("/*", "*/"),
-              new CommentSpec("--", "\n")
-          };
-    
-    private static CodeReformator formatter = 
-        new CodeReformator(";", commentSpecs);
-    
-    public PostgresSourceTab(String hint)
-    {
-        super(hint);
-        super.setSourcePanel(new InformixSourcePanel());
-    }
+	protected int sourceType = VIEW_TYPE;
 
-    private final class InformixSourcePanel extends BaseSourcePanel
-    {
-        private JTextArea _ta;
+	/** Logger for this class. */
+	private final static ILogger s_log = LoggerController.createLogger(PostgresSourceTab.class);
 
-        InformixSourcePanel()
-        {
-            super(new BorderLayout());
-            createUserInterface();
-        }
+	private static CommentSpec[] commentSpecs =
+		new CommentSpec[] { new CommentSpec("/*", "*/"), new CommentSpec("--", "\n") };
 
-        public void load(ISession session, PreparedStatement stmt)
-        {
-            _ta.setText("");
-            _ta.setWrapStyleWord(true);
-            try
-            {
-                ResultSet rs = stmt.executeQuery();
-                StringBuffer buf = new StringBuffer(4096);
-                while (rs.next())
-                {
-                    if (sourceType == STORED_PROC_TYPE) {
-                        String tmpProcData = rs.getString(1);
-                        buf.append(tmpProcData);
-                    } 
-                    if (sourceType == TRIGGER_TYPE) {
-                        String data = rs.getString(1);
-                        buf.append(data.trim() + " ");
-                    }
-                    if (sourceType == VIEW_TYPE) {
-                        String line = rs.getString(1);
-                        buf.append(line.trim() + " ");                        
-                    }
-                }
-                // Stored Procedures can have comments embedded in them, so 
-                // don't line-wrap them.
-                if (sourceType == VIEW_TYPE || sourceType == TRIGGER_TYPE) {
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("View source before formatting: "+
-                                    buf.toString());
-                    }
-                    _ta.setText(formatter.reformat(buf.toString()));
-                } else {
-                    _ta.setText(buf.toString());
-                }
-                _ta.setCaretPosition(0);
-            }
-            catch (SQLException ex)
-            {
-                session.showErrorMessage(ex);
-            }
+	private static CodeReformator formatter = new CodeReformator(";", commentSpecs);
 
-        }
+	public PostgresSourceTab(String hint)
+	{
+		super(hint);
+		super.setSourcePanel(new InformixSourcePanel());
+	}
 
-        private void createUserInterface()
-        {
-            _ta = new JTextArea();
-            _ta.setEditable(false);
-            add(_ta, BorderLayout.CENTER);
-        }
-    }
+	private final class InformixSourcePanel extends BaseSourcePanel
+	{
+		private static final long serialVersionUID = 1L;
+
+		private JTextArea _ta;
+
+		InformixSourcePanel()
+		{
+			super(new BorderLayout());
+			createUserInterface();
+		}
+
+		public void load(ISession session, PreparedStatement stmt)
+		{
+			_ta.setText("");
+			_ta.setWrapStyleWord(true);
+			try
+			{
+				ResultSet rs = stmt.executeQuery();
+				StringBuffer buf = new StringBuffer(4096);
+				while (rs.next())
+				{
+					if (sourceType == STORED_PROC_TYPE)
+					{
+						String tmpProcData = rs.getString(1);
+						buf.append(tmpProcData);
+					}
+					if (sourceType == TRIGGER_TYPE)
+					{
+						String data = rs.getString(1);
+						buf.append(data.trim() + " ");
+					}
+					if (sourceType == VIEW_TYPE)
+					{
+						String line = rs.getString(1);
+						buf.append(line.trim() + " ");
+					}
+				}
+				// Stored Procedures can have comments embedded in them, so
+				// don't line-wrap them.
+				if (sourceType == VIEW_TYPE || sourceType == TRIGGER_TYPE)
+				{
+					if (s_log.isDebugEnabled())
+					{
+						s_log.debug("View source before formatting: " + buf.toString());
+					}
+					_ta.setText(formatter.reformat(buf.toString()));
+				}
+				else
+				{
+					_ta.setText(buf.toString());
+				}
+				_ta.setCaretPosition(0);
+			}
+			catch (SQLException ex)
+			{
+				session.showErrorMessage(ex);
+			}
+
+		}
+
+		private void createUserInterface()
+		{
+			_ta = new JTextArea();
+			_ta.setEditable(false);
+			add(_ta, BorderLayout.CENTER);
+		}
+	}
 
 }
