@@ -37,7 +37,9 @@ import java.awt.event.KeyEvent;
  */
 public abstract class AbstractRefactoringDialog extends JDialog implements IDisposableDialog {
 
-    private JTextField tableNameTextField = null;
+	private static final long serialVersionUID = 1L;
+
+	private JTextField tableNameTextField = null;
 
     protected JButton executeButton = null;
     protected JButton editSQLButton = null;
