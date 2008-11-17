@@ -2,27 +2,32 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import java.util.HashMap;
 
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
-
-public class MockSQLEntryPanelFactory implements ISQLEntryPanelFactory {
+public class MockSQLEntryPanelFactory implements ISQLEntryPanelFactory
+{
 
 	MockSQLEntryPanel panel = null;
-	
-	public MockSQLEntryPanelFactory() {
-		
-	}
-	
-	public ISQLEntryPanel createSQLEntryPanel(ISession session) {
-        panel = new MockSQLEntryPanel(session);
-        return panel;
+
+	public MockSQLEntryPanelFactory()
+	{
+
 	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel(net.sourceforge.squirrel_sql.client.session.ISession, java.util.HashMap)
-     */
-    public ISQLEntryPanel createSQLEntryPanel(ISession session, 
-                                              HashMap<String, Object> props) {
-        return createSQLEntryPanel(session);
-    }
+	/**
+	 * @param session
+	 * @return
+	 */
+	public ISQLEntryPanel createSQLEntryPanel(ISession session)
+	{
+		panel = new MockSQLEntryPanel(session);
+		return panel;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel(net.sourceforge.squirrel_sql.client.session.ISession, java.util.HashMap)
+	 */
+	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap<String, Object> props)
+	{
+		return createSQLEntryPanel(session);
+	}
 
 }
