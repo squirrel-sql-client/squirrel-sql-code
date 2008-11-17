@@ -241,7 +241,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			_currentChannelBean = _util.loadUpdateFromFileSystem(settings.getFileSystemUpdatePath());
 		}
 
-		getUpdateSettings().setLastUpdateCheckTimeMillis("" + currentTimeMillis());
+		settings.setLastUpdateCheckTimeMillis("" + currentTimeMillis());
+		saveUpdateSettings(settings);
 
 		// 5. Is it the same as the local copy, which was placed either by the
 		// installer or the last update?
@@ -502,11 +503,20 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 * 
 	 * @return
 	 */
-	IUpdateSettings getUpdateSettings()
+	private IUpdateSettings getUpdateSettings()
 	{
 		return _app.getSquirrelPreferences().getUpdateSettings();
 	}
 
+	/**
+	 * @param settings
+	 */
+	private void saveUpdateSettings(final IUpdateSettings settings)
+	{
+		_app.getSquirrelPreferences().setUpdateSettings(settings);
+	}
+	
+	
 	private class GlobalPrefsListener implements GlobalPreferencesActionListener
 	{
 
