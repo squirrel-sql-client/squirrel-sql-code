@@ -19,6 +19,8 @@ else
 	UNIX_STYLE_HOME=$SQUIRREL_SQL_HOME
 fi
 
+cd $UNIX_STYLE_HOME
+
 # First entry in classpath is the Squirrel application.
 TMP_CP=$UNIX_STYLE_HOME/squirrel-sql.jar
 
