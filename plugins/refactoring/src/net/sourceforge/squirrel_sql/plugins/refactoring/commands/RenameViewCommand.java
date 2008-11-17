@@ -42,7 +42,6 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 	/**
 	 * Logger for this class.
 	 */
-	@SuppressWarnings("unused")
 	private final ILogger s_log = LoggerController.createLogger(RenameViewCommand.class);
 
 	/**

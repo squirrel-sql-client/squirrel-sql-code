@@ -119,7 +119,6 @@ public class MockMessageHandler implements IMessageHandler {
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IMessageHandler#setExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter, ISession)
 	 */
-    @SuppressWarnings("unused")
 	public void setExceptionFormatter(ExceptionFormatter formatter, ISession session) {
 	    // Do Nothing
     }

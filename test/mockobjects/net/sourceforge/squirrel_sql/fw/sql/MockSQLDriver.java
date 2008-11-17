@@ -64,7 +64,6 @@ public class MockSQLDriver implements ISQLDriver {
         driverClassName = aClassName;
     }
 
-    @SuppressWarnings("deprecation")
     public String getJarFileName() {
         System.err.println("MockSQLDriver.getJarFileName: stub not yet implemented");
         return null;
