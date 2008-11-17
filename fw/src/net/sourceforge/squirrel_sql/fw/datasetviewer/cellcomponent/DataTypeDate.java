@@ -495,7 +495,6 @@ public class DataTypeDate extends BaseDataTypeComponent
       * On input from the DB, read the data from the ResultSet into the appropriate
       * type of object to be stored in the table cell.
       */
-    @SuppressWarnings("unused")
     public static Object staticReadResultSet(ResultSet rs, int index, boolean limitDataRead)
         throws java.sql.SQLException 
     {
