@@ -41,36 +41,48 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 	private ArtifactStatus classUnderTest = null;
 
 	EasyMockHelper mockHelper = new EasyMockHelper();
-	
-	
+
 	/* Common mock objects */
-	
+
 	ArtifactXmlBean mockCoreArtifactXmlBean = null;
+
 	ArtifactXmlBean mockPluginArtifactXmlBean = null;
+
 	ArtifactXmlBean mockTranslationArtifactXmlBean = null;
-	
-	//ArtifactXmlBean 
-	
+
+	// ArtifactXmlBean
+
 	/* Data */
 	private final String coreArtifactName = "aCoreArtifactName";
+
 	private final boolean coreIsInstalled = true;
+
 	private final long coreSize = 10000L;
+
 	private final long coreChecksum = 10000L;
+
 	private final String coreType = UpdateUtil.CORE_ARTIFACT_ID;
 
 	private final String pluginArtifactName = "aPluginArtifactName";
+
 	private final boolean pluginIsInstalled = false;
+
 	private final long pluginSize = 20000L;
+
 	private final long pluginChecksum = 20000L;
+
 	private final String pluginType = UpdateUtil.PLUGIN_ARTIFACT_ID;
-	
+
 	private final String translationArtifactName = "aTranslationArtifactName";
+
 	private final boolean translationIsInstalled = false;
+
 	private final long translationSize = 30000L;
+
 	private final long translationChecksum = 30000L;
-	private final String translationType = UpdateUtil.TRANSLATION_ARTIFACT_ID; 
-	
-	
+
+	private final String translationType = UpdateUtil.TRANSLATION_ARTIFACT_ID;
+
 	@Before
 	public void setUp() throws Exception
 	{
@@ -80,14 +92,14 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockCoreArtifactXmlBean.getSize()).andStubReturn(coreSize);
 		expect(mockCoreArtifactXmlBean.getChecksum()).andStubReturn(coreChecksum);
 		expect(mockCoreArtifactXmlBean.getType()).andStubReturn(coreType);
-		
+
 		mockPluginArtifactXmlBean = mockHelper.createMock(ArtifactXmlBean.class);
 		expect(mockPluginArtifactXmlBean.getName()).andStubReturn(pluginArtifactName);
 		expect(mockPluginArtifactXmlBean.isInstalled()).andStubReturn(pluginIsInstalled);
 		expect(mockPluginArtifactXmlBean.getSize()).andStubReturn(pluginSize);
 		expect(mockPluginArtifactXmlBean.getChecksum()).andStubReturn(pluginChecksum);
 		expect(mockPluginArtifactXmlBean.getType()).andStubReturn(pluginType);
-		
+
 		mockTranslationArtifactXmlBean = mockHelper.createMock(ArtifactXmlBean.class);
 		expect(mockTranslationArtifactXmlBean.getName()).andStubReturn(translationArtifactName);
 		expect(mockTranslationArtifactXmlBean.isInstalled()).andStubReturn(translationIsInstalled);
@@ -106,39 +118,44 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 	public void testEqualsAndHashCode()
 	{
 		mockHelper.replayAll();
-		 final ArtifactStatus a = new ArtifactStatus(mockCoreArtifactXmlBean); // original object
-		 final ArtifactStatus b = new ArtifactStatus(mockCoreArtifactXmlBean); // another object that has the same values as the original
-		 final ArtifactStatus c = new ArtifactStatus(mockPluginArtifactXmlBean); // another object with different values
-		 final ArtifactStatus d = new ArtifactStatus(mockCoreArtifactXmlBean) {}; // a subclass of Foo with the same values as the original
-		 new EqualsTester(a, b, c, d);
-		 mockHelper.verifyAll();
-		 
-		 a.setName(null);
-		 b.setName(null);
-		 d.setName(null);
-		 new EqualsTester(a, b, c, d);
-		 
-		 // different only by type - same name
-		 a.setName(coreArtifactName);
-		 b.setName(coreArtifactName);
-		 c.setName(coreArtifactName);
-		 a.setType(null);
-		 b.setType(null);
-		 d.setType(null);
-		 new EqualsTester(a, b, c, d);
-		 
-		 a.setType(coreType);
-		 b.setType(coreType);
-		 c.setType(null);
-		 d.setType(coreType);
-		 new EqualsTester(a, b, c, d);
-		 
-		 a.setType(null);
-		 b.setType(null);
-		 c.setType(pluginType);
-		 d.setType(null);
-		 new EqualsTester(a, b, c, d);
-		 
+		final ArtifactStatus a = new ArtifactStatus(mockCoreArtifactXmlBean); // original object
+		final ArtifactStatus b = new ArtifactStatus(mockCoreArtifactXmlBean); // another object that has the
+																										// same values as the original
+		final ArtifactStatus c = new ArtifactStatus(mockPluginArtifactXmlBean); // another object with different
+																										// values
+		final ArtifactStatus d = new ArtifactStatus(mockCoreArtifactXmlBean)
+		{
+			private static final long serialVersionUID = 1L;
+		}; // a subclass of Foo with the same values as the original
+		new EqualsTester(a, b, c, d);
+		mockHelper.verifyAll();
+
+		a.setName(null);
+		b.setName(null);
+		d.setName(null);
+		new EqualsTester(a, b, c, d);
+
+		// different only by type - same name
+		a.setName(coreArtifactName);
+		b.setName(coreArtifactName);
+		c.setName(coreArtifactName);
+		a.setType(null);
+		b.setType(null);
+		d.setType(null);
+		new EqualsTester(a, b, c, d);
+
+		a.setType(coreType);
+		b.setType(coreType);
+		c.setType(null);
+		d.setType(coreType);
+		new EqualsTester(a, b, c, d);
+
+		a.setType(null);
+		b.setType(null);
+		c.setType(pluginType);
+		d.setType(null);
+		new EqualsTester(a, b, c, d);
+
 	}
 
 	@Test
@@ -153,7 +170,7 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		mockHelper.replayAll();
 		classUnderTest = new ArtifactStatus(mockCoreArtifactXmlBean);
 		mockHelper.verifyAll();
-		
+
 		assertEquals(coreArtifactName, classUnderTest.getName());
 		assertEquals(coreIsInstalled, classUnderTest.isInstalled());
 		assertEquals(this.coreSize, classUnderTest.getSize());
@@ -172,7 +189,6 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		assertEquals(pluginArtifactName, classUnderTest.getName());
 	}
 
-
 	@Test
 	public void testSetGetType()
 	{
@@ -184,7 +200,6 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		classUnderTest.setType(UpdateUtil.PLUGIN_ARTIFACT_ID);
 		assertEquals(UpdateUtil.PLUGIN_ARTIFACT_ID, classUnderTest.getType());
 	}
-
 
 	@Test
 	public void testIsCoreArtifact()
@@ -207,7 +222,7 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 
 		assertTrue(classUnderTest.isPluginArtifact());
 		assertFalse(classUnderTest.isCoreArtifact());
-		assertFalse(classUnderTest.isTranslationArtifact());		
+		assertFalse(classUnderTest.isTranslationArtifact());
 	}
 
 	@Test
@@ -245,7 +260,6 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		assertEquals(ArtifactAction.INSTALL, classUnderTest.getArtifactAction());
 	}
 
-
 	@Test
 	public void testToString()
 	{
@@ -269,7 +283,6 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		assertEquals(2, classUnderTest.getSize());
 	}
 
-
 	@Test
 	public void testSetGetChecksum()
 	{
@@ -292,5 +305,5 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		classUnderTest.setDisplayType(coreType);
 		assertEquals(coreType, classUnderTest.getDisplayType());
 	}
-	
+
 }

@@ -1669,15 +1669,7 @@ public class DialectUtils implements StringTemplateConstants
 			for (TableColumnInfo tcInfo : infos)
 			{
 				String columnName = tcInfo.getColumnName();
-				int columnSize = tcInfo.getColumnSize();
-				int dataType = tcInfo.getDataType();
 				String defaultVal = tcInfo.getDefaultValue();
-				int precision = dialect.getPrecisionDigits(columnSize, dataType);
-//				String column =
-//					dialect.getTypeName(tcInfo.getDataType(),
-//						tcInfo.getColumnSize(),
-//						precision,
-//						tcInfo.getDecimalDigits());
 				String columnType = dialect.getTypeName(tcInfo);
 				
 				result.append("\n   ");
