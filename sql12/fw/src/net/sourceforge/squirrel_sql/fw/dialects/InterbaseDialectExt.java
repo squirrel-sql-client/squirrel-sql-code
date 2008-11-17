@@ -220,7 +220,6 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	@SuppressWarnings("unused")
 	public String getColumnCommentAlterSQL(String tableName, String columnName, String comment)
 		throws UnsupportedOperationException
 	{
