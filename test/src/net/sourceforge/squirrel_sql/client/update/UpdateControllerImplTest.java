@@ -103,6 +103,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    	expect(mockApplication.getPluginManager()).andReturn(mockPluginManager).anyTimes();
    	expect(mockApplication.getSquirrelPreferences()).andReturn(prefs).anyTimes();
    	expect(prefs.getUpdateSettings()).andReturn(mockUpdateSettings).anyTimes();
+   	prefs.setUpdateSettings(mockUpdateSettings);
    	mockUpdateSettings.setLastUpdateCheckTimeMillis(isA(String.class));
    	
    	setupSnapshotChannelXmlBean();
