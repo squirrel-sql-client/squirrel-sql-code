@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 
 public class MockSQLAlias implements ISQLAliasExt {
 
-    @SuppressWarnings("unused")
     public void assignFrom(ISQLAlias rhs) throws ValidationException {
         // TODO Auto-generated method stub
 

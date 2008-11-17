@@ -43,7 +43,6 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand
 	/**
 	 * Logger for this class.
 	 */
-	@SuppressWarnings("unused")
 	private final static ILogger s_log = LoggerController.createLogger(ModifySequenceCommand.class);
 
 	/**
