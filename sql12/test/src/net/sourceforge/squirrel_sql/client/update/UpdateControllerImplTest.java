@@ -26,6 +26,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry;
+import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
@@ -99,6 +101,8 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 			setupUpdateUtilLocalUpdateSite(mockInstalledChannelXmlBean, mockAvailableChannelXmlBean);
    	boolean isRemoteUpdateSite = false;
    	mockUpdateSettings = setupUpdateSettings(isRemoteUpdateSite);
+   	ChannelType type = ChannelType.SNAPSHOT;
+   	expect(mockUpdateSettings.getUpdateServerChannel()).andReturn(type.name());
    	
    	expect(mockApplication.getPluginManager()).andReturn(mockPluginManager).anyTimes();
    	expect(mockApplication.getSquirrelPreferences()).andReturn(prefs).anyTimes();
