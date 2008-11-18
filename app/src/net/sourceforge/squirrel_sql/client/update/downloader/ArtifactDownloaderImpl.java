@@ -42,10 +42,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 {
-   /** Logger for this class. */
-   private final static ILogger s_log = 
-      LoggerController.createLogger(ArtifactDownloaderImpl.class);
-	
+	/** Logger for this class. */
+	private final static ILogger s_log = LoggerController.createLogger(ArtifactDownloaderImpl.class);
+
 	private List<ArtifactStatus> _artifactStatus = null;
 
 	private volatile boolean _stopped = false;
@@ -68,9 +67,9 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	/** The name of the channel from which we are downloading artifacts */
 	private String _channelName;
-	
+
 	private UpdateUtil _util = null;
-	
+
 	/** TODO: change this to Spring-injected when this class becomes a Spring bean. */
 	private PathUtils _pathUtils = new PathUtilsImpl();
 
@@ -86,8 +85,8 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	public void start()
 	{
 		downloadThread.start();
-	}	
-	
+	}
+
 	/**
 	 * Runnable interface method implementation
 	 */
@@ -112,21 +111,25 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 					_pathUtils.buildPath(true, _path, _channelName, status.getType(), status.getName());
 				String destDir = getArtifactDownloadDestDir(status);
 
-				if (_util.isPresentInDownloadsDirectory(status)) {
+				if (_util.isPresentInDownloadsDirectory(status))
+				{
+					if (s_log.isInfoEnabled())
+					{
+						s_log.info("run: Skipping download of file (" + fileToGet + ") which is already present "
+							+ "in the downloads directory.");
+					}
 					sendDownloadFileCompleted(status.getName());
 					continue;
 				}
-				
+
 				boolean result = true;
 				if (_isRemoteUpdateSite)
 				{
-					if (!attemptFileDownload(fileToGet, destDir, status)){
-						return;
-					}
+					if (!attemptFileDownload(fileToGet, destDir, status)) { return; }
 				}
 				else
 				{
-					fileToGet = _pathUtils.buildPath(false, this._fileSystemUpdatePath,fileToGet);
+					fileToGet = _pathUtils.buildPath(false, this._fileSystemUpdatePath, fileToGet);
 					result = _util.downloadLocalUpdateFile(fileToGet, destDir);
 				}
 				if (result == false)
@@ -143,25 +146,25 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		}
 		catch (FileNotFoundException e)
 		{
-			// TODO: alert the user that downloads failed. Prevent installation
-			s_log.error("run: Unexpected exception: "+e.getMessage(),e);
+			s_log.error("run: Unexpected exception: " + e.getMessage(), e);
 			sendDownloadFailed();
 			return;
 		}
 		catch (IOException e)
 		{
-			// TODO: alert the user that downloads failed. Prevent installation
-			s_log.error("run: Unexpected exception: "+e.getMessage(),e);
+			s_log.error("run: Unexpected exception: " + e.getMessage(), e);
 			sendDownloadFailed();
 			return;
 		}
-		if (s_log.isInfoEnabled()) {
-			s_log.info("run: Downloaded "+totalBytesDownloaded+" bytes total for all update files.");
+		if (s_log.isInfoEnabled())
+		{
+			s_log.info("run: Downloaded " + totalBytesDownloaded + " bytes total for all update files.");
 		}
 		sendDownloadComplete();
 	}
 
-	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status) {
+	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status)
+	{
 		boolean success = true;
 		try
 		{
@@ -170,17 +173,18 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		}
 		catch (Exception e)
 		{
-			s_log.error("run: encountered exception while attempting to download file ("+fileToGet+
-							"): "+e.getMessage(),e);
+			s_log.error("run: encountered exception while attempting to download file (" + fileToGet + "): "
+				+ e.getMessage(), e);
 			sendDownloadFailed();
 			success = false;
-		}		
+		}
 		return success;
 	}
-	
-	private String getArtifactDownloadDestDir(ArtifactStatus status) {
 
-		FileWrapper destDir = _util.getCoreDownloadsDir();		
+	private String getArtifactDownloadDestDir(ArtifactStatus status)
+	{
+
+		FileWrapper destDir = _util.getCoreDownloadsDir();
 		if (UpdateUtil.PLUGIN_ARTIFACT_ID.equals(status.getType()))
 		{
 			destDir = _util.getPluginDownloadsDir();
@@ -191,7 +195,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		}
 		return destDir.getAbsolutePath();
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader#stopDownload()
 	 */
@@ -255,16 +259,6 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	{
 		return _path;
 	}
-
-//	/**
-//	 * @param path
-//	 *           the _path to set
-//	 */
-//	String downloadHttpFile(String host, int port, String path, String fileToGet, String destDir)
-//		throws Exception
-//	{
-//		return _util.downloadHttpFile(host, port, fileToGet, destDir, -1, -1);
-//	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader#setPath(java.lang.String)
@@ -384,5 +378,5 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	{
 		this._util = util;
 	}
-	
+
 }
