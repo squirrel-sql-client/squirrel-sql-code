@@ -145,16 +145,16 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		return "changes.txt";
 	}
 
-	/** 
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName() 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
 	 */
 	public String getHelpFileName()
 	{
 		return "readme.html";
 	}
 
-	/** 
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName() 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
 	 */
 	public String getLicenceFileName()
 	{
@@ -174,8 +174,8 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		_resources = new PluginResources(getClass().getName(), this);
 	}
 
-	/** 
-	 * Initialize this plugin. 
+	/**
+	 * Initialize this plugin.
 	 */
 	public synchronized void initialize() throws PluginException
 	{
@@ -190,22 +190,12 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		JMenu sessionMenu = createSessionMenu(col);
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, sessionMenu);
 		super.registerSessionMenu(sessionMenu);
-		
-		CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory(),
-			java.sql.Types.OTHER,
-			"xml");
-		CellComponentFactory.registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"),
-			java.sql.Types.OTHER,
-			"interval");
-		
-	}
 
-	/** 
-	 * Application is shutting down so save preferences. 
-	 */
-	public void unload()
-	{
-		super.unload();
+		CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory(),
+			java.sql.Types.OTHER, "xml");
+		CellComponentFactory.registerDataTypeFactory(
+			new PostgreSqlOtherTypeDataTypeComponentFactory("interval"), java.sql.Types.OTHER, "interval");
+
 	}
 
 	public boolean allowsSessionStartedInBackground()
@@ -222,10 +212,7 @@ public class PostgresPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-		if (!isPluginSession(session))
-		{
-			return null;
-		}
+		if (!isPluginSession(session)) { return null; }
 
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
@@ -274,7 +261,8 @@ public class PostgresPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * @param session the current session whose tree API should be updated
+	 * @param session
+	 *           the current session whose tree API should be updated
 	 */
 	private void updateTreeApi(ISession session)
 	{
