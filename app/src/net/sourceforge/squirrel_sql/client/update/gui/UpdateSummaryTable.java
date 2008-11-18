@@ -61,11 +61,15 @@ public class UpdateSummaryTable extends SortableTable {
    private static final StringManager s_stringMgr = 
    	StringManagerFactory.getStringManager(UpdateSummaryTable.class);
    
-   /** @TODO: i18n */ 
    private interface i18n {
-   	String ALL_TRANSLATIONS_LABEL = "All translations";
-   	String ALL_PLUGINS_LABEL = "All plugins";
-   	String INSTALL_OPTIONS_LABEL = "Install Options";
+   	//i18n[UpdateSummaryTable.allTranslationsLabel=All translations]
+   	String ALL_TRANSLATIONS_LABEL = s_stringMgr.getString("UpdateSummaryTable.allTranslationsLabel");
+   	
+   	//i18n[UpdateSummaryTable.allPluginsLabel=All plugins]
+   	String ALL_PLUGINS_LABEL = s_stringMgr.getString("UpdateSummaryTable.allPluginsLabel");
+   	
+   	//i18n[UpdateSummaryTable.installOptionsLabel=Install Options]
+   	String INSTALL_OPTIONS_LABEL = s_stringMgr.getString("UpdateSummaryTable.installOptionsLabel");
    }
 
    private List<ArtifactStatus> _artifacts = null;
