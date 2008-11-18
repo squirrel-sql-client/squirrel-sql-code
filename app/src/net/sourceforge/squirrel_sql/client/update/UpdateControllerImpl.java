@@ -133,15 +133,15 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		String RELEASE_FILE_DOWNLOAD_FAILED_MSG =
 			s_stringMgr.getString("UpdateControllerImpl.releaseFileDownloadFailedMsg");
 
-		//i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesMsg=There are updates available.  
-		//Do you want to download them now?]
-		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_MSG = 
+		// i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesMsg=There are updates available.
+		// Do you want to download them now?]
+		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_MSG =
 			s_stringMgr.getString("UpdateControllerImpl.promptToDownloadAvailableUpdatesMsg");
-		
-		//i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle=Updates Available]
-		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE = 
+
+		// i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle=Updates Available]
+		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE =
 			s_stringMgr.getString("UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle");
-		
+
 	}
 
 	/**
@@ -218,8 +218,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// 2. Load the local release.xml file as a ChannelXmlBean.
 		_installedChannelBean = _util.getLocalReleaseInfo(releaseFilename);
 
-		// 3. Determine the channel that the user has (stable or snapshot)
-		String channelName = _installedChannelBean.getName();
+		// 3. Determine the channel that the user wants (stable or snapshot)
+		String channelName = getDesiredChannel(settings);
 
 		StringBuilder releasePath = new StringBuilder("/");
 		releasePath.append(getUpdateServerPath());
@@ -247,6 +247,28 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// 5. Is it the same as the local copy, which was placed either by the
 		// installer or the last update?
 		return _currentChannelBean.equals(_installedChannelBean);
+	}
+
+	/**
+	 * This method takes a look at preference for channel and the channel that the user currently has installed
+	 * and logs an info if switching from one to channel to another.
+	 * 
+	 * @return the name of the channel that the user wants.
+	 */
+	private String getDesiredChannel(final IUpdateSettings settings)
+	{
+		String desiredChannel = settings.getUpdateServerChannel().toLowerCase();
+		String currentChannelName = _installedChannelBean.getName();
+
+		if (!currentChannelName.equals(desiredChannel))
+		{
+			if (s_log.isInfoEnabled())
+			{
+				s_log.info("getDesiredChannel: User is switching distribution channel from "
+					+ "installed channel (" + currentChannelName + ") to new channel (" + desiredChannel + ")");
+			}
+		}
+		return desiredChannel;
 	}
 
 	/**
@@ -346,13 +368,14 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController#
-	 * showConfirmMessage(java.lang.String, java.lang.String)
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController# showConfirmMessage(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public boolean showConfirmMessage(String title, String msg)
 	{
-		int result = JOptionPane.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE);
+		int result =
+			JOptionPane.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
 		return (result == JOptionPane.YES_OPTION);
 	}
 
@@ -405,17 +428,22 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController#promptUserToDownloadAvailableUpdates()
 	 */
-	public void promptUserToDownloadAvailableUpdates() {
-		boolean userSaidYes = showConfirmMessage(i18n.PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE,  
-			i18n.PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_MSG);
-		if (userSaidYes) {
+	public void promptUserToDownloadAvailableUpdates()
+	{
+		boolean userSaidYes =
+			showConfirmMessage(i18n.PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE,
+				i18n.PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_MSG);
+		if (userSaidYes)
+		{
 			showUpdateDialog();
-		} else {
-			s_log.info("promptUserToDownloadAvailableUpdates: user decided not to download updates at " +
-					"this time (currentTimeMillis="+System.currentTimeMillis()+")");
+		}
+		else
+		{
+			s_log.info("promptUserToDownloadAvailableUpdates: user decided not to download updates at "
+				+ "this time (currentTimeMillis=" + System.currentTimeMillis() + ")");
 		}
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController#checkUpToDate()
 	 */
@@ -515,8 +543,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	{
 		_app.getSquirrelPreferences().setUpdateSettings(settings);
 	}
-	
-	
+
 	private class GlobalPrefsListener implements GlobalPreferencesActionListener
 	{
 
@@ -608,7 +635,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 				setProgress(totalFiles);
 			}
 
-			// When all updates are retrieved, consult the user to see if they want to install now or upon the
+			// When all updates are retrieved, tell the user that the updates will be installed upon the
 			// next startup.
 			if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED)
 			{
@@ -618,7 +645,6 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED)
 			{
 				showErrorMessage(i18n.UPDATE_DOWNLOAD_FAILED_TITLE, i18n.UPDATE_DOWNLOAD_FAILED_MSG);
-
 				setProgress(totalFiles);
 			}
 		}
