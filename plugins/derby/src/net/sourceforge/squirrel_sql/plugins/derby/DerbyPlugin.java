@@ -208,13 +208,6 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    }
 
    /**
-    * Application is shutting down so save preferences.
-    */
-   public void unload() {
-      super.unload();
-   }
-
-   /**
     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
     */
    public boolean allowsSessionStartedInBackground() {
