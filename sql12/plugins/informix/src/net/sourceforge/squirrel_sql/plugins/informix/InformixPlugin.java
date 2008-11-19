@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.informix;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,9 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.informix;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -46,202 +45,183 @@ import net.sourceforge.squirrel_sql.plugins.informix.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.ViewSourceTab;
 
-
 /**
  * The main controller class for the Informix plugin.
  * 
  * @author manningr
  */
-public class InformixPlugin extends DefaultSessionPlugin {
-    
+public class InformixPlugin extends DefaultSessionPlugin
+{
+
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(InformixPlugin.class);
 
-    /** Logger for this class. */
-    @SuppressWarnings("unused")
-    private final static ILogger s_log = 
-        LoggerController.createLogger(InformixPlugin.class);
+	/** Logger for this class. */
+	@SuppressWarnings("unused")
+	private final static ILogger s_log = LoggerController.createLogger(InformixPlugin.class);
 
-    /** API for the Obejct Tree. */
-    private IObjectTreeAPI _treeAPI;
+	/** API for the Obejct Tree. */
+	private IObjectTreeAPI _treeAPI;
 
-    static interface i18n {
-        //i18n[InformixPlugin.showViewSource=Show view source]
-        String SHOW_VIEW_SOURCE = 
-            s_stringMgr.getString("InformixPlugin.showViewSource");
-        
-        //i18n[InformixPlugin.showProcedureSource=Show procedure source]
-        String SHOW_PROCEDURE_SOURCE =
-            s_stringMgr.getString("InformixPlugin.showProcedureSource");
-    }
-    
-    /**
-     * Return the internal name of this plugin.
-     *
-     * @return  the internal name of this plugin.
-     */
-    public String getInternalName()
-    {
-        return "informix";
-    }
-
-    /**
-     * Return the descriptive name of this plugin.
-     *
-     * @return  the descriptive name of this plugin.
-     */
-    public String getDescriptiveName()
-    {
-        return "Informix Plugin";
-    }
-
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return  the current version of this plugin.
-     */
-    public String getVersion()
-    {
-        return "0.03";
-    }
-
-    /**
-     * Returns the authors name.
-     *
-     * @return  the authors name.
-     */
-    public String getAuthor()
-    {
-        return "Rob Manning";
-    }
-
-    /**
-     * Returns a comma separated list of other contributors.
-     *
-     * @return  Contributors names.
-     */    
-    public String getContributors() {
-        return "Doug Lawry";
-    }    
-    
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
-     */
-    public String getChangeLogFileName()
-    {
-        return "changes.txt";
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
-     */
-    public String getHelpFileName()
-    {
-        return "readme.html";
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
-     */
-    public String getLicenceFileName()
-    {
-        return "licence.txt";
-    }
-
-	/**
-	 * Load this plugin.
-	 *
-	 * @param	app	 Application API.
-	 */
-	public synchronized void load(IApplication app) throws PluginException
+	static interface i18n
 	{
-		super.load(app);
+		// i18n[InformixPlugin.showViewSource=Show view source]
+		String SHOW_VIEW_SOURCE = s_stringMgr.getString("InformixPlugin.showViewSource");
+
+		// i18n[InformixPlugin.showProcedureSource=Show procedure source]
+		String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("InformixPlugin.showProcedureSource");
 	}
 
 	/**
-	 * Initialize this plugin.
+	 * Return the internal name of this plugin.
+	 * 
+	 * @return the internal name of this plugin.
 	 */
-	public synchronized void initialize() throws PluginException
+	public String getInternalName()
 	{
-		super.initialize();
+		return "informix";
 	}
 
-    /**
-     * Application is shutting down so save preferences.
-     */
-    public void unload()
-    {
-        super.unload();
-    }
+	/**
+	 * Return the descriptive name of this plugin.
+	 * 
+	 * @return the descriptive name of this plugin.
+	 */
+	public String getDescriptiveName()
+	{
+		return "Informix Plugin";
+	}
 
-   public boolean allowsSessionStartedInBackground()
-   {
-      return true;
-   }
-   
-   /**
-     * Session has been started. Update the tree api in using the event thread
-     *
-     * @param   session     Session that has started.
-     *
-     * @return  <TT>true</TT> if session is Oracle in which case this plugin
-     *                          is interested in it.
-     */
-   public PluginSessionCallback sessionStarted(final ISession session)
-   {
-       if (!isPluginSession(session)) {
-           return null;
-       }
-       GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               updateTreeApi(session);
-           }
-       });
-       InformixExceptionFormatter formatter = 
-           new InformixExceptionFormatter(session);
-       session.setExceptionFormatter(formatter);
-       return new PluginSessionCallbackAdaptor(this);
-   }
+	/**
+	 * Returns the current version of this plugin.
+	 * 
+	 * @return the current version of this plugin.
+	 */
+	public String getVersion()
+	{
+		return "0.03";
+	}
 
-    @Override
-    protected boolean isPluginSession(ISession session) {
-        return DialectFactory.isInformix(session.getMetaData());
-    }    
-    
-    private void updateTreeApi(ISession session) {
-        //DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
-        
-        _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-                new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
-        
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
-        
-        // Expanders - trigger and index expanders are added inside the table
-        // expander
-        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
-      	  new SchemaExpander(new InformixSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE)); 
-        
-        TableWithChildNodesExpander tableExp = 
-            new TableWithChildNodesExpander();
-        tableExp.setTableIndexExtractor(new InformixTableIndexExtractorImpl());
-        tableExp.setTableTriggerExtractor(new InformixTableTriggerExtractorImpl());
-        _treeAPI.addExpander(DatabaseObjectType.TABLE,tableExp);
-        
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
-        
-    }
-    
+	/**
+	 * Returns the authors name.
+	 * 
+	 * @return the authors name.
+	 */
+	public String getAuthor()
+	{
+		return "Rob Manning";
+	}
+
+	/**
+	 * Returns a comma separated list of other contributors.
+	 * 
+	 * @return Contributors names.
+	 */
+	@Override
+	public String getContributors()
+	{
+		return "Doug Lawry";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+	 */
+	@Override
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+	 */
+	@Override
+	public String getHelpFileName()
+	{
+		return "readme.html";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+	 */
+	@Override
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+	 */
+	@Override
+	public boolean allowsSessionStartedInBackground()
+	{
+		return true;
+	}
+
+	/**
+	 * Session has been started. Update the tree api in using the event thread
+	 * 
+	 * @param session
+	 *           Session that has started.
+	 * @return <TT>true</TT> if session is Oracle in which case this plugin is interested in it.
+	 */
+	public PluginSessionCallback sessionStarted(final ISession session)
+	{
+		if (!isPluginSession(session)) { return null; }
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				updateTreeApi(session);
+			}
+		});
+		InformixExceptionFormatter formatter = new InformixExceptionFormatter(session);
+		session.setExceptionFormatter(formatter);
+		return new PluginSessionCallbackAdaptor(this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
+	@Override
+	protected boolean isPluginSession(ISession session)
+	{
+		return DialectFactory.isInformix(session.getMetaData());
+	}
+
+	/**
+	 * Add Informix-specific tabs when an informix session is started.
+	 * @param session
+	 */
+	private void updateTreeApi(ISession session)
+	{
+		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+
+		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+
+		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+
+		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+
+		// Expanders - trigger and index expanders are added inside the table
+		// expander
+		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(
+			new InformixSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
+
+		TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
+		tableExp.setTableIndexExtractor(new InformixTableIndexExtractorImpl());
+		tableExp.setTableTriggerExtractor(new InformixTableTriggerExtractorImpl());
+		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
+
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+
+	}
+
 }
