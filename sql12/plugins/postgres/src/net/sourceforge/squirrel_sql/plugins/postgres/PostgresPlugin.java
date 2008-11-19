@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -38,9 +39,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.postgres.actions.VacuumDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.postgres.actions.VacuumTableAction;
+import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresSequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExtractorImpl;
-import net.sourceforge.squirrel_sql.plugins.postgres.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.postgres.explain.ExplainExecuterPanel;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
@@ -272,7 +273,8 @@ public class PostgresPlugin extends DefaultSessionPlugin
 
 		// ////// Object Tree Expanders ////////
 		// Schema Expanders - sequence
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
+		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
+			new SchemaExpander(new PostgresSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
 
 		// Table Expanders - trigger and index
 		// expander
