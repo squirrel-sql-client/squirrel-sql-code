@@ -1064,7 +1064,7 @@
 			<batchtest fork="yes" todir="${junit.report.dir}">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
-					<exclude name="**/AbstractPluginTest.java"/>
+					<exclude name="**/Abstract*.java"/>
 				</fileset>
 			</batchtest>
 
