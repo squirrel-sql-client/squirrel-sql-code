@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -35,9 +36,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixExceptionFormatter;
+import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixSequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableTriggerExtractorImpl;
-import net.sourceforge.squirrel_sql.plugins.informix.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.SequenceDetailsTab;
@@ -228,7 +229,8 @@ public class InformixPlugin extends DefaultSessionPlugin {
         
         // Expanders - trigger and index expanders are added inside the table
         // expander
-        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander()); 
+        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
+      	  new SchemaExpander(new InformixSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE)); 
         
         TableWithChildNodesExpander tableExp = 
             new TableWithChildNodesExpander();

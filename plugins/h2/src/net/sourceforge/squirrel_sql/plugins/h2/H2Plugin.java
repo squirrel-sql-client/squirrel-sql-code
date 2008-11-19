@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -34,9 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.h2.exp.H2SequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableTriggerExtractorImpl;
-import net.sourceforge.squirrel_sql.plugins.h2.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.SequenceDetailsTab;
@@ -186,7 +187,8 @@ public class H2Plugin extends DefaultSessionPlugin
 		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
+		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
+			new SchemaExpander(new H2SequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
 
 		TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
 		tableExp.setTableIndexExtractor(new H2TableIndexExtractorImpl());
