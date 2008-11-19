@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
