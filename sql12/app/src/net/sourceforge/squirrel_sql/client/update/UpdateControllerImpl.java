@@ -39,6 +39,8 @@ import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionLi
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
 import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
+import net.sourceforge.squirrel_sql.client.update.async.ReleaseFileUpdateCheckTask;
+import net.sourceforge.squirrel_sql.client.update.async.UpdateCheckRunnableCallback;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
 import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadEventType;
@@ -449,32 +451,72 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void checkUpToDate()
 	{
-		try
+		UpdateCheckRunnableCallback callback = new UpdateCheckRunnableCallback()
 		{
-			if (isUpToDate())
+
+			public void updateCheckComplete(final boolean isUpdateToDate,
+				final ChannelXmlBean installedChannelXmlBean, final ChannelXmlBean currentChannelXmlBean)
 			{
-				showMessage(i18n.UPDATE_CHECK_TITLE, i18n.SOFTWARE_VERSION_CURRENT_MSG);
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						if (isUpdateToDate)
+						{
+							showMessage(i18n.UPDATE_CHECK_TITLE, i18n.SOFTWARE_VERSION_CURRENT_MSG);
+						}
+						// build data
+						_currentChannelBean = currentChannelXmlBean;
+						_installedChannelBean = installedChannelXmlBean;
+						List<ArtifactStatus> artifactStatusItems = _util.getArtifactStatus(_currentChannelBean);
+						String installedVersion = _installedChannelBean.getCurrentRelease().getVersion();
+						String currentVersion = _currentChannelBean.getCurrentRelease().getVersion();
+
+						// build ui
+						showUpdateSummaryDialog(artifactStatusItems, installedVersion, currentVersion);
+					}
+
+				});
 			}
-			List<ArtifactStatus> artifactStatusItems = this._util.getArtifactStatus(_currentChannelBean);
-			UpdateSummaryDialog dialog = new UpdateSummaryDialog(_app.getMainFrame(), artifactStatusItems, this);
-			String installedVersion = _installedChannelBean.getCurrentRelease().getVersion();
-			dialog.setInstalledVersion(installedVersion);
 
-			String currentVersion = _currentChannelBean.getCurrentRelease().getVersion();
-			dialog.setAvailableVersion(currentVersion);
+			public void updateCheckFailed(final Exception e)
+			{
+				if (e instanceof FileNotFoundException)
+				{
+					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.RELEASE_FILE_DOWNLOAD_FAILED_MSG);
+				}
+				else
+				{
+					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.EXCEPTION_MSG + e.getClass().getName()
+						+ ":" + e.getMessage(), e);
+				}
+			}
 
-			GUIUtils.centerWithinParent(_app.getMainFrame());
-			dialog.setVisible(true);
-		}
-		catch (FileNotFoundException e)
+		};
+
+		ReleaseFileUpdateCheckTask runnable =
+			new ReleaseFileUpdateCheckTask(callback, getUpdateSettings(), _util, _app);
+		runnable.start();
+
+	}
+
+	private void showUpdateSummaryDialog(final List<ArtifactStatus> artifactStatusItems,
+		final String installedVersion, final String currentVersion)
+	{
+		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
-			showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.RELEASE_FILE_DOWNLOAD_FAILED_MSG);
-		}
-		catch (Exception e)
-		{
-			showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.EXCEPTION_MSG + e.getClass().getName() + ":"
-				+ e.getMessage(), e);
-		}
+
+			public void run()
+			{
+				UpdateSummaryDialog dialog =
+					new UpdateSummaryDialog(_app.getMainFrame(), artifactStatusItems, UpdateControllerImpl.this);
+				dialog.setInstalledVersion(installedVersion);
+				dialog.setAvailableVersion(currentVersion);
+				GUIUtils.centerWithinParent(_app.getMainFrame());
+				dialog.setVisible(true);
+			}
+
+		});
 	}
 
 	/**

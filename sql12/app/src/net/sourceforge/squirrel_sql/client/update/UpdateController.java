@@ -46,7 +46,7 @@ public interface UpdateController {
     * 
     * @return true if the installed software is latest; false otherwise.
     */
-   boolean isUpToDate() throws Exception;
+   //boolean isUpToDate() throws Exception;
 
    String getUpdateServerName();
 

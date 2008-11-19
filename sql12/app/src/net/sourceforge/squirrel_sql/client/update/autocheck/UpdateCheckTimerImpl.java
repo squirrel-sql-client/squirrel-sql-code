@@ -24,7 +24,9 @@ import net.sourceforge.squirrel_sql.client.update.UpdateCheckFrequency;
 import net.sourceforge.squirrel_sql.client.update.UpdateController;
 import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactory;
 import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactoryImpl;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
+import net.sourceforge.squirrel_sql.client.update.async.ReleaseFileUpdateCheckTask;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -49,10 +51,13 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(UpdateCheckTimerImpl.class);
 	
+	private UpdateUtil _util = new UpdateUtilImpl();
+	
 	public UpdateCheckTimerImpl(IApplication app)
 	{
 		this._app = app;
 		_updateSettings = _app.getSquirrelPreferences().getUpdateSettings();
+		
 	}
 
 	public void start()
@@ -61,10 +66,9 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 			return;
 		}
 		updateController =
-			updateControllerFactory.createUpdateController(_app, new ArtifactDownloaderFactoryImpl(),
-				new UpdateUtilImpl());
+			updateControllerFactory.createUpdateController(_app, new ArtifactDownloaderFactoryImpl(), _util);
 		Thread t = new Thread(runnable);
-		t.setName("UpdateCheckTimerImpl Thread");
+		t.setName("Update Check Timer Thread");
 		t.start();
 	}
 
@@ -143,7 +147,13 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 			{
 				logDebug("isUpToDate: checking to see if software is up-to-date; currentTimeMillis = "+
 					System.currentTimeMillis());
-				result = updateController.isUpToDate();
+				
+				ReleaseFileUpdateCheckTask task = 
+					new ReleaseFileUpdateCheckTask(null, _updateSettings, _util, _app);
+				
+				// Since this thread is not a UI thread, it is ok to run the task synchronously.
+				task.run();
+				result = task.isUpToDate();
 			}
 			catch (Exception e)
 			{
