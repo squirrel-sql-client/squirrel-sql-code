@@ -403,24 +403,6 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		return DialectType.AXION;
 	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
-	 */
-	public String[] getIndexAccessMethodsTypes()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
-	 */
-	public String[] getIndexStorageOptions()
-	{
-		// TODO Auto-generated method stub		
-		return null;
-	}
 	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
@@ -656,117 +638,9 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()
-	 */
-	public boolean supportsAccessMethods()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddForeignKeyConstraint()
-	 */
-	public boolean supportsAddForeignKeyConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddUniqueConstraint()
-	 */
-	public boolean supportsAddUniqueConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAlterSequence()
-	 */
-	public boolean supportsAlterSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAutoIncrement()
-	 */
-	public boolean supportsAutoIncrement()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCheckOptionsForViews()
-	 */
-	public boolean supportsCheckOptionsForViews()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateIndex()
-	 */
-	public boolean supportsCreateIndex()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateSequence()
-	 */
-	public boolean supportsCreateSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateTable()
 	 */
 	public boolean supportsCreateTable()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateView()
-	 */
-	public boolean supportsCreateView()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropConstraint()
-	 */
-	public boolean supportsDropConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropIndex()
-	 */
-	public boolean supportsDropIndex()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropSequence()
-	 */
-	public boolean supportsDropSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -782,36 +656,9 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsEmptyTables()
-	 */
-	public boolean supportsEmptyTables()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsIndexes()
-	 */
-	public boolean supportsIndexes()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsInsertInto()
 	 */
 	public boolean supportsInsertInto()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsMultipleRowInserts()
-	 */
-	public boolean supportsMultipleRowInserts()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -836,33 +683,6 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequence()
-	 */
-	public boolean supportsSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequenceInformation()
-	 */
-	public boolean supportsSequenceInformation()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsTablespace()
-	 */
-	public boolean supportsTablespace()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsUpdate()
 	 */
 	public boolean supportsUpdate()
@@ -878,14 +698,6 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		// TODO verify this is correct
 		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
-	 */
-	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
-		return false;
 	}
 		
 	/**

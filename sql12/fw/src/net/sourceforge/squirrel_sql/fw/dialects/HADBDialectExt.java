@@ -487,21 +487,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return DialectType.HADB;
 	}
 
-	public String[] getIndexAccessMethodsTypes()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
-	 */
-	public String[] getIndexStorageOptions()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -634,79 +619,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public boolean supportsAccessMethods()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsAddForeignKeyConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsAddUniqueConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsAlterSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsAutoIncrement()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsCheckOptionsForViews()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsCreateIndex()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsCreateSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public boolean supportsCreateTable()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsCreateView()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsDropConstraint()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsDropIndex()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsDropSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -718,25 +631,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return false;
 	}
 
-	public boolean supportsEmptyTables()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsIndexes()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public boolean supportsInsertInto()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsMultipleRowInserts()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -749,24 +644,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	}
 
 	public boolean supportsRenameView()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsSequence()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsSequenceInformation()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean supportsTablespace()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -785,15 +662,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	{
 		// TODO verify this is correct
 		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
-	 */
-	public boolean supportsViewDefinition()
-	{
-		// TODO verify this is correct
-		return false;
 	}
 
 	/**
