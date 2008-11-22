@@ -535,7 +535,6 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		final ArrayList<String> result = new ArrayList<String>();
 		StringTemplate st = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
 
 		HashMap<String, String> fkValuesMap = new HashMap<String, String>();
@@ -548,7 +547,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 		StringTemplate childIndexST = null;
 		HashMap<String, String> ckIndexValuesMap = null;
 
-		DialectUtils.getAddForeignKeyConstraintSQL(st,
+		return DialectUtils.getAddForeignKeyConstraintSQL(st,
 			fkValuesMap,
 			childIndexST,
 			ckIndexValuesMap,
@@ -557,7 +556,6 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 			prefs,
 			this);
 
-		return result.toArray(new String[result.size()]);
 	}
 
 	/**

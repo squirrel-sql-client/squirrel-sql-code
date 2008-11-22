@@ -21,10 +21,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import static java.sql.Types.VARCHAR;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.sql.Types;
+import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
@@ -53,49 +55,132 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		super();
 	}
 
-	@Test
-	public void testAddColumnQualifiedNamesQuotedIdentifiers()
+	private void setCommonExpectations()
 	{
 		expect(mockColumnInfo.getTableName()).andStubReturn("aTestTableName");
 		expect(mockColumnInfo.getColumnName()).andStubReturn("aTestColumnName");
 		expect(mockColumnInfo.getRemarks()).andStubReturn("aRemark");
-		expect(mockQualifier.getSchema()).andStubReturn("aTestSchema");
-		expect(mockQualifier.getCatalog()).andStubReturn("aTestCatalog");
 		expect(mockColumnInfo.getDataType()).andStubReturn(VARCHAR);
 		expect(mockColumnInfo.getColumnSize()).andStubReturn(1024);
 		expect(mockColumnInfo.getDecimalDigits()).andStubReturn(0);
 		expect(mockColumnInfo.getDefaultValue()).andStubReturn(null);
 		expect(mockColumnInfo.isNullable()).andStubReturn("YES");
+		expect(mockQualifier.getSchema()).andStubReturn("aTestSchema");
+		expect(mockQualifier.getCatalog()).andStubReturn("aTestCatalog");
 		expect(mockPrefs.isQualifyTableNames()).andStubReturn(true);
 		expect(mockPrefs.isQuoteIdentifiers()).andStubReturn(true);
-		
-		
-		mockHelper.replayAll();
+	}
 
-		if (classUnderTest.supportsAddColumn())
+	@Test
+	public void testgetAddForeignKeyConstraintSQL() {
+		setCommonExpectations();
+		mockHelper.replayAll();
+		try
 		{
-			try {
-				assertNotNull(classUnderTest.getAddColumnSQL(mockColumnInfo, mockQualifier, mockPrefs));
-			} catch (UnsupportedOperationException e) {
-				String message = e.getMessage();
-				// Some dialects support adding columns, but the logic has not been added yet to the dialect.
-				// If that is the case the message is "Not yet implemented" - fail for all other messages.
-				if (!message.equals("Not yet implemented")) {
-					fail("supportsAddColumn was true, but still got an UnsupportedOperationException: "+
-						e.getMessage());
-				}
+			Vector<String[]> localRefCols = new Vector<String[]>();
+			localRefCols.add(new String[] {"aCol", "bCol"});
+			String[] sql =
+				classUnderTest.getAddForeignKeyConstraintSQL("localTableName", "refTableName", "constraintName", 
+					true, true, true, true, "fkIndexName", localRefCols, "updateAction", "onDeleteAction", 
+					mockQualifier, mockPrefs);
+								
+			if (classUnderTest.supportsAddForeignKeyConstraint()) {
+				assertNotNull("supportsAddForeignKeyConstraint == true, but sql returned was null", sql);
+				assertTrue(sql.length != 0);
+			} else {
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding " +
+						"a foreign key constraint");
 			}
 		}
-		else
+		catch (UnsupportedOperationException e)
 		{
-			try
-			{
-				classUnderTest.getAddColumnSQL(mockColumnInfo, mockQualifier, mockPrefs);
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding a column");
+			if (classUnderTest.supportsAddForeignKeyConstraint()) {
+				failForUnsupported("supportsAddForeignKeyConstraint", e);
 			}
-			catch (UnsupportedOperationException e)
+		}
+		mockHelper.verifyAll();
+
+	}
+	
+	
+	@Test
+	public void testGetColumnDefaultAlterSQL() {
+		setCommonExpectations();
+		mockHelper.replayAll();
+		try
+		{
+			String sql =
+				classUnderTest.getColumnDefaultAlterSQL(mockColumnInfo, mockQualifier, mockPrefs);
+								
+			if (classUnderTest.supportsAlterColumnDefault()) {
+				assertNotNull("supportsAlterColumnDefault == true, but sql returned was null", sql);
+			} else {
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for altering " +
+						"a column default");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsAlterColumnDefault()) {
+				failForUnsupported("supportsAlterColumnDefault", e);
+			}
+		}
+		mockHelper.verifyAll();
+
+	}
+	
+	@Test
+	public void testGetColumnDropSQL()
+	{
+		setCommonExpectations();
+		mockHelper.replayAll();
+		try
+		{
+			String sql =
+				classUnderTest.getColumnDropSQL("aTestTableName", "aTestColumnName", mockQualifier, mockPrefs);
+			if (classUnderTest.supportsDropColumn()) {
+				assertNotNull("supportsDropColumn == true, but sql returned was null", sql);
+			} else {
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for dropping a column");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsDropColumn()) {
+				failForUnsupported("supportsDropColumn", e);
+			}
+		}
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testGetColumnNameAlter()
+	{
+		setCommonExpectations();
+
+		TableColumnInfo mockToInfo = mockHelper.createMock(TableColumnInfo.class);
+		expect(mockToInfo.getColumnName()).andStubReturn("aNewColumnName");
+
+		mockHelper.replayAll();
+
+		try
+		{
+			String sql =
+				classUnderTest.getColumnNameAlterSQL(mockColumnInfo, mockToInfo, mockQualifier, mockPrefs);
+			if (classUnderTest.supportsRenameColumn())
 			{
-				// this is expected.
+				assertNotNull("supportsRenameColumn == true, but sql returned was null", sql);
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for re-naming a column");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsRenameColumn())
+			{
+				failForUnsupported("supportsRenameColumn", e);
 			}
 		}
 
@@ -103,9 +188,48 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
+	public void testAddColumnQualifiedNamesQuotedIdentifiers()
+	{
+		setCommonExpectations();
+		mockHelper.replayAll();
+
+		try
+		{
+			String[] sql = classUnderTest.getAddColumnSQL(mockColumnInfo, mockQualifier, mockPrefs);
+			if (!classUnderTest.supportsAddColumn())
+			{
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding a column");
+			}
+			assertNotNull(sql);
+			assertTrue(sql.length != 0);
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsAddColumn())
+			{
+				failForUnsupported("supportsAddColumn", e);
+			}
+		}
+		mockHelper.verifyAll();
+	}
+
+	@Test
 	public void testGetTypeNameInt()
 	{
 		testAllTypes(classUnderTest);
+	}
+
+	// Helper methods
+
+	private void failForUnsupported(String supportsMethod, UnsupportedOperationException e)
+	{
+		String message = e.getMessage();
+		// Some dialects support adding columns, but the logic has not been added yet to the dialect.
+		// If that is the case the message is "Not yet implemented" - fail for all other messages.
+		if (!message.equals("Not yet implemented"))
+		{
+			fail(supportsMethod + " was true, but still got an UnsupportedOperationException: " + e.getMessage());
+		}
 	}
 
 	private void testAllTypes(HibernateDialect d)
