@@ -1,4 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
+
+import org.junit.After;
+import org.junit.Before;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,21 +21,19 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class DB2DialectTest extends DialectTestCase {
+public class DB2DialectTest extends AbstractDialectExtTest
+{
 
-    private DB2DialectExt dialect = null;
-    
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dialect = new DB2DialectExt();
-    }
-    
-    /*
-     * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
-     */
-    public void testGetTypeNameInt() {
-        testAllTypes(dialect);
-    }
-    
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new DB2DialectExt();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
+
 }
