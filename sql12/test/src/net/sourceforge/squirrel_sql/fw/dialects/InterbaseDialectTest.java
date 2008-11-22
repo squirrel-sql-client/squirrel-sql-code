@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import org.junit.After;
+import org.junit.Before;
 
 /*
  * Copyright (C) 2007 Rob Manning
@@ -19,24 +21,19 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class InterbaseDialectTest extends DialectTestCase {
+public class InterbaseDialectTest extends AbstractDialectExtTest
+{
 
-    @SuppressWarnings("unused")
-    private InterbaseDialectExt dialect = null;
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new InterbaseDialectExt();
+	}
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dialect = new InterbaseDialectExt();
-    }
-    
-    /*
-     * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
-     */
-    public void testGetTypeNameInt() {
-        // Interbase dialect is not currently implemented.  So for now, 
-        // don't test the types.
-        //testAllTypes(dialect);
-        
-    }
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
+
 }

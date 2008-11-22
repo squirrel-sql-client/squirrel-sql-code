@@ -1,4 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
+
+import org.junit.After;
+import org.junit.Before;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,25 +21,19 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class DerbyDialectTest extends DialectTestCase {
+public class DerbyDialectTest extends AbstractDialectExtTest
+{
 
-    private DerbyDialectExt dialect = null;
-    
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dialect = new DerbyDialectExt();
-    }
-    
-    /*
-     * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
-     */
-    public void testGetTypeNameInt() {
-        testAllTypes(dialect);
-    }
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
-    }
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new DerbyDialectExt();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
 
 }

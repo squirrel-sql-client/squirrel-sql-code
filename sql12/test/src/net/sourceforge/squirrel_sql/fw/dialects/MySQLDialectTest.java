@@ -18,22 +18,22 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import org.junit.After;
+import org.junit.Before;
 
-public class MySQLDialectTest extends DialectTestCase {
+public class MySQLDialectTest extends AbstractDialectExtTest
+{
 
-    private MySQLDialectExt dialect = null;
-    
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dialect = new MySQLDialectExt();
-    }
-    
-    /*
-     * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
-     */
-    public void testGetTypeNameInt() {
-        testAllTypes(dialect);
-    }
-    
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new MySQLDialectExt();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
+
 }
