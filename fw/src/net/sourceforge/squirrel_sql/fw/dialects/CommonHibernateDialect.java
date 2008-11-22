@@ -662,7 +662,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAddColumn()
 	{
-		return false;
+		return true;
 	}
 
 	/**

@@ -238,7 +238,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
+		return DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this);
 	}
 
 	/**
@@ -445,7 +445,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 		}
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column, null, null));
+			result.add(getColumnCommentAlterSQL(column, qualifier, prefs));
 		}
 		return result.toArray(new String[result.size()]);
 	}
