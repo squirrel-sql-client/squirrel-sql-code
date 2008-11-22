@@ -303,7 +303,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
                         || (dataType == Types.LONGVARCHAR)
                         || (dataType == Types.VARCHAR))
                 {
-                    textColumns.put(columnName, Boolean.valueOf(true));
+                    textColumns.put(columnName, Boolean.TRUE);
                 }
                 
             }
