@@ -37,7 +37,6 @@ import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
-
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -264,7 +263,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == boolean.class)
 			{
-				Object data = new Boolean(value);
+				Object data = Boolean.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });

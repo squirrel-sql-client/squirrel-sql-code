@@ -124,7 +124,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
 
          settingsMap.put(SettingsNames.TEXT_LIMIT_LINE_VISIBLE, Boolean.valueOf(_syntaxPreferences.isTextLimitLineVisible()));
 
-         settingsMap.put(SettingsNames.LINE_NUMBER_VISIBLE, Boolean.valueOf(true));
+         settingsMap.put(SettingsNames.LINE_NUMBER_VISIBLE, Boolean.TRUE);
 
          settingsMap.put(SettingsNames.TEXT_LIMIT_WIDTH, Integer.valueOf(_syntaxPreferences.getTextLimitLineWidth()));
 
