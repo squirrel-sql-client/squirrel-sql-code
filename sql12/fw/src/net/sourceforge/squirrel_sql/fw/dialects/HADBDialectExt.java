@@ -105,13 +105,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public String[] getColumnAddSQL(TableColumnInfo info) throws HibernateException,
-		UnsupportedOperationException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
@@ -497,8 +490,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final String msg = DialectUtils.getUnsupportedMessage(this, DialectUtils.ADD_COLUMN_TYPE);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
@@ -660,8 +653,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
-		return true;
+		return false;
 	}
 
 	/**

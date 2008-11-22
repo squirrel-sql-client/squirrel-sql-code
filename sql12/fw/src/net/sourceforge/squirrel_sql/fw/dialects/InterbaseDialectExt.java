@@ -36,32 +36,44 @@ import org.hibernate.HibernateException;
 public class InterbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class InterbaseDialectHelper extends org.hibernate.dialect.InterbaseDialect {
-		public InterbaseDialectHelper() {
+	private class InterbaseDialectHelper extends org.hibernate.dialect.InterbaseDialect
+	{
+		public InterbaseDialectHelper()
+		{
 			super();
 			/*
 			 * TODO: hookup with Interbase spec and adjust these as necessary. 
 			 */
-			// What follows comes from the standard hibernate dialect.
-			registerColumnType( Types.BIT, "smallint" );
-			registerColumnType( Types.BIGINT, "numeric(18,0)" );
-			registerColumnType( Types.SMALLINT, "smallint" );
-			registerColumnType( Types.TINYINT, "smallint" );
-			registerColumnType( Types.INTEGER, "integer" );
-			registerColumnType( Types.CHAR, "char(1)" );
-			registerColumnType( Types.VARCHAR, "varchar($l)" );
-			registerColumnType( Types.FLOAT, "float" );
-			registerColumnType( Types.DOUBLE, "double precision" );
-			registerColumnType( Types.DATE, "date" );
-			registerColumnType( Types.TIME, "time" );
-			registerColumnType( Types.TIMESTAMP, "timestamp" );
-			registerColumnType( Types.VARBINARY, "blob" );
-			registerColumnType( Types.NUMERIC, "numeric($p,$s)" );
-			registerColumnType( Types.BLOB, "blob" );
-			registerColumnType( Types.CLOB, "blob sub_type 1" );			
+			// What follows comes from the SQuirreL firebird dialect extension.
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, "blob sub_type 0");
+			registerColumnType(Types.BIT, "char(1)");
+			registerColumnType(Types.BLOB, "blob sub_type -1");
+			registerColumnType(Types.BOOLEAN, "char(1)");
+			registerColumnType(Types.CHAR, 32767, "char($l)");
+			registerColumnType(Types.CHAR, "char(32767)");
+			registerColumnType(Types.CLOB, "blob sub_type text");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "double precision");
+			registerColumnType(Types.FLOAT, "double precision");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "blob sub_type 0");
+			registerColumnType(Types.LONGVARCHAR, "blob sub_type 1");
+			registerColumnType(Types.NUMERIC, 18, "numeric($p,$s)");
+			registerColumnType(Types.NUMERIC, "double precision");
+			registerColumnType(Types.REAL, "double precision");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, "blob sub_type -1");
+			registerColumnType(Types.VARCHAR, 32765, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "varchar(32765)");
+
 		}
 	}
-	
+
 	/** extended hibernate dialect used in this wrapper */
 	private InterbaseDialectHelper _dialect = new InterbaseDialectHelper();
 
@@ -72,13 +84,14 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
 		return _dialect.getTypeName(code, length, precision, scale);
-	}	
+	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	@Override
-	public boolean canPasteTo(IDatabaseObjectInfo info) {
+	public boolean canPasteTo(IDatabaseObjectInfo info)
+	{
 		return true;
 	}
 
@@ -169,10 +182,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().toLowerCase().startsWith("interbase"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -193,7 +203,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
 	{
-		throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
+		final String msg = DialectUtils.getUnsupportedMessage(this, DialectUtils.ADD_COLUMN_TYPE);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -223,7 +234,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getColumnCommentAlterSQL(String tableName, String columnName, String comment)
 		throws UnsupportedOperationException
 	{
-		throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+		throw new UnsupportedOperationException(
+			"This database dialect doesn't support adding comments to columns");
 	}
 
 	/**
@@ -251,7 +263,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *            if the database doesn't support dropping columns.
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO: Need to verify this
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
@@ -273,12 +286,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: Need to verify this
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -292,7 +301,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
@@ -308,7 +318,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
 	@Override
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -322,7 +333,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return the SQL to execute
 	 */
 	@Override
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -350,7 +362,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return the SQL to make the change
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -379,8 +392,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
 	@Override
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not Yet Implemented");
@@ -420,7 +433,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return SQL to make the change
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO need to implement or change the message
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -436,7 +450,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -451,7 +466,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -501,25 +517,17 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub		
-		return null;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	@Override
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -527,7 +535,24 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final String msg = DialectUtils.getUnsupportedMessage(this, DialectUtils.ADD_COLUMN_TYPE);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean,
+	 *      boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
@@ -540,18 +565,24 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAlterSequenceSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
@@ -563,7 +594,10 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateIndexSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateIndexSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
@@ -575,7 +609,10 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateSequenceSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
@@ -587,7 +624,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.lang.String, java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.lang.String,
+	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
 	@Override
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
@@ -598,7 +637,10 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
@@ -609,7 +651,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropConstraintSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getDropConstraintSQL(String tableName, String constraintName,
@@ -620,7 +664,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropIndexSQL(java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropIndexSQL(java.lang.String,
+	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
@@ -631,7 +677,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropSequenceSQL(java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropSequenceSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
@@ -642,7 +690,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropViewSQL(java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropViewSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
@@ -653,7 +703,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getInsertIntoSQL(java.lang.String, java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getInsertIntoSQL(java.lang.String,
+	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
@@ -664,7 +716,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getRenameTableSQL(String oldTableName, String newTableName,
@@ -675,18 +729,22 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameViewSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getSequenceInformationSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getSequenceInformationSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
@@ -697,11 +755,14 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getUpdateSQL(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getUpdateSQL(java.lang.String,
+	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -953,28 +1014,33 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
-		return true;
+		return false;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
+	public boolean supportsViewDefinition()
+	{
 		// TODO verify this is correct
 		return false;
-	}	
-	
+	}
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs) {
+		SqlGenerationPreferences prefs)
+	{
 		return null;
 	}
-	
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -990,5 +1056,5 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }

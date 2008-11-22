@@ -415,15 +415,13 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -692,12 +690,11 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddColumn()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsAddColumn()
-	{
+	public boolean supportsViewDefinition() {
 		// TODO verify this is correct
-		return true;
+		return false;
 	}
 		
 	/**
