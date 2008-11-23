@@ -18,9 +18,12 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Rectangle;
+import java.io.Serializable;
 
-public class RectangleWrapper
+public class RectangleWrapper implements Serializable
 {
+	private static final long serialVersionUID = -188201653324691558L;
+
 	public interface IPropertyNames
 	{
 		String X = "x";

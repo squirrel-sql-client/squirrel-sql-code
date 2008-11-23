@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 import net.sourceforge.squirrel_sql.fw.gui.WindowState;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.RectangleWrapper;
@@ -28,8 +29,10 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class MainFrameWindowState extends WindowState
+public class MainFrameWindowState extends WindowState implements Serializable
 {
+	private static final long serialVersionUID = -7443323389797901005L;
+
 	// JASON: Messages height should be stored with this.
 	public interface IPropertyNames
 	{
@@ -40,7 +43,7 @@ public class MainFrameWindowState extends WindowState
 	private WindowState _driversWindowState = new WindowState();
 	private WindowState _aliasesWindowState = new WindowState();
 
-	private WindowManager _mgr;
+	private transient WindowManager _mgr;
 
 	public MainFrameWindowState()
 	{

@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.util;
+
+import java.io.Serializable;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -22,8 +25,10 @@ package net.sourceforge.squirrel_sql.fw.util;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ProxySettings implements Cloneable
+public class ProxySettings implements Cloneable, Serializable
 {
+	private static final long serialVersionUID = 6435632924688921646L;
+
 	/** If <TT>true</TT> use a HTTP proxy server. */
 	private boolean _httpUseProxy;
 
