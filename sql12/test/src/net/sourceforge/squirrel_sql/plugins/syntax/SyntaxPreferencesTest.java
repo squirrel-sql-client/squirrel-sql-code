@@ -19,21 +19,32 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  */ 
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *   Test class for SyntaxPreferences
  */
-public class SyntaxPreferencesTest extends BaseSQuirreLJUnit4TestCase {
+public class SyntaxPreferencesTest extends AbstractSerializableTest {
 
 	SyntaxPreferences classUnderTest = new SyntaxPreferences();
 
 	SyntaxStyle testStyle = new SyntaxStyle();
 	
+	@Before
+	public void setUp() {
+		super.serializableToTest = new SyntaxPreferences();
+	}
+	
+	@After
+	public void tearDown() {
+		super.serializableToTest = null;
+	}
 
 	@Test
 	public void testGetUseOsterTextControl() throws Exception
@@ -153,5 +164,4 @@ public class SyntaxPreferencesTest extends BaseSQuirreLJUnit4TestCase {
 		classUnderTest.setWhiteSpaceStyle(testStyle);
 		assertEquals(testStyle, classUnderTest.getWhiteSpaceStyle());
 	}
-
 }
