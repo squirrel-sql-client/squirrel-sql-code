@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -138,7 +139,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		if (dataType == Types.FLOAT)
 		{
 			return 15;
-		} else
+		}
+		else
 		{
 			return 32;
 		}
@@ -187,10 +189,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().toLowerCase().startsWith("progress")
 			|| databaseProductName.trim().toLowerCase().startsWith("openedge"))
 		{
@@ -247,12 +246,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
 		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			false,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -264,7 +259,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
 		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -294,15 +290,14 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ SET $nullable$";
 		final StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NULL_STYLE_ONE);
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
-				info.getTableName(),
-				ST_COLUMN_NAME_KEY,
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, info.getTableName(), ST_COLUMN_NAME_KEY,
 				info.getColumnName());
 
 		if (info.isNullable().equalsIgnoreCase("YES"))
 		{
 			valuesMap.put(ST_NULLABLE_KEY, "NULL");
-		} else
+		}
+		else
 		{
 			valuesMap.put(ST_NULLABLE_KEY, "NOT NULL");
 		}
@@ -331,12 +326,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NAME_STYLE_ONE);
 
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
-				from.getTableName(),
-				ST_OLD_COLUMN_NAME_KEY,
-				from.getColumnName(),
-				ST_NEW_COLUMN_NAME_KEY,
-				to.getColumnName());
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, from.getTableName(), ST_OLD_COLUMN_NAME_KEY,
+				from.getColumnName(), ST_NEW_COLUMN_NAME_KEY, to.getColumnName());
 
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
@@ -385,9 +376,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
-	 *      SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public String getColumnDefaultAlterSQL(final TableColumnInfo info,
@@ -398,9 +388,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 		StringTemplate st = null;
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
-				info.getTableName(),
-				ST_COLUMN_NAME_KEY,
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, info.getTableName(), ST_COLUMN_NAME_KEY,
 				info.getColumnName());
 
 		if (info.getDefaultValue() != null)
@@ -412,11 +400,13 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 			if (JDBCTypeMapper.isNumberType(info.getDataType()))
 			{
 				valuesMap.put(ST_DEFAULT_VALUE_KEY, info.getDefaultValue());
-			} else
+			}
+			else
 			{
 				valuesMap.put(ST_DEFAULT_VALUE_KEY, "'" + info.getDefaultValue() + "'");
 			}
-		} else
+		}
+		else
 		{
 			// drop the existing default value.
 			// "ALTER TABLE $tableName$ " +
@@ -432,7 +422,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -444,7 +435,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(final String fkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -515,13 +507,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final boolean supportsNullQualifier = false;
 		final boolean addNullClause = true;
 
-		return new String[] { DialectUtils.getAddColumSQL(column,
-			this,
-			addDefaultClause,
-			supportsNullQualifier,
-			addNullClause,
-			qualifier,
-			prefs) };
+		return new String[] { DialectUtils.getAddColumSQL(column, this, addDefaultClause,
+			supportsNullQualifier, addNullClause, qualifier, prefs) };
 	}
 
 	/**
@@ -542,20 +529,9 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		Boolean initiallyDeferredNotSupported = null;
 		Boolean matchFullNotSupported = null;
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-			refTableName,
-			constraintName,
-			deferrableNotSupported,
-			initiallyDeferredNotSupported,
-			matchFullNotSupported,
-			autoFKIndex,
-			fkIndexName,
-			localRefColumns,
-			onUpdateAction,
-			onDeleteAction,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
+			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
 	}
 
 	/**
@@ -581,11 +557,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
-		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
-			valuesMap,
-			columns,
-			qualifier,
-			prefs,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
 			this) };
 	}
 
@@ -600,9 +572,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final String minimum, final String maximum, final String restart, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum,
+			cache, cycle, qualifier, prefs, this);
 	}
 
 	/**
@@ -690,7 +661,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		if (cycle)
 		{
 			st.setAttribute(ST_CYCLE_KEY, "CYCLE");
-		} else
+		}
+		else
 		{
 			st.setAttribute(ST_CYCLE_KEY, "NOCYCLE");
 		}

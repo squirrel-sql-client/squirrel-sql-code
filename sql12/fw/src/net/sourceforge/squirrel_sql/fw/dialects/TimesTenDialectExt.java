@@ -33,6 +33,8 @@ import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the TimesTen database.
+ * TODO: This dialect is not yet complete.  Need to provide implementations wherever "Not yet implemented"
+ * appears.  
  */
 public class TimesTenDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
@@ -447,8 +449,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -456,8 +458,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -468,8 +470,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -524,8 +526,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -538,8 +540,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum, cache,
+			cycle, qualifier, prefs, this);
 	}
 
 	/**
@@ -552,8 +554,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -577,8 +579,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -590,8 +592,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -602,8 +604,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -614,8 +616,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -626,8 +628,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -638,8 +640,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -650,8 +652,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -662,8 +664,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -674,8 +676,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -686,8 +688,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -700,8 +702,8 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -709,7 +711,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -726,7 +728,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -735,7 +737,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -744,7 +746,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -753,7 +755,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -762,7 +764,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -771,7 +773,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -780,7 +782,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -789,7 +791,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -798,7 +800,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -807,7 +809,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -816,7 +818,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -825,7 +827,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -834,7 +836,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -843,7 +845,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -852,7 +854,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -861,7 +863,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -870,7 +872,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -879,7 +881,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -888,7 +890,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -897,7 +899,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -906,7 +908,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -915,7 +917,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -924,7 +926,6 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 
@@ -933,7 +934,6 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsViewDefinition()
 	{
-		// TODO verify this is correct
 		return false;
 	}
 
@@ -945,7 +945,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -964,7 +964,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

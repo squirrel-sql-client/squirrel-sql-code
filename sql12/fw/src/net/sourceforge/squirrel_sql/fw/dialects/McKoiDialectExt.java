@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -202,10 +203,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().toLowerCase().startsWith("mckoi"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -236,7 +234,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
@@ -255,12 +254,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			false,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -273,9 +268,11 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -409,7 +406,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
+			prefs);
 	}
 
 	/**
@@ -421,7 +419,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -435,7 +434,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -510,13 +510,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		boolean addNullClause = true;
 
 		String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
+			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
+				qualifier, prefs);
 
 		return new String[] { sql };
 	}
@@ -537,20 +532,9 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		Boolean initiallyDeferredNotSupported = null;
 		Boolean matchFullNotSupported = null;
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-			refTableName,
-			constraintName,
-			deferrableNotSupported,
-			initiallyDeferredNotSupported,
-			matchFullNotSupported,
-			autoFKIndex,
-			fkIndexName,
-			localRefColumns,
-			onUpdateAction,
-			onDeleteAction,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
+			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
 	}
 
 	/**
@@ -574,11 +558,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
-		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
-			valuesMap,
-			columns,
-			qualifier,
-			prefs,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
 			this) };
 	}
 
@@ -592,9 +572,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum,
+			cache, cycle, qualifier, prefs, this);
 	}
 
 	/**
@@ -643,7 +622,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		// "$increment$ $minimum$ $maximum$ $startWith$ $cache$ $cycle$";
 
 		StringTemplate st = new StringTemplate(ST_CREATE_SEQUENCE_STYLE_THREE);
-		
+
 		OptionalSqlClause startWithClause = new OptionalSqlClause("START", start);
 		OptionalSqlClause incClause = new OptionalSqlClause(DialectUtils.INCREMENT_CLAUSE, increment);
 		OptionalSqlClause minClause = new OptionalSqlClause(DialectUtils.MINVALUE_CLAUSE, minimum);
@@ -651,17 +630,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		OptionalSqlClause cacheClause = new OptionalSqlClause(DialectUtils.CACHE_CLAUSE, cache);
 
 		HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY,
-				sequenceName,
-				ST_START_WITH_KEY,
-				startWithClause,
-				ST_INCREMENT_KEY,
-				incClause,
-				ST_MINIMUM_KEY,
-				minClause,
-				ST_MAXIMUM_KEY,
-				maxClause,
-				ST_CACHE_KEY,
+			DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName, ST_START_WITH_KEY, startWithClause,
+				ST_INCREMENT_KEY, incClause, ST_MINIMUM_KEY, minClause, ST_MAXIMUM_KEY, maxClause, ST_CACHE_KEY,
 				cacheClause);
 		if (cycle)
 		{
@@ -669,7 +639,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 		}
 
 		return DialectUtils.getCreateSequenceSQL(st, valuesMap, qualifier, prefs, this);
-		
+
 	}
 
 	/**
@@ -947,7 +917,6 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 

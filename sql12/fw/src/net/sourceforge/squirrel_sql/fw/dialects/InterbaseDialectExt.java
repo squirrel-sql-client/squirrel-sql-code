@@ -31,7 +31,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.hibernate.HibernateException;
 
 /**
- * A dialect delegate for the Interbase database.
+ * A dialect delegate for the Interbase database.  This dialect's support and get..SQL methods have not been 
+ * tested against an actual instance of Interbase.
  */
 public class InterbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
@@ -247,7 +248,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropColumn()
 	{
-		// TODO: need to verify this
+		
 		return true;
 	}
 
@@ -266,7 +267,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO: Need to verify this
+		
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
@@ -285,7 +286,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO: Need to verify this
+		
 		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
 			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
@@ -304,7 +305,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO: implement
+
 		throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
 	}
 
@@ -321,7 +322,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO: implement
+
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -336,7 +337,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO: implement
+
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -348,7 +349,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsRenameColumn()
 	{
-		// TODO: need to verify this
+		
 		return true;
 	}
 
@@ -365,7 +366,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO: implement
+
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -395,7 +396,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO: implement
+
 		throw new UnsupportedOperationException("Not Yet Implemented");
 	}
 
@@ -408,7 +409,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAlterColumnNull()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -421,7 +422,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAlterColumnDefault()
 	{
-		// TODO Need to verify this
+		
 		return true;
 	}
 
@@ -507,8 +508,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -517,8 +517,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -530,8 +529,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -573,8 +571,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -588,8 +585,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -603,8 +599,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -630,8 +625,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -644,8 +638,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -657,8 +650,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -670,8 +662,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -683,8 +674,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -696,8 +687,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -709,8 +700,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -722,8 +713,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -735,8 +726,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -748,8 +739,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -763,8 +754,8 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -773,7 +764,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -783,7 +774,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -793,7 +784,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -803,7 +794,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -813,7 +804,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -823,7 +814,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -833,7 +824,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -843,7 +834,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -853,7 +844,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -863,7 +854,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -873,7 +864,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -883,7 +874,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -893,7 +884,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -903,7 +894,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -913,7 +904,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -923,7 +914,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -933,7 +924,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -943,7 +934,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -953,7 +944,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -963,7 +954,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -973,8 +964,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -983,7 +973,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -993,7 +983,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -1003,7 +993,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -1020,7 +1010,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsViewDefinition()
 	{
-		// TODO verify this is correct
+
 		return false;
 	}
 
@@ -1032,7 +1022,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -1051,7 +1041,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
