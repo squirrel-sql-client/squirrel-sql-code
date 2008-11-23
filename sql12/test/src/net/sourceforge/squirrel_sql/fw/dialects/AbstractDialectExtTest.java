@@ -315,8 +315,6 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 				classUnderTest.getAlterSequenceSQL("sSequenceName", "1", "1", "2000", "1", "20", true,
 					mockQualifier, mockPrefs);
 			
-			/* TODO: McKoi (and possibly other databases allow you to create sequences, but not alter them. */
-			
 			if (classUnderTest.supportsSequence())
 			{
 				assertNotNull("supportsSequence == true, but sql returned was null", sql);
