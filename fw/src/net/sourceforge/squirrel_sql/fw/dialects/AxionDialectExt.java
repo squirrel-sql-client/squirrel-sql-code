@@ -490,8 +490,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**

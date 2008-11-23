@@ -988,7 +988,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public boolean supportsSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**

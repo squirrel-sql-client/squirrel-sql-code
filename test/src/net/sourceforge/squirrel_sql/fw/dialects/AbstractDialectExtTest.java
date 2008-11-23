@@ -73,68 +73,83 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
-	public void testSupportsProduct() {
+	public void testSupportsProduct()
+	{
 		assertFalse(classUnderTest.supportsProduct(null, null));
 	}
-	
+
 	@Test
-	public void testgetAddForeignKeyConstraintSQL() {
+	public void testGetDialectType()
+	{
+		assertNotNull(classUnderTest.getDialectType());
+	}
+
+	@Test
+	public void testgetAddForeignKeyConstraintSQL()
+	{
 		setCommonExpectations();
 		mockHelper.replayAll();
 		try
 		{
 			Vector<String[]> localRefCols = new Vector<String[]>();
-			localRefCols.add(new String[] {"aCol", "bCol"});
+			localRefCols.add(new String[] { "aCol", "bCol" });
 			String[] sql =
-				classUnderTest.getAddForeignKeyConstraintSQL("localTableName", "refTableName", "constraintName", 
-					true, true, true, true, "fkIndexName", localRefCols, "updateAction", "onDeleteAction", 
+				classUnderTest.getAddForeignKeyConstraintSQL("localTableName", "refTableName", "constraintName",
+					true, true, true, true, "fkIndexName", localRefCols, "updateAction", "onDeleteAction",
 					mockQualifier, mockPrefs);
-								
-			if (classUnderTest.supportsAddForeignKeyConstraint()) {
+
+			if (classUnderTest.supportsAddForeignKeyConstraint())
+			{
 				assertNotNull("supportsAddForeignKeyConstraint == true, but sql returned was null", sql);
 				assertTrue(sql.length != 0);
-			} else {
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding " +
-						"a foreign key constraint");
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding "
+					+ "a foreign key constraint");
 			}
 		}
 		catch (UnsupportedOperationException e)
 		{
-			if (classUnderTest.supportsAddForeignKeyConstraint()) {
+			if (classUnderTest.supportsAddForeignKeyConstraint())
+			{
 				failForUnsupported("supportsAddForeignKeyConstraint", e);
 			}
 		}
 		mockHelper.verifyAll();
 
 	}
-	
-	
+
 	@Test
-	public void testGetColumnDefaultAlterSQL() {
+	public void testGetColumnDefaultAlterSQL()
+	{
 		setCommonExpectations();
 		mockHelper.replayAll();
 		try
 		{
-			String sql =
-				classUnderTest.getColumnDefaultAlterSQL(mockColumnInfo, mockQualifier, mockPrefs);
-								
-			if (classUnderTest.supportsAlterColumnDefault()) {
+			String sql = classUnderTest.getColumnDefaultAlterSQL(mockColumnInfo, mockQualifier, mockPrefs);
+
+			if (classUnderTest.supportsAlterColumnDefault())
+			{
 				assertNotNull("supportsAlterColumnDefault == true, but sql returned was null", sql);
-			} else {
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for altering " +
-						"a column default");
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for altering "
+					+ "a column default");
 			}
 		}
 		catch (UnsupportedOperationException e)
 		{
-			if (classUnderTest.supportsAlterColumnDefault()) {
+			if (classUnderTest.supportsAlterColumnDefault())
+			{
 				failForUnsupported("supportsAlterColumnDefault", e);
 			}
 		}
 		mockHelper.verifyAll();
 
 	}
-	
+
 	@Test
 	public void testGetColumnDropSQL()
 	{
@@ -144,18 +159,53 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		{
 			String sql =
 				classUnderTest.getColumnDropSQL("aTestTableName", "aTestColumnName", mockQualifier, mockPrefs);
-			if (classUnderTest.supportsDropColumn()) {
+			if (classUnderTest.supportsDropColumn())
+			{
 				assertNotNull("supportsDropColumn == true, but sql returned was null", sql);
-			} else {
+			}
+			else
+			{
 				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for dropping a column");
 			}
 		}
 		catch (UnsupportedOperationException e)
 		{
-			if (classUnderTest.supportsDropColumn()) {
+			if (classUnderTest.supportsDropColumn())
+			{
 				failForUnsupported("supportsDropColumn", e);
 			}
 		}
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testGetColumnNullAlter()
+	{
+		setCommonExpectations();
+
+		mockHelper.replayAll();
+
+		try
+		{
+			String[] sql = classUnderTest.getColumnNullableAlterSQL(mockColumnInfo, mockQualifier, mockPrefs);
+			if (classUnderTest.supportsAlterColumnNull())
+			{
+				assertNotNull("supportsAlterColumnNull == true, but sql returned was null", sql);
+				assertTrue(sql.length != 0);
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for modify a column's nullability");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsAlterColumnNull())
+			{
+				failForUnsupported("supportsAlterColumnNull", e);
+			}
+		}
+
 		mockHelper.verifyAll();
 	}
 
@@ -223,6 +273,35 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 	public void testGetTypeNameInt()
 	{
 		testAllTypes(classUnderTest);
+	}
+
+	@Test
+	public void testGetCreateSequenceSQL()
+	{
+		setCommonExpectations();
+		mockHelper.replayAll();
+		try
+		{
+			String sql =
+				classUnderTest.getCreateSequenceSQL("sSequenceName", "1", "1", "2000", "1", "20", true,
+					mockQualifier, mockPrefs);
+			if (classUnderTest.supportsSequence())
+			{
+				assertNotNull("supportsSequence == true, but sql returned was null", sql);
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to create a sequence");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsSequence())
+			{
+				failForUnsupported("supportsSequence", e);
+			}
+		}
+		mockHelper.verifyAll();
 	}
 
 	// Helper methods
