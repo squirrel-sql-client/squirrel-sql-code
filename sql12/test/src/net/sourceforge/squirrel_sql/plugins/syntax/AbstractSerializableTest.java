@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -46,7 +47,8 @@ public abstract class AbstractSerializableTest extends BaseSQuirreLJUnit4TestCas
 	@Test
 	public void serializationTest() throws Exception
 	{
-		String filename = "/tmp/classUnderTest.ser";
+		String tmpDir = System.getProperty("java.io.tmpdir", "/tmp");
+		String filename = tmpDir + File.separator  + "classUnderTest.ser";
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		fos = new FileOutputStream(filename);
