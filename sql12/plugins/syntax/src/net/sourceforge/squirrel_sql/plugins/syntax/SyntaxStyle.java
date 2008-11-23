@@ -22,13 +22,16 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Color;
+import java.io.Serializable;
 /**
  * Defines the attributes for a syntax style.
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SyntaxStyle
+public class SyntaxStyle implements Serializable
 {
+	private static final long serialVersionUID = 5071458594077779491L;
+
 	/** name fo this style. */
 	private String _name;
 
