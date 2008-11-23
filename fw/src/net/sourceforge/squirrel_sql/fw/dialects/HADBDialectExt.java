@@ -33,6 +33,8 @@ import org.hibernate.dialect.Dialect;
 
 /**
  * A dialect delegate for the Sun Microsystems HADB (High-Availability) database.
+ * TODO: This dialect is not yet complete.  Need to provide implementations wherever "Not yet implemented"
+ * appears.
  * 
  * @author manningr
  */
@@ -101,8 +103,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
@@ -143,9 +145,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public int getColumnLength(int columnSize, int dataType)
 	{
 		// HADB reports "10" for column size of BLOB/CLOB
-		if (dataType == Types.CLOB || dataType == Types.BLOB)
-		{
-			return Integer.MAX_VALUE; // 2GB (2^32)
+		if (dataType == Types.CLOB || dataType == Types.BLOB) { return Integer.MAX_VALUE; // 2GB (2^32)
 		}
 		return columnSize;
 	}
@@ -157,7 +157,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsRenameColumn()
 	{
-		// TODO: need to verify this
 		return true;
 	}
 
@@ -269,14 +268,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public int getMaxPrecision(int dataType)
 	{
-		if (dataType == Types.FLOAT)
-		{
-			return 52;
-		}
-		if (dataType == Types.DECIMAL || dataType == Types.NUMERIC)
-		{
-			return 31;
-		}
+		if (dataType == Types.FLOAT) { return 52; }
+		if (dataType == Types.DECIMAL || dataType == Types.NUMERIC) { return 31; }
 		return 0;
 	}
 
@@ -326,12 +319,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			false,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -367,10 +356,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		String prodName = "sun java system high availability";
 		if (databaseProductName.trim().toLowerCase().startsWith(prodName))
 		{
@@ -382,7 +368,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 
 	public boolean supportsSchemasInTableDefinition()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -394,7 +380,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -406,7 +392,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
-		// TODO Need to verify this
 		return true;
 	}
 
@@ -420,7 +405,6 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO need to implement or change the message
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -448,7 +432,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -483,8 +468,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
@@ -505,24 +490,23 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
@@ -535,114 +519,114 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -662,7 +646,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -681,7 +665,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 

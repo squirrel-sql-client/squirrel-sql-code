@@ -523,9 +523,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final String minimum, final String maximum, final String restart, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum, cache,
+			cycle, qualifier, prefs, this);
 	}
 
 	/**

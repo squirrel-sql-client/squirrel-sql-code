@@ -32,13 +32,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 
 /**
- * A dialect delegate for the Axion database.
+ * A dialect delegate for the Axion database.  
+ * TODO: This dialect is not yet complete.  Need to provide implementations wherever "Not yet implemented"
+ * appears. 
  */
 
 public class AxionDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
-	private class AxionDialectHelper extends Dialect {
-		public AxionDialectHelper() {
+	private class AxionDialectHelper extends Dialect
+	{
+		public AxionDialectHelper()
+		{
 			// Do not use Axion's bigint data type.
 			// I get the following exception in my test:
 			// org.axiondb.AxionException:
@@ -82,7 +86,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 			registerColumnType(Types.VARCHAR, "varchar($l)");
 		}
 	}
-	
+
 	/** extended hibernate dialect used in this wrapper */
 	private AxionDialectHelper _dialect = new AxionDialectHelper();
 
@@ -94,7 +98,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		return _dialect.getTypeName(code, length, precision, scale);
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
@@ -141,10 +145,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().startsWith("Axion"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -175,7 +176,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
@@ -195,7 +197,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String cascadeClause = DialectUtils.CASCADE_CLAUSE;
-		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false,
+			qualifier, prefs, this);
 	}
 
 	/**
@@ -208,11 +211,13 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// Axion doesn't allow column alterations of the nullable attribute.
 		// Fortunately, it doesn't require this to add a primary key.
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -234,7 +239,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -259,7 +265,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -314,8 +321,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -341,11 +348,13 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
+			prefs);
 	}
 
 	/**
@@ -358,7 +367,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -372,7 +382,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -403,19 +414,23 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		return DialectType.AXION;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
+	 *      DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
@@ -445,11 +460,11 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -462,8 +477,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -476,8 +490,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -502,8 +516,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -515,8 +529,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -528,20 +542,20 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
-	 *      java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String, java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -552,8 +566,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -564,8 +578,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -577,8 +591,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -590,8 +604,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -600,11 +614,11 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -615,8 +629,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -625,12 +639,12 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -638,7 +652,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -647,7 +661,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -656,7 +670,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -665,7 +679,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -674,7 +688,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -683,28 +697,33 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
+	public boolean supportsViewDefinition()
+	{
 		return false;
-	}
-		
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs) {
-		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -717,8 +736,8 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
-	
+
 }
