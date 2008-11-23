@@ -18,10 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.db;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class AliasGroupTest extends BaseSQuirreLJUnit4TestCase
+public class AliasGroupTest extends AbstractSerializableTest
 {
 
 	private AliasGroup classUnderTest = null;
@@ -38,12 +38,14 @@ public class AliasGroupTest extends BaseSQuirreLJUnit4TestCase
 	public void setUp() throws Exception
 	{
 		classUnderTest = new AliasGroup();
+		super.serializableToTest = new AliasGroup();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
 		classUnderTest = null;
+		super.serializableToTest = null;
 	}
 
 	@Test
