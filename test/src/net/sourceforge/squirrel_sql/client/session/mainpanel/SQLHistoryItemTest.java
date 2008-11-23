@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -28,7 +29,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class SQLHistoryItemTest
+public class SQLHistoryItemTest extends AbstractSerializableTest
 {
 
 	SQLHistoryItem classUnderTest = null;
@@ -37,12 +38,14 @@ public class SQLHistoryItemTest
 	public void setUp() throws Exception
 	{
 		classUnderTest = new SQLHistoryItem();
+		super.serializableToTest = new SQLHistoryItem();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
 		classUnderTest = null;
+		super.serializableToTest = null;
 	}
 
 	@Test
