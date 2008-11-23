@@ -20,8 +20,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */ 
 
 import static org.junit.Assert.assertEquals;
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
@@ -29,10 +31,20 @@ import com.gargoylesoftware.base.testing.EqualsTester;
 /**
  *   Test class for SQLAliasSchemaDetailProperties
  */
-public class SQLAliasSchemaDetailPropertiesTest extends BaseSQuirreLJUnit4TestCase {
+public class SQLAliasSchemaDetailPropertiesTest extends AbstractSerializableTest {
 
 	SQLAliasSchemaDetailProperties classUnderTest = new SQLAliasSchemaDetailProperties();
 
+	@Before
+	public void setUp() {
+		super.serializableToTest = new SQLAliasSchemaDetailProperties();
+	}
+	
+	@After
+	public void tearDown() {
+		super.serializableToTest = null;
+	}
+	
 	@Test
 	public void testGetSchemaName() throws Exception
 	{
