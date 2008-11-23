@@ -529,8 +529,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,

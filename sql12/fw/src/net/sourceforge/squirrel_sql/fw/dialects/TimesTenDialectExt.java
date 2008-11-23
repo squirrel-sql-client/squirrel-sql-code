@@ -566,8 +566,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
