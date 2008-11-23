@@ -18,13 +18,16 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
+import java.io.Serializable;
+
 import net.sourceforge.squirrel_sql.client.Version;
 
 /**
  * Software update settings.
  */
-public class UpdateSettings implements Cloneable, IUpdateSettings
+public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 {
+	private static final long serialVersionUID = -1305655179503568153L;
 
 	/** Name of software update server. */
 	private String updateServer = "www.squirrel-sql.net";

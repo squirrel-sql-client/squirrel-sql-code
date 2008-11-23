@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.io.Serializable;
 
 import javax.swing.JInternalFrame;
 
@@ -30,8 +31,10 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class WindowState implements IXMLAboutToBeWritten
+public class WindowState implements IXMLAboutToBeWritten, Serializable
 {
+	private static final long serialVersionUID = 2664203798124718385L;
+
 	/**
 	 * Window whose state is being stored. Only one of <TT>_window</TT>,
 	 * <TT>_frame</tt> and <TT>_internalFrame</TT> can be non-null.
