@@ -304,6 +304,39 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		mockHelper.verifyAll();
 	}
 
+	@Test
+	public void testGetAlterSequenceSQL()
+	{
+		setCommonExpectations();
+		mockHelper.replayAll();
+		try
+		{
+			String[] sql =
+				classUnderTest.getAlterSequenceSQL("sSequenceName", "1", "1", "2000", "1", "20", true,
+					mockQualifier, mockPrefs);
+			
+			/* TODO: McKoi (and possibly other databases allow you to create sequences, but not alter them. */
+			
+			if (classUnderTest.supportsSequence())
+			{
+				assertNotNull("supportsSequence == true, but sql returned was null", sql);
+				assertTrue(sql.length != 0);
+			}
+			else
+			{
+				fail("Expected an UnsupportedOperationException when trying to alter a sequence");
+			}
+		}
+		catch (UnsupportedOperationException e)
+		{
+			if (classUnderTest.supportsSequence())
+			{
+				failForUnsupported("supportsSequence", e);
+			}
+		}
+		mockHelper.verifyAll();
+	}
+	
 	// Helper methods
 
 	private void failForUnsupported(String supportsMethod, UnsupportedOperationException e)
