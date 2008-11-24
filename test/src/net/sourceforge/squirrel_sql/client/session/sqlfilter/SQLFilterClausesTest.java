@@ -18,11 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.client.session.sqlfilter;
 
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SQLFilterClausesTest
+public class SQLFilterClausesTest extends AbstractSerializableTest
 {
 
 	SQLFilterClauses classUnderTest = null;
@@ -31,12 +33,14 @@ public class SQLFilterClausesTest
 	public void setUp() throws Exception
 	{
 		classUnderTest = new SQLFilterClauses();
+		super.serializableToTest = new SQLFilterClauses();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
 		classUnderTest = null;
+		super.serializableToTest = null;
 	}
 
 	@Test
