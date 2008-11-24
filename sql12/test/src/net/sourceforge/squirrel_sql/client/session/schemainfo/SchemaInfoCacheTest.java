@@ -25,17 +25,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SchemaInfoCacheTest extends BaseSQuirreLJUnit4TestCase {
+public class SchemaInfoCacheTest extends AbstractSerializableTest {
 
    SchemaInfoCache schemaInfoCacheUnderTest = new SchemaInfoCache();
 
@@ -54,6 +54,7 @@ public class SchemaInfoCacheTest extends BaseSQuirreLJUnit4TestCase {
 
    @Before
    public void setUp() throws Exception {
+   	super.serializableToTest = new SchemaInfoCache();
       mockMetaData = TestUtil.getEasyMockH2SQLMetaData();
       for (int i = 0; i < tableInfos.length; i++) {
          String tableName = "table" + i;
@@ -65,6 +66,7 @@ public class SchemaInfoCacheTest extends BaseSQuirreLJUnit4TestCase {
 
    @After
    public void tearDown() throws Exception {
+   	super.serializableToTest = null;
       mockMetaData = null;
    }
 
