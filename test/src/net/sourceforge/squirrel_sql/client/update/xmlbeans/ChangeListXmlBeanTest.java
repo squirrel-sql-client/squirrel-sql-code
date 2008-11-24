@@ -1,7 +1,5 @@
-package net.sourceforge.squirrel_sql.fw.id;
-
 /*
- * Copyright (C) 2007 Rob Manning
+ * Copyright (C) 2008 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -18,49 +16,38 @@ package net.sourceforge.squirrel_sql.fw.id;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.client.update.xmlbeans;
+
+import static org.junit.Assert.assertNull;
 import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.gargoylesoftware.base.testing.EqualsTester;
-
-public class UidIdentifierTest extends AbstractSerializableTest
+public class ChangeListXmlBeanTest extends AbstractSerializableTest
 {
 
+	ChangeListXmlBean classUnderTest = null;
+	
 	@Before
 	public void setUp() throws Exception
 	{
-		super.serializableToTest = new UidIdentifier();
+		classUnderTest = new ChangeListXmlBean();
+		super.serializableToTest = new ChangeListXmlBean();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
+		classUnderTest = null;
 		super.serializableToTest = null;
 	}
 
 	@Test
-	public void testEquals()
+	public void testGetChanges() throws Exception
 	{
-		UidIdentifier uid1 = createIIdentifier();
-		uid1.setString("1");
-		UidIdentifier uid2 = createIIdentifier();
-		uid2.setString("1");
-		UidIdentifier uid3 = createIIdentifier();
-		uid3.setString("2");
-		UidIdentifier uid4 = new UidIdentifier()
-		{
-			private static final long serialVersionUID = 1L;
-		};
-		uid4.setString("1");
-		new EqualsTester(uid1, uid2, uid3, uid4);
-	}
-
-	protected UidIdentifier createIIdentifier()
-	{
-		return new UidIdentifier();
-	}
-
+		classUnderTest.setChanges(null);
+		assertNull(classUnderTest.getChanges());
+	}	
 }

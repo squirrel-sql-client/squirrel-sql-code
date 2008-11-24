@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.id;
  */
 import junit.framework.Assert;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,7 +28,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class IntegerIdentifierTest extends BaseSQuirreLJUnit4TestCase
+public class IntegerIdentifierTest extends AbstractSerializableTest
 {
 
 	private IntegerIdentifier classUnderTest = null;
@@ -38,12 +39,14 @@ public class IntegerIdentifierTest extends BaseSQuirreLJUnit4TestCase
 	public void setUp() throws Exception
 	{
 		classUnderTest = new IntegerIdentifier(value);
+		super.serializableToTest = new IntegerIdentifier(value); 
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
 		classUnderTest = null;
+		super.serializableToTest = null;
 	}
 
 	@Test

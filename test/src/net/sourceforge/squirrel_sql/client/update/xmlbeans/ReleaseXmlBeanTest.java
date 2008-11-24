@@ -26,8 +26,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
@@ -35,10 +37,24 @@ import com.gargoylesoftware.base.testing.EqualsTester;
 /**
  *   Test class for ReleaseXmlBean
  */
-public class ReleaseXmlBeanTest extends BaseSQuirreLJUnit4TestCase {
+public class ReleaseXmlBeanTest extends AbstractSerializableTest {
 
-	ReleaseXmlBean classUnderTest = new ReleaseXmlBean();
+	ReleaseXmlBean classUnderTest = null;
 
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new ReleaseXmlBean();
+		super.serializableToTest = new ReleaseXmlBean();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+		super.serializableToTest = null;
+	}
+	
 	@Test
 	public void testGetName() throws Exception
 	{

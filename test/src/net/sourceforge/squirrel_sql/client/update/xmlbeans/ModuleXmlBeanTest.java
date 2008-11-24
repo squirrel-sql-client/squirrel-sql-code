@@ -19,20 +19,36 @@ package net.sourceforge.squirrel_sql.client.update.xmlbeans;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  */ 
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *   Test class for ModuleXmlBean
  */
-public class ModuleXmlBeanTest extends BaseSQuirreLJUnit4TestCase {
+public class ModuleXmlBeanTest extends AbstractSerializableTest {
 
-	ModuleXmlBean classUnderTest = new ModuleXmlBean();
+	ModuleXmlBean classUnderTest = null;
 
+	@Before
+	public void setUp() throws Exception
+	{
+		classUnderTest = new ModuleXmlBean();
+		super.serializableToTest = new ModuleXmlBean();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+		super.serializableToTest = null;
+	}
+	
+	
 	@Test
 	public void testGetName() throws Exception
 	{
