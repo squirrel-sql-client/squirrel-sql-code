@@ -82,6 +82,9 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
 
    public boolean equals(Object obj)
    {
+   	if (obj == null) {
+   		return false;
+   	}
       if(obj instanceof String)
       {
          String other = (String) obj;
@@ -120,7 +123,7 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
          }
          return true;
       }
-      else if(obj instanceof CaseInsensitiveString)
+      else if(obj.getClass() == this.getClass())
       {
          CaseInsensitiveString other = (CaseInsensitiveString) obj;
 
