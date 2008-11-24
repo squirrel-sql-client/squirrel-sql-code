@@ -19,14 +19,17 @@
 package net.sourceforge.squirrel_sql.client.update.gui;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
+import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
+import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +38,7 @@ import utils.EasyMockHelper;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
+public class ArtifactStatusTest extends AbstractSerializableTest
 {
 
 	private ArtifactStatus classUnderTest = null;
@@ -106,6 +109,18 @@ public class ArtifactStatusTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockTranslationArtifactXmlBean.getSize()).andStubReturn(translationSize);
 		expect(mockTranslationArtifactXmlBean.getChecksum()).andStubReturn(translationChecksum);
 		expect(mockTranslationArtifactXmlBean.getType()).andStubReturn(translationType);
+		
+		// For the serialization test in superclass - cannot use mockHelper because the replay needs to be 
+		// done here.
+		ArtifactXmlBean mockArtifactXmlBean = EasyMock.createMock(ArtifactXmlBean.class);
+		expect(mockArtifactXmlBean.getName()).andStubReturn(coreArtifactName);
+		expect(mockArtifactXmlBean.isInstalled()).andStubReturn(coreIsInstalled);
+		expect(mockArtifactXmlBean.getSize()).andStubReturn(coreSize);
+		expect(mockArtifactXmlBean.getChecksum()).andStubReturn(coreChecksum);
+		expect(mockArtifactXmlBean.getType()).andStubReturn(coreType);
+		replay(mockArtifactXmlBean);
+		super.serializableToTest = new ArtifactStatus(mockArtifactXmlBean);
+		verify(mockArtifactXmlBean);
 	}
 
 	@After
