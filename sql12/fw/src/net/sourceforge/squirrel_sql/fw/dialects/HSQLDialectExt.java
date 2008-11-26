@@ -351,8 +351,8 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -361,8 +361,8 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -612,18 +612,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.lang.String,
-	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
-	 */
-	// @Override
-	// public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
-	// List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
-	// {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -741,8 +729,8 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -817,7 +805,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -863,7 +851,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -944,7 +932,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -953,7 +941,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -962,7 +950,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -971,7 +959,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -996,7 +984,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

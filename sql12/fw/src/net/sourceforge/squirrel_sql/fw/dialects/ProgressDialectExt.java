@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -468,7 +467,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -477,7 +476,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
