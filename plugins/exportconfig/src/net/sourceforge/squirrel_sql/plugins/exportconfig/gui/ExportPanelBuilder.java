@@ -59,9 +59,6 @@ public class ExportPanelBuilder
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ExportPanelBuilder.class);
 
-	/** The last directory saved to. */
-	private static File s_lastDir;
-
 	/**
 	 * Update the status of the GUI controls as the user makes changes.
 	 */
@@ -210,8 +207,6 @@ public class ExportPanelBuilder
 
 	private void initComponents(ExportConfigPreferences prefs)
 	{
-		final File here = new File(".");
-
 		final String export = s_stringMgr.getString("ExportPanel.export");
         
 		_exportPrefsChk = new JCheckBox(export);
@@ -440,5 +435,6 @@ public class ExportPanelBuilder
      * Exception to indicate user wanted to break out of the export early.
      */
     private class CancelledException extends Exception {
+		private static final long serialVersionUID = 1L;
     }
 }
