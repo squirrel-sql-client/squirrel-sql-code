@@ -366,10 +366,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param tableName
 	 *           the unqualified table
 	 * @param columnName
+	 *           the name of the column
 	 * @param addConstraintClause
-	 *           TODO
+	 *           whether or not to add a constraint clause
 	 * @param constraintClause
-	 *           TODO
+	 *           the constraint clause to add
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
@@ -407,11 +408,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param cascadeValue
 	 *           whether or not to drop any FKs that may reference the specified table.
 	 * @param supportsMatViews
-	 *           TODO
+	 *           whether or not the dialect supports materialized views
 	 * @param cascadeClause
-	 *           TODO
+	 *           what cascade clause to append.
 	 * @param isMatView
-	 *           TODO
+	 *           true if the tableInfo represents a materialized view.
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
@@ -572,12 +573,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * (col,...) CONSTRAINT pkName;
 	 * 
 	 * @param ti
-	 *           TODO
+	 *           the ITableInfo representing the table to add a primary key to
 	 * @param colInfos
+	 *           the TableColumnInfos representing all of the columns that represent a primary key
 	 * @param appendConstraintName
 	 *           whether or not the pkName (constraint name) should be placed at the end of the statement.
-	 * @param qualifier
-	 *           TODO
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
@@ -827,8 +827,9 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param valuesMap
 	 * @param columns
 	 * @param qualifier
+	 *           qualifier of the table
 	 * @param prefs
-	 * @param dialect
+	 *           preferences for generated sql scripts
 	 * @return
 	 */
 	public static String getAddUniqueConstraintSQL(StringTemplate st, HashMap<String, String> valuesMap,
@@ -848,11 +849,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * 
 	 * @param colInfos
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @return
 	 */
 	private static String getColumnList(TableColumnInfo[] colInfos, DatabaseObjectQualifier qualifier,
@@ -882,11 +883,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @return the SQL to make the change
 	 */
 	public static String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, String alterClause,
@@ -921,11 +922,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param info
 	 *           the column to modify and it's default value.
 	 * @param specifyType
-	 *           TODO
+	 *           whether or not to specify the column type
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @return SQL to make the change
 	 */
 	public static String getColumnDefaultAlterSQL(HibernateDialect dialect, TableColumnInfo info,
@@ -970,9 +971,9 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
@@ -1018,11 +1019,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @return the SQL to make the change
 	 */
 	public static String getColumnRenameSQL(TableColumnInfo from, TableColumnInfo to,
@@ -1043,6 +1044,13 @@ public class DialectUtils implements StringTemplateConstants
 		return result.toString();
 	}
 
+	/**
+	 * @param dialect
+	 *           the HibernateDialect representing the target database.
+	 * @param featureId
+	 * @return
+	 * @throws UnsupportedOperationException
+	 */
 	public static String getUnsupportedMessage(HibernateDialect dialect, int featureId)
 		throws UnsupportedOperationException
 	{
@@ -1153,7 +1161,7 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param prefs
 	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @return
 	 */
 	public static String getDropPrimaryKeySQL(String pkName, String tableName, boolean useConstraintName,
@@ -1238,21 +1246,6 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * @param st
-	 * @param tablename
-	 * @param indexName
-	 * @param qualifier
-	 * @param prefs
-	 * @param dialect
-	 * @return
-	 */
-	// public static String getDropIndexSQL(StringTemplate st, HashMap<String, String> valuesMap,
-	// DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
-	// {
-	// bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-	// return st.toString();
-	// }
-	/**
 	 * Gets the SQL command to drop a sequence.
 	 * 
 	 * @param sequenceName
@@ -1332,17 +1325,19 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * CREATE UNIQUE INDEX indexName ON tableName (columns);
+	 * Returns SQL that can be executed to create the specified index. Like: CREATE UNIQUE INDEX indexName ON
+	 * tableName (columns);
 	 * 
 	 * @param indexName
+	 *           the name of the index
 	 * @param columns
+	 *           the columns that are indexed
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
-	 * @param tableName
+	 *           the HibernateDialect to generate the SQL for.
 	 * @return
 	 */
 	public static String getAddIndexSQL(String indexName, boolean unique, TableColumnInfo[] columns,
@@ -2003,7 +1998,7 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Simulates alter statement for sequence for those dialects that have no "ALTER SEQUENCE ..." support.  
+	 * Simulates alter statement for sequence for those dialects that have no "ALTER SEQUENCE ..." support.
 	 * This will return a drop followed by a create.
 	 * 
 	 * @param sequenceName
