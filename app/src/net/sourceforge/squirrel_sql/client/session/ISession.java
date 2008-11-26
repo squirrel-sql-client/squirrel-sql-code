@@ -317,14 +317,13 @@ public interface ISession extends IHasIdentifier
     * 
     * @param formatter
     *            the ExceptionFormatter
-    * @param session TODO
     */
    void setExceptionFormatter(ExceptionFormatter formatter);
    
    /**
     * Returns the exception formatter to use when handling messages.
     * 
-    * @return
+    * @return the ExceptionFormatter
     */
    ExceptionFormatter getExceptionFormatter();
 
