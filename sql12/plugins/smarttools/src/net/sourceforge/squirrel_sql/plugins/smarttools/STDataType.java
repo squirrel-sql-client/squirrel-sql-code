@@ -19,12 +19,12 @@
 package net.sourceforge.squirrel_sql.plugins.smarttools;
 
 public class STDataType {
-	public static int USE_WHOLE_GROUP = -1;
-	public static int GROUP_NULL = 0;
-	public static int GROUP_INT = 1;
-	public static int GROUP_NUMERIC = 2;
-	public static int GROUP_CHAR = 3;
-	public static int GROUP_DATE = 4;
+	public static final int USE_WHOLE_GROUP = -1;
+	public static final int GROUP_NULL = 0;
+	public static final int GROUP_INT = 1;
+	public static final int GROUP_NUMERIC = 2;
+	public static final int GROUP_CHAR = 3;
+	public static final int GROUP_DATE = 4;
 	
 	private int jdbcType;
 	private String jdbcTypeName;
