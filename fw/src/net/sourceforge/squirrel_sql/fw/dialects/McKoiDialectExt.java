@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -472,7 +471,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		return null;
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -480,8 +479,8 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	/**
@@ -749,7 +748,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
+		
 		return new String[] { "foo" };
 	}
 
@@ -791,13 +790,13 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
@@ -827,7 +826,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
@@ -841,61 +840,61 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
@@ -930,7 +929,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
+		
 		return true;
 	}
 
