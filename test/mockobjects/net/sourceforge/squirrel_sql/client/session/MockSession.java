@@ -143,7 +143,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#getExceptionFormatter()
      */
     public ExceptionFormatter getExceptionFormatter() {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.getExceptionFormatter: stub not yet implemented");
         return null;
     }
@@ -152,7 +152,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#setExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
      */
     public void setExceptionFormatter(ExceptionFormatter formatter) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.setExceptionFormatter: stub not yet implemented");
     }
 
@@ -207,29 +207,29 @@ public class MockSession implements ISession {
     }
 
     public void setSessionInternalFrame(SessionInternalFrame sif) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.setSessionInternalFrame: stub not yet implemented");
     }
 
     public void reconnect() {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.reconnect: stub not yet implemented");
     }
 
     public Object getPluginObject(IPlugin plugin, String key) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.getPluginObject: stub not yet implemented");
         return null;
     }
 
     public Object putPluginObject(IPlugin plugin, String key, Object obj) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.putPluginObject: stub not yet implemented");
         return null;
     }
 
     public void removePluginObject(IPlugin plugin, String key) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.removePluginObject: stub not yet implemented");
     }
 
@@ -246,7 +246,7 @@ public class MockSession implements ISession {
     }
 
     public SessionInternalFrame getSessionInternalFrame() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.getSessionInternalFrame: stub not yet implemented");    	
         return null;
     }
@@ -259,28 +259,28 @@ public class MockSession implements ISession {
     }
 
     public void selectMainTab(int tabIndex) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.selectMainTab: stub not yet implemented");
     }
 
     public int addMainTab(IMainPanelTab tab) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.addMainTab: stub not yet implemented");
         return 0;
     }
 
     public void addToStatusBar(JComponent comp) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.addToStatusBar: stub not yet implemented");
     }
 
     public void removeFromStatusBar(JComponent comp) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.removeFromStatusBar: stub not yet implemented");
     }
 
     public String getTitle() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.getTitle: stub not yet implemented");
         return null;
     }
@@ -296,31 +296,31 @@ public class MockSession implements ISession {
     }
 
     public void addToToolbar(Action action) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.addToToolbar: stub not yet implemented");
     }
 
     public void addSeparatorToToolbar() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.addSeparatorToToolbar: stub not yet implemented");
     }
 
     public IParserEventsProcessor getParserEventsProcessor(
             							    IIdentifier sqlEntryPanelIdentifier) 
     {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.getParserEventsProcessor: stub not yet implemented");
         return null;
     }
 
     public void setActiveSessionWindow(
             BaseSessionInternalFrame activeActiveSessionWindow) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.setActiveSessionWindow: stub not yet implemented");
     }
 
     public BaseSessionInternalFrame getActiveSessionWindow() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.getActiveSessionWindow: stub not yet implemented");
         return null;
     }
@@ -330,24 +330,24 @@ public class MockSession implements ISession {
     }
 
     public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.getObjectTreeAPIOfActiveSessionWindow: stub not yet implemented");
         return null;
     }
 
     public boolean isfinishedLoading() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.isfinishedLoading: stub not yet implemented");
         return true;
     }
 
     public void setPluginsfinishedLoading(boolean _finishedLoading) {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.setPluginsfinishedLoading: stub not yet implemented");
     }
 
     public boolean confirmClose() {
-        // TODO Auto-generated method stub
+        
     	System.err.println("MockSession.confirmClose: stub not yet implemented");
         return false;
     }
@@ -393,7 +393,7 @@ public class MockSession implements ISession {
     }
 
     public void setQueryTokenizer(IQueryTokenizer tokenizer) {
-        // TODO Auto-generated method stub
+        
     }
 
     /* (non-Javadoc)
@@ -407,7 +407,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.String)
      */
     public void showErrorMessage(String msg) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.showErrorMessage: stub not yet implemented");
     }
 
@@ -415,7 +415,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.Throwable)
      */
     public void showErrorMessage(Throwable th) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.showErrorMessage: stub not yet implemented");
     }
 
@@ -423,7 +423,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.String)
      */
     public void showMessage(String msg) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.showMessage: stub not yet implemented");
     }
 
@@ -431,7 +431,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.Throwable)
      */
     public void showMessage(Throwable th) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.showMessage: stub not yet implemented");
     }
 
@@ -439,12 +439,12 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showWarningMessage(java.lang.String)
      */
     public void showWarningMessage(String msg) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.showWarningMessage: stub not yet implemented");
     }    
     
     public String formatException(Throwable th) {
-        // TODO Auto-generated method stub
+        
         System.err.println("MockSession.format: stub not yet implemented");
         return null;        
     }
