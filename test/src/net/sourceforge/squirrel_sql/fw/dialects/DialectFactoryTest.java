@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
@@ -42,16 +43,21 @@ import utils.EasyMockHelper;
 
 public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 {
-	
+
 	EasyMockHelper mockHelper = new EasyMockHelper();
-	
+
 	IDialogUtils mockDialogUtils = mockHelper.createMock(IDialogUtils.class);
+
 	ISQLDatabaseMetaData mockSqlDatabaseMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
-	
+
 	@Before
 	public void setUp() throws Exception
 	{
 		DialectFactory.setDialogUtils(mockDialogUtils);
+
+		// Not a real database, but no driver should match this.
+		expect(mockSqlDatabaseMetaData.getDatabaseProductName()).andStubReturn("FooBar Database");
+		expect(mockSqlDatabaseMetaData.getDatabaseProductVersion()).andStubReturn("FooBar-v1.0.0");
 	}
 
 	@After
@@ -59,202 +65,279 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	{
 	}
 
-	@Test @Ignore 
+	@Test
+	@Ignore
 	public void testSetDialogUtils()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsAxion()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isAxion(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsDaffodil()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isDaffodil(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsDB2()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isDB2(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsDerby()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isDerby(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsFirebird()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isFirebird(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsFrontBase()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isFrontBase(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsHADB()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isHADB(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsH2()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isH2(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsHSQL()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isHSQL(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsInformix()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isInformix(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsIngres()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isIngres(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsInterbase()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isInterbase(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsMaxDB()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isMaxDB(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsMcKoi()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isMcKoi(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsMSSQLServer()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isMSSQLServer(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsMySQL()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isMySQL(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsMySQL5()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isMySQL5(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsOracle()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isOracle(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsPointbase()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isPointbase(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsPostgreSQL()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isPostgreSQL(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsProgress()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isProgress(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsSyBase()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isSyBase(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsTimesTen()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isTimesTen(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
 	public void testIsIntersystemsCacheDialectExt()
 	{
-		fail("Not yet implemented"); // TODO
+		mockHelper.replayAll();
+		assertFalse(DialectFactory.isIntersystemsCacheDialectExt(mockSqlDatabaseMetaData));
+		mockHelper.verifyAll();
+
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetDialectType()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetDialectString()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetDialectIgnoreCase()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetDialectISQLDatabaseMetaData()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test (expected = UserCancelledOperationException.class)
+	@Test(expected = UserCancelledOperationException.class)
 	public void testGetDialect_ShowDialog_UserCancelled() throws UserCancelledOperationException
 	{
-		
+
 		DialectFactory.isPromptForDialect = true;
-		
-		expect(mockDialogUtils.showInputDialog((Component)anyObject(), isA(String.class), isA(String.class), 
-			anyInt(), (Icon)anyObject(), (Object[]) anyObject(), anyObject()));
+
+		expect(mockDialogUtils.showInputDialog((Component) anyObject(), isA(String.class), isA(String.class),
+			anyInt(), (Icon) anyObject(), (Object[]) anyObject(), anyObject()));
 		expectLastCall().andReturn("");
-		
+
 		mockHelper.replayAll();
 		DialectFactory.getDialect(DialectFactory.DEST_TYPE, null, mockSqlDatabaseMetaData);
 		mockHelper.verifyAll();
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetDbNames()
 	{
 		fail("Not yet implemented"); // TODO
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testGetSupportedDialects()
 	{
 		fail("Not yet implemented"); // TODO
