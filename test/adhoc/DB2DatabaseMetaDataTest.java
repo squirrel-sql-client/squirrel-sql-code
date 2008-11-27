@@ -83,7 +83,7 @@ public class DB2DatabaseMetaDataTest {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        // TODO Auto-generated method stub
+
         DB2DatabaseMetaDataTest test = new DB2DatabaseMetaDataTest();
         
         test.doTest();
