@@ -28,43 +28,49 @@ import java.beans.SimpleBeanInfo;
  */
 public final class FontInfoBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_descriptors;
 
-	public FontInfoBeanInfo() throws IntrospectionException
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override
+	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		super();
-		if (s_descriptors == null)
+		try
 		{
-			s_descriptors = new PropertyDescriptor[4];
-			s_descriptors[0] =
+			PropertyDescriptor[] result = new PropertyDescriptor[4];
+			result[0] =
 				new PropertyDescriptor(
 					FontInfo.IPropertyNames.FAMILY,
 					FontInfo.class,
 					"getFamily",
 					"setFamily");
-			s_descriptors[1] =
+			result[1] =
 				new PropertyDescriptor(
 					FontInfo.IPropertyNames.IS_BOLD,
 					FontInfo.class,
 					"isBold",
 					"setIsBold");
-			s_descriptors[2] =
+			result[2] =
 				new PropertyDescriptor(
 					FontInfo.IPropertyNames.IS_ITALIC,
 					FontInfo.class,
 					"isItalic",
 					"setIsItalic");
-			s_descriptors[3] =
+			result[3] =
 				new PropertyDescriptor(
 					FontInfo.IPropertyNames.SIZE,
 					FontInfo.class,
 					"getSize",
 					"setSize");
+			
+			return result;
 		}
-	}
-
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		return s_descriptors;
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }

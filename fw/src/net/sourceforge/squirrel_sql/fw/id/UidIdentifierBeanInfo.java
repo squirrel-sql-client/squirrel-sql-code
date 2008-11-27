@@ -27,25 +27,31 @@ import java.beans.SimpleBeanInfo;
  */
 public class UidIdentifierBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_dscrs;
 
-	public UidIdentifierBeanInfo() throws IntrospectionException
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override		
+	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		super();
-		if (s_dscrs == null)
+		try
 		{
-			s_dscrs = new PropertyDescriptor[1];
-			s_dscrs[0] =
+			PropertyDescriptor[] result = new PropertyDescriptor[1];
+			result[0] =
 				new PropertyDescriptor(
 					UidIdentifier.IPropertyNames.STRING,
 					UidIdentifier.class,
 					"toString",
 					"setString");
+			
+			return result;
 		}
-	}
-
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		return s_dscrs;
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }
