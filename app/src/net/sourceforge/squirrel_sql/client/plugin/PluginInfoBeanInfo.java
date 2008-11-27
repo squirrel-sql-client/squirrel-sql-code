@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.plugin;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,49 +21,51 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>PluginInfo</CODE>.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public final class PluginInfoBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_descr;
 
 	private interface IPropNames extends PluginInfo.IPropertyNames
 	{
-		// Empty body, purely to shorten the interface name for convienience. 
+		// Empty body, purely to shorten the interface name for convienience.
 	}
 
-	public PluginInfoBeanInfo() throws IntrospectionException
-	{
-		super();
-		if (s_descr == null)
-		{
-			final Class<PluginInfo> CLAZZ = PluginInfo.class;
-			s_descr = new PropertyDescriptor[8];
-
-			s_descr[0] = new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, CLAZZ,
-												"getPluginClassName", null);
-			s_descr[1] = new PropertyDescriptor(IPropNames.IS_LOADED, CLAZZ,
-												"isLoaded", null);
-			s_descr[2] = new PropertyDescriptor(IPropNames.INTERNAL_NAME, CLAZZ,
-												"getInternalName", null);
-			s_descr[3] = new PropertyDescriptor(IPropNames.DESCRIPTIVE_NAME, CLAZZ,
-												"getDescriptiveName", null);
-			s_descr[4] = new PropertyDescriptor(IPropNames.AUTHOR, CLAZZ,
-												"getAuthor", null);
-			s_descr[5] = new PropertyDescriptor(IPropNames.CONTRIBUTORS, CLAZZ,
-												"getContributors", null);
-			s_descr[6] = new PropertyDescriptor(IPropNames.WEB_SITE, CLAZZ,
-												"getWebSite", null);
-			s_descr[7] = new PropertyDescriptor(IPropNames.VERSION, CLAZZ,
-												"getVersion", null);
-		}
-	}
-
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override	
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descr;
+		try
+		{
+			PropertyDescriptor[] s_descr = new PropertyDescriptor[8];
+
+			s_descr[0] =
+				new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, PluginInfo.class, "getPluginClassName", null);
+			s_descr[1] = new PropertyDescriptor(IPropNames.IS_LOADED, PluginInfo.class, "isLoaded", null);
+			s_descr[2] =
+				new PropertyDescriptor(IPropNames.INTERNAL_NAME, PluginInfo.class, "getInternalName", null);
+			s_descr[3] =
+				new PropertyDescriptor(IPropNames.DESCRIPTIVE_NAME, PluginInfo.class, "getDescriptiveName", null);
+			s_descr[4] = new PropertyDescriptor(IPropNames.AUTHOR, PluginInfo.class, "getAuthor", null);
+			s_descr[5] =
+				new PropertyDescriptor(IPropNames.CONTRIBUTORS, PluginInfo.class, "getContributors", null);
+			s_descr[6] = new PropertyDescriptor(IPropNames.WEB_SITE, PluginInfo.class, "getWebSite", null);
+			s_descr[7] = new PropertyDescriptor(IPropNames.VERSION, PluginInfo.class, "getVersion", null);
+
+			return s_descr;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }
