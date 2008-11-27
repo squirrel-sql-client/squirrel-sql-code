@@ -1,7 +1,4 @@
 package net.sourceforge.squirrel_sql.client;
-/*
- * TODO: i18n
- */
 
 /*
  * Copyright (C) 2001-2006 Colin Bell
@@ -34,7 +31,8 @@ import org.apache.commons.cli.ParseException;
  *
  * <B>Note:</B> <EM>This class <B>cannot</B> use the logging package as this
  * class is used to initialize the logging package. Nor can it use any classes
- * that themselves use the logging package.</EM>
+ * that themselves use the logging package.</EM> Since StringManager uses the 
+ * logging facility, neither can it be internationalized.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
