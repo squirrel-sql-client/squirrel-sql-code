@@ -45,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.I18NBaseObject;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
 
 import org.hibernate.MappingException;
@@ -53,7 +52,7 @@ import org.hibernate.MappingException;
 /**
  * A utility class for interacting with the database.
  */
-public class DBUtil extends I18NBaseObject
+public class DBUtil
 {
 
 	/** Logger for this class. */

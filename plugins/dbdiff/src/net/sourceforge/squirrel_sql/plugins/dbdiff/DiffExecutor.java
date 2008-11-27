@@ -47,7 +47,7 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.util.DBUtil;
  * This is the class that performs the table copy using database connections 
  * to two different database schemas.  
  */
-public class DiffExecutor extends I18NBaseObject {
+public class DiffExecutor {
 
     /** Logger for this class. */
     private final static ILogger s_log = 

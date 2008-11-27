@@ -21,15 +21,13 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff.commands;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.DiffExecutor;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.I18NBaseObject;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
 
 /** 
  * This class represents the command that gets executed when the user clicks 
  * compare in a schema after selecting one or more tables.
  */
-public class CompareCommand  extends I18NBaseObject 
-                                  implements ICommand
+public class CompareCommand implements ICommand
 {
     
     /** the class that does the work of copying */
