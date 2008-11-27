@@ -57,7 +57,7 @@ public class MySQLDecimalTest {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        // TODO Auto-generated method stub
+
         PointbaseBLOBTest test = new PointbaseBLOBTest();
         
         test.doTest();

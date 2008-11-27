@@ -67,7 +67,7 @@ public class MySQLDatabaseMetaDataTest {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        // TODO Auto-generated method stub
+
         MySQLDatabaseMetaDataTest test = new MySQLDatabaseMetaDataTest();
         
         test.doTest();
