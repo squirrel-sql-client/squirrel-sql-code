@@ -25,99 +25,97 @@ import java.beans.SimpleBeanInfo;
 
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SessionProperties</CODE>.
- *
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 {
-   private static PropertyDescriptor[] s_dscrs;
-   private static Class<SessionProperties> CLAZZ = SessionProperties.class;
 
-   private interface IPropNames extends SessionProperties.IPropertyNames
-   {
-      // Empty body.
-   }
+	private interface IPropNames extends SessionProperties.IPropertyNames
+	{
+		// Empty body.
+	}
 
-   public SessionPropertiesBeanInfo() throws IntrospectionException
-   {
-      super();
-      if (s_dscrs == null)
-      {
-         s_dscrs = new PropertyDescriptor[]
-         {
-            new PropertyDescriptor(IPropNames.AUTO_COMMIT,
-               CLAZZ, "getAutoCommit", "setAutoCommit"),
-            new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION,
-               CLAZZ, "getCommitOnClosingConnection", "setCommitOnClosingConnection"),
-            new PropertyDescriptor(IPropNames.CONTENTS_LIMIT_ROWS,
-               CLAZZ, "getContentsLimitRows", "setContentsLimitRows"),
-            new PropertyDescriptor(IPropNames.CONTENTS_NBR_ROWS_TO_SHOW,
-               CLAZZ, "getContentsNbrRowsToShow", "setContentsNbrRowsToShow"),
-            new PropertyDescriptor(IPropNames.FONT_INFO,
-               CLAZZ, "getFontInfo", "setFontInfo"),
-            new PropertyDescriptor(IPropNames.META_DATA_OUTPUT_CLASS_NAME,
-               CLAZZ, "getMetaDataOutputClassName", "setMetaDataOutputClassName"),
-            new PropertyDescriptor(IPropNames.SHOW_ROW_COUNT,
-               CLAZZ, "getShowRowCount", "setShowRowCount"),
-            new PropertyDescriptor(IPropNames.SHOW_TOOL_BAR,
-               CLAZZ, "getShowToolBar", "setShowToolBar"),
-            new PropertyDescriptor(IPropNames.SQL_LIMIT_ROWS,
-               CLAZZ, "getSQLLimitRows", "setSQLLimitRows"),
-            new PropertyDescriptor(IPropNames.SQL_NBR_ROWS_TO_SHOW,
-               CLAZZ, "getSQLNbrRowsToShow", "setSQLNbrRowsToShow"),
-            new PropertyDescriptor(IPropNames.SQL_STATEMENT_SEPARATOR_STRING,
-               CLAZZ, "getSQLStatementSeparator", "setSQLStatementSeparator"),
-            new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME,
-               CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName"),
-            new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
-               CLAZZ, "getStartOfLineComment", "setStartOfLineComment"),
-            new PropertyDescriptor(IPropNames.REMOVE_MULTI_LINE_COMMENT,
-               CLAZZ, "getRemoveMultiLineComment", "setRemoveMultiLineComment"),
-            new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
-               CLAZZ, "getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize"),
-            new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,
-               CLAZZ, "getSQLEntryHistorySize", "setSQLEntryHistorySize"),
-            new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY,
-               CLAZZ, "getSQLShareHistory", "setSQLShareHistory"),
-            new PropertyDescriptor(IPropNames.MAIN_TAB_PLACEMENT,
-               CLAZZ, "getMainTabPlacement", "setMainTabPlacement"),
-            new PropertyDescriptor(IPropNames.OBJECT_TAB_PLACEMENT,
-               CLAZZ, "getObjectTabPlacement", "setObjectTabPlacement"),
-            new PropertyDescriptor(IPropNames.SQL_EXECUTION_TAB_PLACEMENT,
-               CLAZZ, "getSQLExecutionTabPlacement", "setSQLExecutionTabPlacement"),
-            new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT,
-               CLAZZ, "getSQLResultsTabPlacement", "setSQLResultsTabPlacement"),
-            new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
-               CLAZZ, "getTableContentsOutputClassName", "setTableContentsOutputClassName"),
-            new PropertyDescriptor(IPropNames.ABORT_ON_ERROR,
-               CLAZZ, "getAbortOnError", "setAbortOnError"),
-            new PropertyDescriptor(IPropNames.SQL_RESULT_TAB_LIMIT,
-               CLAZZ, "getSqlResultTabLimit", "setSqlResultTabLimit"),
-            new PropertyDescriptor(IPropNames.LIMIT_SQL_RESULT_TABS,
-               CLAZZ, "getLimitSqlResultTabs", "setLimitSqlResultTabs"),
-            new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
-               CLAZZ, "getLoadSchemasCatalogs", "setLoadSchemasCatalogs"),
-            new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
-               CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData"),
+	public PropertyDescriptor[] getPropertyDescriptors()
+	{
+		try
+		{
+			PropertyDescriptor[] result =
+				new PropertyDescriptor[] {
+						new PropertyDescriptor(IPropNames.AUTO_COMMIT, SessionProperties.class, "getAutoCommit",
+							"setAutoCommit"),
+						new PropertyDescriptor(IPropNames.COMMIT_ON_CLOSING_CONNECTION, SessionProperties.class,
+							"getCommitOnClosingConnection", "setCommitOnClosingConnection"),
+						new PropertyDescriptor(IPropNames.CONTENTS_LIMIT_ROWS, SessionProperties.class,
+							"getContentsLimitRows", "setContentsLimitRows"),
+						new PropertyDescriptor(IPropNames.CONTENTS_NBR_ROWS_TO_SHOW, SessionProperties.class,
+							"getContentsNbrRowsToShow", "setContentsNbrRowsToShow"),
+						new PropertyDescriptor(IPropNames.FONT_INFO, SessionProperties.class, "getFontInfo",
+							"setFontInfo"),
+						new PropertyDescriptor(IPropNames.META_DATA_OUTPUT_CLASS_NAME, SessionProperties.class,
+							"getMetaDataOutputClassName", "setMetaDataOutputClassName"),
+						new PropertyDescriptor(IPropNames.SHOW_ROW_COUNT, SessionProperties.class,
+							"getShowRowCount", "setShowRowCount"),
+						new PropertyDescriptor(IPropNames.SHOW_TOOL_BAR, SessionProperties.class, "getShowToolBar",
+							"setShowToolBar"),
+						new PropertyDescriptor(IPropNames.SQL_LIMIT_ROWS, SessionProperties.class,
+							"getSQLLimitRows", "setSQLLimitRows"),
+						new PropertyDescriptor(IPropNames.SQL_NBR_ROWS_TO_SHOW, SessionProperties.class,
+							"getSQLNbrRowsToShow", "setSQLNbrRowsToShow"),
+						new PropertyDescriptor(IPropNames.SQL_STATEMENT_SEPARATOR_STRING, SessionProperties.class,
+							"getSQLStatementSeparator", "setSQLStatementSeparator"),
+						new PropertyDescriptor(IPropNames.SQL_RESULTS_OUTPUT_CLASS_NAME, SessionProperties.class,
+							"getSQLResultsOutputClassName", "setSQLResultsOutputClassName"),
+						new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT, SessionProperties.class,
+							"getStartOfLineComment", "setStartOfLineComment"),
+						new PropertyDescriptor(IPropNames.REMOVE_MULTI_LINE_COMMENT, SessionProperties.class,
+							"getRemoveMultiLineComment", "setRemoveMultiLineComment"),
+						new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE, SessionProperties.class,
+							"getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize"),
+						new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE, SessionProperties.class,
+							"getSQLEntryHistorySize", "setSQLEntryHistorySize"),
+						new PropertyDescriptor(IPropNames.SQL_SHARE_HISTORY, SessionProperties.class,
+							"getSQLShareHistory", "setSQLShareHistory"),
+						new PropertyDescriptor(IPropNames.MAIN_TAB_PLACEMENT, SessionProperties.class,
+							"getMainTabPlacement", "setMainTabPlacement"),
+						new PropertyDescriptor(IPropNames.OBJECT_TAB_PLACEMENT, SessionProperties.class,
+							"getObjectTabPlacement", "setObjectTabPlacement"),
+						new PropertyDescriptor(IPropNames.SQL_EXECUTION_TAB_PLACEMENT, SessionProperties.class,
+							"getSQLExecutionTabPlacement", "setSQLExecutionTabPlacement"),
+						new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT, SessionProperties.class,
+							"getSQLResultsTabPlacement", "setSQLResultsTabPlacement"),
+						new PropertyDescriptor(IPropNames.TABLE_CONTENTS_OUTPUT_CLASS_NAME,
+							SessionProperties.class, "getTableContentsOutputClassName",
+							"setTableContentsOutputClassName"),
+						new PropertyDescriptor(IPropNames.ABORT_ON_ERROR, SessionProperties.class,
+							"getAbortOnError", "setAbortOnError"),
+						new PropertyDescriptor(IPropNames.SQL_RESULT_TAB_LIMIT, SessionProperties.class,
+							"getSqlResultTabLimit", "setSqlResultTabLimit"),
+						new PropertyDescriptor(IPropNames.LIMIT_SQL_RESULT_TABS, SessionProperties.class,
+							"getLimitSQLResultTabs", "setLimitSQLResultTabs"),
+						new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS, SessionProperties.class,
+							"getLoadSchemasCatalogs", "setLoadSchemasCatalogs"),
+						new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA, SessionProperties.class,
+							"getShowResultsMetaData", "setShowResultsMetaData"),
 
-            new PropertyDescriptor(IPropNames.CATALOG_FILTER_INCLUDE,
-               CLAZZ, "getCatalogFilterInclude", "setCatalogFilterInclude"),
-            new PropertyDescriptor(IPropNames.SCHEMA_FILTER_INCLUDE,
-               CLAZZ, "getSchemaFilterInclude", "setSchemaFilterInclude"),
-            new PropertyDescriptor(IPropNames.OBJECT_FILTER_INCLUDE,
-                CLAZZ, "getObjectFilterInclude", "setObjectFilterInclude"),
-            new PropertyDescriptor(IPropNames.CATALOG_FILTER_EXCLUDE,
-               CLAZZ, "getCatalogFilterExclude", "setCatalogFilterExclude"),
-            new PropertyDescriptor(IPropNames.SCHEMA_FILTER_EXCLUDE,
-               CLAZZ, "getSchemaFilterExclude", "setSchemaFilterExclude"),
-            new PropertyDescriptor(IPropNames.OBJECT_FILTER_EXCLUDE,
-                CLAZZ, "getObjectFilterExclude", "setObjectFilterExclude")
-         };
-      }
-   }
+						new PropertyDescriptor(IPropNames.CATALOG_FILTER_INCLUDE, SessionProperties.class,
+							"getCatalogFilterInclude", "setCatalogFilterInclude"),
+						new PropertyDescriptor(IPropNames.SCHEMA_FILTER_INCLUDE, SessionProperties.class,
+							"getSchemaFilterInclude", "setSchemaFilterInclude"),
+						new PropertyDescriptor(IPropNames.OBJECT_FILTER_INCLUDE, SessionProperties.class,
+							"getObjectFilterInclude", "setObjectFilterInclude"),
+						new PropertyDescriptor(IPropNames.CATALOG_FILTER_EXCLUDE, SessionProperties.class,
+							"getCatalogFilterExclude", "setCatalogFilterExclude"),
+						new PropertyDescriptor(IPropNames.SCHEMA_FILTER_EXCLUDE, SessionProperties.class,
+							"getSchemaFilterExclude", "setSchemaFilterExclude"),
+						new PropertyDescriptor(IPropNames.OBJECT_FILTER_EXCLUDE, SessionProperties.class,
+							"getObjectFilterExclude", "setObjectFilterExclude") };
 
-   public PropertyDescriptor[] getPropertyDescriptors()
-   {
-      return s_dscrs;
-   }
+			return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
+	}
 }
