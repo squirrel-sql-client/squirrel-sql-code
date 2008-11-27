@@ -27,14 +27,19 @@ import java.beans.SimpleBeanInfo;
  */
 public class WindowStateBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_dscrs;
 
-	public WindowStateBeanInfo() throws IntrospectionException
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override	
+	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		super();
-		if (s_dscrs == null)
+		try
 		{
-			s_dscrs = new PropertyDescriptor[3];
+			PropertyDescriptor[] s_dscrs = new PropertyDescriptor[3];
 			s_dscrs[0] = new PropertyDescriptor(WindowState.IPropertyNames.BOUNDS,
 												WindowState.class,
 												"getBounds", "setBounds");
@@ -44,11 +49,12 @@ public class WindowStateBeanInfo extends SimpleBeanInfo
 			s_dscrs[2] = new PropertyDescriptor(WindowState.IPropertyNames.FRAME_EXTENDED_STATE,
 					WindowState.class,
 					"getFrameExtendedState", "setFrameExtendedState");
+			
+			return s_dscrs;
 		}
-	}
-
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		return s_dscrs;
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }
