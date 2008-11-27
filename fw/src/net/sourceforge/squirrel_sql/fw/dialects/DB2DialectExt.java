@@ -93,12 +93,12 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
 			registerColumnType(Types.VARCHAR, "clob(1073741823)");
-			
-			// The registrations below are made in support for new types introduced in Java6 
-			
-			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version 
+
+			// The registrations below are made in support for new types introduced in Java6
+
+			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version
 			registerColumnType(-8, "int");
-			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version 
+			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version
 			registerColumnType(-9, 1073741823, "clob($l)");
 			registerColumnType(-9, "clob(1073741823)");
 
@@ -110,7 +110,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			registerColumnType(2009, "clob");
 			// Replace "2011" with Types.NCLOB when Java6 is the minimum supported version
 			registerColumnType(2011, "clob");
-			
+
 		}
 	}
 
@@ -165,7 +165,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
 		{
 			return 53;
-		} else
+		}
+		else
 		{
 			return 31;
 		}
@@ -181,7 +182,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			// double and float have no scale - that is DECIMAL_DIGITS is null.
 			// Assume that is because it's variable - "floating" point.
 			return 0;
-		} else
+		}
+		else
 		{
 			return getMaxPrecision(dataType);
 		}
@@ -225,10 +227,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().startsWith("DB2"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -262,9 +261,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		addColumn.append(" ADD ");
 		addColumn.append(shapedColumnName);
 		addColumn.append(" ");
-		addColumn.append(getTypeName(info.getDataType(),
-			info.getColumnSize(),
-			info.getColumnSize(),
+		addColumn.append(getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(),
 			info.getDecimalDigits()));
 		if (info.getDefaultValue() != null)
 		{
@@ -272,7 +269,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			if (JDBCTypeMapper.isNumberType(info.getDataType()))
 			{
 				addColumn.append(info.getDefaultValue());
-			} else
+			}
+			else
 			{
 				addColumn.append("'");
 				addColumn.append(info.getDefaultValue());
@@ -316,9 +314,12 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the column to create the SQL for.
 	 * @param comment
 	 *           the comment to add.
-	 * @param qualifier TODO
-	 * @param prefs TODO
-	 * @param dialect TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect
+	 *           the HibernateDialect for the target database
 	 * @return
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
@@ -352,7 +353,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// alter table <tablename> drop column <columnName>
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
@@ -372,12 +374,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			false,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -390,9 +388,11 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -493,7 +493,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		if (nullable)
 		{
 			result.append("NULL");
-		} else
+		}
+		else
 		{
 			result.append("NOT NULL");
 		}
@@ -552,20 +553,19 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 */
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
-	{ 
+	{
 
 		// "ALTER TABLE $tableName$ " +
 		// "ALTER $columnName$ SET DATA TYPE $dataType$";
-		
-		
+
 		String templateString = ST_ALTER_COLUMN_SET_DATA_TYPE_STYLE_ONE;
 		StringTemplate st = new StringTemplate(templateString);
-		
+
 		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, from.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, from.getColumnName());
 		valuesMap.put(ST_DATA_TYPE_KEY, DialectUtils.getTypeName(to, this));
 
-		ArrayList<String> result = new ArrayList<String>();		
+		ArrayList<String> result = new ArrayList<String>();
 		result.add(DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs));
 		return result;
 	}
@@ -594,7 +594,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
+			prefs);
 	}
 
 	/**
@@ -606,7 +607,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -620,7 +622,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -665,12 +668,13 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, String sequenceName,
@@ -687,15 +691,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		 */
 		final String tableName = column.getTableName();
 		final String columnName = column.getColumnName();
-		
-		result.add(getCreateSequenceSQL(sequenceName.toString(),
-			"1",
-			"1",
-			null,
-			"1",
-			null,
-			false,
-			qualifier,
+
+		result.add(getCreateSequenceSQL(sequenceName.toString(), "1", "1", null, "1", null, false, qualifier,
 			prefs));
 
 		StringBuilder triggerSql = new StringBuilder();
@@ -720,7 +717,6 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 *      
 	 * @deprecated use the version that accepts the sequence name instead.
 	 */
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
@@ -751,20 +747,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		Boolean initiallyDeferredNotSupported = null;
 		Boolean matchFullNotSupported = null;
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-			refTableName,
-			constraintName,
-			deferrableNotSupported,
-			initiallyDeferredNotSupported,
-			matchFullNotSupported,
-			autoFKIndex,
-			fkIndexName,
-			localRefColumns,
-			onUpdateAction,
-			onDeleteAction,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
+			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
 	}
 
 	private String getTableReorgSql(String tableName, DatabaseObjectQualifier qualifier,
@@ -798,11 +783,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			}
 		}
 
-		result.add(DialectUtils.getAddUniqueConstraintSQL(tableName,
-			constraintName,
-			columns,
-			qualifier,
-			prefs,
+		result.add(DialectUtils.getAddUniqueConstraintSQL(tableName, constraintName, columns, qualifier, prefs,
 			this));
 
 		return result.toArray(new String[result.size()]);
@@ -825,16 +806,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		}
 		return new String[] {
 
-		DialectUtils.getAlterSequenceSQL(sequenceName,
-			increment,
-			minimum,
-			maximum,
-			restart,
-			cache,
-			cycleClause,
-			qualifier,
-			prefs,
-			this) };
+		DialectUtils.getAlterSequenceSQL(sequenceName, increment, minimum, maximum, restart, cache,
+			cycleClause, qualifier, prefs, this) };
 	}
 
 	/**
@@ -880,16 +853,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getCreateSequenceSQL(sequenceName,
-			increment,
-			minimum,
-			maximum,
-			start,
-			cache,
-			null,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getCreateSequenceSQL(sequenceName, increment, minimum, maximum, start, cache, null,
+			qualifier, prefs, this);
 	}
 
 	/**
@@ -1042,8 +1007,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		SqlGenerationPreferences prefs)
 	{
 		// SELECT
-		// SEQSCHEMA,SEQNAME,DEFINER,DEFINERTYPE,OWNER,OWNERTYPE,SEQID,SEQTYPE,INCREMENT,START,MAXVALUE,MINVALUE,
-		// NEXTCACHEFIRSTVALUE,CYCLE,CACHE,ORDER,DATATYPEID,SOURCETYPEID,CREATE_TIME,ALTER_TIME,PRECISION,ORIGIN,REMARKS
+		//SEQSCHEMA,SEQNAME,DEFINER,DEFINERTYPE,OWNER,OWNERTYPE,SEQID,SEQTYPE,INCREMENT,START,MAXVALUE,MINVALUE,
+		//NEXTCACHEFIRSTVALUE,CYCLE,CACHE,ORDER,DATATYPEID,SOURCETYPEID,CREATE_TIME,ALTER_TIME,PRECISION,ORIGIN,
+		// REMARKS
 		// FROM SYSCAT.SEQUENCES
 		// WHERE SEQNAME = ?
 		// and SEQSCHEMA = <schema>
@@ -1078,23 +1044,16 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		if (fromTables != null)
 		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else
+		}
+		else
 		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
 
 		StringTemplate st = new StringTemplate(templateStr);
 
-		return DialectUtils.getUpdateSQL(st,
-			tableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
+			whereValues, qualifier, prefs, this);
 	}
 
 	/**
@@ -1208,13 +1167,11 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1228,7 +1185,6 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1299,11 +1255,13 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		String schema = qualifier.getSchema();
 		String catalog = qualifier.getCatalog();
 		StringBuilder result = new StringBuilder();
-		if (!StringUtilities.isEmpty(catalog)) {
+		if (!StringUtilities.isEmpty(catalog))
+		{
 			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
 			result.append(".");
 		}
-		if (!StringUtilities.isEmpty(schema)) {
+		if (!StringUtilities.isEmpty(schema))
+		{
 			result.append(DialectUtils.shapeIdentifier(schema, prefs, this));
 			result.append(".");
 		}
