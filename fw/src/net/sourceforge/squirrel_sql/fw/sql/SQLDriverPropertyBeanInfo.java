@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,34 +21,36 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>SQLDriverProperty</CODE>.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLDriverPropertyBeanInfo extends SimpleBeanInfo
-							implements SQLDriverProperty.IPropertyNames
+public class SQLDriverPropertyBeanInfo extends SimpleBeanInfo implements SQLDriverProperty.IPropertyNames
 {
-	private static PropertyDescriptor[] s_dscrs;
 
-	public SQLDriverPropertyBeanInfo() throws IntrospectionException
-	{
-		super();
-		synchronized (getClass())
-		{
-			if (s_dscrs == null)
-			{
-				s_dscrs = new PropertyDescriptor[3];
-				final Class<SQLDriverProperty> clazz = SQLDriverProperty.class;
-				s_dscrs[0] = new PropertyDescriptor(NAME, clazz, "getName", "setName");
-				s_dscrs[1] = new PropertyDescriptor(VALUE, clazz, "getValue", "setValue");
-				s_dscrs[2] = new PropertyDescriptor(IS_SPECIFIED, clazz, "isSpecified", "setIsSpecified");
-			}
-		}
-	}
-
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override	
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_dscrs;
+		try
+		{
+			PropertyDescriptor[] result = new PropertyDescriptor[3];
+			result[0] = new PropertyDescriptor(NAME, SQLDriverProperty.class, "getName", "setName");
+			result[1] = new PropertyDescriptor(VALUE, SQLDriverProperty.class, "getValue", "setValue");
+			result[2] =
+				new PropertyDescriptor(IS_SPECIFIED, SQLDriverProperty.class, "isSpecified", "setIsSpecified");
+			return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }

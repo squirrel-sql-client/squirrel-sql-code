@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.db;
+
 /*
  * Copyright (C) 2002 -2006 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,36 +21,40 @@ package net.sourceforge.squirrel_sql.client.db;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>AliasGroup</CODE>.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class AliasGroupBeanInfo extends SimpleBeanInfo
 {
-	private static final Class<AliasGroup> CLAZZ = AliasGroup.class;
-
 	private static interface IPropertyNames extends AliasGroup.IPropertyNames
 	{
 		// Empty body.
 	}
-	
-	private static PropertyDescriptor[] s_descr;
 
-	public AliasGroupBeanInfo() throws IntrospectionException
-	{
-		super();
-		if (s_descr == null)
-		{
-			s_descr = new PropertyDescriptor[2];
-			s_descr[0] = new PropertyDescriptor(IPropertyNames.ID, CLAZZ, "getIdentifier", "setIdentifier");
-			s_descr[0] = new PropertyDescriptor(IPropertyNames.NAME, CLAZZ, "getName", "setName");
-		}
-	}
-
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descr;
+		try
+		{
+			PropertyDescriptor[] result = new PropertyDescriptor[2];
+			result[0] =
+				new PropertyDescriptor(IPropertyNames.ID, AliasGroup.class, "getIdentifier", "setIdentifier");
+			result[0] = new PropertyDescriptor(IPropertyNames.NAME, AliasGroup.class, "getName", "setName");
+			return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
+
 	}
 }
-
