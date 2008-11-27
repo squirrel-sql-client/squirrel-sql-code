@@ -35,8 +35,7 @@ public class MockCopyTableListener extends CopyTableAdaptor
     }
     
     public void copyStarted(CopyEvent e) {
-        // TODO Auto-generated method stub
-
+   	 // Ignored
     }
 
     public void tableCopyStarted(TableEvent e) {
@@ -54,7 +53,7 @@ public class MockCopyTableListener extends CopyTableAdaptor
     }
 
     public void recordCopied(RecordEvent e) {
-        // TODO Auto-generated method stub
+   	 // Ignored
     }
 
     public void statementExecuted(StatementEvent e) {
