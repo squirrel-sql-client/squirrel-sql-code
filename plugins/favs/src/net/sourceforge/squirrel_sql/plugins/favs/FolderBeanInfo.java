@@ -29,18 +29,26 @@ import java.beans.SimpleBeanInfo;
  */
 public final class FolderBeanInfo extends SimpleBeanInfo {
 
-	private static PropertyDescriptor[] s_descriptors;
 
-	public FolderBeanInfo() throws IntrospectionException {
-		super();
-		if (s_descriptors == null) {
-			s_descriptors = new PropertyDescriptor[3];
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override		public PropertyDescriptor[] getPropertyDescriptors() {
+		try
+		{
+			PropertyDescriptor[] s_descriptors = new PropertyDescriptor[3];
 			s_descriptors[0] = new PropertyDescriptor(Folder.IPropertyNames.ID, Folder.class, "getIdentifier", "setIdentifier");
 			s_descriptors[1] = new PropertyDescriptor(Folder.IPropertyNames.NAME, Folder.class, "getName", "setName");
 			s_descriptors[2] = new IndexedPropertyDescriptor(Folder.IPropertyNames.SUB_FOLDERS, Folder.class, "getSubFolders", "setSubFolders", "getSubFolder", "setSubFolder");
+
+			return s_descriptors;
 		}
-	}
-	public PropertyDescriptor[] getPropertyDescriptors() {
-		return s_descriptors;
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }
