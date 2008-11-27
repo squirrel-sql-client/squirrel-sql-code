@@ -28,31 +28,34 @@ import java.beans.SimpleBeanInfo;
  */
 public class SQLDriverPropertyCollectionBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_desc;
 
 	private interface IPropNames extends SQLDriverPropertyCollection.IPropertyNames
 	{
 		// Empty body.
 	}
 
-	public SQLDriverPropertyCollectionBeanInfo() throws IntrospectionException
-	{
-		super();
-		if (s_desc == null)
-		{
-			final Class<SQLDriverPropertyCollection> clazz = 
-			    SQLDriverPropertyCollection.class;
-			s_desc = new PropertyDescriptor[1];
-			s_desc[0] = new IndexedPropertyDescriptor(IPropNames.DRIVER_PROPERTIES,
-							clazz,
-							"getDriverProperties", "setDriverProperties",
-							"getDriverProperty", "setDriverProperty");
-		}
-	}
-
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_desc;
+		try
+		{
+			PropertyDescriptor[] result = new PropertyDescriptor[1];
+			result[0] = new IndexedPropertyDescriptor(IPropNames.DRIVER_PROPERTIES,
+				SQLDriverPropertyCollection.class,
+							"getDriverProperties", "setDriverProperties",
+							"getDriverProperty", "setDriverProperty");
+			return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
+		
 	}
 }
 

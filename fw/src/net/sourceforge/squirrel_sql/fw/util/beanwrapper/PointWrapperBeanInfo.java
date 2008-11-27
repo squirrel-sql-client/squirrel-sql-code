@@ -27,31 +27,33 @@ import java.beans.SimpleBeanInfo;
  */
 public class PointWrapperBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_descriptors;
-
-	public PointWrapperBeanInfo() throws IntrospectionException
+	
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override
+	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		super();
-		if (s_descriptors == null)
-		{
-			s_descriptors = new PropertyDescriptor[2];
-			s_descriptors[0] =
+		try {
+			PropertyDescriptor[] result = new PropertyDescriptor[2];
+			result[0] =
 				new PropertyDescriptor(
 					PointWrapper.IPropertyNames.X,
 					PointWrapper.class,
 					"getX",
 					"setX");
-			s_descriptors[1] =
+			result[1] =
 				new PropertyDescriptor(
 					PointWrapper.IPropertyNames.Y,
 					PointWrapper.class,
 					"getY",
 					"setY");
+			return result;
+		} catch (IntrospectionException e) {
+			throw new Error(e);
 		}
-	}
-
-	public PropertyDescriptor[] getPropertyDescriptors()
-	{
-		return s_descriptors;
 	}
 }
