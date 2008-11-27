@@ -535,8 +535,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 		fbManager.setPort(Integer.parseInt(jtextfieldPort.getText()));
 		
 		if (file.exists()) {
-			String msg = i18n.CREATEDB_MSG_FILEEXISTS;
-			msg.replaceAll("{0}", filename);
+			String msg = i18n.CREATEDB_MSG_FILEEXISTS.replaceAll("{0}", filename);
 		     if (JOptionPane.showConfirmDialog(this, msg,
 		            i18n.CREATEDB_MSG_WARNING, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 		        fbManager.setForceCreate(true);
