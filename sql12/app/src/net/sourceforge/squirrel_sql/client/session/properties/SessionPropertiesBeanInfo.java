@@ -36,6 +36,13 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 		// Empty body.
 	}
 
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override	
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
 		try
