@@ -37,7 +37,12 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SessionProperties implements Cloneable, Serializable, ISessionProperties
 {
-   public interface IDataSetDestinations
+	/**
+	 * Change this when this class changes. 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public interface IDataSetDestinations
    {
       String TEXT = DataSetViewerTextPanel.class.getName();
       String READ_ONLY_TABLE = DataSetViewerTablePanel.class.getName();
