@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -20,50 +21,42 @@ package net.sourceforge.squirrel_sql.fw.util.beanwrapper;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
+
 /**
  * This is the <CODE>BeanInfo</CODE> class for <CODE>RectangleWrapper</CODE>.
- *
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class RectangleWrapperBeanInfo extends SimpleBeanInfo
 {
-	private static PropertyDescriptor[] s_descriptors;
 
-	public RectangleWrapperBeanInfo() throws IntrospectionException
-	{
-		super();
-		if (s_descriptors == null)
-		{
-			s_descriptors = new PropertyDescriptor[4];
-			s_descriptors[0] =
-				new PropertyDescriptor(
-					RectangleWrapper.IPropertyNames.WIDTH,
-					RectangleWrapper.class,
-					"getWidth",
-					"setWidth");
-			s_descriptors[1] =
-				new PropertyDescriptor(
-					RectangleWrapper.IPropertyNames.HEIGHT,
-					RectangleWrapper.class,
-					"getHeight",
-					"setHeight");
-			s_descriptors[2] =
-				new PropertyDescriptor(
-					RectangleWrapper.IPropertyNames.X,
-					RectangleWrapper.class,
-					"getX",
-					"setX");
-			s_descriptors[3] =
-				new PropertyDescriptor(
-					RectangleWrapper.IPropertyNames.Y,
-					RectangleWrapper.class,
-					"getY",
-					"setY");
-		}
-	}
-
+	/**
+	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+	 * getPropertyDescriptors().
+	 * 
+	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+	 */
+	@Override
 	public PropertyDescriptor[] getPropertyDescriptors()
 	{
-		return s_descriptors;
+		try
+		{
+			PropertyDescriptor[] result = new PropertyDescriptor[4];
+			result[0] =
+				new PropertyDescriptor(RectangleWrapper.IPropertyNames.WIDTH, RectangleWrapper.class, "getWidth",
+					"setWidth");
+			result[1] =
+				new PropertyDescriptor(RectangleWrapper.IPropertyNames.HEIGHT, RectangleWrapper.class,
+					"getHeight", "setHeight");
+			result[2] =
+				new PropertyDescriptor(RectangleWrapper.IPropertyNames.X, RectangleWrapper.class, "getX", "setX");
+			result[3] =
+				new PropertyDescriptor(RectangleWrapper.IPropertyNames.Y, RectangleWrapper.class, "getY", "setY");
+			return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
 	}
 }
