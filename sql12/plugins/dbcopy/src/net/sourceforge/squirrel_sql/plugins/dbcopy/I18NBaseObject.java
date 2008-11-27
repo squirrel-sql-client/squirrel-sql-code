@@ -16,14 +16,6 @@ public abstract class I18NBaseObject {
         StringManagerFactory.getStringManager(I18NBaseObject.class);
     
     /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
-    }
-    
-    /**
      * 
      * @param key
      * @return
