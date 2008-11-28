@@ -34,47 +34,50 @@ public class IndexInfoBeanInfo extends SimpleBeanInfo
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(IndexInfoBeanInfo.class);
 
-    private static final Class<IndexInfo> CLAZZ = IndexInfo.class;
-
     private static interface IPropertyNames extends IndexInfo.IPropertyNames
     {
         // Empty body.
     }
     
-    private static PropertyDescriptor[] s_descr;
-
-    public IndexInfoBeanInfo() throws IntrospectionException
-    {
-        super();
-        if (s_descr == null)
-        {
-            s_descr = new PropertyDescriptor[10];
-            s_descr[0] = new PropertyDescriptor(IPropertyNames.NAME, CLAZZ);
-            s_descr[0].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.name"));
-            s_descr[1] = new PropertyDescriptor(IPropertyNames.DESCRIPTION, CLAZZ);
-            s_descr[1].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.description"));
-            s_descr[2] = new PropertyDescriptor(IPropertyNames.RELATION_NAME, CLAZZ);
-            s_descr[2].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.relationname"));
-            s_descr[3] = new PropertyDescriptor(IPropertyNames.ID, CLAZZ);
-            s_descr[3].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.id"));
-            s_descr[4] = new PropertyDescriptor(IPropertyNames.UNIQUE, CLAZZ);
-            s_descr[4].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.unique"));
-            s_descr[5] = new PropertyDescriptor(IPropertyNames.SEGMENT_COUNT, CLAZZ);
-            s_descr[5].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.segmentcount"));
-            s_descr[6] = new PropertyDescriptor(IPropertyNames.ACTIVE, CLAZZ);
-            s_descr[6].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.active"));
-            s_descr[7] = new PropertyDescriptor(IPropertyNames.EXPRESSION_SOURCE, CLAZZ);
-            s_descr[7].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.expressionsource"));
-            s_descr[8] = new PropertyDescriptor(IPropertyNames.FOREIGN_KEY_CONSTRAINT, CLAZZ);
-            s_descr[8].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.foreignkeyconstraint"));
-            s_descr[9] = new PropertyDescriptor(IPropertyNames.SYSTEM_DEFINED, CLAZZ);
-            s_descr[9].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.systemdefined"));
-        }
-    }
-
+ 	/**
+ 	 * See http://tinyurl.com/63no6t for discussion of the proper thread-safe way to implement
+ 	 * getPropertyDescriptors().
+ 	 * 
+ 	 * @see java.beans.SimpleBeanInfo#getPropertyDescriptors()
+ 	 */
+ 	@Override    
     public PropertyDescriptor[] getPropertyDescriptors()
     {
-        return s_descr;
+       try
+		{
+			PropertyDescriptor[] result = new PropertyDescriptor[10];
+			 result[0] = new PropertyDescriptor(IPropertyNames.NAME, IndexInfo.class);
+			 result[0].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.name"));
+			 result[1] = new PropertyDescriptor(IPropertyNames.DESCRIPTION, IndexInfo.class);
+			 result[1].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.description"));
+			 result[2] = new PropertyDescriptor(IPropertyNames.RELATION_NAME, IndexInfo.class);
+			 result[2].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.relationname"));
+			 result[3] = new PropertyDescriptor(IPropertyNames.ID, IndexInfo.class);
+			 result[3].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.id"));
+			 result[4] = new PropertyDescriptor(IPropertyNames.UNIQUE, IndexInfo.class);
+			 result[4].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.unique"));
+			 result[5] = new PropertyDescriptor(IPropertyNames.SEGMENT_COUNT, IndexInfo.class);
+			 result[5].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.segmentcount"));
+			 result[6] = new PropertyDescriptor(IPropertyNames.ACTIVE, IndexInfo.class);
+			 result[6].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.active"));
+			 result[7] = new PropertyDescriptor(IPropertyNames.EXPRESSION_SOURCE, IndexInfo.class);
+			 result[7].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.expressionsource"));
+			 result[8] = new PropertyDescriptor(IPropertyNames.FOREIGN_KEY_CONSTRAINT, IndexInfo.class);
+			 result[8].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.foreignkeyconstraint"));
+			 result[9] = new PropertyDescriptor(IPropertyNames.SYSTEM_DEFINED, IndexInfo.class);
+			 result[9].setDisplayName(s_stringMgr.getString("IndexInfoBeanInfo.systemdefined"));
+			 
+			  return result;
+		}
+		catch (IntrospectionException e)
+		{
+			throw new Error(e);
+		}
     }
 }
 
