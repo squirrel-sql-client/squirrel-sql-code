@@ -72,7 +72,6 @@ public abstract class BaseObjectTab implements IObjectTab
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_app = session.getApplication();
-//		_session = session;
 		_sessionId = session.getIdentifier();
 	}
 
@@ -115,6 +114,10 @@ public abstract class BaseObjectTab implements IObjectTab
 			}
 			catch (Throwable th)
 			{
+				th.printStackTrace();
+				if (s_log.isDebugEnabled()) {
+					s_log.debug("Unexpected exception: "+th.getMessage(), th);
+				}
 				getSession().showErrorMessage(th);
 			}
 			_hasBeenDisplayed = true;

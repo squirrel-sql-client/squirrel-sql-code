@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -35,19 +36,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class BaseSourceTab extends BaseObjectTab
 {
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(BaseSourceTab.class);
-	
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(BaseSourceTab.class);
+
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(BaseSourceTab.class);
+	private final static ILogger s_log = LoggerController.createLogger(BaseSourceTab.class);
 
 	/** Hint to display for tab. */
 	private final String _hint;
 
 	/** Title of the tab */
-    private String _title;
+	private String _title;
 
 	/** Component to display in tab. */
 	private BaseSourcePanel _comp;
@@ -55,27 +54,28 @@ public abstract class BaseSourceTab extends BaseObjectTab
 	/** Scrolling pane for <TT>_comp. */
 	private JScrollPane _scroller;
 
-	public BaseSourceTab(String hint)
-	{
+	public BaseSourceTab(String hint) {
 		this(null, hint);
 	}
 
 	public BaseSourceTab(String title, String hint) {
-  		super();
-  		if (title != null) {
-  			_title = title;
-  		} else {
-  		    //i18n[BaseSourceTab.title=Source]
-  			_title = s_stringMgr.getString("BaseSourceTab.title");
-  		}
-  		
-  		_hint = hint != null ? hint : _title;
-    }
+		super();
+		if (title != null)
+		{
+			_title = title;
+		} else
+		{
+			// i18n[BaseSourceTab.title=Source]
+			_title = s_stringMgr.getString("BaseSourceTab.title");
+		}
+
+		_hint = hint != null ? hint : _title;
+	}
 
 	/**
 	 * Return the title for the tab.
-	 *
-	 * @return	The title for the tab.
+	 * 
+	 * @return The title for the tab.
 	 */
 	public String getTitle()
 	{
@@ -84,8 +84,8 @@ public abstract class BaseSourceTab extends BaseObjectTab
 
 	/**
 	 * Return the hint for the tab.
-	 *
-	 * @return	The hint for the tab.
+	 * 
+	 * @return The hint for the tab.
 	 */
 	public String getHint()
 	{
@@ -98,28 +98,31 @@ public abstract class BaseSourceTab extends BaseObjectTab
 
 	public Component getComponent()
 	{
-        if (_scroller == null) {
-    		if (_comp == null) {
-    			_comp = new DefaultSourcePanel();
-    		}
-            _scroller = new JScrollPane(_comp);
-            LineNumber lineNumber = new LineNumber( _comp );
-            _scroller.setRowHeaderView( lineNumber );
-            _scroller.getVerticalScrollBar().setUnitIncrement(10);
-        }
+		if (_scroller == null)
+		{
+			if (_comp == null)
+			{
+				_comp = new DefaultSourcePanel();
+			}
+			_scroller = new JScrollPane(_comp);
+			LineNumber lineNumber = new LineNumber(_comp);
+			_scroller.setRowHeaderView(lineNumber);
+			_scroller.getVerticalScrollBar().setUnitIncrement(10);
+		}
 		return _scroller;
 	}
-    
-    /**
-     * Subclasses can use this to override the default behavior provided by the
-     * DefaultSourcePanel, with a subclass of BaseSourcePanel.
-     * 
-     * @param panel
-     */
-    public void setSourcePanel(BaseSourcePanel panel) {
-        _comp = panel;
-    }
-    
+
+	/**
+	 * Subclasses can use this to override the default behavior provided by the DefaultSourcePanel, with a
+	 * subclass of BaseSourcePanel.
+	 * 
+	 * @param panel
+	 */
+	public void setSourcePanel(BaseSourcePanel panel)
+	{
+		_comp = panel;
+	}
+
 	protected void refreshComponent()
 	{
 		ISession session = getSession();
@@ -133,46 +136,34 @@ public abstract class BaseSourceTab extends BaseObjectTab
 			try
 			{
 				_comp.load(getSession(), pstmt);
-			}
-			finally
+			} finally
 			{
-				try
-				{
-					pstmt.close();
-				}
-				catch (SQLException ex)
-				{
-					s_log.error(ex);
-				}
+				SQLUtilities.closeStatement(pstmt);
 			}
-		}
-		catch (SQLException ex)
+		} catch (SQLException ex)
 		{
 			s_log.error(ex);
 			session.showErrorMessage(ex);
 		}
 	}
 
-    /**
-     * Sub-classes should override this method to return a PreparedStatement
-     * which will yield the source code of the object returned by
-     * getDatabaseObjectInfo.
-     * 
-     * @return a PreparedStatement already with bound variables, ready to be
-     *         executed
-     * @throws SQLException
-     *             if any error occurs.
-     */
+	/**
+	 * Sub-classes should override this method to return a PreparedStatement which will yield the source code
+	 * of the object returned by getDatabaseObjectInfo.
+	 * 
+	 * @return a PreparedStatement already with bound variables, ready to be executed
+	 * @throws SQLException
+	 *         if any error occurs.
+	 */
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
 	private final class DefaultSourcePanel extends BaseSourcePanel
 	{
-        private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-        private JTextArea _ta;
+		private JTextArea _ta;
 
-        DefaultSourcePanel()
-		{
+		DefaultSourcePanel() {
 			super(new BorderLayout());
 			createUserInterface();
 		}
@@ -180,9 +171,10 @@ public abstract class BaseSourceTab extends BaseObjectTab
 		public void load(ISession session, PreparedStatement stmt)
 		{
 			_ta.setText("");
+			ResultSet rs = null;
 			try
 			{
-				ResultSet rs = stmt.executeQuery();
+				rs = stmt.executeQuery();
 				StringBuffer buf = new StringBuffer(4096);
 				while (rs.next())
 				{
@@ -190,10 +182,12 @@ public abstract class BaseSourceTab extends BaseObjectTab
 				}
 				_ta.setText(buf.toString());
 				_ta.setCaretPosition(0);
-			}
-			catch (SQLException ex)
+			} catch (SQLException ex)
 			{
 				session.showErrorMessage(ex);
+			} finally
+			{
+				SQLUtilities.closeResultSet(rs);
 			}
 
 		}
