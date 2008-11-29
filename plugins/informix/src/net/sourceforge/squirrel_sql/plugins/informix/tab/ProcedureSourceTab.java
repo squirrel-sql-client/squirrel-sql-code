@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This class will display the source for an Informix trigger.
+ * This class will display the source for an Informix procedure.
  *
  * @author manningr
  */
