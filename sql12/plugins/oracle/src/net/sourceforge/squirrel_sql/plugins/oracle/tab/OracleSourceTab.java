@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -90,9 +91,10 @@ public abstract class OracleSourceTab extends BaseSourceTab {
         {
             _ta.setText("");
             _ta.setWrapStyleWord(true);
+            ResultSet rs = null;
             try
             {
-                ResultSet rs = stmt.executeQuery();
+                rs = stmt.executeQuery();
                 StringBuffer buf = new StringBuffer(4096);
                 while (rs.next())
                 {
@@ -138,6 +140,8 @@ public abstract class OracleSourceTab extends BaseSourceTab {
             {
                 s_log.error("Unexpected exception: "+ex.getMessage(), ex);
                 session.showErrorMessage(ex);
+            } finally {
+            	SQLUtilities.closeResultSet(rs);
             }
 
         }
