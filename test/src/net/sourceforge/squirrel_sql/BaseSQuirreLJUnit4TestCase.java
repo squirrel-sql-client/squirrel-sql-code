@@ -15,12 +15,12 @@ public class BaseSQuirreLJUnit4TestCase
 	protected EasyMockHelper mockHelper = new EasyMockHelper();
 
 	static {
+		ApplicationManager.initApplication();
 		LoggerController.setForceDebug(true);
 	}
 	
 	public BaseSQuirreLJUnit4TestCase()
 	{
-		ApplicationManager.initApplication();
 		StringManager.setTestMode(true);
 	}
 
