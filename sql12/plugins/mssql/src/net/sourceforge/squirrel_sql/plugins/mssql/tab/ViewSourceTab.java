@@ -26,6 +26,11 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+/**
+ * This class will display the source for an MS-SQLServer view.
+ * 
+ * @author manningr
+ */
 public class ViewSourceTab extends BaseSourceTab
 {
 
