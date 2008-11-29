@@ -98,15 +98,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		return result;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSchemasInTableDefinition()
-	 */
-	@Override
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
-	}
-
 	@Override
 	public int getMaxPrecision(final int dataType)
 	{
