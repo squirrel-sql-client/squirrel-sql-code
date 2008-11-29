@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
 
 import java.util.Vector;
+
+import org.apache.log4j.Level;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -23,6 +25,9 @@ public class LoggerController
 {
 	private static Vector<ILoggerFactory> s_oldfactories = new Vector<ILoggerFactory>();
 	private static ILoggerFactory s_factory = new Log4jLoggerFactory();
+	
+	/** Whether or not to override the level configured in the properties file */ 
+	private static boolean forceDebug = false;
 
 	public static void registerLoggerFactory(ILoggerFactory factory)
 	{
@@ -32,7 +37,11 @@ public class LoggerController
 
 	public static ILogger createLogger(Class<?> clazz)
 	{
-		return s_factory.createLogger(clazz);
+		ILogger result = s_factory.createLogger(clazz);
+		if (forceDebug) {
+			result.setLevel(Level.DEBUG);
+		}
+		return result;
 	}
 
 	public static void shutdown()
@@ -61,6 +70,22 @@ public class LoggerController
 			iLoggerFactory.removeLoggerListener(l);
 		}
 
+	}
+
+	/**
+	 * @param forceDebug the forceDebug to set
+	 */
+	public static void setForceDebug(boolean forceDebug)
+	{
+		LoggerController.forceDebug = forceDebug;
+	}
+
+	/**
+	 * @return the forceDebug
+	 */
+	public static boolean isForceDebug()
+	{
+		return forceDebug;
 	}
 
 }
