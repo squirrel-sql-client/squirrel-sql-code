@@ -32,101 +32,87 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Test;
 
-import utils.EasyMockHelper;
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
-public class AbstractBasePreparedStatementTabTest extends BaseSQuirreLJUnit4TestCase
+public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 {
 
-	private static final String TEST_COLUMN_NAME = "aColumnName";
-	protected static final String DATABASE_PRODUCT_VERSION = "1.0";
-	protected EasyMockHelper mockHelper = new EasyMockHelper();
 	protected BasePreparedStatementTab classUnderTest = null;
-	protected String databaseProductName = null;
-	private static final String TEST_QUALIFIED_NAME = "testQualifiedName";
-	private static final String TEST_SIMPLE_NAME = "testSimpleName";
-	private static final String TEST_CATALOG_NAME = "testCatalogName";
-	private static final String TEST_SCHEMA_NAME = "testSchemaName";
+
 	public static final String STMT_SEP = ";";
+
 	public static final String HINT = "aHint";
-	public static final String METADATA_OUTPUT_CLASSNAME = "aMetaDataOutputClassName";
-	protected ISession mockSession = mockHelper.createMock(ISession.class);
+
 	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
-	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
-	protected IIdentifier mockSessionId = mockHelper.createMock(IIdentifier.class);
-	protected SessionManager mockSessionManager = mockHelper.createMock(SessionManager.class);
+
 	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
-	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
+
 	protected PreparedStatement mockPreparedStatement = mockHelper.createMock(PreparedStatement.class);
+
 	protected ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
-	protected ISQLDatabaseMetaData mockMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
+
 	protected ResultSetMetaData mockResultSetMetaData = mockHelper.createMock(ResultSetMetaData.class);
 
-	public AbstractBasePreparedStatementTabTest() {
+	public AbstractBasePreparedStatementTabTest()
+	{
 		super();
 	}
 
 	@After
-   public void tearDown() throws Exception
-   {
-   	classUnderTest = null;
-   }
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
 
 	@Test
-   public void testSelect() throws SQLException
-   {
-   	expect(mockSession.getApplication()).andStubReturn(mockApplication);
-   	expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
-   	expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
-   	expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
-   	expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(DataSetListModel.class.getName());
-   	expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
-   	expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
-   	expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
-   	expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
-   	expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
-   	expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
-   	expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
-   	expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
-   	expect(mockMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
-   	expect(mockMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
-   	mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
-   	expectLastCall().anyTimes();
-   	expect(mockPreparedStatement.executeQuery()).andStubReturn(mockResultSet);
-   	expect(mockResultSet.next()).andStubReturn(false);
-   	expect(mockResultSet.getMetaData()).andStubReturn(mockResultSetMetaData);
-   	expect(mockResultSetMetaData.getColumnCount()).andStubReturn(1);
-   	expect(mockResultSetMetaData.isNullable(1)).andStubReturn(ResultSetMetaData.columnNoNulls);
-   	expect(mockResultSetMetaData.getPrecision(1)).andStubReturn(10);
-   	expect(mockResultSetMetaData.isSigned(1)).andReturn(true);
-   	expect(mockResultSetMetaData.isCurrency(1)).andReturn(true);
-   	expect(mockResultSetMetaData.isAutoIncrement(1)).andReturn(true);
-   	expect(mockResultSetMetaData.getColumnName(1)).andReturn(TEST_COLUMN_NAME);
-   	expect(mockResultSetMetaData.getColumnTypeName(1)).andReturn("VARCHAR");
-   	expect(mockResultSetMetaData.getColumnType(1)).andReturn(Types.VARCHAR);
-   	expect(mockResultSetMetaData.getColumnDisplaySize(1)).andStubReturn(10);
-   	expect(mockResultSetMetaData.getColumnLabel(1)).andStubReturn(TEST_COLUMN_NAME);
-   	expect(mockResultSetMetaData.getScale(1)).andStubReturn(3);
-   	
-   	mockResultSet.close();
-   	mockPreparedStatement.close();
-   	
-   	mockHelper.replayAll();
-   	classUnderTest.setSession(mockSession);
-   	classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);		
-   	classUnderTest.getComponent();
-   	classUnderTest.select();
-   	mockHelper.verifyAll();
-   }
+	public void testSelect() throws SQLException
+	{
+		expect(mockSession.getApplication()).andStubReturn(mockApplication);
+		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
+		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
+		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(
+			DataSetListModel.class.getName());
+		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
+		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
+		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
+		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
+		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
+		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
+		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
+		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
+		expect(mockMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
+		expect(mockMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
+		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
+		expectLastCall().anyTimes();
+		expect(mockPreparedStatement.executeQuery()).andStubReturn(mockResultSet);
+		expect(mockResultSet.next()).andStubReturn(false);
+		expect(mockResultSet.getMetaData()).andStubReturn(mockResultSetMetaData);
+		expect(mockResultSetMetaData.getColumnCount()).andStubReturn(1);
+		expect(mockResultSetMetaData.isNullable(1)).andStubReturn(ResultSetMetaData.columnNoNulls);
+		expect(mockResultSetMetaData.getPrecision(1)).andStubReturn(10);
+		expect(mockResultSetMetaData.isSigned(1)).andReturn(true);
+		expect(mockResultSetMetaData.isCurrency(1)).andReturn(true);
+		expect(mockResultSetMetaData.isAutoIncrement(1)).andReturn(true);
+		expect(mockResultSetMetaData.getColumnName(1)).andReturn(TEST_COLUMN_NAME);
+		expect(mockResultSetMetaData.getColumnTypeName(1)).andReturn("VARCHAR");
+		expect(mockResultSetMetaData.getColumnType(1)).andReturn(Types.VARCHAR);
+		expect(mockResultSetMetaData.getColumnDisplaySize(1)).andStubReturn(10);
+		expect(mockResultSetMetaData.getColumnLabel(1)).andStubReturn(TEST_COLUMN_NAME);
+		expect(mockResultSetMetaData.getScale(1)).andStubReturn(3);
+
+		mockResultSet.close();
+		mockPreparedStatement.close();
+
+		mockHelper.replayAll();
+		classUnderTest.setSession(mockSession);
+		classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);
+		classUnderTest.getComponent();
+		classUnderTest.select();
+		mockHelper.verifyAll();
+	}
 
 }
