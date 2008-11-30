@@ -26,47 +26,31 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import org.junit.After;
 import org.junit.Test;
 
-import utils.EasyMockHelper;
 
-public class AbstractStatementTabTest extends BaseSQuirreLJUnit4TestCase
+public class AbstractStatementTabTest extends AbstractTabTest
 {
 
 	protected BaseObjectTab classUnderTest = null;
-	protected EasyMockHelper mockHelper = new EasyMockHelper();
-	private static final String TEST_COLUMN_NAME = "aColumnName";
-	protected static final String DATABASE_PRODUCT_VERSION = "1.0";
-	protected String databaseProductName = null;
-	private static final String TEST_QUALIFIED_NAME = "testQualifiedName";
-	private static final String TEST_SIMPLE_NAME = "testSimpleName";
-	private static final String TEST_CATALOG_NAME = "testCatalogName";
-	private static final String TEST_SCHEMA_NAME = "testSchemaName";
+
 	public static final String STMT_SEP = ";";
+
 	public static final String HINT = "aHint";
-	public static final String METADATA_OUTPUT_CLASSNAME = "aMetaDataOutputClassName";
-	protected ISession mockSession = mockHelper.createMock(ISession.class);
+
 	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
-	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
-	protected IIdentifier mockSessionId = mockHelper.createMock(IIdentifier.class);
-	protected SessionManager mockSessionManager = mockHelper.createMock(SessionManager.class);
+
 	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
-	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
+
 	protected Statement mockStatement = mockHelper.createMock(Statement.class);
+
 	protected ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
-	protected ISQLDatabaseMetaData mockMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
+
 	protected ResultSetMetaData mockResultSetMetaData = mockHelper.createMock(ResultSetMetaData.class);
 
 	public AbstractStatementTabTest()
@@ -83,12 +67,13 @@ public class AbstractStatementTabTest extends BaseSQuirreLJUnit4TestCase
 	@Test
 	public void testSelect() throws Exception
 	{
-		
+
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
 		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
 		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
-		expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(DataSetListModel.class.getName());
+		expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(
+			DataSetListModel.class.getName());
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
 		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
 		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
@@ -116,11 +101,11 @@ public class AbstractStatementTabTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockResultSetMetaData.getScale(1)).andStubReturn(3);
 		mockResultSet.close();
 		mockStatement.close();
-		
+
 		mockHelper.replayAll();
 		classUnderTest.setSession(mockSession);
-		classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);		
-		classUnderTest.getComponent();		
+		classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);
+		classUnderTest.getComponent();
 		classUnderTest.select();
 		mockHelper.verifyAll();
 	}

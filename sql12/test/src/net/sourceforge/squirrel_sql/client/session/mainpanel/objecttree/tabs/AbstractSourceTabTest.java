@@ -25,78 +25,67 @@ import static org.easymock.EasyMock.isA;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Test;
 
-import utils.EasyMockHelper;
+public class AbstractSourceTabTest extends AbstractTabTest
+{
 
-public class AbstractSourceTabTest extends BaseSQuirreLJUnit4TestCase {
 
-	private static final String TEST_QUALIFIED_NAME = "testQualifiedName";
-	private static final String TEST_SIMPLE_NAME = "testSimpleName";
-	private static final String TEST_CATALOG_NAME = "testCatalogName";
-	private static final String TEST_SCHEMA_NAME = "testSchemaName";
-	public static final String STMT_SEP = ";";
-	public static final String HINT = "aHint";
 	protected BaseSourceTab classUnderTest = null;
-	protected EasyMockHelper mockHelper = new EasyMockHelper();
-	protected ISession mockSession = mockHelper.createMock(ISession.class);
-	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
-	protected IIdentifier mockSessionId = mockHelper.createMock(IIdentifier.class);
-	protected SessionManager mockSessionManager = mockHelper.createMock(SessionManager.class);
+
 	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
-	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
+
 	protected PreparedStatement mockPreparedStatement = mockHelper.createMock(PreparedStatement.class);
+
 	protected ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
 
-	public AbstractSourceTabTest() {
+	public AbstractSourceTabTest()
+	{
 		super();
 	}
 
 	@After
-   public void tearDown() throws Exception {
-   	classUnderTest = null;
-   }
+	public void tearDown() throws Exception
+	{
+		classUnderTest = null;
+	}
 
 	/**
 	 * Verifies that the select method properly closes the PreparedStatement and ResultSet.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
-   public final void testSelect() throws Exception {
-   	
-   	expect(mockSession.getApplication()).andStubReturn(mockApplication);
-   	expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
-   	expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
-   	expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
-   	expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
-   	expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
-   	expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
-   	expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
-   	expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
-   	expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
-   	mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
-   	expectLastCall().anyTimes();
-   	expect(mockPreparedStatement.executeQuery()).andReturn(mockResultSet);
-   	expect(mockResultSet.next()).andStubReturn(false);
-   	mockResultSet.close();
-   	mockPreparedStatement.close();
-   	
-   	mockHelper.replayAll();
-   	classUnderTest.getComponent();
-   	classUnderTest.setSession(mockSession);
-   	classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);
-   	classUnderTest.select();
-   	mockHelper.verifyAll();
-   }
+	public final void testSelect() throws Exception
+	{
+
+		expect(mockSession.getApplication()).andStubReturn(mockApplication);
+		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
+		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
+		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
+		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
+		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
+		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
+		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
+		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
+		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
+		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
+		expectLastCall().anyTimes();
+		expect(mockPreparedStatement.executeQuery()).andReturn(mockResultSet);
+		expect(mockResultSet.next()).andStubReturn(false);
+		mockResultSet.close();
+		mockPreparedStatement.close();
+
+		mockHelper.replayAll();
+		classUnderTest.getComponent();
+		classUnderTest.setSession(mockSession);
+		classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);
+		classUnderTest.select();
+		mockHelper.verifyAll();
+	}
 
 }
