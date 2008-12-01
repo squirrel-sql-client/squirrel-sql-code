@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
@@ -36,13 +37,6 @@ import org.junit.Test;
 
 public class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
-
-	private static final String[] NUMERIC_FUNCTIONS =
-		new String[] { "testNumericFunction1", "testNumericFunction2" };
-
-	private static final String[] DRIVER_JAR_FILE_NAMES = new String[] { "jarFilename1", "jarFilename2" };
-
-	public static final String TEST_DRIVER_CLASS_NAME = "aTestDriverClassName";
 
 	/** set by subclass in setUp method; the object to test */
 	protected BaseDataSetTab classUnderTest = null;
@@ -58,9 +52,20 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	protected ISQLDriver mockSQLDriver = mockHelper.createMock(ISQLDriver.class);
 
+	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
+
 	// Test Data
 
 	public static final String[] SQL_KEYWORDS = new String[] { "testKeyword1", "testKeyword2" };
+
+	public static final String[] SCHEMAS = new String[] { "testSchema1", "testSchema2" };
+
+	public static final String[] NUMERIC_FUNCTIONS =
+		new String[] { "testNumericFunction1", "testNumericFunction2" };
+
+	public static final String[] DRIVER_JAR_FILE_NAMES = new String[] { "jarFilename1", "jarFilename2" };
+
+	public static final String TEST_DRIVER_CLASS_NAME = "aTestDriverClassName";
 
 	public AbstractBaseDataSetTabTest()
 	{
@@ -75,6 +80,7 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSession.getMetaData()).andStubReturn(mockSQLMetaData);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
 		expect(mockSession.getDriver()).andStubReturn(mockSQLDriver);
+		expect(mockSession.getSchemaInfo()).andStubReturn(mockSchemaInfo);
 
 		// mockApplication
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
@@ -96,6 +102,9 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getJDBCMetaData()).andStubReturn(mockDatabaseMetaData);
 		expect(mockSQLMetaData.getCatalogs()).andStubReturn(mockCatalogs);
 		expect(mockSQLMetaData.getNumericFunctions()).andStubReturn(NUMERIC_FUNCTIONS);
+
+		// mockSchemaInfo
+		expect(mockSchemaInfo.getSchemas()).andStubReturn(SCHEMAS);
 
 		// mockThreadPool
 		mockThreadPool.addTask(isA(Runnable.class));
