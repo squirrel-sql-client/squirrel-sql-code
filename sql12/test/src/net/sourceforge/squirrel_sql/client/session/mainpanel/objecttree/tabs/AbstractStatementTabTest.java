@@ -71,7 +71,7 @@ public class AbstractStatementTabTest extends AbstractTabTest
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
 		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
-		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		expect(mockSession.getMetaData()).andStubReturn(mockSQLMetaData);
 		expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(
 			DataSetListModel.class.getName());
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
@@ -82,8 +82,8 @@ public class AbstractStatementTabTest extends AbstractTabTest
 		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
 		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
 		expect(mockSQLConnection.createStatement()).andStubReturn(mockStatement);
-		expect(mockMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
-		expect(mockMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
+		expect(mockSQLMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
+		expect(mockSQLMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
 		expect(mockStatement.executeQuery(isA(String.class))).andStubReturn(mockResultSet);
 		expect(mockResultSet.next()).andStubReturn(false);
 		expect(mockResultSet.getMetaData()).andStubReturn(mockResultSetMetaData);

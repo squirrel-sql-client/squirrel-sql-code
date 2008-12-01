@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseDataSetTabTest;
 
 import org.junit.Before;
-import org.junit.Test;
 
 public class ConnectionStatusTabTest extends AbstractBaseDataSetTabTest
 {
@@ -31,15 +30,7 @@ public class ConnectionStatusTabTest extends AbstractBaseDataSetTabTest
 	{
 		super.setUp();
 		classUnderTest = new ConnectionStatusTab();
-	}
-
-	@Test
-	public void testCreateDataSet() throws Exception
-	{
-		mockHelper.replayAll();
-		classUnderTest.setSession(mockSession);
-		((ConnectionStatusTab) classUnderTest).createDataSet();
-		mockHelper.verifyAll();
+		clazz = ConnectionStatusTab.class;
 	}
 
 }
