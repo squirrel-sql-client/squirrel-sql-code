@@ -37,6 +37,9 @@ import org.junit.Test;
 public class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
 
+	private static final String[] NUMERIC_FUNCTIONS =
+		new String[] { "testNumericFunction1", "testNumericFunction2" };
+
 	private static final String[] DRIVER_JAR_FILE_NAMES = new String[] { "jarFilename1", "jarFilename2" };
 
 	public static final String TEST_DRIVER_CLASS_NAME = "aTestDriverClassName";
@@ -92,6 +95,7 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getSQLKeywords()).andStubReturn(SQL_KEYWORDS);
 		expect(mockSQLMetaData.getJDBCMetaData()).andStubReturn(mockDatabaseMetaData);
 		expect(mockSQLMetaData.getCatalogs()).andStubReturn(mockCatalogs);
+		expect(mockSQLMetaData.getNumericFunctions()).andStubReturn(NUMERIC_FUNCTIONS);
 
 		// mockThreadPool
 		mockThreadPool.addTask(isA(Runnable.class));
