@@ -158,7 +158,7 @@ public class DataTypeTimestamp extends BaseDataTypeComponent
      * The DTProperties key that is used to store and get the mode that 
      * determines how timestamps are used in where clauses
      */ 
-    public static String WHERE_CLAUSE_USAGE_KEY = "whereClauseUsage";
+    public static final String WHERE_CLAUSE_USAGE_KEY = "whereClauseUsage";
     
     private boolean _renderExceptionHasBeenLogged;
 
