@@ -37,9 +37,6 @@ import org.junit.Test;
 
 public class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
-
-	public static final String[] SYSTEM_FUNCTIONS = new String[] {"systemFunction1", "systemFunction2"};
-
 	/** set by subclass in setUp method; the object to test */
 	protected BaseDataSetTab classUnderTest = null;
 
@@ -71,6 +68,12 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	public static final String[] STRING_FUNCTIONS = new String[] { "stringFunction1", "stringFunction2" };
 
+	public static final String[] TABLE_TYPES = new String[] { "TABLE" };
+
+	public static final String[] SYSTEM_FUNCTIONS = new String[] {"systemFunction1", "systemFunction2"};
+	
+	public static final String[] TIME_DATE_FUNCTIONS = new String[] {"currentTime", "currentDate"};
+	
 	public AbstractBaseDataSetTabTest()
 	{
 		super();
@@ -108,6 +111,8 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getNumericFunctions()).andStubReturn(NUMERIC_FUNCTIONS);
 		expect(mockSQLMetaData.getStringFunctions()).andStubReturn(STRING_FUNCTIONS);
 		expect(mockSQLMetaData.getSystemFunctions()).andStubReturn(SYSTEM_FUNCTIONS);
+		expect(mockSQLMetaData.getTableTypes()).andStubReturn(TABLE_TYPES);
+		expect(mockSQLMetaData.getTimeDateFunctions()).andStubReturn(TIME_DATE_FUNCTIONS);
 		
 		// mockSchemaInfo
 		expect(mockSchemaInfo.getSchemas()).andStubReturn(SCHEMAS);
