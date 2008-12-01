@@ -41,6 +41,5 @@ public interface IObjectTypes
 	DatabaseObjectType INSTANCE = DatabaseObjectType.createNewDatabaseObjectType("Instance");
 	DatabaseObjectType LOB = DatabaseObjectType.createNewDatabaseObjectType("LOB");
 	DatabaseObjectType PACKAGE = DatabaseObjectType.createNewDatabaseObjectType("Package");
-	DatabaseObjectType SESSION = DatabaseObjectType.createNewDatabaseObjectType("Session");
 	DatabaseObjectType TYPE = DatabaseObjectType.createNewDatabaseObjectType("Type");
 }

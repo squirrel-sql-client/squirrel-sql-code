@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -22,12 +23,13 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
+
 /**
  * This tab will display session statistics for the database.
- *
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionStatisticsTab extends BasePreparedStatementTab
@@ -35,38 +37,61 @@ public class SessionStatisticsTab extends BasePreparedStatementTab
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SessionStatisticsTab.class);
 
-
 	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
+	 * This interface defines locale specific strings. This should be replaced with a property file.
 	 */
 	private interface i18n
 	{
 		// i18n[oracle.sessionStatistics=Session Statistics]
 		String TITLE = s_stringMgr.getString("oracle.sessionStatistics");
+
 		// i18n[oracle.displaySessionStatistics=Display database session statistics]
 		String HINT = s_stringMgr.getString("oracle.displaySessionStatistics");
 	}
 
 	/** SQL that retrieves the data. */
 	private static String SQL =
-		"select sn.name, ss.value"
-			+ " from sys.v_$sesstat ss, sys.v_$statname sn"
-			+ " where ss.sid = ?"
-			+ " and ss.statistic# = sn.statistic#";
+		"select sn.name, ss.value from sys.v_$sesstat ss, sys.v_$statname sn, sys.v_$session  se " +
+		"where ss.statistic# = sn.statistic# " +
+		"and se.sid = ss.sid " +
+		"and se.audsid = ? ";	
 
-	public SessionStatisticsTab()
+	/** SQL that is used to see if the session has access to query this info */
+	private static String CHECK_ACCESS_SQL =	
+		"select sn.name, ss.value from sys.v_$sesstat ss, sys.v_$statname sn, sys.v_$session  se " +
+		"where ss.statistic# = sn.statistic# " +
+		"and se.sid = ss.sid";	
+
+		
+	private long audSid;
+	
+	public SessionStatisticsTab(long audSid)
 	{
 		super(i18n.TITLE, i18n.HINT);
+		this.audSid = audSid;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab#createStatement()
+	 */
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
-		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-        String[] parts = doi.getSimpleName().split("\\s+");
-        pstmt.setLong(1, Long.parseLong(parts[0]));
+		pstmt.setLong(1, audSid);
 		return pstmt;
 	}
+
+	/**
+	 * Check if data accessible from current connection.
+	 * 
+	 * @param session
+	 *           session
+	 * @return true if data accessible
+	 */
+	public static boolean isAccessible(final ISession session)
+	{
+		return OraclePlugin.checkObjectAccessible(session, CHECK_ACCESS_SQL);
+	}
+
 }

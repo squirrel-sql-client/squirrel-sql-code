@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -27,22 +28,22 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+
 /**
- * This class handles the expanding of the "Session Parent"
- * node. It will give a list of all the sessions.
- *
+ * This class handles the expanding of the "Session Parent" node. It will give a list of all the sessions.
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionParentExpander implements INodeExpander
 {
 
 	/** SQL that retrieves the data. */
-	private static String SQL =
-		"select sid||' ('||schemaname||')' from sys.v_$session";
+	private static String SQL = "select sid||' ('||schemaname||')' from sys.v_$session";
 
 	/**
 	 * Default ctor.
@@ -53,15 +54,14 @@ public class SessionParentExpander implements INodeExpander
 	}
 
 	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
-	 *
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 *
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
+	 * Create the child nodes for the passed parent node and return them. Note that this method should
+	 * <B>not</B> actually add the child nodes to the parent node as this is taken care of in the caller.
+	 * 
+	 * @param session
+	 *           Current session.
+	 * @param node
+	 *           Node to be expanded.
+	 * @return A list of <TT>ObjectTreeNode</TT> objects representing the child nodes for the passed node.
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
@@ -72,28 +72,22 @@ public class SessionParentExpander implements INodeExpander
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		try
 		{
-			ResultSet rs = pstmt.executeQuery();
-			try
+			pstmt = conn.prepareStatement(SQL);
+			rs = pstmt.executeQuery();
+			while (rs.next())
 			{
-				while (rs.next())
-				{
-					IDatabaseObjectInfo doi = new DatabaseObjectInfo(null,
-													schemaName, rs.getString(1),
-													IObjectTypes.SESSION, md);
-					childNodes.add(new ObjectTreeNode(session, doi));
-				}
-			}
-			finally
-			{
-				rs.close();
+				IDatabaseObjectInfo doi =
+					new DatabaseObjectInfo(null, schemaName, rs.getString(1), DatabaseObjectType.SESSION, md);
+				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		}
 		finally
 		{
-			pstmt.close();
+			SQLUtilities.closeResultSet(rs, true);
 		}
 		return childNodes;
 	}
