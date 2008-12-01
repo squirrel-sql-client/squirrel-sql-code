@@ -38,6 +38,8 @@ import org.junit.Test;
 public class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
 
+	public static final String[] SYSTEM_FUNCTIONS = new String[] {"systemFunction1", "systemFunction2"};
+
 	/** set by subclass in setUp method; the object to test */
 	protected BaseDataSetTab classUnderTest = null;
 
@@ -66,6 +68,8 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 	public static final String[] DRIVER_JAR_FILE_NAMES = new String[] { "jarFilename1", "jarFilename2" };
 
 	public static final String TEST_DRIVER_CLASS_NAME = "aTestDriverClassName";
+
+	public static final String[] STRING_FUNCTIONS = new String[] { "stringFunction1", "stringFunction2" };
 
 	public AbstractBaseDataSetTabTest()
 	{
@@ -102,7 +106,9 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getJDBCMetaData()).andStubReturn(mockDatabaseMetaData);
 		expect(mockSQLMetaData.getCatalogs()).andStubReturn(mockCatalogs);
 		expect(mockSQLMetaData.getNumericFunctions()).andStubReturn(NUMERIC_FUNCTIONS);
-
+		expect(mockSQLMetaData.getStringFunctions()).andStubReturn(STRING_FUNCTIONS);
+		expect(mockSQLMetaData.getSystemFunctions()).andStubReturn(SYSTEM_FUNCTIONS);
+		
 		// mockSchemaInfo
 		expect(mockSchemaInfo.getSchemas()).andStubReturn(SCHEMAS);
 
