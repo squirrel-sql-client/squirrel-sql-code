@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -28,14 +30,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Test;
-
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetListModel;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+
+import org.junit.After;
+import org.junit.Test;
 
 public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 {
@@ -82,7 +82,9 @@ public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
 		expect(mockSQLMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
 		expect(mockSQLMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
-		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
+		mockPreparedStatement.setString(anyInt(), isA(String.class));
+		expectLastCall().anyTimes();
+		mockPreparedStatement.setLong(anyInt(), anyLong());
 		expectLastCall().anyTimes();
 		expect(mockPreparedStatement.executeQuery()).andStubReturn(mockResultSet);
 		expect(mockResultSet.next()).andStubReturn(false);
