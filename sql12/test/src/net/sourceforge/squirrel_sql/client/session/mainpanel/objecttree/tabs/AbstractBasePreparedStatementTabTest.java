@@ -42,10 +42,6 @@ public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 
 	protected BasePreparedStatementTab classUnderTest = null;
 
-	public static final String STMT_SEP = ";";
-
-	public static final String HINT = "aHint";
-
 	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
 
 	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
