@@ -16,21 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database;
+package net.sourceforge.squirrel_sql.plugins.postgres.tab;
+
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseDataSetTabTest;
 
 import org.junit.Before;
 
-public class CatalogsTabTest extends AbstractBaseDataSetTabTest
+public class LockTabTest extends AbstractBaseDataSetTabTest
 {
 
 	@Before
 	public void setUp() throws Exception
 	{
 		super.setUp();
-		classUnderTest = new CatalogsTab();
-		clazz = CatalogsTab.class;
+		classUnderTest = new LockTab();
 	}
 
 }

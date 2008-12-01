@@ -73,7 +73,7 @@ public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
 		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
-		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		expect(mockSession.getMetaData()).andStubReturn(mockSQLMetaData);
 		expect(mockSessionProperties.getMetaDataOutputClassName()).andStubReturn(
 			DataSetListModel.class.getName());
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
@@ -84,8 +84,8 @@ public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
 		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
 		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
-		expect(mockMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
-		expect(mockMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
+		expect(mockSQLMetaData.getDatabaseProductName()).andStubReturn(databaseProductName);
+		expect(mockSQLMetaData.getDatabaseProductVersion()).andStubReturn(DATABASE_PRODUCT_VERSION);
 		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
 		expectLastCall().anyTimes();
 		expect(mockPreparedStatement.executeQuery()).andStubReturn(mockResultSet);

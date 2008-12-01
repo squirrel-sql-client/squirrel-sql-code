@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
@@ -41,8 +40,6 @@ public class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
 	protected ISession mockSession = mockHelper.createMock(ISession.class);
 
 	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
-
-	protected ISQLDatabaseMetaData mockMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
 
 	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
 

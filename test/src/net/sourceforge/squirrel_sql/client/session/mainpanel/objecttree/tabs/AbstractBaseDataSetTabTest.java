@@ -22,8 +22,13 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -32,7 +37,27 @@ import org.junit.Test;
 public class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
 
+	private static final String[] DRIVER_JAR_FILE_NAMES = new String[] { "jarFilename1", "jarFilename2" };
+
+	public static final String TEST_DRIVER_CLASS_NAME = "aTestDriverClassName";
+
+	/** set by subclass in setUp method; the object to test */
 	protected BaseDataSetTab classUnderTest = null;
+
+	/** set by subclass in setUp method; the class of the object to test */
+	protected Class<? extends BaseDataSetTab> clazz = null;
+
+	// common mocks
+
+	protected IDataSet mockDataSet = mockHelper.createMock(IDataSet.class);
+
+	protected DatabaseMetaData mockDatabaseMetaData = mockHelper.createMock(DatabaseMetaData.class);
+
+	protected ISQLDriver mockSQLDriver = mockHelper.createMock(ISQLDriver.class);
+
+	// Test Data
+
+	public static final String[] SQL_KEYWORDS = new String[] { "testKeyword1", "testKeyword2" };
 
 	public AbstractBaseDataSetTabTest()
 	{
@@ -41,26 +66,51 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	public void setUp() throws Exception
 	{
+		// mockSession
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
-		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		expect(mockSession.getMetaData()).andStubReturn(mockSQLMetaData);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
+		expect(mockSession.getDriver()).andStubReturn(mockSQLDriver);
+
+		// mockApplication
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
-		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
 		expect(mockApplication.getThreadPool()).andStubReturn(mockThreadPool);
+
+		// mockSessionManager
+		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
+
+		// mockSQLConnection
 		expect(mockSQLConnection.getSQLMetaData()).andStubReturn(mockSQLMetaData);
-		expect(mockSQLMetaData.getCatalogs()).andStubReturn(mockCatalogs);
 		expect(mockSQLConnection.getConnection()).andStubReturn(mockConnection);
+		expect(mockSQLConnection.getCatalog()).andStubReturn(TEST_CATALOG_NAME);
+		expect(mockSQLConnection.getAutoCommit()).andStubReturn(true);
+		expect(mockSQLConnection.getTimeOpened()).andStubReturn(new Date());
+
+		// mockSQLMetaData
+		expect(mockSQLMetaData.getTypesDataSet()).andStubReturn(mockDataSet);
+		expect(mockSQLMetaData.getSQLKeywords()).andStubReturn(SQL_KEYWORDS);
+		expect(mockSQLMetaData.getJDBCMetaData()).andStubReturn(mockDatabaseMetaData);
+		expect(mockSQLMetaData.getCatalogs()).andStubReturn(mockCatalogs);
+
+		// mockThreadPool
+		mockThreadPool.addTask(isA(Runnable.class));
+		expectLastCall().anyTimes();
+
+		// mockConnection
 		expect(mockConnection.isClosed()).andStubReturn(false);
 		expect(mockConnection.isReadOnly()).andStubReturn(false);
 		expect(mockConnection.getCatalog()).andStubReturn(TEST_CATALOG_NAME);
-		expect(mockSQLConnection.getCatalog()).andStubReturn(TEST_CATALOG_NAME);
-		expect(mockSQLConnection.getAutoCommit()).andStubReturn(true);
 		expect(mockConnection.getTransactionIsolation()).andStubReturn(TRANSACTION_ISOLATION);
-		expect(mockSQLConnection.getTimeOpened()).andStubReturn(new Date());
 
-		mockThreadPool.addTask(isA(Runnable.class));
-		expectLastCall().anyTimes();
+		// mockSQLDriver
+		expect(mockSQLDriver.getDriverClassName()).andStubReturn(TEST_DRIVER_CLASS_NAME);
+		expect(mockSQLDriver.getJarFileNames()).andStubReturn(DRIVER_JAR_FILE_NAMES);
+
+		// mockDatabaseMetaData
+		expect(mockDatabaseMetaData.getDefaultTransactionIsolation()).andStubReturn(
+			Connection.TRANSACTION_READ_COMMITTED);
+
 	}
 
 	@After
@@ -93,6 +143,20 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		mockHelper.replayAll();
 		classUnderTest.setSession(mockSession);
 		Assert.assertNotNull(classUnderTest.getTitle());
+		mockHelper.verifyAll();
+	}
+
+	@Test
+	public void testCreateDataSet() throws Exception
+	{
+		mockHelper.replayAll();
+		classUnderTest.setSession(mockSession);
+		if (clazz != null)
+		{
+			Method m = clazz.getDeclaredMethod("createDataSet", (Class[]) null);
+			m.setAccessible(true);
+			m.invoke(classUnderTest, (Object[]) null);
+		}
 		mockHelper.verifyAll();
 	}
 
