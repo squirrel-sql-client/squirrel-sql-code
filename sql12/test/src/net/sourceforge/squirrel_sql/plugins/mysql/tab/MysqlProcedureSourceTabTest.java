@@ -19,17 +19,17 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractStatementTabTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractSourceTabTest;
 
 import org.junit.Before;
 
-public class ShowMasterStatusTabTest extends AbstractStatementTabTest
+public class MysqlProcedureSourceTabTest extends AbstractSourceTabTest
 {
 
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new ShowMasterStatusTab();
+		classUnderTest = new MysqlProcedureSourceTab(HINT);
 	}
 
 }
