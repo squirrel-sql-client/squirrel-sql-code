@@ -25,19 +25,16 @@ public class FindInObjectTreeController
       _filterEditSQLEntryPanel = new DefaultSQLEntryPanel(session);
       _findInObjectTreePanel = new FindInObjectTreePanel(_filterEditSQLEntryPanel.getTextComponent(), session.getApplication().getResources());
 
-      Keymap km = _filterEditSQLEntryPanel.getTextComponent().getKeymap();
 
-      Action FindAction = new AbstractAction("ObjectTree.Find")
+      Action findAction = new AbstractAction("ObjectTree.Find")
       {
-          private static final long serialVersionUID = 1L;
-
           public void actionPerformed(ActionEvent e)
           {
              onEnter();
           }
       };
-
-      km.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), FindAction);
+      JComponent comp = _filterEditSQLEntryPanel.getTextComponent();
+      comp.registerKeyboardAction(findAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), JComponent.WHEN_FOCUSED);
 
 
       boolean filter = Preferences.userRoot().getBoolean(PREF_KEY_OBJECT_TREE_SEARCH_FILTER, false);
