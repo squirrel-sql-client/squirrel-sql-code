@@ -137,6 +137,8 @@ appender that is based on file size rather than time.
 
 2119937: Windows EOL chars (CRLF) are converted to Linux EOL (LF).
 
+2104422: Fixed some potential bugs (Thanks to Hashim Kubba)
+
 2102894: Missing Scale Placeholder in Sql server dialect.  This causes script generation and dbcopy 
 targeting MS-SQL server to produce decimal columns without the scale attribute (that is, decimal(7) instead 
 of decimal(7,5))
