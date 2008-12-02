@@ -896,7 +896,6 @@ class Application implements IApplication
 		try
 		{
 			if (_prefs.getSessionProperties().getLimitSQLEntryHistorySize())
-			;
 			{
 				SQLHistoryItem[] data = _sqlHistory.getData();
 
