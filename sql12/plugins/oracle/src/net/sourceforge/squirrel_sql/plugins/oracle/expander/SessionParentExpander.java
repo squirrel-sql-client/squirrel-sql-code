@@ -80,6 +80,11 @@ public class SessionParentExpander implements INodeExpander
 			rs = pstmt.executeQuery();
 			while (rs.next())
 			{
+				// There is a reason that we don't want to use DatabaseObjectType.SESSION here.  The "session"
+				// nodes that this expander is creating should not be confused with the SQuirreL session.  These
+				// session nodes are Oracle sessions that an administrator has the privileges to see.  So we 
+				// must not use DatabaseObjectType.SESSION, or else these nodes get expanded with the database
+				// DefaultdatabasExpander.
 				IDatabaseObjectInfo doi =
 					new DatabaseObjectInfo(null, schemaName, rs.getString(1), IObjectTypes.SESSION, md);
 				childNodes.add(new ObjectTreeNode(session, doi));
