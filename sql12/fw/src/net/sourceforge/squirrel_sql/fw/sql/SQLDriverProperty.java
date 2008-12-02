@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.io.Serializable;
 import java.sql.DriverPropertyInfo;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * This represents a property that can be specified when connecting to the database.
  *
@@ -171,6 +173,7 @@ public class SQLDriverProperty implements Cloneable, Serializable
 
 	public void setDriverPropertyInfo(DriverPropertyInfo parm)
 	{
+		Utilities.checkNull("setDriverPropertyInfo", "parm", parm);
 		if (parm != null)
 		{
 			if (!parm.name.equals(getName()))
