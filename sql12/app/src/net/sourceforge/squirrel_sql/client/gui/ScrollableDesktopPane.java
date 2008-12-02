@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui;
+
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -25,11 +26,13 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
+
 // 
 public class ScrollableDesktopPane extends JDesktopPane
 {
-	// TODO: make serializable safe
-	private MyComponentListener _listener = new MyComponentListener();
+	private static final long serialVersionUID = -4675469251932456059L;
+
+	private transient MyComponentListener _listener = new MyComponentListener();
 
 	/**
 	 * Default ctor.
@@ -50,10 +53,10 @@ public class ScrollableDesktopPane extends JDesktopPane
 		if (comp != null)
 		{
 			comp.removeComponentListener(_listener);
+			super.remove(comp);
+			revalidate();
+			repaint();
 		}
-		super.remove(comp);
-		revalidate();
-		repaint();
 	}
 
 	protected void addImpl(Component comp, Object constraints, int index)
@@ -62,14 +65,13 @@ public class ScrollableDesktopPane extends JDesktopPane
 		{
 			comp.addComponentListener(_listener);
 			revalidate();
+			super.addImpl(comp, constraints, index);
 		}
-		super.addImpl(comp, constraints, index);
 	}
 
 	/**
-	 * Calculate the required size of this desktop pane so that
-	 * all visible intenal frames will be fully shown.
-	 *
+	 * Calculate the required size of this desktop pane so that all visible intenal frames will be fully shown.
+	 * 
 	 * @return <TT>Dimension</TT> required size.
 	 */
 	public Dimension getRequiredSize()
