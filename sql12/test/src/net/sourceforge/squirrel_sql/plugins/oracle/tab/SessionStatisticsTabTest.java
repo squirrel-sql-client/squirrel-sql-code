@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBasePreparedStatementTabTest;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 
 public class SessionStatisticsTabTest extends AbstractBasePreparedStatementTabTest
@@ -29,7 +30,18 @@ public class SessionStatisticsTabTest extends AbstractBasePreparedStatementTabTe
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SessionStatisticsTab(1);
+		classUnderTest = new SessionStatisticsTab();
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBasePreparedStatementTabTest#setupMockDatabaseObjectInfo()
+	 */
+	@Override
+	protected void setupMockDatabaseObjectInfo()
+	{
+		super.setupMockDatabaseObjectInfo();
+		EasyMock.expect(mockDatabaseObjectInfo.getSimpleName()).andReturn("1").anyTimes();
+	}
+	
+	
 }

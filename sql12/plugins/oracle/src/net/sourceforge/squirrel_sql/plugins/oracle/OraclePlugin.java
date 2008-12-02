@@ -1,5 +1,4 @@
 package net.sourceforge.squirrel_sql.plugins.oracle;
-
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -111,782 +110,735 @@ import net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeCo
 
 /**
  * Oracle plugin class.
- * 
+ *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class OraclePlugin extends DefaultSessionPlugin
 {
-	private static final String AUDSID_QUERY = "SELECT SYS_CONTEXT ('USERENV', 'SESSIONID') FROM DUAL";
+   /**
+    * Logger for this class.
+    */
+   private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
 
-	/**
-	 * Logger for this class.
-	 */
-	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
 
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(OraclePlugin.class);
+   /**
+    * Internationalized strings for this class.
+    */
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(OraclePlugin.class);
 
-	private PluginResources _resources;
 
-	/**
-	 * A list of Oracle sessions that are open so we'll know when none are left
-	 */
-	private ArrayList<ISession> oracleSessions = new ArrayList<ISession>();
+   private PluginResources _resources;
 
-	/**
-	 * SQL to find schemas to which the logged in user has access
-	 */
-	private static String SCHEMA_ACCESS_SQL = "SELECT DISTINCT OWNER FROM ALL_OBJECTS";
+   /**
+    * A list of Oracle sessions that are open so we'll know when none are left
+    */
+   private ArrayList<ISession> oracleSessions = new ArrayList<ISession>();
+   /**
+    * SQL to find schemas to which the logged in user has access
+    */
+   private static String SCHEMA_ACCESS_SQL =
+      "SELECT DISTINCT OWNER FROM ALL_OBJECTS";
+   /**
+    * SQL to determine whether or not this account is a DBA account
+    */
+   private static String DBA_ROLE_SQL =
+      "SELECT GRANTED_ROLE FROM USER_ROLE_PRIVS";
 
-	/**
-	 * SQL to determine whether or not this account is a DBA account
-	 */
-	private static String DBA_ROLE_SQL = "SELECT GRANTED_ROLE FROM USER_ROLE_PRIVS";
 
-	private static final String ORACLE_ALIAS_PREFS_FILE = "oracleAliasPrefs.xml";
+   private static final String ORACLE_ALIAS_PREFS_FILE = "oracleAliasPrefs.xml";
+   
+   private Hashtable<IIdentifier, OracleAliasPrefs> _oracleAliasPrefsByAliasIdentifier = 
+       new Hashtable<IIdentifier, OracleAliasPrefs>();
 
-	private Hashtable<IIdentifier, OracleAliasPrefs> _oracleAliasPrefsByAliasIdentifier =
-		new Hashtable<IIdentifier, OracleAliasPrefs>();
+   /** manages our query tokenizing preferences */
+   private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+      
+   interface i18n {
+       // i18n[OraclePlugin.title=Oracle]
+       String title = s_stringMgr.getString("OraclePlugin.title");
+       
+       // i18n[OraclePlugin.hint=Preferences for Oracle]
+       String hint = s_stringMgr.getString("OraclePlugin.hint");
+       
+       //i18n[OraclePlugin.timestampWarning=The setting to use string literals 
+       //for timestamps may result in the inability to edit tables containing
+       //these columns.  If this problem occurs, open 
+       //Global Preferences -> Data Type Controls and set Timestamps to use 
+       // "JDBC standard escape format"] 
+       String timestampWarning = 
+           s_stringMgr.getString("OraclePlugin.timestampWarning");
+   }
+   
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return	the internal name of this plugin.
+    */
+   public String getInternalName()
+   {
+      return "oracle";
+   }
 
-	/** manages our query tokenizing preferences */
-	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return	the descriptive name of this plugin.
+    */
+   public String getDescriptiveName()
+   {
+      return "Oracle Plugin";
+   }
 
-	private long audSid = -1;
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return	the current version of this plugin.
+    */
+   public String getVersion()
+   {
+      return "0.20";
+   }
 
-	interface i18n
-	{
-		// i18n[OraclePlugin.title=Oracle]
-		String title = s_stringMgr.getString("OraclePlugin.title");
+   /**
+    * Returns the authors name.
+    *
+    * @return	the authors name.
+    */
+   public String getAuthor()
+   {
+      return "Colin Bell";
+   }
 
-		// i18n[OraclePlugin.hint=Preferences for Oracle]
-		String hint = s_stringMgr.getString("OraclePlugin.hint");
+    /**
+     * Returns a comma separated list of other contributors.
+     *
+     * @return  Contributors names.
+     */
+    public String getContributors()
+    {
+        return "Alexander Buloichik, Rob Manning";
+    }
 
-		// i18n[OraclePlugin.timestampWarning=The setting to use string literals
-		// for timestamps may result in the inability to edit tables containing
-		// these columns. If this problem occurs, open
-		// Global Preferences -> Data Type Controls and set Timestamps to use
-		// "JDBC standard escape format"]
-		String timestampWarning = s_stringMgr.getString("OraclePlugin.timestampWarning");
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+    */
+   public String getChangeLogFileName()
+   {
+      return "changes.txt";
+   }
 
-	/**
-	 * Return the internal name of this plugin.
-	 * 
-	 * @return the internal name of this plugin.
-	 */
-	public String getInternalName()
-	{
-		return "oracle";
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+    */
+   public String getHelpFileName()
+   {
+      return "readme.html";
+   }
 
-	/**
-	 * Return the descriptive name of this plugin.
-	 * 
-	 * @return the descriptive name of this plugin.
-	 */
-	public String getDescriptiveName()
-	{
-		return "Oracle Plugin";
-	}
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+    */
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
 
-	/**
-	 * Returns the current version of this plugin.
-	 * 
-	 * @return the current version of this plugin.
-	 */
-	public String getVersion()
-	{
-		return "0.20";
-	}
+   /**
+    * Create panel for the Global Properties dialog.
+    * 
+    * @return  properties panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+       PluginQueryTokenizerPreferencesPanel _prefsPanel = 
+           new OraclePluginPreferencesPanel(_prefsManager);
+       
+       PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+       
+       tab.setHint(i18n.hint);
+       tab.setTitle(i18n.title);
+       
+       return new IGlobalPreferencesPanel[] { tab };
+   }
+   
+   
+   public void initialize() throws PluginException
+   {
+      try
+      {
+         super.initialize();
 
-	/**
-	 * Returns the authors name.
-	 * 
-	 * @return the authors name.
-	 */
-	public String getAuthor()
-	{
-		return "Colin Bell";
-	}
+         final IApplication app = getApplication();
 
-	/**
-	 * Returns a comma separated list of other contributors.
-	 * 
-	 * @return Contributors names.
-	 */
-	public String getContributors()
-	{
-		return "Alexander Buloichik, Rob Manning";
-	}
+         _resources = new OracleResources(
+            "net.sourceforge.squirrel_sql.plugins.oracle.oracle",
+            this);
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
-	 */
-	public String getChangeLogFileName()
-	{
-		return "changes.txt";
-	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
-	 */
-	public String getHelpFileName()
-	{
-		return "readme.html";
-	}
+         ActionCollection coll = app.getActionCollection();
+         coll.add(new NewDBOutputWorksheetAction(app, _resources));
+         coll.add(new NewInvalidObjectsWorksheetAction(app, _resources));
+         coll.add(new NewSessionInfoWorksheetAction(app, _resources));
+         coll.add(new NewSGATraceWorksheetAction(app, _resources));
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
-	 */
-	public String getLicenceFileName()
-	{
-		return "licence.txt";
-	}
 
-	/**
-	 * Create panel for the Global Properties dialog.
-	 * 
-	 * @return properties panel.
-	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
-	{
-		PluginQueryTokenizerPreferencesPanel _prefsPanel = new OraclePluginPreferencesPanel(_prefsManager);
+         app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
+         {
+            public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
+            {
+               return onGetAllowedSchemas(con, alias);
+            }
+         });
 
-		PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+         File f = getGlobalPrefsFile();
 
-		tab.setHint(i18n.hint);
-		tab.setTitle(i18n.title);
+         if(f.exists())
+         {
+            XMLBeanReader xbr = new XMLBeanReader();
+            xbr.load(f, getClass().getClassLoader());
 
-		return new IGlobalPreferencesPanel[] { tab };
-	}
+            for(Iterator<Object> i=xbr.iterator(); i.hasNext();)
+            {
+               OracleAliasPrefs buf = (OracleAliasPrefs) i.next();
+               _oracleAliasPrefsByAliasIdentifier.put(buf.getAliasIdentifier(), buf);
+            }
 
-	public void initialize() throws PluginException
-	{
-		try
+         }
+         else
+         {
+            _oracleAliasPrefsByAliasIdentifier = 
+                new Hashtable<IIdentifier, OracleAliasPrefs>();
+         }
+         _prefsManager = new PluginQueryTokenizerPreferencesManager();
+         _prefsManager.initialize(this, new OraclePreferenceBean());
+
+         /* Register custom DataTypeComponent factory for Oracles XMLType */
+         CellComponentFactory.registerDataTypeFactory(
+             new OracleXmlTypeDataTypeComponentFactory() , 2007,
+             "SYS.XMLTYPE");
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public void load(IApplication app) throws PluginException
+   {
+      super.load(app);
+   }
+
+   private File getGlobalPrefsFile()
+      throws IOException
+   {
+      return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_ALIAS_PREFS_FILE);
+   }
+
+   public void unload()
+   {
+      try
+      {
+         File f = getGlobalPrefsFile();
+
+         XMLBeanWriter xbw = new XMLBeanWriter();
+
+         Collection<OracleAliasPrefs> set =  
+             _oracleAliasPrefsByAliasIdentifier.values();
+         if (set.size() > 0) {
+             xbw.addIteratorToRoot(set.iterator());
+         }
+
+         xbw.save(f);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+   }
+
+
+   /**
+    * Create Alias prefs panel.
+    */
+   public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
+   {
+      if(false == isOracle(alias))
+      {
+         return new IAliasPropertiesPanelController[0];
+      }
+
+      OracleAliasPrefs aliasPrefs = 
+          _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+
+      if (null == aliasPrefs)
+      {
+         aliasPrefs = new OracleAliasPrefs();
+         aliasPrefs.setAliasIdentifier(alias.getIdentifier());
+         _oracleAliasPrefsByAliasIdentifier.put(alias.getIdentifier(), aliasPrefs);
+      }
+
+      return new OracleAliasPrefsPanelController[]{new OracleAliasPrefsPanelController(aliasPrefs)};
+   }
+
+   public void aliasCopied(SQLAlias source, SQLAlias target)
+   {
+      if(false == isOracle(source) || false == isOracle(target))
+      {
+         return;
+      }
+
+      OracleAliasPrefs sourcePrefs = 
+          _oracleAliasPrefsByAliasIdentifier.get(source.getIdentifier());
+
+      if(null != sourcePrefs)
+      {
+         OracleAliasPrefs targetPrefs = (OracleAliasPrefs) Utilities.cloneObject(sourcePrefs, getClass().getClassLoader());
+         targetPrefs.setAliasIdentifier(target.getIdentifier());
+         _oracleAliasPrefsByAliasIdentifier.put(targetPrefs.getAliasIdentifier(), targetPrefs);
+      }
+   }
+
+   public void aliasRemoved(SQLAlias alias)
+   {
+      _oracleAliasPrefsByAliasIdentifier.remove(alias.getIdentifier());
+   }
+
+    /**
+     * Called when a session shutdown.
+     *
+     * @param   session The session that is ending.
+     */
+    public void sessionEnding(ISession session)
+    {
+        super.sessionEnding(session);
+        oracleSessions.remove(session);
+    }   
+
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+      if (!isOracle(session))
+      {
+         return null;
+      }
+      OraclePreferenceBean prefs = (OraclePreferenceBean)_prefsManager.getPreferences();
+      if (prefs.isInstallCustomQueryTokenizer()) {
+          session.setQueryTokenizer(new OracleQueryTokenizer(prefs));
+      }
+      
+      if (((OraclePreferenceBean)prefs).isShowErrorOffset()) {
+         OracleExceptionFormatter formatter = new OracleExceptionFormatter();
+         formatter.setSession(session);
+         session.setExceptionFormatter(formatter);
+      }
+      
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            addActions(session);
+         }
+      });
+
+      oracleSessions.add(session);
+      
+      checkTimestampSetting(session);
+            
+      PluginSessionCallback ret = new PluginSessionCallback()
+      {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         {
+            onSQLInternaFrameOpened(sqlInternalFrame, sess);
+         }
+
+         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+         {
+            onObjectTreeInternalFrameOpened(objectTreeInternalFrame);
+         }
+
+      };
+
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+            sqlPaneAPI.addExecutor(new ExplainPlanExecuter(session, sqlPaneAPI));
+            updateObjectTree(session.getSessionSheet().getObjectTreePanel());
+         }
+      });
+
+      setTimezoneForSession(session, prefs);
+
+      return ret;
+   }
+
+   @SuppressWarnings("unchecked")
+	private void setTimezoneForSession(ISession session, OraclePreferenceBean prefs) {
+   	if (!prefs.getInitSessionTimezone()) {
+   		if (s_log.isInfoEnabled()) {
+   			s_log.info("setTimezoneForSession: user preference for init session timezone is disabled.  " +
+   					"Local Timezone data types may not be displayed correctly.");
+   		}
+   		return;
+   	}
+   	
+   	Connection con = session.getSQLConnection().getConnection();
+   	String timezoneStr = prefs.getSessionTimezone();
+   	try
 		{
-			super.initialize();
-
-			final IApplication app = getApplication();
-
-			_resources = new OracleResources("net.sourceforge.squirrel_sql.plugins.oracle.oracle", this);
-
-			ActionCollection coll = app.getActionCollection();
-			coll.add(new NewDBOutputWorksheetAction(app, _resources));
-			coll.add(new NewInvalidObjectsWorksheetAction(app, _resources));
-			coll.add(new NewSessionInfoWorksheetAction(app, _resources));
-			coll.add(new NewSGATraceWorksheetAction(app, _resources));
-
-			app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
-			{
-				public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
-				{
-					return onGetAllowedSchemas(con, alias);
-				}
-			});
-
-			File f = getGlobalPrefsFile();
-
-			if (f.exists())
-			{
-				XMLBeanReader xbr = new XMLBeanReader();
-				xbr.load(f, getClass().getClassLoader());
-
-				for (Iterator<Object> i = xbr.iterator(); i.hasNext();)
-				{
-					OracleAliasPrefs buf = (OracleAliasPrefs) i.next();
-					_oracleAliasPrefsByAliasIdentifier.put(buf.getAliasIdentifier(), buf);
-				}
-
-			}
-			else
-			{
-				_oracleAliasPrefsByAliasIdentifier = new Hashtable<IIdentifier, OracleAliasPrefs>();
-			}
-			_prefsManager = new PluginQueryTokenizerPreferencesManager();
-			_prefsManager.initialize(this, new OraclePreferenceBean());
-
-			/* Register custom DataTypeComponent factory for Oracles XMLType */
-			CellComponentFactory.registerDataTypeFactory(new OracleXmlTypeDataTypeComponentFactory(), 2007,
-				"SYS.XMLTYPE");
+   		if (s_log.isInfoEnabled()) {
+   			s_log.info("setTimezoneForSession: attempting to set the session timezone to : "+timezoneStr);
+   		}
+   		Class oraConClass = Class.forName("oracle.jdbc.OracleConnection");
+   		Method setSessionTimeZoneMethod = oraConClass.getMethod("setSessionTimeZone", String.class);
+   		if (setSessionTimeZoneMethod != null) {
+   			setSessionTimeZoneMethod.invoke(con, timezoneStr);
+   		} else {
+   			s_log.error("setTimezoneForSession: setSessionTimeZoneMethod returned by reflection was null.  " +
+   					"Skipped setting session timezone");
+   		}
 		}
 		catch (Exception e)
 		{
-			throw new RuntimeException(e);
+			s_log.error("Unexpected exception while trying to set session timezone: "+e.getMessage(), e);
 		}
-	}
-
-	public void load(IApplication app) throws PluginException
-	{
-		super.load(app);
-	}
-
-	private File getGlobalPrefsFile() throws IOException
-	{
-		return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_ALIAS_PREFS_FILE);
-	}
-
-	public void unload()
-	{
-		try
-		{
-			File f = getGlobalPrefsFile();
-
-			XMLBeanWriter xbw = new XMLBeanWriter();
-
-			Collection<OracleAliasPrefs> set = _oracleAliasPrefsByAliasIdentifier.values();
-			if (set.size() > 0)
-			{
-				xbw.addIteratorToRoot(set.iterator());
-			}
-
-			xbw.save(f);
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
-
-	}
-
-	/**
-	 * Create Alias prefs panel.
-	 */
-	public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
-	{
-		if (false == isOracle(alias)) { return new IAliasPropertiesPanelController[0]; }
-
-		OracleAliasPrefs aliasPrefs = _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
-
-		if (null == aliasPrefs)
-		{
-			aliasPrefs = new OracleAliasPrefs();
-			aliasPrefs.setAliasIdentifier(alias.getIdentifier());
-			_oracleAliasPrefsByAliasIdentifier.put(alias.getIdentifier(), aliasPrefs);
-		}
-
-		return new OracleAliasPrefsPanelController[] { new OracleAliasPrefsPanelController(aliasPrefs) };
-	}
-
-	public void aliasCopied(SQLAlias source, SQLAlias target)
-	{
-		if (false == isOracle(source) || false == isOracle(target)) { return; }
-
-		OracleAliasPrefs sourcePrefs = _oracleAliasPrefsByAliasIdentifier.get(source.getIdentifier());
-
-		if (null != sourcePrefs)
-		{
-			OracleAliasPrefs targetPrefs =
-				(OracleAliasPrefs) Utilities.cloneObject(sourcePrefs, getClass().getClassLoader());
-			targetPrefs.setAliasIdentifier(target.getIdentifier());
-			_oracleAliasPrefsByAliasIdentifier.put(targetPrefs.getAliasIdentifier(), targetPrefs);
-		}
-	}
-
-	public void aliasRemoved(SQLAlias alias)
-	{
-		_oracleAliasPrefsByAliasIdentifier.remove(alias.getIdentifier());
-	}
-
-	/**
-	 * Called when a session shutdown.
-	 * 
-	 * @param session
-	 *           The session that is ending.
-	 */
-	public void sessionEnding(ISession session)
-	{
-		super.sessionEnding(session);
-		oracleSessions.remove(session);
-	}
-
-	public PluginSessionCallback sessionStarted(final ISession session)
-	{
-		if (!isOracle(session)) { return null; }
-		OraclePreferenceBean prefs = (OraclePreferenceBean) _prefsManager.getPreferences();
-		if (prefs.isInstallCustomQueryTokenizer())
-		{
-			session.setQueryTokenizer(new OracleQueryTokenizer(prefs));
-		}
-
-		if (((OraclePreferenceBean) prefs).isShowErrorOffset())
-		{
-			OracleExceptionFormatter formatter = new OracleExceptionFormatter();
-			formatter.setSession(session);
-			session.setExceptionFormatter(formatter);
-		}
-
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				addActions(session);
-			}
-		});
-
-		oracleSessions.add(session);
-
-		checkTimestampSetting(session);
-
-		PluginSessionCallback ret = new PluginSessionCallback()
-		{
-			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-			{
-				onSQLInternaFrameOpened(sqlInternalFrame, sess);
-			}
-
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-				ISession sess)
-			{
-				onObjectTreeInternalFrameOpened(objectTreeInternalFrame);
-			}
-
-		};
-
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
-				sqlPaneAPI.addExecutor(new ExplainPlanExecuter(session, sqlPaneAPI));
-				updateObjectTree(session.getSessionSheet().getObjectTreePanel());
-			}
-		});
-
-		setTimezoneForSession(session, prefs);
-
-		return ret;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void setTimezoneForSession(ISession session, OraclePreferenceBean prefs)
-	{
-		if (!prefs.getInitSessionTimezone())
-		{
-			if (s_log.isInfoEnabled())
-			{
-				s_log.info("setTimezoneForSession: user preference for init session timezone is disabled.  "
-					+ "Local Timezone data types may not be displayed correctly.");
-			}
-			return;
-		}
-
-		Connection con = session.getSQLConnection().getConnection();
-		String timezoneStr = prefs.getSessionTimezone();
-		try
-		{
-			if (s_log.isInfoEnabled())
-			{
-				s_log.info("setTimezoneForSession: attempting to set the session timezone to : " + timezoneStr);
-			}
-			Class oraConClass = Class.forName("oracle.jdbc.OracleConnection");
-			Method setSessionTimeZoneMethod = oraConClass.getMethod("setSessionTimeZone", String.class);
-			if (setSessionTimeZoneMethod != null)
-			{
-				setSessionTimeZoneMethod.invoke(con, timezoneStr);
-			}
-			else
-			{
-				s_log.error("setTimezoneForSession: setSessionTimeZoneMethod returned by reflection was null.  "
-					+ "Skipped setting session timezone");
-			}
-		}
-		catch (Exception e)
-		{
-			s_log.error("Unexpected exception while trying to set session timezone: " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * This will check the setting for using timestamps in where clauses and display a warning message to the
-	 * user if string literal - which is known not to work correctly in Oracle - is set to be used.
-	 */
-	private void checkTimestampSetting(ISession session)
-	{
-
-		String tsClassName = DataTypeTimestamp.class.getName();
-		String timeStampWhereClauseUsage =
-			DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
-		if (timeStampWhereClauseUsage != null)
-		{
-			int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
-			if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt)
-			{
-				session.showWarningMessage(i18n.timestampWarning);
-				s_log.warn(i18n.timestampWarning);
-			}
-		}
-
-	}
-
-	@Override
-	protected boolean isPluginSession(ISession session)
-	{
-		return DialectFactory.isOracle(session.getMetaData());
-	}
-
-	private void addActions(ISession session)
-	{
-		ActionCollection coll = getApplication().getActionCollection();
-		session.addSeparatorToToolbar();
-		session.addToToolbar(coll.get(NewDBOutputWorksheetAction.class));
-		session.addToToolbar(coll.get(NewInvalidObjectsWorksheetAction.class));
-		session.addToToolbar(coll.get(NewSessionInfoWorksheetAction.class));
-		session.addToToolbar(coll.get(NewSGATraceWorksheetAction.class));
-
-		session.getSessionInternalFrame().addToToolsPopUp("oracleoutput",
-			coll.get(NewDBOutputWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("oracleinvalid",
-			coll.get(NewInvalidObjectsWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("oracleinfo",
-			coll.get(NewSessionInfoWorksheetAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("oraclesga",
-			coll.get(NewSGATraceWorksheetAction.class));
-
-	}
-
-	private void onSQLInternaFrameOpened(SQLInternalFrame sqlInternalFrame, final ISession session)
-	{
-		final ISQLPanelAPI panel = sqlInternalFrame.getSQLPanelAPI();
-		panel.addExecutor(new ExplainPlanExecuter(session, panel));
-	}
-
-	private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame)
-	{
-		final IObjectTreeAPI objTree = objectTreeInternalFrame.getObjectTreeAPI();
-		updateObjectTree(objTree);
-	}
-
-	/**
-	 * Return a node expander for the object tree for a particular default node type. <p/> A plugin could
-	 * return non null here if they wish to override the default node expander bahaviour. Most plugins should
-	 * return null here.
-	 */
-	public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type)
-	{
-		boolean isOracle = isOracle(session.getAlias());
-		boolean isOracleWithFlashBack = isOracleWithFlashBack(session);
-		if ((type == DatabaseObjectType.PROC_TYPE_DBO) && isOracle) { return new ProcedureExpander(); }
-		if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) { return new DefaultDatabaseExpander(
-			session); }
-		if (type == DatabaseObjectType.TABLE_TYPE_DBO && isOracleWithFlashBack)
-		{
-			OraclePreferenceBean prefs = (OraclePreferenceBean) _prefsManager.getPreferences();
-			return new OracleTableParentExpander(prefs);
-		}
-		return null;
-	}
-
-	private boolean isOracleWithFlashBack(ISession session)
-	{
-		boolean result = false;
-		if (DialectFactory.isOracle(session.getMetaData()))
-		{
-			// Not all Oracle's, just 10g and above.
-			try
-			{
-				int version = session.getMetaData().getDatabaseMajorVersion();
-				if (version >= 10)
-				{
-					result = true;
-				}
-			}
-			catch (SQLException e)
-			{
-				s_log.error("Unexpected exception while attempting to get " + "the database version", e);
-			}
-		}
-		return result;
-	}
-
-	private boolean isOracle(ISession session)
-	{
-		boolean result = false;
-		if (DialectFactory.isOracle(session.getMetaData()))
-		{
-			result = true;
-		}
-		return result;
-	}
-
-	private boolean isOracle(ISQLAliasExt alias)
-	{
-		IIdentifier driverIdentifier = alias.getDriverIdentifier();
-		Driver jdbcDriver = getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
-
-		if (null == jdbcDriver) { return false; }
-
-		return jdbcDriver.getClass().getName().startsWith("oracle.");
-	}
-
-	private String[] onGetAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
-	{
-		if (isOracle(alias))
-		{
-			OracleAliasPrefs prefs = _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
-
-			if (null == prefs)
-			{
-				prefs = new OracleAliasPrefs();
-				prefs.setAliasIdentifier(alias.getIdentifier());
-				_oracleAliasPrefsByAliasIdentifier.put(prefs.getAliasIdentifier(), prefs);
-			}
-
-			return getAccessibleSchemas(prefs, con);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	/**
-	 * Returns an array of schema names that represent schemas in which there exist tables that the user
-	 * associated with the specified session has privilege to access.
-	 * 
-	 * @param session
-	 *           the session to retrieve schemas for
-	 * @param con
-	 * @return an array of strings representing the names of accessible schemas
-	 */
-	private String[] getAccessibleSchemas(OracleAliasPrefs aliasPrefs, ISQLConnection con)
-	{
-		String[] result = null;
-		ResultSet rs = null;
-		Statement stmt = null;
-		SQLDatabaseMetaData md = con.getSQLMetaData();
-		String currentUserName = null;
-		try
-		{
-			if (hasSystemPrivilege(con) || aliasPrefs.isLoadAllSchemas())
-			{
-				result = md.getSchemas();
-			}
-			else
-			{
-				currentUserName = md.getUserName();
-				stmt = con.getConnection().createStatement();
-				rs = stmt.executeQuery(SCHEMA_ACCESS_SQL);
-				ArrayList<String> tmp = new ArrayList<String>();
-				while (rs.next())
-				{
-					tmp.add(rs.getString(1));
-				}
-				if (currentUserName != null && !tmp.contains(currentUserName))
-				{
-					tmp.add(currentUserName);
-				}
-
-				tmp.remove("SYS");
-
-				if (aliasPrefs.isLoadAccessibleSchemasAndSYS())
-				{
-					tmp.add("SYS");
-				}
-
-				result = tmp.toArray(new String[tmp.size()]);
-			}
-		}
-		catch (SQLException e)
-		{
-			// i18n[DefaultDatabaseExpander.error.retrieveschemaprivs=Unable to retrieve schema privileges]
-			String msg = s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveschemaprivs");
-			s_log.error(msg, e);
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs, true);
-		}
-		return result;
-	}
-
-	/**
-	 * Checks whether or not the user associated with the specified session has been granted the DBA privilege.
-	 * 
-	 * @param session
-	 *           the session to check
-	 * @return true if the user has the DBA privilege; false otherwise.
-	 */
-	private boolean hasSystemPrivilege(ISQLConnection con)
-	{
-		boolean result = false;
-		Statement stmt = null;
-		ResultSet rs = null;
-		try
-		{
-			stmt = con.createStatement();
-			rs = stmt.executeQuery(DBA_ROLE_SQL);
-			while (rs.next())
-			{
-				String role = rs.getString(1);
-				if ("DBA".equalsIgnoreCase(role))
-				{
-					result = true;
-					break;
-				}
-			}
-		}
-		catch (SQLException e)
-		{
-			// i18n[DefaultDatabaseExpander.error.retrieveuserroles=Unable to retrieve user roles]
-			String msg = s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveuserroles");
-			s_log.error(msg, e);
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs, true);
-		}
-		return result;
-	}
-
-	/**
-	 * Check if we can run query.
-	 * 
-	 * @param session
-	 *           session
-	 * @param query
-	 *           query text
-	 * @return true if query works fine
-	 */
-	public static boolean checkObjectAccessible(final ISession session, final String query)
-	{
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = session.getSQLConnection().prepareStatement(query);
-			rs = pstmt.executeQuery();
-			return true;
-		}
-		catch (SQLException ex)
-		{
-			return false;
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs, true);
-		}
-	}
-
-	/**
-	 * Get the Oracle unique identifier for this session.
-	 *  
-	 * @param session the ISession to get the identifier for.
-	 * 
-	 * @return the identifier or -1 if an exception is encountered
-	 */
-	private long getAudSid(final ISession session)
-	{
-		if (audSid != -1) { return audSid; }
-
-		long result = -1;
-
-		Statement stmt = null;
-		ResultSet rs = null;
-		try
-		{
-			stmt = session.getSQLConnection().createStatement();
-			rs = stmt.executeQuery(AUDSID_QUERY);
-			if (rs.next())
-			{
-				result = rs.getLong(1);
-			}
-			else
-			{
-				s_log.error("No rows returned from audsid query: " + AUDSID_QUERY);
-			}
-
-		}
-		catch (SQLException e)
-		{
-			s_log.error("getAudSid: unexpected exception: " + e.getMessage(), e);
-		}
-		finally
-		{
-			SQLUtilities.closeResultSet(rs, true);
-		}
-
-		audSid = result;
-		return result;
-	}
-
-	private void updateObjectTree(final IObjectTreeAPI objTree)
-	{
-		ISession session = objTree.getSession();
-		addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
-		addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
-		addDetailTab(objTree, IObjectTypes.LOB, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-
-		// Expanders.
-		addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander());
-		addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
-		addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());
-		addExpander(objTree, IObjectTypes.USER_PARENT, new UserParentExpander(session));
-		addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
-		addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander());
-		addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
-
-		addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE",
-			"Show stored procedure source"));
-		addDetailTab(objTree, DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION",
-			"Show function source"));
-		addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification",
-			"Show package specification"));
-		addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE BODY", "Body",
-			"Show package body"));
-		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE", "Specification",
-			"Show type specification"));
-		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
-		addDetailTab(objTree, IObjectTypes.INSTANCE, new InstanceDetailsTab());
-		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
-		if (SessionDetailsTab.isAccessible(session))
-		{
-			addDetailTab(objTree, DatabaseObjectType.SESSION, new SessionDetailsTab(getAudSid(session)));
-		}
-		if (SessionStatisticsTab.isAccessible(session))
-		{
-			addDetailTab(objTree, DatabaseObjectType.SESSION, new SessionStatisticsTab(getAudSid(session)));
-		}
-		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
-		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
-		addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
-
-		addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
-		addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());
-
-		// This fixes the issue where the tree is getting constructed prior to
-		// the Oracle plugin expanders being registered.(USERS, SESSIONS,
-		// INSTANCES nodes have no children until the tree is refreshed). Even
-		// though this is a hack, it doesn't seem to negatively impact
-		// performance even when loading all schemas.
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				objTree.refreshTree();
-			}
-		});
-	}
-
-	private void addExpander(final IObjectTreeAPI objTree, final DatabaseObjectType dboType,
-		final INodeExpander exp)
-	{
-		objTree.addExpander(dboType, exp);
-	}
-
-	private void addDetailTab(final IObjectTreeAPI objTree, final DatabaseObjectType dboType,
-		final IObjectTab tab)
-	{
-		objTree.addDetailTab(dboType, tab);
-	}
+   }
+   
+   /**
+    * This will check the setting for using timestamps in where clauses and 
+    * display a warning message to the user if string literal - which is known 
+    * not to work correctly in Oracle - is set to be used.
+    */
+   private void checkTimestampSetting(ISession session) {
+       
+       String tsClassName = DataTypeTimestamp.class.getName();
+       String timeStampWhereClauseUsage = 
+           DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
+       if (timeStampWhereClauseUsage != null) {
+           int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
+           if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt) {
+               session.showWarningMessage(i18n.timestampWarning);
+               s_log.warn(i18n.timestampWarning);
+           }
+       }
+       
+   }
+   
+   @Override
+   protected boolean isPluginSession(ISession session) {
+       return DialectFactory.isOracle(session.getMetaData());
+   }
+   
+   private void addActions(ISession session)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(NewDBOutputWorksheetAction.class));
+      session.addToToolbar(coll.get(NewInvalidObjectsWorksheetAction.class));
+      session.addToToolbar(coll.get(NewSessionInfoWorksheetAction.class));
+      session.addToToolbar(coll.get(NewSGATraceWorksheetAction.class));
+
+
+      session.getSessionInternalFrame().addToToolsPopUp("oracleoutput", coll.get(NewDBOutputWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oracleinvalid", coll.get(NewInvalidObjectsWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oracleinfo", coll.get(NewSessionInfoWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oraclesga", coll.get(NewSGATraceWorksheetAction.class));
+
+   }
+
+
+   private void onSQLInternaFrameOpened(SQLInternalFrame sqlInternalFrame, final ISession session)
+   {
+      final ISQLPanelAPI panel = sqlInternalFrame.getSQLPanelAPI();
+      panel.addExecutor(new ExplainPlanExecuter(session, panel));
+   }
+
+   private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame)
+   {
+      final IObjectTreeAPI objTree = objectTreeInternalFrame.getObjectTreeAPI();
+      updateObjectTree(objTree);
+   }
+
+
+
+   /**
+     * Return a node expander for the object tree for a particular default node type.
+     * <p/> A plugin could return non null here if they wish to override the default node
+     * expander bahaviour. Most plugins should return null here.
+     */
+    public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
+      boolean isOracle = isOracle(session.getAlias());
+      boolean isOracleWithFlashBack = isOracleWithFlashBack(session);
+      if ((type == DatabaseObjectType.PROC_TYPE_DBO) && isOracle) {
+          return new ProcedureExpander();
+      }
+      if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) {
+          return new DefaultDatabaseExpander(session);
+      }
+      if (type == DatabaseObjectType.TABLE_TYPE_DBO && isOracleWithFlashBack) {
+          OraclePreferenceBean prefs = 
+              (OraclePreferenceBean)_prefsManager.getPreferences();
+          return new OracleTableParentExpander(prefs);
+      }
+      return null;
+    }
+
+    private boolean isOracleWithFlashBack(ISession session) {
+        boolean result = false;
+        if (DialectFactory.isOracle(session.getMetaData())) {
+            // Not all Oracle's, just 10g and above.
+            try {
+                int version = 
+                    session.getMetaData().getDatabaseMajorVersion();
+                if (version >= 10) {
+                    result = true;
+                }
+            } catch (SQLException e) {
+                s_log.error("Unexpected exception while attempting to get " +
+                            "the database version", e);
+            }
+        }
+        return result;
+    }
+
+   private boolean isOracle(ISession session) {
+       boolean result = false;
+       if (DialectFactory.isOracle(session.getMetaData())) {
+           result = true;
+       }
+       return result;
+   }
+    
+   private boolean isOracle(ISQLAliasExt alias)
+   {
+      IIdentifier driverIdentifier = alias.getDriverIdentifier();
+      Driver jdbcDriver = getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
+
+      if(null == jdbcDriver)
+      {
+         return false;
+      }
+
+      return jdbcDriver.getClass().getName().startsWith("oracle.");
+   }
+
+   private String[] onGetAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
+   {
+      if(isOracle(alias))
+      {
+         OracleAliasPrefs prefs = 
+             _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+
+         if(null == prefs)
+         {
+            prefs = new OracleAliasPrefs();
+            prefs.setAliasIdentifier(alias.getIdentifier());
+            _oracleAliasPrefsByAliasIdentifier.put(prefs.getAliasIdentifier(), prefs);
+         }
+
+         return getAccessibleSchemas(prefs, con);
+      }
+      else
+      {
+         return null;
+      }
+   }
+
+
+
+   /**
+    * Returns an array of schema names that represent schemas in which there
+    * exist tables that the user associated with the specified session has
+    * privilege to access.
+    *
+    * @param session the session to retrieve schemas for
+    * @param con
+    * @return an array of strings representing the names of accessible schemas
+    */
+   private String[] getAccessibleSchemas(OracleAliasPrefs aliasPrefs, ISQLConnection con)
+   {
+      String[] result = null;
+      ResultSet rs = null;
+      Statement stmt = null;
+      SQLDatabaseMetaData md = con.getSQLMetaData();
+      String currentUserName = null;
+      try
+      {
+         if (hasSystemPrivilege(con) || aliasPrefs.isLoadAllSchemas())
+         {
+            result = md.getSchemas();
+         }
+         else
+         {
+            currentUserName = md.getUserName();
+            stmt = con.getConnection().createStatement();
+            rs = stmt.executeQuery(SCHEMA_ACCESS_SQL);
+            ArrayList<String> tmp = new ArrayList<String>();
+            while (rs.next())
+            {
+               tmp.add(rs.getString(1));
+            }
+            if (currentUserName != null && !tmp.contains(currentUserName))
+            {
+               tmp.add(currentUserName);
+            }
+
+            tmp.remove("SYS");
+
+            if(aliasPrefs.isLoadAccessibleSchemasAndSYS())
+            {
+               tmp.add("SYS");
+            }
+
+            result = tmp.toArray(new String[tmp.size()]);
+         }
+      }
+      catch (SQLException e)
+      {
+         // i18n[DefaultDatabaseExpander.error.retrieveschemaprivs=Unable to retrieve schema privileges]
+         String msg = s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveschemaprivs");
+         s_log.error(msg, e);
+      }
+      finally
+      {
+      	SQLUtilities.closeResultSet(rs, true);
+      }
+      return result;
+   }
+
+   /**
+    * Checks whether or not the user associated with the specified session has
+    * been granted the DBA privilege.
+    *
+    * @param session the session to check
+    * @return true if the user has the DBA privilege; false otherwise.
+    */
+   private boolean hasSystemPrivilege(ISQLConnection con)
+   {
+      boolean result = false;
+      Statement stmt = null;
+      ResultSet rs = null;
+      try
+      {
+         stmt = con.createStatement();
+         rs = stmt.executeQuery(DBA_ROLE_SQL);
+         while (rs.next())
+         {
+            String role = rs.getString(1);
+            if ("DBA".equalsIgnoreCase(role))
+            {
+               result = true;
+               break;
+            }
+         }
+      }
+      catch (SQLException e)
+      {
+         // i18n[DefaultDatabaseExpander.error.retrieveuserroles=Unable to retrieve user roles]
+         String msg =
+            s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveuserroles");
+         s_log.error(msg, e);
+      }
+      finally
+      {
+      	SQLUtilities.closeResultSet(rs, true);
+      }
+      return result;
+   }
+
+
+   /**
+    * Check if we can run query.
+    *
+    * @param session session
+    * @param query   query text
+    * @return true if query works fine
+    */
+   public static boolean checkObjectAccessible(final ISession session, final String query)
+   {
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      try
+      {
+         pstmt = session.getSQLConnection().prepareStatement(query);
+         rs = pstmt.executeQuery();
+         return true;
+      }
+      catch (SQLException ex)
+      {
+         return false;
+      }
+      finally
+      {
+      	SQLUtilities.closeResultSet(rs, true);
+      }
+   }
+
+    private void updateObjectTree(final IObjectTreeAPI objTree) {
+        ISession session = objTree.getSession();
+        addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
+        addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
+        addDetailTab(objTree, IObjectTypes.LOB, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
+
+        // Expanders.
+        addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander());
+        addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
+        addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());
+        addExpander(objTree, IObjectTypes.USER_PARENT, new UserParentExpander(session));
+        addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
+        addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander());
+        addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
+
+        addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
+        addDetailTab(objTree, DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
+        addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification", "Show package specification"));
+        addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE BODY", "Body", "Show package body"));
+        addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE", "Specification", "Show type specification"));
+        addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
+        addDetailTab(objTree, IObjectTypes.INSTANCE, new InstanceDetailsTab());
+        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+        addDetailTab(objTree, IObjectTypes.SESSION, new SessionDetailsTab());
+        addDetailTab(objTree, IObjectTypes.SESSION, new SessionStatisticsTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
+
+        addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
+        addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());
+        
+        // This fixes the issue where the tree is getting constructed prior to 
+        // the Oracle plugin expanders being registered.(USERS, SESSIONS, 
+        // INSTANCES nodes have no children until the tree is refreshed).  Even
+        // though this is a hack, it doesn't seem to negatively impact 
+        // performance even when loading all schemas.
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                objTree.refreshTree();
+            }
+        });
+    }
+
+   private void addExpander(final IObjectTreeAPI objTree,
+                            final DatabaseObjectType dboType,
+                            final INodeExpander exp)
+   {
+      objTree.addExpander(dboType, exp);
+   }
+
+   private void addDetailTab(final IObjectTreeAPI objTree,
+                             final DatabaseObjectType dboType,
+                             final IObjectTab tab)
+   {
+      objTree.addDetailTab(dboType, tab);
+   }
 }

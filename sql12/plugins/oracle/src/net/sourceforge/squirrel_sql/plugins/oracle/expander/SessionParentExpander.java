@@ -28,11 +28,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 
 /**
  * This class handles the expanding of the "Session Parent" node. It will give a list of all the sessions.
@@ -81,7 +81,7 @@ public class SessionParentExpander implements INodeExpander
 			while (rs.next())
 			{
 				IDatabaseObjectInfo doi =
-					new DatabaseObjectInfo(null, schemaName, rs.getString(1), DatabaseObjectType.SESSION, md);
+					new DatabaseObjectInfo(null, schemaName, rs.getString(1), IObjectTypes.SESSION, md);
 				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		}
