@@ -16,26 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.h2.exp;
+package org.firebirdsql.squirrel.exp;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderFactoryTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
 
-import org.junit.After;
+import org.firebirdsql.squirrel.FirebirdPlugin;
 import org.junit.Before;
 
-public class H2SequenceInodeExpanderFactoryTest extends AbstractINodeExpanderFactoryTest
+public class DatabaseExpanderTest extends AbstractINodeExpanderTest
 {
 
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new H2SequenceInodeExpanderFactory();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
+		FirebirdPlugin mockPlugin = mockHelper.createMock(FirebirdPlugin.class);
+		classUnderTest = new DatabaseExpander(mockPlugin);
 	}
 
 }

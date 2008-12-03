@@ -18,12 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.plugins.informix.exp;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractInodeExpanderFactoryTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderFactoryTest;
 
 import org.junit.After;
 import org.junit.Before;
 
-public class InformixSequenceInodeExpanderFactoryTest extends AbstractInodeExpanderFactoryTest
+public class InformixSequenceInodeExpanderFactoryTest extends AbstractINodeExpanderFactoryTest
 {
 
 	@Before

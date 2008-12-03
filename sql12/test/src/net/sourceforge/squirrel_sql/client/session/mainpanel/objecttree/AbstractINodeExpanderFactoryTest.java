@@ -19,19 +19,17 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 
 import static org.junit.Assert.assertNotNull;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 import org.junit.Test;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresSequenceInodeExpanderFactory;
-
-public abstract class AbstractInodeExpanderFactoryTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractINodeExpanderFactoryTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected INodeExpanderFactory classUnderTest = null;
 
-	public AbstractInodeExpanderFactoryTest()
+	public AbstractINodeExpanderFactoryTest()
 	{
 		super();
 	}

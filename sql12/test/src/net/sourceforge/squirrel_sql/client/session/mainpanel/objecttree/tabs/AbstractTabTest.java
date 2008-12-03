@@ -55,14 +55,6 @@ public class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
 
 	protected String databaseProductName = null;
 
-	public static final String TEST_QUALIFIED_NAME = "testQualifiedName";
-
-	public static final String TEST_SIMPLE_NAME = "testSimpleName";
-
-	public static final String TEST_CATALOG_NAME = "testCatalogName";
-
-	public static final String TEST_SCHEMA_NAME = "testSchemaName";
-
 	public static final String TEST_COLUMN_NAME = "aColumnName";
 
 	protected static final String DATABASE_PRODUCT_VERSION = "1.0";

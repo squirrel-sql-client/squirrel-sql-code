@@ -16,26 +16,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.h2.exp;
+package net.sourceforge.squirrel_sql.plugins.mysql.expander;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderFactoryTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
-import org.junit.After;
 import org.junit.Before;
 
-public class H2SequenceInodeExpanderFactoryTest extends AbstractINodeExpanderFactoryTest
+public class UserParentExpanderTest extends AbstractINodeExpanderTest
 {
-
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new H2SequenceInodeExpanderFactory();
+		MysqlPlugin mockPlugin = mockHelper.createMock(MysqlPlugin.class);
+		classUnderTest = new UserParentExpander(mockPlugin);
+		clazz = UserParentExpander.class;
 	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
+	
 
 }
