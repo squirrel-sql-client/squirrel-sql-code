@@ -12,6 +12,10 @@ import utils.EasyMockHelper;
 public class BaseSQuirreLJUnit4TestCase
 {
 
+	public static final String TEST_QUALIFIED_NAME = "testQualifiedName";
+	public static final String TEST_SIMPLE_NAME = "testSimpleName";
+	public static final String TEST_CATALOG_NAME = "testCatalogName";
+	public static final String TEST_SCHEMA_NAME = "testSchemaName";
 	protected EasyMockHelper mockHelper = new EasyMockHelper();
 
 	static {
