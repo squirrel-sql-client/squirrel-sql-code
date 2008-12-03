@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 
 public abstract class ClientAction extends SquirrelAction
 {
+	private static final long serialVersionUID = -9168131047077835490L;
+
 	protected ClientAction(IApplication app)
 	{
 		super(app);
