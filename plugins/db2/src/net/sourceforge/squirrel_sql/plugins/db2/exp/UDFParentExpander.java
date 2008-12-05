@@ -34,8 +34,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 /**
- * This class handles the expanding of the "Sequence Group"
- * node. It will give a list of all the Sequences available in the schema.
+ * This class handles the expanding of the "UDF"
+ * node. It will give a list of all the User-Defined Functions in the schema that match the
+ * object tree filter criteria.
  *
  * @author manningr
  */
