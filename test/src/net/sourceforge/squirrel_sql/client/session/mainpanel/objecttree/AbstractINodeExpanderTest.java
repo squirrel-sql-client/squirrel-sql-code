@@ -25,19 +25,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.easymock.classextension.EasyMock;
-import org.junit.Test;
-
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+
+import org.easymock.classextension.EasyMock;
+import org.junit.Test;
 
 public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 {
@@ -53,7 +52,8 @@ public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
 	protected IIdentifier mockIdentifier = mockHelper.createMock(IIdentifier.class);
 	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
-	protected Class clazz = null;
+	protected Class<Object> clazz = null;
+	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
 
 	public AbstractINodeExpanderTest()
 	{
@@ -68,6 +68,7 @@ public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockIdentifier);
 		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
+		expect(mockSession.getSchemaInfo()).andStubReturn(mockSchemaInfo);
 		
 		expect(mockSQLConnection.getSQLMetaData()).andStubReturn(mockSQLDatabaseMetaData);
 		expect(mockObjectTreeNode.getDatabaseObjectInfo()).andStubReturn(mockDatabaseObjectInfo);
@@ -80,6 +81,8 @@ public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 		
 		expect(mockResultSet.next()).andReturn(true).andReturn(false);
 		expect(mockResultSet.getString(1)).andStubReturn("aTestResultSetStringValue");
+		expect(mockResultSet.getStatement()).andStubReturn(mockPreparedStatement);
+		
 		expect(mockSQLDatabaseMetaData.getDatabaseProductName()).andStubReturn("Oracle");
 		expect(mockSQLDatabaseMetaData.getDatabaseProductVersion()).andStubReturn("10g");
 		expect(mockSQLDatabaseMetaData.supportsSchemasInDataManipulation()).andStubReturn(true);
