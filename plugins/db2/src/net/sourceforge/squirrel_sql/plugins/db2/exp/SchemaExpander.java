@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
- * This class is an expander for the schema nodes. It will add Sequence Object 
+ * This class is an expander for the schema nodes. It will add Sequence and UDF Object 
  * Type nodes to the schema node.
  *
  * @author manningr
