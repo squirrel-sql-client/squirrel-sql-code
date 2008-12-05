@@ -52,7 +52,7 @@ public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
 	protected IIdentifier mockIdentifier = mockHelper.createMock(IIdentifier.class);
 	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
-	protected Class<Object> clazz = null;
+	protected Class<?> clazz = null;
 	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
 
 	public AbstractINodeExpanderTest()
