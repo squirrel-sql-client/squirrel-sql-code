@@ -250,9 +250,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          identifierQuoteString = 
             checkSybaseIdentifierQuoteString(md, identifierQuoteString);         
       }
-            
-      
-      StringBuffer buf = new StringBuffer();
+                  
+      StringBuilder buf = new StringBuilder();
       if (supportsCatalogsInDataManipulation
             && !StringUtilities.isEmpty(_catalog))	  
       {
