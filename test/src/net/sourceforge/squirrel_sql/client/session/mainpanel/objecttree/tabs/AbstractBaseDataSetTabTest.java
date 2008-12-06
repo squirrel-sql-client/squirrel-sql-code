@@ -29,6 +29,7 @@ import java.util.Date;
 
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 
 import org.junit.After;
@@ -53,6 +54,8 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
 
+	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
+	
 	// Test Data
 
 	public static final String[] SQL_KEYWORDS = new String[] { "testKeyword1", "testKeyword2" };
@@ -134,6 +137,12 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		// mockDatabaseMetaData
 		expect(mockDatabaseMetaData.getDefaultTransactionIsolation()).andStubReturn(
 			Connection.TRANSACTION_READ_COMMITTED);
+		
+		// mockDatabaseObjectInfo
+		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
+		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
+		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
+		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
 
 	}
 
