@@ -27,11 +27,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 {
@@ -396,7 +394,7 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 
 		private JTable _columnTable;
 
-		private final ColumnTableModel _columnTableModel = new ColumnTableModel();
+		private final AddIndexColumnTableModel _columnTableModel = new AddIndexColumnTableModel();
 
 		private JComboBox _columnBox;
 
@@ -539,58 +537,6 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 			return _columnTableModel.getRowData().toArray(new String[] {});
 		}
 
-	}
-
-	class ColumnTableModel extends AbstractTableModel
-	{
-		private static final long serialVersionUID = -3437369044423909295L;
-
-		private final Vector<String> rowData = new Vector<String>();
-
-		private final String[] columnNames = new String[] { i18n.COLUMNS_COLUMN_HEADER };
-
-		public String getColumnName(int col)
-		{
-			return columnNames[col];
-		}
-
-		public int getRowCount()
-		{
-			return rowData.size();
-		}
-
-		public int getColumnCount()
-		{
-			return columnNames.length;
-		}
-
-		public Object getValueAt(int row, int col)
-		{
-			return rowData.get(row);
-		}
-
-		public boolean isCellEditable(int row, int col)
-		{
-			return false;
-		}
-
-		public void addColumn(String column)
-		{
-			rowData.add(column);
-			fireTableDataChanged();
-		}
-
-		public String deleteRow(int row)
-		{
-			String removedRow = rowData.remove(row);
-			fireTableDataChanged();
-			return removedRow;
-		}
-
-		public Vector<String> getRowData()
-		{
-			return rowData;
-		}
 	}
 
 	public static void main(String[] args)
