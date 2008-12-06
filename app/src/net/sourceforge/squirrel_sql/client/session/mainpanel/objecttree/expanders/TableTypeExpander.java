@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
+
 /*
  * Copyright (C) 2002 Colin Bell and Johan Compagner
  * colbell@users.sourceforge.net
@@ -27,6 +28,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -34,28 +36,26 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+
 /**
- * This class handles the expanding of a Table Type node. It will build all the
- * tables for the table type.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * This class handles the expanding of a Table Type node. It will build all the tables for the table type.
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class TableTypeExpander implements INodeExpander
 {
 	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(TableTypeExpander.class);
+	private static ILogger s_log = LoggerController.createLogger(TableTypeExpander.class);
 
 	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
+	 * Create the child nodes for the passed parent node and return them. Note that this method should
+	 * <B>not</B> actually add the child nodes to the parent node as this is taken care of in the caller.
 	 * 
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 * 
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
+	 * @param session
+	 *           Current session.
+	 * @param node
+	 *           Node to be expanded.
+	 * @return A list of <TT>ObjectTreeNode</TT> objects representing the child nodes for the passed node.
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
@@ -68,19 +68,20 @@ public class TableTypeExpander implements INodeExpander
 			final ISQLConnection conn = session.getSQLConnection();
 			final String catalogName = parentDbinfo.getCatalogName();
 			final String schemaName = parentDbinfo.getSchemaName();
-         final String tableType = parentDbinfo.getSimpleName();
+			final String tableType = parentDbinfo.getSimpleName();
 
+			String[] types = tableType != null ? new String[] { tableType } : null;
+			session.getSchemaInfo().waitTillTablesLoaded();
+			final ITableInfo[] tables =
+				session.getSchemaInfo().getITableInfos(catalogName, schemaName,
+					new ObjFilterMatcher(session.getProperties()), types);
 
-         String[] types = tableType != null ? new String[]{tableType} : null;
-         session.getSchemaInfo().waitTillTablesLoaded();
-         final ITableInfo[] tables = session.getSchemaInfo().getITableInfos(catalogName, schemaName, new ObjFilterMatcher(session.getProperties()), types);
+			if (session.getProperties().getShowRowCount())
+			{
+				stmt = conn.createStatement();
+			}
 
-         if (session.getProperties().getShowRowCount())
-         {
-            stmt = conn.createStatement();
-         }
-
-         for (int i = 0; i < tables.length; ++i)
+			for (int i = 0; i < tables.length; ++i)
 			{
 				ObjectTreeNode child = new ObjectTreeNode(session, tables[i]);
 				child.setUserObject(getNodeDisplayText(stmt, tables[i]));
@@ -89,17 +90,7 @@ public class TableTypeExpander implements INodeExpander
 		}
 		finally
 		{
-			if (stmt != null)
-			{
-				try
-				{
-					stmt.close();
-				}
-				catch (SQLException ex)
-				{
-					s_log.error("Error closing Statement", ex);
-				}
-			}
+			SQLUtilities.closeStatement(stmt);
 		}
 
 		return childNodes;
@@ -111,8 +102,7 @@ public class TableTypeExpander implements INodeExpander
 		{
 			try
 			{
-				ResultSet rs = rowCountStmt.executeQuery("select count(*) from "
-										+ dbinfo.getQualifiedName());
+				ResultSet rs = rowCountStmt.executeQuery("select count(*) from " + dbinfo.getQualifiedName());
 				try
 				{
 					long nbrRows = 0;
@@ -120,10 +110,8 @@ public class TableTypeExpander implements INodeExpander
 					{
 						nbrRows = rs.getLong(1);
 					}
-					StringBuffer buf = new StringBuffer(dbinfo.getSimpleName());
-					buf.append(" (")
-						.append(nbrRows)
-						.append(")");
+					StringBuilder buf = new StringBuilder(dbinfo.getSimpleName());
+					buf.append(" (").append(nbrRows).append(")");
 					return buf.toString();
 				}
 				finally
