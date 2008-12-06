@@ -56,8 +56,8 @@ public class UpdateXmlSerializerTest extends BaseSQuirreLJUnit4TestCase {
     @After
     public void tearDown() throws Exception {
         serializerUnderTest = null;
-        ArtifactXmlBean squirrel_jar = null;
-        ArtifactXmlBean fw_jar = null;
+        squirrel_jar = null;
+        fw_jar = null;
     }
     
     @Test
