@@ -55,11 +55,6 @@ public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 	protected Class<?> clazz = null;
 	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
 
-	public AbstractINodeExpanderTest()
-	{
-		super();
-	}
-
 	@Test
 	public void testCreateChildren() throws SQLException
 	{
