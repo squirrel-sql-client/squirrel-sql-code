@@ -18,77 +18,44 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
 
-import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.List;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
-public class UpdateSummaryTableModelTest extends BaseSQuirreLJUnit4TestCase
+public class UpdateSummaryTableModelTest extends AbstractTableModelTest
 {
-	protected TableModel classUnderTest = null;
-	
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new UpdateSummaryTableModel(null);
+		List<ArtifactStatus> artifacts = new ArrayList<ArtifactStatus>();
+		ArtifactStatus mockStatus = getArtifactStatus("testCoreArtifactName", "testArtifactType", true, true);
+		ArtifactStatus mockStatus2 = getArtifactStatus("testPluginArtifactName", "testArtifactType", false, false);		
+		artifacts.add(mockStatus);
+		artifacts.add(mockStatus2);
+		mockHelper.replayAll();
+		classUnderTest = new UpdateSummaryTableModel(artifacts);
+		editableColumns = new int[] { 3 };
 	}
 
-	@After
-	public void tearDown() throws Exception
-	{
-	}
-
-	@Test
-	public void testIsCellEditable()
-	{
-		
-	}
-
-	@Test
-	public void testGetValueAt()
-	{
-		
-	}
-
-	@Test
-	public void testGetRowCount()
-	{
-
-	}
-
-	@Test
-	public void testGetColumnCount()
-	{
-
-	}
-
-	@Test
-	public void testGetColumnNameInt()
-	{
-
-	}
-
-	@Test
-	public void testGetColumnClassInt()
-	{
-
-	}
-
-	@Test
-	public void testSetValueAtObjectIntInt()
-	{
-
-	}
-
-	@Test
-	public void testGetColumnWidth()
-	{
-
-	}
+	/**
+    * @param artifactName
+	 * @param artifactType
+	 * @param isInstalled
+	 * @param isCoreArtifact
+	 * @return
+    */
+   private ArtifactStatus getArtifactStatus(String artifactName, String artifactType, boolean isInstalled, boolean isCoreArtifact)
+   {
+	   ArtifactStatus mockStatus = mockHelper.createMock(ArtifactStatus.class);
+		expect(mockStatus.getName()).andStubReturn(artifactName);
+		expect(mockStatus.getType()).andStubReturn(artifactType);
+		expect(mockStatus.isInstalled()).andStubReturn(isInstalled);
+		expect(mockStatus.isCoreArtifact()).andStubReturn(isCoreArtifact);
+		expect(mockStatus.getArtifactAction()).andStubReturn(ArtifactAction.INSTALL);
+	   return mockStatus;
+   }
 
 }
