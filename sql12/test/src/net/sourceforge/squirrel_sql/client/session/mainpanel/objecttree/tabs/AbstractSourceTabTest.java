@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -43,6 +44,8 @@ public class AbstractSourceTabTest extends AbstractTabTest
 
 	protected ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
 
+	protected ISQLDatabaseMetaData mockMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
+	
 	public AbstractSourceTabTest()
 	{
 		super();
@@ -65,13 +68,14 @@ public class AbstractSourceTabTest extends AbstractTabTest
 
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
+		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
+		
+		setupMockDatabaseObjectInfo();
+		
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
 		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
-		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
-		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
-		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
-		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
-		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
+		
 		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
 		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
 		expectLastCall().anyTimes();
@@ -88,4 +92,10 @@ public class AbstractSourceTabTest extends AbstractTabTest
 		mockHelper.verifyAll();
 	}
 
+	protected void setupMockDatabaseObjectInfo() {
+		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
+		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
+		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
+		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);		
+	}
 }
