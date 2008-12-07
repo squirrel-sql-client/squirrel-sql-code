@@ -25,138 +25,153 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 
-public class MockSQLAlias implements ISQLAliasExt {
+public class MockSQLAlias implements ISQLAliasExt
+{
 
-    public void assignFrom(ISQLAlias rhs) throws ValidationException {
-        // TODO Auto-generated method stub
+	public void assignFrom(ISQLAlias rhs) throws ValidationException
+	{
 
-    }
+	}
 
-    public int compareTo(Object rhs) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	public int compareTo(Object rhs)
+	{
 
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		return 0;
+	}
 
-    public void setName(String name) throws ValidationException {
-        // TODO Auto-generated method stub
+	public String getName()
+	{
 
-    }
+		return null;
+	}
 
-    public IIdentifier getDriverIdentifier() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setName(String name) throws ValidationException
+	{
 
-    public void setDriverIdentifier(IIdentifier data)
-            throws ValidationException {
-        // TODO Auto-generated method stub
+	}
 
-    }
+	public IIdentifier getDriverIdentifier()
+	{
 
-    public String getUrl() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		return null;
+	}
 
-    public void setUrl(String url) throws ValidationException {
-        // TODO Auto-generated method stub
+	public void setDriverIdentifier(IIdentifier data) throws ValidationException
+	{
 
-    }
+	}
 
-    public String getUserName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public String getUrl()
+	{
 
-    public void setUserName(String userName) throws ValidationException {
-        // TODO Auto-generated method stub
+		return null;
+	}
 
-    }
+	public void setUrl(String url) throws ValidationException
+	{
 
-    public String getPassword() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	}
 
-    public void setPassword(String password) throws ValidationException {
-        // TODO Auto-generated method stub
+	public String getUserName()
+	{
 
-    }
+		return null;
+	}
 
-    public boolean isAutoLogon() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	public void setUserName(String userName) throws ValidationException
+	{
 
-    public void setAutoLogon(boolean value) {
-        // TODO Auto-generated method stub
+	}
 
-    }
+	public String getPassword()
+	{
 
-    public boolean isConnectAtStartup() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		return null;
+	}
 
-    public void setConnectAtStartup(boolean value) {
-        // TODO Auto-generated method stub
+	public void setPassword(String password) throws ValidationException
+	{
 
-    }
+	}
 
-    public boolean getUseDriverProperties() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	public boolean isAutoLogon()
+	{
 
-    public void setUseDriverProperties(boolean value) {
-        // TODO Auto-generated method stub
+		return false;
+	}
 
-    }
+	public void setAutoLogon(boolean value)
+	{
 
-    public SQLDriverPropertyCollection getDriverProperties() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	}
 
-    public void setDriverProperties(SQLDriverPropertyCollection value) {
-        // TODO Auto-generated method stub
+	public boolean isConnectAtStartup()
+	{
 
-    }
+		return false;
+	}
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // TODO Auto-generated method stub
+	public void setConnectAtStartup(boolean value)
+	{
 
-    }
+	}
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        // TODO Auto-generated method stub
+	public boolean getUseDriverProperties()
+	{
 
-    }
+		return false;
+	}
 
-    public IIdentifier getIdentifier() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void setUseDriverProperties(boolean value)
+	{
 
-    public boolean isValid() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	}
 
-   public SQLDriverPropertyCollection getDriverPropertiesClone() {
-      return null;  //To change body of implemented methods use File | Settings | File Templates.
-   }
+	public SQLDriverPropertyCollection getDriverProperties()
+	{
 
-   public SQLAliasSchemaProperties getSchemaProperties()  {
-      return null;  //To change body of implemented methods use File | Settings | File Templates.
-   }
+		return null;
+	}
 
-   public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)  {
-      //To change body of implemented methods use File | Settings | File Templates.
-   }
+	public void setDriverProperties(SQLDriverPropertyCollection value)
+	{
+
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener)
+	{
+
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener)
+	{
+
+	}
+
+	public IIdentifier getIdentifier()
+	{
+
+		return null;
+	}
+
+	public boolean isValid()
+	{
+
+		return false;
+	}
+
+	public SQLDriverPropertyCollection getDriverPropertiesClone()
+	{
+		return null;
+	}
+
+	public SQLAliasSchemaProperties getSchemaProperties()
+	{
+		return null;
+	}
+
+	public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
+	{
+
+	}
 }
