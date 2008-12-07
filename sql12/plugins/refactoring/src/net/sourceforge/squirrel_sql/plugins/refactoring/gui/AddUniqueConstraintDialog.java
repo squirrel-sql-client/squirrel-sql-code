@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -41,7 +40,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -200,7 +198,7 @@ public class AddUniqueConstraintDialog extends AbstractRefactoringTabbedDialog
 
 		private JTable _columTable;
 
-		private final ColumnTableModel _columnTableModel = new ColumnTableModel();
+		private final AddUniqueConstraintColumnTableModel _columnTableModel = new AddUniqueConstraintColumnTableModel();
 
 		private JComboBox localColumBox;
 
@@ -350,58 +348,6 @@ public class AddUniqueConstraintDialog extends AbstractRefactoringTabbedDialog
 		public List<String> getUniqueColumns()
 		{
 			return _columnTableModel.getRowData();
-		}
-	}
-
-	class ColumnTableModel extends AbstractTableModel
-	{
-		private static final long serialVersionUID = 3668028756342251497L;
-
-		private final ArrayList<String> rowData = new ArrayList<String>();
-
-		private final String[] columnNames = new String[] { i18n.COLUMNS_LOCAL_COLUMN_HEADER };
-
-		public String getColumnName(int col)
-		{
-			return columnNames[col];
-		}
-
-		public int getRowCount()
-		{
-			return rowData.size();
-		}
-
-		public int getColumnCount()
-		{
-			return columnNames.length;
-		}
-
-		public Object getValueAt(int row, int col)
-		{
-			return rowData.get(row);
-		}
-
-		public boolean isCellEditable(int row, int col)
-		{
-			return false;
-		}
-
-		public void addColumn(String column)
-		{
-			rowData.add(column);
-			fireTableDataChanged();
-		}
-
-		public String deleteRow(int row)
-		{
-			String removedRow = rowData.remove(row);
-			fireTableDataChanged();
-			return removedRow;
-		}
-
-		public List<String> getRowData()
-		{
-			return rowData;
 		}
 	}
 
