@@ -466,4 +466,22 @@ public class Utilities
 			}
 		}
 	}
+	
+	/**
+	 * Cause the current thread to sleep for the specified number of milliseconds. Exceptions logged.
+	 * 
+	 * @param millis number of milliseconds to sleep.
+	 */
+	public static void sleep(long millis)
+	{
+		try
+		{
+			Thread.sleep(millis);
+		}
+		catch (Exception e)
+		{
+			s_log.error(e);
+		}
+	}
+	
 }
