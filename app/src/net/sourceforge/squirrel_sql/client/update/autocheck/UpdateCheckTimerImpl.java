@@ -99,7 +99,7 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 		{
 			// Since this timer must be started when SQuirreL is launched, wait a couple of minutes for
 			// SQuirreL to get done initializing the UI.
-			sleep(120 * 1000L);
+			Utilities.sleep(120 * 1000L);
 
 			while (!stopped)
 			{
