@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.client.update.async.ReleaseFileUpdateCheckTask;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -174,22 +175,10 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 		{
 			stopped = true;
 		}
-
-		private void sleep(long millis)
-		{
-			try
-			{
-				Thread.sleep(millis);
-			}
-			catch (Exception e)
-			{
-				/* Do Nothing */
-			}
-		}
 		
 		private void sleepForAnHour()
 		{
-			sleep(1000 * 60 * 60);
+			Utilities.sleep(1000 * 60 * 60);
 		}
 		
 	}

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -81,7 +82,7 @@ public class CancelStatementThread extends Thread
          // give the ResultSetReader some time to realize that the user requested
          // cancel and stop fetching results.  This allows us to stop the query
          // processing gracefully.
-         Thread.sleep(500);
+         Utilities.sleep(500);
          if (_stmt != null) {
              _stmt.close();
          }
