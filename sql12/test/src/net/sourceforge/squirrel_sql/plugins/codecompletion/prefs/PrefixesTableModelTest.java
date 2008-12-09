@@ -32,10 +32,8 @@ public class PrefixesTableModelTest extends AbstractTableModelTest
 	{
 		PrefixedConfig mockPrefix = mockHelper.createMock(PrefixedConfig.class);
 		PrefixedConfig[] prefixes = new PrefixedConfig[] { mockPrefix };
-		
+		mockHelper.replayAll();
 		classUnderTest = new PrefixesTableModel(prefixes);
-		
-		
 	}
 
 	@Test
