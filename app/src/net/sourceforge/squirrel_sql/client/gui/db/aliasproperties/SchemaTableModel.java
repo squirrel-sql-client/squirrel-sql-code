@@ -12,7 +12,7 @@ public class SchemaTableModel extends DefaultTableModel
     
    static final int IX_SCHEMA_NAME = 0;
    static final int IX_TABLE = 1;
-   static final int IX_VIEW = 2;
+	static final int IX_VIEW = 2;
    static final int IX_PROCEDURE = 3;
    private SQLAliasSchemaDetailProperties[] _schemaDetails;
 
@@ -67,10 +67,19 @@ public class SchemaTableModel extends DefaultTableModel
       fireTableCellUpdated(row, column);
    }
 
+   /**
+	 * @see javax.swing.table.DefaultTableModel#getColumnCount()
+	 */
+	@Override
+	public int getColumnCount()
+	{
+		return 4;
+	}
+
 
    public boolean isCellEditable(int row, int column)
    {
-      return IX_SCHEMA_NAME != column;
+      return IX_SCHEMA_NAME != column && column < getColumnCount();
    }
 
 
