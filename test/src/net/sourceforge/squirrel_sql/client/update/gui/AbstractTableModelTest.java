@@ -21,13 +21,14 @@ package net.sourceforge.squirrel_sql.client.update.gui;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.swing.table.TableModel;
 
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
 import org.junit.After;
 import org.junit.Test;
-
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 public class AbstractTableModelTest extends BaseSQuirreLJUnit4TestCase
 {
@@ -45,6 +46,7 @@ public class AbstractTableModelTest extends BaseSQuirreLJUnit4TestCase
    public void tearDown() throws Exception
    {
    	classUnderTest = null;
+   	mockHelper.verifyAll();
    }
 
 	@Test
@@ -83,10 +85,19 @@ public class AbstractTableModelTest extends BaseSQuirreLJUnit4TestCase
    	}
    }
 
-	@Test(expected = IndexOutOfBoundsException.class)
+	@Test
    public void testGetValueAt_InvalidColumn()
    {
-   	classUnderTest.getValueAt(0, classUnderTest.getColumnCount());
+		try {
+			classUnderTest.getValueAt(0, classUnderTest.getColumnCount());
+			fail("Expected an exception for call to getValue with a column that is one higher that the " +
+					"highest column index allowed by this table model");
+		} catch (IndexOutOfBoundsException e) {
+			// This is acceptable
+		} catch (IllegalArgumentException e) {
+			// This is acceptable
+		}
+		
    }
 
 	@Test
