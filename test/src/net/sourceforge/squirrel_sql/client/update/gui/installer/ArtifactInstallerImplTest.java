@@ -91,7 +91,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String SQUIRREL_SQL_ES_JAR_FILENAME = "squirrel-sql_es.jar";
 	
-	private static final String LOCAL_RELEASE_FILENAME = "release.xml";
+	private static final String LOCAL_RELEASE_FILENAME = UpdateUtil.RELEASE_XML_FILENAME;
 	
 	private FileWrapper mockSquirreLHomeDirFile = helper.createMock("mockSquirreHomeDirFile", FileWrapper.class);
 

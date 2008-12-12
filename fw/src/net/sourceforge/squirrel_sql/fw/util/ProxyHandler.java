@@ -40,12 +40,12 @@ public class ProxyHandler
 		super();
 	}
 
-	public void apply(ProxySettings proxy)
+	public void apply(IProxySettings proxy)
 	{
 		apply(proxy, System.getProperties());
 	}
 
-	public void apply(ProxySettings proxy, Properties props)
+	public void apply(IProxySettings proxy, Properties props)
 	{
 		if (proxy == null)
 		{

@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -118,7 +119,7 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 		void loadData(IApplication app, SquirrelPreferences prefs)
 		{
-			final ProxySettings proxySettings = prefs.getProxySettings();
+			final IProxySettings proxySettings = prefs.getProxySettings();
 
 			_httpUseProxyChk.setSelected(proxySettings.getHttpUseProxy());
 			_httpProxyServer.setText(proxySettings.getHttpProxyServer());

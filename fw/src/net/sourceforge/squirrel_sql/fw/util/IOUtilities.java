@@ -27,10 +27,11 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public interface IOUtilities {
+public interface IOUtilities
+{
 
-	String HTTP_PROTOCOL_PREFIX = "http";	
-	
+	String HTTP_PROTOCOL_PREFIX = "http";
+
 	void closeInputStream(InputStream is);
 
 	void closeOutputStream(OutputStream os);
@@ -39,7 +40,7 @@ public interface IOUtilities {
 	 * Closes the specified Reader which can be null. Logs an error if an exception occurs while closing.
 	 * 
 	 * @param reader
-	 *        the Reader to close.
+	 *           the Reader to close.
 	 */
 	void closeReader(Reader reader);
 
@@ -47,7 +48,7 @@ public interface IOUtilities {
 	 * Closes the specified writer which can be null. Logs an error if an exception occurs while closing.
 	 * 
 	 * @param writer
-	 *        the Writer to close.
+	 *           the Writer to close.
 	 */
 	void closeWriter(Writer writer);
 
@@ -55,11 +56,11 @@ public interface IOUtilities {
 	 * Reads from the specified InputStream and copies bytes read to the specified OuputStream.
 	 * 
 	 * @param is
-	 *        the InputStream to read from
+	 *           the InputStream to read from
 	 * @param os
-	 *        the OutputStream to write to
+	 *           the OutputStream to write to
 	 * @throws IOException
-	 *         in an exception occurs while reading/writing
+	 *            in an exception occurs while reading/writing
 	 */
 	void copyBytes(InputStream is, OutputStream os) throws IOException;
 
@@ -76,14 +77,12 @@ public interface IOUtilities {
 	 * Computes the CRC32 checksum for the specified file. This doesn't appear to be compatible with cksum.
 	 * 
 	 * @param f
-	 *        the file to compute a checksum for.
-	 * 
+	 *           the file to compute a checksum for.
 	 * @return the checksum value for the file specified
 	 */
 	long getCheckSum(File f) throws IOException;
 
 	/**
-	 * 
 	 * @param f
 	 * @return
 	 * @throws IOException
@@ -95,17 +94,18 @@ public interface IOUtilities {
 	 * it doesn't already exist. The specified inputstream is not closed in this method.
 	 * 
 	 * @param is
-	 *        the InputStream to read from.
+	 *           the InputStream to read from.
 	 * @param outputFile
-	 *        the file to write to.
+	 *           the file to write to.
 	 * @return the number of bytes that were read and written to the file.
-	 * 
 	 * @throws IOException
 	 */
 	public int copyBytesToFile(InputStream is, FileWrapper outputFile) throws IOException;
 
-	public int downloadHttpFile(final URL url, FileWrapper destFile) throws Exception;
+	public int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings)
+		throws Exception;
 
-	public URL constructHttpUrl(final String host, final int port, final String fileToGet) throws MalformedURLException;
+	public URL constructHttpUrl(final String host, final int port, final String fileToGet)
+		throws MalformedURLException;
 
 }

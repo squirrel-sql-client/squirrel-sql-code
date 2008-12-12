@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -65,6 +66,7 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    private IOUtilities mockIOUtilities = null;
    private UpdateXmlSerializer mockSerializer = null;
 	private PathUtils mockPathUtils = null;
+	private IProxySettings mockProxySettings = null;
    
    @Before
    public void setUp() throws Exception {
@@ -318,11 +320,12 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
 		String host = "somehost.com";
 		int port = 80;
 		String fileToGet = "/updates/snapshot/release.xml";
-		String fileFromPath = "release.xml";
+		String fileFromPath = UpdateUtil.RELEASE_XML_FILENAME;
 		String destDir = "/some/dest/directory";
 		int fileSize = 10;
 		long checksum = 10;
 		String absPath = destDir + "/" + fileFromPath;
+		mockProxySettings = mockHelper.createMock(IProxySettings.class);
 		
 		// Cannot mock URLs, they are final and so they cannot be subclassed.
 		URL url = new URL("http", host, fileToGet);
@@ -335,16 +338,16 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    	expect(destFile.getAbsolutePath()).andReturn(absPath);
    	expect(mockFileWrapperFactory.create(destDir, fileFromPath)).andReturn(destFile);
    	if (simulateSuccess) {
-   		expect(mockIOUtilities.downloadHttpFile(url, destFile)).andReturn(fileSize);
+   		expect(mockIOUtilities.downloadHttpFile(url, destFile, mockProxySettings)).andReturn(fileSize);
    	} else {
-   		expect(mockIOUtilities.downloadHttpFile(url, destFile)).andReturn(fileSize-1);
+   		expect(mockIOUtilities.downloadHttpFile(url, destFile, mockProxySettings)).andReturn(fileSize-1);
    	}
 		
    	String downloadedPath = null;
    	mockHelper.replayAll();
    	try {
    		downloadedPath =  
-   			underTest.downloadHttpUpdateFile(host, port, fileToGet, destDir, fileSize, checksum);
+   			underTest.downloadHttpUpdateFile(host, port, fileToGet, destDir, fileSize, checksum, mockProxySettings);
 			if (!simulateSuccess) {
 				fail("Expected an exception to be thrown for failed filesize verification");
 			}

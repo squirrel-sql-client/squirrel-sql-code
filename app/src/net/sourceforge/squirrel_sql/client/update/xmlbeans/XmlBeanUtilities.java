@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
@@ -96,7 +97,7 @@ public class XmlBeanUtilities {
 		if (args.length != 3) {
 			printUsage();
 		} else {
-			File f = new File(args[2], "release.xml");
+			File f = new File(args[2], UpdateUtil.RELEASE_XML_FILENAME);
 			String filename = f.getAbsolutePath();
 			if (f.exists()) {
 				System.err.println("File " + filename + " appears to already exist");

@@ -41,7 +41,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 
    private static final String FILE_SYSTEM_UPDATE_PATH = "fileSystemUpdatePath";
 
-	private static final String LOCAL_RELEASE_FILENAME = "release.xml";
+	private static final String LOCAL_RELEASE_FILENAME = UpdateUtil.RELEASE_XML_FILENAME;
 
 	UpdateControllerImpl underTest = null;
    
