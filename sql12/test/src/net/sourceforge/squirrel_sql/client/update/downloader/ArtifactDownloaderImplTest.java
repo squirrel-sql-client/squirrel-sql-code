@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatu
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,6 +59,8 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase {
 		mockHelper.createMock("mockCoreArtifactStatus",ArtifactStatus.class);
 	private ArtifactStatus mockPluginArtifactStatus = 
 		mockHelper.createMock("mockPluginArtifactStatus",ArtifactStatus.class);
+	private IProxySettings mockProxySettings = 
+		mockHelper.createMock(IProxySettings.class);
 	
 	private UpdateUtil mockUpdateUtil = mockHelper.createMock("mockUpdateUtil", UpdateUtil.class);
 	
@@ -115,9 +118,10 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase {
 		classUnderTest.setPort(port);
 		classUnderTest.setChannelName("channelName");
 		classUnderTest.setIsRemoteUpdateSite(true);
+		classUnderTest.setProxySettings(mockProxySettings);
 		
 		expect(mockUpdateUtil.downloadHttpUpdateFile(eq(host), eq(port), contains(coreFilename), 
-			eq(CORE_DOWNLOADS_DIR), eq(coreFileSize), eq(checksum)));
+			eq(CORE_DOWNLOADS_DIR), eq(coreFileSize), eq(checksum), eq(mockProxySettings)));
 		expectLastCall().andReturn(destFileAbsPath);
 		
 		DownloadStatusTypeCheckListenerStub listener = 
@@ -138,9 +142,10 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase {
 		classUnderTest.setPort(port);
 		classUnderTest.setChannelName("channelName");
 		classUnderTest.setIsRemoteUpdateSite(true);
+		classUnderTest.setProxySettings(mockProxySettings);
 
 		expect(mockUpdateUtil.downloadHttpUpdateFile(eq(host), eq(port), contains(coreFilename), 
-			eq(CORE_DOWNLOADS_DIR), eq(coreFileSize), eq(checksum)));
+			eq(CORE_DOWNLOADS_DIR), eq(coreFileSize), eq(checksum), eq(mockProxySettings)));
 		expectLastCall().andThrow(new Exception("Test exception for run() method failure test"));
 
 		

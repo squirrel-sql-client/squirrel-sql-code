@@ -156,7 +156,7 @@ public class ReleaseFileUpdateCheckTask implements Runnable
 				currentChannelBean =
 					_util.downloadCurrentRelease(_settings.getUpdateServer(),
 						Integer.parseInt(_settings.getUpdateServerPort()), releasePath.toString(),
-						RELEASE_XML_FILENAME);
+						RELEASE_XML_FILENAME, _app.getSquirrelPreferences().getProxySettings());
 			}
 			catch (Exception e)
 			{

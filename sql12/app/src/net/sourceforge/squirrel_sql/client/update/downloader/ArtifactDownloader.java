@@ -23,6 +23,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 
 public interface ArtifactDownloader
 {
@@ -114,5 +115,7 @@ public interface ArtifactDownloader
 	 * @param util
 	 */
 	void setUtil(UpdateUtil util);
+
+	public void setProxySettings(IProxySettings settings);
 
 }

@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -72,6 +73,8 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	/** TODO: change this to Spring-injected when this class becomes a Spring bean. */
 	private PathUtils _pathUtils = new PathUtilsImpl();
+
+	private IProxySettings _proxySettings = null;	
 
 	public ArtifactDownloaderImpl(List<ArtifactStatus> artifactStatus)
 	{
@@ -169,7 +172,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		try
 		{
 			_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
-				status.getChecksum());
+				status.getChecksum(), _proxySettings);
 		}
 		catch (Exception e)
 		{
@@ -377,6 +380,14 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	public void setUtil(UpdateUtil util)
 	{
 		this._util = util;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader#setProxySettings(net.sourceforge.squirrel_sql.fw.util.IProxySettings)
+	 */
+	public void setProxySettings(IProxySettings settings)
+	{
+		_proxySettings = settings;
 	}
 
 }

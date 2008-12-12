@@ -236,7 +236,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 			_currentChannelBean =
 				_util.downloadCurrentRelease(getUpdateServerName(), getUpdateServerPortAsInt(),
-					releasePath.toString(), RELEASE_XML_FILENAME);
+					releasePath.toString(), RELEASE_XML_FILENAME, _app.getSquirrelPreferences().getProxySettings());
 		}
 		else
 		{
@@ -311,6 +311,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 		_downloader = _downloaderFactory.create(newartifactsList);
 		_downloader.setUtil(_util);
+		_downloader.setProxySettings(_app.getSquirrelPreferences().getProxySettings());
 		_downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
 		_downloader.setHost(getUpdateServerName());
 		_downloader.setPort(Integer.parseInt(getUpdateServerPort()));

@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ProxySettings implements Cloneable, Serializable
+public class ProxySettings implements Cloneable, Serializable, IProxySettings
 {
 	private static final long serialVersionUID = 6435632924688921646L;
 

@@ -33,8 +33,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.CRC32;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -44,7 +47,7 @@ public class IOUtilitiesImpl implements IOUtilities {
 
    /** Logger for this class. */
    private final ILogger s_log = LoggerController.createLogger(IOUtilitiesImpl.class);
-
+   
    /**
     * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#closeInputStream(java.io.InputStream)
     */
@@ -206,7 +209,7 @@ public class IOUtilitiesImpl implements IOUtilities {
 	/** 
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#downloadHttpFile(java.lang.String, int, java.lang.String, net.sourceforge.squirrel_sql.fw.util.FileWrapper)
 	 */
-   public int downloadHttpFile(URL url, FileWrapper destFile)
+   public int downloadHttpFile(URL url, FileWrapper destFile, IProxySettings proxySettings)
 	      throws Exception {
 		BufferedInputStream is = null;
 		HttpMethod method = null;
@@ -217,6 +220,20 @@ public class IOUtilitiesImpl implements IOUtilities {
 				s_log.debug("downloadHttpFile: downloading file (" + destFile.getName() + ") from url: " + url);
 			}
 			HttpClient client = new HttpClient();
+			
+			if (proxySettings.getHttpUseProxy()) {
+				String proxyHost =proxySettings.getHttpProxyServer();
+				int proxyPort = Integer.parseInt(proxySettings.getHttpProxyPort());
+				String proxyUsername = proxySettings.getHttpProxyUser();
+				String proxyPassword = proxySettings.getHttpProxyPassword();
+				
+				client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+				if (proxyUsername != null && !"".equals(proxyUsername))  {
+					Credentials credentials = new UsernamePasswordCredentials(proxyUsername, proxyPassword);
+					client.getState().setProxyCredentials(AuthScope.ANY, credentials);
+				}
+			}
+			
 			method = new GetMethod(url.toString());
 			method.setFollowRedirects(true);
 
@@ -249,5 +266,5 @@ public class IOUtilitiesImpl implements IOUtilities {
 		}
 		return result;
 	}
-	
+
 }

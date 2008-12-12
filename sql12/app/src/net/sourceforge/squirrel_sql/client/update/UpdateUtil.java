@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
 
 public interface UpdateUtil
 {
@@ -89,7 +90,7 @@ public interface UpdateUtil
 	 * @return
 	 */
 	ChannelXmlBean downloadCurrentRelease(final String host, final int port, final String path,
-		final String fileToGet) throws Exception;
+		final String fileToGet, final IProxySettings proxySettings) throws Exception;
 
 	/**
 	 * Loads the channel xml bean from the file system.
@@ -114,11 +115,13 @@ public interface UpdateUtil
 	 *           the size of the file in bytes
 	 * @param checksum
 	 *           the checksum of the file
+	 * @param proxySettings
+	 * 			 information about the web-proxy to use if any
 	 * @return a string representing the full local path to where the file was downloaded to
 	 * @throws Exception
 	 */
 	String downloadHttpUpdateFile(String host, int port, String fileToGet, String destDir, long fileSize,
-		long checksum) throws Exception;
+		long checksum, IProxySettings proxySettings) throws Exception;
 
 	/**
 	 * Downloads the a file from a local directory into our update downloads directory.
