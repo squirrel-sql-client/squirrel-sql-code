@@ -46,7 +46,6 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -74,6 +73,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
@@ -83,6 +83,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -1095,10 +1096,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
     private class delaySelectionRunnable implements Runnable {
         public void run() {
-            try {
-                Thread.sleep(50);
-            } catch (Exception e) {}
-            SwingUtilities.invokeLater(new Runnable() {
+      	  Utilities.sleep(50);
+      	  SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     TreePath rootPath = _tree.getPathForRow(0);
                     _tree.setSelectionPath(rootPath);
