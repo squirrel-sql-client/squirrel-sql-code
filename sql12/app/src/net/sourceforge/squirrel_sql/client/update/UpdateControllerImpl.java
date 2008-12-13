@@ -482,7 +482,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 			public void updateCheckFailed(final Exception e)
 			{
-				if (e instanceof FileNotFoundException)
+				if (e == null || e instanceof FileNotFoundException)
 				{
 					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.RELEASE_FILE_DOWNLOAD_FAILED_MSG);
 				}
@@ -493,6 +493,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 				}
 			}
 
+
+			
 		};
 
 		ReleaseFileUpdateCheckTask runnable =
