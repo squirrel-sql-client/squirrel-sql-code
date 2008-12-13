@@ -102,6 +102,15 @@ public interface IOUtilities
 	 */
 	public int copyBytesToFile(InputStream is, FileWrapper outputFile) throws IOException;
 
+	/**
+	 * Downloads a file using HTTP.
+	 * 
+    * @param url the URL of the file to be retrieved
+	 * @param destFile the file to download the URL file into
+    * @param proxySettings the ProxySettings to use
+	 * @return
+	 * @throws Exception
+	 */
 	public int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings)
 		throws Exception;
 
