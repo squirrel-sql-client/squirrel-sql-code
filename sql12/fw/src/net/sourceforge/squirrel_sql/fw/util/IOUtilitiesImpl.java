@@ -267,7 +267,6 @@ public class IOUtilitiesImpl implements IOUtilities
 				s_log.debug("downloadHttpFile: downloading file (" + destFile.getName() + ") from url: " + url);
 			}
 			HttpClient client = new HttpClient();
-
 			setupProxy(proxySettings, client, url);
 
 			method = new GetMethod(url.toString());
@@ -321,7 +320,8 @@ public class IOUtilitiesImpl implements IOUtilities
 	{
 		if (proxySettings == null) { return; }
 		if (!proxySettings.getHttpUseProxy()) { return; }
-		if (proxySettings.getHttpNonProxyHosts().contains(url.getHost())) { return; }
+		if (proxySettings.getHttpNonProxyHosts() != null 
+				&& proxySettings.getHttpNonProxyHosts().contains(url.getHost())) { return; }
 
 		String proxyHost = proxySettings.getHttpProxyServer();
 		int proxyPort = Integer.parseInt(proxySettings.getHttpProxyPort());
