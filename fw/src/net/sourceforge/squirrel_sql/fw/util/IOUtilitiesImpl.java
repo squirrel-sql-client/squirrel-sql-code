@@ -254,7 +254,7 @@ public class IOUtilitiesImpl implements IOUtilities
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities# downloadHttpFile(java.lang.String, int,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.util.FileWrapper)
 	 */
-	public int downloadHttpFile(URL url, FileWrapper destFile, IProxySettings proxySettings) throws Exception
+	public int downloadHttpFile(URL url, FileWrapper destFile, IProxySettings proxySettings) throws IOException
 	{
 		BufferedInputStream is = null;
 		HttpMethod method = null;
@@ -273,14 +273,18 @@ public class IOUtilitiesImpl implements IOUtilities
 			method.setFollowRedirects(true);
 
 			resultCode = client.executeMethod(method);
-			if (resultCode != 200) { throw new FileNotFoundException("Failed to download file from url (" + url
-				+ "): HTTP Response Code=" + resultCode); }
-			InputStream mis = method.getResponseBodyAsStream();
-
 			if (s_log.isDebugEnabled())
 			{
 				s_log.debug("downloadHttpFile: response code was: " + resultCode);
 			}
+
+			if (resultCode != 200) 
+			{ 
+				throw new FileNotFoundException(
+					"Failed to download file from url (" + url + "): HTTP Response Code=" + resultCode); 
+			}
+			InputStream mis = method.getResponseBodyAsStream();
+
 			is = new BufferedInputStream(mis);
 
 			if (s_log.isDebugEnabled())
@@ -290,12 +294,11 @@ public class IOUtilitiesImpl implements IOUtilities
 
 			result = copyBytesToFile(mis, destFile);
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
 			s_log.error("downloadHttpFile: Unexpected exception while "
 				+ "attempting to open an HTTP connection to url (" + url + ") to download a file ("
 				+ destFile.getAbsolutePath() + "): " + e.getMessage(), e);
-			s_log.error("response code was: " + resultCode);
 			throw e;
 		}
 		finally
