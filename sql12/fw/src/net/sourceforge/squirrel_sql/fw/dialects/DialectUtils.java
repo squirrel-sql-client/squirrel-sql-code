@@ -977,13 +977,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	@SuppressWarnings("unused")
 	public static List<String> getColumnTypeAlterSQL(HibernateDialect dialect, String alterClause,
 		String setClause, boolean repeatColumn, TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		String shapedTable = shapeQualifiableIdentifier(to.getTableName(), qualifier, prefs, dialect);
-		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
 		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
 
 		ArrayList<String> list = new ArrayList<String>();
