@@ -95,7 +95,10 @@ public class ReleaseFileUpdateCheckTask implements Runnable
 		}
 		catch (Exception e)
 		{
-			_callback.updateCheckFailed(e);
+			s_log.error("Unexpected exception while attempting to find local release file: "+e.getMessage(), e);
+			if (_callback != null) {
+				_callback.updateCheckFailed(e);
+			}
 			return;
 		}
 
@@ -116,15 +119,17 @@ public class ReleaseFileUpdateCheckTask implements Runnable
 		{
 			s_log.warn("run: currentChannelBean was null - it is inconclusive whether or not the software "
 				+ "is current : assuming that it is for now");
-			isUpToDate = true;
+			if (_callback != null) {
+				_callback.updateCheckFailed(null);
+			}
 		}
 		else
 		{
 			isUpToDate = currentChannelBean.equals(installedChannelBean);
-		}
-		if (_callback != null)
-		{
-			_callback.updateCheckComplete(isUpToDate, installedChannelBean, currentChannelBean);
+			if (_callback != null)
+			{
+				_callback.updateCheckComplete(isUpToDate, installedChannelBean, currentChannelBean);
+			}
 		}
 	}
 
