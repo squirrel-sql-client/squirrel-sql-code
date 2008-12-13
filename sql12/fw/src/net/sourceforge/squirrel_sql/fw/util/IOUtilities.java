@@ -112,7 +112,7 @@ public interface IOUtilities
 	 * @throws Exception
 	 */
 	public int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings)
-		throws Exception;
+		throws IOException;
 
 	public URL constructHttpUrl(final String host, final int port, final String fileToGet)
 		throws MalformedURLException;
