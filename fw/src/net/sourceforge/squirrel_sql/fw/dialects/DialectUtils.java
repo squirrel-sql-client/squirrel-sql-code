@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -2665,9 +2666,9 @@ public class DialectUtils implements StringTemplateConstants
 	public static String bindAttributes(HibernateDialect dialect, StringTemplate st,
 		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		for (String key : valuesMap.keySet())
-		{
-			String value = valuesMap.get(key);
+		for (Entry<String, String> entry : valuesMap.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
 			bindAttribute(dialect, st, key, value, qualifier, prefs);
 		}
 
