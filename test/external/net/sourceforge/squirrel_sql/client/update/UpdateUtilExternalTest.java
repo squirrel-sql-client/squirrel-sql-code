@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerIm
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,6 +45,7 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
     UpdateUtil utilUnderTest = new UpdateUtilImpl();
     UpdateXmlSerializer serializer = null;
     FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl(); 
+    IProxySettings proxySettings = new ProxySettings();
     
     @Before
     public void setUp() throws Exception {
@@ -62,18 +65,18 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
         //String path = "/downloads/";
         int port = 80;
         //UpdateUtil util = new UpdateUtilImpl();
-        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1);
+        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1, proxySettings);
         verifyFileExistsAndDeleteIt("firebird_object_tree.jpg", false);
     }
     
     @Test
     public void downloadHttpFile() throws Exception {
         String host = "squirrel-sql.sourceforge.net";
-        String file = "release.xml";
+        String file = UpdateUtil.RELEASE_XML_FILENAME;
         //String path = "/release/snapshot/";
         int port = 80;
-        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1);
-        verifyFileExistsAndDeleteIt("release.xml", false);
+        utilUnderTest.downloadHttpUpdateFile(host, port, file, "/tmp", -1, -1, proxySettings);
+        verifyFileExistsAndDeleteIt(file, false);
     }
 
     @Test
@@ -94,9 +97,9 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
     public void testFileDownloadCurrentRelease() throws Exception {
         String host = "http://squirrel-sql.sourceforge.net";
         String path = "/release/snapshot/";
-        String file = "release.xml";
+        String file = UpdateUtil.RELEASE_XML_FILENAME;
         
-        ChannelXmlBean bean = utilUnderTest.downloadCurrentRelease(host, 80, path, file);
+        ChannelXmlBean bean = utilUnderTest.downloadCurrentRelease(host, 80, path, file, proxySettings);
         assertNotNull(bean);
         serializer.write(bean, "/tmp/test.xml");
         verifyFileExistsAndDeleteIt("test.xml", false);
