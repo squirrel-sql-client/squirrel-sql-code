@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -396,6 +397,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 
 		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_STARTED)).andReturn(
 			mockBackupStartedStatusEvent);
+		mockBackupStartedStatusEvent.setNumFilesToUpdate(anyInt());
 		expect(mockInstallStatusEventFactory.create(InstallEventType.BACKUP_COMPLETE)).andReturn(
 			mockBackupCompletedStatusEvent);
 
@@ -437,6 +439,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	{
 		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_STARTED)).andReturn(
 			mockInstallStartedStatusEvent);
+		mockInstallStartedStatusEvent.setNumFilesToUpdate(anyInt());
 		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_COMPLETE)).andReturn(
 			mockInstallCompletedStatusEvent);
 
@@ -607,6 +610,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	private void setupInstallEventsAndListener() { 
 		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_STARTED)).andReturn(
 			mockInstallStartedStatusEvent);
+		mockInstallStartedStatusEvent.setNumFilesToUpdate(anyInt());
 		
 		mockInstallStatusListener.handleInstallStatusEvent(mockInstallStartedStatusEvent);
 		
