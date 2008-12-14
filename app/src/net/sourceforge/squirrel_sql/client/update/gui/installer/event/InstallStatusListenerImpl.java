@@ -18,66 +18,65 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
 
-public class InstallStatusListenerImpl implements InstallStatusListener {
+import net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-   /**
-    * @see net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener#handleInstallStatusEvent(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEvent)
-    */
-   public void handleInstallStatusEvent(InstallStatusEvent evt) {
-      if (evt.getType() == InstallEventType.BACKUP_STARTED) {
-      	handleBackupStarted(evt);
-      }
-      if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED) {
-      	handleFileBackupStarted(evt);
-      }
-      if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE) {
-      	handleFileBackupComplete(evt);
-      }
-      if (evt.getType() == InstallEventType.BACKUP_COMPLETE) {
-      	handleBackupComplete(evt);
-      }
-      if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED) {
-      	handleFileInstallStarted(evt);
-      }
-      if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE) {
-      	handleFileInstallComplete(evt);
-      }
-   }
+public class InstallStatusListenerImpl implements InstallStatusListener
+{
 
-	private void handleBackupComplete(InstallStatusEvent evt)
+	ProgressDialogController _progressDialogController = null;
+
+	/**
+	 * @param progressDialogFactory
+	 */
+	public InstallStatusListenerImpl(ProgressDialogController progressDialogFactory)
 	{
-		// TODO Auto-generated method stub
-		
+		Utilities.checkNull("InstallStatusListenerImpl.init", "progressDialogFactory", progressDialogFactory);
+		this._progressDialogController = progressDialogFactory;
 	}
 
-	private void handleFileInstallComplete(InstallStatusEvent evt)
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener#
+	 *     
+	 *     
+	 *      handleInstallStatusEvent(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEvent)
+	 */
+	public void handleInstallStatusEvent(InstallStatusEvent evt)
 	{
-		// TODO Auto-generated method stub
-		
+		if (evt.getType() == InstallEventType.BACKUP_STARTED)
+		{
+			_progressDialogController.showProgressDialog("Backing up files to be updated", "Initializing",
+				evt.getNumFilesToUpdate());
+		}
+		if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED)
+		{
+			_progressDialogController.setMessage("Copying file: " + evt.getArtifactName());
+		}
+		if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE)
+		{
+			_progressDialogController.incrementProgress();
+		}
+		if (evt.getType() == InstallEventType.BACKUP_COMPLETE)
+		{
+			_progressDialogController.hideProgressDialog();
+		}
+		if (evt.getType() == InstallEventType.INSTALL_STARTED)
+		{
+			_progressDialogController.showProgressDialog("Updating files", "Initializing",
+				evt.getNumFilesToUpdate());
+		}
+		if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED)
+		{
+			_progressDialogController.setMessage("Updating file: " + evt.getArtifactName());
+		}
+		if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE)
+		{
+			_progressDialogController.incrementProgress();
+		}
+		if (evt.getType() == InstallEventType.INSTALL_COMPLETE)
+		{
+			_progressDialogController.hideProgressDialog();
+		}
 	}
 
-	private void handleFileInstallStarted(InstallStatusEvent evt)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void handleFileBackupComplete(InstallStatusEvent evt)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void handleFileBackupStarted(InstallStatusEvent evt)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void handleBackupStarted(InstallStatusEvent evt)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-   
 }

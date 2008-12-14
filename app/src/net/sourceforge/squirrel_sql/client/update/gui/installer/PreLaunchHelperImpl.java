@@ -186,8 +186,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 		{
 			s_log.info(message);
 		}
-		LoggerController.shutdown();
-		System.exit(0);		
+		LoggerController.shutdown();		
 	}
 	
 	/**
@@ -201,12 +200,14 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	private void installUpdates(FileWrapper changeList) throws Exception
 	{
 		ArtifactInstaller installer = artifactInstallerFactory.create(changeList);
-		installer.addListener(new InstallStatusListenerImpl());
+		ProgressDialogController controller = new ProgressDialogControllerImpl();
+		installer.addListener(new InstallStatusListenerImpl(controller));
 		if (installer.backupFiles()) {
 			installer.installFiles();
 		} else {
 			showErrorDialog(BACKUP_FAILED_MESSAGE);
 		}
+		controller.hideProgressDialog();
 	}
 	
 	
@@ -243,4 +244,5 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 			s_log.info(message);
 		}
 	}
+
 }

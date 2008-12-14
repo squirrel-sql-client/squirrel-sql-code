@@ -63,6 +63,7 @@ public class PreLaunchUpdateApplication
 		} else {
 			helper.restoreFromBackup();
 		}
+		System.exit(0);
 	}
 	
 	// Helper methods

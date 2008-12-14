@@ -24,16 +24,19 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 /**
  * An event implementation that informs the installer of key events that are 
  * happening during installation.  The ArtifactInstaller generates these events as
- * it is installing artifacts giving them to any listeners.  The installer UI can 
+ * it is installing artifacts giving them to any listeners.  The installer UI 
  * registers as a listener and updates the UI based on the events that it receives.
  */
 public class InstallStatusEvent {
 
 	/** The name of the artifact being installed; typically a filename (e.g. fw.jar) */
-   String _artifactName;
+   private String _artifactName;
    
    /** The type of event that has occurred - see InstallEventType for detailed */
-   InstallEventType _type;
+   private InstallEventType _type;
+   
+   /** The number of files that will be added, replaced or removed */
+   private int numFilesToUpdate = 0;
    
    public InstallStatusEvent(InstallEventType type) {
    	Utilities.checkNull("InstallStatusEvent.init", "type", type);
@@ -69,5 +72,22 @@ public class InstallStatusEvent {
    	Utilities.checkNull("setType", "type", type);
       this._type = type;
    }
+
+	/**
+	 * @param numFilesToUpdate the numFilesToUpdate to set
+	 */
+	public void setNumFilesToUpdate(int numFilesToUpdate)
+	{
+		this.numFilesToUpdate = numFilesToUpdate;
+	}
+
+	/**
+	 * @return the numFilesToUpdate
+	 */
+	public int getNumFilesToUpdate()
+	{
+		return numFilesToUpdate;
+	}
+
    
 }
