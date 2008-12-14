@@ -195,7 +195,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	public boolean backupFiles() throws FileNotFoundException, IOException
 	{
 		boolean result = true;
-		sendBackupStarted();
+		sendBackupStarted(_changeList.size());
 
 		FileWrapper localReleaseFile = _util.getLocalReleaseFile();
 		_util.copyFile(localReleaseFile, _util.getBackupDir());
@@ -264,7 +264,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 */
 	public void installFiles() throws IOException
 	{
-		sendInstallStarted();
+		sendInstallStarted(_changeList.size());
 
 		List<FileWrapper> filesToRemove = new ArrayList<FileWrapper>();
 		List<InstallFileOperationInfo> filesToInstall = new ArrayList<InstallFileOperationInfo>();
@@ -592,7 +592,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				
 	}
 
-	private void sendBackupStarted()
+	private void sendBackupStarted(int numFilesToBackup)
 	{
 		if (s_log.isInfoEnabled())
 		{
@@ -600,6 +600,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		}
 
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.BACKUP_STARTED);
+		evt.setNumFilesToUpdate(numFilesToBackup);
 		sendEvent(evt);
 	}
 
@@ -613,13 +614,14 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		sendEvent(evt);
 	}
 
-	private void sendInstallStarted()
+	private void sendInstallStarted(int numFilesToUpdate)
 	{
 		if (s_log.isInfoEnabled())
 		{
 			s_log.info("Install started");
 		}
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.INSTALL_STARTED);
+		evt.setNumFilesToUpdate(numFilesToUpdate);
 		sendEvent(evt);
 	}
 
