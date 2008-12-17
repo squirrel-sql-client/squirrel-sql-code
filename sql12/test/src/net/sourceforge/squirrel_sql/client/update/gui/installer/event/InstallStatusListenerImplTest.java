@@ -47,9 +47,9 @@ public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
-	public void testHandleBackupStartedStatusEvent()
+	public void testHandleInitChangelistStartedStatusEvent()
 	{
-		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.BACKUP_STARTED);
+		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.INIT_CHANGELIST_STARTED);
 		int numFilesToUpdate = 10;
 		evt.setNumFilesToUpdate(numFilesToUpdate);
 		mockController.showProgressDialog(isA(String.class), isA(String.class), eq(numFilesToUpdate));
@@ -60,10 +60,59 @@ public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
+	public void testHandleFileInitChangelistStartedStatusEvent()
+	{
+		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.FILE_INIT_CHANGELIST_STARTED);
+		evt.setArtifactName("testArtifactName");
+		mockController.setDetailMessage(isA(String.class));
+		
+		mockHelper.replayAll();
+		classUnderTest.handleInstallStatusEvent(evt);
+		mockHelper.verifyAll();
+	}
+	
+	@Test
+	public void testHandleFileInitChangeListCompleteStatusEvent()
+	{
+		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.FILE_INIT_CHANGELIST_COMPLETE);
+		mockController.incrementProgress();
+		
+		mockHelper.replayAll();
+		classUnderTest.handleInstallStatusEvent(evt);
+		mockHelper.verifyAll();
+	}
+	
+	@Test
+	public void testHandleInitChangelistCompleteStatusEvent()
+	{
+		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.INIT_CHANGELIST_COMPLETE);
+		mockController.setDetailMessage(isA(String.class));
+		
+		mockHelper.replayAll();
+		classUnderTest.handleInstallStatusEvent(evt);
+		mockHelper.verifyAll();
+	}
+	
+	
+	@Test
+	public void testHandleBackupStartedStatusEvent()
+	{
+		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.BACKUP_STARTED);
+		int numFilesToUpdate = 10;
+		evt.setNumFilesToUpdate(numFilesToUpdate);
+		mockController.resetProgressDialog(isA(String.class), isA(String.class), eq(numFilesToUpdate));
+		
+		mockHelper.replayAll();
+		classUnderTest.handleInstallStatusEvent(evt);
+		mockHelper.verifyAll();
+	}
+
+	@Test
 	public void testHandleFileBackupStartedStatusEvent()
 	{
 		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.FILE_BACKUP_STARTED);
-		mockController.setMessage(isA(String.class));
+		evt.setArtifactName("testArtifactName");
+		mockController.setDetailMessage(isA(String.class));
 		
 		mockHelper.replayAll();
 		classUnderTest.handleInstallStatusEvent(evt);
@@ -85,7 +134,7 @@ public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 	public void testHandleBackupCompleteStatusEvent()
 	{
 		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.BACKUP_COMPLETE);
-		mockController.hideProgressDialog();
+		mockController.setDetailMessage(isA(String.class));
 		
 		mockHelper.replayAll();
 		classUnderTest.handleInstallStatusEvent(evt);
@@ -98,7 +147,7 @@ public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.INSTALL_STARTED);
 		int numFilesToUpdate = 10;
 		evt.setNumFilesToUpdate(numFilesToUpdate);
-		mockController.showProgressDialog(isA(String.class), isA(String.class), eq(numFilesToUpdate));
+		mockController.resetProgressDialog(isA(String.class), isA(String.class), eq(numFilesToUpdate));
 		
 		mockHelper.replayAll();
 		classUnderTest.handleInstallStatusEvent(evt);
@@ -109,7 +158,8 @@ public class InstallStatusListenerImplTest extends BaseSQuirreLJUnit4TestCase
 	public void testHandleFileInstallStartedStatusEvent()
 	{
 		InstallStatusEvent evt = new InstallStatusEvent(InstallEventType.FILE_INSTALL_STARTED);
-		mockController.setMessage(isA(String.class));
+		evt.setArtifactName("testArtifactName");
+		mockController.setDetailMessage(isA(String.class));
 		
 		mockHelper.replayAll();
 		classUnderTest.handleInstallStatusEvent(evt);

@@ -38,17 +38,19 @@ public interface ProgressDialogController
 	void showProgressDialog(String title, String msg, int total);
 
 	/**
-	 * Updates the message in the progress bar dialog
+	 * Updates the detail message in the progress bar dialog
 	 * 
-	 * @param msg a new message for the body of the dialog 
+	 * @param msg a new detail message for the body of the dialog 
 	 */
-	void setMessage(String msg);
+	void setDetailMessage(String msg);
 
 	/**
 	 * Increments the currently displayed progress bar
 	 */
 	void incrementProgress();
 
+	void resetProgressDialog(String title, String msg, int total);
+	
 	/**
 	 * Hides the currently displayed progress bar
 	 */

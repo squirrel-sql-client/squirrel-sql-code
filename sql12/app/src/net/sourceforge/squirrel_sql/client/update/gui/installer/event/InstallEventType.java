@@ -27,6 +27,16 @@ package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
  */
 public enum InstallEventType {
 
+	/** change list initialization phase has started */
+	INIT_CHANGELIST_STARTED,
+	
+	FILE_INIT_CHANGELIST_STARTED,
+	
+	FILE_INIT_CHANGELIST_COMPLETE,
+	
+	/** change list initialization phase is complete */
+	INIT_CHANGELIST_COMPLETE,
+	
 	/** backup phase has started */
    BACKUP_STARTED,
    
@@ -38,6 +48,18 @@ public enum InstallEventType {
    
    /** backup phase has completed successfully */
    BACKUP_COMPLETE,
+   
+   /** File removal phase has been started */
+   REMOVE_STARTED,
+   
+   /** file remove has started */
+   FILE_REMOVE_STARTED,
+   
+   /** file remove completed */
+   FILE_REMOVE_COMPLETE,
+   
+   /** File removal phase has completed successfully */
+   REMOVE_COMPLETE,
    
    /** install phase has started */
    INSTALL_STARTED,
