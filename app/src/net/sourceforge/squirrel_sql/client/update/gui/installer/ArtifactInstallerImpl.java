@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
@@ -49,12 +51,12 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ArtifactInstallerImpl.class);
 
-	/** 
-	 * this list is derived from the changelist xmlbean.  It will only contain the artifacts that need to 
-	 * be change (installed, removed).
+	/**
+	 * this list is derived from the changelist xmlbean. It will only contain the artifacts that need to be
+	 * change (installed, removed).
 	 */
 	private List<ArtifactStatus> _changeList = null;
-	
+
 	/** listeners to notify of important install events */
 	private List<InstallStatusListener> _listeners = new ArrayList<InstallStatusListener>();
 
@@ -65,19 +67,19 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	private FileWrapper updateDir = null;
 
 	// Download directories
-	
+
 	/** the downlaods root directory (e.g. /opt/squirrel/update/downloads) */
 	private FileWrapper downloadsRootDir = null;
-	
+
 	/** the core sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/core) */
 	private FileWrapper coreDownloadsDir = null;
 
 	/** the plugin sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/plugin) */
 	private FileWrapper pluginDownloadsDir = null;
-	
+
 	/** the i18n sub-directory of the backup directory (e.g. /opt/squirrel/update/downloads/i18n) */
-	private FileWrapper i18nDownloadsDir = null;	
-	
+	private FileWrapper i18nDownloadsDir = null;
+
 	// Backup directories
 
 	/** the backup directory (e.g. /opt/squirrel/update/backup) */
@@ -105,17 +107,18 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	/** the lib directory where translation jars are (e.g. /opt/squirrel/lib) */
 	private FileWrapper i18nInstallDir = null;
-	
-	/** 
+
+	/**
 	 * the file that was used to build a ChangeListXmlBean that we are using to determine which files need to
 	 * be installed/removed
 	 */
 	private FileWrapper changeListFile = null;
-		
+
 	/* Spring-injected dependencies */
 
 	/** Spring-injected factory for creating install events */
 	private InstallStatusEventFactory installStatusEventFactory = null;
+
 	public void setInstallStatusEventFactory(InstallStatusEventFactory installStatusEventFactory)
 	{
 		this.installStatusEventFactory = installStatusEventFactory;
@@ -123,6 +126,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	/** Spring-injected factory for creating file operation infos */
 	private InstallFileOperationInfoFactory installFileOperationInfoFactory = null;
+
 	public void setInstallFileOperationInfoFactory(
 		InstallFileOperationInfoFactory installFileOperationInfoFactory)
 	{
@@ -131,13 +135,14 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	/** Utility which provides path information and abstraction to file operations */
 	private UpdateUtil _util = null;
+
 	public void setUpdateUtil(UpdateUtil util)
 	{
 		this._util = util;
 		updateDir = _util.getSquirrelUpdateDir();
 		backupRootDir = _util.checkDir(updateDir, UpdateUtil.BACKUP_ROOT_DIR_NAME);
 		downloadsRootDir = _util.checkDir(updateDir, UpdateUtil.DOWNLOADS_DIR_NAME);
-		
+
 		coreBackupDir = _util.checkDir(backupRootDir, UpdateUtil.CORE_ARTIFACT_ID);
 		pluginBackupDir = _util.checkDir(backupRootDir, UpdateUtil.PLUGIN_ARTIFACT_ID);
 		translationBackupDir = _util.checkDir(backupRootDir, UpdateUtil.TRANSLATION_ARTIFACT_ID);
@@ -147,16 +152,14 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		coreInstallDir = _util.getSquirrelLibraryDir();
 		pluginInstallDir = _util.getSquirrelPluginsDir();
 		i18nInstallDir = _util.getSquirrelLibraryDir();
-		
+
 		coreDownloadsDir = _util.getCoreDownloadsDir();
 		pluginDownloadsDir = _util.getPluginDownloadsDir();
 		i18nDownloadsDir = _util.getI18nDownloadsDir();
-	}	
-	
-	
+	}
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#setChangeList(
-	 * net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#setChangeList(net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
 	 */
 	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
 	{
@@ -173,16 +176,16 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#
-	 * setChangeListFile(java.io.File)
+	 *      setChangeListFile(java.io.File)
 	 */
 	public void setChangeListFile(FileWrapper changeListFile)
 	{
 		this.changeListFile = changeListFile;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#
-	 * addListener(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener)
+	 *      addListener(net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener)
 	 */
 	public void addListener(InstallStatusListener listener)
 	{
@@ -199,10 +202,11 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 		FileWrapper localReleaseFile = _util.getLocalReleaseFile();
 		_util.copyFile(localReleaseFile, _util.getBackupDir());
-		
+
 		for (ArtifactStatus status : _changeList)
 		{
 			String artifactName = status.getName();
+			sendFileBackupStarted(artifactName);
 			// Skip files that are not installed - new files
 			if (!status.isInstalled())
 			{
@@ -210,6 +214,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				{
 					s_log.info("Skipping backup of artifact (" + status + ") which isn't installed.");
 				}
+				sendFileBackupComplete(artifactName);
 				continue;
 			}
 			if (status.isCoreArtifact())
@@ -228,20 +233,25 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 				ArrayList<FileWrapper> filesToZip = new ArrayList<FileWrapper>();
 				FileWrapper pluginDirectoryFile = _util.getFile(pluginInstallDir, pluginDirectory);
-				if (pluginDirectoryFile.exists()) {
+				if (pluginDirectoryFile.exists())
+				{
 					filesToZip.add(pluginDirectoryFile);
 				}
 				FileWrapper pluginJarFile = _util.getFile(pluginInstallDir, pluginJarFilename);
-				if (pluginJarFile.exists()) {
+				if (pluginJarFile.exists())
+				{
 					filesToZip.add(pluginJarFile);
 				}
-				if (filesToZip.size() > 0) {
+				if (filesToZip.size() > 0)
+				{
 					_util.createZipFile(pluginBackupFile, filesToZip.toArray(new FileWrapper[filesToZip.size()]));
-				} else {
-					s_log.error("Plugin ("+status.getName()+") was listed as already installed, but it's " +
-							"files didn't exist and couldn't be backed up: pluginDirectoryFile="+
-							pluginDirectoryFile.getAbsolutePath()+" pluginJarFile="+
-							pluginJarFile.getAbsolutePath());
+				}
+				else
+				{
+					s_log.error("Plugin (" + status.getName() + ") was listed as already installed, but it's "
+						+ "files didn't exist and couldn't be backed up: pluginDirectoryFile="
+						+ pluginDirectoryFile.getAbsolutePath() + " pluginJarFile="
+						+ pluginJarFile.getAbsolutePath());
 				}
 			}
 			if (status.isTranslationArtifact())
@@ -253,6 +263,8 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 					_util.copyFile(translationFile, backupFile);
 				}
 			}
+			breathing();
+			sendFileBackupComplete(artifactName);
 		}
 
 		sendBackupComplete();
@@ -287,22 +299,26 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 				}
 				installDir = getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir);
 				fileToCopy = _util.getFile(coreDownloadsDir, artifactName);
-				if (UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(status.getName())) {
+				if (UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(status.getName()))
+				{
 					fileToRemove = _util.getFile(installDir, artifactName.replace(".zip", ""));
-				} else {
+				}
+				else
+				{
 					fileToRemove = _util.getFile(installDir, artifactName);
 				}
-				
+
 				filesToRemove.add(fileToRemove);
 			}
 			if (status.isPluginArtifact())
 			{
 				isPlugin = true;
 				installDir = pluginInstallDir;
-				if (action != ArtifactAction.REMOVE) {
+				if (action != ArtifactAction.REMOVE)
+				{
 					fileToCopy = _util.getFile(pluginDownloadsDir, artifactName);
 				}
-				
+
 				// Need to remove the existing jar in the plugins directory and all of the files beneath the
 				// plugin-named directory.
 				String jarFileToRemove = artifactName.replace(".zip", ".jar");
@@ -314,138 +330,198 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 			if (status.isTranslationArtifact())
 			{
 				installDir = i18nInstallDir;
-				if (action != ArtifactAction.REMOVE) {
+				if (action != ArtifactAction.REMOVE)
+				{
 					fileToCopy = _util.getFile(i18nDownloadsDir, artifactName);
 				}
 				fileToRemove = _util.getFile(installDir, artifactName);
 				filesToRemove.add(fileToRemove);
 			}
-			if (fileToCopy != null) {
+			if (fileToCopy != null)
+			{
 				InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
 				info.setPlugin(isPlugin);
+				info.setArtifactName(artifactName);
 				filesToInstall.add(info);
 			}
+
 		}
 		boolean success = removeOldFiles(filesToRemove);
 		success = success && installFiles(filesToInstall);
 		success = success && backupAndDeleteChangeListFile();
 		success = success && installNewReleaseXmlFile();
-		
-		if (!success) {
+
+		if (!success)
+		{
 			restoreFilesFromBackup(filesToInstall);
-		} 
-		
+		}
+
 		sendInstallComplete();
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#restoreBackupFiles(
-	 * net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#restoreBackupFiles(net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean)
 	 */
 	public boolean restoreBackupFiles() throws FileNotFoundException, IOException
 	{
-		for (ArtifactStatus status : _changeList) {
+		for (ArtifactStatus status : _changeList)
+		{
 			String name = status.getName();
 			FileWrapper backupDir = null;
 			FileWrapper installDir = null;
-			
-			if (status.isCoreArtifact()) {
+
+			if (status.isCoreArtifact())
+			{
 				backupDir = coreBackupDir;
 				installDir = getCoreArtifactLocation(name, installRootDir, coreInstallDir);
 			}
-			if (status.isPluginArtifact()) {
+			if (status.isPluginArtifact())
+			{
 				backupDir = pluginBackupDir;
 				installDir = pluginInstallDir;
 			}
-			if (status.isTranslationArtifact()) {
+			if (status.isTranslationArtifact())
+			{
 				backupDir = translationBackupDir;
 				installDir = coreInstallDir; // translations are most likely to be found in core lib dir.
 			}
 			FileWrapper backupJarPath = _util.getFile(backupDir, name);
 			FileWrapper installJarPath = _util.getFile(installDir, name);
-			
-			if (!_util.deleteFile(installJarPath)) { 
+
+			if (!_util.deleteFile(installJarPath))
+			{
 				return false;
-			} else {
+			}
+			else
+			{
 				_util.copyFile(backupJarPath, installJarPath);
-			}			
+			}
 		}
-		if (!_util.deleteFile(_util.getLocalReleaseFile())) {
+		if (!_util.deleteFile(_util.getLocalReleaseFile()))
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			FileWrapper backupReleaseFile = _util.getFile(_util.getBackupDir(), UpdateUtil.RELEASE_XML_FILENAME);
 			_util.copyFile(backupReleaseFile, updateDir);
 		}
-		
+
 		return true;
 	}
-	
-	// Helper methods	
-	
+
+	// Helper methods
+
+	private void breathing()
+	{
+		// In case this is called by the AWT thread, log a message - this is most likey a bug
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("breathing: ignoring request to sleep the event dispatch thread");
+			}
+			return;
+		}
+		synchronized (this)
+		{
+			try
+			{
+				wait(50);
+			}
+			catch (InterruptedException e)
+			{
+				if (s_log.isInfoEnabled())
+				{
+					s_log.info("breathing: Interrupted", e);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Since it possible that some artifacts haven't changed between releases, and it is time-consuming to read
-	 * the contents of the installed file to compute it's checksum, we do that here just once and boil the 
+	 * the contents of the installed file to compute it's checksum, we do that here just once and boil the
 	 * change list down to just those files that have physically changed, by comparing byte-size and checksum.
 	 */
-	private List<ArtifactStatus> initializeChangeList(ChangeListXmlBean changeListBean) {
+	private List<ArtifactStatus> initializeChangeList(ChangeListXmlBean changeListBean)
+	{
+		sendInitChangelistStarted(changeListBean.getChanges().size());
 		ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
-		for (ArtifactStatus status : changeListBean.getChanges()) {
+		for (ArtifactStatus status : changeListBean.getChanges())
+		{
+			String artifactName = status.getName();
+			sendFileInitChangelistStarted(artifactName);
+			
 			// Always add plugins - there is not a good way to compare plugin zips and their extracted contents
 			// at the moment.
-			// TODO: Determine the best way to derive the filesize and checksum of the plugin zip that was last 
-			// extracted.  Should we keep it around? How about using the current release.xml file ? Come to 
-			// think of it, perhaps we shouldn't be computing the checksum of *any* existing files, why don't 
+			// TODO: Determine the best way to derive the filesize and checksum of the plugin zip that was last
+			// extracted. Should we keep it around? How about using the current release.xml file ? Come to
+			// think of it, perhaps we shouldn't be computing the checksum of *any* existing files, why don't
 			// we just get it from the current release.xml file?
-			if (status.isPluginArtifact()) {
+			if (status.isPluginArtifact())
+			{
 				result.add(status);
+				sendFileInitChangelistComplete(artifactName);
 				continue;
 			}
-			
-			if (status.getArtifactAction() == ArtifactAction.INSTALL) {
+
+			if (status.getArtifactAction() == ArtifactAction.INSTALL)
+			{
 				FileWrapper installedFileLocation = null;
 				// Skip the artifact if it is identical to the one that is already installed
-				if (status.isCoreArtifact()) {
-					installedFileLocation = 
+				if (status.isCoreArtifact())
+				{
+					installedFileLocation =
 						_util.getFile(getCoreArtifactLocation(status.getName(), installRootDir, coreInstallDir),
-										  status.getName());
+							status.getName());
 				}
-				if (status.isTranslationArtifact()) {
+				if (status.isTranslationArtifact())
+				{
 					installedFileLocation = _util.getFile(coreInstallDir, status.getName());
 				}
-				
+
 				long installedSize = installedFileLocation.length();
-				if (installedSize == status.getSize()) {
+				if (installedSize == status.getSize())
+				{
 					long installedCheckSum = _util.getCheckSum(installedFileLocation);
-					if (installedCheckSum == status.getChecksum()) {
-						if (s_log.isDebugEnabled()) {
-							s_log.debug("initializeChangeList: found a core/translation artifact that is not " +
-									"installed: installedSize= "+installedSize+"installedCheckSum="+
-									installedCheckSum+" statusSize="+status.getSize()+" statusChecksum="+
-									status.getChecksum());
+					if (installedCheckSum == status.getChecksum())
+					{
+						if (s_log.isDebugEnabled())
+						{
+							s_log.debug("initializeChangeList: found a core/translation artifact that is not "
+								+ "installed: installedSize= " + installedSize + "installedCheckSum="
+								+ installedCheckSum + " statusSize=" + status.getSize() + " statusChecksum="
+								+ status.getChecksum());
 						}
+						sendFileInitChangelistComplete(artifactName);
 						continue;
 					}
 				}
 			}
-			
-			// We have a core or translation file that is not already installed - add it 
+
+			// We have a core or translation file that is not already installed - add it
 			result.add(status);
+			sendFileInitChangelistComplete(artifactName);
 		}
-		
+		sendInitChangelistComplete();
 		return result;
 	}
-	
-	
+
 	/* Handle squirrel-sql.jar and documentation archive carefully - they live at the top */
-	private FileWrapper getCoreArtifactLocation(String artifactName, FileWrapper rootDir, FileWrapper coreDir) {
-		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName ) 
-				|| UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(artifactName)) {
+	private FileWrapper getCoreArtifactLocation(String artifactName, FileWrapper rootDir, FileWrapper coreDir)
+	{
+		if (UpdateUtil.SQUIRREL_SQL_JAR_FILENAME.equals(artifactName)
+			|| UpdateUtil.DOCS_ARCHIVE_FILENAME.equals(artifactName))
+		{
 			return rootDir;
-		} else {
+		}
+		else
+		{
 			return coreDir;
 		}
 	}
-	
+
 	private void restoreFilesFromBackup(List<InstallFileOperationInfo> filesToInstall)
 	{
 		// TODO Auto-generated method stub
@@ -454,16 +530,23 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	private boolean backupAndDeleteChangeListFile()
 	{
 		boolean result = true;
-		if (changeListFile != null) {
-			try {
+		if (changeListFile != null)
+		{
+			try
+			{
 				_util.copyFile(changeListFile, backupRootDir);
 				result = _util.deleteFile(changeListFile);
-			} catch (IOException e) {
-				result = false;
-				s_log.error("Unexpected exception: "+e.getMessage(), e);
 			}
-		} else {
-			if (s_log.isInfoEnabled()) {
+			catch (IOException e)
+			{
+				result = false;
+				s_log.error("Unexpected exception: " + e.getMessage(), e);
+			}
+		}
+		else
+		{
+			if (s_log.isInfoEnabled())
+			{
 				s_log.info("moveChangeListFile: Changelist file was null.  Skipping move");
 			}
 		}
@@ -471,14 +554,15 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	}
 
 	/**
-	 * Install the downloaded release.xml file into the updates root directory so that the update knows the 
+	 * Install the downloaded release.xml file into the updates root directory so that the update knows the
 	 * current release has changed.
 	 * 
 	 * @return true if install was successful; false otherwise.
 	 */
-	private boolean installNewReleaseXmlFile() {
+	private boolean installNewReleaseXmlFile()
+	{
 		boolean result = true;
-				
+
 		try
 		{
 			_util.deleteFile(_util.getLocalReleaseFile());
@@ -499,31 +583,39 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		catch (FileNotFoundException e)
 		{
 			result = false;
-			s_log.error("installNewReleaseXmlFile: unexpected exception - "+e.getMessage(), e);
+			s_log.error("installNewReleaseXmlFile: unexpected exception - " + e.getMessage(), e);
 		}
 		catch (IOException e)
 		{
 			result = false;
-			s_log.error("installNewReleaseXmlFile: unexpected exception - "+e.getMessage(), e);
+			s_log.error("installNewReleaseXmlFile: unexpected exception - " + e.getMessage(), e);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Removes the specified list of File objects (can represent either a file or directory)
 	 * 
-	 * @param filesToRemove the files to be removed.
+	 * @param filesToRemove
+	 *           the files to be removed.
 	 * @return true if the remove operation was successful and false otherwise.
 	 */
 	private boolean removeOldFiles(List<FileWrapper> filesToRemove)
 	{
 		boolean result = true;
-		for (FileWrapper fileToRemove : filesToRemove) {
+		sendRemoveStarted(filesToRemove.size());
+		for (FileWrapper fileToRemove : filesToRemove)
+		{
+			sendFileRemoveStarted(fileToRemove.getName());
 			result = removeOldFile(fileToRemove);
-			if (!result) {
+			if (!result)
+			{
 				break;
 			}
+			breathing();
+			sendFileRemoveComplete(fileToRemove.getName());
 		}
+		sendRemoveComplete();
 		return result;
 	}
 
@@ -538,25 +630,35 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		boolean result = true;
 		String absolutePath = fileToRemove.getAbsolutePath();
-		if (s_log.isDebugEnabled()) {
-			s_log.debug("Examining file to remove: "+absolutePath);
+		if (s_log.isDebugEnabled())
+		{
+			s_log.debug("Examining file to remove: " + absolutePath);
 		}
-		if (fileToRemove.exists()) {		
-			try {
-				if (s_log.isDebugEnabled()) {
-					s_log.debug("Attempting to delete file: "+absolutePath);
-				}			
-				result = _util.deleteFile(fileToRemove);
-				if (!result) {
-					s_log.error("Delete operation failed for file/directory: "+absolutePath);
+		if (fileToRemove.exists())
+		{
+			try
+			{
+				if (s_log.isDebugEnabled())
+				{
+					s_log.debug("Attempting to delete file: " + absolutePath);
 				}
-			} catch (SecurityException e) {
-				result = false;
-				s_log.error("Unexpected security exception: "+e.getMessage());
+				result = _util.deleteFile(fileToRemove);
+				if (!result)
+				{
+					s_log.error("Delete operation failed for file/directory: " + absolutePath);
+				}
 			}
-		} else {
-			if (s_log.isInfoEnabled()) {
-				s_log.info("Skipping delete of file doesn't appear to exist: "+absolutePath);
+			catch (SecurityException e)
+			{
+				result = false;
+				s_log.error("Unexpected security exception: " + e.getMessage());
+			}
+		}
+		else
+		{
+			if (s_log.isInfoEnabled())
+			{
+				s_log.info("Skipping delete of file doesn't appear to exist: " + absolutePath);
 			}
 		}
 		return result;
@@ -565,14 +667,21 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	private boolean installFiles(List<InstallFileOperationInfo> filesToInstall) throws IOException
 	{
 		boolean result = true;
-		for (InstallFileOperationInfo info : filesToInstall) {
-			try {
+		for (InstallFileOperationInfo info : filesToInstall)
+		{
+			try
+			{
+				sendFileInstallStarted(info.getArtifactName());
 				installFile(info);
-			} catch (Exception e) {
-				s_log.error("installFiles: unexpected exception: "+e.getMessage(), e);
+				sendFileInstallComplete(info.getArtifactName());
+			}
+			catch (Exception e)
+			{
+				s_log.error("installFiles: unexpected exception: " + e.getMessage(), e);
 				result = false;
 				break;
 			}
+			breathing();
 		}
 		return result;
 	}
@@ -581,56 +690,141 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	{
 		FileWrapper installDir = info.getInstallDir();
 		FileWrapper fileToCopy = info.getFileToInstall();
-		
-		if (fileToCopy.getAbsolutePath().endsWith(".zip")) {
+
+		if (fileToCopy.getAbsolutePath().endsWith(".zip"))
+		{
 			// This file is a zip; it needs to be extracted into the install directory. All zips are packaged
 			// in such a way that the extraction beneath install directory is all that is required.
-			_util.extractZipFile(fileToCopy, installDir);		
-		} else {			
+			_util.extractZipFile(fileToCopy, installDir);
+		}
+		else
+		{
 			_util.copyFile(fileToCopy, installDir);
 		}
-				
+
 	}
 
+	private void sendInitChangelistStarted(int numFilesToBackup)
+	{
+		logInfo("Changelist initialization started");
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.INIT_CHANGELIST_STARTED);
+		evt.setNumFilesToUpdate(numFilesToBackup);
+		sendEvent(evt);
+	}
+
+	private void sendFileInitChangelistStarted(String artifactName)
+	{
+		logInfo("Changelist init started for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_INIT_CHANGELIST_STARTED);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendFileInitChangelistComplete(String artifactName)
+	{
+		logInfo("Changelist init complete for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_INIT_CHANGELIST_COMPLETE);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendInitChangelistComplete()
+	{
+		logInfo("Changelist initialization complete");
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.INIT_CHANGELIST_COMPLETE);
+		sendEvent(evt);
+	}	
+	
 	private void sendBackupStarted(int numFilesToBackup)
 	{
-		if (s_log.isInfoEnabled())
-		{
-			s_log.info("Backup started");
-		}
-
+		logInfo("Backup started");
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.BACKUP_STARTED);
 		evt.setNumFilesToUpdate(numFilesToBackup);
 		sendEvent(evt);
 	}
 
+	private void sendFileBackupStarted(String artifactName)
+	{
+		logInfo("Backup started for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_BACKUP_STARTED);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendFileBackupComplete(String artifactName)
+	{
+		logInfo("Backup complete for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_BACKUP_COMPLETE);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
 	private void sendBackupComplete()
 	{
-		if (s_log.isInfoEnabled())
-		{
-			s_log.info("Backup complete");
-		}
+		logInfo("Backup complete");
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.BACKUP_COMPLETE);
 		sendEvent(evt);
 	}
 
+	
+	private void sendRemoveStarted(int numFilesToRemove)
+	{
+		logInfo("Remove started");
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.REMOVE_STARTED);
+		evt.setNumFilesToUpdate(numFilesToRemove);
+		sendEvent(evt);
+	}
+
+	private void sendFileRemoveStarted(String artifactName)
+	{
+		logInfo("Remove started for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_REMOVE_STARTED);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendFileRemoveComplete(String artifactName)
+	{
+		logInfo("Remove complete for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_REMOVE_COMPLETE);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendRemoveComplete()
+	{
+		logInfo("Remove complete");
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.REMOVE_COMPLETE);
+		sendEvent(evt);
+	}
+	
 	private void sendInstallStarted(int numFilesToUpdate)
 	{
-		if (s_log.isInfoEnabled())
-		{
-			s_log.info("Install started");
-		}
+		logInfo("Install started");
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.INSTALL_STARTED);
 		evt.setNumFilesToUpdate(numFilesToUpdate);
 		sendEvent(evt);
 	}
 
+	private void sendFileInstallStarted(String artifactName)
+	{
+		logInfo("Install started for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_INSTALL_STARTED);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
+	private void sendFileInstallComplete(String artifactName)
+	{
+		logInfo("Install complete for file: " + artifactName);
+		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.FILE_INSTALL_COMPLETE);
+		evt.setArtifactName(artifactName);
+		sendEvent(evt);
+	}
+
 	private void sendInstallComplete()
 	{
-		if (s_log.isInfoEnabled())
-		{
-			s_log.info("Install completed");
-		}
+		logInfo("Install completed");
 		InstallStatusEvent evt = installStatusEventFactory.create(InstallEventType.INSTALL_COMPLETE);
 		sendEvent(evt);
 	}
@@ -640,6 +834,14 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 		for (InstallStatusListener listener : _listeners)
 		{
 			listener.handleInstallStatusEvent(evt);
+		}
+	}
+
+	private void logInfo(String message)
+	{
+		if (s_log.isInfoEnabled())
+		{
+			s_log.info(message);
 		}
 	}
 

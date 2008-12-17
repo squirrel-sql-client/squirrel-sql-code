@@ -25,6 +25,7 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
    private FileWrapper fileToInstall;
    private FileWrapper installDir;
    private boolean isPlugin;
+   private String artifactName;
    
    /**
     * @param fileToInstall
@@ -73,5 +74,21 @@ public class InstallFileOperationInfoImpl implements InstallFileOperationInfo {
     */
    public void setInstallDir(FileWrapper installDir) {
       this.installDir = installDir;
-   } 
+   }
+
+	/**
+	 * @param artifactName the artifactName to set
+	 */
+	public void setArtifactName(String artifactName)
+	{
+		this.artifactName = artifactName;
+	}
+
+	/**
+	 * @return the artifactName
+	 */
+	public String getArtifactName()
+	{
+		return artifactName;
+	} 
 }

@@ -18,10 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.GridLayout;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Progress dialog controller that shows, updates and hides a single progress bar dialog.
@@ -37,19 +38,32 @@ public class ProgressDialogControllerImpl implements ProgressDialogController
 {
 	/** the dialog being displayed */
 	private JDialog currentDialog = null;
-	
-	/** The message that appears in the dialog above the progress bar */
+
+	/** The message that appears in the dialog just above the detail message */
 	private JLabel currentMessage = null;
+
+	/** The message that appears in the dialog just above the progress bar */
+	private JLabel detailMessage = null;
 	
 	/** the progress bar */
 	private JProgressBar currentProgressBar = null;
+
+	/** Logger for this class. */
+	private static ILogger s_log = LoggerController.createLogger(ProgressDialogControllerImpl.class);
 	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController#hideProgressDialog()
 	 */
 	public void hideProgressDialog()
 	{
-		currentDialog.setVisible(false);
+		s_log.info("Hiding dialog");
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				currentDialog.setVisible(false);
+			}
+		}, true);
 	}
 
 	/**
@@ -57,55 +71,76 @@ public class ProgressDialogControllerImpl implements ProgressDialogController
 	 */
 	public void incrementProgress()
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable() {
+		s_log.info("incrementing progress");
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
 			public void run()
 			{
 				int currentValue = currentProgressBar.getValue();
-				currentProgressBar.setValue(currentValue+1);
+				currentProgressBar.setValue(currentValue + 1);
 			}
-		});		
+		}, true);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController#setMessage(java.lang.String)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController#setDetailMessage(java.lang.String)
 	 */
-	public void setMessage(final String msg)
+	public void setDetailMessage(final String msg)
 	{
-		GUIUtils.processOnSwingEventThread(new Runnable() {
+		s_log.info("Setting detail message: "+msg);
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
 			public void run()
 			{
-				currentMessage.setText(msg);
-				currentProgressBar.setString(msg);
+				detailMessage.setText(msg);
 			}
-		});
+		}, true);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController#showProgressDialog(java.lang.String, java.lang.String, int)
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ProgressDialogController#showProgressDialog(java.lang.String,
+	 *      java.lang.String, int)
 	 */
 	public void showProgressDialog(final String title, final String msg, final int total)
 	{
-		currentDialog = new JDialog((Frame)null, title);
-		currentMessage = new JLabel(msg);
-		
-		currentProgressBar = new JProgressBar(0, total-1);
-		
-		
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(5, 0, 5, 0);
-		panel.add(currentMessage,gbc);
-		
-		gbc.gridy = 1;
-		panel.add(currentProgressBar,gbc);
-		
-		currentDialog.getContentPane().add(panel);
-		currentDialog.setSize(300, 150);
-		currentDialog.setVisible(true);
+		s_log.info("showing progress dialog");
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				currentDialog = new JDialog((Frame) null, title);
+				currentMessage = new JLabel(msg);
+				detailMessage = new JLabel("...");
+				currentProgressBar = new JProgressBar(0, total - 1);
+				
+				JPanel panel = new JPanel(new BorderLayout());
+				JPanel messagePanel = new JPanel(new GridLayout(2,1));
+				messagePanel.add(currentMessage);
+				messagePanel.add(detailMessage);
+				panel.add(messagePanel, BorderLayout.CENTER);
+				panel.add(currentProgressBar, BorderLayout.SOUTH);
+				
+				currentDialog.getContentPane().add(panel);
+				currentDialog.setSize(300, 100);
+				GUIUtils.centerWithinScreen(currentDialog);
+				currentDialog.setVisible(true);
+			}
+		}, true);
+
 	}
 
-	
+	public void resetProgressDialog(final String title, final String msg, final int total)
+	{
+		GUIUtils.processOnSwingEventThread(new Runnable() {
+			public void run() {
+				currentDialog.setTitle(title);
+				currentMessage.setText(msg);
+				currentProgressBar.setValue(0);
+				currentProgressBar.setMinimum(0);
+				currentProgressBar.setMaximum(total);
+			}
+		});
+		
+	}
+
 }

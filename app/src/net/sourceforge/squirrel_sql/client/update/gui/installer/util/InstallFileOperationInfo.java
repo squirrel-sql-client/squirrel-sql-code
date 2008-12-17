@@ -42,4 +42,14 @@ public interface InstallFileOperationInfo {
     */
    public void setPlugin(boolean isPlugin);
 
+	/**
+	 * @param artifactName the artifactName to set
+	 */
+	public void setArtifactName(String artifactName);
+
+	/**
+	 * @return the artifactName
+	 */
+	public String getArtifactName();
+
 }

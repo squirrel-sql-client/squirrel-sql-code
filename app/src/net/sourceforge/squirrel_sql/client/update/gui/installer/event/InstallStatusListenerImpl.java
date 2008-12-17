@@ -43,14 +43,27 @@ public class InstallStatusListenerImpl implements InstallStatusListener
 	 */
 	public void handleInstallStatusEvent(InstallStatusEvent evt)
 	{
+		if (evt.getType() == InstallEventType.INIT_CHANGELIST_STARTED) {
+			_progressDialogController.showProgressDialog("Initializing File Change List", "Processing file:",
+				evt.getNumFilesToUpdate());			
+		}
+		if (evt.getType() == InstallEventType.FILE_INIT_CHANGELIST_STARTED) {
+			_progressDialogController.setDetailMessage(evt.getArtifactName());
+		}
+		if (evt.getType() == InstallEventType.FILE_INIT_CHANGELIST_COMPLETE) {
+			_progressDialogController.incrementProgress();
+		}		
+		if (evt.getType() == InstallEventType.INIT_CHANGELIST_COMPLETE) {
+			_progressDialogController.setDetailMessage("");
+		}
 		if (evt.getType() == InstallEventType.BACKUP_STARTED)
 		{
-			_progressDialogController.showProgressDialog("Backing up files to be updated", "Initializing",
+			_progressDialogController.resetProgressDialog("Backing up files to be updated", "Backing up file:",
 				evt.getNumFilesToUpdate());
 		}
 		if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED)
 		{
-			_progressDialogController.setMessage("Copying file: " + evt.getArtifactName());
+			_progressDialogController.setDetailMessage(evt.getArtifactName());
 		}
 		if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE)
 		{
@@ -58,16 +71,30 @@ public class InstallStatusListenerImpl implements InstallStatusListener
 		}
 		if (evt.getType() == InstallEventType.BACKUP_COMPLETE)
 		{
-			_progressDialogController.hideProgressDialog();
+			_progressDialogController.setDetailMessage("");
+		}
+		
+		if (evt.getType() == InstallEventType.REMOVE_STARTED) {
+			_progressDialogController.resetProgressDialog("Removing file to be updated", "Removing file:", 
+				evt.getNumFilesToUpdate());
+		}		
+		if (evt.getType() == InstallEventType.FILE_REMOVE_STARTED) {
+			_progressDialogController.setDetailMessage(evt.getArtifactName());
+		}
+		if (evt.getType() == InstallEventType.FILE_REMOVE_STARTED) {
+			_progressDialogController.incrementProgress();
+		}
+		if (evt.getType() == InstallEventType.REMOVE_COMPLETE) {
+			_progressDialogController.setDetailMessage("");
 		}
 		if (evt.getType() == InstallEventType.INSTALL_STARTED)
 		{
-			_progressDialogController.showProgressDialog("Updating files", "Initializing",
+			_progressDialogController.resetProgressDialog("Installing updated files", "Installing file:", 
 				evt.getNumFilesToUpdate());
 		}
 		if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED)
 		{
-			_progressDialogController.setMessage("Updating file: " + evt.getArtifactName());
+			_progressDialogController.setDetailMessage(evt.getArtifactName());
 		}
 		if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE)
 		{
