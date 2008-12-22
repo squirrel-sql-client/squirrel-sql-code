@@ -24,7 +24,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class RelatedObjectInfo extends DatabaseObjectInfo
 {
-    private final IDatabaseObjectInfo _relatedObjInfo;
+   private static final long serialVersionUID = -6019860536077865903L;
+
+   private final IDatabaseObjectInfo _relatedObjInfo;
 
     public RelatedObjectInfo(IDatabaseObjectInfo relatedObjInfo,
                                 String simpleName,
