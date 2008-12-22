@@ -18,6 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.client.db;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -89,4 +92,16 @@ public class AliasGroupTest extends AbstractSerializableTest
 		classUnderTest.setName(null);
 	}
 	
+	@Test 
+	public void testGetName() throws ValidationException {
+		classUnderTest.setName("aTestName");
+		assertEquals("aTestName", classUnderTest.getName());
+	}
+	
+	@Test
+	public void testIsValid() throws ValidationException {	
+		assertFalse(classUnderTest.isValid());
+		classUnderTest.setName("aTestName");
+		assertTrue(classUnderTest.isValid());
+	}
 }
