@@ -109,7 +109,7 @@ public class ProcessData
       //7  ["  d:\db\shd_data_lov\"]User.WLagerartikelD(77)  5544  1D,  3804  S  E
       //8  ["  d:\db\shd_data_lov\"]User.WVorgangD(24)  5544  1D,
       //
-      // oder für kein Lock:
+      // oder fuer kein Lock:
       //
       //3  ["  f:\db\shd_data\"]User.ygwaTestD(989)  3792  1D,
       //4  ["  f:\db\shd_data\"]User.ygwaTestD(990)  3792  1D,
@@ -156,7 +156,7 @@ public class ProcessData
                   {
                      Integer pidBuf = new Integer(splits4[l].trim());
 
-                     // Es mach nichts, wenn es die PID nicht gäbe.
+                     // Es mach nichts, wenn es die PID nicht gï¿½be.
                      // Sie wird dann einfach oben nicht zugeordnet.
                      if(pidBuf.intValue() != pid)
                      {
