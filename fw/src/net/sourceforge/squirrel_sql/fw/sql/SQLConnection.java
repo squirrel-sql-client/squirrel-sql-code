@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,9 +18,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectType.INFORMIX;
-import static net.sourceforge.squirrel_sql.fw.dialects.DialectType.MSSQL;
-
 import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,23 +35,23 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
- * This represents a connection to an SQL server. it is basically a wrapper
- * around <TT>java.sql.Connection</TT>.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * This represents a connection to an SQL server. it is basically a wrapper around
+ * <TT>java.sql.Connection</TT>.
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLConnection implements ISQLConnection
 {
-   private ISQLDriver _sqlDriver;
+	private ISQLDriver _sqlDriver;
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SQLConnection.class);
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(SQLConnection.class);
+	private final static ILogger s_log = LoggerController.createLogger(SQLConnection.class);
 
 	/** The <TT>java.sql.Connection</TT> this object is wrapped around. */
 	private Connection _conn;
@@ -64,30 +62,28 @@ public class SQLConnection implements ISQLConnection
 	private boolean _autoCommitOnClose = false;
 
 	private Date _timeOpened;
+
 	private Date _timeClosed;
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
-    private SQLDatabaseMetaData metaData = null;
-    
+	private SQLDatabaseMetaData metaData = null;
+
 	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps, ISQLDriver sqlDriver)
 	{
 		super();
-      _sqlDriver = sqlDriver;
-      if (conn == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
-		}
+		_sqlDriver = sqlDriver;
+		if (conn == null) { throw new IllegalArgumentException("SQLConnection == null"); }
 		_conn = conn;
 		_connProps = connProps;
 		_timeOpened = Calendar.getInstance().getTime();
-        metaData = new SQLDatabaseMetaData(this);
+		metaData = new SQLDatabaseMetaData(this);
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#close()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#close()
+	 */
 	public void close() throws SQLException
 	{
 		SQLException savedEx = null;
@@ -124,47 +120,46 @@ public class SQLConnection implements ISQLConnection
 		}
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#commit()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#commit()
+	 */
 	public void commit() throws SQLException
 	{
 		validateConnection();
 		_conn.commit();
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#rollback()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#rollback()
+	 */
 	public void rollback() throws SQLException
 	{
 		validateConnection();
 		_conn.rollback();
 	}
 
-    /**
-     * Retrieve the properties specified when connection was opened. This can
-     * be <TT>null</TT>.
-     * 
-     * @return  Connection properties.
-     */
+	/**
+	 * Retrieve the properties specified when connection was opened. This can be <TT>null</TT>.
+	 * 
+	 * @return Connection properties.
+	 */
 	public SQLDriverPropertyCollection getConnectionProperties()
 	{
 		return _connProps;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getAutoCommit()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getAutoCommit()
+	 */
 	public boolean getAutoCommit() throws SQLException
 	{
 		validateConnection();
 		return _conn.getAutoCommit();
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setAutoCommit(boolean)
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setAutoCommit(boolean)
+	 */
 	public void setAutoCommit(boolean value) throws SQLException
 	{
 		validateConnection();
@@ -173,135 +168,130 @@ public class SQLConnection implements ISQLConnection
 		if (oldValue != value)
 		{
 			_conn.setAutoCommit(value);
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.AUTO_COMMIT,
-												oldValue, value);
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.AUTO_COMMIT, oldValue, value);
 		}
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getCommitOnClose()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getCommitOnClose()
+	 */
 	public boolean getCommitOnClose()
 	{
 		return _autoCommitOnClose;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getTransactionIsolation()
-     */
-	public int getTransactionIsolation()
-		throws SQLException
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getTransactionIsolation()
+	 */
+	public int getTransactionIsolation() throws SQLException
 	{
 		validateConnection();
 		return _conn.getTransactionIsolation();
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setTransactionIsolation(int)
-     */
-	public void setTransactionIsolation(int value)
-		throws SQLException
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setTransactionIsolation(int)
+	 */
+	public void setTransactionIsolation(int value) throws SQLException
 	{
 		validateConnection();
 		_conn.setTransactionIsolation(value);
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setCommitOnClose(boolean)
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setCommitOnClose(boolean)
+	 */
 	public void setCommitOnClose(boolean value)
 	{
 		_autoCommitOnClose = value;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#createStatement()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#createStatement()
+	 */
 	public Statement createStatement() throws SQLException
 	{
 		validateConnection();
 		return _conn.createStatement();
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#prepareStatement(java.lang.String)
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#prepareStatement(java.lang.String)
+	 */
 	public PreparedStatement prepareStatement(String sql) throws SQLException
 	{
 		validateConnection();
 		return _conn.prepareStatement(sql);
 	}
 
-    /**
-     * Retrieve the time that this connection was opened. Note that this time
-     * is the time that this <TT>SQLConnection</TT> was created, not the time
-     * that the <TT>java.sql.Connection</TT> object that it is wrapped around
-     * was opened.
-     * 
-     * @return  Time connection opened.
-     */
+	/**
+	 * Retrieve the time that this connection was opened. Note that this time is the time that this
+	 * <TT>SQLConnection</TT> was created, not the time that the <TT>java.sql.Connection</TT> object that it is
+	 * wrapped around was opened.
+	 * 
+	 * @return Time connection opened.
+	 */
 	public Date getTimeOpened()
 	{
 		return _timeOpened;
 	}
 
-    /**
-     * Retrieve the time that this connection was closed. If this connection
-     * is still opened then <TT>null</TT> will be returned..
-     * 
-     * @return  Time connection closed.
-     */
+	/**
+	 * Retrieve the time that this connection was closed. If this connection is still opened then <TT>null</TT>
+	 * will be returned..
+	 * 
+	 * @return Time connection closed.
+	 */
 	public Date getTimeClosed()
 	{
 		return _timeClosed;
 	}
-	
-    /**
-     * Retrieve the metadata for this connection.
-     * 
-     * @return  The <TT>SQLMetaData</TT> object.
-     */
+
+	/**
+	 * Retrieve the metadata for this connection.
+	 * 
+	 * @return The <TT>SQLMetaData</TT> object.
+	 */
 	public SQLDatabaseMetaData getSQLMetaData()
-	{        
-	    return metaData;
+	{
+		return metaData;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getConnection()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getConnection()
+	 */
 	public Connection getConnection()
 	{
-        /* This is extremely useful when trying to track down Swing UI freezing.
-         * However, it currently fills the log which obscures other debug 
-         * messages even though UI performance is acceptable, so it is commented 
-         * out until it is needed later.         
-        if (s_log.isDebugEnabled()) {
-            try {
-                if (SwingUtilities.isEventDispatchThread() ) {
-                    throw new Exception();
-                }
-            } catch (Exception e) {
-                s_log.debug("GUI thread doing database work", e);
-            }
-        }
-        */
+		/* This is extremely useful when trying to track down Swing UI freezing.
+		 * However, it currently fills the log which obscures other debug 
+		 * messages even though UI performance is acceptable, so it is commented 
+		 * out until it is needed later.         
+		if (s_log.isDebugEnabled()) {
+		    try {
+		        if (SwingUtilities.isEventDispatchThread() ) {
+		            throw new Exception();
+		        }
+		    } catch (Exception e) {
+		        s_log.debug("GUI thread doing database work", e);
+		    }
+		}
+		*/
 		return _conn;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getCatalog()
-     */
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getCatalog()
+	 */
 	public String getCatalog() throws SQLException
 	{
 		validateConnection();
 		return getConnection().getCatalog();
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setCatalog(java.lang.String)
-     */
-	public void setCatalog(String catalogName)
-		throws SQLException
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#setCatalog(java.lang.String)
+	 */
+	public void setCatalog(String catalogName) throws SQLException
 	{
 		validateConnection();
 		final Connection conn = getConnection();
@@ -310,8 +300,7 @@ public class SQLConnection implements ISQLConnection
 		if (!StringUtilities.areStringsEqual(oldValue, catalogName))
 		{
 			setDbSpecificCatalog(dialectType, catalogName);
-			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG,
-												oldValue, catalogName);
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG, oldValue, catalogName);
 		}
 	}
 
@@ -327,25 +316,33 @@ public class SQLConnection implements ISQLConnection
 	 * @throws SQLException
 	 *            if an error occurs
 	 */
-	private void setDbSpecificCatalog(DialectType dialectType, String catalogName) throws SQLException {
-		switch (dialectType) {
-			case MSSQL:
-				setMSSQLServerCatalog(catalogName);
-				break;
-			case INFORMIX:
-				setInformixCatalog(catalogName);
-				break;
-			default:
-				setGenericDbCatalog(catalogName);
-				break;
-		};
+	private void setDbSpecificCatalog(DialectType dialectType, String catalogName) throws SQLException
+	{
+		switch (dialectType)
+		{
+		case MSSQL:
+			setMSSQLServerCatalog(catalogName);
+			break;
+		case INFORMIX:
+			setInformixCatalog(catalogName);
+			break;
+		default:
+			setGenericDbCatalog(catalogName);
+			break;
+		}
+		;
 	}
-	
-	private void setGenericDbCatalog(String catalogName) throws SQLException {
+
+	/**
+	 * @param catalogName
+	 * @throws SQLException
+	 */
+	private void setGenericDbCatalog(String catalogName) throws SQLException
+	{
 		final Connection conn = getConnection();
 		conn.setCatalog(catalogName);
 	}
-	
+
 	/**
 	 * MS SQL Server throws an exception if the catalog name contains a period without it being quoted.
 	 * 
@@ -354,8 +351,31 @@ public class SQLConnection implements ISQLConnection
 	 * @throws SQLException
 	 *            if an error occurs
 	 */
-	private void setMSSQLServerCatalog(String catalogName) throws SQLException {
+	private void setMSSQLServerCatalog(final String catalogName) throws SQLException
+	{
 		final Connection conn = getConnection();
+
+		// Bug #1995728
+		// MS-SQL is inconsistent with regard to setting the current catalog. If you have a database with
+		// periods or spaces, then in some cases you must surround the catalog with quotes. For example, 
+		// if you have a catalog named 'db with spaces' you must execute the following SQL:
+		// 
+		// use "db with spaces"
+		//
+		// However, the same is not always true for the JDBC API method Connection.setCatalog. For some old
+		// versions of Microsoft drivers, you must quote the catalog as well. But for newer versions of the
+		// driver, you must not quote the catalog. So here, we attempt to use the unquoted version first, then
+		// if that fails, we will try quoting it.
+		try
+		{
+			conn.setCatalog(catalogName);
+			return;
+		}
+		catch (SQLException e)
+		{
+			s_log.error("Connection.setCatalog yielded an exception for catalog (" + catalogName + ") :"
+				+ e.getMessage(), e);
+		}
 		conn.setCatalog(quote(catalogName));
 	}
 
@@ -367,36 +387,43 @@ public class SQLConnection implements ISQLConnection
 	 * @throws SQLException
 	 *            if an error occurs
 	 */
-	private void setInformixCatalog(String catalogName) throws SQLException {
+	private void setInformixCatalog(String catalogName) throws SQLException
+	{
 		final Connection conn = getConnection();
 		Statement stmt = null;
-		String sql = "DATABASE "+catalogName;
-		try {
+		String sql = "DATABASE " + catalogName;
+		try
+		{
 			stmt = conn.createStatement();
 			stmt.execute(sql);
-		} catch (SQLException e) {
-			s_log.error("setInformixCatalog: failed to change database with the database SQL directive: "+sql);
-		} finally {
+		}
+		catch (SQLException e)
+		{
+			s_log.error("setInformixCatalog: failed to change database with the database SQL directive: " + sql);
+		}
+		finally
+		{
 			SQLUtilities.closeStatement(stmt);
 		}
 		// finally, try to set the catalog, which appears to be a NO-OP in the Informix driver.
 		conn.setCatalog(catalogName);
 	}
-	
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getWarnings()
-     */
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getWarnings()
+	 */
 	public SQLWarning getWarnings() throws SQLException
 	{
 		validateConnection();
 		return _conn.getWarnings();
 	}
 
-    /**
-     * Add a listener for property change events.
-     *
-     * @param   lis     The new listener.
-     */
+	/**
+	 * Add a listener for property change events.
+	 * 
+	 * @param lis
+	 *           The new listener.
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener)
 	{
 		if (listener != null)
@@ -409,11 +436,12 @@ public class SQLConnection implements ISQLConnection
 		}
 	}
 
-    /**
-     * Remove a property change listener.
-     *
-     * @param   lis     The listener to be removed.
-     */
+	/**
+	 * Remove a property change listener.
+	 * 
+	 * @param lis
+	 *           The listener to be removed.
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener)
 	{
 		if (listener != null)
@@ -428,29 +456,28 @@ public class SQLConnection implements ISQLConnection
 
 	protected void validateConnection() throws SQLException
 	{
-		if (_conn == null)
-		{
-			throw new SQLException(s_stringMgr.getString("SQLConnection.noConn"));
-		}
+		if (_conn == null) { throw new SQLException(s_stringMgr.getString("SQLConnection.noConn")); }
 	}
 
 	/**
-	 * Retrieve the object that reports on property change events. If it
-	 * doesn't exist then create it.
-	 *
-	 * @return	PropertyChangeReporter object.
+	 * Retrieve the object that reports on property change events. If it doesn't exist then create it.
+	 * 
+	 * @return PropertyChangeReporter object.
 	 */
 	private synchronized PropertyChangeReporter getPropertyChangeReporter()
 	{
 		if (_propChgReporter == null)
 		{
-			_propChgReporter = new PropertyChangeReporter(this); 
+			_propChgReporter = new PropertyChangeReporter(this);
 		}
 		return _propChgReporter;
 	}
-	
+
 	private String quote(String str)
 	{
+		// Bug #1995728 - Don't add quotes to an already quoted identifier
+		if (str.startsWith("\"")) { return str; }
+
 		String identifierQuoteString = "";
 		try
 		{
@@ -458,26 +485,19 @@ public class SQLConnection implements ISQLConnection
 		}
 		catch (SQLException ex)
 		{
-			s_log.debug(
-				"DBMS doesn't supportDatabasemetaData.getIdentifierQuoteString",
-				ex);
+			s_log.debug("DBMS doesn't supportDatabasemetaData.getIdentifierQuoteString", ex);
 		}
-		if (identifierQuoteString != null
-				&& !identifierQuoteString.equals(" "))
-		{
-			return identifierQuoteString + str + identifierQuoteString;
-		}
+		if (identifierQuoteString != null && !identifierQuoteString.equals(" ")) { return identifierQuoteString
+			+ str + identifierQuoteString; }
 		return str;
 	}
 
-   /* (non-Javadoc)
- * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getSQLDriver()
- */
-public ISQLDriver getSQLDriver()
-   {
-      return _sqlDriver;
-   }
-
-
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getSQLDriver()
+	 */
+	public ISQLDriver getSQLDriver()
+	{
+		return _sqlDriver;
+	}
 
 }
