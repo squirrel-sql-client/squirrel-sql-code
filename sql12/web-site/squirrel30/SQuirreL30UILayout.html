@@ -6,7 +6,8 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Linux)">
 	<META NAME="CREATED" CONTENT="20060105;16371400">
 	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
-	<META NAME="CHANGED" CONTENT="20081225;19485700">
+	<META NAME="CHANGED" CONTENT="20081225;20211600">
+	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
 	<STYLE TYPE="text/css">
 	<!--
 		@page { size: 21cm 29.7cm; margin: 2cm }
@@ -52,11 +53,12 @@ required from that date on.</P>
 information for developers</B></FONT></P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P STYLE="margin-bottom: 0cm">In order allow SQuirreL to the new
-layout direct usage of JInternalFrames had to be replaced by an
-abstract layer. To do so the concept of “widgets” was introduced
-in SQuirreL. Instead of using/deriving from JInternalFrames widgets
-are used/derived from. There are three kinds of widgets:</P>
+<P STYLE="margin-bottom: 0cm">To be able to work with the new user
+interface layout direct usage of JInternalFrames had to be replaced
+by an abstract layer. To do so the concept of “widgets” was
+introduced in SQuirreL: Instead of using/deriving from
+JInternalFrames widgets are used/derived from. There are three kinds
+of widgets:</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <UL>
@@ -67,20 +69,14 @@ are used/derived from. There are three kinds of widgets:</P>
 </UL>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm">The Widget abstraction layer is
+<P STYLE="margin-bottom: 0cm">The widget abstraction layer is
 essential to allow the user to choose if he wants to use SQuirreL in
-old Internal Frame/MDI layout or the new tabbed layout. 
+the old Internal Frame/MDI layout or the new tabbed layout. 
 </P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <P STYLE="margin-bottom: 0cm">The class diagram below gives a bit of
 a technical background:</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <P STYLE="margin-bottom: 0cm"><IMG SRC="SQuirreL30UILayout_html_7114d8cf.jpg" NAME="Grafik2" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR>
@@ -103,10 +99,8 @@ JInternalFrame. (In most cases DialogWidget will be the right
 choice.)</SPAN></P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
 <P STYLE="margin-bottom: 0cm">Before the new UI-Layout was committed
-to a tag named “beforeTabLayout” was created in SQuirreLs CVS
+to a tag named “beforeTabLayout” was created in SQuirreL's CVS
 repositiory.</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
