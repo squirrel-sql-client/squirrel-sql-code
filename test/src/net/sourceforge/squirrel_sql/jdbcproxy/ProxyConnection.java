@@ -20,18 +20,7 @@ package net.sourceforge.squirrel_sql.jdbcproxy;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
 
@@ -168,11 +157,6 @@ public class ProxyConnection implements Connection {
     public Map getTypeMap() throws SQLException {
         ProxyMethodManager.check("ProxyConnection", "getTypeMap");
         return _con.getTypeMap();
-    }
-    @SuppressWarnings("unchecked")
-    public void setTypeMap(Map map) throws SQLException {
-        ProxyMethodManager.check("ProxyConnection", "setTypeMap");
-        _con.setTypeMap(map);
     }
 
     public String nativeSQL(String sql) throws SQLException {
@@ -325,4 +309,28 @@ public class ProxyConnection implements Connection {
 	}
 
 
+   public void setTypeMap(Map<String, Class<?>> map) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public NClob createNClob() throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public SQLXML createSQLXML() throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setClientInfo(String name, String value) throws SQLClientInfoException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setClientInfo(Properties properties) throws SQLClientInfoException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

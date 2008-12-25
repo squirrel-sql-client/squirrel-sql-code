@@ -19,29 +19,29 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /**
  * JASON: Rename to ResultInternalFrame
  * Torn off frame that contains SQL results.
  *
  * @author <A HREF="mailto:jcompagner@j-com.nl">Johan Compagner</A>
  */
-public class ResultFrame extends BaseSessionInternalFrame
+public class ResultFrame extends SessionDialogWidget
 {
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
@@ -65,10 +65,10 @@ public class ResultFrame extends BaseSessionInternalFrame
     */
    public ResultFrame(ISession session, IResultTab tab)
    {
-      super(session, getFrameTitle(session, tab), true, true, true, true);
+      super(getFrameTitle(session, tab), true, true, true, true, session);
       _tab = tab;
 
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+      setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
       final Container cont = getContentPane();
       cont.setLayout(new BorderLayout());
@@ -87,6 +87,8 @@ public class ResultFrame extends BaseSessionInternalFrame
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(_chkOnTop, gbc);
       _chkOnTop.setSelected(true);
+
+      _chkOnTop.setVisible(session.getApplication().getDesktopStyle().supportsLayers());
 
       _chkOnTop.addActionListener(new ActionListener()
       {
@@ -109,18 +111,17 @@ public class ResultFrame extends BaseSessionInternalFrame
    {
       if(_chkOnTop.isSelected())
       {
-         getDesktopPane().setLayer(this, JLayeredPane.PALETTE_LAYER.intValue());
+         setLayer(JLayeredPane.PALETTE_LAYER.intValue());
       }
       else
       {
-         getDesktopPane().setLayer(this, JLayeredPane.DEFAULT_LAYER.intValue());
+         setLayer(JLayeredPane.DEFAULT_LAYER.intValue());
       }
 
       // Needs to be done in both cases because if the window goes back to
       // the default layer it goes back behind all other windows too.
       toFront();
    }
-
 
    /**
 	 * Close this window.

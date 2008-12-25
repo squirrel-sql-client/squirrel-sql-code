@@ -19,22 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
-import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.DBOutputPanel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,9 +70,9 @@ public class SessionInfoInternalFrame extends OracleInternalFrame
    private void createGUI(ISession session)
    {
 
-      addInternalFrameListener(new InternalFrameAdapter()
+      addWidgetListener(new WidgetAdapter()
       {
-         public void internalFrameClosing(InternalFrameEvent e)
+         public void widgetClosing(WidgetEvent e)
          {
             SessionInfoInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), _sessionInfoPanel.getAutoRefreshPeriod());
             _sessionInfoPanel.setAutoRefresh(false);

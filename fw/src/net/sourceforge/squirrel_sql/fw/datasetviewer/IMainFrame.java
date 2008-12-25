@@ -7,6 +7,4 @@ import javax.swing.*;
  * This class lets fw operate without a dependance on the app code using it.
  */
 public interface IMainFrame {
-	public void addInternalFrame(JInternalFrame child,
-			boolean createMenuItem);
 }

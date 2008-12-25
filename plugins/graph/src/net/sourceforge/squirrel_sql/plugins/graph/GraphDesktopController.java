@@ -62,7 +62,7 @@ public class GraphDesktopController
       _listener = listener;
       _session = session;
       _plugin = plugin;
-      _desktopPane = new GraphDesktopPane();
+      _desktopPane = new GraphDesktopPane(_session.getApplication());
       _desktopPane.setBackground(Color.white);
 
       _scrollPane = new JScrollPane(_desktopPane);

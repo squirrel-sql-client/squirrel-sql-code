@@ -16,27 +16,23 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.AWTEvent;
-import java.awt.ActiveEvent;
-import java.awt.Component;
-import java.awt.MenuComponent;
-import java.awt.Toolkit;
+
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
+
+import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.JLayeredPane;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlparam.gui.AskParamValueDialog;
 
 /**
  * This listener listens for SQL execution.
@@ -151,7 +147,7 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 
 		GUIUtils.processOnSwingEventThread(new Runnable() {
 			public void run() {
-				new SelectInternalFrameCommand(session.getActiveSessionWindow()).execute();
+				new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
 			}
 		});
 		// log.info("SQL passing to execute: " + buffer.toString());
@@ -159,11 +155,11 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 	}
 
 	private void createParameterDialog(String parameter, String oldValue) {
-		dialog = new AskParamValueDialog(parameter, oldValue);
-		session.getApplication().getMainFrame().addInternalFrame(dialog, true);
+		dialog = new AskParamValueDialog(parameter, oldValue, session.getApplication());
+		session.getApplication().getMainFrame().addWidget(dialog);
 		dialog.setLayer(JLayeredPane.MODAL_LAYER);
 		dialog.moveToFront();
-		GUIUtils.centerWithinDesktop(dialog);
+		DialogWidget.centerWithinDesktop(dialog);
 		dialog.setVisible(true);
 	}
 

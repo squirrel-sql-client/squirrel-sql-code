@@ -35,20 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -74,7 +61,6 @@ import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
@@ -490,28 +476,17 @@ public class SQLPanel extends JPanel
 	}
 
 
-
    public void setVisible(boolean value)
-	{
+   {
       super.setVisible(value);
-      if (!_hasBeenVisible && value == true)
+      if (value)
       {
-         final int dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, _splitPane.getMaximumDividerLocation() / 4);
-
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               _splitPane.setDividerLocation(dividerLoc);
-            }
-         });
-
          _hasBeenVisible = true;
       }
-	}
+   }
 
 
-	/**
+   /**
 	 * Add the passed item to end of the SQL history. If the item
 	 * at the end of the history is the same as the passed one
 	 * then don't add it.
@@ -881,7 +856,7 @@ public class SQLPanel extends JPanel
 			add(pnl, BorderLayout.NORTH);
 		}
 
-		_splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+      createSplitPaneWithHackToSetSplitLocation();
 		_splitPane.setOneTouchExpandable(true);
 
 		installSQLEntryPanel(
@@ -909,6 +884,65 @@ public class SQLPanel extends JPanel
 			}
 		});
 	}
+
+   private void createSplitPaneWithHackToSetSplitLocation()
+   {
+      final int dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, 50);
+
+      final Timer timer = new Timer(500, new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            _splitPane.setDividerLocation(dividerLoc);
+         }
+      });
+
+      timer.setRepeats(false);
+
+      _splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT)
+      {
+//         @Override
+//         public void setDividerLocation(double proportionalLocation)
+//         {
+//            if (timer.isRunning())
+//            {
+//               super.setDividerLocation(dividerLoc);
+//               timer.restart();
+//               System.out.println("SQLPanel.setDividerLocation true");
+//            }
+//            else
+//            {
+//               System.out.println("SQLPanel.setDividerLocation false");
+//               super.setDividerLocation(proportionalLocation);
+//            }
+//         }
+
+         @Override
+         public void setDividerLocation(int location)
+         {
+            if (timer.isRunning())
+            {
+               super.setDividerLocation(dividerLoc);
+               timer.restart();
+            }
+            else
+            {
+               super.setDividerLocation(location);
+            }
+         }
+      };
+
+      _splitPane.setDividerLocation(dividerLoc);
+      timer.start();
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            timer.restart();
+         }
+      });
+
+   }
 
    public Action getUndoAction()
    {

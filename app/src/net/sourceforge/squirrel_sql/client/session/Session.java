@@ -22,27 +22,12 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -52,28 +37,22 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessorDummy;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -139,7 +118,7 @@ class Session implements ISession
 
    private SQLConnectionListener _connLis = null;
 
-   private BaseSessionInternalFrame _activeActiveSessionWindow;
+   private ISessionWidget _activeActiveSessionWindow;
    private SessionInternalFrame _sessionInternalFrame;
    private Hashtable<IIdentifier, IParserEventsProcessor>  _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable<IIdentifier, IParserEventsProcessor>();
 
@@ -752,7 +731,7 @@ class Session implements ISession
 
    private ISQLPanelAPI getSqlPanelApi(IIdentifier entryPanelIdentifier)
    {
-      BaseSessionInternalFrame[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
+      ISessionWidget[] frames = getApplication().getWindowManager().getAllFramesOfSession(getIdentifier());
 
       for (int i = 0; i < frames.length; i++)
       {
@@ -785,17 +764,28 @@ class Session implements ISession
                return null;
             }
          }
+
+         if(frames[i] instanceof ObjectTreeInternalFrame)
+         {
+            IObjectTreeAPI objectTreeApi = ((ObjectTreeInternalFrame)frames[i]).getObjectTreeAPI();
+            IIdentifier findEditorID = objectTreeApi.getFindController().getFindEntryPanel().getIdentifier();
+
+            if(findEditorID.equals(entryPanelIdentifier))
+            {
+               return null;
+            }
+         }
       }
 
       throw new IllegalStateException("Session has no entry panel for ID=" + entryPanelIdentifier);
    }
 
-   public void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow)
+   public void setActiveSessionWindow(ISessionWidget activeActiveSessionWindow)
    {
       _activeActiveSessionWindow = activeActiveSessionWindow;
    }
 
-   public BaseSessionInternalFrame getActiveSessionWindow()
+   public ISessionWidget getActiveSessionWindow()
    {
       return _activeActiveSessionWindow;
    }

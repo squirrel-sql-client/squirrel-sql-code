@@ -31,8 +31,8 @@ public class Version
 		StringManagerFactory.getStringManager(Version.class);
 
 	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
-	private static final int MAJOR_VERSION = 2;
-	private static final int MINOR_VERSION = 7;
+	private static final int MAJOR_VERSION = 3;
+	private static final int MINOR_VERSION = 0;
 	private static final int RELEASE = 0;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
@@ -99,7 +99,8 @@ public class Version
          || vmVer.startsWith("1.1")
          || vmVer.startsWith("1.2")
          || vmVer.startsWith("1.3")
-         || vmVer.startsWith("1.4"))
+         || vmVer.startsWith("1.4")
+         || vmVer.startsWith("1.5"))
       {
          return false;
       }

@@ -16,34 +16,14 @@ package net.sourceforge.squirrel_sql.plugins.dataimport.gui;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.AUTO_INCREMENT;
-import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.FIXED_VALUE;
-import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.NULL;
-import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.SKIP;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -51,11 +31,19 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportDataIntoTableExecutor;
+import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.*;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * This dialog has some options to specify how the file is imported into
@@ -63,7 +51,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Thorsten Mürell
  */
-public class ImportFileDialog extends BaseInternalFrame {
+public class ImportFileDialog extends DialogWidget
+{
 	private static final long serialVersionUID = 3470927611018381204L;
 
 	private static final StringManager stringMgr =
@@ -92,14 +81,14 @@ public class ImportFileDialog extends BaseInternalFrame {
 	 */
 	public ImportFileDialog(ISession session, IFileImporter importer, ITableInfo table, TableColumnInfo[] columns) {
         //i18n[ImportFileDialog.fileImport=Import file]
-		super(stringMgr.getString("ImportFileDialog.fileImport"), true);
+		super(stringMgr.getString("ImportFileDialog.fileImport"), true, session.getApplication());
 		this.session = session;
 		this.importer = importer;
 		this.table = table;
 		this.columns = columns;
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		GUIUtils.makeToolWindow(this, true);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		makeToolWindow(true);
 
 		final JPanel content = new JPanel(new BorderLayout());
 		content.add(createMainPanel(), BorderLayout.CENTER);

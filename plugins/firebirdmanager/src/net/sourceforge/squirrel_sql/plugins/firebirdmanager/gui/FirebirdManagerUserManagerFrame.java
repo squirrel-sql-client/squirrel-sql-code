@@ -18,7 +18,28 @@
  */
 package net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui;
 
-import java.awt.BorderLayout;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelper;
+import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerUsersPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.PreferencesManager;
+import org.firebirdsql.gds.GDSException;
+import org.firebirdsql.gds.IscSvcHandle;
+import org.firebirdsql.management.FBUser;
+import org.firebirdsql.management.FBUserManager;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,40 +49,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelper;
-import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerUsersPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.PreferencesManager;
-
-import org.firebirdsql.gds.GDSException;
-import org.firebirdsql.gds.IscSvcHandle;
-import org.firebirdsql.management.FBUser;
-import org.firebirdsql.management.FBUserManager;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-public class FirebirdManagerUserManagerFrame extends BaseInternalFrame 
+public class FirebirdManagerUserManagerFrame extends DialogWidget
 implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionListener {
 	private static final long serialVersionUID = 7592543018317340170L;
 
@@ -136,19 +124,18 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
 	private JTextField jtextfieldMiddleName = new JTextField();
 	private JLabel lblLastName = new JLabel();
 	private JTextField jtextfieldLastName = new JTextField();
-	
+   private IApplication _application;
 
-    /**
+
+   /**
      * Constructor
-     * @param app
-     * @param rsrc
-     * @param session
-     * @param tab
+     * @param application
      */
-	public FirebirdManagerUserManagerFrame() {
-		super("Firebird manager - " + stringManager.getString("usermanager.title"), true, true, true, true);
-		
-		initLayout();
+	public FirebirdManagerUserManagerFrame(IApplication application) {
+		super("Firebird manager - " + stringManager.getString("usermanager.title"), true, true, true, true, application);
+      _application = application;
+
+      initLayout();
 		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
@@ -204,8 +191,8 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(createPanel(), BorderLayout.CENTER);
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(createPanel(), BorderLayout.CENTER);
 		
 		initVisualObjects();
 		readPreferences();
@@ -703,7 +690,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
 		}
 		
 		if (bufError.length() != 0) {
-			JOptionPane.showMessageDialog(this, bufError.toString());
+			JOptionPane.showMessageDialog(_application.getMainFrame(), bufError.toString());
 		}
 		
 		return bufError.length() == 0;

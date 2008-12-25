@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
@@ -109,6 +110,8 @@ class Application implements IApplication
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Application.class);
 
 	private SquirrelPreferences _prefs;
+
+   private DesktopStyle _desktopStyle;
 
 	private SQLDriverManager _driverMgr;
 
@@ -212,6 +215,7 @@ class Application implements IApplication
 		// name to generate properties file name.
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
 		_prefs = SquirrelPreferences.load();
+      _desktopStyle = new DesktopStyle(_prefs);
 		Locale.setDefault(constructPreferredLocale(_prefs));
 		preferencesHaveChanged(null);
 		_prefs.addPropertyChangeListener(new PropertyChangeListener()
@@ -488,7 +492,12 @@ class Application implements IApplication
 		return _prefs;
 	}
 
-	public MainFrame getMainFrame()
+   public DesktopStyle getDesktopStyle()
+   {
+      return _desktopStyle;
+   }
+
+   public MainFrame getMainFrame()
 	{
 		// return _mainFrame;
 		return _windowManager.getMainFrame();

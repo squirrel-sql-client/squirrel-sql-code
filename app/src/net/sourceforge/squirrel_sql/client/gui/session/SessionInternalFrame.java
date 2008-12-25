@@ -19,20 +19,17 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.session.*;
 
-public class SessionInternalFrame extends BaseSessionInternalFrame
+import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+
+public class SessionInternalFrame extends SessionTabWidget
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
 {
     static final long serialVersionUID = 6961615570741567740L;
@@ -44,7 +41,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
     
 	public SessionInternalFrame(ISession session)
 	{
-		super(session, session.getTitle(), true, true, true, true);
+		super(session.getTitle(), true, true, true, true, session);
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
@@ -90,7 +87,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
    private void createGUI(final ISession session)
 	{
 		setVisible(false);
-		setDefaultCloseOperation(SessionInternalFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		final IApplication app = session.getApplication();
 		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 		if (icon != null)
@@ -98,15 +95,16 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 			setFrameIcon(icon);
 		}
 
-		addInternalFrameListener(new InternalFrameAdapter()
+		addWidgetListener(new WidgetAdapter()
 		{
-			public void internalFrameClosing(InternalFrameEvent evt)
+			public void widgetClosing(WidgetEvent evt)
 			{
-                if (!session.isfinishedLoading()) {                         
-                    return;
-                }
-				final ISession mySession = getSession();
-				if (mySession != null)
+            if (!session.isfinishedLoading())
+            {
+               return;
+            }
+            final ISession mySession = getSession();
+            if (mySession != null)
 				{
                _sessionPanel.sessionWindowClosing();
 					_app.getSessionManager().closeSession(mySession);
@@ -121,7 +119,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 
    public void requestFocus()
    {
-      if (ISession.IMainPanelTabIndexes.SQL_TAB == _session.getSelectedMainTabIndex())
+      if (ISession.IMainPanelTabIndexes.SQL_TAB == getSession().getSelectedMainTabIndex())
       {
          SwingUtilities.invokeLater(new Runnable()
          {
@@ -131,7 +129,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
             }
          });
       }
-      else if (ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB == _session.getSelectedMainTabIndex())
+      else if (ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB == getSession().getSelectedMainTabIndex())
       {
          SwingUtilities.invokeLater(new Runnable()
          {

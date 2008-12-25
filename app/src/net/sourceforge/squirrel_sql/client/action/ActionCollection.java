@@ -19,44 +19,26 @@ package net.sourceforge.squirrel_sql.client.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.JInternalFrame;
-import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DisplayPluginSummaryAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DumpApplicationAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ExitAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.SavePreferencesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.UpdateAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
@@ -224,7 +206,7 @@ public class ActionCollection
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> deactivated.
 	 */
-	public void deactivationChanged(JInternalFrame frame)
+	public void deactivationChanged(IWidget frame)
 	{
 		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
 		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
@@ -266,16 +248,16 @@ public class ActionCollection
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
-	public synchronized void activationChanged(JInternalFrame frame)
+	public synchronized void activationChanged(IWidget frame)
 	{
 		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
 		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
 		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
 
 		ISession session = null;
-		if (frame instanceof BaseSessionInternalFrame)
+		if (frame instanceof ISessionWidget)
 		{
-			session = ((BaseSessionInternalFrame)frame).getSession();
+			session = ((ISessionWidget)frame).getSession();
 		}
 
 		for (Iterator<Action> it = actions(); it.hasNext();)

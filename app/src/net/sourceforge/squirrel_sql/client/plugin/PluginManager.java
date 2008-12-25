@@ -20,42 +20,31 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JInternalFrame;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
-import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Manages plugins for the application.
@@ -507,7 +496,7 @@ public class PluginManager implements IPluginManager
 
 				} else
 				{
-					pluginUrls.add(pluginFile.toURL());
+					pluginUrls.add(pluginFile.toURI().toURL());
 
 					// See if plugin has any jars in lib dir.
 					final String pluginDirName = Utilities.removeFileNameSuffix(fullFilePath);
@@ -538,7 +527,7 @@ public class PluginManager implements IPluginManager
 					{
 						try
 						{
-							pluginUrls.add(libDirFiles[j].toURL());
+							pluginUrls.add(libDirFiles[j].toURI().toURL());
 						} catch (IOException ex)
 						{
 							String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
@@ -557,11 +546,11 @@ public class PluginManager implements IPluginManager
 	 */
 	public void initializePlugins()
 	{
-		_app.getWindowManager().addSessionSheetListener(new InternalFrameAdapter()
+		_app.getWindowManager().addSessionWidgetListener(new WidgetAdapter()
 		{
-			public void internalFrameOpened(InternalFrameEvent e)
+			public void widgetOpened(WidgetEvent e)
 			{
-				onInternalFrameOpened(e);
+				onWidgetOpened(e);
 			}
 		});
 
@@ -594,13 +583,13 @@ public class PluginManager implements IPluginManager
 		classLoaderListener = listener;
 	}
 
-	private void onInternalFrameOpened(InternalFrameEvent e)
+	private void onWidgetOpened(WidgetEvent e)
 	{
-		JInternalFrame frame = e.getInternalFrame();
+		IWidget widget = e.getWidget();
 
-		if (frame instanceof BaseSessionInternalFrame)
+		if (widget instanceof ISessionWidget)
 		{
-			ISession session = ((BaseSessionInternalFrame) frame).getSession();
+			ISession session = ((ISessionWidget) widget).getSession();
 
 			List<PluginSessionCallback> list = _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
 
@@ -610,12 +599,12 @@ public class PluginManager implements IPluginManager
 				{
 					PluginSessionCallback psc = list.get(i);
 
-					if (frame instanceof SQLInternalFrame)
+					if (widget instanceof SQLInternalFrame)
 					{
-						psc.sqlInternalFrameOpened((SQLInternalFrame) frame, session);
-					} else if (frame instanceof ObjectTreeInternalFrame)
+						psc.sqlInternalFrameOpened((SQLInternalFrame) widget, session);
+					} else if (widget instanceof ObjectTreeInternalFrame)
 					{
-						psc.objectTreeInternalFrameOpened((ObjectTreeInternalFrame) frame, session);
+						psc.objectTreeInternalFrameOpened((ObjectTreeInternalFrame) widget, session);
 					}
 				}
 			}
@@ -764,7 +753,7 @@ public class PluginManager implements IPluginManager
 		}
 	}
 
-	/**
+   /**
 	 * A plugin implementation that serves only to identify plugins that aren't being loaded, but which are
 	 * still installed, and available to load on startup if the user changes the isLoadedOnStartup attribute.
 	 * 

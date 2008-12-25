@@ -21,52 +21,37 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.*;
+import java.util.List;
 /**
  * SQLFilter dialog gui.
  * JASON: Rename to SQLFilterInternalFrame
  *
  * @author <A HREF="mailto:mjhammel@users.sourceforge.net">Maury Hammel</A>
  */
-public class SQLFilterSheet extends BaseSessionInternalFrame
+public class SQLFilterSheet extends SessionDialogWidget
 {
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +100,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	public SQLFilterSheet(IObjectTreeAPI objectTree,
 							IDatabaseObjectInfo objectInfo)
 	{
-		super(objectTree.getSession(), TITLE, true);
+		super(TITLE, true, objectTree.getSession());
 		if (objectInfo == null)
 		{
 			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
@@ -189,7 +174,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 					/*
 					 * END-KLUDGE
 					 */
-					GUIUtils.centerWithinDesktop(this);
+					DialogWidget.centerWithinDesktop(this);
 					moveToFront();
 				}
 			}
@@ -283,11 +268,11 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		SortedSet<String> columnNames = new TreeSet<String>();
 		Map<String, Boolean> textColumns = new TreeMap<String, Boolean>();
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle(getTitle());
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		try
 		{

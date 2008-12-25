@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,8 +28,9 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    //
    /////////////////////////////////////////////////////////
 
-   public GraphDesktopPane()
+   public GraphDesktopPane(IApplication app)
    {
+      super(app);
       _constraintViewListener = new ConstraintViewListener()
       {
          public void foldingPointMoved(ConstraintView source)

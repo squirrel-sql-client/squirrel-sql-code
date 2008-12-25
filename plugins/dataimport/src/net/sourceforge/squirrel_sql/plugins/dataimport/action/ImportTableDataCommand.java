@@ -30,8 +30,10 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -140,9 +142,9 @@ public class ImportTableDataCommand implements ICommand {
 
 				GUIUtils.processOnSwingEventThread(new Runnable() {
 					public void run() {
-						session.getApplication().getMainFrame().addInternalFrame(importFileDialog, true);
+						session.getApplication().getMainFrame().addWidget(importFileDialog);
 						importFileDialog.moveToFront();
-						GUIUtils.centerWithinDesktop(importFileDialog);
+						DialogWidget.centerWithinDesktop(importFileDialog);
 						importFileDialog.setVisible(true);
 					}
 				}, true);

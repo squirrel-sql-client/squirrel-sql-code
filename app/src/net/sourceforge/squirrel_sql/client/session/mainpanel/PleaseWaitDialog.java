@@ -16,27 +16,22 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Statement;
-
-import javax.swing.JButton;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.CancelStatementThread;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.CancelStatementThread;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Statement;
 
 
 /**
@@ -44,7 +39,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Thorsten Mürell
  */
-public class PleaseWaitDialog extends BaseInternalFrame implements ActionListener {
+public class PleaseWaitDialog extends DialogWidget implements ActionListener {
 	private static final long serialVersionUID = 8870277695490954084L;
 
 	private static final StringManager stringMgr =
@@ -58,15 +53,15 @@ public class PleaseWaitDialog extends BaseInternalFrame implements ActionListene
 	 * Creates the dialog.
 	 * 
 	 * @param stmt The statement that is currently executed
-	 * @param messageHandler The message handler to produce the log output to
-	 */
-	public PleaseWaitDialog(Statement stmt, IMessageHandler messageHandler) {
+    * @param app The message handler to produce the log output to
+    */
+	public PleaseWaitDialog(Statement stmt, IApplication app) {
         //i18n[PleaseWaitDialog.queryExecuting=Query is executing]
-		super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true);
-		this.messageHandler = messageHandler;
+		super(stringMgr.getString("PleaseWaitDialog.queryExecuting"), true, app);
+		this.messageHandler = app.getMessageHandler();
 		this.stmt = stmt;
 
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		final JPanel content = new JPanel(new BorderLayout());
 		content.add(createMainPanel(), BorderLayout.CENTER);
@@ -88,7 +83,7 @@ public class PleaseWaitDialog extends BaseInternalFrame implements ActionListene
 		builder.setDefaultDialogBorder();
 
 		int y = 1;
-		builder.addSeparator(title, cc.xywh(1, y, 1, 1));
+		builder.addSeparator(getTitle(), cc.xywh(1, y, 1, 1));
 
 		y += 2;
 		//i18n[PleaseWaitDialog.pleaseWait=Please wait while the query is executed]
@@ -120,10 +115,10 @@ public class PleaseWaitDialog extends BaseInternalFrame implements ActionListene
 	 * @param app The application to show the window in
 	 */
 	public void showDialog(IApplication app) {
-        app.getMainFrame().addInternalFrame(this, true);
-        this.moveToFront();
-        this.setLayer(JLayeredPane.MODAL_LAYER);
-        GUIUtils.centerWithinDesktop(this);
+        app.getMainFrame().addWidget(this);
+        moveToFront();
+        setLayer(JLayeredPane.MODAL_LAYER);
+        DialogWidget.centerWithinDesktop(this);
         this.setVisible(true);
 	}
 }

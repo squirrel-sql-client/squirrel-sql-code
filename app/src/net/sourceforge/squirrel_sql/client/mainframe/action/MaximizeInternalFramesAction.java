@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -19,13 +19,18 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 import java.awt.event.ActionEvent;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MaximizeInternalFramePositioner;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.IHasJDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.WidgetUtils;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeInternalFramesAction;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
+import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * This class will cascade all internal frames owned by a
  * <CODE>JDesktopPane</CODE>.
@@ -44,37 +49,27 @@ public class MaximizeInternalFramesAction
 	 * The <CODE>JDesktopPane</CODE> that owns the internal frames to be
 	 * cascaded.
 	 */
-	private JDesktopPane _desktop;
+	private IDesktopContainer _desktop;
+   private IApplication _app;
 
-	/**
+   /**
 	 * Default constructor.
-	 */
-	public MaximizeInternalFramesAction()
+    * @param app
+    */
+	public MaximizeInternalFramesAction(IApplication app)
 	{
-		this(null);
-	}
+      super(s_stringMgr.getString("MaximizeInternalFramesAction.title"));
+      _app = app;
+   }
 
-	/**
-	 * Constructor specifying the <CODE>JDesktopPane</CODE> that owns the
-	 * internal frames to be maximized.
-	 *
-	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
-	 *					  internal frames to be maximized.
-	 */
-	public MaximizeInternalFramesAction(JDesktopPane desktop)
-	{
-		super(s_stringMgr.getString("MaximizeInternalFramesAction.title"));
-		setJDesktopPane(desktop);
-	}
-
-	/**
+   /**
 	 * Set the <CODE>JDesktopPane</CODE> that owns the internal frames to be
 	 * maximized.
 	 *
 	 * @param   desktop	 the <CODE>JDesktopPane</CODE> that owns the
 	 *					  internal frames to be maximized.
 	 */
-	public void setJDesktopPane(JDesktopPane value)
+	public void setDesktopContainer(IDesktopContainer value)
 	{
 		_desktop = value;
 	}
@@ -86,15 +81,14 @@ public class MaximizeInternalFramesAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		if (_desktop != null)
+		if (_desktop != null  && _app.getDesktopStyle().isInternalFrameStyle())
 		{
 			MaximizeInternalFramePositioner pos =
 				new MaximizeInternalFramePositioner();
-			JInternalFrame[] children =
-				GUIUtils.getOpenNonToolWindows(_desktop.getAllFrames());
-			for (int i = children.length - 1; i >= 0; --i)
+			IWidget[] widgets = WidgetUtils.getOpenNonToolWindows(_desktop.getAllWidgets());
+			for (int i = widgets.length - 1; i >= 0; --i)
 			{
-				pos.positionInternalFrame(children[i]);
+				pos.positionInternalFrame(widgets[i].getInternalFrame());
 			}
 		}
 	}

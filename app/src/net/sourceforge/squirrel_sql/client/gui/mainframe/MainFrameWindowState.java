@@ -47,7 +47,6 @@ public class MainFrameWindowState extends WindowState implements Serializable
 
 	public MainFrameWindowState()
 	{
-		super();
 		_driversWindowState.setBounds(new RectangleWrapper(new Rectangle(5, 5, 250, 250)));
 		_aliasesWindowState.setBounds(new RectangleWrapper(new Rectangle(400, 5, 250, 250)));
 	}

@@ -51,6 +51,12 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 							"getMainFrameWindowState", "setMainFrameWindowState"),
 						new PropertyDescriptor(SHOW_CONTENTS_WHEN_DRAGGING, SquirrelPreferences.class,
 							"getShowContentsWhenDragging", "setShowContentsWhenDragging"),
+
+						new PropertyDescriptor(TABBED_STYLE, SquirrelPreferences.class,
+							"getTabbedStyle", "setTabbedStyle"),
+						new PropertyDescriptor(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class,
+							"getShowTabbedStyleHint", "setShowTabbedStyleHint"),
+
 						new PropertyDescriptor(LOGIN_TIMEOUT, SquirrelPreferences.class, "getLoginTimeout",
 							"setLoginTimeout"),
 						new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, SquirrelPreferences.class,

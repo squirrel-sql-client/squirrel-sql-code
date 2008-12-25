@@ -23,10 +23,13 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetListener;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
@@ -50,7 +53,7 @@ import java.awt.event.KeyEvent;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ConnectionInternalFrame extends BaseInternalFrame
+public class ConnectionInternalFrame extends DialogWidget
 {
 	/** Handler called for internal frame actions. */
 	public interface IHandler
@@ -138,7 +141,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 	public ConnectionInternalFrame(IApplication app, ISQLAlias alias,
 									IHandler handler)
 	{
-		super("", true);
+		super("", true, app);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -223,7 +226,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 	 * Allow base class to create rootpane and add a couple
 	 * of listeners for ENTER and ESCAPE to it.
 	 */
-	protected JRootPane createRootPane()
+	private void initKeyListeners()
 	{
 		ActionListener escapeListener = new ActionListener()
 		{
@@ -241,14 +244,12 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 			}
 		};
 
-		final JRootPane pane = super.createRootPane();
+		final JRootPane pane = getRootPane();
 
 		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		pane.registerKeyboardAction(escapeListener, ks, WHEN_IN_FOCUSED_WINDOW);
+		pane.registerKeyboardAction(escapeListener, ks, JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ks = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		pane.registerKeyboardAction(enterListener, ks, WHEN_IN_FOCUSED_WINDOW);
-
-		return pane;
+		pane.registerKeyboardAction(enterListener, ks, JComponent.WHEN_IN_FOCUSED_WINDOW);
 	}
 
    /**
@@ -326,22 +327,21 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 
 	private void createGUI()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		GUIUtils.makeToolWindow(this, true);
+      setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+      makeToolWindow(true);
 
-		final String winTitle =
-			s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
-		setTitle(winTitle);
+      final String winTitle =
+         s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
+      setTitle(winTitle);
 
-		final JPanel content = new JPanel(new BorderLayout());
-		content.add(createMainPanel(), BorderLayout.CENTER);
-		content.add(_statusBar, BorderLayout.SOUTH);
-        setContentPane(content);
-		
+      final JPanel content = new JPanel(new BorderLayout());
+      content.add(createMainPanel(), BorderLayout.CENTER);
+      content.add(_statusBar, BorderLayout.SOUTH);
+      setContentPane(content);
 
-// TODO:
-//		_btnsPnl.makeOKButtonDefault();
-	}
+      initKeyListeners();
+
+   }
 
 	/**
 	 * Create the main panel
@@ -375,7 +375,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		builder.setDefaultDialogBorder();
 
 		int y = 1;
-		builder.addSeparator(title, cc.xywh(1, y, 3, 1));
+		builder.addSeparator(getTitle(), cc.xywh(1, y, 3, 1));
 
 		y += 2;
 		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.alias"), cc.xy(1, y));
@@ -412,24 +412,11 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
 
 
-//		_useDriverPropsChk.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				boolean useDriverProps = _useDriverPropsChk.isSelected();
-//				_driverPropsBtn.setEnabled(useDriverProps);
-//				if (useDriverProps)
-//				{
-//					loadDriverProperties();
-//				}
-//			}
-//		});
-
 		// Set focus to password control if default user name has been setup.
-		addInternalFrameListener(new InternalFrameAdapter()
+		addWidgetListener(new WidgetAdapter()
 		{
-			private InternalFrameAdapter _this;
-			public void internalFrameActivated(InternalFrameEvent evt)
+			private WidgetAdapter _this;
+			public void widgetActivated(WidgetEvent evt)
 			{
 				_this = this;
 				final String userName = _user.getText();
@@ -448,7 +435,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 							{
 								_password.requestFocus();
 							}
-							ConnectionInternalFrame.this.removeInternalFrameListener(_this);
+							ConnectionInternalFrame.this.removeWidgetListener(_this);
 						}
 					});
 				}
@@ -461,40 +448,8 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 	private void showDriverPropertiesDialog()
 	{
       new AliasPropertiesCommand(_alias, _app).execute();
-//		final Frame owner = _app.getMainFrame();
-//		DriverPropertiesDialog.showDialog(owner, _props);
 	}
 
-//	private void loadDriverProperties()
-//	{
-//		if (!_driverPropertiesLoaded)
-//		{
-//			if (_useDriverPropsChk.isSelected())
-//			{
-//				_driverPropertiesLoaded = true;
-//				try
-//				{
-//					final SQLDriverManager mgr = _app.getSQLDriverManager();
-//					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
-//					if (jdbcDriver == null)
-//					{
-//						throw new BaseException(s_stringMgr.getString("ConnectionInternalFrame.error.cannotloaddriver"));
-//					}
-//
-//					_props = _alias.getDriverPropertiesClone();
-//					DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
-//																	new Properties());
-//					_props.applyDriverPropertynfo(infoAr);
-//				}
-//				catch (Exception ex)
-//				{
-//					String msg = s_stringMgr.getString("ConnectionInternalFrame.error.driverprops");
-//					s_log.error(msg, ex);
-//					_app.showErrorDialog(msg, ex);
-//				}
-//			}
-//		}
-//	}
 
 	/**
 	 * Listener to handle button events in OK/Close panel.

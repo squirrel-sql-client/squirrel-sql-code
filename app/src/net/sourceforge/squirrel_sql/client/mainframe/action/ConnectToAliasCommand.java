@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -143,8 +144,8 @@ public class ConnectToAliasCommand implements ICommand
     private void createConnectionInternalFrame(SheetHandler hdl) {
         ConnectionInternalFrame sheet = 
             new ConnectionInternalFrame(_app, _sqlAlias, hdl);                        
-        _app.getMainFrame().addInternalFrame(sheet, true, null);
-        GUIUtils.centerWithinDesktop(sheet);
+        _app.getMainFrame().addWidget(sheet);
+        DialogWidget.centerWithinDesktop(sheet);
         sheet.moveToFront();
         sheet.setVisible(true);                        
     }

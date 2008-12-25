@@ -65,7 +65,7 @@ public class NewSessionInfoWorksheetAction extends SquirrelAction {
 
 
           final SessionInfoInternalFrame sif = new SessionInfoInternalFrame(activeSession, _resources);
-          getApplication().getMainFrame().addInternalFrame(sif, true, null);
+          getApplication().getMainFrame().addWidget(sif);
 
           // If we don't invokeLater here no Short-Cut-Key is sent
           // to the internal frame

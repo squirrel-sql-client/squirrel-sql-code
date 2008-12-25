@@ -18,37 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -59,17 +32,26 @@ import net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui.comp.FBButton;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerBackupAndRestorePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.PreferencesManager;
-
 import org.firebirdsql.management.FBBackupManager;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.*;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * Internal frame for backup and restore
  * @author Michael Romankiewicz
  */
-public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
+public class FirebirdManagerBackupRestoreFrame extends DialogWidget
 		implements IFirebirdManagerFrame, ActionListener, KeyListener {
 	private static final long serialVersionUID = 3260000837769327217L;
 	private final String CR = System.getProperty("line.separator", "\n");
@@ -152,19 +134,22 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 	private FBButton jbuttonRestore = new FBButton(true);
 	private JButton jbuttonLoadRestoreProp = new JButton();
 	private JButton jbuttonSaveRestoreProp = new JButton();
+   private IApplication _application;
 
 
-	
-	// ------------------------------------------------------------------------
+   // ------------------------------------------------------------------------
 	/**
 	 * Constructor
-	 */
-	public FirebirdManagerBackupRestoreFrame() {
+    * @param application
+    */
+	public FirebirdManagerBackupRestoreFrame(IApplication application) {
 		super("Firebird manager - "
 				+ stringManager.getString("backuprestoremanager.title"), true,
-				true, true, true);
+				true, true, true, application);
+      _application = application;
 
-		initLayout();
+
+      initLayout();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 		this.moveToFront();
@@ -229,8 +214,8 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(createPanelMain());
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(createPanelMain());
 
 		initVisualObjects();
 		readPreferences();
@@ -732,10 +717,10 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 			try {
 				prop.load(new FileInputStream(file));
 			} catch (FileNotFoundException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			} catch (IOException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			}
 			
@@ -767,7 +752,7 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 			boolean saveFile = true;
 			if (file.exists()) {
 				saveFile = JOptionPane.showConfirmDialog(
-						this, i18n.GLOBAL_WARNING_FILE_EXISTS, 
+						_application.getMainFrame(), i18n.GLOBAL_WARNING_FILE_EXISTS,
 						i18n.GLOBAL_TITLE_WARNING, 
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 			}
@@ -792,10 +777,10 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 					prop.store(new FileOutputStream(file),
 							"FirebirdManager - Backup properties");
 				} catch (FileNotFoundException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				}
 			}
@@ -812,10 +797,10 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 			try {
 				prop.load(new FileInputStream(file));
 			} catch (FileNotFoundException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			} catch (IOException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			}
 			
@@ -847,7 +832,7 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 			boolean saveFile = true;
 			if (file.exists()) {
 				saveFile = JOptionPane.showConfirmDialog(
-						this, i18n.GLOBAL_WARNING_FILE_EXISTS, 
+						_application.getMainFrame(), i18n.GLOBAL_WARNING_FILE_EXISTS,
 						i18n.GLOBAL_TITLE_WARNING, 
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 			}
@@ -872,10 +857,10 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 					prop.store(new FileOutputStream(file),
 							"FirebirdManager - Restore properties");
 				} catch (FileNotFoundException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				}
 			}
@@ -945,7 +930,7 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 
 		
 		if (bufError.length() != 0) {
-			JOptionPane.showMessageDialog(this, bufError.toString());
+			JOptionPane.showMessageDialog(_application.getMainFrame(), bufError.toString());
 		}
 
 		return bufError.length() == 0;
@@ -1070,7 +1055,7 @@ public class FirebirdManagerBackupRestoreFrame extends BaseInternalFrame
 		} 
 
 		if (bufError.length() != 0) {
-			JOptionPane.showMessageDialog(this, bufError.toString());
+			JOptionPane.showMessageDialog(_application.getMainFrame(), bufError.toString());
 		}
 
 		return bufError.length() == 0;

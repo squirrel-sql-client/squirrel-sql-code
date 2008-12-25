@@ -81,7 +81,7 @@ public class DriverWindowManager
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		moveToFront(_driverWinFactory.getModifySheet(driver));
+      _driverWinFactory.getModifySheet(driver).moveToFront();
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class DriverWindowManager
 	 */
 	public void showNewDriverInternalFrame()
 	{
-		moveToFront(_driverWinFactory.getCreateSheet());
+      _driverWinFactory.getCreateSheet().moveToFront();
 	}
 
 	/**
@@ -109,8 +109,8 @@ public class DriverWindowManager
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
 
-		moveToFront(_driverWinFactory.showCopySheet(driver));
-	}
+      _driverWinFactory.showCopySheet(driver).moveToFront();
+   }
 
 	public void moveToFront(final JInternalFrame fr)
 	{

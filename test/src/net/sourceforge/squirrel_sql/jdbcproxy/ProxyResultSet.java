@@ -22,18 +22,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -1106,4 +1095,134 @@ public class ProxyResultSet implements ResultSet
 		// TODO Auto-generated method stub
 
 	}
+
+   public RowId getRowId(int columnIndex) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public RowId getRowId(String columnLabel) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateRowId(int columnIndex, RowId x) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateRowId(String columnLabel, RowId x) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNString(int columnIndex, String nString) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNString(String columnLabel, String nString) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(int columnIndex, NClob nClob) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(String columnLabel, NClob nClob) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public NClob getNClob(int columnIndex) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public NClob getNClob(String columnLabel) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public SQLXML getSQLXML(int columnIndex) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public SQLXML getSQLXML(String columnLabel) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public String getNString(int columnIndex) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public String getNString(String columnLabel) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(int columnIndex, Reader reader) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void updateNClob(String columnLabel, Reader reader) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public <T> T unwrap(Class<T> iface) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public boolean isWrapperFor(Class<?> iface) throws SQLException
+   {
+      return false;  //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

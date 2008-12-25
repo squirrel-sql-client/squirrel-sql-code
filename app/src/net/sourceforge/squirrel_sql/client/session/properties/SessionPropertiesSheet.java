@@ -17,29 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.prefs.Preferences;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
@@ -50,7 +33,16 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class SessionPropertiesSheet extends BaseSessionInternalFrame
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.Preferences;
+
+public class SessionPropertiesSheet extends SessionDialogWidget
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SessionPropertiesSheet.class);
@@ -81,7 +73,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
 	public SessionPropertiesSheet(ISession session)
 	{
-		super(session, session.getTitle() + " " + i18n.TITLE, true);
+		super(session.getTitle() + " " + i18n.TITLE, true, session);
 		createGUI();
         for (ISessionPropertiesPanel pnl : _panels)
 		{
@@ -153,17 +145,17 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
             if (otPanel.isObjectTreeRefreshNeeded())
             {
-               WindowManager wm = _session.getApplication().getWindowManager();
-               BaseSessionInternalFrame[] frames = wm.getAllFramesOfSession(_session.getIdentifier());
+               WindowManager wm = getSession().getApplication().getWindowManager();
+               ISessionWidget[] frames = wm.getAllFramesOfSession(getSession().getIdentifier());
                for (int i = 0; i < frames.length; i++)
                {
-                  BaseSessionInternalFrame frame = frames[i];
+                  ISessionWidget widget = frames[i];
                   try
                   {
-                     if (frame instanceof SessionInternalFrame)
+                     if (widget instanceof SessionInternalFrame)
                      {
                         SessionInternalFrame sif =
-                           (SessionInternalFrame) frame;
+                           (SessionInternalFrame) widget;
                         sif.getObjectTreeAPI().refreshSelectedNodes();
                      }
                   }
@@ -197,13 +189,13 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
 	private void createGUI()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 // TODO: Setup title correctly.
 //		setTitle(getTitle() + ": " + _session.getSessionSheet().getTitle());
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		final IApplication app = getSession().getApplication();
 

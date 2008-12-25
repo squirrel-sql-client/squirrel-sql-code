@@ -111,7 +111,7 @@ public class AliasWindowManager
 		moveToFront(_aliasWinFactory.getCopySheet(alias));
 	}
 
-	public void moveToFront(final JInternalFrame fr)
+	public void moveToFront(final AliasInternalFrame fr)
 	{
 		if (fr != null)
 		{
@@ -119,7 +119,7 @@ public class AliasWindowManager
 			{
 				public void run()
 				{
-					GUIUtils.moveToFront(fr);
+					fr.moveToFront();
 				}
 			});
 		}

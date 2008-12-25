@@ -21,24 +21,21 @@ package net.sourceforge.squirrel_sql.plugins.oracle.dboutput;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
-import java.util.prefs.Preferences;
 
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
 import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
@@ -86,11 +83,11 @@ public class DBOutputInternalFrame extends OracleInternalFrame
 
    private void createGUI(ISession session)
    {
-      addInternalFrameListener(new InternalFrameAdapter()
+      addWidgetListener(new WidgetAdapter()
       {
-         public void internalFrameClosing(InternalFrameEvent e)
+         public void widgetClosing(WidgetEvent e)
          {
-            onInternalFrameClosing();
+            onWidgetClosing();
          }
       });
 
@@ -123,7 +120,7 @@ public class DBOutputInternalFrame extends OracleInternalFrame
    }
 
 
-   private void onInternalFrameClosing()
+   private void onWidgetClosing()
    {
 
       internalFrameClosing(_toolBar.isStayOnTop(), _dbOutputPanel.getAutoRefreshPeriod());

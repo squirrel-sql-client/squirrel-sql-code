@@ -28,6 +28,7 @@ import java.io.FilenameFilter;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -45,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewLogsSheet extends BaseInternalFrame
+public class ViewLogsSheet extends DialogWidget
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -96,7 +97,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 	 */
 	private ViewLogsSheet(IApplication app)
 	{
-		super(s_stringMgr.getString("ViewLogsSheet.title"), true, true, true, true);
+		super(s_stringMgr.getString("ViewLogsSheet.title"), true, true, true, true, app);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -121,8 +122,8 @@ public class ViewLogsSheet extends BaseInternalFrame
 		if (s_instance == null)
 		{
 			s_instance = new ViewLogsSheet(app);
-			app.getMainFrame().addInternalFrame(s_instance, true, null);
-			GUIUtils.centerWithinDesktop(s_instance);
+			app.getMainFrame().addWidget(s_instance);
+			centerWithinDesktop(s_instance);
 		}
 
 		final boolean wasVisible = s_instance.isVisible();
@@ -137,7 +138,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 	}
 
-	public void dispose()
+   public void dispose()
 	{
 		// Stop refresh if it is running.
 		_closing = true;
@@ -188,7 +189,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 	private void refreshLog()
 	{
 	    enableComponents(false);
-        CursorChanger cursorChg = new CursorChanger(this);
+        CursorChanger cursorChg = new CursorChanger(getAwtContainer());
 		cursorChg.show();
 		try
 		{
@@ -359,8 +360,8 @@ public class ViewLogsSheet extends BaseInternalFrame
 	 */
 	private void createUserInterface()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		GUIUtils.makeToolWindow(this, true);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		makeToolWindow(true);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(createToolBar(), BorderLayout.NORTH);

@@ -22,6 +22,9 @@ import java.awt.Component;
 
 import org.junit.Before;
 import org.junit.Test;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.MockApplication;
 
 public class ScrollableDesktopPaneTest
 {
@@ -31,7 +34,7 @@ public class ScrollableDesktopPaneTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new ScrollableDesktopPane();
+		classUnderTest = new ScrollableDesktopPane(new MockApplication());
 	}
 
 	@Test
@@ -43,7 +46,7 @@ public class ScrollableDesktopPaneTest
 	@Test
 	public void testAddImplComponentObjectInt_nullargs()
 	{
-		classUnderTest.addImpl(null, null, 0);
+		classUnderTest.addWidget((DialogWidget)null);
 	}
 
 }

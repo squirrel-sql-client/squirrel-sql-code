@@ -480,7 +480,7 @@ class LAFRegister
 				{
 					if (file.isFile() && file.exists())
 					{
-						lafs.put(className, file.toURL());
+						lafs.put(className, file.toURI().toURL());
 					}
 				}
 				catch (IOException ex)
@@ -523,7 +523,7 @@ class LAFRegister
 					{
 						if (file.isFile() && file.exists())
 						{
-							lafs.put(className, file.toURL());
+							lafs.put(className, file.toURI().toURL());
 						}
 					}
 					catch (IOException ex)

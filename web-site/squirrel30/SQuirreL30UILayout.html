@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Linux)">
+	<META NAME="CREATED" CONTENT="20060105;16371400">
+	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
+	<META NAME="CHANGED" CONTENT="20081225;19485700">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 21cm 29.7cm; margin: 2cm }
+		P { margin-bottom: 0.21cm }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0cm"><FONT SIZE=4><B>New User Interface
+Layout in SQuirreL 3.0 / Dec. 25. 2008</B></FONT></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">SQuirreL 3.0 will be the next SQuirreL
+version after the 2.6.x versions. Here we will focus on a single
+change in SQuirreL 3.0. A complete overview of all changes can be
+found in our <A HREF="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/doc/changes.txt"><B>change
+log</B></A>.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">With SQuirreL 3.0 we introduce a new
+user interface layout as shown in the screenshot below.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><IMG SRC="SQuirreL30UILayout_html_63721a3f.jpg" NAME="Grafik1" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">The new user interface comes closer to
+what is known of modern applications like Eclipse or Netbeans. Those
+who still prefer the old MDI / Internal Frame layout the can switch
+layouts in SQuirreL's Global Preferences.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">SQuirreL 3.0 is planned to be released
+to the end of January 2008 and will require JRE (1.)6. 
+</P>
+<P STYLE="margin-bottom: 0cm">From Dec. 25. 2008 on the new layout
+will be available in CVS and in weekly snapshots. JRE (1.)6 will be
+required from that date on.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><FONT SIZE=4><B>Some technical
+information for developers</B></FONT></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">In order allow SQuirreL to the new
+layout direct usage of JInternalFrames had to be replaced by an
+abstract layer. To do so the concept of “widgets” was introduced
+in SQuirreL. Instead of using/deriving from JInternalFrames widgets
+are used/derived from. There are three kinds of widgets:</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm">DialogWidget (e.g. Session
+	Properties)</P>
+	<LI><P STYLE="margin-bottom: 0cm">DockWidget (e.g. Aliases)</P>
+	<LI><P STYLE="margin-bottom: 0cm">TabWidget (e.g. Session)</P>
+</UL>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">The Widget abstraction layer is
+essential to allow the user to choose if he wants to use SQuirreL in
+old Internal Frame/MDI layout or the new tabbed layout. 
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">The class diagram below gives a bit of
+a technical background:</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><IMG SRC="SQuirreL30UILayout_html_7114d8cf.jpg" NAME="Grafik2" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm; font-style: normal; font-weight: medium">
+<FONT FACE="Thorndale AMT, serif"><FONT SIZE=3>Dialog-/Dock-/Tab-widgets
+use delegates to work on the given user interface layout. When a
+widget is added to a DesktopContainer the DesktopContainer gets hold
+of the delegate inside the widget and uses this delegate for display.
+A factory that creates the DesktopContainer as well as the delegates
+takes care that DesktopContainer and delegates match.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><SPAN STYLE="background: #ffff00">Any
+Plugin developer who does not host his plugin in our CVS repository
+will have inherit from one of the three Widget types instead of
+JInternalFrame. (In most cases DialogWidget will be the right
+choice.)</SPAN></P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">Before the new UI-Layout was committed
+to a tag named “beforeTabLayout” was created in SQuirreLs CVS
+repositiory.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+</BODY>
+</HTML>

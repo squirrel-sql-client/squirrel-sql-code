@@ -21,6 +21,9 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.*;
@@ -33,7 +36,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
-public class SQLInternalFrame extends BaseSessionInternalFrame
+public class SQLInternalFrame extends SessionTabWidget
 								implements ISQLInternalFrame
 {
 	/** Application API. */
@@ -47,7 +50,7 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 
 	public SQLInternalFrame(ISession session)
 	{
-		super(session, session.getTitle(), true, true, true, true);
+		super(session.getTitle(), true, true, true, true, session);
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
@@ -78,26 +81,10 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 		// is being unable to key into the text entry field unless you click
 		// elsewhere after focus is gained by the internal frame.
 		// See bug ID 4309079 on the JavaSoft bug parade (plus others).
-		addInternalFrameListener(new InternalFrameAdapter()
+		addWidgetListener(new WidgetAdapter()
 		{
-			public void internalFrameActivated(InternalFrameEvent evt)
+			public void widgetActivated(WidgetEvent evt)
 			{
-//				Window window = SwingUtilities
-//						.windowForComponent(SQLInternalFrame.this.getSQLPanel());
-//				Component focusOwner = (window != null) ? window
-//						.getFocusOwner() : null;
-//				if (focusOwner != null)
-//				{
-//					FocusEvent lost = new FocusEvent(focusOwner,
-//							FocusEvent.FOCUS_LOST);
-//					FocusEvent gained = new FocusEvent(focusOwner,
-//							FocusEvent.FOCUS_GAINED);
-//					window.dispatchEvent(lost);
-//					window.dispatchEvent(gained);
-//					window.dispatchEvent(lost);
-//					focusOwner.requestFocus();
-//				}
-
             SwingUtilities.invokeLater(new Runnable()
             {
                public void run()
@@ -107,7 +94,7 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
             });
 			}
 
-         public void internalFrameClosing(InternalFrameEvent e)
+         public void widgetClosing(InternalFrameEvent e)
          {
             _sqlPanel.sessionWindowClosing();
          }

@@ -17,9 +17,22 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,24 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.session.properties.GeneralSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionObjectTreePropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLPropertiesPanel;
-
 // JASON: Rename to NewSessionPropertiesInternalFrame
-public class NewSessionPropertiesSheet extends BaseInternalFrame
+public class NewSessionPropertiesSheet extends DialogWidget
 {
     private static final long serialVersionUID = 1L;
 
@@ -72,9 +69,9 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 
 	private NewSessionPropertiesSheet(IApplication app)
 	{
-		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true);
+		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true, app);
 		_app = app;
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		createGUI();
 		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
@@ -84,8 +81,8 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 		}
 
 		setSize(getDimension());
-		app.getMainFrame().addInternalFrame(this, true, null);
-		GUIUtils.centerWithinDesktop(this);
+		app.getMainFrame().addWidget(this);
+		DialogWidget.centerWithinDesktop(this);
 		setVisible(true);
 	}
 
@@ -174,10 +171,10 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 
 	private void createGUI()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralSessionPropertiesPanel());

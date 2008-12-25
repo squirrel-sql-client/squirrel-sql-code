@@ -19,14 +19,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
@@ -42,6 +38,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
+import javax.swing.*;
+import java.sql.SQLException;
 
 /**
  * The current session.
@@ -244,7 +243,7 @@ public interface ISession extends IHasIdentifier
     */
    IParserEventsProcessor getParserEventsProcessor(IIdentifier sqlEntryPanelIdentifier);
 
-   void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow);
+   void setActiveSessionWindow(ISessionWidget activeActiveSessionWindow);
 
    /**
     * Hint for plugins:
@@ -252,7 +251,7 @@ public interface ISession extends IHasIdentifier
     * always the SessionInternalFrame which provides an SQLPanelAPI. This might help to simplyfy
     * the code in the sessionStarted() method of a plugin.
     */
-   BaseSessionInternalFrame getActiveSessionWindow();
+   ISessionWidget getActiveSessionWindow();
 
    /**
     * Hint for plugins:

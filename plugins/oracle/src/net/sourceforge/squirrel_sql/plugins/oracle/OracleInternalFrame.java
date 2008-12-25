@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.oracle;
 
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -9,13 +9,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
-import java.util.prefs.Preferences;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.util.prefs.Preferences;
 
-public class OracleInternalFrame extends BaseSessionInternalFrame
+public class OracleInternalFrame extends SessionDialogWidget
 {
    private static final String PREF_KEY_ORACLE_FRAME_REPL = "@@";
 
@@ -36,7 +36,7 @@ public class OracleInternalFrame extends BaseSessionInternalFrame
 
    public OracleInternalFrame(ISession session, String title)
    {
-      super(session, title, true, true, true, true);
+      super(title, true, true, true, true, session);
 
       setBorder(BorderFactory.createRaisedBevelBorder());
    }
@@ -59,7 +59,7 @@ public class OracleInternalFrame extends BaseSessionInternalFrame
       {
          public void run()
          {
-            Rectangle rectMain = getSession().getApplication().getMainFrame().getDesktopPane().getBounds();
+            Rectangle rectMain = getSession().getApplication().getMainFrame().getDesktopContainer().getBounds();
             Rectangle rect = new Rectangle();
             rect.x = x;
             if(rectMain.width - x < 50) rect.x = 0;
@@ -90,6 +90,7 @@ public class OracleInternalFrame extends BaseSessionInternalFrame
          }
       });
    }
+
 
 
    protected void internalFrameClosing(boolean stayOnTop, int autoRefreshPeriod)
@@ -137,11 +138,11 @@ public class OracleInternalFrame extends BaseSessionInternalFrame
       {
          if(selected)
          {
-            getDesktopPane().setLayer(OracleInternalFrame.this, JLayeredPane.PALETTE_LAYER.intValue());
+            OracleInternalFrame.this.setLayer(JLayeredPane.PALETTE_LAYER.intValue());
          }
          else
          {
-            getDesktopPane().setLayer(OracleInternalFrame.this, JLayeredPane.DEFAULT_LAYER.intValue());
+            OracleInternalFrame.this.setLayer(JLayeredPane.DEFAULT_LAYER.intValue());
          }
 
          // Needs to be done in both cases because if the window goes back to

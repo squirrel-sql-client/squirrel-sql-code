@@ -19,57 +19,37 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.Point;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultDesktopManager;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.MessagePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
-import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 {
-
    public interface IMenuIDs extends MainFrameMenuBar.IMenuIDs
 	{
 		// Empty body.
@@ -102,10 +82,8 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 	/** If <TT>true</TT> then status bar is visible. */
 	private boolean _statusBarVisible = false;
 
-	private JDesktopPane _desktop;
+	private IDesktopContainer _desktop;
 
-	private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
-//	private Map _children = new HashMap();
 
    private static final String PREFS_KEY_MESSAGEPANEL_HEIGHT = "squirrelSql_msgPanel_height";
 
@@ -131,7 +109,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_desktop = new ScrollableDesktopPane();
+		_desktop = DesktopContainerFactory.createDesktopContainer(_app);
 		createUserInterface();
 		preferencesHaveChanged(null); // Initial load of prefs.
 		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
@@ -149,7 +127,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		{
 			public void run()
 			{
-				ScrollableDesktopPane comp = (ScrollableDesktopPane)getDesktopPane();
+				IDesktopContainer comp = getDesktopContainer();
 				comp.setPreferredSize(comp.getRequiredSize());
 				comp.revalidate();
 			}
@@ -183,84 +161,29 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		return _app;
 	}
 
-	public JDesktopPane getDesktopPane()
+	public IDesktopContainer getDesktopContainer()
 	{
 		return _desktop;
 	}
 
-	/**
-	 * Add the passed internal frame to this MDI frame.
-	 * Calls <TT>addInternalFrame(child, createMenuItem, null)</TT>.
-	 *
-	 * @param	child			The internal frame to be added.
-	 * @param	createMenuItem	If <TT>true</TT> add an item to the MDI
-	 * 							Window menu to select the passed internal frame.
-	 *
-	 * @throws	IllegalArgumentException if null <TT>JInternalFrame</TT> passed.
-	 */
-	public void addInternalFrame(JInternalFrame child, boolean createMenuItem)
-	{
-		addInternalFrame(child, createMenuItem, null);
-	}
-
-   public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action)
+   public void addWidget(DialogWidget widget)
    {
-      addInternalFrame(child, addToWindowMenu, action, null);
+      _desktop.addWidget(widget);
    }
 
-	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action, Integer layer)
-	{
-      if (!GUIUtils.isToolWindow(child))
-      {
-         Dimension cs = getDesktopPane().getSize();
-         // Cast to int required as Dimension::setSize(double,double)
-         // doesn't appear to do anything in JDK1.2.2.
-         cs.setSize((int) (cs.width * 0.8d), (int) (cs.height * 0.8d));
-         child.setSize(cs);
-      }
+   public void addWidget(DockWidget widget)
+   {
+      _desktop.addWidget(widget);
+   }
+
+   public void addWidget(TabWidget widget)
+   {
+      _desktop.addWidget(widget);
+   }
 
 
-      if (child == null)
-      {
-         throw new IllegalArgumentException("Null JInternalFrame added");
-      }
 
-      if(null != layer)
-      {
-         _desktop.add(child, layer);
-      }
-      else
-      {
-         _desktop.add(child);
-      }
-
-
-      if (!GUIUtils.isToolWindow(child))
-      {
-         positionNewInternalFrame(child);
-      }
-//		JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getDesktopPane().getAllFrames());
-//		_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
-
-		// Size non-tool child window.
-		if (!GUIUtils.isToolWindow(child))
-		{
-			if (child.isMaximizable() &&
-					_app.getSquirrelPreferences().getMaximizeSessionSheetOnOpen())
-			{
-				try
-				{
-					child.setMaximum(true);
-				}
-				catch (PropertyVetoException ex)
-				{
-					s_log.error("Unable to maximize window", ex);
-				}
-			}
-		}
-	}
-
-	public JMenu getSessionMenu()
+   public JMenu getSessionMenu()
 	{
 		return ((MainFrameMenuBar) getJMenuBar()).getSessionMenu();
 	}
@@ -331,11 +254,11 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		{
 			if (prefs.getShowContentsWhenDragging())
 			{
-				getDesktopPane().putClientProperty("JDesktopPane.dragMode", null);
+				getDesktopContainer().putClientProperty("JDesktopPane.dragMode", null);
 			}
 			else
 			{
-				getDesktopPane().putClientProperty("JDesktopPane.dragMode", "outline");
+				getDesktopContainer().putClientProperty("JDesktopPane.dragMode", "outline");
 			}
 		}
 
@@ -374,8 +297,8 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 	private void closeAllToolWindows()
 	{
-		JInternalFrame[] frames =
-			GUIUtils.getOpenToolWindows(getDesktopPane().getAllFrames());
+		IWidget[] frames =
+			WidgetUtils.getOpenToolWindows(getDesktopContainer().getAllWidgets());
 		for (int i = 0; i < frames.length; ++i)
 		{
 			frames[i].dispose();
@@ -389,12 +312,12 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 		final SquirrelResources rsrc = _app.getResources();
 
-		getDesktopPane().setDesktopManager(new MyDesktopManager());
+		getDesktopContainer().setDesktopManager(new SquirrelDesktopManager(_app));
 
 		final Container content = getContentPane();
 
 		content.setLayout(new BorderLayout());
-		final JScrollPane sp = new JScrollPane(getDesktopPane());
+		final JScrollPane sp = new JScrollPane(getDesktopContainer().getComponent());
 		sp.setBorder(BorderFactory.createEmptyBorder());
 
 		_msgPnl = new MessagePanel()
@@ -460,7 +383,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);
 
-		setJMenuBar(new MainFrameMenuBar(_app, getDesktopPane(), _app.getActionCollection()));
+		setJMenuBar(new MainFrameMenuBar(_app, getDesktopContainer(), _app.getActionCollection()));
 
 		setupFromPreferences();
 
@@ -550,12 +473,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		setExtendedState(ws.getFrameExtendedState());
 	}
 
-   private void positionNewInternalFrame(JInternalFrame child)
-	{
-		_internalFramePositioner.positionInternalFrame(child);
-	}
-
-	public JMenu getWindowsMenu()
+   public JMenu getWindowsMenu()
 	{
 		return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
 	}
@@ -579,19 +497,4 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
    {
       _toolBar.add(act);
    }
-
-
-	private class MyDesktopManager extends DefaultDesktopManager
-	{
-		public void activateFrame(JInternalFrame f)
-		{
-			super.activateFrame(f);
-			_app.getActionCollection().activationChanged(f);
-		}
-		public void deactivateFrame(JInternalFrame f)
-		{
-			super.deactivateFrame(f);
-			_app.getActionCollection().deactivationChanged(f);
-		}
-	}
 }

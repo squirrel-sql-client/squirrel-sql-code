@@ -18,28 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.plugins.smarttools.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;
-import javax.swing.table.DefaultTableModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -50,10 +31,19 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
 import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Vector;
 
-public class SmarttoolFindBadNullValuesFrame extends BaseInternalFrame
+public class SmarttoolFindBadNullValuesFrame extends DialogWidget
 		implements ISmarttoolFrame, ActionListener {
 	private static final long serialVersionUID = -1504852937961154906L;
 
@@ -103,7 +93,7 @@ public class SmarttoolFindBadNullValuesFrame extends BaseInternalFrame
 	 */
 	public SmarttoolFindBadNullValuesFrame(ISession session, String title) {
 		super("Smarttool - " + title,
-				true, true, true, true);
+				true, true, true, true, session.getApplication());
 		this.session = session;
 
 		initLayout();
@@ -148,10 +138,10 @@ public class SmarttoolFindBadNullValuesFrame extends BaseInternalFrame
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
+		this.getContentPane().setLayout(new BorderLayout());
 		createTableHeader();
 		tblResult = new JTable(vecData, vecHeader);
-		this.add(createPanel());
+		this.getContentPane().add(createPanel());
 
 		initVisualObjects();
 	}
@@ -311,7 +301,7 @@ public class SmarttoolFindBadNullValuesFrame extends BaseInternalFrame
 
 	private void stopWork() {
 		threadSuspended = true;
-		if (JOptionPane.showConfirmDialog(this, i18n.QUESTION_CANCEL_WORK,
+		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.QUESTION_CANCEL_WORK,
 				i18n.QUESTION_CANCEL_WORK_TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			threadWork = null;
 			controlComponents(STOP_WORKING);

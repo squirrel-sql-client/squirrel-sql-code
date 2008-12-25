@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.action;
+package net.sourceforge.squirrel_sql.client.gui.mainframe;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.JDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 
 public interface IHasJDesktopPane
 {
@@ -26,5 +26,5 @@ public interface IHasJDesktopPane
 	 *
 	 * @param   desktop	 the <TT>JDesktopPane</TT>.
 	 */
-	public void setJDesktopPane(JDesktopPane value);
+	public void setDesktopContainer(IDesktopContainer value);
 }

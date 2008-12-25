@@ -24,6 +24,7 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -235,4 +236,8 @@ public class MockApplication implements IApplication {
 		
 	}
 
+   public DesktopStyle getDesktopStyle()
+   {
+      return new DesktopStyle(getSquirrelPreferences());
+   }
 }

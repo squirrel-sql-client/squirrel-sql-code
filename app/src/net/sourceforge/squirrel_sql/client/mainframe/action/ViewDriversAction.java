@@ -17,10 +17,10 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetAction;
 
 import java.awt.event.ActionEvent;
 
@@ -29,7 +29,7 @@ import java.awt.event.ActionEvent;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ViewDriversAction extends SelectInternalFrameAction
+public class ViewDriversAction extends SelectWidgetAction
 {
    private DriversListInternalFrame m_window;
 

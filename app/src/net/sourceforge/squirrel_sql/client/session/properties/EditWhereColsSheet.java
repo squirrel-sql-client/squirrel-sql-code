@@ -20,22 +20,9 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -43,17 +30,25 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Edit Where Cols dialog gui.
  * JASON: Rename to EditWhereColsInternalFrame 
  */
 @SuppressWarnings("serial")
-public class EditWhereColsSheet extends BaseSessionInternalFrame
+public class EditWhereColsSheet extends SessionDialogWidget
 {
 
 	private static final StringManager s_stringMgr =
@@ -93,7 +88,7 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 	 */
 	public EditWhereColsSheet(ISession session, IDatabaseObjectInfo objectInfo)
 	{
-		super(session, i18n.TITLE, true);
+		super(i18n.TITLE, true, session);
 		if (objectInfo == null)
 		{
 			throw new IllegalArgumentException("Null IDatabaseObjectInfo passed");
@@ -146,7 +141,7 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 				/*
 				 * END-KLUDGE
 				 */
-				GUIUtils.centerWithinDesktop(this);
+				DialogWidget.centerWithinDesktop(this);
 			}
 			moveToFront();
 		}
@@ -205,10 +200,10 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 	{
 		SortedSet<String> columnNames = new TreeSet<String>();
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		final ISession session = getSession();
 

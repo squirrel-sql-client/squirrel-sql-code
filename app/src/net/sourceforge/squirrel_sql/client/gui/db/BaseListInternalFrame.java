@@ -17,19 +17,11 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -38,7 +30,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-abstract class BaseListInternalFrame extends BaseInternalFrame
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+abstract class BaseListInternalFrame extends DockWidget
 {
 	protected interface IUserInterfaceFactory
 	{
@@ -70,13 +67,9 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(BaseListInternalFrame.class);
     
-	public BaseListInternalFrame(IUserInterfaceFactory uiFactory)
+	public BaseListInternalFrame(IUserInterfaceFactory uiFactory, IApplication app)
 	{
-		super("", true, true);
-		if (uiFactory == null)
-		{
-			throw new IllegalArgumentException("Null IUserInterfaceFactory passed");
-		}
+		super(uiFactory.getWindowTitle(), true, true, app);
 		_uiFactory = uiFactory;
 
 		createUserInterface();
@@ -176,12 +169,12 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 		}
 	}
 
-	private void createUserInterface()
+   private void createUserInterface()
 	{
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
-		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		// Pane to add window content to.
 		final Container content = getContentPane();
@@ -223,31 +216,31 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 		});
 
 
-		// When window opened ensure it is wide enough to display the toolbar.
-		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
-		// called so we've used a workaround. The workaround doesn't work in
-		// JDK1.3.
-		addInternalFrameListener(new InternalFrameAdapter()
-		{
-			//private boolean _hasBeenActivated = false;
-			//public void internalFrameActivated(InternalFrameEvent evt)
-			//{
-				//if (!_hasBeenActivated)
-				//{
-				////	_hasBeenActivated = true;
-				//	privateResize();
-				//}
-				//list.requestFocus();
-			//}
-
-			public void internalFrameOpened(InternalFrameEvent evt)
-			{
-				privateResize();
-			}
-
-		});
-
-		validate();
+//		// When window opened ensure it is wide enough to display the toolbar.
+//		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
+//		// called so we've used a workaround. The workaround doesn't work in
+//		// JDK1.3.
+//		addInternalFrameListener(new InternalFrameAdapter()
+//		{
+//			//private boolean _hasBeenActivated = false;
+//			//public void internalFrameActivated(InternalFrameEvent evt)
+//			//{
+//				//if (!_hasBeenActivated)
+//				//{
+//				////	_hasBeenActivated = true;
+//				//	privateResize();
+//				//}
+//				//list.requestFocus();
+//			//}
+//
+//			public void internalFrameOpened(InternalFrameEvent evt)
+//			{
+//				privateResize();
+//			}
+//
+//		});
+//
+//		validate();
 
 	}
 }

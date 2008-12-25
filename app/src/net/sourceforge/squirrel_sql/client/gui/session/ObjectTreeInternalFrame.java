@@ -38,6 +38,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
@@ -54,7 +57,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /* Object Tree frame class*/
-public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
+public class ObjectTreeInternalFrame extends SessionTabWidget
 										implements IObjectTreeInternalFrame
 {
 	/** Application API. */
@@ -73,7 +76,7 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
     
 	public ObjectTreeInternalFrame(ISession session)
 	{
-		super(session, session.getTitle(), true, true, true, true);
+		super(session.getTitle(), true, true, true, true, session);
 		_app = session.getApplication();
 		setVisible(false);
 		createGUI(session);
@@ -116,9 +119,9 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 		// is being unable to key into the text entry field unless you click
 		// elsewhere after focus is gained by the internal frame.
 		// See bug ID 4309079 on the JavaSoft bug parade (plus others).
-		addInternalFrameListener(new InternalFrameAdapter()
+		addWidgetListener(new WidgetAdapter()
 		{
-			public void internalFrameActivated(InternalFrameEvent evt)
+			public void widgetActivated(WidgetEvent evt)
 			{
 				Window window = SwingUtilities.windowForComponent(ObjectTreeInternalFrame.this.getObjectTreePanel());
 				Component focusOwner = (window != null) ? window.getFocusOwner() : null;
@@ -144,7 +147,12 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 		validate();
 	}
 
-	/** The class representing the toolbar at the top of a sql internal frame*/
+   public boolean hasSQLPanelAPI()
+   {
+      return false; 
+   }
+
+   /** The class representing the toolbar at the top of a sql internal frame*/
 	private class ObjectTreeToolBar extends ToolBar
 	{
 		/** Internationalized strings for this class. */

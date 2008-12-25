@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.DefaultTableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -51,7 +52,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _schemaTableModel = new SchemaTableModel(alias.getSchemaProperties().getSchemaDetails());
       _pnl.tblSchemas.setModel(_schemaTableModel);
 
-      TableColumnModel cm = _pnl.tblSchemas.getColumnModel();
+      TableColumnModel cm = new DefaultTableColumnModel();
 
       TableColumn tc;
       tc = new TableColumn(SchemaTableModel.IX_SCHEMA_NAME);
@@ -76,6 +77,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       tc.setHeaderValue(s_stringMgr.getString("SchemaPropertiesController.tableHeader.procedures"));
       tc.setCellEditor(new DefaultCellEditor(initCbo(_cboFunction)));
       cm.addColumn(tc);
+
+      _pnl.tblSchemas.setColumnModel(cm);
 
       _pnl.radLoadAllAndCacheNone.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
       _pnl.radLoadAndCacheAll.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
