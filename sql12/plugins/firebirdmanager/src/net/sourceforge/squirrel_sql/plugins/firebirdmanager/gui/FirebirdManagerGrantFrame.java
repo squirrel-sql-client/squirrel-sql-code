@@ -18,52 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -72,10 +29,23 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerDataAccess;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelper;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
-public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFirebirdManagerFrame,
+public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebirdManagerFrame,
 	ActionListener, KeyListener, MouseListener
 {
 	private static final long serialVersionUID = 7592543018317340170L;
@@ -212,7 +182,7 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 	 */
 	public FirebirdManagerGrantFrame(ISession session)
 	{
-		super("Firebird manager - " + stringManager.getString("grantmanager.title"), true, true, true, true);
+		super("Firebird manager - " + stringManager.getString("grantmanager.title"), true, true, true, true, session.getApplication());
 		this.session = session;
 
 		initDataObjects();
@@ -310,8 +280,8 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 	// ------------------------------------------------------------------------
 	private void initLayout()
 	{
-		this.setLayout(new BorderLayout());
-		this.add(createMain());
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(createMain());
 	}
 
 	private JPanel createMain()
@@ -857,14 +827,14 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 		boolean bSetPermissions = true;
 		if (gTreenodeType == TREENODE_TYPE_ROOT)
 		{
-			JOptionPane.showMessageDialog(this, i18n.GRANTMANAGER_INFO_SELECT_PERMISSION_RECEIVER);
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_INFO_SELECT_PERMISSION_RECEIVER);
 			jtreeReceiver.requestFocus();
 			bSetPermissions = false;
 		}
 		else if (isTreeNodeAGroup())
 		{
 			bSetPermissions =
-				JOptionPane.showConfirmDialog(this, i18n.GRANTMANAGER_QUEST_PERMISSION_FOR_GROUP + " "
+				JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_QUEST_PERMISSION_FOR_GROUP + " "
 					+ gsTreenodeName + "?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 		}
 
@@ -891,7 +861,7 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 
 			bSetPermissions = iCount < 10000;
 			if (!bSetPermissions) bSetPermissions =
-				JOptionPane.showConfirmDialog(this, i18n.GRANTMANAGER_INFO_PRIVILEGES_COUNT.replaceFirst("{1}",
+				JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_INFO_PRIVILEGES_COUNT.replaceFirst("{1}",
 					iCount + "")
 					+ CR + "Do you want to do this?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_NO_OPTION;
 
@@ -933,7 +903,7 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 
 		if (!setFirebirdPrivileges(sSQLRevoke, sSQLGrant))
 		{
-			JOptionPane.showMessageDialog(this, i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
 			return false;
 		}
 		else
@@ -962,7 +932,7 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 
 		if (!setFirebirdPrivileges(sSQLRevoke, sSQLGrant))
 		{
-			JOptionPane.showMessageDialog(this, i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
 			return false;
 		}
 		else
@@ -981,7 +951,7 @@ public class FirebirdManagerGrantFrame extends BaseInternalFrame implements IFir
 
 		if (!setFirebirdPrivileges(sSQLRevoke, sSQLGrant))
 		{
-			JOptionPane.showMessageDialog(this, i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GRANTMANAGER_ERROR_SET_PRIVILEGES);
 			return false;
 		}
 		else

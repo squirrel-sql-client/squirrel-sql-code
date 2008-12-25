@@ -21,16 +21,11 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
@@ -109,14 +104,19 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 	private static final class MyPanel extends JPanel
 	{
 
+      private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));
+      private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
+      private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
+      private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
+      private JCheckBox _showTabbedStyleHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showTabbedStyleHint"));
+
+
       private JCheckBox _showAliasesToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showaliasestoolbar"));
       private JCheckBox _showDriversToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showdriverstoolbar"));
       private JCheckBox _showMainStatusBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwinstatusbar"));
       private JCheckBox _showMainToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwintoolbar"));
-      private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
       private JCheckBox _showToolTips = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showtooltips"));
       private JCheckBox _useScrollableTabbedPanes = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.usescrolltabs"));
-      private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
 
       private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
       private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
@@ -148,14 +148,21 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       void loadData(SquirrelPreferences prefs)
       {
+         _tabbedStyle.setSelected(prefs.getTabbedStyle());
+         _internalFrameStyle.setSelected(!prefs.getTabbedStyle());
+         onStyleChanged(false);
+         _showTabbedStyleHint.setSelected(prefs.getShowTabbedStyleHint());
+
+
          _showContents.setSelected(prefs.getShowContentsWhenDragging());
+         _maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
+
          _showToolTips.setSelected(prefs.getShowToolTips());
          _useScrollableTabbedPanes.setSelected(prefs.getUseScrollableTabbedPanes());
          _showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
          _showMainToolBar.setSelected(prefs.getShowMainToolBar());
          _showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
          _showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
-         _maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
          _showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
          _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
 
@@ -168,15 +175,42 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
          _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
          String preferredLocalString = prefs.getPreferredLocale();
-         if (StringUtilities.isEmpty(preferredLocalString)) {
-         	preferredLocalString = "en_US";
+         if (StringUtilities.isEmpty(preferredLocalString))
+         {
+            preferredLocalString = "en_US";
          }
          _localeChooser.setSelectedItem(preferredLocalString);
+
+         _tabbedStyle.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onStyleChanged(true);
+            }
+         });
+
+         _internalFrameStyle.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onStyleChanged(true);
+            }
+         });
+
+      }
+
+      private void onStyleChanged(boolean showMessage)
+      {
+         _showContents.setEnabled(_internalFrameStyle.isSelected());
+         _maximimizeSessionSheet.setEnabled(_internalFrameStyle.isSelected());
+         _showTabbedStyleHint.setEnabled(_internalFrameStyle.isSelected());
       }
 
       void applyChanges(SquirrelPreferences prefs)
 		{
+         prefs.setTabbedStyle(_tabbedStyle.isSelected());
          prefs.setShowContentsWhenDragging(_showContents.isSelected());
+         prefs.setShowTabbedStyleHint(_showTabbedStyleHint.isSelected());
          prefs.setShowToolTips(_showToolTips.isSelected());
          prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
          prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
@@ -225,21 +259,33 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.appearance")));
 			pnl.setLayout(new GridBagLayout());
 
+         ButtonGroup g = new ButtonGroup();
+         g.add(_tabbedStyle);
+         g.add(_internalFrameStyle);
+
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(2, 4, 2, 4);
 			gbc.gridx = 0;
-			gbc.gridy = 0;
 			gbc.weightx = 1;
+         gbc.insets.top = 0;
+
+         gbc.gridy = 0;
+			pnl.add(_tabbedStyle, gbc);
+         ++gbc.gridy;
+         pnl.add(_internalFrameStyle, gbc);
+         ++gbc.gridy;
 			pnl.add(_showContents, gbc);
+         ++gbc.gridy;
+         pnl.add(_maximimizeSessionSheet, gbc);
+         ++gbc.gridy;
+         pnl.add(_showTabbedStyleHint, gbc);
+
+
 			++gbc.gridy;
 			pnl.add(_showToolTips, gbc);
-
-			gbc.insets.top = 0;
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
-			//gbc.insets = oldInsets;
-
 			++gbc.gridy;
 			pnl.add(_showMainToolBar, gbc);
 			++gbc.gridy;
@@ -249,11 +295,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			++gbc.gridy;
 			pnl.add(_showAliasesToolBar, gbc);
 			++gbc.gridy;
-			pnl.add(_maximimizeSessionSheet, gbc);
-			++gbc.gridy;
 			pnl.add(_showColoriconsInToolbar, gbc);
-            ++gbc.gridy;
-            pnl.add(_showPluginFilesInSplashScreen, gbc);
+         ++gbc.gridy;
+         pnl.add(_showPluginFilesInSplashScreen, gbc);
 
 			return pnl;
 		}

@@ -17,46 +17,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
 import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -69,13 +33,26 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 /**
  * This dialog allows maintenance of a JDBC driver definition.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 @SuppressWarnings("serial")
-public class DriverInternalFrame extends BaseInternalFrame
+public class DriverInternalFrame extends DialogWidget
 {
 	/** Different types of maintenance that can be done. */
 	public interface MaintenanceType
@@ -157,7 +134,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 	 */
 	DriverInternalFrame(IApplication app, ISQLDriver sqlDriver, int maintType)
 	{
-		super("", true);
+		super("", true, app);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
@@ -300,10 +277,10 @@ public class DriverInternalFrame extends BaseInternalFrame
 
 	private void createGUI()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		String winTitle;
 		if (_maintType == MaintenanceType.MODIFY)
@@ -737,7 +714,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 					final URL[] urls = new URL[fileNames.length];
 					for (int i = 0; i < fileNames.length; ++i)
 					{
-						urls[i] = new File(fileNames[i]).toURL();
+						urls[i] = new File(fileNames[i]).toURI().toURL();
 					}
 //					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
 					SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);

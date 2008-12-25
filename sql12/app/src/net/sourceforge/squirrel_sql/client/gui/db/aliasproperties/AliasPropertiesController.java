@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverPropertiesController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
@@ -33,7 +34,7 @@ public class AliasPropertiesController
       }
       else
       {
-         GUIUtils.moveToFront(openProps._frame);
+         openProps._frame.moveToFront();
       }
 
    }
@@ -42,11 +43,11 @@ public class AliasPropertiesController
    {
       _app = app;
       _alias = selectedAlias;
-      _frame = new AliasPropertiesInternalFrame(_alias.getName());
+      _frame = new AliasPropertiesInternalFrame(_alias.getName(), app);
 
-      _app.getMainFrame().addInternalFrame(_frame, false);
+      _app.getMainFrame().addWidget(_frame);
 
-      GUIUtils.centerWithinDesktop(_frame);
+      DialogWidget.centerWithinDesktop(_frame);
 
       _frame.setVisible(true);
 

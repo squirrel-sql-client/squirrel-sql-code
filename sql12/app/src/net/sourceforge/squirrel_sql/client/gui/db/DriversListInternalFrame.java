@@ -22,14 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.beans.PropertyVetoException;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -39,6 +32,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
@@ -74,7 +70,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 	 */
 	public DriversListInternalFrame(IApplication app, DriversList list)
 	{
-		super(new UserInterfaceFactory(app, list));
+		super(new UserInterfaceFactory(app, list), app);
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 		_uiFactory.setDriversListInternalFrame(this);
@@ -84,7 +80,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
       {
          public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
          {
-            if(IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
+            if(JInternalFrame.IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
             {
                // i18n[DriversListInternalFrame.error.ctrlF4key=Probably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction]
                throw new PropertyVetoException(s_stringMgr.getString("DriversListInternalFrame.error.ctrlF4key"), evt);
@@ -92,9 +88,22 @@ public class DriversListInternalFrame extends BaseListInternalFrame
          }
       });
 
-      addInternalFrameListener(new InternalFrameAdapter()
+      addWidgetListener(new WidgetAdapter()
       {
-         public void internalFrameClosing(InternalFrameEvent e)
+         @Override
+         public void widgetOpened(WidgetEvent evt)
+         {
+            nowVisible(true);
+         }
+         
+         @Override
+         public void widgetClosing(WidgetEvent evt)
+         {
+            nowVisible(false);
+         }
+
+         @Override
+         public void widgetClosed(WidgetEvent evt)
          {
             nowVisible(false);
          }
@@ -113,9 +122,15 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 	}
 
 
-   public void nowVisible(boolean b)
+   public void nowVisible(final boolean b)
    {
-      _app.getMainFrame().setEnabledDriversMenu(b);
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _app.getMainFrame().setEnabledDriversMenu(b);
+         }
+      });
    }
 
 
@@ -217,15 +232,18 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
 
-			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
-			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			_tb.add(lbl, 0);
+         if (_app.getDesktopStyle().isInternalFrameStyle())
+         {
+            final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
+            lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+            _tb.add(lbl, 0);
+         }
 
-			final ActionCollection actions = _app.getActionCollection();
+         final ActionCollection actions = _app.getActionCollection();
 			_tb.add(actions.get(CreateDriverAction.class));
 			_tb.add(actions.get(ModifyDriverAction.class));
 			_tb.add(actions.get(CopyDriverAction.class));
-            _tb.add(actions.get(ShowDriverWebsiteAction.class));
+         _tb.add(actions.get(ShowDriverWebsiteAction.class));
 			_tb.add(actions.get(DeleteDriverAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(InstallDefaultDriversAction.class));

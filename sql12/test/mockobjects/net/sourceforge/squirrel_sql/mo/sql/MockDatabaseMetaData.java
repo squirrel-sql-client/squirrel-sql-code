@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.mo.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.RowIdLifetime;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -1159,4 +1160,23 @@ public class MockDatabaseMetaData extends com.mockobjects.sql.MockDatabaseMetaDa
 		return null;
 	}
 
+   public RowIdLifetime getRowIdLifetime() throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException
+   {
+      return false;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public <T> T unwrap(Class<T> iface) throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public boolean isWrapperFor(Class<?> iface) throws SQLException
+   {
+      return false;  //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

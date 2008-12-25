@@ -17,29 +17,33 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.ApplicationListener;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.util.prefs.Preferences;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.ApplicationListener;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.*;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
  * This window shows all the database aliases defined in the system.
@@ -68,7 +72,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 	 */
 	public AliasesListInternalFrame(IApplication app, IAliasesList list)
 	{
-		super(new UserInterfaceFactory(app, list));
+		super(new UserInterfaceFactory(app, list), app);
 		_app = app;
 		_uiFactory = (UserInterfaceFactory)getUserInterfaceFactory();
 
@@ -77,7 +81,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
       {
          public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException
          {
-            if(IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
+            if(JInternalFrame.IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
             {
                nowVisible(true);
                 // i18n[AliasesListInternalFrame.error.ctrlF4key=Probably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction]
@@ -86,9 +90,22 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          }
       });
 
-      addInternalFrameListener(new InternalFrameAdapter()
+      addWidgetListener(new WidgetAdapter()
       {
-         public void internalFrameClosing(InternalFrameEvent e)
+         @Override
+         public void widgetOpened(WidgetEvent evt)
+         {
+            nowVisible(true);
+         }
+
+         @Override
+         public void widgetClosing(WidgetEvent evt)
+         {
+            nowVisible(false);
+         }
+
+         @Override
+         public void widgetClosed(WidgetEvent evt)
          {
             nowVisible(false);
          }
@@ -134,9 +151,15 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 		return _uiFactory._aliasesList;
 	}
 
-   public void nowVisible(boolean b)
+   public void nowVisible(final boolean b)
    {
-      _app.getMainFrame().setEnabledAliasesMenu(b);
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _app.getMainFrame().setEnabledAliasesMenu(b);
+         }
+      });
    }
 
    public void enableDisableActions()
@@ -289,11 +312,14 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.setUseRolloverButtons(true);
 			_tb.setFloatable(false);
 
-			final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
-			lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-			_tb.add(lbl, 0);
+         if (_app.getDesktopStyle().isInternalFrameStyle())
+         {
+            final JLabel lbl = new JLabel(getWindowTitle(), SwingConstants.CENTER);
+            lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+            _tb.add(lbl, 0);
+         }
 
-			final ActionCollection actions = _app.getActionCollection();
+         final ActionCollection actions = _app.getActionCollection();
 			_tb.add(actions.get(ConnectToAliasAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(CreateAliasAction.class));

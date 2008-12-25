@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.smarttools;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import java.beans.PropertyVetoException;
 
 import javax.swing.JInternalFrame;
@@ -29,6 +30,8 @@ import javax.swing.JMenuItem;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -230,7 +233,7 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 		JMenuItem menuItem = new JMenuItem(title);
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JInternalFrame frame = isInternalFrameUsed(application, sheetType);
+				DialogWidget frame = (DialogWidget) isInternalFrameUsed(application, sheetType);
 				if (frame == null) {
 					if (sheetType == ST_SHEET_TYPE_FIND_VALUES) {
 						frame = new SmarttoolFindBadNullValuesFrame(session, title);
@@ -239,16 +242,16 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 					} else if (sheetType == ST_SHEET_TYPE_MISSING_INICES) {
 						frame = new SmarttoolMissingIndicesFrame(session, title);
 					}
-					application.getMainFrame().addInternalFrame(frame, true, null);
+					application.getMainFrame().addWidget(frame);
 					frame.pack();
 					if (frame instanceof SmarttoolFindBadNullValuesFrame) {
-						frame.setSize(frame.getWidth(), 500);
+						frame.setSize(new Dimension(frame.getWidth(), 500));
 					} else if (frame instanceof SmarttoolChangeValuesFrame) {
-						frame.setSize(frame.getWidth(), 500);
+						frame.setSize(new Dimension(frame.getWidth(), 500));
 					} else if (frame instanceof SmarttoolMissingIndicesFrame) {
-						frame.setSize(frame.getWidth(), 500);
+						frame.setSize(new Dimension(frame.getWidth(), 500));
 					} 
-					GUIUtils.centerWithinDesktop(frame);
+					DialogWidget.centerWithinDesktop(frame);
 				} else {
 					frame.setVisible(true);
 					frame.moveToFront();
@@ -268,10 +271,9 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 		return menuItem;
 	}
 
-	private JInternalFrame isInternalFrameUsed(IApplication application,
+	private IWidget isInternalFrameUsed(IApplication application,
 			int sheetType) {
-		JInternalFrame[] frames = application.getMainFrame().getDesktopPane()
-				.getAllFrames();
+		IWidget[] frames = application.getMainFrame().getDesktopContainer().getAllWidgets();
 		for (int i = 0; i < frames.length; i++) {
 			if ((sheetType == ST_SHEET_TYPE_FIND_VALUES && frames[i] instanceof SmarttoolFindBadNullValuesFrame)
 					|| (sheetType == ST_SHEET_TYPE_CHANGE_VALUES && frames[i] instanceof SmarttoolChangeValuesFrame)
@@ -286,8 +288,7 @@ public class SmarttoolsPlugin extends DefaultSessionPlugin {
 	@Override
 	public void sessionEnding(ISession session) {
 		super.sessionEnding(session);
-		JInternalFrame[] frames = session.getApplication().getMainFrame().getDesktopPane()
-				.getAllFrames();
+		IWidget[] frames = session.getApplication().getMainFrame().getDesktopContainer().getAllWidgets();
 		for (int i = 0; i < frames.length; i++) {
 			if (frames[i] instanceof SmarttoolFindBadNullValuesFrame
 					|| frames[i] instanceof SmarttoolChangeValuesFrame

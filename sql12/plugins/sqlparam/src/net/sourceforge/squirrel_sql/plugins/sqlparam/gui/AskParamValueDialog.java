@@ -16,26 +16,22 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam.gui;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
-import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
-import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
 
 
 /**
@@ -43,7 +39,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Thorsten Mürell
  */
-public class AskParamValueDialog extends BaseInternalFrame {
+public class AskParamValueDialog extends DialogWidget
+{
 	private static final long serialVersionUID = 3470927611018381204L;
 
 
@@ -63,16 +60,17 @@ public class AskParamValueDialog extends BaseInternalFrame {
 	 * Creates the dialog.
 	 * 
 	 * @param parameter The name of the parameter to replace.
-	 * @param oldValue The old value of the parameter to provide as a default.
-	 */
-	public AskParamValueDialog(String parameter, String oldValue) {
+    * @param oldValue The old value of the parameter to provide as a default.
+    * @param application
+    */
+	public AskParamValueDialog(String parameter, String oldValue, IApplication application) {
         //i18n[sqlparam.inputParameterValues=Please input the parameter values]
-		super(stringMgr.getString("sqlparam.inputParameterValues"), true);
+		super(stringMgr.getString("sqlparam.inputParameterValues"), true, application);
 		this.parameter = parameter;
 		this.oldValue = oldValue;
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		GUIUtils.makeToolWindow(this, true);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		makeToolWindow(true);
 
 		final JPanel content = new JPanel(new BorderLayout());
 		content.add(createMainPanel(), BorderLayout.CENTER);
@@ -168,7 +166,7 @@ public class AskParamValueDialog extends BaseInternalFrame {
 		builder.setDefaultDialogBorder();
 
 		int y = 1;
-		builder.addSeparator(title, cc.xywh(1, y, 3, 1));
+		builder.addSeparator(getTitle(), cc.xywh(1, y, 3, 1));
 
 		y += 2;
 		//i18n[sqlparam.valueFor=Value for {0}]

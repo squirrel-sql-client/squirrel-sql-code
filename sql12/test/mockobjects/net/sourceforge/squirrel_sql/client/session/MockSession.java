@@ -30,9 +30,10 @@ import net.sourceforge.squirrel_sql.client.MockApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -314,12 +315,12 @@ public class MockSession implements ISession {
     }
 
     public void setActiveSessionWindow(
-            BaseSessionInternalFrame activeActiveSessionWindow) {
+            SessionTabWidget activeActiveSessionWindow) {
         
     	System.err.println("MockSession.setActiveSessionWindow: stub not yet implemented");
     }
 
-    public BaseSessionInternalFrame getActiveSessionWindow() {
+    public SessionTabWidget getActiveSessionWindow() {
         
     	System.err.println("MockSession.getActiveSessionWindow: stub not yet implemented");
         return null;
@@ -457,4 +458,9 @@ public class MockSession implements ISession {
        return 0;
     }
 
+
+   public void setActiveSessionWindow(ISessionWidget activeActiveSessionWindow)
+   {
+      System.err.println("MockSession.setActiveSessionWindow: stub not yet implemented" );
+   }
 }

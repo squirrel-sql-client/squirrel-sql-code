@@ -56,11 +56,11 @@ public class I18nProps extends Object
         {
             if(null != _file)
             {
-                return _file.toURL().getPath().replaceAll("%20", " ");
+                return _file.toURI().toURL().getPath().replaceAll("%20", " ");
             }
             else
             {
-                return new File(_zipFile.toString() + File.separator + _entryName).toURL().getPath().replaceAll("%20", " ");
+                return new File(_zipFile.toString() + File.separator + _entryName).toURI().toURL().getPath().replaceAll("%20", " ");
             }
         }
         catch (MalformedURLException e)

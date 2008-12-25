@@ -27,17 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.CellEditor;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 //import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -85,7 +75,7 @@ public class CellDataPopup
       Component comp = SwingUtilities.getRoot(table);
       Component newComp = null;
 
-      if (false == comp instanceof IMainFrame)
+      if (false == comp instanceof JFrame)
       {
          // Fixes ClassCastException, see below.
          return;
@@ -96,10 +86,10 @@ public class CellDataPopup
       // If SwingTUilities.getRoot(table) returns and instance of Dialog or
       // Frame, then other code must be used.
       TextAreaInternalFrame taif =
-         new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
+         new TextAreaInternalFrame((JFrame) comp, table.getColumnName(col), colDef, obj,
             row, col, isModelEditable, table);
-      ((IMainFrame) comp).addInternalFrame(taif, false);
-      taif.setLayer(JLayeredPane.POPUP_LAYER);
+      //((IMainFrame) comp).addInternalFrame(taif, false);
+      //taif.setLayer(JLayeredPane.POPUP_LAYER);
       taif.pack();
       newComp = taif;
 
@@ -186,9 +176,9 @@ public class CellDataPopup
 	//
 	private static class ColumnDataPopupPanel extends JPanel {
 
-        private static final long serialVersionUID = 1L;
-        private final PopupEditableIOPanel ioPanel;
-		private JInternalFrame _parentFrame = null;
+      private static final long serialVersionUID = 1L;
+      private final PopupEditableIOPanel ioPanel;
+		private JDialog _parentFrame = null;
 		private int _row;
 		private int _col;
 		private JTable _table;
@@ -291,7 +281,7 @@ _table.setValueAt(newValue, _row, _col);
 		/*
 		 * Save various information which is needed to do Update & Cancel.
 		 */
-		 public void setUserActionInfo(JInternalFrame parent, int row, int col,
+		 public void setUserActionInfo(JDialog parent, int row, int col,
 		 	JTable table) {
 		 	_parentFrame = parent;
 		 	_row = row;
@@ -306,16 +296,16 @@ _table.setValueAt(newValue, _row, _col);
 
 	// The following is only useable for a root type of InternalFrame. If the
 	// root type is Dialog or Frame, then other code must be used.
-	class TextAreaInternalFrame extends JInternalFrame
+	class TextAreaInternalFrame extends JDialog
 	{
         private static final long serialVersionUID = 1L;
 
-        public TextAreaInternalFrame(String columnName, ColumnDisplayDefinition colDef,
+        public TextAreaInternalFrame(JFrame owner, String columnName, ColumnDisplayDefinition colDef,
 			Object value, int row, int col,
 			boolean isModelEditable, JTable table)
 		{
 			// i18n[cellDataPopup.valueofColumn=Value of column {0}]
-			super(s_stringMgr.getString("cellDataPopup.valueofColumn", columnName), true, true, true, true);
+			super(owner, s_stringMgr.getString("cellDataPopup.valueofColumn", columnName), false);
 			ColumnDataPopupPanel popup =
 				new ColumnDataPopupPanel(value, colDef, isModelEditable);
 			popup.setUserActionInfo(this, row, col, table);

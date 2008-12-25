@@ -18,7 +18,21 @@
  */
 package net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui;
 
-import java.awt.BorderLayout;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelper;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,31 +42,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelper;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-public class FirebirdManagerRoleFrame extends BaseInternalFrame 
+public class FirebirdManagerRoleFrame extends DialogWidget
 implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionListener {
 	private static final long serialVersionUID = 6138993610321442456L;
 
@@ -96,7 +86,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
      * @param tab
      */
 	public FirebirdManagerRoleFrame(ISession session) {
-		super("Firebird manager - " + stringManager.getString("rolemanager.title"), true, true, true, true);
+		super("Firebird manager - " + stringManager.getString("rolemanager.title"), true, true, true, true, session.getApplication());
 		this.session = session;
 		
 		initLayout();
@@ -136,8 +126,8 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(createPanel());
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(createPanel());
 
 		initVisualObjects();
 		readRoles();
@@ -306,7 +296,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener, ListSelectionList
 		
 		if (bufError.length() != 0) {
 			jtextfieldRolename.requestFocusInWindow();
-			JOptionPane.showMessageDialog(this, bufError.toString());
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), bufError.toString());
 		}
 		
 		return bufError.length() == 0;

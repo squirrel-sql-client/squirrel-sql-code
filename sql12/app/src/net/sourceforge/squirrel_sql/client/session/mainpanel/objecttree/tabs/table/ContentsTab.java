@@ -442,7 +442,7 @@ public class ContentsTab extends BaseTableTab
          
          GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
-               _waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
+               _waitDialog = new PleaseWaitDialog(stmt, _app);
                _waitDialog.showDialog(_app);                                          
                // Restore the paths
                _treePanel.restoreSavedSelectedPaths();

@@ -249,7 +249,7 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	 */
 	public URL toURL() throws MalformedURLException
 	{
-		return _wrappedFile.toURL();
+		return _wrappedFile.toURI().toURL();
 	}
 
 	/**

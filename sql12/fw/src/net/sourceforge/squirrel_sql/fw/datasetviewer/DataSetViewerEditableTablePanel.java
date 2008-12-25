@@ -376,8 +376,12 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		Point pt = new Point(10, 200);
 
 		Component comp = SwingUtilities.getRoot(table);
-		Component newComp = null;
-		
+
+      if(null == comp || false == comp instanceof JFrame)
+      {
+         return;
+      }
+
 		// get the default values from the DB for the table columns
 		String[] dbDefaultValues = 
 			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
@@ -395,13 +399,12 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// and instanceof BaseMDIParentFrame.
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
-		RowDataInputFrame rdif = new RowDataInputFrame(_colDefs, initialValues, this);
-		((IMainFrame)comp).addInternalFrame(rdif, false);
-		rdif.setLayer(JLayeredPane.POPUP_LAYER);
+		RowDataInputFrame rdif = new RowDataInputFrame((JFrame) comp, _colDefs, initialValues, this);
+//		((IMainFrame)comp).addInternalFrame(rdif, false);
+//		rdif.setLayer(JLayeredPane.POPUP_LAYER);
 		rdif.pack();
-		newComp = rdif;
 
-		Dimension dim = newComp.getSize();
+		Dimension dim = rdif.getSize();
 		boolean dimChanged = false;
 		if (dim.width < 300)
 		{
@@ -411,7 +414,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		if (dimChanged)
 		{
-			newComp.setSize(dim);
+			rdif.setSize(dim);
 		}
 
 			
@@ -426,7 +429,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		{
 			dim.width = parentBounds.width - fudgeFactor;
 			pt.x = fudgeFactor / 2;
-			newComp.setSize(dim);
+			rdif.setSize(dim);
 		}
 		else 
 		{
@@ -436,8 +439,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			}
 		}
 
-		newComp.setLocation(pt);
-		newComp.setVisible(true);
+		rdif.setLocation(pt);
+		rdif.setVisible(true);
 	}
 	
 	/**

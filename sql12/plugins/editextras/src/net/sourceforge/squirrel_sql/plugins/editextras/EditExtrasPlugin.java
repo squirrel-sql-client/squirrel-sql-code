@@ -16,13 +16,10 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -38,6 +35,8 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
 /**
  * The plugin class.
  *
@@ -215,7 +214,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 	 */
 	public void sessionEnding(ISession session)
 	{
-      BaseSessionInternalFrame[] frames = 
+      ISessionWidget[] frames =
          session.getApplication().getWindowManager().getAllFramesOfSession(session.getIdentifier());
 
       for (int i = 0; i < frames.length; i++)

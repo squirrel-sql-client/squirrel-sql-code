@@ -18,10 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameCommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -71,7 +71,7 @@ public class SQLReplaceExecutionListener implements ISQLExecutionListener {
 		
 		GUIUtils.processOnSwingEventThread(new Runnable() {
 			public void run() {
-				new SelectInternalFrameCommand(session.getActiveSessionWindow()).execute();
+				new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
 			}
 		});
 		// log.info("SQL passing to execute: " + buffer.toString());

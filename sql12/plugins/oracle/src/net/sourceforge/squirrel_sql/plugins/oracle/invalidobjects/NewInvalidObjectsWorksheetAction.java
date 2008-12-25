@@ -65,7 +65,7 @@ public class NewInvalidObjectsWorksheetAction extends SquirrelAction {
 
 
           final InvalidObjectsInternalFrame sif = new InvalidObjectsInternalFrame(activeSession, _resources);
-          getApplication().getMainFrame().addInternalFrame(sif, true, null);
+          getApplication().getMainFrame().addWidget(sif);
 
           // If we don't invokeLater here no Short-Cut-Key is sent
           // to the internal frame

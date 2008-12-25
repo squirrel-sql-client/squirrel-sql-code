@@ -65,7 +65,7 @@ public class NewSGATraceWorksheetAction extends SquirrelAction {
 
 
           final SGATraceInternalFrame sif = new SGATraceInternalFrame(activeSession, _resources);
-          getApplication().getMainFrame().addInternalFrame(sif, true, null);
+          getApplication().getMainFrame().addWidget(sif);
 
           // If we don't invokeLater here no Short-Cut-Key is sent
           // to the internal frame

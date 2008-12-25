@@ -37,30 +37,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
@@ -82,9 +68,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 @SuppressWarnings("serial")
-public class AliasInternalFrame extends BaseInternalFrame
+public class AliasInternalFrame extends DialogWidget
 {
-	/**
+   /**
 	 * Maintenance types.
 	 */
 	public interface IMaintenanceType
@@ -171,7 +157,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 	 */
 	AliasInternalFrame(IApplication app, ISQLAlias sqlAlias, int maintType)
 	{
-		super("", true);
+		super("", true, app);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
@@ -339,10 +325,11 @@ public class AliasInternalFrame extends BaseInternalFrame
 	 */
 	private void createUserInterface()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+
+      makeToolWindow(true);
 
 		String winTitle; 
 		if (_maintType == IMaintenanceType.MODIFY)
@@ -369,7 +356,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 		// look and feels.
 		final JPanel contentPane = new JPanel();
 		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-		setContentPane(contentPane);
+		super.setContentPane(contentPane);
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		contentPane.setLayout(new GridBagLayout());
@@ -658,7 +645,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 				s_log.error(msg, th);
 				_app.showErrorDialog(msg + ": " + th.toString());
 			}
-			Dialogs.showOk(AliasInternalFrame.this, s_stringMgr.getString("AliasInternalFrame.connsuccess"));
+
+			AliasInternalFrame.this.showOk(s_stringMgr.getString("AliasInternalFrame.connsuccess"));
 
          if(getAlias().isAutoLogon())
          {
@@ -680,7 +668,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 		}
 	}
 
-	/**
+   /**
 	 * Listens to changes in the drivers cache and adds/removes drivers from the dropdown
 	 * as they are added/removed from the cache.
 	 */

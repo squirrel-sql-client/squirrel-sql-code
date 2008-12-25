@@ -18,9 +18,27 @@
  */
 package net.sourceforge.squirrel_sql.plugins.smarttools.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
+import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
+
+import javax.swing.*;
+import javax.swing.JTable.PrintMode;
+import javax.swing.border.EtchedBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
@@ -33,40 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.JTable.PrintMode;
-import javax.swing.border.EtchedBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
-import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-public class SmarttoolMissingIndicesFrame extends BaseInternalFrame
+public class SmarttoolMissingIndicesFrame extends DialogWidget
 		implements ISmarttoolFrame, ActionListener {
 	private static final long serialVersionUID = 3680564513241320485L;
 
@@ -131,7 +116,7 @@ public class SmarttoolMissingIndicesFrame extends BaseInternalFrame
 	 */
 	public SmarttoolMissingIndicesFrame(ISession session, String title) {
 		super("Smarttool - " + title,
-				true, true, true, true);
+				true, true, true, true, session.getApplication());
 		this.session = session;
 
 		initLayout();
@@ -195,10 +180,10 @@ public class SmarttoolMissingIndicesFrame extends BaseInternalFrame
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
+		this.getContentPane().setLayout(new BorderLayout());
 		createTableHeader();
 		tblResult = new JTable(vecData, vecHeader);
-		this.add(createPanel());
+		this.getContentPane().add(createPanel());
 
 		initVisualObjects();
 	}
@@ -435,7 +420,7 @@ public class SmarttoolMissingIndicesFrame extends BaseInternalFrame
 
 	private void stopWork() {
 		threadSuspended = true;
-		if (JOptionPane.showConfirmDialog(this, i18n.QUESTION_CANCEL_WORK,
+		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.QUESTION_CANCEL_WORK,
 				i18n.QUESTION_CANCEL_WORK_TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			threadWork = null;
 			controlComponents(STOP_WORKING);
@@ -514,7 +499,7 @@ public class SmarttoolMissingIndicesFrame extends BaseInternalFrame
 			if (tblResult.getSelectedRow() > -1) {
 				new SmarttoolCreateIndexD(null, session, (String)tblResult.getValueAt(tblResult.getSelectedRow(), COL_TABLENAME));
 			} else {
-				JOptionPane.showMessageDialog(this, i18n.ERROR_NO_ROW_SELECTED);
+				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.ERROR_NO_ROW_SELECTED);
 			}
 		} if (e.getSource() == btnRecordCount) {
 			getRecordCounts();

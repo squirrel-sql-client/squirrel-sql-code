@@ -18,9 +18,25 @@
  */
 package net.sourceforge.squirrel_sql.plugins.smarttools.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.smarttools.STDataType;
+import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
+import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,41 +50,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.smarttools.STDataType;
-import net.sourceforge.squirrel_sql.plugins.smarttools.SmarttoolsHelper;
-import net.sourceforge.squirrel_sql.plugins.smarttools.comp.STButton;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 /**
  * @author Mike
  */
-public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISmarttoolFrame, ActionListener
+public class SmarttoolChangeValuesFrame extends DialogWidget implements ISmarttoolFrame, ActionListener
 {
 	private static final long serialVersionUID = 3680564541641320485L;
 
@@ -183,22 +168,22 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 	 */
 	public SmarttoolChangeValuesFrame(ISession session, String title)
 	{
-		super("Smarttool - " + title, true, true, true, true);
+		super("Smarttool - " + title, true, true, true, true, session.getApplication());
 		this.session = session;
 
 		initLayout();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 		this.moveToFront();
-		JOptionPane.showMessageDialog(this, i18n.WARNING, i18n.WARNING_TITLE, JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.WARNING, i18n.WARNING_TITLE, JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void initLayout()
 	{
-		this.setLayout(new BorderLayout());
+		this.getContentPane().setLayout(new BorderLayout());
 		createTableHeader();
 		tblResult = new JTable(vecData, vecHeader);
-		this.add(createPanelMain());
+		this.getContentPane().add(createPanelMain());
 
 		initVisualObjects();
 	}
@@ -477,7 +462,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 		{
 			if (tfColumnName.getText().trim().length() < 1)
 			{
-				JOptionPane.showMessageDialog(this, i18n.ERROR_COLUMNNAME_MISSING);
+				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.ERROR_COLUMNNAME_MISSING);
 				tfColumnName.requestFocusInWindow();
 				return false;
 			}
@@ -493,7 +478,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 				}
 				catch (NumberFormatException ex)
 				{
-					JOptionPane.showMessageDialog(this, i18n.GLOBAL_ERROR_FORMAT_INTEGER);
+					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GLOBAL_ERROR_FORMAT_INTEGER);
 					tfNewValue.requestFocusInWindow();
 					return false;
 				}
@@ -506,7 +491,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 				}
 				catch (NumberFormatException ex)
 				{
-					JOptionPane.showMessageDialog(this, i18n.GLOBAL_ERROR_FORMAT_NUMERIC);
+					JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GLOBAL_ERROR_FORMAT_NUMERIC);
 					tfNewValue.requestFocusInWindow();
 					return false;
 				}
@@ -524,7 +509,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 					}
 					catch (ParseException ex)
 					{
-						JOptionPane.showMessageDialog(this, i18n.GLOBAL_ERROR_FORMAT_DATE);
+						JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GLOBAL_ERROR_FORMAT_DATE);
 						tfNewValue.requestFocusInWindow();
 						return false;
 					}
@@ -538,7 +523,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 					}
 					catch (ParseException ex)
 					{
-						JOptionPane.showMessageDialog(this, i18n.GLOBAL_ERROR_FORMAT_DATETIME);
+						JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GLOBAL_ERROR_FORMAT_DATETIME);
 						tfNewValue.requestFocusInWindow();
 						return false;
 					}
@@ -552,7 +537,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 					}
 					catch (ParseException ex)
 					{
-						JOptionPane.showMessageDialog(this, i18n.GLOBAL_ERROR_FORMAT_TIME);
+						JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.GLOBAL_ERROR_FORMAT_TIME);
 						tfNewValue.requestFocusInWindow();
 						return false;
 					}
@@ -569,14 +554,14 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 			}
 			if (!selectedRowExists)
 			{
-				JOptionPane.showMessageDialog(this, i18n.ERROR_SELECT_ENTRY);
+				JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.ERROR_SELECT_ENTRY);
 				return false;
 			}
 		}
 
 		if (tfOldValue.isEnabled() && tfOldValue.getText().trim().length() == 0)
 		{
-			JOptionPane.showMessageDialog(this, i18n.ERROR_MISSING_OLD_VALUE);
+			JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), i18n.ERROR_MISSING_OLD_VALUE);
 			return false;
 		}
 		return true;
@@ -608,7 +593,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 	private void startChanging()
 	{
 		if (isInputOK(START_CHANGEING)
-			&& JOptionPane.showConfirmDialog(this, i18n.QUESTION_START_CHANGING,
+			&& JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.QUESTION_START_CHANGING,
 				i18n.QUESTION_START_CHANGING_TITLE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 		{
 			controlComponents(START_CHANGEING);
@@ -621,7 +606,7 @@ public class SmarttoolChangeValuesFrame extends BaseInternalFrame implements ISm
 	private void stopWork()
 	{
 		threadSuspended = true;
-		if (JOptionPane.showConfirmDialog(this, i18n.QUESTION_CANCEL_WORK, i18n.QUESTION_CANCEL_WORK_TITLE,
+		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(), i18n.QUESTION_CANCEL_WORK, i18n.QUESTION_CANCEL_WORK_TITLE,
 			JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 		{
 			if (threadSearching != null)

@@ -45,7 +45,7 @@ public class MyURLClassLoader extends URLClassLoader
 
 	public MyURLClassLoader(String fileName) throws IOException
 	{
-		this(new File(fileName).toURL());
+		this(new File(fileName).toURI().toURL());
 	}
 
 	public MyURLClassLoader(URL url)

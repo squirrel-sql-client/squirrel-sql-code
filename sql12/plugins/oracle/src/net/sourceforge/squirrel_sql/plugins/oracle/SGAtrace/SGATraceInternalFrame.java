@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -69,9 +71,9 @@ public class SGATraceInternalFrame extends OracleInternalFrame
 
    private void createGUI()
    {
-      addInternalFrameListener(new InternalFrameAdapter()
+      addWidgetListener(new WidgetAdapter()
       {
-         public void internalFrameClosing(InternalFrameEvent e)
+         public void widgetClosing(WidgetEvent e)
          {
             SGATraceInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), _sgaTracePanel.getAutoRefreshPeriod());
             _sgaTracePanel.setAutoRefresh(false);

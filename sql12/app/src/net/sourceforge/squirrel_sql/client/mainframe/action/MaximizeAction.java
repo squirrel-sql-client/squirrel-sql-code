@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.action.MaximizeInternalFramesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeInternalFramesAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 /**
@@ -40,7 +40,7 @@ public class MaximizeAction extends MaximizeInternalFramesAction
 	 */
 	public MaximizeAction(IApplication app)
 	{
-		super();
+		super(app);
 		_app = app;
 		app.getResources().setupAction(this,
 					_app.getSquirrelPreferences().getShowColoriconsInToolbar());

@@ -17,19 +17,13 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
+
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
@@ -37,14 +31,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * Common GUI utilities accessed via static methods.
  *
@@ -151,11 +137,17 @@ public class GUIUtils
 					try
 					{
 						fr.setSelected(true);
+                  if(fr.isIcon())
+                  {
+                     fr.setIcon(false);
+                  }
+                  fr.setSelected(true);
 					}
 					catch (PropertyVetoException ex)
 					{
 						s_log.error("Error bringing internal frame to the front", ex);
 					}
+               fr.requestFocus();
 				}
 			});
 		}
@@ -252,80 +244,7 @@ public class GUIUtils
 		}
 	}
 
-	/**
-	 * Return an array containing all <TT>JInternalFrame</TT> objects
-	 * that were passed in <TT>frames</TT> that are tool windows.
-	 *
-	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
-	 */
-	public static JInternalFrame[] getOpenToolWindows(JInternalFrame[] frames)
-	{
-		if (frames == null)
-		{
-			throw new IllegalArgumentException("null JInternalFrame[] passed");
-		}
-		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
-		for (int i = 0; i < frames.length; ++i)
-		{
-			JInternalFrame fr = frames[i];
-			if (isToolWindow(fr) && !fr.isClosed())
-			{
-				framesList.add(frames[i]);
-			}
-		}
-		return framesList.toArray(new JInternalFrame[framesList.size()]);
-	}
-
-	/**
-	 * Return an array containing all <TT>JInternalFrame</TT> objects
-	 * that were passed in <TT>frames</TT> that are <EM>not</EM> tool windows.
-	 *
-	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
-	 */
-	public static JInternalFrame[] getOpenNonToolWindows(JInternalFrame[] frames)
-	{
-		if (frames == null)
-		{
-			throw new IllegalArgumentException("null JInternalFrame[] passed");
-		}
-		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
-		for (int i = 0; i < frames.length; ++i)
-		{
-			JInternalFrame fr = frames[i];
-			if (!isToolWindow(fr) && !fr.isClosed())
-			{
-				framesList.add(frames[i]);
-			}
-		}
-		return framesList.toArray(new JInternalFrame[framesList.size()]);
-	}
-
-	/**
-	 * Return an array containing all <TT>JInternalFrame</TT> objects
-	 * that were passed in <TT>frames</TT> that are <EM>not</EM> tool windows.
-	 * and are not minimized.
-	 *
-	 * @param	frames	<TT>JInternalFrame</TT> objects to be checked.
-	 */
-	public static JInternalFrame[] getNonMinimizedNonToolWindows(JInternalFrame[] frames)
-	{
-		if (frames == null)
-		{
-			throw new IllegalArgumentException("null JInternalFrame[] passed");
-		}
-		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
-		for (int i = 0; i < frames.length; ++i)
-		{
-			JInternalFrame fr = frames[i];
-			if (!isToolWindow(fr) && !fr.isClosed() && !fr.isIcon())
-			{
-				framesList.add(frames[i]);
-			}
-		}
-		return framesList.toArray(new JInternalFrame[framesList.size()]);
-	}
-
-	public static boolean isWithinParent(Component wind)
+   public static boolean isWithinParent(Component wind)
 	{
 		if (wind == null)
 		{

@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.firebirdmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 
@@ -32,6 +33,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame.IMenuIDs;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -285,27 +288,27 @@ public class FirebirdManagerPlugin extends DefaultSessionPlugin {
 		JMenuItem menuItem = new JMenuItem(title);
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JInternalFrame frame = isInternalFrameUsed(application, sheetType);
+				DialogWidget frame = (DialogWidget) isInternalFrameUsed(application, sheetType);
 				if (frame == null) {
 					if (sheetType == FB_SHEET_TYPE_ROLE) {
 						frame = new FirebirdManagerRoleFrame(session);
 					} else if (sheetType == FB_SHEET_TYPE_GRANT) {
 						frame = new FirebirdManagerGrantFrame(session);
 					} else if (sheetType == FB_SHEET_TYPE_BACKUP){
-						frame = new FirebirdManagerBackupRestoreFrame();
+						frame = new FirebirdManagerBackupRestoreFrame(session.getApplication());
 					} else if (sheetType == FB_SHEET_TYPE_CREATE){
-						frame = new FirebirdManagerCreateDatabaseFrame();
+						frame = new FirebirdManagerCreateDatabaseFrame(session.getApplication());
 					} else if (sheetType == FB_SHEET_TYPE_USER){
-						frame = new FirebirdManagerUserManagerFrame();
+						frame = new FirebirdManagerUserManagerFrame(session.getApplication());
 					}
-					application.getMainFrame().addInternalFrame(frame, true, null);
+					application.getMainFrame().addWidget(frame);
 					frame.pack();
 					if (frame instanceof FirebirdManagerBackupRestoreFrame) {
-						frame.setSize(650, frame.getHeight());
+						frame.setSize(new Dimension(650, frame.getHeight()));
 					} else if (frame instanceof FirebirdManagerUserManagerFrame) {
-						frame.setSize(frame.getWidth(), 500);
+						frame.setSize(new Dimension(frame.getWidth(), 500));
 					}
-					GUIUtils.centerWithinDesktop(frame);
+					DialogWidget.centerWithinDesktop(frame);
 				} else {
 					frame.setVisible(true);
 					frame.moveToFront();
@@ -325,10 +328,9 @@ public class FirebirdManagerPlugin extends DefaultSessionPlugin {
 		return menuItem;
 	}
 
-	private JInternalFrame isInternalFrameUsed(IApplication application,
+	private IWidget isInternalFrameUsed(IApplication application,
 			int sheetType) {
-		JInternalFrame[] frames = application.getMainFrame().getDesktopPane()
-				.getAllFrames();
+		IWidget[] frames = application.getMainFrame().getDesktopContainer().getAllWidgets();
 		for (int i = 0; i < frames.length; i++) {
 			if ((sheetType == FB_SHEET_TYPE_CREATE && frames[i] instanceof FirebirdManagerCreateDatabaseFrame)
 					|| (sheetType == FB_SHEET_TYPE_USER && frames[i] instanceof FirebirdManagerUserManagerFrame)
@@ -345,8 +347,7 @@ public class FirebirdManagerPlugin extends DefaultSessionPlugin {
 	@Override
 	public void sessionEnding(ISession session) {
 		super.sessionEnding(session);
-		JInternalFrame[] frames = session.getApplication().getMainFrame().getDesktopPane()
-				.getAllFrames();
+		IWidget[] frames = session.getApplication().getMainFrame().getDesktopContainer().getAllWidgets();
 		for (int i = 0; i < frames.length; i++) {
 			if (frames[i] instanceof FirebirdManagerGrantFrame
 				|| frames[i] instanceof FirebirdManagerRoleFrame) {

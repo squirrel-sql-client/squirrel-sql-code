@@ -34,6 +34,8 @@ import javax.swing.event.UndoableEditListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
@@ -161,7 +163,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       if (_fileManager.save()) {
           fileSaved = true;
           unsavedEdits = false;
-          getSession().getActiveSessionWindow().setUnsavedEdits(false);
+          getActiveSessionTabWidget().setUnsavedEdits(false);
           ActionCollection actions = 
               getSession().getApplication().getActionCollection();
           actions.enableAction(FileSaveAction.class, false);
@@ -170,10 +172,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
           return false;
       }
    }
-   
+
+   private SessionTabWidget getActiveSessionTabWidget()
+   {
+      return (SessionTabWidget) getSession().getActiveSessionWindow();
+   }
+
    /* (non-Javadoc)
-    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileAppend()
-    */
+   * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileAppend()
+   */
    public void fileAppend() {
        if (_fileManager.open(true)) {
            fileOpened = true;
@@ -194,7 +201,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
            showConfirmSaveDialog();
        }
        setEntireSQLScript("");
-       getSession().getActiveSessionWindow().setSqlFile(null);
+       getActiveSessionTabWidget().setSqlFile(null);
        fileOpened = false;
        fileSaved = false;
        unsavedEdits = false;
@@ -220,7 +227,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
        if (_fileManager.saveAs()) {
            fileSaved = true;
            unsavedEdits = false;
-           getSession().getActiveSessionWindow().setUnsavedEdits(false);
+           getActiveSessionTabWidget().setUnsavedEdits(false);
            ActionCollection actions = 
                getSession().getApplication().getActionCollection();
            actions.enableAction(FileSaveAction.class, false);         
@@ -803,7 +810,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
             if (prefs.getWarnForUnsavedFileEdits()) {
                 unsavedEdits = true;
             }
-            getSession().getActiveSessionWindow().setUnsavedEdits(true);
+            getActiveSessionTabWidget().setUnsavedEdits(true);
             ActionCollection actions = 
                 getSession().getApplication().getActionCollection();
             actions.enableAction(FileSaveAction.class, true);

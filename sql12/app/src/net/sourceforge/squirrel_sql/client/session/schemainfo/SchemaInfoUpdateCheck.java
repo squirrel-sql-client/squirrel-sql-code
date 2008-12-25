@@ -1,25 +1,19 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
-import java.sql.DatabaseMetaData;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
+
+import javax.swing.*;
+import java.sql.DatabaseMetaData;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -196,18 +190,18 @@ public class SchemaInfoUpdateCheck
 
    private void repaintSqlEditor()
    {
-      BaseSessionInternalFrame activeSessionWindow = _session.getActiveSessionWindow();
+      ISessionWidget activeSessionWidget = _session.getActiveSessionWindow();
 
-      if (activeSessionWindow instanceof SQLInternalFrame)
+      if (activeSessionWidget instanceof SQLInternalFrame)
       {
-         ISQLEntryPanel sqlEntryPanel = ((SQLInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel();
+         ISQLEntryPanel sqlEntryPanel = ((SQLInternalFrame) activeSessionWidget).getSQLPanelAPI().getSQLEntryPanel();
          sqlEntryPanel.getTextComponent().repaint();
          _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }
 
-      if (activeSessionWindow instanceof SessionInternalFrame)
+      if (activeSessionWidget instanceof SessionInternalFrame)
       {
-         ISQLEntryPanel sqlEntryPanel = ((SessionInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel();
+         ISQLEntryPanel sqlEntryPanel = ((SessionInternalFrame) activeSessionWidget).getSQLPanelAPI().getSQLEntryPanel();
          sqlEntryPanel.getTextComponent().repaint();
          _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }

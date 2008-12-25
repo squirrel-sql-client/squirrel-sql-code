@@ -83,7 +83,7 @@ public class ViewFileCommand implements ICommand
 	{
 		try
 		{
-			URL url = _file.toURL();
+			URL url = _file.toURI().toURL();
 			FileViewerFactory factory = FileViewerFactory.getInstance();
 			HtmlViewerSheet viewer = factory.getViewer(_app.getMainFrame(), url);
 			viewer.setVisible(true);

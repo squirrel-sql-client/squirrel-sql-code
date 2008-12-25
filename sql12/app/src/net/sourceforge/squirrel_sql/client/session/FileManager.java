@@ -11,6 +11,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -299,7 +301,12 @@ public class FileManager
    private void setFile(File file)
    {
       _toSaveTo = file;
-      _sqlPanelAPI.getSession().getActiveSessionWindow().setSqlFile(file);
+      getActiveSessionTabWidget().setSqlFile(file);
+   }
+
+   private SessionTabWidget getActiveSessionTabWidget()
+   {
+      return (SessionTabWidget)_sqlPanelAPI.getSession().getActiveSessionWindow();
    }
 
    public File getFile() {

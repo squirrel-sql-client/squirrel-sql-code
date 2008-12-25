@@ -31,15 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.Point;
 import java.awt.Dimension;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-import javax.swing.JScrollPane;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -57,7 +49,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * This is the frame that gets data from the user for creating
  * a new row in a table.
  */
-public class RowDataInputFrame extends JInternalFrame
+public class RowDataInputFrame extends JDialog
 	implements ActionListener {
 
 	private static final StringManager s_stringMgr =
@@ -72,12 +64,12 @@ public class RowDataInputFrame extends JInternalFrame
 	/**
 	 * ctor.
 	 */
-	public RowDataInputFrame(ColumnDisplayDefinition[] colDefs,
+	public RowDataInputFrame(JFrame parent, ColumnDisplayDefinition[] colDefs,
 									 Object[] initialValues,
 									 DataSetViewerEditableTablePanel caller) {
 
 		// i18n[rowDataInputFrame.propName=Input New Row Data]
-		super(s_stringMgr.getString("rowDataInputFrame.propName"), true, true, false, true);
+		super(parent, s_stringMgr.getString("rowDataInputFrame.propName"), false);
 
 		// get the ConentPane into a variable for convenience
 		Container pane = getContentPane();
@@ -139,7 +131,7 @@ public class RowDataInputFrame extends JInternalFrame
 
 		// display the frame
 		pack();
-		show();
+		setVisible(true);
 
 	}
 

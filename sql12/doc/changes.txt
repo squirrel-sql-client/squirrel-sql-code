@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+New user interface layout: Tabbed layout
+
 Hibernate Plugin:
    - Cleaned up details display in mapped objects tab: Now every tree node displays an appropriate details table.
    - Added hint to slove StackOverflowError caused by logging that may occur when connecting to a Hibernate configuration.

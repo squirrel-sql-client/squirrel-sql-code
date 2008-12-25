@@ -19,10 +19,7 @@ package net.sourceforge.squirrel_sql.jdbcproxy;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ProxyDatabaseMetaData implements DatabaseMetaData {
 
@@ -966,4 +963,9 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 		return null;
 	}
 
+
+   public RowIdLifetime getRowIdLifetime() throws SQLException
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

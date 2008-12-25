@@ -55,6 +55,8 @@ import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
@@ -672,15 +674,23 @@ public class SQLResultExecuterPanel extends JPanel
 		ResultFrame frame = new ResultFrame(_session, tab);
 		ResultTabInfo tabInfo = _allTabs.get(tab.getIdentifier());
 		tabInfo._resultFrame = frame;
-		_session.getApplication().getMainFrame().addInternalFrame(frame, true, null, JLayeredPane.PALETTE_LAYER);
+		_session.getApplication().getMainFrame().addWidget(frame);
+      frame.setLayer(JLayeredPane.PALETTE_LAYER);
 		fireTabTornOffEvent(tab);
-		frame.setVisible(true);
 
-		// There used to be a frame.pack() here but it resized the frame
+      if (false == _session.getApplication().getDesktopStyle().supportsLayers())
+      {
+         frame.pack();
+         DialogWidget.centerWithinDesktop(frame);
+      }
+      frame.setVisible(true);
+
+      // There used to be a frame.pack() here but it resized the frame
 		// to be very wide if text output was used.
 
 		frame.toFront();
 		frame.requestFocus();
+
 
    }
 

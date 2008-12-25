@@ -17,20 +17,18 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-class ScriptsSheet extends BaseInternalFrame
+import javax.swing.*;
+import java.awt.*;
+
+class ScriptsSheet extends DialogWidget
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ScriptsSheet.class);
@@ -55,7 +53,7 @@ class ScriptsSheet extends BaseInternalFrame
 	private ScriptsSheet(SessionScriptPlugin plugin, IApplication app)
 	{
 		// i18n[sessionscript.startupScripts=Startup Scripts]
-		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true);
+		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true, app);
 		_plugin = plugin;
 		_app = app;
 
@@ -77,7 +75,7 @@ class ScriptsSheet extends BaseInternalFrame
 		if (s_instance == null)
 		{
 			s_instance = new ScriptsSheet(plugin, app);
-			app.getMainFrame().addInternalFrame(s_instance, true, null);
+			app.getMainFrame().addWidget(s_instance);
 		}
 		s_instance.setVisible(true);
 	}
@@ -87,14 +85,14 @@ class ScriptsSheet extends BaseInternalFrame
 	 */
 	private void createUserInterface()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 //		Icon icon = app.getResources().getIcon(getClass(), "frameIcon"); //i18n
 //		if (icon != null)
 //		{
 //			setFrameIcon(icon);
 //		}
 
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		_mainPnl = new ViewSessionScriptsPanel(_plugin, _app);
 

@@ -72,6 +72,10 @@ public class SquirrelResources extends Resources
       String FIND = "find";
       String FILTER = "filter";
 
+      String AUTOHIDE_ON = "autohideOn";
+      String AUTOHIDE_OFF = "autohideOff";
+      String MINIMIZE = "minimize";
+
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

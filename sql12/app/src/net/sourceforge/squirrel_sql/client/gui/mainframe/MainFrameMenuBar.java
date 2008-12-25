@@ -23,11 +23,10 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDesktopPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import net.sourceforge.squirrel_sql.fw.gui.action.IHasJDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.IHasJDesktopPane;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
@@ -35,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
@@ -83,7 +83,7 @@ final class MainFrameMenuBar extends JMenuBar
 	/**
 	 * Ctor.
 	 */
-	MainFrameMenuBar(IApplication app, JDesktopPane desktopPane, ActionCollection actions)
+	MainFrameMenuBar(IApplication app, IDesktopContainer desktopContainer, ActionCollection actions)
 	{
 		super();
 		if (app == null)
@@ -91,7 +91,7 @@ final class MainFrameMenuBar extends JMenuBar
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 
-		if (desktopPane == null)
+		if (desktopContainer == null)
 		{
 			throw new IllegalArgumentException("Null JDesktopPane passed");
 		}
@@ -118,7 +118,7 @@ final class MainFrameMenuBar extends JMenuBar
       add(_aliasesMenu = createAliasesMenu(rsrc));
 		add(_pluginsMenu = createPluginsMenu(rsrc));
 		add(_sessionMenu = createSessionMenu(rsrc));
-		add(_windowsMenu = createWindowsMenu(rsrc, desktopPane));
+		add(_windowsMenu = createWindowsMenu(rsrc, desktopContainer));
 		add(createHelpMenu(rsrc));
 	}
 
@@ -378,7 +378,7 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-	private JMenu createWindowsMenu(Resources rsrc, JDesktopPane desktopPane)
+	private JMenu createWindowsMenu(Resources rsrc, IDesktopContainer desktopPane)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.WINDOWS);
 		addToMenu(rsrc, ViewAliasesAction.class, menu);
@@ -446,14 +446,14 @@ final class MainFrameMenuBar extends JMenuBar
 
    @SuppressWarnings("unchecked")
    private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
-											JMenu menu, JDesktopPane desktopPane)
+											JMenu menu, IDesktopContainer desktopContainer)
 	{
 		Action act = addToMenu(rsrc, actionClass, menu);
 		if (act != null)
 		{
 			if (act instanceof IHasJDesktopPane)
 			{
-				((IHasJDesktopPane)act).setJDesktopPane(desktopPane);
+				((IHasJDesktopPane)act).setDesktopContainer(desktopContainer);
 			}
 			else
 			{

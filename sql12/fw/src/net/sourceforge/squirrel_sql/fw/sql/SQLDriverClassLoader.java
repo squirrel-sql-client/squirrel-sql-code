@@ -92,7 +92,7 @@ public class SQLDriverClassLoader extends MyURLClassLoader
                     "For driver '"+driverName+"', the JVM says the file can't be read: "+
                     fileNames[i]);
             }
-            urls[i] = f.toURL();
+            urls[i] = f.toURI().toURL();
             
 		}
 		return urls;

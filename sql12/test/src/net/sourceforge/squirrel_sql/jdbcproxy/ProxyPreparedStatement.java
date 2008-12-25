@@ -23,18 +23,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 
 public class ProxyPreparedStatement extends ProxyStatement implements
@@ -330,6 +319,43 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 		
 	}
 
+   public void setRowId(int parameterIndex, RowId x) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 
+   public void setNString(int parameterIndex, String value) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 
+   public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setNClob(int parameterIndex, NClob value) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setNClob(int parameterIndex, Reader reader) throws SQLException
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

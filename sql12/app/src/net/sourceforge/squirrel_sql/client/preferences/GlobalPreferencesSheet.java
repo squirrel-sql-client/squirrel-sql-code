@@ -17,8 +17,20 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,27 +39,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This sheet allows the user to maintain global preferences.
  * JASON: Rename to GlobalPreferencesInternalFrame
@@ -55,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 @SuppressWarnings("serial")
-public class GlobalPreferencesSheet extends BaseInternalFrame
+public class GlobalPreferencesSheet extends DialogWidget
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -101,7 +92,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
     */
    private GlobalPreferencesSheet(IApplication app)
    {
-      super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true);
+      super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true, app);
       if (app == null)
       {
          throw new IllegalArgumentException("IApplication == null");
@@ -126,8 +117,8 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
       }
       setSize(getDimension());
 
-      app.getMainFrame().addInternalFrame(this, true, null);
-      GUIUtils.centerWithinDesktop(this);
+      app.getMainFrame().addWidget(this);
+      DialogWidget.centerWithinDesktop(this);
       setVisible(true);
 
    }
@@ -306,10 +297,10 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	 */
 	private void createGUI()
 	{
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		// This is a tool window.
-		GUIUtils.makeToolWindow(this, true);
+		makeToolWindow(true);
 
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());

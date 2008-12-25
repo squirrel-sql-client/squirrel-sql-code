@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.prefs.Preferences;
 
-public class AliasPropertiesInternalFrame extends BaseInternalFrame
+public class AliasPropertiesInternalFrame extends DialogWidget
 {
    private static final String PREF_KEY_ALIAS_PROPS_SHEET_WIDTH = "Squirrel.aliasPropsSheetWidth";
    private static final String PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT = "Squirrel.aliasPropsSheetHeight";
@@ -22,12 +22,13 @@ public class AliasPropertiesInternalFrame extends BaseInternalFrame
    JButton btnOk;
    JButton btnClose;
 
-   AliasPropertiesInternalFrame(String title)
+   AliasPropertiesInternalFrame(String title, IApplication app)
    {
-      setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-      GUIUtils.makeToolWindow(this, true);
+      super(s_stringMgr.getString("AliasPropertiesInternalFrame.title", title), true, app);
+
+      setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+      makeToolWindow(true);
       setSize(getDimension());
-      setResizable(true);
 
       getContentPane().setLayout(new GridBagLayout());
 

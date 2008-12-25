@@ -20,9 +20,6 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
@@ -34,6 +31,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 /**
  * TODO: Move all code other than for window creation up to AliasWindowManager
@@ -103,20 +103,22 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		{
 			sheet = new DriverInternalFrame(_app, driver, MODIFY);
 			_modifySheets.put(driver.getIdentifier(), sheet);
-			_app.getMainFrame().addInternalFrame(sheet, true, null);
+			_app.getMainFrame().addWidget(sheet);
 
-			sheet.addInternalFrameListener(new InternalFrameAdapter()
+			sheet.addWidgetListener(new WidgetAdapter()
 			{
-				public void internalFrameClosed(InternalFrameEvent evt)
-				{
-					synchronized (DriverWindowFactory.this)
-					{
-						DriverInternalFrame frame = (DriverInternalFrame) evt.getInternalFrame();
-						_modifySheets.remove(frame.getSQLDriver().getIdentifier());
-					}
-				}
+            @Override
+            public void widgetClosed(WidgetEvent evt)
+            {
+               synchronized (DriverWindowFactory.this)
+               {
+                  DriverInternalFrame frame = (DriverInternalFrame) evt.getWidget();
+                  _modifySheets.remove(frame.getSQLDriver().getIdentifier());
+               }
+            }
+
 			});
-			GUIUtils.centerWithinDesktop(sheet);
+			DialogWidget.centerWithinDesktop(sheet);
 		}
 
 		return sheet;
@@ -133,8 +135,8 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
 		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, NEW);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
+		_app.getMainFrame().addWidget(sheet);
+		DialogWidget.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
@@ -167,8 +169,8 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 		}
 		final DriverInternalFrame sheet =
 			new DriverInternalFrame(_app, newDriver, COPY);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
+		_app.getMainFrame().addWidget(sheet);
+		DialogWidget.centerWithinDesktop(sheet);
 
 		return sheet;
 	}

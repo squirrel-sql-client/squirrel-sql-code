@@ -17,7 +17,7 @@ public class MappedObjectPanel extends JPanel
    JCheckBox chkShowQualified;
 
    private JSplitPane _split;
-   private static final String PERF_KEY_OBJ_TAB_DIV_LOC = "Squirrel.hibernateplugin.objTabDivLoc";
+   //private static final String PERF_KEY_OBJ_TAB_DIV_LOC = "Squirrel.hibernateplugin.objTabDivLocAsInt";
 
    public MappedObjectPanel(JComponent detailComp)
    {
@@ -35,11 +35,16 @@ public class MappedObjectPanel extends JPanel
 
       add(_split, BorderLayout.CENTER);
 
+
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-            _split.setDividerLocation(Preferences.userRoot().getDouble(PERF_KEY_OBJ_TAB_DIV_LOC, 0.5));
+            _split.setDividerLocation(0.3);
+//            double loc = Preferences.userRoot().getDouble(PERF_KEY_OBJ_TAB_DIV_LOC, 0.5);
+//            loc = Math.min(0.95, loc);
+//            loc = Math.max(loc, 0.05);
+//            _split.setDividerLocation(loc);
          }
       });
 
@@ -66,6 +71,6 @@ public class MappedObjectPanel extends JPanel
 
    public void closing()
    {
-      Preferences.userRoot().putDouble(PERF_KEY_OBJ_TAB_DIV_LOC, ((double) _split.getDividerLocation())/ ((double) _split.getWidth()) );
+      //Preferences.userRoot().putDouble(PERF_KEY_OBJ_TAB_DIV_LOC, ((double) _split.getDividerLocation())/ ((double) _split.getWidth()) );
    }
 }

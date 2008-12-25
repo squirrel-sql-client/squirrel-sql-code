@@ -18,73 +18,73 @@
  */
 package net.sourceforge.squirrel_sql.client.gui;
 
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Allows to acces open Session windows by Session and by opening sequence.
  */
 public class SessionWindowsHolder
 {
-   HashMap<IIdentifier, List<BaseSessionInternalFrame>> _framesBySessionIdentifier = new HashMap<IIdentifier, List<BaseSessionInternalFrame>>();
-   HashMap<BaseSessionInternalFrame, IIdentifier> _sessionIdentifierByFrame = new HashMap<BaseSessionInternalFrame, IIdentifier>();
-   Vector<BaseSessionInternalFrame> _framesInOpeningSequence = new Vector<BaseSessionInternalFrame>();
+   HashMap<IIdentifier, List<ISessionWidget>> _framesBySessionIdentifier = new HashMap<IIdentifier, List<ISessionWidget>>();
+   HashMap<ISessionWidget, IIdentifier> _sessionIdentifierByFrame = new HashMap<ISessionWidget, IIdentifier>();
+   Vector<ISessionWidget> _framesInOpeningSequence = new Vector<ISessionWidget>();
 
-   public int addFrame(IIdentifier sessionIdentifier, BaseSessionInternalFrame internalFrame)
+   public int addFrame(IIdentifier sessionIdentifier, ISessionWidget sessionWidget)
    {
-      List<BaseSessionInternalFrame> windowList = _framesBySessionIdentifier.get(sessionIdentifier);
+      List<ISessionWidget> windowList = _framesBySessionIdentifier.get(sessionIdentifier);
       if (windowList == null)
       {
-         windowList = new ArrayList<BaseSessionInternalFrame>();
+         windowList = new ArrayList<ISessionWidget>();
          _framesBySessionIdentifier.put(sessionIdentifier, windowList);
       }
-      windowList.add(internalFrame);
+      windowList.add(sessionWidget);
 
-      _framesInOpeningSequence.add(internalFrame);
+      _framesInOpeningSequence.add(sessionWidget);
 
-      _sessionIdentifierByFrame.put(internalFrame, sessionIdentifier);
+      _sessionIdentifierByFrame.put(sessionWidget, sessionIdentifier);
 
       return windowList.size();
    }
 
-   public BaseSessionInternalFrame[] getFramesOfSession(IIdentifier sessionIdentifier)
+   public ISessionWidget[] getFramesOfSession(IIdentifier sessionIdentifier)
    {
-      List<BaseSessionInternalFrame> list = _framesBySessionIdentifier.get(sessionIdentifier);
+      List<ISessionWidget> list = _framesBySessionIdentifier.get(sessionIdentifier);
 
       if(null == list)
       {
-         return new BaseSessionInternalFrame[0];
+         return new ISessionWidget[0];
       }
       else
       {
-         return list.toArray(new BaseSessionInternalFrame[list.size()]);
+         return list.toArray(new ISessionWidget[list.size()]);
       }
    }
 
-   public void removeWindow(BaseSessionInternalFrame internalFrame)
+   public void removeWindow(ISessionWidget sessionWidget)
    {
-      IIdentifier sessionIdentifier = _sessionIdentifierByFrame.get(internalFrame);
+      IIdentifier sessionIdentifier = _sessionIdentifierByFrame.get(sessionWidget);
 
       if(null == sessionIdentifier)
       {
-         throw new IllegalArgumentException("Unknown Frame " + internalFrame.getTitle());
+         throw new IllegalArgumentException("Unknown Frame " + sessionWidget.getTitle());
       }
 
-      List<BaseSessionInternalFrame> framesOfSession = _framesBySessionIdentifier.get(sessionIdentifier);
-      framesOfSession.remove(internalFrame);
+      List<ISessionWidget> framesOfSession = _framesBySessionIdentifier.get(sessionIdentifier);
+      framesOfSession.remove(sessionWidget);
 
-      _framesInOpeningSequence.remove(internalFrame);
-      _sessionIdentifierByFrame.remove(internalFrame);
+      _framesInOpeningSequence.remove(sessionWidget);
+      _sessionIdentifierByFrame.remove(sessionWidget);
    }
 
    public void removeAllWindows(IIdentifier sessionId)
    {
-      BaseSessionInternalFrame[] framesOfSession = getFramesOfSession(sessionId);
+      ISessionWidget[] framesOfSession = getFramesOfSession(sessionId);
 
       for (int i = 0; i < framesOfSession.length; i++)
       {
@@ -95,7 +95,7 @@ public class SessionWindowsHolder
       _framesBySessionIdentifier.remove(sessionId);
    }
 
-   public BaseSessionInternalFrame getNextSessionWindow(BaseSessionInternalFrame sessionWindow)
+   public ISessionWidget getNextSessionWindow(ISessionWidget sessionWindow)
    {
       int nextIx = _framesInOpeningSequence.indexOf(sessionWindow) + 1;
 
@@ -116,7 +116,7 @@ public class SessionWindowsHolder
       }
    }
 
-   public BaseSessionInternalFrame getPreviousSessionWindow(BaseSessionInternalFrame sessionWindow)
+   public ISessionWidget getPreviousSessionWindow(ISessionWidget sessionWindow)
    {
       int prevIx = _framesInOpeningSequence.indexOf(sessionWindow) -1;
 

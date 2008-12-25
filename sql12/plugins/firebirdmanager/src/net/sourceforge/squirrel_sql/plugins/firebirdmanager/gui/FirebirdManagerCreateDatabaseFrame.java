@@ -18,32 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -52,18 +30,24 @@ import net.sourceforge.squirrel_sql.plugins.firebirdmanager.FirebirdManagerHelpe
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerCreateDatabasePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.FirebirdManagerPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.pref.PreferencesManager;
-
 import org.firebirdsql.management.FBMaintenanceManager;
 import org.firebirdsql.management.FBManager;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.*;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Internal frame for database creation
  * @author Michael Romankiewicz
  */
-public class FirebirdManagerCreateDatabaseFrame extends BaseInternalFrame 
+public class FirebirdManagerCreateDatabaseFrame extends DialogWidget
 implements IFirebirdManagerFrame, ActionListener, KeyListener {
 	private static final long serialVersionUID = 218636820715664639L;
 	private final String CR = System.getProperty("line.separator", "\n");
@@ -105,15 +89,18 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
     private JRadioButton radioButtonDialect3 = new JRadioButton();
     private JButton jbuttonLoadProp = new JButton();
     private JButton jbuttonSaveProp = new JButton();
-	
+   private IApplication _application;
 
-    /**
+
+   /**
      * Constructor
+     * @param application
      */
-	public FirebirdManagerCreateDatabaseFrame() {
-		super("Firebird manager - " + stringManager.getString("createdatabase.title"), true, true, true, true);
-		
-		initLayout();
+	public FirebirdManagerCreateDatabaseFrame(IApplication application) {
+		super("Firebird manager - " + stringManager.getString("createdatabase.title"), true, true, true, true, application);
+      _application = application;
+
+      initLayout();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 		this.moveToFront();
@@ -157,8 +144,8 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(createPanelCreateDB());
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(createPanelCreateDB());
 		
 		initVisualObjects();
 		readPreferences();
@@ -370,10 +357,10 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 			try {
 				prop.load(new FileInputStream(file));
 			} catch (FileNotFoundException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			} catch (IOException e) {
-	            JOptionPane.showMessageDialog(this, i18n.LOAD_PROP_FAILED);
+	            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.LOAD_PROP_FAILED);
 				log.error(e.getLocalizedMessage());
 			}
 			
@@ -401,7 +388,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 			boolean saveFile = true;
 			if (file.exists()) {
 				saveFile = JOptionPane.showConfirmDialog(
-						this, i18n.GLOBAL_WARNING_FILE_EXISTS, 
+						_application.getMainFrame(), i18n.GLOBAL_WARNING_FILE_EXISTS,
 						i18n.GLOBAL_TITLE_WARNING, 
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 			}
@@ -419,10 +406,10 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 					prop.store(new FileOutputStream(file),
 							"FirebirdManager - Create database properties");
 				} catch (FileNotFoundException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(this, i18n.SAVE_PROP_FAILED);
+					JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.SAVE_PROP_FAILED);
 					log.error(e.getLocalizedMessage());
 				}
 			}
@@ -502,7 +489,7 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 		}
 		
 		if (bufError.length() != 0) {
-			JOptionPane.showMessageDialog(this, bufError.toString());
+			JOptionPane.showMessageDialog(_application.getMainFrame(), bufError.toString());
 		}
 		
 		return bufError.length() == 0;
@@ -536,11 +523,11 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
 		
 		if (file.exists()) {
 			String msg = i18n.CREATEDB_MSG_FILEEXISTS.replaceAll("{0}", filename);
-		     if (JOptionPane.showConfirmDialog(this, msg,
+		     if (JOptionPane.showConfirmDialog(_application.getMainFrame(), msg,
 		            i18n.CREATEDB_MSG_WARNING, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 		        fbManager.setForceCreate(true);
 		    else {
-		        JOptionPane.showMessageDialog(this, i18n.CREATEDB_MSG_CANCELED);
+		        JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.CREATEDB_MSG_CANCELED);
 		        return;
 		    }
 		}
@@ -561,10 +548,10 @@ implements IFirebirdManagerFrame, ActionListener, KeyListener {
     				  jtextfieldUsername.getText(), new String(jpasswordfield.getPassword()));
     		fbManager.stop();
     		
-            JOptionPane.showMessageDialog(this, i18n.CREATEDB_MSG_SUCCEDED);
+            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.CREATEDB_MSG_SUCCEDED);
             saveSessionPreferences();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, i18n.CREATEDB_MSG_FAILED
+            JOptionPane.showMessageDialog(_application.getMainFrame(), i18n.CREATEDB_MSG_FAILED
             		+ CR + CR + e.getLocalizedMessage());
             log.error(e.getLocalizedMessage());
         }

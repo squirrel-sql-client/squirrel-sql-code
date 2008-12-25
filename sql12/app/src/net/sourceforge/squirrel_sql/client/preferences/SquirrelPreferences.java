@@ -49,7 +49,6 @@ import java.util.Iterator;
 @SuppressWarnings("serial")
 public class SquirrelPreferences implements Serializable
 {
-
    public interface IPropertyNames
    {
       String ACTION_KEYS = "actionKeys";
@@ -69,6 +68,8 @@ public class SquirrelPreferences implements Serializable
       String SESSION_PROPERTIES = "sessionProperties";
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
       String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
+      String TABBED_STYLE = "tabbedStyle";
+      String SHOW_TABBED_STYLE_HINT = "showTabbedStyleHint";
       String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
       String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
       String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
@@ -120,6 +121,10 @@ public class SquirrelPreferences implements Serializable
 	 */
 	private boolean _showContentsWhenDragging = false;
 
+
+   private boolean _tabbedStyle = true;
+
+   private boolean _showTabbedStyleHint = true;
 
 	private boolean _fileOpenInPreviousDir = true;
 
@@ -284,13 +289,44 @@ public class SquirrelPreferences implements Serializable
 		return _mainFrameState;
 	}
 
-	// TODO: Only set if changed
 	public synchronized void setMainFrameWindowState(MainFrameWindowState data)
 	{
 		final MainFrameWindowState oldValue = _mainFrameState;
 		_mainFrameState = data;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.MAIN_FRAME_STATE,
 											oldValue, _mainFrameState);
+	}
+
+	public boolean getTabbedStyle()
+	{
+		return _tabbedStyle;
+	}
+
+	public synchronized void setTabbedStyle(boolean data)
+	{
+		if (data != _tabbedStyle)
+		{
+			final boolean oldValue = _tabbedStyle;
+			_tabbedStyle = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.TABBED_STYLE,
+												oldValue, _tabbedStyle);
+		}
+	}
+
+	public boolean getShowTabbedStyleHint()
+	{
+		return _showTabbedStyleHint;
+	}
+
+	public synchronized void setShowTabbedStyleHint(boolean data)
+	{
+		if (data != _showTabbedStyleHint)
+		{
+			final boolean oldValue = _showTabbedStyleHint;
+			_showTabbedStyleHint = data;
+			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_TABBED_STYLE_HINT,
+												oldValue, _showTabbedStyleHint);
+		}
 	}
 
 	public boolean getShowContentsWhenDragging()
@@ -520,7 +556,6 @@ public class SquirrelPreferences implements Serializable
 		return _actionsKeys[idx];
 	}
 
-	// TODO: Only set if changed? May not be practical.
 	public synchronized void setActionKeys(ActionKeys[] data)
 	{
 		final ActionKeys[] oldValue = _actionsKeys;
@@ -529,7 +564,6 @@ public class SquirrelPreferences implements Serializable
 											oldValue, _actionsKeys);
 	}
 
-	// TODO: Only set if changed? May not be practical.
 	public void setActionKeys(int idx, ActionKeys value)
 	{
 		final ActionKeys[] oldValue = _actionsKeys;
@@ -549,7 +583,6 @@ public class SquirrelPreferences implements Serializable
 		return _pluginStatusInfoColl.get(idx);
 	}
 
-	// TODO: Only set if changed? May not be practical.
 	public synchronized void setPluginStatuses(PluginStatus[] data)
 	{
 		if (data == null)
@@ -565,7 +598,6 @@ public class SquirrelPreferences implements Serializable
 											oldValue, data);
 	}
 
-	// TODO: Only set if changed? May not be practical.
 	public synchronized void setPluginStatus(int idx, PluginStatus value)
 	{
 		_pluginStatusInfoColl.ensureCapacity(idx + 1);
@@ -590,7 +622,6 @@ public class SquirrelPreferences implements Serializable
 	   return new UpdateSettings(_updateSettings); 
 	}
 
-   // TODO: Only set if changed
    public synchronized void setUpdateSettings(IUpdateSettings data)
    {
       if (data == null)
@@ -604,7 +635,6 @@ public class SquirrelPreferences implements Serializable
    }
 	
 	
-	// TODO: Only set if changed
 	public synchronized void setProxySettings(ProxySettings data)
 	{
 		if (data == null)

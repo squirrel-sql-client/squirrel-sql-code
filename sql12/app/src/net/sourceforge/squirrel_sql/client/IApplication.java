@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
@@ -78,6 +79,8 @@ public interface IApplication
 	DataCache getDataCache();
 
 	SquirrelPreferences getSquirrelPreferences();
+
+   DesktopStyle getDesktopStyle();
 
 	SquirrelResources getResources();
 

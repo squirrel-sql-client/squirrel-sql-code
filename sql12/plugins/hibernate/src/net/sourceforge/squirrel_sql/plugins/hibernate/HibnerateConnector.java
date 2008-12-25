@@ -117,7 +117,7 @@ public class HibnerateConnector
 
        for (int i = 0; i < classpathUrls.length; i++)
        {
-          classpathUrls[i] = new File(classpath[i]).toURL();
+          classpathUrls[i] = new File(classpath[i]).toURI().toURL();
        }
 
        URLClassLoader cl = new URLClassLoader(classpathUrls, null);

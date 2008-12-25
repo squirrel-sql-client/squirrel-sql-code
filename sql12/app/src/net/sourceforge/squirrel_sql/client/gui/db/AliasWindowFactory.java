@@ -17,13 +17,12 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -33,8 +32,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * TODO: Move all code other than for window creation up to AliasWindowManager
  * Factory to handle creation of maintenance sheets for SQL Alias objects.
@@ -104,20 +103,21 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		{
 			sheet = new AliasInternalFrame(_app, alias, MODIFY);
 			_modifySheets.put(alias.getIdentifier(), sheet);
-			_app.getMainFrame().addInternalFrame(sheet, true, null);
+			_app.getMainFrame().addWidget(sheet);
 
-			sheet.addInternalFrameListener(new InternalFrameAdapter()
+			sheet.addWidgetListener(new WidgetAdapter()
 			{
-				public void internalFrameClosed(InternalFrameEvent evt)
+				public void widgetClosed(WidgetEvent evt)
 				{
 					synchronized (AliasWindowFactory.this)
 					{
-						AliasInternalFrame frame = (AliasInternalFrame)evt.getInternalFrame();
+   						AliasInternalFrame frame = (AliasInternalFrame)evt.getWidget();
 						_modifySheets.remove(frame.getSQLAlias().getIdentifier());
 					}
 				}
-			});
-			GUIUtils.centerWithinDesktop(sheet);
+         });
+
+         DialogWidget.centerWithinDesktop(sheet);
 		}
 
 		return sheet;
@@ -135,8 +135,8 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasInternalFrame sheet = new AliasInternalFrame(_app, alias, NEW);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
+		_app.getMainFrame().addWidget(sheet);
+      DialogWidget.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
@@ -179,8 +179,8 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 			s_log.error(s_stringMgr.getString("AliasWindowFactory.error.copyAlias"), ex);
 		}
 		final AliasInternalFrame sheet = new AliasInternalFrame(_app, newAlias, COPY);
-		_app.getMainFrame().addInternalFrame(sheet, true, null);
-		GUIUtils.centerWithinDesktop(sheet);
+		_app.getMainFrame().addWidget(sheet);
+		DialogWidget.centerWithinDesktop(sheet);
 		return sheet;
 	}
 
