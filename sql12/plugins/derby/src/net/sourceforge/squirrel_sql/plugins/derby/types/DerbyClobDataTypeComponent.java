@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.derby.types;
  */
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,15 +32,23 @@ import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseKeyTextHandler;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
 /**
  * @author manningr
@@ -88,18 +98,20 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
    /* The CellRenderer used for this data type */
    private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
+   private IOUtilities ioUtils = new IOUtilitiesImpl();
+   
    /**
     * Default Constructor
     */
    public DerbyClobDataTypeComponent() {
    }
 
-   /**
+	/**
     * Return the name of the java class used to hold this data type.
     */
    @Override
    public String getClassName() {
-      return "net.sourceforge.squirrel_sql.plugins.derby.types.ClobDescriptor";
+      return "net.sourceforge.squirrel_sql.plugins.derby.types.DerbyClobDescriptor";
    }
 
    /**
@@ -270,7 +282,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
    }
 
    /**
-    * Validating and converting in Popup is identical to cell-related operation.
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent#validateAndConvertInPopup(java.lang.String, java.lang.Object, java.lang.StringBuffer)
     */
    @Override
    public Object validateAndConvertInPopup(String value, Object originalValue,
@@ -287,6 +299,60 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
        return new KeyTextHandler();
    }
 
+   
+	/**
+	 * Return a JTextField usable in a CellEditor.
+	 */
+	public JTextField getJTextField() {
+		_textComponent = new RestorableJTextField();
+
+		// special handling of operations while editing this data type
+		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
+
+		//
+		// handle mouse events for double-click creation of popup dialog.
+		// This happens only in the JTextField, not the JTextArea, so we can
+		// make this an inner class within this method rather than a separate
+		// inner class as is done with the KeyTextHandler class.
+		//
+		((RestorableJTextField)_textComponent).addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent evt)
+			{
+				if (evt.getClickCount() == 2)
+				{
+					MouseEvent tableEvt = SwingUtilities.convertMouseEvent(
+						(RestorableJTextField)DerbyClobDataTypeComponent.this._textComponent,
+						evt, DerbyClobDataTypeComponent.this._table);
+					CellDataPopup.showDialog(DerbyClobDataTypeComponent.this._table,
+						DerbyClobDataTypeComponent.this._colDef, tableEvt, true);
+				}
+			}
+		});	// end of mouse listener
+
+		return (JTextField)_textComponent;
+	}
+   
+	/*
+	 * Return a JTextArea usable in the CellPopupDialog
+	 * and fill in the value.
+	 */
+	 public JTextArea getJTextArea(Object value) {
+		_textComponent = new RestorableJTextArea();
+
+		// value is a simple string representation of the data,
+		// but NOT the same one used in the Text and in-cell operations.
+		// The in-cell version may replace newline chars with "\n" while this version
+		// does not.  In other respects it is the same as the in-cell version because both
+		// use the _renderer object to do the rendering.
+		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
+
+		// special handling of operations while editing this data type
+		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
+
+		return (RestorableJTextArea)_textComponent;
+	 }
+	
    
    /*
     * The following is used in both cell and popup operations.
@@ -548,12 +614,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
          outWriter.flush();
 
       } finally {
-         if (outWriter != null) {
-            try {
-               outWriter.close();
-            } catch (Exception e) {/* Do nothing */
-            }
-         }
+      	ioUtils.closeWriter(outWriter);
       }
    }
 
