@@ -75,6 +75,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 		expect(columnDisplayDefinition.getPrecision()).andStubReturn(10);
 		expect(columnDisplayDefinition.getScale()).andStubReturn(3);
 		expect(columnDisplayDefinition.getColumnSize()).andStubReturn(10);
+		expect(columnDisplayDefinition.getLabel()).andStubReturn("testLabel");
 		return columnDisplayDefinition;
 	}
 
