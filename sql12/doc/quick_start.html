@@ -114,6 +114,9 @@
 	<TR>
 		<TD><A HREF="#plugins">Plugins</A></TD>
 	</TR>
+        <TR>
+                <TD><A HREF="#updatemanager">Update Manager</A></TD>
+        </TR>
 	<TR>
 		<TD><A HREF="#logs">Logs</A></TD>
 	</TR>
@@ -258,6 +261,11 @@ it has been successfully loaded while the <IMG ALIGN="CENTER"
 indicates that the JDBC driver could not be loaded and so cannot be used
 to connect to a database.</P>
 
+<p>The <IMG ALIGN="CENTER" SRC="images/discovery.gif" BORDER="0"
+ALT="Earth Icon"> toolbar button launches an external web browser with
+the website URL associated with the currently selected driver definition.
+
+
 <P>All of the default driver definitions assume that the JDBC driver
 classes are in the current class path or in your JRE extensions
 directory (consult the documentation for your Java implementation for
@@ -265,7 +273,8 @@ more information on this). If this is not the case you will need to
 modify the driver definition to point to the jar file or the classes
 directory that contains these classes.
 <P>You can create new driver definitions using the <EM>New
-Driver</EM> option on the <EM>Drivers</EM> menu.</P>
+Driver</EM> option on the <EM>Drivers</EM> menu, or by clicking the 
+<IMG ALIGN="CENTER" SRC="images/add_exc.gif"/> toolbar icon</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/chg_driver_1.png" BORDER="0"
 	ALT="Change Driver dialog (Java Class Path tab)"></P>
@@ -281,6 +290,9 @@ List window.</P>
 <P>The <EM>Example URL</EM> shows an example URL for this driver.
 This can be found in the documentation that comes with the driver. This
 is only an example URL, the actual URL is defined in the alias.</P>
+
+<P>The <EM>Website URL</EM> allows you to store a link to the database vendor's
+website for JDBC driver documentation.  
 
 <P>The entries in the <EM>Java Class path</EM> tab show the
 directories and jars in the current class path. Pressing the <EM>List
@@ -311,7 +323,8 @@ without saving any changes.</P>
 <H3>The Alias</H3>
 </A>
 
-<P>Now you need to create an alias to your database.</P>
+<P>Now you need to create an alias for your database. An alias is a descriptive name that is 
+associated with connection details necessary to login to an interactive session with your database.</P>
 
 <P>Display the Aliases List window (<EM>View Aliases</EM> option on
 the <EM>Windows</EM> menu). When you run SQuirreL for the first time
@@ -319,25 +332,35 @@ this window will be empty.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/aliases_tool_window_1.png"
 	BORDER="0" ALT="Aliases List Window">
-<P>Take the <EM>New Alias</EM> option from the <EM>Aliases</EM> menu
-and the following dialog will be displayed.</P>
+<P>You can create new aliases using <EM>New Alias</EM> option from the 
+<EM>Aliases</EM> menu, or by clicking the 
+<IMG ALIGN="CENTER" SRC="images/add_exc.gif"/> toolbar icon.
+The following "Add Alias" dialog will be displayed :</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/add_alias_1.png" BORDER="0"
 	ALT="Add
 New Alias Window"></P>
 
 <P>Enter an easy to remember name in the <EM>Name</EM> field for
-this database URL. This is the text that will be displayed in the
+this database connection Alias. This is the text that will be displayed in the
 Aliases List Window.</P>
 
 <P>Select the driver for this alias from the <EM>Driver</EM>
 dropdown or click on the <EM>New</EM> button to create a new driver
 definition.</P>
 
-<P>Change the <EM>URL</EM> to point to your database.</P>
+<P>Enter the JDBC connection <EM>URL</EM> that is used to connect to your database 
+(Consult the documentation for the JDBC driver that you are using.  Each driver's JDBC 
+connection URL has a slightly different form.  You will see an error message when 
+you attempt to connect to your database if the JDBC URL isn't correct.)
+</P>
 
 <P>Optionally enter a user name if you want the alias to default to
-a specific user.</P>
+a specific user.  A password is also optional here.  <B>Caution: if a 
+password is entered, although it is obscured (****) when displayed here, it 
+is saved in an unencrypted file in clear text in the user's home directory.</B>
+Also note that username and password are required if "Auto Logon" is selected.
+</P>
 
 <P>The <EM>Test</EM> button will allow you to attempt to connect to
 your alias to ensure that the parameters you have entered are correct.</P>
@@ -1732,6 +1755,46 @@ will display a dialog box showing the plugins currently installed.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/plugins_1.png" BORDER="0"
 	ALT="Plugins Summary"></P>
+
+<A NAME="updatemanager">
+<H2>Update Manager</H2>
+</A>
+<p> Once SQuirreL has been installed, the Update Manager feature allows the software to be updated in 
+place when new releases become available.  Additionally, the installed optional plugins and translations 
+can be updated, removed or added at any time.  This means that it is not necessary to uninstall SQuirreL and 
+re-install it when a new version becomes available.  To access the Update Manager, in the main Help menu, 
+select "Software Update" as shown in the figure below:
+
+<P ALIGN="CENTER"><IMG SRC="images/updates-menu.png" BORDER="0"
+        ALT="Software Update Menu"></P>
+
+  The following update dialog window is displayed:
+
+<P ALIGN="CENTER"><IMG SRC="images/update-dialog.png" BORDER="0"
+        ALT="Update Dialog"></P>
+
+To check with the update server for a new release, click the "Check" button.  Clicking on the "Settings" 
+button will display the Update Manager preferences dialog shown below:
+
+
+<P ALIGN="CENTER"><IMG SRC="images/update-settings.png" BORDER="0"
+        ALT="Update Dialog"></P>
+
+
+The "Site Type" setting refers to what kind of update site to use and changes the kinds of configuration items
+that are required :  
+<uL>
+  <li>Remote</li>
+    <ol>
+      <li>Server - the name of the HTTP server to consult for updates (default: www.squirrel-sql.net)</li> 
+      <li>Port - the numeric HTTP port that the server is listening on (default: 80)</li>
+      <li>Path - the path on the server where the channels are found (default: updates)</li>
+    </ol>
+  <li>Local</li>
+    <ol>
+      <li>Local Path - the local directory containing the update files (release.xml file is directly 
+      beneath this directory)</li>
+    </ol>
 
 <A NAME="logs">
 <H2>Logs</H2>
