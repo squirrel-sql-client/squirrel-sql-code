@@ -1,5 +1,13 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import static java.lang.System.currentTimeMillis;
+
+import java.sql.Timestamp;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.junit.Before;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -24,15 +32,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * 
  * @author manningr
  */
-public class DataTypeTimestampTest extends AbstractDataType {
+public class DataTypeTimestampTest extends AbstractDataTypeComponentTest {
 
+	@Before
 	public void setUp() throws Exception {
+		ColumnDisplayDefinition mockColumnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeTimestamp(null, mockColumnDisplayDefinition);
+		mockHelper.resetAll();
 		super.setUp();
-		iut = new DataTypeTimestamp(null, getColDef());
+		
 	}
 
-	public void testTextComponents() {
-		testTextComponents(iut);
+	@Override
+	protected Object getEqualsTestObject()
+	{
+		return new Timestamp(currentTimeMillis());
 	}
 
+	
 }

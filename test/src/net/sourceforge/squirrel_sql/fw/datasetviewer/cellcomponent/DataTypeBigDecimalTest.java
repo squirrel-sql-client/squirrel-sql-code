@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import java.math.BigDecimal;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.junit.Before;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -19,21 +25,28 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 /**
  * JUnit test for DataTypeBigDecimal class.
  * 
  * @author manningr
  */
-public class DataTypeBigDecimalTest extends AbstractDataType {
+public class DataTypeBigDecimalTest extends AbstractDataTypeComponentTest
+{
 
-	public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception
+	{
+		ColumnDisplayDefinition columnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeBigDecimal(null, columnDisplayDefinition);
+		mockHelper.resetAll();
 		super.setUp();
-		iut = new DataTypeBigDecimal(null, getColDef());
 	}
 
-	public void testTextComponents() {
-		testTextComponents(iut);
+	@Override
+	protected Object getEqualsTestObject()
+	{
+		return new BigDecimal(0);
 	}
 
 }

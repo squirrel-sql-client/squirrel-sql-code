@@ -1,5 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import static org.junit.Assert.assertFalse;
+
+import java.sql.Date;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.junit.Before;
+import org.junit.Test;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -24,23 +33,32 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * 
  * @author manningr
  */
-public class DataTypeDateTest extends AbstractDataType {
+public class DataTypeDateTest extends AbstractDataTypeComponentTest
+{
 
-	public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception
+	{
+		ColumnDisplayDefinition columnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeDate(null, columnDisplayDefinition);
+		mockHelper.resetAll();
 		super.setUp();
-		iut = new DataTypeDate(null, getColDef());
 	}
 
-	public void testTextComponents() {
-		testTextComponents(iut);
+	// 1757076 (DATE column seen as TIMESTAMP, update in editable mode fails)
+	// We should always return false for this, when the user hasn't specified
+	@Test
+	public void testGetReadDateAsTimestamp()
+	{
+		assertFalse("Expected default value to be false for read date as timestamp",
+			DataTypeDate.getReadDateAsTimestamp());
 	}
-    
-    // 1757076 (DATE column seen as TIMESTAMP, update in editable mode fails)
-    // We should always return false for this, when the user hasn't specified 
-    public void testGetReadDateAsTimestamp() {
-        
-        assertFalse("Expected default value to be false for read date as timestamp", 
-                    DataTypeDate.getReadDateAsTimestamp());
-    }
+
+	@Override
+	protected Object getEqualsTestObject()
+	{
+		return new Date(System.currentTimeMillis());
+	}
 
 }

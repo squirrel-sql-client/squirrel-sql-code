@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.junit.Before;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -24,15 +28,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * 
  * @author manningr
  */
-public class DataTypeShortTest extends AbstractDataType {
+public class DataTypeShortTest extends AbstractDataTypeComponentTest {
 
+
+	@Before
 	public void setUp() throws Exception {
+		ColumnDisplayDefinition mockColumnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeShort(null, mockColumnDisplayDefinition);
+		mockHelper.resetAll();
 		super.setUp();
-		iut = new DataTypeShort(null, getColDef());
+		
 	}
 
-	public void testTextComponents() {
-		testTextComponents(iut);
+	@Override
+	protected Object getEqualsTestObject()
+	{
+		return Short.valueOf((short) 1);
 	}
 
 }
