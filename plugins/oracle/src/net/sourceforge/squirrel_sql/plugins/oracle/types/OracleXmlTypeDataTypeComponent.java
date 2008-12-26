@@ -98,7 +98,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
         if (s_log.isInfoEnabled()) {
             s_log.info("getDefaultValue: not yet implemented");
         }
-        return null;
+        return dbDefaultValue;
     }
 
     /**
