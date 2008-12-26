@@ -60,6 +60,19 @@ public class EditableSqlCheckTest
 		testGetTableNameFromSQL(sql, "table_name");
 	}
 
+	/**
+	 * TODO: this is a bug in the code at the moment.  If table "test" isn't qualified then this test passes - 
+	 * so we need to beef up qualified tablename handling.
+	 */
+	@Test @Ignore
+	public void testGetTableNameFromSQL_qualifiedtableinjoin() {
+		String sql = "SELECT * FROM dtproperties p, \"dbcopydest\".\"dbo\".\"test\" t " +
+				"where p.objectid = t.myid";
+		testGetTableNameFromSQL(sql, null);
+	}
+		
+
+	
 	@Test
 	public void testGetTableNameFromSQL_OneNewLine() {
 		String sql = "select col1, col2 \n" +
