@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.junit.Before;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -24,15 +28,28 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * 
  * @author manningr
  */
-public class DataTypeUnknownTest extends AbstractDataType {
+public class DataTypeUnknownTest extends AbstractDataTypeComponentTest
+{
 
-	public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception
+	{
+		ColumnDisplayDefinition columnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeUnknown(null, columnDisplayDefinition);
+		mockHelper.resetAll();
 		super.setUp();
-		iut = new DataTypeUnknown(null, getColDef());
+		super.defaultValueIsNull = true;
+		super.canDoFileIO = false;
+		super.isEditableInCell = false;
+		super.isEditableInPopup = false;
 	}
 
-	public void testTextComponents() {
-		testTextComponents(iut);
+	@Override
+	protected Object getEqualsTestObject()
+	{
+		// "Unknown" types are treated as Strings internally in SQuirreL.
+		return "aTestString";
 	}
 
 }
