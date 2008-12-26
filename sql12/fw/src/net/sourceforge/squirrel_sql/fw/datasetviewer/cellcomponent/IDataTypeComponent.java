@@ -233,4 +233,12 @@ public interface IDataTypeComponent {
      * @param table a JTable component
      */
     public void setTable(JTable table);
+    
+    /**
+     * Sets the utility that allows the component to notify the user audibly when there is a 
+     * problem with input data.
+     * 
+     * @param helper
+     */
+    public void setBeepHelper(IToolkitBeepHelper helper);
 }

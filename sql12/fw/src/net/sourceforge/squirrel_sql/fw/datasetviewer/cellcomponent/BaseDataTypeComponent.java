@@ -65,6 +65,9 @@ public class BaseDataTypeComponent {
     /** The JTextComponent that is being used for editing */
     protected RestorableJTextArea _textArea;
     
+    /** Service for subclasses to use to notify the user audibly of a mistake */
+    protected IToolkitBeepHelper _beepHelper = new ToolkitBeepHelper();
+    
     /** The text value that is placed in the cell to indicate a null value */ 
     public static final String NULL_VALUE_PATTERN = "<null>";
     
@@ -278,5 +281,11 @@ public class BaseDataTypeComponent {
    public String getClassName() {
        return "java.lang.String";
    }
-      
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#setBeepHelper(net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IToolkitBeepHelper)
+    */
+   public void setBeepHelper(IToolkitBeepHelper helper) {
+   	this._beepHelper = helper;
+   }
 }

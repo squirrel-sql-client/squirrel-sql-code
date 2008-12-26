@@ -18,21 +18,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -308,7 +310,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 						text = text.substring(0, index) + text.substring(index + 1);
 					}
 					((IRestorableTextComponent) _theComponent).updateText(text);
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 				}
 				e.consume();
 			}
@@ -339,7 +341,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 				//
 				// we have already handled all legal input,
 				// so just tell user this is being ignored
-				_theComponent.getToolkit().beep();
+				_beepHelper.beep(_theComponent);
 				e.consume();
 			}
 		}
