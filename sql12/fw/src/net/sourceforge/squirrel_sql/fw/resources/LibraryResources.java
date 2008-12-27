@@ -21,11 +21,6 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class LibraryResources extends Resources
 {
-   public void getIcon(Object keyName)
-   {
-      //To change body of created methods use File | Settings | File Templates.
-   }
-
    public interface IImageNames
    {
       String TABLE_ASCENDING = "table.ascending";
