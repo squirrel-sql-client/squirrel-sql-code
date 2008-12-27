@@ -69,7 +69,8 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 	 */
 	protected ColumnDisplayDefinition getMockColumnDisplayDefinition()
 	{
-		ColumnDisplayDefinition columnDisplayDefinition = mockHelper.createMock(ColumnDisplayDefinition.class);
+		ColumnDisplayDefinition columnDisplayDefinition = 
+			mockHelper.createMock("testColumnDisplayDefinition", ColumnDisplayDefinition.class);
 		expect(columnDisplayDefinition.isNullable()).andStubReturn(false);
 		expect(columnDisplayDefinition.isSigned()).andStubReturn(false);
 		expect(columnDisplayDefinition.getPrecision()).andStubReturn(10);
@@ -95,6 +96,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 	public void tearDown() throws Exception
 	{
 		classUnderTest = null;
+		mockHelper.resetAll();
 	}
 
 	@Test
@@ -138,7 +140,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 	public void testIsEditableInCell()
 	{
 		Object testObject = getEqualsTestObject();
-		;
+		
 		mockHelper.replayAll();
 		if (isEditableInCell)
 		{

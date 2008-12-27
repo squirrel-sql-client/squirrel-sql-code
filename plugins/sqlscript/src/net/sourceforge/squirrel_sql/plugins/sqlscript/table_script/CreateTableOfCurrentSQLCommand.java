@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
@@ -142,7 +143,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          }
          finally
          {
-            try {stmt.close();} catch (Exception e) {}
+            SQLUtilities.closeStatement(stmt);
          }
 
 
@@ -227,51 +228,4 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       }
    }
 
-   private String getTableName()
-   {
-      return "ygwaTest";
-   }
-
-   private String getNextToken(String selectSQL, int startPos)
-   {
-      int curPos = startPos;
-      while(curPos < selectSQL.length() && true == Character.isWhitespace(selectSQL.charAt(curPos)))
-      {
-         // Move over leading whitespaces
-         ++curPos;
-      }
-
-      int startPosTrimed = curPos;
-
-
-      while(curPos < selectSQL.length() && false == Character.isWhitespace(selectSQL.charAt(curPos)))
-      {
-         ++curPos;
-      }
-
-      return selectSQL.substring(startPosTrimed, curPos);
-   }
-
-   private int getTokenBeginIndex(String selectSQL, String token)
-   {
-      String lowerSel = selectSQL.toLowerCase();
-      String lowerToken = token.toLowerCase().trim();
-
-      int curPos = 0;
-      while(-1 != curPos)
-      {
-         curPos = lowerSel.indexOf(lowerToken);
-
-         if(
-                -1 < curPos
-             && (0 == curPos || Character.isWhitespace(lowerSel.charAt(curPos-1)))
-             && (lowerSel.length() == curPos + lowerToken.length() || Character.isWhitespace(lowerSel.charAt(curPos + lowerToken.length())))
-           )
-         {
-            return curPos;
-         }
-      }
-
-      return curPos;
-   }
 }

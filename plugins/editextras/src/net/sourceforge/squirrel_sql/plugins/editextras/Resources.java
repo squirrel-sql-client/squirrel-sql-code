@@ -29,8 +29,4 @@ public final class Resources extends PluginResources
 	{
 		super(Resources.class.getName(), plugin);
 	}
-
-	interface IKeys
-	{
-	}
 }

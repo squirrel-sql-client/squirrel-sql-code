@@ -1,33 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
    implements ISQLPanelAction
 {
+   private static final long serialVersionUID = 1L;
 
    /**
     * Current panel.
     */
    private ISQLPanelAPI _panel;
-
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ViewObjectAtCursorInObjectTreeAction.class);
-   
 
    /**
     * Ctor specifying Application API.

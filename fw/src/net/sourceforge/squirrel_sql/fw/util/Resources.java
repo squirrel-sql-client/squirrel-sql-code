@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.util;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -30,20 +31,25 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class Resources
 {
-   public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
+	public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
 
 	private interface ActionProperties
 	{
 		String DISABLED_IMAGE = "disabledimage";
+
 		String IMAGE = "image";
+
 		String NAME = "name";
+
 		String ROLLOVER_IMAGE = "rolloverimage";
+
 		String TOOLTIP = "tooltip";
 	}
 
 	private interface MenuProperties
 	{
 		String TITLE = "title";
+
 		String MNEMONIC = "mnemonic";
 	}
 
@@ -55,7 +61,9 @@ public abstract class Resources
 	private interface Keys
 	{
 		String ACTION = "action";
+
 		String MENU = "menu";
+
 		String MENU_ITEM = "menuitem";
 	}
 
@@ -71,8 +79,7 @@ public abstract class Resources
 	/** Path to images. */
 	private final String _imagePath;
 
-	protected Resources(String rsrcBundleBaseName, ClassLoader cl)
-	{
+	protected Resources(String rsrcBundleBaseName, ClassLoader cl) {
 		super();
 		if (rsrcBundleBaseName == null || rsrcBundleBaseName.trim().length() == 0)
 		{
@@ -86,6 +93,7 @@ public abstract class Resources
 
 	public KeyStroke getKeyStroke(Action action)
 	{
+		Utilities.checkNull("getKeyStroke", "action", action);
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 
 		String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
@@ -96,24 +104,22 @@ public abstract class Resources
 		return null;
 	}
 
-   private String getAcceleratorString(Action action)
-   {
-      try
-      {
-         final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
-         return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
-      }
-      catch (MissingResourceException e)
-      {
-         return null;
-      }
-   }
-
-
+	private String getAcceleratorString(Action action)
+	{
+		try
+		{
+			final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
+			return getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+		} catch (MissingResourceException e)
+		{
+			return null;
+		}
+	}
 
 	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu)
-		throws MissingResourceException
+	      throws MissingResourceException
 	{
+		Utilities.checkNull("addToPopupMenu", "action", action, "menu", menu);
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 		final JMenuItem item = menu.add(action);
 
@@ -143,25 +149,24 @@ public abstract class Resources
 	}
 
 	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JMenu menu)
-		throws MissingResourceException
+	      throws MissingResourceException
 	{
+		Utilities.checkNull("addToMenuAsCheckBoxMenuItem", "action", action, "menu", menu);
 		final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
 		menu.add(item);
 		configureMenuItem(action, item);
 		return item;
 	}
 
-   public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JPopupMenu popupMenu)
-   {
-      final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
-      popupMenu.add(item);
-      configureMenuItem(action, item);
-      return item;
-   }
+	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JPopupMenu popupMenu)
+	{
+		final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
+		popupMenu.add(item);
+		configureMenuItem(action, item);
+		return item;
+	}
 
-
-   public JMenuItem addToMenu(Action action, JMenu menu)
-		throws MissingResourceException
+	public JMenuItem addToMenu(Action action, JMenu menu) throws MissingResourceException
 	{
 		final JMenuItem item = menu.add(action);
 		configureMenuItem(action, item);
@@ -183,11 +188,12 @@ public abstract class Resources
 
 	/**
 	 * Setup the passed action from the resource bundle.
-	 *
-	 * @param	action		Action being setup.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			thrown if <TT>null</TT> <TT>action</TT> passed.
+	 * 
+	 * @param action
+	 *        Action being setup.
+	 * 
+	 * @throws IllegalArgumentException
+	 *         thrown if <TT>null</TT> <TT>action</TT> passed.
 	 */
 	public void setupAction(Action action, boolean showColoricons)
 	{
@@ -200,47 +206,42 @@ public abstract class Resources
 		final String key = Keys.ACTION + "." + actionClassName;
 		action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
 
-
 		String shortDescription = getResourceString(key, ActionProperties.TOOLTIP);
 
 		String acceleratorString = getAcceleratorString(action);
-		if(null != acceleratorString && 0 < acceleratorString.trim().length())
+		if (null != acceleratorString && 0 < acceleratorString.trim().length())
 		{
 			shortDescription += "  (" + acceleratorString + ")";
 
 		}
 
-		action.putValue(Action.SHORT_DESCRIPTION,	shortDescription );
+		action.putValue(Action.SHORT_DESCRIPTION, shortDescription);
 
-      String accelerator = getAcceleratorString(action);
-      if(null != accelerator)
-      {
-         action.putValue(ACCELERATOR_STRING, accelerator);
-      }
+		String accelerator = getAcceleratorString(action);
+		if (null != accelerator)
+		{
+			action.putValue(ACCELERATOR_STRING, accelerator);
+		}
 
-
-      Icon icon = null;
+		Icon icon = null;
 		try
 		{
 			if (showColoricons == true)
 			{
 				icon = getIcon(key, ActionProperties.ROLLOVER_IMAGE);
 				action.putValue(Action.SMALL_ICON, icon);
-			}
-			else
+			} else
 			{
 				icon = getIcon(key, ActionProperties.IMAGE);
 				action.putValue(Action.SMALL_ICON, icon);
 			}
-		}
-		catch (MissingResourceException ex)
+		} catch (MissingResourceException ex)
 		{
 			try
 			{
 				icon = getIcon(key, ActionProperties.IMAGE);
 				action.putValue(Action.SMALL_ICON, icon);
-			}
-			catch (MissingResourceException ignore)
+			} catch (MissingResourceException ignore)
 			{
 				// Ignore
 			}
@@ -250,8 +251,7 @@ public abstract class Resources
 		{
 			icon = getIcon(key, ActionProperties.ROLLOVER_IMAGE);
 			action.putValue(BaseAction.IBaseActionPropertyNames.ROLLOVER_ICON, icon);
-		}
-		catch (MissingResourceException ignore)
+		} catch (MissingResourceException ignore)
 		{
 			// Ignore
 		}
@@ -260,8 +260,7 @@ public abstract class Resources
 		{
 			icon = getIcon(key, ActionProperties.DISABLED_IMAGE);
 			action.putValue(BaseAction.IBaseActionPropertyNames.DISABLED_ICON, icon);
-		}
-		catch (MissingResourceException ignore)
+		} catch (MissingResourceException ignore)
 		{
 			// Ignore
 		}
@@ -299,11 +298,12 @@ public abstract class Resources
 			{
 				s_log.error("can't load image: " + rsrcName);
 			}
-		}
-		else
+		} else
 		{
-			s_log.debug("No resource found for " + keyName + " : "
-							+ propName);
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("No resource found for " + keyName + " : " + propName);
+			}
 		}
 
 		return icon;
@@ -311,12 +311,13 @@ public abstract class Resources
 
 	public String getString(String key)
 	{
+		Utilities.checkNull("getString", "key", key);
 		return _bundle.getString(key);
 	}
 
-	public void configureMenuItem(Action action, JMenuItem item)
-		throws MissingResourceException
+	public void configureMenuItem(Action action, JMenuItem item) throws MissingResourceException
 	{
+		Utilities.checkNull("configureMenuItem", "action", action, "item", item);
 		final String fullKey = Keys.MENU_ITEM + "." + action.getClass().getName();
 
 		if (action.getValue(Action.MNEMONIC_KEY) == null)
@@ -339,17 +340,16 @@ public abstract class Resources
 
 		String toolTipText = getToolTipTextWithAccelerator(action, fullKey);
 
-
 		item.setToolTipText(toolTipText);
 
-		//item.setIcon(null);
+		// item.setIcon(null);
 	}
 
 	private String getToolTipTextWithAccelerator(Action action, String fullKey)
 	{
 		String toolTipText = (String) action.getValue(Action.SHORT_DESCRIPTION);
 
-		if(null == toolTipText)
+		if (null == toolTipText)
 		{
 			toolTipText = "";
 		}
@@ -358,10 +358,9 @@ public abstract class Resources
 			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
 			if (null != accel && accel.length() > 0)
 			{
-			 	toolTipText += "  (" + accel + ")";
+				toolTipText += "  (" + accel + ")";
 			}
-		}
-		catch (MissingResourceException e)
+		} catch (MissingResourceException e)
 		{
 			// Some actions dont have accelerators
 		}
@@ -380,35 +379,31 @@ public abstract class Resources
 			URL url;
 			String imagePathName = getImagePathName(iconName);
 
-			if(null == _classLoader)
+			if (null == _classLoader)
 			{
 				url = getClass().getResource(imagePathName);
 
 				// This slash stuff is a ...
-				if(null == url && imagePathName.startsWith("/"))
+				if (null == url && imagePathName.startsWith("/"))
 				{
 					url = getClass().getResource(imagePathName.substring(1));
-				}
-				else if(null == url && false == imagePathName.startsWith("/"))
+				} else if (null == url && false == imagePathName.startsWith("/"))
 				{
 					url = getClass().getResource("/" + imagePathName);
 				}
 
-			}
-			else
+			} else
 			{
 				url = _classLoader.getResource(imagePathName);
 
-				if(null == url && imagePathName.startsWith("/"))
+				if (null == url && imagePathName.startsWith("/"))
 				{
 					url = _classLoader.getResource(imagePathName.substring(1));
-				}
-				else if(null == url && false == imagePathName.startsWith("/"))
+				} else if (null == url && false == imagePathName.startsWith("/"))
 				{
 					url = _classLoader.getResource("/" + imagePathName);
 				}
 			}
-
 
 			if (url != null)
 			{
@@ -418,8 +413,7 @@ public abstract class Resources
 		return null;
 	}
 
-	private String getResourceString(String keyName, String propName)
-		throws MissingResourceException
+	private String getResourceString(String keyName, String propName) throws MissingResourceException
 	{
 		return _bundle.getString(keyName + "." + propName);
 	}

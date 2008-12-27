@@ -1,7 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.sql.DatabaseMetaData;
-
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 

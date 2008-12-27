@@ -1,11 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions.AbstractJoin.ColBuffer;
-
 import java.util.Hashtable;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 
 public class RightJoin extends AbstractJoin

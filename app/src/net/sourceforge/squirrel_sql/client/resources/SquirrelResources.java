@@ -23,9 +23,10 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class SquirrelResources extends Resources
 {
-	//public final static int S_SPLASH_IMAGE_BACKGROUND = 0xADAFC4;
 	public final static int S_SPLASH_IMAGE_BACKGROUND = 0xAEB0C5;
 
+	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.client.resources.squirrel";
+	
 	private final String _defaultsPath;
 
 	public interface IMenuResourceKeys

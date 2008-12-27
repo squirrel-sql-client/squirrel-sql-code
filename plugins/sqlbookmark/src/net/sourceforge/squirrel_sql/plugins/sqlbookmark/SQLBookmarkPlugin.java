@@ -78,17 +78,11 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       String BOOKMARKS = "bookmarks";
    }
 
-   private static String RESOURCE_PATH =
+   public static String RESOURCE_PATH =
       "net.sourceforge.squirrel_sql.plugins.sqlbookmark.sqlbookmark";
 
    private static ILogger logger =
       LoggerController.createLogger(SQLBookmarkPlugin.class);
-
-   /**
-    * The app folder for this plugin.
-    */
-   private File pluginAppFolder;
-
 
    private PluginResources resources;
 
@@ -236,17 +230,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       super.initialize();
 
       IApplication app = getApplication();
-
-      // Folder within plugins folder that belongs to this
-      // plugin.
-      try
-      {
-         pluginAppFolder = getPluginAppSettingsFolder();
-      }
-      catch (IOException ex)
-      {
-         throw new PluginException(ex);
-      }
 
       // Load resources such as menu items, etc...
       resources = new SQLBookmarkResources(RESOURCE_PATH, this);

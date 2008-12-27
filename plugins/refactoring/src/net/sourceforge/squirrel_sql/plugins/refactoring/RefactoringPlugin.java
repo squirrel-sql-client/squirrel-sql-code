@@ -64,7 +64,10 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.tab.SupportedRefactoring
  * The Refactoring plugin class.
  */
 public class RefactoringPlugin extends DefaultSessionPlugin {
-    private interface IMenuResourceKeys {
+    public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.refactoring.refactoring";
+
+
+	private interface IMenuResourceKeys {
         String REFACTORING = "refactoring";
         String TABLE = "Table";
         String COLUMN = "Column";
@@ -189,7 +192,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         super.initialize();
         IApplication app = getApplication();
 
-        _resources = new SQLPluginResources("net.sourceforge.squirrel_sql.plugins.refactoring.refactoring", this);
+        _resources = new SQLPluginResources(BUNDLE_BASE_NAME, this);
 
         ActionCollection coll = app.getActionCollection();
         coll.add(new AddAutoIncrementAction(app, _resources));

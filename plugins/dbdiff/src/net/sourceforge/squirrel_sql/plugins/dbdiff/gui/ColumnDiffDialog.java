@@ -471,11 +471,7 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
             return result;
         }
     }
-    
-    private static class CornerTableColumnModel extends DefaultTableColumnModel {
         
-    }
-    
     private static class CornerTableModel extends DefaultTableModel {
 
         private static final long serialVersionUID = 1L;
@@ -673,7 +669,7 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
                 }
                 break;
             default: 
-               System.err.println("Unknown column: " + column);
+               s_log.error("Unknown column: " + column);
             }
             return label;       
          }

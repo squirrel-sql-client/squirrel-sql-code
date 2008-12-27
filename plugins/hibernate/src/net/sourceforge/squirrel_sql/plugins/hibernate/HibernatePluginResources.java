@@ -3,8 +3,6 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
-import java.io.File;
-
 public final class HibernatePluginResources extends PluginResources
 {
 	HibernatePluginResources(IPlugin plugin)

@@ -8,7 +8,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.*;
 import java.util.Arrays;
 
-public class AliasFolderState implements Comparable
+public class AliasFolderState implements Comparable<AliasFolderState>
 {
    private AliasFolderState[] _kids = new AliasFolderState[0];
    private IIdentifier _aliasIdentifier;
@@ -171,10 +171,8 @@ public class AliasFolderState implements Comparable
       }
    }
 
-   public int compareTo(Object o)
+   public int compareTo(AliasFolderState other)
    {
-      AliasFolderState other = (AliasFolderState) o;
-
       if(null == _aliasIdentifier && null != other._aliasIdentifier)
       {
          return -1;

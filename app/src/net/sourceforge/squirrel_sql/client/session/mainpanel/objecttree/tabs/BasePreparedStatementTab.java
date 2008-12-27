@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
+
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -30,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -50,17 +52,14 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 	/** Component to display in tab. */
 	private DataSetScrollingPanel _comp;
 
-    /** Logger for this class. */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(BasePreparedStatementTab.class);
-            
-	public BasePreparedStatementTab(String title, String hint)
-	{
+	/** Logger for this class. */
+	private final static ILogger s_log = LoggerController.createLogger(BasePreparedStatementTab.class);
+
+	public BasePreparedStatementTab(String title, String hint) {
 		this(title, hint, false);
 	}
 
-	public BasePreparedStatementTab(String title, String hint, boolean firstRowOnly)
-	{
+	public BasePreparedStatementTab(String title, String hint, boolean firstRowOnly) {
 		super();
 		if (title == null)
 		{
@@ -73,8 +72,8 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 
 	/**
 	 * Return the title for the tab.
-	 *
-	 * @return	The title for the tab.
+	 * 
+	 * @return The title for the tab.
 	 */
 	public String getTitle()
 	{
@@ -83,8 +82,8 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 
 	/**
 	 * Return the hint for the tab.
-	 *
-	 * @return	The hint for the tab.
+	 * 
+	 * @return The hint for the tab.
 	 */
 	public String getHint()
 	{
@@ -99,16 +98,17 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 	{
 		if (_comp == null)
 		{
-		    ISession session = getSession();
-            SessionProperties props = session.getProperties();
-            String destClassName = props.getMetaDataOutputClassName();
-            try {
-                _comp = new DataSetScrollingPanel(destClassName, null);
-            } catch (Exception e) {
-                s_log.error("Unexpected exception from call to getComponent: "+
-                            e.getMessage(), e);
-            }
-            
+			ISession session = getSession();
+			SessionProperties props = session.getProperties();
+			String destClassName = props.getMetaDataOutputClassName();
+			try
+			{
+				_comp = new DataSetScrollingPanel(destClassName, null);
+			} catch (Exception e)
+			{
+				s_log.error("Unexpected exception from call to getComponent: " + e.getMessage(), e);
+			}
+
 		}
 		return _comp;
 	}
@@ -120,46 +120,34 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		{
 			throw new IllegalStateException("Null ISession");
 		}
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		try
 		{
-			PreparedStatement pstmt = createStatement();
-			try
-			{
-				ResultSet rs = pstmt.executeQuery();
-				try
-				{
-					final IDataSet ds = createDataSetFromResultSet(rs);
-					_comp.load(ds);
-				}
-				finally
-				{
-					rs.close();
-				}
-			}
-			finally
-			{
-				pstmt.close();
-			}
-		}
-		catch (SQLException ex)
+			pstmt = createStatement();
+			rs = pstmt.executeQuery();
+			final IDataSet ds = createDataSetFromResultSet(rs);
+			_comp.load(ds);
+		} catch (SQLException ex)
 		{
 			throw new DataSetException(ex);
+		} finally
+		{
+			SQLUtilities.closeResultSet(rs, true);
 		}
 	}
 
 	/**
-	 * Subclasses must implement this to provide a PreparedStatement that has
-	 * it's parameter values bound and is ready to be executed.  It will be 
-	 * used in refreshComponent to load a DataSet into this tab.
-	 *  
+	 * Subclasses must implement this to provide a PreparedStatement that has it's parameter values bound and
+	 * is ready to be executed. It will be used in refreshComponent to load a DataSet into this tab.
+	 * 
 	 * @return the PreparedStatement to execute.
 	 * 
 	 * @throws SQLException
 	 */
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
-	protected IDataSet createDataSetFromResultSet(ResultSet rs)
-		throws DataSetException
+	protected IDataSet createDataSetFromResultSet(ResultSet rs) throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
 		rsds.setResultSet(rs, getDialectType());

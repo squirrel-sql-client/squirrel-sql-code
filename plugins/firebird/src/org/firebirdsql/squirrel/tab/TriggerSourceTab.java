@@ -51,7 +51,10 @@ public class TriggerSourceTab extends BaseSourceTab
 	{
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
+		if (s_log.isDebugEnabled()) {
+			s_log.debug("Preparing trigger SQL statement: "+SQL);
+			s_log.debug("trigger name = "+doi.getSimpleName());
+		}
 		ISQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName());

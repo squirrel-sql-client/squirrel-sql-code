@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.firebirdmanager.gui.FirebirdManagerGrantDbObject;
@@ -65,12 +66,12 @@ public class FirebirdManagerDataAccess {
 			IscSvcHandle iscSvcHandle = fbUserManager.attachServiceManager(fbUserManager.getGds());
 			Map<String,FBUser> mapUsers = null;
 			try {
-				mapUsers = (Map<String,FBUser>)fbUserManager.getUsers();
+				mapUsers = fbUserManager.getUsers();
 			} catch (Exception e) {
 				log.error(e.getLocalizedMessage());
 			}
 
-			Collection<FBUser> listUsers = (Collection<FBUser>)mapUsers.values();
+			Collection<FBUser> listUsers = mapUsers.values();
 			for (Iterator iter = listUsers.iterator(); iter.hasNext();) {
 				listFBUser.add((FBUser) iter.next());
 			}
@@ -170,9 +171,11 @@ public class FirebirdManagerDataAccess {
 				+ " From RDB$RELATIONS" 
 				+ " Where RDB$SYSTEM_FLAG = 0"
 				+ " Order By RDB$RELATION_NAME";
+		Statement stmt = null;
+		ResultSet rsTables = null;
 		try {
-			Statement stmt = session.getSQLConnection().getConnection().createStatement();
-			ResultSet rsTables = stmt.executeQuery(sql);
+			stmt = session.getSQLConnection().getConnection().createStatement();
+			rsTables = stmt.executeQuery(sql);
 			while (rsTables.next()) {
 				//listTable.add(rsTables.getString("RDB$RELATION_NAME").trim());
 				String description = rsTables.getString("RDB$DESCRIPTION");
@@ -184,10 +187,10 @@ public class FirebirdManagerDataAccess {
 						rsTables.getString("RDB$OWNER_NAME").trim(),
 						description));
 			}
-			rsTables.close();
-			stmt.close();
 		} catch (SQLException e) {
 			log.error(e.getLocalizedMessage());
+		} finally {
+			SQLUtilities.closeResultSet(rsTables, true);
 		}
 		
 		

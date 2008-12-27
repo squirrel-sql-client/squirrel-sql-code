@@ -34,20 +34,15 @@ import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class AppPreferencesPanel extends JPanel
 {
+   private static final long serialVersionUID = 1L;
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AppPreferencesPanel.class);
-
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(AppPreferencesPanel.class);
 
 	// i18n[sqlval.info=This plugin uses version 1.0 of the SQL Validator Web Service developed by MimerSQL http://sqlvalidator.mimer.com. The SQL Statement is stored anonymously to be used by the ISO SQL Standards committee.]
 	private static final String INFO = s_stringMgr.getString("sqlval.info");

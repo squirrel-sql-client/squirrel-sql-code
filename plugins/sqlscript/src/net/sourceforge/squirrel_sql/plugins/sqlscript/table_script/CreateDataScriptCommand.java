@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -170,13 +171,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                }
                finally
                {
-                  try
-                  {
-                     stmt.close();
-                  }
-                  catch (Exception e)
-                  {
-                  }
+               	SQLUtilities.closeStatement(stmt);
                }
             }
             catch (Exception e)

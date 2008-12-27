@@ -1,19 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import java.net.URLClassLoader;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyInfo;
-
-import java.net.URLClassLoader;
-import java.util.*;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-
-import org.hibernate.persister.entity.AbstractEntityPersister;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 
 public class HibernateConnection
 {

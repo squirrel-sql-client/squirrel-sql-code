@@ -14,6 +14,8 @@ import java.sql.Statement;
 
 public class ScriptDB2ViewAction extends SquirrelAction
 {
+   private static final long serialVersionUID = 1L;
+
    private ISession _session;
 
 

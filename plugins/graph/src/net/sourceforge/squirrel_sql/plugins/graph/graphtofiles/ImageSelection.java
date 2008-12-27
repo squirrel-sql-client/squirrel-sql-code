@@ -1,14 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.graph.graphtofiles;
 
-import javax.swing.*;
-import java.awt.datatransfer.Transferable;
+import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.datatransfer.Clipboard;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
+
+import javax.swing.AbstractButton;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.TransferHandler;
 
 
 /**
@@ -19,8 +22,9 @@ import java.io.IOException;
 public class ImageSelection extends TransferHandler
    implements Transferable
 {
+   private static final long serialVersionUID = 1L;
 
-   private static final DataFlavor flavors[] =
+	private static final DataFlavor flavors[] =
       {
          DataFlavor.imageFlavor,
          new DataFlavor("image/jpeg","JPEG image"),

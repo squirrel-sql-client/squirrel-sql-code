@@ -102,7 +102,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
  * @author Lynn Pye
  */
 class Application implements IApplication
-{
+{	
+
 	/** Logger for this class. */
 	private static ILogger s_log;
 
@@ -213,7 +214,7 @@ class Application implements IApplication
 
 		// TODO: Make properties file Application.properties so we can use class
 		// name to generate properties file name.
-		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
+		_resources = new SquirrelResources(SquirrelResources.BUNDLE_BASE_NAME);
 		_prefs = SquirrelPreferences.load();
       _desktopStyle = new DesktopStyle(_prefs);
 		Locale.setDefault(constructPreferredLocale(_prefs));

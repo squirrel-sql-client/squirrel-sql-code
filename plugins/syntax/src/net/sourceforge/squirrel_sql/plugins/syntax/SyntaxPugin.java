@@ -27,11 +27,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -40,16 +38,13 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -57,14 +52,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEditorPane;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLKit;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsInitializer;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
-
-import org.netbeans.editor.BaseKit;
 
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
@@ -344,8 +334,6 @@ public class SyntaxPugin extends DefaultSessionPlugin
       SessionInternalFrame sif = session.getSessionInternalFrame();
 
       ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
-      ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
-      JComponent septc = sep.getTextComponent();
 
       new ToolsPopupHandler(this).initToolsPopup(sif, coll);
 
