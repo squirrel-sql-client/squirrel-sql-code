@@ -100,6 +100,7 @@ public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 		expect(mockResultSetMetaData.getScale(1)).andStubReturn(3);
 
 		mockResultSet.close();
+		expect(mockResultSet.getStatement()).andStubReturn(mockPreparedStatement);
 		mockPreparedStatement.close();
 
 		mockHelper.replayAll();

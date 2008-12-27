@@ -26,7 +26,6 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -59,6 +58,8 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	private IDatabaseObjectInfo[] selectedDatabaseObjects = null;
 
 	private IDatabaseObjectInfo[] selectedDestDatabaseObjects = null;
+
+	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.dbdiff.dbdiff";
 
 	/* (non-Javadoc)
 	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
@@ -149,8 +150,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 			s_log.debug("Initializing DB Diff Plugin");
 		}
 
-		_resources = new DBDiffPluginResources("net.sourceforge.squirrel_sql.plugins.dbdiff.dbdiff", this);
-		// PreferencesManager.initialize(this);
+		_resources = new DBDiffPluginResources(DBDiffPlugin.BUNDLE_BASE_NAME, this);
 
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
@@ -224,14 +224,6 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 					addToPopup(api, coll);
 				}
 			});
-		}
-	}
-
-	private class DBDiffPluginResources extends PluginResources
-	{
-		DBDiffPluginResources(String rsrcBundleBaseName, IPlugin plugin)
-		{
-			super(rsrcBundleBaseName, plugin);
 		}
 	}
 

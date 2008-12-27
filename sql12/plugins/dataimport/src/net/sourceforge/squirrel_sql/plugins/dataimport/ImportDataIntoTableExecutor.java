@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -209,9 +210,7 @@ public class ImportDataIntoTableExecutor {
     		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.ioException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
     		log.error("Error while reading file", ioe);
     	} finally {
-    		if (stmt != null) {
-    			try { stmt.close(); } catch (SQLException sqle) { /* Do nothing */ }
-    		}
+    		SQLUtilities.closeStatement(stmt);
     		ProgressBarDialog.dispose();
     	}
     	

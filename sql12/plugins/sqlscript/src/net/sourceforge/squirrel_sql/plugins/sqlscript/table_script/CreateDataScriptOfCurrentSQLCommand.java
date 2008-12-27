@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -108,13 +109,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                }
                finally
                {
-                  try
-                  {
-                     stmt.close();
-                  }
-                  catch (Exception e)
-                  {
-                  }
+               	SQLUtilities.closeStatement(stmt);
                }
             }
             catch (Exception e)

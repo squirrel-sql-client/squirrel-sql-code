@@ -72,9 +72,9 @@ public class DatabaseTypesDataSetTest extends BaseSQuirreLJUnit4TestCase
 
 		expect(resultSet.next()).andReturn(true).times(3);
 		expect(resultSet.next()).andReturn(false);
-		expect(resultSet.getShort(7)).andReturn((short)DatabaseMetaData.attributeNoNulls);
-		expect(resultSet.getShort(7)).andReturn((short)DatabaseMetaData.attributeNullable);
-		expect(resultSet.getShort(7)).andReturn((short)DatabaseMetaData.attributeNullableUnknown);
+		expect(resultSet.getShort(7)).andReturn(DatabaseMetaData.attributeNoNulls);
+		expect(resultSet.getShort(7)).andReturn(DatabaseMetaData.attributeNullable);
+		expect(resultSet.getShort(7)).andReturn(DatabaseMetaData.attributeNullableUnknown);
 		
 		mockHelper.replayAll();
 		classUnderTest = new DatabaseTypesDataSet(resultSet, columnIndices);

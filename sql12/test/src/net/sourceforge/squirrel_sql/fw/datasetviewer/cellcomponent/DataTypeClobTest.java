@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 import org.junit.Before;
 
+import utils.EasyMockHelper;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -31,12 +33,17 @@ import org.junit.Before;
  */
 public class DataTypeClobTest extends AbstractDataTypeComponentTest {
 
+	EasyMockHelper localMockHelper = new EasyMockHelper();
+	
 	@Before
 	public void setUp() throws Exception {
-		ColumnDisplayDefinition mockColumnDisplayDefinition = getMockColumnDisplayDefinition();
-		mockHelper.replayAll();
+		ColumnDisplayDefinition mockColumnDisplayDefinition = 
+			localMockHelper.createMock("testCDD", ColumnDisplayDefinition.class);
+		org.easymock.classextension.EasyMock.expect(mockColumnDisplayDefinition.isNullable()).andStubReturn(false);
+		org.easymock.classextension.EasyMock.replay(mockColumnDisplayDefinition);
+		
 		classUnderTest = new DataTypeClob(null, mockColumnDisplayDefinition);
-		mockHelper.resetAll();
+
 		super.setUp();
 		super.defaultValueIsNull = true;
 	}
@@ -44,7 +51,7 @@ public class DataTypeClobTest extends AbstractDataTypeComponentTest {
 	@Override
 	protected Object getEqualsTestObject()
 	{
-		ClobDescriptor result = mockHelper.createMock(ClobDescriptor.class);
+		ClobDescriptor result = mockHelper.createMock("testClobDescriptor", ClobDescriptor.class);
 		expect(result.getWholeClobRead()).andStubReturn(true);
 		expect(result.getData()).andStubReturn("aTestString");
 		ClobDescriptor nullClobDesc = null;

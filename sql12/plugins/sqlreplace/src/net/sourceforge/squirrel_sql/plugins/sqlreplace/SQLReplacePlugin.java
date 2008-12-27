@@ -60,7 +60,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	 */
 	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
 
-	private static String RESOURCE_PATH = "net.sourceforge.squirrel_sql.plugins.sqlreplace.sqlreplace";
+	public static String RESOURCE_PATH = "net.sourceforge.squirrel_sql.plugins.sqlreplace.sqlreplace";
 
 	private static ILogger logger = LoggerController.createLogger(SQLReplacePlugin.class);
 

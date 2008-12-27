@@ -116,7 +116,7 @@ public class TableTypeExpander implements INodeExpander
 				}
 				finally
 				{
-					rs.close();
+					SQLUtilities.closeResultSet(rs);
 				}
 			}
 			catch (SQLException ex)

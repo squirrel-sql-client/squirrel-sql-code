@@ -29,7 +29,6 @@ public class SQLReplaceResources extends PluginResources {
 	 */
 	public SQLReplaceResources(String rsrcBundleBaseName, IPlugin plugin) {
 		super(rsrcBundleBaseName, plugin);
-		// TODO Auto-generated constructor stub
 	}
 
 	

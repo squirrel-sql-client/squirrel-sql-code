@@ -1,8 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-
-import java.awt.event.MouseEvent;
 /*
  * Copyright (C) 2004 Colin Bell
  * colbell@users.sourceforge.net

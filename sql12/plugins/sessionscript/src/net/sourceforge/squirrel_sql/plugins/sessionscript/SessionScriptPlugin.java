@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.sessionscript;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -32,15 +33,17 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
  * The plugin class.
  */
 public class SessionScriptPlugin extends DefaultSessionPlugin
 {
+	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.sessionscript.sessionscript";
+
 	/** Logger for this class. */
 	@SuppressWarnings("unused")
-	private static ILogger s_log =
-		LoggerController.createLogger(SessionScriptPlugin.class);
+	private static ILogger s_log = LoggerController.createLogger(SessionScriptPlugin.class);
 
 	/** The app folder for this plugin. */
 	@SuppressWarnings("unused")
@@ -57,8 +60,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Return the internal name of this plugin.
-	 *
-	 * @return  the internal name of this plugin.
+	 * 
+	 * @return the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -67,8 +70,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Return the descriptive name of this plugin.
-	 *
-	 * @return  the descriptive name of this plugin.
+	 * 
+	 * @return the descriptive name of this plugin.
 	 */
 	public String getDescriptiveName()
 	{
@@ -77,8 +80,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Returns the current version of this plugin.
-	 *
-	 * @return  the current version of this plugin.
+	 * 
+	 * @return the current version of this plugin.
 	 */
 	public String getVersion()
 	{
@@ -87,8 +90,8 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 
 	/**
 	 * Returns the authors name.
-	 *
-	 * @return  the authors name.
+	 * 
+	 * @return the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -96,12 +99,10 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Returns the name of the change log for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
-	 * 			a change log.
+	 * Returns the name of the change log for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the changelog file name or <TT>null</TT> if plugin doesn't have a change log.
 	 */
 	public String getChangeLogFileName()
 	{
@@ -109,12 +110,10 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Returns the name of the Help file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
-	 * 			a help file.
+	 * Returns the name of the Help file for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the Help file name or <TT>null</TT> if plugin doesn't have a help file.
 	 */
 	public String getHelpFileName()
 	{
@@ -122,12 +121,10 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Returns the name of the Licence file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
-	 * 			a licence file.
+	 * Returns the name of the Licence file for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the Licence file name or <TT>null</TT> if plugin doesn't have a licence file.
 	 */
 	public String getLicenceFileName()
 	{
@@ -147,8 +144,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		try
 		{
 			_pluginAppFolder = getPluginAppSettingsFolder();
-		}
-		catch (IOException ex)
+		} catch (IOException ex)
 		{
 			throw new PluginException(ex);
 		}
@@ -157,15 +153,12 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		try
 		{
 			_userSettingsFolder = getPluginUserSettingsFolder();
-		}
-		catch (IOException ex)
+		} catch (IOException ex)
 		{
 			throw new PluginException(ex);
 		}
 
-		_resources = new SessionScriptResources(
-			"net.sourceforge.squirrel_sql.plugins.sessionscript.sessionscript",
-			this);
+		_resources = new SessionScriptResources(BUNDLE_BASE_NAME, this);
 
 		ActionCollection coll = app.getActionCollection();
 		ViewSessionScriptsAction action = new ViewSessionScriptsAction(app, _resources, this);
@@ -175,8 +168,7 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		try
 		{
 			_cache = new AliasScriptCache(this);
-		}
-		catch (IOException ex)
+		} catch (IOException ex)
 		{
 			throw new PluginException(ex);
 		}
@@ -200,39 +192,42 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 	{
 		boolean rc = false;
 
-		AliasScript script = (AliasScript)_cache.get(session.getAlias());
+		AliasScript script = _cache.get(session.getAlias());
 		if (script != null)
 		{
 			final String sql = script.getSQL();
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				final ISQLPanelAPI api = 
-                    session.getSessionInternalFrame().getSQLPanelAPI();
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        api.setEntireSQLScript(sql);
-                        session.getApplication().getThreadPool().addTask(new Runnable() {
-                            public void run() {
-                                api.executeCurrentSQL();
-                            }
-                        });
-                    }
-                });
+				final ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						api.setEntireSQLScript(sql);
+						session.getApplication().getThreadPool().addTask(new Runnable()
+						{
+							public void run()
+							{
+								api.executeCurrentSQL();
+							}
+						});
+					}
+				});
 			}
 		}
 
-		if(false == rc)
-      {
-         return null;
-      }
+		if (false == rc)
+		{
+			return null;
+		}
 		return new PluginSessionCallbackAdaptor(this);
 	}
 
 	/**
 	 * Return the scripts cache.
 	 * 
-	 * @return	The scripts cache.
+	 * @return The scripts cache.
 	 */
 	AliasScriptCache getScriptsCache()
 	{

@@ -43,6 +43,7 @@ import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -435,11 +436,19 @@ public class SmarttoolCreateIndexD extends JDialog implements ActionListener {
 	}
 	
 	private void createDdl() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (rbPrimaryKey.isSelected()) {
-			buf.append("ALTER TABLE " + tablename + " ADD CONSTRAINT " + tfName.getText() + " PRIMARY KEY (");
+			buf.append("ALTER TABLE ");
+			buf.append(tablename);
+			buf.append(" ADD CONSTRAINT ");
+			buf.append(tfName.getText());
+			buf.append(" PRIMARY KEY (");
 		} else {
-			buf.append("CREATE UNIQUE INDEX " + tfName.getText() + " ON " + tablename + " (");
+			buf.append("CREATE UNIQUE INDEX ");
+			buf.append(tfName.getText());
+			buf.append(" ON ");
+			buf.append(tablename);
+			buf.append(" (");
 		}
 		
 		if (listTargetColumns.getModel().getSize() > 0) {
@@ -452,7 +461,8 @@ public class SmarttoolCreateIndexD extends JDialog implements ActionListener {
 			}
 		}
 		
-		buf.append(");");
+		buf.append(")");
+		buf.append(session.getQueryTokenizer().getSQLStatementSeparator());
 		
 		taDdl.setText(buf.toString());
 	}
@@ -467,14 +477,17 @@ public class SmarttoolCreateIndexD extends JDialog implements ActionListener {
 		} else {
 			if (JOptionPane.showConfirmDialog(this, i18n.QUESTION_EXECUTE_DDL, "?", 
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				Statement stmt = null;
 				try {
-					Statement stmt = session.getSQLConnection().createStatement();
+					stmt = session.getSQLConnection().createStatement();
 					stmt.executeUpdate(taDdl.getText());
-					stmt.close();
+					
 					JOptionPane.showMessageDialog(this, i18n.INFO_SUCCESS_EXECUTE);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, i18n.ERROR_EXECUTE_DDL);
 					log.error(e.getLocalizedMessage());
+				} finally {
+					SQLUtilities.closeStatement(stmt);
 				}
 			}
 		}

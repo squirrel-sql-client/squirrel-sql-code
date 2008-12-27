@@ -1,18 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.FileNotFoundException;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 
 
 public class GraphXmlSerializer

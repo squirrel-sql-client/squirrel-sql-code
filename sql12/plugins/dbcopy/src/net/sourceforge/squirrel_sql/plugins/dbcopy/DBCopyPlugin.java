@@ -24,7 +24,6 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -47,6 +46,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
  */
 public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoProvider
 {
+
+	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.dbcopy.dbcopy";
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(DBCopyPlugin.class);
@@ -166,7 +167,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		{
 			s_log.debug("Initializing DB Copy Plugin");
 		}
-		_resources = new DBCopyPluginResources("net.sourceforge.squirrel_sql.plugins.dbcopy.dbcopy", this);
+		_resources = new DBCopyPluginResources(BUNDLE_BASE_NAME, this);
 		PreferencesManager.initialize(this);
 
 		IApplication app = getApplication();
@@ -293,14 +294,6 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
 		api.addToPopup(DatabaseObjectType.SESSION, coll.get(PasteTableAction.class));
 
-	}
-
-	private class DBCopyPluginResources extends PluginResources
-	{
-		DBCopyPluginResources(String rsrcBundleBaseName, IPlugin plugin)
-		{
-			super(rsrcBundleBaseName, plugin);
-		}
 	}
 
 	/**

@@ -47,7 +47,6 @@ import java.util.TreeSet;
  * Edit Where Cols dialog gui.
  * JASON: Rename to EditWhereColsInternalFrame 
  */
-@SuppressWarnings("serial")
 public class EditWhereColsSheet extends SessionDialogWidget
 {
 

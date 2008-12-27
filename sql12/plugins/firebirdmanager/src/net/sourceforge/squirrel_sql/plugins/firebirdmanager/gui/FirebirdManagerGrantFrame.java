@@ -22,6 +22,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -687,7 +688,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 		vecGrant = new Vector<Vector<Object>>();
 		for (int i = 0; i < iCount; i++)
 		{
-			String relationName = (String) listProcedureNames.get(i);
+			String relationName = listProcedureNames.get(i);
 			Vector<Object> vecRow = new Vector<Object>();
 			vecRow.add(relationName);
 			fbPrivileges =
@@ -712,7 +713,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 		vecGrant = new Vector<Vector<Object>>();
 		for (int i = 0; i < iCount; i++)
 		{
-			String relationName = (String) listRoleNames.get(i);
+			String relationName = listRoleNames.get(i);
 			Vector<Object> vecRow = new Vector<Object>();
 			vecRow.add(relationName);
 			fbPrivileges =
@@ -765,7 +766,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 		vecGrant = new Vector<Vector<Object>>();
 		for (int i = 0; i < iCount; i++)
 		{
-			String relationName = (String) listViewNames.get(i);
+			String relationName = listViewNames.get(i);
 			Vector<Object> vecRow = new Vector<Object>();
 			vecRow.add(relationName);
 			fbPrivileges =
@@ -878,7 +879,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 
 					for (int g = 0; g < iCountTarget; g++)
 					{
-						String sGrantTarget = (String) listGrantTarget.get(g);
+						String sGrantTarget = listGrantTarget.get(g);
 						if (radioButtonTables.isSelected() || radioButtonViews.isSelected()) bOK =
 							setPrivilegesForTableAndView(sGrantSource, sGrantTarget, iSelRows[i]);
 						else if (radioButtonProcedures.isSelected()) bOK =
@@ -975,7 +976,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 			for (int i = 0; i < listUserNames.size(); i++)
 			{
 				FirebirdManagerGrantTreeNode node =
-					new FirebirdManagerGrantTreeNode((String) listUserNames.get(i), TREENODE_TYPE_USER);
+					new FirebirdManagerGrantTreeNode(listUserNames.get(i), TREENODE_TYPE_USER);
 				treeModel.insertNodeInto(node, nodeUsers, nodeUsers.getChildCount());
 			}
 		}
@@ -989,7 +990,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 			for (int iV = 0; iV < listProcedureNames.size(); iV++)
 			{
 				FirebirdManagerGrantTreeNode node =
-					new FirebirdManagerGrantTreeNode((String) listProcedureNames.get(iV), TREENODE_TYPE_PROCEDURE);
+					new FirebirdManagerGrantTreeNode(listProcedureNames.get(iV), TREENODE_TYPE_PROCEDURE);
 				treeModel.insertNodeInto(node, nodeProcedures, nodeProcedures.getChildCount());
 			}
 		}
@@ -1003,7 +1004,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 			for (int iV = 0; iV < listTriggerNames.size(); iV++)
 			{
 				FirebirdManagerGrantTreeNode node =
-					new FirebirdManagerGrantTreeNode((String) listTriggerNames.get(iV), TREENODE_TYPE_TRIGGER);
+					new FirebirdManagerGrantTreeNode(listTriggerNames.get(iV), TREENODE_TYPE_TRIGGER);
 				treeModel.insertNodeInto(node, nodeTriggers, nodeTriggers.getChildCount());
 			}
 		}
@@ -1017,7 +1018,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 			for (int iV = 0; iV < listViewNames.size(); iV++)
 			{
 				FirebirdManagerGrantTreeNode node =
-					new FirebirdManagerGrantTreeNode((String) listViewNames.get(iV), TREENODE_TYPE_VIEW);
+					new FirebirdManagerGrantTreeNode(listViewNames.get(iV), TREENODE_TYPE_VIEW);
 				treeModel.insertNodeInto(node, nodeViews, nodeViews.getChildCount());
 			}
 		}
@@ -1031,7 +1032,7 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 			for (int iV = 0; iV < listRoleNames.size(); iV++)
 			{
 				FirebirdManagerGrantTreeNode node =
-					new FirebirdManagerGrantTreeNode((String) listRoleNames.get(iV), TREENODE_TYPE_ROLE);
+					new FirebirdManagerGrantTreeNode(listRoleNames.get(iV), TREENODE_TYPE_ROLE);
 				treeModel.insertNodeInto(node, nodeRoles, nodeRoles.getChildCount());
 			}
 		}
@@ -1052,15 +1053,10 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 		}
 		catch (SQLException e)
 		{
-			try
-			{
-				stmt.close();
-			}
-			catch (SQLException e1)
-			{
-			}
 			log.error(e.getLocalizedMessage() + CR + "Statement:" + CR + psSQLRevoke);
 			return false;
+		} finally {
+			SQLUtilities.closeStatement(stmt);
 		}
 
 		try
@@ -1070,19 +1066,13 @@ public class FirebirdManagerGrantFrame extends DialogWidget implements IFirebird
 				stmt = session.getSQLConnection().createStatement();
 				stmt.execute(psSQLGrant);
 			}
-			stmt.close();
 		}
 		catch (SQLException e)
 		{
-			try
-			{
-				stmt.close();
-			}
-			catch (SQLException e1)
-			{
-			}
 			log.error(e.getLocalizedMessage() + CR + "Statement:" + CR + psSQLGrant + CR);
 			return false;
+		} finally {
+			SQLUtilities.closeStatement(stmt);
 		}
 
 		return true;
@@ -1274,7 +1264,7 @@ class FirebirdManagerGrantTableRenderer extends JComponent implements TableCellR
 
 	private Border borderLabel = BorderFactory.createEmptyBorder(0, 3, 0, 3);
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,

@@ -57,7 +57,9 @@ public class IndexInfoTabTest extends AbstractBaseDataSetTabTest
 		expect(mockResultSet.next()).andReturn(true);
 		expect(mockResultSet.getString(EasyMock.anyInt())).andReturn("testString").anyTimes();
 		expect(mockResultSet.getInt(EasyMock.anyInt())).andReturn(0).anyTimes();
-
+		expect(mockResultSet.getStatement()).andStubReturn(mockPreparedStatement);
+		
+		mockPreparedStatement.close();
 		mockResultSet.close();
 		super.testCreateDataSet();
 	}
