@@ -9,13 +9,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.prefs.Preferences;
 
 public class DockFrame extends JPanel
 {
+
+   private static final String PREFS_KEY_DOCK_AUTO_HIDE_ON = "squirrelSql_dock_auto_hide." ;
+   
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DockFrame.class);
 
 
    private Container _comp;
+   private String _title;
    private JLabel _lblTitle;
    private JButton _btnAutoHide;
    private JButton _btnMinimize;
@@ -25,13 +30,14 @@ public class DockFrame extends JPanel
    public DockFrame(IApplication app, Container comp, String title)
    {
       _comp = comp;
+      _title = title;
 
       setLayout(new BorderLayout());
-      add(createTitlePanel(app, title), BorderLayout.NORTH);
+      add(createTitlePanel(app), BorderLayout.NORTH);
       add(_comp, BorderLayout.CENTER);
    }
 
-   private JPanel createTitlePanel(IApplication app, String title)
+   private JPanel createTitlePanel(IApplication app)
    {
       JPanel ret = new JPanel();
       ret.setBorder(BorderFactory.createEtchedBorder());
@@ -41,7 +47,7 @@ public class DockFrame extends JPanel
       ret.setLayout(new GridBagLayout());
       GridBagConstraints gbc;
 
-      _lblTitle = new JLabel(title);
+      _lblTitle = new JLabel(_title);
       _lblTitle.setBackground(bg);
       gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
       ret.add(_lblTitle, gbc);
@@ -50,7 +56,15 @@ public class DockFrame extends JPanel
       _iconAutohideOff = app.getResources().getIcon(SquirrelResources.IImageNames.AUTOHIDE_OFF);
       _iconAutohideOn = app.getResources().getIcon(SquirrelResources.IImageNames.AUTOHIDE_ON);
 
-      _btnAutoHide = new JButton(_iconAutohideOn);
+
+      if(Preferences.userRoot().getBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true))
+      {
+         _btnAutoHide = new JButton(_iconAutohideOn);
+      }
+      else
+      {
+         _btnAutoHide = new JButton(_iconAutohideOff);
+      }
       _btnAutoHide.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -82,10 +96,12 @@ public class DockFrame extends JPanel
       if(_btnAutoHide.getIcon() == _iconAutohideOn)
       {
          _btnAutoHide.setIcon(_iconAutohideOff);
+         Preferences.userRoot().putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, false);
       }
       else if(_btnAutoHide.getIcon() == _iconAutohideOff)
       {
          _btnAutoHide.setIcon(_iconAutohideOn);
+         Preferences.userRoot().putBoolean(PREFS_KEY_DOCK_AUTO_HIDE_ON + _title, true);
       }
       else
       {

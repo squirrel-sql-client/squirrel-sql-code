@@ -17,7 +17,7 @@ public class DockHandle
 
    private JToggleButton _btn;
    private ArrayList<DockHandleListener> _dockHandleListeners = new ArrayList<DockHandleListener>();
-   private static final String PREFS_KEY_DOC_DIVIDER_LOC = "squirrelSql_dock_divider_loc." ;
+   private static final String PREFS_KEY_DOCK_DIVIDER_LOC = "squirrelSql_dock_divider_loc." ;
    private IApplication _app;
 
    public DockHandle(IApplication app, Container comp, String title, JToggleButton btn)
@@ -68,12 +68,12 @@ public class DockHandle
 
    public int getDividerLocation()
    {
-      return Preferences.userRoot().getInt(PREFS_KEY_DOC_DIVIDER_LOC + _title, 150);
+      return Preferences.userRoot().getInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, 150);
    }
 
    public void storeDividerLocation(int dividerLocation)
    {
-      Preferences.userRoot().putInt(PREFS_KEY_DOC_DIVIDER_LOC + _title, dividerLocation);
+      Preferences.userRoot().putInt(PREFS_KEY_DOCK_DIVIDER_LOC + _title, dividerLocation);
    }
 
    public void addDockHandleListener(DockHandleListener dockHandleListener)

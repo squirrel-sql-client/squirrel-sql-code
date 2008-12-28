@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.V
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.ApplicationListener;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -22,10 +23,6 @@ import javax.swing.event.ChangeEvent;
 //
 public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 {
-   private HashSet<TabHandle> _handlesInRemoveTab_CloseButton = new HashSet<TabHandle>();
-   private HashSet<TabHandle> _handlesInRemoveTab_Dispose = new HashSet<TabHandle>();
-
-
    public enum TabClosingMode
    {
       CLOSE_BUTTON,
@@ -45,6 +42,9 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    private ArrayList<DockHandle> _dockHandles = new ArrayList<DockHandle>();
    private ArrayList<TabHandle> _tabHandles = new ArrayList<TabHandle>();
    private int _standardDividerSize;
+
+   private HashSet<TabHandle> _handlesInRemoveTab_CloseButton = new HashSet<TabHandle>();
+   private HashSet<TabHandle> _handlesInRemoveTab_Dispose = new HashSet<TabHandle>();
 
    private DockTabDesktopManager _dockTabDesktopManager = new DockTabDesktopManager();
 
@@ -85,6 +85,25 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       });
 
       closeDock();
+
+      _app.addApplicationListener(new ApplicationListener()
+      {
+         public void saveApplicationState()
+         {
+            onSaveApplicationState();
+         }
+      });
+   }
+
+   private void onSaveApplicationState()
+   {
+      for (DockHandle dockHandle : _dockHandles)
+      {
+         if(false == dockHandle.isClosed())
+         {
+            dockHandle.storeDividerLocation(_split.getDividerLocation());
+         }
+      }
    }
 
    private void onTabStateChanged(ChangeEvent e)
