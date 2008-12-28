@@ -1196,12 +1196,12 @@ public class WindowManager
 				ISessionWidget[] framesOfSession = _sessionWindows.getFramesOfSession(sessionId);
 				for (int i = 0; i < framesOfSession.length; i++)
 				{
-					if(framesOfSession[i] instanceof ISessionWidget)
+					if(framesOfSession[i] instanceof SessionTabWidget)
 					{
 						// We are in the closing event of the Session main window.
 						// We don't want to send this event again therefore
 						// we pass withEvents = false.
-						((ISessionWidget)framesOfSession[i]).closeFrame(false);
+						framesOfSession[i].closeFrame(false);
 					}
 					else
 					{
