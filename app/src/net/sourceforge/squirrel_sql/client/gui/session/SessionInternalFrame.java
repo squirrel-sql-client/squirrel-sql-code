@@ -20,14 +20,20 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.session.*;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class SessionInternalFrame extends SessionTabWidget
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
@@ -113,6 +119,8 @@ public class SessionInternalFrame extends SessionTabWidget
 		});
 
 		_sessionPanel = new SessionPanel(session);
+		_sessionPanel.setMainPanelFactory(new MainPanelFactory());
+		_sessionPanel.initialize(session);
 		setContentPane(_sessionPanel);
 		validate();
 	}

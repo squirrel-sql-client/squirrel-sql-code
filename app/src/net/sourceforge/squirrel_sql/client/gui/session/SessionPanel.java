@@ -42,7 +42,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
 import net.sourceforge.squirrel_sql.client.session.action.FileAppendAction;
 import net.sourceforge.squirrel_sql.client.session.action.FileCloseAction;
@@ -63,8 +62,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectT
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -88,28 +87,27 @@ public class SessionPanel extends JPanel
 		StringManagerFactory.getStringManager(SessionPanel.class);
 
 	/** Application API. */
-	transient private final IApplication _app;
+	private final transient IApplication _app;
 
 	/** ID of the session for this window. */
-	private IIdentifier _sessionId;
+	private transient IIdentifier _sessionId;
 
 	/** Listener to the sessions properties. */
-	private PropertyChangeListener _propsListener;
+	private transient PropertyChangeListener _propsListener;
 
-	private MainPanel _mainTabPane;
-//	private JSplitPane _msgSplit;
+	private transient MainPanel _mainTabPane;
+
+	private transient IMainPanelFactory _mainPanelFactory;
 
 	/** Toolbar for window. */
 	private MyToolBar _toolBar;
 
-	private Vector _externallyAddedToolbarActionsAndSeparators = new Vector();
+	private Vector<ToolbarItem> _externallyAddedToolbarActionsAndSeparators = new Vector<ToolbarItem>();
 
 	private StatusBar _statusBar = new StatusBar();
 	private boolean _hasBeenVisible;
 
-//	private boolean _buildingListOfCatalogs = false;
-
-	private ObjectTreeSelectionListener _objTreeSelectionLis = null;
+	private transient ObjectTreeSelectionListener _objTreeSelectionLis = null;
 
    public SessionPanel(ISession session)
 	{
@@ -123,7 +121,11 @@ public class SessionPanel extends JPanel
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
         
-        createGUI(session);
+
+	}
+
+   protected void initialize(ISession session) {
+      createGUI(session);
 		propertiesHaveChanged(null);
 
 		_propsListener = new PropertyChangeListener()
@@ -133,10 +135,9 @@ public class SessionPanel extends JPanel
 				propertiesHaveChanged(evt.getPropertyName());
 			}
 		};
-		session.getProperties().addPropertyChangeListener(_propsListener);
-
-	}
-
+		session.getProperties().addPropertyChangeListener(_propsListener);   	
+   }
+   
    public void addToToolsPopUp(String selectionString, Action action)
    {
       getSQLPaneAPI().addToToolsPopUp(selectionString, action);
@@ -367,7 +368,7 @@ public class SessionPanel extends JPanel
 	 */
 	public synchronized void addToToolbar(Action action)
 	{
-		_externallyAddedToolbarActionsAndSeparators.add(action);
+		_externallyAddedToolbarActionsAndSeparators.add(new ToolbarItem(action));
 		if (null != _toolBar)
 		{
 			_toolBar.add(action);
@@ -376,7 +377,7 @@ public class SessionPanel extends JPanel
 
    public synchronized void addSeparatorToToolbar()
    {
-      _externallyAddedToolbarActionsAndSeparators.add(new SeparatorMarker());
+      _externallyAddedToolbarActionsAndSeparators.add(new ToolbarItem());
       if (null != _toolBar)
       {
          _toolBar.addSeparator();
@@ -440,14 +441,13 @@ public class SessionPanel extends JPanel
 							_toolBar = new MyToolBar(session);
 							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
-							    if(_externallyAddedToolbarActionsAndSeparators.get(i) instanceof Action)
-							    {
-								   _toolBar.add((Action)_externallyAddedToolbarActionsAndSeparators.get(i));
-							    }
-							    else
-							    {
-							        _toolBar.addSeparator();
-							    }
+								ToolbarItem toolbarItem =  _externallyAddedToolbarActionsAndSeparators.get(i);
+								
+								if (toolbarItem.isSeparator()) {
+									_toolBar.addSeparator();
+								} else {
+									 _toolBar.add(toolbarItem.getAction());
+								}								
 							}
 							add(_toolBar, BorderLayout.NORTH);
 						}
@@ -469,7 +469,7 @@ public class SessionPanel extends JPanel
 	{
 		final IApplication app = session.getApplication();
 
-		_mainTabPane = new MainPanel(session);
+		_mainTabPane = _mainPanelFactory.createMainPanel(session);
 
 		add(_mainTabPane, BorderLayout.CENTER);
 
@@ -495,6 +495,15 @@ public class SessionPanel extends JPanel
       return MainPanel.ITabIndexes.OBJECT_TREE_TAB ==_mainTabPane.getTabbedPane().getSelectedIndex();
    }
 
+	/**
+	 * @param panelFactory the _mainPanelFactory to set
+	 */
+	public void setMainPanelFactory(IMainPanelFactory panelFactory)
+	{
+		_mainPanelFactory = panelFactory;
+	}
+   
+   
    private class MyToolBar extends ToolBar
    {
       private static final long serialVersionUID = 1L;
@@ -658,9 +667,4 @@ public class SessionPanel extends JPanel
 			}
 		}
 	}
-
-   private static class SeparatorMarker
-   {
-
-   }
 }
