@@ -34,7 +34,6 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.commands.CompareCommand;
 
 public class CompareAction extends SquirrelAction implements ISessionAction
 {
-
 	private static final long serialVersionUID = 1L;
 
 	/** Current plugin. */
@@ -44,7 +43,7 @@ public class CompareAction extends SquirrelAction implements ISessionAction
 	private final static ILogger log = LoggerController.createLogger(CompareAction.class);
 
 	/**
-	 * Creates a new SQuirreL action that gets fired whenever the user chooses the paste operation.
+	 * Creates a new SQuirreL action that gets fired whenever the user chooses the compare operation.
 	 * 
 	 * @param app
 	 * @param rsrc
@@ -56,7 +55,7 @@ public class CompareAction extends SquirrelAction implements ISessionAction
 		sessionInfoProv = prov;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt)
