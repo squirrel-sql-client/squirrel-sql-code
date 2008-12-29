@@ -25,6 +25,7 @@ import java.awt.Font;
 
 import javax.swing.ImageIcon;
 
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -33,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.easymock.EasyMock;
 import org.junit.After;

@@ -25,10 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;

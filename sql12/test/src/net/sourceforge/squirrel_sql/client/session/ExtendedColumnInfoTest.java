@@ -19,8 +19,8 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import static org.easymock.EasyMock.expect;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;

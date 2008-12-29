@@ -19,10 +19,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static org.junit.Assert.assertEquals;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;

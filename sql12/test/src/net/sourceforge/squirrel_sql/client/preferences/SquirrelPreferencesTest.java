@@ -22,8 +22,8 @@ package net.sourceforge.squirrel_sql.client.preferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences.IJdbcDebugTypes;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;

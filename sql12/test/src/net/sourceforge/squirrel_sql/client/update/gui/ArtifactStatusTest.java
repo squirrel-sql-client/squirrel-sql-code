@@ -25,9 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
