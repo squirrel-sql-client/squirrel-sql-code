@@ -1,49 +1,73 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
-	<TITLE>SQuirreL SQL Client ReadMe</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Linux)">
-	<META NAME="CREATED" CONTENT="20050609;21410500">
-	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
-	<META NAME="CHANGED" CONTENT="20050609;21515500">
-	<META NAME="DESCRIPTION" CONTENT="SQuirreL SQL is an open-source Java SQL Client program for any JDBC compliant database">
-	<META NAME="KEYWORDS" CONTENT="squirrel-sql, squirrel sql, sql, java, database, open source, open-source">
+<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+<TITLE>SQuirreL SQL Client ReadMe</TITLE>
+<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Linux)">
+<META NAME="CREATED" CONTENT="20050609;21410500">
+<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
+<META NAME="CHANGED" CONTENT="20050609;21515500">
+<META NAME="DESCRIPTION"
+	CONTENT="SQuirreL SQL is an open-source Java SQL Client program for any JDBC compliant database">
+<META NAME="KEYWORDS"
+	CONTENT="squirrel-sql, squirrel sql, sql, java, database, open source, open-source">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
 <P><B>SQuirreL SQL Client</B> is a graphical Java program that will
-allow you to view the structure of a JDBC compliant database, browse
-the data in tables, issue SQL commands etc. It is free software, and
-you are welcome to redistribute it under the terms of the GNU Lesser
-General Public License.</P>
-<P>From version 2.0 on SQuirreL SQL Client requires JDK1.4 or higher.
-If you need a version that is compatible with JDK1.2 or JDK1.3 download
-please download SquirreL SQL Client 1.0</P>
-<P>From version 2.4 on SQuirreL SQL Client requires JDK1.5 or higher.
-If you need a version that is compatible with JDK1.4, please download
-SquirreL SQL Client 2.3.2</P>
-<P>The installation offers two install packages Base and Standard and
-a number of optional plugins.
-The Standard package contains the following plugins:</P>
-<UL>
-	<LI><P STYLE="margin-bottom: 0cm"><SPAN STYLE="background: transparent">Code
-	C</SPAN>ompletion - Offers code completion the same way as
-	modern IDEs do.</P>
-	<LI><P STYLE="margin-bottom: 0cm">Syntax - Syntax
-	highlighting.</P>
-	<LI><P STYLE="margin-bottom: 0cm">Edit Extras - Auxiliary
-	functions to work with SQL code for example formatting</P>
-	<LI><P STYLE="margin-bottom: 0cm">Graph - create a chart of
-	the tables and foreign-key relationships between them</P>
-	<LI><P STYLE="margin-bottom: 0cm">SQL Script - Generation of
-	SQL and DDL scripts</P>
-	<LI><P STYLE="margin-bottom: 0cm">SQL Bookmarks - Managing SQL
-	code templates</P>
-	<LI><P STYLE="margin-bottom: 0cm">Look and Feel - Switching
-	the look and feel</P>
-</UL>
+allow you to view the structure of a JDBC compliant database, browse the
+data in tables, issue SQL commands etc. It is free software, and you are
+welcome to redistribute it under the terms of the GNU Lesser General
+Public License.</P>
+The following compatibility matrix shows which version of the Java
+Runtime Environment (JRE) is required (minimum version) for different 
+versions of the SQuirreL SQL Client:
+</P>
+
 <P>
-The following optional plugins are provided:
+<TABLE align="center" border="1" title="SQuirreL/JRE Version Compatibility Matrix" cellpadding="5">
+	<TH>SQuirreL SQL Client Version</TH>
+	<TH>JRE Minimum Version</TH>
+	<TR align="center">
+		<TD>3.0 and higher</TD>
+		<TD>1.6</TD>
+	</TR>
+        <TR align="center">
+                <TD>2.4 - 2.6.x</TD>
+                <TD>1.5</TD>
+        </TR>
+	<TR align="center">
+                <TD>2.0 - 2.3.2</TD>
+                <TD>1.4</TD>	       
+	</TR>
+</TABLE>
+</P>
+
+<P>The installation offers two install packages Base and Standard
+and a number of optional plugins. The Standard package contains the
+following plugins:</P>
+<UL>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">Code Completion - Offers code completion 
+	the same way as modern IDEs do.</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">Syntax - Syntax highlighting.</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">Edit Extras - Auxiliary functions to
+	work with SQL code (for example, formatting)</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">Graph - create a chart of tables
+	and foreign-key relationships between them</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">SQL Script - Generation of SQL and
+	DDL scripts</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">SQL Bookmarks - Managing SQL code
+	templates</P>
+	<LI>
+	<P STYLE="margin-bottom: 0cm">Look and Feel - Switching the look
+	and feel</P>
+</UL>
+<P>The following optional plugins are provided:
 <UL>
 	<LI>Data import - Import arbitary files into the database</LI>
 	<LI>DBCopy - Copy database objects from one session to another</LI>
@@ -52,24 +76,26 @@ The following optional plugins are provided:
 	<LI>Firebird - DBMS-specific capabilities</LI>
 	<LI>Firebird Manager - Manage your Firebird Database Server</LI>
 	<LI>Hibernate - Tools for developing Hibernate applications</LI>
-	<LI>H2 - DBMS-specific capabilities</LI>	
+	<LI>H2 - DBMS-specific capabilities</LI>
 	<LI>Informix - DBMS-specific capabilities</LI>
 	<LI>Microsoft SQL Server - DBMS-specific capabilities</LI>
 	<LI>MySQL - DBMS-specific capabilities</LI>
 	<LI>Oracle - DBMS-specific capabilities</LI>
-	<LI>PostgreSQL - DBMS-specific capabilities</LI>	
-	<LI>Refactoring - refactor your database schema using refactoring patterns
+	<LI>PostgreSQL - DBMS-specific capabilities</LI>
+	<LI>Refactoring - refactor your database schema using refactoring
+	patterns
 	<LI>Smart Tools - Handy tools for manipulating data</LI>
 	<LI>Session Scripts - run SQL when opening an session</LI>
 	<LI>SQL Parametrisation - put variables into your SQL statements</LI>
-	<LI>SQL Replace - place environment variables into your SQL statements</LI>
+	<LI>SQL Replace - place environment variables into your SQL
+	statements</LI>
 	<LI>SQL Validator - validate SQL against the ISO SQL-99 standard</LI>
 	<LI>Sybase - DBMS-specific capabilities</LI>
 	<LI>Internationalization - tools for translators</LI>
 </UL>
 <P STYLE="margin-bottom: 0cm">For Windows the file squirrel-sql.bat
-will run the application. For Unix the file is squirrel-sql.sh. On
-some operating systems a &quot;shortcut&quot; will be created in the
-menu system as part of the installation process.</P>
+will run the application. For Unix the file is squirrel-sql.sh. On some
+operating systems a &quot;shortcut&quot; will be created in the menu
+system as part of the installation process.</P>
 </BODY>
 </HTML>
