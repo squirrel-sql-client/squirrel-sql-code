@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.junit.After;
 import org.junit.Test;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
@@ -57,4 +58,10 @@ public abstract class AbstractSerializableTest extends BaseSQuirreLJUnit4TestCas
 		out.close();
 	}
 
+	@After
+	public void tearDown() throws Exception
+	{
+		serializableToTest = null;
+	}
+	
 }
