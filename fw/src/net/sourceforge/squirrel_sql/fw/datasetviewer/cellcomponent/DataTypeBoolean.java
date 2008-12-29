@@ -67,12 +67,6 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 
-	/* whether number is signed or unsigned */
-	private boolean _isSigned;
-
-	/* the number of decimal digits allowed in the number */
-	private int _scale;
-
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
 
@@ -82,7 +76,7 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	/* The CellRenderer used for this data type */
 	// ??? For now, use the same renderer as everyone else.
 	// ??
-	// ?? IN FUTURE: change this to use a new instance of renederer
+	// ?? IN FUTURE: change this to use a new instance of renderer
 	// ?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
