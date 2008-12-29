@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.update.xmlbeans;
  */ 
 
 import static org.junit.Assert.assertEquals;
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;

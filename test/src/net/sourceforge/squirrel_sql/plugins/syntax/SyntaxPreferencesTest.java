@@ -23,6 +23,8 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import static org.junit.Assert.assertEquals;
 
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

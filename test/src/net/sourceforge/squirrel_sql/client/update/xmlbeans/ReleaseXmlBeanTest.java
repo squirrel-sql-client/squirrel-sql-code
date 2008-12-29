@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
-import net.sourceforge.squirrel_sql.plugins.syntax.AbstractSerializableTest;
+import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 
 import org.junit.After;
 import org.junit.Before;

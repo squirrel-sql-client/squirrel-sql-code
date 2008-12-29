@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.syntax;
+package net.sourceforge.squirrel_sql;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,14 +26,11 @@ import java.io.Serializable;
 import org.junit.After;
 import org.junit.Test;
 
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 /**
  * Tests for classes that are Serializable should extend this class then implement a @Before method that 
  * initializes the protected serializableToTest to an instance of the classUnderTest.
  * 
- * @author manningr
- *
  */
 public abstract class AbstractSerializableTest extends BaseSQuirreLJUnit4TestCase
 {
