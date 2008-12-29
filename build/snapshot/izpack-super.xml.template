@@ -11,7 +11,7 @@
 		</authors>
 		<url>http://www.squirrelsql.org</url>
 		<uninstaller write="yes"/>
-		<javaversion>1.5</javaversion>
+		<javaversion>1.6</javaversion>
 	</info>
 
 	<guiprefs height="480" resizable="yes" width="640"/>
