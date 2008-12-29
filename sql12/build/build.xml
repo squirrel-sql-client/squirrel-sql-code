@@ -43,7 +43,7 @@
 		<property name="debug" value="yes" />
 		<property name="optimize" value="off" />
 		<property name="deprecation" value="on" />
-		<property name="targetVM" value="1.5" />
+		<property name="targetVM" value="1.6" />
 
 		<!-- init test output properties -->
 
