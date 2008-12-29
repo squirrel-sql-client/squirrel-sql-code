@@ -30,26 +30,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
 public class SGATracePanel extends JPanel
 {
-   private static final StringManager s_stringMgr =
+	private static final long serialVersionUID = 1L;
+
+	private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SGATracePanel.class);
 
-
-   /**
-    * Logger for this class.
-    */
-   private static final ILogger s_log = LoggerController.createLogger(SGATracePanel.class);
-
+	/** The SQL used to get SQL statistics from the SGA */
    private static final String sgaTraceSQL =
       "  SELECT a.SQL_Text, " +
          "         a.First_Load_Time, " +
@@ -232,12 +227,14 @@ public class SGATracePanel extends JPanel
       {
          return;
       }
+      PreparedStatement s = null;
+      ResultSet rs = null;
       try
       {
-         PreparedStatement s = _session.getSQLConnection().getConnection().prepareStatement(sgaTraceSQL);
+         s = _session.getSQLConnection().getConnection().prepareStatement(sgaTraceSQL);
          if (s.execute())
          {
-            ResultSet rs = s.getResultSet();
+            rs = s.getResultSet();
             DefaultTableModel tm = createTableModel();
             while (rs.next())
             {
@@ -274,12 +271,15 @@ public class SGATracePanel extends JPanel
       catch (SQLException ex)
       {
          _session.showErrorMessage(ex);
+      } finally {
+      	SQLUtilities.closeResultSet(rs);
+      	SQLUtilities.closeStatement(s);
       }
+      
    }
 
    private void createGUI()
    {
-      final IApplication app = _session.getApplication();
       setLayout(new BorderLayout());
       _sgaTrace = new AutoWidthResizeTable(new DefaultTableModel());
       _sgaTrace.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
