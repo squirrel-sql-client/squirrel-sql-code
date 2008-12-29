@@ -88,9 +88,6 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 
-	/* whether number is signed or unsigned */
-	private boolean _isSigned;
-
 	/* The total number of decimal digits allowed in the number */
 	private int _precision;
 
@@ -125,7 +122,6 @@ public class DataTypeBigDecimal extends FloatingPointBase
       _table = table;
       _colDef = colDef;
       _isNullable = colDef.isNullable();
-      _isSigned = colDef.isSigned();
       _precision = colDef.getPrecision();
       _scale = colDef.getScale();
 
