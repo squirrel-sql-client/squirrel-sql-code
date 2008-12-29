@@ -406,7 +406,7 @@
 
 		<delete file="release_notes.txt"/>
 				
-		<copy file="snapshot_release_notes.template" toFile="release_notes.txt">
+		<copy file="snapshot_release_notes.template" toFile="${java.io.tmpdir}/release_notes.txt">
 			<filterchain>
 				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
 					<param type="token" 
