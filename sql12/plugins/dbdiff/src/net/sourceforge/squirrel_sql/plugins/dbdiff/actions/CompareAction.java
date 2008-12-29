@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff.actions;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -26,93 +27,81 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.commands.CompareCommand;
 
+public class CompareAction extends SquirrelAction implements ISessionAction
+{
 
-public class CompareAction extends SquirrelAction
-                                     implements ISessionAction {
+	private static final long serialVersionUID = 1L;
 
 	/** Current plugin. */
 	private final SessionInfoProvider sessionInfoProv;
 
-    /** The IApplication that we can use to display error dialogs */
-    private IApplication app = null;
-    
-    /** Logger for this class. */
-    private final static ILogger log = 
-                         LoggerController.createLogger(CompareAction.class);    
-    
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(CompareAction.class);    
-    
-    /**
-     * Creates a new SQuirreL action that gets fired whenever the user chooses
-     * the paste operation.
-     * 
-     * @param app
-     * @param rsrc
-     * @param plugin
-     */
-    public CompareAction(IApplication app, 
-                         Resources rsrc, 
-                         SessionInfoProvider prov) {
-        super(app, rsrc);
-        this.app = app;
-        sessionInfoProv = prov;
-    }
+	/** Logger for this class. */
+	private final static ILogger log = LoggerController.createLogger(CompareAction.class);
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent evt) {
-        ISession destSession = sessionInfoProv.getDiffDestSession();
-        IObjectTreeAPI api = destSession.getObjectTreeAPIOfActiveSessionWindow();
-        if (api == null) {
-            return;
-        }
-        IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-        sessionInfoProv.setDestSelectedDatabaseObjects(dbObjs);
+	/**
+	 * Creates a new SQuirreL action that gets fired whenever the user chooses the paste operation.
+	 * 
+	 * @param app
+	 * @param rsrc
+	 * @param plugin
+	 */
+	public CompareAction(IApplication app, Resources rsrc, SessionInfoProvider prov)
+	{
+		super(app, rsrc);
+		sessionInfoProv = prov;
+	}
 
-        if (sessionInfoProv.getDiffSourceSession() == null) {
-            return;
-        }        
-        if (!sourceDestSchemasDiffer()) {
-            // TODO: tell the user that the selected destination schema is 
-            // the same as the source schema.
-            //monitor.showMessageDialog(...)            
-            return;
-        }
-        new CompareCommand(sessionInfoProv).execute();
-    }
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent evt)
+	{
+		ISession destSession = sessionInfoProv.getDiffDestSession();
+		IObjectTreeAPI api = destSession.getObjectTreeAPIOfActiveSessionWindow();
+		if (api == null) { return; }
+		IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
+		sessionInfoProv.setDestSelectedDatabaseObjects(dbObjs);
+
+		if (sessionInfoProv.getDiffSourceSession() == null) { return; }
+		if (!sourceDestSchemasDiffer())
+		{
+			if (log.isInfoEnabled()) {
+				log.info("Source and destination schemas were the same schema");
+			}
+			// TODO: tell the user that the selected destination schema is
+			// the same as the source schema.
+			// monitor.showMessageDialog(...)
+			return;
+		}
+		new CompareCommand(sessionInfoProv).execute();
+	}
 
 	/**
 	 * Set the current session.
 	 * 
-	 * @param	session		The current session.
+	 * @param session
+	 *           The current session.
 	 */
-    public void setSession(ISession session) {
-        sessionInfoProv.setDestDiffSession(session);        
-    }
-        
-    /**
-     * Returns a boolean value indicating whether or not the source and 
-     * destination sessions refer to the same schema.
-     * 
-     * @return
-     */
-    private boolean sourceDestSchemasDiffer() {
-        //ISession sourceSession = sessionInfoProv.getCopySourceSession();
-        //ISession destSession = sessionInfoProv.getCopyDestSession();
-        
-        // TODO: check to be sure that the source and destination schemas are
-        // different. Abort if they are the same and inform the user.
-        
-        return true;
-    }    
+	public void setSession(ISession session)
+	{
+		sessionInfoProv.setDestDiffSession(session);
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not the source and destination sessions refer to the same
+	 * schema.
+	 * 
+	 * @return
+	 */
+	private boolean sourceDestSchemasDiffer()
+	{
+		ISession sourceSession = sessionInfoProv.getDiffSourceSession();
+		ISession destSession = sessionInfoProv.getDiffDestSession();
+		return sourceSession != null && sourceSession.equals(destSession);
+	}
 }
