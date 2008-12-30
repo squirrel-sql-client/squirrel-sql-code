@@ -84,12 +84,6 @@ public class DataTypeDouble extends FloatingPointBase
    /* whether nulls are allowed or not */
    private boolean _isNullable;
 
-   /* the total number of digits allowed in the field */
-   private int _precision;
-
-   /* the number of decimal digits allowed flollowing the decimal point */
-   private int _scale;
-
    /* table of which we are part (needed for creating popup dialog) */
    private JTable _table;
 
@@ -114,9 +108,6 @@ public class DataTypeDouble extends FloatingPointBase
       _table = table;
       _colDef = colDef;
       _isNullable = colDef.isNullable();
-      _precision = colDef.getPrecision();
-      _scale = colDef.getScale();
-
       _numberFormat = NumberFormat.getInstance();
 
       // This is a bit hard coded but if we use _scale here
@@ -355,7 +346,7 @@ public class DataTypeDouble extends FloatingPointBase
 	                  text = text.substring(0, index) + text.substring(index+1);
 	               }
 	               ((IRestorableTextComponent)_theComponent).updateText( text);
-	               _theComponent.getToolkit().beep();
+	               _beepHelper.beep(_theComponent);
                }
                e.consume();
             }
@@ -369,7 +360,7 @@ public class DataTypeDouble extends FloatingPointBase
                (c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
                (c == KeyEvent.VK_BACK_SPACE) ||
                (c == KeyEvent.VK_DELETE) ) ) {
-               _theComponent.getToolkit().beep();
+            	_beepHelper.beep(_theComponent);
                e.consume();
             }
 
