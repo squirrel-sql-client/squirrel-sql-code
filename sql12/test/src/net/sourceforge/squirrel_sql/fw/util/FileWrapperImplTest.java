@@ -21,13 +21,15 @@ package net.sourceforge.squirrel_sql.fw.util;
 
 import static org.junit.Assert.assertEquals;
 
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.gargoylesoftware.base.testing.EqualsTester;
 
-public class FileWrapperImplTest
+public class FileWrapperImplTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	FileWrapperImpl classUnderTest = null;

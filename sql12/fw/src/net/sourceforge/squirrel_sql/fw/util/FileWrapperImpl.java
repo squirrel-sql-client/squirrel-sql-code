@@ -29,7 +29,7 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * A wrapper for java.io.File which simply delegates all calls to the wrapped File.  Use the Factory to 
+ * A wrapper for java.io.File which simply delegates all calls to the wrapped File. Use the Factory to
  * instantiate this class to avoid coupling.
  */
 public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl>, FileWrapper
@@ -131,8 +131,13 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	 */
 	public FileWrapperImpl(FileWrapper parent, String child)
 	{
-		FileWrapperImpl parentImpl = (FileWrapperImpl) parent;
-		_wrappedFile = new File(parentImpl._wrappedFile, child);
+		
+		if (parent != null) {
+			FileWrapperImpl parentImpl = (FileWrapperImpl) parent;
+			_wrappedFile = new File(parentImpl._wrappedFile, child);
+		} else {
+			_wrappedFile = new File((File)null, child);
+		}
 	}
 
 	/**
@@ -191,6 +196,9 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	 */
 	public FileWrapper getParentFile()
 	{
+		if (_wrappedFile.getParentFile() == null) {
+			return null;
+		}
 		return new FileWrapperImpl(_wrappedFile.getParentFile());
 	}
 
@@ -526,9 +534,12 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	public static FileWrapper createTempFile(String prefix, String suffix, FileWrapper directory)
 		throws IOException
 	{
-		if (directory == null) {
+		if (directory == null)
+		{
 			return new FileWrapperImpl(File.createTempFile(prefix, suffix, null));
-		} else {
+		}
+		else
+		{
 			return new FileWrapperImpl(File.createTempFile(prefix, suffix,
 				((FileWrapperImpl) directory)._wrappedFile));
 		}
@@ -633,8 +644,7 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	 * different than the separator character on this system, then the old separator is replaced by the local
 	 * separator.
 	 */
-	private void readObject(java.io.ObjectInputStream s) throws IOException,
-		ClassNotFoundException
+	private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException
 	{
 
 	}
@@ -644,12 +654,25 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 
 	private static FileWrapper[] wrapFiles(File[] resultFiles)
 	{
+		if (resultFiles == null) {
+			return null;
+		}
 		FileWrapper[] wrappedFiles = new FileWrapper[resultFiles.length];
 		for (int i = 0; i < resultFiles.length; i++)
 		{
 			wrappedFiles[i] = new FileWrapperImpl(resultFiles[i]);
 		}
 		return wrappedFiles;
+	}
+
+	public static FileWrapperImpl createTempFile(String prefix, String suffix, FileWrapperImpl directory)
+		throws IOException
+	{
+		if (directory != null) {
+			return new FileWrapperImpl(File.createTempFile(prefix, suffix, directory._wrappedFile));
+		} else {
+			return new FileWrapperImpl(File.createTempFile(prefix, suffix, null));
+		}
 	}
 
 }
