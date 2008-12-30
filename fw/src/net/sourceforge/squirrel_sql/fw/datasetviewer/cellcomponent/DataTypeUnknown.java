@@ -307,13 +307,11 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	 */
 	 private class KeyTextHandler extends KeyAdapter {
 	 	public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeUnknown.this._textComponent;
-				_theComponent.getToolkit().beep();
+				_beepHelper.beep(_theComponent);
 				e.consume();
 			}
 		}

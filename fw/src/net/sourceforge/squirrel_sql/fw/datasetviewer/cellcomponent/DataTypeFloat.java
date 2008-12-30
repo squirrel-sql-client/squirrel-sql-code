@@ -17,23 +17,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
-import java.math.BigDecimal;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -84,12 +84,6 @@ public class DataTypeFloat extends FloatingPointBase
    /* whether nulls are allowed or not */
    private boolean _isNullable;
 
-   /* the total number of digits allowed in the field */
-   private int _precision;
-
-   /* the number of decimal digits allowed flollowing the decimal point */
-   private int _scale;
-
    /* table of which we are part (needed for creating popup dialog) */
    private JTable _table;
 
@@ -115,9 +109,6 @@ public class DataTypeFloat extends FloatingPointBase
       _table = table;
       _colDef = colDef;
       _isNullable = colDef.isNullable();
-      _precision = colDef.getPrecision();
-      _scale = colDef.getScale();
-
       _numberFormat = NumberFormat.getInstance();
 
 
@@ -358,7 +349,7 @@ public class DataTypeFloat extends FloatingPointBase
 	                  text = text.substring(0, index) + text.substring(index+1);
 	               }
 	               ((IRestorableTextComponent)_theComponent).updateText( text);
-	               _theComponent.getToolkit().beep();
+	               _beepHelper.beep(_theComponent);
                }
                e.consume();
             }
@@ -371,7 +362,7 @@ public class DataTypeFloat extends FloatingPointBase
                (c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
                (c == KeyEvent.VK_BACK_SPACE) ||
                (c == KeyEvent.VK_DELETE) ) ) {
-               _theComponent.getToolkit().beep();
+            	_beepHelper.beep(_theComponent);
                e.consume();
             }
 

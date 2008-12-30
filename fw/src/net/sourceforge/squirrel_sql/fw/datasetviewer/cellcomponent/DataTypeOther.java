@@ -316,7 +316,7 @@ public class DataTypeOther extends BaseDataTypeComponent
 			// could typecast every reference, but this makes the code cleaner
 			JTextComponent _theComponent = (JTextComponent)DataTypeOther.this._textComponent;
 			e.consume();
-			_theComponent.getToolkit().beep();
+			_beepHelper.beep(_theComponent);
 		}
 	}
 
