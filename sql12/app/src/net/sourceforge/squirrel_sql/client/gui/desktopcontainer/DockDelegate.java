@@ -154,7 +154,6 @@ public class DockDelegate implements IDockDelegate
 
    public void setLayer(Integer layer)
    {
-      setLayer(layer);
    }
 
    public void pack()

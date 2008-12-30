@@ -56,10 +56,12 @@ information for developers</B></FONT></P>
 </P>
 <P STYLE="margin-bottom: 0cm">To be able to work with the new user
 interface layout direct usage of JInternalFrames had to be replaced
-by an abstract layer. To do so the concept of “widgets” was
-introduced in SQuirreL: Instead of using/deriving from
-JInternalFrames widgets are used/derived from. There are three kinds
-of widgets:</P>
+by an abstract layer. To do so the concept of “Widgets” was
+introduced in SQuirreL: <br>
+In former times developers either derived
+from JInternalFrame or created JInternalFrame instances. Now they need to either
+derive from or create instances of one of the Widget classes.
+There are three different Widget classes:</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <UL>
@@ -70,7 +72,7 @@ of widgets:</P>
 </UL>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P STYLE="margin-bottom: 0cm">The widget abstraction layer is
+<P STYLE="margin-bottom: 0cm">The Widget abstraction layer is
 essential to allow the user to choose if he wants to use SQuirreL in
 the old Internal Frame/MDI layout or the new tabbed layout. 
 </P>
@@ -85,10 +87,10 @@ a technical background:</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <P STYLE="margin-bottom: 0cm; font-style: normal; font-weight: medium">
-<FONT FACE="Thorndale AMT, serif"><FONT SIZE=3>Dialog-/Dock-/Tab-widgets
+<FONT FACE="Thorndale AMT, serif"><FONT SIZE=3>Dialog-/Dock-/Tab-Widgets
 use delegates to work on the given user interface layout. When a
-widget is added to a DesktopContainer the DesktopContainer gets hold
-of the delegate inside the widget and uses this delegate for display.
+Widget is added to a DesktopContainer the DesktopContainer gets hold
+of the delegate inside the Widget and uses this delegate for display.
 A factory that creates the DesktopContainer as well as the delegates
 takes care that DesktopContainer and delegates match.</FONT></FONT></P>
 <P STYLE="margin-bottom: 0cm"><BR>
