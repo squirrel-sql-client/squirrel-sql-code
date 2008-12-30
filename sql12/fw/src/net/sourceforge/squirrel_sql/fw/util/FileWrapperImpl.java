@@ -526,8 +526,12 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	public static FileWrapper createTempFile(String prefix, String suffix, FileWrapper directory)
 		throws IOException
 	{
-		return new FileWrapperImpl(File.createTempFile(prefix, suffix,
-			((FileWrapperImpl) directory)._wrappedFile));
+		if (directory == null) {
+			return new FileWrapperImpl(File.createTempFile(prefix, suffix, null));
+		} else {
+			return new FileWrapperImpl(File.createTempFile(prefix, suffix,
+				((FileWrapperImpl) directory)._wrappedFile));
+		}
 	}
 
 	/**
@@ -578,27 +582,42 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#equals(java.lang.Object)
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#toString()
 	 */
-	public boolean equals(Object obj)
+	@Override
+	public String toString()
 	{
-		return _wrappedFile.equals(obj);
+		return _wrappedFile.toString();
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#hashCode()
 	 */
+	@Override
 	public int hashCode()
 	{
-		return _wrappedFile.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_wrappedFile == null) ? 0 : _wrappedFile.hashCode());
+		return result;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#toString()
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#equals(java.lang.Object)
 	 */
-	public String toString()
+	@Override
+	public boolean equals(Object obj)
 	{
-		return _wrappedFile.toString();
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		FileWrapperImpl other = (FileWrapperImpl) obj;
+		if (_wrappedFile == null)
+		{
+			if (other._wrappedFile != null) { return false; }
+		}
+		else if (!_wrappedFile.equals(other._wrappedFile)) { return false; }
+		return true;
 	}
 
 	/**
@@ -614,7 +633,7 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 	 * different than the separator character on this system, then the old separator is replaced by the local
 	 * separator.
 	 */
-	private synchronized void readObject(java.io.ObjectInputStream s) throws IOException,
+	private void readObject(java.io.ObjectInputStream s) throws IOException,
 		ClassNotFoundException
 	{
 
