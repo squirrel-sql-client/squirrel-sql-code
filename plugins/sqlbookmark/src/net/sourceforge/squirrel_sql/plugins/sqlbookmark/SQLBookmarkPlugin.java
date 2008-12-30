@@ -78,7 +78,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       String BOOKMARKS = "bookmarks";
    }
 
-   public static String RESOURCE_PATH =
+   public static final String RESOURCE_PATH =
       "net.sourceforge.squirrel_sql.plugins.sqlbookmark.sqlbookmark";
 
    private static ILogger logger =

@@ -94,7 +94,7 @@ public class SQLInternalFrame extends SessionTabWidget
             });
 			}
 
-         public void widgetClosing(InternalFrameEvent e)
+         public void widgetClosing(WidgetEvent e)
          {
             _sqlPanel.sessionWindowClosing();
          }
