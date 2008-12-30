@@ -25,7 +25,8 @@ import java.lang.reflect.Method;
  */
 public class MacOSPlugin extends DefaultPlugin {
     
-    private final static ILogger s_log = LoggerController.createLogger(MacOSPlugin.class);
+    private static final String COM_APPLE_EAWT_APPLICATION_CLASSNAME = "com.apple.eawt.Application";
+	private final static ILogger s_log = LoggerController.createLogger(MacOSPlugin.class);
 
     public String getAuthor() {
         return("Neville Rowe");
@@ -74,10 +75,12 @@ public class MacOSPlugin extends DefaultPlugin {
           Class<?> com_apple_eawt_Application;
           try
           {
-             com_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
+             com_apple_eawt_Application = Class.forName(COM_APPLE_EAWT_APPLICATION_CLASSNAME);
           }
           catch (ClassNotFoundException e)
           {
+         	 s_log.error("MacOSX plugin is loaded, but Apple support class isn't in the Classpath: "+
+         		 e.getMessage(), e);
             return;
           }
 
