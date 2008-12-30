@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.util;
 /**
  * See long comment in FileTest for the origin of this class and why it is licensed under the ASF license.
  */
-public class Support_DeleteOnExitTest {
+public class Support_DeleteOnExit {
 
 	public static void main(java.lang.String[] args) {
         for (int i = 0; i < args.length; i++) {

@@ -2209,7 +2209,7 @@ public class FileTest extends BaseSQuirreLTestCase {
         assertTrue(subDir.exists());
 
         Support_Exec.execJava(new String[] {
-                "net.sourceforge.squirrel_sql.fw.util.Support_DeleteOnExitTest",
+                "net.sourceforge.squirrel_sql.fw.util.Support_DeleteOnExit",
                 dir.getAbsolutePath(), subDir.getAbsolutePath() },
                 new String[] {}, false);
         assertFalse(dir.exists());
