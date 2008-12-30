@@ -138,15 +138,20 @@ public class ViewLogsSheet extends DialogWidget
 		}
 	}
 
+	/**
+	 * Nulls the singleton instance of this class in a thread-safe way. 
+	 */
+	public static synchronized void disposeInstance() {
+		s_instance = null;
+	}
+	
    public void dispose()
 	{
 		// Stop refresh if it is running.
 		_closing = true;
 
-		synchronized (getClass())
-		{
-			s_instance = null;
-		}
+		ViewLogsSheet.disposeInstance();
+		
 		super.dispose();
 	}
 
@@ -372,7 +377,9 @@ public class ViewLogsSheet extends DialogWidget
 
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent actionEvent)
          {
             performClose();
          }
@@ -520,6 +527,8 @@ public class ViewLogsSheet extends DialogWidget
 
 	private static final class LogsComboBox extends DirectoryListComboBox
 	{
+		private static final long serialVersionUID = 1L;
+		
 		private File _dir;
 
 		public void load(File dir, FilenameFilter filter)
@@ -536,6 +545,8 @@ public class ViewLogsSheet extends DialogWidget
 
 	private static final class LogFile extends File
 	{
+		private static final long serialVersionUID = 1L;
+		
 		private final String _stringRep;
 
 		LogFile(File dir, String name)
