@@ -23,8 +23,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
@@ -165,6 +163,11 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
    public void enableDisableActions()
    {
       _uiFactory.enableDisableActions();
+   }
+
+   public boolean isEmpty()
+   {
+      return _uiFactory._aliasesList.isEmpty();   
    }
 
    private static final class UserInterfaceFactory

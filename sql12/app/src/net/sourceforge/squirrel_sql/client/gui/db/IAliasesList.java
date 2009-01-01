@@ -33,4 +33,7 @@ public interface IAliasesList extends IBaseList
    void deleteSelected();
 
    void modifySelected();
+
+   boolean isEmpty();
+
 }
