@@ -555,6 +555,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
    }
 
+   public boolean isEmpty()
+   {
+      return 0 == _aliasesListModel.getSize();
+   }
+
    private void removeAllAliasesFromNode(DefaultMutableTreeNode selNode)
    {
       if(selNode.getUserObject() instanceof SQLAlias)

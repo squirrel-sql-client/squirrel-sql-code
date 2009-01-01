@@ -162,6 +162,11 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
       }
    }
 
+   public boolean isEmpty()
+   {
+      return 0 == _model.getSize();
+   }
+
    /**
 	 * Return the description for the alias that the mouse is currently
 	 * over as the tooltip text.

@@ -90,6 +90,11 @@ public class AliasesList implements IToogleableAliasesList
       getCurrentImpl().modifySelected();
    }
 
+   public boolean isEmpty()
+   {
+      return getCurrentImpl().isEmpty();
+   }
+
 
    /**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
@@ -133,7 +138,6 @@ public class AliasesList implements IToogleableAliasesList
       _jListImpl.removeMouseListener(mouseListener);
       _jTreeImpl.removeMouseListener(mouseListener);
    }
-
 
 
 }

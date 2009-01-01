@@ -934,7 +934,11 @@ public class WindowManager
       if (toolWs.isVisible() && _app.getDesktopStyle().isInternalFrameStyle())
       {
          _driversListWindow.setVisible(true);
-         _driversListWindow.nowVisible(true);
+
+         // Has to be done directly on the main frame because of racing condition at start up.
+         _mainFrame.setEnabledDriversMenu(true);
+         //_driversListWindow.nowVisible(true);
+
          try
          {
             _driversListWindow.setSelected(true);
@@ -948,7 +952,10 @@ public class WindowManager
       else
       {
          _driversListWindow.setVisible(false);
-         _driversListWindow.nowVisible(false);
+
+         // Has to be done directly on the main frame because of racing condition at start up.
+         _mainFrame.setEnabledDriversMenu(false);
+         //_driversListWindow.nowVisible(false);
       }
    }
 
@@ -958,10 +965,17 @@ public class WindowManager
       _mainFrame.addWidget(_aliasesListWindow);
       toolWs = ws.getAliasesWindowState();
       _aliasesListWindow.setBounds(toolWs.getBounds().createRectangle());
-      if (toolWs.isVisible() && _app.getDesktopStyle().isInternalFrameStyle())
+      if (
+              (toolWs.isVisible() && _app.getDesktopStyle().isInternalFrameStyle())
+           || (false == _app.getDesktopStyle().isInternalFrameStyle() && false == _aliasesListWindow.isEmpty())
+         )
       {
          _aliasesListWindow.setVisible(true);
-         _aliasesListWindow.nowVisible(true);
+
+         // Has to be done directly on the main frame because of racing condition at start up.
+         //_aliasesListWindow.nowVisible(true);
+         _mainFrame.setEnabledAliasesMenu(true);
+
          try
          {
             _aliasesListWindow.setSelected(true);
@@ -972,10 +986,13 @@ public class WindowManager
             s_log.error(s_stringMgr.getString("WindowManager.errorselectingwindow"), ex);
          }
       }
-      else
+      else if(false == _app.getDesktopStyle().isInternalFrameStyle())
       {
          _aliasesListWindow.setVisible(false);
-         _aliasesListWindow.nowVisible(false);
+
+         // Has to be done directly on the main frame because of racing condition at start up.
+         //_aliasesListWindow.nowVisible(false);
+         _mainFrame.setEnabledAliasesMenu(false);
       }
    }
 
