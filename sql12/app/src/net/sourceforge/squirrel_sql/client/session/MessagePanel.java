@@ -142,11 +142,15 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
       /////////////////////////////////////////////////////////////////
       // Error
+      // Attention: Do not use background colors here.
+      // Color blind people cannot read black writing on red background.
       _saSetError = new SimpleAttributeSet();
-      StyleConstants.setBackground(_saSetError, Color.red);
+      //StyleConstants.setBackground(_saSetError, Color.red);
+      StyleConstants.setForeground(_saSetError, Color.red);
 
       SimpleAttributeSet saSetErrorHistory = new SimpleAttributeSet();
-      StyleConstants.setBackground(saSetErrorHistory, Color.pink);
+      //StyleConstants.setBackground(saSetErrorHistory, Color.pink);
+      StyleConstants.setForeground(saSetErrorHistory, new Color(255,102,102));
       _saSetHistoryBySaSet.put(_saSetError, saSetErrorHistory);
       //
       //////////////////////////////////////////////////////////////////
