@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -107,7 +109,12 @@ public class MyURLClassLoader extends URLClassLoader
 		for (int i = 0; i < urls.length; ++i)
 		{
 			URL url = urls[i];
-			File file = new File(url.getFile());
+
+			File file = getFileFromUrl(logger, url);
+         if (file == null) {
+         	continue;
+         }
+         
 			if (!file.isDirectory() && file.exists() && file.canRead())
 			{
 				ZipFile zipFile = null;
@@ -162,6 +169,37 @@ public class MyURLClassLoader extends URLClassLoader
 		notifyListenersFinished();
 		return classes.toArray(new Class[classes.size()]);
 	}
+
+	/**
+	 * Returns a File object whose absolute path is equivalent to the specified URL (minus any URL encoding
+	 * fragments)
+	 * 
+	 * @param logger
+	 *        the log to use for exceptions
+	 * @param url
+	 *        the URL to get a File for
+	 * @return a valid File, or null if the URL cannot be converted to a File object
+	 */
+	private File getFileFromUrl(ILogger logger, URL url)
+   {
+	   File file = null;
+	   try
+	   {
+	   	// Bug 2480365: It is very important to get the URI from the URL and not simply do 
+	   	// new File(url.getFile()).  In the case where the path contains spaces, they get encoded as %20 in
+	   	// the string returned from url.getFile().  java.io.File doesn't know how to deal with them 
+	   	// (i.e. replace them with spaces) and the resulting File is rendered non-existent. 
+	   	URI fileUri = url.toURI();
+	   	if (logger.isDebugEnabled()) {
+	   		logger.debug("getFileFromUrl: fileUri.getPath()="+fileUri.getPath());
+	   	}
+	      file = new File(url.toURI());
+	   } catch (URISyntaxException e)
+	   {
+	   	logger.error("getAssignableClasses: Unable to convert URL ("+url+") to a URI:"+e.getMessage(),e);
+	   }
+	   return file;
+   }
 
 	protected synchronized Class findClass(String className) throws ClassNotFoundException
 	{
