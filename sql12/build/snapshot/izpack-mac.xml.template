@@ -38,10 +38,12 @@
 	<packs>
 		<pack name="Base" required="yes">
 			<description>SQL Client</description>
-			
-            <singlefile target="$INSTALL_PATH/Contents/MacOS/JavaApplicationStub"
-                        src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"/>
-            <!-- Make JavaApplicationStub launcher executable -->
+		
+		<!-- Make squirrel launch script executable -->	
+                <executable target="$INSTALL_PATH/Contents/MacOS/squirrel"
+                        src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/squirrel"
+                        stage="never"/>
+            
 			<executable targetfile="$INSTALL_PATH/Contents/MacOS/JavaApplicationStub" stage="never"/>
 
 			<singlefile target="$INSTALL_PATH/Contents/Info.plist"
