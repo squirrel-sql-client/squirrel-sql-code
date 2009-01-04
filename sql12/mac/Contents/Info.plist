@@ -2,83 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleName</key> 
+    <string>SQuirreLSQL</string>
+
     <key>CFBundleExecutable</key>
-    <string>JavaApplicationStub</string>
+    <string>squirrel</string>
+
     <key>CFBundleIconFile</key>
     <string>acorn.icns</string>
-    <key>CFBundleIdentifier</key>
-    <string>net.sourceforge.squirrel_sql</string>
+
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
-    <key>CFBundleName</key>
-    <string>SQuirreLSQL</string>
+
     <key>CFBundlePackageType</key>
     <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>@SquirrelVersion@</string>
+
     <key>CFBundleSignature</key>
     <string>????</string>
-    <key>CFBundleVersion</key>
-    <string>@SquirrelVersion@</string>
-    <key>Java</key>
-    <dict>
-        <key>MainClass</key>
-        <string>net.sourceforge.squirrel_sql.client.Main</string>
-        <key>JVMVersion</key>
-        <string>1.5+</string>
-        <key>ClassPath</key>
-        <array>
-                <string>$JAVAROOT/lib/antlr-2.7.5H3.jar</string>
-                <string>$JAVAROOT/lib/cglib-2.1.3.jar</string>
-                <string>$JAVAROOT/lib/commons-cli.jar</string>
-                <string>$JAVAROOT/lib/commons-codec-1.3.jar</string>
-                <string>$JAVAROOT/lib/commons-collections-2.1.1.jar</string>
-                <string>$JAVAROOT/lib/commons-httpclient-3.1.jar</string>
-                <string>$JAVAROOT/lib/commons-logging-1.0.4.jar</string>
-                <string>$JAVAROOT/lib/dom4j-1.6.1.jar</string>
-                <string>$JAVAROOT/lib/ejb3-persistence.jar</string>
-                <string>$JAVAROOT/lib/forms.jar</string>
-                <string>$JAVAROOT/lib/fw.jar</string>
-                <string>$JAVAROOT/lib/hibernate3.jar</string>
-                <string>$JAVAROOT/lib/jxl.jar</string>
-                <string>$JAVAROOT/lib/log4j-1.2.15.jar</string>
-                <string>$JAVAROOT/lib/nanoxml-2.2.3.jar</string>
-                <string>$JAVAROOT/lib/openide-loaders.jar</string>
-                <string>$JAVAROOT/lib/openide.jar</string>
-                <string>$JAVAROOT/lib/org-netbeans-modules-editor-fold.jar</string>
-                <string>$JAVAROOT/lib/org-netbeans-modules-editor-lib.jar</string>
-                <string>$JAVAROOT/lib/org-netbeans-modules-editor-util.jar</string>
-                <string>$JAVAROOT/lib/org-netbeans-modules-editor.jar</string>
-                <string>$JAVAROOT/lib/syntax.jar</string>
-                <string>$JAVAROOT/lib/stringtemplate-3.1.b1.jar</string>
-                <string>$JAVAROOT/lib/hibernate-entitymanager-3.3.1.jar</string>
-                <string>$JAVAROOT/lib/hibernate-commons-annotations-3.3.0.jar</string>
-                <string>$JAVAROOT/lib/hibernate-annotations-3.3.0.jar</string>
-                <string>$JAVAROOT/lib/hibernate3.2.4.sp1.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_pt_BR.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_bg_BG.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_cs_CZ.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_zh_CN.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_fr.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_de_DE.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_it_IT.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_ru.jar</string>
-                <string>$JAVAROOT/lib/squirrel-sql_es.jar</string>
-                <string>$JAVAROOT/squirrel-sql.jar</string>
-                <string>$JAVAROOT/log4j.properties</string>
-                <string>$JAVAROOT/updater-log4j.properties</string>                
-        </array>
-        <key>WorkingDirectory</key>
-        <string>$JAVAROOT</string>
-        <key>Properties</key>
-        <dict>
-            <key>apple.laf.useScreenMenuBar</key>
-            <string>true</string>
-            <key>com.apple.mrj.application.apple.menu.about.name</key>
-            <string>SQuirreL SQL</string>
-        </dict>
-        <key>Arguments</key>
-        <string>--native-laf</string>
-    </dict>
 </dict>
 </plist>
