@@ -327,6 +327,13 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
             }
 
             _handlesInRemoveTab_Dispose.add(tabHandle);
+
+            if(false == tabHandle.isFireClosingProceedingOrDone())
+            {
+               // Has to be done here e.g. when "Close All Sessions" menu was used.
+               tabHandle.fireClosing(e);
+            }
+
             tabHandle.getWidget().setVisible(false);
             tabHandle.fireDeselected(e);
             int tabIndex = getTabIndex(tabHandle);

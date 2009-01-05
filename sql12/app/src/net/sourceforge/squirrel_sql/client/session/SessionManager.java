@@ -20,14 +20,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -78,6 +73,7 @@ public class SessionManager
    private final IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory(1);
    private ArrayList<IAllowedSchemaChecker> _allowedSchemaCheckers = new ArrayList<IAllowedSchemaChecker>();
    private Hashtable<IIdentifier, String[]> _allowedSchemasBySessionID = new Hashtable<IIdentifier, String[]>();
+   private HashSet<IIdentifier> _inCloseSession = new HashSet<IIdentifier>();
 
    /**
     * Ctor.
@@ -268,6 +264,12 @@ public class SessionManager
 
       try
       {
+         if(_inCloseSession.contains(session.getIdentifier()))
+         {
+            return false;
+         }
+
+         _inCloseSession.add(session.getIdentifier());
          if (confirmClose(session))
          {
             // TODO: Should have session listeners instead of these calls.
@@ -324,6 +326,10 @@ public class SessionManager
       {
          s_log.error("Error closing Session", ex);
          session.showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", ex));
+      }
+      finally
+      {
+         _inCloseSession.remove(session.getIdentifier());
       }
 
       return false;
