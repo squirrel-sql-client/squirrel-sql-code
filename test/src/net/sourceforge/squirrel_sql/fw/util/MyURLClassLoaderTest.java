@@ -13,7 +13,7 @@ import net.sourceforge.squirrel_sql.test.TestUtil;
 public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 {
 
-	private static String filePrefix = "file:/";
+	private static String filePrefix = "file:";
 
 	private static String COMMONS_CLI_JAR = "squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
 
@@ -66,7 +66,6 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	      result = filePrefix + resultFile.getCanonicalPath();
       } catch (IOException e)
       {
-	      // TODO Auto-generated catch block
 	      e.printStackTrace();
       }
 		System.out.println("Found file: " + result);
