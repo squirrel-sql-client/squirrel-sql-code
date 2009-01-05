@@ -45,6 +45,8 @@
                 
                         <!-- Make squirrel launch script executable -->        
 			<executable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel" stage="never"/>
+			<!-- Replace variables in shell script -->
+                        <parsable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel" type="shell"/>
 
 			<singlefile target="$INSTALL_PATH/Contents/Info.plist"
 					    src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/Info.plist"/>
