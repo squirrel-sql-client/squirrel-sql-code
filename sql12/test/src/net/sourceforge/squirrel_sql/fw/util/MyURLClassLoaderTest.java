@@ -14,6 +14,11 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 {
 
 	private static String filePrefix = "file:";
+	static {
+		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+			filePrefix = "file:/";
+		}
+	}
 
 	private static String COMMONS_CLI_JAR = "squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
 
