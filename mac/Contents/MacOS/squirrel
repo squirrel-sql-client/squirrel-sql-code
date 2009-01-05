@@ -10,7 +10,7 @@ case "`uname -s`" in
 esac
 
 # Squirrel home.
-SQUIRREL_SQL_HOME=''%INSTALL_PATH'
+SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/java'
 
 # SQuirreL home in Unix format.
 if $cygwin ; then
