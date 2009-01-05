@@ -15,6 +15,8 @@ public class TabHandle
 
    private ArrayList<TabHandleListener> _tabHandleListeners = new ArrayList<TabHandleListener>();
 
+   private boolean _fireClosingProceedingOrDone;
+
    public TabHandle(TabWidget tabWidget, DockTabDesktopPane dockTabDesktopPane)
    {
       _tabWidget = tabWidget;
@@ -40,6 +42,7 @@ public class TabHandle
 
    public void fireClosing(ActionEvent e)
    {
+      _fireClosingProceedingOrDone = true;
       TabHandleListener[] clone = _tabHandleListeners.toArray(new TabHandleListener[_tabHandleListeners.size()]);
 
       for (TabHandleListener listener : clone)
@@ -132,5 +135,10 @@ public class TabHandle
    public void select()
    {
       _dockTabDesktopPane.selectTab(this);
+   }
+
+   public boolean isFireClosingProceedingOrDone()
+   {
+      return _fireClosingProceedingOrDone;
    }
 }
