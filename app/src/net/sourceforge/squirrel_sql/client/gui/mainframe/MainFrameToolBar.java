@@ -104,14 +104,16 @@ class MainFrameToolBar extends ToolBar
       addSeparator();
       add(actions.get(GlobalPreferencesAction.class));
       add(actions.get(NewSessionPropertiesAction.class));
-      addSeparator();
-      add(actions.get(TileAction.class));
-      add(actions.get(TileHorizontalAction.class));
-      add(actions.get(TileVerticalAction.class));
-      add(actions.get(CascadeAction.class));
-      add(actions.get(MaximizeAction.class));
-
-      addSeparator();
+      if (_app.getDesktopStyle().isInternalFrameStyle())
+      {
+         addSeparator();
+         add(actions.get(TileAction.class));
+         add(actions.get(TileHorizontalAction.class));
+         add(actions.get(TileVerticalAction.class));
+         add(actions.get(CascadeAction.class));
+         add(actions.get(MaximizeAction.class));
+         addSeparator();
+      }
       JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
       lbl.setAlignmentY(0.5f);
       add(lbl2);

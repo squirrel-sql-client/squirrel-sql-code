@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IDesktopContainer;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.*;
@@ -384,14 +385,17 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ViewAliasesAction.class, menu);
 		addToMenu(rsrc, ViewDriversAction.class, menu);
 		addToMenu(rsrc, ViewLogsAction.class, menu);
-		menu.addSeparator();
-		addDesktopPaneActionToMenu(rsrc, TileAction.class, menu, desktopPane);
-		addDesktopPaneActionToMenu(rsrc, TileHorizontalAction.class, menu, desktopPane);
-		addDesktopPaneActionToMenu(rsrc, TileVerticalAction.class, menu, desktopPane);
-		addDesktopPaneActionToMenu(rsrc, CascadeAction.class, menu, desktopPane);
-		addDesktopPaneActionToMenu(rsrc, MaximizeAction.class, menu, desktopPane);
-		menu.addSeparator();
-		addToMenu(rsrc, CloseAllSessionsAction.class, menu);
+      if (_app.getDesktopStyle().isInternalFrameStyle())
+      {
+         menu.addSeparator();
+         addDesktopPaneActionToMenu(rsrc, TileAction.class, menu, desktopPane);
+         addDesktopPaneActionToMenu(rsrc, TileHorizontalAction.class, menu, desktopPane);
+         addDesktopPaneActionToMenu(rsrc, TileVerticalAction.class, menu, desktopPane);
+         addDesktopPaneActionToMenu(rsrc, CascadeAction.class, menu, desktopPane);
+         addDesktopPaneActionToMenu(rsrc, MaximizeAction.class, menu, desktopPane);
+         menu.addSeparator();
+      }
+      addToMenu(rsrc, CloseAllSessionsAction.class, menu);
 		menu.addSeparator();
 		return menu;
 	}
