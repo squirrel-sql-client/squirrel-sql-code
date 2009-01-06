@@ -6,7 +6,7 @@
     <string>SQuirreLSQL</string>
 
     <key>CFBundleExecutable</key>
-    <string>squirrel</string>
+    <string>squirrel-sql.sh</string>
 
     <key>CFBundleIconFile</key>
     <string>acorn.icns</string>
