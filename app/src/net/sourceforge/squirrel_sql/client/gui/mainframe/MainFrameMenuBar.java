@@ -309,6 +309,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, ReconnectAction.class, menu);
+		addToMenu(rsrc, CloseSessionWindowAction.class, menu);
 		addToMenu(rsrc, CloseSessionAction.class, menu);
 		menu.add(createSQLResultsCloseMenu(rsrc));
 		menu.addSeparator();
@@ -396,6 +397,7 @@ final class MainFrameMenuBar extends JMenuBar
          menu.addSeparator();
       }
       addToMenu(rsrc, CloseAllSessionsAction.class, menu);
+      addToMenu(rsrc, CloseAllButCurrentSessionsAction.class, menu);
 		menu.addSeparator();
 		return menu;
 	}

@@ -26,10 +26,14 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
@@ -359,6 +363,29 @@ public class SessionManager
       }
       return true;
    }
+
+   synchronized public boolean closeAllButCurrentSessions()
+   {
+      ISession activeSession = getActiveSession();
+
+      // Get an array since we dont want trouble with the sessionsList when
+      // we remove the sessions from it.
+      final ISession[] sessions = getConnectedSessions();
+      for (int i = sessions.length - 1; i >= 0; i--)
+      {
+         if(sessions[i] == activeSession)
+         {
+            continue; 
+         }
+
+         if (!closeSession(sessions[i]))
+         {
+            return false;
+         }
+      }
+      return true;
+   }
+
 
    /**
     * Adds a session listener
