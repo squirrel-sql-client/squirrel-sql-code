@@ -402,9 +402,9 @@
 	create "releaseNotes.txt" mostly suitable for pasting into the 
 	File Releases page
 	-->
-	<target name="releaseNotes">
+	<target name="releaseNotes" depends="init">
 
-		<delete file="release_notes.txt"/>
+		<delete file="${java.io.tmpdir}/release_notes.txt"/>
 				
 		<copy file="snapshot_release_notes.template" toFile="${java.io.tmpdir}/release_notes.txt">
 			<filterchain>
