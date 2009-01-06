@@ -409,6 +409,7 @@ public class ActionCollection
 		enableAction(TileHorizontalAction.class, enable);
 		enableAction(TileVerticalAction.class, enable);
 		enableAction(CloseAllSessionsAction.class, enable);
+		enableAction(CloseAllButCurrentSessionsAction.class, enable);
 	}
 
 	/**
@@ -420,6 +421,7 @@ public class ActionCollection
 		add(new CascadeAction(_app));
 		add(new ToolsPopupAction(_app));
 		add(new CloseAllSessionsAction(_app));
+		add(new CloseAllButCurrentSessionsAction(_app));
 		add(new CloseAllSQLResultTabsAction(_app));
 		add(new CloseAllSQLResultTabsButCurrentAction(_app));
 		add(new CloseCurrentSQLResultTabAction(_app));
@@ -427,6 +429,7 @@ public class ActionCollection
 		add(new CloseAllSQLResultWindowsAction(_app));
 		add(new ViewObjectAtCursorInObjectTreeAction(_app));
 		add(new CloseSessionAction(_app));
+		add(new CloseSessionWindowAction(_app));
 		add(new CommitAction(_app));
 		add(new CopyQualifiedObjectNameAction(_app));
 		add(new CopySimpleObjectNameAction(_app));

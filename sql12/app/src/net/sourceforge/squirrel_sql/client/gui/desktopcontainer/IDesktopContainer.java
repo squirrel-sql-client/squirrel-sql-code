@@ -30,5 +30,4 @@ public interface IDesktopContainer
    JComponent getComponent();
 
    Rectangle getBounds();
-
 }

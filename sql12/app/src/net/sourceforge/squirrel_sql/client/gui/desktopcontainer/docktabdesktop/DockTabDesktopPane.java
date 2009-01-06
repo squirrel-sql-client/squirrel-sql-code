@@ -7,12 +7,14 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.T
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -48,6 +50,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private DockTabDesktopManager _dockTabDesktopManager = new DockTabDesktopManager();
 
+   private JPopupMenu _tabRightMouseMenu;
 
    public DockTabDesktopPane(IApplication app)
    {
@@ -93,6 +96,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
             onSaveApplicationState();
          }
       });
+
+      initTabRightMouseMenu();
    }
 
    private void onSaveApplicationState()
@@ -342,10 +347,21 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
                _tabbedPane.remove(tabIndex);
             }
 
-            //tabHandle.fireClosed(e); is done in dispose itself because listeners must befired even in DO_NOTHING_ON_CLOSE mode
+            ////////////////////////////////////////////////////
+            // Is done in dispose itself because listeners must be fired even in DO_NOTHING_ON_CLOSE mode
+            // tabHandle.fireClosed(e);
+            ///////////////////////////////////////////////////
 
             _tabHandles.remove(tabHandle);
             tabHandle.removeTabHandleListener(_dockTabDesktopManager);
+
+
+            TabHandle newSelectedHandle = getSelectedHandle();
+            if(null != newSelectedHandle)
+            {
+               // Make sure a deselect is followed by a select when a new selected Tab exists. 
+               newSelectedHandle.fireSelected(e);
+            }
          }
          finally
          {
@@ -433,6 +449,53 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       return this;
    }
 
+   public void initTabRightMouseMenu()
+   {
+      _tabRightMouseMenu = new JPopupMenu();
+
+      _tabbedPane.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowTabRightMouseMenu(e);
+         }
+
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowTabRightMouseMenu(e);
+         }
+      });
+
+      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseSessionWindowAction.class)));
+      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseSessionAction.class)));
+      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseAllButCurrentSessionsAction.class)));
+      _tabRightMouseMenu.add(createMenu(_app.getActionCollection().get(CloseAllSessionsAction.class)));
+   }
+
+   private JMenuItem createMenu(Action action)
+   {
+      JMenuItem ret = new JMenuItem(action);
+
+      String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
+      if(   null != accel && 0 != accel.trim().length())
+      {
+         ret.setAccelerator(KeyStroke.getKeyStroke(accel));
+      }
+
+      return ret;
+   }
+
+   private void maybeShowTabRightMouseMenu(MouseEvent e)
+   {
+      if (e.isPopupTrigger())
+      {
+         int tab = _tabbedPane.getUI().tabForCoordinate(_tabbedPane, e.getX(), e.getY());
+         if (-1 != tab)
+         {
+            _tabRightMouseMenu.show(e.getComponent(), e.getX(), e.getY());
+         }
+      }
+   }
 
 
    public void setDesktopManager(SquirrelDesktopManager squirrelDesktopManager)

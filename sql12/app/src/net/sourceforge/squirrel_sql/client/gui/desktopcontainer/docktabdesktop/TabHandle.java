@@ -81,6 +81,17 @@ public class TabHandle
       }
    }
 
+   public void fireSelected(ActionEvent e)
+   {
+      TabHandleListener[] clone = _tabHandleListeners.toArray(new TabHandleListener[_tabHandleListeners.size()]);
+
+      for (TabHandleListener listener : clone)
+      {
+         listener.tabSelected(new TabHandleEvent(this, null));
+      }
+   }
+
+
 
 
    public boolean isSelected()
@@ -141,4 +152,5 @@ public class TabHandle
    {
       return _fireClosingProceedingOrDone;
    }
+
 }

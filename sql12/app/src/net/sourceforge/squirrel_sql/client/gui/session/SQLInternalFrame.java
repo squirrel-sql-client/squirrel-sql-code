@@ -194,4 +194,11 @@ public class SQLInternalFrame extends SessionTabWidget
 			actions.get(SQLFilterAction.class).setEnabled(true);
 		}
 	}
+
+
+   @Override
+   public void dispose()
+   {
+      super.dispose();    //To change body of overridden methods use File | Settings | File Templates.
+   }
 }
