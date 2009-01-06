@@ -5,12 +5,21 @@
 
 # Are we running within Cygwin on some version of Windows?
 cygwin=false;
+macosx=false;
+
 case "`uname -s`" in
 	CYGWIN*) cygwin=true ;;
 esac
+case "`uname -s`" in
+        Darwin) macosx=true;;
+esac
 
-# Squirrel home.
-SQUIRREL_SQL_HOME='%INSTALL_PATH'
+# SQuirreL home.
+if $macosx ; then
+        SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/java'
+else 
+        SQUIRREL_SQL_HOME='%INSTALL_PATH'
+fi
 
 # SQuirreL home in Unix format.
 if $cygwin ; then
@@ -48,17 +57,23 @@ else
 	UPDATE_CP=$UPDATE_CP:$CLASSPATH
 fi
 
+if $macosx ; then
+        # Define mac-specific system properties if running on Mac OS X
+        MACOSX_UPDATER_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=\"SQuirreL SQL Updater\""
+        MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=\"SQuirreL SQL\""
+fi 
+
 # Check for updates and prompt to apply if any are available
 if [ -f $UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar -a -f $UNIX_STYLE_HOME/update/changeList.xml ]; then
-        $JAVA -cp $UPDATE_CP -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
+        $JAVA -cp $UPDATE_CP $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
 fi
 
-#To add translation working directories to your classpath edit and uncomment this line:
-#$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
-
-#To change the language edit and uncomment this line:
-#$JAVA -Xmx256m -cp $TMP_CP:<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
+if $macosx ; then
+        # macosx provides unknown args to the script, causing SQuirreL to bail..
+        SCRIPT_ARGS=""       
+else
+        SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
+fi
 
 # Launch SQuirreL application
-$JAVA -Xmx256m -cp $TMP_CP net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $1 $2 $3 $4 $5 $6 $7 $8 $9
-
+$JAVA -Xmx256m -cp $TMP_CP $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $SCRIPT_ARGS
