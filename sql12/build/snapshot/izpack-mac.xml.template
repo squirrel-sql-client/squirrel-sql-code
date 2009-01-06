@@ -40,13 +40,13 @@
 			<description>SQL Client</description>
 		
 			
-                        <singlefile target="$INSTALL_PATH/Contents/MacOS/squirrel"
-                                src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/squirrel"/>
+                        <singlefile target="$INSTALL_PATH/Contents/MacOS/squirrel-sql.sh"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.sh"/>
                 
                         <!-- Make squirrel launch script executable -->        
-			<executable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel" stage="never"/>
+			<executable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel-sql.sh" stage="never"/>
 			<!-- Replace variables in shell script -->
-                        <parsable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel" type="shell"/>
+                        <parsable targetfile="$INSTALL_PATH/Contents/MacOS/squirrel-sql.sh" type="shell"/>
 
 			<singlefile target="$INSTALL_PATH/Contents/Info.plist"
 					    src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/Info.plist"/>
