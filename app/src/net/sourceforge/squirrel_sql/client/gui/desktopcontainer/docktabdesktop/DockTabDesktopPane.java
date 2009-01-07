@@ -256,6 +256,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    private DockHandle addDock(Container comp, String title)
    {
       final VerticalToggleButton btn = new VerticalToggleButton(title);
+      btn.setBorder(BorderFactory.createEtchedBorder());
 
       _pnlButtons.add(btn);
 
