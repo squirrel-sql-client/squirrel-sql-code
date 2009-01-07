@@ -871,8 +871,6 @@
 				<include name="**/Info.plist" />
 			</fileset>
 		</copy>
-		<chmod file="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"
-		       perm="ugo+rx" />
 		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib">
 			<fileset dir="${core_dist_lib_dir}">
 				<include name="**/*" />
@@ -907,12 +905,8 @@
 		<!--<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>-->
 		<!--<zip destfile="${dist_dir}/SquirrelSQLMac.zip" basedir="${dist_dir}/mac"/>-->
 		<tar destfile="${dist_dir}/SquirrelSQLMac.tar.gz" compression="gzip">
-			<tarfileset dir="${dist_dir}/mac" mode="755">
-				<include name="**/JavaApplicationStub" />
-			</tarfileset>
 			<tarfileset dir="${dist_dir}/mac">
 				<include name="**" />
-				<exclude name="**/JavaApplicationStub" />
 			</tarfileset>
 		</tar>
 	</target>
