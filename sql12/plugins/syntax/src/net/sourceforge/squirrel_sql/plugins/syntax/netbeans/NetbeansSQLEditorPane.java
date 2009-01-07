@@ -145,6 +145,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
 		KeyStroke ctrlShiftCStroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
 		getKeymap().removeKeyStrokeBinding(ctrlShiftCStroke);
 
+		// Removed for close Session
+		KeyStroke ctrlF3Stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3, java.awt.event.InputEvent.CTRL_MASK);
+		getKeymap().removeKeyStrokeBinding(ctrlF3Stroke);
+
 		//
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
