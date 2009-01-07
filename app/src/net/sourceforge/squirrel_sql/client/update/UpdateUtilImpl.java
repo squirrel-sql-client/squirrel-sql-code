@@ -303,7 +303,7 @@ public class UpdateUtilImpl implements UpdateUtil
 			+ fromDir.getAbsolutePath() + ") to be a directory."); }
 		if (!toDir.isDirectory()) { throw new IllegalArgumentException("Expected toDir("
 			+ toDir.getAbsolutePath() + ") to be a directory."); }
-		FileWrapper[] files = toDir.listFiles();
+		FileWrapper[] files = fromDir.listFiles();
 		for (FileWrapper sourceFile : files)
 		{
 			copyFile(sourceFile, toDir);
