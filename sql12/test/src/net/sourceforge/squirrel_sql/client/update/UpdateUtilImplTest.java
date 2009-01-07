@@ -67,16 +67,18 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    private UpdateXmlSerializer mockSerializer = null;
 	private PathUtils mockPathUtils = null;
 	private IProxySettings mockProxySettings = null;
+	private FileWrapper mockDownloadsCoreDirectory = null;
+	private FileWrapper mockSquiirelLibDir = null;
    
    @Before
    public void setUp() throws Exception {
       underTest = new UpdateUtilImpl();
       
       // create mocks to be injected
-      mockPluginManager = mockHelper.createMock(IPluginManager.class);
-      mockFileWrapperFactory = mockHelper.createMock(FileWrapperFactory.class);
-      mockApplicationFileWrappers = mockHelper.createMock(ApplicationFileWrappers.class);
-      mockIOUtilities = mockHelper.createMock(IOUtilities.class);
+      mockPluginManager = mockHelper.createMock("mockPluginManager",IPluginManager.class);
+      mockFileWrapperFactory = mockHelper.createMock("mockFileWrapperFactory",FileWrapperFactory.class);
+      mockApplicationFileWrappers = mockHelper.createMock("mockApplicationFileWrappers",ApplicationFileWrappers.class);
+      mockIOUtilities = mockHelper.createMock("mockIOUtilities", IOUtilities.class);
       mockSerializer = mockHelper.createMock("UpdateXmlSerializer", UpdateXmlSerializer.class);
       mockPathUtils = mockHelper.createMock(PathUtils.class);
       
@@ -114,6 +116,16 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    	expect(mockDownloadsPluginDirectory.isDirectory()).andStubReturn(true);
    	expect(mockFileWrapperFactory.create(mockDownloadsDirectory, PLUGIN_ARTIFACT_ID));
    	expectLastCall().andStubReturn(mockDownloadsPluginDirectory);
+   	
+   	// squirrel installed lib dir
+   	mockSquiirelLibDir = mockHelper.createMock("mockSquiirelLibDir", FileWrapper.class);
+   	expect(mockSquiirelLibDir.exists()).andStubReturn(true);
+   	expect(mockSquiirelLibDir.isDirectory()).andStubReturn(true);
+   	
+   	// downloads/core directory
+   	mockDownloadsCoreDirectory = mockHelper.createMock("mockDownloadsCoreDirectory", FileWrapper.class);
+   	expect(mockDownloadsCoreDirectory.exists()).andStubReturn(true);
+   	expect(mockDownloadsCoreDirectory.isDirectory()).andStubReturn(true);
    }
    
    @After
@@ -313,6 +325,60 @@ public class UpdateUtilImplTest extends BaseSQuirreLJUnit4TestCase {
    public void testDownloadHttpUpdateFile_verifyfailure() throws Exception {
    	testDownloadHttpUpdateFile(false);
    }   
+   
+   @Test
+   public void testCopyDir() throws Exception {
+   	FileWrapper[] listOfFiles = new FileWrapper[1];
+   	FileWrapper mockFwJarFileWrapper = mockHelper.createMock("mockFwJarFileWrapper",FileWrapper.class);
+   	listOfFiles[0] = mockFwJarFileWrapper;
+   	expect(mockFwJarFileWrapper.exists()).andStubReturn(true);
+   	expect(mockFwJarFileWrapper.getName()).andReturn("fw.jar");
+   	expect(mockFwJarFileWrapper.getAbsolutePath()).andStubReturn("/squirrellibdir/test/path/fw.jar");
+   	expect(mockSquiirelLibDir.listFiles()).andStubReturn(listOfFiles);
+   	
+   	FileWrapper mockFwJarFileInDownloadsWrapper = 
+   		mockHelper.createMock("mockFwJarFileInDownloadsWrapper", FileWrapper.class);
+   	expect(mockFwJarFileInDownloadsWrapper.getAbsolutePath()).andStubReturn("/downloads/test/path/fw.jar");
+   	expect(mockFwJarFileInDownloadsWrapper.exists()).andReturn(false);
+   	
+   	expect(mockFileWrapperFactory.create(mockDownloadsCoreDirectory, "fw.jar"));
+   	expectLastCall().andReturn(mockFwJarFileInDownloadsWrapper);
+   	
+   	mockIOUtilities.copyFile(mockFwJarFileWrapper, mockFwJarFileInDownloadsWrapper);
+   	
+   	mockHelper.replayAll();
+   	underTest.copyDir(mockSquiirelLibDir, mockDownloadsCoreDirectory);
+   	mockHelper.verifyAll();
+   }
+   
+   @Test (expected = IllegalArgumentException.class)
+   public void testCopyDir_fromDirNotADir() throws Exception {
+   	FileWrapper mockFromDir = mockHelper.createMock("mockFromFile", FileWrapper.class);
+   	expect(mockFromDir.getAbsolutePath()).andStubReturn("/absolute/path/to/mockFromFile");
+		FileWrapper mockToDir = mockHelper.createMock("mockToDir", FileWrapper.class);
+		expect(mockToDir.getAbsolutePath()).andStubReturn("/absolute/path/to/mockToDir");
+		
+   	expect(mockFromDir.isDirectory()).andStubReturn(false);
+		
+   	mockHelper.replayAll();
+		underTest.copyDir(mockFromDir, mockToDir);
+		mockHelper.verifyAll();
+   }
+
+   @Test (expected = IllegalArgumentException.class)
+   public void testCopyDir_ToDirNotADir() throws Exception {
+   	FileWrapper mockFromDir = mockHelper.createMock("mockFromFile", FileWrapper.class);
+   	expect(mockFromDir.getAbsolutePath()).andStubReturn("/absolute/path/to/mockFromFile");
+		FileWrapper mockToDir = mockHelper.createMock("mockToDir", FileWrapper.class);
+		expect(mockToDir.getAbsolutePath()).andStubReturn("/absolute/path/to/mockToDir");
+		
+   	expect(mockFromDir.isDirectory()).andStubReturn(true);
+   	expect(mockToDir.isDirectory()).andStubReturn(false);
+		
+   	mockHelper.replayAll();
+		underTest.copyDir(mockFromDir, mockToDir);
+		mockHelper.verifyAll();
+   }
    
    // Helper methods
    
