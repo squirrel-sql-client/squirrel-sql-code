@@ -1192,7 +1192,7 @@
         -->
 	<target name="cpd" depends="init">
 		<mkdir dir="${cpd.reports.dir}" />
-		<cpd minimumTokenCount="100" outputFile="${cpd.reports.dir}/cpd.txt">
+		<cpd format="xml" minimumTokenCount="100" outputFile="${cpd.reports.dir}/cpd.xml">
 			<fileset dir="${coverage.sources.dir}">
 				<include name="**/*.java" />
 			</fileset>
