@@ -26,12 +26,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -52,7 +50,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
-public class CreateDataScriptCommand implements ICommand, InternalFrameListener
+public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(CreateDataScriptCommand.class);
@@ -64,8 +62,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    /** flag that gets set when the first timestamp column is encountered */
    private Boolean dialectSupportsSubSecondTimestamps = null; 
    
-	protected JInternalFrame _statusFrame;
-   protected boolean _bStop = false;
+	protected AbortController _abortController;
 
    /**
     * Current session.
@@ -87,38 +84,17 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       _session = session;
       _plugin = plugin;
       _templateScriptOnly = templateScriptOnly;
+      _abortController = new AbortController(_session.getApplication());
    }
 
    protected void showAbortFrame()
    {
-      if (_statusFrame == null)
+      if (false == _abortController.isVisble())
       {
-			// i18n[sqlscript.abort=Abort?]
-         JOptionPane optionPane = new JOptionPane(s_stringMgr.getString("sqlscript.abort"), JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
-
-			// i18n[sqlscript.creatingDataScript=Creating data script]
-			_statusFrame = optionPane.createInternalFrame(_session.getSessionSheet(), s_stringMgr.getString("sqlscript.creatingDataScript"));
-         _statusFrame.addInternalFrameListener(this);
-      }
-      _bStop = false;
-      _statusFrame.setVisible(true);
-   }
-
-   protected void hideAbortFrame()
-   {
-      if (_statusFrame != null)
-      {
-         _statusFrame.removeInternalFrameListener(this);
-         try
-         {
-            _statusFrame.setClosed(true);
-         }
-         catch (Exception e)
-         {
-         }
-         _statusFrame.setVisible(false);
+         _abortController.setVisible(true);
       }
    }
+
 
    /**
     * Execute this command.
@@ -146,7 +122,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                   {
                      if (dbObjs[k] instanceof ITableInfo)
                      {
-                        if (_bStop) break;
+                        if (_abortController.isStop()) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ScriptUtil.getTableName(ti);
                         StringBuilder sql = new StringBuilder();
@@ -190,7 +166,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
                      _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                   }
-                  hideAbortFrame();
+                  _abortController.setVisible(false);
                }
             });
          }
@@ -233,7 +209,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       Timestamp currentTime = new Timestamp(System.currentTimeMillis());
       while (srcResult.next() || _templateScriptOnly || headerOnly)
       {
-         if (_bStop) break;
+         if (isAborted()) break;
          sbRows.append("INSERT INTO ");
          StringBuffer sbValues = new StringBuffer();
          sbRows.append(sTable);
@@ -537,55 +513,6 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    }
 
 
-   /**
-    * @see InternalFrameListener#internalFrameActivated(InternalFrameEvent)
-    */
-   public void internalFrameActivated(InternalFrameEvent e)
-   {
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameClosed(InternalFrameEvent)
-    */
-   public void internalFrameClosed(InternalFrameEvent e)
-   {
-      _bStop = true;
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameClosing(InternalFrameEvent)
-    */
-   public void internalFrameClosing(InternalFrameEvent e)
-   {
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameDeactivated(InternalFrameEvent)
-    */
-   public void internalFrameDeactivated(InternalFrameEvent e)
-   {
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameDeiconified(InternalFrameEvent)
-    */
-   public void internalFrameDeiconified(InternalFrameEvent e)
-   {
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameIconified(InternalFrameEvent)
-    */
-   public void internalFrameIconified(InternalFrameEvent e)
-   {
-   }
-
-   /**
-    * @see InternalFrameListener#internalFrameOpened(InternalFrameEvent)
-    */
-   public void internalFrameOpened(InternalFrameEvent e)
-   {
-   }
 
    private static class ColumnInfo
    {
@@ -597,6 +524,16 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
          this.columnName = columnName;
          this.sqlType = sqlType;
       }
+   }
+
+   protected void hideAbortFrame()
+   {
+      _abortController.setVisible(false);
+   }
+
+   protected boolean isAborted()
+   {
+      return _abortController.isStop();
    }
 
 }

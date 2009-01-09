@@ -126,6 +126,12 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             String sql = qt.nextQuery();
             ResultSet srcResult = stmt.executeQuery(sql);
 
+            if(isAborted())
+            {
+               return;
+            }
+
+
             genCreate(srcResult, sTable, sbCreate);
 
             genInserts(srcResult, sTable, sbInsert, true);
