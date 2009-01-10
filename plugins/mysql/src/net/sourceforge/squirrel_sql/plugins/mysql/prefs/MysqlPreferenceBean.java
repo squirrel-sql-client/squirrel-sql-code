@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.prefs;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -19,158 +20,26 @@ package net.sourceforge.squirrel_sql.plugins.mysql.prefs;
  */
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
 
 /**
  * A bean class to store preferences for the Oracle plugin.
  */
-public class MysqlPreferenceBean implements  Cloneable, 
-                                             Serializable,
-                                             IQueryTokenizerPreferenceBean {
-    
+public class MysqlPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable
+{
+
 	static final long serialVersionUID = 5818886723165356478L;
 
-    static final String UNSUPPORTED = "Unsupported";
+	static final String UNSUPPORTED = "Unsupported";
 
-    /** Client Name. */
-	private String _clientName;
-
-	/** Client version. */
-	private String _clientVersion;
-    
-    private String statementSeparator = ";";
-    
-    private String procedureSeparator = "|";
-    
-    private String lineComment = "--";
-    
-    private boolean removeMultiLineComments = false;
-    
-    private boolean installCustomQueryTokenizer = true;    
-    
-	public MysqlPreferenceBean() {
+	public MysqlPreferenceBean()
+	{
 		super();
+		statementSeparator = ";";
+		procedureSeparator = "|";
+		lineComment = "--";
+		removeMultiLineComments = false;
+		installCustomQueryTokenizer = true;
 	}
 
-	/**
-	 * Return a copy of this object.
-	 */
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException ex) {
-			throw new InternalError(ex.getMessage()); // Impossible.
-		}
-	}
-
-	/**
-	 * Retrieve the client to use. This is only
-	 * used if <TT>useAnonymousClient</TT> is false.
-	 *
-	 * @return	Client name.
-	 */
-	public String getClientName() {
-		return _clientName;
-	}
-
-	/**
-	 * Set the client name.
-	 *
-	 * @param	value	Client name
-	 */
-	public void setClientName(String value) {
-		_clientName = value;
-	}
-
-	/**
-	 * Retrieve the client version to use. This is only
-	 * used if <TT>useAnonymousLogon</TT> is false.
-	 *
-	 * @return	Client version.
-	 */
-	public String getClientVersion() {
-		return _clientVersion;
-	}
-
-	/**
-	 * Set the client version.
-	 *
-	 * @param	value	Client version
-	 */
-	public void setClientVersion(String value) {
-		_clientVersion = value;
-	}
-
-    /**
-     * @param statementSeparator the statementSeparator to set
-     */
-    public void setStatementSeparator(String statementSeparator) {
-        this.statementSeparator = statementSeparator;
-    }
-
-    /**
-     * @return the statementSeparator
-     */
-    public String getStatementSeparator() {
-        return statementSeparator;
-    }
-
-    /**
-     * @param procedureSeparator the procedureSeparator to set
-     */
-    public void setProcedureSeparator(String procedureSeparator) {
-        this.procedureSeparator = procedureSeparator;
-    }
-
-    /**
-     * @return the procedureSeparator
-     */
-    public String getProcedureSeparator() {
-        return procedureSeparator;
-    }
-
-    /**
-     * @param lineComment the lineComment to set
-     */
-    public void setLineComment(String lineComment) {
-        this.lineComment = lineComment;
-    }
-
-    /**
-     * @return the lineComment
-     */
-    public String getLineComment() {
-        return lineComment;
-    }
-
-    /**
-     * @param removeMultiLineComments the removeMultiLineComments to set
-     */
-    public void setRemoveMultiLineComments(boolean removeMultiLineComments) {
-        this.removeMultiLineComments = removeMultiLineComments;
-    }
-
-    /**
-     * @return the removeMultiLineComments
-     */
-    public boolean isRemoveMultiLineComments() {
-        return removeMultiLineComments;
-    }
-
-    /**
-     * @param installCustomQueryTokenizer the installCustomQueryTokenizer to set
-     */
-    public void setInstallCustomQueryTokenizer(boolean installCustomQueryTokenizer) {
-        this.installCustomQueryTokenizer = installCustomQueryTokenizer;
-    }
-
-    /**
-     * @return the installCustomQueryTokenizer
-     */
-    public boolean isInstallCustomQueryTokenizer() {
-        return installCustomQueryTokenizer;
-    }
-
-	
 }
-
