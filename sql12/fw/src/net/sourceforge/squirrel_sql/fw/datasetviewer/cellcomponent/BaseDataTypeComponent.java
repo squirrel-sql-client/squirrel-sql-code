@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,7 +44,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * 
  * @author manningr
  */
-public class BaseDataTypeComponent {
+public abstract class BaseDataTypeComponent implements IDataTypeComponent {
 
     /** Logger for this class. */
     private static ILogger s_log = 
@@ -287,5 +288,20 @@ public class BaseDataTypeComponent {
     */
    public void setBeepHelper(IToolkitBeepHelper helper) {
    	this._beepHelper = helper;
+   }
+   
+   
+   /**
+    * This default implementation only uses the column in a where clause when it's value is null, which is 
+    * believed to be safe for all types in all databases.
+    *  
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object, net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
+    */
+   public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+      if (value == null || value.toString() == null ) {
+         return _colDef.getLabel() + " IS NULL";
+     } else {
+         return "";
+     }
    }
 }
