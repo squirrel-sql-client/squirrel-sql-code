@@ -20,148 +20,29 @@ package net.sourceforge.squirrel_sql.plugins.derby.prefs;
 
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
 
 /**
  * A preference bean for the Derby plugin.
  * 
  * @author manningr
  */
-public class DerbyPreferenceBean implements Cloneable, 
-Serializable,
-IQueryTokenizerPreferenceBean {
+public class DerbyPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable {
 
    static final long serialVersionUID = 5818886723165356478L;
 
    static final String UNSUPPORTED = "Unsupported";
-
-   /** Client Name. */
-   private String _clientName;
-
-   /** Client version. */
-   private String _clientVersion;
-
-   private String statementSeparator = ";";
-
-   private String procedureSeparator = "/";
-
-   private String lineComment = "--";
-
-   private boolean removeMultiLineComments = false;
    
    private boolean readClobsFully = true;
-   
-   private boolean installQueryTokenizer = true;
 
    public DerbyPreferenceBean() {
       super();
-   }
-
-   /**
-    * Return a copy of this object.
-    */
-   public Object clone() {
-      try {
-         return super.clone();
-      } catch (CloneNotSupportedException ex) {
-         throw new InternalError(ex.getMessage()); // Impossible.
-      }
-   }
-
-   /**
-    * Retrieve the client to use. This is only used if
-    * <TT>useAnonymousClient</TT> is false.
-    * 
-    * @return Client name.
-    */
-   public String getClientName() {
-      return _clientName;
-   }
-
-   /**
-    * Set the client name.
-    * 
-    * @param value
-    *           Client name
-    */
-   public void setClientName(String value) {
-      _clientName = value;
-   }
-
-   /**
-    * Retrieve the client version to use. This is only used if
-    * <TT>useAnonymousLogon</TT> is false.
-    * 
-    * @return Client version.
-    */
-   public String getClientVersion() {
-      return _clientVersion;
-   }
-
-   /**
-    * Set the client version.
-    * 
-    * @param value
-    *           Client version
-    */
-   public void setClientVersion(String value) {
-      _clientVersion = value;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setStatementSeparator(java.lang.String)
-    */
-   public void setStatementSeparator(String statementSeparator) {
-      this.statementSeparator = statementSeparator;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getStatementSeparator()
-    */
-   public String getStatementSeparator() {
-      return statementSeparator;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
-    */
-   public void setProcedureSeparator(String procedureSeparator) {
-      this.procedureSeparator = procedureSeparator;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getProcedureSeparator()
-    */
-   public String getProcedureSeparator() {
-      return procedureSeparator;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setLineComment(java.lang.String)
-    */
-   public void setLineComment(String lineComment) {
-      this.lineComment = lineComment;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getLineComment()
-    */
-   public String getLineComment() {
-      return lineComment;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setRemoveMultiLineComments(boolean)
-    */
-   public void setRemoveMultiLineComments(boolean removeMultiLineComments) {
-      this.removeMultiLineComments = removeMultiLineComments;
-   }
-
-   /**
-    * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#isRemoveMultiLineComments()
-    */
-   public boolean isRemoveMultiLineComments() {
-      return removeMultiLineComments;
+      statementSeparator = ";";
+      procedureSeparator = "/";
+      lineComment = "--";
+      removeMultiLineComments = false;
+      readClobsFully = true;
+      installCustomQueryTokenizer = true;
    }
 
    /**
@@ -176,20 +57,6 @@ IQueryTokenizerPreferenceBean {
     */
    public void setReadClobsFully(boolean readClobsFully) {
       this.readClobsFully = readClobsFully;
-   }
-
-   /**
-    * @return the installQueryTokenizer
-    */
-   public boolean isInstallCustomQueryTokenizer() {
-      return installQueryTokenizer;
-   }
-
-   /**
-    * @param installQueryTokenizer the installQueryTokenizer to set
-    */
-   public void setInstallCustomQueryTokenizer(boolean installQueryTokenizer) {
-      this.installQueryTokenizer = installQueryTokenizer;
    }
 
 }
