@@ -13,7 +13,7 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class FloatingPointBase extends BaseDataTypeComponent
+public abstract class FloatingPointBase extends BaseDataTypeComponent
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(FloatingPointBase.class);

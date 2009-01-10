@@ -97,16 +97,13 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
-		if (value == null || value.toString() == null)
-		{
-			return _colDef.getLabel() + " IS NULL";
-		} else
-		{
-			// This results in "ERROR: operator does not exist: xml = unknown"
-			// So don't use xml type column in where clauses for now.
-			//return _colDef.getLabel() + "='" + SQLUtilities.escapeLine(value.toString(), md) + "'";
-			return "";
-		}
+		// This results in "ERROR: operator does not exist: xml = unknown"
+		// return _colDef.getLabel() + "='" + SQLUtilities.escapeLine(value.toString(), md) + "'";
+		//
+		// So don't use xml type column in where clauses if it has a non-null value for now (which is what the
+		// base class implementation provides).
+		//
+		return super.getWhereClauseValue(value, md);		
 	}
 
 	/**
