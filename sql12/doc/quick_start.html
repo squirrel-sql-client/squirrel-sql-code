@@ -1170,8 +1170,8 @@ DISTINCT, STRUCT, ARRAY, REF, and DATALINK. These are all handled as
 <P>Global Preferences specify configuration settings for the
 application.</P>
 
-The descriptions included here are for the tabs created by the core
-product. Plugins may add other tabs to this window. See the
+The descriptions included here are for the tabs created by the core product and standard plugins 
+(if standard plugins are installed). Optional Plugins may add other tabs to this window. See the
 Plugin-specific help for descriptions of the tabs added by that plugin.
 
 <H3>General Tab</H3>
@@ -1180,6 +1180,11 @@ Plugin-specific help for descriptions of the tabs added by that plugin.
 	ALT="General tab"></P>
 
 <H4>General Tab (Appearance)</H4>
+
+<P><B>Use tabbed layout</B> - if selected each new session becomes a new tab, instead of having it's own
+internal window.</P>
+ 
+<P><B>Use MDI Internal Frame layout</B> - if selected each new session becomes a new internal window.</P>
 
 <P><B>Show Window Contents While Dragging</B> - If checked this
 shows the contents of windows as they are being dragged. If unchecked
@@ -1767,9 +1772,9 @@ select "Software Update" as shown in the figure below:
 
 <P ALIGN="CENTER"><IMG SRC="images/updates-menu.png" BORDER="0"
         ALT="Software Update Menu"></P>
-
+<p>
   The following update dialog window is displayed:
-
+<p>
 <P ALIGN="CENTER"><IMG SRC="images/update-dialog.png" BORDER="0"
         ALT="Update Dialog"></P>
 
@@ -1789,13 +1794,26 @@ that are required :
       <li>Server - the name of the HTTP server to consult for updates (default: www.squirrel-sql.net)</li> 
       <li>Port - the numeric HTTP port that the server is listening on (default: 80)</li>
       <li>Path - the path on the server where the channels are found (default: updates)</li>
+      <li>Channel - the type of release this is (snapshot gets updated almost weekly and tends to have new but
+      not thoroughly tested changes.</li>
+      <li>Url - This is a read-only representation of the values given above in the form of an HTTP URL.  This
+      can be placed in a web-browser to see the release.xml file before updating if desired.</li>
+      <li>Test Connection - This button allows you to check connectivity to the URL specified by the values 
+      above and displays a message indicating whether or not the connection was successful.</li>
     </ol>
   <li>Local</li>
     <ol>
       <li>Local Path - the local directory containing the update files (release.xml file is directly 
       beneath this directory)</li>
     </ol>
-
+  <li>Automatic Updates</li>
+    <ol>
+        <li>Enable Automatic Updates - checking this option cause SQuirreL to periodically and in the 
+        background check to see if updates have been posted using the Remote/Local settings above.</li>
+        <li>How often to check for updates (At Startup / Daily / Weekly)</li>
+    </ol>
+</uL>
+<p>
 <A NAME="logs">
 <H2>Logs</H2>
 </A>
