@@ -84,7 +84,7 @@ public class UpdatePreferencesTab implements IGlobalPreferencesPanel
 		return _myPanel;
 	}
 
-	public void applyChanges()
+	public synchronized void applyChanges()
 	{
 		_myPanel.applyChanges(_app.getSquirrelPreferences());
 	}
