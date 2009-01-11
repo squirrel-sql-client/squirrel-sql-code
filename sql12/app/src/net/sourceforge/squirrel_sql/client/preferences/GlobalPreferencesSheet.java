@@ -213,7 +213,7 @@ public class GlobalPreferencesSheet extends DialogWidget
          pnl.uninitialize(_app);
       }
 
-      synchronized (getClass())
+      synchronized (GlobalPreferencesSheet.class)
       {
          s_instance = null;
       }
