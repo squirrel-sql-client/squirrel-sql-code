@@ -63,18 +63,26 @@ public class SQLReplaceExecutionListener implements ISQLExecutionListener {
 	 * @see net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener#statementExecuting(java.lang.String)
 	 */
 	public String statementExecuting(String sql) {
+		
+		if (log.isDebugEnabled()) {
+			log.debug("statementExecuting: original SQL = "+sql);
+		}
+		
 		StringBuffer buffer = new StringBuffer(sql);
 
 		// Here we do the Replacement
 		ReplacementManager repMan = plugin.getReplacementManager();
 		String replacedStmnt = repMan.replace(buffer);
 		
+		if (log.isDebugEnabled()) {
+			log.debug("statementExecuting: replacedStmnt = "+replacedStmnt);
+		}
+		
 		GUIUtils.processOnSwingEventThread(new Runnable() {
 			public void run() {
 				new SelectWidgetCommand(session.getActiveSessionWindow()).execute();
 			}
 		});
-		// log.info("SQL passing to execute: " + buffer.toString());
 		return replacedStmnt;
 	}
 
