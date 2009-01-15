@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,161 +34,159 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
  * Manages replacements. Including loading and saving to a properties file.
  * 
  * @author Dieter
- *
  */
-public class ReplacementManager {
+public class ReplacementManager
+{
 
-	   /**
-	    * The file to save/load replacements to/from
-	    */
-	   private File replacementFile;
-	   private ArrayList<Replacement> replacements = new ArrayList<Replacement>();
-	   private SQLReplacePlugin _plugin;
-	   MessagePanel mpan;
+	/**
+	 * The file to save/load replacements to/from
+	 */
+	private File replacementFile;
 
-	   private final static ILogger log = 
-		       LoggerController.createLogger(SQLReplacePlugin.class);  
+	private ArrayList<Replacement> replacements = new ArrayList<Replacement>();
 
-	 /**
+	MessagePanel mpan;
+
+	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
+
+	/**
 	 * @param _plugin
 	 */
-	public ReplacementManager(SQLReplacePlugin _plugin) {
-		try 
+	public ReplacementManager(SQLReplacePlugin _plugin)
+	{
+		try
 		{
-			this._plugin = _plugin;
 			replacementFile = new File(_plugin.getPluginUserSettingsFolder(), "sqlreplacement.xml");
-			mpan = (MessagePanel)_plugin.getApplication().getMessageHandler();
-
+			mpan = (MessagePanel) _plugin.getApplication().getMessageHandler();
 		}
-		catch (IOException e)
-	    {
-	         throw new RuntimeException(e);
-	    }
+		catch (final IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
-	   
-	   /**
-	    * Load the stored replacement.
-	    */
-	   protected void load() throws IOException
-	   {
-		  replacements.clear();
-	      try
-	      {
-	         XMLBeanReader xmlin = new XMLBeanReader();
 
-	         if (replacementFile.exists())
-	         {
-	            xmlin.load(replacementFile, getClass().getClassLoader());
-	            for (Iterator<?> i = xmlin.iterator(); i.hasNext();)
-	            {
-	               Object bean = i.next();
-	               if (bean instanceof Replacement)
-	               {
-	        		   replacements.add((Replacement)bean);
-	               }
-	            }
-	         }
-	      }
-	      catch (XMLException e)
-	      {
-	         throw new RuntimeException(e);
-	      }
-	   }
+	/**
+	 * Load the stored replacement.
+	 */
+	protected void load() throws IOException
+	{
+		replacements.clear();
+		try
+		{
+			final XMLBeanReader xmlin = new XMLBeanReader();
 
-	   /**
-	    * Save the replacement.
-	    */
-	   protected void save()
-	   {
-	      try
-	      {
-	         XMLBeanWriter xmlout = new XMLBeanWriter();
+			if (replacementFile.exists())
+			{
+				xmlin.load(replacementFile, getClass().getClassLoader());
+				for (final Object bean : xmlin)
+				{
+					if (bean instanceof Replacement)
+					{
+						replacements.add((Replacement) bean);
+					}
+				}
+			}
+		}
+		catch (final XMLException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
-	         for (Iterator<Replacement> i = replacements.iterator(); i.hasNext();)
-	         {
-	        	 Replacement rep = i.next();
+	/**
+	 * Save the replacement.
+	 */
+	protected void save()
+	{
+		try
+		{
+			final XMLBeanWriter xmlout = new XMLBeanWriter();
 
-	            xmlout.addToRoot(rep);
-	         }
+			for (final Replacement rep : replacements)
+			{
+				xmlout.addToRoot(rep);
+			}
 
-	         xmlout.save(replacementFile);
-	      }
-	      catch (Exception e)
-	      {
-	         throw new RuntimeException(e);
-	      }
-	   }
+			xmlout.save(replacementFile);
+		}
+		catch (final Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
-	   protected Iterator<Replacement> iterator()
-	   {
-	      return replacements.iterator();
-	   }
+	protected Iterator<Replacement> iterator()
+	{
+		return replacements.iterator();
+	}
 
-	   public void removeAll()
-	   {
-		   replacements = new ArrayList<Replacement>();
-	   }
+	public void removeAll()
+	{
+		replacements = new ArrayList<Replacement>();
+	}
 
-	   /**
-	    * Sets the content from the editor section and add it to the replacementarray
-	    * @param content
-	    */
-	   public void setContentFromEditor(String content) 
-	   {
-		   String cont = content;
-		   String[] lines = cont.split("\n");
-           replacements.clear();
-		   for (int i = 0; i < lines.length; i++)
-		   {
-			   if(lines[i] != null && lines[i].length() != 0)
-			   {
-				   String[] s = lines[i].split("=");
-				   if(s[0] != null && s[0].length() > 0 && s[1] != null && s[1].length() > 0)
-				   {
-					   Replacement ro = new Replacement(s[0].trim(), s[1].trim());
-					   replacements.add(ro);
-				   }
-			   }
-		   }
-		   this.save();
-	   }
-	   
-	   /*
-	    * 
-	    */
-	   public String getContent()
-	   {
-		   StringBuffer sb = new StringBuffer();
-		   Iterator<Replacement> it = replacements.iterator();
-		   while (it.hasNext())
-		   {
-			   Replacement r = it.next();
-			   sb.append(r.toString() + "\n");
-		   }
-		   
-		   return sb.toString();
-	   }
-	   
-	   /**
-	    * Here we replace the original SQL Statement with the Set of Vars from our ReplamentList
-	    * @param buffer
-	    * @return
-	    */
-	   public String replace(StringBuffer buffer )
-	   {
-		   String toReplace = buffer.toString();
-		   Iterator<Replacement> it = replacements.iterator();
-		   while (it.hasNext())
-		   {
-			   Replacement r = it.next();
-			   if ( toReplace.indexOf(r.getVariable()) > 0)
-			   {
-				   log.info("Replace-Rule: " + r.toString());
-				   mpan.showMessage("Replace-Rule: " + r.toString());
-				   toReplace = toReplace.replaceAll(r.getRegexVariable(), r.getValue());
-			   }
-		   }
-		
-		   return toReplace;
-	   }
+	/**
+	 * Sets the content from the editor section and add it to the replacementarray
+	 * 
+	 * @param content
+	 */
+	public void setContentFromEditor(String content)
+	{
+		final String cont = content;
+		final String[] lines = cont.split("\n");
+		replacements.clear();
+		for (final String line : lines)
+		{
+			if (line != null && line.length() != 0)
+			{
+				final String[] s = line.split("=");
+				if (s[0] != null && s[0].length() > 0 && s[1] != null && s[1].length() > 0)
+				{
+					final Replacement ro = new Replacement(s[0].trim(), s[1].trim());
+					replacements.add(ro);
+				}
+			}
+		}
+		this.save();
+	}
+
+	/*
+	 * 
+	 */
+	public String getContent()
+	{
+		final StringBuffer sb = new StringBuffer();
+		final Iterator<Replacement> it = replacements.iterator();
+		while (it.hasNext())
+		{
+			final Replacement r = it.next();
+			sb.append(r.toString() + "\n");
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Here we replace the original SQL Statement with the Set of Vars from our ReplamentList
+	 * 
+	 * @param buffer
+	 * @return
+	 */
+	public String replace(StringBuffer buffer)
+	{
+		String toReplace = buffer.toString();
+		final Iterator<Replacement> it = replacements.iterator();
+		while (it.hasNext())
+		{
+			final Replacement r = it.next();
+			if (toReplace.indexOf(r.getVariable()) > -1)
+			{
+				log.info("Replace-Rule: " + r.toString());
+				mpan.showMessage("Replace-Rule: " + r.toString());
+				toReplace = toReplace.replaceAll(r.getRegexVariable(), r.getValue());
+			}
+		}
+
+		return toReplace;
+	}
 }
