@@ -6,15 +6,17 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
-New user interface layout: Tabbed layout
+Updated Italian translation (Ivo Neri), Chinese translation (xpdz)
+
+New user interface layout: Tabled layout
 
 Hibernate Plugin:
    - Cleaned up details display in mapped objects tab: Now every tree node displays an appropriate details table.
-   - Added hint to slove StackOverflowError caused by logging that may occur when connecting to a Hibernate configuration.
+   - Added hint to solve StackOverflowError caused by logging that may occur when connecting to a Hibernate configuration.
 
 Object tree search (Feature request 2004240):
    Above the Object tree is a text field and a find button.
-   The search string has to be the exaxct simple (unqualified) name of an DB object or may contain placeholders ("%" or "_").
+   The search string has to be the exact simple (unqualified) name of an DB object or may contain placeholders ("%" or "_").
    The text field supports code completion.
    A filter button allows to apply the search string as Object tree filter. 
 
@@ -47,13 +49,13 @@ New Plugin: Firebird Manager by Michael Romankiewicz
 
  - Aliases can be displayed as list or as tree.
 
- - A new preference for choosing Locale is available in Global Preferences -> General tab.  This allows you to
+ - A new preference for choosing Locales is available in Global Preferences -> General tab.  This allows you to
    set your preferred locale, and if an optional translation is installed that corresponds with the preferred
    locale, then restart and the changes take effect.(No longer necessary to hand edit the start script)
 
  - Copy as "SQL WHERE" / "UPDATE-SET" / "INSERT-VALUES" statement function in tables
    Tables offer right mouse menu to copy WHERE, UPDATE-SET or INSERT-VALUES clauses of selected data to clip board.
-   Works like the exisiting "Copy as SQL IN statment" function.
+   Works like the existing "Copy as SQL IN statement" function.
 
  - New Plugin: SQLReplace by Dieter Engelhardt
    This plugin replaces a set of variables before a statement is executed.
@@ -81,11 +83,11 @@ Oracle Plugin:
  - Added ability to recognize "create package" and "create package body" statements.   
 
 PostgreSQL Plugin:
- - Added support for PostgreSQL(8.3.x) new xml type.
+ - Added support for PostgreSQL(8.3.x) new XML type.
 
  Contributions from Daniel Regli and Yannick Winiger:
  - Menu: added a new "PostgreSQL" menu to the object tree and the session menu for
-   Postgres specific functionalities.
+   PostgreSQL-specific functionalities.
  - Vacuum: added visual (dialog) support for the PostgreSQL-specific VACUUM statement for
    garbage-collecting a selection of tables or the whole database.
  - Explain: added an additional SQLResultExecuter to the sql panel that shows
@@ -99,7 +101,7 @@ Refactoring Plugin:
    when there is only one table being dropped.
 
  - Contributions from Daniel Regli and Yannick Winiger:
-   Added new Refactorings (All new refactoring dialogs are now closeable with the ESCAPE key):
+   Added new Refactorings (All new refactoring dialogs can now be closed with the ESCAPE key):
     - Rename Table
     - Add/Rename/Drop View
     - Add/Modify/Drop Sequence
@@ -124,17 +126,15 @@ SQL Scripts Plugin: On some DBs (e.g. MySQL) "Store result of SQL in table"
 Graph Plugin: Table's right mouse menu "Add Parent tables" did add a parent more
               than once when more than one foreign key to the parent existed.    
 
-Graph Plugin: Referesh didn't work for newly created constraints
+Graph Plugin: Refresh didn't work for newly created constraints
 
 Fixed several bugs which made it impossible to work with SQLite.
-
-Updated Italian translation (Ivo Neri)
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
 2480365: Plugin loading fails when installdir has spaces
 
-2220792: SQLite:  content not editable
+2220792: SQLite: content not editable
 
 2184379: (SQuirrel client 2.6.6 fills up 52 gigs of log file space).  Added a new log 
 appender that is based on file size rather than time.
@@ -191,7 +191,7 @@ that are greater than 4000 characters.
    catalog ("None") is inserted into the catalog drop-down menu and removed once a catalog is selected.  
  - Fixed a race condition that caused the tree to be refreshed before data was refreshed from the database 
    when the catalog was switched.  
- - For Informix, setCatalog seems to have no effect, so now an explicit DATABASE <catalogname> command is 
+ - For Informix, setCatalog seems to have no effect, so now an explicit DATABASE <catalog name> command is 
    issued. 
 
 1848924: Sybase object browser contents not displayed
@@ -225,9 +225,10 @@ Changing to another window using Alt + left/right arrow did not properly set foc
 Hibernate Plugin: 
  - Class names in completion list could change from fully qualified to simple
    while scrolling through the completion list.
- - When a statement like "Fixed identifier qualification in Progress - tested on OpenEdge 10.1C.  Now only schema is pre-fixed to identifiers, instead of catalog and schema.from Kv k where k." was completed the 
-   fields for k. would come from any arbitrary mapped class which name started 
-   with Kv
+ - Fixed identifier qualification in Progress - tested on OpenEdge 10.1C.  
+   Now only schema is pre-fixed to identifiers, instead of catalog and schema.
+   When a statement like "from Kv k where k." was completed the fields for k. would come from 
+   any arbitrary mapped class which name started with Kv
 
 Refactoring Plugin: When generating DROP TABLE statements, Frontbase requires
 CASCADE or RESTRICT.  Now we append CASCADE to the DROP TABLE statement.
