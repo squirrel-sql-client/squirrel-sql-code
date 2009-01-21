@@ -113,15 +113,15 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// i18n[UpdateControllerImpl.updateCheckTitle=Update Check]
 		String UPDATE_CHECK_TITLE = s_stringMgr.getString("UpdateControllerImpl.updateCheckTitle");
 
-		// i18n[UpdateControllerImpl.updateDownloadCompleteTitle=Update Download Complete]
-		String UPDATE_DOWNLOAD_COMPLETE_TITLE =
-			s_stringMgr.getString("UpdateControllerImpl.updateDownloadCompleteTitle");
+		// i18n[UpdateControllerImpl.changesRecordedTitle=Changes Recorded]
+		String CHANGES_RECORDED_TITLE =
+			s_stringMgr.getString("UpdateControllerImpl.changesRecordedTitle");
 
-		// i18n[UpdateControllerImpl.updateDownloadCompleteMsg=Requested updates will be installed when
+		// i18n[UpdateControllerImpl.changesRecordedMsg=Requested changes will be made when
 		// SQuirreL is restarted]
-		String UPDATE_DOWNLOAD_COMPLETE_MSG =
-			s_stringMgr.getString("UpdateControllerImpl.updateDownloadCompleteMsg");
-
+		String CHANGES_RECORDED_MSG =
+			s_stringMgr.getString("UpdateControllerImpl.changesRecordedMsg");
+		
 		// i18n[UpdateControllerImpl.updateDownloadFailed=Update Download Failed]
 		String UPDATE_DOWNLOAD_FAILED_TITLE =
 			s_stringMgr.getString("UpdateControllerImpl.updateDownloadFailed");
@@ -309,17 +309,21 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			}
 		}
 
-		_downloader = _downloaderFactory.create(newartifactsList);
-		_downloader.setUtil(_util);
-		_downloader.setProxySettings(_app.getSquirrelPreferences().getProxySettings());
-		_downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
-		_downloader.setHost(getUpdateServerName());
-		_downloader.setPort(Integer.parseInt(getUpdateServerPort()));
-		_downloader.setPath(getUpdateServerPath());
-		_downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
-		_downloader.addDownloadStatusListener(listener);
-		_downloader.setChannelName(_installedChannelBean.getName());
-		_downloader.start();
+		if (newartifactsList.size() > 0) {		
+			_downloader = _downloaderFactory.create(newartifactsList);
+			_downloader.setUtil(_util);
+			_downloader.setProxySettings(_app.getSquirrelPreferences().getProxySettings());
+			_downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
+			_downloader.setHost(getUpdateServerName());
+			_downloader.setPort(Integer.parseInt(getUpdateServerPort()));
+			_downloader.setPath(getUpdateServerPath());
+			_downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
+			_downloader.addDownloadStatusListener(listener);
+			_downloader.setChannelName(_installedChannelBean.getName());
+			_downloader.start();
+		} else {
+			showMessage(i18n.CHANGES_RECORDED_TITLE, i18n.CHANGES_RECORDED_MSG);
+		}
 	}
 
 	/**
@@ -684,7 +688,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			// next startup.
 			if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED)
 			{
-				showMessage(i18n.UPDATE_DOWNLOAD_COMPLETE_TITLE, i18n.UPDATE_DOWNLOAD_COMPLETE_MSG);
+				showMessage(i18n.CHANGES_RECORDED_TITLE, i18n.CHANGES_RECORDED_MSG);
 				setProgress(totalFiles);
 			}
 			if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED)
