@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.update.util.PathUtils;
 import net.sourceforge.squirrel_sql.client.update.util.PathUtilsImpl;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -128,7 +129,18 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				boolean result = true;
 				if (_isRemoteUpdateSite)
 				{
-					if (!attemptFileDownload(fileToGet, destDir, status)) { return; }
+					int count = 0;
+					boolean success = false;
+					while (count++ <= 3 && !success) {
+						success = attemptFileDownload(fileToGet, destDir, status);
+						if (!success) {
+							long sleepTime = (count+1) * 3000;
+							Utilities.sleep(sleepTime);
+						}
+					}
+					if (!success) {
+						return;
+					}
 				}
 				else
 				{
@@ -169,6 +181,8 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status)
 	{
 		boolean success = true;
+		
+		
 		try
 		{
 			_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
