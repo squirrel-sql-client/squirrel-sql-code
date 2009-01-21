@@ -12,15 +12,16 @@ import javax.swing.*;
 
 public class VerticalToggleButton extends JToggleButton
 {
+   private static final int WIDHT_MARGIN = 20;
+   private static final int HEIGHT_MARGIN = 4;
 
    public VerticalToggleButton(String caption)
    {
-
       Font f = getFont();
       FontMetrics fm = getFontMetrics(f);
       int captionHeight = fm.getHeight();
       int captionWidth = fm.stringWidth(caption);
-      BufferedImage bi = new BufferedImage(captionHeight + 4, captionWidth + 4, BufferedImage.TYPE_INT_ARGB);
+      BufferedImage bi = new BufferedImage(captionHeight + 2 * HEIGHT_MARGIN, captionWidth + 2 * WIDHT_MARGIN, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = (Graphics2D) bi.getGraphics();
 
       g.setColor(new Color(0, 0, 0, 0)); // transparent
@@ -30,21 +31,12 @@ public class VerticalToggleButton extends JToggleButton
       g.setFont(f);
       g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-//      if (clockwise)
-//      {
-//         g.rotate(Math.PI / 2);
-//      }
-//      else
-//      {
-         g.rotate(-Math.PI / 2);
-         g.translate(-bi.getHeight(), bi.getWidth());
-//      }
-      g.drawString(caption, 2, -6);
+      g.rotate(-Math.PI / 2);
+      g.translate(-bi.getHeight(), bi.getWidth());
+      g.drawString(caption, WIDHT_MARGIN , -HEIGHT_MARGIN - fm.getDescent());
 
       Icon icon = new ImageIcon(bi);
       setIcon(icon);
-
-      setMargin(new Insets(15, 2, 15, 2));
       setActionCommand(caption);
    }
 
