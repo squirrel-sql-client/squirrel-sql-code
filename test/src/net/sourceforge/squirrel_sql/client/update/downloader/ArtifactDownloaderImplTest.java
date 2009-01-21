@@ -146,7 +146,7 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase {
 
 		expect(mockUpdateUtil.downloadHttpUpdateFile(eq(host), eq(port), contains(coreFilename), 
 			eq(CORE_DOWNLOADS_DIR), eq(coreFileSize), eq(checksum), eq(mockProxySettings)));
-		expectLastCall().andThrow(new Exception("Test exception for run() method failure test"));
+		expectLastCall().andThrow(new Exception("Test exception for run() method failure test")).atLeastOnce();
 
 		
 		mockHelper.replayAll();
