@@ -101,15 +101,31 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 	private static final class MyPanel extends JPanel
 	{
+		private static final long serialVersionUID = 1L;
 		private JCheckBox _httpUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
+		private JLabel _httpProxyServerLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
 		private JTextField _httpProxyServer = new JTextField();
+		private JLabel _httpProxyPortLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT);
 		private JTextField _httpProxyPort = new JTextField();
-		private JTextField _httpNonProxyHosts = new JTextField();
+		private JLabel _httpProxyUserLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.user"), JLabel.RIGHT);
 		private JTextField _httpProxyUser = new JTextField();
+		private JLabel _httpProxyPasswordLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.password"), JLabel.RIGHT);		
 		private JPasswordField _httpProxyPassword = new JPasswordField();
+		private JLabel _httpNonProxyHostsLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.noproxyfor"), JLabel.RIGHT);
+		private JTextField _httpNonProxyHosts = new JTextField();
 		private JCheckBox _socksUseProxyChk = new JCheckBox(s_stringMgr.getString("ProxyPreferencesPanel.useproxy"));
+		private JLabel _socksProxyServerLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT);
 		private JTextField _socksProxyServer = new JTextField();
+		private JLabel _socksProxyPortLabel = 
+			new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT);
 		private JTextField _socksProxyPort = new JTextField();
+		
 
 		MyPanel()
 		{
@@ -158,14 +174,21 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		private void updateControlStatus()
 		{
 			final boolean http = _httpUseProxyChk.isSelected();
+			_httpProxyServerLabel.setEnabled(http);
 			_httpProxyServer.setEnabled(http);
+			_httpProxyPortLabel.setEnabled(http);
 			_httpProxyPort.setEnabled(http);
+			_httpNonProxyHostsLabel.setEnabled(http);
 			_httpNonProxyHosts.setEnabled(http);
+			_httpProxyUserLabel.setEnabled(http);
 			_httpProxyUser.setEnabled(http);
+			_httpProxyPasswordLabel.setEnabled(http);
 			_httpProxyPassword.setEnabled(http);
 
 			final boolean socks = _socksUseProxyChk.isSelected();
+			_socksProxyServerLabel.setEnabled(socks);
 			_socksProxyServer.setEnabled(socks);
+			_socksProxyPortLabel.setEnabled(socks);
 			_socksProxyPort.setEnabled(socks);
 		}
 
@@ -201,19 +224,19 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			++gbc.gridx;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT), gbc);
+			pnl.add(_httpProxyServerLabel, gbc);
+			
+			++gbc.gridy;		
+			pnl.add(_httpProxyPortLabel, gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT), gbc);
+			pnl.add(_httpProxyUserLabel, gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.user"), JLabel.RIGHT), gbc);
+			pnl.add(_httpProxyPasswordLabel, gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.password"), JLabel.RIGHT), gbc);
-
-			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.noproxyfor"), JLabel.RIGHT), gbc);
+			pnl.add(_httpNonProxyHostsLabel, gbc);
 
 			++gbc.gridy;
 			--gbc.gridx;
@@ -255,11 +278,11 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_socksUseProxyChk, gbc);
 
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			++gbc.gridx;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.server"), JLabel.RIGHT), gbc);
+			++gbc.gridx;		
+			pnl.add(_socksProxyServerLabel, gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("ProxyPreferencesPanel.port"), JLabel.RIGHT), gbc);
+			pnl.add(_socksProxyPortLabel, gbc);
 
 			++gbc.gridx;
 			gbc.gridy = 0;
