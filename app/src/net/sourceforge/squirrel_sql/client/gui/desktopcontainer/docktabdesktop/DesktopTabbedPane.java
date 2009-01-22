@@ -2,8 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 public class DesktopTabbedPane extends JTabbedPane
 {
@@ -23,14 +22,14 @@ public class DesktopTabbedPane extends JTabbedPane
    public void setTitleAt(int index, String title)
    {
       ButtonTabComponent btc = (ButtonTabComponent) getTabComponentAt(index);
-      btc.getLabel().setText(title);
+      btc.setTitle(title);
    }
 
    @Override
    public void setIconAt(int index, Icon icon)
    {
       ButtonTabComponent btc = (ButtonTabComponent) getTabComponentAt(index);
-      btc.getLabel().setIcon(icon);
+      btc.setIcon(icon);
    }
 
    @Override
@@ -41,7 +40,11 @@ public class DesktopTabbedPane extends JTabbedPane
       setTabComponentAt(index, new ButtonTabComponent(this, title, icon));
    }
 
-   
+
+   public void doProcessMouseEvent(MouseEvent e)
+   {
+      super.processMouseEvent(e);
+   }
 }
 
 

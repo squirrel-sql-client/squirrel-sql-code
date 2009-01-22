@@ -163,7 +163,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       ButtonTabComponent btc = (ButtonTabComponent) _tabbedPane.getTabComponentAt(tabIx);
 
-      btc.getButton().addActionListener(new ActionListener()
+      btc.getClosebutton().addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
