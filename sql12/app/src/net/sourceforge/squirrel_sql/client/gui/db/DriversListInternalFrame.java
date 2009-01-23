@@ -129,6 +129,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
          public void run()
          {
             _app.getMainFrame().setEnabledDriversMenu(b);
+            _uiFactory._driversList.requestFocus();
          }
       });
    }

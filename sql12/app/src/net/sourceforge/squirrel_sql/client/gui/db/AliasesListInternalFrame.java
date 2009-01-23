@@ -156,6 +156,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          public void run()
          {
             _app.getMainFrame().setEnabledAliasesMenu(b);
+            _uiFactory._aliasesList.requestFocus();
          }
       });
    }

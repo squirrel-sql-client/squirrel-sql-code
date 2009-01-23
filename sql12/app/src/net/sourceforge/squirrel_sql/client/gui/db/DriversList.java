@@ -174,5 +174,10 @@ public class DriversList extends BaseList implements IDriversList
    {
       return PREF_KEY_SELECTED_DRIVER_INDEX;
    }
+
+   public void requestFocus()
+   {
+      getList().requestFocus();
+   }
 }
 
