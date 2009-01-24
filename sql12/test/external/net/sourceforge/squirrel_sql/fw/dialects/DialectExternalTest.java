@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static org.junit.Assert.fail;
+
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.io.FileReader;
@@ -39,7 +41,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -57,6 +59,8 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFac
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand;
 
+import org.junit.Test;
+
 /**
  * The purpose of this class is to hookup to the database(s) specified in
  * dialectLiveTest.properties and test SQL generation parts of the dialect
@@ -65,7 +69,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
  * 
  * @author manningr
  */
-public class DialectExternalTestRunner {
+public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
 	/**
 	 * These sessions are the ones that are being tested.  This is populated from the dbsToTest list in 
@@ -170,13 +174,19 @@ public class DialectExternalTestRunner {
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
 
-   public DialectExternalTestRunner(String propertyFile) throws Exception {
-      ApplicationArguments.initialize(new String[] {});
+   @Test
+   public void testDialects() throws Exception {
+   	String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
+   	if (propertyFile == null || "".equals(propertyFile)) {
+   		fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
+   	}
+
       props.load(new FileReader(propertyFile));
       initSessions(sessions, "dbsToTest");
       initReferenceDialects(referenceDialects);
+      runTests();
    }
-
+   
    /**
     * This sets up the dialects that will be used as references to consult for sql variants that can be tried
     * to see discover whether an undocumented variant might be allowed.
@@ -2196,19 +2206,6 @@ public class DialectExternalTestRunner {
    	return md.getColumnInfo(catalog, schema, tableName);
    }
    
-   /**
-    * @param args
-    */
-   public static void main(String[] args) throws Exception {
-   	if (args.length < 1) {
-   		System.err.println("Must specify the location of the properties file.");
-   		System.exit(1);
-   	}
-      DialectExternalTestRunner runner = new DialectExternalTestRunner(args[0]);
-      runner.runTests();
-      System.exit(0);
-   }
-
    
    /**
     * A helper "dialog" implementation that simulates getting user input for automating the test.  The merge
