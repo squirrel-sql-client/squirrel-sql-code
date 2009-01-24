@@ -269,7 +269,7 @@ public class ProxyStatement implements Statement
 	 */
 	public boolean isWrapperFor(Class<?> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -278,7 +278,7 @@ public class ProxyStatement implements Statement
 	 */
 	public <T> T unwrap(Class<T> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -287,7 +287,7 @@ public class ProxyStatement implements Statement
 	 */
 	public boolean isClosed() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -296,7 +296,7 @@ public class ProxyStatement implements Statement
 	 */
 	public boolean isPoolable() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -305,7 +305,7 @@ public class ProxyStatement implements Statement
 	 */
 	public void setPoolable(boolean poolable) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
