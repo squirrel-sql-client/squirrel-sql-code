@@ -234,7 +234,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -243,7 +243,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -252,7 +252,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -261,7 +261,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -270,7 +270,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -279,7 +279,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -288,7 +288,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -297,7 +297,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -306,7 +306,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setClob(int parameterIndex, Reader reader, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -315,7 +315,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 	 */
 	public void setClob(int parameterIndex, Reader reader) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		
 	}
 

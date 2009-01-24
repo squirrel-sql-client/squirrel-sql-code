@@ -885,7 +885,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public int getHoldability() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
@@ -894,7 +894,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public Reader getNCharacterStream(int columnIndex) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -903,7 +903,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public Reader getNCharacterStream(String columnLabel) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -912,7 +912,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public boolean isClosed() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -921,7 +921,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -930,7 +930,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -939,7 +939,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -948,7 +948,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -957,7 +957,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -966,7 +966,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -975,7 +975,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -984,7 +984,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -993,7 +993,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1002,7 +1002,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1011,7 +1011,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1020,7 +1020,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1029,7 +1029,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1038,7 +1038,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateCharacterStream(int columnIndex, Reader x) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1047,7 +1047,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1056,7 +1056,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1065,7 +1065,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateClob(int columnIndex, Reader reader, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1074,7 +1074,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateClob(int columnIndex, Reader reader) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1083,7 +1083,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateClob(String columnLabel, Reader reader, long length) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1092,7 +1092,7 @@ public class ProxyResultSet implements ResultSet
 	 */
 	public void updateClob(String columnLabel, Reader reader) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 
 	}
 

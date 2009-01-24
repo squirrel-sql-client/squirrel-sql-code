@@ -894,7 +894,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public boolean autoCommitFailureClosesAllResultSets() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -903,7 +903,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public ResultSet getClientInfoProperties() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -913,7 +913,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern,
 		String columnNamePattern) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -923,7 +923,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern)
 		throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -932,7 +932,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -941,7 +941,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -950,7 +950,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public boolean isWrapperFor(Class<?> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -959,7 +959,7 @@ public class ProxyDatabaseMetaData implements DatabaseMetaData {
 	 */
 	public <T> T unwrap(Class<T> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

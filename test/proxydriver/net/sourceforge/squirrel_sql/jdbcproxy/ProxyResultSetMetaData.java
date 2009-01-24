@@ -119,7 +119,7 @@ public class ProxyResultSetMetaData implements ResultSetMetaData {
 	 */
 	public boolean isWrapperFor(Class<?> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -128,7 +128,7 @@ public class ProxyResultSetMetaData implements ResultSetMetaData {
 	 */
 	public <T> T unwrap(Class<T> iface) throws SQLException
 	{
-		// TODO Auto-generated method stub
+
 		return null;
 	}
     
