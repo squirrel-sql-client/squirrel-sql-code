@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -34,7 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -64,7 +65,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
  * 
  * @author manningr
  */
-public class DialectLiveTestRunner {
+public class DialectExternalTestRunner {
 
 	/**
 	 * These sessions are the ones that are being tested.  This is populated from the dbsToTest list in 
@@ -78,7 +79,7 @@ public class DialectLiveTestRunner {
     */
    ArrayList<HibernateDialect> referenceDialects = new ArrayList<HibernateDialect>();
    
-   ResourceBundle bundle = null;
+   Properties props = new Properties();
 
    TableColumnInfo firstCol = null;
 
@@ -169,11 +170,9 @@ public class DialectLiveTestRunner {
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
 
-	
-   
-   public DialectLiveTestRunner() throws Exception {
+   public DialectExternalTestRunner(String propertyFile) throws Exception {
       ApplicationArguments.initialize(new String[] {});
-      bundle = ResourceBundle.getBundle("net.sourceforge.squirrel_sql.fw.dialects.dialectLiveTest");
+      props.load(new FileReader(propertyFile));
       initSessions(sessions, "dbsToTest");
       initReferenceDialects(referenceDialects);
    }
@@ -203,7 +202,7 @@ public class DialectLiveTestRunner {
 
 	private List<String> getPropertyListValue(String propertyKey)
 	{
-		String dbsToTest = bundle.getString(propertyKey);
+		String dbsToTest = props.getProperty(propertyKey);
       StringTokenizer st = new StringTokenizer(dbsToTest, ",");
       ArrayList<String> dbs = new ArrayList<String>();
       while (st.hasMoreTokens()) {
@@ -214,11 +213,11 @@ public class DialectLiveTestRunner {
 	}
 
 	private void initSessions(ArrayList<ISession> sessionsList, String sessionListPropKey) throws Exception {
-   	prefs.setQualifyTableNames(Boolean.parseBoolean(bundle.getString("qualifyTableNames")));
-   	prefs.setQuoteIdentifiers(Boolean.parseBoolean(bundle.getString("quoteIdentifiers")));
+   	prefs.setQualifyTableNames(Boolean.parseBoolean(props.getProperty("qualifyTableNames")));
+   	prefs.setQuoteIdentifiers(Boolean.parseBoolean(props.getProperty("quoteIdentifiers")));
    	prefs.setSqlStatementSeparator(";");
    	
-   	dialectDiscoveryMode = Boolean.parseBoolean(bundle.getString("dialectDiscoveryMode"));
+   	dialectDiscoveryMode = Boolean.parseBoolean(props.getProperty("dialectDiscoveryMode"));
    	if (dialectDiscoveryMode) {
    		System.out.println("In discovery mode - assuming that the dialect being tested isn't yet implemented");
    	}
@@ -226,12 +225,13 @@ public class DialectLiveTestRunner {
    	List<String> dbs = getPropertyListValue(sessionListPropKey);
       for (Iterator<String> iter = dbs.iterator(); iter.hasNext();) {
          String db = iter.next();
-         String url = bundle.getString(db + "_jdbcUrl");
-         String user = bundle.getString(db + "_jdbcUser");
-         String pass = bundle.getString(db + "_jdbcPass");
-         String driver = bundle.getString(db + "_jdbcDriver");
-         String catalog = bundle.getString(db + "_catalog");
-         String schema = bundle.getString(db + "_schema");
+         String url = props.getProperty(db + "_jdbcUrl");
+         String user = props.getProperty(db + "_jdbcUser");
+         String pass = props.getProperty(db + "_jdbcPass");
+         String driver = props.getProperty(db + "_jdbcDriver");
+         String catalog = props.getProperty(db + "_catalog");
+         String schema = props.getProperty(db + "_schema");
+         
          MockSession session = new MockSession(driver, url, user, pass);
          session.setDefaultCatalog(catalog);
          session.setDefaultSchema(schema);
@@ -2200,8 +2200,13 @@ public class DialectLiveTestRunner {
     * @param args
     */
    public static void main(String[] args) throws Exception {
-      DialectLiveTestRunner runner = new DialectLiveTestRunner();
+   	if (args.length < 1) {
+   		System.err.println("Must specify the location of the properties file.");
+   		System.exit(1);
+   	}
+      DialectExternalTestRunner runner = new DialectExternalTestRunner(args[0]);
       runner.runTests();
+      System.exit(0);
    }
 
    
