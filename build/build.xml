@@ -935,6 +935,7 @@
 		       target="${targetVM}">
 
 			<src path="test/src" />
+			<src path="test/external" />
 			<src path="test/mockobjects" />
 			<src path="test/jfctests" />
 			<classpath>
@@ -1060,13 +1061,17 @@
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
 				</fileset>
+				<fileset dir="test/external">
+					<include name="**/DialectExternalTest.java" />
+				</fileset>
 			</batchtest>
 
 			<jvmarg value="-Demma.coverage.out.file=${coverage.report.dir}/coverage.emma" />
 			<jvmarg value="-Demma.coverage.out.merge=true" />
+			<jvmarg value="-DdialectExternalTestPropertyFile=${ext.test.config}" />
 
-		</junit>
-
+		</junit>		
+		
 		<!-- if enabled, generate coverage report(s): -->
 		<emma enabled="${emma.enabled}">
 			<report sourcepath="${coverage.sources.dir}"
@@ -1198,7 +1203,7 @@
 			</fileset>
 		</cpd>
 	</target>
-
+	
 	<!--
 	This can be used to copy modified files to a location where SQuirreL was 
 	installed for testing outside of the IDE. The location is set in 
