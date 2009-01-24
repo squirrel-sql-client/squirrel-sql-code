@@ -1051,16 +1051,19 @@
 			<classpath>
 				<pathelement path="${instr.dir}" />
 				<pathelement path="${test.classes.dir}" />
+				<pathelement path="${derby.driver.jar}"/>
 				<path refid="test.compile.classpath" />
 				<path refid="emma.lib" />
 			</classpath>
 			<formatter type="plain" />
 			<formatter type="xml" />
 			<batchtest fork="yes" todir="${junit.report.dir}">
+			        <!--
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
 				</fileset>
+				-->
 				<fileset dir="test/external">
 					<include name="**/DialectExternalTest.java" />
 				</fileset>
