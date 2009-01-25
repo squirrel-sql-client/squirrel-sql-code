@@ -133,7 +133,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 				{
 					if (s_log.isDebugEnabled())
 					{
-						s_log.debug("Schema" + mc.getSchemaName());
+						s_log.debug("Schema: " + mc.getSchemaName());
 					}
 					TableColumnInfo columnInNewTable =
 						new TableColumnInfo(	mc.getCatalogName(),
