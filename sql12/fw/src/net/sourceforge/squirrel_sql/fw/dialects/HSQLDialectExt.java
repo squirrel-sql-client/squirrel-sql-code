@@ -183,11 +183,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
-
-		return getAddPrimaryKeySQL(pkName, columns, ti.getQualifiedName());
+		String tableName = DialectUtils.shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, this);
+		return getAddPrimaryKeySQL(pkName, columns, tableName, qualifier, prefs);
 	}
 
-	private String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, String tableName)
+	private String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, String tableName, 
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 
 		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
@@ -200,7 +201,8 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		result.append(" PRIMARY KEY (");
 		for (int i = 0; i < columns.length; i++)
 		{
-			result.append(columns[i].getColumnName());
+			String columnName = DialectUtils.shapeIdentifier(columns[i].getColumnName(), prefs, this);
+			result.append(columnName);
 			if (i + 1 < columns.length)
 			{
 				result.append(", ");
@@ -389,7 +391,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		String[] pkSQL =
 			getAddPrimaryKeySQL("PK_" + column.getTableName() + "_" + column.getColumnName(),
 				new TableColumnInfo[] { column },
-				column.getTableName());
+				column.getTableName(), qualifier, prefs);
 
 		ArrayList<String> result = new ArrayList<String>();
 
