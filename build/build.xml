@@ -209,7 +209,7 @@
 	</target>
 
 	<!-- Enable Emma -->
-	<target name="emma" description="turns on EMMA's instrumentation/reporting">
+	<target name="emma" description="turns on EMMA's instrumentation/reporting" depends="init">
 
 		<property name="emma.enabled" value="true" />
 
@@ -1039,7 +1039,7 @@
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>
-
+		
 		<!-- Runs all tests using the test code just built.  This will find any
 		     class that ends with "Test" and expect that it can run it as a 
 		     JUnit test.  If that is not the case for any class, pick another 
@@ -1047,7 +1047,7 @@
 		     manually configured AllTest class TestSuites, and removes the 
 		     temptation to not configure certain tests because they fail.  If a 
 		     test fails, fix it; if it can't be fixed, then remove it.  -->
-		<junit printsummary="true" fork="yes" dir="${junit.report.dir}">
+		<junit printsummary="true" fork="true" dir="${junit.report.dir}">
 
 			<classpath>
 				<pathelement path="${instr.dir}" />
@@ -1060,7 +1060,7 @@
 			</classpath>
 			<formatter type="plain" />
 			<formatter type="xml" />
-			<batchtest fork="yes" todir="${junit.report.dir}">
+			<batchtest   fork="true" todir="${junit.report.dir}">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
@@ -1073,7 +1073,6 @@
 			<jvmarg value="-Demma.coverage.out.file=${coverage.report.dir}/coverage.emma" />
 			<jvmarg value="-Demma.coverage.out.merge=true" />
 			<jvmarg value="-DdialectExternalTestPropertyFile=${ext.test.config}" />
-
 		</junit>		
 		
 		<!-- if enabled, generate coverage report(s): -->
