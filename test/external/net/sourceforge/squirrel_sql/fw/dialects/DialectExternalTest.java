@@ -177,8 +177,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    @Test
    public void testDialects() throws Exception {
    	
-   	String propertyFile = "/home/manningr/projects/squirrel_snapshots/sql12/test/external/net/sourceforge/squirrel_sql/fw/dialects/dialectExternalTest.properties"; 
-   		//System.getProperty("dialectExternalTestPropertyFile");
+   	String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
    	if (propertyFile == null || "".equals(propertyFile)) {
    		fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
    	}
