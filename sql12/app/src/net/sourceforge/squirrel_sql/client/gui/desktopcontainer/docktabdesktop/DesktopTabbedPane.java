@@ -35,7 +35,7 @@ public class DesktopTabbedPane extends JTabbedPane
    @Override
    public void addTab(String title, Icon icon, Component component, String tip)
    {
-      super.addTab(title, icon, component, tip);
+      super.addTab("", null, component, tip);
       int index = indexOfComponent(component);
       setTabComponentAt(index, new ButtonTabComponent(this, title, icon));
    }
