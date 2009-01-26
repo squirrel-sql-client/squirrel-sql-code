@@ -176,7 +176,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
    @Test
    public void testDialects() throws Exception {
-   	String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
+   	
+   	String propertyFile = "/home/manningr/projects/squirrel_snapshots/sql12/test/external/net/sourceforge/squirrel_sql/fw/dialects/dialectExternalTest.properties"; 
+   		//System.getProperty("dialectExternalTestPropertyFile");
    	if (propertyFile == null || "".equals(propertyFile)) {
    		fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
    	}
@@ -203,8 +205,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       	}
       	HibernateDialect dialectToRef = DialectFactory.getDialectIgnoreCase(dbName);
       	if (dialectToRef == null) {
-      		System.err.println("Failed to find dialect for : "+dbName);
-      		System.exit(1);
+      		fail("Failed to find dialect for : "+dbName);
       	}
       	dialects.add(dialectToRef);
       }
@@ -677,6 +678,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          testMergeTable(session);
          testDataScript(session);
          System.out.println("Completed tests for "+dialect.getDisplayName());
+         session.close();
       }
    }
    
@@ -2039,6 +2041,18 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} catch (Exception e) {
    		System.err.println("Dialect failed to produce valid sql: "+e.getMessage());
    		e.printStackTrace();
+   		if (!dialectDiscoveryMode) {
+   			String displayName = "unknown"; 
+   				try
+					{
+						displayName = getDialect(session).getDisplayName();
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+					} 
+   			fail("Dialect ("+displayName+") failed to produce valid sql: "+e.getMessage());
+   		}
    	}
    	boolean success = false;
    	HibernateDialect lastDialect = null;
@@ -2065,9 +2079,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    		System.out.println("Dialect "+lastDialect.getDisplayName()+" produced valid SQL: "+Arrays.toString(sql));
    	} else {
    		System.err.println("No reference dialect was able to generate valid SQL for this operation.");
-   	}
-   	if (!dialectDiscoveryMode) {
-   		System.exit(1);		
    	}
 	}
    
