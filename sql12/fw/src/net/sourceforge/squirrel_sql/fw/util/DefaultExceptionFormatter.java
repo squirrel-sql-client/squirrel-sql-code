@@ -151,7 +151,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         StringBuilder buf = new StringBuilder();
         while (ex != null)
         {
-           buf.append(buildMessage("\nWarning:   ", ex));
+           buf.append(buildMessage("Warning:   ", ex));
            ex = ex.getNextWarning();
         }
 
@@ -162,7 +162,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         StringBuilder buf = new StringBuilder();
         while (ex != null)
         {
-            buf.append(buildMessage("\nError: ", ex));
+            buf.append(buildMessage("Error: ", ex));
             if (s_log.isDebugEnabled()) {
                 s_log.debug("Error", ex);
             }
