@@ -151,7 +151,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         StringBuilder buf = new StringBuilder();
         while (ex != null)
         {
-           buf.append(buildMessage("Warning:   ", ex));
+           buf.append(buildMessage("\nWarning:   ", ex));
            ex = ex.getNextWarning();
         }
 
@@ -162,7 +162,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         StringBuilder buf = new StringBuilder();
         while (ex != null)
         {
-            buf.append(buildMessage("Error: ", ex));
+            buf.append(buildMessage("\nError: ", ex));
             if (s_log.isDebugEnabled()) {
                 s_log.debug("Error", ex);
             }
@@ -181,7 +181,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         result.append("\nSQLState:  ");
         result.append(ex.getSQLState());
         result.append("\nErrorCode: ");
-        result.append(ex.getErrorCode());        
+        result.append(ex.getErrorCode());
         return result.toString();
     }
 

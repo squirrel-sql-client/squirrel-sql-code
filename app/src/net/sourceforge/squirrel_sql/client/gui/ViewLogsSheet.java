@@ -341,7 +341,9 @@ public class ViewLogsSheet extends DialogWidget
         }
         int threadNameEndIdx = line.indexOf("]");
         if (threadNameEndIdx > -1) {
-            char levelChar = line.charAt(threadNameEndIdx+2);
+        	char levelChar = ' ';
+        	if (line.length() >= threadNameEndIdx + 2)
+        		levelChar = line.charAt(threadNameEndIdx + 2);
             if (_errorChkbox.isSelected() && levelChar == 'E') {
                 result = true;
             }

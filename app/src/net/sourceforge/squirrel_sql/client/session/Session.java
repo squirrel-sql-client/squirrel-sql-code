@@ -897,6 +897,7 @@ class Session implements ISession
         try {
             md.supportsSavepoints();
         } catch (Throwable e) {
+        	s_log.debug(e);
             driverIs30Compliant = false;
         }
 
