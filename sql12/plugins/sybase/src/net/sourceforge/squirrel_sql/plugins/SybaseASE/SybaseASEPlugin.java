@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.exception.SybaseASEExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.exp.SybaseTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.exp.SybaseTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.SybasePreferenceBean;
@@ -68,8 +69,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 
         
     }
-    
-    
+        
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -97,7 +97,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.02";
+		return "0.05";
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public String getAuthor()
 	{
-		return "Ken McCullough";
+		return "Ken McCullough, Guido Wojke";
 	}
 
 	/**
@@ -219,10 +219,16 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	{
 	    if (!isPluginSession(session)) {
 	        return null;
-	    }
+	    }	    
         installSybaseQueryTokenizer(session);
         String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
 
+        // Add a new formatter for Sybase-Errors/Warnings
+      SybaseASEExceptionFormatter formatter = new SybaseASEExceptionFormatter();
+		formatter.setSession(session);
+		session.setExceptionFormatter(formatter);
+
+        
 	    // Add context menu items to the object tree's view and procedure nodes.
 	    IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
 	    otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));

@@ -14,7 +14,12 @@ import java.sql.Statement;
 
 public class ScriptSybaseASEProcedureAction extends SquirrelAction
 {
-   private ISession _session;
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private ISession _session;
 
 
    public ScriptSybaseASEProcedureAction(IApplication app, Resources rsrc, ISession session)
