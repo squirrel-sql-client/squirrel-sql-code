@@ -1055,6 +1055,7 @@
 				<pathelement path="${derby.driver.jar}"/>
 				<pathelement path="${h2.driver.jar}"/>
 				<pathelement path="${hsqldb.driver.jar}"/>
+				<pathelement path="${postgresql.driver.jar}" />
 				<path refid="test.compile.classpath" />
 				<path refid="emma.lib" />
 			</classpath>
