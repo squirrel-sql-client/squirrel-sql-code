@@ -1173,7 +1173,7 @@ public class DialectUtils implements StringTemplateConstants
 		if (useConstraintName)
 		{
 			result.append(" DROP CONSTRAINT ");
-			result.append(pkName);
+			result.append(shapeIdentifier(pkName, prefs, dialect));
 		}
 		else
 		{
@@ -1482,7 +1482,8 @@ public class DialectUtils implements StringTemplateConstants
 		sql.append(DialectUtils.ALTER_TABLE_CLAUSE);
 		sql.append(" ");
 		sql.append(shapeQualifiableIdentifier(oldTableName, qualifier, prefs, dialect));
-		sql.append(" RENAME TO ").append(shapeQualifiableIdentifier(newTableName, qualifier, prefs, dialect));
+		sql.append(" RENAME TO ");
+		sql.append(shapeQualifiableIdentifier(newTableName, qualifier, prefs, dialect));
 
 		return sql.toString();
 	}
