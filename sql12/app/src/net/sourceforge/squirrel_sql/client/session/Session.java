@@ -23,11 +23,27 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -42,17 +58,22 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -231,8 +252,9 @@ class Session implements ISession
    {
       if (!_closed)
       {
-         s_log.debug("Closing session: " + _id);
-
+      	if (s_log.isDebugEnabled()) {
+      		s_log.debug("Closing session: " + _id);
+      	}
          _conn.removePropertyChangeListener(_connLis);
          _connLis = null;
 
@@ -252,7 +274,9 @@ class Session implements ISession
             }
             catch(Exception e)
             {
-               s_log.info("Error stopping parser event processor", e);
+            	if (s_log.isInfoEnabled()) {
+            		s_log.info("Error stopping parser event processor", e);
+            	}
             }
          }
 
@@ -275,7 +299,9 @@ class Session implements ISession
                _sessionSheet = null;
             }
          }
-         s_log.debug("Successfully closed session: " + _id);
+         if (s_log.isDebugEnabled()) {
+         	s_log.debug("Successfully closed session: " + _id);
+         }
       }
    }
 
@@ -897,7 +923,9 @@ class Session implements ISession
         try {
             md.supportsSavepoints();
         } catch (Throwable e) {
-        	s_log.debug(e);
+      	   if (s_log.isDebugEnabled()) {
+      	   	s_log.debug(e);
+      	   }
             driverIs30Compliant = false;
         }
 
@@ -909,7 +937,9 @@ class Session implements ISession
             String title =
                 s_stringMgr.getString("Session.driverComplianceTitle");
             showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
-            s_log.info(msg);
+            if (s_log.isInfoEnabled()) {
+            	s_log.info(msg);
+            }
         }
     }
 
