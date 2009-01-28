@@ -8,7 +8,7 @@ Enhancements:
 
 Updated Italian translation (Ivo Neri), Chinese translation (xpdz)
 
-New user interface layout: Tabled layout
+New user interface layout: Tabbed layout
 
 Hibernate Plugin:
    - Cleaned up details display in mapped objects tab: Now every tree node displays an appropriate details table.
