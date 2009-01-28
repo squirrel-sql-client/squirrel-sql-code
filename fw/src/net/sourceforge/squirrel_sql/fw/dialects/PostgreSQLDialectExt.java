@@ -453,9 +453,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
+		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		result.append(" ALTER COLUMN ");
-		result.append(info.getColumnName());
+		result.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
 		String defVal = info.getDefaultValue();
 		if (defVal == null || "".equals(defVal))
 		{
@@ -804,7 +804,25 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
+		// ALTER TABLE oldTableName RENAME TO newTableName;
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(DialectUtils.ALTER_TABLE_CLAUSE);
+		sql.append(" ");
+		sql.append(DialectUtils.shapeQualifiableIdentifier(oldTableName, qualifier, prefs, this));
+		sql.append(" RENAME TO ");
+		// This is a work-around for what looks like a bug to me - it is a syntax error to qualify with the 
+		// schema the new table name, but not the old as in:
+		//
+		// ALTER TABLE "public"."tablerenametest" RENAME TO "public"."tablewasrenamed"
+		//
+		// The second "public". is apparently not (currently) a valid thing to do.
+		
+		//sql.append(DialectUtils.shapeQualifiableIdentifier(newTableName, qualifier, prefs, this));
+
+		sql.append(DialectUtils.shapeIdentifier(newTableName, prefs, this));
+		
+		return sql.toString();
 	}
 
 	/**
@@ -829,7 +847,7 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	{
 		// rename view has that same syntax as that of tables.
 		return new String[] { 
-			DialectUtils.getRenameTableSQL(oldViewName, newViewName, qualifier, prefs, this) 
+			getRenameTableSQL(oldViewName, newViewName, qualifier, prefs) 
 		};
 	}
 
@@ -1216,7 +1234,25 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return identifier;
+		StringBuilder result = new StringBuilder();
+		if (prefs.isQualifyTableNames()) {
+			if (prefs.isQuoteIdentifiers()) {
+				result.append(this.openQuote());
+			}
+			result.append(qualifier.getSchema());
+			if (prefs.isQuoteIdentifiers()) {
+				result.append(this.closeQuote());
+			} 
+			result.append(".");
+		}
+		if (prefs.isQuoteIdentifiers()) {
+			result.append(this.openQuote());
+		}
+		result.append(identifier);
+		if (prefs.isQuoteIdentifiers()) {
+			result.append(this.closeQuote());
+		}
+		return result.toString();
 	}
 
 	/**
