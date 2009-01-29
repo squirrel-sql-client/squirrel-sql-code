@@ -114,6 +114,7 @@ public class OracleInternalFrame extends SessionDialogWidget
          // i18n[oracle.dboutputStayOnTop=Stay on top]
          _stayOnTop = new JCheckBox(s_stringMgr.getString("oracle.dboutputStayOnTop"), false);
          _stayOnTop.setSelected(stayOnTop);
+         _stayOnTop.setVisible(getSession().getApplication().getDesktopStyle().supportsLayers());
 
          SwingUtilities.invokeLater(new Runnable()
          {
