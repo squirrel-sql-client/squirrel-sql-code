@@ -203,7 +203,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 	abstract void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
 			throws BaseException;
 
-	final MetalTheme getThemeForName(String name)
+	MetalTheme getThemeForName(String name)
 	{
 		return _themes.get(name);
 	}

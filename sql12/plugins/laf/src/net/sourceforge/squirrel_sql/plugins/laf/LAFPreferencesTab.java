@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -180,7 +177,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			String LAF_LOC = s_stringMgr.getString("laf.jars");
          // i18n[laf.lafPerformanceWarning=Also note: Some Look and Feels may cause performance problems.
          // If you think your selected Look and Feel slows down SQuirreL switch to a Metal or Plastic Look and Feel.]
-         String LAF_PERFROMANCE_WARNING = s_stringMgr.getString("laf.lafPerformanceWarning");
+         String LAF_CRITICAL_WARNING = s_stringMgr.getString("laf.lafCriticalWarning");
       }
 
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
@@ -284,7 +281,9 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
          ++gbc.gridy;
          gbc.gridx = 0;
          gbc.gridwidth = GridBagConstraints.REMAINDER;
-         add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_PERFROMANCE_WARNING), gbc);
+         MultipleLineLabel enforedWarningLabel = new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_CRITICAL_WARNING);
+         enforedWarningLabel.setForeground(Color.red);
+         add(enforedWarningLabel, gbc);
 		}
 
 		private JPanel createLookAndFeelPanel()
