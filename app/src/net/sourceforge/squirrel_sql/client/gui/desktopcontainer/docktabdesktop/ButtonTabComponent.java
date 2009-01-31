@@ -8,70 +8,41 @@ import java.awt.event.*;
 
 public class ButtonTabComponent extends JPanel
 {
-   private final DesktopTabbedPane _tabbedPane;
+   private final JTabbedPane _tabbedPane;
    private JLabel _label = new JLabel();
+   private TabButton _closeButton = new TabButton();
 
-   /**
-    * Became a text field because lables could not display
-    * very long file names as title.
-    */
-   private JTextField _txtTitle = new JTextField()
-   {
-      @Override
-      protected void processMouseEvent(MouseEvent e)
-      {
-         Point tabbedPaneLoc = _tabbedPane.getLocationOnScreen();
-         Point mouseLoc = e.getLocationOnScreen();
-         int transfX = mouseLoc.x - tabbedPaneLoc.x;
-         int transfY = mouseLoc.y - tabbedPaneLoc.y;
-
-         MouseEvent transformedMouseEvent =
-            new MouseEvent(
-               _tabbedPane,
-               e.getID(),
-               e.getWhen(),
-               e.getModifiers(),
-               transfX,
-               transfY,
-               e.getClickCount(),
-               e.isPopupTrigger(),
-               e.getButton());
-
-         _tabbedPane.doProcessMouseEvent(transformedMouseEvent);
-         super.processMouseEvent(e);    //To change body of overridden methods use File | Settings | File Templates.
-      }
-   };
-
-
-   private TabButton _closebutton = new TabButton();
-
-   public ButtonTabComponent(final DesktopTabbedPane tabbedPane, String title, Icon icon)
+   public ButtonTabComponent(final JTabbedPane tabbedPane, String title, Icon icon)
    {
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       _tabbedPane = tabbedPane;
       setOpaque(false);
 
-      // Has to be at the front because very long file names would move it
-      // out of sight if it were in the back. 
-      add(_closebutton);
-      setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 9));
+      //tab button
+      add(_closeButton);
 
+      _label.setText(title);
       _label.setIcon(icon);
-      _label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       add(_label);
-
-
-      _txtTitle.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-      _txtTitle.setEditable(false);
-      _txtTitle.setOpaque(false);
-      add(_txtTitle);
-
+      //add more space between the label and the button
+      _label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+      //add more space to the top of the component
+      setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
    }
 
+   JLabel getLabel()
+   {
+      return _label;
+   }
+
+   public JButton getButton()
+   {
+      return _closeButton;
+   }
 
    public JButton getClosebutton()
    {
-      return _closebutton;
+      return _closeButton;
    }
 
    public void setIcon(Icon icon)
@@ -81,7 +52,7 @@ public class ButtonTabComponent extends JPanel
 
    public void setTitle(String title)
    {
-      _txtTitle.setText(title);
+      _label.setText(title);
    }
 
    private class TabButton extends JButton //implements ActionListener
