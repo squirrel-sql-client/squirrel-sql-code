@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+2.6.9 (1/30/2008)
+=================
+
+Bug-Fixes:
+
+1995728: Unable to switch database
+
+Updated French translation labels/messages (Erwan Duroselle)  
+
 2.6.8 (10/11/2008)
 =================
 
