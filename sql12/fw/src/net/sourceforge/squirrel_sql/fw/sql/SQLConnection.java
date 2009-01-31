@@ -349,6 +349,28 @@ public class SQLConnection implements ISQLConnection
 	 */
 	private void setMSSQLServerCatalog(String catalogName) throws SQLException {
 		final Connection conn = getConnection();
+
+		// Bug #1995728
+		// MS-SQL is inconsistent with regard to setting the current catalog. If you have a database with
+		// periods or spaces, then in some cases you must surround the catalog with quotes. For example, 
+		// if you have a catalog named 'db with spaces' you must execute the following SQL:
+		// 
+		// use "db with spaces"
+		//
+		// However, the same is not always true for the JDBC API method Connection.setCatalog. For some old
+		// versions of Microsoft drivers, you must quote the catalog as well. But for newer versions of the
+		// driver, you must not quote the catalog. So here, we attempt to use the unquoted version first, then
+		// if that fails, we will try quoting it.
+		try
+		{
+			conn.setCatalog(catalogName);
+			return;
+		}
+		catch (SQLException e)
+		{
+			s_log.error("Connection.setCatalog yielded an exception for catalog (" + catalogName + ") :"
+				+ e.getMessage()+" - will try quoting the catalog next.", e);
+		}
 		conn.setCatalog(quote(catalogName));
 	}
 
@@ -444,6 +466,9 @@ public class SQLConnection implements ISQLConnection
 	
 	private String quote(String str)
 	{
+		// Bug #1995728 - Don't add quotes to an already quoted identifier
+		if (str.startsWith("\"")) { return str; }
+		
 		String identifierQuoteString = "";
 		try
 		{
