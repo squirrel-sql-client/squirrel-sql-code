@@ -169,6 +169,8 @@ bug-fix.
 
 2013346: export csv with option "carriage return + linefeed"
 
+1995728: Unable to switch database
+
 1958881: (Unable to see source of database views)  Adjusted the query for view source to use 
 underlying system tables instead of INFORMATION_SCHEMA.VIEWS, since this view cannot handle views 
 that are greater than 4000 characters.
