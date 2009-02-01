@@ -205,9 +205,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
-		result.append(tableName);
+		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		result.append(" DROP COLUMN ");
-		result.append(columnName);
+		result.append(DialectUtils.shapeIdentifier(columnName, prefs, this));
 		return result.toString();
 	}
 
@@ -250,13 +250,14 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
-		result.append(ti.getQualifiedName());
+		result.append(DialectUtils.shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, this));
 		result.append(" ADD CONSTRAINT ");
 		result.append(pkName);
 		result.append(" PRIMARY KEY (");
 		for (int i = 0; i < columns.length; i++)
 		{
-			result.append(columns[i].getColumnName());
+			
+			result.append(DialectUtils.shapeIdentifier(columns[i].getColumnName(), prefs, this));
 			if (i + 1 < columns.length)
 			{
 				result.append(", ");
@@ -319,9 +320,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
 				from.getTableName(),
 				ST_OLD_COLUMN_NAME_KEY,
-				from.getColumnName(),
+				DialectUtils.shapeIdentifier(from.getColumnName(), prefs, this),
 				ST_NEW_COLUMN_NAME_KEY,
-				to.getColumnName());
+				DialectUtils.shapeIdentifier(to.getColumnName(), prefs, this));
 		
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
@@ -430,9 +431,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
+		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		result.append(" MODIFY ");
-		result.append(info.getColumnName());
+		result.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
 		result.append(" DEFAULT ");
 		if (JDBCTypeMapper.isNumberType(info.getDataType()))
 		{
