@@ -1032,6 +1032,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
    private void testCreateTableWithDefault(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
+      
+      if (!dialect.supportsCreateTable()) {
+      	return;
+      }
+      
       String testTableName = "TESTDEFAULT";
          
       dropTable(session, testTableName);
@@ -1878,6 +1883,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    
    private void testDataScript(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	
+   	// Axion cannot handle ts escape sequence - so skip this test for now.
+   	if (DialectFactory.isAxion(session.getMetaData())) {
+   		return;
+   	}
    	
    	String tableName = fixIdentifierCase(session, "timestamptest");
    	String timestampTypeName =  dialect.getTypeName(Types.TIMESTAMP,5,5,5);
