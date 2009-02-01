@@ -134,7 +134,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    private static String fkChildPrimaryKeyColumnName = "childpkid";
    private static String testUniqueConstraintTableName = "testUniqueConstraintTable";
    private static String uniqueConstraintName = "uniq_constraint";
-   private static String uniqueConstraintColName = "uid";
+   private static String uniqueConstraintColName = "uidc";
    // this is the constraint that is dropped in drop constraint test
    private static String secondUniqueConstraintName = "uniq_constraint2";
    // this is the column on which the constraint to be dropped is defined
