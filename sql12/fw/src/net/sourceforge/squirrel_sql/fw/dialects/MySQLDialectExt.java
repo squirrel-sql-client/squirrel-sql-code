@@ -497,14 +497,20 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		boolean supportsNullQualifier = true;
 		boolean addNullClause = true;
 
-		return new String[] { DialectUtils.getAddColumSQL(column,
+		String addColumnSql = DialectUtils.getAddColumSQL(column,
 			this,
 			addDefaultClause,
 			supportsNullQualifier,
 			addNullClause,
 			qualifier,
-			prefs) };
-
+			prefs);
+		
+		// MySQL disallows quoted column identifiers when adding columns.
+		if (prefs.isQuoteIdentifiers()) {
+			addColumnSql = stripQuotesFromIdentifier(column.getColumnName(), addColumnSql);			
+		}
+		
+		return new String[] { addColumnSql };
 	}
 
 	/**
@@ -1096,5 +1102,25 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	{
+		// MySQL disallows quoted column identifiers when dropping columns.
+		return stripQuotesFromIdentifier(columnName, 
+			super.getColumnDropSQL(tableName, columnName, qualifier, prefs));
+	}
+
+	
+	private String stripQuotesFromIdentifier(String identifier, String strWithQuotes) {
+		// Strip quotes from the column name 
+		StringBuilder tmp = new StringBuilder("\\" + openQuote());
+		tmp.append(identifier);
+		tmp.append("\\" + closeQuote());
+		return strWithQuotes.replaceAll(tmp.toString(), identifier);		
+	}
 	
 }
