@@ -81,7 +81,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/** extended hibernate dialect used in this wrapper */
-	private MySQLDialectHelper _dialect = new MySQLDialectHelper();
+	private final MySQLDialectHelper _dialect = new MySQLDialectHelper();
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
@@ -101,7 +101,8 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		if (dataType == Types.FLOAT)
 		{
 			return 53;
-		} else
+		}
+		else
 		{
 			return 38;
 		}
@@ -110,6 +111,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName()
 	{
 		return "MySQL";
@@ -125,17 +127,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the version of the database as reported by DatabaseMetaData.getDatabaseProductVersion()
 	 * @return true if this dialect can be used for the specified product name and version; false otherwise.
 	 */
+	@Override
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().toLowerCase().startsWith("mysql")
-			&& !databaseProductVersion.startsWith("5"))
-		{
-			return true;
-		}
+			&& !databaseProductVersion.startsWith("5")) { return true; }
 		return false;
 	}
 
@@ -149,48 +146,47 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support adding columns after a table has already been created.
 	 */
-//	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
-//	{
-//		ArrayList<String> returnVal = new ArrayList<String>();
-//		StringBuilder result = new StringBuilder();
-//		result.append("ALTER TABLE ");
-//		result.append(info.getTableName());
-//		result.append(" ADD COLUMN ");
-//		result.append(info.getColumnName());
-//		result.append(" ");
-//		result.append(DialectUtils.getTypeName(info, this));
-//		result.append(" ");
-//		DialectUtils.appendDefaultClause(info, result);
-//		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-//		{
-//			result.append(" COMMENT ");
-//			result.append("'");
-//			result.append(info.getRemarks());
-//			result.append("'");
-//		}
-//		returnVal.add(result.toString());
-//		if (info.isNullable().equals("NO"))
-//		{
-//			String setNullSQL = getModifyColumnNullabilitySQL(info.getTableName(), info, false);
-//			returnVal.add(setNullSQL);
-//		}
-//		// Sometimes, MySQL omits the change for COMMENT, so explicitly add
-//		// it in a separate alter statement as well
-//		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-//		{
-//			returnVal.add(getColumnCommentAlterSQL(info, null, null));
-//		}
-//		// Sometimes, MySQL omits the change for DEFAULT, so explicitly add
-//		// it in a separate alter statement as well
-//		// returnVal.add()
-//		if (info.getDefaultValue() != null && !"".equals(info.getDefaultValue()))
-//		{
-//			returnVal.add(getColumnDefaultAlterSQL(info, qualifier, prefs));
-//		}
-//
-//		return returnVal.toArray(new String[returnVal.size()]);
-//	}
-
+	// public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
+	// {
+	// ArrayList<String> returnVal = new ArrayList<String>();
+	// StringBuilder result = new StringBuilder();
+	// result.append("ALTER TABLE ");
+	// result.append(info.getTableName());
+	// result.append(" ADD COLUMN ");
+	// result.append(info.getColumnName());
+	// result.append(" ");
+	// result.append(DialectUtils.getTypeName(info, this));
+	// result.append(" ");
+	// DialectUtils.appendDefaultClause(info, result);
+	// if (info.getRemarks() != null && !"".equals(info.getRemarks()))
+	// {
+	// result.append(" COMMENT ");
+	// result.append("'");
+	// result.append(info.getRemarks());
+	// result.append("'");
+	// }
+	// returnVal.add(result.toString());
+	// if (info.isNullable().equals("NO"))
+	// {
+	// String setNullSQL = getModifyColumnNullabilitySQL(info.getTableName(), info, false);
+	// returnVal.add(setNullSQL);
+	// }
+	// // Sometimes, MySQL omits the change for COMMENT, so explicitly add
+	// // it in a separate alter statement as well
+	// if (info.getRemarks() != null && !"".equals(info.getRemarks()))
+	// {
+	// returnVal.add(getColumnCommentAlterSQL(info, null, null));
+	// }
+	// // Sometimes, MySQL omits the change for DEFAULT, so explicitly add
+	// // it in a separate alter statement as well
+	// // returnVal.add()
+	// if (info.getDefaultValue() != null && !"".equals(info.getDefaultValue()))
+	// {
+	// returnVal.add(getColumnDefaultAlterSQL(info, qualifier, prefs));
+	// }
+	//
+	// return returnVal.toArray(new String[returnVal.size()]);
+	// }
 	/**
 	 * @param tableName
 	 * @param info
@@ -199,7 +195,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public String getModifyColumnNullabilitySQL(String tableName, TableColumnInfo info, boolean nullable)
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append(" ALTER TABLE ");
 		result.append(tableName);
 		result.append(" MODIFY ");
@@ -209,7 +205,8 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		if (nullable)
 		{
 			result.append(" NULL ");
-		} else
+		}
+		else
 		{
 			result.append(" NOT NULL ");
 		}
@@ -222,6 +219,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if the database supports modifying column defaults; false otherwise
 	 */
+	@Override
 	public boolean supportsAlterColumnDefault()
 	{
 		return true;
@@ -234,9 +232,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	@Override
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(info.getTableName());
 		result.append(" MODIFY ");
@@ -252,6 +252,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if column comments are supported; false otherwise.
 	 */
+	@Override
 	public boolean supportsColumnComment()
 	{
 		return true;
@@ -266,10 +267,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
+	@Override
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(info.getTableName());
 		result.append(" MODIFY ");
@@ -288,6 +290,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if the database supports dropping columns; false otherwise.
 	 */
+	@Override
 	public boolean supportsDropColumn()
 	{
 		return true;
@@ -299,6 +302,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if the database supports dropping columns; false otherwise.
 	 */
+	@Override
 	public boolean supportsAlterColumnNull()
 	{
 		return true;
@@ -312,11 +316,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
+	@Override
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
-		String columnNullableAlterSql = 
+		final String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
+		String columnNullableAlterSql =
 			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs);
 		columnNullableAlterSql = stripQuotesFromIdentifier(info.getColumnName(), columnNullableAlterSql);
 		return new String[] { columnNullableAlterSql };
@@ -327,6 +332,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if the database supports changing the name of columns; false otherwise.
 	 */
+	@Override
 	public boolean supportsRenameColumn()
 	{
 		return true;
@@ -341,9 +347,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	@Override
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(from.getTableName());
 		result.append(" CHANGE ");
@@ -360,6 +368,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * 
 	 * @return true if supported; false otherwise
 	 */
+	@Override
 	public boolean supportsAlterColumnType()
 	{
 		return true;
@@ -375,10 +384,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
+	@Override
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(from.getTableName());
 		result.append(" CHANGE ");
@@ -388,7 +398,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		result.append(to.getColumnName());
 		result.append(" ");
 		result.append(DialectUtils.getTypeName(to, this));
-		ArrayList<String> list = new ArrayList<String>();
+		final ArrayList<String> list = new ArrayList<String>();
 		list.add(result.toString());
 		return list;
 	}
@@ -402,7 +412,9 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	@Override
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -416,9 +428,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	@Override
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		StringBuilder tmp = new StringBuilder();
+		final StringBuilder tmp = new StringBuilder();
 		tmp.append("ALTER TABLE ");
 		tmp.append(tableName);
 		tmp.append(" DROP FOREIGN KEY ");
@@ -439,15 +453,17 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           whether or not the connection is via JDBC-ODBC bridge.
 	 * @return the SQL that is used to create the specified table
 	 */
+	@Override
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
-	{		
+	{
 		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
 	 */
+	@Override
 	public DialectType getDialectType()
 	{
 		return DialectType.MYSQL;
@@ -456,6 +472,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
 	 */
+	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
 		return new String[] { "UNIQUE", "FULLTEXT", "SPATIAL" };
@@ -464,6 +481,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
 	 */
+	@Override
 	public String[] getIndexStorageOptions()
 	{
 		return new String[] { "BTREE", "HASH" };
@@ -474,19 +492,19 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// ALTER TABLE <tableName> MODIFY <columnName> MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY
-		String templateStr = ST_ADD_AUTO_INCREMENT_STYLE_ONE;
-		StringTemplate st = new StringTemplate(templateStr);
+		final String templateStr = ST_ADD_AUTO_INCREMENT_STYLE_ONE;
+		final StringTemplate st = new StringTemplate(templateStr);
 
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
 
-		String addAutoIncrementSql =
-			DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		String addAutoIncrementSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 		addAutoIncrementSql = stripQuotesFromIdentifier(column.getColumnName(), addAutoIncrementSql);
 		return new String[] { addAutoIncrementSql };
 	}
@@ -496,26 +514,24 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		boolean addDefaultClause = true;
-		boolean supportsNullQualifier = true;
-		boolean addNullClause = true;
+		final boolean addDefaultClause = true;
+		final boolean supportsNullQualifier = true;
+		final boolean addNullClause = true;
 
-		String addColumnSql = DialectUtils.getAddColumSQL(column,
-			this,
-			addDefaultClause,
-			supportsNullQualifier,
-			addNullClause,
-			qualifier,
-			prefs);
-		
+		String addColumnSql =
+			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
+				qualifier, prefs);
+
 		// MySQL disallows quoted column identifiers when adding columns.
-		if (prefs.isQuoteIdentifiers()) {
-			addColumnSql = stripQuotesFromIdentifier(column.getColumnName(), addColumnSql);			
+		if (prefs.isQuoteIdentifiers())
+		{
+			addColumnSql = stripQuotesFromIdentifier(column.getColumnName(), addColumnSql);
 		}
-		
+
 		return new String[] { addColumnSql };
 	}
 
@@ -526,6 +542,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
 		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
@@ -538,10 +555,10 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
 		// [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
 
-		String fkTemplateStr = ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE;
+		final String fkTemplateStr = ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE;
 
-		StringTemplate fkst = new StringTemplate(fkTemplateStr);
-		HashMap<String, String> fkValuesMap = new HashMap<String, String>();
+		final StringTemplate fkst = new StringTemplate(fkTemplateStr);
+		final HashMap<String, String> fkValuesMap = new HashMap<String, String>();
 		fkValuesMap.put(ST_CHILD_TABLE_KEY, localTableName);
 		if (constraintName != null)
 		{
@@ -563,14 +580,8 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
 		}
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(fkst,
-			fkValuesMap,
-			ckIndexSt,
-			ckIndexValuesMap,
-			localRefColumns,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkst, fkValuesMap, ckIndexSt, ckIndexValuesMap,
+			localRefColumns, qualifier, prefs, this);
 	}
 
 	/**
@@ -579,6 +590,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -590,9 +602,9 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// alter_specification:
 		// | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
 
-		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE;
+		final String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE;
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
 		if (constraintName != null)
 		{
@@ -611,7 +623,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// st.setAttribute(ST_INDEX_TYPE_KEY, indexType);
 		// }
 
-		for (TableColumnInfo columnInfo : columns)
+		for (final TableColumnInfo columnInfo : columns)
 		{
 			st.setAttribute(ST_COLUMN_NAME_KEY, columnInfo.getColumnName());
 		}
@@ -625,6 +637,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -640,6 +653,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -668,11 +682,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// index_type:
 		// USING {BTREE | HASH}
 		// Note; indexType is unused at the moment because the index dialog doesn't accept this. See below.
-		String templateStr = ST_CREATE_INDEX_STYLE_ONE;
+		final String templateStr = ST_CREATE_INDEX_STYLE_ONE;
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 
 		if (accessMethod != null && !accessMethod.toLowerCase().equals("default"))
 		{
@@ -685,11 +699,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 
 		String addIndexSql = DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
-		
-		for (String columnName : columns) {
+
+		for (final String columnName : columns)
+		{
 			addIndexSql = stripQuotesFromIdentifier(columnName, addIndexSql);
 		}
-		
+
 		return addIndexSql;
 	}
 
@@ -699,6 +714,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -713,16 +729,18 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
+	@Override
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		String createTableSql = 
+		String createTableSql =
 			DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
-		
-		for (TableColumnInfo colInfo : columns) {
+
+		for (final TableColumnInfo colInfo : columns)
+		{
 			createTableSql = stripQuotesFromIdentifier(colInfo.getColumnName(), createTableSql);
 		}
-		
+
 		return createTableSql;
 	}
 
@@ -732,6 +750,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -745,6 +764,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -758,10 +778,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		Boolean cascadeNotSupported = null;
+		final Boolean cascadeNotSupported = null;
 		return DialectUtils.getDropIndexSQL(tableName, indexName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
@@ -770,6 +791,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -783,6 +805,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -796,6 +819,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -810,11 +834,11 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		String renameTableSql = 
+		String renameTableSql =
 			DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
-		
+
 		renameTableSql = stripQuotesFromIdentifier(newTableName, renameTableSql);
-		
+
 		return renameTableSql;
 	}
 
@@ -859,23 +883,16 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		if (fromTables != null)
 		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_TWO;
-		} else
+		}
+		else
 		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 
-		return DialectUtils.getUpdateSQL(st,
-			tableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
+			whereValues, qualifier, prefs, this);
 	}
 
 	/**
@@ -1126,20 +1143,25 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		// MySQL disallows quoted column identifiers when dropping columns.
-		return stripQuotesFromIdentifier(columnName, 
-			super.getColumnDropSQL(tableName, columnName, qualifier, prefs));
+		return stripQuotesFromIdentifier(columnName, super.getColumnDropSQL(tableName, columnName, qualifier,
+			prefs));
 	}
 
-
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[], net.sourceforge.squirrel_sql.fw.sql.ITableInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
@@ -1147,23 +1169,25 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		// MySQL disallows quoted column identifiers when adding a primary key.
 		String addPrimaryKeySql = (super.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs))[0];
-		
-		for (TableColumnInfo colInfo : colInfos) {
+
+		for (final TableColumnInfo colInfo : colInfos)
+		{
 			addPrimaryKeySql = stripQuotesFromIdentifier(colInfo.getColumnName(), addPrimaryKeySql);
 		}
-		
+
 		// MySQL disallows quoted constraint identifiers when adding a primary key.
 		addPrimaryKeySql = stripQuotesFromIdentifier(pkName, addPrimaryKeySql);
-		
+
 		return new String[] { addPrimaryKeySql };
 	}
-	
-	protected String stripQuotesFromIdentifier(String identifier, String strWithQuotes) {
-		// Strip quotes from the column name 
-		StringBuilder tmp = new StringBuilder("\\" + openQuote());
+
+	protected String stripQuotesFromIdentifier(String identifier, String strWithQuotes)
+	{
+		// Strip quotes from the column name
+		final StringBuilder tmp = new StringBuilder("\\" + openQuote());
 		tmp.append(identifier);
 		tmp.append("\\" + closeQuote());
-		return strWithQuotes.replaceAll(tmp.toString(), identifier);		
+		return strWithQuotes.replaceAll(tmp.toString(), identifier);
 	}
-	
+
 }

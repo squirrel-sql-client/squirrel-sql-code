@@ -41,11 +41,11 @@ public class MySQL5DialectExt extends MySQLDialectExt
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 
-		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+		final StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
 
 		// "CREATE VIEW $viewName$ " +
 		// "AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_VIEW_NAME_KEY, viewName);
 		valuesMap.put(ST_SELECT_STATEMENT_KEY, definition);
 		// check option not supported
@@ -83,19 +83,15 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		String renameClause = DialectUtils.RENAME_CLAUSE;
-		String commandPrefix = DialectUtils.ALTER_TABLE_CLAUSE;
-		
-		String renameViewSql = DialectUtils.getRenameViewSQL(commandPrefix,
-			renameClause,
-			oldViewName,
-			newViewName,
-			qualifier,
-			prefs,
-			this);
+		final String renameClause = DialectUtils.RENAME_CLAUSE;
+		final String commandPrefix = DialectUtils.ALTER_TABLE_CLAUSE;
+
+		String renameViewSql =
+			DialectUtils.getRenameViewSQL(commandPrefix, renameClause, oldViewName, newViewName, qualifier,
+				prefs, this);
 
 		renameViewSql = stripQuotesFromIdentifier(newViewName, renameViewSql);
-		
+
 		return new String[] { renameViewSql };
 	}
 
@@ -108,7 +104,7 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("SELECT view_definition ");
 		result.append("FROM information_schema.views");
 		result.append("WHERE table_name = '");
@@ -145,14 +141,8 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	@Override
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null || databaseProductVersion == null)
-		{
-			return false;
-		}
-		if (!databaseProductName.trim().toLowerCase().startsWith("mysql"))
-		{
-			return false;
-		}
+		if (databaseProductName == null || databaseProductVersion == null) { return false; }
+		if (!databaseProductName.trim().toLowerCase().startsWith("mysql")) { return false; }
 		return databaseProductVersion.startsWith("5");
 	}
 
@@ -182,7 +172,7 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	{
 		return true;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getDisplayName()
 	 */
@@ -191,6 +181,5 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	{
 		return "MySQL5";
 	}
-	
-}
 
+}
