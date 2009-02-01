@@ -1061,7 +1061,8 @@
 			</classpath>
 			<formatter type="plain" />
 			<formatter type="xml" />
-			<batchtest   fork="true" todir="${junit.report.dir}">
+			<!-- fork needs to be true for DialectExternalTest to work properly -->
+		        <batchtest   fork="true" todir="${junit.report.dir}">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
