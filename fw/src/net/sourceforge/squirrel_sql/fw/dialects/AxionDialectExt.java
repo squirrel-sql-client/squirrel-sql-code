@@ -404,7 +404,9 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
 	{
-		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
+		final int featureId = DialectUtils.CREATE_TABLE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -424,18 +426,6 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 		SqlGenerationPreferences prefs)
 	{
 
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	@Override
-	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
-	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
@@ -652,7 +642,6 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsCreateTable()
 	{
-
 		return false;
 	}
 
