@@ -85,13 +85,18 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	{
 		String renameClause = DialectUtils.RENAME_CLAUSE;
 		String commandPrefix = DialectUtils.ALTER_TABLE_CLAUSE;
-		return new String[] { DialectUtils.getRenameViewSQL(commandPrefix,
+		
+		String renameViewSql = DialectUtils.getRenameViewSQL(commandPrefix,
 			renameClause,
 			oldViewName,
 			newViewName,
 			qualifier,
 			prefs,
-			this) };
+			this);
+
+		renameViewSql = stripQuotesFromIdentifier(newViewName, renameViewSql);
+		
+		return new String[] { renameViewSql };
 	}
 
 	/**

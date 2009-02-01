@@ -316,7 +316,10 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
+		String columnNullableAlterSql = 
+			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs);
+		columnNullableAlterSql = stripQuotesFromIdentifier(info.getColumnName(), columnNullableAlterSql);
+		return new String[] { columnNullableAlterSql };
 	}
 
 	/**
@@ -438,7 +441,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
-	{
+	{		
 		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
 
@@ -482,7 +485,10 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
 
-		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
+		String addAutoIncrementSql =
+			DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		addAutoIncrementSql = stripQuotesFromIdentifier(column.getColumnName(), addAutoIncrementSql);
+		return new String[] { addAutoIncrementSql };
 	}
 
 	/**
@@ -678,8 +684,13 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// valuesMap.put("indexType", "USING BTREE");
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 
-		return DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
-
+		String addIndexSql = DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
+		
+		for (String columnName : columns) {
+			addIndexSql = stripQuotesFromIdentifier(columnName, addIndexSql);
+		}
+		
+		return addIndexSql;
 	}
 
 	/**
@@ -705,7 +716,14 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		return DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
+		String createTableSql = 
+			DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
+		
+		for (TableColumnInfo colInfo : columns) {
+			createTableSql = stripQuotesFromIdentifier(colInfo.getColumnName(), createTableSql);
+		}
+		
+		return createTableSql;
 	}
 
 	/**
@@ -792,7 +810,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
+		String renameTableSql = 
+			DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
+		
+		renameTableSql = stripQuotesFromIdentifier(newTableName, renameTableSql);
+		
+		return renameTableSql;
 	}
 
 	/**
@@ -1114,8 +1137,28 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 			super.getColumnDropSQL(tableName, columnName, qualifier, prefs));
 	}
 
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[], net.sourceforge.squirrel_sql.fw.sql.ITableInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// MySQL disallows quoted column identifiers when adding a primary key.
+		String addPrimaryKeySql = (super.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs))[0];
+		
+		for (TableColumnInfo colInfo : colInfos) {
+			addPrimaryKeySql = stripQuotesFromIdentifier(colInfo.getColumnName(), addPrimaryKeySql);
+		}
+		
+		// MySQL disallows quoted constraint identifiers when adding a primary key.
+		addPrimaryKeySql = stripQuotesFromIdentifier(pkName, addPrimaryKeySql);
+		
+		return new String[] { addPrimaryKeySql };
+	}
 	
-	private String stripQuotesFromIdentifier(String identifier, String strWithQuotes) {
+	protected String stripQuotesFromIdentifier(String identifier, String strWithQuotes) {
 		// Strip quotes from the column name 
 		StringBuilder tmp = new StringBuilder("\\" + openQuote());
 		tmp.append(identifier);
