@@ -1052,14 +1052,12 @@
 			<classpath>
 				<pathelement path="${instr.dir}" />
 				<pathelement path="${test.classes.dir}" />
-				<pathelement path="${derby.driver.jar}"/>
-				<pathelement path="${h2.driver.jar}"/>
-				<pathelement path="${hsqldb.driver.jar}"/>
-				<pathelement path="${postgresql.driver.jar}" />
-				<pathelement path="${mysql.driver.jar}" />
-				<pathelement path="${oracle.driver.jar}" />
+	                        <fileset dir="${base.jdbc.driver.path}" id="id">
+	                            <include name="**/*.jar"/>
+	                        </fileset>
 				<path refid="test.compile.classpath" />
 				<path refid="emma.lib" />
+				
 			</classpath>
 			<formatter type="plain" />
 			<formatter type="xml" />
