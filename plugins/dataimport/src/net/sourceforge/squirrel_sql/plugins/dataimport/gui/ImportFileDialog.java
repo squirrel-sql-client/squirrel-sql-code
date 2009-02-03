@@ -52,11 +52,11 @@ import java.util.Vector;
  * @author Thorsten Mürell
  */
 public class ImportFileDialog extends DialogWidget
-{
+{	
 	private static final long serialVersionUID = 3470927611018381204L;
 
 	private static final StringManager stringMgr =
-		StringManagerFactory.getStringManager(ImportFileDialog.class);
+		StringManagerFactory.getStringManager(ImportFileDialog.class);	
 	
 	private String[][] previewData = null;
 	private List<String> importerColumns = new Vector<String>();
@@ -64,6 +64,8 @@ public class ImportFileDialog extends DialogWidget
 	private JTable previewTable = null;
 	private JTable mappingTable = null;
 	private JCheckBox headersIncluded = null;
+	private JCheckBox suggestColumns = null;
+	private JCheckBox suggestColumnsIgnoreCase = null;
 	private OkClosePanel btnsPnl = new OkClosePanel();
 	
 	private ISession session = null;
@@ -106,8 +108,10 @@ public class ImportFileDialog extends DialogWidget
 				// Columns
 				"left:pref:grow",
 				// Rows
-				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 80dlu:grow, 6dlu, pref");
-		
+//				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu,              6dlu, 80dlu:grow, 6dlu, pref"
+				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu, 2dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, pref"
+				);
+				
 		PanelBuilder builder = new PanelBuilder(layout);
 		CellConstraints cc = new CellConstraints();
 		builder.setDefaultDialogBorder();
@@ -121,8 +125,8 @@ public class ImportFileDialog extends DialogWidget
         //i18n[ImportFileDialog.headersIncluded=Headers in first line]
 		headersIncluded = new JCheckBox(stringMgr.getString("ImportFileDialog.headersIncluded"));
 		headersIncluded.setSelected(true);
-		headersIncluded.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
+		headersIncluded.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				GUIUtils.processOnSwingEventThread(new Runnable() {
 					public void run() {
 						ImportFileDialog.this.updatePreviewData();
@@ -130,16 +134,47 @@ public class ImportFileDialog extends DialogWidget
 				});
 			}
 		});
-
+		
+		// i18n[ImportFileDialog.suggestColumns=Suggest columns (find matching columns)]
+		suggestColumns = new JCheckBox(stringMgr.getString("ImportFileDialog.suggestColumns"));
+		suggestColumns.setSelected(false);
+		suggestColumns.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				
+				GUIUtils.processOnSwingEventThread(new Runnable() {
+					public void run() {
+						ImportFileDialog.this.suggestColumns();
+					}
+				});
+			}
+		});
+		// i18n[ImportFileDialog.suggestColumnsIgnoreCase=ignore case]
+		suggestColumnsIgnoreCase = new JCheckBox(stringMgr.getString("ImportFileDialog.suggestColumnsIgnoreCase"));
+		suggestColumnsIgnoreCase.setSelected(false);
+		suggestColumnsIgnoreCase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GUIUtils.processOnSwingEventThread(new Runnable() {
+					public void run() {
+						ImportFileDialog.this.suggestColumns();
+					}
+				});
+			}
+		});
+		
 		int y = 1;
         //i18n[ImportFileDialog.dataPreview=Data preview]
 		builder.add(new JLabel(stringMgr.getString("ImportFileDialog.dataPreview")), cc.xy(1, y));
 		
 		y += 2;
-		builder.add(headersIncluded, cc.xy(1, y));
+		builder.add(headersIncluded, cc.xy(1, y));		
 
 		y += 2;
 		builder.add(scrollPane, cc.xy(1, y));
+		
+		y += 2;
+		builder.add(suggestColumns, cc.xy(1, y));
+		
+		y += 2;
+		builder.add(suggestColumnsIgnoreCase, cc.xy(1, y));
 		
 		y += 2;
 		builder.add(scrollPane2, cc.xy(1, y));
@@ -147,6 +182,7 @@ public class ImportFileDialog extends DialogWidget
 		y += 2;
 		builder.add(btnsPnl, cc.xywh(1, y, 1, 1));
 
+		
 		return builder.getPanel();
 	}
 	
@@ -176,7 +212,7 @@ public class ImportFileDialog extends DialogWidget
 				}
 				TableModel model = mappingTable.getModel();
 				String comboValue = ((JComboBox)e.getSource()).getSelectedItem().toString();
-				int fixedValueColumnIdx = 2;
+				int fixedValueColumnIdx = ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN;
 				if (comboValue.equals(AUTO_INCREMENT.getVisibleString())) {
 					// If the user picks auto-increment, auto-fill the "Fixed value" column with 0 for the start 
 					// value if it is currently empty.
@@ -227,8 +263,53 @@ public class ImportFileDialog extends DialogWidget
 		}
 		mappingTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(editBox));
 		((ColumnMappingTableModel) mappingTable.getModel()).resetMappings();
+		if (suggestColumns.isSelected())
+		{
+			this.suggestColumns();
+		}
 	}
 	
+	public void suggestColumns()
+	{
+		final ColumnMappingTableModel columnMappingTableModel = ((ColumnMappingTableModel) mappingTable.getModel());
+		final boolean ignorecase = suggestColumnsIgnoreCase.isSelected();		
+		if (suggestColumns.isSelected())
+		{
+			for (String importerColumn : importerColumns )
+			{
+				if (null != importerColumn && !importerColumn.isEmpty())
+				{
+					final TableColumnInfo suggestedColumn = suggestColumn(importerColumn, ignorecase);
+					if (suggestedColumn != null)
+					{						
+						final String suggestedColumnName = suggestedColumn.getColumnName();
+						int row = columnMappingTableModel.findTableColumn(suggestedColumnName);
+						columnMappingTableModel.setValueAt(importerColumn, row, ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN);
+					}
+				}
+			}			
+		}
+		else
+		{
+			columnMappingTableModel.resetMappings();
+		}
+	}	
+	
+	private TableColumnInfo suggestColumn(final String importerColumn, final boolean ignoreCase) {
+		for (TableColumnInfo colInfo : columns)
+		{
+			if (!ignoreCase && colInfo.getColumnName().equals(importerColumn))
+			{
+				return colInfo;
+			} 
+			else if (ignoreCase && colInfo.getColumnName().equalsIgnoreCase(importerColumn))
+			{
+				return colInfo;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * This is invoked if the user presses ok
 	 */

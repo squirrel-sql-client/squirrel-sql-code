@@ -73,11 +73,11 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		if (columnIndex == 0) {
+		if (columnIndex == ColumnMappingConstants.INDEX_TABLE_COLUMN) {
 			return columns[rowIndex].getColumnName();
-		} else if (columnIndex == 1) {
+		} else if (columnIndex == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN) {
 			return mapping.get(rowIndex);
-		} else if (columnIndex == 2) {
+		} else if (columnIndex == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN) {
 			return defaults.get(rowIndex);
 		}
 		return null;
@@ -88,7 +88,8 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		if (columnIndex == 1 || columnIndex == 2) {
+		if (columnIndex == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN || 
+				columnIndex == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN) {
 			return true;
 		}
 		return false;
@@ -99,26 +100,26 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public void setValueAt(Object value, int row, int col) {
-		if (col == 1) {
+		if (col == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN) {
 			mapping.set(row, value.toString());
-		} else if (col == 2) {
+		} else if (col == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN) {
 			defaults.set(row, value.toString());
 		}
 		fireTableCellUpdated(row, col);
-	}
-
+	}	
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
 	public String getColumnName(int column) {
-		if (column == 0) {
+		if (column == ColumnMappingConstants.INDEX_TABLE_COLUMN) {
 			// i18n[ImportFileDialog.tableColumn=Table column]
 			return stringMgr.getString("ImportFileDialog.tableColumn");
-		} else if (column == 1) {
+		} else if (column == ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN) {
 			// i18n[ImportFileDialog.importFileColumn=Import file column]
 			return stringMgr.getString("ImportFileDialog.importFileColumn");
-		} else if (column == 2) {
+		} else if (column == ColumnMappingConstants.INDEX_FIXEDVALUE_COLUMN) {
 			// i18n[ImportFileDialog.fixedValue=Fixed value]
 			return stringMgr.getString("ImportFileDialog.fixedValue");
 		}
@@ -150,5 +151,6 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 			mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
 			defaults.add("");
 		}
+		fireTableDataChanged();
 	}
 }
