@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Dataimport Plugin:
+  * SuggestColumns: if columns in database and in the first line of the file
+    are equal, they are matched for the import.
+
 Sybase Plugin:
   * New ExceptionFormatter for SQLWarnings: better viewing warnings while the parameter
     showplan is on (set showplan on) 
