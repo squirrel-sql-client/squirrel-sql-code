@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.db2.DB2JCCExceptionFormatter;
@@ -170,9 +171,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    private static String testFirstMergeTable = "firstTableToBeMerged";
    private static String testSecondMergeTable = "secondTableToBeMerged";
    private static String testTableForDropView = "testTableForDropView";
+   private static String testTimestampTable = "timestamptest";
+   private static String testNewTimestampTable = "timestampttest2";
    
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
+
+	
 
    @Test
    public void testDialects() throws Exception {
@@ -393,7 +398,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          }
          dropTable(session, ti);
       } catch (SQLException e) {
-         // Do Nothing
+         e.printStackTrace();
       }
    }
 
@@ -428,7 +433,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       try {
          runSQL(session, dialect.getTableDropSQL(ti, true, false, qualifier, prefs));
       } catch (SQLException e) {
-         // Do Nothing
+      	e.printStackTrace();
       }
    }
    
@@ -462,6 +467,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       dropTable(session, fixIdentifierCase(session, testRenameTableAfter));
       dropTable(session, fixIdentifierCase(session, testCreateViewTable));
       dropTable(session, fixIdentifierCase(session, testCreateIndexTable));
+      dropTable(session, fixIdentifierCase(session, testTimestampTable));
+      dropTable(session, fixIdentifierCase(session, testNewTimestampTable));
       dropTable(session, fixIdentifierCase(session, fkChildTableName));
       dropTable(session, fixIdentifierCase(session, fkParentTableName));
       dropTable(session, fixIdentifierCase(session, testUniqueConstraintTableName));
@@ -1889,7 +1896,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    		return;
    	}
    	
-   	String tableName = fixIdentifierCase(session, "timestamptest");
+   	String tableName = fixIdentifierCase(session, testTimestampTable);
    	String timestampTypeName =  dialect.getTypeName(Types.TIMESTAMP,5,5,5);
    	
    	CreateDataScriptHelper command = new CreateDataScriptHelper(session, null, false);
@@ -1906,13 +1913,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	
    	StringBuffer sb = command.getSQL(tableName);
 
-   	dropTable(session, tableName);
-   	runSQL(session, "create table "+tableName+" ( mytime "+timestampTypeName+" )");
+		String newTableName = fixIdentifierCase(session, testNewTimestampTable);
+   	runSQL(session, "create table "+newTableName+" ( mytime "+timestampTypeName+" )");
    	runSQL(session, sb.toString());
 
    	/* Verify insert worked only if the dialect supports sub-second timestamp values */
    	if (dialect.supportsSubSecondTimestamps()) {
-	   	ResultSet rs = runQuery(session, "select mytime from timestamptest");
+	   	ResultSet rs = runQuery(session, "select mytime from "+newTableName);
 	   	if (rs.next()) {
 	   		Timestamp ts = rs.getTimestamp(1);
 	   		String nanos = (""+ts.getNanos()/1000).substring(3);
@@ -1921,8 +1928,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 	   		}
 	   	}
 	   	Statement stmt = rs.getStatement();
-	   	rs.close();
-	   	stmt.close();
+	   	SQLUtilities.closeResultSet(rs);
+	   	SQLUtilities.closeStatement(stmt);
    	}
    }
    
