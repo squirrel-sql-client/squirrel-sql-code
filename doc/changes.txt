@@ -12,7 +12,7 @@ Look an Feel Plugin:
   * Added warning message that look and feels other than Metal may cause perfomance and/or functional problems
 
 
-Updated Italian translation (Ivo Neri), Chinese translation (xpdz)
+Updated Italian translation (Ivo Neri), Chinese translation (xpdz), French translation (Erwan Duroselle)
 
 New user interface layout: Tabbed layout
 
