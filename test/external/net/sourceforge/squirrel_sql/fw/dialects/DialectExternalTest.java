@@ -389,6 +389,15 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    }
 
    private void dropTable(ISession session, String tableName) throws Exception {
+   	// For some reason, Frontbase doesn't find tables that have been previously created.
+   	if (DialectFactory.isFrontBase(session.getMetaData())) {
+   		try {
+   			runSQL(session, "drop table "+tableName+" cascade");
+   		} catch (Exception e) {
+   			// quiet
+   		}
+   		return;
+   	}
       try {
          ITableInfo ti = getTableInfo(session, tableName);
          if (ti == null) {
@@ -398,7 +407,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          }
          dropTable(session, ti);
       } catch (SQLException e) {
-         e.printStackTrace();
       }
    }
 
@@ -1914,7 +1922,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	StringBuffer sb = command.getSQL(tableName);
 
 		String newTableName = fixIdentifierCase(session, testNewTimestampTable);
-   	runSQL(session, "create table "+newTableName+" ( mytime "+timestampTypeName+" )");
+		dropTable(session, newTableName);
+		runSQL(session, "create table "+newTableName+" ( mytime "+timestampTypeName+" )");
    	runSQL(session, sb.toString());
 
    	/* Verify insert worked only if the dialect supports sub-second timestamp values */
