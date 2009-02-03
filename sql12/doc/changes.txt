@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements: 
 
+Sybase Plugin:
+  * New ExceptionFormatter for SQLWarnings: better viewing warnings while the parameter
+    showplan is on (set showplan on) 
+
 Look an Feel Plugin:
   * Made Nimbus look and feel available (needs at least JDK/JRE 1.6.0_10)
   * Made Metal look and feel with Ocean theme the default (used at first start up).
