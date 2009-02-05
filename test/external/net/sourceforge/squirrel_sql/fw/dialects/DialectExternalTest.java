@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
@@ -48,6 +50,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -178,9 +181,22 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    private boolean dialectDiscoveryMode = false;
 
 	
+   @Test 
+   public void testDialectsQuotedQualified() throws Exception {
+   	testDialects(true, true);
+   }
 
-   @Test
-   public void testDialects() throws Exception {
+   @Test 
+   public void testDialectsNotQuotedNotQualified() throws Exception {
+   	testDialects(false, false);
+   }
+   
+
+
+   private void testDialects(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception {
+   	
+   	prefs.setQualifyTableNames(qualifyTableNames);
+   	prefs.setQuoteIdentifiers(quoteIdentifiers);
    	
    	String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
    	if (propertyFile == null || "".equals(propertyFile)) {
@@ -228,8 +244,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 	}
 
 	private void initSessions(ArrayList<ISession> sessionsList, String sessionListPropKey) throws Exception {
-   	prefs.setQualifyTableNames(Boolean.parseBoolean(props.getProperty("qualifyTableNames")));
-   	prefs.setQuoteIdentifiers(Boolean.parseBoolean(props.getProperty("quoteIdentifiers")));
    	prefs.setSqlStatementSeparator(";");
    	
    	dialectDiscoveryMode = Boolean.parseBoolean(props.getProperty("dialectDiscoveryMode"));
@@ -669,6 +683,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
                }
             }
          }
+         testSupportsIndexes(session);
+         testGetMaxPrecision(session);
          testDropMatView(session);
          testCreateTableWithDefault(session);
          testCreateTableSql(session);
@@ -694,6 +710,25 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          System.out.println("Completed tests for "+dialect.getDisplayName());
          session.close();
       }
+   }
+   
+   private void testSupportsIndexes(ISession session) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
+   	if (dialect.supportsCreateIndex() || dialect.supportsDropIndex()) {
+   		assertTrue(dialect.getDisplayName()+
+   			" dialect claims not to support indexes; yet it can create or drop them", 
+   			dialect.supportsIndexes());
+   	} else {
+   		assertFalse(dialect.getDisplayName()+" dialect claims to support indexes; yet it can't create them nor can it drop them", 
+   			dialect.supportsIndexes());
+   	}
+   }
+   
+   private void testGetMaxPrecision(ISession session) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
+   	for (String jdbcTypeName : JDBCTypeMapper.getJdbcTypeList()) {
+   		assertTrue(dialect.getMaxPrecision(JDBCTypeMapper.getJdbcType(jdbcTypeName)) > 0);
+   	}
    }
    
    /**
@@ -790,7 +825,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
        * alterColTypeSQL);
        */
       TableColumnInfo thirdColLonger = getVarcharColumn(nullVarcharColumnName,
-                                                        "test3",
+                                                        fixIdentifierCase(session, "test3"),
                                                         true,
                                                         "defVal",
                                                         "A varchar comment",
