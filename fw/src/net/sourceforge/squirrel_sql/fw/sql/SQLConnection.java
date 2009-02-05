@@ -374,7 +374,7 @@ public class SQLConnection implements ISQLConnection
 		catch (SQLException e)
 		{
 			s_log.error("Connection.setCatalog yielded an exception for catalog (" + catalogName + ") :"
-				+ e.getMessage(), e);
+				+ e.getMessage()+" - will try quoting the catalog next.", e);
 		}
 		conn.setCatalog(quote(catalogName));
 	}
