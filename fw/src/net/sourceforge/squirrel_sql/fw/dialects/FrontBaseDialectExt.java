@@ -654,6 +654,22 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		return result.toString();
 	}
 
+	
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropIndexSQL(java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// "DROP INDEX $indexName$";
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+		st.setAttribute(ST_INDEX_NAME_KEY, indexName);
+
+		return st.toString();
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateSequenceSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
@@ -931,7 +947,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsIndexes()
 	{
-		return false;
+		return true;
 	}
 
 	/**
