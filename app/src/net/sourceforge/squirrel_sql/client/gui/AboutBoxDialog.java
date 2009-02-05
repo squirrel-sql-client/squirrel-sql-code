@@ -418,7 +418,7 @@ public class AboutBoxDialog extends JDialog
 			{
 				public void actionPerformed(ActionEvent evt)
 				{
-					System.gc();
+					Utilities.garbageCollect();
 				}
 			});
 			add(gcBtn, new JLabel(""));

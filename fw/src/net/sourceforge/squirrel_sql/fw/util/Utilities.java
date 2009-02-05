@@ -484,4 +484,12 @@ public class Utilities
 		}
 	}
 	
+	/**
+	 * Run the garbage collector.  We may eventually want this to execute in an app thread and serialize 
+	 * many requests using a queue to avoid a performance hit for too many simultaneous calls.
+	 */
+	public static void garbageCollect() {
+		System.gc();
+	}
+	
 }
