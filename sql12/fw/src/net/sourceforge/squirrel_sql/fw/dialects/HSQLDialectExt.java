@@ -934,8 +934,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsIndexes()
 	{
-		
-		return false;
+		return true;
 	}
 
 	/**
