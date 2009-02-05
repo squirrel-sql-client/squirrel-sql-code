@@ -17,7 +17,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 {
    private static final long serialVersionUID = 1L;
    private Vector<GraphComponent> _graphComponents = new Vector<GraphComponent>();
-   private ConstraintViewListener _constraintViewListener;
+   private transient ConstraintViewListener _constraintViewListener;
 
    /////////////////////////////////////////////////////////
    // Printing

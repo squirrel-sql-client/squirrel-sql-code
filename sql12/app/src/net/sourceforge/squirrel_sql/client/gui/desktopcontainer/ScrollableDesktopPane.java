@@ -39,14 +39,16 @@ import javax.swing.*;
 public class ScrollableDesktopPane extends JDesktopPane implements IDesktopContainer
 {
 
-   /** Logger for this class. */
-   private final ILogger s_log = LoggerController.createLogger(ScrollableDesktopPane.class);
+	private static final long serialVersionUID = 1L;
+
+	/** Logger for this class. */
+   private transient final ILogger s_log = LoggerController.createLogger(ScrollableDesktopPane.class);
 
 
-	private MyComponentListener _listener = new MyComponentListener();
+	private transient MyComponentListener _listener = new MyComponentListener();
 
-   private final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
-   private IApplication _app;
+   private transient final IInternalFramePositioner _internalFramePositioner = new CascadeInternalFramePositioner();
+   private transient IApplication _app;
 
 
    /**
