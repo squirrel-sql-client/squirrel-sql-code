@@ -115,7 +115,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	}
 
 	/** extended hibernate dialect used in this wrapper */
-	private DB2DialectHelper _dialect = new DB2DialectHelper();
+	private final DB2DialectHelper _dialect = new DB2DialectHelper();
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
@@ -133,7 +133,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
 		boolean result = true;
-		DatabaseObjectType type = info.getDatabaseObjectType();
+		final DatabaseObjectType type = info.getDatabaseObjectType();
 		if (type.getName().equalsIgnoreCase("database"))
 		{
 			result = false;
@@ -253,9 +253,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this);
 		final String shapedColumnName = DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this);
 
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 
-		StringBuffer addColumn = new StringBuffer();
+		final StringBuffer addColumn = new StringBuffer();
 		addColumn.append("ALTER TABLE ");
 		addColumn.append(qualifedTableName);
 		addColumn.append(" ADD ");
@@ -283,7 +283,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		{
 			// ALTER TABLE <TABLENAME> ADD CONSTRAINT NULL_FIELD CHECK (<FIELD> IS NOT
 			// NULL)
-			StringBuffer notnull = new StringBuffer();
+			final StringBuffer notnull = new StringBuffer();
 			notnull.append("ALTER TABLE ");
 			notnull.append(qualifedTableName);
 			notnull.append(" ADD CONSTRAINT ");
@@ -449,13 +449,13 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 
-		boolean nullable = info.isNullable().equalsIgnoreCase("yes");
+		final boolean nullable = info.isNullable().equalsIgnoreCase("yes");
 		result.addAll(Arrays.asList(getColumnNullableAlterSQL(info, nullable, qualifier, prefs)));
 
 		/* DB2 needs to reorg table after changing nullabolity */
-		StringBuilder reorgSql = new StringBuilder();
+		final StringBuilder reorgSql = new StringBuilder();
 		reorgSql.append("CALL SYSPROC.ADMIN_CMD('REORG TABLE ");
 		reorgSql.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		reorgSql.append("')");
@@ -480,9 +480,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	private String[] getColumnNullableAlterSQL(TableColumnInfo info, boolean nullable,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		ArrayList<String> sql = new ArrayList<String>();
+		final ArrayList<String> sql = new ArrayList<String>();
 
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		result.append(" ");
@@ -525,8 +525,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		final int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
 		throw new UnsupportedOperationException(msg);
 	}
 
@@ -558,14 +558,15 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		// "ALTER TABLE $tableName$ " +
 		// "ALTER $columnName$ SET DATA TYPE $dataType$";
 
-		String templateString = ST_ALTER_COLUMN_SET_DATA_TYPE_STYLE_ONE;
-		StringTemplate st = new StringTemplate(templateString);
+		final String templateString = ST_ALTER_COLUMN_SET_DATA_TYPE_STYLE_ONE;
+		final StringTemplate st = new StringTemplate(templateString);
 
-		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, from.getTableName());
+		final HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, from.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, from.getColumnName());
 		valuesMap.put(ST_DATA_TYPE_KEY, DialectUtils.getTypeName(to, this));
 
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 		result.add(DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs));
 		return result;
 	}
@@ -592,8 +593,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		final String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
 		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
 			prefs);
 	}
@@ -680,7 +681,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, String sequenceName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 		/*
 		 * DB2 doesn't support adding an auto-increment column once the table has already been created. So this
 		 * can simulate one using trigger on the table to access a sequence. Found this idea at wikibooks:
@@ -695,7 +696,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		result.add(getCreateSequenceSQL(sequenceName.toString(), "1", "1", null, "1", null, false, qualifier,
 			prefs));
 
-		StringBuilder triggerSql = new StringBuilder();
+		final StringBuilder triggerSql = new StringBuilder();
 		triggerSql.append("CREATE TRIGGER ");
 		triggerSql.append(columnName);
 		triggerSql.append("_trigger \n");
@@ -743,9 +744,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		Boolean deferrableNotSupported = null;
-		Boolean initiallyDeferredNotSupported = null;
-		Boolean matchFullNotSupported = null;
+		final Boolean deferrableNotSupported = null;
+		final Boolean initiallyDeferredNotSupported = null;
+		final Boolean matchFullNotSupported = null;
 
 		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
 			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
@@ -756,7 +757,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		SqlGenerationPreferences prefs)
 	{
 		/* DB2 needs to reorg table after changing nullabolity */
-		StringBuilder reorgSql = new StringBuilder();
+		final StringBuilder reorgSql = new StringBuilder();
 		reorgSql.append("CALL SYSPROC.ADMIN_CMD('REORG TABLE ");
 		reorgSql.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		reorgSql.append("')");
@@ -772,10 +773,10 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<String>();
 
 		// DB2 requires that columns be not-null before applying a unique constraint
-		for (TableColumnInfo column : columns)
+		for (final TableColumnInfo column : columns)
 		{
 			if (column.isNullable().equalsIgnoreCase("YES"))
 			{
@@ -820,7 +821,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("CREATE ");
 
 		if (unique)
@@ -832,7 +833,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		result.append(" ON ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		result.append("(");
-		for (String column : columns)
+		for (final String column : columns)
 		{
 			result.append(column);
 			result.append(",");
@@ -899,7 +900,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		Boolean cascadeNotSupported = null;
+		final Boolean cascadeNotSupported = null;
 		return DialectUtils.getDropIndexSQL(indexName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
@@ -922,7 +923,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		Boolean cascadeNotSupported = null;
+		final Boolean cascadeNotSupported = null;
 
 		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);
 	}
@@ -947,7 +948,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// RENAME TABLE <tablename> TO <newtablename>;
-		StringBuilder sql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 
 		sql.append("RENAME TABLE ");
 		sql.append(DialectUtils.shapeQualifiableIdentifier(oldTableName, qualifier, prefs, this));
@@ -987,7 +988,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		 * SYSCAT.VIEWS WHERE VIEWSCHEMA = '<schema>' AND VIEWNAME = '<oldViewName>';
 		 */
 
-		StringBuilder createViewSql = new StringBuilder();
+		final StringBuilder createViewSql = new StringBuilder();
 		createViewSql.append("SELECT TEXT ");
 		createViewSql.append(" FROM SYSCAT.VIEWS ");
 		createViewSql.append("WHERE VIEWSCHEMA = '");
@@ -1014,7 +1015,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		// WHERE SEQNAME = ?
 		// and SEQSCHEMA = <schema>
 
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("SELECT NEXTCACHEFIRSTVALUE, MAXVALUE, MINVALUE, CACHE, INCREMENT, CYCLE ");
 		result.append("FROM SYSCAT.SEQUENCES ");
 		result.append("WHERE ");
@@ -1050,7 +1051,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 
 		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
 			whereValues, qualifier, prefs, this);
@@ -1170,9 +1171,12 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
+	 */
 	public boolean supportsIndexes()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -1183,6 +1187,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
+	 */
 	public boolean supportsMultipleRowInserts()
 	{
 		return false;
@@ -1252,9 +1259,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		String schema = qualifier.getSchema();
-		String catalog = qualifier.getCatalog();
-		StringBuilder result = new StringBuilder();
+		final String schema = qualifier.getSchema();
+		final String catalog = qualifier.getCatalog();
+		final StringBuilder result = new StringBuilder();
 		if (!StringUtilities.isEmpty(catalog))
 		{
 			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
