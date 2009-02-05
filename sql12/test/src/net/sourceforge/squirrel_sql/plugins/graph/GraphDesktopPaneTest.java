@@ -30,11 +30,13 @@ public class GraphDesktopPaneTest extends AbstractSerializableTest
 {
 	private EasyMockHelper mockHelper = new EasyMockHelper();
 	
-	private IApplication mockApplication = mockHelper.createMock(IApplication.class); 
+	private IApplication mockApplication = null; 
 
 	@Before
 	public void setUp() throws Exception
 	{
+		mockApplication = mockHelper.createMock(IApplication.class);
+		mockHelper.replayAll();
 		super.serializableToTest = new GraphDesktopPane(mockApplication);
 	}
 
