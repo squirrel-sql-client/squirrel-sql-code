@@ -215,7 +215,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(ti.getQualifiedName(), qualifier, prefs, this));
+		result.append(DialectUtils.shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, this));
 		result.append(" ADD CONSTRAINT ");
 		result.append(pkName);
 		result.append(" PRIMARY KEY (");
