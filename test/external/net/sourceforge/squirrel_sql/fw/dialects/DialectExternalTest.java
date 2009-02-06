@@ -176,11 +176,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    private static String testTableForDropView = "testTableForDropView";
    private static String testTimestampTable = "timestamptest";
    private static String testNewTimestampTable = "timestampttest2";
+   private static String testTableForGetViewDefinition = "testTableForGetViewDef";
    
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
 
-	
    @Test 
    public void testDialectsQuotedQualified() throws Exception {
    	testDialects(true, true);
@@ -191,8 +191,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	testDialects(false, false);
    }
    
-
-
    private void testDialects(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception {
    	
    	prefs.setQualifyTableNames(qualifyTableNames);
@@ -502,6 +500,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       dropTable(session, fixIdentifierCase(session, testFirstMergeTable)); 
       dropTable(session, fixIdentifierCase(session, testSecondMergeTable));
       dropTable(session, fixIdentifierCase(session, testTableForDropView));
+      dropTable(session, fixIdentifierCase(session, testTableForGetViewDefinition));
       
       // Now sequences should go.
       dropSequence(session, testSequenceName);
@@ -630,6 +629,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       runSQL(session, "create table " + fixIdentifierCase(session, testTableForDropView)
       	+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
       
+      runSQL(session, "create table " + fixIdentifierCase(session, testTableForGetViewDefinition)
+      	+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
+      
    }
 
    private void runTests() throws Exception {
@@ -692,6 +694,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          testCreateView(session);
          testRenameView(session);
          testDropView(session);
+         testGetViewDefinition(session);
          testCreateAndDropIndex(session);
          testCreateSequence(session);
          testGetSequenceInfo(session);
@@ -1310,12 +1313,49 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop view");
+   			fail("Expected dialect to fail to provide SQL for drop view");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
    		}
    	}   	
+   }
+   
+   private void testGetViewDefinition(ISession session) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
+		final String tableName = fixIdentifierCase(session, testTableForGetViewDefinition); 
+		final String viewName = fixIdentifierCase(session, testViewToBeDropped);
+		
+		GetViewdefinitionSqlExtractor extractor = new GetViewdefinitionSqlExtractor(viewName);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}         	
+   	if (dialect.supportsCreateView() && dialect.supportsDropView() && dialect.supportsViewDefinition()) {
+   		
+   		/* create a test view that we will get view def for then drop and re-create */
+   		String createViewSql = 
+   			dialect.getCreateViewSQL(viewName, "select * from "+tableName, null, qualifier, prefs);
+   		runSQL(session, createViewSql);
+   		
+   		String viewDefSql = dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
+   		
+   		String dropViewSql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
+   		
+   		runSQL(session, new String[] { dropViewSql }, extractor);
+   		
+   		runSQL(session, new String[] { viewDefSql }, extractor);
+   		
+   	} else {
+   		try {
+   			dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
+   			fail("Expected dialect to fail to provide SQL for get view definition");
+   		} catch (Exception e) {
+   			// this is expected
+   			System.err.println(e.getMessage());
+   		}   		
+   	}
+   	
    }
    
    private void testCreateAndDropIndex(ISession session) throws Exception {
@@ -3058,7 +3098,27 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 		{
 			return dialect.supportsDropView();
 		}
-   	
-   	
    }
+   
+   private class GetViewdefinitionSqlExtractor implements IDialectSqlExtractor {
+
+		private String viewName;
+		
+		public GetViewdefinitionSqlExtractor(String viewName)
+		{
+			super();
+			this.viewName = viewName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getViewDefinitionSQL(viewName, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsViewDefinition();
+		}
+   }
+   
 }
