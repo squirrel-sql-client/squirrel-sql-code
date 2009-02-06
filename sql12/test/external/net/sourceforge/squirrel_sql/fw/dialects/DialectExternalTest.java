@@ -18,6 +18,10 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.isNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -44,13 +48,20 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -63,7 +74,12 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFac
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand;
 
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import utils.EasyMockHelper;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in
@@ -181,6 +197,85 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
 
+   private EasyMockHelper mockHelper = new EasyMockHelper();
+
+   private static final String[] TABLE_TYPES = new String[] { "TABLE" };
+   
+   // Mocks for generic dialect test
+   private ISession mockGenericDialectSession = mockHelper.createMock(ISession.class);
+   private SQLDatabaseMetaData mockGenericSQLDialectMetaData = mockHelper.createMock(SQLDatabaseMetaData.class);
+   private ISQLConnection mockGenericDialectSQLConnection = mockHelper.createMock(ISQLConnection.class);
+   private ITableInfo mockGenericDialectTableInfo = mockHelper.createMock("mockGenericDialectTableInfo", ITableInfo.class);
+   private TableColumnInfo mockTableColumnInfo = mockHelper.createMock(TableColumnInfo.class);
+   private IQueryTokenizer mockQueryTokenizer = mockHelper.createMock(IQueryTokenizer.class);
+   private IApplication mockApplication = mockHelper.createMock(IApplication.class);
+   
+   //private DatabaseMetaData mockGenericDialectDBMetaData = mockHelper.createMock(DatabaseMetaData.class);
+   
+   private Connection mockGenericDialectConnection = mockHelper.createMock(Connection.class);
+   private Statement mockGenericDialectStatement = mockHelper.createMock(Statement.class);
+   private ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
+   
+   @Before
+   public void setup() throws Exception {
+   	expect(mockGenericDialectSession.getMetaData()).andStubReturn(mockGenericSQLDialectMetaData);
+   	expect(mockGenericSQLDialectMetaData.getDatabaseProductName()).andStubReturn("Generic Database Product Name");
+   	expect(mockGenericSQLDialectMetaData.getDatabaseProductVersion()).andStubReturn("Generic Database Product Version");
+   	expect(mockGenericDialectSession.getSQLConnection()).andStubReturn(mockGenericDialectSQLConnection);
+   	expect(mockGenericDialectSQLConnection.getSQLMetaData()).andStubReturn(mockGenericSQLDialectMetaData);
+   	expect(mockGenericSQLDialectMetaData.storesUpperCaseIdentifiers()).andStubReturn(true);
+   	expect(mockGenericDialectSQLConnection.getConnection()).andStubReturn(mockGenericDialectConnection);
+   	expect(mockGenericDialectConnection.createStatement()).andStubReturn(mockGenericDialectStatement);
+   	expect(mockGenericDialectStatement.execute(EasyMock.isA(String.class))).andStubReturn(true);
+   	expect(mockGenericSQLDialectMetaData.getTables(isA(String.class), isA(String.class), isA(String.class), 
+   		eq(TABLE_TYPES), (ProgressCallBack)isNull())).andStubReturn(new ITableInfo[] {mockGenericDialectTableInfo});
+   	expect(mockGenericSQLDialectMetaData.supportsSchemasInDataManipulation()).andStubReturn(true);
+   	expect(mockGenericSQLDialectMetaData.supportsCatalogsInDataManipulation()).andStubReturn(false);
+   	expect(mockGenericSQLDialectMetaData.supportsSchemasInTableDefinitions()).andStubReturn(true);
+   	expect(mockGenericSQLDialectMetaData.supportsCatalogsInTableDefinitions()).andStubReturn(false);
+   	expect(mockGenericSQLDialectMetaData.getCatalogSeparator()).andStubReturn("");
+   	expect(mockGenericSQLDialectMetaData.getIdentifierQuoteString()).andStubReturn("'");
+   	expect(mockGenericDialectTableInfo.getSimpleName()).andStubReturn("GenericTable");
+   	expect(mockGenericDialectTableInfo.getCatalogName()).andStubReturn("DefaultCatalog");
+   	expect(mockGenericDialectTableInfo.getSchemaName()).andStubReturn("DefaultSchema");
+   	expect(mockGenericDialectTableInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.TABLE);
+   	
+   	expect(mockGenericSQLDialectMetaData.getPrimaryKey(mockGenericDialectTableInfo)).andStubReturn(new PrimaryKeyInfo[] {});
+   	expect(mockGenericSQLDialectMetaData.getColumnInfo(mockGenericDialectTableInfo)).andStubReturn(new TableColumnInfo[] {mockTableColumnInfo});
+   	expect(mockGenericSQLDialectMetaData.getColumnInfo(isA(String.class), isA(String.class), isA(String.class))).andStubReturn(new TableColumnInfo[] {mockTableColumnInfo});
+   	
+   	expect(mockTableColumnInfo.getColumnName()).andStubReturn("GenericColumn");
+   	expect(mockTableColumnInfo.getDefaultValue()).andStubReturn("GenericDefaultValue");
+   	expect(mockTableColumnInfo.getColumnSize()).andStubReturn(10);
+   	expect(mockTableColumnInfo.getDataType()).andStubReturn(Types.VARCHAR);
+   	expect(mockTableColumnInfo.getDecimalDigits()).andStubReturn(0);
+   	expect(mockTableColumnInfo.isNullable()).andStubReturn("YES");
+   	
+   	expect(mockGenericSQLDialectMetaData.getImportedKeysInfo(mockGenericDialectTableInfo)).andStubReturn(new ForeignKeyInfo[]{});
+   	expect(mockGenericSQLDialectMetaData.getIndexInfo(mockGenericDialectTableInfo)).andStubReturn(new ArrayList<IndexInfo>() );
+   	
+   	expect(mockGenericDialectSession.getQueryTokenizer()).andStubReturn(mockQueryTokenizer);
+   	expect(mockQueryTokenizer.getSQLStatementSeparator()).andStubReturn(";");
+   	
+   	expect(mockGenericDialectSession.getApplication()).andStubReturn(mockApplication);
+   	expect(mockApplication.getMainFrame()).andStubReturn(null);
+   	
+   	expect(mockGenericDialectStatement.executeQuery(isA(String.class))).andStubReturn(mockResultSet);
+   	expect(mockResultSet.getStatement()).andStubReturn(mockGenericDialectStatement);
+   	expect(mockResultSet.next()).andStubReturn(false);
+   	mockGenericDialectStatement.close();
+   	EasyMock.expectLastCall().atLeastOnce();
+   	mockResultSet.close();
+   	EasyMock.expectLastCall().atLeastOnce();
+   	mockGenericDialectSession.close();
+   	mockHelper.replayAll();
+   }
+   
+   @After
+   public void teardown() {
+   	mockHelper.resetAll();
+   }
+   
    @Test 
    public void testDialectsQuotedQualified() throws Exception {
    	testDialects(true, true);
@@ -264,11 +359,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          session.setDefaultSchema(schema);
          sessionsList.add(session);
       }
+      
+      sessionsList.add(mockGenericDialectSession);
    }
 
    private void init(ISession session) throws Exception {
-   	MockSession mockSession = (MockSession)session;
-   	qualifier = new DatabaseObjectQualifier(mockSession.getDefaultCatalog(), mockSession.getDefaultSchema());
+   	String defaultCatalog = getDefaultCatalog(session);
+   	String defaultSchema = getDefaultSchema(session);
+   	qualifier = new DatabaseObjectQualifier(defaultCatalog, defaultSchema);
    	
    	uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
    	autoIncrementSequenceName = fixIdentifierCase(session, autoIncrementSequenceName);
@@ -364,16 +462,30 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       dropConstraintColumn = getCharColumn(secondUniqueColumnName, fixIdentifierCase(session, testUniqueConstraintTableName), true, null, null);
    }
 
+   private String getDefaultCatalog(ISession session) {
+   	if (session instanceof MockSession) {
+   		return ((MockSession)session).getDefaultCatalog();
+   	}
+   	return "defaultCatalog";
+   }
+   
+   private String getDefaultSchema(ISession session) {
+   	if (session instanceof MockSession) {
+   		return ((MockSession)session).getDefaultSchema();
+   	}
+   	return "defaultSchema";
+   }
+   
    private ITableInfo getTableInfo(ISession session, String tableName)
          throws Exception {
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-      String catalog = ((MockSession) session).getDefaultCatalog();
-      String schema = ((MockSession) session).getDefaultSchema();
+      String catalog = getDefaultCatalog(session);
+      String schema = getDefaultSchema(session);
       System.out.println("Looking for table with catalog="+catalog+" schema="+schema+" tableName="+tableName);
       ITableInfo[] infos = md.getTables(catalog,
                                         schema,
                                         tableName,
-                                        new String[] { "TABLE" },
+                                        TABLE_TYPES,
                                         null);
       if (infos.length == 0) {
          if (md.storesUpperCaseIdentifiers()) {
@@ -384,7 +496,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          infos = md.getTables(catalog,
                               schema,
                               tableName,
-                              new String[] { "TABLE" },
+                              TABLE_TYPES,
                               null);
          if (infos.length == 0) {
             return null;
@@ -975,8 +1087,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    private void alterColumnComment(ISession session, TableColumnInfo info)
          throws Exception {
       HibernateDialect dialect = getDialect(session);
-   	String catalog = ((MockSession)session).getDefaultCatalog();
-   	String schema = ((MockSession)session).getDefaultSchema();
+   	String catalog = getDefaultCatalog(session);
+   	String schema = getDefaultSchema(session);
       DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
       
       AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(info);
@@ -1033,12 +1145,12 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       }
 
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-      String catalog = ((MockSession) session).getDefaultCatalog();
-      String schema = ((MockSession) session).getDefaultSchema();
+      String catalog = getDefaultCatalog(session);
+      String schema = getDefaultSchema(session);
 
       ITableInfo[] infos = null;
       try {
-         infos = md.getTables(catalog, schema, tableName, new String[] { "TABLE" }, null);
+         infos = md.getTables(catalog, schema, tableName, TABLE_TYPES, null);
       } catch (SQLException e) {
          // Do nothing
       }
@@ -1129,8 +1241,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       
    
       List<TableColumnInfo> columns = new ArrayList<TableColumnInfo>();
-      String catalog = ((MockSession) session).getDefaultCatalog();
-      String schema = ((MockSession) session).getDefaultSchema();
+      String catalog = getDefaultCatalog(session);
+      String schema = getDefaultSchema(session);
       String columnName = "firstCol";
       String tableName = fixIdentifierCase(session, testCreateTable);
       
@@ -1244,8 +1356,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	HibernateDialect dialect = getDialect(session);
    	String oldViewName = fixIdentifierCase(session, testViewName);
    	String newViewName = fixIdentifierCase(session, testNewViewName);
-   	String catalog = ((MockSession)session).getDefaultCatalog();
-   	String schema = ((MockSession)session).getDefaultSchema();
+      String catalog = getDefaultCatalog(session);
+      String schema = getDefaultSchema(session);
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
    	
    	RenameViewSqlExtractor renameViewSqlExtractor = new RenameViewSqlExtractor(oldViewName, newViewName);
@@ -1311,12 +1423,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
 			runSQL(session, new String[] { sql }, dropViewSqlExtractor);
    	} else {
-   		try {
-   			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-   			fail("Expected dialect to fail to provide SQL for drop view");
-   		} catch (Exception e) {
-   			// this is expected
-   			System.err.println(e.getMessage());
+   		if (!dialect.supportsDropView()) {
+	   		try {
+	   			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
+	   			fail("Expected dialect to fail to provide SQL for drop view");
+	   		} catch (Exception e) {
+	   			// this is expected
+	   			System.err.println(e.getMessage());
+	   		}
    		}
    	}   	
    }
@@ -1953,8 +2067,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	if (dialect.supportsUpdate() && dialect.supportsAddColumn()) {
    		
    		IDatabaseObjectInfo[] selectedTables = new IDatabaseObjectInfo[1];
-   		String catalog = ((MockSession)session).getDefaultCatalog();
-   		String schema = ((MockSession)session).getDefaultSchema();
+         String catalog = getDefaultCatalog(session);
+         String schema = getDefaultSchema(session);
    		
    		selectedTables[0] =
 				new DatabaseObjectInfoHelper(	catalog,
@@ -2312,8 +2426,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
     */
    private TableColumnInfo[] getLiveColumnInfo(ISession session, String tableName) throws SQLException {
    	ISQLDatabaseMetaData md = session.getMetaData();
-   	String catalog = ((MockSession)session).getDefaultCatalog();
-   	String schema = ((MockSession)session).getDefaultSchema();
+      String catalog = getDefaultCatalog(session);
+      String schema = getDefaultSchema(session);
    	return md.getColumnInfo(catalog, schema, tableName);
    }
    
@@ -2399,10 +2513,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
 		public StringBuffer getSQL(String tableName) throws SQLException {
 			StringBuffer result = new StringBuffer();
-			Statement st = _session.getSQLConnection().getConnection().createStatement();
-			ResultSet rs = st.executeQuery("select * from "+tableName);
-			
-			genInserts(rs, tableName, result, false);
+			if (_session instanceof MockSession) {
+				Statement st = _session.getSQLConnection().getConnection().createStatement();
+				ResultSet rs = st.executeQuery("select * from "+tableName);
+				genInserts(rs, tableName, result, false);			
+			}
 			return result;
 		}
 		
