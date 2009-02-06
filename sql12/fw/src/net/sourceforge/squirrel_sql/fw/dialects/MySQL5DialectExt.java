@@ -106,7 +106,7 @@ public class MySQL5DialectExt extends MySQLDialectExt
 	{
 		final StringBuilder result = new StringBuilder();
 		result.append("SELECT view_definition ");
-		result.append("FROM information_schema.views");
+		result.append("FROM information_schema.views ");
 		result.append("WHERE table_name = '");
 		result.append(viewName);
 		result.append("' ");
