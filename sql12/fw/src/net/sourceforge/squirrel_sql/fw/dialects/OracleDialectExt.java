@@ -1135,7 +1135,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
 	public boolean supportsViewDefinition() {
-		return false;
+		return true;
 	}	
 	
 	/**
@@ -1143,7 +1143,19 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) {
-		return null;
+
+		StringBuilder result = new StringBuilder();
+		result.append("select  'CREATE OR REPLACE VIEW ' || VIEW_NAME ||' AS ', TEXT ");
+      result.append("FROM SYS.ALL_VIEWS ");
+      result.append("WHERE OWNER = ");
+      result.append("'");
+      result.append(qualifier.getSchema());
+      result.append("'");
+      result.append(" AND VIEW_NAME = ");
+      result.append("'");
+      result.append(viewName);
+      result.append("'");
+      return result.toString();
 	}
 	
 	/**
