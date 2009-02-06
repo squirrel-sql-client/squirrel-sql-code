@@ -702,7 +702,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAlterColumnType()
 	{
-		return true;
+		return false;
 	}
 
 	/**
