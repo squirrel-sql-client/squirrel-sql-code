@@ -26,8 +26,10 @@ import java.util.EventObject;
  */
 public class UIFactoryComponentCreatedEvent extends EventObject
 {
+	private static final long serialVersionUID = -4353644204236711872L;
+
 	/** The <CODE>UIFactory</CODE> involved. */
-	private UIFactory _factory;
+	private transient UIFactory _factory;
 
 	/** The <CODE>Component</CODE> created. */
 	private Component _comp;
