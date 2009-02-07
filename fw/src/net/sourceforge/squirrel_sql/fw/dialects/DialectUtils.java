@@ -388,7 +388,11 @@ public class DialectUtils implements StringTemplateConstants
 		result.append(" ");
 		result.append(dropClause);
 		result.append(" ");
-		result.append(shapeIdentifier(columnName, prefs, dialect));
+		if (prefs.isQuoteColumnNames()) {
+			result.append(shapeIdentifier(columnName, prefs, dialect));
+		} else {
+			result.append(columnName);
+		}
 		if (addConstraintClause)
 		{
 			result.append(" ");
@@ -513,7 +517,11 @@ public class DialectUtils implements StringTemplateConstants
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
-		result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		if (prefs.isQuoteColumnNames()) {
+			result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		} else {
+			result.append(info.getColumnName());
+		}
 		if (specifyType)
 		{
 			result.append(" ");
@@ -591,8 +599,11 @@ public class DialectUtils implements StringTemplateConstants
 	{
 		StringBuilder pkSQL = new StringBuilder();
 
-		String shapedPkName = shapeIdentifier(pkName, prefs, dialect);
-
+		String shapedPkName = pkName;
+		if (prefs.isQuoteConstraintNames()) {
+			shapedPkName = shapeIdentifier(pkName, prefs, dialect);
+		}
+		
 		pkSQL.append("ALTER TABLE ");
 		pkSQL.append(shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, dialect));
 		pkSQL.append(" ADD CONSTRAINT ");
@@ -713,7 +724,11 @@ public class DialectUtils implements StringTemplateConstants
 			sql.append(" ");
 			sql.append(DialectUtils.ADD_CONSTRAINT_CLAUSE);
 			sql.append(" ");
-			sql.append(shapeIdentifier(constraintName, prefs, dialect));
+			if (prefs.isQuoteConstraintNames()) {
+				sql.append(shapeIdentifier(constraintName, prefs, dialect));
+			} else {
+				sql.append(constraintName);
+			}
 			sql.append("\n");
 		}
 
@@ -725,10 +740,18 @@ public class DialectUtils implements StringTemplateConstants
 		StringBuilder refColumns = new StringBuilder();
 		for (String[] columns : localRefColumns)
 		{
-			sql.append(shapeIdentifier(columns[0], prefs, dialect));
+			if (prefs.isQuoteColumnNames()) {
+				sql.append(shapeIdentifier(columns[0], prefs, dialect));
+			} else {
+				sql.append(columns[0]);
+			}
 			sql.append(", ");
 			localColumns.add(columns[0]);
-			refColumns.append(shapeIdentifier(columns[1], prefs, dialect));
+			if (prefs.isQuoteColumnNames()) {
+				refColumns.append(shapeIdentifier(columns[1], prefs, dialect));
+			} else {
+				refColumns.append(columns[1]);
+			}
 			refColumns.append(", ");
 		}
 		sql.setLength(sql.length() - 2); // deletes the last ", "
@@ -864,7 +887,10 @@ public class DialectUtils implements StringTemplateConstants
 		result.append("(");
 		for (int i = 0; i < colInfos.length; i++)
 		{
-			String shapedColumnName = shapeIdentifier(colInfos[i].getColumnName(), prefs, dialect);
+			String shapedColumnName = colInfos[i].getColumnName();
+			if (prefs.isQuoteColumnNames()) {
+				shapedColumnName = shapeIdentifier(colInfos[i].getColumnName(), prefs, dialect);
+			}
 			result.append(shapedColumnName);
 			if (i + 1 < colInfos.length)
 			{
@@ -941,7 +967,11 @@ public class DialectUtils implements StringTemplateConstants
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
-		result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		if (prefs.isQuoteColumnNames()) {
+			result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		} else {
+			result.append(info.getColumnName());
+		}
 		result.append(" ");
 		if (specifyType)
 		{
@@ -983,7 +1013,11 @@ public class DialectUtils implements StringTemplateConstants
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		String shapedTable = shapeQualifiableIdentifier(to.getTableName(), qualifier, prefs, dialect);
-		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		
+		String shapedToColumn = to.getColumnName();
+		if (prefs.isQuoteColumnNames()) {
+			shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		}
 
 		ArrayList<String> list = new ArrayList<String>();
 		StringBuilder result = new StringBuilder();
@@ -1031,8 +1065,14 @@ public class DialectUtils implements StringTemplateConstants
 		StringBuilder result = new StringBuilder();
 
 		String shapedTable = shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, dialect);
-		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
-		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		String shapedFromColumn = from.getColumnName();
+		if (prefs.isQuoteColumnNames()) {
+			shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
+		}
+		String shapedToColumn = to.getColumnName();
+		if (prefs.isQuoteColumnNames()) {
+			shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		}
 
 		result.append("RENAME COLUMN ");
 		result.append(shapedTable);
@@ -1173,7 +1213,11 @@ public class DialectUtils implements StringTemplateConstants
 		if (useConstraintName)
 		{
 			result.append(" DROP CONSTRAINT ");
-			result.append(shapeIdentifier(pkName, prefs, dialect));
+			if (prefs.isQuoteConstraintNames()) {
+				result.append(shapeIdentifier(pkName, prefs, dialect));
+			} else {
+				result.append(pkName);
+			}
 		}
 		else
 		{
@@ -1288,7 +1332,11 @@ public class DialectUtils implements StringTemplateConstants
 		sql.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect)).append("\n");
 
 		sql.append(" " + DialectUtils.DROP_CONSTRAINT_CLAUSE + " ");
-		sql.append(shapeIdentifier(constraintName, prefs, dialect));
+		if (prefs.isQuoteConstraintNames()) {
+			sql.append(shapeIdentifier(constraintName, prefs, dialect));
+		} else {
+			sql.append(constraintName);
+		}
 		return sql.toString();
 	}
 
@@ -1345,7 +1393,10 @@ public class DialectUtils implements StringTemplateConstants
 		StringBuilder result = new StringBuilder();
 
 		String shapedTable = shapeQualifiableIdentifier(columns[0].getTableName(), qualifier, prefs, dialect);
-		String shapedIndexName = shapeIdentifier(indexName, prefs, dialect);
+		String shapedIndexName = indexName;
+		if (prefs.isQuoteConstraintNames()) {
+			shapedIndexName = shapeIdentifier(indexName, prefs, dialect);
+		}
 
 		if (unique)
 		{
@@ -1594,7 +1645,13 @@ public class DialectUtils implements StringTemplateConstants
 		sql.append(shapeQualifiableIdentifier(simpleName, qualifier, prefs, dialect)).append(" (\n");
 		for (TableColumnInfo column : columns)
 		{
-			sql.append(" ").append(shapeIdentifier(column.getColumnName(), prefs, dialect)).append(" ");
+			sql.append(" ");
+			if (prefs.isQuoteColumnNames()) {
+				sql.append(shapeIdentifier(column.getColumnName(), prefs, dialect));
+			} else {
+				sql.append(column.getColumnName());
+			}
+			sql.append(" ");
 			sql.append(dialect.getTypeName(column.getDataType(), column.getColumnSize(), column.getColumnSize(),
 				column.getDecimalDigits()));
 
@@ -2611,7 +2668,11 @@ public class DialectUtils implements StringTemplateConstants
 		result.append(dialect.getAddColumnString().toUpperCase());
 
 		result.append(" ");
-		result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		if (prefs.isQuoteColumnNames()) {
+			result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
+		} else {
+			result.append(info.getColumnName());
+		}
 		result.append(" ");
 		result.append(dialect.getTypeName(info.getDataType(), info.getColumnSize(), info.getColumnSize(),
 			info.getDecimalDigits()));
@@ -2744,4 +2805,25 @@ public class DialectUtils implements StringTemplateConstants
 	{
 		return (value != null) && (!"".equals(value));
 	}
+
+	/**
+	 * This allows to counteract the effects of quoting identifiers in odd cases where the dialect may not 
+	 * allow it. 
+	 * 
+	 * @param dialect the dialect to use to determine the open and close quotes
+	 * @param identifier the identifier to look for to remove quotes from
+	 * @param strWithQuotes the string which contains the identifier and may or may not have quotes.
+	 * 
+	 * @return the string with quotes stripped from any occurrences of the specified identifier.
+	 */
+	public static String stripQuotesFromIdentifier(HibernateDialect dialect, String identifier,
+		String strWithQuotes)
+	{
+		// Strip quotes from the column name
+		final StringBuilder tmp = new StringBuilder("\\" + dialect.openQuote());
+		tmp.append(identifier);
+		tmp.append("\\" + dialect.closeQuote());
+		return strWithQuotes.replaceAll(tmp.toString(), identifier);
+	}
+
 }
