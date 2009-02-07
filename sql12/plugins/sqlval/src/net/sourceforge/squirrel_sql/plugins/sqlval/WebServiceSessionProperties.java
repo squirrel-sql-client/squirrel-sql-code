@@ -24,6 +24,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class WebServiceSessionProperties implements Cloneable, Serializable
 {
+	private static final long serialVersionUID = -2947538669142176792L;
+
 	private static final String UNSUPPORTED = "Unsupported";
 
 	/** If <TT>true</TT> use anonymous DBMS and connection technology. */
@@ -42,7 +44,7 @@ public class WebServiceSessionProperties implements Cloneable, Serializable
 	private String _connTechnologyVersion;
 
 	/** Web service session. */
-	private WebServiceSession _webServiceSession;
+	private transient WebServiceSession _webServiceSession;
 
 	public WebServiceSessionProperties(WebServicePreferences prefs)
 	{
