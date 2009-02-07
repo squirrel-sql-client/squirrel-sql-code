@@ -798,7 +798,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropIndex()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -830,7 +830,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsIndexes()
 	{
-		return false;
+		return true;
 	}
 
 	/**

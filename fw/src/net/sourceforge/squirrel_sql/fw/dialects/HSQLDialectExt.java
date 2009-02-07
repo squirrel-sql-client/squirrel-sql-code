@@ -299,6 +299,17 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
+	
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnType()
+	 */
+	@Override
+	public boolean supportsAlterColumnType()
+	{
+		return true;
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnDefault()
 	 */
