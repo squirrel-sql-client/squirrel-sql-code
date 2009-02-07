@@ -70,6 +70,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockQualifier.getCatalog()).andStubReturn("aTestCatalog");
 		expect(mockPrefs.isQualifyTableNames()).andStubReturn(true);
 		expect(mockPrefs.isQuoteIdentifiers()).andStubReturn(true);
+		expect(mockPrefs.isQuoteColumnNames()).andStubReturn(true);
+		expect(mockPrefs.isQuoteConstraintNames()).andStubReturn(true);
 	}
 
 	@Test
