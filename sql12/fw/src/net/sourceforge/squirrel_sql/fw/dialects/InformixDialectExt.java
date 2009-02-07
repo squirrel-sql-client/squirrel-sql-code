@@ -108,7 +108,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		{
 			return 32;
 		}
-		if (dataType == Types.DOUBLE || dataType == Types.DOUBLE)
+		if (dataType == Types.DOUBLE)
 		{
 			return 16;
 		}
