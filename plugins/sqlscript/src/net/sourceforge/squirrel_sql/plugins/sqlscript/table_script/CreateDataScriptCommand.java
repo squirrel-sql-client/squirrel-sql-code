@@ -227,14 +227,11 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                || Types.BIGINT == colInfo[i].sqlType
                || Types.SMALLINT == colInfo[i].sqlType
                || Types.INTEGER == colInfo[i].sqlType
-               || Types.BIGINT == colInfo[i].sqlType
                || Types.FLOAT == colInfo[i].sqlType
                || Types.REAL == colInfo[i].sqlType
                || Types.DOUBLE == colInfo[i].sqlType
                || Types.NUMERIC == colInfo[i].sqlType
-               || Types.DECIMAL == colInfo[i].sqlType
-               || Types.NUMERIC == colInfo[i].sqlType
-               || Types.NUMERIC == colInfo[i].sqlType)
+               || Types.DECIMAL == colInfo[i].sqlType)
             {
                Object value = fromResultSet ? srcResult.getObject(i + 1) : "0" + getNullableComment(metaData, i+1);
                sbValues.append(value);
