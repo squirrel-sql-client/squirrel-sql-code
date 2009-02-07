@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
+
 /*
 * Copyright (C) 2007 Daniel Regli & Yannick Winiger
 * http://sourceforge.net/projects/squirrel-sql
@@ -19,66 +20,108 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 */
 
 /**
- * A simple object to store user preferences regarding generated SQL scripts.
- * When we are generating an SQL script, we want to take into account the
- * user's preferences.
+ * A simple object to store user preferences regarding generated SQL scripts. When we are generating an SQL
+ * script, we want to take into account the user's preferences.
  */
-public class SqlGenerationPreferences {
-    private boolean qualifyTableNames = true;
-    private boolean quoteIdentifiers = true;
-    private String sqlStatementSeparator = ";";
+public class SqlGenerationPreferences
+{
+	private boolean qualifyTableNames = true;
 
+	private boolean quoteColumnNames = true;
 
-    /**
-     * Sets if table names have to be qualified.
-     *
-     * @param qualifyTableNames true if table names have to be qualified, false otherwise.
-     */
-    public void setQualifyTableNames(boolean qualifyTableNames) {
-        this.qualifyTableNames = qualifyTableNames;
-    }
+	private boolean quoteConstraintNames = true;
+	
+	/**
+	 * @return the quoteConstraintNames
+	 */
+	public boolean isQuoteConstraintNames()
+	{
+		return quoteConstraintNames;
+	}
 
+	/**
+	 * @param quoteConstraintNames the quoteConstraintNames to set
+	 */
+	public void setQuoteConstraintNames(boolean quoteConstraintNames)
+	{
+		this.quoteConstraintNames = quoteConstraintNames;
+	}
 
-    /**
-     * @return true if table names have to be qualified, false otherwise.
-     */
-    public boolean isQualifyTableNames() {
-        return qualifyTableNames;
-    }
+	/**
+	 * @return the quoteColumnNames
+	 */
+	public boolean isQuoteColumnNames()
+	{
+		return quoteColumnNames;
+	}
 
+	/**
+	 * @param quoteColumnNames
+	 *           the quoteColumnNames to set
+	 */
+	public void setQuoteColumnNames(boolean quoteColumnNames)
+	{
+		this.quoteColumnNames = quoteColumnNames;
+	}
 
-    /**
-     * Sets if identifiers have to be quoted.
-     *
-     * @param quoteIdentifiers true if identifiers have to be quoted, false otherwise.
-     */
-    public void setQuoteIdentifiers(boolean quoteIdentifiers) {
-        this.quoteIdentifiers = quoteIdentifiers;
-    }
+	private boolean quoteIdentifiers = true;
 
+	private String sqlStatementSeparator = ";";
 
-    /**
-     * @return true if identifiers have to be quoted, false otherwise.
-     */
-    public boolean isQuoteIdentifiers() {
-        return quoteIdentifiers;
-    }
+	/**
+	 * Sets if table names have to be qualified.
+	 * 
+	 * @param qualifyTableNames
+	 *           true if table names have to be qualified, false otherwise.
+	 */
+	public void setQualifyTableNames(boolean qualifyTableNames)
+	{
+		this.qualifyTableNames = qualifyTableNames;
+	}
 
+	/**
+	 * @return true if table names have to be qualified, false otherwise.
+	 */
+	public boolean isQualifyTableNames()
+	{
+		return qualifyTableNames;
+	}
 
-    /**
-     * Sets the separator for sql statements.
-     *
-     * @param sqlStatementSeparator the separator for sql statements
-     */
-    public void setSqlStatementSeparator(String sqlStatementSeparator) {
-        this.sqlStatementSeparator = sqlStatementSeparator;
-    }
+	/**
+	 * Sets if identifiers have to be quoted.
+	 * 
+	 * @param quoteIdentifiers
+	 *           true if identifiers have to be quoted, false otherwise.
+	 */
+	public void setQuoteIdentifiers(boolean quoteIdentifiers)
+	{
+		this.quoteIdentifiers = quoteIdentifiers;
+	}
 
+	/**
+	 * @return true if identifiers have to be quoted, false otherwise.
+	 */
+	public boolean isQuoteIdentifiers()
+	{
+		return quoteIdentifiers;
+	}
 
-    /**
-     * @return the separator for sql statements
-     */
-    public String getSqlStatementSeparator() {
-        return sqlStatementSeparator;
-    }
+	/**
+	 * Sets the separator for sql statements.
+	 * 
+	 * @param sqlStatementSeparator
+	 *           the separator for sql statements
+	 */
+	public void setSqlStatementSeparator(String sqlStatementSeparator)
+	{
+		this.sqlStatementSeparator = sqlStatementSeparator;
+	}
+
+	/**
+	 * @return the separator for sql statements
+	 */
+	public String getSqlStatementSeparator()
+	{
+		return sqlStatementSeparator;
+	}
 }
