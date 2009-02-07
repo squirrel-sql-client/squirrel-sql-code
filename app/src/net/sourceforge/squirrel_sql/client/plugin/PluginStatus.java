@@ -1,8 +1,12 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 
-public class PluginStatus
+import java.io.Serializable;
+
+public class PluginStatus implements Serializable
 {
-	 /** Identifies the plugin that this object refers to. */
+	private static final long serialVersionUID = -2149837347357638120L;
+
+	/** Identifies the plugin that this object refers to. */
 	private String _internalName;
 
 	/** If tue plugin should be loaded at startup. */
