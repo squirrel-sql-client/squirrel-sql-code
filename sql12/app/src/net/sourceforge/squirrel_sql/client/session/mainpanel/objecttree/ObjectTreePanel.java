@@ -104,7 +104,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	private IIdentifier _id = IdentifierFactory.getInstance().createIdentifier();
 
 	/** Current session. */
-	private ISession _session;
+	private transient ISession _session;
 
 	/** Tree of objects within the database. */
 	private ObjectTree _tree;
@@ -132,7 +132,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	/** Listens to changes in each of the tabbed folders. */
 	private TabbedPaneListener _tabPnlListener;
 
-	private ObjectTreeSelectionListener _objTreeSelLis = null;
+	private transient ObjectTreeSelectionListener _objTreeSelLis = null;
 
    private ObjectTreeTabbedPane _selectedObjTreeTabbedPane = null;
    
@@ -1008,7 +1008,9 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
    private final class LeftPanel extends JPanel
 	{
-      LeftPanel()
+		private static final long serialVersionUID = 1L;
+
+		LeftPanel()
 		{
 			super(new BorderLayout());
          add(_findInObjectTreeController.getFindInObjectTreePanel(), BorderLayout.NORTH);
@@ -1048,14 +1050,14 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 * When a different tab is selected in one of the tabbed panels then
 	 * refresh the newly selected tab.
 	 */
-	private class TabbedPaneListener implements ChangeListener
+	private static class TabbedPaneListener implements ChangeListener
 	{
 		public void stateChanged(ChangeEvent evt)
 		{
 			final Object src = evt.getSource();
 			if (!(src instanceof JTabbedPane))
 			{
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append("Source object in TabbedPaneListener was not a JTabbedpane")
 					.append(" - it was ")
 					.append(src == null ? "null" : src.getClass().getName());
@@ -1067,7 +1069,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 			Object prop = tabPane.getClientProperty(ObjectTreeTabbedPane.IClientPropertiesKeys.TABBED_PANE_OBJ);
 			if (!(prop instanceof ObjectTreeTabbedPane))
 			{
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				buf.append("Client property in JTabbedPane was not an ObjectTreeTabbedPane")
 					.append(" - it was ")
 					.append(prop == null ? "null" : prop.getClass().getName());
@@ -1079,7 +1081,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		}
 	}
 
-    /* (non-Javadoc)
+    /**
      * @see net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI#selectRoot()
      */
     public void selectRoot() {
