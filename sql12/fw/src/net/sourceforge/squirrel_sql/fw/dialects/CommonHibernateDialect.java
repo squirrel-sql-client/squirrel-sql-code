@@ -206,7 +206,8 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
 
-		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		String dropSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.stripQuotesFromIdentifier(this, columnName, dropSql);
 	}
 
 	/**
