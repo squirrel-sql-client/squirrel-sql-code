@@ -77,6 +77,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.EasyMockHelper;
@@ -281,7 +282,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	testDialects(true, true);
    }
 
-   @Test 
+   @Test
    public void testDialectsNotQuotedNotQualified() throws Exception {
    	testDialects(false, false);
    }
@@ -758,7 +759,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          testAddColumn(session);
          testDropColumn(session);
          testAlterDefaultValue(session);
-         testColumnComment(session);
+         testAlterColumnComment(session);
          testAlterNull(session);
          testAlterColumnName(session);
          testAlterColumnlength(session);
@@ -811,7 +812,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          testCreateSequence(session);
          testGetSequenceInfo(session);
          testAlterSequence(session);
-         testGetSequenceInformation(session);
          testDropSequence(session);
          testAddForeignKeyConstraint(session);
          testAddUniqueConstraint(session);
@@ -834,8 +834,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    			" dialect claims not to support indexes; yet it can create or drop them", 
    			dialect.supportsIndexes());
    	} else {
-   		assertFalse(dialect.getDisplayName()+" dialect claims to support indexes; yet it can't create them nor can it drop them", 
-   			dialect.supportsIndexes());
+   		assertFalse(" Dialect ("+dialect.getDisplayName()+")claims to support indexes; " +
+   				"yet it can't create them nor can it drop them", dialect.supportsIndexes());
    	}
    }
    
@@ -902,7 +902,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             dialect.getColumnNameAlterSQL(renameCol, newNameCol, qualifier, prefs);
-            throw new IllegalStateException("testAlterColumnName: Expected dialect to failed to provide SQL.");
+            failDialect(dialect, "renaming a column");
          } catch (UnsupportedOperationException e) {
             // this is expected
          	System.err.println(e.getMessage());
@@ -918,7 +918,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             dropColumn(session, dropCol);
-            throw new IllegalStateException("testDropColumn: Expected dialect to failed to provide SQL.");
+            failDialect(dialect, "dropping a column");
          } catch (UnsupportedOperationException e) {
             // This is what we expect
             System.err.println(e.getMessage());
@@ -960,14 +960,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger, qualifier, prefs);
-            throw new IllegalStateException("Expected dialect to fail to provide SQL for altering column type");
+            failDialect(dialect, "altering column type");
          } catch (UnsupportedOperationException e) {
             // this is expected
          	System.err.println(e.getMessage());
          }
       }
    }
-
+   
    private void testAlterDefaultValue(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       TableColumnInfo varcharColWithDefaultValue = getVarcharColumn("noDefaultVarcharCol",
@@ -998,7 +998,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             dialect.getColumnDefaultAlterSQL(noDefaultValueVarcharCol, qualifier, prefs);
-            throw new IllegalStateException("Expected dialect to fail to provide SQL for column default alter");
+            failDialect(dialect, "column default alter");
          } catch (UnsupportedOperationException e) {
             // This is what we expect.
             System.err.println(e.getMessage());
@@ -1027,7 +1027,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
-            throw new IllegalStateException("Expected dialect to fail to provide SQL for column nullable alter");
+            failDialect(dialect, "column nullable alter");
          } catch (UnsupportedOperationException e) {
             // this is expected
             System.err.println(e.getMessage());
@@ -1059,7 +1059,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
    }
 
-   private void testColumnComment(ISession session) throws Exception {
+   private void testAlterColumnComment(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       
       AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(firstCol);
@@ -1076,7 +1076,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
          try {
             alterColumnComment(session, firstCol);
-            throw new IllegalStateException("testColumnComment: Expected dialect to failed to provide SQL.");
+            failDialect(dialect, "column comment alter");
          } catch (UnsupportedOperationException e) {
             // this is expected
          	System.err.println(e.getMessage());
@@ -1122,7 +1122,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 			try
 			{
 				dialect.getDropPrimaryKeySQL(pkName, tableName, qualifier, prefs);
-            throw new IllegalStateException("testDropPrimaryKey: Expected dialect to failed to provide SQL.");
+				failDialect(dialect, "dropping a primary key");
          } catch (UnsupportedOperationException e) {
             // this is expected
          	System.err.println(e.getMessage());
@@ -1183,16 +1183,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       } else {
       	try {
       		dialect.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for add primary key");
+      		failDialect(dialect, "adding a primary key");
    		} catch (Exception e) {
    			// This is expected
    			System.err.println(e.getMessage());
    		}
       	
       }
-      
-      
-      
    }
 
    private void testCreateTableWithDefault(ISession session) throws Exception {
@@ -1277,7 +1274,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for create table");
+   			failDialect(dialect, "creating a table");
    		} catch (Exception e) {
    			// This is expected
    			System.err.println(e.getMessage());
@@ -1305,7 +1302,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for rename table");
+   			failDialect(dialect, "renaming a table");
    		} catch (Exception e) {
    			// This is expected
    			System.err.println(e.getMessage());
@@ -1343,8 +1340,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for " +
-   					"create view");
+   			failDialect(dialect, "creating a view");
    		} catch (Exception e) {
    			// This is expected
    			System.err.println(e.getMessage());
@@ -1395,7 +1391,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for rename view");
+   			failDialect(dialect, "renaming a view");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1426,7 +1422,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    		if (!dialect.supportsDropView()) {
 	   		try {
 	   			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-	   			fail("Expected dialect to fail to provide SQL for drop view");
+	   			failDialect(dialect, "dropping a view");
 	   		} catch (Exception e) {
 	   			// this is expected
 	   			System.err.println(e.getMessage());
@@ -1463,7 +1459,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
-   			fail("Expected dialect to fail to provide SQL for get view definition");
+   			failDialect(dialect, "getting the view definition");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1579,13 +1575,23 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 				 
    		}   		
    	} else {
-   		try {
-   			dialect.getCreateIndexSQL(indexName1, tableName, null, columns, false, tablespace, constraints, qualifier, prefs);
-   			dialect.getDropIndexSQL(tableName, indexName1, false, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for create index");
-   		} catch (Exception e) {
-   			// this is expected
-   			System.err.println(e.getMessage());
+   		if (!dialect.supportsCreateIndex()) {
+      		try {
+      			dialect.getCreateIndexSQL(indexName1, tableName, null, columns, false, tablespace, constraints, qualifier, prefs);
+      			failDialect(dialect, "for creating an index");
+      		} catch (Exception e) {
+      			// this is expected
+      			System.err.println(e.getMessage());
+      		}
+   		}
+   		if (!dialect.supportsDropIndex()) {
+      		try {
+      			dialect.getDropIndexSQL(tableName, indexName1, false, qualifier, prefs);
+      			failDialect(dialect, "for dropping an index");
+      		} catch (Exception e) {
+      			// this is expected
+      			System.err.println(e.getMessage());
+      		}
    		}
    	}   	
    }
@@ -1615,13 +1621,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for create sequence");
+   			failDialect(dialect, "for creating a sequence");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
    		}
    	}   	   	   	
-   }
+   }   
    
    private void testGetSequenceInfo(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
@@ -1640,14 +1646,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    				throw new IllegalStateException("Expected a result from sequence info query");
    			}
    		} else {
-
 				runSQL(session, new String[] { sql }, sequenceInfoSqlExtractor);
    		}
    		
    	} else {
    		try {
    			dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for sequence info query");
+   			failDialect(dialect, "getting sequence info");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1687,40 +1692,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", "1", cache, cycle, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for alter sequence");
+   			failDialect(dialect, "for altering a sequence");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	
    }
-   
-   private void testGetSequenceInformation(ISession session) throws Exception {
-   	HibernateDialect dialect = getDialect(session);
-   	   	
-   	if (dialect.supportsSequenceInformation()) {
-   		String sql = 
-   			dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
-   		if (sql.endsWith("?") || sql.endsWith("?)")) {
-   			ResultSet rs = runPreparedQuery(session, sql, testSequenceName);
-   			if (!rs.next()) {
-   				throw new IllegalStateException("Expected a record for the sql with bind variable = "
-						+ testSequenceName);
-   			}
-   		} else {
-   			runSQL(session, sql);
-   		}
-   	} else {
-   		try {
-   			dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for get sequence information");
-   		} catch (Exception e) {
-   			// this is expected
-   			System.err.println(e.getMessage());
-   		}
-   	}   	   	   	   	   	
-   }
-   
+      
    private void testDropSequence(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	
@@ -1739,7 +1718,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getDropSequenceSQL(testSequenceName, false, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop sequence");
+   			failDialect(dialect, "for dropping a sequence");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1821,7 +1800,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 					onDeleteAction,
 					qualifier,
 					prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for add FK constraint");
+				failDialect(dialect, "for adding a FK constraint");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -1870,8 +1849,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 					columns,
 					qualifier,
 					prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for add unique "
-					+ "constraint");
+   			failDialect(dialect, "for adding a unique constraint");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1892,8 +1870,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    	} else {
    		try {
    			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for add auto increment "
-					+ "column");
+   			failDialect(dialect, "for adding an auto increment column");
    		} catch (Exception e) {
    			// this is expected
    			System.err.println(e.getMessage());
@@ -1928,7 +1905,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 					uniqueConstraintName,
 					qualifier,
 					prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for drop constraint");
+				failDialect(dialect, "for dropping a constraint");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -1967,7 +1944,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 			try
 			{
 				dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for insert into ");
+				failDialect(dialect, "for insert into statements");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -1990,7 +1967,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 			try
 			{
 				dialect.getAddColumnSQL(addColumn, qualifier, prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for add column ");
+				failDialect(dialect, "for adding a column");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -2053,7 +2030,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 					whereValues,
 					qualifier,
 					prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for update ");
+				failDialect(dialect, "for update SQL");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -2132,6 +2109,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    }
    
    // Utility methods
+   
+   private void failDialect(HibernateDialect dialect, String refactoringType) {
+   	fail("Expected dialect ("+dialect.getDisplayName()+") to fail to provide SQL for "+refactoringType);
+   }   
    
    private void dropColumn(ISession session, TableColumnInfo info)
          throws Exception {
