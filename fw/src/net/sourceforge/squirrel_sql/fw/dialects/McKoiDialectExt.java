@@ -748,8 +748,9 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		
-		return new String[] { "foo" };
+		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -805,7 +806,7 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsAlterSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -946,7 +947,6 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 
@@ -966,7 +966,12 @@ public class McKoiDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return "foo";
+		// The problem with this is data is LONGVARBINARY and there are no McKoi SQL functions to convert it 
+		// to a character string which is executing the SQL produced by this method is supposed to return.
+		//return "SELECT data FROM SYS_INFO.sUSRView where name = '" + viewName + "'";
+		final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
