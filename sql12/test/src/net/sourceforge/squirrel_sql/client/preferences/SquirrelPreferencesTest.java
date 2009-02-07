@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import net.sourceforge.squirrel_sql.AbstractSerializableTest;
+import net.sourceforge.squirrel_sql.client.plugin.PluginStatus;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences.IJdbcDebugTypes;
 
 import org.junit.After;
@@ -40,6 +41,8 @@ public class SquirrelPreferencesTest extends AbstractSerializableTest {
 	public void setUp() {
 		classUnderTest = new SquirrelPreferences();
 		super.serializableToTest = new SquirrelPreferences();
+		PluginStatus ps = new PluginStatus("testPlugin");
+		((SquirrelPreferences)serializableToTest).setPluginStatuses(new PluginStatus[] { ps });
 	}
 
 	@After
