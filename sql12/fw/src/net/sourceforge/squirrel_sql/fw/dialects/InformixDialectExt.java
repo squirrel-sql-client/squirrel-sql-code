@@ -197,6 +197,8 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteColumnNames(false);
+		
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
@@ -238,6 +240,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// TODO: should also make sure that each of the columns is made "NOT NULL"
 
+		prefs.setQuoteColumnNames(false);
+		prefs.setQuoteConstraintNames(false);
+		
 		return new String[] { DialectUtils.getAddIndexSQL(pkName, true, columns, qualifier, prefs, this),
 				DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, true, qualifier, prefs, this) };
 	}
@@ -314,6 +319,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteColumnNames(false);
 		return DialectUtils.getColumnRenameSQL(from, to, qualifier, prefs, this);
 	}
 
@@ -343,6 +349,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String setClause = null;
+		prefs.setQuoteColumnNames(false);
 		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
@@ -368,6 +375,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
+		prefs.setQuoteColumnNames(false);
 		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause, qualifier, prefs);
 	}
 
@@ -382,6 +390,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteConstraintNames(false);
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
@@ -480,7 +489,8 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		result.append(" ");
 		result.append(DialectUtils.MODIFY_CLAUSE);
 		result.append(" ");
-		result.append(DialectUtils.shapeIdentifier(column.getColumnName(), prefs, this));
+		// must not qualify column name 
+		result.append(column.getColumnName());
 		result.append(" SERIAL");
 		return new String[] { result.toString() };
 	}
@@ -497,6 +507,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		boolean supportsNullQualifier = false;
 		boolean addNullClause = true;
 
+		// Informix doesn't allow quoting column names.
+		prefs.setQuoteColumnNames(false);
+		
 		String sql =
 			DialectUtils.getAddColumSQL(column,
 				this,
@@ -521,6 +534,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteColumnNames(false);
+		prefs.setQuoteConstraintNames(false);
+		
 		// We only want the index sql which is the second statement in the array. Informix requires the
 		// constraint stuck onto the end of the statement.
 		String[] utilSql =
@@ -561,10 +577,11 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		StringBuilder refColumns = new StringBuilder();
 		for (String[] columns : localRefColumns)
 		{
-			result.append(DialectUtils.shapeIdentifier(columns[0], prefs, this));
+			// must not quote column names
+			result.append(columns[0]);
 			result.append(", ");
 			localColumns.add(columns[0]);
-			refColumns.append(DialectUtils.shapeIdentifier(columns[1], prefs, this));
+			refColumns.append(columns[1]);
 			refColumns.append(", ");
 		}
 		result.setLength(result.length() - 2); // deletes the last ", "
@@ -613,14 +630,14 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		sql.append(" (");
 		for (TableColumnInfo column : columns)
 		{
-			sql.append(DialectUtils.shapeIdentifier(column.getColumnName(), prefs, this));
+			sql.append(column.getColumnName());
 			sql.append(", ");
 		}
 		sql.delete(sql.length() - 2, sql.length()); // deletes the last ", "
 		sql.append(")");
 
 		sql.append(" CONSTRAINT ");
-		sql.append(DialectUtils.shapeIdentifier(constraintName, prefs, this));
+		sql.append(constraintName);
 
 		return new String[] { sql.toString() };
 
@@ -682,13 +699,14 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		sql.append(" ");
 		sql.append(DialectUtils.INDEX_CLAUSE);
 		sql.append(" ");
-		sql.append(DialectUtils.shapeIdentifier(indexName, prefs, this));
+		sql.append(indexName);
 		sql.append(" ON ").append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 
 		sql.append("(");
 		for (String column : columns)
 		{
-			sql.append(DialectUtils.shapeIdentifier(column, prefs, this)).append(", ");
+			sql.append(column);
+			sql.append(", ");
 		}
 		sql.delete(sql.length() - 2, sql.length()); // deletes the last ", "
 		sql.append(")");
@@ -769,6 +787,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteConstraintNames(false);
 		/*
 		 * alter table test drop constraint u_test
 		 */
@@ -833,7 +852,8 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		result.append("RENAME TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(oldTableName, qualifier, prefs, this));
 		result.append(" TO ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(newTableName, qualifier, prefs, this));
+		// must not qualify the new table name
+		result.append(newTableName);
 		return result.toString();
 	}
 
