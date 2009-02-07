@@ -29,7 +29,7 @@ public class CSVSettingsBean implements Cloneable, Serializable {
 	
 	private char seperator = ';';
 	
-	private Charset importCharset = Charset.defaultCharset();
+	private transient Charset importCharset = Charset.defaultCharset();
 	
 	private String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
