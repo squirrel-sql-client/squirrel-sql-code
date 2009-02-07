@@ -90,7 +90,7 @@ public class MySQL5DialectExt extends MySQLDialectExt
 			DialectUtils.getRenameViewSQL(commandPrefix, renameClause, oldViewName, newViewName, qualifier,
 				prefs, this);
 
-		renameViewSql = stripQuotesFromIdentifier(newViewName, renameViewSql);
+		renameViewSql = DialectUtils.stripQuotesFromIdentifier(this, newViewName, renameViewSql);
 
 		return new String[] { renameViewSql };
 	}

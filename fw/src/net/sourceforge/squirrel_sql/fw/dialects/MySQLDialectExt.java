@@ -321,9 +321,13 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		SqlGenerationPreferences prefs)
 	{
 		final String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
+		
+		// MySQL disallows quoted column identifiers.
+		prefs.setQuoteColumnNames(false);
+		
 		String columnNullableAlterSql =
 			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs);
-		columnNullableAlterSql = stripQuotesFromIdentifier(info.getColumnName(), columnNullableAlterSql);
+		
 		return new String[] { columnNullableAlterSql };
 	}
 
@@ -505,7 +509,8 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
 
 		String addAutoIncrementSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
-		addAutoIncrementSql = stripQuotesFromIdentifier(column.getColumnName(), addAutoIncrementSql);
+		addAutoIncrementSql = 
+			DialectUtils.stripQuotesFromIdentifier(this, column.getColumnName(), addAutoIncrementSql);
 		return new String[] { addAutoIncrementSql };
 	}
 
@@ -522,15 +527,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		final boolean supportsNullQualifier = true;
 		final boolean addNullClause = true;
 
+		// MySQL disallows quoted column identifiers.
+		prefs.setQuoteColumnNames(false);
+		
 		String addColumnSql =
 			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
 				qualifier, prefs);
-
-		// MySQL disallows quoted column identifiers when adding columns.
-		if (prefs.isQuoteIdentifiers())
-		{
-			addColumnSql = stripQuotesFromIdentifier(column.getColumnName(), addColumnSql);
-		}
 
 		return new String[] { addColumnSql };
 	}
@@ -682,6 +684,9 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		// index_type:
 		// USING {BTREE | HASH}
 		// Note; indexType is unused at the moment because the index dialog doesn't accept this. See below.
+		
+		// MySQL disallows quoted column identifiers.
+
 		final String templateStr = ST_CREATE_INDEX_STYLE_ONE;
 
 		final StringTemplate st = new StringTemplate(templateStr);
@@ -699,12 +704,10 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 
 		String addIndexSql = DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
-
-		for (final String columnName : columns)
-		{
-			addIndexSql = stripQuotesFromIdentifier(columnName, addIndexSql);
+		for (String column : columns) {
+			addIndexSql = DialectUtils.stripQuotesFromIdentifier(this, column, addIndexSql);
 		}
-
+		
 		return addIndexSql;
 	}
 
@@ -733,15 +736,10 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		String createTableSql =
-			DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
-
-		for (final TableColumnInfo colInfo : columns)
-		{
-			createTableSql = stripQuotesFromIdentifier(colInfo.getColumnName(), createTableSql);
-		}
-
-		return createTableSql;
+		// MySQL disallows quoted column identifiers.
+		prefs.setQuoteColumnNames(false);
+		
+		return  DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
 	}
 
 	/**
@@ -837,9 +835,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		String renameTableSql =
 			DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
 
-		renameTableSql = stripQuotesFromIdentifier(newTableName, renameTableSql);
-
-		return renameTableSql;
+		return DialectUtils.stripQuotesFromIdentifier(this, newTableName, renameTableSql);
 	}
 
 	/**
@@ -1151,9 +1147,12 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// MySQL disallows quoted column identifiers when dropping columns.
-		return stripQuotesFromIdentifier(columnName, super.getColumnDropSQL(tableName, columnName, qualifier,
-			prefs));
+		// MySQL disallows quoted column identifiers when dropping a column.
+		prefs.setQuoteColumnNames(false);
+		// MySQL disallows quoted constraint names
+		prefs.setQuoteConstraintNames(false);
+		
+		return super.getColumnDropSQL(tableName, columnName, qualifier, prefs);
 	}
 
 	/**
@@ -1166,28 +1165,13 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
+	{		
 		// MySQL disallows quoted column identifiers when adding a primary key.
-		String addPrimaryKeySql = (super.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs))[0];
-
-		for (final TableColumnInfo colInfo : colInfos)
-		{
-			addPrimaryKeySql = stripQuotesFromIdentifier(colInfo.getColumnName(), addPrimaryKeySql);
-		}
-
-		// MySQL disallows quoted constraint identifiers when adding a primary key.
-		addPrimaryKeySql = stripQuotesFromIdentifier(pkName, addPrimaryKeySql);
-
-		return new String[] { addPrimaryKeySql };
-	}
-
-	protected String stripQuotesFromIdentifier(String identifier, String strWithQuotes)
-	{
-		// Strip quotes from the column name
-		final StringBuilder tmp = new StringBuilder("\\" + openQuote());
-		tmp.append(identifier);
-		tmp.append("\\" + closeQuote());
-		return strWithQuotes.replaceAll(tmp.toString(), identifier);
+		prefs.setQuoteColumnNames(false);
+		// MySQL disallows quoted constraint names
+		prefs.setQuoteConstraintNames(false);
+		
+		return super.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs);
 	}
 
 }
