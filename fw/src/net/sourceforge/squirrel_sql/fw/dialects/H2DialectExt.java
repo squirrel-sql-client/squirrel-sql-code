@@ -359,6 +359,23 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			prefs);
 	}
 
+	
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	{		
+		StringTemplate st = new StringTemplate(DROP_COLUMN_SQL_TEMPLATE);
+
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+	}
+
 	/**
 	 * Returns the SQL command to drop the specified table's primary key.
 	 * 
