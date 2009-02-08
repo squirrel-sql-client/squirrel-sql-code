@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import static java.sql.Types.VARCHAR;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -72,6 +73,10 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		expect(mockPrefs.isQuoteIdentifiers()).andStubReturn(true);
 		expect(mockPrefs.isQuoteColumnNames()).andStubReturn(true);
 		expect(mockPrefs.isQuoteConstraintNames()).andStubReturn(true);
+		mockPrefs.setQuoteColumnNames(false);
+		expectLastCall().anyTimes();
+		mockPrefs.setQuoteConstraintNames(false);
+		expectLastCall().anyTimes();
 	}
 
 	@Test
