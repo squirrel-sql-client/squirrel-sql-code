@@ -2013,54 +2013,44 @@ alt="Update Dialog"></p>
 The "Site Type" setting refers to what kind of update site to use
 and changes the kinds of configuration items that are required : 
 
-<ol>
-<li>Remote 
-
-<ol>
-<li>Server - the name of the HTTP server to consult for updates
-(default: www.squirrel-sql.net)</li>
-
-<li>Port - the numeric HTTP port that the server is listening on
-(default: 80)</li>
-
-<li>Path - the path on the server where the channels are found
-(default: updates)</li>
-
-<li>Channel - the type of release this is (snapshot gets updated
-almost weekly and tends to have new but not thoroughly tested
-changes.</li>
-
-<li>Url - This is a read-only representation of the values given
-above in the form of an HTTP URL. This can be placed in a
-web-browser to see the release.xml file before updating if
-desired.</li>
-
-<li>Test Connection - This button allows you to check connectivity
-to the URL specified by the values above and displays a message
-indicating whether or not the connection was successful.</li>
-</ol>
-</li>
-
-<li>Local 
-
-<ol>
-<li>Local Path - the local directory containing the update files
-(release.xml file is directly beneath this directory)</li>
-</ol>
-</li>
-
-<li>Automatic Updates 
-
-<ol>
-<li>Enable Automatic Updates - checking this option cause SQuirreL
-to periodically and in the background check to see if updates have
-been posted using the Remote/Local settings above.</li>
-
-<li>How often to check for updates (At Startup / Daily /
-Weekly)</li>
-</ol>
-</li>
-</ol>
+<dl>
+<dt><b>Remote</b></dt> 
+<dd>
+  <dl>
+  <dt><b>Server</b></dt> 
+  <dd>the name of the HTTP server to consult for updates (default: www.squirrel-sql.net)</dd>
+  <dt><b>Port</b></dt> 
+  <dd>the numeric HTTP port that the server is listening on (default: 80)</dd>
+  <dt><b>Path</b></dt> 
+  <dd>the path on the server where the channels are found (default: updates)</dd>
+  <dt><b>Channel</b></dt>
+  <dd>the type of release this is (snapshot gets updated almost weekly and 
+      tends to have new but not thoroughly tested changes.</dd>
+  <dt><b>Url</b></dt> 
+  <dd>This is a read-only representation of the values given above in the form of an HTTP URL. 
+      This can be placed in a web-browser to see the release.xml file before updating if desired.</dd>
+  <dt><b>Test Connection</b></dt>
+  <dd>This button allows you to check connectivity to the URL specified by the values above 
+      and displays a message indicating whether or not the connection was successful.</dd>  
+  </dl>
+</dd>
+<dt><b>Local</b></dt>
+<dd>
+  <dl>
+  <dt><b>Local Path</b></dt>
+  <dd>the local directory containing the update files (release.xml file is directly beneath this 
+      directory)</dd>  
+  </dl>
+  <dl>
+  <dt><b>Automatic Updates</b></dt>
+  <dd>Enable Automatic Updates - checking this option cause SQuirreL to periodically and in the 
+      background check to see if updates have been posted using the Remote/Local settings above.</dd>
+  <dt><b>How often to check for updates</b></dt>
+  <dd>(At Startup / Daily / Weekly)</dd>
+  </dl>
+</dd>
+<dt>
+</dl>
 
 <p>Clicking the "Check" button yields the following summary of
 available/installed artifacts:</p>
