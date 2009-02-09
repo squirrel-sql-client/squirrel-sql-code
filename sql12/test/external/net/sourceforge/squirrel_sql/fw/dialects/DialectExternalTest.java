@@ -77,7 +77,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.EasyMockHelper;

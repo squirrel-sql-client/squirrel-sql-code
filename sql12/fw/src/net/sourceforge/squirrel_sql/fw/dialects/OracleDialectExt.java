@@ -207,7 +207,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		result.append("ALTER TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		result.append(" DROP COLUMN ");
-		result.append(DialectUtils.shapeIdentifier(columnName, prefs, this));
+		result.append(columnName);
 		return result.toString();
 	}
 
@@ -256,8 +256,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		result.append(" PRIMARY KEY (");
 		for (int i = 0; i < columns.length; i++)
 		{
-			
-			result.append(DialectUtils.shapeIdentifier(columns[i].getColumnName(), prefs, this));
+			result.append(columns[i].getColumnName());
 			if (i + 1 < columns.length)
 			{
 				result.append(", ");
@@ -320,9 +319,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
 				from.getTableName(),
 				ST_OLD_COLUMN_NAME_KEY,
-				DialectUtils.shapeIdentifier(from.getColumnName(), prefs, this),
+				from.getColumnName(),
 				ST_NEW_COLUMN_NAME_KEY,
-				DialectUtils.shapeIdentifier(to.getColumnName(), prefs, this));
+				to.getColumnName());
 		
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
@@ -433,7 +432,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		result.append("ALTER TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		result.append(" MODIFY ");
-		result.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
+		result.append(info.getColumnName());
 		result.append(" DEFAULT ");
 		if (JDBCTypeMapper.isNumberType(info.getDataType()))
 		{
@@ -573,6 +572,8 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		boolean supportsNullQualifier = true;
 		boolean addNullClause = true;
 
+		prefs.setQuoteColumnNames(false);
+		
 		String addColumnSql =
 			DialectUtils.getAddColumSQL(info,
 				this,
@@ -637,6 +638,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		prefs.setQuoteConstraintNames(false);
+		prefs.setQuoteColumnNames(false);
+		
 		return new String[] { DialectUtils.getAddUniqueConstraintSQL(tableName,
 			constraintName,
 			columns,

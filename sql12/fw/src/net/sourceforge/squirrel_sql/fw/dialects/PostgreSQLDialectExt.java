@@ -326,6 +326,7 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 */
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
+		prefs.setQuoteColumnNames(false);
 		return DialectUtils.getColumnCommentAlterSQL(info.getTableName(),
 			info.getColumnName(),
 			info.getRemarks(), qualifier, prefs, this);
@@ -455,7 +456,7 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 		result.append("ALTER TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		result.append(" ALTER COLUMN ");
-		result.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
+		result.append(info.getColumnName());
 		String defVal = info.getDefaultValue();
 		if (defVal == null || "".equals(defVal))
 		{

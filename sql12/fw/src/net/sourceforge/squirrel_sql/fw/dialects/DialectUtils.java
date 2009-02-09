@@ -309,7 +309,11 @@ public class DialectUtils implements StringTemplateConstants
 		result.append("COMMENT ON COLUMN ");
 		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
 		result.append(".");
-		result.append(shapeIdentifier(columnName, prefs, dialect));
+		if (prefs.isQuoteColumnNames()) {
+			result.append(shapeIdentifier(columnName, prefs, dialect));
+		} else {
+			result.append(columnName);
+		}
 		result.append(" IS '");
 		if (comment != null && !"".equals(comment))
 		{
@@ -830,14 +834,22 @@ public class DialectUtils implements StringTemplateConstants
 		sql.append(" ");
 		sql.append(DialectUtils.ADD_CONSTRAINT_CLAUSE);
 		sql.append(" ");
-		sql.append(DialectUtils.shapeIdentifier(constraintName, prefs, dialect));
+		if (prefs.isQuoteConstraintNames()) {
+			sql.append(DialectUtils.shapeIdentifier(constraintName, prefs, dialect));
+		} else {
+			sql.append(constraintName);
+		}
 
 		sql.append(" ");
 		sql.append(DialectUtils.UNIQUE_CLAUSE);
 		sql.append(" (");
 		for (TableColumnInfo column : columns)
 		{
-			sql.append(DialectUtils.shapeIdentifier(column.getColumnName(), prefs, dialect));
+			if (prefs.isQuoteColumnNames()) {
+				sql.append(DialectUtils.shapeIdentifier(column.getColumnName(), prefs, dialect));
+			} else {
+				sql.append(column.getColumnName());
+			}
 			sql.append(", ");
 		}
 		sql.delete(sql.length() - 2, sql.length()); // deletes the last ", "
@@ -922,8 +934,14 @@ public class DialectUtils implements StringTemplateConstants
 		HibernateDialect dialect)
 	{
 		String shapedTable = shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, dialect);
-		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
-		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		String shapedFromColumn = from.getColumnName();
+		if (prefs.isQuoteColumnNames()) {
+			shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
+		}
+		String shapedToColumn = to.getColumnName();
+		if (prefs.isQuoteColumnNames()) {
+			shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		}
 
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
