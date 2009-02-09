@@ -355,8 +355,11 @@
 			<fileset dir="doc">
 				<include name="**/*.*" />
 			</fileset>
+			<fileset dir="website">
+			   <include name="faq.html" />
+			</fileset>
 		</copy>
-
+		
 		<copy todir="${core_dist_dir}/icons">
 			<fileset dir="app/icons">
 				<include name="**/*.*" />
