@@ -355,7 +355,7 @@
 			<fileset dir="doc">
 				<include name="**/*.*" />
 			</fileset>
-			<fileset dir="website">
+			<fileset dir="web-site">
 			   <include name="faq.html" />
 			</fileset>
 		</copy>
