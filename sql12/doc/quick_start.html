@@ -2052,13 +2052,56 @@ and changes the kinds of configuration items that are required :
 <dt>
 </dl>
 
-<p>Clicking the "Check" button yields the following summary of
-available/installed artifacts:</p>
+<p>Clicking the "Check" button will display a dialog window with a summary of
+available/installed artifacts that can be updated, installed or removed :</p>
 
-<p align="CENTER"><img src="images/update-settings.png" alt=
-"Update Dialog"></p>
+<p align="CENTER"><img src="images/update_summary.png" alt="Update Dialog"></p>
 
 <h2><a name="logs"></a>Logs</h2>
+
+SQuirreL writes messages to a file called a log file as SQuirreL is being used.  These messages can provide 
+additional details and clues about what SQuirreL is doing internally and are very useful for debugging 
+problems.  The main log file that SQuirreL writes to called squirrel-sql.log, and is located in the user's 
+home directory in a "log" folder just below the private SQuirreL user preference folder called 
+".squirrel-sql".  You may access this log file at any time from within SQuirreL be opening the log viewer 
+which can be done in one of two ways:
+
+<ol>    
+  <li>Click on the menu sub-item located in "Windows" -> "View SQuirreL Logs", or </li>
+  <li>Click the Monitor icon located in the status bar at the bottom of the window as shown in the following 
+  image: </li>
+</ol>
+
+<p align="center">
+<img src="images/log_messages_status.png" alt="Log Message Status Bar"/>
+</p>
+
+The log status section (at the bottom of the window in the status bar) displays a count of how many 
+Errors, Warnings and Info (informational) messages there are currently in the log.  The icon to the left of 
+the Monitor icon discussed above is the last message display button. It's color will change from light blue to
+red any time the last log message contains an error.  This button displays the last message when clicked and 
+for most errors it also provides a stack trace of the exception encountered (if there was one).  This 
+information can be invaluable for the developers in tracking down the cause of the error.  An example of 
+this dialog window appears below:
+
+<p align="center">
+<img src="images/last_log_entry_dialog.png" alt="Last Log Entry Dialog"/>
+</p>
+   
+In addition to the three types of error messages covered above, SQuirreL can be configured to log Debug 
+messages which are even more useful at times then just the Error, Warning and Info messages.  This 
+configuration is accomplished by editing the log4j.properties file which is located in the SQuirreL install 
+directory.  This file has a line in it that looks like: 
+<pre>
+        log4j.rootLogger=info, SquirrelAppender
+</pre>    
+To enable Debug messages to be written to the log, edit this file in your favorite text editor, changing the
+above line to:
+<pre>
+        log4j.rootLogger=debug, SquirrelAppender
+</pre>
+Once this file has been saved, then SQuirreL should be restarted to apply the change.
+
 
 <h2><a name="menus"></a>Menus</h2>
 
