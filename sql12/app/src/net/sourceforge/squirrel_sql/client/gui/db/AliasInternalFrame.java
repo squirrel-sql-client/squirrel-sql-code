@@ -497,6 +497,11 @@ public class AliasInternalFrame extends DialogWidget
       gbc = new GridBagConstraints(0,7,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.cleartext")), gbc);
 
+
+      // make it grow when added
+      gbc = new GridBagConstraints(0,8,2,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+		pnl.add(new JPanel(), gbc);
+
 		return pnl;
 	}
 
