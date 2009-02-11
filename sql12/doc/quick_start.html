@@ -1174,6 +1174,26 @@ times. The first time causes the data to be updated in the DB, but
 leaves you back in the same cell. Pressing enter again moves to the
 cell below the current one.<br>
 </li>
+
+<li>Displaying all records in large tables (> 10000 rows) is memory 
+and cpu intensive and can cause SQuirreL to attempt to allocate more memory 
+than it is configured to use by default (256 MB).  If this is a problem, 
+you can increase the memory that SQuirreL is allowed to use by editing the 
+launch script (squirrel-sql.bat for Windows, squirrel-sql.sh for Linux/MacOS X).
+Search for -Xmx256m in the script and change it to something appropriately higher
+(For example, -Xmx512m (512 MB) or -Xmx1024m (1 GB)).  This setting should not be 
+greater than the physical RAM you have installed on the machine that SQuirreL is 
+being run on.  Setting it too high can cause the Java VM that SQuirreL runs in 
+not to start.</li>    
+
+<li>Records that contain large BLOBs (> 500KB) are currently a big problem 
+for SQuirreL.  SQuirreL will attempt to render BLOB data as text by converting 
+it to HEX.  The conversion process is memory intensive, and so is displaying the 
+HEX converted binary data.  It is currently not practical to work with data in 
+tables that contain BLOBs of size in excess of 500 KBs.  When viewing/editing tables 
+with small BLOBs, but many records, the maximum memory given to SQuirreL should 
+be increased, using the procedure outlined in the previous bullet.</li>  
+
 </ul>
 
 <h2><a name="printing"></a>Printing</h2>
