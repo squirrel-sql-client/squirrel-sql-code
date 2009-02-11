@@ -133,6 +133,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Add/Edit Alias window did not resize properly
+
 SQL Scripts Plugin: On some DBs (e.g. MySQL) "Store result of SQL in table"
                     did not work for SQLs that returned a lot of rows.   
 
