@@ -2077,6 +2077,35 @@ available/installed artifacts that can be updated, installed or removed :</p>
 
 <p align="CENTER"><img src="images/update_summary.png" alt="Update Dialog"></p>
 
+<p>This update summary dialog allows you to see what files will be downloaded/installed when the changes
+are applied.  An Artifact is simply a file that can be one of three types.  Core artifacts are always updated
+to the latest version when changes are applied.  However, plugin and i18n (Internationalization) artifacts
+can be installed, updated or even removed from your local installation with the Action column on the far 
+right.  Each row in the table represents a single artifact and non-core artifacts can have an action applied
+by clicking on the Action column cell for that artifact.  The drop-down list will have choices to INSTALL, 
+and REMOVE (if already installed).  Selecting NONE results in no action for that artifact.  When core artifacts
+are automatically marked for INSTALL, it means there is a new release available, which is also signified by 
+the top of the dialog which indicates the "Installed" version id and the "Current" version id (that is, what is
+"currently" available for download).  In this case any installed artifacts of type plugin or i18n have choices
+for INSTALL/REMOVE - that is they must be either updated or removed so that when core artifacts change, the 
+version of all installed artifacts stays in sync.  It is important to hit apply changes when finished making
+changes to artifact actions - clicking close with abort the update process.</p>
+
+Clicking "Apply Changes" will start the download process, which retrieves new artifacts (artifacts whose 
+bytesize and checksum haven't changed will not be downloaded to prevent needless waste of bandwidth).  If you
+use a proxy to reach the Internet update site (http://www.squirrel-sql.net:80/updates/...), you will need to 
+configure those settings in the Global Preferences -> Proxy -> HTTP Proxy section.  You may cancel the download
+at any time, and the next time the update process is started, it will resume downloading the remaining files
+that weren't previously downloaded.  Also, if an error should occur, you may want to check the log file to 
+see what might cause the error - and re-start the update process at a later time.  Until all artifacts have 
+been successfully downloaded and verified, the next stage of the software update (applying the updates after
+restart) will not occur.
+
+<p align="CENTER"><img src="images/update_download_progress.png" alt="Update Progress Dialog"></p>
+
+Once all updated artifacts have been successfully downloaded and verified, you can re-start SQuirreL and the 
+next stage of updating will being by asking you if you want to apply the updates.  
+
 <h2><a name="logs"></a>Logs</h2>
 
 SQuirreL writes messages to a file called a log file as SQuirreL is being used.  These messages can provide 
