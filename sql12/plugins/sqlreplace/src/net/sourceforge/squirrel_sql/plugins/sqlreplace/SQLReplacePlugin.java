@@ -103,7 +103,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.0.1";
+		return "0.0.2";
 	}
 
 	/**
@@ -252,7 +252,13 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			String sessionName = null;
+			if (session != null && session.getAlias() != null) {
+				sessionName = session.getAlias().getName();
+			}
+			log.error("Unexpected exeption while loading replacementManager for "+sessionName+" : "+
+				e.getMessage(), e);
+			
 		}
 	}
 
@@ -270,7 +276,9 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 		{
 			public void run()
 			{
-				log.info("Adding SQL execution listener.");
+				if (log.isInfoEnabled()) {
+					log.info("Adding SQL execution listener.");
+				}
 				ISQLExecutionListener listener = new SQLReplaceExecutionListener(plugin, session);
 				sqlPaneAPI.addSQLExecutionListener(listener);
 				panelListenerMap.put(sqlPaneAPI, listener);
