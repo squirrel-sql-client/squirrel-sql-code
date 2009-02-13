@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sourceforge.squirrel_sql.client.session.MessagePanel;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -45,7 +45,7 @@ public class ReplacementManager
 
 	private ArrayList<Replacement> replacements = new ArrayList<Replacement>();
 
-	MessagePanel mpan;
+	IMessageHandler mpan;
 
 	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
 
@@ -57,7 +57,7 @@ public class ReplacementManager
 		try
 		{
 			replacementFile = new File(_plugin.getPluginUserSettingsFolder(), "sqlreplacement.xml");
-			mpan = (MessagePanel) _plugin.getApplication().getMessageHandler();
+			mpan = _plugin.getApplication().getMessageHandler();
 		}
 		catch (final IOException e)
 		{
@@ -155,12 +155,13 @@ public class ReplacementManager
 	 */
 	public String getContent()
 	{
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		final Iterator<Replacement> it = replacements.iterator();
 		while (it.hasNext())
 		{
 			final Replacement r = it.next();
-			sb.append(r.toString() + "\n");
+			sb.append(r.toString());
+			sb.append("\n");
 		}
 
 		return sb.toString();
@@ -181,9 +182,13 @@ public class ReplacementManager
 			final Replacement r = it.next();
 			if (toReplace.indexOf(r.getVariable()) > -1)
 			{
-				log.info("Replace-Rule: " + r.toString());
-				mpan.showMessage("Replace-Rule: " + r.toString());
-				toReplace = toReplace.replaceAll(r.getRegexVariable(), r.getValue());
+				String replacementMsg = "Replace-Rule: " + r.toString();
+				if (log.isInfoEnabled()) {
+					log.info(replacementMsg);
+				}
+				mpan.showMessage(replacementMsg);
+				
+				toReplace = toReplace.replace(r.getVariable(), r.getValue());
 			}
 		}
 
