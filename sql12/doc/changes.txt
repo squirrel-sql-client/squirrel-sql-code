@@ -133,6 +133,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+SQL Replace Plugin: Fixed a bug that caused patterns such as $P{startDate} to throw an exception.
+
 Add/Edit Alias window did not resize properly
 
 SQL Scripts Plugin: On some DBs (e.g. MySQL) "Store result of SQL in table"
