@@ -593,8 +593,10 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 
 		final StringTemplate st = new StringTemplate(templateStr);
 
+		String quotedConstraint = DialectUtils.shapeIdentifier(constraintName, prefs, this); 
+		
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, quotedConstraint);
 
 		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
 			valuesMap,
