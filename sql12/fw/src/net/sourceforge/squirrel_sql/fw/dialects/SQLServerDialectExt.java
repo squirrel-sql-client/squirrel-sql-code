@@ -454,7 +454,11 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	{
 		ArrayList<String> result = new ArrayList<String>();
 
-		boolean addDefaultClause = false;
+		/**
+		 * The default must be in the add column sql if the new column is marked not-null in SQLServer 2000, 
+		 * but it's optional in SQLServer 2005.
+		 */
+		boolean addDefaultClause = true;
 		boolean supportsNullQualifier = true;
 		boolean addNullClause = true;
 
@@ -469,11 +473,6 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 
 		result.add(sql);
 
-		if (column.getDefaultValue() != null)
-		{
-			result.add(getColumnDefaultAlterSQL(column, qualifier, prefs));
-		}
-
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -486,7 +485,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_TWO);
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
