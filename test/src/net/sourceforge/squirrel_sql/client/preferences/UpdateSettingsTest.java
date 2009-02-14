@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.Version;
@@ -168,5 +169,14 @@ public class UpdateSettingsTest extends BaseSQuirreLJUnit4TestCase
 		assertEquals("test", classUnderTest.getFileSystemUpdatePath());
 	}
 
+	@Test
+	public void testClone() throws Exception {
+		classUnderTest.setEnableAutomaticUpdates(false);
+		UpdateSettings clone = (UpdateSettings) ((UpdateSettings)classUnderTest).clone();
+		assertTrue(clone != classUnderTest);
+		assertFalse(clone.isEnableAutomaticUpdates());
+		classUnderTest.setEnableAutomaticUpdates(true);
+		assertFalse(clone.isEnableAutomaticUpdates());
+	}
 
 }
