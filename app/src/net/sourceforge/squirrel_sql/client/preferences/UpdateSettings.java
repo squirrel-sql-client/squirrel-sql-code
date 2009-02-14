@@ -62,6 +62,15 @@ public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 	}
 	
 	/**
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
+
+	/**
 	  * Copy Constructor
 	  *
 	  * @param updateSettings a <code>UpdateSettings</code> object
