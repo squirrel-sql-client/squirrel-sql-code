@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.isNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -514,9 +515,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 
    private void dropTable(ISession session, String tableName) throws Exception {
    	// For some reason, Frontbase doesn't find tables that have been previously created.
-   	if (DialectFactory.isFrontBase(session.getMetaData())) {
+   	if (DialectFactory.isFrontBase(session.getMetaData()) 
+   			|| DialectFactory.isMSSQLServer(session.getMetaData())) {
    		try {
-   			runSQL(session, "drop table "+tableName+" cascade");
+   			String dropSql = "drop table "+tableName;
+   			if (DialectFactory.isFrontBase(session.getMetaData())) {
+   				dropSql += " cascade";
+   			}
+   			runSQL(session, dropSql);
    		} catch (Exception e) {
    			// quiet
    		}
@@ -1217,6 +1223,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
          tableInfo = getTableInfo(session, testTableName.toUpperCase());
       }
       
+      assertNotNull("Couldn't locate table ("+testTableName+") that was just created with statement ("+
+      	createSql+").  Dialect="+dialect.getDisplayName(), tableInfo);
+      
       CreateScriptPreferences prefs = new CreateScriptPreferences();
       List<String> sqls = dialect.getCreateTableSQL(Arrays.asList(tableInfo),
                                                     session.getMetaData(),
@@ -1447,13 +1456,29 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    			dialect.getCreateViewSQL(viewName, "select * from "+tableName, null, qualifier, prefs);
    		runSQL(session, createViewSql);
    		
+   		/* 
+   		 * viewDefSql is the SQL that can be used to query the data dictionary for the body of a view. 
+   		 * This should exclude the "CREATE VIEW <viewname> AS" prefix and just return the query.
+   		 */
    		String viewDefSql = dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
+   		ResultSet rs = runQuery(session, viewDefSql);
+   		String viewBody = "";
+   		if (rs.next()) {
+   			viewBody = rs.getString(1);
+   		} else {
+   			fail("viewDefSql () returned no view body for dialect: "+dialect.getDisplayName());
+   		}
+   		assertNotNull(viewBody);
+   		assertTrue("Expected view body to have larger than zero length", viewBody.length() > 0);
    		
+   		/*
+   		 * Now that we have run the view definition query, and retrieved the SQL that is the body of the view
+   		 * (that is, it's query part minus the "CREATE VIEW AS" prefix), we can drop the view. 
+   		 */
    		String dropViewSql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-   		
    		runSQL(session, new String[] { dropViewSql }, extractor);
+
    		
-   		runSQL(session, new String[] { viewDefSql }, extractor);
    		
    	} else {
    		try {
