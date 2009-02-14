@@ -1102,8 +1102,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    	}
    	
 		Statement stmt = null;
-		String sql = "DATABASE " + catalogName;
-
 		try
 		{
 			stmt = _conn.createStatement();
