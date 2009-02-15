@@ -524,9 +524,9 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final Collection<String[]> localRefColumns, final String onUpdateAction, final String onDeleteAction,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		Boolean deferrableNotSupported = null;
-		Boolean initiallyDeferredNotSupported = null;
-		Boolean matchFullNotSupported = null;
+		final Boolean deferrableNotSupported = null;
+		final Boolean initiallyDeferredNotSupported = null;
+		final Boolean matchFullNotSupported = null;
 
 		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
 			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
@@ -549,11 +549,11 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		// "ALTER TABLE $tableName$ " +
 		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
 
-		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
+		final String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
 		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
@@ -586,7 +586,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final String[] columns, final boolean unique, final String tablespace, final String constraints,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 		result.append("CREATE ");
 
 		if (unique)
@@ -598,7 +598,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		result.append(" ON ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		result.append("(");
-		for (String column : columns)
+		for (final String column : columns)
 		{
 			result.append(column);
 			result.append(",");
@@ -634,22 +634,23 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		// "CREATE SEQUENCE $sequenceName$ " +
 		// "$increment$ $startWith$ $minimum$ $maximum$ $cache$ $cycle$";
 
-		String templateStr = ST_CREATE_SEQUENCE_STYLE_TWO;
+		final String templateStr = ST_CREATE_SEQUENCE_STYLE_TWO;
 
-		StringTemplate startClauseTemplate = new StringTemplate("START WITH $startWith$ ,");
-		OptionalSqlClause startClause = new OptionalSqlClause(startClauseTemplate, ST_START_WITH_KEY, start);
+		final StringTemplate startClauseTemplate = new StringTemplate("START WITH $startWith$ ,");
+		final OptionalSqlClause startClause =
+			new OptionalSqlClause(startClauseTemplate, ST_START_WITH_KEY, start);
 
-		StringTemplate incrementByClauseTemplate = new StringTemplate("INCREMENT BY $incrementBy$ ,");
-		OptionalSqlClause incrementClause =
+		final StringTemplate incrementByClauseTemplate = new StringTemplate("INCREMENT BY $incrementBy$ ,");
+		final OptionalSqlClause incrementClause =
 			new OptionalSqlClause(incrementByClauseTemplate, ST_INCREMENT_BY_KEY, increment);
 
-		StringTemplate maxClauseTemplate = new StringTemplate("MAXVALUE $maximum$ ,");
-		OptionalSqlClause maxClause = new OptionalSqlClause(maxClauseTemplate, ST_MAXIMUM_KEY, maximum);
+		final StringTemplate maxClauseTemplate = new StringTemplate("MAXVALUE $maximum$ ,");
+		final OptionalSqlClause maxClause = new OptionalSqlClause(maxClauseTemplate, ST_MAXIMUM_KEY, maximum);
 
-		StringTemplate minClauseTemplate = new StringTemplate("MINVALUE $minimum$ ,");
-		OptionalSqlClause minClause = new OptionalSqlClause(minClauseTemplate, ST_MINIMUM_KEY, minimum);
+		final StringTemplate minClauseTemplate = new StringTemplate("MINVALUE $minimum$ ,");
+		final OptionalSqlClause minClause = new OptionalSqlClause(minClauseTemplate, ST_MINIMUM_KEY, minimum);
 
-		StringTemplate st = new StringTemplate(templateStr);
+		final StringTemplate st = new StringTemplate(templateStr);
 
 		st.setAttribute(ST_SEQUENCE_NAME_KEY, "PUB." + sequenceName);
 		st.setAttribute(ST_START_WITH_KEY, startClause.toString());
@@ -684,9 +685,9 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 		// "CREATE VIEW $viewName$ " +
 		// "AS $selectStatement$ $withCheckOption$";
-		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
+		final StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
 
 		if (checkOption != null)
@@ -718,8 +719,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropIndexSQL(final String tableName, final String indexName, final boolean cascade,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		final StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 		return DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs);
@@ -736,8 +737,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// Currently, OpenEdge only supports the PUB schema for sequences.
 
-		DatabaseObjectQualifier pubQualifier = new DatabaseObjectQualifier(qualifier.getCatalog(), "PUB");
-		SqlGenerationPreferences pubPrefs = new SqlGenerationPreferences();
+		final DatabaseObjectQualifier pubQualifier = new DatabaseObjectQualifier(qualifier.getCatalog(), "PUB");
+		final SqlGenerationPreferences pubPrefs = new SqlGenerationPreferences();
 		pubPrefs.setQualifyTableNames(true);
 
 		return DialectUtils.getDropSequenceSQL(sequenceName, null, pubQualifier, pubPrefs, this);
@@ -752,7 +753,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropViewSQL(final String viewName, final boolean cascade,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		Boolean cascadeNotSupported = null;
+		final Boolean cascadeNotSupported = null;
 
 		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);
 	}
@@ -767,9 +768,9 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
 		// "ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
-		StringTemplate st = new StringTemplate(ST_RENAME_OBJECT_STYLE_ONE);
+		final StringTemplate st = new StringTemplate(ST_RENAME_OBJECT_STYLE_ONE);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldTableName, ST_NEW_OBJECT_NAME_KEY, newTableName);
 
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
@@ -851,9 +852,12 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsAlterSequence()
 	{
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAutoIncrement()
+	 */
 	@Override
 	public boolean supportsAutoIncrement()
 	{
@@ -899,6 +903,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateView()
 	 */
+	@Override
 	public boolean supportsCreateView()
 	{
 		return true;
@@ -907,6 +912,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropConstraint()
 	 */
+	@Override
 	public boolean supportsDropConstraint()
 	{
 		return true;
@@ -915,6 +921,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropIndex()
 	 */
+	@Override
 	public boolean supportsDropIndex()
 	{
 		return true;
@@ -923,6 +930,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropSequence()
 	 */
+	@Override
 	public boolean supportsDropSequence()
 	{
 		return true;
@@ -931,6 +939,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropView()
 	 */
+	@Override
 	public boolean supportsDropView()
 	{
 		return true;
@@ -939,6 +948,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsEmptyTables()
 	 */
+	@Override
 	public boolean supportsEmptyTables()
 	{
 		return false;
@@ -947,6 +957,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
 	 */
+	@Override
 	public boolean supportsIndexes()
 	{
 		return true;
@@ -955,6 +966,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
 	 */
+	@Override
 	public boolean supportsMultipleRowInserts()
 	{
 		return true;
@@ -963,6 +975,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameTable()
 	 */
+	@Override
 	public boolean supportsRenameTable()
 	{
 		return true;
@@ -971,6 +984,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameView()
 	 */
+	@Override
 	public boolean supportsRenameView()
 	{
 		return false;
@@ -979,6 +993,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequence()
 	 */
+	@Override
 	public boolean supportsSequence()
 	{
 		return true;
@@ -987,6 +1002,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequenceInformation()
 	 */
+	@Override
 	public boolean supportsSequenceInformation()
 	{
 		return true;
@@ -995,6 +1011,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsTablespace()
 	 */
+	@Override
 	public boolean supportsTablespace()
 	{
 		return false;
@@ -1003,6 +1020,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsUpdate()
 	 */
+	@Override
 	public boolean supportsUpdate()
 	{
 		return false;
@@ -1011,6 +1029,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddColumn()
 	 */
+	@Override
 	public boolean supportsAddColumn()
 	{
 		return true;
@@ -1019,6 +1038,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
+	@Override
 	public boolean supportsViewDefinition()
 	{
 		return true;
@@ -1029,6 +1049,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getViewDefinitionSQL(final String viewName, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
@@ -1052,6 +1073,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
@@ -1061,6 +1083,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
 	 */
+	@Override
 	public boolean supportsCorrelatedSubQuery()
 	{
 		return false;

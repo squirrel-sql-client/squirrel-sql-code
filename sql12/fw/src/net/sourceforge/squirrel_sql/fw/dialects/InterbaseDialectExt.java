@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.hibernate.HibernateException;
 
 /**
- * A dialect delegate for the Interbase database.  This dialect's support and get..SQL methods have not been 
+ * A dialect delegate for the Interbase database. This dialect's support and get..SQL methods have not been
  * tested against an actual instance of Interbase.
  */
 public class InterbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
@@ -76,7 +76,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/** extended hibernate dialect used in this wrapper */
-	private InterbaseDialectHelper _dialect = new InterbaseDialectHelper();
+	private final InterbaseDialectHelper _dialect = new InterbaseDialectHelper();
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
@@ -248,7 +248,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsDropColumn()
 	{
-		
+
 		return true;
 	}
 
@@ -267,7 +267,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		
+
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
@@ -286,7 +286,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		
+
 		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
 			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
@@ -349,7 +349,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsRenameColumn()
 	{
-		
+
 		return true;
 	}
 
@@ -422,7 +422,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsAlterColumnDefault()
 	{
-		
+
 		return true;
 	}
 
@@ -1000,6 +1000,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddColumn()
 	 */
+	@Override
 	public boolean supportsAddColumn()
 	{
 		return false;
@@ -1008,6 +1009,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsViewDefinition()
 	 */
+	@Override
 	public boolean supportsViewDefinition()
 	{
 
@@ -1019,6 +1021,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -1030,6 +1033,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -1039,6 +1043,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCorrelatedSubQuery()
 	 */
+	@Override
 	public boolean supportsCorrelatedSubQuery()
 	{
 

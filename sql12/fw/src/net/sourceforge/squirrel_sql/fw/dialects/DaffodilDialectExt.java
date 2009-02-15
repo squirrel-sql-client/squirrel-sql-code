@@ -81,12 +81,12 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 			registerColumnType(Types.VARCHAR, 4192, "varchar($l)");
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
 			registerColumnType(Types.VARCHAR, "clob(1073741823)");
-			
-			// The registrations below are made in support for new types introduced in Java6 
-			
-			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version 
+
+			// The registrations below are made in support for new types introduced in Java6
+
+			// Replace "-8" with Types.ROWID when Java6 is the minimum supported version
 			registerColumnType(-8, "integer");
-			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version 
+			// Replace "-9" with Types.NVARCHAR when Java6 is the minimum supported version
 			registerColumnType(-9, 4192, "varchar($l)");
 			registerColumnType(-9, 1073741823, "clob($l)");
 			registerColumnType(-9, "clob(1073741823)");
@@ -103,7 +103,7 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 			// Replace "2011" with Types.NCLOB when Java6 is the minimum supported version
 			registerColumnType(2011, 1073741823, "clob($l)");
 			registerColumnType(2011, "clob(1073741823)");
-			
+
 		}
 	}
 
@@ -150,14 +150,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public int getMaxPrecision(final int dataType)
 	{
-		if (dataType == Types.FLOAT)
-		{
-			return 15;
-		}
-		if (dataType == Types.NUMERIC || dataType == Types.DECIMAL)
-		{
-			return 38;
-		}
+		if (dataType == Types.FLOAT) { return 15; }
+		if (dataType == Types.NUMERIC || dataType == Types.DECIMAL) { return 38; }
 		return 0;
 	}
 
@@ -177,10 +171,7 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().startsWith("Daffodil"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -221,8 +212,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public String getColumnDropSQL(final String tableName, final String columnName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		final StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -241,12 +232,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
 		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -258,7 +245,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
 		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -366,7 +354,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		final String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
+			prefs);
 	}
 
 	/**
@@ -374,7 +363,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true, qualifier, prefs, this);
 	}
@@ -384,7 +374,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(final String fkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -465,20 +456,9 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final Boolean initiallyDeferredNotSupported = null;
 		final Boolean matchFullNotSupported = null;
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-			refTableName,
-			constraintName,
-			deferrableNotSupported,
-			initiallyDeferredNotSupported,
-			matchFullNotSupported,
-			autoFKIndex,
-			fkIndexName,
-			localRefColumns,
-			onUpdateAction,
-			onDeleteAction,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
+			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
 	}
 
 	/**
@@ -504,11 +484,7 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
-		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
-			valuesMap,
-			columns,
-			qualifier,
-			prefs,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
 			this) };
 	}
 
@@ -523,8 +499,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final String minimum, final String maximum, final String restart, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum, cache,
-			cycle, qualifier, prefs, this);
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum,
+			cache, cycle, qualifier, prefs, this);
 	}
 
 	/**
@@ -572,16 +548,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final String minimum, final String maximum, final String start, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getCreateSequenceSQL(sequenceName,
-			increment,
-			minimum,
-			maximum,
-			start,
-			cache,
-			null,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getCreateSequenceSQL(sequenceName, increment, minimum, maximum, start, cache, null,
+			qualifier, prefs, this);
 	}
 
 	/**
@@ -597,13 +565,8 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		final boolean supportsNullQualifier = false;
 		final boolean addNullClause = true;
 
-		return new String[] { DialectUtils.getAddColumSQL(column,
-			this,
-			addDefaultClause,
-			supportsNullQualifier,
-			addNullClause,
-			qualifier,
-			prefs) };
+		return new String[] { DialectUtils.getAddColumSQL(column, this, addDefaultClause,
+			supportsNullQualifier, addNullClause, qualifier, prefs) };
 	}
 
 	/**
@@ -691,23 +654,16 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 		if (fromTables != null)
 		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else
+		}
+		else
 		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
 
 		final StringTemplate st = new StringTemplate(templateStr);
 
-		return DialectUtils.getUpdateSQL(st,
-			tableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
+			whereValues, qualifier, prefs, this);
 	}
 
 	/**
@@ -745,7 +701,7 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsAlterSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -920,14 +876,16 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		String schema = qualifier.getSchema();
-		String catalog = qualifier.getCatalog();
-		StringBuilder result = new StringBuilder();
-		if (catalog != null) {
+		final String schema = qualifier.getSchema();
+		final String catalog = qualifier.getCatalog();
+		final StringBuilder result = new StringBuilder();
+		if (catalog != null)
+		{
 			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
 			result.append(".");
 		}
-		if (schema != null) {
+		if (schema != null)
+		{
 			result.append(DialectUtils.shapeIdentifier(schema, prefs, this));
 			result.append(".");
 		}

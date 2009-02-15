@@ -98,6 +98,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		return result;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
+	 */
 	@Override
 	public int getMaxPrecision(final int dataType)
 	{
@@ -120,10 +123,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public int getColumnLength(final int columnSize, final int dataType)
 	{
 		// driver returns 8 for "long byte", yet it can store 2GB of data.
-		if (dataType == Types.LONGVARBINARY)
-		{
-			return Integer.MAX_VALUE;
-		}
+		if (dataType == Types.LONGVARBINARY) { return Integer.MAX_VALUE; }
 		return columnSize;
 	}
 
@@ -149,10 +149,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		final String lname = databaseProductName.trim().toLowerCase();
 		if (lname.startsWith("sap") || lname.startsWith("maxdb"))
 		{
@@ -186,7 +183,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 *            if the database doesn't support dropping columns.
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(final String tableName, final String columnName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
@@ -206,12 +204,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
 		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -313,7 +307,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		if (nullable)
 		{
 			result.append(" DEFAULT NULL");
-		} else
+		}
+		else
 		{
 			result.append(" NOT NULL");
 		}
@@ -342,7 +337,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return the SQL to make the change
 	 */
 	@Override
-	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnRenameSQL(from, to, qualifier, prefs, this);
 	}
@@ -398,7 +394,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return SQL to make the change
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(final TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(final TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		final String alterClause = DialectUtils.COLUMN_CLAUSE;
 		final String newDefault = info.getDefaultValue();
@@ -406,11 +403,13 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		if (newDefault != null && !"".equals(newDefault))
 		{
 			defaultClause = DialectUtils.ADD_DEFAULT_CLAUSE;
-		} else
+		}
+		else
 		{
 			defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
 		}
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
+			prefs);
 	}
 
 	/**
@@ -423,7 +422,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
@@ -438,7 +438,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(final String fkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -520,13 +521,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final boolean addNullClause = true;
 
 		final String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
+			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
+				qualifier, prefs);
 
 		result.add(sql);
 
@@ -581,14 +577,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
 		}
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(fkST,
-			fkValuesMap,
-			childIndexST,
-			ckIndexValuesMap,
-			localRefColumns,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkST, fkValuesMap, childIndexST, ckIndexValuesMap,
+			localRefColumns, qualifier, prefs, this);
 
 	}
 
@@ -619,8 +609,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final String minimum, final String maximum, final String restart, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum, cache,
-			cycle, qualifier, prefs, this);
+		return DialectUtils.getSimulatedAlterSequenceSQL(sequenceName, increment, minimum, maximum, minimum,
+			cache, cycle, qualifier, prefs, this);
 	}
 
 	/**
@@ -694,16 +684,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final OptionalSqlClause cacheClause = new OptionalSqlClause(DialectUtils.CACHE_CLAUSE, cache);
 
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY,
-				sequenceName,
-				ST_INCREMENT_KEY,
-				incClause,
-				ST_MINIMUM_KEY,
-				minClause,
-				ST_MAXIMUM_KEY,
-				maxClause,
-				ST_CACHE_KEY,
-				cacheClause);
+			DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName, ST_INCREMENT_KEY, incClause,
+				ST_MINIMUM_KEY, minClause, ST_MAXIMUM_KEY, maxClause, ST_CACHE_KEY, cacheClause);
 		if (cycle)
 		{
 			valuesMap.put(ST_CYCLE_KEY, "CYCLE");
@@ -893,7 +875,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsAlterSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
