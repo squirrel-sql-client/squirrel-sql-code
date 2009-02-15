@@ -36,12 +36,6 @@ import org.hibernate.HibernateException;
 /**
  * A dialect delegate for the Pointbase database.
  */
-/**
- * @author manningr
- */
-/**
- * @author manningr
- */
 public class PointbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
