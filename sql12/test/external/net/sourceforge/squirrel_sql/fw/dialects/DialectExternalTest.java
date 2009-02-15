@@ -288,10 +288,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
    }
    
    private void testDialects(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception {
-   	
+   	   	
    	prefs.setQualifyTableNames(qualifyTableNames);
    	prefs.setQuoteIdentifiers(quoteIdentifiers);
-   	
+
    	String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
    	if (propertyFile == null || "".equals(propertyFile)) {
    		fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
@@ -300,7 +300,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       props.load(new FileReader(propertyFile));
       initSessions(sessions, "dbsToTest");
       initReferenceDialects(referenceDialects);
-      runTests();
+      runTests(quoteIdentifiers, qualifyTableNames);
    }
    
    /**
@@ -752,8 +752,12 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
       
    }
 
-   private void runTests() throws Exception {
+   private void runTests(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception {
       for (Iterator<ISession> iter = sessions.iterator(); iter.hasNext();) {
+      	prefs.setQualifyTableNames(qualifyTableNames);
+      	prefs.setQuoteIdentifiers(quoteIdentifiers);
+      	prefs.setQuoteConstraintNames(true);
+      	
          ISession session = iter.next();
          HibernateDialect dialect = getDialect(session);
          DialectType dialectType = DialectFactory.getDialectType(session.getMetaData());
