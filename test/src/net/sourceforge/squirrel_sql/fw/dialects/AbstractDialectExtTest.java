@@ -27,10 +27,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Types;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -83,6 +86,93 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 	public void testSupportsProduct()
 	{
 		assertFalse(classUnderTest.supportsProduct(null, null));
+		assertFalse(classUnderTest.supportsProduct("FOOBAR", "1"));
+
+	}
+
+	@Test
+	public void testGetLengthFunction()
+	{
+		for (String type : JDBCTypeMapper.getJdbcTypeList())
+		{
+			int dataType = JDBCTypeMapper.getJdbcType(type);
+			String lengthFunction = classUnderTest.getLengthFunction(dataType);
+			assertNotNull(lengthFunction);
+			assertFalse("".equals(lengthFunction));
+		}
+
+	}
+
+	@Test
+	public void testCanPasteTo() throws Exception
+	{
+		IDatabaseObjectInfo mockDboInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
+		boolean canPasteTo = false;
+		DatabaseObjectType t = DatabaseObjectType.DATABASE_TYPE_DBO;
+		for (Field f : t.getClass().getFields())
+		{
+			if (Modifier.isPublic(f.getModifiers()))
+			{
+				Object o = f.get(t);
+				expect(mockDboInfo.getDatabaseObjectType()).andStubReturn(o);
+				mockHelper.replayAll();
+				canPasteTo = canPasteTo || classUnderTest.canPasteTo(mockDboInfo);
+				mockHelper.resetAll();
+			}
+		}
+		String displayName = classUnderTest.getDisplayName();
+		assertTrue("Dialect (" + displayName + ") can't paste to any object", canPasteTo);
+
+	}
+
+	@Test
+	public void testGetMaxFunction()
+	{
+		String displayName = classUnderTest.getDisplayName();
+		assertNotNull("Dialect (" + displayName + ") doesn't return a valid max function",
+			classUnderTest.getMaxFunction());
+		assertFalse("Dialect (" + displayName + ") doesn't return a valid max function",
+			"".equals(classUnderTest.getMaxFunction()));
+	}
+
+	@Test
+	public void testGetPrecisionDigits()
+	{
+		for (String type : JDBCTypeMapper.getJdbcTypeList())
+		{
+			int dataType = JDBCTypeMapper.getJdbcType(type);
+			assertTrue(classUnderTest.getPrecisionDigits(10, dataType) > 0);
+		}
+	}
+
+	@Test
+	public void testGetMaxPrecision()
+	{
+		for (String type : JDBCTypeMapper.getJdbcTypeList())
+		{
+			int dataType = JDBCTypeMapper.getJdbcType(type);
+			assertTrue(classUnderTest.getMaxPrecision(dataType) >= 0);
+		}
+	}
+
+	@Test
+	public void testGetMaxScale()
+	{
+		for (String type : JDBCTypeMapper.getJdbcTypeList())
+		{
+			int dataType = JDBCTypeMapper.getJdbcType(type);
+			assertTrue(classUnderTest.getMaxScale(dataType) >= 0);
+		}
+	}
+
+	@Test
+	public void testGetColumnLength()
+	{
+		for (String type : JDBCTypeMapper.getJdbcTypeList())
+		{
+			int dataType = JDBCTypeMapper.getJdbcType(type);
+			assertTrue(classUnderTest.getColumnLength(10, dataType) >= 0);
+		}
 	}
 
 	@Test
@@ -112,7 +202,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding "
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for adding "
 					+ "a foreign key constraint");
 			}
 		}
@@ -142,7 +233,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for altering "
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for altering "
 					+ "a column default");
 			}
 		}
@@ -172,7 +264,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for dropping a column");
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for dropping a column");
 			}
 		}
 		catch (UnsupportedOperationException e)
@@ -202,7 +295,9 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for modify a column's nullability");
+				fail("Expected dialect ("
+					+ classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for modify a column's nullability");
 			}
 		}
 		catch (UnsupportedOperationException e)
@@ -236,7 +331,9 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for re-naming a column");
+				fail("Expected dialect ("
+					+ classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for re-naming a column");
 			}
 		}
 		catch (UnsupportedOperationException e)
@@ -261,7 +358,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			String[] sql = classUnderTest.getAddColumnSQL(mockColumnInfo, mockQualifier, mockPrefs);
 			if (!classUnderTest.supportsAddColumn())
 			{
-				fail("Expected an UnsupportedOperationException when trying to retrieve SQL for adding a column");
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to retrieve SQL for adding a column");
 			}
 			assertNotNull(sql);
 			assertTrue(sql.length != 0);
@@ -298,7 +396,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to create a sequence");
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to create a sequence");
 			}
 		}
 		catch (UnsupportedOperationException e)
@@ -321,15 +420,16 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			String[] sql =
 				classUnderTest.getAlterSequenceSQL("sSequenceName", "1", "1", "2000", "1", "20", true,
 					mockQualifier, mockPrefs);
-			
-			if (classUnderTest.supportsSequence())
+
+			if (classUnderTest.supportsSequence() && classUnderTest.supportsAlterSequence())
 			{
 				assertNotNull("supportsSequence == true, but sql returned was null", sql);
 				assertTrue(sql.length != 0);
 			}
 			else
 			{
-				fail("Expected an UnsupportedOperationException when trying to alter a sequence");
+				fail("Expected dialect (" + classUnderTest.getDisplayName()
+					+ ") to throw UnsupportedOperationException when trying to alter a sequence");
 			}
 		}
 		catch (UnsupportedOperationException e)
@@ -341,7 +441,7 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		}
 		mockHelper.verifyAll();
 	}
-	
+
 	// Helper methods
 
 	private void failForUnsupported(String supportsMethod, UnsupportedOperationException e)
@@ -351,7 +451,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 		// If that is the case the message is "Not yet implemented" - fail for all other messages.
 		if (!message.equals("Not yet implemented"))
 		{
-			fail(supportsMethod + " was true, but still got an UnsupportedOperationException: " + e.getMessage());
+			fail("For dialect (" + classUnderTest.getDisplayName() + ") " + supportsMethod
+				+ " was true, but still got an UnsupportedOperationException: " + e.getMessage());
 		}
 	}
 
@@ -397,7 +498,8 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 				&& type != 2009 // SQLXML
 			)
 			{
-				fail("No mapping for type: " + type + "=" + JDBCTypeMapper.getJdbcTypeName(type));
+				fail("Dialect (" + classUnderTest.getDisplayName() + ") has no mapping for type: " + type + "="
+					+ JDBCTypeMapper.getJdbcTypeName(type));
 			}
 		}
 	}
