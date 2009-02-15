@@ -141,7 +141,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
 		{
 			return 48;
-		} else
+		}
+		else
 		{
 			return 31;
 		}
@@ -198,10 +199,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	@Override
 	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().toLowerCase().startsWith("pointbase"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -234,7 +232,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *            if the database doesn't support dropping columns.
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(final String tableName, final String columnName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
@@ -254,12 +253,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
 		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -276,7 +271,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
 		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs,
+			this) };
 	}
 
 	/**
@@ -390,7 +386,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		final String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier,
+			prefs);
 	}
 
 	/**
@@ -427,7 +424,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
@@ -442,7 +440,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(final String fkName, final String tableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -522,13 +521,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		final boolean addNullClause = true;
 
 		final String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
+			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
+				qualifier, prefs);
 
 		return new String[] { sql };
 	}
@@ -551,20 +545,9 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		final Boolean initiallyDeferredNotSupported = null;
 		final Boolean matchFullNotSupported = null;
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-			refTableName,
-			constraintName,
-			deferrableNotSupported,
-			initiallyDeferredNotSupported,
-			matchFullNotSupported,
-			autoFKIndex,
-			fkIndexName,
-			localRefColumns,
-			onUpdateAction,
-			onDeleteAction,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
+			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
 	}
 
 	/**
@@ -587,16 +570,12 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 
 		final StringTemplate st = new StringTemplate(templateStr);
 
-		String quotedConstraint = DialectUtils.shapeIdentifier(constraintName, prefs, this); 
-		
+		final String quotedConstraint = DialectUtils.shapeIdentifier(constraintName, prefs, this);
+
 		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, quotedConstraint);
 
-		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
-			valuesMap,
-			columns,
-			qualifier,
-			prefs,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
 			this) };
 	}
 
@@ -627,26 +606,8 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		final String[] columns, final boolean unique, final String tablespace, final String constraints,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final StringBuilder result = new StringBuilder();
-		result.append("CREATE ");
-
-		if (unique)
-		{
-			result.append("UNIQUE ");
-		}
-		result.append(" INDEX ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
-		result.append(" ON ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
-		result.append("(");
-		for (final String column : columns)
-		{
-			result.append(column);
-			result.append(",");
-		}
-		result.setLength(result.length() - 1);
-		result.append(")");
-		return result.toString();
+		return DialectUtils.getCreateIndexSQL(indexName, tableName, accessMethod, columns, unique, tablespace,
+			constraints, qualifier, prefs, this);
 	}
 
 	/**
@@ -821,28 +782,22 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		if (fromTables != null)
 		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else
+		}
+		else
 		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
 
 		final StringTemplate st = new StringTemplate(templateStr);
 
-		return DialectUtils.getUpdateSQL(st,
-			tableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
+			whereValues, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAccessMethods()
 	 */
+	@Override
 	public boolean supportsAccessMethods()
 	{
 		return false;
@@ -851,6 +806,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddForeignKeyConstraint()
 	 */
+	@Override
 	public boolean supportsAddForeignKeyConstraint()
 	{
 		return true;
@@ -859,6 +815,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddUniqueConstraint()
 	 */
+	@Override
 	public boolean supportsAddUniqueConstraint()
 	{
 		return true;
@@ -867,6 +824,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterSequence()
 	 */
+	@Override
 	public boolean supportsAlterSequence()
 	{
 		return false;
@@ -875,6 +833,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAutoIncrement()
 	 */
+	@Override
 	public boolean supportsAutoIncrement()
 	{
 		return false;
@@ -883,6 +842,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCheckOptionsForViews()
 	 */
+	@Override
 	public boolean supportsCheckOptionsForViews()
 	{
 		return true;
@@ -891,6 +851,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateIndex()
 	 */
+	@Override
 	public boolean supportsCreateIndex()
 	{
 		return true;
@@ -899,6 +860,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateSequence()
 	 */
+	@Override
 	public boolean supportsCreateSequence()
 	{
 		return false;
@@ -907,6 +869,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateTable()
 	 */
+	@Override
 	public boolean supportsCreateTable()
 	{
 		return true;
@@ -915,6 +878,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateView()
 	 */
+	@Override
 	public boolean supportsCreateView()
 	{
 		return true;
@@ -923,6 +887,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropConstraint()
 	 */
+	@Override
 	public boolean supportsDropConstraint()
 	{
 		return true;
@@ -931,6 +896,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropIndex()
 	 */
+	@Override
 	public boolean supportsDropIndex()
 	{
 		return true;
@@ -939,6 +905,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropSequence()
 	 */
+	@Override
 	public boolean supportsDropSequence()
 	{
 		return false;
@@ -947,6 +914,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsEmptyTables()
 	 */
+	@Override
 	public boolean supportsEmptyTables()
 	{
 		return false;
@@ -955,6 +923,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
 	 */
+	@Override
 	public boolean supportsIndexes()
 	{
 		return true;
@@ -963,6 +932,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsInsertInto()
 	 */
+	@Override
 	public boolean supportsInsertInto()
 	{
 		return true;
@@ -971,6 +941,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
 	 */
+	@Override
 	public boolean supportsMultipleRowInserts()
 	{
 		return true;
@@ -979,6 +950,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameTable()
 	 */
+	@Override
 	public boolean supportsRenameTable()
 	{
 		return true;
@@ -987,6 +959,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameView()
 	 */
+	@Override
 	public boolean supportsRenameView()
 	{
 		return false;
@@ -995,6 +968,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequence()
 	 */
+	@Override
 	public boolean supportsSequence()
 	{
 		return false;
@@ -1003,6 +977,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequenceInformation()
 	 */
+	@Override
 	public boolean supportsSequenceInformation()
 	{
 		return false;
@@ -1011,6 +986,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsTablespace()
 	 */
+	@Override
 	public boolean supportsTablespace()
 	{
 		return true;
@@ -1019,6 +995,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsUpdate()
 	 */
+	@Override
 	public boolean supportsUpdate()
 	{
 		return true;
@@ -1027,6 +1004,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddColumn()
 	 */
+	@Override
 	public boolean supportsAddColumn()
 	{
 		return true;
@@ -1035,6 +1013,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
+	@Override
 	public boolean supportsViewDefinition()
 	{
 		return true;
@@ -1045,6 +1024,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getViewDefinitionSQL(final String viewName, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
@@ -1068,6 +1048,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
@@ -1077,6 +1058,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
 	 */
+	@Override
 	public boolean supportsCorrelatedSubQuery()
 	{
 		return true;

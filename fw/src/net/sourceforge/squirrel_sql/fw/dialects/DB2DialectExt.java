@@ -821,27 +821,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final StringBuilder result = new StringBuilder();
-		result.append("CREATE ");
-
-		if (unique)
-		{
-			result.append("UNIQUE ");
-		}
-		result.append(" INDEX ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
-		result.append(" ON ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
-		result.append("(");
-		for (final String column : columns)
-		{
-			result.append(column);
-			result.append(",");
-		}
-		result.setLength(result.length() - 1);
-		result.append(")");
-		return result.toString();
-
+		return DialectUtils.getCreateIndexSQL(indexName, tableName, accessMethod, columns, unique, tablespace,
+			constraints, qualifier, prefs, this);
 	}
 
 	/**
