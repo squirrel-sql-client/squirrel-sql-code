@@ -901,40 +901,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		result.append("FROM USER_SEQUENCES ");
 		result.append("WHERE sequence_name = upper(?)");
 		return result.toString();
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
-	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	public String[] getUpdateSQL(String destTableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
-	{
-		String templateStr = "";
-		
-		if (fromTables != null) {
-			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else {
-			templateStr = ST_UPDATE_STYLE_ONE;
-		}
-			
-		StringTemplate st = new StringTemplate(templateStr);
-		
-		return DialectUtils.getUpdateSQL(st,
-			destTableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
-	}
- 
+	} 
 	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()

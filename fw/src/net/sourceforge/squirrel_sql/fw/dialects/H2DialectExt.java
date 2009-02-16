@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
+
 /*
  * Copyright (C) 2008 Rob Manning
  * manningr@users.sourceforge.net
@@ -132,10 +133,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
-		if (databaseProductName == null)
-		{
-			return false;
-		}
+		if (databaseProductName == null) { return false; }
 		if (databaseProductName.trim().startsWith("H2"))
 		{
 			// We don't yet have the need to discriminate by version.
@@ -168,15 +166,8 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false,
+			DialectUtils.CASCADE_CLAUSE, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -206,9 +197,9 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			if (info.isNullable().equals("YES"))
 			{
 				String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-				String notNullSql = 
+				String notNullSql =
 					DialectUtils.getColumnNullableAlterSQL(info, false, this, alterClause, true, qualifier, prefs);
-				
+
 				result.add(notNullSql);
 			}
 			addPKSQL.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
@@ -218,7 +209,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			}
 		}
 		addPKSQL.append(")");
-		
+
 		result.add(addPKSQL.toString());
 		return result.toArray(new String[result.size()]);
 	}
@@ -250,11 +241,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info,
-			this,
-			alterClause,
-			true,
-			qualifier,
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier,
 			prefs) };
 	}
 
@@ -323,7 +310,8 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier,
+			prefs);
 	}
 
 	/**
@@ -350,24 +338,19 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this,
-			info,
-			alterClause,
-			false,
-			defaultClause,
-			qualifier,
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier,
 			prefs);
 	}
 
-	
-	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) throws UnsupportedOperationException
-	{		
+	{
 		StringTemplate st = new StringTemplate(DROP_COLUMN_SQL_TEMPLATE);
 
 		HashMap<String, String> valuesMap =
@@ -461,9 +444,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		StringTemplate st = new StringTemplate(ST_ADD_AUTO_INCREMENT_STYLE_TWO);
 
 		HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
-				column.getTableName(),
-				ST_COLUMN_NAME_KEY,
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, column.getTableName(), ST_COLUMN_NAME_KEY,
 				column.getColumnName());
 
 		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
@@ -484,13 +465,8 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		boolean addNullClause = true;
 
 		String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
+			DialectUtils.getAddColumSQL(column, this, addDefaultClause, supportsNullQualifier, addNullClause,
+				qualifier, prefs);
 
 		result.add(sql);
 
@@ -541,14 +517,8 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
 		}
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(fkST,
-			fkValuesMap,
-			childIndexST,
-			ckIndexValuesMap,
-			localRefColumns,
-			qualifier,
-			prefs,
-			this);
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkST, fkValuesMap, childIndexST, ckIndexValuesMap,
+			localRefColumns, qualifier, prefs, this);
 	}
 
 	/**
@@ -566,18 +536,10 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		StringTemplate st = new StringTemplate(ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE);
 
 		HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
-				tableName,
-				ST_CONSTRAINT_KEY,
-				"CONSTRAINT",
-				ST_CONSTRAINT_NAME_KEY,
-				constraintName);
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_KEY, "CONSTRAINT",
+				ST_CONSTRAINT_NAME_KEY, constraintName);
 
-		return new String[] { DialectUtils.bindTemplateAttributes(this,
-			st,
-			valuesMap,
-			columns,
-			qualifier,
+		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, columns, qualifier,
 			prefs) };
 
 	}
@@ -848,40 +810,6 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 
 		return st.toString();
 
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
-	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
-		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
-	{
-		String templateStr = "";
-
-		if (fromTables != null)
-		{
-			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else
-		{
-			templateStr = ST_UPDATE_STYLE_ONE;
-		}
-
-		StringTemplate st = new StringTemplate(templateStr);
-
-		return DialectUtils.getUpdateSQL(st,
-			tableName,
-			setColumns,
-			setValues,
-			fromTables,
-			whereColumns,
-			whereValues,
-			qualifier,
-			prefs,
-			this);
 	}
 
 	/**
