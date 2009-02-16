@@ -416,7 +416,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 							text = text.substring(0, index) + text.substring(index + 1);
 						}
 						((IRestorableTextComponent) _theComponent).updateText(text);
-						_theComponent.getToolkit().beep();
+						_beepHelper.beep(_theComponent);
 						e.consume();
 					}
 				}
@@ -424,7 +424,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 				if ( (c == '-' || c=='+') &&
 					! (text.equals("<null>") || text.length() == 0)) {
 					// user entered '+' or '-' at a bad place
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 					e.consume();
 				}
 
@@ -433,7 +433,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 					(c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
 					(c == KeyEvent.VK_BACK_SPACE) ||
 					(c == KeyEvent.VK_DELETE) ) ) {
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 					e.consume();
 				}
 

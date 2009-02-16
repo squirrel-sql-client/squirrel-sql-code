@@ -319,7 +319,7 @@ public class DataTypeJavaObject extends BaseDataTypeComponent
 			// could typecast every reference, but this makes the code cleaner
 			JTextComponent _theComponent = (JTextComponent)DataTypeJavaObject.this._textComponent;
 			e.consume();
-			_theComponent.getToolkit().beep();
+			_beepHelper.beep(_theComponent);
 		}
 	}
 

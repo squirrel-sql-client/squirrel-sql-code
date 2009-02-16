@@ -37,11 +37,16 @@ public class StringFieldKeyTextHandler extends BaseKeyTextHandler
 	
 	/** whether nulls are allowed or not */
 	private boolean _isNullable;
+	
+   /** Service for subclasses to use to notify the user audibly of a mistake */
+   private IToolkitBeepHelper _beepHelper = null;
+
 		
-	public StringFieldKeyTextHandler(IRestorableTextComponent component, int columnSize, boolean isNullable) {
+	public StringFieldKeyTextHandler(IRestorableTextComponent component, int columnSize, boolean isNullable, IToolkitBeepHelper beepHelper) {
 		_textComponent = component;
 		_columnSize = columnSize;
 		_isNullable = isNullable;
+		_beepHelper = beepHelper;
 	}
 	
 	// special handling of operations while editing Strings
@@ -66,7 +71,7 @@ public class StringFieldKeyTextHandler extends BaseKeyTextHandler
 		{
 			// max size reached
 			e.consume();
-			_theComponent.getToolkit().beep();
+			_beepHelper.beep(_theComponent);
 
 			// Note: tabs and newlines are allowed in string fields, even though they are unusual.
 		}
