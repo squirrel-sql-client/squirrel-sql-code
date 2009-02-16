@@ -599,7 +599,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public String getTypeName(int code) throws HibernateException
 	{
-		// TODO Need to have a generic hibernate dialect extend this to provide the types.
 		throw new UnsupportedOperationException("Common dialect doesn't register column types");
 	}
 

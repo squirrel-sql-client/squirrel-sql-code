@@ -639,34 +639,6 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getUpdateSQL(java.lang.String,
-	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	@Override
-	public String[] getUpdateSQL(final String tableName, final String[] setColumns, final String[] setValues,
-		final String[] fromTables, final String[] whereColumns, final String[] whereValues,
-		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
-	{
-		String templateStr = "";
-
-		if (fromTables != null)
-		{
-			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		}
-		else
-		{
-			templateStr = ST_UPDATE_STYLE_ONE;
-		}
-
-		final StringTemplate st = new StringTemplate(templateStr);
-
-		return DialectUtils.getUpdateSQL(st, tableName, setColumns, setValues, fromTables, whereColumns,
-			whereValues, qualifier, prefs, this);
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAccessMethods()
 	 */
 	@Override
