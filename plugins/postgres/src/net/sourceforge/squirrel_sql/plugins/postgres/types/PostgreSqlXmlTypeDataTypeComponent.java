@@ -235,7 +235,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 			isNullable = _colDef.isNullable();
 			columnSize = _colDef.getColumnSize();
 		}
-		return new StringFieldKeyTextHandler(component, columnSize, isNullable);
+		return new StringFieldKeyTextHandler(component, columnSize, isNullable, _beepHelper);
 	}
 
 	

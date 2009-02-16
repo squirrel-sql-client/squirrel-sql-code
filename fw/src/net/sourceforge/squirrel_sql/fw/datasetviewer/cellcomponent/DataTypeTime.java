@@ -419,7 +419,7 @@ public class DataTypeTime extends BaseDataTypeComponent
                   text = text.substring(0, index) + text.substring(index+1);
                }
                ((IRestorableTextComponent)_theComponent).updateText( text);
-               _theComponent.getToolkit().beep();
+               _beepHelper.beep(_theComponent);
                e.consume();
             }
 

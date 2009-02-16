@@ -240,6 +240,9 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * that we have all of the BLOB data, if that is possible.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
+		if (!_readBlobs) {
+			return false;
+		}
 		return wholeBlobRead((BlobDescriptor)originalValue);
 	}
 
@@ -379,7 +382,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	public boolean isEditableInPopup(Object originalValue) {
 		// If all of the data has been read, then the blob can be edited in the Popup,
 		// otherwise it cannot
-		return isEditableInCell(originalValue);
+		return wholeBlobRead((BlobDescriptor)originalValue);
 	}
 
 	/*
@@ -477,6 +480,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 
 		// data was not fully read in before, so try to do that now
 		try {
+			System.out.println("reading bytes from BLOB");
 			byte[] data = bdesc.getBlob().getBytes(1, (int)bdesc.getBlob().length());
 
 			// read succeeded, so reset the BlobDescriptor to match

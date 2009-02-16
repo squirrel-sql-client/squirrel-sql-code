@@ -480,7 +480,7 @@ public class DataTypeString extends BaseDataTypeComponent
 				c != KeyEvent.VK_DELETE) {
 				// max size reached
 				e.consume();
-				_theComponent.getToolkit().beep();
+				_beepHelper.beep(_theComponent);
 
 				// Note: tabs and newlines are allowed in string fields, even though they are unusual.
 			}

@@ -278,7 +278,7 @@ public class DataTypeByte extends BaseDataTypeComponent
 				// look for illegal chars
 				if ( ! DataTypeByte.this._isSigned && c == '-') {
 					// cannot use '-' when unsigned
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 					e.consume();
 				}
 												
@@ -297,7 +297,7 @@ public class DataTypeByte extends BaseDataTypeComponent
 							text = text.substring(0, index) + text.substring(index+1);
 						}
 						((IRestorableTextComponent)_theComponent).updateText( text);
-						_theComponent.getToolkit().beep();
+						_beepHelper.beep(_theComponent);
 					}
 					e.consume();
 				}
@@ -307,7 +307,7 @@ public class DataTypeByte extends BaseDataTypeComponent
 					(c == '-') ||
 					(c == KeyEvent.VK_BACK_SPACE) ||
 					(c == KeyEvent.VK_DELETE) ) ) {
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 					e.consume();
 				}
 
@@ -318,7 +318,7 @@ public class DataTypeByte extends BaseDataTypeComponent
 					c != KeyEvent.VK_DELETE) {
 					// max size reached
 					e.consume();
-					_theComponent.getToolkit().beep();
+					_beepHelper.beep(_theComponent);
 				}
 
 				// handle cases of null
