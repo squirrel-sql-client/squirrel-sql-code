@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Rob Manning
+ * Copyright (C) 2009 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,20 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.postgres.exp;
+package net.sourceforge.squirrel_sql.plugins.informix.exp;
 
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
+
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.AbstractSequenceParentExtractorTest;
 
 import org.junit.Before;
 
-public class SequenceParentExpanderTest extends AbstractINodeExpanderTest
-{
-
+public class InformixSequenceExtractorImplTest extends AbstractSequenceParentExtractorTest
+{	
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SequenceParentExpander();
+		classUnderTest = new InformixSequenceExtractorImpl();
 	}
 
 }
