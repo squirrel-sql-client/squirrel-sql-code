@@ -1079,7 +1079,9 @@ class Session implements ISession
                 newTokenizer);
         }
         customTokenizerInstalled = true;
-        tokenizer = aTokenizer;
+        tokenizer = aTokenizer;        
+        _props.setSQLStatementSeparator(aTokenizer.getSQLStatementSeparator());
+        _props.setStartOfLineComment(aTokenizer.getLineCommentBegin());
     }
 
     /**
