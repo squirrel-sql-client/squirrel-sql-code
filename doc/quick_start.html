@@ -3,255 +3,244 @@
 <html>
 <head>
 <meta name="generator" content="HTML Tidy, see www.w3.org">
-<meta http-equiv="Content-Type" content=
-"text/html;charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
 <title>SQuirreL SQL Client Help</title>
-<link rel="stylesheet" type="text/css" href="style.css" title=
-"SQuirreL SQL Client Stylesheet">
+<link rel="stylesheet" type="text/css" href="style.css"
+	title="SQuirreL SQL Client Stylesheet">
 </head>
 <body>
 <table summary="document title table">
-<tr>
-<td width="310"><img src="images/logo_1.jpg" width="302" height=
-"99" alt="SQuirreL SQL Client Logo"> </td>
-<td align="left">
-<h1>SQL Client Help File</h1>
-</td>
-</tr>
+	<tr>
+		<td width="310"><img src="images/logo_1.jpg" width="302"
+			height="99" alt="SQuirreL SQL Client Logo"></td>
+		<td align="left">
+		<h1>SQL Client Help File</h1>
+		</td>
+	</tr>
 </table>
 
-<table border="0" cellspacing="0" cellpadding="0" summary=
-"table of contents">
-<tr>
-<td><b>Contents</b></td>
-</tr>
+<table border="0" cellspacing="0" cellpadding="0"
+	summary="table of contents">
+	<tr>
+		<td><b>Contents</b></td>
+	</tr>
 
-<tr>
-<td><a href="#introduction">Introduction</a></td>
-</tr>
+	<tr>
+		<td><a href="#introduction">Introduction</a></td>
+	</tr>
 
-<tr>
-<td><a href="#installation">Installation</a></td>
-</tr>
+	<tr>
+		<td><a href="#installation">Installation</a></td>
+	</tr>
 
-<tr>
-<td><a href="#cmd_line_options">Command Line Options</a></td>
-</tr>
+	<tr>
+		<td><a href="#cmd_line_options">Command Line Options</a></td>
+	</tr>
 
-<tr>
-<td><a href="#howtoconnect">How to Connect to a Database</a></td>
-</tr>
+	<tr>
+		<td><a href="#howtoconnect">How to Connect to a Database</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#the_driver">The
-Driver</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#the_driver">The Driver</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#the_alias">The Alias</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#the_alias">The Alias</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=
-"#connecting">Connecting</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#connecting">Connecting</a></td>
+	</tr>
 
-<tr>
-<td><a href="#executing">Executing SQL</a></td>
-</tr>
+	<tr>
+		<td><a href="#executing">Executing SQL</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#editing_sql">Editing the SQL
-Results</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#editing_sql">Editing
+		the SQL Results</a></td>
+	</tr>
 
-<tr>
-<td><a href="#ContentsTab">The Contents Tab and Editing
-Data</a></td>
-</tr>
+	<tr>
+		<td><a href="#ContentsTab">The Contents Tab and Editing Data</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=
-"#ViewingDataInContentsTab">Viewing Data in the Contents
-Tab</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ViewingDataInContentsTab">Viewing
+		Data in the Contents Tab</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#enablingediting">Enabling
-Editing</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#enablingediting">Enabling
+		Editing</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href=
-"#Setting_the_Editing_Mode">Setting the Format and Editing
-Mode</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Setting_the_Editing_Mode">Setting
+		the Format and Editing Mode</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#howtoedit">How To
-Edit</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#howtoedit">How To Edit</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#insert_delete">Inserting and
-Deleting Rows</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#insert_delete">Inserting
+		and Deleting Rows</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#UsingPopup">Using the Popup
-Window</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#UsingPopup">Using the
+		Popup Window</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href=
-"#EditingInPopup">Editing Within the Popup</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+			href="#EditingInPopup">Editing Within the Popup</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href=
-"#ImportExport">Import, Export and Editing with an External
-Command</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+			href="#ImportExport">Import, Export and Editing with an External
+		Command</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Limitations">Limitations</a>
-</td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Limitations">Limitations</a>
+		</td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href=
-"#summary_of_how_it_works">Summary of How it works (and why you may
-care)</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#summary_of_how_it_works">Summary
+		of How it works (and why you may care)</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#quirks">Quirks,Oddities and
-Known Bugs and workarounds</a> </td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#quirks">Quirks,Oddities
+		and Known Bugs and workarounds</a></td>
+	</tr>
 
-<tr>
-<td><a href="#data_types">Data Types</a></td>
-</tr>
+	<tr>
+		<td><a href="#data_types">Data Types</a></td>
+	</tr>
 
-<tr>
-<td><a href="#printing">Printing</a></td>
-</tr>
+	<tr>
+		<td><a href="#printing">Printing</a></td>
+	</tr>
 
-<tr>
-<td><a href="#global_prefs">Global Preferences</a></td>
-</tr>
+	<tr>
+		<td><a href="#global_prefs">Global Preferences</a></td>
+	</tr>
 
-<tr>
-<td><a href="#session_props">New Session and Session
-Properties</a></td>
-</tr>
+	<tr>
+		<td><a href="#session_props">New Session and Session
+		Properties</a></td>
+	</tr>
 
-<tr>
-<td><a href="#plugins">Plugins</a></td>
-</tr>
+	<tr>
+		<td><a href="#plugins">Plugins</a></td>
+	</tr>
 
-<tr>
-<td><a href="#updatemanager">Update Manager</a></td>
-</tr>
+	<tr>
+		<td><a href="#updatemanager">Update Manager</a></td>
+	</tr>
 
-<tr>
-<td><a href="#logs">Logs</a></td>
-</tr>
+	<tr>
+		<td><a href="#logs">Logs</a></td>
+	</tr>
 
-<tr>
-<td><a href="#menus">Menus</a></td>
-</tr>
+	<tr>
+		<td><a href="#menus">Menus</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#file_menu">File Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#file_menu">File Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#drivers_menu">Drivers
-Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#drivers_menu">Drivers
+		Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#aliases_menu">Aliases
-Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#aliases_menu">Aliases
+		Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#plugins_menu">Plugins
-Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#plugins_menu">Plugins
+		Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#session_menu">Session
-Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#session_menu">Session
+		Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#windows_menu">Windows
-Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#windows_menu">Windows
+		Menu</a></td>
+	</tr>
 
-<tr>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#help_menu">Help Menu</a></td>
-</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#help_menu">Help Menu</a></td>
+	</tr>
 </table>
 
 <br>
- <a name="introduction"></a> 
+<a name="introduction"></a>
 
 <h2>Introduction</h2>
 
 <p>SQuirreL SQL Client is a graphical Java program that will allow
-you to view the structure of a JDBC compliant database, browse the
-data in tables, issue SQL commands etc. You need to be running at
-least version 1.5 of Java for SQuirreL version 2.4 and higher. See
-the <a href="http://squirrel-sql.sf.net/index.php?page=old">Old
-Versions</a> page for SQuirreL downloads that will work with older
-versions of Java.</p>
+you to view the structure of a JDBC compliant database, browse the data
+in tables, issue SQL commands etc. You need to be running at least
+version 1.5 of Java for SQuirreL version 2.4 and higher. See the <a
+	href="http://squirrel-sql.sf.net/index.php?page=old">Old Versions</a>
+page for SQuirreL downloads that will work with older versions of Java.</p>
 
-<p>It is free software, and you are welcome to redistribute it
-under the terms of the <a href="licences/squirrel_licence.txt">GNU
-Lesser General Public License</a>.</p>
+<p>It is free software, and you are welcome to redistribute it under
+the terms of the <a href="licences/squirrel_licence.txt">GNU Lesser
+General Public License</a>.</p>
 
-<a name="installation"></a> 
+<a name="installation"></a>
 
 <h2>Installation</h2>
 
-<p>The installer has been created using the <a href=
-"http://www.izforge.com/izpack/">IzPack Java Installer</a>. <a
-href=
-"http://sourceforge.net/project/showfiles.php?group_id=28383">Download</a>
-the file <tt>squirrel-sql-&lt;version&gt;-install.jar</tt> and
-execute it with the command:</p>
+<p>The installer has been created using the <a
+	href="http://www.izforge.com/izpack/">IzPack Java Installer</a>. <a
+	href="http://sourceforge.net/project/showfiles.php?group_id=28383">Download</a>
+the file <tt>squirrel-sql-&lt;version&gt;-install.jar</tt> and execute
+it with the command:</p>
 
 <pre>
 java -jar squirrel-sql-&lt;version&gt;-install.jar
 </pre>
 
 <p>On some operating systems (currently Windows NT, 2000 and XP) a
-shortcut will be created in the menu system. For Windows the file
-<tt>squirrel-sql.bat</tt> will run the application. For Unix the
-file is <tt>squirrel-sql.sh</tt>. The <tt>squirrel-sql.jar</tt>
-file is executable so on those operating systems that support it
-you can run SQuirrel by double clicking <tt>squirrel-sql.jar</tt>.
+shortcut will be created in the menu system. For Windows the file <tt>squirrel-sql.bat</tt>
+will run the application. For Unix the file is <tt>squirrel-sql.sh</tt>.
+The <tt>squirrel-sql.jar</tt> file is executable so on those operating
+systems that support it you can run SQuirrel by double clicking <tt>squirrel-sql.jar</tt>.
 You can also run it by issuing the following command:</p>
 
 <pre>
 java -jar squirrel-sql.jar
 </pre>
 
-<p>Just remember that when executing the jar file directly you
-don't use your current class path ($CLASSPATH on Unix or
-%CLASSPATH% on Windows) so if you have your JDBC drivers in your
-class path then SQuirreL won't see them. See <a href=
-"#the_driver">The Driver</a> for more information.</p>
+<p>Just remember that when executing the jar file directly you don't
+use your current class path ($CLASSPATH on Unix or %CLASSPATH% on
+Windows) so if you have your JDBC drivers in your class path then
+SQuirreL won't see them. See <a href="#the_driver">The Driver</a> for
+more information.</p>
 
 <p>Some people have reported core dumps with the Sun JDK1.3.1
-running under Linux. If this happens passing the -classic flag to
-the java executable appears to fix the problem. No similar problems
-have been reported with any other JDK on Linux.</p>
+running under Linux. If this happens passing the -classic flag to the
+java executable appears to fix the problem. No similar problems have
+been reported with any other JDK on Linux.</p>
 
-<a name="cmd_line_options"></a> 
+<a name="cmd_line_options"></a>
 
 <h2>Command Line Options</h2>
 
@@ -274,281 +263,273 @@ Options:
  -h,--help                                Display Help and exit
 </pre>
 
-<p><tt>-userdir</tt> specifies where SQuirreL stores its
-<em>per-user</em> settings such as application preferences etc.
-This defaults to <tt>&lt;home&gt;/squirrel-sql</tt>.</p>
+<p><tt>-userdir</tt> specifies where SQuirreL stores its <em>per-user</em>
+settings such as application preferences etc. This defaults to <tt>&lt;home&gt;/squirrel-sql</tt>.</p>
 
 <p><tt>-home</tt> specifies the directory that SQuirreL was
-installed into. It is setup during the installation process. You
-should never need to change this argument.</p>
+installed into. It is setup during the installation process. You should
+never need to change this argument.</p>
 
-<a name="howtoconnect"></a> 
+<a name="howtoconnect"></a>
 
 <h2>How to Connect to a Database</h2>
 
-There are two pieces of information you need to supply to connect
-to a database; the driver definition and the alias. The driver
-definition specifies the JDBC driver to use and the alias specifies
-the connection parameters. <a name="the_driver"></a> 
+There are two pieces of information you need to supply to connect to a
+database; the driver definition and the alias. The driver definition
+specifies the JDBC driver to use and the alias specifies the connection
+parameters.
+<a name="the_driver"></a>
 
 <h3>The Driver</h3>
 
 <p>A number of default driver definitions ship with SQuirreL. These
-are added to the Drivers List window (<em>View Drivers</em> option
-on the <em>Windows</em> menu) when you first start up SQuirreL.</p>
+are added to the Drivers List window (<em>View Drivers</em> option on
+the <em>Windows</em> menu) when you first start up SQuirreL.</p>
 
 <p align="CENTER"><img src="images/drivers_tool_window_1.png"
-border="0" alt="Drivers List Window"></p>
+	border="0" alt="Drivers List Window"></p>
 
-<p>The <img src="images/ok_st_obj.gif" alt="Blue Tick"> icon next
-to a driver definition indicates that it has been successfully
+<p>The <img src="images/ok_st_obj.gif" alt="Blue Tick"> icon
+next to a driver definition indicates that it has been successfully
 loaded while the <img src="images/error_st_obj.gif" alt="Cross">
-icon indicates that the JDBC driver could not be loaded and so
-cannot be used to connect to a database.</p>
+icon indicates that the JDBC driver could not be loaded and so cannot be
+used to connect to a database.</p>
 
-<p>The <img src="images/discovery.gif" alt="Earth Icon"> toolbar
-button launches an external web browser with the website URL
+<p>The <img src="images/discovery.gif" alt="Earth Icon">
+toolbar button launches an external web browser with the website URL
 associated with the currently selected driver definition.</p>
 
-<p>All of the default driver definitions assume that the JDBC
-driver classes are in the current class path or in your JRE
-extensions directory (consult the documentation for your Java
-implementation for more information on this). If this is not the
-case you will need to modify the driver definition to point to the
-jar file or the classes directory that contains these classes.</p>
+<p>All of the default driver definitions assume that the JDBC driver
+classes are in the current class path or in your JRE extensions
+directory (consult the documentation for your Java implementation for
+more information on this). If this is not the case you will need to
+modify the driver definition to point to the jar file or the classes
+directory that contains these classes.</p>
 
 <p>You can create new driver definitions using the <em>New
-Driver</em> option on the <em>Drivers</em> menu, or by clicking the
-<img src="images/add_exc.gif" alt="toolbar icon"> toolbar icon</p>
+Driver</em> option on the <em>Drivers</em> menu, or by clicking the <img
+	src="images/add_exc.gif" alt="toolbar icon"> toolbar icon</p>
 
-<p align="CENTER"><img src="images/chg_driver_1.png" alt=
-"Change Driver dialog (Java Class Path tab)"></p>
+<p align="CENTER"><img src="images/chg_driver_1.png"
+	alt="Change Driver dialog (Java Class Path tab)"></p>
 
 <p>This is an example of a driver definition. This dialog can be
-displayed by selecting a driver definition in the Drivers List
-window and then selecting the <em>Modify Driver</em> option from
-the <em>Drivers</em> menu.</p>
+displayed by selecting a driver definition in the Drivers List window
+and then selecting the <em>Modify Driver</em> option from the <em>Drivers</em>
+menu.</p>
 
 <p>The <em>Name</em> text field specifies an easy to remember name
-for the database driver definition and is the text shown in the
-Drivers List window.</p>
+for the database driver definition and is the text shown in the Drivers
+List window.</p>
 
 <p>The <em>Example URL</em> shows an example URL for this driver.
-This can be found in the documentation that comes with the driver.
-This is only an example URL, the actual URL is defined in the
-alias.</p>
+This can be found in the documentation that comes with the driver. This
+is only an example URL, the actual URL is defined in the alias.</p>
 
 <p>The <em>Website URL</em> allows you to store a link to the
 database vendor's website for JDBC driver documentation.</p>
 
 <p>The entries in the <em>Java Class path</em> tab show the
-directories and jars in the current class path. Pressing the
-<em>List Drivers</em> button will place the class names of all the
-JDBC drivers found in the class path into the <em>Class Name</em>
-dropdown control.</p>
+directories and jars in the current class path. Pressing the <em>List
+Drivers</em> button will place the class names of all the JDBC drivers found
+in the class path into the <em>Class Name</em> dropdown control.</p>
 
 <p>The <em>Class Name</em> specifies the class name of the JDBC
-driver. Either select an existing entry in the dropdown or key in
-the class name of the JDBC driver (it can normally be found in the
+driver. Either select an existing entry in the dropdown or key in the
+class name of the JDBC driver (it can normally be found in the
 documentation that comes with the driver).</p>
 
 <p>The <em>Extra Class Path</em> tab allows you to select a JDBC
-driver that is in a jar file or a directory that is not in the
-current class path.</p>
+driver that is in a jar file or a directory that is not in the current
+class path.</p>
 
 <p align="CENTER"><img src="images/chg_driver_2.png" border="0"
-alt="Change Driver dialog (Extra Class Path tab)"></p>
+	alt="Change Driver dialog (Extra Class Path tab)"></p>
 
 <p>The <em>Add</em> button will display a File Open dialog allowing
-you to select one or more jar files or directories. The
-<em>Delete</em> button allows you to remove a jar file or directory
-from the list. The <em>Up</em> and <em>Down</em> buttons allow you
-to change the sequence of the entries. The <em>List Drivers</em>
-button will place the class names of all the JDBC drivers into the
-<em>Class Name</em> dropdown.</p>
+you to select one or more jar files or directories. The <em>Delete</em>
+button allows you to remove a jar file or directory from the list. The <em>Up</em>
+and <em>Down</em> buttons allow you to change the sequence of the
+entries. The <em>List Drivers</em> button will place the class names of
+all the JDBC drivers into the <em>Class Name</em> dropdown.</p>
 
 <p>Press the <em>OK</em> button to save the driver definition and
 close the window or the <em>Close</em> button to close the window
 without saving any changes.</p>
 
-<a name="the_alias"></a> 
+<a name="the_alias"></a>
 
 <h3>The Alias</h3>
 
 <p>Now you need to create an alias for your database. An alias is a
-descriptive name that is associated with connection details
-necessary to login to an interactive session with your
-database.</p>
+descriptive name that is associated with connection details necessary to
+login to an interactive session with your database.</p>
 
 <p>Display the Aliases List window (<em>View Aliases</em> option on
-the <em>Windows</em> menu). When you run SQuirreL for the first
-time this window will be empty.</p>
+the <em>Windows</em> menu). When you run SQuirreL for the first time
+this window will be empty.</p>
 
-<p align="CENTER"><img src="images/aliases_tool_window_1.png" alt=
-"Aliases List Window"></p>
+<p align="CENTER"><img src="images/aliases_tool_window_1.png"
+	alt="Aliases List Window"></p>
 
 <p>You can create new aliases using <em>New Alias</em> option from
-the <em>Aliases</em> menu, or by clicking the <img src=
-"images/add_exc.gif" alt="blue plus"> toolbar icon. The following
-"Add Alias" dialog will be displayed :</p>
+the <em>Aliases</em> menu, or by clicking the <img
+	src="images/add_exc.gif" alt="blue plus"> toolbar icon. The
+following "Add Alias" dialog will be displayed :</p>
 
-<p align="CENTER"><img src="images/add_alias_1.png" border="0" alt=
-"Add New Alias Window"></p>
+<p align="CENTER"><img src="images/add_alias_1.png" border="0"
+	alt="Add New Alias Window"></p>
 
 <p>Enter an easy to remember name in the <em>Name</em> field for
-this database connection Alias. This is the text that will be
-displayed in the Aliases List Window.</p>
+this database connection Alias. This is the text that will be displayed
+in the Aliases List Window.</p>
 
 <p>Select the driver for this alias from the <em>Driver</em>
 dropdown or click on the <em>New</em> button to create a new driver
 definition.</p>
 
-<p>Enter the JDBC connection <em>URL</em> that is used to connect
-to your database (Consult the documentation for the JDBC driver
-that you are using. Each driver's JDBC connection URL has a
-slightly different form. You will see an error message when you
-attempt to connect to your database if the JDBC URL isn't
-correct.)</p>
+<p>Enter the JDBC connection <em>URL</em> that is used to connect to
+your database (Consult the documentation for the JDBC driver that you
+are using. Each driver's JDBC connection URL has a slightly different
+form. You will see an error message when you attempt to connect to your
+database if the JDBC URL isn't correct.)</p>
 
 <p>Optionally enter a user name if you want the alias to default to
 a specific user. A password is also optional here. <b>Caution: if a
-password is entered, although it is obscured (****) when displayed
-here, it is saved in an unencrypted file in clear text in the
-user's home directory.</b> Also note that username and password are
-required if "Auto Logon" is selected.</p>
+password is entered, although it is obscured (****) when displayed here,
+it is saved in an unencrypted file in clear text in the user's home
+directory.</b> Also note that username and password are required if "Auto
+Logon" is selected.</p>
 
 <p>The <em>Test</em> button will allow you to attempt to connect to
-your alias to ensure that the parameters you have entered are
-correct.</p>
+your alias to ensure that the parameters you have entered are correct.</p>
 
 <p>Press the <em>OK</em> button to save the alias definition and
 close the window or the <em>Close</em> button to close the window
 without saving any changes.</p>
 
-<p>The <em>Properties</em> button ( <img src=
-"images/alias_properties_button.png" alt="Properties Button"> ) in
-the alias dialog window allows you to configure alias properties
-such as which schemas to load into the Object Tree. This is will
-reduce the time that it takes to populate the Object Tree after
-connecting/refreshing for databases like Oracle. There are three
-types of objects that can be selected to be loaded, loaded and
-cached, or not loaded at all for each schema. The Alias Properties
-dialog is displayed below:</p>
+<p>The <em>Properties</em> button ( <img
+	src="images/alias_properties_button.png" alt="Properties Button">
+) in the alias dialog window allows you to configure alias properties
+such as which schemas to load into the Object Tree. This is will reduce
+the time that it takes to populate the Object Tree after
+connecting/refreshing for databases like Oracle. There are three types
+of objects that can be selected to be loaded, loaded and cached, or not
+loaded at all for each schema. The Alias Properties dialog is displayed
+below:</p>
 
 <p align="CENTER"><img src="images/alias_properties_dialog.png"
-border="0" alt="Alias Properties Dialog"></p>
+	border="0" alt="Alias Properties Dialog"></p>
 
-The <em>Connect database to refresh Schema table</em> button will
-load all schemas from the database into the table for
-customization. <br clear="LEFT">
- 
+The
+<em>Connect database to refresh Schema table</em>
+button will load all schemas from the database into the table for
+customization.
+<br clear="LEFT">
+
 
 <p>As more aliases are added, it can become to difficult locate the
 desired alias to use or modify. To help organize the aliases in the
-alias window, they can be grouped into folders or even nested
-folders. In order to turn this capability on, you must right-click
-anywhere in the alias window and select the menu item "View Aliases
-in tree". The following image shows what the popup menu in the
-aliases window looks like:</p>
+alias window, they can be grouped into folders or even nested folders.
+In order to turn this capability on, you must right-click anywhere in
+the alias window and select the menu item "View Aliases in tree". The
+following image shows what the popup menu in the aliases window looks
+like:</p>
 
 <p align="CENTER"><img src="images/alias_window_no_tree.png"
-border="0" alt="Alias Properties Dialog"></p>
+	border="0" alt="Alias Properties Dialog"></p>
 
 After enabling alias tree mode, you can add folders to contain the
-aliases and nest folders within folders. For example: 
+aliases and nest folders within folders. For example:
 
 <p align="CENTER"><img src="images/alias_window_with_tree.png"
-border="0" alt="Alias Properties Dialog"></p>
+	border="0" alt="Alias Properties Dialog"></p>
 
-<a name="connecting"></a> 
+<a name="connecting"></a>
 
 <h3>Connecting</h3>
 
 <p>The new alias should now appear in the <em>Connect To</em>
 dropdown. Select it in the dropdown and enter your user name and
-password in the connection dialog, press <em>OK</em> and you should
-be connected.</p>
+password in the connection dialog, press <em>OK</em> and you should be
+connected.</p>
 
-<a name="sessionwindow"></a> 
+<a name="sessionwindow"></a>
 
 <h2>Session Window</h2>
 
 <p>When you first connect to a database a Session window will be
 shown.</p>
 
-<p align="CENTER"><img src="images/session_1.png" border="0" alt=
-"Session Window"></p>
+<p align="CENTER"><img src="images/session_1.png" border="0"
+	alt="Session Window"></p>
 
 <p>The Object Tree on the left shows the structure of the database.
 Clicking on various nodes within this object tree will show further
-information in the right hand detail panel. In this example the
-database metadata is shown. Clicking on the title of a column will
-sort the display by the data in that column. This is true of all
-tabular displays in SQuirreL.</p>
+information in the right hand detail panel. In this example the database
+metadata is shown. Clicking on the title of a column will sort the
+display by the data in that column. This is true of all tabular displays
+in SQuirreL.</p>
 
-<p align="CENTER"><img src="images/session_2.png" border="0" alt=
-"Session Window Showing a Table"></p>
+<p align="CENTER"><img src="images/session_2.png" border="0"
+	alt="Session Window Showing a Table"></p>
 
 <p>This shows the data displayed when a table is selected in the
 Object Tree.</p>
 
-<a name="executing"></a> 
+<a name="executing"></a>
 
 <h2>Executing SQL</h2>
 
 <p>SQL can be executed from the SQL tab in the window that opens
-once you have connected to an alias. Multiple statements can be
-executed and the results will be displayed in multiple tabs below
-the SQL entry area.</p>
+once you have connected to an alias. Multiple statements can be executed
+and the results will be displayed in multiple tabs below the SQL entry
+area.</p>
 
-<p>When the SQL tab is selected pressing
-<tt>&lt;ctrl&gt;&lt;enter&gt;</tt>, taking the Execute SQL option
-from the Session menu or pressing the Execute SQL button in the
-session window tool bar will execute the entered SQL.</p>
+<p>When the SQL tab is selected pressing <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>,
+taking the Execute SQL option from the Session menu or pressing the
+Execute SQL button in the session window tool bar will execute the
+entered SQL.</p>
 
-<p>If a single statement is entered then pressing
-<tt>&lt;ctrl&gt;&lt;enter&gt;</tt> will execute just that
-statement.</p>
+<p>If a single statement is entered then pressing <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>
+will execute just that statement.</p>
 
 <p>If you only want to execute part of the SQL entered then
-highlight the SQL that you want to execute and press
-<tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
+highlight the SQL that you want to execute and press <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
 
 <p>To only execute a single statement amongst several statements
-(separated from the other statements by at least one blank line)
-within the SQL entry area then click on the line containing the
-statement that you want to execute and press
-<tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
+(separated from the other statements by at least one blank line) within
+the SQL entry area then click on the line containing the statement that
+you want to execute and press <tt>&lt;ctrl&gt;&lt;enter&gt;</tt>.</p>
 
 <p>The characters -- at the beginning of a line will turn it into a
 comment.</p>
 
-<p align="CENTER"><img src="images/sql_1.png" border="0" alt=
-"Executing SQL"></p>
+<p align="CENTER"><img src="images/sql_1.png" border="0"
+	alt="Executing SQL"></p>
 
 <p>As can be seen in the above screen shot, double clicking in a
-cell in the query results will open up a new window showing the
-entire contents of the cell.</p>
+cell in the query results will open up a new window showing the entire
+contents of the cell.</p>
 
-<p>Plugins can add many functions to the SQL editor. The tools
-popup shows all of these functions and allows the user to execute
-them. The functions in the popup may be filtered by typing the name
-of the filter into the filter text field. The tools popup can be
-opened by pressing &lt;Ctrl&gt;-t. A picture of the tools popup
-dialog is show below.</p>
+<p>Plugins can add many functions to the SQL editor. The tools popup
+shows all of these functions and allows the user to execute them. The
+functions in the popup may be filtered by typing the name of the filter
+into the filter text field. The tools popup can be opened by pressing
+&lt;Ctrl&gt;-t. A picture of the tools popup dialog is show below.</p>
 
-<p align="CENTER"><img src="images/toolspopup.jpg" border="0" alt=
-"Tools popup"></p>
+<p align="CENTER"><img src="images/toolspopup.jpg" border="0"
+	alt="Tools popup"></p>
 
 <p>The <img src="images/createresultwindow.gif" alt="Tearoff icon">
-icon on the tabbed folder containing the SQL results allow you to
-"tear off" the query results from the tabbed folder and display it
-in its own window.</p>
+icon on the tabbed folder containing the SQL results allow you to "tear
+off" the query results from the tabbed folder and display it in its own
+window.</p>
 
-<p align="CENTER"><img src="images/sql_2.png" border="0" alt=
-"&quot;Torn off&quot; query results"></p>
+<p align="CENTER"><img src="images/sql_2.png" border="0"
+	alt="&quot;Torn off&quot; query results"></p>
 
-<a name="executing"></a> 
+<a name="executing"></a>
 
 <h2>SQL History</h2>
 
@@ -556,20 +537,20 @@ in its own window.</p>
 to the drop-down history list, which is shown below.</p>
 
 <p align="CENTER"><img src="images/sql_history_list.png" border="0"
-alt="&quot;Torn off&quot; query results"></p>
+	alt="&quot;Torn off&quot; query results"></p>
 
 <p>This list can then be used to find and re-execute previously
 executed statements. The drop-down list allows you to pick the SQL
-statement, and clicking the blue arrow ( <img src=
-"images/history_arrow.png" alt="blue down arrow"> ) will copy the
-statement into the editor. Additionally, the history list can be
-searched using the SQL History dialog which is accessed by the icon
-( <img src="images/history_dialog_icon.png" alt=
-"history sql item list"> ) which is next to the blue arrow. The SQL
-History window is shown below.</p>
+statement, and clicking the blue arrow ( <img
+	src="images/history_arrow.png" alt="blue down arrow"> ) will copy
+the statement into the editor. Additionally, the history list can be
+searched using the SQL History dialog which is accessed by the icon ( <img
+	src="images/history_dialog_icon.png" alt="history sql item list">
+) which is next to the blue arrow. The SQL History window is shown
+below.</p>
 
-<p align="CENTER"><img src="images/sql_history_dialog.png" border=
-"0" alt="&quot;Torn off&quot; query results"></p>
+<p align="CENTER"><img src="images/sql_history_dialog.png"
+	border="0" alt="&quot;Torn off&quot; query results"></p>
 
 <p><a name="editing_sql"></a></p>
 
@@ -577,291 +558,272 @@ History window is shown below.</p>
 
 <p>The data displayed within the SQL Results may be edited in the
 same manner as the data within the <a href="#ContentsTab">Contents
-Tab</a>. You should read that section to understand the
-capabilities and limitations of data editing, including the use of
-the Popup window to import and export data. In addition, there are
-two things that you need to know about editing in the SQL
-Results:</p>
+Tab</a>. You should read that section to understand the capabilities and
+limitations of data editing, including the use of the Popup window to
+import and export data. In addition, there are two things that you need
+to know about editing in the SQL Results:</p>
 
 <ol>
-<li>To enable editing in the SQL Results tables, you must set the
-"SQL Results" entry in the Session Properties to "Editable
-Table".</li>
+	<li>To enable editing in the SQL Results tables, you must set the
+	"SQL Results" entry in the Session Properties to "Editable Table".</li>
 
-<li>Editing is only allowed when the SQL that was executed consists
-of: 
-
-<pre>
+	<li>Editing is only allowed when the SQL that was executed
+	consists of: <pre>
         "SELECT &lt;column list&gt; FROM &lt;single_table_name&gt;"
             or
         "SELECT &lt;column list&gt; FROM &lt;single_table_name&gt; WHERE ..."
        
-</pre>
-
-In addition, the name of the table must be unique within the entire
-DB. This means that if you have multiple catalogs or schemas which
-have that same table name defined in them, Squirrel cannot
-determine which to use and thus will not allow data to be updated
-in the DB. (Squirrel is just a bit stupid on this point: it will
-let you edit the data, and then tell you that it cannot update the
-DB when you exit the cell being changed.)</li>
+</pre> In addition, the name of the table must be unique within the entire DB.
+	This means that if you have multiple catalogs or schemas which have
+	that same table name defined in them, Squirrel cannot determine which
+	to use and thus will not allow data to be updated in the DB. (Squirrel
+	is just a bit stupid on this point: it will let you edit the data, and
+	then tell you that it cannot update the DB when you exit the cell being
+	changed.)</li>
 </ol>
 
-<h2><a name="ContentsTab"></a>The Contents Tab and Editing
-Data</h2>
+<h2><a name="ContentsTab"></a>The Contents Tab and Editing Data</h2>
 
 <p>SQuirreL allows you to easily view and change the data in a
-single table. Data may be changed just by typing the new values
-when you are viewing the table in the Contents tab under the
-Objects view. The data may also be viewed and edited in a larger
-popup window, which has more capabilities, by double-clicking on
-the cell. There are some small differences between the in-cell
-editing and editing in the Popup, so be sure to read the <a href=
-"#UsingPopup">Using the Popup Window</a> information.</p>
+single table. Data may be changed just by typing the new values when you
+are viewing the table in the Contents tab under the Objects view. The
+data may also be viewed and edited in a larger popup window, which has
+more capabilities, by double-clicking on the cell. There are some small
+differences between the in-cell editing and editing in the Popup, so be
+sure to read the <a href="#UsingPopup">Using the Popup Window</a>
+information.</p>
 
 <p><a name="ViewingDataInContentsTab"></a></p>
 
 <h3>Viewing Data in the Contents Tab</h3>
 
-After connecting to a database, you may view the data in a single
-table by using the Contents Tab. 
+After connecting to a database, you may view the data in a single table
+by using the Contents Tab.
 
 <p>To get to the contents tab, first select the Objects view. Next,
-look under the tree in the window on the left. The exact
-organization of this window is different for each DBMS, so you may
-have to do a bit of exploring. What you are looking for is a list
-of table names, and they are usually found under a heading labeled
-"TABLE" or "TABLES". The "TABLE" heading may itself be under
-another heading, such as the name of the database instance. When
-you find the list of table names, click on the name of the table
-that you wish to view, and then in the window on the right click on
-the tab labeled "Contents".</p>
+look under the tree in the window on the left. The exact organization of
+this window is different for each DBMS, so you may have to do a bit of
+exploring. What you are looking for is a list of table names, and they
+are usually found under a heading labeled "TABLE" or "TABLES". The
+"TABLE" heading may itself be under another heading, such as the name of
+the database instance. When you find the list of table names, click on
+the name of the table that you wish to view, and then in the window on
+the right click on the tab labeled "Contents".</p>
 
-<p>The data in the table will be displayed in rows and columns
-based on the format selected (see <a href=
-"#Setting_the_Editing_Mode">Setting the Format and Editing
-Mode</a>).</p>
+<p>The data in the table will be displayed in rows and columns based
+on the format selected (see <a href="#Setting_the_Editing_Mode">Setting
+the Format and Editing Mode</a>).</p>
 
 <p>The column ordering is the order of the rows in the table
 definition. That order may be changed by drag-and-drop, which means
-clicking on the column header and holding the mouse button down
-while dragging the column horizontally to another location. Columns
-are initially displayed with a moderate width so that you can see a
+clicking on the column header and holding the mouse button down while
+dragging the column horizontally to another location. Columns are
+initially displayed with a moderate width so that you can see a
 reasonable amount of data in as many columns as possible within the
-limited window space. You may increase or decrease a column's width
-by click-and-hold on the space between two columns, then moving the
-mouse left or right to change the column widths.</p>
+limited window space. You may increase or decrease a column's width by
+click-and-hold on the space between two columns, then moving the mouse
+left or right to change the column widths.</p>
 
 <p>The rows are initally unordered. However, after retrieving the
 data, you may sort the rows based on the values in a column by
 single-clicking on a column header. That will sort the rows into an
 order with the values in the selected columns starting with the
-"smallest" value. Clicking on the same column header again will
-reverse the order ("largest" first). You can limit the number of
-rows retrieved (see the Session Properties, Object Tree).</p>
+"smallest" value. Clicking on the same column header again will reverse
+the order ("largest" first). You can limit the number of rows retrieved
+(see the Session Properties, Object Tree).</p>
 
 <p>There are a few special cases for how data is displayed.</p>
 
 <ul>
-<li>If a cell contains Newlines (which is possible in the various
-VARCHAR and CLOB data types), the cell background is colored Cyan
-and the Newline characters are explicitly shown as "\n" (unless
-changed in the <a href="#data_type_controls">Data Type
-Controls</a>). If the table is editable, the Cyan background means
-that the cell contents cannot be edited ina the cell as displayed
-in the table, but can be edited using the Popup window (see <a
-href="#UsingPopup">Using the Popup Window</a>).</li>
+	<li>If a cell contains Newlines (which is possible in the various
+	VARCHAR and CLOB data types), the cell background is colored Cyan and
+	the Newline characters are explicitly shown as "\n" (unless changed in
+	the <a href="#data_type_controls">Data Type Controls</a>). If the table
+	is editable, the Cyan background means that the cell contents cannot be
+	edited ina the cell as displayed in the table, but can be edited using
+	the Popup window (see <a href="#UsingPopup">Using the Popup Window</a>).</li>
 
-<li>BLOB (Binary Large OBject) and CLOB (Character Large Object)
-fields are initially displayed as "&lt;Blob&gt;" and "&lt;Clob&gt;"
-respecively. This is done for performance reasons, since those data
-types are often quite large. When you select the Blob or Clob
-field, the entire data is read in and displayed in the cell.<br>
- Alternatively, you may use the Session Properties -&gt; Format
-screen to limit the amount of the Blob/Clob data read and displayed
-when the Contents Tab is first displayed, in which case the number
-of characters you have selected will be displayed in each Blob or
-Clob cell. This may be necessary when the Blob or Clob contains
-data needed to identify specific rows in the table. When there is
-more Blob/Clob data for a cell than is displayed in that cell, an
-elipsis ("...") is added to the end of the displayed data so you
-know that the data has been truncated for display. As before, when
-you select the cell, the whole Blob or Clob will be read and
-displayed.</li>
+	<li>BLOB (Binary Large OBject) and CLOB (Character Large Object)
+	fields are initially displayed as "&lt;Blob&gt;" and "&lt;Clob&gt;"
+	respecively. This is done for performance reasons, since those data
+	types are often quite large. When you select the Blob or Clob field,
+	the entire data is read in and displayed in the cell.<br>
+	Alternatively, you may use the Session Properties -&gt; Format screen
+	to limit the amount of the Blob/Clob data read and displayed when the
+	Contents Tab is first displayed, in which case the number of characters
+	you have selected will be displayed in each Blob or Clob cell. This may
+	be necessary when the Blob or Clob contains data needed to identify
+	specific rows in the table. When there is more Blob/Clob data for a
+	cell than is displayed in that cell, an elipsis ("...") is added to the
+	end of the displayed data so you know that the data has been truncated
+	for display. As before, when you select the cell, the whole Blob or
+	Clob will be read and displayed.</li>
 </ul>
 
 <p>One word of warning. Some DBMSs that claim to have BLOB and CLOB
 data types actually implement those types using BINARY, VARCHAR, or
-other types of fields. In those cases, the cells will act as they
-would for the BINARY, VARCHAR, etc., data types, and not as
-described above for the BLOB/CLOB types. (There is a functional
-difference in that "real" BLOB/CLOB types return a "locator" or
-"reference" object rather than the actual data. Using the locator
-allows SQuirreL to defer reading the actual data until you need it
-rather than reading it all during the initial display of the
-Contents Tab.) To see if your DBMS uses real BLOB/CLOB types, go to
-the Objects view, then select the top element in the tree in the
-left window and "Data Types" in the right window. In the column
-labeled "DATA_TYPE", real BLOBs will have the value 2004 and real
-CLOBs will show 2005. If your DBMS does not have 2004 and 2005
-listed under the "DATA_TYPE" field, then it does not support the
-BLOB/CLOB functionality provided by SQuirreL. As an example, the
-MySQL DBMS claims to support BLOBS, but in the "Data Types" table
-it shows that the "TYPE_NAME" of "BLOB" is actually using the
-"DATA_TYPE" of "-4 [LONGVARBINARY]", so a "BLOB" field in MySQL
-will be treated by SQuirreL as a LONGVARBINARY and not as a
-"BLOB".</p>
+other types of fields. In those cases, the cells will act as they would
+for the BINARY, VARCHAR, etc., data types, and not as described above
+for the BLOB/CLOB types. (There is a functional difference in that
+"real" BLOB/CLOB types return a "locator" or "reference" object rather
+than the actual data. Using the locator allows SQuirreL to defer reading
+the actual data until you need it rather than reading it all during the
+initial display of the Contents Tab.) To see if your DBMS uses real
+BLOB/CLOB types, go to the Objects view, then select the top element in
+the tree in the left window and "Data Types" in the right window. In the
+column labeled "DATA_TYPE", real BLOBs will have the value 2004 and real
+CLOBs will show 2005. If your DBMS does not have 2004 and 2005 listed
+under the "DATA_TYPE" field, then it does not support the BLOB/CLOB
+functionality provided by SQuirreL. As an example, the MySQL DBMS claims
+to support BLOBS, but in the "Data Types" table it shows that the
+"TYPE_NAME" of "BLOB" is actually using the "DATA_TYPE" of "-4
+[LONGVARBINARY]", so a "BLOB" field in MySQL will be treated by SQuirreL
+as a LONGVARBINARY and not as a "BLOB".</p>
 
-<a name="enablingediting"></a> 
+<a name="enablingediting"></a>
 
 <h3>Enabling Editing</h3>
 
 <p>When SQuirreL is initially set up, the Contents Tab will be set
-in a read-only mode. This is a safety precaution. Once a table is
-made editable, changing the contents of a cell causes the database
-to be immediately updated. While extremely convenient, this is
-dangerous. With this capability enabled, it becomes very easy to
-accidentally destroy data, violate some consistancy checks,
-mis-direct references between tables, etc. On the other hand, the
-author of this feature runs with editing always enabled. It is
-simpler that way, but has the potential for disaster. <b>You have
-been warned!</b></p>
+in a read-only mode. This is a safety precaution. Once a table is made
+editable, changing the contents of a cell causes the database to be
+immediately updated. While extremely convenient, this is dangerous. With
+this capability enabled, it becomes very easy to accidentally destroy
+data, violate some consistancy checks, mis-direct references between
+tables, etc. On the other hand, the author of this feature runs with
+editing always enabled. It is simpler that way, but has the potential
+for disaster. <b>You have been warned!</b></p>
 
-<p>You can set SQuirreL so that tables are editable all the time,
-or you can enable editing on a specific table as you are working on
-it. Either option may be set as your default mode of operation, and
-either option may be selected for use on a specific table.</p>
+<p>You can set SQuirreL so that tables are editable all the time, or
+you can enable editing on a specific table as you are working on it.
+Either option may be set as your default mode of operation, and either
+option may be selected for use on a specific table.</p>
 
 <p>Editing may only be done in Contents tab in the Object view, not
-on the results of manually entered SQL queries run under the SQL
-view.</p>
+on the results of manually entered SQL queries run under the SQL view.</p>
 
 <h4><a name="Setting_the_Editing_Mode"></a>Setting the Format and
 Editing Mode</h4>
 
 <p>To set the default format and edting mode for the Contents Tab
-for new sessions take the <em>New Session Properties</em> option
-from the <em>File</em> and click on the <em>General</em> tab. The
-<b>Table Contents</b> dropdown list gives the following
-options:</p>
+for new sessions take the <em>New Session Properties</em> option from
+the <em>File</em> and click on the <em>General</em> tab. The <b>Table
+Contents</b> dropdown list gives the following options:</p>
 
 <dl>
-<dt>Table</dt>
+	<dt>Table</dt>
 
-<dd>The data in the Contents tab is a read-only table. You may
-click in any cell or tab through the table and any accidental
-typing you do will be ignored and not change the database. To
-enable editing on this table, click on the right mouse button and
-select the <b>Make Editable</b> option. This makes that table
-<i>and only that table</i> editable.</dd>
+	<dd>The data in the Contents tab is a read-only table. You may
+	click in any cell or tab through the table and any accidental typing
+	you do will be ignored and not change the database. To enable editing
+	on this table, click on the right mouse button and select the <b>Make
+	Editable</b> option. This makes that table <i>and only that table</i>
+	editable.</dd>
 </dl>
 
 <dl>
-<dt>Text</dt>
+	<dt>Text</dt>
 
-<dd>The data in the Contents tab is shown as simple formatted text
-and is read-only. To enable editing on this table, ;click on the
-right mouse button and select the <b>Make Editable</b> option. This
-makes the table <i>and only that table</i> editable</dd>
+	<dd>The data in the Contents tab is shown as simple formatted text
+	and is read-only. To enable editing on this table, ;click on the right
+	mouse button and select the <b>Make Editable</b> option. This makes the
+	table <i>and only that table</i> editable</dd>
 </dl>
 
 <dl>
-<dt>Editable Table</dt>
+	<dt>Editable Table</dt>
 
-<dd>The data in the Contents tab is an editable table. Changes made
-to the data in this view are made to the database.</dd>
+	<dd>The data in the Contents tab is an editable table. Changes
+	made to the data in this view are made to the database.</dd>
 </dl>
 
 <p>After you have connected with a database, you may change the
-format or editing mode for the data in the Contents tab by the
-<em>Session Properties</em> option from the <em>Session</em> and
-clicking on the <em>General</em> tab and changing the selection for
-<em>Table Contents</em>.</p>
+format or editing mode for the data in the Contents tab by the <em>Session
+Properties</em> option from the <em>Session</em> and clicking on the <em>General</em>
+tab and changing the selection for <em>Table Contents</em>.</p>
 
 Note that the individual data items may be displayed in different
-formats as described in <a href="#data_type_controls">"Data Type
-Controls"</a> . 
+formats as described in
+<a href="#data_type_controls">"Data Type Controls"</a>
+.
 
 <h3><a name="howtoedit"></a>How To Edit</h3>
 
 <p>Here is how to edit data in the table:</p>
 
 <ol>
-<li>Connect to the database.</li>
+	<li>Connect to the database.</li>
 
-<li>Select a table in the object tree and select the
-<em>Contents</em> tab to view the data.</li>
+	<li>Select a table in the object tree and select the <em>Contents</em>
+	tab to view the data.</li>
 
-<li>Make sure the table is editable. See <a href=
-"#Setting_the_Editing_Mode">Setting the Format and Editing Mode</a>
-above.</li>
+	<li>Make sure the table is editable. See <a
+		href="#Setting_the_Editing_Mode">Setting the Format and Editing
+	Mode</a> above.</li>
 
-<li>Select the cell that you want to edit. This may be done either
-by using the keyboard (tab and enter keys) to move around the table
-to reach the cell, or you may click on the cell with the mouse.
-Note that if a cell cannot be edited (see <a href=
-"#Limitations">Limitations</a>) you may select the cell, but you
-will not be allowed to edit the data. When a cell is being edited,
-its background will change to Yellow to let you know that you may
-be changing the contents of the database. Cells with a Cyan
-background may be edited only by using the Popup window (see <a
-href="#UsingPopup">Using the Popup Window</a>).</li>
+	<li>Select the cell that you want to edit. This may be done either
+	by using the keyboard (tab and enter keys) to move around the table to
+	reach the cell, or you may click on the cell with the mouse. Note that
+	if a cell cannot be edited (see <a href="#Limitations">Limitations</a>)
+	you may select the cell, but you will not be allowed to edit the data.
+	When a cell is being edited, its background will change to Yellow to
+	let you know that you may be changing the contents of the database.
+	Cells with a Cyan background may be edited only by using the Popup
+	window (see <a href="#UsingPopup">Using the Popup Window</a>).</li>
 
-<li>If you select the cell using the mouse, the background
-immediately turns Yellow and the cursor is set to the place where
-you clicked in the cell. If you select the cell by using the tab or
-enter keys, the background remains white until you type the first
-character to be added (or use the delete key). That character is
-added to (or deleted from) the end of the text displayed in the
-cell, and the cell background changes to Yellow.</li>
+	<li>If you select the cell using the mouse, the background
+	immediately turns Yellow and the cursor is set to the place where you
+	clicked in the cell. If you select the cell by using the tab or enter
+	keys, the background remains white until you type the first character
+	to be added (or use the delete key). That character is added to (or
+	deleted from) the end of the text displayed in the cell, and the cell
+	background changes to Yellow.</li>
 
-<li>Change the data in the cell to look the way that you want it
-to. Editing is done in the usual way by typing characters, using
-delete to erase, and using the mouse to select a point to insert or
-characters to delete. There are a couple of specialized features
-that are described later in this section.</li>
+	<li>Change the data in the cell to look the way that you want it
+	to. Editing is done in the usual way by typing characters, using delete
+	to erase, and using the mouse to select a point to insert or characters
+	to delete. There are a couple of specialized features that are
+	described later in this section.</li>
 
-<li>When the data in the cell looks the way you want, leave the
-cell by pressing the tab key, the enter key, or clicking on another
-cell with the mouse. This causes the data in that cell to be
-updated in the DB.</li>
+	<li>When the data in the cell looks the way you want, leave the
+	cell by pressing the tab key, the enter key, or clicking on another
+	cell with the mouse. This causes the data in that cell to be updated in
+	the DB.</li>
 </ol>
 
 <p>If the data in the cell gets really messed up and you are
-confused about what is going on, press the &lt;delete&gt; key until
-the original data appears (see below). If that doesn't work then
-immediately close the database connection without leaving the cell
-(&lt;ctrl&gt;W or click the close button). This will abort the
-operation and avoid changing the DB.</p>
+confused about what is going on, press the &lt;delete&gt; key until the
+original data appears (see below). If that doesn't work then immediately
+close the database connection without leaving the cell (&lt;ctrl&gt;W or
+click the close button). This will abort the operation and avoid
+changing the DB.</p>
 
 <p>If the cell contains a NULL value, that is shown as the string
-"&lt;null&gt;". To change that to a non-null value, just type the
-new data. When you enter the first character of the data, the
-"&lt;null&gt;" will be replaced by that character.<br>
-NOTE: This means that SQuirreL will not allow you to enter a string
-with the value "&lt;null&gt;" into a nullable column, since that
-string will be interpreted by SQuirreL to be the null value. Also,
-if you have a field in the database containing the string
-"&lt;null&gt;", do not edit that field using SQuirreL since the
-value will be replaced by the null value.</p>
+"&lt;null&gt;". To change that to a non-null value, just type the new
+data. When you enter the first character of the data, the "&lt;null&gt;"
+will be replaced by that character.<br>
+NOTE: This means that SQuirreL will not allow you to enter a string with
+the value "&lt;null&gt;" into a nullable column, since that string will
+be interpreted by SQuirreL to be the null value. Also, if you have a
+field in the database containing the string "&lt;null&gt;", do not edit
+that field using SQuirreL since the value will be replaced by the null
+value.</p>
 
 <p>To change the value of a nullable cell to NULL, just delete all
-of the data in that cell. When you delete all of the data in a
-cell, the contents of the cell will be set to "&lt;null&gt;". Since
-the VARCHAR data types allow a non-null empty string, for those
-cells you must delete all of the data so that the cell is blank,
-and then press delete. The VARCHAR cell will then be set to
-&lt;null&gt;.</p>
+of the data in that cell. When you delete all of the data in a cell, the
+contents of the cell will be set to "&lt;null&gt;". Since the VARCHAR
+data types allow a non-null empty string, for those cells you must
+delete all of the data so that the cell is blank, and then press delete.
+The VARCHAR cell will then be set to &lt;null&gt;.</p>
 
 <p>If a cell is not nullable, deleting the last character in the
 cell will leave the cell blank. You may then enter new data for the
 cell.</p>
 
-<p>To restore the cell to its original value, delete all of the
-data in the cell, then press the delete key one more time. This
-will cause the cell to be reset to its original value. For cells
-that allow nulls, continually pressing the delete key causes a
-cycle:</p>
+<p>To restore the cell to its original value, delete all of the data
+in the cell, then press the delete key one more time. This will cause
+the cell to be reset to its original value. For cells that allow nulls,
+continually pressing the delete key causes a cycle:</p>
 
 <p>&nbsp;&nbsp;&nbsp; original data -&gt;&nbsp; delete data -&gt;
 &nbsp;&lt;null&gt; -&gt; original data</p>
@@ -871,256 +833,239 @@ cycle:</p>
 <p>&nbsp;&nbsp;&nbsp; original data -&gt; delete data -&gt; blank
 cell -&gt; original data</p>
 
-<p>Thus, if you mess up the contents of a cell, repeatedly press
-the delete key until you see the original data reappear.</p>
+<p>Thus, if you mess up the contents of a cell, repeatedly press the
+delete key until you see the original data reappear.</p>
 
 <p>When leaving the cell, if the cell data is identical to the
 original contents of the cell, the DB will not be updated.</p>
 
 <h3><a name="insert_delete"></a>Inserting and Deleting Rows</h3>
 
-You may easily insert or delete rows in the table using the
-Contents Tab For both operations the table must be editable (see <a
-href="#enablingediting">Enabling Editing</a> ) 
+You may easily insert or delete rows in the table using the Contents Tab
+For both operations the table must be editable (see
+<a href="#enablingediting">Enabling Editing</a>
+)
 
-<p>To insert a row into the table, click the right mouse button,
-and choose the "Insert row" option from the menu This brings up a
-separate window showing the columns of the table with two rows The
-first row contains the data to be filled i with default values as
-defined for the table's column already filled in The second row
-shows information about the field including the type of data, the
-field length (if known), and so forth You should edit the values in
-the first row in the same way that you would if that row already
-existed in the table When the data in the row is the way you want
-it, click the "OK" button to have the row entered into the
-table</p>
+<p>To insert a row into the table, click the right mouse button, and
+choose the "Insert row" option from the menu This brings up a separate
+window showing the columns of the table with two rows The first row
+contains the data to be filled i with default values as defined for the
+table's column already filled in The second row shows information about
+the field including the type of data, the field length (if known), and
+so forth You should edit the values in the first row in the same way
+that you would if that row already existed in the table When the data in
+the row is the way you want it, click the "OK" button to have the row
+entered into the table</p>
 
 <p>If there are no rows in the table when you open the Contents Tab
-clicking the right mouse button brings up a menu with only the
-"Insert Row option You may use this in the normal manner to enter
-the first row in the table</p>
+clicking the right mouse button brings up a menu with only the "Insert
+Row option You may use this in the normal manner to enter the first row
+in the table</p>
 
 <p>To delete one or more rows from the table select the rows to be
-deleted, then click the right mouse button an choose the "Delete
-Rows" option from the menu</p>
+deleted, then click the right mouse button an choose the "Delete Rows"
+option from the menu</p>
 
 <h3><a name="UsingPopup"></a>Using the Popup Window</h3>
 
 <h4><a name="EditingInPopup"></a>Editing within the Popup</h4>
 
-<p>When you double-click in a cell, a Popup window is displayed.
-For simple data (e.g. integers, floats, or simple strings) you will
-be able to edit the data directly in the cell, but there are some
-times when you will need to use the Popup:</p>
+<p>When you double-click in a cell, a Popup window is displayed. For
+simple data (e.g. integers, floats, or simple strings) you will be able
+to edit the data directly in the cell, but there are some times when you
+will need to use the Popup:</p>
 
 <ul>
-<li>when the data is too long to comfortably work with in the space
-provided by the cell</li>
+	<li>when the data is too long to comfortably work with in the
+	space provided by the cell</li>
 
-<li>when the data contains newlines or tabs (which are used as
-control characters by the in-cell editor and are not displayed
-correctly there)</li>
+	<li>when the data contains newlines or tabs (which are used as
+	control characters by the in-cell editor and are not displayed
+	correctly there)</li>
 
-<li>when the data must be represented in a complex way, such as
-needing multiple lines (e.g. an Array type)</li>
+	<li>when the data must be represented in a complex way, such as
+	needing multiple lines (e.g. an Array type)</li>
 
-<li>when the data is potentially so large or complex that loading
-it into the table cells in a printable form might significantly
-delay the display of the table. In this case, the cell may display
-just the name of the data type, something like "&lt;Blob&gt;",
-while the Popup window would show the actual contents of that
-field.</li>
+	<li>when the data is potentially so large or complex that loading
+	it into the table cells in a printable form might significantly delay
+	the display of the table. In this case, the cell may display just the
+	name of the data type, something like "&lt;Blob&gt;", while the Popup
+	window would show the actual contents of that field.</li>
 </ul>
 
-For these reasons the data may not be editable in the cell but
-still be editable in the Popup. If the data is not editable in the
-cell (i.e. the background does not change color when you click on
-it), you will need to bring up the Popup window to know whether the
-data can be edited there. 
+For these reasons the data may not be editable in the cell but still be
+editable in the Popup. If the data is not editable in the cell (i.e. the
+background does not change color when you click on it), you will need to
+bring up the Popup window to know whether the data can be edited there.
 
 <p>To use the Popup, double-click in the cell to start the Popup,
-then edit the text in the text window. Editing uses the same
-mechanism as the in-cell editing where repeatedly typeing the
-backspace key eventually restores the original data in the window.
-One difference from the in-cell editing is that, depending on the
-data type being displayed, you may enter newline and tab characters
-into strings when in the Popup. When you are done editing, click on
-the "Update DB" button to put the changed data into the Database.
-The "Cancel" button closes the Popup without changing the
-Database.</p>
+then edit the text in the text window. Editing uses the same mechanism
+as the in-cell editing where repeatedly typeing the backspace key
+eventually restores the original data in the window. One difference from
+the in-cell editing is that, depending on the data type being displayed,
+you may enter newline and tab characters into strings when in the Popup.
+When you are done editing, click on the "Update DB" button to put the
+changed data into the Database. The "Cancel" button closes the Popup
+without changing the Database.</p>
 
 <p>For Binary data types, the data may be changed from the default
-Hex representation into Decimal, Octal or Binary formats. You may
-also choose to view bytes of data that correspond to printable
-ASCII characters as the character rather than in their numeric
-form. This may be useful if the file contains strings, in which
-case you could see "ContentsTab.java" instead of "43 6f 6e 74 65 6e
-74 73 54 61 62 2e 6a 61 76 61".</p>
+Hex representation into Decimal, Octal or Binary formats. You may also
+choose to view bytes of data that correspond to printable ASCII
+characters as the character rather than in their numeric form. This may
+be useful if the file contains strings, in which case you could see
+"ContentsTab.java" instead of "43 6f 6e 74 65 6e 74 73 54 61 62 2e 6a 61
+76 61".</p>
 
 <p>The Popup window provides line-wrap and word-wrap functions.
-These are accessed in the menu brought up by right-clicking in the
-text area. Both of these options are toggle-switches that flip from
-on to off or off to on each time you click on them. The word-wrap
-function operates only when the line-wrap function is on.</p>
+These are accessed in the menu brought up by right-clicking in the text
+area. Both of these options are toggle-switches that flip from on to off
+or off to on each time you click on them. The word-wrap function
+operates only when the line-wrap function is on.</p>
 
 <h4><a name="ImportExport"></a>Import, Export and Editing with an
 External Command</h4>
 
 <p>The Popup window also allows you to import data into a cell,
-export data from the cell to a file, and operate on the data using
-an external command.</p>
+export data from the cell to a file, and operate on the data using an
+external command.</p>
 
 <dl>
-<dt><b>Importing data into a cell:</b></dt>
+	<dt><b>Importing data into a cell:</b></dt>
 
-<dd>Enter the name of the file containing the data in the "File:"
-field, then click on "Import".</dd>
+	<dd>Enter the name of the file containing the data in the "File:"
+	field, then click on "Import".</dd>
 
-<dt><b>Exporting data from the cell into a file:</b></dt>
+	<dt><b>Exporting data from the cell into a file:</b></dt>
 
-<dd>Enter the name of the target file in the "File:" field, then
-click on "Export". Note that the default value of the "File:" field
-is "&lt;Temp File&gt;", and if you do not change that entry the
-system will put the data into a new temp file and tell you the name
-of that file after it has been written.</dd>
+	<dd>Enter the name of the target file in the "File:" field, then
+	click on "Export". Note that the default value of the "File:" field is
+	"&lt;Temp File&gt;", and if you do not change that entry the system
+	will put the data into a new temp file and tell you the name of that
+	file after it has been written.</dd>
 
-<dt><b>Operating on the data with an External Command:</b></dt>
+	<dt><b>Operating on the data with an External Command:</b></dt>
 
-<dd>This function provides a single-click operation to export the
-data to a file, operate on that file with an external process (e.g.
-MS Word, VI, various graphical editors, etc.), then read the result
-back from the file when editing is completed. To do this you must: 
+	<dd>This function provides a single-click operation to export the
+	data to a file, operate on that file with an external process (e.g. MS
+	Word, VI, various graphical editors, etc.), then read the result back
+	from the file when editing is completed. To do this you must:
 
-<dl>
-<dt><b>Enter a file name in the "File:"</b></dt>
+	<dl>
+		<dt><b>Enter a file name in the "File:"</b></dt>
 
-<dd>field or leave it set to "&lt;Temp File&gt;". If you leave it
-set to "&lt;Temp File&gt;", a temporary file will be created for
-you. If you enter your own file name, be warned that the file will
-be deleted after the data is read back when editing is
-completed.</dd>
+		<dd>field or leave it set to "&lt;Temp File&gt;". If you leave it
+		set to "&lt;Temp File&gt;", a temporary file will be created for you.
+		If you enter your own file name, be warned that the file will be
+		deleted after the data is read back when editing is completed.</dd>
 
-<dt><b>Enter a command in the "Command:" field.</b></dt>
+		<dt><b>Enter a command in the "Command:" field.</b></dt>
 
-<dd>This field is a Combo box where the drop-down list contains all
-of the commands you have used for editing other fields, so you can
-just choose one of them. The command will typically need the name
-of the file to edit. This may be done by using "%f" where you want
-the name of the file to go in that command, so, for example,
-instead of typing: 
-
-<pre>
+		<dd>This field is a Combo box where the drop-down list contains
+		all of the commands you have used for editing other fields, so you can
+		just choose one of them. The command will typically need the name of
+		the file to edit. This may be done by using "%f" where you want the
+		name of the file to go in that command, so, for example, instead of
+		typing: <pre>
                    xterm -e vi myfilename
                
-</pre>
-
-you could type 
-
-<pre>
+</pre> you could type <pre>
                    xterm -e vi %f
                
-</pre>
+</pre> which makes the command more general and avoids the need for you to
+		edit the command for each file.</dd>
 
-which makes the command more general and avoids the need for you to
-edit the command for each file.</dd>
+		<dt><b>Click on "Execute".</b></dt>
 
-<dt><b>Click on "Execute".</b></dt>
+		<dd>This causes the cell data to be exported to the selected file
+		and the command to be executed. When the external process exits,
+		SQuirreL imports the data from that same file back into the popup and
+		deletes the file. IMPORTANT: SQuirreL does NOT automatically update
+		the database with this data. To put the edited data into the database,
+		click on the "Update DB" button.</dd>
+	</dl>
 
-<dd>This causes the cell data to be exported to the selected file
-and the command to be executed. When the external process exits,
-SQuirreL imports the data from that same file back into the popup
-and deletes the file. IMPORTANT: SQuirreL does NOT automatically
-update the database with this data. To put the edited data into the
-database, click on the "Update DB" button.</dd>
-</dl>
+	<p>Note: SQuirrel does not provide a window for the command to
+	operate in, so you may need to provide for that as part of the command.
+	For example, to run VI on Linux you may need to enter the command:</p>
 
-<p>Note: SQuirrel does not provide a window for the command to
-operate in, so you may need to provide for that as part of the
-command. For example, to run VI on Linux you may need to enter the
-command:</p>
-
-<pre>
+	<pre>
         xterm -e vi %f
        
-</pre>
-
-to have VI run in a window visible to you. If you just enter "vi
-%f" as the command, you will not get a window to operate in. Other
-commands (e.g. gimp) provide their own windows, so the extra step
-will not be necessary for them.</dd>
+</pre> to have VI run in a window visible to you. If you just enter "vi %f" as
+	the command, you will not get a window to operate in. Other commands
+	(e.g. gimp) provide their own windows, so the extra step will not be
+	necessary for them.</dd>
 </dl>
 
 <p>In all of the above cases, the entries you make in the "File:"
-and "Command" fields will be associated with that column so that
-you do not need to re-type them the next time that you edit that
-field. You may, of course, change those values at any time.</p>
+and "Command" fields will be associated with that column so that you do
+not need to re-type them the next time that you edit that field. You
+may, of course, change those values at any time.</p>
 
-<p>Also, if you just want to set the default values for a
-particular column, you can enter the "File:" and "Command:" field
-information and click on "Apply".</p>
+<p>Also, if you just want to set the default values for a particular
+column, you can enter the "File:" and "Command:" field information and
+click on "Apply".</p>
 
 <h3><a name="Limitations"></a>Limitations</h3>
 
 <p>Some DBMSs implement "standard" data types in non-standard ways
-For example, we know that many DBMSs claim to implement the BLOB
-data type but they actually store that data using a BINARY or
-LONGVARBINARY field SQuirreL uses the <i>actual</i> data type as
-defined in the DATA_TYPE field in the Columns tab for the table,
-not the TYPE_NAME Thus it is possible that you may think you are
-working with one type of data but actually using something else so
-controls and limitations on specific data type (e.g. limiting the
-data read when loading the Contents tab may not work as
-expected.</p>
+For example, we know that many DBMSs claim to implement the BLOB data
+type but they actually store that data using a BINARY or LONGVARBINARY
+field SQuirreL uses the <i>actual</i> data type as defined in the
+DATA_TYPE field in the Columns tab for the table, not the TYPE_NAME Thus
+it is possible that you may think you are working with one type of data
+but actually using something else so controls and limitations on
+specific data type (e.g. limiting the data read when loading the
+Contents tab may not work as expected.</p>
 
 <p>SQuirreL allows editing only on cells that are defined using the
-basic standard SQL data type (see <a href="#data_types">Data
-Types</a>) If your DBMS provides other data types, you can create a
-plug-in that supports the (see the file
+basic standard SQL data type (see <a href="#data_types">Data Types</a>)
+If your DBMS provides other data types, you can create a plug-in that
+supports the (see the file
 net/sourceforge/squirrel_sql/fw/datasetviewer/cellcomponent/CellComponentFactory
 for more information)</p>
 
-<p>Some attempt has been made to validate user input for each of
-the types. For example, INTEGER fields allow only digits and '-' as
-input. However, not all of the necessary information is supplied by
-all DBMSs, so we cannot do a complete validation of user input in
-all cases. For example, we cannot check that a value entered for a
-SMALLINT field will fit into a SMALLINT column in a specific DBMS.
-Also, the drivers for each DBMS provide different amounts of
-information for the same field type in different situation, and
-SQuirreL cannot validate the input when such data is missing The
-"validation of last resort" is done when we try to do an update on
-the DB. The DBMS either succeeds or it fails, and if there is an
-error we display that message to the user with the information that
-the DB has not been updated.</p>
+<p>Some attempt has been made to validate user input for each of the
+types. For example, INTEGER fields allow only digits and '-' as input.
+However, not all of the necessary information is supplied by all DBMSs,
+so we cannot do a complete validation of user input in all cases. For
+example, we cannot check that a value entered for a SMALLINT field will
+fit into a SMALLINT column in a specific DBMS. Also, the drivers for
+each DBMS provide different amounts of information for the same field
+type in different situation, and SQuirreL cannot validate the input when
+such data is missing The "validation of last resort" is done when we try
+to do an update on the DB. The DBMS either succeeds or it fails, and if
+there is an error we display that message to the user with the
+information that the DB has not been updated.</p>
 
 <p>VARCHAR fields containing tabs or newlines may only be edited in
 the Popup window Fields that can only be edited in the Popup are
 displayed with a cyan background</p>
 
 <p>VARCHAR fields that may be set to null cannot be set to the
-string value "&lt;null&gt; " (without the quotes). VARCHAR fields
-in the database may include that value as long as you do not try to
-edit them</p>
+string value "&lt;null&gt; " (without the quotes). VARCHAR fields in the
+database may include that value as long as you do not try to edit them</p>
 
-Tables with a large number of columns or with a column containing a
-very long value (not includeing BLOB/CLOB data types) may get an
-error when trying to update the DB because the WHERE clause is too
-long. In this case you should open the table in a session, go to
-the <b>Session</b> menu in the main window, and select the entry
-"Limit cell edit WHERE clause size" That tool lets you specify
-which columns SQuirrel should use in the WHERE clause when doing
-the requested update on the cell contents See <a href=
-"#session_menu">Session Menu</a> . 
+Tables with a large number of columns or with a column containing a very
+long value (not includeing BLOB/CLOB data types) may get an error when
+trying to update the DB because the WHERE clause is too long. In this
+case you should open the table in a session, go to the
+<b>Session</b>
+menu in the main window, and select the entry "Limit cell edit WHERE
+clause size" That tool lets you specify which columns SQuirrel should
+use in the WHERE clause when doing the requested update on the cell
+contents See
+<a href="#session_menu">Session Menu</a>
+.
 
 <h3><a name="summary_of_how_it_works"></a>Summary of How it works
 (and why you may care)</h3>
 
 <p>The DB updates are based on the assumption that the list of DB
-column names and their values for the current row are unique, or if
-they are not unique, that all of the rows with those values are to
-be updated in the DB. For example, if you have a database with
-columns a, b, and c, and in a particular row you have the
-values</p>
+column names and their values for the current row are unique, or if they
+are not unique, that all of the rows with those values are to be updated
+in the DB. For example, if you have a database with columns a, b, and c,
+and in a particular row you have the values</p>
 
 <pre>
     a=34  b='your name'  c=55
@@ -1130,18 +1075,17 @@ values</p>
 following:</p>
 
 <ol>
-<li>Query the DB for how many rows contain a=34, b='your name', and
-c=55. If there are more than one, then the update will affect all
-of those rows, so SQuirreL asks if you want to do that before
-continuing.</li>
+	<li>Query the DB for how many rows contain a=34, b='your name',
+	and c=55. If there are more than one, then the update will affect all
+	of those rows, so SQuirreL asks if you want to do that before
+	continuing.</li>
 
-<li>Query the DB for how many rows contain a=34, b='your name' and
-c=66. If there are any existing rows with those values, changing
-the current row to c=66 will make the current row identical to the
-existing row(s), so SQuirreL asks if you want to do that before
-continuing.</li>
+	<li>Query the DB for how many rows contain a=34, b='your name' and
+	c=66. If there are any existing rows with those values, changing the
+	current row to c=66 will make the current row identical to the existing
+	row(s), so SQuirreL asks if you want to do that before continuing.</li>
 
-<li>Create and execute the following:</li>
+	<li>Create and execute the following:</li>
 </ol>
 
 <pre>
@@ -1149,216 +1093,205 @@ update &lt;table&gt; set c=66 where
     a=34 and b='your name' and c=55
 </pre>
 
-<p>To help distinguish rows that are similar to each other, any
-DBMS that provides a pseudo-column to uniquely identify each row
-(such as Oracle's ROWID) has that pseudo-column included in all
-querys.</p>
+<p>To help distinguish rows that are similar to each other, any DBMS
+that provides a pseudo-column to uniquely identify each row (such as
+Oracle's ROWID) has that pseudo-column included in all querys.</p>
 
 <p>The problem with this is that some columns cannot be
-differentiated in this way, most notably BLOBs and CLOBs. Thus, if
-your table contains BLOB or CLOB columns, SQuirreL may think that
-rows are identical because all of the non-BLOB/CLOB fields are
-identical, but the rows are actually not the same because the
-contents of the BLOB/CLOB fields differ. This could lead to
-"erroneous" warning messages.</p>
+differentiated in this way, most notably BLOBs and CLOBs. Thus, if your
+table contains BLOB or CLOB columns, SQuirreL may think that rows are
+identical because all of the non-BLOB/CLOB fields are identical, but the
+rows are actually not the same because the contents of the BLOB/CLOB
+fields differ. This could lead to "erroneous" warning messages.</p>
 
 <h3><a name="quirks"></a>Quirks, Oddities and Known Bugs and
 work-arounds</h3>
 
 <ul>
-<li>After error or warning messages, the focus is lost. You will
-need to click on a cell in order to continue editing.</li>
+	<li>After error or warning messages, the focus is lost. You will
+	need to click on a cell in order to continue editing.</li>
 
-<li>When using the enter key to leave a cell, you must press it two
-times. The first time causes the data to be updated in the DB, but
-leaves you back in the same cell. Pressing enter again moves to the
-cell below the current one.<br>
-</li>
+	<li>When using the enter key to leave a cell, you must press it
+	two times. The first time causes the data to be updated in the DB, but
+	leaves you back in the same cell. Pressing enter again moves to the
+	cell below the current one.<br>
+	</li>
 
-<li>Displaying all records in large tables (> 10000 rows) is memory 
-and cpu intensive and can cause SQuirreL to attempt to allocate more memory 
-than it is configured to use by default (256 MB).  If this is a problem, 
-you can increase the memory that SQuirreL is allowed to use by editing the 
-launch script (squirrel-sql.bat for Windows, squirrel-sql.sh for Linux/MacOS X).
-Search for -Xmx256m in the script and change it to something appropriately higher
-(For example, -Xmx512m (512 MB) or -Xmx1024m (1 GB)).  This setting should not be 
-greater than the physical RAM you have installed on the machine that SQuirreL is 
-being run on.  Setting it too high can cause the Java VM that SQuirreL runs in 
-not to start.</li>    
+	<li>Displaying all records in large tables (&gt; 10000 rows) is
+	memory and cpu intensive and can cause SQuirreL to attempt to allocate
+	more memory than it is configured to use by default (256 MB). If this
+	is a problem, you can increase the memory that SQuirreL is allowed to
+	use by editing the launch script (squirrel-sql.bat for Windows,
+	squirrel-sql.sh for Linux/MacOS X). Search for -Xmx256m in the script
+	and change it to something appropriately higher (For example, -Xmx512m
+	(512 MB) or -Xmx1024m (1 GB)). This setting should not be greater than
+	the physical RAM you have installed on the machine that SQuirreL is
+	being run on. Setting it too high can cause the Java VM that SQuirreL
+	runs in not to start.</li>
 
-<li>Records that contain large BLOBs (> 500KB) are currently a big problem 
-for SQuirreL.  SQuirreL will attempt to render BLOB data as text by converting 
-it to HEX.  The conversion process is memory intensive, and so is displaying the 
-HEX converted binary data.  It is currently not practical to work with data in 
-tables that contain BLOBs of size in excess of 500 KBs.  When viewing/editing tables 
-with small BLOBs, but many records, the maximum memory given to SQuirreL should 
-be increased, using the procedure outlined in the previous bullet.</li>  
-
+	<li>Records that contain large BLOBs (&gt; 500KB) are currently a
+	big problem for SQuirreL. SQuirreL will attempt to render BLOB data as
+	text by converting it to HEX. The conversion process is memory
+	intensive, and so is displaying the HEX converted binary data. It is
+	currently not practical to work with data in tables that contain BLOBs
+	of size in excess of 500 KBs. When viewing/editing tables with small
+	BLOBs, but many records, the maximum memory given to SQuirreL should be
+	increased, using the procedure outlined in the previous bullet.</li>
 </ul>
 
 <h2><a name="printing"></a>Printing</h2>
 
 <p>Any data that is displayed in a Table may be printed. This
-includes all of the meta-data tables displayed in the Object View
-as well as the Contents Tab and SQL Results tables. To print, first
-make sure that the Session Properties for the type of information
-(Meta Data, Table Contents, or SQL Results) has been set to either
-"Table" or "Editable Table". Then, with the cursor over the table
-to be printed, click on the right mouse button and click on
-"Print". This will bring up a dialog box in which you can adjust
-the parameters of the print job. When you tell the dialog to print,
-the selected table will be printed.</p>
+includes all of the meta-data tables displayed in the Object View as
+well as the Contents Tab and SQL Results tables. To print, first make
+sure that the Session Properties for the type of information (Meta Data,
+Table Contents, or SQL Results) has been set to either "Table" or
+"Editable Table". Then, with the cursor over the table to be printed,
+click on the right mouse button and click on "Print". This will bring up
+a dialog box in which you can adjust the parameters of the print job.
+When you tell the dialog to print, the selected table will be printed.</p>
 
-<p>Tables that are too wide or too long to fit onto one page will
-be printed across multiple pages that can be pieced together to
-show the entire table.</p>
+<p>Tables that are too wide or too long to fit onto one page will be
+printed across multiple pages that can be pieced together to show the
+entire table.</p>
 
 <p>If the Session Properties for "Table Contents" or "SQL Results"
-have been set to "Text", then the data within the Contents Tab or
-SQL Results tables (respectively) may be copied and pasted into a
-separate window for printing.</p>
+have been set to "Text", then the data within the Contents Tab or SQL
+Results tables (respectively) may be copied and pasted into a separate
+window for printing.</p>
 
 <h2><a name="data_types"></a>Data Types</h2>
 
 <p>This is a quick description of how SQuirreL handles various data
-types when displaying the results of SQL statements. SQuirreL uses
-the column type (ResultSetMetaData.getColumnType(...)) from the
-metadata for the result set to determine how to display the
-column.</p>
+types when displaying the results of SQL statements. SQuirreL uses the
+column type (ResultSetMetaData.getColumnType(...)) from the metadata for
+the result set to determine how to display the column.</p>
 
 <dl>
-<dt><b>java.sql.Types.NULL</b></dt>
+	<dt><b>java.sql.Types.NULL</b></dt>
 
-<dd><em>&lt;Null&gt;</em> is displayed.</dd>
+	<dd><em>&lt;Null&gt;</em> is displayed.</dd>
 
-<dt><b>java.sql.Types.BOOLEAN and java.sql.Types.BIT</b></dt>
+	<dt><b>java.sql.Types.BOOLEAN and java.sql.Types.BIT</b></dt>
 
-<dd>If the retrieved column data is a <em>java.lang.Boolean</em>
-object then the appropriate <em>true/false</em> is displayed. If
-the retrieved column is a <em>java.lang.Number</em> then a non-zero
-value will display <em>true</em> while a zero value will display
-<em>false</em>. Otherwise the column data is converted to a string
-and if this string equals (ignoring case) "true" then <em>true</em>
-is displayed else <em>false</em>.</dd>
+	<dd>If the retrieved column data is a <em>java.lang.Boolean</em>
+	object then the appropriate <em>true/false</em> is displayed. If the
+	retrieved column is a <em>java.lang.Number</em> then a non-zero value
+	will display <em>true</em> while a zero value will display <em>false</em>.
+	Otherwise the column data is converted to a string and if this string
+	equals (ignoring case) "true" then <em>true</em> is displayed else <em>false</em>.</dd>
 
-<dt><b>java.sql.Types.TIME</b></dt>
+	<dt><b>java.sql.Types.TIME</b></dt>
 
-<dd>A <em>java.sql.Time</em> object is retrieved from the result
-set and displayed in <em>hh:mm:ss</em> format.</dd>
+	<dd>A <em>java.sql.Time</em> object is retrieved from the result
+	set and displayed in <em>hh:mm:ss</em> format.</dd>
 
-<dt><b>java.sql.Types.DATE</b></dt>
+	<dt><b>java.sql.Types.DATE</b></dt>
 
-<dd>A <em>java.sql.Date</em> object is retrieved from the result
-set and displayed in <em>yyyy-mm-dd</em> format.</dd>
+	<dd>A <em>java.sql.Date</em> object is retrieved from the result
+	set and displayed in <em>yyyy-mm-dd</em> format.</dd>
 
-<dt><b>java.sql.Types.TIMESTAMP</b></dt>
+	<dt><b>java.sql.Types.TIMESTAMP</b></dt>
 
-<dd>A <em>java.sql.TimeStamp</em> object is retrieved from the
-result set and displayed in <em>yyyy-mm-dd hh:mm:ss.fffffffff</em>
-format. WARNING: When updating any column in a row containing
-TIMESTAMP fields, the MySQL DBMS will automatically set the first
-TIMESTAMP field in the row to the current time. This is a "feature"
-of MySQL, and not a bug in SQuirreL.</dd>
+	<dd>A <em>java.sql.TimeStamp</em> object is retrieved from the
+	result set and displayed in <em>yyyy-mm-dd hh:mm:ss.fffffffff</em>
+	format. WARNING: When updating any column in a row containing TIMESTAMP
+	fields, the MySQL DBMS will automatically set the first TIMESTAMP field
+	in the row to the current time. This is a "feature" of MySQL, and not a
+	bug in SQuirreL.</dd>
 
-<dt><b>java.sql.Types.BIGINT</b></dt>
+	<dt><b>java.sql.Types.BIGINT</b></dt>
 
-<dd>If the retrieved column type is a <em>java.lang.Long</em> or a
-<em>java.lang.Number</em> then it is stored as a
-<em>java.lang.Long</em> and displayed as a base ten signed long.
-Otherwise the column data is converted to a string which is then
-parsed as a base ten signed long.</dd>
+	<dd>If the retrieved column type is a <em>java.lang.Long</em> or a
+	<em>java.lang.Number</em> then it is stored as a <em>java.lang.Long</em>
+	and displayed as a base ten signed long. Otherwise the column data is
+	converted to a string which is then parsed as a base ten signed long.</dd>
 
-<dt><b>java.sql.Types.DOUBLE, java.sql.Types.FLOAT,
-java.sql.Types.REAL</b></dt>
+	<dt><b>java.sql.Types.DOUBLE, java.sql.Types.FLOAT,
+	java.sql.Types.REAL</b></dt>
 
-<dd>If the retrieved column type is a <em>java.lang.Double</em> or
-a <em>java.lang.Number</em> then it is stored as a
-<em>java.lang.Double</em> and displayed as a string representation
-of the double. Otherwise the column data is converted to a string
-which is then parsed as a double.</dd>
+	<dd>If the retrieved column type is a <em>java.lang.Double</em> or
+	a <em>java.lang.Number</em> then it is stored as a <em>java.lang.Double</em>
+	and displayed as a string representation of the double. Otherwise the
+	column data is converted to a string which is then parsed as a double.</dd>
 
-<dt><b>java.sql.Types.DECIMAL, java.sql.Types.NUMERIC</b></dt>
+	<dt><b>java.sql.Types.DECIMAL, java.sql.Types.NUMERIC</b></dt>
 
-<dd>If the retrieved column type is a <em>java.math.BigDecimal</em>
-or a <em>java.lang.Number</em> then it is stored as a
-<em>java.math.BigDecimal</em> and displayed as a string
-representation of the <em>BigDecimal</em>. Otherwise the column
-data is converted to a string which is then parsed as a
-<em>BigDecimal</em>.</dd>
+	<dd>If the retrieved column type is a <em>java.math.BigDecimal</em>
+	or a <em>java.lang.Number</em> then it is stored as a <em>java.math.BigDecimal</em>
+	and displayed as a string representation of the <em>BigDecimal</em>.
+	Otherwise the column data is converted to a string which is then parsed
+	as a <em>BigDecimal</em>.</dd>
 
-<dt><b>java.sql.Types.INTEGER, java.sql.Types.SMALLINT,
-java.sql.Types.TINYINT</b></dt>
+	<dt><b>java.sql.Types.INTEGER, java.sql.Types.SMALLINT,
+	java.sql.Types.TINYINT</b></dt>
 
-<dd>If the retrieved column type is a <em>java.lang.Integer</em>
-then it is stored as a <em>java.lang.Integer</em> and displayed as
-a string representation of the <em>Integer</em>. Otherwise the
-column data is converted to a string which is then parsed as a
-<em>Integer</em>.</dd>
+	<dd>If the retrieved column type is a <em>java.lang.Integer</em>
+	then it is stored as a <em>java.lang.Integer</em> and displayed as a
+	string representation of the <em>Integer</em>. Otherwise the column
+	data is converted to a string which is then parsed as a <em>Integer</em>.</dd>
 
-<dt><b>java.sql.Types.CHAR, java.sql.Types.VARCHAR,
-java.sql.Types.LONGVARCHAR</b></dt>
+	<dt><b>java.sql.Types.CHAR, java.sql.Types.VARCHAR,
+	java.sql.Types.LONGVARCHAR</b></dt>
 
-<dd>The column data is displayed as a string. Note that if the data
-includes a newline character, that particular data item cannot be
-edited in the cell within the table, but if you double-click on the
-cell to get the Popup window, you will be able to edit the data
-there.</dd>
+	<dd>The column data is displayed as a string. Note that if the
+	data includes a newline character, that particular data item cannot be
+	edited in the cell within the table, but if you double-click on the
+	cell to get the Popup window, you will be able to edit the data there.</dd>
 
-<dt><b>java.sql.Types.BINARY, java.sql.Types.VARBINARY,
-java.sql.Types.LONGVARBINARY</b></dt>
+	<dt><b>java.sql.Types.BINARY, java.sql.Types.VARBINARY,
+	java.sql.Types.LONGVARBINARY</b></dt>
 
-<dd>In the SQL tab the column data is displayed as a string. The
-ContentsTab in the Object view displays each byte using Hex format.
-In the Popup editing window, you may choose to display these in
-Hex, Decimal, Octal, or Binary, and you may choose to display
-values representing printable ASCII characters as those characters
-(e.g. to see strings embedded in the binary object).</dd>
+	<dd>In the SQL tab the column data is displayed as a string. The
+	ContentsTab in the Object view displays each byte using Hex format. In
+	the Popup editing window, you may choose to display these in Hex,
+	Decimal, Octal, or Binary, and you may choose to display values
+	representing printable ASCII characters as those characters (e.g. to
+	see strings embedded in the binary object).</dd>
 
-<dt><b>java.sql.Types.BLOB</b></dt>
+	<dt><b>java.sql.Types.BLOB</b></dt>
 
-<dd>If the <a href="#data_type_controls">Global Preferences, Data
-Type Controls</a> says to retrieve blobs then the column data is
-displayed as bytes. Note that the <a href=
-"#data_type_controls">Global Preferences, Data Type Controls</a>
-can specify the number of bytes of the blob to read in during the
-initial setup of the ContentsTab table. If you do not specify a
-limit, the default operation is to not read in any data and to
-display "&lt;Blob&gt;" in the column. Clicking on an individual
-cell causes the entire BLOB data to be read and displayed at that
-time. Note: BLOB fields may be very large, and this can cause the
-Popup window to take some time to start up (e.g. 30 sec. for a BLOB
-containing a relatively small sized photo).</dd>
+	<dd>If the <a href="#data_type_controls">Global Preferences,
+	Data Type Controls</a> says to retrieve blobs then the column data is
+	displayed as bytes. Note that the <a href="#data_type_controls">Global
+	Preferences, Data Type Controls</a> can specify the number of bytes of the
+	blob to read in during the initial setup of the ContentsTab table. If
+	you do not specify a limit, the default operation is to not read in any
+	data and to display "&lt;Blob&gt;" in the column. Clicking on an
+	individual cell causes the entire BLOB data to be read and displayed at
+	that time. Note: BLOB fields may be very large, and this can cause the
+	Popup window to take some time to start up (e.g. 30 sec. for a BLOB
+	containing a relatively small sized photo).</dd>
 
-<dt><b>java.sql.Types.CLOB</b></dt>
+	<dt><b>java.sql.Types.CLOB</b></dt>
 
-<dd>If the <a href="#data_type_controls">Global Preferences, Data
-Type Controls</a> says to retrieve clobs then the column data is
-displayed as a string. Note that the <a href=
-"#data_type_controls">Global Preferences, Data Type Controls</a>
-can specify the number of characters of the clob to read in during
-the initial setup of the ContentsTab table. If you do not specify a
-limit, the default operation is to not read in any data and to
-display "&lt;Clob&gt;" in the column. Clicking on an individual
-cell causes the entire CLOB data to be read and displayed at that
-time.</dd>
+	<dd>If the <a href="#data_type_controls">Global Preferences,
+	Data Type Controls</a> says to retrieve clobs then the column data is
+	displayed as a string. Note that the <a href="#data_type_controls">Global
+	Preferences, Data Type Controls</a> can specify the number of characters of
+	the clob to read in during the initial setup of the ContentsTab table.
+	If you do not specify a limit, the default operation is to not read in
+	any data and to display "&lt;Clob&gt;" in the column. Clicking on an
+	individual cell causes the entire CLOB data to be read and displayed at
+	that time.</dd>
 
-<dt><b>java.sql.Types.OTHER</b></dt>
+	<dt><b>java.sql.Types.OTHER</b></dt>
 
-<dd>If the <a href="#data_type_controls">Global Preferences, Data
-Type Controls</a> says to retrieve columns of this type then the
-column data is displayed as a string.</dd>
+	<dd>If the <a href="#data_type_controls">Global Preferences,
+	Data Type Controls</a> says to retrieve columns of this type then the
+	column data is displayed as a string.</dd>
 
-<dt><b>Any other type</b></dt>
+	<dt><b>Any other type</b></dt>
 
-<dd>If the <a href="#data_type_controls">Global Preferences, Data
-Type Controls</a> says to retrieve all other data types then the
-column data is displayed as a string.</dd>
+	<dd>If the <a href="#data_type_controls">Global Preferences,
+	Data Type Controls</a> says to retrieve all other data types then the
+	column data is displayed as a string.</dd>
 </dl>
 
 <p>The JDBC specification (in file java.sql.Types) defines several
 codes whose semantics are not understood by SQuirreL: JAVA_OBJECT,
-DISTINCT, STRUCT, ARRAY, REF, and DATALINK. These are all handled
-as "Any other type" as described above.</p>
+DISTINCT, STRUCT, ARRAY, REF, and DATALINK. These are all handled as
+"Any other type" as described above.</p>
 
 <h2><a name="global_prefs"></a>Global Preferences</h2>
 
@@ -1368,367 +1301,400 @@ application.</p>
 The descriptions included here are for the tabs created by the core
 product and standard plugins (if standard plugins are installed).
 Optional Plugins may add other tabs to this window. See the
-Plugin-specific help for descriptions of the tabs added by that
-plugin. 
+Plugin-specific help for descriptions of the tabs added by that plugin.
 
 <h3>General Tab</h3>
 
 <p align="CENTER"><img src="images/global_general.png" border="0"
-alt="General tab"></p>
+	alt="General tab"></p>
 
 <h4>General Tab (Appearance)</h4>
 
-<p><b>Use tabbed layout</b> - if selected each new session becomes
-a new tab, instead of having it's own internal window.</p>
+<dl>
+	<dt><b>Use tabbed layout</b></dt>
+	<dd>if selected each new session becomes a new tab, instead of
+	having it's own internal window. An example of two sessions with
+	SQuirreL configured for tabbed layout appears below (Note: in
+	particular, notice that only one session window tab can be selected at
+	a time leading to less clutter and zero internal window size
+	management):</dd>
 
-<p><b>Use MDI Internal Frame layout</b> - if selected each new
-session becomes a new internal window.</p>
+	<p align="CENTER"><img src="images/tabbed_session_layout.png"
+		alt="Tabbed Layout Example"></p>
 
-<p><b>Show Window Contents While Dragging</b> - If checked this
-shows the contents of windows as they are being dragged. If
-unchecked only the outline of the window will be shown. Uncheck for
-a speed improvement on slow machines.</p>
+	<dt><b>Use MDI Internal Frame layout</b></dt>
+	<dd>if selected each new session becomes a new internal window
+	(Multiple Document Interface). We refer to this as the "Classic"
+	session layout interface as it has been around the longest. An example
+	of the same two sessions with SQuirreL configured for MDI layout
+	appears below:</dd>
 
-<p><b>Show Tooltips</b> - If checked then tooltips (or hints) will
-be shown when the mouse "hovers" over some controls.</p>
+	<p align="CENTER"><img src="images/mdi_session_layout.png"
+		alt="Multiple Document Interface Layout Example"></p>
 
-<p><b>Use Scrollable Tabbed Panes</b> - If checked will display the
-tabs in tabbed folders in a scrollable region rather than wrapping
-them when all tabs will not fit within a single run.</p>
+	<dt><b>Show Window Contents While Dragging</b></dt>
+	<dd>If checked this shows the contents of windows as they are
+	being dragged. If unchecked only the outline of the window will be
+	shown. Uncheck for a speed improvement on slow machines.</dd>
+
+	<dt><b>Show Tooltips</b></dt>
+	<dd>If checked then tooltips (or hints) will be shown when the
+	mouse "hovers" over some controls.</dd>
+
+	<dt><b>Use Scrollable Tabbed Panes</b></dt>
+	<dd>If checked will display the tabs in tabbed folders in a
+	scrollable region rather than wrapping them when all tabs will not fit
+	within a single run.</dd>
+</dl>
 
 <table summary="scrollable/stacked tabs side-by-side comparison">
-<tr>
-<td width="40%" align="right"><img src="images/stacked_tabs.png"
-alt="stacked tabs picture"> </td>
-<td width="10%"></td>
-<td width="40%" align="left"><img src="images/scrollable_tabs.png"
-alt="scrollable tabs picture"> </td>
-</tr>
+	<tr>
+		<td width="40%" align="right"><img src="images/stacked_tabs.png"
+			alt="stacked tabs picture"></td>
+		<td width="10%"></td>
+		<td width="40%" align="left"><img
+			src="images/scrollable_tabs.png" alt="scrollable tabs picture">
+		</td>
+	</tr>
 
-<tr>
-<td align="center">Stacked Tabs</td>
-<td></td>
-<td align="center">Scrollable Tabs</td>
-</tr>
+	<tr>
+		<td align="center">Stacked Tabs</td>
+		<td></td>
+		<td align="center">Scrollable Tabs</td>
+	</tr>
 </table>
 
 <br>
-<br>
- 
 
-<p><b>Show Main Window Tool Bar</b> - If checked then the tool bar
-will be displayed in the main window.</p>
+<dl>
+	<dt><b>Show Main Window Tool Bar</b></dt>
 
-<p><b>Show Main Window Status Bar</b> - If checked then the status
-bar will be displayed in the main window.</p>
+	<dd>If checked then the tool bar will be displayed in the main
+	window.</dd>
 
-<p><b>Show Drivers Tool Bar</b> - If checked then the tool bar will
-be displayed in the Aliases Window.</p>
+	<dt><b>Show Main Window Status Bar</b></dt>
 
-<p><b>Show Aliases Tool Bar</b> - If checked then the tool bar will
-be displayed in the Aliases Window.</p>
+	<dd>If checked then the status bar will be displayed in the main
+	window.</dd>
 
-<p><b>Maximize Session Sheet on Open</b> - If checked then when a
-session is opened it will automatically maximize to the whole space
-available within the Squirrel window. If not checked, it is opened
-using a smaller part of the space.</p>
+	<dt><b>Show Drivers Tool Bar</b></dt>
+	<dd>If checked then the tool bar will be displayed in the Aliases
+	Window.
+	<dt><b>Show Aliases Tool Bar</b></dt>
+	<dd>If checked then the tool bar will be displayed in the Aliases
+	Window.</dd>
 
-<p><b>Show Color Icons in Toolbars</b> - If checked then the icons
-in the toolbars are shown in color. If not checked, the icons are
-in black-and-white.</p>
+	<dt><b>Maximize Session Sheet on Open</b></dt>
+	<dd>If checked then when a session is opened it will automatically
+	maximize to the whole space available within the Squirrel window. If
+	not checked, it is opened using a smaller part of the space.</dd>
+
+	<dt><b>Show Color Icons in Toolbars</b></dt>
+	<dd>If checked then the icons in the toolbars are shown in color.
+	If not checked, the icons are in black-and-white.</dd>
+
+</dl>
 
 <h4>General Tab (Logging)</h4>
 
-<p><b>Execution Log File</b> - This (display only) setting tells
-you the name (and location) of the logging file for SQuirreL. If
-the file name is too long for the label then the full name will be
-displayed in a tooltip.</p>
+<dl>
+	<dt><b>Execution Log File</b></dt>
+	<dd>This (display only) setting tells you the name (and location)
+	of the logging file for SQuirreL. If the file name is too long for the
+	label then the full name will be displayed in a tooltip. For more
+	information see <a href="#logs">Logs</a>.</dd>
 
-For more information see <a href="#logs">Logs</a>. 
-
-<p><b>Configuration File</b> - This (display only) setting tells
-you the name (and location) of the logging configuration file for
-SQuirreL. If the file name is too long for the label then the full
-name will be displayed in a tooltip.</p>
-
-For more information see <a href="#logs">Logs</a>. 
+	<dt><b>Configuration File</b></dt>
+	<dd>This (display only) setting tells you the name (and location)
+	of the logging configuration file for SQuirreL. If the file name is too
+	long for the label then the full name will be displayed in a tooltip.
+	For more information see <a href="#logs">Logs</a>.</dd>
+</dl>
 
 <h4>SQL Tab</h4>
 
-<p align="CENTER"><img src="images/global_sql.png" border="0" alt=
-"SQL tab"></p>
+<p align="CENTER"><img src="images/global_sql.png" border="0"
+	alt="SQL tab"></p>
 
 <h4>SQL Tab (General)</h4>
 
-<p><b>Login Timeout</b> - Sets the maximum time in seconds that a
-JDBC driver will wait while attempting to connect to the
-database.</p>
+<dl>
+	<dt><b>Login Timeout</b></dt>
 
-<p><b>Large Scrip Statement Count</b> - By default, a script is
-considered large if it has more than 200 SQL statements selected
-for execution in the script. When this is set to zero, large script
-execution support is disabled. Large script support consists of the
-following behavior during execution:</p>
+	<dd>Sets the maximum time in seconds that a JDBC driver will wait
+	while attempting to connect to the database.</dd>
 
-<ul>
-<li>Only one message is written in the message panel at the bottom
-of the session window at the end of running many statements
-summarizing the details of execution (timing, statement type and
-count, etc).</li>
+	<dt><b>Large Scrip Statement Count</b></dt>
 
-<li>The message "SQL Statement x of y &lt;some sql...&gt;" is still
-displayed in the results panel to indicate progress.</li>
+	<dd>This feature can dramatically improve UI responsiveness when
+	executing many statements in large scripts (especially those with
+	statement counts in the thousands). By default, a script is considered
+	large if it has more than 200 SQL statements selected for execution in
+	the script. When this is set to zero, large script execution support is
+	disabled. Large script support consists of the following behavior
+	during execution:
 
-<li>The history bar isn't updated during large script
-execution.</li>
-</ul>
 
-This feature can dramatically improve UI responsiveness when
-executing many statements in large scripts (especially those with
-statement counts in the thousands). 
+	<ul>
+		<li>Only one message is written in the message panel at the
+		bottom of the session window at the end of running many statements
+		summarizing the details of execution (timing, statement type and
+		count, etc).</li>
+
+		<li>The message "SQL Statement x of y &lt;some sql...&gt;" is
+		still displayed in the results panel to indicate progress.</li>
+
+		<li>The history bar isn't updated during large script execution.</li>
+	</ul>
+	</dd>
+</dl>
 
 <h4>SQL Tab (Debug)</h4>
 
-<p><b>No Debug</b> - If checked then no debugging information is
-output from Squirrel.</p>
+<dl>
+	<dt><b>No Debug</b></dt>
 
-<p><b>JDBC Debug to Output Stream</b> - If checked tells the JDBC
-drivers to write debugging information to the JDBC Debug File.
-Depending on the JDBC driver you are using this may generate a lot
-of output and significantly slow down SQuirreL.</p>
+	<dd>If checked then no debugging information is output from
+	Squirrel.</dd>
 
-<p><b>JDBC Debug to Writer</b> - If checked tells the JDBC drivers
-to write debugging information to the JDBC Debug File. Depending on
-the JDBC driver you are using this may generate a lot of output and
-significantly slow down SQuirreL.</p>
+	<dt><b>JDBC Debug to Output Stream</b></dt>
 
-<p><b>JDBC Debug File</b> - If JDBC Debug is enabled then this
-(display only) setting is the file that the debug information will
-be written out to. If the file name is too long for the label then
-the full name will be displayed in a tooltip.</p>
+	<dd>If checked tells the JDBC drivers to write debugging
+	information to the JDBC Debug File. Depending on the JDBC driver you
+	are using this may generate a lot of output and significantly slow down
+	SQuirreL.</dd>
 
-<p>The <b>JDBC Debug to Output Stream</b> has been deprecated by
-JavaSoft in favour of the <b>JDBC Debug To Writer</b> option.
-However some older JDBC drivers may use the <b>Output Stream</b>
-rather than the <b>Writer</b>. Other drivers (such as the oracle 8
-JDBC driver) may write different information to the <b>Output
-Stream</b> than they do to the <b>Writer</b>.</p>
+	<dt><b>JDBC Debug to Writer</b></dt>
+
+	<dd>If checked tells the JDBC drivers to write debugging
+	information to the JDBC Debug File. Depending on the JDBC driver you
+	are using this may generate a lot of output and significantly slow down
+	SQuirreL.</dd>
+
+	<dt><b>JDBC Debug File</b></dt>
+
+	<dd>If JDBC Debug is enabled then this (display only) setting is
+	the file that the debug information will be written out to. If the file
+	name is too long for the label then the full name will be displayed in
+	a tooltip.</dd>
+</dl>
+
+The
+<b>JDBC Debug to Output Stream</b>
+has been deprecated by JavaSoft in favour of the
+<b>JDBC Debug To Writer</b>
+option. However some older JDBC drivers may use the
+<b>Output Stream</b>
+rather than the
+<b>Writer</b>
+. Other drivers (such as the oracle 8 JDBC driver) may write different
+information to the
+<b>Output Stream</b>
+than they do to the
+<b>Writer</b>
+.
 
 <h4>SQL Tab (SQL File)</h4>
+</dd>
 
-<p><b>Open in previous direcory</b> When opening files in the SQL
-editor, sets the location in the file chooser to be the last
-directory that a script file was opened from.</p>
+<dt><b>Open in previous direcory</b> When opening files in the SQL
+editor, sets the location in the file chooser to be the last directory
+that a script file was opened from.</dt>
 
-<p><b>Open in specified direcory</b> When opening files in the SQL
-editor, sets the location in the file chooser to be the directory
-that is specified in the text field.</p>
+<dt><b>Open in specified direcory</b> When opening files in the SQL
+editor, sets the location in the file chooser to be the directory that
+is specified in the text field.</dt>
 
+<dd>
 <h3>Proxy Tab</h3>
 
 <p align="CENTER"><img src="images/global_proxy.png" border="0"
-alt="Proxy tab"></p>
+	alt="Proxy tab"></p>
 
 <dl>
-<dt><b>Proxy Tab (HTTP Proxy)</b></dt>
-<dd>
-  <dl>
-  <dt><b>Use Proxy</b></dt>
+	<dt><b>Proxy Tab (HTTP Proxy)</b></dt>
 
-  <dd>If checked then a HTTP proxy server will be used for connecting to servers.</dd>
+	<dd>
+	<dl>
+		<dt><b>Use Proxy</b></dt>
 
-  <dt><b>Server</b></dt>
+		<dd>If checked then a HTTP proxy server will be used for
+		connecting to servers.</dd>
 
-  <dd>The name (or IP address) of your proxy server.</dd>
+		<dt><b>Server</b></dt>
 
-  <dt><b>Port</b></dt>
+		<dd>The name (or IP address) of your proxy server.</dd>
 
-  <dd>The port number to use on the proxy server.</dd>
+		<dt><b>Port</b></dt>
 
-  <dt><b>User</b></dt>
+		<dd>The port number to use on the proxy server.</dd>
 
-  <dd>The user name to use to log onto the proxy server.</dd>
+		<dt><b>User</b></dt>
 
-  <dd><b>Password</b></dd>
+		<dd>The user name to use to log onto the proxy server.</dd>
 
-  <dd>The password to use to log onto the proxy server.</dd>
+		<dt><b>Password</b></dt>
 
-  <dt><b>No Proxy For</b></dt>
+		<dd>The password to use to log onto the proxy server.</dd>
 
-  <dd>A list of servers (separated by |) that do not need to be accessed through your proxy server.</dd>
-  </dl>
-</dd>
+		<dt><b>No Proxy For</b></dt>
+
+		<dd>A list of servers (separated by |) that do not need to be
+		accessed through your proxy server.</dd>
+	</dl>
+	</dd>
 </dl>
 
 <dl>
-<dt><b>Proxy Tab (SOCKS Proxy)</b></dt>
-<dd>
-  <dl>
-  <dt><b>Use Proxy</b></dt> 
-  <dd>If checked then a SOCKS proxy server will be used for connecting to servers.</dd>
+	<dt><b>Proxy Tab (SOCKS Proxy)</b></dt>
 
-  <dt><b>Server</b></dt> 
-  <dd>The name (or IP address) of your proxy server.</dd>
+	<dd>
+	<dl>
+		<dt><b>Use Proxy</b></dt>
 
-  <dt><b>Port</b></dt> 
-  <dd>The port number to use on the proxy server.</dd>
-  </dl>
-</dd>
+		<dd>If checked then a SOCKS proxy server will be used for
+		connecting to servers.</dd>
+
+		<dt><b>Server</b></dt>
+
+		<dd>The name (or IP address) of your proxy server.</dd>
+
+		<dt><b>Port</b></dt>
+
+		<dd>The port number to use on the proxy server.</dd>
+	</dl>
+	</dd>
 </dl>
 
 <h3><a name="data_type_controls"></a>Data Type Controls Tab</h3>
 
-<p>The contents of this tab may change depending on what Plugins
-you have loaded. Plugins are allowed to define new Data Types or
-override the existing Data Types, and that may add or remove
-controls from this window. The following describes the standard
-Data Type controls with no changes made by any Plugins.</p>
+<p>The contents of this tab may change depending on what Plugins you
+have loaded. Plugins are allowed to define new Data Types or override
+the existing Data Types, and that may add or remove controls from this
+window. The following describes the standard Data Type controls with no
+changes made by any Plugins.</p>
 
 <p>Even with only the default Data Type Controls defined, there are
 still two screens of them to describe.</p>
 
 <p align="CENTER"><img src="images/global_data_types_part1.png"
-border="0" alt="Data Type Controls Tab, part 1"></p>
+	border="0" alt="Data Type Controls Tab, part 1"></p>
 
 <h4>BLOB (SQL Type 2004)</h4>
 
-<p><b>Read contents when table is first loaded</b> - If checked
-then the actual contents of the BLOB is read when the table is
-first loaded. This is usually not recommended because it usually
-degrades performance. If this is not checked, then the data will
-initally display as "&gt;Blob&lt;" in the table, and the entire
-contents will be read in and displayed when you click on that
-cell.</p>
+<p><b>Read contents when table is first loaded</b> - If checked then
+the actual contents of the BLOB is read when the table is first loaded.
+This is usually not recommended because it usually degrades performance.
+If this is not checked, then the data will initally display as
+"&gt;Blob&lt;" in the table, and the entire contents will be read in and
+displayed when you click on that cell.</p>
 
 <p><b>Read</b> - If reading the contents during initial table load,
-select whether to read the entire contents or just part of the
-data. If only part of the data is read, then the entire contents
-will be read when you click on that cell.</p>
+select whether to read the entire contents or just part of the data. If
+only part of the data is read, then the entire contents will be read
+when you click on that cell.</p>
 
 <p><b>(number)</b> - When reading part of the data during inital
 table load, how many bytes to read.</p>
 
 <h4>CLOB (SQL Type 2005)</h4>
 
-<p><b>Read contents when table is first loaded</b> - If checked
-then the actual contents of the CLOB is read when the table is
-first loaded. This is usually not recommended because it usually
-degrades performance. If this is not checked, then the data will
-initally display as "&gt;Clob&lt;" in the table, and the entire
-contents will be read in and displayed</p>
+<p><b>Read contents when table is first loaded</b> - If checked then
+the actual contents of the CLOB is read when the table is first loaded.
+This is usually not recommended because it usually degrades performance.
+If this is not checked, then the data will initally display as
+"&gt;Clob&lt;" in the table, and the entire contents will be read in and
+displayed</p>
 
 <p><b>Read</b> - If reading the contents during initial table load,
-select whether to read the entire contents or just part of the
-data. If only part of the data is read, then the entire contents
-will be read when you click on that cell.</p>
+select whether to read the entire contents or just part of the data. If
+only part of the data is read, then the entire contents will be read
+when you click on that cell.</p>
 
 <p><b>(number)</b> - When reading part of the data during inital
 table load, how many characters to read.</p>
 
 <p><b>Show newlines as \n within cells</b> - If checked, when the
-data contains newlines, the newlines will be displayed as "\n"
-within the cell. When unchecked, the newlines are ignored within
-the cell. The difference is between seeing:</p>
+data contains newlines, the newlines will be displayed as "\n" within
+the cell. When unchecked, the newlines are ignored within the cell. The
+difference is between seeing:</p>
 
 <pre>
     first line\nsecond line\nthird line
     and
     first linesecond linethird line
-</pre>
-
-Note that this option does not affect display in the Popup window,
-where newlines actually become new lines. 
+</pre> Note that this option does not affect display in the Popup window,
+where newlines actually become new lines.
 
 <h4>CHAR, VARCHAR, LONGVARCHAR (SQL Types 1, 12, -1)</h4>
 
 <p><b>Show newlines as \n within cells</b> - If checked, when the
-data contains newlines, the newlines will be displayed as "\n"
-within the cell. When unchecked, the newlines are ignored within
-the cell. The difference is between seeing:</p>
+data contains newlines, the newlines will be displayed as "\n" within
+the cell. When unchecked, the newlines are ignored within the cell. The
+difference is between seeing:</p>
 
 <pre>
     first line\nsecond line\nthird line
     and
     first linesecond linethird line
-</pre>
-
-Note that this option does not affect display in the Popup window,
-where newlines actually become new lines. 
+</pre> Note that this option does not affect display in the Popup window,
+where newlines actually become new lines.
 
 <p><b>Allow LONGVARCHAR type to be used in WHERE clause</b> - When
-checked, the LONGVARCHAR type is used in WHERE clauses just as
-other types. When unchecked, columns of type LONGVARCHAR are not
-used in the WHERE clause when performing edits in the cell data.
-This is necessary because some databases (e.g. Oracle, DB2) do not
-allow LONGVARCHAR data types to be used in WHERE clauses and
-generate odd error messages when they are seen.</p>
+checked, the LONGVARCHAR type is used in WHERE clauses just as other
+types. When unchecked, columns of type LONGVARCHAR are not used in the
+WHERE clause when performing edits in the cell data. This is necessary
+because some databases (e.g. Oracle, DB2) do not allow LONGVARCHAR data
+types to be used in WHERE clauses and generate odd error messages when
+they are seen.</p>
 
-<p><b>Limit size of strings read during initial table load ...</b>
-- When checked, the amount of string data loaded during the initial
-table read is limited to a maximum size (see next field). When
-unchecked, the amount of data is not limited. (Note: This was
-originally built as a performance improvement, but the
-implementation actually reads all of the data from the DB in either
-case and just displays or does not display all of it, and thus may
-not make an impact on performance.) If the inital data read is
-limited, the entire data contents will be displayed when the user
-clicks on the cell.</p>
+<p><b>Limit size of strings read during initial table load ...</b> -
+When checked, the amount of string data loaded during the initial table
+read is limited to a maximum size (see next field). When unchecked, the
+amount of data is not limited. (Note: This was originally built as a
+performance improvement, but the implementation actually reads all of
+the data from the DB in either case and just displays or does not
+display all of it, and thus may not make an impact on performance.) If
+the inital data read is limited, the entire data contents will be
+displayed when the user clicks on the cell.</p>
 
 <p><b>... to max of</b> - When limiting the size of the data, this
 defines how many characters to display.</p>
 
 <p><b>Limit read only on columns with these names:</b> - When
-limiting the size of data during the initial table load, only apply
-the limit to columns with the names listed in this box. All other
-columns load all of the data. (This was built as a technology demo
-to show how Data Type Controls, which are global to all columns of
-the given SQL type(s), can be applied selectively to a limited set
-of columns.)</p>
+limiting the size of data during the initial table load, only apply the
+limit to columns with the names listed in this box. All other columns
+load all of the data. (This was built as a technology demo to show how
+Data Type Controls, which are global to all columns of the given SQL
+type(s), can be applied selectively to a limited set of columns.)</p>
 
 <h4>SQL Other (SQL Type 1111)</h4>
 
 <p><b>Read contents when table is first loaded and display as
-string</b> - If checked then columns of this SQL Type will be read
-by Squirrel and displayed using the toString() function.<br>
-Warning: Since fields of this data type are not known to Squirrel
-and have been explicitly defined as NOT being of a normal, known
-type, attempting to display them as Strings may result in
-unintelligable displays, and may cause exceptions during
-processing.</p>
+string</b> - If checked then columns of this SQL Type will be read by
+Squirrel and displayed using the toString() function.<br>
+Warning: Since fields of this data type are not known to Squirrel and
+have been explicitly defined as NOT being of a normal, known type,
+attempting to display them as Strings may result in unintelligable
+displays, and may cause exceptions during processing.</p>
 
 <p align="center"><img src="images/global_data_types_part2.png"
-alt="Data Type Controls Tab, part 1"></p>
+	alt="Data Type Controls Tab, part 1"></p>
 
 <h4>Unknown DataTypes (non-standard SQL type codes)</h4>
 
 <p><b>Read contents when table is first loaded and display as
-string</b> - If checked then columns of this SQL Type will be read
-by Squirrel and displayed using the toString() function.<br>
-Warning: Since fields of this data type are not known to Squirrel
-and have been explicitly defined as NOT being of a normal, known
-type, attempting to display them as Strings may result in
-unintelligable displays, and may cause exceptions during
-processing.</p>
+string</b> - If checked then columns of this SQL Type will be read by
+Squirrel and displayed using the toString() function.<br>
+Warning: Since fields of this data type are not known to Squirrel and
+have been explicitly defined as NOT being of a normal, known type,
+attempting to display them as Strings may result in unintelligable
+displays, and may cause exceptions during processing.</p>
 
 <h4>Date (SQL Type 91)</h4>
 
 <p><b>Use default format(yyyy-mm-dd)</b> - If checked then dates
-will be displayed in the JDBC default format as shown. If
-unchecked, then the "locale-dependent" formats are made
-available.</p>
-
-<p><b>or locale-dependent format:</b> - When not using the default
-format, this allows you to select from one of the other available
-formats.</p>
-
-<p><b>allow inexact format on input</b> - If checked then Squirrel
-allows some flexibility when you type a new value for the
-field.</p>
-
-<h4>Time (SQL Type 92)</h4>
-
-<p><b>Use default format(hh:mm:ss)</b> - If checked then times will
-be displayed in the JDBC default format as shown. If unchecked,
+will be displayed in the JDBC default format as shown. If unchecked,
 then the "locale-dependent" formats are made available.</p>
 
 <p><b>or locale-dependent format:</b> - When not using the default
@@ -1736,45 +1702,53 @@ format, this allows you to select from one of the other available
 formats.</p>
 
 <p><b>allow inexact format on input</b> - If checked then Squirrel
-allows some flexibility when you type a new value for the
-field.</p>
+allows some flexibility when you type a new value for the field.</p>
 
-<h4>Timestamp (SQL Type 93)</h4>
+<h4>Time (SQL Type 92)</h4>
 
-<p><b>Use default format(yyyy-mm-dd hh:mm:ss.msec)</b> - If checked
-then timestamps will be displayed in the JDBC default format as
-shown. If unchecked, then the "locale-dependent" formats are made
-available.</p>
+<p><b>Use default format(hh:mm:ss)</b> - If checked then times will
+be displayed in the JDBC default format as shown. If unchecked, then the
+"locale-dependent" formats are made available.</p>
 
 <p><b>or locale-dependent format:</b> - When not using the default
 format, this allows you to select from one of the other available
 formats.</p>
 
 <p><b>allow inexact format on input</b> - If checked then Squirrel
-allows some flexibility when you type a new value for the
-field.</p>
+allows some flexibility when you type a new value for the field.</p>
+
+<h4>Timestamp (SQL Type 93)</h4>
+
+<p><b>Use default format(yyyy-mm-dd hh:mm:ss.msec)</b> - If checked
+then timestamps will be displayed in the JDBC default format as shown.
+If unchecked, then the "locale-dependent" formats are made available.</p>
+
+<p><b>or locale-dependent format:</b> - When not using the default
+format, this allows you to select from one of the other available
+formats.</p>
+
+<p><b>allow inexact format on input</b> - If checked then Squirrel
+allows some flexibility when you type a new value for the field.</p>
 
 <h3>L&amp;F Tab</h3>
 
-<p align="CENTER"><img src="images/global_laf.png" alt=
-"L&amp;F tab"></p>
+<p align="CENTER"><img src="images/global_laf.png" alt="L&amp;F tab"></p>
 
-This tab is installed by the Look and Feel (L&amp;F) plugin which
-is part of the "standard" plugin set. If you didn't choose to
-install the "standard" plugins then this tab will not appear. 
+This tab is installed by the Look and Feel (L&amp;F) plugin which is
+part of the "standard" plugin set. If you didn't choose to install the
+"standard" plugins then this tab will not appear.
 
 <h4>L&amp;F Tab (General)</h4>
 
 <p><b>Allow L&amp;F to set tilebar and window borders</b> - allows
-you to specify whether the Look and Feel can set these, otherwise
-the Window Manager will set them. This setting only takes effect
-for newly created windows.</p>
+you to specify whether the Look and Feel can set these, otherwise the
+Window Manager will set them. This setting only takes effect for newly
+created windows.</p>
 
 <h4>L&amp;F Tab (Look and Feel)</h4>
 
-<p><b>Look And Feel</b> - allows you to specify which L&amp;F
-family to use. This setting only takes effect for newly created
-windows.</p>
+<p><b>Look And Feel</b> - allows you to specify which L&amp;F family
+to use. This setting only takes effect for newly created windows.</p>
 
 <p><b>Theme</b> - If the selected L&amp;F supports themes, this
 allows you to specify which one to use</p>
@@ -1782,87 +1756,83 @@ allows you to specify which one to use</p>
 <h3>Fonts Tab</h3>
 
 <p align="CENTER"><img src="images/global_fonts.png" border="0"
-alt="Fonts tab"></p>
+	alt="Fonts tab"></p>
 
 <h4>Fonts Tab (Fonts)</h4>
 
 <p><b>Menus</b> - If enabled this will override the default font
-with the selected font for menus/menu items in the toolbar and the
-popup menu. Pictured below is the main frame menubar with Ravie
-12-point Bold font.</p>
+with the selected font for menus/menu items in the toolbar and the popup
+menu. Pictured below is the main frame menubar with Ravie 12-point Bold
+font.</p>
 
 <p align="CENTER"><img src="images/fonts_menus_demo.png" border="0"
-alt="Menus Custom Font"></p>
+	alt="Menus Custom Font"></p>
 
 <p><b>Static Text</b> - If enabled this will override the default
-font with the selected font for labels on Tabs and Object Tree
-Nodes. The picture below shows a session window with Ravie 12-point
-Bold font.</p>
+font with the selected font for labels on Tabs and Object Tree Nodes.
+The picture below shows a session window with Ravie 12-point Bold font.</p>
 
 <p align="CENTER"><img src="images/fonts_static_text_demo.png"
-border="0" alt="Static Text Custom Font"></p>
+	border="0" alt="Static Text Custom Font"></p>
 
 <p><b>Status Bars</b> - If enabled this will override the default
-font with the selected font for labels on status bars. The picture
-below shows a session window status bar and the main application
-status bar with Ravie 12-point Bold font.</p>
+font with the selected font for labels on status bars. The picture below
+shows a session window status bar and the main application status bar
+with Ravie 12-point Bold font.</p>
 
 <p align="CENTER"><img src="images/fonts_status_bar_demo.png"
-border="0" alt="Status Bar Custom Font"></p>
+	border="0" alt="Status Bar Custom Font"></p>
 
 <p><b>Other</b> - If enabled this will override the default font
-with the selected font for labels in many places not already
-covered by the preceding settings. The picture below shows "other"
-labels with Ravie 12-point Bold font.</p>
+with the selected font for labels in many places not already covered by
+the preceding settings. The picture below shows "other" labels with
+Ravie 12-point Bold font.</p>
 
-<p align="CENTER"><img src="images/fonts_other_demo.png" alt=
-"Other Custom Font"></p>
+<p align="CENTER"><img src="images/fonts_other_demo.png"
+	alt="Other Custom Font"></p>
 
-The font tab is also installed by the Look and Feel (L&amp;F)
-plugin which is part of the "standard" plugin set. If you didn't
-choose to install the "standard" plugins then this tab will not
-appear. There may be other tabs present in the Global Preferences
-dialog (plugin-specific) which are not listed here. See the plugin
-documentation for details. For preference tabs installed by
-plugins, the tab name should match the plugin name. 
+The font tab is also installed by the Look and Feel (L&amp;F) plugin
+which is part of the "standard" plugin set. If you didn't choose to
+install the "standard" plugins then this tab will not appear. There may
+be other tabs present in the Global Preferences dialog (plugin-specific)
+which are not listed here. See the plugin documentation for details. For
+preference tabs installed by plugins, the tab name should match the
+plugin name.
 
-<h2><a name="session_props"></a>New Session and Session
-Properties</h2>
+<h2><a name="session_props"></a>New Session and Session Properties</h2>
 
 <p>The "New Session Properties" dialog allows you to specify
 settings for future session. To change the settings for existing
 sessions use the "Session Properties" menu option. The descriptions
-included here are for the tabs created by the core product. Plugins
-may add other tabs to this window. See the Plugin-specific help for
+included here are for the tabs created by the core product. Plugins may
+add other tabs to this window. See the Plugin-specific help for
 descriptions of the tabs added by that plugin.</p>
 
 <h3>General Tab</h3>
 
 <p align="CENTER"><img src="images/session_props_general.png"
-border="0" alt="General tab"></p>
+	border="0" alt="General tab"></p>
 
 <h4>General Tab (Appearance)</h4>
 
 <p><b>Show Tool Bar</b> - If checked then display a toolbar on the
 session window.</p>
 
-<p><b>Main Tabs</b> - Defines where the Main tabs (ie: "Objects"
-and "SQL") in the session window go relative to the data being
-displayed. This may be set to top, bottom, left or right.</p>
+<p><b>Main Tabs</b> - Defines where the Main tabs (ie: "Objects" and
+"SQL") in the session window go relative to the data being displayed.
+This may be set to top, bottom, left or right.</p>
 
 <p><b>Object Tabs</b> - Defines where the tabs in the Object window
-(eg: Metadata, Contents, Status, etc.) go relative to the data
-being displayed. This may be set to top, bottom, left or right.</p>
+(eg: Metadata, Contents, Status, etc.) go relative to the data being
+displayed. This may be set to top, bottom, left or right.</p>
 
 <p><b>SQL Execution Tabs</b> - Defines where the tabs for the sets
-of results from SQL execution in the SQL window go relative to the
-data being displayed. This may be set to top, bottom, left or
-right.</p>
+of results from SQL execution in the SQL window go relative to the data
+being displayed. This may be set to top, bottom, left or right.</p>
 
 <p><b>SQL Results Tabs</b> - Defines where the tabs within a single
-SQL result window ("Results", "Metadata" and "Info") go relative to
-the data being displayed. This may be set to top, bottom, left or
-right.</p>
+SQL result window ("Results", "Metadata" and "Info") go relative to the
+data being displayed. This may be set to top, bottom, left or right.</p>
 
 <h4>General Tab (Output)</h4>
 
@@ -1870,98 +1840,93 @@ right.</p>
 table, or editable table) for meta data displays.</p>
 
 <p><b>Table Contents</b> - Specify the output type (text, read-only
-table, or editable table) for the Contents tab in the Ojbect
-display.</p>
+table, or editable table) for the Contents tab in the Ojbect display.</p>
 
 <p><b>SQL Results</b> - Specify the output type (text, read-only
-table, or editable table) for SQL result displays. (Note that there
-are additional limits on what can or cannot be edited in the
-results of SQL queries, so setting this to "Editable table" may not
-result in an editable output for any given query. See <a href=
-"#editing_sql">Editing the SQL Results</a> for details.)</p>
+table, or editable table) for SQL result displays. (Note that there are
+additional limits on what can or cannot be edited in the results of SQL
+queries, so setting this to "Editable table" may not result in an
+editable output for any given query. See <a href="#editing_sql">Editing
+the SQL Results</a> for details.)</p>
 
 <h3>Object Tree Tab</h3>
 
 <p align="CENTER"><img src="images/session_props_objecttree.png"
-border="0" alt="Object tab"></p>
+	border="0" alt="Object tab"></p>
 
 <h4>Object Tree Tab (Object Tree)</h4>
 
 <p><b>Load Schemas/Catalogs into object tree</b> - If checked then
-the global DB information is automatically loaded into the Object
-Tree view of the Database. This is useful for navigating the entire
-Database contents, but it may cause an unacceptable performance
-penalty, e.g. when using Squirrel for remote access through a
-low-bandwidth connection.</p>
+the global DB information is automatically loaded into the Object Tree
+view of the Database. This is useful for navigating the entire Database
+contents, but it may cause an unacceptable performance penalty, e.g.
+when using Squirrel for remote access through a low-bandwidth
+connection.</p>
 
 <p><b>Show Row Count for Tables (can slow application)</b> - If
-checked then when a table is opened the number of rows in the table
-is included in parentheses after the name of the table in the
-message bar at the bottom of the Squirrel windows. If not checked,
-then the number is not shown. Showing the number may slow the
-application. The number is still available by using the "Row Count"
-tab in the Object view.</p>
+checked then when a table is opened the number of rows in the table is
+included in parentheses after the name of the table in the message bar
+at the bottom of the Squirrel windows. If not checked, then the number
+is not shown. Showing the number may slow the application. The number is
+still available by using the "Row Count" tab in the Object view.</p>
 
 <p><b>Contents - Limit rows [number] rows</b> - If checked then the
-number of rows read from the table is limited to the number in the
-text box, which may be adjusted as needed. If not checked, then
-Squirrel will attempt to read the entire table.</p>
+number of rows read from the table is limited to the number in the text
+box, which may be adjusted as needed. If not checked, then Squirrel will
+attempt to read the entire table.</p>
 
 <h4>Object Tree Tab (Filters)</h4>
 
-<p><b>Limit Schema Objects using these comma-delimited
-prefixes:</b> - Limit the list of objects shown in the Object Tree
-to only those with Schema names that start with the entries in this
-box. If the box is empty, then no limiting is done and all objects
-are shown.</p>
+<p><b>Limit Schema Objects using these comma-delimited prefixes:</b>
+- Limit the list of objects shown in the Object Tree to only those with
+Schema names that start with the entries in this box. If the box is
+empty, then no limiting is done and all objects are shown.</p>
 
 <p><b>Limit Catalog Objects using these comma-delimited
-prefixes:</b> - Limit the list of objects shown in the Object Tree
-to only those with Catalog names that start with the entries in
-this box. If the box is empty, then no limiting is done and all
-objects are shown.</p>
+prefixes:</b> - Limit the list of objects shown in the Object Tree to only
+those with Catalog names that start with the entries in this box. If the
+box is empty, then no limiting is done and all objects are shown.</p>
 
 <p><b>Object Filter</b> - Limit the list of objects shown in the
-Object Tree to only those with names that match the pattern
-specified in this box.</p>
+Object Tree to only those with names that match the pattern specified in
+this box.</p>
 
 <h3>SQL Tab</h3>
 
 <h4>SQL Tab (SQL)</h4>
 
-<p align="CENTER"><img src="images/session_props_sql.png" border=
-"0" alt="SQL tab"></p>
+<p align="CENTER"><img src="images/session_props_sql.png" border="0"
+	alt="SQL tab"></p>
 
 <h4>SQL Tab (SQL)</h4>
 
 <p><b>Auto Commit</b> - If checked then all SQL will be
-automatically committed after it is executed. If unchecked then you
-will be able to use the "Commit" and "Rollback" options on the
-"Session" menu.</p>
+automatically committed after it is executed. If unchecked then you will
+be able to use the "Commit" and "Rollback" options on the "Session"
+menu.</p>
 
 <p><b>Show SQL Results MetaData (can slow application)</b> - If
-checked then the MetaData associated with the results of an SQL
-query will be read and made available to the user. This may slow
-down Squirrel operation, espcially when being used over low-speed
-connections. If unchecked, then the MetaData will not be avilable
-for the SQL query results.</p>
+checked then the MetaData associated with the results of an SQL query
+will be read and made available to the user. This may slow down Squirrel
+operation, espcially when being used over low-speed connections. If
+unchecked, then the MetaData will not be avilable for the SQL query
+results.</p>
 
 <p><b>SQL Results - Limit Rows [number] rows</b> - If <em>SQL -
-Limit rows</em> is checked then only the number of rows specified
-in the <em>rows</em> will be displayed for an SQL query.</p>
+Limit rows</em> is checked then only the number of rows specified in the <em>rows</em>
+will be displayed for an SQL query.</p>
 
 <p><b>Abort on Error</b> - If checked then when executing multiple
-commands in a single sequence, if one of the commands returns an
-error, then the sequence is aborted at that point. If not checked,
-then the SQL commands following the one with the error are executed
-anyway.</p>
+commands in a single sequence, if one of the commands returns an error,
+then the sequence is aborted at that point. If not checked, then the SQL
+commands following the one with the error are executed anyway.</p>
 
 <p><b>Statement Separator</b> - The character used to separate SQL
 statements in the SQL entry area.</p>
 
 <p><b>Start of Line Comment</b> - The character that specifies that
-the line in the SQL entry area is a comment and should not be
-passed to the database for execution.</p>
+the line in the SQL entry area is a comment and should not be passed to
+the database for execution.</p>
 
 <h4>SQL Tab (SQL Entry Area)</h4>
 
@@ -1971,456 +1936,480 @@ font to be used in the SQL entry area.</p>
 <h4>SQL Tab (SQL History)</h4>
 
 <p><b>Share SQL History</b> - if checked then the SQL history is
-shared accross all Sessions. If not, then the history is kept for
-this Session only.</p>
+shared accross all Sessions. If not, then the history is kept for this
+Session only.</p>
 
 <p><b>Limit SQL History Combo Size [number]</b> - if checked then
-limit the number of lines of SQL available in the SQL History Combo
-box (pull down list above the SQL command entry area) to the
-(adjustable) number given.</p>
+limit the number of lines of SQL available in the SQL History Combo box
+(pull down list above the SQL command entry area) to the (adjustable)
+number given.</p>
 
 <h2><a name="plugins"></a>Plugins</h2>
 
 <p>A plugin is an application written in Java that runs within
 SQuirreL. This allows developers to enhance the functionality of
-SQuirreL without having to rebuild the SQuirreL application itself.
-It also allows you to "pick and choose" the functionality that you
-want in SQuirreL. For instance if you don't use Oracle then you
-don't need the Oracle specific functionality supplied by the Oracle
-plugin.</p>
+SQuirreL without having to rebuild the SQuirreL application itself. It
+also allows you to "pick and choose" the functionality that you want in
+SQuirreL. For instance if you don't use Oracle then you don't need the
+Oracle specific functionality supplied by the Oracle plugin.</p>
 
-<p>All supported plugins are available in the install jar and can
-be installed at the same time when installing SQuirreL, or at any
-time afterward. Third-party plugins can be installed by unpacking
-the archive file (*.zip, *.gz) into the plugins directory within
-the SQuirreL application directory keeping the directory structure.
-To use the plugin you will need to restart SQuirreL. The SQuirreL
-project team no longer makes individual plugins available for
-download.</p>
+<p>All supported plugins are available in the install jar and can be
+installed at the same time when installing SQuirreL, or at any time
+afterward. Third-party plugins can be installed by unpacking the archive
+file (*.zip, *.gz) into the plugins directory within the SQuirreL
+application directory keeping the directory structure. To use the plugin
+you will need to restart SQuirreL. The SQuirreL project team no longer
+makes individual plugins available for download.</p>
 
 <p>The "Summary" option on the "Plugins" menu will display a dialog
 box showing the plugins currently installed.</p>
 
-<p align="CENTER"><img src="images/plugins_1.png" border="0" alt=
-"Plugins Summary"></p>
+<p align="CENTER"><img src="images/plugins_1.png" border="0"
+	alt="Plugins Summary"></p>
 
 <h2><a name="updatemanager"></a>Update Manager</h2>
 
 <p>Once SQuirreL has been installed, the Update Manager feature
 allows the software to be updated in place when new releases become
-available. Additionally, the installed optional plugins and
-translations can be updated, removed or added at any time. This
-means that it is not necessary to uninstall SQuirreL and re-install
-it when a new version becomes available. To access the Update
-Manager, in the main Help menu, select "Software Update" as shown
-in the figure below:</p>
+available. Additionally, the installed optional plugins and translations
+can be updated, removed or added at any time. This means that it is not
+necessary to uninstall SQuirreL and re-install it when a new version
+becomes available. To access the Update Manager, in the main Help menu,
+select "Software Update" as shown in the figure below:</p>
 
-<p align="CENTER"><img src="images/updates-menu.png" alt=
-"Software Update Menu"></p>
+<p align="CENTER"><img src="images/updates-menu.png"
+	alt="Software Update Menu"></p>
 
 <p>The following update dialog window is displayed:</p>
 
-<p align="CENTER"><img src="images/update-dialog.png" alt=
-"Update Dialog"></p>
+<p align="CENTER"><img src="images/update-dialog.png"
+	alt="Update Dialog"></p>
 
-To check with the update server for a new release, click the
-"Check" button. Clicking on the "Settings" button will display the
-Update Manager preferences dialog shown below: 
+To check with the update server for a new release, click the "Check"
+button. Clicking on the "Settings" button will display the Update
+Manager preferences dialog shown below:
 
 <p align="CENTER"><img src="images/update-settings.png" border="0"
-alt="Update Dialog"></p>
+	alt="Update Dialog"></p>
 
-The "Site Type" setting refers to what kind of update site to use
-and changes the kinds of configuration items that are required : 
+The "Site Type" setting refers to what kind of update site to use and
+changes the kinds of configuration items that are required :
 
 <dl>
-<dt><b>Remote</b></dt> 
-<dd>
-  <dl>
-  <dt><b>Server</b></dt> 
-  <dd>the name of the HTTP server to consult for updates (default: www.squirrel-sql.net)</dd>
-  <dt><b>Port</b></dt> 
-  <dd>the numeric HTTP port that the server is listening on (default: 80)</dd>
-  <dt><b>Path</b></dt> 
-  <dd>the path on the server where the channels are found (default: updates)</dd>
-  <dt><b>Channel</b></dt>
-  <dd>the type of release this is (snapshot gets updated almost weekly and 
-      tends to have new but not thoroughly tested changes.</dd>
-  <dt><b>Url</b></dt> 
-  <dd>This is a read-only representation of the values given above in the form of an HTTP URL. 
-      This can be placed in a web-browser to see the release.xml file before updating if desired.</dd>
-  <dt><b>Test Connection</b></dt>
-  <dd>This button allows you to check connectivity to the URL specified by the values above 
-      and displays a message indicating whether or not the connection was successful.</dd>  
-  </dl>
-</dd>
-<dt><b>Local</b></dt>
-<dd>
-  <dl>
-  <dt><b>Local Path</b></dt>
-  <dd>the local directory containing the update files (release.xml file is directly beneath this 
-      directory)</dd>  
-  </dl>
-  <dl>
-  <dt><b>Automatic Updates</b></dt>
-  <dd>Enable Automatic Updates - checking this option cause SQuirreL to periodically and in the 
-      background check to see if updates have been posted using the Remote/Local settings above.</dd>
-  <dt><b>How often to check for updates</b></dt>
-  <dd>(At Startup / Daily / Weekly)</dd>
-  </dl>
-</dd>
-<dt>
+	<dt><b>Remote</b></dt>
+
+	<dd>
+	<dl>
+		<dt><b>Server</b></dt>
+
+		<dd>the name of the HTTP server to consult for updates (default:
+		www.squirrel-sql.net)</dd>
+
+		<dt><b>Port</b></dt>
+
+		<dd>the numeric HTTP port that the server is listening on
+		(default: 80)</dd>
+
+		<dt><b>Path</b></dt>
+
+		<dd>the path on the server where the channels are found (default:
+		updates)</dd>
+
+		<dt><b>Channel</b></dt>
+
+		<dd>the type of release this is (snapshot gets updated almost
+		weekly and tends to have new but not thoroughly tested changes.</dd>
+
+		<dt><b>Url</b></dt>
+
+		<dd>This is a read-only representation of the values given above
+		in the form of an HTTP URL. This can be placed in a web-browser to see
+		the release.xml file before updating if desired.</dd>
+
+		<dt><b>Test Connection</b></dt>
+
+		<dd>This button allows you to check connectivity to the URL
+		specified by the values above and displays a message indicating
+		whether or not the connection was successful.</dd>
+	</dl>
+	</dd>
+
+	<dt><b>Local</b></dt>
+
+	<dd>
+	<dl>
+		<dt><b>Local Path</b></dt>
+
+		<dd>the local directory containing the update files (release.xml
+		file is directly beneath this directory)</dd>
+	</dl>
+
+	<dl>
+		<dt><b>Automatic Updates</b></dt>
+
+		<dd>Enable Automatic Updates - checking this option cause
+		SQuirreL to periodically and in the background check to see if updates
+		have been posted using the Remote/Local settings above.</dd>
+
+		<dt><b>How often to check for updates</b></dt>
+
+		<dd>(At Startup / Daily / Weekly)</dd>
+	</dl>
+	</dd>
 </dl>
 
-<p>Clicking the "Check" button will display a dialog window with a summary of
-available/installed artifacts that can be updated, installed or removed :</p>
+<p>Clicking the "Check" button will display a dialog window with a
+summary of available/installed artifacts that can be updated, installed
+or removed :</p>
 
-<p align="CENTER"><img src="images/update_summary.png" alt="Update Dialog"></p>
+<p align="CENTER"><img src="images/update_summary.png"
+	alt="Update Dialog"></p>
 
-<p>This update summary dialog allows you to see what files will be downloaded/installed when the changes
-are applied.  An Artifact is simply a file that can be one of three types.  Core artifacts are always updated
-to the latest version when changes are applied.  However, plugin and i18n (Internationalization) artifacts
-can be installed, updated or even removed from your local installation with the Action column on the far 
-right.  Each row in the table represents a single artifact and non-core artifacts can have an action applied
-by clicking on the Action column cell for that artifact.  The drop-down list will have choices to INSTALL, 
-and REMOVE (if already installed).  Selecting NONE results in no action for that artifact.  When core artifacts
-are automatically marked for INSTALL, it means there is a new release available, which is also signified by 
-the top of the dialog which indicates the "Installed" version id and the "Current" version id (that is, what is
-"currently" available for download).  In this case any installed artifacts of type plugin or i18n have choices
-for INSTALL/REMOVE - that is they must be either updated or removed so that when core artifacts change, the 
-version of all installed artifacts stays in sync.  It is important to hit apply changes when finished making
-changes to artifact actions - clicking close with abort the update process.</p>
+<p>This update summary dialog allows you to see what files will be
+downloaded/installed when the changes are applied. An Artifact is simply
+a file that can be one of three types. Core artifacts are always updated
+to the latest version when changes are applied. However, plugin and i18n
+(Internationalization) artifacts can be installed, updated or even
+removed from your local installation with the Action column on the far
+right. Each row in the table represents a single artifact and non-core
+artifacts can have an action applied by clicking on the Action column
+cell for that artifact. The drop-down list will have choices to INSTALL,
+and REMOVE (if already installed). Selecting NONE results in no action
+for that artifact. When core artifacts are automatically marked for
+INSTALL, it means there is a new release available, which is also
+signified by the top of the dialog which indicates the "Installed"
+version id and the "Current" version id (that is, what is "currently"
+available for download). In this case any installed artifacts of type
+plugin or i18n have choices for INSTALL/REMOVE - that is they must be
+either updated or removed so that when core artifacts change, the
+version of all installed artifacts stays in sync. It is important to hit
+apply changes when finished making changes to artifact actions -
+clicking close with abort the update process.</p>
 
-Clicking "Apply Changes" will start the download process, which retrieves new artifacts (artifacts whose 
-bytesize and checksum haven't changed will not be downloaded to prevent needless waste of bandwidth).  If you
-use a proxy to reach the Internet update site (http://www.squirrel-sql.net:80/updates/...), you will need to 
-configure those settings in the Global Preferences -> Proxy -> HTTP Proxy section.  You may cancel the download
-at any time, and the next time the update process is started, it will resume downloading the remaining files
-that weren't previously downloaded.  Also, if an error should occur, you may want to check the log file to 
-see what might cause the error - and re-start the update process at a later time.  Until all artifacts have 
-been successfully downloaded and verified, the next stage of the software update (applying the updates after
-restart) will not occur.
+Clicking "Apply Changes" will start the download process, which
+retrieves new artifacts (artifacts whose bytesize and checksum haven't
+changed will not be downloaded to prevent needless waste of bandwidth).
+If you use a proxy to reach the Internet update site
+(http://www.squirrel-sql.net:80/updates/...), you will need to configure
+those settings in the Global Preferences -&gt; Proxy -&gt; HTTP Proxy
+section. You may cancel the download at any time, and the next time the
+update process is started, it will resume downloading the remaining
+files that weren't previously downloaded. Also, if an error should
+occur, you may want to check the log file to see what might cause the
+error - and re-start the update process at a later time. Until all
+artifacts have been successfully downloaded and verified, the next stage
+of the software update (applying the updates after restart) will not
+occur.
 
-<p align="CENTER"><img src="images/update_download_progress.png" alt="Update Progress Dialog"></p>
+<p align="CENTER"><img src="images/update_download_progress.png"
+	alt="Update Progress Dialog"></p>
 
-Once all updated artifacts have been successfully downloaded and verified, you can re-start SQuirreL and the 
-next stage of updating will being by asking you if you want to apply the updates.  
+Once all updated artifacts have been successfully downloaded and
+verified, you can re-start SQuirreL and the next stage of updating will
+being by asking you if you want to apply the updates.
 
 <h2><a name="logs"></a>Logs</h2>
 
-SQuirreL writes messages to a file called a log file as SQuirreL is being used.  These messages can provide 
-additional details and clues about what SQuirreL is doing internally and are very useful for debugging 
-problems.  The main log file that SQuirreL writes to called squirrel-sql.log, and is located in the user's 
-home directory in a "log" folder just below the private SQuirreL user preference folder called 
-".squirrel-sql".  You may access this log file at any time from within SQuirreL be opening the log viewer 
-which can be done in one of two ways:
+SQuirreL writes messages to a file called a log file as SQuirreL is
+being used. These messages can provide additional details and clues
+about what SQuirreL is doing internally and are very useful for
+debugging problems. The main log file that SQuirreL writes to called
+squirrel-sql.log, and is located in the user's home directory in a "log"
+folder just below the private SQuirreL user preference folder called
+".squirrel-sql". You may access this log file at any time from within
+SQuirreL be opening the log viewer which can be done in one of two ways:
 
-<ol>    
-  <li>Click on the menu sub-item located in "Windows" -> "View SQuirreL Logs", or </li>
-  <li>Click the Monitor icon located in the status bar at the bottom of the window as shown in the following 
-  image: </li>
+<ol>
+	<li>Click on the menu sub-item located in "Windows" -&gt; "View
+	SQuirreL Logs", or</li>
+
+	<li>Click the Monitor icon located in the status bar at the bottom
+	of the window as shown in the following image:</li>
 </ol>
 
-<p align="center">
-<img src="images/log_messages_status.png" alt="Log Message Status Bar"/>
-</p>
+<p align="center"><img src="images/log_messages_status.png"
+	alt="Log Message Status Bar"></p>
 
-The log status section (at the bottom of the window in the status bar) displays a count of how many 
-Errors, Warnings and Info (informational) messages there are currently in the log.  The icon to the left of 
-the Monitor icon discussed above is the last message display button. It's color will change from light blue to
-red any time the last log message contains an error.  This button displays the last message when clicked and 
-for most errors it also provides a stack trace of the exception encountered (if there was one).  This 
-information can be invaluable for the developers in tracking down the cause of the error.  An example of 
+The log status section (at the bottom of the window in the status bar)
+displays a count of how many Errors, Warnings and Info (informational)
+messages there are currently in the log. The icon to the left of the
+Monitor icon discussed above is the last message display button. It's
+color will change from light blue to red any time the last log message
+contains an error. This button displays the last message when clicked
+and for most errors it also provides a stack trace of the exception
+encountered (if there was one). This information can be invaluable for
+the developers in tracking down the cause of the error. An example of
 this dialog window appears below:
 
-<p align="center">
-<img src="images/last_log_entry_dialog.png" alt="Last Log Entry Dialog"/>
-</p>
-   
-In addition to the three types of error messages covered above, SQuirreL can be configured to log Debug 
-messages which are even more useful at times then just the Error, Warning and Info messages.  This 
-configuration is accomplished by editing the log4j.properties file which is located in the SQuirreL install 
-directory.  This file has a line in it that looks like: 
-<pre>
-        log4j.rootLogger=info, SquirrelAppender
-</pre>    
-To enable Debug messages to be written to the log, edit this file in your favorite text editor, changing the
-above line to:
-<pre>
-        log4j.rootLogger=debug, SquirrelAppender
-</pre>
-Once this file has been saved, then SQuirreL should be restarted to apply the change.
+<p align="center"><img src="images/last_log_entry_dialog.png"
+	alt="Last Log Entry Dialog"></p>
 
+In addition to the three types of error messages covered above, SQuirreL
+can be configured to log Debug messages which are even more useful at
+times then just the Error, Warning and Info messages. This configuration
+is accomplished by editing the log4j.properties file which is located in
+the SQuirreL install directory. This file has a line in it that looks
+like: <pre>
+        log4j.rootLogger=info, SquirrelAppender
+</pre> To enable Debug messages to be written to the log, edit this file in
+your favorite text editor, changing the above line to: <pre>
+        log4j.rootLogger=debug, SquirrelAppender
+</pre> Once this file has been saved, then SQuirreL should be restarted to
+apply the change.
 
 <h2><a name="menus"></a>Menus</h2>
 
 <h3><a name="file_menu"></a>File Menu</h3>
 
 <dl>
-<dt><b>Global Preferences</b></dt>
+	<dt><b>Global Preferences</b></dt>
 
-<dd>Displays the <a href="#global_prefs">Global Preferences</a>
-dialog.</dd>
+	<dd>Displays the <a href="#global_prefs">Global Preferences</a>
+	dialog.</dd>
 
-<dt><b>New Session Properties</b></dt>
+	<dt><b>New Session Properties</b></dt>
 
-<dd>Displays the <a href="#session_props">New Session
-Properties</a> dialog.</dd>
+	<dd>Displays the <a href="#session_props">New Session
+	Properties</a> dialog.</dd>
 
-<dt><b>Dump Application</b></dt>
+	<dt><b>Dump Application</b></dt>
 
-<dd>This option will dump some internal structures of the
-application to a text file along with a <a href=
-"#dump_session">dump</a> of all the currently open sessions. This
-may be useful for debugging problems with SQuirreL.</dd>
+	<dd>This option will dump some internal structures of the
+	application to a text file along with a <a href="#dump_session">dump</a>
+	of all the currently open sessions. This may be useful for debugging
+	problems with SQuirreL.</dd>
 
-<dt><b>Exit</b></dt>
+	<dt><b>Exit</b></dt>
 
-<dd>Exit the application after closing all sessions.</dd>
+	<dd>Exit the application after closing all sessions.</dd>
 </dl>
 
 <h3><a name="drivers_menu"></a>Drivers Menu</h3>
 
 <dl>
-<dt><b>New Driver</b></dt>
+	<dt><b>New Driver</b></dt>
 
-<dd>Displays a dialog allowing you to specify a new JDBC <a href=
-"#the_driver">driver</a>.</dd>
+	<dd>Displays a dialog allowing you to specify a new JDBC <a
+		href="#the_driver">driver</a>.</dd>
 
-<dt><b>Modify Driver</b></dt>
+	<dt><b>Modify Driver</b></dt>
 
-<dd>Displays a dialog allowing you to modify an existing JDBC <a
-href="#the_driver">driver</a>.</dd>
+	<dd>Displays a dialog allowing you to modify an existing JDBC <a
+		href="#the_driver">driver</a>.</dd>
 
-<dt><b>Delete Driver</b></dt>
+	<dt><b>Delete Driver</b></dt>
 
-<dd>Allows you to delete an existing JDBC <a href=
-"#the_driver">driver</a>.</dd>
+	<dd>Allows you to delete an existing JDBC <a href="#the_driver">driver</a>.</dd>
 
-<dt><b>Copy Driver</b></dt>
+	<dt><b>Copy Driver</b></dt>
 
-<dd>Copies the JDBC <a href="#the_driver">driver</a> currently
-selected in the Drivers list and displays it as a new driver in the
-driver maintenance dialog</dd>
+	<dd>Copies the JDBC <a href="#the_driver">driver</a> currently
+	selected in the Drivers list and displays it as a new driver in the
+	driver maintenance dialog</dd>
 
-<dt><b>Install Default Driver Definitions</b></dt>
+	<dt><b>Install Default Driver Definitions</b></dt>
 
-<dd>Copies entries from the default JDBC driver definitions that
-ships with SQuirreL to the Drivers List. If the driver definition
-is already in the list then the default one will not be
-copied.</dd>
+	<dd>Copies entries from the default JDBC driver definitions that
+	ships with SQuirreL to the Drivers List. If the driver definition is
+	already in the list then the default one will not be copied.</dd>
 </dl>
 
 <h3><a name="aliases_menu"></a>Aliases Menu</h3>
 
 <dl>
-<dt><b>Connect</b></dt>
+	<dt><b>Connect</b></dt>
 
-<dd>Display a connection dialog allowing you to <a href=
-"#howtoconnect">connect</a> to the specified <a href=
-"#the_alias">alias</a>.</dd>
+	<dd>Display a connection dialog allowing you to <a
+		href="#howtoconnect">connect</a> to the specified <a href="#the_alias">alias</a>.</dd>
 
-<dt><b>New Alias</b></dt>
+	<dt><b>New Alias</b></dt>
 
-<dd>Displays a dialog allowing you to specify a new <a href=
-"#the_alias">alias</a>.</dd>
+	<dd>Displays a dialog allowing you to specify a new <a
+		href="#the_alias">alias</a>.</dd>
 
-<dt><b>Modify Alias</b></dt>
+	<dt><b>Modify Alias</b></dt>
 
-<dd>Displays a dialog allowing you to modify an existing <a href=
-"#the_alias">alias</a>.</dd>
+	<dd>Displays a dialog allowing you to modify an existing <a
+		href="#the_alias">alias</a>.</dd>
 
-<dt><b>Delete Alias</b></dt>
+	<dt><b>Delete Alias</b></dt>
 
-<dd>Allows you to delete an existing <a href=
-"#the_alias">alias</a>.</dd>
+	<dd>Allows you to delete an existing <a href="#the_alias">alias</a>.</dd>
 
-<dt><b>Copy Alias</b></dt>
+	<dt><b>Copy Alias</b></dt>
 
-<dd>Copies the <a href="#the_alias">alias</a> currently selected in
-the ALiases list and displays it as a new alias in the alias
-maintenance dialog.</dd>
+	<dd>Copies the <a href="#the_alias">alias</a> currently selected
+	in the ALiases list and displays it as a new alias in the alias
+	maintenance dialog.</dd>
 </dl>
 
 <h3><a name="plugins_menu"></a>Plugins Menu</h3>
 
 <dl>
-<dt><b>Summary</b></dt>
+	<dt><b>Summary</b></dt>
 
-<dd>Displays a dialog showing the installed <a href=
-"#plugins">plugins</a>.</dd>
+	<dd>Displays a dialog showing the installed <a href="#plugins">plugins</a>.</dd>
 </dl>
 
 <h3><a name="session_menu"></a>Session Menu</h3>
 
 <dl>
-<dt><b>Session Properties</b></dt>
+	<dt><b>Session Properties</b></dt>
 
-<dd>This option will display the Session Properties dialog allowing
-you configure your current session. <a href=
-"#session_props">More</a>.</dd>
+	<dd>This option will display the Session Properties dialog
+	allowing you configure your current session. <a href="#session_props">More</a>.</dd>
 
-<dt><b><a name="dump_session">Dump Session</a></b></dt>
+	<dt><b><a name="dump_session">Dump Session</a></b></dt>
 
-<dd>This option will dump some internal structures of the current
-session to a text file. This may be useful for debugging problems
-with SQuirreL.</dd>
+	<dd>This option will dump some internal structures of the current
+	session to a text file. This may be useful for debugging problems with
+	SQuirreL.</dd>
 
-<dt><b>Refresh Tree</b></dt>
+	<dt><b>Refresh Tree</b></dt>
 
-<dd>This option will refresh the object tree.</dd>
+	<dd>This option will refresh the object tree.</dd>
 
-<dt><b>Run SQL</b></dt>
+	<dt><b>Run SQL</b></dt>
 
-<dd>This option will run the current SQL in the SQL entry area. <a
-href="#executing">More</a>.</dd>
+	<dd>This option will run the current SQL in the SQL entry area. <a
+		href="#executing">More</a>.</dd>
 
-<dt><b>Commit</b></dt>
+	<dt><b>Commit</b></dt>
 
-<dd>This option will commit the current SQL transaction. This is
-only applicable if "Auto Commit" has been turned off in the <a
-href="#session_props">Session Properties</a>.</dd>
+	<dd>This option will commit the current SQL transaction. This is
+	only applicable if "Auto Commit" has been turned off in the <a
+		href="#session_props">Session Properties</a>.</dd>
 
-<dt><b>Rollback</b></dt>
+	<dt><b>Rollback</b></dt>
 
-<dd>This option will rollback the current SQL transaction. This is
-only applicable if "Auto Commit" has been turned off in the <a
-href="#session_props">Session Properties</a>.</dd>
+	<dd>This option will rollback the current SQL transaction. This is
+	only applicable if "Auto Commit" has been turned off in the <a
+		href="#session_props">Session Properties</a>.</dd>
 
-<dt><b>Goto Previous Results Tab</b></dt>
+	<dt><b>Goto Previous Results Tab</b></dt>
 
-<dd>This option will select the Results Set tab to the left of the
-currently selected one. If the leftmost tab is currently selected
-then the rightmost tab will be selected.</dd>
+	<dd>This option will select the Results Set tab to the left of the
+	currently selected one. If the leftmost tab is currently selected then
+	the rightmost tab will be selected.</dd>
 
-<dt><b>Goto Next Results Tab</b></dt>
+	<dt><b>Goto Next Results Tab</b></dt>
 
-<dd>This option will select the Results Set tab to the left of the
-currently selected one. If the rightmost tab is currently selected
-then the leftmost tab will be selected.</dd>
+	<dd>This option will select the Results Set tab to the left of the
+	currently selected one. If the rightmost tab is currently selected then
+	the leftmost tab will be selected.</dd>
 
-<dt><b>Show Native SQL</b></dt>
+	<dt><b>Show Native SQL</b></dt>
 
-<dd>This option will append the native SQL for the current JDBC SQL
-into the SQL entry area. E.G. If you enter the following in an
-Oracle session 
-
-<pre>
+	<dd>This option will append the native SQL for the current JDBC
+	SQL into the SQL entry area. E.G. If you enter the following in an
+	Oracle session <pre>
            select * from table1 where entered_date = {d'2002-12-01'}
    
-</pre>
-
-and take this option then the following will be appended to the SQL
-entry area. 
-
-<pre>
+</pre> and take this option then the following will be appended to the SQL
+	entry area. <pre>
            select * from table1 where entered_date = TO_DATE ('2002-12-01', 'YYYY-MM-DD')
    
-</pre>
-</dd>
+</pre></dd>
 
-<dt><b>Reconnect</b></dt>
+	<dt><b>Reconnect</b></dt>
 
-<dd>Close the current connection to the database and reopen it
-using the same user name and password.</dd>
+	<dd>Close the current connection to the database and reopen it
+	using the same user name and password.</dd>
 
-<dt><b>Close Session</b></dt>
+	<dt><b>Close Session</b></dt>
 
-<dd>Close the current connection to the database and close the
-session window.</dd>
+	<dd>Close the current connection to the database and close the
+	session window.</dd>
 
-<dt><b>Close All SQL Result Tabs</b></dt>
+	<dt><b>Close All SQL Result Tabs</b></dt>
 
-<dd>Close all SQL results displayed in the tabbed folder for the
-current session.</dd>
+	<dd>Close all SQL results displayed in the tabbed folder for the
+	current session.</dd>
 
-<dt><b>Close All SQL Result Windows</b></dt>
+	<dt><b>Close All SQL Result Windows</b></dt>
 
-<dd>Close all SQL results windows "torn off" from the tabbed folder
-for the current session</dd>
+	<dd>Close all SQL results windows "torn off" from the tabbed
+	folder for the current session</dd>
 
-<dt><b>Limit cell edit WHERE clause size</b></dt>
+	<dt><b>Limit cell edit WHERE clause size</b></dt>
 
-<dd>This allows you to select specific columns to use as the key
-field when updating the DB after you edit a cell in a table. The
-purpose of thi is to reduce the size of the WHERE clause, which
-normally includes all field in the table. For tables with many
-columns, or with columns containing lon data entries (not including
-BLOB/CLOB fields, which are handled differently) the automatically
-generated WHERE clause may exceed the DBMS length limitation You
-may move column names between the "use columns" and "not use
-columns" boxe by selecting the names and using the arrow buttons to
-move them to the other box You must leave at least one column in
-the "use columns" box, and the column in the "use columns" box must
-be sufficient to uniquely identify each row in the table, e.g. the
-primary key fields for the table The "Reset" button restores the
-column name lists to the way they were when you opened the window
-Remember to click "OK" when you are done If you define a set of
-columns to use in the WHERE clause and then edit some other column,
-SQuirreL will warn you that "1 duplicate row" is about to be
-created. Since you have told SQuirreL to not look at the edited
-column it does no recognize that the new data is different than the
-old data so it gives you a warning. In this case there is no
-problem and you should just tell SQuirreL to go ahead with the
-update.</dd>
+	<dd>This allows you to select specific columns to use as the key
+	field when updating the DB after you edit a cell in a table. The
+	purpose of thi is to reduce the size of the WHERE clause, which
+	normally includes all field in the table. For tables with many columns,
+	or with columns containing lon data entries (not including BLOB/CLOB
+	fields, which are handled differently) the automatically generated
+	WHERE clause may exceed the DBMS length limitation You may move column
+	names between the "use columns" and "not use columns" boxe by selecting
+	the names and using the arrow buttons to move them to the other box You
+	must leave at least one column in the "use columns" box, and the column
+	in the "use columns" box must be sufficient to uniquely identify each
+	row in the table, e.g. the primary key fields for the table The "Reset"
+	button restores the column name lists to the way they were when you
+	opened the window Remember to click "OK" when you are done If you
+	define a set of columns to use in the WHERE clause and then edit some
+	other column, SQuirreL will warn you that "1 duplicate row" is about to
+	be created. Since you have told SQuirreL to not look at the edited
+	column it does no recognize that the new data is different than the old
+	data so it gives you a warning. In this case there is no problem and
+	you should just tell SQuirreL to go ahead with the update.</dd>
 </dl>
 
 <h3><a name="windows_menu"></a>Windows Menu</h3>
 
 <dl>
-<dt><b>View Aliases</b></dt>
+	<dt><b>View Aliases</b></dt>
 
-<dd>Display the list of <a href="#the_alias">aliases</a> that
-define a connection to a database.</dd>
+	<dd>Display the list of <a href="#the_alias">aliases</a> that
+	define a connection to a database.</dd>
 
-<dt><b>View Drivers</b></dt>
+	<dt><b>View Drivers</b></dt>
 
-<dd>Display the list of <a href="#the_driver">drivers</a>.</dd>
+	<dd>Display the list of <a href="#the_driver">drivers</a>.</dd>
 
-<dt><b>View SQuirreL Logs</b></dt>
+	<dt><b>View SQuirreL Logs</b></dt>
 
-<dd>Display the execution <a href="#logs">logs</a> for
-SQuirreL.</dd>
+	<dd>Display the execution <a href="#logs">logs</a> for SQuirreL.</dd>
 
-<dt><b>Tile</b></dt>
+	<dt><b>Tile</b></dt>
 
-<dd>Tile the open session windows.</dd>
+	<dd>Tile the open session windows.</dd>
 
-<dt><b>Cascade</b></dt>
+	<dt><b>Cascade</b></dt>
 
-<dd>Cascade the open session windows.</dd>
+	<dd>Cascade the open session windows.</dd>
 
-<dt><b>Maximize</b></dt>
+	<dt><b>Maximize</b></dt>
 
-<dd>Maximize the open session windows.</dd>
+	<dd>Maximize the open session windows.</dd>
 
-<dt><b>Close All Sessions</b></dt>
+	<dt><b>Close All Sessions</b></dt>
 
-<dd>Close all existing sessions.</dd>
+	<dd>Close all existing sessions.</dd>
 </dl>
 
 <h3><a name="help_menu"></a>Help Menu</h3>
 
 <dl>
-<dt><b>Help</b></dt>
+	<dt><b>Help</b></dt>
 
-<dd>Displays this Help File.</dd>
+	<dd>Displays this Help File.</dd>
 
-<dt><b>FAQ</b></dt>
+	<dt><b>FAQ</b></dt>
 
-<dd>Displays the Frequently Asked Questions file.</dd>
+	<dd>Displays the Frequently Asked Questions file.</dd>
 
-<dt><b>Change Log</b></dt>
+	<dt><b>Change Log</b></dt>
 
-<dd>Displays the development history of SQuirreL.</dd>
+	<dd>Displays the development history of SQuirreL.</dd>
 
-<dt><b>Licence</b></dt>
+	<dt><b>Licence</b></dt>
 
-<dd>Displays the licence for SQuirreL.</dd>
+	<dd>Displays the licence for SQuirreL.</dd>
 
-<dt><b>About</b></dt>
+	<dt><b>About</b></dt>
 
-<dd>Displays the About Box for SQuirrel.</dd>
+	<dd>Displays the About Box for SQuirrel.</dd>
 </dl>
 </dd>
 </dl>
