@@ -30,8 +30,6 @@ import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceB
 public class DerbyPreferenceBean extends BaseQueryTokenizerPreferenceBean implements Cloneable, Serializable {
 
    static final long serialVersionUID = 5818886723165356478L;
-
-   static final String UNSUPPORTED = "Unsupported";
    
    private boolean readClobsFully = true;
 
@@ -59,4 +57,14 @@ public class DerbyPreferenceBean extends BaseQueryTokenizerPreferenceBean implem
       this.readClobsFully = readClobsFully;
    }
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean#clone()
+	 */
+	@Override
+	protected DerbyPreferenceBean clone()
+	{
+		return (DerbyPreferenceBean)super.clone();
+	}
+
+   
 }

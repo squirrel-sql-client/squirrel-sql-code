@@ -52,12 +52,8 @@ public class OraclePreferenceBean extends BaseQueryTokenizerPreferenceBean imple
     /**
      * Return a copy of this object.
      */
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new InternalError(ex.getMessage()); // Impossible.
-        }
+    public OraclePreferenceBean clone() {
+   	 return (OraclePreferenceBean) super.clone();
     }
 
     /**

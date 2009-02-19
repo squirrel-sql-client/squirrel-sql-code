@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.derby.prefs;
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
- */ 
+ */
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
@@ -26,9 +26,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- *   Test class for DerbyPreferenceBean
+ * Test class for DerbyPreferenceBean
  */
-public class DerbyPreferenceBeanTest extends BaseSQuirreLJUnit4TestCase {
+public class DerbyPreferenceBeanTest extends BaseSQuirreLJUnit4TestCase
+{
 
 	DerbyPreferenceBean classUnderTest = new DerbyPreferenceBean();
 
@@ -86,6 +87,42 @@ public class DerbyPreferenceBeanTest extends BaseSQuirreLJUnit4TestCase {
 	{
 		classUnderTest.setInstallCustomQueryTokenizer(true);
 		assertEquals(true, classUnderTest.isInstallCustomQueryTokenizer());
+	}
+
+	@Test
+	public void testClone()
+	{
+		// Create a test bean to clone
+		DerbyPreferenceBean bean1 = new DerbyPreferenceBean();
+		bean1.setClientName("bean1");
+		bean1.setClientVersion("bean1");
+		bean1.setInstallCustomQueryTokenizer(true);
+		bean1.setLineComment("bean1");
+		bean1.setProcedureSeparator("bean1");
+		bean1.setReadClobsFully(true);
+		bean1.setRemoveMultiLineComments(true);
+		bean1.setStatementSeparator("bean1");
+
+		// Clone the test bean and change every bean property
+		DerbyPreferenceBean bean2 = bean1.clone();
+		bean2.setClientName("bean2");
+		bean2.setClientVersion("bean2");
+		bean2.setInstallCustomQueryTokenizer(false);
+		bean2.setLineComment("bean2");
+		bean2.setProcedureSeparator("bean2");
+		bean2.setReadClobsFully(false);
+		bean2.setRemoveMultiLineComments(false);
+		bean2.setStatementSeparator("bean2");
+
+		// verify that changing the clone didn't affect the original
+		assertEquals("bean1", bean1.getClientName());
+		assertEquals("bean1", bean1.getClientVersion());
+		assertEquals(true, bean1.isInstallCustomQueryTokenizer());
+		assertEquals("bean1", bean1.getLineComment());
+		assertEquals("bean1", bean1.getProcedureSeparator());
+		assertEquals(true, bean1.isReadClobsFully());
+		assertEquals(true, bean1.isRemoveMultiLineComments());
+		assertEquals("bean1", bean1.getStatementSeparator());
 	}
 
 }
