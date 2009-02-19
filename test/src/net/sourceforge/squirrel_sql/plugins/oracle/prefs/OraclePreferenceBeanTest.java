@@ -109,4 +109,40 @@ public class OraclePreferenceBeanTest extends BaseSQuirreLJUnit4TestCase {
 		assertEquals(true, classUnderTest.getInitSessionTimezone());
 	}
 
+	@Test
+	public void testClone() {
+		
+		// Create a test bean to clone
+		OraclePreferenceBean bean1 = new OraclePreferenceBean();
+		bean1.setClientName("bean1");
+		bean1.setClientVersion("bean1");
+		bean1.setExcludeRecycleBinTables(true);
+		bean1.setInstallCustomQueryTokenizer(true);
+		bean1.setLineComment("bean1");
+		bean1.setProcedureSeparator("bean1");
+		bean1.setRemoveMultiLineComments(true);
+		bean1.setStatementSeparator("bean1");
+
+		// Clone the test bean and change every bean property
+		OraclePreferenceBean bean2 = bean1.clone();
+		bean2.setClientName("bean2");
+		bean2.setClientVersion("bean2");
+		bean2.setExcludeRecycleBinTables(false);
+		bean2.setInstallCustomQueryTokenizer(false);
+		bean2.setLineComment("bean2");
+		bean2.setProcedureSeparator("bean2");
+		bean2.setRemoveMultiLineComments(false);
+		bean2.setStatementSeparator("bean2");
+		
+		// verify that changing the clone didn't affect the original
+		assertEquals("bean1", bean1.getClientName());
+		assertEquals("bean1", bean1.getClientVersion());
+		assertEquals(true, bean1.isExcludeRecycleBinTables());
+		assertEquals(true, bean1.isInstallCustomQueryTokenizer());
+		assertEquals("bean1", bean1.getLineComment());
+		assertEquals("bean1", bean1.getProcedureSeparator());
+		assertEquals(true, bean1.isRemoveMultiLineComments());
+		assertEquals("bean1", bean1.getStatementSeparator());
+		
+	}
 }
