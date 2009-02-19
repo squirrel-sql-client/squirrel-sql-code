@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.preferences;
 /**
  * Base-class for preference beans that store QueryTokenizer preferences.
  */
-public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferenceBean
+public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferenceBean, Cloneable
 {
 
 	/** Client Name. */
@@ -167,4 +167,23 @@ public class BaseQueryTokenizerPreferenceBean implements IQueryTokenizerPreferen
 		
 	}
 
+	/**
+	 * Implemented in accordance with page 55 of "Effective Java" by Joshua Bloch.
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected BaseQueryTokenizerPreferenceBean clone()
+	{
+		try
+		{
+			return (BaseQueryTokenizerPreferenceBean)super.clone();
+		}
+		catch (CloneNotSupportedException e)
+		{
+			throw new AssertionError(); // Can't happen
+		}
+	}
+
+	
 }
