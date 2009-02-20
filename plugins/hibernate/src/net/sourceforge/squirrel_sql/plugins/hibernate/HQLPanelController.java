@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 
 import javax.swing.*;
@@ -78,8 +79,9 @@ public class HQLPanelController
             return;
          }
 
-         String statementSeparator = _sess.getProperties().getSQLStatementSeparator();
-         String startOfLineComment = _sess.getProperties().getStartOfLineComment();
+         final IQueryTokenizer queryTokenizer = _sess.getQueryTokenizer();
+		 final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
+         final String startOfLineComment = queryTokenizer.getLineCommentBegin();
          QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
          qt.setScriptToTokenize(hql);
 

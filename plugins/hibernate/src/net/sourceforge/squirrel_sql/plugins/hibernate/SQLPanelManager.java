@@ -130,7 +130,7 @@ public class SQLPanelManager extends EntryPanelManagerBase
    {
       String allSqls = "";
 
-      String sep = getSession().getProperties().getSQLStatementSeparator();
+      String sep = getSession().getQueryTokenizer().getSQLStatementSeparator();
 
       for (String sql : sqls)
       {
