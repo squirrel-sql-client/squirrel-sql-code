@@ -19,7 +19,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -214,26 +213,15 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 		sessionUnderTest.setQueryTokenizer(customTokenizer2);
 	}
 
-	private SessionProperties getEasyMockSessionProperties()
-	{
-		// Simulate the user switching the statement separator for the session
-		SessionProperties result = EasyMock.createMock(SessionProperties.class);
-
-		// TODO: Temporary until we sort out a better way to do guido's fix
-		// expect(result.getSQLStatementSeparator()).andReturn(";").once();
-		// expect(result.getSQLStatementSeparator()).andReturn("FOO").once();
-
-		// TODO: Temporary until we sort out a better way to do guido's fix
-		expect(result.getSQLStatementSeparator()).andStubReturn(";");
-		result.setSQLStatementSeparator(isA(String.class));
-		expectLastCall().anyTimes();
-		result.setStartOfLineComment(isA(String.class));
-		expectLastCall().anyTimes();
-
-		expect(result.getStartOfLineComment()).andReturn("--").anyTimes();
-		expect(result.clone()).andReturn(result);
-		expect(result.getRemoveMultiLineComment()).andReturn(true).anyTimes();
-		replay(result);
-		return result;
-	}
+   private SessionProperties getEasyMockSessionProperties() {
+      // Simulate the user switching the statement separator for the session
+      SessionProperties result = EasyMock.createMock(SessionProperties.class);
+      expect(result.getSQLStatementSeparator()).andReturn(";").once();
+      expect(result.getSQLStatementSeparator()).andReturn("FOO").once();
+      expect(result.getStartOfLineComment()).andReturn("--").anyTimes();
+      expect(result.clone()).andReturn(result);
+      expect(result.getRemoveMultiLineComment()).andReturn(true).anyTimes();
+      replay(result);
+      return result;
+  }
 }
