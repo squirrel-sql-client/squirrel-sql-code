@@ -2,42 +2,13 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.exception;
 
 import java.sql.SQLWarning;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SybaseASEExceptionFormatter implements ExceptionFormatter {
 
-	/**
-	 * Logger for this class.
-	 */
-	private final static ILogger s_log = LoggerController
-			.createLogger(SybaseASEExceptionFormatter.class);
-
-	/**
-	 * Internationalized strings for this class.
-	 */
-	private static final StringManager s_stringMgr = StringManagerFactory
-			.getStringManager(SybaseASEExceptionFormatter.class);
-
-	/** The session that this formatter is associated with */
-	private ISession _session = null;
 
 	private final DefaultExceptionFormatter defaultFormatter = new DefaultExceptionFormatter();
-
-	/**
-	 * Sets the Oracle session that this formatter is associated with.
-	 *
-	 * @param session
-	 *            the session
-	 */
-   public void setSession(ISession session) {
-		_session = session;
-	}
 
 	@Override
 	public String format(Throwable t) throws Exception {

@@ -225,7 +225,6 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 
         // Add a new formatter for Sybase-Errors/Warnings
       SybaseASEExceptionFormatter formatter = new SybaseASEExceptionFormatter();
-		formatter.setSession(session);
 		session.setExceptionFormatter(formatter);
 
         

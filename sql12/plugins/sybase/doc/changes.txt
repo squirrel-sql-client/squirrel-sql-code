@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.05
+====
+
+- Better formatting in message window for SQLWarnings
+
 0.02
 ====
 - Added new trigger and index nodes beneath tables in the tree.  Also, added 
