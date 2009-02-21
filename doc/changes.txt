@@ -1,8 +1,8 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released - available from CVS or in the latest snapshot:
-----------------------------------------------------------------
+3.0 (2/21/2009)
+==============
 
 Enhancements: 
 
