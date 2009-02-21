@@ -150,6 +150,8 @@ Fixed several bugs which made it impossible to work with SQLite.
 
 Fixed a bug which made it difficult to see text that was being edited in a table.
 
+2609090: Auto update fails if "empty" change list is validated
+
 2480365: Plugin loading fails when installdir has spaces
 
 2220792: SQLite: content not editable

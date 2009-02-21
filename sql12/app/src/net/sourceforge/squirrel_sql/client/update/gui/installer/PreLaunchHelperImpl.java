@@ -18,11 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListenerImpl;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
@@ -125,7 +128,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	public void installUpdates(boolean prompt)
 	{
 		FileWrapper changeListFile = updateUtil.getChangeListFile();
-		if (changeListFile.exists())
+		if (hasChangesToBeApplied(changeListFile))
 		{
 			logInfo("Pre-launch update app detected a changeListFile to be processed");
 			if (prompt)
@@ -144,10 +147,50 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 				installUpdates(changeListFile);
 			}
 		}
-		else
+	}
+
+	/**
+	 * Peeks into the changelist file to see if there are artifacts to change. This is precautionary as the GUI
+	 * should prevent the changeList file from being created if there are no artifacts to be changed.
+	 * 
+	 * @param changeListFile
+	 *           the file that contains the changeList
+	 * @return true if the changeListFile exists and has changes to be applied; false otherwise.
+	 */
+	private boolean hasChangesToBeApplied(final FileWrapper changeListFile)
+	{
+		boolean result = false;
+		try
 		{
-			logInfo("installUpdates: changeList file (" + changeListFile + ") doesn't exist.");
+			if (changeListFile.exists())
+			{
+				final ChangeListXmlBean changeListBean = updateUtil.getChangeList(changeListFile);
+				final List<ArtifactStatus> changeList = changeListBean.getChanges();
+				final int changeListSize = changeList.size();
+				logInfo("hasChangesToBeApplied: changeListFile (" + changeListSize + ") has " + changeListSize
+					+ " changes to be applied");
+
+				if (changeList != null && changeListSize > 0)
+				{
+					result = true;
+				}
+				else
+				{
+					logInfo("Aborting update: changeList was found with no updates");
+				}
+			}
+			else
+			{
+				logInfo("installUpdates: changeList file (" + changeListFile + ") doesn't exist");
+			}
 		}
+		catch (FileNotFoundException e)
+		{
+			s_log.error("hasChangesToBeApplied: unable to get change list from file (" + changeListFile + "): "
+				+ e.getMessage());
+		}
+
+		return result;
 	}
 
 	/**
