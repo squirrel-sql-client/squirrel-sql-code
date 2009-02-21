@@ -26,11 +26,13 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.List;
 
+import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
@@ -47,7 +49,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 
-import org.jdesktop.layout.GroupLayout;
+
 
 /**
  *
@@ -239,24 +241,20 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jScrollPane1, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+            jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jScrollPane1, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+            jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
         );
         jTabbedPane1.addTab("Columns", jPanel1);
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(0, 395, Short.MAX_VALUE)
+            jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 395, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(GroupLayout.LEADING)
-            .add(0, 264, Short.MAX_VALUE)
+            jPanel2Layout.createParallelGroup(Alignment.LEADING).addGap(0, 264, Short.MAX_VALUE)
         );
         jTabbedPane1.addTab("Constraints", jPanel2);
 
@@ -275,13 +273,13 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         GroupLayout layout = new GroupLayout(diffPanel);
         diffPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.LEADING)
-            .add(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                 .addContainerGap())
         );
         
