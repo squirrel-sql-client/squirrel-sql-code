@@ -73,6 +73,7 @@
                         <fileset targetdir="$INSTALL_PATH/lib" 
                                  dir="../../squirrel-sql-dist/squirrel-sql/core/dist/lib" >
                                <include name="*.jar"/> 
+                               <exclude name="squirrel-sql.jar" />
                         </fileset>
 
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
