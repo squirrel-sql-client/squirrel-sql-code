@@ -2161,10 +2161,11 @@ your favorite text editor, changing the above line to:
 The update feature uses HttpClient to manage downloads from the Update 
 website and this can produce a great volume of debug log messages.  If 
 debugging is enabled according to the above instructions, the following 
-line should also be added to log4j.properties at the same time that debug
+lines should also be added to log4j.properties at the same time that debug
 is enabled:
 <pre>
 log4j.logger.org.apache.commons.httpclient=WARN, SquirrelAppender
+log4j.logger.httpclient=WARN, SquirrelAppender
 </pre> 
 Once this file has been saved, then SQuirreL should be restarted to
 apply the change.
