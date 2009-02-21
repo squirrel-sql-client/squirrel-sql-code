@@ -116,16 +116,6 @@
 					dir="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax">
 				<include name="*"/>
 			</fileset>
-			<!-- 
-				 We want to avoid putting library jars in the plugin directory tree. This will
-			     reduce the time it takes for SQuirreL to load plugins at startup and avoid 
-			     logging errors for parsing library jars that have external dependencies while 
-			     looking for plugin jars
-			-->
-            <fileset targetdir="$INSTALL_PATH/lib"
-                     dir="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax/lib">
-                <include name="*.jar"/>    
-            </fileset>
 
 			<file	targetdir="$INSTALL_PATH/plugins"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax.jar"/>
