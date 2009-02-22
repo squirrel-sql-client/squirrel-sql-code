@@ -183,7 +183,7 @@
 		<!-- build the release.xml document -->
 		<java fork="true"  
 		      classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
-			<arg value="snapshot"/>
+			<arg value="${release.channel}"/>
 			<arg value="${squirrel.version}"/>
 			<arg value="${release.dir}"/>
 			<classpath>
