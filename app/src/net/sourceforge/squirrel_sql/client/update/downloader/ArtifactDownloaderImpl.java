@@ -139,6 +139,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 						}
 					}
 					if (!success) {
+						sendDownloadFailed();
 						return;
 					}
 				}
@@ -192,7 +193,6 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		{
 			s_log.error("run: encountered exception while attempting to download file (" + fileToGet + "): "
 				+ e.getMessage(), e);
-			sendDownloadFailed();
 			success = false;
 		}
 		return success;
