@@ -1,7 +1,0 @@
-<Beans>
-    <Bean Class="net.sourceforge.squirrel_sql.plugins.dbinfo.DBInfo">
-        <author>Colin Bell</author>
-        <title>Oracle Database Info</title>
-        <procSourceSql>select text from user_source where name = %1% order by line</procSourceSql>
-    </Bean>
-</Beans>
