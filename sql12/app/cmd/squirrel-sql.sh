@@ -28,19 +28,19 @@ else
 	UNIX_STYLE_HOME=$SQUIRREL_SQL_HOME
 fi
 
-cd $UNIX_STYLE_HOME
+cd "$UNIX_STYLE_HOME"
 
 # First entry in classpath is the Squirrel application.
-TMP_CP=$UNIX_STYLE_HOME/squirrel-sql.jar
+TMP_CP="$UNIX_STYLE_HOME/squirrel-sql.jar"
 
 # Then add all library jars to the classpath.
-for a in $UNIX_STYLE_HOME/lib/*; do
+for a in "$UNIX_STYLE_HOME/lib/*"; do
 	TMP_CP="$TMP_CP":"$a";
 done
 
 # Set the update app's classpath to use jars in download area first, then the installed jars
 UPDATE_CP=$TMP_CP
-for a in $UNIX_STYLE_HOME/update/downloads/core/*; do
+for a in "$UNIX_STYLE_HOME/update/downloads/core/*"; do
     UPDATE_CP="$a":"$UPDATE_CP"
 done
 
@@ -61,19 +61,19 @@ if $macosx ; then
         # Define mac-specific system properties if running on Mac OS X
         MACOSX_UPDATER_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQLUpdater"
         MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL"
-fi 
+fi
 
 # Check for updates and prompt to apply if any are available
-if [ -f $UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar -a -f $UNIX_STYLE_HOME/update/changeList.xml ]; then
-        $JAVA -cp $UPDATE_CP $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l $SQUIRREL_SQL_HOME/update-log4j.properties
+if [ -f "$UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar" -a -f "$UNIX_STYLE_HOME/update/changeList.xml" ]; then
+        $JAVA -cp "$UPDATE_CP" $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l "$SQUIRREL_SQL_HOME/update-log4j.properties"
 fi
 
 if $macosx ; then
         # macosx provides unknown args to the script, causing SQuirreL to bail..
-        SCRIPT_ARGS=""       
+        SCRIPT_ARGS=""
 else
         SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
 fi
 
 # Launch SQuirreL application
-$JAVA -Xmx256m -cp $TMP_CP $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $SCRIPT_ARGS
+$JAVA -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $SCRIPT_ARGS
