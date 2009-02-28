@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import static java.sql.DatabaseMetaData.importedKeyNoAction;
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NOCYCLE_CLAUSE;
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.RENAME_CLAUSE;
@@ -39,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
+
 
 /**
  * A dialect delegate for the Oracle database.
@@ -490,6 +492,12 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
 	{
+		// Set ON UPDATE action to NO ACTION as Oracle doesn't currently support this.  NO ACTION causes the 
+		// update clause to be omitted.
+		prefs.setUpdateRefAction(true);
+		prefs.setUpdateAction(importedKeyNoAction);
+		
+		
 		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
 

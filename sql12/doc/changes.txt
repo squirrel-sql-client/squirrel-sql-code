@@ -7,7 +7,7 @@ Not yet released - available from CVS or in the latest snapshot:
 Bug-Fixes:
 
 2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
-
+2531193: Oracle create table script the "ON UPDATE" is wrong
 
 
 3.0 (2/21/2009)
