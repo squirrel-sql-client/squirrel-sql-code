@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released - available from CVS or in the latest snapshot:
+----------------------------------------------------------------
+
+Bug-Fixes:
+
+2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
+
+
+
 3.0 (2/21/2009)
 ==============
 
