@@ -251,23 +251,25 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
                                                  4);
         checkAction(sqls, "ALTER TABLE", " ON DELETE CASCADE");
         
-        prefs.setDeleteAction(DatabaseMetaData.importedKeyRestrict);
-        sqls = checkGetTableSource(new HSQLDialectExt(), 
-                                   twoTableList,
-                                   mockMetaData,
-                                   prefs,
-                                   false,
-                                   4);
-        checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
+// These are commented out since the code no longer emits a delete action if the FK mode is restrict or 
+// no action.
+//        prefs.setDeleteAction(DatabaseMetaData.importedKeyRestrict);
+//        sqls = checkGetTableSource(new HSQLDialectExt(), 
+//                                   twoTableList,
+//                                   mockMetaData,
+//                                   prefs,
+//                                   false,
+//                                   4);
+//        checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
         
-        prefs.setDeleteAction(DatabaseMetaData.importedKeyNoAction);
-        sqls = checkGetTableSource(new HSQLDialectExt(), 
-                                   twoTableList,
-                                   mockMetaData,
-                                   prefs,
-                                   false,
-                                   4);        
-        checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
+//        prefs.setDeleteAction(DatabaseMetaData.importedKeyNoAction);
+//        sqls = checkGetTableSource(new HSQLDialectExt(), 
+//                                   twoTableList,
+//                                   mockMetaData,
+//                                   prefs,
+//                                   false,
+//                                   4);        
+//        checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
         
         prefs.setDeleteAction(DatabaseMetaData.importedKeySetNull);
         sqls = checkGetTableSource(new HSQLDialectExt(), 
