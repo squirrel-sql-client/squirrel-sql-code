@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 
 import org.junit.Before;
 
-public class ImportedKeysTabTest extends ForeignKeysTabBaseTest
+public class ImportedKeysTabTest extends AbstractForeignKeysTabTest
 {
 
 	@Before
