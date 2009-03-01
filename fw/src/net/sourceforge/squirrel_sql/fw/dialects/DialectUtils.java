@@ -2596,7 +2596,7 @@ public class DialectUtils implements StringTemplateConstants
 			
 			boolean overrideUpdate = prefs.isDeleteRefAction();
 			String conditionClause = " ON DELETE ";
-			String overrideAction = prefs.getRefActionByType(prefs.getUpdateAction());
+			String overrideAction = prefs.getRefActionByType(prefs.getDeleteAction());
 			int rule = ci.deleteRule;
 			
 			String onDeleteClause =
