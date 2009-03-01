@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ForeignKeysTabBaseTest extends BaseSQuirreLJUnit4TestCase
+public class AbstractForeignKeysTabTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected ForeignKeysBaseTab classUnderTest = null;
@@ -46,7 +46,7 @@ public class ForeignKeysTabBaseTest extends BaseSQuirreLJUnit4TestCase
 	protected ISQLConnection mockSQLConnection = mockHelper.createMock("mockSQLConnection", ISQLConnection.class);
 	protected SQLDatabaseMetaData mockSQLDatabaseMetaData = mockHelper.createMock("mockSQLDatabaseMetaData", SQLDatabaseMetaData.class);
 
-	public ForeignKeysTabBaseTest()
+	public AbstractForeignKeysTabTest()
 	{
 		super();
 	}
