@@ -490,7 +490,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 						if (s_log.isDebugEnabled())
 						{
 							s_log.debug("initializeChangeList: found a core/translation artifact that is not "
-								+ "installed: installedSize= " + installedSize + "installedCheckSum="
+								+ "installed: installedSize= " + installedSize + " installedCheckSum="
 								+ installedCheckSum + " statusSize=" + status.getSize() + " statusChecksum="
 								+ status.getChecksum());
 						}
