@@ -319,7 +319,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			_downloader.setPath(getUpdateServerPath());
 			_downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
 			_downloader.addDownloadStatusListener(listener);
-			_downloader.setChannelName(getUpdateServerChannel());
+			_downloader.setChannelName(getUpdateServerChannel().toLowerCase());
 			_downloader.start();
 		} else {
 			showMessage(i18n.CHANGES_RECORDED_TITLE, i18n.CHANGES_RECORDED_MSG);
