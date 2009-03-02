@@ -17,11 +17,7 @@ public class DialogDelegate extends JDialog implements IDialogDelegate
 
    private IWidget _widget;
 
-   private boolean _inDispose;
-   private boolean _inSetTitle;
-   private boolean _inUpdateUI;
-   private boolean _inSetVisible;
-   private boolean _inAddNotify;
+   private boolean _inWidgetSetVisible;
 
    private WidgetEventCaster _eventCaster = new WidgetEventCaster();
    private HashMap _clientProperties = new HashMap();
@@ -184,7 +180,22 @@ public class DialogDelegate extends JDialog implements IDialogDelegate
 
    public void _moveToFront()
    {
-      _setVisible(true);
+      //_setVisible(true); Bug 2644778: The widgets setVisible() wasn't called.
+
+      if(false == _inWidgetSetVisible)
+      {
+         try
+         {
+            _inWidgetSetVisible = true;
+            _widget.setVisible(true);
+         }
+         finally
+         {
+            // _inWidgetSetVisible was introduced to allow moveToFront to be called
+            // from within setVisible. See EditWhereColsSheet or SQLFilterSheet
+            _inWidgetSetVisible = false;
+         }
+      }
       setSelected(true);
       requestFocus();
    }

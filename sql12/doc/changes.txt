@@ -8,7 +8,7 @@ Bug-Fixes:
 
 2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
 2531193: Oracle create table script the "ON UPDATE" is wrong
-
+2644778: "Contents Tab SQL fliter" and "Limit cell edit WHERE clause size" dialogs didn't work. 
 
 3.0 (2/21/2009)
 ==============
