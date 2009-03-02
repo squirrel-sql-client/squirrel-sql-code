@@ -99,10 +99,10 @@ release.channel=stable
 remoteUpdateSiteHostname=www.squirrel-sql.net
 
 # The username to use for authentication on the update site.
-remoteUpdateSiteUsername=squirrelftp2
+remoteUpdateSiteUsername=
 
 # The password to use when connecting to the remote host
-remoteUpdateSitePassword=qUEd7Rux
+remoteUpdateSitePassword=
 
 # The remote directory into which to place the release.zip file which represents the update site.  This will
 # be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
