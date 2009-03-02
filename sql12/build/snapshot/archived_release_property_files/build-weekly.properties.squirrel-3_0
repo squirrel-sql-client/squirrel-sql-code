@@ -1,0 +1,113 @@
+####
+#
+# Release build properties
+#
+####
+
+# Name and version
+
+# application name that is used in the name of the installer file.
+name=squirrel-sql
+
+# version that's used in the name of the installer file - this isn't used if 
+# building a snapshot release (that is, if replace.version is set to true)
+appversion=3.0
+
+# cvs repository cvsroot to checkout the source from.
+project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
+
+# The module in the cvs repository to grab
+project.module=sql12
+
+# What tag to use to checkout from CVS
+cvs.tag=HEAD
+
+# What temporary directory to checkout to in order to perform the build in.
+cvs.dest.dir=/home/manningr/squirrel_builds/squirrel_3_0_build
+
+# Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
+# and do a clean.  
+delete.dest.dir=true
+
+# The Version.java template file that contains a marker for where to insert the
+# snapshot number.
+version.template.filename=Version.java.template
+
+# If true, this replaces the version source file with the template that can be 
+# used to create a snapshot version.  Otherwise, the stock Version.java that's
+# on the CVS trunk is used to compile.
+replace.version=false
+
+# The location in the temp build area for where to place the Version.java file
+# once the template has been filtered. 
+version.dest.filename=${cvs.dest.dir}/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java
+
+# What build target to call on the build script to produce the compiled objects
+# required by the installer(s)
+build.target=mac_dist
+
+# The build directory where the main build scripts and configuration files are.
+build.file.dest.dir=${cvs.dest.dir}/${project.module}/build
+
+# Directory where IzPack is installed 
+izpack.home.dir=/opt/IzPack
+
+# The template file to use to create the Windows/Unix IzPack configuration file
+other.izpack.config.file.template=izpack-super.xml.template
+
+# The template file to use to create the MacOS X IzPack configuration file
+macosx.izpack.config.file.template=izpack-mac.xml.template
+
+# The name of the Windows/Unix IzPack configuration file.
+other.izpack.config.file=izpack-super.xml
+
+# The name of the MacOS X IzPack configuration file.
+macosx.izpack.config.file=izpack-macosx.xml
+
+# The template file to use to create the auto install script
+auto.intall.template=autoinstall.xml.template
+
+# The configuration file to use for autoinstalling using IzPack installer
+auto.install.file=autoinstall.xml
+
+# The directory that the application gets installed into for build verification
+# testing
+bv.install.dir=/tmp/squirreltest
+
+# The launch script for the application
+launch.file=${bv.install.dir}/squirrel-sql.sh
+
+# The JVM to launch squirrel with.  This should be a directoy and contain bin/java executable
+launch.jvm=/usr/lib/jvm/java-6-sun
+
+# Sftp username that is used to login to frs.sourceforge.net.  No password is specified for this account
+# as this script only supports the use of public key encryption in which interaction isn't required and the 
+# files can be uploaded in batch.
+sftp.username=manningr
+
+# The channel of the release (this determines what sub-folder beneath the "updates" directory on the
+# remote update site.  Currently, the only valid values here are "stable" and "snapshot"
+release.channel=stable
+
+#----------------------------------------------------------------------------------------------------------#
+# The following properties are for uploading the release update site files onto a remote host that can then 
+# be pointed to inside of SQuirreL using the software update feature to pull down updates.  These are only 
+# required when using the "publishUpdateSite" Ant target.
+#----------------------------------------------------------------------------------------------------------#
+
+# The remote update site hostname
+remoteUpdateSiteHostname=www.squirrel-sql.net
+
+# The username to use for authentication on the update site.
+remoteUpdateSiteUsername=squirrelftp2
+
+# The password to use when connecting to the remote host
+remoteUpdateSitePassword=qUEd7Rux
+
+# The remote directory into which to place the release.zip file which represents the update site.  This will
+# be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
+# archive, so the channel directory should be specified in the path here
+remoteUpdateSiteDir=/updates/stable
+
+
+
