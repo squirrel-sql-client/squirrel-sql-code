@@ -15,6 +15,7 @@ NullPointerException occured when last tab was closed
 Fixed several problems when Schemas where cached.
 E.g. "Contents Tab SQL filter" and "Limit cell edit WHERE clause size" dialogs did not open.
 
+Fixed: When certain windows were closed (e.g. Session Properties window) the first tab was always selected
 
 3.0 (2/21/2009)
 ==============
