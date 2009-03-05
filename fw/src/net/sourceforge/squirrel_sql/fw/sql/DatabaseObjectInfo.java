@@ -393,4 +393,9 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
    {
       return _qualifiedName.compareTo(o.getQualifiedName());
    }
+
+   public void replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType type)
+   {
+      _dboType = type;
+   }
 }

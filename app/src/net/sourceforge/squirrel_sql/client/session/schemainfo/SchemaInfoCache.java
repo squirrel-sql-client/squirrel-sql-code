@@ -20,9 +20,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SchemaTableTypeCombination;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -683,6 +681,32 @@ public class SchemaInfoCache implements Serializable
    Map<IProcedureInfo, IProcedureInfo> getIProcedureInfosForReadOnly()
    {
       return _iProcedureInfos;
+   }
+
+   /**
+    * When SchemaInfoCache has been deserialized the the constants in DatabaseObjectType
+    * still come from the last serialisation. Thus the == operator won't work
+    * unless we replace the DatabaseObjectTypes
+    *
+    */
+   void replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM()
+   {
+      for (ITableInfo iTableInfo : _iTableInfos)
+      {
+         if(iTableInfo instanceof TableInfo)
+         {
+            ((TableInfo)iTableInfo).replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM();
+         }
+      }
+
+      for (IProcedureInfo iProcedureInfo : _iProcedureInfos.keySet())
+      {
+         if(iProcedureInfo instanceof DatabaseObjectInfo)
+         {
+            ((DatabaseObjectInfo)iProcedureInfo).replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType.PROCEDURE);
+         }
+      }
+
    }
 
    /**
