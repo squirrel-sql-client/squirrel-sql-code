@@ -83,6 +83,8 @@ public class SchemaInfoCacheSerializer
          ois.close();
          fis.close();
 
+         ret.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM();
+
          return ret;
       }
       catch (Exception e)
