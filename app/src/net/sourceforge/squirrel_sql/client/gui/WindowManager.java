@@ -836,6 +836,15 @@ public class WindowManager
 
 	private void selectFrontWindow()
 	{
+      if(false == _app.getDesktopStyle().isInternalFrameStyle())
+      {
+         // This is a funny functionality anyway and
+         // leads to problems with the DockTabStyle.
+         // E.g. when SessionProperties is closed first tab gets selected.
+         return;
+      }
+
+
 		final IDesktopContainer desktop = _app.getMainFrame().getDesktopContainer();
 		if (desktop != null)
 		{
