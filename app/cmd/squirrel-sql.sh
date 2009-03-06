@@ -16,7 +16,7 @@ esac
 
 # SQuirreL home.
 if $macosx ; then
-        SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/java'
+        SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/Java'
 else 
         SQUIRREL_SQL_HOME='%INSTALL_PATH'
 fi
