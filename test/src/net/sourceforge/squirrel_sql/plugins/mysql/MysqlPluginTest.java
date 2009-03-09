@@ -20,17 +20,16 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
-import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class MysqlPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
+public class MysqlPluginTest extends AbstractSessionPluginTest
 {	
 	// Common mocks 
 	
@@ -84,6 +83,18 @@ public class MysqlPluginTest extends AbstractPluginTest implements DatabaseProdu
 			isPluginSession, result);
 
 		mockHelper.verifyAll();
+	}
+
+	@Override
+	protected String getDatabaseProductName()
+	{
+		return "mysql";
+	}
+
+	@Override
+	protected String getDatabaseProductVersion()
+	{
+		return "5";
 	}
 		
 

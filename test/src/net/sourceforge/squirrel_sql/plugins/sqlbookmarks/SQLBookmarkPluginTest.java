@@ -18,7 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlbookmarks;
 
-import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
 import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 import net.sourceforge.squirrel_sql.plugins.sqlbookmark.SQLBookmarkPlugin;
 

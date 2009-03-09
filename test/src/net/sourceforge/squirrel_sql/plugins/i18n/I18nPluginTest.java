@@ -18,7 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
-import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
 import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 
 import org.junit.After;
