@@ -54,7 +54,7 @@ public class WhereClausePanel implements ISQLFilterPanel
         StringManagerFactory.getStringManager(WhereClausePanel.class);    
     
 	/** A class containing the information about the SQL filters. */
-	private SQLFilterClauses _sqlFilterClauses;
+	private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
 
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private WhereClauseSubPanel _myPanel;
@@ -233,7 +233,6 @@ public class WhereClausePanel implements ISQLFilterPanel
 		                    Map<String, Boolean> textColumns,
 						    String tableName)
 		{
-			super();
 			_tableName = tableName;
 			_columnCombo = new JComboBox(columnList.toArray());
 			_textColumns = textColumns;
@@ -271,101 +270,79 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		private void createGUI()
 		{
-			setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
+         setLayout(new GridBagLayout());
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(createGeneralPanel(), gbc);
+
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         add(createControlsPanel(), gbc);
+
+         _whereClauseArea.setBorder(BorderFactory.createEtchedBorder());
+         _whereClauseArea.setLineWrap(true);
+         JScrollPane sp = new JScrollPane(_whereClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+
+         gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         add(sp, gbc);
 		}
 
-		/**
-		 * Create a JPanel with GUI components.
-		 *
-		 * @return Returns a JPanel
-		 */
-		private JPanel createGeneralPanel()
-		{
-			final JPanel pnl = new JPanel(new GridBagLayout());
 
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.weightx = 1.0;
+      private JPanel createControlsPanel()
+      {
 
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.gridwidth = 1;
-			JPanel andOrPanel = new JPanel();
-			andOrPanel.setLayout(new BoxLayout(andOrPanel, BoxLayout.Y_AXIS));
-			_andOrLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			andOrPanel.add(_andOrLabel);
-			_andOrCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			andOrPanel.add(_andOrCombo);
-			pnl.add(andOrPanel, gbc);
+         JPanel ret = new JPanel(new GridBagLayout());
+         GridBagConstraints gbc;
 
-			gbc.gridx++;
-			gbc.gridwidth = 5;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			JPanel columnPanel = new JPanel();
-			columnPanel.setLayout(new BoxLayout(columnPanel, BoxLayout.Y_AXIS));
-			_columnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			columnPanel.add(_columnLabel);
-			_columnCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			columnPanel.add(_columnCombo);
-			pnl.add(columnPanel, gbc);
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_andOrLabel, gbc);
 
-			gbc.gridx += 5;
-			gbc.gridwidth = 1;
-			gbc.fill = GridBagConstraints.NONE;
-			JPanel operatorPanel = new JPanel();
-			operatorPanel.setLayout(
-				new BoxLayout(operatorPanel, BoxLayout.Y_AXIS));
-			_operatorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			operatorPanel.add(_operatorLabel);
-			_operatorCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			operatorPanel.add(_operatorCombo);
-			pnl.add(operatorPanel, gbc);
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         ret.add(_andOrCombo, gbc);
 
-			gbc.gridx++;
-			gbc.gridwidth = 1;
-			JPanel valuePanel = new JPanel();
-			valuePanel.setLayout(new BoxLayout(valuePanel, BoxLayout.Y_AXIS));
-			_valueLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			valuePanel.add(_valueLabel);
-			valuePanel.add(Box.createRigidArea(new Dimension(5, 5)));
-			_valueField.setAlignmentX(Component.LEFT_ALIGNMENT);
-			valuePanel.add(_valueField);
-			pnl.add(valuePanel, gbc);
 
-			gbc.gridx++;
-			_addTextButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent evt)
-				{
-					addTextToClause();
-				}
-			});
-			pnl.add(_addTextButton, gbc);
 
-			gbc.gridy++; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = 9;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.ipady = 4;
-			_whereClauseArea.setBorder(BorderFactory.createEtchedBorder());
-			_whereClauseArea.setLineWrap(true);
-			JScrollPane sp = new JScrollPane(_whereClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-												JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			pnl.add(sp, gbc);
+         gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_columnLabel, gbc);
 
-			return pnl;
-		}
+         gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         ret.add(_columnCombo, gbc);
 
-		private static final class OperatorTypeCombo extends JComboBox
+
+
+         gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_operatorLabel, gbc);
+
+         gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         ret.add(_operatorCombo, gbc);
+
+
+
+         gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_valueLabel, gbc);
+
+         gbc = new GridBagConstraints(3,1,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         ret.add(_valueField, gbc);
+
+
+
+         gbc = new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_addTextButton, gbc);
+
+
+         _addTextButton.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent evt)
+            {
+               addTextToClause();
+            }
+         });
+
+         return ret;
+      }
+
+      private static final class OperatorTypeCombo extends JComboBox
 		{
             private static final long serialVersionUID = 1L;
 

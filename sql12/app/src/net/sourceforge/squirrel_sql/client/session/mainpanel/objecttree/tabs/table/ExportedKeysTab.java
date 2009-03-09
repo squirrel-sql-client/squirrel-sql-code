@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -19,49 +20,32 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+
 /**
  * This tab shows the columns in the currently selected table.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ExportedKeysTab extends BaseTableTab
+public class ExportedKeysTab extends ForeignKeysBaseTab
 {
-	
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ExportedKeysTab.class);
-	
-	/**
-	 * Return the title for the tab.
-	 *
-	 * @return	The title for the tab.
-	 */
-	public String getTitle()
+	@Override
+	protected String getHintKey()
 	{
-		//i18n[ExportedKeysTab.title=Exported Keys]
-		return s_stringMgr.getString("ExportedKeysTab.title");
+		return "ExportedKeysTab.hint";
 	}
 
-	/**
-	 * Return the hint for the tab.
-	 *
-	 * @return	The hint for the tab.
-	 */
-	public String getHint()
+	@Override
+	protected String getTitleKey()
 	{
-		//i18n[ExportedKeysTab.hint=Show tables that reference the selected table] 
-		return s_stringMgr.getString("ExportedKeysTab.hint");
+		return "ExportedKeysTab.title";
 	}
 
-	/**
-	 * Create the <TT>IDataSet</TT> to be displayed in this tab.
-	 */
-	protected IDataSet createDataSet() throws DataSetException
+	@Override
+	protected IDataSet getUnfilteredDataSet(SQLDatabaseMetaData md, ITableInfo tableInfo)
+		throws DataSetException
 	{
-		final ISQLConnection conn = getSession().getSQLConnection();
-        return conn.getSQLMetaData().getExportedKeysDataSet(getTableInfo());
+		return md.getExportedKeysDataSet(tableInfo);
 	}
 }

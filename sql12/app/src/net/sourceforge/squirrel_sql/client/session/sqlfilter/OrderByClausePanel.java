@@ -19,10 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.SortedSet;
@@ -64,7 +61,6 @@ public class OrderByClausePanel implements ISQLFilterPanel
 	 */
 	public OrderByClausePanel(SortedSet<String> columnList, String tableName)
 	{
-		super();
 		_myPanel = new OrderByClauseSubPanel(columnList, tableName);
 	}
 
@@ -190,7 +186,6 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		 */
 		OrderByClauseSubPanel(SortedSet<String> columnList, String tableName)
 		{
-			super(new GridBagLayout());
 			_columnCombo = new JComboBox(columnList.toArray());
 			_tableName = tableName;
 			createUserInterface();
@@ -222,75 +217,59 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		/** Create the GUI elements for the panel */
 		private void createUserInterface()
 		{
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
+         setLayout(new GridBagLayout());
+         GridBagConstraints gbc;
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(createGeneralPanel(), gbc);
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         add(createControlsPanel(), gbc);
+
+         _orderClauseArea.setLineWrap(true);
+         JScrollPane sp = new JScrollPane(_orderClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,	JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+         gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4,4,4,4),0,0);
+         add(sp, gbc);
 		}
 
 		/** Create a JPanel with GUI components.
 		 * @return Returns a JPanel
 		 *
 		 */
-		private JPanel createGeneralPanel()
-		{
-			JPanel pnl = new JPanel(new GridBagLayout());
 
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.weightx = 10.0;
+      private JPanel createControlsPanel()
+      {
+         JPanel ret = new JPanel(new GridBagLayout());
+         GridBagConstraints gbc;
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			JPanel columnPanel = new JPanel();
-			columnPanel.setLayout(new BoxLayout(columnPanel, BoxLayout.Y_AXIS));
-			_columnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			columnPanel.add(_columnLabel);
-			_columnCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			columnPanel.add(_columnCombo);
-			pnl.add(columnPanel, gbc);
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_columnLabel, gbc);
 
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.gridx += 2;
-			gbc.weightx = 1.0;
-			JPanel orderPanel = new JPanel();
-			orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS));
-			_orderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			orderPanel.add(_orderLabel);
-			_orderCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-			orderPanel.add(_orderCombo);
-			pnl.add(orderPanel, gbc);
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         ret.add(_columnCombo, gbc);
 
-			gbc.gridx += 2;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			_addButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent evt)
-				{
-					addTextToClause();
-				}
-			});
-			pnl.add(_addButton, gbc);
 
-			gbc.gridx = 0;
-			gbc.gridy++;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.ipady = 4;
-			_orderClauseArea.setBorder(BorderFactory.createEtchedBorder());
-			_orderClauseArea.setLineWrap(true);
-			JScrollPane sp = new JScrollPane(_orderClauseArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-												JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			pnl.add(sp, gbc);
+         gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_orderLabel, gbc);
 
-			return pnl;
-		}
+         gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4,4,4,4),0,0);
+         ret.add(_orderCombo, gbc);
 
-		/** Combine the information entered in the combo boxes and add it
+
+         gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4,4,4,4),0,0);
+         ret.add(_addButton, gbc);
+
+
+         _addButton.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent evt)
+            {
+               addTextToClause();
+            }
+         });
+
+         return ret;
+      }
+
+      /** Combine the information entered in the combo boxes and add it
 		 * to the Order By clause information.
 		 */
 		private void addTextToClause()

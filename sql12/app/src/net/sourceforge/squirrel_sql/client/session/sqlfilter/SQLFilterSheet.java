@@ -41,6 +41,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
@@ -134,7 +135,7 @@ public class SQLFilterSheet extends SessionDialogWidget
 				{
 					reallyShow = false;
                     // i18n[SQLFilterSheet.contentsMsg=You must have the Contents Tab selected to activate the SQL Filter]
-                    String msg = 
+                    String msg =
                         s_stringMgr.getString("SQLFilterSheet.contentsMsg");
 					_objectTree.getSession().showMessage(msg);
 				}
@@ -149,7 +150,7 @@ public class SQLFilterSheet extends SessionDialogWidget
 						{
 							start = System.currentTimeMillis();
 						}
-	
+
 						pnl.initialize(tab.getSQLFilterClauses());
 						if (isDebug)
 						{
@@ -315,9 +316,7 @@ public class SQLFilterSheet extends SessionDialogWidget
 			ISQLFilterPanel pnl = it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			tabPane.addTab(pnlTitle, null, sp, hint);
+			tabPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		tabPane.addChangeListener(new ChangeListener()
@@ -368,6 +367,21 @@ public class SQLFilterSheet extends SessionDialogWidget
 		gbc.gridwidth = 2;
 		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
+
+
+      AbstractAction closeAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            performClose();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      getRootPane().getActionMap().put("CloseAction", closeAction);
+      
 	}
 
 	/**
@@ -445,4 +459,9 @@ public class SQLFilterSheet extends SessionDialogWidget
         _clearFilter.setText(label);
         _tabSelected = tabSelected;
 	}
+
+   public static SQLFilterSheet createSheet(IObjectTreeAPI objectTree, IDatabaseObjectInfo objectInfo)
+   {
+      return null;  //To change body of created methods use File | Settings | File Templates.
+   }
 }

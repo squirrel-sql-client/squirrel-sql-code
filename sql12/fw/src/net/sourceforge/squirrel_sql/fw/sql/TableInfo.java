@@ -61,6 +61,19 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
       }
    }
 
+   public void replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM()
+   {
+      if(DatabaseObjectType.TABLE.getKeyForSerializationReplace().equals(super.getDatabaseObjectType().getKeyForSerializationReplace()))
+      {
+         super.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType.TABLE);
+      }
+      else if (DatabaseObjectType.TABLE.getKeyForSerializationReplace().equals(super.getDatabaseObjectType().getKeyForSerializationReplace()))
+      {
+         super.replaceDatabaseObjectTypeConstantObjectsByConstantObjectsOfThisVM(DatabaseObjectType.VIEW);
+      }
+   }
+
+
    // TODO: Rename this to getTableType.
    public String getType()
    {
@@ -131,7 +144,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
     public void setImportedKeys(ForeignKeyInfo[] foreignKeys) {
         importedKeys = foreignKeys;
     }
-    
+
 
 
 }

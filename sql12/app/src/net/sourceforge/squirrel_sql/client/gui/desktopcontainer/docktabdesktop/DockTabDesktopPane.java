@@ -288,9 +288,17 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       {
          return;
       }
-      selectedHandle.fireDeselected(null);
-      int tabIx = getTabIndex(tabHandle);
-      _tabbedPane.setSelectedIndex(tabIx);
+
+      if (null != selectedHandle)
+      {
+         selectedHandle.fireDeselected(null);
+      }
+
+      if (null != tabHandle)
+      {
+         int tabIx = getTabIndex(tabHandle);
+         _tabbedPane.setSelectedIndex(tabIx);
+      }
    }
 
 

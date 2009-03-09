@@ -1,6 +1,29 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+3.0.1 (3/??/2009)
+================
+
+Bug-Fixes:
+
+2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
+2531193: Oracle create table script the "ON UPDATE" is wrong
+2644778: "Contents Tab SQL filter" and "Limit cell edit WHERE clause size" dialogs didn't work
+
+Other reported bug-fixes:
+
+ - Fixed the case of the install directory (java -> Java) to match the case of the directory created by the 
+   installer. 
+
+ - NullPointerException occured when last tab was closed
+
+ - Fixed several problems when Schemas where cached. For example, "Contents Tab SQL filter" and 
+   "Limit cell edit WHERE clause size" dialogs did not open.
+
+ - Fixed a problem where when certain windows were closed (for example, the Session Properties window) the 
+   first tab was always selected
+
+
 3.0 (2/21/2009)
 ==============
 

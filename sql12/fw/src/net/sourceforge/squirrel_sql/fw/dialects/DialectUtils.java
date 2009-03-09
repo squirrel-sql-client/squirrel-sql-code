@@ -2564,82 +2564,55 @@ public class DialectUtils implements StringTemplateConstants
 				sbToAppend.append("(\n");
 				for (int j = 0; j < ci.fkCols.size(); j++)
 				{
+					sbToAppend.append("  ");
+					sbToAppend.append(ci.fkCols.get(j));
 					if (j < ci.fkCols.size() - 1)
 					{
-						sbToAppend.append("  " + ci.fkCols.get(j) + ",\n");
+						sbToAppend.append(",");
 					}
-					else
-					{
-						sbToAppend.append("  " + ci.fkCols.get(j) + "\n");
-					}
+					sbToAppend.append("\n");
+
 				}
 				sbToAppend.append(")\n");
 
-				sbToAppend.append("REFERENCES " + ci.pkTable + "\n");
+				sbToAppend.append("REFERENCES ");
+				sbToAppend.append(ci.pkTable);
+				sbToAppend.append("\n");
 				sbToAppend.append("(\n");
 				for (int j = 0; j < ci.pkCols.size(); j++)
 				{
+					sbToAppend.append("  ");
+					sbToAppend.append(ci.pkCols.get(j));
 					if (j < ci.pkCols.size() - 1)
 					{
-						sbToAppend.append("  " + ci.pkCols.get(j) + ",\n");
+						sbToAppend.append(",");
 					}
-					else
-					{
-						sbToAppend.append("  " + ci.pkCols.get(j) + "\n");
-					}
+					sbToAppend.append("\n");
 				}
 			}
 
 			sbToAppend.append(")");
 
-			if (prefs.isDeleteRefAction())
-			{
-				sbToAppend.append(" ON DELETE ");
-				sbToAppend.append(prefs.getRefActionByType(prefs.getDeleteAction()));
-			}
-			else
-			{
-				switch (ci.deleteRule)
-				{
-				case DatabaseMetaData.importedKeyCascade:
-					sbToAppend.append(" ON DELETE CASCADE");
-					break;
-				case DatabaseMetaData.importedKeySetNull:
-					sbToAppend.append(" ON DELETE SET NULL");
-					break;
-				case DatabaseMetaData.importedKeySetDefault:
-					sbToAppend.append(" ON DELETE SET DEFAULT");
-					break;
-				case DatabaseMetaData.importedKeyRestrict:
-				case DatabaseMetaData.importedKeyNoAction:
-				default:
-					sbToAppend.append(" ON DELETE NO ACTION");
-				}
-			}
-			if (prefs.isUpdateRefAction())
-			{
-				sbToAppend.append(" ON UPDATE ");
-				sbToAppend.append(prefs.getRefActionByType(prefs.getUpdateAction()));
-			}
-			else
-			{
-				switch (ci.updateRule)
-				{
-				case DatabaseMetaData.importedKeyCascade:
-					sbToAppend.append(" ON UPDATE CASCADE");
-					break;
-				case DatabaseMetaData.importedKeySetNull:
-					sbToAppend.append(" ON UPDATE SET NULL");
-					break;
-				case DatabaseMetaData.importedKeySetDefault:
-					sbToAppend.append(" ON UPDATE SET DEFAULT");
-					break;
-				case DatabaseMetaData.importedKeyRestrict:
-				case DatabaseMetaData.importedKeyNoAction:
-				default:
-					sbToAppend.append(" ON UPDATE NO ACTION");
-				}
-			}
+			
+			boolean overrideUpdate = prefs.isDeleteRefAction();
+			String conditionClause = " ON DELETE ";
+			String overrideAction = prefs.getRefActionByType(prefs.getDeleteAction());
+			int rule = ci.deleteRule;
+			
+			String onDeleteClause =
+				constructFKContraintActionClause(overrideUpdate, conditionClause, overrideAction, rule);
+						
+			sbToAppend.append(onDeleteClause);
+			
+			overrideUpdate = prefs.isUpdateRefAction();
+			conditionClause = " ON UPDATE ";
+			overrideAction = prefs.getRefActionByType(prefs.getUpdateAction());
+			rule = ci.updateRule;
+			
+			String onUpdateClause =
+				constructFKContraintActionClause(overrideUpdate, conditionClause, overrideAction, rule);
+
+			sbToAppend.append(onUpdateClause);
 			sbToAppend.append("\n");
 			result.add(sbToAppend.toString());
 			sbToAppend.setLength(0);
@@ -2648,6 +2621,54 @@ public class DialectUtils implements StringTemplateConstants
 		return result;
 	}
 
+	private static String constructFKContraintActionClause(boolean override, String conditionClause,
+		String overrideAction, int rule)
+	{
+		// Bug 2531193: Oracle create table script the "ON UPDATE" is wrong
+		StringBuilder tmp = new StringBuilder();
+		if (override) {
+			if ("NO ACTION".equals(overrideAction)) {
+				return "";
+			} else {
+				tmp.append(conditionClause);
+				tmp.append(overrideAction);
+				return tmp.toString();
+			}
+		}
+	
+		switch (rule)
+		{
+		case DatabaseMetaData.importedKeyCascade:
+			tmp.append(conditionClause);
+			if (override) {
+				tmp.append(overrideAction);
+			} else {
+				tmp.append("CASCADE");
+			}
+			break;
+		case DatabaseMetaData.importedKeySetNull:
+			if (override) {
+				tmp.append(overrideAction);
+			} else {
+				tmp.append("SET NULL");
+			}
+			break;
+		case DatabaseMetaData.importedKeySetDefault:
+			if (override) {
+				tmp.append(overrideAction);
+			} else {
+				tmp.append("SET DEFAULT");
+			}
+			break;
+		case DatabaseMetaData.importedKeyRestrict:
+		case DatabaseMetaData.importedKeyNoAction:
+		default:
+			// Append nothing - standard says this is equivalent to NO ACTION and some DBs 
+			// (e.g. Oracle don't accept ... NO ACTION)
+		}
+		return tmp.toString();
+	}
+	
 	private static ConstraintInfo[] getConstraintInfos(ITableInfo ti, ISQLDatabaseMetaData md)
 		throws SQLException
 	{
