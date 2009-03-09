@@ -19,7 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
 
-import net.sourceforge.squirrel_sql.plugins.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
 
 import org.junit.After;
 import org.junit.Before;

@@ -16,15 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins;
+package net.sourceforge.squirrel_sql.client.plugin;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertNotNull;
 
+import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Test;
 
 import utils.EasyMockHelper;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 /**
  * This class provides common tests for plugins.  Each plugin test should simply extend this class to 
@@ -81,5 +87,5 @@ public abstract class AbstractPluginTest extends BaseSQuirreLJUnit4TestCase
 	public void testGetContributors() {
 		assertNotNull(classUnderTest.getContributors());
 	}
-	
+
 }
