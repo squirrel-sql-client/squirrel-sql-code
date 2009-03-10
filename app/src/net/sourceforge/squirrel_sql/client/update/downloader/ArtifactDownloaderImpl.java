@@ -75,7 +75,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	/** TODO: change this to Spring-injected when this class becomes a Spring bean. */
 	private PathUtils _pathUtils = new PathUtilsImpl();
 
-	private IProxySettings _proxySettings = null;	
+	private IProxySettings _proxySettings = null;
 
 	public ArtifactDownloaderImpl(List<ArtifactStatus> artifactStatus)
 	{
@@ -113,6 +113,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				}
 				String fileToGet =
 					_pathUtils.buildPath(true, _path, _channelName, status.getType(), status.getName());
+
 				String destDir = getArtifactDownloadDestDir(status);
 
 				if (_util.isPresentInDownloadsDirectory(status))
@@ -131,21 +132,25 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				{
 					int count = 0;
 					boolean success = false;
-					while (count++ <= 3 && !success) {
+					while (count++ <= 3 && !success)
+					{
 						success = attemptFileDownload(fileToGet, destDir, status);
-						if (!success) {
-							long sleepTime = (count+1) * 3000;
+						if (!success)
+						{
+							long sleepTime = (count + 1) * 3000;
 							Utilities.sleep(sleepTime);
 						}
 					}
-					if (!success) {
+					if (!success)
+					{
 						sendDownloadFailed();
 						return;
 					}
 				}
 				else
 				{
-					fileToGet = _pathUtils.buildPath(false, this._fileSystemUpdatePath, fileToGet);
+					fileToGet =
+						_pathUtils.buildPath(false, this._fileSystemUpdatePath, status.getType(), status.getName());
 					result = _util.downloadLocalUpdateFile(fileToGet, destDir);
 				}
 				if (result == false)
@@ -182,8 +187,7 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status)
 	{
 		boolean success = true;
-		
-		
+
 		try
 		{
 			_util.downloadHttpUpdateFile(_host, _port, fileToGet, destDir, status.getSize(),
