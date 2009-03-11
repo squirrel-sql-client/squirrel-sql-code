@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
+Enhancements:
+
+ - New Korean translation available (Thanks to Youngwoo Kim)
+
 Bug-Fixes:
 
 2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
