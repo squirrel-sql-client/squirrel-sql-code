@@ -16,6 +16,9 @@ Bug-Fixes:
 
 Other reported bug-fixes:
 
+ - Fixed bug which occurred when generating FK SQL for DB2 where the update and delete action clause result 
+   in syntax error for certain standard constraint actions.
+ 
  - Fixed the case of the install directory (java -> Java) to match the case of the directory created by the 
    installer. 
 
