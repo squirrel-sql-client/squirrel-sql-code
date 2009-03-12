@@ -748,6 +748,19 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		final Boolean initiallyDeferredNotSupported = null;
 		final Boolean matchFullNotSupported = null;
 
+		/* DB2 doesn't support cascade, set default, or set null for FK constraint update action */
+		if (onUpdateAction != null) {
+			if (! (onUpdateAction.equalsIgnoreCase("no action") 
+						|| onUpdateAction.equalsIgnoreCase("restrict"))) {
+				onUpdateAction = "";
+			}
+		}
+
+		/* DB2 doesn't support set default for FK constraint delete action */
+		if (onDeleteAction != null && onDeleteAction.equalsIgnoreCase("set default")) {
+			onDeleteAction = "";
+		}
+		
 		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
 			deferrableNotSupported, initiallyDeferredNotSupported, matchFullNotSupported, autoFKIndex,
 			fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs, this);
