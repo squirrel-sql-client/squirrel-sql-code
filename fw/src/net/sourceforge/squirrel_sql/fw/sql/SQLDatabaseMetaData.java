@@ -1791,9 +1791,25 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
           rs = md.getColumns(catalog, schema, table, "%");
           final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
 
+          int isNullAllowed = DatabaseMetaData.typeNullableUnknown;
+                    
           int index = 0;
           while (rdr.next())
           {
+             /*
+              * PointBase doesn't follow the spec with regard to column 11 of getColumns (should return a type
+              * constant, but instead returns a Boolean.
+              */
+             if (DialectFactory.isPointbase(this)) {
+            	 if (rdr.getBoolean(11)) {
+            		 isNullAllowed = DatabaseMetaData.typeNullable;
+            	 } else {
+            		 isNullAllowed = DatabaseMetaData.typeNoNulls;
+            	 } 
+             } else {
+            	 isNullAllowed = rdr.getLong(11).intValue();
+             }
+         	 
              final TableColumnInfo tci = 
                  new TableColumnInfo(rdr.getString(1),           // TABLE_CAT
                                      rdr.getString(2),           // TABLE_SCHEM
@@ -1804,7 +1820,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
                                      rdr.getLong(7).intValue(),  // COLUMN_SIZE
                                      rdr.getLong(9).intValue(),  // DECIMAL_DIGITS
                                      rdr.getLong(10).intValue(), // NUM_PREC_RADIX
-                                     rdr.getLong(11).intValue(), // NULLABLE
+                                     isNullAllowed, 				  // NULLABLE
                                      rdr.getString(12),          // REMARKS
                                      rdr.getString(13),          // COLUMN_DEF
                                      rdr.getLong(16).intValue(), // CHAR_OCTET_LENGTH
