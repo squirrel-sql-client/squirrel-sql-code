@@ -72,7 +72,6 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	private UpdateUtil _util = null;
 
-	/** TODO: change this to Spring-injected when this class becomes a Spring bean. */
 	private PathUtils _pathUtils = new PathUtilsImpl();
 
 	private IProxySettings _proxySettings = null;
