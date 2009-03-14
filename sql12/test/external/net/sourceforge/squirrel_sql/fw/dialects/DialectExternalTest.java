@@ -2198,6 +2198,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase {
 	      		System.err.println("Formatted message: "+formatter.format(e));
 	      	}
 	      	throw e;
+	      } finally {
+	      	SQLUtilities.closeStatement(stmt);
 	      }
    	} else {
          System.out.println("Skip Comment (" + dialect.getDisplayName() + "): "
