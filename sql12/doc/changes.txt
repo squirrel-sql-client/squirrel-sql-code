@@ -16,6 +16,10 @@ Bug-Fixes:
 
 Other reported bug-fixes:
 
+ - Better support for PointBase 5.7
+
+ - Fixed bug which caused NullPointerException in Refactoring when modifying column types
+ 
  - Fixed bug which occurred when generating FK SQL for DB2 where the update and delete action clause result 
    in syntax error for certain standard constraint actions.
  
