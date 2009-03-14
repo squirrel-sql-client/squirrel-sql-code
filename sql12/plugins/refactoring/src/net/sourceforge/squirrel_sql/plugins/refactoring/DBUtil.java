@@ -53,7 +53,7 @@ public class DBUtil
 		{
 			result.add(commentSQL);
 		}
-		List<String> typeSQL = getTypeAlterSQL(from, to, dialect);
+		List<String> typeSQL = getTypeAlterSQL(from, to, dialect, qualifier, prefs);
 		if (typeSQL != null)
 		{
 			result.addAll(typeSQL);
@@ -67,13 +67,13 @@ public class DBUtil
 	}
 
 	public static List<String> getTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
-		HibernateDialect dialect)
+		HibernateDialect dialect, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		if (from.getDataType() == to.getDataType() && from.getColumnSize() == to.getColumnSize())
 		{
 			return null;
 		}
-		return dialect.getColumnTypeAlterSQL(from, to, null, null);
+		return dialect.getColumnTypeAlterSQL(from, to, qualifier, prefs);
 	}
 
 	public static String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
