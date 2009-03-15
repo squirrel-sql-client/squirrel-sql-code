@@ -1,6 +1,3 @@
-import java.util.Enumeration;
-import java.util.Properties;
-
 import javax.swing.JOptionPane;
 
 /*
@@ -33,30 +30,57 @@ import javax.swing.JOptionPane;
  */
 public class JavaVersionChecker
 {
+	/** The system property which gives the install location of the java that this small app runs in */ 
+	private static final String JAVA_HOME_PROPERTY = "java.home";
+	
+	/** The system property which gives the version of java that this small application runs in */
+	private static final String JAVA_VERSION_PROPERTY = "java.version";
 
 	/**
-	 * @param args
+	 * @param args should contain at least one version of Java which is the acceptable minimum version.  If 
+	 * that version is not the latest version of Java available, then newer versions (which are also 
+	 * acceptable) should also be specified after the minimum acceptable version.
 	 */
 	public static void main(String[] args)
 	{
-		Properties props = System.getProperties();
-		Enumeration e = props.keys();
-		byte lineSep = Character.LINE_SEPARATOR;
-		
-		while (e.hasMoreElements()) {
-			System.out.println(e.nextElement());
+		if (args.length == 0) {
+			System.err.println("JavaVersionChecker: Must specify one or more minimum JVM versions");
+			System.exit(1);
 		}
-		
-		String jvmVersion = System.getProperty("java.version");
-		if (!jvmVersion.startsWith("1.6") && !jvmVersion.startsWith("1.7")) {
-			String javaHome = System.getProperty("java.home");
+				
+		String jvmVersion = System.getProperty(JAVA_VERSION_PROPERTY);
+		if (!checkVersion(jvmVersion, args)) {
+			String javaHome = System.getProperty(JAVA_HOME_PROPERTY);
 			JOptionPane.showMessageDialog(null, 
-				"Your Java Virtual Machine must be at least 1.6 to run SQuirreL 3.x and above" + lineSep +				
-				"  JVM Version used: "+jvmVersion+ lineSep +
+				"Your Java Virtual Machine must be at least "+args[0]+" to run SQuirreL 3.x and above\n" +				
+				"  JVM Version used: "+jvmVersion+ "\n" +
 				"  JVM Location: "+javaHome);
 			System.exit(1);
 		}
 		System.exit(0);
+	}
+	
+	/**
+	 * Check that the specified JVM version matches one of the jvm versions specified in minimumJavaVersions.
+	 * 
+	 * @param jvmVersion the version of the JVM that this app runs in  
+	 * @param minimumJavaVersions one or more acceptable versions of the JVM
+	 * @return true if the JVM matches one or more of the minimum JVM versions; false otherwise.
+	 */
+	private static boolean checkVersion(String jvmVersion, String[] minimumJavaVersions) {
+		
+		if (jvmVersion == null) {
+			System.err.println("jvm version could not be determined. The "+JAVA_VERSION_PROPERTY+
+				" system property is null");
+		}
+		
+		boolean result = false;
+		for (int i = 0; i < minimumJavaVersions.length; i++) {
+			if (jvmVersion.startsWith(minimumJavaVersions[i])) {
+				result = true;
+			}
+		}
+		return result;
 	}
 
 }
