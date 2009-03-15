@@ -10,7 +10,8 @@ set basedir=%basedir:~0,-1%
 if NOT "%removed%"=="\" goto strip
 set SQUIRREL_SQL_HOME=%basedir%
 
-"%LOCAL_JAVA%w" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker
+@rem Check to see if we are running in a 1.6/1.7 JVM and inform the user if not and skip launch.
+"%LOCAL_JAVA%w" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 1.6 1.7
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 @rem If the changelist.xml file isn't present or the downloaded update jars don't exist, skip launching the updater - these files are created by the 
