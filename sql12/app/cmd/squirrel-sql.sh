@@ -30,6 +30,12 @@ fi
 
 cd "$UNIX_STYLE_HOME"
 
+# Check to see if the JVM meets the minimum required to run SQuirreL
+$JAVA -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.6 1.7
+if [ "$?" = "1" ]; then
+  exit
+fi
+
 # First entry in classpath is the Squirrel application.
 TMP_CP="$UNIX_STYLE_HOME/squirrel-sql.jar"
 
