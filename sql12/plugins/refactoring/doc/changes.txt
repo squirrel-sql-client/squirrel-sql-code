@@ -1,6 +1,11 @@
 Refactoring Plugin Change Log
 =============================
 
+0.21
+====
+
+ - Fixed bug which caused NullPointerException in Refactoring when modifying column types
+
 0.20
 ====
 
