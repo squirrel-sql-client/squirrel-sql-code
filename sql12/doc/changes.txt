@@ -16,6 +16,8 @@ Bug-Fixes:
 
 Other reported bug-fixes:
 
+ - Fixed UI freeze issue which sometimes occurred when using software update feature.
+
  - Better support for PointBase 5.7
 
  - Fixed bug which caused NullPointerException in Refactoring when modifying column types
