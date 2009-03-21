@@ -81,6 +81,8 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	private boolean releaseVersionWillChange = false;
 
+	private RetryStrategy _retryStrategy = new DefaultRetryStrategyImpl();
+	
 	public ArtifactDownloaderImpl(List<ArtifactStatus> artifactStatus)
 	{
 		_artifactStatus = artifactStatus;
@@ -139,13 +141,12 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				{
 					int count = 0;
 					boolean success = false;
-					while (count++ <= 3 && !success)
+					while (_retryStrategy.shouldTryAgain(count++) && !success)
 					{
 						success = attemptFileDownload(fileToGet, destDir, status);
 						if (!success)
 						{
-							long sleepTime = (count + 1) * 3000;
-							Utilities.sleep(sleepTime);
+							Utilities.sleep(_retryStrategy.getTimeToWaitBeforeRetrying(count));
 						}
 					}
 					if (!success)
@@ -461,4 +462,12 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		this.releaseVersionWillChange = releaseVersionWillChange;
 	}
 
+	/**
+	 * @param strategy the _retryStrategy to set
+	 */
+	public void setRetryStrategy(RetryStrategy strategy)
+	{
+		_retryStrategy = strategy;
+	}
+	
 }
