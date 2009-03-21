@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.IUpdateSettings;
@@ -54,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -88,12 +91,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * 
  * @author manningr
  */
-/**
- * @author manningr
- */
 public class UpdateUtilImpl implements UpdateUtil
 {
-
+	static {
+		ApplicationArguments.initialize(new String[] {});
+	}
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(UpdateUtilImpl.class);
 
@@ -295,21 +297,111 @@ public class UpdateUtilImpl implements UpdateUtil
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(
+	 * net.sourceforge.squirrel_sql.fw.util.FileWrapper,
+	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.util.FileWrapper)
+	 */
+	@Override
+	public void moveFiles(FileWrapper fromDir, String filePattern, boolean matchPattern, FileWrapper toDir)
+		throws FileNotFoundException, IOException
+	{
+		if (StringUtilities.isEmpty(filePattern)) {
+			throw new IllegalArgumentException("filePattern arg cannot be empty or null");
+		}
+		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
+			+ fromDir.getAbsolutePath() + ") to be a directory."); }
+		if (!toDir.isDirectory()) { throw new IllegalArgumentException("Expected toDir("
+			+ toDir.getAbsolutePath() + ") to be a directory."); }
+
+		List<FileWrapper> filesToMove = getFilterFileList(fromDir, filePattern, matchPattern);
+		for (FileWrapper file : filesToMove) {
+			copyFile(file, toDir);
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("moveFiles: Attempting to delete file "+file.getAbsolutePath());
+			}
+			if (file.delete()) {
+				s_log.error("moveFiles: Unable to delete file "+file.getAbsolutePath());
+			}
+			
+		}
+	}
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(FileWrapper, FileWrapper)
 	 */
 	public void copyDir(FileWrapper fromDir, FileWrapper toDir) throws FileNotFoundException, IOException
 	{
 		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
 			+ fromDir.getAbsolutePath() + ") to be a directory."); }
+		FileWrapper[] files = fromDir.listFiles();
+		copyFiles(Arrays.asList(files), toDir);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(
+	 * net.sourceforge.squirrel_sql.fw.util.FileWrapper,
+	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.util.FileWrapper)
+	 */
+	@Override
+	public void copyDir(FileWrapper fromDir, String filePattern, boolean matchPattern, FileWrapper toDir)
+		throws FileNotFoundException, IOException
+	{
+		if (StringUtilities.isEmpty(filePattern)) {
+			throw new IllegalArgumentException("filePattern arg cannot be empty or null");
+		}
+		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
+			+ fromDir.getAbsolutePath() + ") to be a directory."); }
+		
+		List<FileWrapper> filesToCopy = getFilterFileList(fromDir, filePattern, matchPattern);		
+		copyFiles(filesToCopy, toDir);
+	}
+
+	/**
+	 * Builds a list of FileWrappers that represent each of the files in the specified fromDir whose name 
+	 * matches or doesn't match the specified filePattern.  A true value for the matchPattern flag indicates
+	 * that files which match the pattern should be included.  False indicates that only files that do not 
+	 * match the pattern should be included. 
+	 * 
+	 * @param fromDir
+	 * @param filePattern
+	 * @param matchPattern
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private List<FileWrapper> getFilterFileList(FileWrapper fromDir, String filePattern, boolean matchPattern) 
+		throws FileNotFoundException, IOException
+	{
+		FileWrapper[] files = fromDir.listFiles();
+		List<FileWrapper> filesToCopy = new ArrayList<FileWrapper>();
+		
+		
+		for (FileWrapper sourceFile : files) {
+			
+			boolean fileNameMatchesPattern = sourceFile.getName().matches(filePattern);
+			if (matchPattern && fileNameMatchesPattern) {
+				filesToCopy.add(sourceFile);
+			}
+			if (!matchPattern && !fileNameMatchesPattern) {
+				filesToCopy.add(sourceFile);
+			}
+		}		
+		return filesToCopy;
+	}
+	
+	
+	private void copyFiles(List<FileWrapper> files, FileWrapper toDir) 
+		throws FileNotFoundException, IOException 
+	{
 		if (!toDir.isDirectory()) { throw new IllegalArgumentException("Expected toDir("
 			+ toDir.getAbsolutePath() + ") to be a directory."); }
-		FileWrapper[] files = fromDir.listFiles();
+		
 		for (FileWrapper sourceFile : files)
 		{
 			copyFile(sourceFile, toDir);
-		}
+		}		
 	}
-
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getLocalReleaseInfo(java.lang.String)
 	 */
@@ -675,8 +767,7 @@ public class UpdateUtilImpl implements UpdateUtil
 	}
 
 	/**
-	 * TODO: Move this to IOUtilities 
-	 * Extracts the specified zip file to the specified output directory.
+	 * TODO: Move this to IOUtilities Extracts the specified zip file to the specified output directory.
 	 * 
 	 * @param zipFile
 	 * @param outputDirectory
@@ -778,7 +869,7 @@ public class UpdateUtilImpl implements UpdateUtil
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#
-	 * getDownloadFileLocation(net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
+	 *      getDownloadFileLocation(net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
 	 */
 	public FileWrapper getDownloadFileLocation(ArtifactStatus status)
 	{
@@ -800,7 +891,7 @@ public class UpdateUtilImpl implements UpdateUtil
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#
-	 * isPresentInDownloadsDirectory(net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
+	 *      isPresentInDownloadsDirectory(net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus)
 	 */
 	public boolean isPresentInDownloadsDirectory(ArtifactStatus status)
 	{
