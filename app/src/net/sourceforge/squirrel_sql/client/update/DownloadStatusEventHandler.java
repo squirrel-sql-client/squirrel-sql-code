@@ -34,11 +34,6 @@ public class DownloadStatusEventHandler implements DownloadStatusListener
 
 	private static interface i18n
 	{
-
-		// i18n[DownloadStatusEventHandler.preparingDownloadsMsg=Preparing downloads directory]
-		String PREPARING_DOWNLOADS_MSG =
-			s_stringMgr.getString("DownloadStatusEventHandler.preparingDownloadsMsg");
-
 		// i18n[DownloadStatusEventHandler.downloadingUpdatesMsg=Downloading Files]
 		String DOWNLOADING_UPDATES_MSG = s_stringMgr.getString("DownloadStatusEventHandler.downloadingUpdatesMsg");
 
