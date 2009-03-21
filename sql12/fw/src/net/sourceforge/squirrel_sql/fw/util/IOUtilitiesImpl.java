@@ -46,6 +46,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class IOUtilitiesImpl implements IOUtilities
 {
 
+	/** The size of the byte array which is used to fetch data from disk to do various I/O operations */
+	public static final int DISK_DATA_BUFFER_SIZE = 8192;
 	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(IOUtilitiesImpl.class);
 
@@ -127,7 +129,7 @@ public class IOUtilitiesImpl implements IOUtilities
 	 */
 	public void copyBytes(InputStream is, OutputStream os) throws IOException
 	{
-		byte[] buffer = new byte[8192];
+		byte[] buffer = new byte[DISK_DATA_BUFFER_SIZE];
 		int length;
 		while ((length = is.read(buffer)) > 0)
 		{
@@ -150,7 +152,7 @@ public class IOUtilitiesImpl implements IOUtilities
 				outputFile.createNewFile();
 			}
 			outputFileStream = new BufferedOutputStream(new FileOutputStream(outputFile.getAbsolutePath()));
-			byte[] buffer = new byte[8192];
+			byte[] buffer = new byte[DISK_DATA_BUFFER_SIZE];
 			int length = 0;
 			while ((length = is.read(buffer)) != -1)
 			{
@@ -176,10 +178,11 @@ public class IOUtilitiesImpl implements IOUtilities
 		try
 		{
 			fis = new FileInputStream(f);
-			int b = 0;
-			while ((b = fis.read()) != -1)
+			int len = 0;
+			byte[] buffer = new byte[DISK_DATA_BUFFER_SIZE];
+			while ((len = fis.read(buffer)) != -1)
 			{
-				result.update(b);
+				result.update(buffer, 0, len);
 			}
 		}
 		finally
