@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 
 /**
@@ -109,6 +111,8 @@ public interface UpdateController {
 	public boolean isTimeToCheckForUpdates();
 
 	public void promptUserToDownloadAvailableUpdates();
+
+	public JFrame getMainFrame();
 
 	
 

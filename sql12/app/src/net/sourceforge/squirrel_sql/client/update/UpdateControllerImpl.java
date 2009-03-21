@@ -29,10 +29,8 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ProgressMonitor;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
@@ -43,9 +41,6 @@ import net.sourceforge.squirrel_sql.client.update.async.ReleaseFileUpdateCheckTa
 import net.sourceforge.squirrel_sql.client.update.async.UpdateCheckRunnableCallback;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
-import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadEventType;
-import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent;
-import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
@@ -66,6 +61,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class UpdateControllerImpl implements UpdateController, CheckUpdateListener
 {
+
+	/** This is the pattern that all translation jars (i18n) begin with */
+	public static final String TRANSLATION_JAR_PREFIX = "squirrel-sql_";
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(UpdateControllerImpl.class);
@@ -97,9 +95,6 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	static interface i18n
 	{
 
-		// i18n[UpdateControllerImpl.downloadingUpdatesMsg=Downloading Files]
-		String DOWNLOADING_UPDATES_MSG = s_stringMgr.getString("UpdateControllerImpl.downloadingUpdatesMsg");
-
 		// i18n[UpdateControllerImpl.exceptionMsg=Exception was: ]
 		String EXCEPTION_MSG = s_stringMgr.getString("UpdateControllerImpl.exceptionMsg");
 
@@ -114,21 +109,11 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		String UPDATE_CHECK_TITLE = s_stringMgr.getString("UpdateControllerImpl.updateCheckTitle");
 
 		// i18n[UpdateControllerImpl.changesRecordedTitle=Changes Recorded]
-		String CHANGES_RECORDED_TITLE =
-			s_stringMgr.getString("UpdateControllerImpl.changesRecordedTitle");
+		String CHANGES_RECORDED_TITLE = s_stringMgr.getString("UpdateControllerImpl.changesRecordedTitle");
 
 		// i18n[UpdateControllerImpl.changesRecordedMsg=Requested changes will be made when
 		// SQuirreL is restarted]
-		String CHANGES_RECORDED_MSG =
-			s_stringMgr.getString("UpdateControllerImpl.changesRecordedMsg");
-		
-		// i18n[UpdateControllerImpl.updateDownloadFailed=Update Download Failed]
-		String UPDATE_DOWNLOAD_FAILED_TITLE =
-			s_stringMgr.getString("UpdateControllerImpl.updateDownloadFailed");
-
-		// i18n[UpdateControllerImpl.updateDownloadFailedMsg=Please consult the log for details]
-		String UPDATE_DOWNLOAD_FAILED_MSG =
-			s_stringMgr.getString("UpdateControllerImpl.updateDownloadFailedMsg");
+		String CHANGES_RECORDED_MSG = s_stringMgr.getString("UpdateControllerImpl.changesRecordedMsg");
 
 		// i18n[UpdateControllerImpl.releaseFileDownloadFailedMsg=Release file couldn't be downloaded. Please
 		// check your settings.]
@@ -296,7 +281,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 * existing files to remove (REMOVE). This method's only concern is with fetching the new artifacts to be
 	 * installed.
 	 */
-	public void pullDownUpdateFiles(List<ArtifactStatus> artifactStatusList, DownloadStatusListener listener)
+	public void pullDownUpdateFiles(List<ArtifactStatus> artifactStatusList,
+		DownloadStatusEventHandler handler, boolean releaseVersionWillChange)
 	{
 
 		List<ArtifactStatus> newartifactsList = new ArrayList<ArtifactStatus>();
@@ -309,7 +295,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			}
 		}
 
-		if (newartifactsList.size() > 0) {		
+		if (newartifactsList.size() > 0)
+		{
 			_downloader = _downloaderFactory.create(newartifactsList);
 			_downloader.setUtil(_util);
 			_downloader.setProxySettings(_app.getSquirrelPreferences().getProxySettings());
@@ -318,10 +305,14 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 			_downloader.setPort(Integer.parseInt(getUpdateServerPort()));
 			_downloader.setPath(getUpdateServerPath());
 			_downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
-			_downloader.addDownloadStatusListener(listener);
+			_downloader.addDownloadStatusListener(handler);
+			_downloader.setReleaseVersionWillChange(releaseVersionWillChange);
+			handler.setDownloader(_downloader);
 			_downloader.setChannelName(getUpdateServerChannel().toLowerCase());
 			_downloader.start();
-		} else {
+		}
+		else
+		{
 			showMessage(i18n.CHANGES_RECORDED_TITLE, i18n.CHANGES_RECORDED_MSG);
 		}
 	}
@@ -497,8 +488,6 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 				}
 			}
 
-
-			
 		};
 
 		ReleaseFileUpdateCheckTask runnable =
@@ -538,19 +527,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 			// Kick off a thread to go and fetch the files one-by-one and register
 			// callback class - DownloadStatusEventHandler
-			pullDownUpdateFiles(artifactStatusList, new DownloadStatusEventHandler());
-
-			// if the release version doesn't change, we won't be pulling down core artifacts. So, we just
-			// need to make sure that all core files have been copied from their installed locations into the
-			// corresponding directory in download, which is in the CLASSPATH of the updater. This covers the
-			// case where the update is being run for the first time after install, and no new version is
-			// available, but the user wants to install/remove plugins and/or translations.
-			// TODO: do we need to show the user a progress dialog here ?
-			if (!releaseVersionWillChange)
-			{
-				_util.copyDir(_util.getSquirrelLibraryDir(), _util.getCoreDownloadsDir());
-				_util.copyFile(_util.getInstalledSquirrelMainJarLocation(), _util.getCoreDownloadsDir());
-			}
+			pullDownUpdateFiles(artifactStatusList, new DownloadStatusEventHandler(this),
+				releaseVersionWillChange);
 		}
 		catch (Exception e)
 		{
@@ -571,6 +549,11 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// 2. Display global preferences
 		GlobalPreferencesSheet.showSheet(_app, UpdatePreferencesPanel.class);
 
+	}
+
+	public JFrame getMainFrame()
+	{
+		return _app.getMainFrame();
 	}
 
 	/* Helper methods */
@@ -633,107 +616,5 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		{
 			this.waitingForOk = waitingForOk;
 		}
-	}
-
-	/**
-	 * Listener for download events and handle them appropriately.
-	 * 
-	 * @author manningr
-	 */
-	private class DownloadStatusEventHandler implements DownloadStatusListener
-	{
-
-		ProgressMonitor progressMonitor = null;
-
-		int currentFile = 0;
-
-		int totalFiles = 0;
-
-		/**
-		 * @see net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener#
-		 *     
-		 *     
-		 *      handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent)
-		 */
-		public void handleDownloadStatusEvent(DownloadStatusEvent evt)
-		{
-
-			if (progressMonitor != null && progressMonitor.isCanceled())
-			{
-				_downloader.stopDownload();
-				return;
-			}
-
-			if (evt.getType() == DownloadEventType.DOWNLOAD_STARTED)
-			{
-				totalFiles = evt.getFileCountTotal();
-				handleDownloadStarted();
-			}
-			if (evt.getType() == DownloadEventType.DOWNLOAD_FILE_STARTED)
-			{
-				setNote("File: " + evt.getFilename());
-			}
-
-			if (evt.getType() == DownloadEventType.DOWNLOAD_FILE_COMPLETED)
-			{
-				setProgress(++currentFile);
-			}
-
-			if (evt.getType() == DownloadEventType.DOWNLOAD_STOPPED)
-			{
-				setProgress(totalFiles);
-			}
-
-			// When all updates are retrieved, tell the user that the updates will be installed upon the
-			// next startup.
-			if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED)
-			{
-				showMessage(i18n.CHANGES_RECORDED_TITLE, i18n.CHANGES_RECORDED_MSG);
-				setProgress(totalFiles);
-			}
-			if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED)
-			{
-				showErrorMessage(i18n.UPDATE_DOWNLOAD_FAILED_TITLE, i18n.UPDATE_DOWNLOAD_FAILED_MSG);
-				setProgress(totalFiles);
-			}
-		}
-
-		private void setProgress(final int value)
-		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					progressMonitor.setProgress(value);
-				}
-			});
-		}
-
-		private void setNote(final String note)
-		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					progressMonitor.setNote(note);
-				}
-			});
-		}
-
-		private void handleDownloadStarted()
-		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					final MainFrame frame = UpdateControllerImpl.this._app.getMainFrame();
-					progressMonitor =
-						new ProgressMonitor(frame, i18n.DOWNLOADING_UPDATES_MSG, i18n.DOWNLOADING_UPDATES_MSG, 0,
-							totalFiles);
-					setProgress(0);
-				}
-			});
-		}
-
 	}
 }
