@@ -331,12 +331,18 @@ public class UpdateUtilImpl implements UpdateUtil
 	 */
 	public void copyDir(FileWrapper fromDir, FileWrapper toDir) throws FileNotFoundException, IOException
 	{
-		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
-			+ fromDir.getAbsolutePath() + ") to be a directory."); }
+		verifyDirectory(fromDir, toDir);
 		FileWrapper[] files = fromDir.listFiles();
 		copyFiles(Arrays.asList(files), toDir);
 	}
 
+	private void verifyDirectory(FileWrapper fromDir, FileWrapper toDir) {
+		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
+			+ fromDir.getAbsolutePath() + ") to be a directory."); }
+		if (!toDir.isDirectory()) { throw new IllegalArgumentException("Expected toDir("
+			+ toDir.getAbsolutePath() + ") to be a directory."); }		
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyDir(
 	 * net.sourceforge.squirrel_sql.fw.util.FileWrapper,
@@ -349,9 +355,7 @@ public class UpdateUtilImpl implements UpdateUtil
 		if (StringUtilities.isEmpty(filePattern)) {
 			throw new IllegalArgumentException("filePattern arg cannot be empty or null");
 		}
-		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
-			+ fromDir.getAbsolutePath() + ") to be a directory."); }
-		
+		verifyDirectory(fromDir, toDir);
 		List<FileWrapper> filesToCopy = getFilterFileList(fromDir, filePattern, matchPattern);		
 		copyFiles(filesToCopy, toDir);
 	}
@@ -389,13 +393,16 @@ public class UpdateUtilImpl implements UpdateUtil
 		return filesToCopy;
 	}
 	
-	
+	/**
+	 * Expects the toDir to be a directory.  This check should be made in the public method.
+	 * @param files
+	 * @param toDir
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private void copyFiles(List<FileWrapper> files, FileWrapper toDir) 
 		throws FileNotFoundException, IOException 
-	{
-		if (!toDir.isDirectory()) { throw new IllegalArgumentException("Expected toDir("
-			+ toDir.getAbsolutePath() + ") to be a directory."); }
-		
+	{		
 		for (FileWrapper sourceFile : files)
 		{
 			copyFile(sourceFile, toDir);
