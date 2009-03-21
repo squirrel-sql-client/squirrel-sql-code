@@ -552,7 +552,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 			return null;
 
 		// field is not nullable, so create a reasonable default value
-		return new BigDecimal(0);
+		return BigDecimal.ZERO;
 	}
 
 
