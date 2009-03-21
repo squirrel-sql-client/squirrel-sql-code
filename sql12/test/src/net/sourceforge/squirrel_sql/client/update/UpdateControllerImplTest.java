@@ -34,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.preferences.UpdateSettings;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
-import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
@@ -155,8 +154,8 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    	List<ArtifactStatus> artifactStatusList = new ArrayList<ArtifactStatus>();
    	ArtifactStatus mockArtifactStatus = mockHelper.createMock("mockArtifactStatus", ArtifactStatus.class);
    	
-   	DownloadStatusListener mockDownloadStatusListener = 
-   		mockHelper.createMock("mockDownloadStatusListener", DownloadStatusListener.class);
+   	DownloadStatusEventHandler mockDownloadStatusListener = 
+   		mockHelper.createMock("mockDownloadStatusEventHandler", DownloadStatusEventHandler.class);
    	ProxySettings mockProxySettings = mockHelper.createMock("mockProxySettings", ProxySettings.class);
    	ArtifactDownloaderFactory mockArtifactDownloaderFactory = 
 			mockHelper.createMock("ArtifactDownloaderFactory", ArtifactDownloaderFactory.class);		
@@ -178,7 +177,11 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
 		mockArtifactDownloader.setFileSystemUpdatePath("");
 		mockArtifactDownloader.addDownloadStatusListener(mockDownloadStatusListener);
 		mockArtifactDownloader.setChannelName(TEST_CHANNEL);
+		mockArtifactDownloader.setReleaseVersionWillChange(true);
 		mockArtifactDownloader.start();
+		
+		
+		mockDownloadStatusListener.setDownloader(mockArtifactDownloader);
 		
 		expect(mockApplication.getSquirrelPreferences()).andStubReturn(mockSquirrelPreferences);
 		expect(mockSquirrelPreferences.getProxySettings()).andStubReturn(mockProxySettings);
@@ -195,7 +198,7 @@ public class UpdateControllerImplTest extends BaseSQuirreLJUnit4TestCase {
    	
    	underTest = new UpdateControllerImpl(mockApplication);
    	underTest.setArtifactDownloaderFactory(mockArtifactDownloaderFactory);
-   	underTest.pullDownUpdateFiles(artifactStatusList, mockDownloadStatusListener);
+   	underTest.pullDownUpdateFiles(artifactStatusList, mockDownloadStatusListener, true);
 		
    	verifyAll();
    }
