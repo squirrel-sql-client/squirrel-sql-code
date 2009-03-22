@@ -84,6 +84,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getClassName()
 	 */
+	@Override
 	public String getClassName()
 	{
 		return "java.lang.String";
@@ -103,12 +104,13 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(
-	 * java.lang.Object, net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object,
+	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
+	@Override
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
-	  /*
+		/*
 		* For Oracle 10g we could say something like : 
 		* 
 		* "where XMLSERIALIZE(CONTENT " + _colDef.getLabel() +") like '<value>'"
@@ -171,34 +173,34 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 		Object result = null;
 		try
 		{
-			Object o = rs.getObject(idx);
+			final Object o = rs.getObject(idx);
 			if (o == null)
 			{
 				return NULL_VALUE_PATTERN;
 			}
 			else if ("oracle.sql.OPAQUE".equals(o.getClass().getName()))
 			{
-				Method createXmlMethod = getCreateXmlMethod(o.getClass());
+				final Method createXmlMethod = getCreateXmlMethod(o.getClass());
 
 				// Below is equivalent to the following:
 				// xmlType = XMLType.createXML(o);
-				Object xmlTypeObj = createXmlMethod.invoke(null, o);
-				Method getStringValMethod = XML_TYPE_CLASS.getMethod("getStringVal", (Class[]) null);
+				final Object xmlTypeObj = createXmlMethod.invoke(null, o);
+				final Method getStringValMethod = XML_TYPE_CLASS.getMethod("getStringVal", (Class[]) null);
 
 				// Below is equivalent to the following:
 				// stringValueResult = xmlType.getStringVal();
-				Object stringValueResult = getStringValMethod.invoke(xmlTypeObj, (Object[]) null);
+				final Object stringValueResult = getStringValMethod.invoke(xmlTypeObj, (Object[]) null);
 				result = stringValueResult;
 
 			}
 			else if (XML_TYPE_CLASSNAME.equals(o.getClass().getName()))
 			{
 				XML_TYPE_CLASS = o.getClass();
-				Method getStringValMethod = XML_TYPE_CLASS.getMethod("getStringVal", (Class[]) null);
+				final Method getStringValMethod = XML_TYPE_CLASS.getMethod("getStringVal", (Class[]) null);
 
 				// Below is equivalent to the following:
 				// stringValueResult = xmlType.getStringVal();
-				Object stringValueResult = getStringValMethod.invoke(o, (Object[]) null);
+				final Object stringValueResult = getStringValMethod.invoke(o, (Object[]) null);
 				result = stringValueResult;
 			}
 			else
@@ -206,12 +208,12 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 				result = o;
 			}
 		}
-		catch (ClassNotFoundException e)
+		catch (final ClassNotFoundException e)
 		{
 			s_log.error("Perhaps the XDK, which contains the class " + XML_TYPE_CLASSNAME
 				+ " is not in the CLASSPATH?", e);
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			s_log.error("Unexpected exception while attempting to read " + "SYS.XMLType column", e);
 		}
@@ -246,11 +248,21 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 		{
 			createXmlMethod = XML_TYPE_CLASS.getMethod("createXML", argClasses);
 		}
-		catch (SecurityException e)
-		{ /* Do nothing - the method could be called createXml instead */
+		catch (final SecurityException e)
+		{
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("getCreateXmlMethod: unable to get method named createXML in class "
+					+ "oracle.xdb.XMLType: " + e.getMessage(), e);
+			}
 		}
-		catch (NoSuchMethodException e)
-		{ /* Do nothing - the method could be called createXml instead */
+		catch (final NoSuchMethodException e)
+		{
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("getCreateXmlMethod: unable to get method named createXML in class "
+					+ "oracle.xdb.XMLType: " + e.getMessage(), e);
+			}
 		}
 
 		if (createXmlMethod == null)
@@ -259,13 +271,13 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 			{
 				createXmlMethod = XML_TYPE_CLASS.getMethod("createXml", argClasses);
 			}
-			catch (SecurityException e)
+			catch (final SecurityException e)
 			{
 				s_log.error("getCreateXmlMethod: Unable to get method named createXml or createXML in class "
 					+ "oracle.xdb.XMLType: " + e.getMessage(), e);
 				throw e;
 			}
-			catch (NoSuchMethodException e)
+			catch (final NoSuchMethodException e)
 			{
 				s_log.error("getCreateXmlMethod: Unable to get method named createXml or createXML in class "
 					+ "oracle.xdb.XMLType: " + e.getMessage(), e);
@@ -303,16 +315,16 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 		{
 			try
 			{
-				Class<?>[] args = new Class[] { Connection.class, String.class };
+				final Class<?>[] args = new Class[] { Connection.class, String.class };
 
-				Method createXmlMethod = getCreateXmlMethod(args);
+				final Method createXmlMethod = getCreateXmlMethod(args);
 
-				Object xmlTypeObj = createXmlMethod.invoke(null, pstmt.getConnection(), value.toString());
+				final Object xmlTypeObj = createXmlMethod.invoke(null, pstmt.getConnection(), value.toString());
 
 				// now bind the string..
 				pstmt.setObject(position, xmlTypeObj);
 			}
-			catch (Exception e)
+			catch (final Exception e)
 			{
 				s_log.error("setPreparedStatementValue: Unexpected exception - " + e.getMessage(), e);
 			}
