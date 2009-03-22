@@ -12,12 +12,7 @@
 		<url>http://www.squirrelsql.org</url>
 		<uninstaller write="yes"/>
 		<javaversion>1.6</javaversion>
-		<summarylogfilepath>$INSTALL_PATH/Uninstaller/install-summary.html</summarylogfilepath>
 	</info>
-
-        <variables>
-                <variable name="InstallerFrame.logfilePath" value="$INSTALL_PATH/Uninstaller/install.log"/>
-        </variables>
 
 	<guiprefs height="480" resizable="yes" width="640"/>
 
@@ -30,8 +25,8 @@
 				id="HTMLInfoPanel.info"/>
 		<res	src="shortcutSpec.xml"
 				id="shortcutSpec.xml"/>
-      <res	src="Unix_shortcutSpec.xml"
-            id="Unix_shortcutSpec.xml"/>
+                <res	src="Unix_shortcutSpec.xml"
+                                id="Unix_shortcutSpec.xml"/>
 	</resources>
 
 	<panels>
@@ -463,6 +458,16 @@
 	        	<file targetdir="$INSTALL_PATH/lib"
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_it_IT.jar" />
 	        </pack>
+
+                <pack required="no" preselected="no" installGroups="Translations"
+                        name="Optional Translation - Korean">
+                        <description>
+                                Provides native labels and user messages for use in
+                                a Korean locale (Youngwoo)
+                        </description>
+                        <file targetdir="$INSTALL_PATH/lib"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ko_KR.jar" />
+                </pack>
 
 	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Russian">
