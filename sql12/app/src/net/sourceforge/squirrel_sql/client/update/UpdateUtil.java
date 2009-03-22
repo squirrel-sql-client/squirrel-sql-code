@@ -75,7 +75,7 @@ public interface UpdateUtil
 
 	/** The documentation archive that contains all of core documentation - assume that top directory is doc */
 	public static final String DOCS_ARCHIVE_FILENAME = "doc.zip";
-	
+
 	/**
 	 * Downloads the current release available at the specified host and path.
 	 * 
@@ -116,7 +116,7 @@ public interface UpdateUtil
 	 * @param checksum
 	 *           the checksum of the file
 	 * @param proxySettings
-	 * 			 information about the web-proxy to use if any
+	 *           information about the web-proxy to use if any
 	 * @return a string representing the full local path to where the file was downloaded to
 	 * @throws Exception
 	 */
@@ -132,7 +132,8 @@ public interface UpdateUtil
 	 *           the destination directory into which to place the file.
 	 * @return true if the download succeeded; false otherwise.
 	 */
-	boolean downloadLocalUpdateFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;
+	boolean downloadLocalUpdateFile(String fileToGet, String destDir) throws FileNotFoundException,
+		IOException;
 
 	/**
 	 * Copies the specified from file to the specified to file. If "to" is a directory, then this will copy
@@ -145,6 +146,23 @@ public interface UpdateUtil
 	 */
 	void copyFile(final FileWrapper from, final FileWrapper to) throws FileNotFoundException, IOException;
 
+
+	/**
+	 * Lists the specified fromDir and moves all of the files found in that directory that match the specified
+	 * filePattern to the specified toDir
+	 * directory.
+	 * 
+	 * @param fromDir
+	 *           the directory to copy files from
+	 * @param toDir
+	 *           the directory to copy files to
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	void moveFiles(final FileWrapper fromDir, final String filePattern, boolean matchPattern,
+		final FileWrapper toDir) throws FileNotFoundException, IOException;
+
+	
 	/**
 	 * Lists the specified fromDir and copies all of the files found in that directory to the specified toDir
 	 * directory.
@@ -156,8 +174,28 @@ public interface UpdateUtil
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	void copyDir(final FileWrapper fromDir, final FileWrapper toDir) throws FileNotFoundException, IOException; 
-	
+	void copyDir(final FileWrapper fromDir, final FileWrapper toDir) throws FileNotFoundException, IOException;
+
+	/**
+	 * Lists the specified fromDir and copies all of the files found in that directory to the specified toDir
+	 * directory.
+	 * 
+	 * @param fromDir
+	 *           the directory to copy files from
+	 * @param filePattern
+	 *           the pattern against which to compare the name of the file
+	 * @param matchPattern
+	 *           a boolean value indicating whether or not to match the specified file pattern. If true, then
+	 *           only filenames that match the pattern are copied. If false, the only filenames that do not
+	 *           match the pattern are copied.
+	 * @param toDir
+	 *           the directory to copy files to
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	void copyDir(final FileWrapper fromDir, final String filePattern, boolean matchPattern,
+		final FileWrapper toDir) throws FileNotFoundException, IOException;
+
 	/**
 	 * Returns an ChannelXmlBean that describes the locally installed release.
 	 * 
@@ -178,15 +216,15 @@ public interface UpdateUtil
 	 * Returns the top-level directory in which all installed plugins of SQuirreL live under.
 	 * 
 	 * @return a File representing the plugins directory of SQuirreL
-	 */	
+	 */
 	FileWrapper getSquirrelPluginsDir();
 
 	/**
-	 * Returns the top-level directory in which all core libraries (and possibly translations) of SQuirreL 
-	 * live under.
+	 * Returns the top-level directory in which all core libraries (and possibly translations) of SQuirreL live
+	 * under.
 	 * 
 	 * @return a File representing the core library directory of SQuirreL
-	 */		
+	 */
 	FileWrapper getSquirrelLibraryDir();
 
 	/**
@@ -199,7 +237,8 @@ public interface UpdateUtil
 
 	FileWrapper checkDir(FileWrapper parent, String child);
 
-	void createZipFile(FileWrapper zipFile, FileWrapper... sourceFiles) throws FileNotFoundException, IOException;
+	void createZipFile(FileWrapper zipFile, FileWrapper... sourceFiles) throws FileNotFoundException,
+		IOException;
 
 	/**
 	 * Returns the update directory in which all information about available updates and the user's desired
@@ -287,20 +326,20 @@ public interface UpdateUtil
 	FileWrapper getI18nDownloadsDir();
 
 	FileWrapper getBackupDir();
-	
+
 	FileWrapper getCoreBackupDir();
-	
+
 	FileWrapper getPluginBackupDir();
-	
+
 	FileWrapper getI18nBackupDir();
-	
+
 	/**
 	 * Returns the absolute path to the location of the squirrel-sql.jar file.
 	 * 
 	 * @return a File representing the current installed squirrel-sql.jar file.
 	 */
 	FileWrapper getInstalledSquirrelMainJarLocation();
-	
+
 	ChangeListXmlBean getChangeList(FileWrapper changeListFile) throws FileNotFoundException;
 
 	FileWrapper getFile(FileWrapper installDir, String artifactName);
@@ -325,7 +364,7 @@ public interface UpdateUtil
 	 *            if an error occurs
 	 */
 	void extractZipFile(FileWrapper zipFile, FileWrapper outputDirectory) throws IOException;
-	
+
 	/**
 	 * Returns the absolute path to the file in the downloads section for the specified ArtifactStatus
 	 * 
@@ -334,7 +373,7 @@ public interface UpdateUtil
 	 * @return a File object representing the location of the artifact in the downloads directory.
 	 */
 	FileWrapper getDownloadFileLocation(ArtifactStatus status);
-	
+
 	boolean isPresentInDownloadsDirectory(ArtifactStatus status);
 
 	/**
@@ -348,11 +387,12 @@ public interface UpdateUtil
 	public long getCheckSum(FileWrapper f);
 
 	/**
-	 * Returns an Enum value representing the users preference for how often to automatically check for 
+	 * Returns an Enum value representing the users preference for how often to automatically check for
 	 * updates.
 	 * 
-	 * @param settings the settings to look in.
+	 * @param settings
+	 *           the settings to look in.
 	 * @return the Enum value
 	 */
-	public UpdateCheckFrequency getUpdateCheckFrequency(IUpdateSettings settings);	
+	public UpdateCheckFrequency getUpdateCheckFrequency(IUpdateSettings settings);
 }

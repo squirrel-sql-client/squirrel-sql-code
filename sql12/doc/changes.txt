@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 3.0.1 (3/??/2009)
 ================
 
+Enhancements:
+
+ - New Korean translation available (Thanks to Youngwoo Kim)
+
 Bug-Fixes:
 
 2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
@@ -12,6 +16,8 @@ Bug-Fixes:
 
 Other reported bug-fixes:
 
+ - Fixed UI freeze issue which sometimes occurred when using software update feature.
+ 
  - Better support for PointBase 5.7
 
  - Fixed bug which caused NullPointerException in Refactoring when modifying column types

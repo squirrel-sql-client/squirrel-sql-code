@@ -118,4 +118,14 @@ public interface ArtifactDownloader
 
 	public void setProxySettings(IProxySettings settings);
 
+	/**
+	 * @return the releaseVersionWillChange
+	 */
+	public boolean isReleaseVersionWillChange();
+
+	/**
+	 * @param releaseVersionWillChange the releaseVersionWillChange to set
+	 */
+	public void setReleaseVersionWillChange(boolean releaseVersionWillChange);
+
 }

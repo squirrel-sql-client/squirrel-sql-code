@@ -47,6 +47,9 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(ArtifactDownloaderImpl.class);
 
+	/** This is the pattern that all translation jars (i18n) begin with */
+	public static final String TRANSLATION_JAR_PREFIX_PATTERN = "squirrel-sql_.*";
+
 	private List<ArtifactStatus> _artifactStatus = null;
 
 	private volatile boolean _stopped = false;
@@ -76,6 +79,10 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 
 	private IProxySettings _proxySettings = null;
 
+	private boolean releaseVersionWillChange = false;
+
+	private RetryStrategy _retryStrategy = new DefaultRetryStrategyImpl();
+	
 	public ArtifactDownloaderImpl(List<ArtifactStatus> artifactStatus)
 	{
 		_artifactStatus = artifactStatus;
@@ -95,10 +102,13 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 	 */
 	public void run()
 	{
-		sendDownloadStarted(_artifactStatus.size());
 		long totalBytesDownloaded = 0;
 		try
 		{
+
+			prepareDownloadsDirectory();
+
+			sendDownloadStarted(_artifactStatus.size());
 			for (ArtifactStatus status : _artifactStatus)
 			{
 				if (_stopped)
@@ -131,13 +141,12 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 				{
 					int count = 0;
 					boolean success = false;
-					while (count++ <= 3 && !success)
+					while (_retryStrategy.shouldTryAgain(count++) && !success)
 					{
 						success = attemptFileDownload(fileToGet, destDir, status);
 						if (!success)
 						{
-							long sleepTime = (count + 1) * 3000;
-							Utilities.sleep(sleepTime);
+							Utilities.sleep(_retryStrategy.getTimeToWaitBeforeRetrying(count));
 						}
 					}
 					if (!success)
@@ -181,6 +190,35 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 			s_log.info("run: Downloaded " + totalBytesDownloaded + " bytes total for all update files.");
 		}
 		sendDownloadComplete();
+	}
+
+	private void prepareDownloadsDirectory() throws FileNotFoundException, IOException
+	{
+		// if the release version doesn't change, we won't be pulling down core artifacts. So, we just
+		// need to make sure that all core files have been copied from their installed locations into the
+		// corresponding directory in download, which is in the CLASSPATH of the updater. This covers the
+		// case where the update is being run for the first time after install, and no new version is
+		// available, but the user wants to install/remove plugins and/or translations.
+		if (!releaseVersionWillChange)
+		{
+			// Copy core files minus any i18n jars to core downloads directory
+			_util.copyDir(_util.getSquirrelLibraryDir(), TRANSLATION_JAR_PREFIX_PATTERN, false,
+				_util.getCoreDownloadsDir());
+
+			// Copy i18n files to i18n downloads directory
+			_util.copyDir(_util.getSquirrelLibraryDir(), TRANSLATION_JAR_PREFIX_PATTERN, true,
+				_util.getI18nDownloadsDir());
+
+			// Copy the app module jar to core downloads directory
+			_util.copyFile(_util.getInstalledSquirrelMainJarLocation(), _util.getCoreDownloadsDir());
+		}
+		// Move any i18n files that are located in the core downloads dir to the i18n downloads dir. The spring
+		// application context will not load properly (for some unknown reason) when there are i18n jars in the
+		// classpath. So as a work-around, we simply ensure that they are where they should be anyway.
+		// Previously we were not as careful about this, so it is possible that i18n jars were copied into the
+		// core downloads directory.
+		_util.moveFiles(_util.getCoreDownloadsDir(), TRANSLATION_JAR_PREFIX_PATTERN, true,
+			_util.getI18nDownloadsDir());
 	}
 
 	private boolean attemptFileDownload(String fileToGet, String destDir, ArtifactStatus status)
@@ -407,4 +445,29 @@ public class ArtifactDownloaderImpl implements Runnable, ArtifactDownloader
 		_proxySettings = settings;
 	}
 
+	/**
+	 * @return the releaseVersionWillChange
+	 */
+	public boolean isReleaseVersionWillChange()
+	{
+		return releaseVersionWillChange;
+	}
+
+	/**
+	 * @param releaseVersionWillChange
+	 *           the releaseVersionWillChange to set
+	 */
+	public void setReleaseVersionWillChange(boolean releaseVersionWillChange)
+	{
+		this.releaseVersionWillChange = releaseVersionWillChange;
+	}
+
+	/**
+	 * @param strategy the _retryStrategy to set
+	 */
+	public void setRetryStrategy(RetryStrategy strategy)
+	{
+		_retryStrategy = strategy;
+	}
+	
 }
