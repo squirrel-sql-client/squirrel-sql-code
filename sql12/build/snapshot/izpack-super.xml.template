@@ -25,8 +25,8 @@
 				id="HTMLInfoPanel.info"/>
 		<res	src="shortcutSpec.xml"
 				id="shortcutSpec.xml"/>
-      <res	src="Unix_shortcutSpec.xml"
-            id="Unix_shortcutSpec.xml"/>
+                <res	src="Unix_shortcutSpec.xml"
+                                id="Unix_shortcutSpec.xml"/>
 	</resources>
 
 	<panels>
@@ -41,8 +41,12 @@
 
 	<native type="izpack" name="ShellLink.dll"/>
 
+        <listeners>
+              <listener installer="SummaryLoggerInstallerListener" />
+        </listeners>
+
 	<packs>
-		<pack name="Base" required="yes">
+		<pack name="Base" required="yes" installGroups="Core">
 			<description>SQL Client</description>
 			<singlefile	target="$INSTALL_PATH/plugins/readme.txt"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
@@ -74,6 +78,7 @@
                                  dir="../../squirrel-sql-dist/squirrel-sql/core/dist/lib" >
                                <include name="*.jar"/> 
                                <exclude name="squirrel-sql.jar" />
+                               <exclude name="squirrel-sql_*.jar" />
                         </fileset>
 
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
@@ -84,7 +89,7 @@
 
 		</pack>
 
-		<pack name="Standard" required="no" depends="Base">
+		<pack name="Standard" required="no" depends="Base"  installGroups="StandardPlugins">
 			<description>Standard Plugins</description>
 			<file	targetdir="$INSTALL_PATH/plugins"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/codecompletion"/>
@@ -132,7 +137,7 @@
 		</pack>				
 
 -->
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Data import">
 			<description>
 				This plugin allows you import files into the database.
@@ -143,7 +148,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/dataimport/dist/dataimport" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - DBCopy">
 			<description>
 				This optional plugin allows database objects to be
@@ -155,7 +160,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - DB2">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -167,7 +172,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/db2/dist/db2" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Derby">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -179,7 +184,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/derby/dist/derby" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Firebird ">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -191,7 +196,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/firebird/dist/firebird" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Firebird Manager">
 			<description>
 				This optional plugin adds the ability to manage a
@@ -203,7 +208,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/firebirdmanager/dist/firebirdmanager" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - H2 ">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -215,7 +220,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Hibernate ">
 			<description>
 				This optional plugin adds development support for
@@ -227,7 +232,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/hibernate/dist/hibernate" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Informix ">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -239,7 +244,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/informix/dist/informix" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Microsoft SQL Server ">
 			<description>
 				This optional plugin allows you to performs
@@ -251,7 +256,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/mssql/dist/mssql" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - MySQL ">
 			<description>
 				This optional plugin adds MySQL-specific functionality
@@ -262,7 +267,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Oracle">
 			<description>
 				This optional plugin adds Oracle-specific functionality
@@ -275,7 +280,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - PostgreSQL ">
 			<description>
 				This optional plugin adds PostgreSQL-specific
@@ -287,7 +292,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/postgres/dist/postgres" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Refactoring">
 			<description>
 				This optional plugin allows you to refactor your database using
@@ -299,7 +304,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Session Scripts">
 			<description>
 				This optional plugin allows you to specify SQL statements to be
@@ -311,7 +316,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript" />
 		</pack>
 
-                <pack required="no" preselected="no"
+                <pack required="no" preselected="no" installGroups="OptionalPlugins"
                         name="Optional Plugin - Smart Tools ">
                         <description>
                                 This optional plugin aims to help you with helpful routines to improve your 
@@ -324,7 +329,7 @@
                 </pack>
 
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - SQL Parametrisation ">
 			<description>
 				This plugin allows you to put variables into your SQL
@@ -336,7 +341,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - SQL Replace ">
 			<description>
 				This plugin allows you to place environment variables
@@ -348,7 +353,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlreplace/dist/sqlreplace" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - SQL Validator ">
 			<description>
 				Provides SQL validation (ISO SQL99) based on results of
@@ -360,7 +365,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
 			name="Optional Plugin - Sybase ">
 			<description>
 				This optional plugin adds functionality that is specific
@@ -384,7 +389,7 @@
 				src="../../squirrel-sql-dist/squirrel-sql/plugins/i18n/dist/i18n" />
 		</pack>
 
-		<pack required="no" preselected="no"
+		<pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Brazilian Portuguese">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -394,7 +399,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_pt_BR.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Bulgarian">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -404,7 +409,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_bg_BG.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Czech">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -414,7 +419,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_cs_CZ.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Simplified Chinese">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -424,7 +429,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_zh_CN.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - French">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -434,7 +439,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_fr.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - German">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -444,7 +449,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_de_DE.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Italian">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -454,7 +459,17 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_it_IT.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+                <pack required="no" preselected="no" installGroups="Translations"
+                        name="Optional Translation - Korean">
+                        <description>
+                                Provides native labels and user messages for use in
+                                a Korean locale (Youngwoo)
+                        </description>
+                        <file targetdir="$INSTALL_PATH/lib"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ko_KR.jar" />
+                </pack>
+
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Russian">
 	        	<description>
 	        		Provides native labels and user messages for use in
@@ -464,7 +479,7 @@
 	        		src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ru.jar" />
 	        </pack>
 
-	        <pack required="no" preselected="no"
+	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Spanish">
 	        	<description>
 	        		Provides native labels and user messages for use in

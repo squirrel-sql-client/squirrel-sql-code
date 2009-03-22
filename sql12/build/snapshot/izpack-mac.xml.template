@@ -36,7 +36,7 @@
 	</panels>
 
 	<packs>
-		<pack name="Base" required="yes">
+		<pack name="Base" required="yes" installGroups="Core">
 			<description>SQL Client</description>
 		
 			
@@ -75,6 +75,7 @@
                                  dir="../../squirrel-sql-dist/squirrel-sql/core/dist/lib" >
                                <include name="*.jar"/> 
                                <exclude name="squirrel-sql.jar" />
+                               <exclude name="squirrel-sql_*.jar" />
                         </fileset>
 
 				
@@ -91,7 +92,7 @@
 					src="../../squirrel-sql-dist/squirrel-sql/plugins/macosx/dist/readme.txt"/>
 		</pack>
 
-		<pack name="Standard" required="no" depends="Base">
+		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
 			<description>Standard Plugins</description>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/codecompletion"/>
@@ -130,7 +131,7 @@
 		</pack>				
 
 -->
-		<pack required="no" preselected="no" name="Optional Plugin - Data import">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Data import">
 			<description>This plugin allows you import files into the database.</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dataimport/dist/dataimport.jar"/>
@@ -138,7 +139,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dataimport/dist/dataimport"/>
 		</pack>
 		
-        <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
+        <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DBCopy">
             <description>This optional plugin allows database objects to be copied from one database session to another </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
                       src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy"/>
@@ -146,7 +147,7 @@
                       src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
         </pack>
 
-        <pack required="no" preselected="no" name="Optional Plugin - DB2">
+        <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DB2">
             <description>This optional plugin adds functionality that is specific to the DB2 DBMS </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
                   src="../../squirrel-sql-dist/squirrel-sql/plugins/db2/dist/db2.jar"/>
@@ -154,7 +155,7 @@
                   src="../../squirrel-sql-dist/squirrel-sql/plugins/db2/dist/db2"/>
         </pack>
 
-        <pack required="no" preselected="no" name="Optional Plugin - Derby">
+        <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Derby">
             <description>This optional plugin adds functionality that is specific to the Derby DBMS </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
                   src="../../squirrel-sql-dist/squirrel-sql/plugins/derby/dist/derby.jar"/>
@@ -162,7 +163,7 @@
                   src="../../squirrel-sql-dist/squirrel-sql/plugins/derby/dist/derby"/>
         </pack>
 
-		<pack required="no" preselected="no" name="Optional Plugin - Firebird ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Firebird ">
 			<description>This optional plugin adds functionality that is specific to the Firebird DBMS  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/firebird/dist/firebird.jar"/>
@@ -170,7 +171,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/firebird/dist/firebird"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Hibernate">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Hibernate">
 			<description>This optional plugin provides tools for developing Hibernate applications  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/hibernate/dist/hibernate.jar"/>
@@ -178,7 +179,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/hibernate/dist/hibernate.jar"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - H2 ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - H2 ">
 			<description>This optional plugin adds functionality that is specific to the H2 DBMS  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2.jar"/>
@@ -186,7 +187,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Informix ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Informix ">
 			<description>This optional plugin adds functionality that is specific to the Informix DBMS  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/informix/dist/informix.jar"/>
@@ -194,7 +195,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/informix/dist/informix"/>
 		</pack>	
 
-		<pack required="no" preselected="no" name="Optional Plugin - Microsoft SQL Server ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Microsoft SQL Server ">
 			<description>This optional plugin allows you to performs MSSQL-specific commands with a few clicks </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mssql/dist/mssql.jar"/>
@@ -202,7 +203,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mssql/dist/mssql"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - MySQL ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - MySQL ">
 			<description>This optional plugin adds MySQL specific functionality  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql.jar"/>
@@ -210,7 +211,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Oracle">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Oracle">
 			<description>This optional plugin adds Oracle-specific functionality </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle.jar"/>
@@ -220,7 +221,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - PostgreSQL ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - PostgreSQL ">
 			<description>This optional plugin adds PostgreSQL-specific functionality  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/postgres/dist/postgres.jar"/>
@@ -228,7 +229,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/postgres/dist/postgres"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Refactoring">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Refactoring">
 			<description>This plugin allows you to refactor your database using database refactoring patterns</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring.jar"/>
@@ -236,7 +237,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Session Scripts">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Session Scripts">
 			<description>This plugin allows you to specify SQL statements to be executed when you first connect to a database</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript.jar"/>
@@ -244,7 +245,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript"/>
 		</pack>				
 
-                <pack required="no" preselected="no"
+                <pack required="no" preselected="no" installGroups="OptionalPlugins"
                         name="Optional Plugin - Smart Tools ">
                         <description>
                                 This optional plugin aims to help you with helpful routines to improve your 
@@ -256,7 +257,7 @@
                                 src="../../squirrel-sql-dist/squirrel-sql/plugins/smarttools/dist/smarttools" />
                 </pack>
 
-		<pack required="no" preselected="no" name="Optional Plugin - SQL Parametrisation ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Parametrisation ">
 			<description>This plugin allows you to put variables into your SQL statements </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam.jar"/>
@@ -264,7 +265,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam"/>
 		</pack>				
 
-                <pack required="no" preselected="no" name="Optional Plugin - SQL Replace ">
+                <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Replace ">
                         <description>This plugin allows you to put environment variables into your SQL statements </description>
                         <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
                                   src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlreplace/dist/sqlreplace.jar"/>
@@ -272,7 +273,7 @@
                                   src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlreplace/dist/sqlreplace"/>
                 </pack>                         
 
-		<pack required="no" preselected="no" name="Optional Plugin - SQL Validator ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Validator ">
 			<description>Provides SQL validation (ISO SQL99) based on results of the Mimer SQL web service </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval.jar"/>
@@ -280,7 +281,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Sybase ">
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Sybase ">
 			<description>This optional plugin adds functionality that is specific to the Sybase ASE DBMS</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase.jar"/>
@@ -288,7 +289,7 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase"/>
 		</pack>				
 
-        <pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
+        <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Internationalization ">
             <description>Allows translators to quickly find missing translation files </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
                       src="../../squirrel-sql-dist/squirrel-sql/plugins/i18n/dist/i18n.jar"/>
@@ -296,55 +297,61 @@
                       src="../../squirrel-sql-dist/squirrel-sql/plugins/i18n/dist/i18n"/>
 	    </pack>
 
-	    <pack required="no" preselected="no" name="Optional Translation - Brazilian Portuguese">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Brazilian Portuguese">
 	        <description>Provides native labels and user messages for use in a Brazilian locale (Francis Martins)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_pt_BR.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - Bulgarian">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Bulgarian">
 	        <description>Provides native labels and user messages for use in a Bulgarian locale (Ivan Dimov)</description>
 	        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 	                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_bg_BG.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - Czech">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Czech">
 	        <description>Provides native labels and user messages for use in a Czech locale (Jan Kostrhun)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_cs_CZ.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - Simplified Chinese">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Simplified Chinese">
 	        <description>Provides native labels and user messages for use in a Chinese locale (xpdz)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_zh_CN.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - French">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - French">
 	        <description>Provides native labels and user messages for use in a French locale (Erwan Duroselle)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_fr.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - German">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - German">
 	        <description>Provides native labels and user messages for use in a German locale (Andreas Oswald)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_de_DE.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - Italian">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Italian">
 	        <description>Provides native labels and user messages for use in an Italian locale (Ivo Neri)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_it_IT.jar"/>
 	    </pack>
 
-	    <pack required="no" preselected="no" name="Optional Translation - Russian">
+            <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Korean">
+                <description>Provides native labels and user messages for use in a Korean locale (Youngwoo)</description>
+                <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ko_KR.jar"/>
+            </pack>
+
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Russian">
 	        <description>Provides native labels and user messages for use in a Russian locale (Dmitry Matyukhin)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ru.jar"/>
 	    </pack>
 	
-	    <pack required="no" preselected="no" name="Optional Translation - Spanish">
+	    <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Spanish">
 	        <description>Provides native labels and user messages for use in a Spanish locale (Diego Schulz)</description>
 	    	<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_es.jar"/>
