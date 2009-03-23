@@ -70,6 +70,7 @@ if $macosx ; then
         # Define mac-specific system properties if running on Mac OS X
         MACOSX_UPDATER_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQLUpdater"
         MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL"
+        NATIVE_LAF_PROP="--native-laf"
 fi
 
 # Check for updates and prompt to apply if any are available
@@ -85,4 +86,4 @@ else
 fi
 
 # Launch SQuirreL application
-$JAVA -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $SCRIPT_ARGS
+$JAVA -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
