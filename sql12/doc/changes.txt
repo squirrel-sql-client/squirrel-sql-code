@@ -10,6 +10,7 @@ Enhancements:
 
 Bug-Fixes:
 
+2686268: OS X Look and Feel is Incorrect
 2645286: Quotes missing in squirrel-sql.sh (Thanks to mdykierek for the patch)
 2531193: Oracle create table script the "ON UPDATE" is wrong
 2644778: "Contents Tab SQL filter" and "Limit cell edit WHERE clause size" dialogs didn't work
