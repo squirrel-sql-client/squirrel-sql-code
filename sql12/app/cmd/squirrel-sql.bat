@@ -10,7 +10,11 @@ set basedir=%basedir:~0,-1%
 if NOT "%removed%"=="\" goto strip
 set SQUIRREL_SQL_HOME=%basedir%
 
-@rem Check to see if we are running in a 1.6/1.7 JVM and inform the user if not and skip launch.
+@rem Check to see if we are running in a 1.6/1.7 JVM and inform the user if not and skip launch. versioncheck.jar 
+@rem is a special jar file which has been compiled with javac version 1.2.2, which should be able to be run by 
+@rem that version of higher.  The arguments to JavaVersionChecker below specify the minimum acceptable version 
+@rem (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should be all that is 
+@rem necessary for the version form. 
 "%LOCAL_JAVA%w" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 1.6 1.7
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 

@@ -2,7 +2,6 @@
 
 [ ${JAVA_HOME} ] && JAVA=${JAVA_HOME}/bin/java || [ %JAVA_HOME ]  && JAVA=%JAVA_HOME/bin/java  || JAVA=java
 
-
 # Are we running within Cygwin on some version of Windows?
 cygwin=false;
 macosx=false;
@@ -25,12 +24,16 @@ fi
 if $cygwin ; then
 	UNIX_STYLE_HOME=`cygpath "$SQUIRREL_SQL_HOME"`
 else
-	UNIX_STYLE_HOME=$SQUIRREL_SQL_HOME
+	UNIX_STYLE_HOME="$SQUIRREL_SQL_HOME"
 fi
 
 cd "$UNIX_STYLE_HOME"
 
-# Check to see if the JVM meets the minimum required to run SQuirreL
+# Check to see if the JVM meets the minimum required to run SQuirreL and inform the user if not and skip 
+# launch.  versioncheck.jar is a special jar file which has been compiled with javac version 1.2.2, which 
+# should be able to be run by that version of higher. The arguments to JavaVersionChecker below specify the 
+# minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
+# be all that is necessary for the version form. 
 $JAVA -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.6 1.7
 if [ "$?" = "1" ]; then
   exit
@@ -40,13 +43,13 @@ fi
 TMP_CP="$UNIX_STYLE_HOME/squirrel-sql.jar"
 
 # Then add all library jars to the classpath.
-for a in "$UNIX_STYLE_HOME/lib/*"; do
+for a in "$UNIX_STYLE_HOME"/lib/*; do
 	TMP_CP="$TMP_CP":"$a";
 done
 
 # Set the update app's classpath to use jars in download area first, then the installed jars
 UPDATE_CP=$TMP_CP
-for a in "$UNIX_STYLE_HOME/update/downloads/core/*"; do
+for a in "$UNIX_STYLE_HOME"/update/downloads/core/*; do
     UPDATE_CP="$a":"$UPDATE_CP"
 done
 
@@ -71,7 +74,7 @@ fi
 
 # Check for updates and prompt to apply if any are available
 if [ -f "$UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar" -a -f "$UNIX_STYLE_HOME/update/changeList.xml" ]; then
-        $JAVA -cp "$UPDATE_CP" $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l "$SQUIRREL_SQL_HOME/update-log4j.properties"
+        $JAVA -cp "$UPDATE_CP" $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l "$UNIX_STYLE_HOME/update-log4j.properties"
 fi
 
 if $macosx ; then
@@ -82,4 +85,4 @@ else
 fi
 
 # Launch SQuirreL application
-$JAVA -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file $SQUIRREL_SQL_HOME/log4j.properties --squirrel-home $SQUIRREL_SQL_HOME $SCRIPT_ARGS
+$JAVA -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $SCRIPT_ARGS
