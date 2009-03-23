@@ -1,6 +1,6 @@
-export INSTALL_JAR=/home/manningr/squirrel_builds/squirrel_2_6_6_build/squirrel-sql-dist/squirrel-sql-2.6.6-install.jar
+export INSTALL_JAR=/home/manningr/squirrel_builds/squirrel_3_0_1_build/squirrel-sql-dist/squirrel-sql-3.0.1-install.jar
 
-export VERSION=2.6.6
+export VERSION=3.0.1
 
 rm -f *.gz
 rm -rf tmp
