@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBasePreparedStatementTabTest;
-import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
 
 import org.junit.Before;
 
