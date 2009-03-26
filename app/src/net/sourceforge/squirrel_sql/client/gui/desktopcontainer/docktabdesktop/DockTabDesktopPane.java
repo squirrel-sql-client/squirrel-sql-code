@@ -317,14 +317,17 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
             _handlesInRemoveTab_CloseButton.add(tabHandle);
             tabHandle.fireClosing(e);
-            int tabIndex = getTabIndex(tabHandle);
-            if(-1 != tabIndex)
+            if (WindowConstants.DO_NOTHING_ON_CLOSE != tabHandle.getWidget().getDefaultCloseOperation())
             {
-               _tabbedPane.remove(tabIndex);
+               int tabIndex = getTabIndex(tabHandle);
+               if (-1 != tabIndex)
+               {
+                  _tabbedPane.remove(tabIndex);
+               }
+               tabHandle.fireClosed(e);
+               _tabHandles.remove(tabHandle);
+               tabHandle.removeTabHandleListener(_dockTabDesktopManager);
             }
-            tabHandle.fireClosed(e);
-            _tabHandles.remove(tabHandle);
-            tabHandle.removeTabHandleListener(_dockTabDesktopManager);
          }
          finally
          {

@@ -17,6 +17,8 @@ Bug-Fixes:
 
 Other reported bug-fixes:
 
+ - Session was closed even if session closing confirm dialog was not confirmed. Connection was not closed then.
+
  - Fixed UI freeze issue which sometimes occurred when using software update feature.
 
  - Better support for PointBase 5.7

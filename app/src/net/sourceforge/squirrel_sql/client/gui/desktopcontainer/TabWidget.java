@@ -47,6 +47,12 @@ public class TabWidget implements IWidget
       _delegate.setDefaultCloseOperation(operation);
    }
 
+   public int getDefaultCloseOperation()
+   {
+      return _delegate.getDefaultCloseOperation();
+   }
+
+
    public Container getContentPane()
    {
       return _delegate.getContentPane();
@@ -206,6 +212,4 @@ public class TabWidget implements IWidget
    {
       _delegate._addNotify();
    }
-
-
 }
