@@ -105,6 +105,12 @@ public class TabDelegate implements ITabDelegate
       _eventCaster.removeTabWidgetListener(widgetListener);
    }
 
+   @Override
+   public int getDefaultCloseOperation()
+   {
+      return _defaultCloseOperation;
+   }
+
    public boolean isVisible()
    {
       return _visible;
