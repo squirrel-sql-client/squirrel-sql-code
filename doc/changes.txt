@@ -4,6 +4,15 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
+Bug-Fixes:
+
+2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
+2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 
+         closed then.
+
+3.0.1 (3/23/2009)
+================
+
 Enhancements:
 
  - New Korean translation available (Thanks to Youngwoo Kim)
@@ -16,8 +25,6 @@ Bug-Fixes:
 2644778: "Contents Tab SQL filter" and "Limit cell edit WHERE clause size" dialogs didn't work
 
 Other reported bug-fixes:
-
- - Session was closed even if session closing confirm dialog was not confirmed. Connection was not closed then.
 
  - Fixed UI freeze issue which sometimes occurred when using software update feature.
 
