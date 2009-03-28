@@ -18,6 +18,8 @@ public interface IDelegateBase
 
    void setDefaultCloseOperation(int operation);
 
+   int getDefaultCloseOperation();
+
    Container getContentPane();
 
    void pack();

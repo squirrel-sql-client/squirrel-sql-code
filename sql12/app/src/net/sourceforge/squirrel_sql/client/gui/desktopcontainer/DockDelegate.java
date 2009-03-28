@@ -26,6 +26,7 @@ public class DockDelegate implements IDockDelegate
    private DockWidget _dockWidget;
    private WidgetEventCaster _eventCaster = new WidgetEventCaster();
    private DockHandle _dockHandle;
+   private int _defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE;
 
 
    public DockDelegate(IApplication app, String title, DockWidget dockWidget)
@@ -56,9 +57,15 @@ public class DockDelegate implements IDockDelegate
       _dockHandle.openDock();
    }
 
-   public void setDefaultCloseOperation(int operation)
+   public void setDefaultCloseOperation(int defaultCloseOperation)
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      _defaultCloseOperation = defaultCloseOperation;
+   }
+
+   @Override
+   public int getDefaultCloseOperation()
+   {
+      return _defaultCloseOperation;
    }
 
    public Container getContentPane()
