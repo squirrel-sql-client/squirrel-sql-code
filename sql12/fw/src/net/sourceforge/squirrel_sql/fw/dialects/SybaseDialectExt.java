@@ -52,7 +52,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 			registerColumnType(Types.CHAR, 255, "char($l)");
 			registerColumnType(Types.CHAR, "text");
 			registerColumnType(Types.CLOB, "text");
-			registerColumnType(Types.DATE, "datetime");
+			registerColumnType(Types.DATE, "date");
 			registerColumnType(Types.DECIMAL, "decimal($p,2)");
 			registerColumnType(Types.DOUBLE, "float($p)");
 			registerColumnType(Types.FLOAT, "float($p)");
