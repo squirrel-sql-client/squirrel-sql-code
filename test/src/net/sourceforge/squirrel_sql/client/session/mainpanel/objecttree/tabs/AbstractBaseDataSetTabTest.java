@@ -46,16 +46,18 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	// common mocks
 
-	protected IDataSet mockDataSet = mockHelper.createMock(IDataSet.class);
+	protected IDataSet mockDataSet = mockHelper.createMock("mockDataSet", IDataSet.class);
 
-	protected DatabaseMetaData mockDatabaseMetaData = mockHelper.createMock(DatabaseMetaData.class);
+	protected DatabaseMetaData mockDatabaseMetaData =
+		mockHelper.createMock("mockDatabaseMetaData", DatabaseMetaData.class);
 
-	protected ISQLDriver mockSQLDriver = mockHelper.createMock(ISQLDriver.class);
+	protected ISQLDriver mockSQLDriver = mockHelper.createMock("mockSQLDriver", ISQLDriver.class);
 
-	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
+	protected SchemaInfo mockSchemaInfo = mockHelper.createMock("mockSchemaInfo", SchemaInfo.class);
 
-	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
-	
+	protected IDatabaseObjectInfo mockDatabaseObjectInfo =
+		mockHelper.createMock("mockDatabaseObjectInfo", IDatabaseObjectInfo.class);
+
 	// Test Data
 
 	public static final String[] SQL_KEYWORDS = new String[] { "testKeyword1", "testKeyword2" };
@@ -73,10 +75,10 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 
 	public static final String[] TABLE_TYPES = new String[] { "TABLE" };
 
-	public static final String[] SYSTEM_FUNCTIONS = new String[] {"systemFunction1", "systemFunction2"};
-	
-	public static final String[] TIME_DATE_FUNCTIONS = new String[] {"currentTime", "currentDate"};
-	
+	public static final String[] SYSTEM_FUNCTIONS = new String[] { "systemFunction1", "systemFunction2" };
+
+	public static final String[] TIME_DATE_FUNCTIONS = new String[] { "currentTime", "currentDate" };
+
 	public AbstractBaseDataSetTabTest()
 	{
 		super();
@@ -116,7 +118,7 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getSystemFunctions()).andStubReturn(SYSTEM_FUNCTIONS);
 		expect(mockSQLMetaData.getTableTypes()).andStubReturn(TABLE_TYPES);
 		expect(mockSQLMetaData.getTimeDateFunctions()).andStubReturn(TIME_DATE_FUNCTIONS);
-		
+
 		// mockSchemaInfo
 		expect(mockSchemaInfo.getSchemas()).andStubReturn(SCHEMAS);
 
@@ -137,7 +139,7 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		// mockDatabaseMetaData
 		expect(mockDatabaseMetaData.getDefaultTransactionIsolation()).andStubReturn(
 			Connection.TRANSACTION_READ_COMMITTED);
-		
+
 		// mockDatabaseObjectInfo
 		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
 		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
