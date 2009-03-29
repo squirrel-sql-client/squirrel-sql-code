@@ -37,21 +37,21 @@ public class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
 
 	public static final int TRANSACTION_ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 
-	protected ISession mockSession = mockHelper.createMock(ISession.class);
+	protected ISession mockSession = mockHelper.createMock("mockSession", ISession.class);
 
-	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
+	protected ISQLConnection mockSQLConnection = mockHelper.createMock("mockSQLConnection", ISQLConnection.class);
 
-	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
+	protected IApplication mockApplication = mockHelper.createMock("mockApplication", IApplication.class);
 
 	protected IIdentifier mockSessionId = mockHelper.createMock(IIdentifier.class);
 
-	protected SessionManager mockSessionManager = mockHelper.createMock(SessionManager.class);
+	protected SessionManager mockSessionManager = mockHelper.createMock("mockSessionId", SessionManager.class);
 
-	protected TaskThreadPool mockThreadPool = mockHelper.createMock(TaskThreadPool.class);
+	protected TaskThreadPool mockThreadPool = mockHelper.createMock("mockThreadPool", TaskThreadPool.class);
 
-	protected SQLDatabaseMetaData mockSQLMetaData = mockHelper.createMock(SQLDatabaseMetaData.class);
+	protected SQLDatabaseMetaData mockSQLMetaData = mockHelper.createMock("mockSQLMetaData", SQLDatabaseMetaData.class);
 
-	protected Connection mockConnection = mockHelper.createMock(Connection.class);
+	protected Connection mockConnection = mockHelper.createMock("mockConnection", Connection.class);
 
 	protected String databaseProductName = null;
 
