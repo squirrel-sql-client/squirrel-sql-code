@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -58,6 +60,12 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 	protected IDatabaseObjectInfo mockDatabaseObjectInfo =
 		mockHelper.createMock("mockDatabaseObjectInfo", IDatabaseObjectInfo.class);
 
+	protected SessionProperties mockSessionProperties = 
+		mockHelper.createMock("mockSessionProperties", SessionProperties.class); 
+	
+	protected ISQLAliasExt mockSQLAliasExt = 
+		mockHelper.createMock("mockSQLAliasExt", ISQLAliasExt.class);
+	
 	// Test Data
 
 	public static final String[] SQL_KEYWORDS = new String[] { "testKeyword1", "testKeyword2" };
@@ -78,7 +86,9 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 	public static final String[] SYSTEM_FUNCTIONS = new String[] { "systemFunction1", "systemFunction2" };
 
 	public static final String[] TIME_DATE_FUNCTIONS = new String[] { "currentTime", "currentDate" };
-
+	
+	public static final String TEST_ALIAS_URL = "jdbc:testdatabase:thin:@localhost:1400/testdatabasename";
+	
 	public AbstractBaseDataSetTabTest()
 	{
 		super();
@@ -93,6 +103,8 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSession.getIdentifier()).andStubReturn(mockSessionId);
 		expect(mockSession.getDriver()).andStubReturn(mockSQLDriver);
 		expect(mockSession.getSchemaInfo()).andStubReturn(mockSchemaInfo);
+		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
+		expect(mockSession.getAlias()).andStubReturn(mockSQLAliasExt);
 
 		// mockApplication
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
@@ -101,6 +113,9 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		// mockSessionManager
 		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
 
+		// mockSQLAliasExt
+		expect(mockSQLAliasExt.getUrl()).andStubReturn(TEST_ALIAS_URL);
+		
 		// mockSQLConnection
 		expect(mockSQLConnection.getSQLMetaData()).andStubReturn(mockSQLMetaData);
 		expect(mockSQLConnection.getConnection()).andStubReturn(mockConnection);
@@ -118,10 +133,15 @@ public class AbstractBaseDataSetTabTest extends AbstractTabTest
 		expect(mockSQLMetaData.getSystemFunctions()).andStubReturn(SYSTEM_FUNCTIONS);
 		expect(mockSQLMetaData.getTableTypes()).andStubReturn(TABLE_TYPES);
 		expect(mockSQLMetaData.getTimeDateFunctions()).andStubReturn(TIME_DATE_FUNCTIONS);
+		expect(mockSQLMetaData.getDatabaseProductName()).andStubReturn(TEST_DATABASE_PRODUCT_NAME);
+		expect(mockSQLMetaData.getDatabaseProductVersion()).andStubReturn(TEST_DATABASE_PRODUCT_VERSION);
 
 		// mockSchemaInfo
 		expect(mockSchemaInfo.getSchemas()).andStubReturn(SCHEMAS);
 
+		// mockSessionProperties
+		expect(mockSessionProperties.getContentsLimitRows()).andStubReturn(false);
+		
 		// mockThreadPool
 		mockThreadPool.addTask(isA(Runnable.class));
 		expectLastCall().anyTimes();
