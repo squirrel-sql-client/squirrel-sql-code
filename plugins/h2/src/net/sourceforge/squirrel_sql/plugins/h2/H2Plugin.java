@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ViewSourceTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -42,7 +43,7 @@ import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.TriggerDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.h2.tab.ViewSourceTab;
+
 
 /**
  * The main controller class for the H2 plugin.
@@ -100,7 +101,7 @@ public class H2Plugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.01";
+		return "0.02";
 	}
 
 	/**

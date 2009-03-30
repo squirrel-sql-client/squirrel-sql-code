@@ -44,7 +44,7 @@ public class IndexSourceTab extends FormattedSourceTab
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(ViewSourceTab.class);
+		LoggerController.createLogger(IndexSourceTab.class);
 
 	public IndexSourceTab(String hint, String stmtSep)
 	{

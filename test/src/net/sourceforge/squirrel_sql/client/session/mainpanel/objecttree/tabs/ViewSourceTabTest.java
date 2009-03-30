@@ -16,10 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.h2.tab;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractSourceTabTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ViewSourceTab;
 
 import org.junit.Before;
 
