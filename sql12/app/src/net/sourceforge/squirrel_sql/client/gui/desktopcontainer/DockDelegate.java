@@ -1,22 +1,25 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandle;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleListener;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.AutoHideManager;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.FocusListener;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.beans.VetoableChangeListener;
+import java.awt.event.FocusListener;
 import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+
+import javax.swing.Icon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandle;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleEvent;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandleListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 
 public class DockDelegate implements IDockDelegate
 {
@@ -144,9 +147,15 @@ public class DockDelegate implements IDockDelegate
 
    public void setBounds(Rectangle rectangle)
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+   	
    }
 
+	@Override
+	public Rectangle getBounds()
+	{
+		return _dockWidget.getBounds();
+	}   
+   
    public void setSelected(boolean b) throws PropertyVetoException
    {
       if(b)
@@ -287,4 +296,5 @@ public class DockDelegate implements IDockDelegate
    {
       return false;
    }
+
 }
