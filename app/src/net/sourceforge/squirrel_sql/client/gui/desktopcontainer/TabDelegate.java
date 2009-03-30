@@ -233,8 +233,14 @@ public class TabDelegate implements ITabDelegate
 
    public void setBounds(Rectangle rectangle)
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+      _widget.setBounds(rectangle);
    }
+   
+	@Override
+	public Rectangle getBounds()
+	{
+		return _widget.getBounds();
+	}   
 
    public void setSelected(boolean b) throws PropertyVetoException
    {

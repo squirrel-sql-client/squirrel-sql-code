@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
+
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -46,10 +47,11 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 /**
  * This dialog allows maintenance of a JDBC driver definition.
- *
- * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 @SuppressWarnings("serial")
 public class DriverInternalFrame extends DialogWidget
@@ -58,7 +60,9 @@ public class DriverInternalFrame extends DialogWidget
 	public interface MaintenanceType
 	{
 		int NEW = 1;
+
 		int MODIFY = 2;
+
 		int COPY = 3;
 	}
 
@@ -67,8 +71,7 @@ public class DriverInternalFrame extends DialogWidget
 		StringManagerFactory.getStringManager(DriverInternalFrame.class);
 
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(DriverInternalFrame.class);
+	private static final ILogger s_log = LoggerController.createLogger(DriverInternalFrame.class);
 
 	/** Number of characters to display in D/E fields. */
 	private static final int COLUMN_COUNT = 25;
@@ -97,8 +100,8 @@ public class DriverInternalFrame extends DialogWidget
 	/** Control for the <TT>ISQLDriver.IPropertyNames.URL</TT> property. */
 	private final JTextField _url = new JTextField();
 
-    private final JTextField _weburl = new JTextField();
-    
+	private final JTextField _weburl = new JTextField();
+
 	/** Listbox containing the Java class path. */
 	private final FileListBox _javaClassPathList = new FileListBox();
 
@@ -121,35 +124,28 @@ public class DriverInternalFrame extends DialogWidget
 	private JButton _extraClasspathDownBtn;
 
 	private File lastExtraClassPathFileSelected = null;
+
 	/**
 	 * Ctor.
-	 *
-	 * @param	app			Application API.
-	 * @param	sqlDriver	JDBC driver definition to be maintained.
-	 * @param	maintType	Maintenance type. @see MaintenanceType.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or
-	 * 			an invalid value passed for <TT>maintType</TT>.
+	 * 
+	 * @param app
+	 *           Application API.
+	 * @param sqlDriver
+	 *           JDBC driver definition to be maintained.
+	 * @param maintType
+	 *           Maintenance type. @see MaintenanceType.
+	 * @throws IllegalArgumentException
+	 *            Thrown if <TT>null</TT> passed for <TT>app</TT> or <TT>sqlDriver</TT> or an invalid value
+	 *            passed for <TT>maintType</TT>.
 	 */
 	DriverInternalFrame(IApplication app, ISQLDriver sqlDriver, int maintType)
 	{
 		super("", true, app);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		if (sqlDriver == null)
-		{
-			throw new IllegalArgumentException("Null ISQLDriver passed");
-		}
-		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY)
-		{
-			throw new IllegalArgumentException(
-                // i18n[DriverInternalFrame.error.illegalvalue=Illegal value of {0} passed for Maintenance type]
-			    s_stringMgr.getString("DriverInternalFrame.error.illegalvalue", 
-                                      maintType));
-		}
+		if (app == null) { throw new IllegalArgumentException("Null IApplication passed"); }
+		if (sqlDriver == null) { throw new IllegalArgumentException("Null ISQLDriver passed"); }
+		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY) { throw new IllegalArgumentException(
+		// i18n[DriverInternalFrame.error.illegalvalue=Illegal value of {0} passed for Maintenance type]
+			s_stringMgr.getString("DriverInternalFrame.error.illegalvalue", maintType)); }
 
 		_app = app;
 		_sqlDriver = sqlDriver;
@@ -161,10 +157,10 @@ public class DriverInternalFrame extends DialogWidget
 	}
 
 	/**
-	 * Set title of this frame. Ensure that the title label
-	 * matches the frame title.
-	 *
-	 * @param	title	New title text.
+	 * Set title of this frame. Ensure that the title label matches the frame title.
+	 * 
+	 * @param title
+	 *           New title text.
 	 */
 	public void setTitle(String title)
 	{
@@ -174,8 +170,8 @@ public class DriverInternalFrame extends DialogWidget
 
 	/**
 	 * Return the driver that is being maintained.
-	 *
-	 * @return	the driver that is being maintained.
+	 * 
+	 * @return the driver that is being maintained.
 	 */
 	ISQLDriver getSQLDriver()
 	{
@@ -190,7 +186,7 @@ public class DriverInternalFrame extends DialogWidget
 		_driverName.setText(_sqlDriver.getName());
 		_driverClassCmb.setSelectedItem(_sqlDriver.getDriverClassName());
 		_url.setText(_sqlDriver.getUrl());
-        _weburl.setText(_sqlDriver.getWebSiteUrl());
+		_weburl.setText(_sqlDriver.getWebSiteUrl());
 
 		_extraClassPathList.removeAll();
 		String[] fileNames = _sqlDriver.getJarFileNames();
@@ -216,8 +212,7 @@ public class DriverInternalFrame extends DialogWidget
 	}
 
 	/**
-	 * OK button pressed. Edit data and if ok save to drivers model
-	 * and then close dialog.
+	 * OK button pressed. Edit data and if ok save to drivers model and then close dialog.
 	 */
 	private void performOk()
 	{
@@ -233,9 +228,9 @@ public class DriverInternalFrame extends DialogWidget
 				_app.getDataCache().refreshDriver(_sqlDriver, _app.getMessageHandler());
 			}
 
-         _app.savePreferences(DRIVER_DEFINITIONS);
-         dispose();
-      }
+			_app.savePreferences(DRIVER_DEFINITIONS);
+			dispose();
+		}
 		catch (Throwable th)
 		{
 			displayErrorMessage(th);
@@ -250,19 +245,19 @@ public class DriverInternalFrame extends DialogWidget
 		_sqlDriver.setName(_driverName.getText().trim());
 		_sqlDriver.setJarFileNames(_extraClassPathList.getTypedModel().getFileNames());
 
-		String driverClassName = (String)_driverClassCmb.getSelectedItem();
+		String driverClassName = (String) _driverClassCmb.getSelectedItem();
 		_sqlDriver.setDriverClassName(driverClassName != null ? driverClassName.trim() : null);
 
 		_sqlDriver.setUrl(_url.getText().trim());
-        _sqlDriver.setWebSiteUrl(_weburl.getText().trim());
+		_sqlDriver.setWebSiteUrl(_weburl.getText().trim());
 	}
 
 	/**
-	 * Display an error msg in a dialog. Uses
-	 * <TT>SwingUtilities.invokeLater()</TT> because this may be called
+	 * Display an error msg in a dialog. Uses <TT>SwingUtilities.invokeLater()</TT> because this may be called
 	 * before the main dialog is displayed.
-	 *
-	 * @param	th	The exception containing the error message.
+	 * 
+	 * @param th
+	 *           The exception containing the error message.
 	 */
 	private void displayErrorMessage(final Throwable th)
 	{
@@ -285,8 +280,7 @@ public class DriverInternalFrame extends DialogWidget
 		String winTitle;
 		if (_maintType == MaintenanceType.MODIFY)
 		{
-			winTitle = s_stringMgr.getString("DriverInternalFrame.changedriver",
-												_sqlDriver.getName());
+			winTitle = s_stringMgr.getString("DriverInternalFrame.changedriver", _sqlDriver.getName());
 		}
 		else
 		{
@@ -329,10 +323,8 @@ public class DriverInternalFrame extends DialogWidget
 		contentPane.add(createDriverPanel(), gbc);
 
 		JTabbedPane tabPnl = new JTabbedPane();
-		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.javaclasspath"),
-												createJavaClassPathPanel());
-		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.extraclasspath"),
-												createExtraClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.javaclasspath"), createJavaClassPathPanel());
+		tabPnl.addTab(s_stringMgr.getString("DriverInternalFrame.extraclasspath"), createExtraClassPathPanel());
 
 		++gbc.gridy;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -353,20 +345,21 @@ public class DriverInternalFrame extends DialogWidget
 		++gbc.gridy;
 		contentPane.add(createButtonsPanel(), gbc);
 
-      AbstractAction closeAction = new AbstractAction()
-      {
-         public void actionPerformed(ActionEvent actionEvent)
-         {
-            performClose();
-         }
-      };
-      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-      getRootPane().getActionMap().put("CloseAction", closeAction);
-      
-   }
+		AbstractAction closeAction = new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent actionEvent)
+			{
+				performClose();
+			}
+		};
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke,
+			"CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+		getRootPane().getActionMap().put("CloseAction", closeAction);
+
+	}
 
 	private JPanel createButtonsPanel()
 	{
@@ -416,9 +409,9 @@ public class DriverInternalFrame extends DialogWidget
 		++gbc.gridy;
 		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.egurl"), SwingConstants.RIGHT), gbc);
 
-        ++gbc.gridy;
-        pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.weburl"), SwingConstants.RIGHT), gbc);        
-        
+		++gbc.gridy;
+		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.weburl"), SwingConstants.RIGHT), gbc);
+
 		gbc.weightx = 1.0;
 		gbc.gridy = 0;
 		++gbc.gridx;
@@ -427,9 +420,9 @@ public class DriverInternalFrame extends DialogWidget
 		++gbc.gridy;
 		pnl.add(_url, gbc);
 
-        ++gbc.gridy;
-        pnl.add(_weburl, gbc);
-        
+		++gbc.gridy;
+		pnl.add(_weburl, gbc);
+
 		return pnl;
 	}
 
@@ -456,14 +449,14 @@ public class DriverInternalFrame extends DialogWidget
 
 	/**
 	 * Create the panel that displays the current class path.
-	 *
-	 * @return	Panel that displays the current class path.
+	 * 
+	 * @return Panel that displays the current class path.
 	 */
 	private JPanel createJavaClassPathPanel()
 	{
 		_javaClasspathListDriversBtn = new ListDriversButton(_javaClassPathList);
 		_javaClasspathListDriversBtn.setEnabled(_javaClassPathList.getModel().getSize() > 0);
-//		_javaClassPathList.addListSelectionListener(new JavaClassPathListBoxListener());
+		// _javaClassPathList.addListSelectionListener(new JavaClassPathListBoxListener());
 
 		IFileListBoxModel model = _javaClassPathList.getTypedModel();
 		if (model.getSize() > 0)
@@ -484,9 +477,9 @@ public class DriverInternalFrame extends DialogWidget
 		gbc.gridheight = GridBagConstraints.REMAINDER;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
-		JScrollPane sp = new JScrollPane(_javaClassPathList,
-									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane sp =
+			new JScrollPane(_javaClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		final Dimension dm = sp.getPreferredSize();
 		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
 		sp.setPreferredSize(dm);
@@ -504,8 +497,8 @@ public class DriverInternalFrame extends DialogWidget
 
 	/**
 	 * Create the panel that displays the extra class path.
-	 *
-	 * @return	Panel that displays the extra class path.
+	 * 
+	 * @return Panel that displays the extra class path.
 	 */
 	private JPanel createExtraClassPathPanel()
 	{
@@ -594,9 +587,9 @@ public class DriverInternalFrame extends DialogWidget
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.BOTH;
-		JScrollPane sp = new JScrollPane(_extraClassPathList,
-									JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-									JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane sp =
+			new JScrollPane(_extraClassPathList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		final Dimension dm = sp.getPreferredSize();
 		dm.width = LIST_WIDTH; // Required otherwise it gets too wide.
 		sp.setPreferredSize(dm);
@@ -635,8 +628,7 @@ public class DriverInternalFrame extends DialogWidget
 	}
 
 	/**
-	 * Button that allows user to enter new items in the Extra Class Path
-	 * list.
+	 * Button that allows user to enter new items in the Extra Class Path list.
 	 */
 	private final class AddListEntryButton extends JButton implements ActionListener
 	{
@@ -653,18 +645,22 @@ public class DriverInternalFrame extends DialogWidget
 			if (_chooser == null)
 			{
 				_chooser = new JFileChooser();
-				if (lastExtraClassPathFileSelected != null) {
-					if (lastExtraClassPathFileSelected.isDirectory()) {
+				if (lastExtraClassPathFileSelected != null)
+				{
+					if (lastExtraClassPathFileSelected.isDirectory())
+					{
 						_chooser.setCurrentDirectory(lastExtraClassPathFileSelected);
-					} else {
+					}
+					else
+					{
 						_chooser.setCurrentDirectory(new File(lastExtraClassPathFileSelected.getParent()));
 					}
 				}
 				_chooser.setFileHidingEnabled(false);
 				_chooser.setMultiSelectionEnabled(true);
 				_chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				_chooser.addChoosableFileFilter(
-						new FileExtensionFilter(s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
+				_chooser.addChoosableFileFilter(new FileExtensionFilter(
+					s_stringMgr.getString("DriverInternalFrame.jarfiles"), new String[] { ".jar", ".zip" }));
 			}
 			int returnVal = _chooser.showOpenDialog(getParent());
 			if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -684,8 +680,7 @@ public class DriverInternalFrame extends DialogWidget
 	}
 
 	/**
-	 * Button that will list all the drivers in the file current selected
-	 * in a listbox.
+	 * Button that will list all the drivers in the file current selected in a listbox.
 	 */
 	private final class ListDriversButton extends JButton implements ActionListener
 	{
@@ -699,62 +694,63 @@ public class DriverInternalFrame extends DialogWidget
 			addActionListener(this);
 		}
 
-		@SuppressWarnings("unchecked")
-        public void actionPerformed(ActionEvent e)
+		public void actionPerformed(ActionEvent e)
 		{
 			_driverClassCmb.removeAllItems();
-//			File file = _listBox.getSelectedFile();
-			String[] fileNames = _listBox.getTypedModel().getFileNames();
+			final String[] fileNames = _listBox.getTypedModel().getFileNames();
 
-//			if (file != null)
 			if (fileNames.length > 0)
 			{
-				try
+				_app.getThreadPool().addTask(new Runnable()
 				{
-					final URL[] urls = new URL[fileNames.length];
-					for (int i = 0; i < fileNames.length; ++i)
+					@Override
+					public void run()
 					{
-						urls[i] = new File(fileNames[i]).toURI().toURL();
+						try
+						{
+							final URL[] urls = new URL[fileNames.length];
+							for (int i = 0; i < fileNames.length; ++i)
+							{
+								urls[i] = new File(fileNames[i]).toURI().toURL();
+							}
+
+							SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);
+							@SuppressWarnings("unchecked")
+							// This can take a long time for big jars - so it is not done on the EDT.
+							Class[] classes = cl.getDriverClasses(s_log);
+							for (int i = 0; i < classes.length; ++i)
+							{
+								addDriverClassToCombo(classes[i].getName());
+							}
+						}
+						catch (MalformedURLException ex)
+						{
+							displayErrorMessage(ex);
+						}
+
 					}
-//					SQLDriverClassLoader cl = new SQLDriverClassLoader(file.toURL());
-					SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);
-					Class[] classes = cl.getDriverClasses(s_log);
-					for (int i = 0; i < classes.length; ++i)
-					{
-						_driverClassCmb.addItem(classes[i].getName());
-					}
-				}
-				catch (MalformedURLException ex)
-				{
-					displayErrorMessage(ex);
-				}
+				});
 			}
+
 			if (_driverClassCmb.getItemCount() > 0)
 			{
 				_driverClassCmb.setSelectedIndex(0);
 			}
 		}
-
 	}
 
-//	private class JavaClassPathListBoxListener implements ListSelectionListener
-//	{
-//		public void valueChanged(ListSelectionEvent evt)
-//		{
-//			final int selIdx = _javaClassPathList.getSelectedIndex();
-//			_javaClasspathListDriversBtn.setEnabled(selIdx != -1);
-//			boolean enable = false;
-//			if (selIdx != -1)
-//			{
-//				File file = _javaClassPathList.getSelectedFile();
-//				if (file != null)
-//				{
-//					enable = file.isFile();
-//				}
-//			}
-//			_javaClasspathListDriversBtn.setEnabled(enable);
-//		}
-//	}
+	private void addDriverClassToCombo(final String driverClassName)
+	{
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				_driverClassCmb.addItem(driverClassName);
+			}
+
+		});
+	}
 
 	private class ExtraClassPathListDataListener implements ListDataListener
 	{
@@ -789,17 +785,17 @@ public class DriverInternalFrame extends DialogWidget
 
 			_extraClasspathUpBtn.setEnabled(selIdx > 0 && model.getSize() > 1);
 			_extraClasspathDownBtn.setEnabled(selIdx > -1 && selIdx < (model.getSize() - 1));
-//
-//			boolean enable = false;
-//			if (selIdx != -1)
-//			{
-//				File file = _extraClassPathList.getSelectedFile();
-//				if (file != null)
-//				{
-//					enable = file.isFile();
-//				}
-//			}
-//			_extraClasspathListDriversBtn.setEnabled(enable);
+			//
+			// boolean enable = false;
+			// if (selIdx != -1)
+			// {
+			// File file = _extraClassPathList.getSelectedFile();
+			// if (file != null)
+			// {
+			// enable = file.isFile();
+			// }
+			// }
+			// _extraClasspathListDriversBtn.setEnabled(enable);
 		}
 	}
 }
