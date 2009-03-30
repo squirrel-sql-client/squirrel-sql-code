@@ -481,7 +481,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		
 		String trigSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 
-		return new String[] { generatorSql, trigSql.toString() };
+		return new String[] { generatorSql, trigSql };
 	}
 
 	/**

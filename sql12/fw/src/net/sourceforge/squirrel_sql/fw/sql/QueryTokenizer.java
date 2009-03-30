@@ -256,7 +256,7 @@ public class QueryTokenizer implements IQueryTokenizer
         String lastQuery = curQuery.toString().trim();
         if(0 < lastQuery.length())
         {
-            _queries.add(lastQuery.toString().trim());
+            _queries.add(lastQuery.trim());
         }
 
         _queryIterator = _queries.iterator();

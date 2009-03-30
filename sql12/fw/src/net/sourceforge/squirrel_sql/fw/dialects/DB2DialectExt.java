@@ -693,8 +693,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		final String tableName = column.getTableName();
 		final String columnName = column.getColumnName();
 
-		result.add(getCreateSequenceSQL(sequenceName.toString(), "1", "1", null, "1", null, false, qualifier,
-			prefs));
+		result.add(getCreateSequenceSQL(sequenceName, "1", "1", null, "1", null, false, qualifier, prefs));
 
 		final StringBuilder triggerSql = new StringBuilder();
 		triggerSql.append("CREATE TRIGGER ");

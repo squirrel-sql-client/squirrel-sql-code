@@ -10,9 +10,8 @@ import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -192,7 +191,7 @@ public class FileManager
 
             if (!_toSaveTo.exists() && null != fileAppenixes.get(chooser.getFileFilter()))
             {
-               if (!_toSaveTo.getAbsolutePath().endsWith(fileAppenixes.get(chooser.getFileFilter()).toString()))
+               if (!_toSaveTo.getAbsolutePath().endsWith(fileAppenixes.get(chooser.getFileFilter())))
                {
                   _toSaveTo = new File(_toSaveTo.getAbsolutePath() + fileAppenixes.get(chooser.getFileFilter()));
                }
