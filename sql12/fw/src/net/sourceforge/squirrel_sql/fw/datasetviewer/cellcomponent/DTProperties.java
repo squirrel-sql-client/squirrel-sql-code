@@ -55,6 +55,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.Map.Entry;
 
 public class DTProperties {
 	
@@ -99,15 +101,16 @@ public class DTProperties {
 		while (keys.hasNext()) {
 			String tableName = keys.next();
 			HashMap<String, String> h = dataTypes.get(tableName);
-			Iterator<String> propertyNames = h.keySet().iterator();
-			while (propertyNames.hasNext()) {
-				String propertyName = propertyNames.next();
-                StringBuilder tmp = new StringBuilder(tableName);
-                tmp.append(" ");
-                tmp.append(propertyName);
-                tmp.append("=");
-                tmp.append(h.get(propertyName));
-                propertyList.add(tmp.toString());
+			
+			Set<Entry<String, String>> properties =  h.entrySet();
+			for (Entry<String, String> entry : properties) {
+				String propertyName = entry.getKey();
+				StringBuilder tmp = new StringBuilder(tableName);
+				tmp.append(" ");
+            tmp.append(propertyName);
+            tmp.append("=");
+            tmp.append(entry.getValue());
+            propertyList.add(tmp.toString());
 			}
 		}
 
