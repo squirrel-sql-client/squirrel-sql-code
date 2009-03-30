@@ -1,4 +1,5 @@
-package net.sourceforge.squirrel_sql.plugins.h2.tab;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -26,30 +27,30 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+
 /**
- * This class will display the source for an H2 view.
- *
+ * This class will display the source for a view.  This will work for databases that support the SQL standard
+ * infomation_schema.views table.
+ * 
  * @author manningr
  */
 public class ViewSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select view_definition " +
-        "from information_schema.views " +
-        "where table_schema = ? " +
-        "and table_name = ? ";
-    
+		"select view_definition " + 
+		"from information_schema.views " + 
+		"where table_schema = ? " + 
+		"and table_name = ? ";
+
 	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ViewSourceTab.class);
+	private final static ILogger s_log = LoggerController.createLogger(ViewSourceTab.class);
 
 	public ViewSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
-        super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);
+		super.setCompressWhitespace(true);
+		super.setupFormatter(stmtSep, null);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
@@ -58,12 +59,13 @@ public class ViewSourceTab extends FormattedSourceTab
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
 		ISQLConnection conn = session.getSQLConnection();
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for View source tab: "+SQL);
-        }
+		if (s_log.isDebugEnabled())
+		{
+			s_log.debug("Running SQL for View source tab: " + SQL);
+		}
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        
-        pstmt.setString(1, doi.getSchemaName());
+
+		pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;
 	}
