@@ -25,6 +25,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -199,6 +200,20 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase
 		mockHelper.verifyAll();
 	}
 
+	@Test
+	public void testTranslationJarPrefix() {
+		assertTrue("squirrel-sql_bg_BG.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_cs_CZ.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_de_DE.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_es.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_fr.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_it_IT.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_ko_KR.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_pt_BR.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_ru.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+		assertTrue("squirrel-sql_zh_CN.jar".matches(ArtifactDownloaderImpl.TRANSLATION_JAR_PREFIX_PATTERN));
+	}
+	
 	private class DownloadStatusTypeCheckListenerStub implements DownloadStatusListener
 	{
 
