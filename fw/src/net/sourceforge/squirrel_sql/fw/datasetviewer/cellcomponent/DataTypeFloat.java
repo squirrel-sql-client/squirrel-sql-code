@@ -77,10 +77,6 @@ public class DataTypeFloat extends FloatingPointBase
    /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(DataTypeFloat.class);
 
-
-   /* the whole column definition */
-   private ColumnDisplayDefinition _colDef;
-
    /* whether nulls are allowed or not */
    private boolean _isNullable;
 
@@ -129,25 +125,14 @@ public class DataTypeFloat extends FloatingPointBase
       return "java.lang.Float";
    }
 
-   /**
-    * Determine if two objects of this data type contain the same value.
-    * Neither of the objects is null
-    */
-   public boolean areEqual(Object obj1, Object obj2) {
-      return obj1.equals(obj2);
-   }
-
    /*
-     * First we have the methods for in-cell and Text-table operations
-     */
+	 * First we have the methods for in-cell and Text-table operations
+	 */
 
    /**
     * Render a value into text for this DataType.
     */
    public String renderObject(Object value) {
-
-
-      //return (String)_renderer.renderObject(value);
 
       if (value == null || useJavaDefaultFormat)
       {

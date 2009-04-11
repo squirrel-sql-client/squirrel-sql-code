@@ -108,14 +108,6 @@ public class DataTypeLong extends BaseDataTypeComponent
 		return "java.lang.Long";
 	}
 
-	/**
-	 * Determine if two objects of this data type contain the same value.
-	 * Neither of the objects is null
-	 */
-	public boolean areEqual(Object obj1, Object obj2) {
-		return (obj1).equals(obj2);
-	}
-
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */

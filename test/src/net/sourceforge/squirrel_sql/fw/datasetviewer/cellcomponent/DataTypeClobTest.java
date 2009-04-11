@@ -59,4 +59,14 @@ public class DataTypeClobTest extends AbstractDataTypeComponentTest {
 		return result;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AbstractDataTypeComponentTest#getWhereClauseValueObject()
+	 */
+	@Override
+	protected Object getWhereClauseValueObject()
+	{
+
+		return new ClobDescriptor(null, "testValue", true, true, -1);
+	}
+
 }

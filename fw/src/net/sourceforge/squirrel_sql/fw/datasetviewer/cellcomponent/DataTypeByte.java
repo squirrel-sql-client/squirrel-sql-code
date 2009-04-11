@@ -108,14 +108,6 @@ public class DataTypeByte extends BaseDataTypeComponent
 		return "java.lang.Byte";
 	}
 
-	/**
-	 * Determine if two objects of this data type contain the same value.
-	 * Neither of the objects is null
-	 */
-	public boolean areEqual(Object obj1, Object obj2) {
-		return ((Byte)obj1).equals(obj2);
-	}
-
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */

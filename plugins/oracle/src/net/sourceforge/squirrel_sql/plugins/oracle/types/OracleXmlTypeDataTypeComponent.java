@@ -340,13 +340,4 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#areEqual(java.lang.Object,
-	 *      java.lang.Object)
-	 */
-	public boolean areEqual(Object obj1, Object obj2)
-	{
-		return ((String) obj1).equals(obj2);
-	}
-
 }

@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Types;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -77,6 +78,8 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 		expect(columnDisplayDefinition.getScale()).andStubReturn(3);
 		expect(columnDisplayDefinition.getColumnSize()).andStubReturn(10);
 		expect(columnDisplayDefinition.getLabel()).andStubReturn("testLabel");
+		expect(columnDisplayDefinition.getSqlType()).andStubReturn(Types.VARCHAR);
+		expect(columnDisplayDefinition.getSqlTypeName()).andStubReturn("VARCHAR");
 		return columnDisplayDefinition;
 	}
 
@@ -197,6 +200,8 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 		Object testObject = getEqualsTestObject();
 		mockHelper.replayAll();
 		assertFalse(classUnderTest.areEqual(testObject, null));
+		assertFalse(classUnderTest.areEqual(null, testObject));
+		assertTrue(classUnderTest.areEqual(testObject, testObject));
 		mockHelper.verifyAll();
 
 	}
@@ -214,7 +219,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 		testKeyListener(ta);
 	}
 
-	public void testKeyListener(Component c)
+	protected void testKeyListener(Component c)
 	{
 		KeyListener[] listeners = c.getKeyListeners();
 		if (listeners.length > 0)
@@ -225,5 +230,19 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 			listener.keyTyped(e);
 		}
 	}
+	
+	@Test
+	public void testGetWhereClauseValue() {
+		ColumnDisplayDefinition localMockColumnDisplayDefinition = 
+			getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest.setColumnDisplayDefinition(localMockColumnDisplayDefinition);
+		assertNotNull(classUnderTest.getWhereClauseValue(null, mockMetaData));
+		assertNotNull(classUnderTest.getWhereClauseValue(getWhereClauseValueObject(), mockMetaData));
+		mockHelper.verifyAll();
+	}
 
+	protected Object getWhereClauseValueObject() {
+		return "aTestValue";
+	}
 }

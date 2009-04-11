@@ -28,6 +28,15 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  */
 public class DataTypeDoubleTest extends AbstractDataTypeComponentTest {
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AbstractDataTypeComponentTest#getWhereClauseValueObject()
+	 */
+	@Override
+	protected Object getWhereClauseValueObject()
+	{
+		return null;
+	}
+
 	public void setUp() throws Exception {
 		ColumnDisplayDefinition columnDisplayDefinition = 
 			super.getMockColumnDisplayDefinition();
