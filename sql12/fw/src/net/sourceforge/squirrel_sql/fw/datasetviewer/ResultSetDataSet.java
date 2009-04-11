@@ -412,4 +412,33 @@ public class ResultSetDataSet implements IDataSet {
          return null;
       }
    }
+   
+   public String toString() {
+   	StringBuilder result = new StringBuilder();
+   	if (_dataSetDefinition != null) {
+   		for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions()) {
+   			String columnName = "Column";
+   			if (colDef != null) {
+   				columnName = colDef.getColumnName();
+   			} 
+   			result.append(columnName);
+   			result.append("\t");
+   		}
+   		result.append("\n");
+   	}
+   	
+   	
+   	for (Object[] row : _alData) {
+   		for (Object rowItem : row) {
+   			if (rowItem == null) {
+   				result.append("<null>");
+   			} else {
+   				result.append(rowItem.toString());
+   			}
+   			result.append("\t");
+   		}
+   		result.append("\n");
+   	}
+   	return result.toString();
+   }
 }
