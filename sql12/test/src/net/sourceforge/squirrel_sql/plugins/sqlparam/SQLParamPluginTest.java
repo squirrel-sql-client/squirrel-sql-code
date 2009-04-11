@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.sqlparam;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
@@ -62,7 +63,9 @@ public class SQLParamPluginTest extends AbstractPluginTest implements DatabasePr
 		expect(mockSession.getSessionSheet()).andStubReturn(mockSessionPanel);
 		expect(mockSessionPanel.getSQLPaneAPI()).andStubReturn(mockSQLPanelAPI);
 		mockSQLPanelAPI.addSQLExecutionListener(isA(ISQLExecutionListener.class));
+		expectLastCall().anyTimes();
 		mockSQLPanelAPI.removeSQLExecutionListener(isA(ISQLExecutionListener.class));
+		expectLastCall().anyTimes();
 		
 		mockHelper.replayAll();
 		
