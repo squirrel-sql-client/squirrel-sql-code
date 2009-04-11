@@ -4,8 +4,14 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
+Enhancements:
+
+ - Updated Korean translation available (Thanks to Youngwoo Kim)
+
+
 Bug-Fixes:
 
+2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisation
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
 2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 
          closed then.
