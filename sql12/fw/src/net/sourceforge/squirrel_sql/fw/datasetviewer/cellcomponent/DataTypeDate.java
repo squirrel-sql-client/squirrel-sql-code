@@ -221,14 +221,6 @@ public class DataTypeDate extends BaseDataTypeComponent
 		return "java.sql.Date";
 	}
 
-	/**
-	 * Determine if two objects of this data type contain the same value.
-	 * Neither of the objects is null
-	 */
-	public boolean areEqual(Object obj1, Object obj2) {
-		return ((Date)obj1).equals(obj2);
-	}
-
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */

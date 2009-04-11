@@ -58,6 +58,12 @@ public class DerbyClobDataTypeComponentTest extends AbstractDataTypeComponentTes
 	{
 		return new DerbyClobDescriptor("aTestString");
 	}
+
+	@Override
+	protected Object getWhereClauseValueObject()
+	{
+		return new DerbyClobDescriptor("aTestValue");
+	}
 	
 	
 

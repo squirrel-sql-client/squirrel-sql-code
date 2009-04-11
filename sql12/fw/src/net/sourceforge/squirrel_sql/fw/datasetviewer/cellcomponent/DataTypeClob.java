@@ -216,25 +216,6 @@ public class DataTypeClob extends BaseDataTypeComponent
         _readCompleteClobs = val;
     }
     
-	/**
-	 * Determine if two objects of this data type contain the same value.
-	 * Neither of the objects is null
-	 */
-	public boolean areEqual(Object obj1, Object obj2) {
-		if (obj1 == obj2)
-			return true;
-
-		// if both objs are null, then they matched in the previous test,
-		// so at this point we know that at least one of them (or both) is not null.
-		// However, one of them may still be null, and we cannot call equals() on
-		// the null object, so make sure that the one we call it on is not null.
-		// The equals() method handles the other one being null, if it is.
-		if (obj1 != null)
-			return ((ClobDescriptor)obj1).equals((ClobDescriptor)obj2);
-		else
-			return ((ClobDescriptor)obj2).equals((ClobDescriptor)obj1);
-	}
-
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */

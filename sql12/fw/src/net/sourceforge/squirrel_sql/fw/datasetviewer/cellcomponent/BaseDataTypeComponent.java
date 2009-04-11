@@ -304,4 +304,21 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
          return "";
      }
    }
+ 
+   /**
+    * Default implementation which uses the equals() implementation in the specified objects.  This 
+    * implementaion is safe for nulls.
+    * 
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#areEqual(java.lang.Object, java.lang.Object)
+    */
+	public boolean areEqual(Object obj1, Object obj2) {
+		if (obj1 != null) {
+			return obj1.equals(obj2);
+		}
+		if (obj2 != null) {
+			return obj2.equals(obj1);
+		}
+		// They are both null
+		return true;
+	}
 }

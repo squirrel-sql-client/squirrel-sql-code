@@ -226,17 +226,9 @@ public class DataTypeTimestamp extends BaseDataTypeComponent
       return "java.sql.Timestamp";
    }
 
-   /**
-    * Determine if two objects of this data type contain the same value.
-    * Neither of the objects is null
-    */
-   public boolean areEqual(Object obj1, Object obj2) {
-      return ((Timestamp)obj1).equals(obj2);
-   }
-
    /*
-     * First we have the methods for in-cell and Text-table operations
-     */
+    * First we have the methods for in-cell and Text-table operations
+    */
 
    /**
     * Render a value into text for this DataType.

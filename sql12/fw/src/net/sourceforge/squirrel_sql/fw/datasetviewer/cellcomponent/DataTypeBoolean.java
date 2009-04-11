@@ -98,14 +98,6 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 		return "java.lang.Boolean";
 	}
 
-	/**
-	 * Determine if two objects of this data type contain the same value. Neither of the objects is null
-	 */
-	public boolean areEqual(Object obj1, Object obj2)
-	{
-		return ((Boolean) obj1).equals(obj2);
-	}
-
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
