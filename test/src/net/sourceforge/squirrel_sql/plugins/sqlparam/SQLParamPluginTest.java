@@ -18,11 +18,19 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlparam;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 
 public class SQLParamPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
@@ -39,4 +47,35 @@ public class SQLParamPluginTest extends AbstractPluginTest implements DatabasePr
 		classUnderTest = null;
 	}		
 
+	// Bug 2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisat
+	// My theory here is that the session ending method was called twice (possibly user clicked the close 
+	// session tab 'X' and close application window 'X' in rapid succession.  In any case, the plugin 
+	// shouldn't behave badly if this happens - no guarantees that the PluginManager won't send spurious 
+	// close events on shutdown.
+	@Test
+	public void testMultipleSessionEndings() {
+		
+		ISession mockSession = mockHelper.createMock("mockSession", ISession.class);
+		SessionPanel mockSessionPanel = mockHelper.createMock("mockSessionPanel", SessionPanel.class);
+		ISQLPanelAPI mockSQLPanelAPI = mockHelper.createMock("mockSQLPanelAPI", ISQLPanelAPI.class); 
+		
+		expect(mockSession.getSessionSheet()).andStubReturn(mockSessionPanel);
+		expect(mockSessionPanel.getSQLPaneAPI()).andStubReturn(mockSQLPanelAPI);
+		mockSQLPanelAPI.addSQLExecutionListener(isA(ISQLExecutionListener.class));
+		mockSQLPanelAPI.removeSQLExecutionListener(isA(ISQLExecutionListener.class));
+		
+		mockHelper.replayAll();
+		
+		((ISessionPlugin)classUnderTest).sessionCreated(mockSession);
+		((ISessionPlugin)classUnderTest).sessionStarted(mockSession);
+		// Give the AWT thread time to finish processing the event.
+		Thread.yield();
+		
+		((ISessionPlugin)classUnderTest).sessionEnding(mockSession);
+		((ISessionPlugin)classUnderTest).sessionEnding(mockSession);
+
+		
+		mockHelper.verifyAll();
+	}
+	
 }

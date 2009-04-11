@@ -81,7 +81,7 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "1.0";
+		return "1.0.1";
 	}
 
 
@@ -163,11 +163,14 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	@Override
 	public void unload()
 	{
-	   for (ISQLPanelAPI api : panelListenerMap.keySet()) {
-	        api.removeSQLExecutionListener(panelListenerMap.get(api));
-       }
+		for (Map.Entry<ISQLPanelAPI, ISQLExecutionListener> entry :  panelListenerMap.entrySet()) {
+			ISQLPanelAPI api = entry.getKey();
+			ISQLExecutionListener listener = entry.getValue();
+			removeSQLExecutionListener(api, listener);
+		}
+		panelListenerMap.clear();
 	}
-
+	
 	/**
 	 * 
 	 */
@@ -236,9 +239,16 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	public void sessionEnding(ISession session) {
 		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
 		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
-		sqlPaneAPI.removeSQLExecutionListener(listener);
+		removeSQLExecutionListener(sqlPaneAPI, listener);
 	}
 
+	private void removeSQLExecutionListener(ISQLPanelAPI api, ISQLExecutionListener listener)
+	{
+		if (api != null && listener != null) {
+			api.removeSQLExecutionListener(listener);
+		}
+	}	
+	
 	private void initSQLParam(final ISQLPanelAPI sqlPaneAPI, final ISession session)
 	{
 		final SQLParamPlugin plugin = this;
