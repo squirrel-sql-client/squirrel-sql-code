@@ -1,11 +1,16 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.FocusListener;
-import java.beans.VetoableChangeListener;
 import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+
+import javax.swing.Icon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public interface IDelegateBase
 {
@@ -64,6 +69,8 @@ public interface IDelegateBase
 
    void setBounds(Rectangle rectangle);
 
+   Rectangle getBounds();
+   
    void setSelected(boolean b)
       throws PropertyVetoException;
 

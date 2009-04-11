@@ -204,7 +204,7 @@ public class DialogWidget implements IWidget
 
    public Rectangle getBounds()
    {
-      return null;
+      return _delegate.getBounds();
    }
 
    public void setFrameIcon(Icon icon)

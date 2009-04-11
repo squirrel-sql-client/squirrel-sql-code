@@ -144,6 +144,11 @@ public class DockWidget implements IWidget
       _delegate.setBounds(rectangle);
    }
 
+   public Rectangle getBounds()
+   {
+      return _delegate.getBounds();
+   }   
+   
    public JInternalFrame getInternalFrame()
    {
       return _delegate.getInternalFrame();

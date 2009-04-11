@@ -6,10 +6,13 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+2722109: "Oracle Session information window" does not close
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
 2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 
          closed then.
 
+Fixed bug where Session was closed even if session closing confirm dialog was not confirmed. Connection was 
+not closed in this case.
 
 3.0.1 (3/23/2009)
 ================

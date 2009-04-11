@@ -91,23 +91,25 @@ public class OracleInternalFrame extends SessionDialogWidget
       });
    }
 
-
-
    protected void internalFrameClosing(boolean stayOnTop, int autoRefreshPeriod)
    {
       Rectangle rect = getBounds();
 
-      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.x);
-      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.y);
-      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.width);
-      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.height);
+      if (rect != null) {
+	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_X.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.x);
+	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_Y.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.y);
+	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_WIDTH.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.width);
+	      Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_HEIGHT.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), rect.height);
+      }
       Preferences.userRoot().putBoolean(PREF_KEY_ORACLE_FRAME_STAY_ON_TOP.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), stayOnTop);
       Preferences.userRoot().putInt(PREF_KEY_ORACLE_FRAME_AUTO_REFRESH_SEC.replaceAll(PREF_KEY_ORACLE_FRAME_REPL, _repl), autoRefreshPeriod);
    }
 
    public class OracleToolBar extends ToolBar
    {
-      private JCheckBox _stayOnTop;
+		private static final long serialVersionUID = 1L;
+		
+		private JCheckBox _stayOnTop;
 
       protected void addStayOnTop(boolean stayOnTop)
       {
