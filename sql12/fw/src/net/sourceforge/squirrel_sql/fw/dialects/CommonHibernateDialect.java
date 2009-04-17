@@ -978,4 +978,10 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		return true;
 	}
 
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 3;
+	}
+
 }

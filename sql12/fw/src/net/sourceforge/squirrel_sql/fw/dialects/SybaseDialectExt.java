@@ -1073,9 +1073,12 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		// Discovered that the loginame field can be null - in that case, how to know we have the correct view?
 		String sql =
 			"select text from sysobjects inner join syscomments on syscomments.id = sysobjects.id "
-				+ "where loginame = '$catalogName$' and name = '$viewName$' and text not like '%--%'";
+				+ "where (loginame = '$catalogName$' or loginame is null) " +
+						"and name = '$viewName$' and text not like '%--%'";		
+
 		StringTemplate st = new StringTemplate(sql);
 		st.setAttribute(ST_CATALOG_NAME_KEY, qualifier.getCatalog());
 		st.setAttribute(ST_VIEW_NAME_KEY, viewName);

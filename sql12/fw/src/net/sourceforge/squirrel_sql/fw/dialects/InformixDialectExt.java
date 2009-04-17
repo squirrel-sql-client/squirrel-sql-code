@@ -1201,5 +1201,14 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		return true;
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTimestampMaximumFractionalDigits()
+	 */
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 8;
+	}
 	
 }

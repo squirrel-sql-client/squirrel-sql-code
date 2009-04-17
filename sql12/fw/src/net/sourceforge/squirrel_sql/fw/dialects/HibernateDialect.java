@@ -1100,7 +1100,7 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * @param tcInfo the TableColumnInfo describing the column
 	 * @return the native column type name
 	 */
-	public String getTypeName(TableColumnInfo tcInfo);
+	String getTypeName(TableColumnInfo tcInfo);
 	
 	/**
 	 * This will return the java.sql.Types constant that the specified native type name can be stored in.
@@ -1108,6 +1108,7 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * @param nativeColumnTypeName the native column type name
 	 * @return a java.sql.Types constant representing the java column type this native type is compatible with.  
 	 */
-	public int getJavaTypeForNativeType(String nativeColumnTypeName);	
+	int getJavaTypeForNativeType(String nativeColumnTypeName);	
 
+	int getTimestampMaximumFractionalDigits();
 }
