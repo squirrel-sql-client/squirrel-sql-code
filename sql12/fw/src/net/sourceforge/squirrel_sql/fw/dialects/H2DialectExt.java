@@ -1062,4 +1062,13 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTimestampMaximumFractionalDigits()
+	 */
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 9;
+	}
+
 }
