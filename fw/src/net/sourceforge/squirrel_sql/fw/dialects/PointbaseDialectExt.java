@@ -1036,4 +1036,13 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTimestampMaximumFractionalDigits()
+	 */
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 9;
+	}
+
 }
