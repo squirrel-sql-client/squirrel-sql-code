@@ -427,7 +427,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			sessionsList.add(session);
 		}
 
-		sessionsList.add(mockGenericDialectSession);
+		//sessionsList.add(mockGenericDialectSession);
 	}
 
 	private void init(ISession session) throws Exception
@@ -2294,16 +2294,21 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		dropTable(session, tableName);
 		runSQL(session, "create table " + tableName + " ( mytime " + timestampTypeName + " )");
-		if (dialect.supportsSubSecondTimestamps())
-		{
-			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966123'})");
-		}
-		else
-		{
-			// MS SQLServer yields "Conversion failed when converting datetime from character string"
-			// for {ts '2008-02-21 21:26:23.966123'}
-			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966'})");
-		}
+		
+		String scale = findMaximumTimestampScale(session, tableName);
+
+		System.out.println("("+dialect.getDisplayName()+") max scale is : "+scale+"("+scale.length()+")");
+		
+		runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23."+scale+"'})");
+		
+//		if (dialect.supportsSubSecondTimestamps())
+//		{
+//			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966123456'})");
+//		}
+//		else
+//		{
+//			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966'})");
+//		}
 
 		final StringBuffer sb = command.getSQL(tableName);
 
@@ -2319,10 +2324,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			if (rs.next())
 			{
 				final Timestamp ts = rs.getTimestamp(1);
-				final String nanos = ("" + ts.getNanos() / 1000).substring(3);
-				if (!"123".equals(nanos))
+				final String nanos = "" + ts.getNanos();
+				if (!scale.equals(nanos))
 				{
-					System.err.println("Expected nanos to be 123, but was instead: " + nanos);
+					System.err.println("Expected nanos to be "+scale+", but was instead: " + nanos);
 				}
 			}
 			final Statement stmt = rs.getStatement();
@@ -2333,6 +2338,27 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	// Utility methods
 
+	private String findMaximumTimestampScale(ISession session, String tableName) {
+		boolean done = false;
+		StringBuilder fraction = new StringBuilder();
+		for (int i = 1; i < 20 && !done; i++) {
+			try {
+				fraction.append("1");
+				runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23."+fraction+"'})");
+			} catch (Exception e) {
+				fraction.setLength(fraction.length()-1);
+				done = true;
+			} finally {
+				try {
+					runSQL(session, "delete from " + tableName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return fraction.toString();
+	}
+	
 	private void failDialect(HibernateDialect dialect, String refactoringType)
 	{
 		fail("Expected dialect (" + dialect.getDisplayName() + ") to fail to provide SQL for "
@@ -2793,7 +2819,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		protected void genInserts(ResultSet srcResult, String table, StringBuffer sbRows, boolean headerOnly)
 			throws SQLException
 		{
-			// TODO Auto-generated method stub
 			super.genInserts(srcResult, table, sbRows, headerOnly);
 		}
 
