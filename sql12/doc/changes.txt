@@ -11,6 +11,7 @@ Enhancements:
 
 Bug-Fixes:
 
+2754166: SQLScript plugin loses precision for Timestamp in H2
 2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisation
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
 2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 

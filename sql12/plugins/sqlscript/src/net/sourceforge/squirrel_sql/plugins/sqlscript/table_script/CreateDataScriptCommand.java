@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.event.WindowAdapter;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,10 +27,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -43,8 +42,6 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
@@ -52,9 +49,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CreateDataScriptCommand.class);
-
    /** Logger for this class. */
    private static final ILogger s_log = 
        LoggerController.createLogger(CreateDataScriptCommand.class);
@@ -291,7 +285,6 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                      esc.append(prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2)).append(":");
                      esc.append(prefixNulls(calendar.get(Calendar.MINUTE), 2)).append(":");
                      esc.append(prefixNulls(calendar.get(Calendar.SECOND), 2)).append(".");
-                     esc.append(prefixNulls(calendar.get(Calendar.MILLISECOND), 3));
                      esc.append(getNanos(ts));
                      esc.append("'}");
 
@@ -431,29 +424,29 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       srcResult.close();
    }
 
-   /**
-    * Returns the sub-second precision value from the specified timestamp if supported by the session's 
-    * dialect.
-    * 
-    * @param ts the Timestamp to get the nanosecond value from
-    * @return a string representing the nanosecond value.
-    */
-   private String getNanos(Timestamp ts) throws SQLException {
-   	boolean dialectSupportsSubSecondTimestamps = getTimestampFlag();
-   	if (!dialectSupportsSubSecondTimestamps) {
-   		return "";
-   	}
-   	
-   	int nanos = ts.getNanos();
-		int micros=nanos/1000%1000;
-		micros+=1000;    /* assert a 4 char string */
+	/**
+	 * Returns the sub-second precision value from the specified timestamp if supported by the session's
+	 * dialect.
+	 * 
+	 * @param ts
+	 *           the Timestamp to get the nanosecond value from
+	 * @return a string representing the nanosecond value.
+	 */
+	private String getNanos(Timestamp ts) throws SQLException
+	{
+		ISQLDatabaseMetaData md = _session.getMetaData();
+		HibernateDialect dialect = DialectFactory.getDialect(md);
+
+		boolean dialectSupportsSubSecondTimestamps = getTimestampFlag();
+		if (!dialectSupportsSubSecondTimestamps 
+				|| dialect.getTimestampMaximumFractionalDigits() == 0) { 
+			return ""; 
+		}
 		
-		if (micros > 1000) {
-			return String.valueOf(micros).substring(1);
-		} else {
-			return "";
-		}   	
-   }
+		String result = "" + ts.getNanos();
+		result = result.substring(0,dialect.getTimestampMaximumFractionalDigits());
+		return result;
+	}
    
    /**
     * If necessary inits the timestamp flag and returns the value indicating whether or not this session
