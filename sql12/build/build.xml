@@ -1076,6 +1076,7 @@
 		        	<fileset dir="test/jfctests">
 		        		   <!-- FEST tests must end in UITest.java to get included -->
 		        	      <include name="**/*UITest.java" />
+		        		   <exclude name="**/Abstract*.java" />
 		        	</fileset>
 			</batchtest>
 
