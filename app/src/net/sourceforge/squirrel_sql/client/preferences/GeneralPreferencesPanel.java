@@ -104,7 +104,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 	private static final class MyPanel extends JPanel
 	{
 
-      private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));
+      private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));      
       private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
       private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
       private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
@@ -150,7 +150,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       {
          _tabbedStyle.setSelected(prefs.getTabbedStyle());
          _internalFrameStyle.setSelected(!prefs.getTabbedStyle());
-         onStyleChanged(false);
+         onStyleChanged();
          _showTabbedStyleHint.setSelected(prefs.getShowTabbedStyleHint());
 
 
@@ -185,7 +185,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          {
             public void actionPerformed(ActionEvent e)
             {
-               onStyleChanged(true);
+               onStyleChanged();
             }
          });
 
@@ -193,13 +193,13 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          {
             public void actionPerformed(ActionEvent e)
             {
-               onStyleChanged(true);
+               onStyleChanged();
             }
          });
 
       }
 
-      private void onStyleChanged(boolean showMessage)
+      private void onStyleChanged()
       {
          _showContents.setEnabled(_internalFrameStyle.isSelected());
          _maximimizeSessionSheet.setEnabled(_internalFrameStyle.isSelected());
@@ -260,9 +260,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setLayout(new GridBagLayout());
 
          ButtonGroup g = new ButtonGroup();
+         
          g.add(_tabbedStyle);
          g.add(_internalFrameStyle);
-
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(2, 4, 2, 4);
@@ -271,14 +271,20 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.insets.top = 0;
 
          gbc.gridy = 0;
+         _tabbedStyle.setName("tabbedStyleRadioButton");
 			pnl.add(_tabbedStyle, gbc);
          ++gbc.gridy;
+         _internalFrameStyle.setName("internalFrameStyleRadioButton");
          pnl.add(_internalFrameStyle, gbc);
          ++gbc.gridy;
+         
+         _showContents.setName("showContentsCheckBox");
 			pnl.add(_showContents, gbc);
          ++gbc.gridy;
+         _maximimizeSessionSheet.setName("maximizeSessionSheetCheckBox");
          pnl.add(_maximimizeSessionSheet, gbc);
          ++gbc.gridy;
+         _showTabbedStyleHint.setName("showTabbedStyleHintCheckBox");
          pnl.add(_showTabbedStyleHint, gbc);
 
 
