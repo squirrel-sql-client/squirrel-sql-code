@@ -67,11 +67,15 @@ public class TestOraclePluginPreferencesPanel
 		JCheckBoxFixture initSessionTimezoneCheckBox = fixture.checkBox("initSessionTimezoneCheckBox");
 		
 		initSessionTimezoneCheckBox.uncheck();
+		
 		saveButton.click();
 		classUnderTest.loadData();
+		initSessionTimezoneCheckBox.requireNotSelected();
+		
 		initSessionTimezoneCheckBox.check();
 		saveButton.click();
 		classUnderTest.loadData();
+		initSessionTimezoneCheckBox.requireSelected();
 	}
 	
 	@Test
