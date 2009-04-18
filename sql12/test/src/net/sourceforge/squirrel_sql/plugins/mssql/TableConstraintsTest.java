@@ -18,19 +18,25 @@
  */
 package net.sourceforge.squirrel_sql.plugins.mssql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.CheckConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.DefaultConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.ForeignKeyConstraint;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.MssqlConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.PrimaryKeyConstraint;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.TableConstraints;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TableConstraintsTest {
 
-    TableConstraints constraintsUnderTest = null;
+    private static final String TEST_COLUMN = "testColumn";
+	TableConstraints constraintsUnderTest = null;
     
     @Before
     public void setUp() throws Exception {
@@ -56,27 +62,36 @@ public class TableConstraintsTest {
     }
 
     @Test
-    @Ignore
     public final void testGetDefaultsForColumn() {
-        fail("Not yet implemented"); // TODO
+   	 DefaultConstraint constraint = new DefaultConstraint();
+   	 constraint.addConstraintColumn(TEST_COLUMN);
+   	 constraintsUnderTest.addConstraint(constraint);
+   	 List<DefaultConstraint> list = constraintsUnderTest.getDefaultsForColumn(TEST_COLUMN);
+   	 assertEquals(1, list.size());
     }
 
     @Test
-    @Ignore
     public final void testGetCheckConstraints() {
-        fail("Not yet implemented"); // TODO
+   	 CheckConstraint constraint = new CheckConstraint();
+   	 constraintsUnderTest.addConstraint(constraint);
+   	 List<CheckConstraint> list = constraintsUnderTest.getCheckConstraints();
+   	 assertEquals(1, list.size());
     }
 
     @Test
-    @Ignore
     public final void testGetForeignKeyConstraints() {
-        fail("Not yet implemented"); // TODO
+   	 ForeignKeyConstraint constraint = new ForeignKeyConstraint();
+   	 constraintsUnderTest.addConstraint(constraint);
+   	 List<ForeignKeyConstraint> list = constraintsUnderTest.getForeignKeyConstraints();
+   	 assertEquals(1, list.size());
     }
 
     @Test
-    @Ignore
     public final void testGetPrimaryKeyConstraints() {
-        fail("Not yet implemented"); // TODO
+   	 PrimaryKeyConstraint constraint = new PrimaryKeyConstraint();
+   	 constraintsUnderTest.addConstraint(constraint);
+   	 List<PrimaryKeyConstraint> list = constraintsUnderTest.getPrimaryKeyConstraints();
+   	 assertEquals(1, list.size());
     }
 
 }
