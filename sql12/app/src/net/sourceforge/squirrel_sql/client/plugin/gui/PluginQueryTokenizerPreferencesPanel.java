@@ -204,6 +204,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		c.anchor = GridBagConstraints.WEST;
 		c.gridwidth = 2; // Span across two columns
 		useCustomQTCheckBox = new JCheckBox(i18n.USE_CUSTOM_QT_LABEL);
+		useCustomQTCheckBox.setName("useCustomQTCheckBox");
 
 		// i18n[PreferencesPanel.useCustomQTToolTip=Gives enhanced capabilities
 		// over the default query tokenizer for handling {0} scripts]
@@ -224,6 +225,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		c.insets = new Insets(5, 30, 0, 0);
 		String cbLabel = i18n.REMOVE_ML_COMMENT_LABEL;
 		removeMultiLineCommentCheckBox = new JCheckBox(cbLabel);
+		removeMultiLineCommentCheckBox.setName("removeMultiLineCommentCheckBox");
 		removeMultiLineCommentCheckBox.setToolTipText(i18n.REMOVE_ML_COMMENT_LABEL_TT);
 		panel.add(removeMultiLineCommentCheckBox, c);
 	}
@@ -250,6 +252,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		c.insets = new Insets(5, 5, 0, 0);
 		c.anchor = GridBagConstraints.WEST;
 		statementSeparatorTextField = new JTextField(10);
+		statementSeparatorTextField.setName("statementSeparatorTextField");
 
 		statementSeparatorTextField.setHorizontalAlignment(JTextField.RIGHT);
 		statementSeparatorTextField.setToolTipText(i18n.STMT_SEP_LABEL_TT);
@@ -278,6 +281,7 @@ public class PluginQueryTokenizerPreferencesPanel extends JPanel
 		c.insets = new Insets(5, 5, 0, 0);
 		c.anchor = GridBagConstraints.WEST;
 		lineCommentTextField = new JTextField(10);
+		lineCommentTextField.setName("lineCommentTextField");
 		lineCommentTextField.setHorizontalAlignment(JTextField.RIGHT);
 		lineCommentTextField.setToolTipText(i18n.LINE_COMMENT_LABEL_TT);
 		panel.add(lineCommentTextField, c);
