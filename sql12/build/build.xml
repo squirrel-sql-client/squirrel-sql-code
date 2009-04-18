@@ -1074,7 +1074,8 @@
 					<include name="**/DialectExternalTest.java" />
 				</fileset>
 		        	<fileset dir="test/jfctests">
-		        	      <include name="**/TestOraclePluginPreferencesPanel.java" />
+		        		   <!-- FEST tests must end in UITest.java to get included -->
+		        	      <include name="**/*UITest.java" />
 		        	</fileset>
 			</batchtest>
 
