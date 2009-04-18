@@ -22,9 +22,9 @@ package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
 
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.gui.AbstractPluginPreferencesUITest;
+import net.sourceforge.squirrel_sql.client.plugin.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 
 import org.fest.swing.annotation.GUITest;
 import org.fest.swing.fixture.JButtonFixture;

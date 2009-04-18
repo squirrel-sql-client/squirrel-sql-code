@@ -36,10 +36,10 @@ import java.util.Arrays;
 
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.client.plugin.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
-import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
 import org.junit.After;

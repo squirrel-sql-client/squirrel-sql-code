@@ -31,8 +31,7 @@ import javax.swing.JScrollPane;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 
 import org.fest.swing.annotation.GUITest;
 import org.fest.swing.fixture.FrameFixture;
@@ -136,5 +135,5 @@ public abstract class AbstractPluginPreferencesUITest extends BaseSQuirreLJUnit4
    
    protected abstract PluginQueryTokenizerPreferencesPanel getPrefsPanelToTest() throws PluginException;
    
-   protected abstract BaseQueryTokenizerPreferenceBean getPreferenceBean();
+   protected abstract IQueryTokenizerPreferenceBean getPreferenceBean();
 }
