@@ -1073,6 +1073,9 @@
 				<fileset dir="test/external">
 					<include name="**/DialectExternalTest.java" />
 				</fileset>
+		        	<fileset dir="test/jfctests">
+		        	      <include name="**/TestOraclePluginPreferencesPanel.java" />
+		        	</fileset>
 			</batchtest>
 
 			<jvmarg value="-Demma.coverage.out.file=${coverage.report.dir}/coverage.emma" />
