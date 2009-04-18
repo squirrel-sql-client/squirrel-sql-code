@@ -89,7 +89,7 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 
 	private final static JCheckBox initSessionTimezoneCheckBox = new JCheckBox("Initialize Session Timezone");
 
-	private final static JTextField sessionTimezone = new JTextField();
+	private final static JTextField sessionTimezoneTextField = new JTextField();
 
 	/**
 	 * Construct a new PreferencesPanel.
@@ -151,12 +151,13 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(5, 5, 0, 0);
 		initSessionTimezoneCheckBox.setToolTipText(i18n.SESSION_TIMEZONE_TT);
+		initSessionTimezoneCheckBox.setName("initSessionTimezoneCheckBox");
 		result.add(initSessionTimezoneCheckBox, c);
 		
 		initSessionTimezoneCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				sessionTimezone.setEnabled(initSessionTimezoneCheckBox.isSelected());
+				sessionTimezoneTextField.setEnabled(initSessionTimezoneCheckBox.isSelected());
 			}
 		});
 	}
@@ -170,8 +171,9 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(5, LEFT_INDENT_INSET_SIZE, 0, 0);
-		sessionTimezone.setToolTipText(i18n.SESSION_TIMEZONE_TT);
-		result.add(sessionTimezone, c);
+		sessionTimezoneTextField.setToolTipText(i18n.SESSION_TIMEZONE_TT);
+		sessionTimezoneTextField.setName("sessionTimezoneTextField");
+		result.add(sessionTimezoneTextField, c);
 	}
 	
 	
@@ -188,15 +190,15 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 		showErrorOffsetCheckBox.setSelected(oraclePrefs.isShowErrorOffset());
 		if (oraclePrefs.getInitSessionTimezone()) {
 			initSessionTimezoneCheckBox.setSelected(true);
-			sessionTimezone.setEnabled(true);
+			sessionTimezoneTextField.setEnabled(true);
 		} else {
 			initSessionTimezoneCheckBox.setSelected(false);
-			sessionTimezone.setEnabled(false);
+			sessionTimezoneTextField.setEnabled(false);
 		}
 		if (oraclePrefs.getSessionTimezone() != null && !"".equals(oraclePrefs.getSessionTimezone())) {
-			sessionTimezone.setText(oraclePrefs.getSessionTimezone());
+			sessionTimezoneTextField.setText(oraclePrefs.getSessionTimezone());
 		} else {
-			sessionTimezone.setText(TimeZone.getDefault().getID());
+			sessionTimezoneTextField.setText(TimeZone.getDefault().getID());
 		}
 	}
 
@@ -212,7 +214,7 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 		oraclePrefs.setShowErrorOffset(showErrorOffsetCheckBox.isSelected());
 		oraclePrefs.setInitSessionTimezone(initSessionTimezoneCheckBox.isSelected());
 		if (initSessionTimezoneCheckBox.isSelected()) {
-			oraclePrefs.setSessionTimezone(sessionTimezone.getText());
+			oraclePrefs.setSessionTimezone(sessionTimezoneTextField.getText());
 		}
 		super.save();
 	}

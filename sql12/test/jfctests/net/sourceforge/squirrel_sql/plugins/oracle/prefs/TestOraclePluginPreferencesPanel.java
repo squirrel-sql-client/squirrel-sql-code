@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.oracle.gui;
+package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -29,12 +29,13 @@ import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
+import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
 import org.fest.swing.annotation.GUITest;
 import org.fest.swing.fixture.FrameFixture;
+import org.fest.swing.fixture.JButtonFixture;
 import org.fest.swing.fixture.JCheckBoxFixture;
 import org.fest.swing.fixture.JTextComponentFixture;
 import org.junit.After;
@@ -47,41 +48,67 @@ import org.junit.Test;
 @GUITest
 public class TestOraclePluginPreferencesPanel
 {
-
-	private FrameFixture fixture;
+	private JFrame frame = null;
+	private FrameFixture fixture = null;	
+	private OraclePluginPreferencesPanel classUnderTest = null;
 	
 	@Before 
 	public void setUp() throws Exception {
-		JFrame f = constructTestFrame();		
-		fixture = new FrameFixture(f);
+		if (frame == null) {
+			frame = constructTestFrame();
+		}
+		fixture = new FrameFixture(frame);
 		fixture.show();
 	}
 	
 	@Test
-	public void testCheckbox() {
-		JCheckBoxFixture cbFixture = fixture.checkBox("useCustomQTCheckBox");
+	public void testSaveData() {
+		JButtonFixture saveButton = fixture.button("saveButton");
+		JCheckBoxFixture initSessionTimezoneCheckBox = fixture.checkBox("initSessionTimezoneCheckBox");
+		
+		initSessionTimezoneCheckBox.uncheck();
+		saveButton.click();
+		classUnderTest.loadData();
+		initSessionTimezoneCheckBox.check();
+		saveButton.click();
+		classUnderTest.loadData();
+	}
+	
+	@Test
+	public void testCheckboxes() {
+		JCheckBoxFixture useCustomQTCheckBox = fixture.checkBox("useCustomQTCheckBox");
+		JCheckBoxFixture initSessionTimezoneCheckBox = fixture.checkBox("initSessionTimezoneCheckBox");
 		JTextComponentFixture lineCommentTextField = fixture.textBox("lineCommentTextField");
 		JTextComponentFixture statementSeparatorTextField = fixture.textBox("statementSeparatorTextField");
+		JTextComponentFixture sessionTimezoneTextField = fixture.textBox("sessionTimezoneTextField");
 		
-		cbFixture.uncheck();
-		cbFixture.check();
-		cbFixture.uncheck();
+		
+		useCustomQTCheckBox.uncheck();
+		useCustomQTCheckBox.check();
+		useCustomQTCheckBox.uncheck();
 		
 		lineCommentTextField.requireDisabled();
 		statementSeparatorTextField.requireDisabled();
 		
-		cbFixture.check();
+		useCustomQTCheckBox.check();
 		lineCommentTextField.requireEnabled();
 		statementSeparatorTextField.requireEnabled();
 		
+		initSessionTimezoneCheckBox.uncheck();
+		initSessionTimezoneCheckBox.check();
+		initSessionTimezoneCheckBox.uncheck();
+
+		sessionTimezoneTextField.requireDisabled();
+		
+		initSessionTimezoneCheckBox.check();
+		
+		sessionTimezoneTextField.requireEnabled();		
 	}
-	
+		
 	@After
 	public void tearDown() {
 		fixture.cleanUp();
 	}
-	
-	
 	
 	/**
 	 * The main method is not used at all in the test - it is just here to allow for user interaction testing
@@ -91,7 +118,7 @@ public class TestOraclePluginPreferencesPanel
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		constructTestFrame().setVisible(true);
+		new TestOraclePluginPreferencesPanel().constructTestFrame().setVisible(true);
 	}
 
 	/**
@@ -100,22 +127,23 @@ public class TestOraclePluginPreferencesPanel
 	 * @return
 	 * @throws Exception
 	 */
-	private static JFrame constructTestFrame() throws Exception {
+	private JFrame constructTestFrame() throws Exception {
 		JFrame f = new JFrame();
 		f.getContentPane().setLayout(new BorderLayout());
 		ApplicationArguments.initialize(new String[0]);
 		final PluginQueryTokenizerPreferencesManager prefsManager =
 			new PluginQueryTokenizerPreferencesManager();
 		prefsManager.initialize(new DummyPlugin(), new OraclePreferenceBean());
-		final PluginQueryTokenizerPreferencesPanel p = new OraclePluginPreferencesPanel(prefsManager);
-		JScrollPane sp = new JScrollPane(p);
+		classUnderTest = new OraclePluginPreferencesPanel(prefsManager);
+		JScrollPane sp = new JScrollPane(classUnderTest);
 		f.getContentPane().add(sp, BorderLayout.CENTER);
 		JButton button = new JButton("Save");
+		button.setName("saveButton");
 		button.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				p.applyChanges();
+				classUnderTest.applyChanges();
 				prefsManager.unload();
 			}
 		});
