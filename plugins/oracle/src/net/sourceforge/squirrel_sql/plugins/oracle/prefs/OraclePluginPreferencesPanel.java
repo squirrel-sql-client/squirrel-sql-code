@@ -100,6 +100,7 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 	public OraclePluginPreferencesPanel(PluginQueryTokenizerPreferencesManager prefsMgr)
 	{
 		super(prefsMgr, "Oracle");
+		setName("OraclePluginPreferencesPanel");
 	}
 
 	/**
