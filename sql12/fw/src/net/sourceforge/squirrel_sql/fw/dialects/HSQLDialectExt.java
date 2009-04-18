@@ -1043,4 +1043,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		return result;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTimestampMaximumFractionalDigits()
+	 */
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 9;
+	}
+
 }
