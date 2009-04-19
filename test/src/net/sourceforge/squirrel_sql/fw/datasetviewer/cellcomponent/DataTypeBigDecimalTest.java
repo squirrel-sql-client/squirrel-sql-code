@@ -46,7 +46,7 @@ public class DataTypeBigDecimalTest extends AbstractDataTypeComponentTest
 	@Override
 	protected Object getEqualsTestObject()
 	{
-		return new BigDecimal(0);
+		return BigDecimal.ONE;
 	}
 
 }
