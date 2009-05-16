@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,7 @@ public class SQLParamPluginTest extends AbstractPluginTest implements DatabasePr
 		ISession mockSession = mockHelper.createMock("mockSession", ISession.class);
 		SessionPanel mockSessionPanel = mockHelper.createMock("mockSessionPanel", SessionPanel.class);
 		ISQLPanelAPI mockSQLPanelAPI = mockHelper.createMock("mockSQLPanelAPI", ISQLPanelAPI.class); 
+		EasyMock.makeThreadSafe(mockSQLPanelAPI, true);
 		
 		expect(mockSession.getSessionSheet()).andStubReturn(mockSessionPanel);
 		expect(mockSessionPanel.getSQLPaneAPI()).andStubReturn(mockSQLPanelAPI);
