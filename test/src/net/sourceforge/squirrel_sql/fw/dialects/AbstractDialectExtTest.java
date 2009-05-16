@@ -114,7 +114,7 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 			if (Modifier.isPublic(f.getModifiers()))
 			{
 				Object o = f.get(t);
-				expect(mockDboInfo.getDatabaseObjectType()).andStubReturn(o);
+				expect(mockDboInfo.getDatabaseObjectType()).andStubReturn((DatabaseObjectType) (o));
 				mockHelper.replayAll();
 				canPasteTo = canPasteTo || classUnderTest.canPasteTo(mockDboInfo);
 				mockHelper.resetAll();
