@@ -188,7 +188,7 @@ public class ArtifactDownloaderImplTest extends BaseSQuirreLJUnit4TestCase
 
 		/** Provide a mock retry strategy to avoid making the test take a long time to execute */ 
 		RetryStrategy mockRetryStrategy = mockHelper.createMock(RetryStrategy.class);
-		expect(mockRetryStrategy.getTimeToWaitBeforeRetrying(anyInt())).andStubReturn(0);
+		expect(mockRetryStrategy.getTimeToWaitBeforeRetrying(anyInt())).andStubReturn(0L);
 		expect(mockRetryStrategy.shouldTryAgain(anyInt())).andReturn(true);
 		expect(mockRetryStrategy.shouldTryAgain(anyInt())).andReturn(true);
 		expect(mockRetryStrategy.shouldTryAgain(anyInt())).andReturn(true);
