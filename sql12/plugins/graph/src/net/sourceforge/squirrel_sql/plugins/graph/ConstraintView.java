@@ -31,6 +31,8 @@ public class ConstraintView implements GraphComponent
    private JMenuItem _mnuAddFoldingPoint;
    private JMenuItem _mnuShowDDL;
    private JMenuItem _mnuScriptDDL;
+   private JMenuItem _mnuRemoveNonDbConstraint;
+   private JMenuItem _mnuConfigureNonDbConstraint;
    private JMenuItem _mnuRemoveFoldingPoint;
 
    private Point _lastPopupClickPoint;
@@ -40,8 +42,9 @@ public class ConstraintView implements GraphComponent
    private ConstraintData _constraintData;
    public static final int STUB_LENGTH = 20;
    private ISession _session;
+   private TableFrameController _fkFrameOriginatingFrom;
    private TableFrameController _pkFramePointingTo;
-   private Vector<ConstraintViewListener> _constraintViewListeners = 
+   private Vector<ConstraintViewListener> _constraintViewListeners =
        new Vector<ConstraintViewListener>();
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
@@ -110,6 +113,31 @@ public class ConstraintView implements GraphComponent
       });
       _connectLinePopup.add(_mnuScriptDDL);
 
+      if (_constraintData.isNonDbConstraint())
+      {
+         // i18n[graph.removeNonDbConstraint=remove non DB constraint]
+         _mnuRemoveNonDbConstraint = new JMenuItem(s_stringMgr.getString("graph.removeNonDbConstraint"));
+         _mnuRemoveNonDbConstraint.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onRemoveNonDbConstraint();
+            }
+         });
+         _connectLinePopup.add(_mnuRemoveNonDbConstraint);
+
+         // i18n[graph.removeNonDbConstraint=remove non DB constraint]
+         _mnuConfigureNonDbConstraint = new JMenuItem(s_stringMgr.getString("graph.configureNonDbConstraint"));
+         _mnuConfigureNonDbConstraint.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onConfigureNonDbConstraint();
+            }
+         });
+         _connectLinePopup.add(_mnuConfigureNonDbConstraint);
+      }
+
 
       _foldingPointPopUp = new JPopupMenu();
 
@@ -123,6 +151,25 @@ public class ConstraintView implements GraphComponent
          }
       });
       _foldingPointPopUp.add(_mnuRemoveFoldingPoint);
+
+
+
+   }
+
+   private void onConfigureNonDbConstraint()
+   {
+      new ConfigureNonDbConstraintController(_session, this, _fkFrameOriginatingFrom, _pkFramePointingTo);
+      _fkFrameOriginatingFrom.refresh();
+   }
+
+   private void onRemoveNonDbConstraint()
+   {
+      ConstraintViewListener[] clone = (ConstraintViewListener[]) _constraintViewListeners.toArray(new ConstraintViewListener[0]);
+
+      for (ConstraintViewListener listener : clone)
+      {
+         listener.removeNonDbConstraint(this);
+      }
    }
 
    private void onRemoveFoldingPoint()
@@ -203,7 +250,7 @@ public class ConstraintView implements GraphComponent
       _desktopController.repaint();
    }
 
-   public void setConnectionPoints(ConnectionPoints fkPoints, ConnectionPoints pkPoints, TableFrameController pkFramePointingTo, ConstraintViewListener constraintViewListener)
+   public void setConnectionPoints(ConnectionPoints fkPoints, ConnectionPoints pkPoints, TableFrameController fkFrameOriginatingFrom, TableFrameController pkFramePointingTo,  ConstraintViewListener constraintViewListener)
    {
       double zoom = 1;
 
@@ -212,6 +259,7 @@ public class ConstraintView implements GraphComponent
          zoom = _desktopController.getZoomer().getZoom();
       }
 
+      _fkFrameOriginatingFrom = fkFrameOriginatingFrom;
       _pkFramePointingTo = pkFramePointingTo;
       addConstraintViewListener(constraintViewListener);
 
@@ -246,7 +294,14 @@ public class ConstraintView implements GraphComponent
    {
       Color colBuf = g.getColor();
 
-      g.setColor(Color.black);
+      if(_constraintData.isNonDbConstraint())
+      {
+         g.setColor(Color.blue);
+      }
+      else
+      {
+         g.setColor(Color.black);
+      }
 
       GraphLine[] lines = _constraintGraph.getAllLines();
       for (int i = 0; i < lines.length; i++)
@@ -666,9 +721,9 @@ public class ConstraintView implements GraphComponent
       return _pkFramePointingTo;
    }
 
-   public void replaceCopiedColsByReferences(ColumnInfo[] colInfos)
+   public void replaceCopiedColsByReferences(ColumnInfo[] colInfos, boolean retainImportData)
    {
-      _constraintData.replaceCopiedColsByReferences(colInfos);
+      _constraintData.replaceCopiedColsByReferences(colInfos, retainImportData);
    }
 
    public void addConstraintViewListener(ConstraintViewListener constraintViewListener)
@@ -680,5 +735,15 @@ public class ConstraintView implements GraphComponent
    public void setData(ConstraintData constraintData)
    {
       _constraintData = constraintData;
+   }
+
+   public void clearColumnImportData()
+   {
+      _constraintData.clearColumnImportData();
+   }
+
+   public boolean hasOverlap(ConstraintView other)
+   {
+      return _constraintData.hasOverlap(other._constraintData);
    }
 }

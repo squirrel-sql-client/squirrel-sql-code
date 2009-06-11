@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.*;
@@ -11,12 +13,14 @@ public class ZoomableColumnTextArea extends JPanel
    private TableToolTipProvider _toolTipProvider;
    private ColumnInfo[] _columnInfos;
    private Zoomer _zoomer;
+   private DndHandler _dndHandler;
 
-   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer)
+   public ZoomableColumnTextArea(TableToolTipProvider toolTipProvider, Zoomer zoomer, DndCallback dndCallback, ISession session)
    {
       _toolTipProvider = toolTipProvider;
       _zoomer = zoomer;
       setToolTipText("Just to make getToolTiptext() to be called");
+      _dndHandler = new DndHandler(dndCallback, this, session);
    }
 
    public String getToolTipText(MouseEvent event)
@@ -90,5 +94,15 @@ public class ZoomableColumnTextArea extends JPanel
       return ret;
    }
 
+
+   public DndEvent getDndEvent()
+   {
+      return _dndHandler.getDndEvent();
+   }
+
+   public void setDndEvent(DndEvent dndEvent)
+   {
+      _dndHandler.setDndEvent(dndEvent);
+   }
 
 }

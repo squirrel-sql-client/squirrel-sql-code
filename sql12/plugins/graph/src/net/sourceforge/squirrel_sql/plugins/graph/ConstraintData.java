@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintDataXmlBean;
@@ -12,15 +13,14 @@ public class ConstraintData
    private String _pkTableName;
    private String _fkTableName;
    private String _constraintName;
+   private boolean _nonDbConstraint;
 
    private ColumnInfo[] _columnInfos = new ColumnInfo[0];
 
 
    public ConstraintData(String pkTableName, String fkTableName, String constraintName)
    {
-      _pkTableName = pkTableName;
-      _fkTableName = fkTableName;
-      _constraintName = constraintName;
+      this(pkTableName, fkTableName, constraintName, false);
    }
 
    public ConstraintData(ConstraintDataXmlBean constraintDataXmlBean)
@@ -28,12 +28,21 @@ public class ConstraintData
       _pkTableName = constraintDataXmlBean.getPkTableName();
       _fkTableName = constraintDataXmlBean.getFkTableName();
       _constraintName = constraintDataXmlBean.getConstraintName();
+      _nonDbConstraint = constraintDataXmlBean.isNonDbConstraint();
 
       _columnInfos = new ColumnInfo[constraintDataXmlBean.getColumnInfoXmlBeans().length];
       for (int i = 0; i < _columnInfos.length; i++)
       {
          _columnInfos[i] = new ColumnInfo(constraintDataXmlBean.getColumnInfoXmlBeans()[i]);
       }
+   }
+
+   public ConstraintData(String pkTableName, String fkTableName, String constraintName, boolean nonDbConstraint)
+   {
+      _pkTableName = pkTableName;
+      _fkTableName = fkTableName;
+      _constraintName = constraintName;
+      _nonDbConstraint = nonDbConstraint;
    }
 
 
@@ -43,6 +52,7 @@ public class ConstraintData
       ret.setPkTableName(_pkTableName);
       ret.setFkTableName(_fkTableName);
       ret.setConstraintName(_constraintName);
+      ret.setNonDbConstraint(_nonDbConstraint);
 
       ColumnInfoXmlBean[] colInfoXmlBeans = new ColumnInfoXmlBean[_columnInfos.length];
       for (int i = 0; i < _columnInfos.length; i++)
@@ -78,6 +88,11 @@ public class ConstraintData
    public String getTitle()
    {
       return _fkTableName + "." + _constraintName;
+   }
+
+   public boolean isNonDbConstraint()
+   {
+      return _nonDbConstraint;
    }
 
    public String[] getDDL()
@@ -150,7 +165,7 @@ public class ConstraintData
       return ret.toArray(new String[ret.size()]);
    }
 
-   public void replaceCopiedColsByReferences(ColumnInfo[] colInfoRefs)
+   public void replaceCopiedColsByReferences(ColumnInfo[] colInfoRefs, boolean retainImportData)
    {
       for (int i = 0; i < colInfoRefs.length; i++)
       {
@@ -158,6 +173,15 @@ public class ConstraintData
          {
             if(colInfoRefs[i].getName().equals(_columnInfos[j].getName()))
             {
+               if(retainImportData)
+               {
+                  colInfoRefs[i].setImportData(
+                     _columnInfos[j].getImportedTableName(),
+                     _columnInfos[j].getImportedColumnName(),
+                     _columnInfos[j].getConstraintName(),
+                     _columnInfos[j].isNonDbConstraint());
+               }
+
                _columnInfos[j] = colInfoRefs[i];
                break;
             }
@@ -168,5 +192,46 @@ public class ConstraintData
    public String getConstraintName()
    {
       return _constraintName;
+   }
+
+   public void clearColumnImportData()
+   {
+      for (ColumnInfo columnInfo : _columnInfos)
+      {
+         columnInfo.clearImportData();
+      }
+   }
+
+   public boolean hasOverlap(ConstraintData other)
+   {
+      if(false == other._pkTableName.equalsIgnoreCase(_pkTableName) || false == other._fkTableName.equalsIgnoreCase(_fkTableName))
+      {
+         return false;
+      }
+
+      for (ColumnInfo ci : _columnInfos)
+      {
+         for (ColumnInfo otherCi : other._columnInfos)
+         {
+            if(ci.getName().equalsIgnoreCase(otherCi.getName()))
+            {
+               return true;
+            }
+
+         }
+      }
+
+      return false;
+   }
+
+   public void removeAllColumns()
+   {
+      clearColumnImportData();
+      _columnInfos = new ColumnInfo[0];
+   }
+
+   public void setConstraintName(String name)
+   {
+      _constraintName = name;
    }
 }

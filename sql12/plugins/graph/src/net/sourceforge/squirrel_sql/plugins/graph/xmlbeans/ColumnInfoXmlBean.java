@@ -7,11 +7,11 @@ public class ColumnInfoXmlBean
    private int columnSize;
    private boolean nullable;
    private int index;
+   private boolean isPrimaryKey;
    private String importedFromTable;
    private String importedColumn;
-   private String toString;
+   private boolean _nonDbConstraint;
    private String constraintName;
-   private boolean isPrimaryKey;
    private int decimalDigits;
 
    public String getColumnName()
@@ -112,5 +112,15 @@ public class ColumnInfoXmlBean
    public void setDecimalDigits(int decimalDigits)
    {
       this.decimalDigits = decimalDigits;
+   }
+
+   public boolean isNonDbConstraint()
+   {
+      return _nonDbConstraint;
+   }
+
+   public void setNonDbConstraint(boolean nonDbConstraint)
+   {
+      _nonDbConstraint = nonDbConstraint;
    }
 }

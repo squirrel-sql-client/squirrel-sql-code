@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import javax.swing.JOptionPane;
+import javax.swing.event.TableModelEvent;
 
 //??import javax.swing.event.TableModelListener;
 //??import javax.swing.event.TableModelEvent;
@@ -57,6 +58,7 @@ import java.awt.Graphics2D;
 import java.awt.Color;
 import javax.swing.table.JTableHeader;
 import java.awt.Font;
+import java.util.ArrayList;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
@@ -70,6 +72,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	private MyJTable _table = null;
 	private MyTableModel _typedModel;
 	private IDataSetUpdateableModel _updateableModel;
+   private DataSetViewerTableListSelectionHandler _selectionHandler;
 
 	public DataSetViewerTablePanel()
 	{
@@ -79,6 +82,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	public void init(IDataSetUpdateableModel updateableModel)
 	{
 		_table = new MyJTable(this, updateableModel);
+      _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
 		_updateableModel = updateableModel;
 	}
 	
@@ -159,10 +163,25 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		_table.setShowRowNumbers(showRowNumbers);
 	}
 
+   public void addRowSelectionListener(RowSelectionListener rowSelectionListener)
+   {
+      _selectionHandler.addRowSelectionListener(rowSelectionListener);
+   }
 
-	/*
-	 * The JTable used for displaying all DB ResultSet info.
-	 */
+   public void removeRowSelectionListener(RowSelectionListener rowSelectionListener)
+   {
+      _selectionHandler.removeRowSelectionListener(rowSelectionListener);
+   }
+
+   public int[] getSeletedRows()
+   {
+      return _table.getSelectedRows();
+   }
+
+
+   /*
+     * The JTable used for displaying all DB ResultSet info.
+     */
 	protected final class MyJTable extends JTable
 	{
 		private static final long serialVersionUID = 1L;

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -23,7 +24,7 @@ public class TableFrame extends JInternalFrame
    private ZoomerListener _zoomerListener;
 
 
-   public TableFrame(String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, Zoomer zoomer)
+   public TableFrame(String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, Zoomer zoomer, DndCallback dndCallback, ISession session)
    {
       _zoomer = zoomer;
 
@@ -47,7 +48,7 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
-      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer);
+      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer, dndCallback, session);
       scrollPane.setViewportView(txtColumsFactory.getComponent(zoomer.isEnabled()));
       
       if(null != xmlBean)

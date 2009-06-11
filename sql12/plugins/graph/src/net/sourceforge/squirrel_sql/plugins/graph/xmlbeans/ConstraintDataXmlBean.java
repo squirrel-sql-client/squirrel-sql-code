@@ -1,13 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
-import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
-
 
 public class ConstraintDataXmlBean
 {
    private String pkTableName;
    private String fkTableName;
    private String constraintName;
+   private boolean nonDbConstraint;
    private ColumnInfoXmlBean[] columnInfoXmlBeans;
 
    public String getPkTableName()
@@ -48,5 +47,15 @@ public class ConstraintDataXmlBean
    public void setColumnInfoXmlBeans(ColumnInfoXmlBean[] columnInfoXmlBeans)
    {
       this.columnInfoXmlBeans = columnInfoXmlBeans;
+   }
+
+   public boolean isNonDbConstraint()
+   {
+      return nonDbConstraint;
+   }
+
+   public void setNonDbConstraint(boolean dbConstraint)
+   {
+      this.nonDbConstraint = dbConstraint;
    }
 }

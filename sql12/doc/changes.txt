@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Graph Plugin:
+ - Allowed constraints to be created using drag and drop.
+   To create such a non DB constraint using drag and drop hold
+   down the control key. Then right click the constraint to configure it.  
+
  - Updated Korean translation available (Thanks to Youngwoo Kim)
 
 

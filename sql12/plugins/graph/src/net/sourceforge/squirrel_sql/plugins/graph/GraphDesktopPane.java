@@ -31,7 +31,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    public GraphDesktopPane(IApplication app)
    {
       super(app);
-      _constraintViewListener = new ConstraintViewListener()
+      _constraintViewListener = new ConstraintViewAdapter()
       {
          public void foldingPointMoved(ConstraintView source)
          {

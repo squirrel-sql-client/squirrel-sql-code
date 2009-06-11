@@ -131,7 +131,7 @@ public class TableFrameController
             _catalog = catalogName;
             _schema = schemaName;
             _tableName = tableName;
-            _frame = new TableFrame(getDisplayName(), null, toolTipProvider, _desktopController.getZoomer());
+            _frame = new TableFrame(getDisplayName(), null, toolTipProvider, _desktopController.getZoomer(), createDndCallback(), _session);
 
 
             initFromDB();
@@ -142,7 +142,7 @@ public class TableFrameController
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
             _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer());
+            _frame = new TableFrame(getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer(), createDndCallback(), _session);
             _columnOrder = xmlBean.getColumOrder();
             _colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
             for (int i = 0; i < _colInfos.length; i++)
@@ -154,16 +154,23 @@ public class TableFrameController
             for (int i = 0; i < _constraintViews.length; i++)
             {
                _constraintViews[i] = new ConstraintView(xmlBean.getConstraintViewXmlBeans()[i], _desktopController, _session);
-               _constraintViews[i].replaceCopiedColsByReferences(_colInfos);
+               _constraintViews[i].replaceCopiedColsByReferences(_colInfos, false);
             }
          }
 
 
          _constraintViewListener = new ConstraintViewListener()
          {
+            @Override
             public void foldingPointMoved(ConstraintView source)
             {
                onFoldingPointMoved(source);
+            }
+
+            @Override
+            public void removeNonDbConstraint(ConstraintView constraintView)
+            {
+               onRemoveNonDbConstraint(constraintView);
             }
          };
 
@@ -235,6 +242,73 @@ public class TableFrameController
       }
    }
 
+
+   private DndCallback createDndCallback()
+   {
+      return new DndCallback()
+      {
+         @Override
+         public void dndImportDone(DndEvent e, Point dropPoint)
+         {
+            onDndImportDone(e, dropPoint);
+         }
+
+         @Override
+         public DndEvent createDndEvent(MouseEvent lastDndExportedMousePressedEvent)
+         {
+            return onCreateDndEvent(lastDndExportedMousePressedEvent);
+         }
+      };
+   }
+
+   private DndEvent onCreateDndEvent(MouseEvent lastDndExportedMousePressedEvent)
+   {
+      return new DndEvent(this, getColumnInfoForPoint(lastDndExportedMousePressedEvent.getPoint()));
+   }
+
+   private void onDndImportDone(DndEvent e, Point dropPoint)
+   {
+      ConstraintView constView = ConstraintViewCreator.createConstraintView(
+         e,
+         this,
+         getColumnInfoForPoint(dropPoint),
+         _desktopController,
+         _session
+      );
+
+      if(null == constView)
+      {
+         return;
+      }
+
+
+
+      TableFrameController fkTable = e.getTableFrameController();
+
+      ArrayList<ConstraintView> buf = new ArrayList<ConstraintView>();
+      buf.addAll(Arrays.asList(fkTable._constraintViews));
+      buf.add(constView);
+      fkTable._constraintViews = buf.toArray(new ConstraintView[buf.size()]);
+
+      fkTable.recalculateAllConnections(true);
+   }
+
+   private void onRemoveNonDbConstraint(ConstraintView constraintView)
+   {
+      constraintView.clearColumnImportData();
+      ArrayList<ConstraintView> buf = new ArrayList<ConstraintView>();
+      buf.addAll(Arrays.asList(_constraintViews));
+      buf.remove(constraintView);
+      _constraintViews = buf.toArray(new ConstraintView[buf.size()]);
+
+      _desktopController.removeConstraintViews(new ConstraintView[]{constraintView}, false);
+
+      recalculateAllConnections(true);
+      _desktopController.repaint();
+   }
+
+
+
    private String getDisplayName()
    {
       if(_desktopController.isShowQualifiedTableNames())
@@ -274,8 +348,7 @@ public class TableFrameController
    {
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
       SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-      Hashtable<String, ConstraintData> constaintInfosByConstraintName = 
-          new Hashtable<String, ConstraintData>();
+      Hashtable<String, ConstraintData> dbConstraintInfosByConstraintName = new Hashtable<String, ConstraintData>();
       Vector<ColumnInfo> colInfosBuf = new Vector<ColumnInfo>();
       if (s_log.isDebugEnabled()) {
           s_log.debug("initFromDB: _catalog="+_catalog+" _schema="+_schema+
@@ -337,16 +410,16 @@ public class TableFrameController
              String fkName = res.getString(12);   // FK_NAME
              
              ColumnInfo colInfo = findColumnInfo(fkColName);
-             colInfo.setImportData(pkTable, pkColName, fkName);
+             colInfo.setImportData(pkTable, pkColName, fkName, false);
     
-             ConstraintData  constraintData = constaintInfosByConstraintName.get(fkName);
+             ConstraintData  dbConstraintData = dbConstraintInfosByConstraintName.get(fkName);
     
-             if(null == constraintData)
+             if(null == dbConstraintData)
              {
-                constraintData = new ConstraintData(pkTable, _tableName, fkName);
-                constaintInfosByConstraintName.put(fkName, constraintData);
+                dbConstraintData = new ConstraintData(pkTable, _tableName, fkName);
+                dbConstraintInfosByConstraintName.put(fkName, dbConstraintData);
              }
-             constraintData.addColumnInfo(colInfo);
+             dbConstraintData.addColumnInfo(colInfo);
           }
       } catch (SQLException e) {
           s_log.error("Unable to get Foriegn Key info", e);
@@ -356,42 +429,75 @@ public class TableFrameController
           }
       }
 
-      ConstraintData[] constraintData = 
-          constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
-
-      Hashtable<String, ConstraintView> oldConstraintViewsByConstraintName = 
-          new Hashtable<String, ConstraintView>();
+      ConstraintData[] newDBconstraintData = dbConstraintInfosByConstraintName.values().toArray(new ConstraintData[0]);
+      Hashtable<String, ConstraintView> oldDBConstraintViewsByConstraintName = new Hashtable<String, ConstraintView>();
+      ArrayList<ConstraintView> oldNonDBConstraintViews = new ArrayList<ConstraintView>();
 
       if(null != _constraintViews)
       {
          _desktopController.removeConstraintViews(_constraintViews, true);
          for (int i = 0; i < _constraintViews.length; i++)
          {
-            String constraintName = 
-                _constraintViews[i].getData().getConstraintName();
-            oldConstraintViewsByConstraintName.put(constraintName, _constraintViews[i]);
+            if (_constraintViews[i].getData().isNonDbConstraint())
+            {
+               _constraintViews[i].replaceCopiedColsByReferences(_colInfos, true);
+               oldNonDBConstraintViews.add(_constraintViews[i]);
+            }
+            else
+            {
+               String constraintName = _constraintViews[i].getData().getConstraintName();
+               oldDBConstraintViewsByConstraintName.put(constraintName, _constraintViews[i]);
+            }
+
          }
       }
 
-      _constraintViews = new ConstraintView[constraintData.length];
-      for (int i = 0; i < constraintData.length; i++)
+      ArrayList<ConstraintView> newConstraintViewsBuf = new ArrayList<ConstraintView>();
+      for (int i = 0; i < newDBconstraintData.length; i++)
       {
          ConstraintView oldCV = 
-             oldConstraintViewsByConstraintName.get(constraintData[i].getConstraintName());
+             oldDBConstraintViewsByConstraintName.get(newDBconstraintData[i].getConstraintName());
 
          if(null != oldCV)
          {
             // The old view is preserved to eventually preserve folding points
-            oldCV.setData(constraintData[i]);
-            _constraintViews[i] = oldCV;
+            oldCV.setData(newDBconstraintData[i]);
+            newConstraintViewsBuf.add(oldCV);
          }
          else
          {
-            _constraintViews[i] = new ConstraintView(constraintData[i], _desktopController, _session);
+            newConstraintViewsBuf.add(new ConstraintView(newDBconstraintData[i], _desktopController, _session));
          }
       }
 
+      removeOverlappingConstraints(newConstraintViewsBuf, oldNonDBConstraintViews);
+
+
+      newConstraintViewsBuf.addAll(oldNonDBConstraintViews);
+
+      _constraintViews = newConstraintViewsBuf.toArray(new ConstraintView[newConstraintViewsBuf.size()]);
+
       return true;
+   }
+
+   private void removeOverlappingConstraints(ArrayList<ConstraintView> master, ArrayList<ConstraintView> toRemoveFrom)
+   {
+      ArrayList<ConstraintView> removeBuf = new ArrayList<ConstraintView>();
+
+      for (ConstraintView cvRemoveCand : toRemoveFrom)
+      {
+         for (ConstraintView cvMaster : master)
+         {
+            if(cvMaster.hasOverlap(cvRemoveCand))
+            {
+               removeBuf.add(cvRemoveCand);
+               break;
+            }
+         }
+      }
+
+      toRemoveFrom.removeAll(removeBuf);
+
    }
 
    private void onZoomEnabled(boolean b)
@@ -1201,7 +1307,7 @@ public class TableFrameController
 
          ConnectionPoints pkPoints = getConnectionPoints(othersColInfos, other, this, lastFoldingPoint);
 
-         constraintView[i].setConnectionPoints(fkPoints, pkPoints, other, _constraintViewListener);
+         constraintView[i].setConnectionPoints(fkPoints, pkPoints, this, other, _constraintViewListener);
       }
 
       _desktopController.putConstraintViews(constraintView);
@@ -1383,4 +1489,8 @@ public class TableFrameController
       return _tableName.hashCode();
    }
 
+   public ColumnInfo[] getColumnInfos()
+   {
+      return _colInfos;
+   }
 }

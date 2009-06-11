@@ -9,14 +9,16 @@ public class ColumnInfo extends Object
    private String _columnType;
    private int _columnSize;
    private int _decimalDigits;
+   private boolean _isPrimaryKey;
    private boolean _nullable;
    private int _index;
+
    private String _importedFromTable;
    private String _importedColumn;
+   private String _constraintName;
+   private boolean _nonDbConstraint;
 
    private String _toString;
-   private String _constraintName;
-   private boolean _isPrimaryKey;
 
 
    public ColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
@@ -43,7 +45,7 @@ public class ColumnInfo extends Object
 
       if(null != xmlBean.getImportedFromTable())
       {
-         setImportData(xmlBean.getImportedFromTable(), xmlBean.getImportedColumn(), xmlBean.getConstraintName());
+         setImportData(xmlBean.getImportedFromTable(), xmlBean.getImportedColumn(), xmlBean.getConstraintName(), xmlBean.isNonDbConstraint());
       }
 
    }
@@ -56,11 +58,12 @@ public class ColumnInfo extends Object
       ret.setColumnSize(_columnSize);
       ret.setDecimalDigits(_decimalDigits);
       ret.setNullable(_nullable);
+      ret.setPrimaryKey(_isPrimaryKey);
       ret.setIndex(_index);
       ret.setImportedFromTable(_importedFromTable);
       ret.setImportedColumn(_importedColumn);
       ret.setConstraintName(_constraintName);
-      ret.setPrimaryKey(_isPrimaryKey);
+      ret.setNonDbConstraint(_nonDbConstraint);
 
       return ret;
    }
@@ -76,14 +79,26 @@ public class ColumnInfo extends Object
       return _columnName;
    }
 
-   public void setImportData(String importedFromTable, String importedColumn, String constraintName)
+   public void setImportData(String importedFromTable, String importedColumn, String constraintName, boolean nonDbConstraint)
    {
       _importedFromTable = importedFromTable;
       _importedColumn = importedColumn;
       _constraintName = constraintName;
-      _toString += " (FK)";
+      _nonDbConstraint = nonDbConstraint;
 
+      String fkString = " (FK)";
+
+      if(null != importedColumn && false == nonDbConstraint && false == _toString.endsWith(fkString))
+      {
+         _toString += fkString;
+      }
    }
+
+   public void clearImportData()
+   {
+      setImportData(null, null, null, false);
+   }
+
 
    public boolean isImportedFrom(String tableName)
    {
@@ -136,4 +151,8 @@ public class ColumnInfo extends Object
       return _importedFromTable;
    }
 
+   public boolean isNonDbConstraint()
+   {
+      return _nonDbConstraint;
+   }
 }
