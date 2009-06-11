@@ -1,21 +1,27 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.InputEvent;
 
 public class GraphTextAreaFactory
 {
    private ColumnTextArea _txtColumns;
    private ZoomableColumnTextArea _txtZoomColumns;
 
-   public GraphTextAreaFactory(TableToolTipProvider toolTipProvider, Zoomer zoomer)
+   public GraphTextAreaFactory(TableToolTipProvider toolTipProvider, Zoomer zoomer, DndCallback dndCallback, ISession session)
    {
-      _txtColumns = new ColumnTextArea(toolTipProvider);
+      _txtColumns = new ColumnTextArea(toolTipProvider, dndCallback, session);
       _txtColumns.setEditable(false);
       _txtColumns.setBackground(new Color(255,255,204));
 
-      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer);
+      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer, dndCallback, session);
       _txtZoomColumns.setBackground(new Color(255,255,204));
 
    }

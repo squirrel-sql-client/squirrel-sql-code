@@ -1,17 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 import javax.swing.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 
 public class ColumnTextArea extends JTextArea
 {
    private TableToolTipProvider _toolTipProvider;
+   private DndHandler _dndHandler;
 
-   public ColumnTextArea(TableToolTipProvider toolTipProvider)
+   public ColumnTextArea(TableToolTipProvider toolTipProvider, DndCallback dndCallback, ISession session)
    {
       _toolTipProvider = toolTipProvider;
       setToolTipText("Just to make getToolTiptext() to be called");
+      _dndHandler = new DndHandler(dndCallback, this, session);
    }
 
    public String getToolTipText(MouseEvent event)
@@ -32,5 +37,15 @@ public class ColumnTextArea extends JTextArea
          sb.append(columnInfos[i]).append('\n');
       }
       setText(sb.toString());
+   }
+
+   public DndEvent getDndEvent()
+   {
+      return _dndHandler.getDndEvent();
+   }
+
+   public void setDndEvent(DndEvent dndEvent)
+   {
+      _dndHandler.setDndEvent(dndEvent);
    }
 }
