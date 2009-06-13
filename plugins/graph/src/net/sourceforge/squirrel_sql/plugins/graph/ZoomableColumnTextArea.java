@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 
-public class ZoomableColumnTextArea extends JPanel
+public class ZoomableColumnTextArea extends JPanel implements DndColumn
 {
    private TableToolTipProvider _toolTipProvider;
    private ColumnInfo[] _columnInfos;

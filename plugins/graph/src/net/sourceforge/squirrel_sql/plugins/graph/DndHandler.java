@@ -1,16 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import javax.activation.DataHandler;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.dnd.DnDConstants;
-import java.awt.*;
 
 public class DndHandler
 {
@@ -44,8 +47,8 @@ public class DndHandler
          {
             if (1 == e.getClickCount() && false == e.isPopupTrigger() && 0 != (e.getModifiers() & MouseEvent.CTRL_MASK) )
             {
-               comp.getTransferHandler().exportAsDrag(comp, e, DnDConstants.ACTION_COPY);
                _lastExportedMouseEvent = e;
+               comp.getTransferHandler().exportAsDrag(comp, e, DnDConstants.ACTION_COPY);
             }
             else if(false == _dndMessageShown && 1 == e.getClickCount() && false == e.isPopupTrigger())
             {
@@ -64,6 +67,33 @@ public class DndHandler
          {
             _dropPoint = support.getDropLocation().getDropPoint();
             return super.importData(support);
+         }
+
+         @Override // Needed because of some plugin class loader problem or something like that.
+         public boolean canImport(JComponent comp, DataFlavor[] transferFlavors)
+         {
+            if(comp instanceof DndColumn)
+            {
+               return true;
+            }
+            else
+            {
+               return super.canImport(comp, transferFlavors);
+            }
+         }
+
+         @Override // Needed because of some plugin class loader problem or something like that.
+         protected Transferable createTransferable(JComponent c)
+         {
+            if(c instanceof DndColumn)
+            {
+               DndColumn dndCol = (DndColumn) c;
+               return new DataHandler(dndCol.getDndEvent(), DataFlavor.javaJVMLocalObjectMimeType);
+            }
+            else
+            {
+               return super.createTransferable(c);    //To change body of overridden methods use File | Settings | File Templates.
+            }
          }
       };
    }

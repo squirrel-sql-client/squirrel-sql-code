@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
 
-public class ColumnTextArea extends JTextArea
+public class ColumnTextArea extends JTextArea implements DndColumn
 {
    private TableToolTipProvider _toolTipProvider;
    private DndHandler _dndHandler;
