@@ -405,10 +405,32 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          if (null != res)
          {
-            if (!processResultSet(res, exInfo))
+            while(true)
             {
-               return false;
+               if (!processResultSet(res, exInfo))
+               {
+                  return false;
+               }
+
+               if (_stopExecution)
+               {
+                  return false;
+               }
+               
+               // Each call to _stmt.getMoreResults() places the to the next output.
+               // As long as it is a ResultSet, we process it ...
+               if(supportsMultipleResultSets && _stmt.getMoreResults())
+               {
+                  res = _stmt.getResultSet();
+               }
+               else
+               {
+                  break;
+               }
             }
+
+            // ... now we have reached an output that is not a result. We now have to aks for this outputs update count.
+            updateCount = _stmt.getUpdateCount();
          }
 
          if (false == supportsMultipleResultSets)
