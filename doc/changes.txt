@@ -7,6 +7,9 @@ Not yet released - available from CVS or in the latest snapshot:
 Enhancements:
 
 Graph Plugin:
+ - Show constraint name can be selected on each constraint separately. See right mouse menu on constraint line.
+
+Graph Plugin:
  - Allowed constraints to be created using drag and drop.
    To create such a non DB constraint using drag and drop hold
    down the control key. Then right click the constraint to configure it.  
@@ -15,6 +18,8 @@ Graph Plugin:
 
 
 Bug-Fixes:
+
+SP that returned a mix of update counts and results sets weren't displayed properly.
 
 2754166: SQLScript plugin loses precision for Timestamp in H2
 2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisation

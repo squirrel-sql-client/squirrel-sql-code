@@ -31,6 +31,7 @@ public class ConstraintView implements GraphComponent
    private JMenuItem _mnuAddFoldingPoint;
    private JMenuItem _mnuShowDDL;
    private JMenuItem _mnuScriptDDL;
+   private JCheckBoxMenuItem _mnuShowThisConstraintName;
    private JMenuItem _mnuRemoveNonDbConstraint;
    private JMenuItem _mnuConfigureNonDbConstraint;
    private JMenuItem _mnuRemoveFoldingPoint;
@@ -44,8 +45,7 @@ public class ConstraintView implements GraphComponent
    private ISession _session;
    private TableFrameController _fkFrameOriginatingFrom;
    private TableFrameController _pkFramePointingTo;
-   private Vector<ConstraintViewListener> _constraintViewListeners =
-       new Vector<ConstraintViewListener>();
+   private Vector<ConstraintViewListener> _constraintViewListeners = new Vector<ConstraintViewListener>();
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
    {
@@ -113,6 +113,18 @@ public class ConstraintView implements GraphComponent
       });
       _connectLinePopup.add(_mnuScriptDDL);
 
+		// i18n[graph.showThisConstraintName=show this constraint name]
+		_mnuShowThisConstraintName = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showThisConstraintName"));
+      _mnuShowThisConstraintName.setSelected(_constraintData.isShowThisConstraintName());
+      _mnuShowThisConstraintName.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onShowThisConstraintName();
+         }
+      });
+      _connectLinePopup.add(_mnuShowThisConstraintName);
+
       if (_constraintData.isNonDbConstraint())
       {
          // i18n[graph.removeNonDbConstraint=remove non DB constraint]
@@ -151,9 +163,12 @@ public class ConstraintView implements GraphComponent
          }
       });
       _foldingPointPopUp.add(_mnuRemoveFoldingPoint);
+   }
 
-
-
+   private void onShowThisConstraintName()
+   {
+      _constraintData.setShowThisConstraintName(_mnuShowThisConstraintName.isSelected());
+      _desktopController.repaint();
    }
 
    private void onConfigureNonDbConstraint()
@@ -316,7 +331,7 @@ public class ConstraintView implements GraphComponent
          paintArrow(g, linesToArrow[i].getEnd().x, linesToArrow[i].getEnd().y, linesToArrow[i].getBegin().x, linesToArrow[i].getBegin().y);
       }
 
-      if(_desktopController.isShowConstraintNames())
+      if(_desktopController.isShowConstraintNames() || _constraintData.isShowThisConstraintName())
       {
          GraphLine mainLine = _constraintGraph.getMainLine();
          drawConstraintNameOnLine(g, mainLine);
