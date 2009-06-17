@@ -42,7 +42,14 @@ public class ScriptViewCommand
             ResultSet viewInfo = qry.execute(selectedViews[i]);
 
             viewInfo.next();
-            script.append("CREATE VIEW ").append(selectedViews[i].substring(PREFIX_SQLUSER.length())).append(" AS\n");
+            if (selectedViews[i].toLowerCase().startsWith(PREFIX_SQLUSER.toLowerCase()))
+            {
+               script.append("CREATE VIEW ").append(selectedViews[i].substring(PREFIX_SQLUSER.length())).append(" AS\n");
+            }
+            else
+            {
+               script.append("CREATE VIEW ").append(selectedViews[i]).append(" AS\n");
+            }
             script.append(viewInfo.getString(1)).append(getStatementSeparator()).append("\n");
             viewInfo.close();
 
@@ -67,7 +74,7 @@ public class ScriptViewCommand
          if (dbObjs[i] instanceof ITableInfo)
          {
             ITableInfo ti = (ITableInfo) dbObjs[i];
-            String sTable = PREFIX_SQLUSER + ti.getSimpleName();
+            String sTable = ti.getSchemaName() + "." +  ti.getSimpleName();
             ret.add(sTable);
          }
       }
