@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import java.util.Arrays;
 import java.util.Vector;
-import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintDataXmlBean;
@@ -16,6 +15,7 @@ public class ConstraintData
    private boolean _nonDbConstraint;
 
    private ColumnInfo[] _columnInfos = new ColumnInfo[0];
+   private boolean _showThisConstraintName;
 
 
    public ConstraintData(String pkTableName, String fkTableName, String constraintName)
@@ -29,6 +29,7 @@ public class ConstraintData
       _fkTableName = constraintDataXmlBean.getFkTableName();
       _constraintName = constraintDataXmlBean.getConstraintName();
       _nonDbConstraint = constraintDataXmlBean.isNonDbConstraint();
+      _showThisConstraintName = constraintDataXmlBean.isShowThisConstraintName(); 
 
       _columnInfos = new ColumnInfo[constraintDataXmlBean.getColumnInfoXmlBeans().length];
       for (int i = 0; i < _columnInfos.length; i++)
@@ -53,6 +54,7 @@ public class ConstraintData
       ret.setFkTableName(_fkTableName);
       ret.setConstraintName(_constraintName);
       ret.setNonDbConstraint(_nonDbConstraint);
+      ret.setShowThisConstraintName(_showThisConstraintName);
 
       ColumnInfoXmlBean[] colInfoXmlBeans = new ColumnInfoXmlBean[_columnInfos.length];
       for (int i = 0; i < _columnInfos.length; i++)
@@ -233,5 +235,15 @@ public class ConstraintData
    public void setConstraintName(String name)
    {
       _constraintName = name;
+   }
+
+   public boolean isShowThisConstraintName()
+   {
+      return _showThisConstraintName;
+   }
+
+   public void setShowThisConstraintName(boolean showThisConstraintName)
+   {
+      _showThisConstraintName = showThisConstraintName;
    }
 }
