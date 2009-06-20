@@ -90,7 +90,7 @@ launch.jvm=/usr/lib/jvm/java-6-sun
 # Sftp username that is used to login to frs.sourceforge.net.  No password is specified for this account
 # as this script only supports the use of public key encryption in which interaction isn't required and the 
 # files can be uploaded in batch.
-sftp.username=manningr
+sftp.username=
 
 #----------------------------------------------------------------------------------------------------------#
 # The following properties are for uploading the release update site files onto a remote host that can then 
