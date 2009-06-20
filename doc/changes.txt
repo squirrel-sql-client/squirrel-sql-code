@@ -22,6 +22,7 @@ Bug-Fixes:
 SP that returned a mix of update counts and results sets weren't displayed properly.
 
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))
+2794860: Sybase (CREATE TABLE script generate numeric(15) instead (15,2))
 2754166: SQLScript plugin loses precision for Timestamp in H2
 2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisation
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
