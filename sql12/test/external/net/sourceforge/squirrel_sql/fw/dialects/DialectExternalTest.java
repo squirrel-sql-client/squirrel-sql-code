@@ -383,7 +383,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	 */
 	private void initReferenceDialects(ArrayList<HibernateDialect> dialects)
 	{
-		final List<String> dbs = getPropertyListValue("dbsToReference");
+		final List<String> dbs = getPropertyListValue(props.getProperty("dbsToReference"));
 
 		for (String dbName : dbs)
 		{
