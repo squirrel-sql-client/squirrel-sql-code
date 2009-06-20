@@ -1120,6 +1120,12 @@
 	
 	<target name="dialectExternalTest">
 		<mkdir dir="${junit.report.dir}" />
+		<echo message="jdbcUrl=${jdbcUrl}" />
+		<echo message="jdbcUser=${jdbcUser}" />
+		<echo message="jdbcPass=${jdbcPass}" />
+		<echo message="jdbcDriver=${jdbcDriver}" />
+		<echo message="catalog=${catalog}" />
+		<echo message="schema=${schema}" />
                 <junit printsummary="true" showoutput="true" fork="true" dir="${junit.report.dir}" >
 
                         <classpath>
@@ -1140,8 +1146,13 @@
                                         <include name="**/DialectExternalTest.java" />
                                 </fileset>
                         </batchtest>
-                	<jvmarg value="-DdbsToTest=${dbsToTest}"/>
-                	<jvmarg value="-DdialectExternalTestPropertyFile=${ext.test.config}" />
+                	<jvmarg value="-Dschema=${schema}"/>
+                        <jvmarg value="-DjdbcUrl=${jdbcUrl}" />
+                        <jvmarg value="-DjdbcUser=${jdbcUser}" />
+                        <jvmarg value="-DjdbcPass=${jdbcPass}" />
+                        <jvmarg value="-DjdbcDriver=${jdbcDriver}" />
+                        <jvmarg value="-Dcatalog=${catalog}" />
+                        <jvmarg value="-Dschema=${schema}" />
                </junit>
 	</target>
 	
