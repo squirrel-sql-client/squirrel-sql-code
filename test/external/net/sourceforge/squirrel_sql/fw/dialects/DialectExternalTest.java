@@ -346,19 +346,31 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private void testDialects(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception
 	{
-
 		prefs.setQualifyTableNames(qualifyTableNames);
 		prefs.setQuoteIdentifiers(quoteIdentifiers);
+		prefs.setSqlStatementSeparator(";");
 
-		final String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
-		if (propertyFile == null || "".equals(propertyFile))
-		{
-			fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
+		
+		if (System.getProperties().containsKey("jdbcUrl")) {
+			Properties sysProps = System.getProperties();
+			String url = sysProps.getProperty("jdbcUrl");
+			String user = sysProps.getProperty("jdbcUser");
+			String pass = sysProps.getProperty("jdbcPass");
+			String driver = sysProps.getProperty("jdbcDriver");
+			String catalog = sysProps.getProperty("catalog");
+			String schema = sysProps.getProperty("schema");
+			initSession(sessions, url, user, pass, driver, catalog, schema);
+		} else {
+			final String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
+			if (propertyFile == null || "".equals(propertyFile))
+			{
+				fail("Must specify the location of the properties file as a system property (dialectExternalTestPropertyFile)");
+			}
+			props.load(new FileReader(propertyFile));
+			initSessions(sessions, props.getProperty("dbsToTest"));
+			initReferenceDialects(referenceDialects);
 		}
-
-		props.load(new FileReader(propertyFile));
-		initSessions(sessions, "dbsToTest");
-		initReferenceDialects(referenceDialects);
+		
 		runTests(quoteIdentifiers, qualifyTableNames);
 	}
 
@@ -388,9 +400,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		}
 	}
 
-	private List<String> getPropertyListValue(String propertyKey)
+	private List<String> getPropertyListValue(String dbsToTest)
 	{
-		final String dbsToTest = props.getProperty(propertyKey);
 		final StringTokenizer st = new StringTokenizer(dbsToTest, ",");
 		final ArrayList<String> dbs = new ArrayList<String>();
 		while (st.hasMoreTokens())
@@ -401,17 +412,28 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		return dbs;
 	}
 
-	private void initSessions(ArrayList<ISession> sessionsList, String sessionListPropKey) throws Exception
+	private void initSession(ArrayList<ISession> sessionsList, String url, String user, String pass,
+		String driver, String catalog, String schema) throws Exception
+	{
+		final MockSession session = new MockSession(driver, url, user, pass);
+		session.setDefaultCatalog(catalog);
+		session.setDefaultSchema(schema);
+		sessionsList.add(session);		
+	}
+	
+	private void initSessions(ArrayList<ISession> sessionsList, String dbsToTest) throws Exception
 	{
 		prefs.setSqlStatementSeparator(";");
 
-		dialectDiscoveryMode = Boolean.parseBoolean(props.getProperty("dialectDiscoveryMode"));
+		if (props != null) {
+			dialectDiscoveryMode = Boolean.parseBoolean(props.getProperty("dialectDiscoveryMode", "false"));
+		}
 		if (dialectDiscoveryMode)
 		{
 			System.out.println("In discovery mode - assuming that the dialect being tested isn't yet implemented");
 		}
 
-		final List<String> dbs = getPropertyListValue(sessionListPropKey);
+		final List<String> dbs = getPropertyListValue(dbsToTest);
 		for (final String db : dbs)
 		{
 			final String url = props.getProperty(db + "_jdbcUrl");
