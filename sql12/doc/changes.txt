@@ -7,6 +7,7 @@ SQuirreL SQL Client Change Log
 Bug-Fixes:
 
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))
+2794860: Sybase (CREATE TABLE script generate numeric(15) instead (15,2))
 2754166: SQLScript plugin loses precision for Timestamp in H2
 2722109: "Oracle Session information window" does not close
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)

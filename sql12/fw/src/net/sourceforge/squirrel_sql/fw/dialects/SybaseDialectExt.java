@@ -59,7 +59,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 			registerColumnType(Types.INTEGER, "int");
 			registerColumnType(Types.LONGVARBINARY, "image");
 			registerColumnType(Types.LONGVARCHAR, "text");
-			registerColumnType(Types.NUMERIC, "numeric($p)");
+			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "time");
