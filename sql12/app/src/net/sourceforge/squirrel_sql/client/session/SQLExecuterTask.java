@@ -87,7 +87,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
    private boolean schemaCheck = true;
-   
+
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
       this(session, sql, handler, new ISQLExecutionListener[0]);
@@ -114,11 +114,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
       _dataSetUpdateableTableModel.setSession(_session);
    }
-   
+
    public void setExecutionListeners(ISQLExecutionListener[] executionListeners) {
        _executionListeners = executionListeners;
    }
-   
+
    /**
     * Returns the number of queries that the tokenizer found in _sql.
     * @return
@@ -126,11 +126,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    public int getQueryCount() {
        return _tokenizer.getQueryCount();
    }
-   
+
    public void setSchemaCheck(boolean aBoolean) {
        schemaCheck = aBoolean;
    }
-   
+
    public void run()
    {
        if (_sql == null) {
@@ -139,7 +139,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
            }
            return;
        }
-       
+
       String lastExecutedStatement = null;
       int statementCount = 0;
       final SessionProperties props = _session.getProperties();
@@ -156,7 +156,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             {
                setMaxRows(props);
             }
-            
+
             if(_tokenizer.getQueryCount() == 0)
             {
                throw new IllegalArgumentException("No SQL selected for execution.");
@@ -214,11 +214,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   }
                   catch (SQLException ex)
                   {
-                     // If the user has cancelled the query, don't bother logging 
-                     // an error message.  It is likely that the cancel request 
-                     // interfered with the attempt to fetch results from the 
+                     // If the user has cancelled the query, don't bother logging
+                     // an error message.  It is likely that the cancel request
+                     // interfered with the attempt to fetch results from the
                      // ResultSet, which is to be expected when the Statement is
-                     // closed.  So, let's not bug the user with obvious error 
+                     // closed.  So, let's not bug the user with obvious error
                      // messages that we can do nothing about.
                      if (_stopExecution) {
                          break;
@@ -325,7 +325,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 	/**
 	 * Returns a boolean indicating whether or not the specified querySql appears to be a SELECT statement.
-	 * 
+	 *
 	 * @param querySql
 	 *           the SQL statement to check
 	 * @return true if it is a SELECT statement; false otherwise.
@@ -405,10 +405,32 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          if (null != res)
          {
-            if (!processResultSet(res, exInfo))
+            while(true)
             {
-               return false;
+               if (!processResultSet(res, exInfo))
+               {
+                  return false;
+               }
+
+               if (_stopExecution)
+               {
+                  return false;
+               }
+               
+               // Each call to _stmt.getMoreResults() places the to the next output.
+               // As long as it is a ResultSet, we process it ...
+               if(supportsMultipleResultSets && _stmt.getMoreResults())
+               {
+                  res = _stmt.getResultSet();
+               }
+               else
+               {
+                  break;
+               }
             }
+
+            // ... now we have reached an output that is not a result. We now have to aks for this outputs update count.
+            updateCount = _stmt.getUpdateCount();
          }
 
          if (false == supportsMultipleResultSets)
@@ -472,10 +494,10 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    /**
     * Some drivers, such as SQLite, don't properly support getMaxRows/setMaxRows for statements.
-    * 
+    *
     * @param stmt the statement to get the max rows that could be returned in a result set for.
-    * 
-    * @return the max number of rows that could be returned by this statement 
+    *
+    * @return the max number of rows that could be returned by this statement
     */
    private int getMaxRows(Statement stmt) {
    	int result = 0;
@@ -491,7 +513,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		}
 		return result;
    }
-   
+
    private void fireExecutionListeners(final String sql)
    {
       // This method is called from a thread.
