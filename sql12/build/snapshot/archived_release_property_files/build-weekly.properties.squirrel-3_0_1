@@ -1,6 +1,6 @@
 ####
 #
-# weekly build target properties
+# Release build properties
 #
 ####
 
@@ -9,8 +9,9 @@
 # application name that is used in the name of the installer file.
 name=squirrel-sql
 
-# version that's used in the name of the installer file
-appversion=2.6.6
+# version that's used in the name of the installer file - this isn't used if 
+# building a snapshot release (that is, if replace.version is set to true)
+appversion=3.0.1
 
 # cvs repository cvsroot to checkout the source from.
 project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
@@ -19,10 +20,10 @@ project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel
 project.module=sql12
 
 # What tag to use to checkout from CVS
-cvs.tag=squirrel_2_6_branch
+cvs.tag=squirrel_3_0_branch
 
 # What temporary directory to checkout to in order to perform the build in.
-cvs.dest.dir=/home/manningr/squirrel_builds/squirrel_2_6_6_build
+cvs.dest.dir=/home/manningr/squirrel_builds/squirrel_3_0_1_build
 
 # Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
 # and do a clean.  
@@ -42,7 +43,7 @@ replace.version=false
 version.dest.filename=${cvs.dest.dir}/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java
 
 # What build target to call on the build script to produce the compiled objects
-# required by the installer.
+# required by the installer(s)
 build.target=mac_dist
 
 # The build directory where the main build scripts and configuration files are.
@@ -51,24 +52,16 @@ build.file.dest.dir=${cvs.dest.dir}/${project.module}/build
 # Directory where IzPack is installed 
 izpack.home.dir=/opt/IzPack
 
-#
 # The template file to use to create the Windows/Unix IzPack configuration file
-#
 other.izpack.config.file.template=izpack-super.xml.template
 
-#
 # The template file to use to create the MacOS X IzPack configuration file
-#
 macosx.izpack.config.file.template=izpack-mac.xml.template
 
-#
 # The name of the Windows/Unix IzPack configuration file.
-#
 other.izpack.config.file=izpack-super.xml
 
-#
 # The name of the MacOS X IzPack configuration file.
-#
 macosx.izpack.config.file=izpack-macosx.xml
 
 # The template file to use to create the auto install script
@@ -92,6 +85,10 @@ launch.jvm=/usr/lib/jvm/java-6-sun
 # files can be uploaded in batch.
 sftp.username=
 
+# The channel of the release (this determines what sub-folder beneath the "updates" directory on the
+# remote update site.  Currently, the only valid values here are "stable" and "snapshot"
+release.channel=stable
+
 #----------------------------------------------------------------------------------------------------------#
 # The following properties are for uploading the release update site files onto a remote host that can then 
 # be pointed to inside of SQuirreL using the software update feature to pull down updates.  These are only 
@@ -111,3 +108,6 @@ remoteUpdateSitePassword=
 # be the location where the file is uploaded and extracted.  The release.xml is at the top level in this 
 # archive, so the channel directory should be specified in the path here
 remoteUpdateSiteDir=/updates/stable
+
+
+
