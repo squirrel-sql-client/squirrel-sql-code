@@ -149,6 +149,7 @@
 		<mkdir dir="${release_core_dir}" />
 		<mkdir dir="${release_i18n_dir}" />
 		<mkdir dir="${release_plugin_dir}" />
+		<echo message="singleTest: ${singleTest}" />
 	</target>
 
 	<!--
@@ -1050,7 +1051,7 @@
 		     manually configured AllTest class TestSuites, and removes the 
 		     temptation to not configure certain tests because they fail.  If a 
 		     test fails, fix it; if it can't be fixed, then remove it.  -->
-		<junit printsummary="true" fork="true" dir="${junit.report.dir}">
+		<junit printsummary="true" fork="true" dir="${junit.report.dir}" >
 
 			<classpath>
 				<pathelement path="${instr.dir}" />
@@ -1064,8 +1065,9 @@
 			</classpath>
 			<formatter type="plain" />
 			<formatter type="xml" />
+						
 			<!-- fork needs to be true for DialectExternalTest to work properly -->
-			<batchtest   fork="true" todir="${junit.report.dir}">
+			<batchtest   fork="true" todir="${junit.report.dir}" unless="singleTest">
 				<fileset dir="test/src">
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
@@ -1079,7 +1081,7 @@
 		        		   <exclude name="**/Abstract*.java" />
 		        	</fileset>
 			</batchtest>
-
+			
 			<jvmarg value="-Demma.coverage.out.file=${coverage.report.dir}/coverage.emma" />
 			<jvmarg value="-Demma.coverage.out.merge=true" />
 			<jvmarg value="-DdialectExternalTestPropertyFile=${ext.test.config}" />
@@ -1115,7 +1117,34 @@
 		</emma>
 
 	</target>
+	
+	<target name="dialectExternalTest">
+		<mkdir dir="${junit.report.dir}" />
+                <junit printsummary="true" showoutput="true" fork="true" dir="${junit.report.dir}" >
 
+                        <classpath>
+                                <pathelement path="${instr.dir}" />
+                                <pathelement path="${test.classes.dir}" />
+                                <fileset dir="${base.jdbc.driver.path}" id="id">
+                                    <include name="**/*.jar"/>
+                                </fileset>
+                                <path refid="test.compile.classpath" />
+                                <path refid="emma.lib" />
+                        </classpath>
+                        <formatter type="plain" />
+                        <formatter type="xml" />
+                        
+                        <!-- fork needs to be true for DialectExternalTest to work properly -->
+                        <batchtest fork="true" todir="${junit.report.dir}">
+                                <fileset dir="test/external">
+                                        <include name="**/DialectExternalTest.java" />
+                                </fileset>
+                        </batchtest>
+                	<jvmarg value="-DdbsToTest=${dbsToTest}"/>
+                	<jvmarg value="-DdialectExternalTestPropertyFile=${ext.test.config}" />
+               </junit>
+	</target>
+	
 	<!--
 	==================================================================
 	Compiles an HTML summary and places it in 
