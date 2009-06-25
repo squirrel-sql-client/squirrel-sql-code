@@ -149,7 +149,11 @@ public class CSVFileImporter implements IFileImporter {
 	 */
 	public Long getLong(int column) throws IOException, UnsupportedFormatException {
 		try {
-			return Long.parseLong(reader.get(column));
+			String longS = reader.get(column);
+			if (null == longS || 0 == longS.trim().length()){
+				return null;
+			}				
+			return Long.parseLong(longS);
 		} catch (NumberFormatException nfe) {
 			throw new UnsupportedFormatException();
 		}
@@ -161,7 +165,12 @@ public class CSVFileImporter implements IFileImporter {
 	 */
 	public Integer getInt(int column) throws IOException, UnsupportedFormatException {
 		try {
-			return Integer.parseInt(reader.get(column));
+			
+			String intS = reader.get(column);
+			if (null == intS || 0 == intS.trim().length()){
+				return null;
+			}
+			return Integer.parseInt(intS);
 		} catch (NumberFormatException nfe) {
 			throw new UnsupportedFormatException(nfe);
 		}

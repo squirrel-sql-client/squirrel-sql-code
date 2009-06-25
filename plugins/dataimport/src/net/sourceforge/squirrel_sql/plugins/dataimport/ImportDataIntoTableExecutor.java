@@ -282,8 +282,8 @@ public class ImportDataIntoTableExecutor {
     private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, UnsupportedFormatException, IOException {
     	int mappedColumn = getMappedColumn(column);
 		switch (column.getDataType()) {
-    	case Types.BIGINT:
-    		stmt.setLong(index, importer.getLong(mappedColumn));
+    	case Types.BIGINT:    		
+    		setLongOrNull(stmt, index, mappedColumn);    		
     		break;
     	case Types.INTEGER:
     	case Types.NUMERIC:
@@ -313,24 +313,49 @@ public class ImportDataIntoTableExecutor {
     private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column) 
     	throws SQLException, UnsupportedFormatException, IOException 
     {
-   	int mappedColumn = getMappedColumn(column);
+    	int mappedColumn = getMappedColumn(column);
   		String columnTypeName = column.getTypeName(); 
  		if (columnTypeName != null 
  				&& (columnTypeName.endsWith("UNSIGNED") || columnTypeName.endsWith("unsigned"))) 
  		{
- 			stmt.setLong(index, importer.getLong(mappedColumn));
+ 			setLongOrNull(stmt, index, mappedColumn);			
  		}
  		
  		try {
- 			stmt.setInt(index, importer.getInt(mappedColumn));
+ 			setIntOrNull(stmt, index, mappedColumn);			
  		} catch (UnsupportedFormatException e) {
- 			log.error("bindColumn: integer storage overflowed.  Exception was "+e.getMessage()+
- 						 ".  Re-trying as a long.", e);
+ 			//
+ 			// Too much logs slow down the system in case of 
+ 			// large imports ( > 10000)
+ 			//
+ 			// log.error("bindColumn: integer storage overflowed.  Exception was "+e.getMessage()+
+ 			//			 ".  Re-trying as a long.", e);
  			/* try it as a long in case the database driver didn't correctly identify an unsigned field */
- 			stmt.setLong(index, importer.getLong(mappedColumn));
+ 			setLongOrNull(stmt, index, mappedColumn);			
  		}
-
     }
+
+	private void setLongOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws IOException, UnsupportedFormatException,
+			SQLException {
+		Long long1 = importer.getLong(mappedColumn);
+		if (null == long1) {
+			stmt.setNull(index, Types.INTEGER);
+		} else {
+			stmt.setLong(index, long1);
+		}
+	}
+
+	private void setIntOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws IOException, UnsupportedFormatException,
+			SQLException {
+		Integer int1 = importer.getInt(mappedColumn);
+		if (null == int1) {
+			stmt.setNull(index, Types.INTEGER);
+		} else {
+			stmt.setInt(index, int1);
+		}
+	}
     
     private int getMappedColumn(TableColumnInfo column) {
     	return importerColumns.indexOf(getMapping(column));
