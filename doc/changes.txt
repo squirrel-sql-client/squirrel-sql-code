@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+About dialog now has a clickable link to our home page.
+ - Thanks to Hashim Kubba for this patch (ID 2104309)
+
+
 Graph Plugin:
  - Show constraint name can be selected on each constraint separately. See right mouse menu on constraint line.
 
