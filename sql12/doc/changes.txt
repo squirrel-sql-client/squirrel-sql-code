@@ -28,6 +28,15 @@ Graph Plugin:
 
 Bug-Fixes:
 
+SQL Scripts Plugin:
+ - When generating insert scripts from a SQL statement the global
+   preference "Qualify table names in generated scripts with the schema name" did not work.
+   Thanks to Johann Geyer for the patch (Patch ID 2365193)
+
+SQL Scripts Plugin:
+ - Generating data scripts may throw java.lang.StringIndexOutOfBoundsException when timestamps where scripted
+
+
 SP that returned a mix of update counts and results sets weren't displayed properly.
 
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))

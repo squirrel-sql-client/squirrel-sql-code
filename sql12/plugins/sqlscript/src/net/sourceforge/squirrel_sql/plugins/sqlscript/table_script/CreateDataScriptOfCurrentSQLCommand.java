@@ -27,9 +27,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -71,14 +69,14 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
             try
             {
-                ISQLPanelAPI api = 
+                ISQLPanelAPI api =
                     FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
-                
+
                 String script = api.getSQLScriptToBeExecuted();
-                
+
                IQueryTokenizer qt = _session.getQueryTokenizer();
                qt.setScriptToTokenize(script);
-                
+
                if(false == qt.hasQuery())
                {
                   // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
@@ -98,10 +96,16 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 
                   ResultSet srcResult = stmt.executeQuery(sql);
                   ResultSetMetaData metaData = srcResult.getMetaData();
-                  String sTable = metaData.getTableName(1);
+                  //String sTable = metaData.getTableName(1);
+
+                  ITableInfo tInfo = new TableInfo(metaData.getCatalogName(1), metaData.getSchemaName(1),
+                       metaData.getTableName(1), "TABLE", "", _session.getMetaData());
+
+                  String sTable = ScriptUtil.getTableName(tInfo);
+
                   if (sTable == null || sTable.equals(""))
                   {
-                     int iFromIndex = 
+                     int iFromIndex =
                          StringUtilities.getTokenBeginIndex(sql, "from");
                      sTable = getNextToken(sql, iFromIndex + "from".length());
                   }

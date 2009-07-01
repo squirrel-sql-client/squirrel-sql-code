@@ -444,7 +444,12 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 		}
 		
 		String result = "" + ts.getNanos();
-		result = result.substring(0,dialect.getTimestampMaximumFractionalDigits());
+
+      int timestampMaximumFractionalDigits = dialect.getTimestampMaximumFractionalDigits();
+      if(result.length() >= timestampMaximumFractionalDigits)
+      {
+         result = result.substring(0, timestampMaximumFractionalDigits);
+      }
 		return result;
 	}
    
