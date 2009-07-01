@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Oracle Plugin
+ - SQL*Loader control file generation.
+   Adds a new right mouse menu item to tables in the object tree: "Generate SQL*Loader control file"
+   Thanks to José David Moreno Juárez for the patch (Patch ID 2776344)
+
 About dialog now has a clickable link to our home page.
  - Thanks to Hashim Kubba for this patch (ID 2104309)
 
