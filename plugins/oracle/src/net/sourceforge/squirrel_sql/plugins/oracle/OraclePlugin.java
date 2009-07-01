@@ -92,6 +92,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObje
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateControlFileAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
@@ -817,6 +818,13 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 		addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
 		addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());
+		
+		/* Adds a popup menu for SQL*Loader control files generation */
+		session.getSessionInternalFrame().getObjectTreeAPI().addToPopup(
+				DatabaseObjectType.TABLE,
+				new GenerateControlFileAction(getApplication(), _resources,
+						session));
+
 
 		// This fixes the issue where the tree is getting constructed prior to
 		// the Oracle plugin expanders being registered.(USERS, SESSIONS,
