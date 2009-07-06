@@ -454,7 +454,7 @@ public class Completor
 	private Rectangle getCurCompletionPanelSize(CompletionInfo[] candidates)
 	{
 		FontMetrics fm = _txtComp.getEditor().getGraphics().getFontMetrics(_txtComp.getEditor().getFont());
-		int width = getCurCompletionPanelWidth(candidates, fm) + 30;
+		int width = getCurCompletionPanelWidth(candidates, fm) + 32;
 		int height = (int)(Math.min(candidates.length,  MAX_ITEMS_IN_COMPLETION_LIST) * (fm.getHeight() + 2.3) + 3);
 
 
