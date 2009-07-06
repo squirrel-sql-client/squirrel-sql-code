@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Look & Feel Plugin
+ - Better support for Nimbus: No horizontal scrollbars on pop up lists (e.g. code completion) 
+
 Oracle Plugin
  - SQL*Loader control file generation.
    Adds a new right mouse menu item to tables in the object tree: "Generate SQL*Loader control file"
