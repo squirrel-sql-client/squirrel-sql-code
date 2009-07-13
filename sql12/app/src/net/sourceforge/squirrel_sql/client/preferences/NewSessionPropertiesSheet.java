@@ -179,7 +179,7 @@ public class NewSessionPropertiesSheet extends DialogWidget
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(_app));
-		_panels.add(new SessionSQLPropertiesPanel(_app, true));
+		_panels.add(new SessionSQLPropertiesPanel(_app, null));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();

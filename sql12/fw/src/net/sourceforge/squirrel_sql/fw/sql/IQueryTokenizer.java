@@ -67,4 +67,6 @@ public interface IQueryTokenizer {
      * @return true if remove; falso otherwise.
      */
     boolean isRemoveMultiLineComment();
+
+    TokenizerSessPropsInteractions getTokenizerSessPropsInteractions();
 }

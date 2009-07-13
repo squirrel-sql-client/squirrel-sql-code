@@ -329,7 +329,13 @@ public class QueryTokenizer implements IQueryTokenizer
         return _removeMultiLineComment;
     }
 
-    /**
+   @Override
+   public TokenizerSessPropsInteractions getTokenizerSessPropsInteractions()
+   {
+      return new TokenizerSessPropsInteractions();
+   }
+
+   /**
      * @param multiLineComment the _removeMultiLineComment to set
      */
     public void setRemoveMultiLineComment(boolean multiLineComment) {
@@ -434,6 +440,6 @@ public class QueryTokenizer implements IQueryTokenizer
      */
     public String getSQLStatementSeparator() {
         return _querySep;
-    }    
-    
+    }
+
 }
