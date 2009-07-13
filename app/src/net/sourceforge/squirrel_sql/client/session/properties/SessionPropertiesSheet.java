@@ -74,7 +74,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 	public SessionPropertiesSheet(ISession session)
 	{
 		super(session.getTitle() + " " + i18n.TITLE, true, session);
-		createGUI();
+		createGUI(session);
         for (ISessionPropertiesPanel pnl : _panels)
 		{
 			pnl.initialize(getSession().getApplication(), getSession());
@@ -187,7 +187,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 		super.dispose();	 //To change body of overridden methods use File | Settings | File Templates.
 	}
 
-	private void createGUI()
+	private void createGUI(ISession session)
 	{
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -202,7 +202,7 @@ public class SessionPropertiesSheet extends SessionDialogWidget
 		// Property panels for SQuirreL.
 		_panels.add(new GeneralSessionPropertiesPanel());
 		_panels.add(new SessionObjectTreePropertiesPanel(app));
-		_panels.add(new SessionSQLPropertiesPanel(app, false));
+		_panels.add(new SessionSQLPropertiesPanel(app, session));
 
 		// Go thru all plugins attached to this session asking for panels.
 		SessionPluginInfo[] plugins = app.getPluginManager().getPluginInformation(getSession());

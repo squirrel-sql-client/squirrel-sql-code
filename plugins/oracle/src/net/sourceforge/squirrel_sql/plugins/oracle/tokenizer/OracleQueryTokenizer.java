@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -315,4 +316,23 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 		}
 		_queries = tmp;
 	}
+
+
+   @Override
+   public TokenizerSessPropsInteractions getTokenizerSessPropsInteractions()
+   {
+      if(_prefs.isInstallCustomQueryTokenizer())
+      {
+         TokenizerSessPropsInteractions ret = new TokenizerSessPropsInteractions();
+         ret.setTokenizerDefinesRemoveMultiLineComment(true);
+         ret.setTokenizerDefinesStartOfLineComment(true);
+         ret.setTokenizerDefinesStatementSeparator(true);
+         
+         return ret;
+      }
+      else
+      {
+         return super.getTokenizerSessPropsInteractions();
+      }
+   }
 }

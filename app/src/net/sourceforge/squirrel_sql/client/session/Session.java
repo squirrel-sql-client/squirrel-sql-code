@@ -58,14 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -1080,6 +1073,23 @@ class Session implements ISession
         }
         customTokenizerInstalled = true;
         tokenizer = aTokenizer;
+
+       TokenizerSessPropsInteractions tep = tokenizer.getTokenizerSessPropsInteractions();
+
+       if(tep.isTokenizerDefinesStatementSeparator())
+       {
+         _props.setSQLStatementSeparator(aTokenizer.getSQLStatementSeparator());
+       }
+
+       if(tep.isTokenizerDefinesStatementSeparator())
+       {
+          _props.setStartOfLineComment(aTokenizer.getLineCommentBegin());
+       }
+
+       if(tep.isTokenizerDefinesStatementSeparator())
+       {
+         _props.setRemoveMultiLineComment(aTokenizer.isRemoveMultiLineComment());
+       }
     }
 
     /**

@@ -17,11 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -35,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -67,11 +65,12 @@ public class SessionSQLPropertiesPanel
 	 *
 	 * @param	app		Application API.
 	 *
-	 * @throws	IllegalArgumentException
+	 * @param session
+    * @throws	IllegalArgumentException
 	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
 	 * 			passed.
 	 */
-	public SessionSQLPropertiesPanel(IApplication app, boolean newSessionProperties) throws IllegalArgumentException
+	public SessionSQLPropertiesPanel(IApplication app, ISession session) throws IllegalArgumentException
 	{
 		super();
       if (app == null)
@@ -79,7 +78,7 @@ public class SessionSQLPropertiesPanel
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
 		_app = app;
-		_myPanel = new SQLPropertiesPanel(app, newSessionProperties);
+		_myPanel = new SQLPropertiesPanel(app, session);
       _scrolledMyPanel = new JScrollPane(_myPanel);
    }
 
@@ -154,12 +153,12 @@ public class SessionSQLPropertiesPanel
 		 * makes changes.
 		 */
 		private final ControlMediator _controlMediator = new ControlMediator();
-      private boolean _newSessionProperties;
+      private ISession _session;
 
-      SQLPropertiesPanel(IApplication app, boolean newSessionProperties)
+      SQLPropertiesPanel(IApplication app, ISession session)
 		{
 			super();
-         _newSessionProperties = newSessionProperties;
+         _session = session;
          createGUI();
 		}
 
@@ -173,9 +172,51 @@ public class SessionSQLPropertiesPanel
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
 			_sqlLimitRowsChk.setSelected(props.getSQLLimitRows());
-			_stmtSepField.setText(props.getSQLStatementSeparator());
-			_solCommentField.setText(props.getStartOfLineComment());
-         _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
+
+
+         if(null != _session)
+         {
+            IQueryTokenizer queryTokenizer = _session.getQueryTokenizer();
+            TokenizerSessPropsInteractions qtp = queryTokenizer.getTokenizerSessPropsInteractions();
+            if(qtp.isTokenizerDefinesStatementSeparator())
+            {
+               _stmtSepField.setText(queryTokenizer.getSQLStatementSeparator());
+               _stmtSepField.setEditable(false);
+            }
+            else
+            {
+               _stmtSepField.setText(props.getSQLStatementSeparator());
+               _stmtSepField.setEditable(true);
+            }
+
+            if (qtp.isTokenizerDefinesStartOfLineComment())
+            {
+               _solCommentField.setText(queryTokenizer.getLineCommentBegin());
+               _solCommentField.setEditable(false);
+            }
+            else
+            {
+               _solCommentField.setText(props.getStartOfLineComment());
+               _solCommentField.setEditable(true);
+            }
+
+            if (qtp.isTokenizerDefinesStatementSeparator())
+            {
+               _removeMultiLineComment.setSelected(queryTokenizer.isRemoveMultiLineComment());
+               _removeMultiLineComment.setEnabled(false);
+            }
+            else
+            {
+               _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
+               _removeMultiLineComment.setEnabled(true);
+            }
+         }
+         else
+         {
+            _stmtSepField.setText(props.getSQLStatementSeparator());
+            _solCommentField.setText(props.getStartOfLineComment());
+            _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
+         }
 
          _shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
@@ -353,6 +394,26 @@ public class SessionSQLPropertiesPanel
 			gbc.insets = defaultInsets;
 			//
 			/////////////////////////////////////////////
+
+
+         if (null != _session)
+         {
+            TokenizerSessPropsInteractions tep = _session.getQueryTokenizer().getTokenizerSessPropsInteractions();
+
+            if(   tep.isTokenizerDefinesRemoveMultiLineComment() ||
+                  tep.isTokenizerDefinesStartOfLineComment() ||
+                  tep.isTokenizerDefinesStatementSeparator())
+            {
+               ++gbc.gridy;
+               gbc.gridwidth = 4;
+               MultipleLineLabel lbl = new MultipleLineLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.tokenizerNotEditableMsg"));
+               lbl.setForeground(Color.red);
+               pnl.add(lbl, gbc);
+
+               gbc.gridwidth = 1;
+            }
+         }
+         
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
