@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Feature Request #2818444:  Oracle: Connecting as SYS not possible - now it is possible to add the necessary 
+driver property to connect as SYS, or any other account that needs to connect as SYSDBA.
+
 Look & Feel Plugin
  - Better support for Nimbus: No horizontal scrollbars on pop up lists (e.g. code completion) 
 
