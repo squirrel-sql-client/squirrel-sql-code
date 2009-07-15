@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -18,6 +19,8 @@ package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.DriverPropertyInfo;
 
 import javax.swing.DefaultCellEditor;
@@ -34,12 +37,16 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-class DriverPropertiesTable extends JTable
-								implements DriverPropertiesTableModel.IColumnIndexes
+class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel.IColumnIndexes,
+	MouseListener
 {
+	private static final long serialVersionUID = 1834042774863321901L;
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DriverPropertiesTable.class);
+
+	private DriverPropertiesPopupMenu popupMenu = null;
 
 	DriverPropertiesTable(SQLDriverPropertyCollection props)
 	{
@@ -49,7 +56,7 @@ class DriverPropertiesTable extends JTable
 
 	DriverPropertiesTableModel getTypedModel()
 	{
-		return (DriverPropertiesTableModel)getModel();
+		return (DriverPropertiesTableModel) getModel();
 	}
 
 	private void init()
@@ -59,11 +66,40 @@ class DriverPropertiesTable extends JTable
 		setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		getTableHeader().setResizingAllowed(true);
 		getTableHeader().setReorderingAllowed(false);
+		popupMenu = new DriverPropertiesPopupMenu(this);
+		addMouseListener(this);
 	}
 
-	private final class PropertiesTableColumnModel
-								extends DefaultTableColumnModel
+	/**
+	 * Adds the specified name, value and description as a new property to this Driver Properties table.
+	 * 
+	 * @param name
+	 *           the name of the property.
+	 * @param value
+	 *           the value that the property should have.
+	 * @param description
+	 *           the description of the property.
+	 */
+	public void addProperty(String name, String value, String description)
 	{
+		getTypedModel().addRow(name, value, description);
+	}
+
+	/**
+	 * Removes the property with the specified name
+	 * 
+	 * @param name
+	 *           the name of the property to remove.
+	 */
+	public void removeProperty(String name)
+	{
+		getTypedModel().removeRow(name);
+	}
+
+	private final class PropertiesTableColumnModel extends DefaultTableColumnModel
+	{
+		private static final long serialVersionUID = 7718475486013810595L;
+
 		PropertiesTableColumnModel()
 		{
 			super();
@@ -92,8 +128,12 @@ class DriverPropertiesTable extends JTable
 
 	private final class ValueCellEditor extends DefaultCellEditor
 	{
+		private static final long serialVersionUID = -7637425267855940899L;
+
 		private final JTextField _textEditor = new JTextField();
+
 		private final JComboBox _comboEditor = new JComboBox();
+
 		private JComponent _currentEditor;
 
 		ValueCellEditor()
@@ -102,14 +142,10 @@ class DriverPropertiesTable extends JTable
 			setClickCountToStart(1);
 		}
 
-		public Component getTableCellEditorComponent(JTable table, Object value,
-												boolean isSelected, int row,
-												int col)
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+			int col)
 		{
-			if (col != IDX_VALUE)
-			{
-				throw new IllegalStateException("Editor used for cell other than value");
-			}
+			if (col != IDX_VALUE) { throw new IllegalStateException("Editor used for cell other than value"); }
 
 			SQLDriverPropertyCollection coll = getTypedModel().getSQLDriverProperties();
 			SQLDriverProperty sdp = coll.getDriverProperty(row);
@@ -137,11 +173,57 @@ class DriverPropertiesTable extends JTable
 
 		public Object getCellEditorValue()
 		{
-			if (_currentEditor == _comboEditor)
-			{
-				return _comboEditor.getSelectedItem();
-			}
+			if (_currentEditor == _comboEditor) { return _comboEditor.getSelectedItem(); }
 			return _textEditor.getText();
 		}
+	}
+
+	/**
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		if (e.isPopupTrigger())
+		{
+			popupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
+
+	}
+	
+	/**
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseClicked(MouseEvent e)
+	{
+		/* Do Nothing */
+	}
+
+	/**
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+		/* Do Nothing */
+	}
+
+	/**
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseExited(MouseEvent e)
+	{
+		/* Do Nothing */
+	}
+
+	/**
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		/* Do Nothing */
 	}
 }
