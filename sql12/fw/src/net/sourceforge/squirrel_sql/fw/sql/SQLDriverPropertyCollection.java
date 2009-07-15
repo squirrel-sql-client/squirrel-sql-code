@@ -121,6 +121,16 @@ public class SQLDriverPropertyCollection implements Serializable
 		}
 	}
 
+	public synchronized void addDriverProperty(SQLDriverProperty value) {
+		_objectsList.add(value);
+		_objectsIndexMap.put(value.getName(), value);		
+	}
+	
+	public synchronized void removeDriverProperty(String name) {
+		SQLDriverProperty prop = _objectsIndexMap.remove(name);
+		_objectsList.remove(prop);
+	}
+	
 	/**
 	 * Warning - should only be used when loading javabean from XML.
 	 */

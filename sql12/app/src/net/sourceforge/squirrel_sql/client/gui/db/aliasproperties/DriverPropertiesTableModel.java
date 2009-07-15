@@ -162,6 +162,31 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		}
 	}
 
+	/**
+	 * Adds a row to the driver properties table with the specified name, value and description.
+	 * 
+	 * @param name the name of the driver property.
+	 * @param value the value of the driver property.
+	 * @param description a description of the driver property.
+	 */
+	public void addRow(String name, String value, String description) {
+		DriverPropertyInfo propInfo = new DriverPropertyInfo(name, value);
+		propInfo.description = description;
+		SQLDriverProperty newProp = new SQLDriverProperty(propInfo); 
+		_props.addDriverProperty(newProp);
+		fireTableDataChanged();
+	}
+	
+	/**
+	 * Removes the row which contains the specified name value in it's property name column.
+	 * 
+	 * @param name the name of the driver property.
+	 */
+	public void removeRow(String name) {
+		_props.removeDriverProperty(name);
+		fireTableDataChanged();
+	}
+	
 	SQLDriverPropertyCollection getSQLDriverProperties()
 	{
 		return _props;
