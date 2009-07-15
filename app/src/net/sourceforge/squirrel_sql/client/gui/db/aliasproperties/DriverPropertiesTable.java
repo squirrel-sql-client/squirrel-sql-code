@@ -68,6 +68,7 @@ class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel
 		getTableHeader().setReorderingAllowed(false);
 		popupMenu = new DriverPropertiesPopupMenu(this);
 		addMouseListener(this);
+		this.getTableHeader().addMouseListener(this);
 	}
 
 	/**
