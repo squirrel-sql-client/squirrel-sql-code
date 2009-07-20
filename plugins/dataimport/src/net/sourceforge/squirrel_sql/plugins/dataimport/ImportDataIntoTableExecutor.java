@@ -257,27 +257,57 @@ public class ImportDataIntoTableExecutor {
     		setIntOrUnsignedInt(stmt, index, column);
     		break;
     	case Types.DATE:
-    		d = DateUtils.parseSQLFormats(value);
-    		if (d == null) 
-    			throw new UnsupportedFormatException();
-    		stmt.setDate(index, new java.sql.Date(d.getTime()));
+    		// Null values should be allowed
+    		setDateOrNull(stmt, index, value);
     		break;
     	case Types.TIMESTAMP:
-    		d = DateUtils.parseSQLFormats(value);
-    		if (d == null) 
-    			throw new UnsupportedFormatException();
-    		stmt.setTimestamp(index, new java.sql.Timestamp(d.getTime()));
+    		// Null values should be allowed
+    		setTimeStampOrNull(stmt, index, value);
     		break;
-    	case Types.TIME:
-    		d = DateUtils.parseSQLFormats(value);
-    		if (d == null) 
-    			throw new UnsupportedFormatException();
-    		stmt.setTime(index, new java.sql.Time(d.getTime()));
+    	case Types.TIME:    	
+    		// Null values should be allowed
+    		setTimeOrNull(stmt, index, value);
     		break;
     	default:
     		stmt.setString(index, value);
     	}
     }
+
+	private void setDateOrNull(PreparedStatement stmt, int index,
+			String value) throws UnsupportedFormatException, SQLException {
+		if (null != value) {
+			Date d = DateUtils.parseSQLFormats(value);
+			if (d == null)
+				throw new UnsupportedFormatException();
+			stmt.setDate(index, new java.sql.Date(d.getTime()));
+		} else {
+			stmt.setNull(index, Types.DATE);
+		}
+	}
+	
+	private void setTimeStampOrNull(PreparedStatement stmt, int index,
+			String value) throws UnsupportedFormatException, SQLException {
+		if (null != value) {
+			Date d = DateUtils.parseSQLFormats(value);
+			if (d == null)
+				throw new UnsupportedFormatException();
+			stmt.setTimestamp(index, new java.sql.Timestamp(d.getTime()));
+		} else {
+			stmt.setNull(index, Types.TIMESTAMP);
+		}
+	}
+	
+	private void setTimeOrNull(PreparedStatement stmt, int index, String value)
+			throws UnsupportedFormatException, SQLException {
+		if (null != value) {
+			Date d = DateUtils.parseSQLFormats(value);
+			if (d == null)
+				throw new UnsupportedFormatException();
+			stmt.setTime(index, new java.sql.Time(d.getTime()));
+		} else {
+			stmt.setNull(index, Types.TIME);
+		}
+	}
     
     private void bindColumn(PreparedStatement stmt, int index, TableColumnInfo column) throws SQLException, UnsupportedFormatException, IOException {
     	int mappedColumn = getMappedColumn(column);
@@ -290,25 +320,69 @@ public class ImportDataIntoTableExecutor {
     		setIntOrUnsignedInt(stmt, index, column);
     		break;
     	case Types.DATE:
-    		stmt.setDate(index, new java.sql.Date(importer.getDate(mappedColumn).getTime()));
+    		setDateOrNull(stmt, index, mappedColumn);
     		break;
     	case Types.TIMESTAMP:
-    		stmt.setTimestamp(index, new java.sql.Timestamp(importer.getDate(mappedColumn).getTime()));
+    		setTimestampOrNull(stmt, index, mappedColumn);
     		break;
     	case Types.TIME:
-    		stmt.setTime(index, new java.sql.Time(importer.getDate(mappedColumn).getTime()));
+    		setTimeOrNull(stmt, index, mappedColumn);
     		break;
     	default:
-    		stmt.setString(index, importer.getString(mappedColumn));
+    		setStringOrNull(stmt, index, mappedColumn);
     	}
     }
+
+	private void setStringOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws SQLException, IOException {
+		String string = importer.getString(mappedColumn);
+		if (null != string) {
+			stmt.setString(index, string);
+		} else {
+			stmt.setNull(index, Types.VARCHAR);
+		}
+	}
+
+	private void setTimeOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws SQLException, IOException,
+			UnsupportedFormatException {
+		Date date = importer.getDate(mappedColumn);
+		if (null != date) {
+			stmt.setTime(index, new java.sql.Time(date.getTime()));
+		} else {
+			stmt.setNull(index, Types.TIME);
+		}
+	}
+
+	private void setTimestampOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws SQLException, IOException,
+			UnsupportedFormatException {
+		Date date = importer.getDate(mappedColumn);
+		if (null != date) {
+			stmt.setTimestamp(index, new java.sql.Timestamp(date.getTime()));
+		} else {
+			stmt.setNull(index, Types.TIMESTAMP);
+		}
+	}
+
+	private void setDateOrNull(PreparedStatement stmt, int index,
+			int mappedColumn) throws SQLException, IOException,
+			UnsupportedFormatException {
+		Date date = importer.getDate(mappedColumn);
+		if (null != date) {
+			stmt.setDate(index, new java.sql.Date(date.getTime()));
+		} else {
+			stmt.setNull(index, Types.DATE);
+		}
+
+	}
     
 	/*
 	 * 1968807: Unsigned INT problem with IMPORT FILE functionality
 	 * 
-	 * If we are working with a signed integer, then it should be ok to store in a Java integer which is 
-	 * always signed.  However, if we are working with an unsigned integer type, Java doesn't have this so 
-	 * use a long instead.  
+	 * If we are working with a signed integer, then it should be ok to store in
+	 * a Java integer which is always signed. However, if we are working with an
+	 * unsigned integer type, Java doesn't have this so use a long instead.
 	 */    
     private void setIntOrUnsignedInt(PreparedStatement stmt, int index, TableColumnInfo column) 
     	throws SQLException, UnsupportedFormatException, IOException 
