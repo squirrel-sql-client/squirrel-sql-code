@@ -184,7 +184,12 @@ public class CSVFileImporter implements IFileImporter {
 		Date d = null;
 		try {
 			DateFormat f = new SimpleDateFormat(settings.getDateFormat());
-			d = f.parse(reader.get(column));
+			String dateString = reader.get(column);
+			// we allow the return of null values if the the reader returns
+			// an empty String or a null String
+			if (null != dateString && dateString.trim().length() > 0) {
+				d = f.parse(dateString);
+			}
 		} catch (IllegalArgumentException e) {
 			//i18n[CSVFileImporter.invalidDateFormat=Invalid date format given]
 			JOptionPane.showMessageDialog(null, stringMgr.getString("CSVFileImporter.invalidDateFormat"));
