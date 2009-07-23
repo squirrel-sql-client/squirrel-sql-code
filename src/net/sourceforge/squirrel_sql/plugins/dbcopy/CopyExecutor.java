@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -801,9 +802,9 @@ public class CopyExecutor extends I18NBaseObject {
             if (prefs.isCopyPrimaryKeys()) {
                 PrimaryKeyInfo[] pkList = sqlmd.getPrimaryKey(ti);
                 List<PrimaryKeyInfo> pkList2 = Arrays.asList(pkList);
-                indices = DialectUtils.createIndexes(ti, sqlmd, pkList2);
+                indices = DialectUtils.createIndexes(ti, sqlmd, pkList2, new CreateScriptPreferences());
             } else {
-                indices = DialectUtils.createIndexes(ti, sqlmd, null);
+                indices = DialectUtils.createIndexes(ti, sqlmd, null, new CreateScriptPreferences());
             }
             Iterator<String> i = indices.iterator();
             while (i.hasNext()) {
