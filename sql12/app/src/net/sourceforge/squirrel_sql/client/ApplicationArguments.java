@@ -165,17 +165,18 @@ public class ApplicationArguments
 	/**
 	 * Return the single instance of this class.
 	 *
-	 * @return the single instance of this class.
-	 *
-	 * @throws	IllegalStateException
-	 * 			Thrown if ApplicationArguments.getInstance() called
-	 *			before ApplicationArguments.initialize()
+	 * @return the single instance of this class. If initialize() hasn't yet been called, then it is
+	 * assumed that there are no arguments to the application.
 	 */
 	public static ApplicationArguments getInstance()
 	{
 		if (s_instance == null)
 		{
-			throw new IllegalStateException("ApplicationArguments.getInstance() called before ApplicationArguments.initialize()");
+			try {
+				s_instance = new ApplicationArguments(new String[] {});
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		return s_instance;
 	}
