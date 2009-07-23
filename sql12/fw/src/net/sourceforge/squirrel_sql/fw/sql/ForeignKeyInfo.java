@@ -127,7 +127,7 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 
 	public String getForeignKeySchemaName()
 	{
-		return getCatalogName();
+		return getSchemaName();
 	}
 
 	public String getForeignKeyTableName()
