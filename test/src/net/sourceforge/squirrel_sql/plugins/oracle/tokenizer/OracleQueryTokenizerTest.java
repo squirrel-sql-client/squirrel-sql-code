@@ -34,7 +34,6 @@ import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
 import java.io.IOException;
 import java.util.Arrays;
 
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -51,9 +50,6 @@ public class OracleQueryTokenizerTest {
     static String nullSQL = null;       
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
-    static {
-        ApplicationManager.initApplication();        
-    }
     
     QueryTokenizer qt = null;
     static int sqlFileStmtCount = 0;

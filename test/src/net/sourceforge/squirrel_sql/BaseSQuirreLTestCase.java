@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -9,10 +8,6 @@ import org.apache.log4j.Level;
 
 public class BaseSQuirreLTestCase extends TestCase {
 
-	static {
-		ApplicationManager.initApplication();
-	}
-	
     protected void setUp() throws Exception {
         super.setUp();
     }

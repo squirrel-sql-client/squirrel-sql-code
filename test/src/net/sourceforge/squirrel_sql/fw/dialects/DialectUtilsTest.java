@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
@@ -114,7 +115,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         
         pkInfos = new PrimaryKeyInfo[] { mockPrimaryKeyInfo };
         
-        mockSession = TestUtil.getEasyMockSession(mockMetaData, false);
+        mockSession = AppTestUtil.getEasyMockSession(mockMetaData, false);
         mockPlugin = createMock(IPlugin.class);
         
         String name =

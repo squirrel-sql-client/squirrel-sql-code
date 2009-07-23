@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -36,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ColTypeMapperTest extends BaseSQuirreLTestCase {
@@ -69,7 +69,6 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     };
     
     static {
-        ApplicationManager.initApplication();
         // Don't care to see tons of debug from ColTypeMapper
         disableLogging(ColTypeMapper.class);
         disableLogging(ColTypeMapperTest.class);
@@ -212,8 +211,8 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
                              TableColumnInfo column) 
         throws Exception 
     {
-        ISession sourceSession = TestUtil.getEasyMockSession(md);
-        ISession destSession = TestUtil.getEasyMockSession(toDb);
+        ISession sourceSession = AppTestUtil.getEasyMockSession(md);
+        ISession destSession = AppTestUtil.getEasyMockSession(toDb);
         
         
         String type = ColTypeMapper.mapColType(sourceSession, 
@@ -232,8 +231,8 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
                              ResultSet rs) 
         throws Exception 
     {
-        ISession sourceSession = TestUtil.getEasyMockSession(md, rs);
-        ISession destSession = TestUtil.getEasyMockSession(toDb);
+        ISession sourceSession = AppTestUtil.getEasyMockSession(md, rs);
+        ISession destSession = AppTestUtil.getEasyMockSession(toDb);
 
 
         String type = ColTypeMapper.mapColType(sourceSession, 

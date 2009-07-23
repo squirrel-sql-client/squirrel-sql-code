@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -18,7 +17,7 @@ public class SQLUtilitiesTest extends BaseSQuirreLJUnit4TestCase {
 
     @Before
     public void setUp() throws Exception {
-        ApplicationManager.initApplication();
+
     }
 
     @After

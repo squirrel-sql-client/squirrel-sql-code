@@ -29,34 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.Action;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
-import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -69,15 +46,11 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 
 import org.easymock.classextension.EasyMock;
 
@@ -87,111 +60,6 @@ import org.easymock.classextension.EasyMock;
  * @author manningr
  */
 public class TestUtil {
-
-   public static ISession getEasyMockSession(String dbName, boolean replay)
-         throws SQLException {
-      ISQLDatabaseMetaData md = getEasyMockSQLMetaData(dbName, "jdbc:oracle");
-      ISession session = getEasyMockSession(md, replay);
-      return session;
-   }
-
-   /**
-    * Calls replay by default.
-    * 
-    * @param dbName
-    * @return
-    * @throws SQLException
-    */
-   public static ISession getEasyMockSession(String dbName) throws SQLException {
-      return getEasyMockSession(dbName, true);
-   }
-
-   public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
-         boolean replay) {
-      ISession session = null;
-      try {
-         ISQLConnection con = getEasyMockSQLConnection();
-         session = getEasyMockSession(md, con, false);
-         if (replay) {
-            replay(session);
-         }
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-      return session;
-   }
-
-   public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
-         ISQLConnection con, boolean replay) {
-      ISession session = createMock(ISession.class);
-      IQueryTokenizer tokenizer = getEasyMockQueryTokenizer();
-      // IMessageHandler messageHandler = getEasyMockMessageHandler();
-
-      expect(session.getMetaData()).andReturn(md).anyTimes();
-      expect(session.getApplication()).andReturn(getEasyMockApplication())
-                                      .anyTimes();
-      expect(session.getQueryTokenizer()).andReturn(tokenizer).anyTimes();
-      session.setQueryTokenizer(isA(QueryTokenizer.class));
-      ISQLPanelAPI api = getEasyMockSqlPanelApi();
-      expect(session.getSQLPanelAPIOfActiveSessionWindow()).andReturn(api)
-                                                           .anyTimes();
-      // expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
-      expect(session.getAlias()).andReturn(getEasyMockSqlAliasExt());
-      expect(session.getIdentifier()).andReturn(getEasyMockIdentifier())
-                                     .anyTimes();
-      expect(session.getSQLConnection()).andReturn(con).anyTimes();
-      session.setExceptionFormatter(isA(ExceptionFormatter.class));
-      expectLastCall().anyTimes();
-      session.addSeparatorToToolbar();
-      expectLastCall().anyTimes();
-      SessionPanel panel = getEasyMockSessionPanel();
-      expect(session.getSessionSheet()).andReturn(panel).anyTimes();
-      session.addToToolbar(isA(Action.class));
-      expectLastCall().anyTimes();
-      SessionInternalFrame frame = getEasyMockSessionInternalFrame();
-      expect(session.getSessionInternalFrame()).andReturn(frame).anyTimes();
-
-      if (replay) {
-         replay(session);
-      }
-      return session;
-   }
-
-   public static SessionPanel getEasyMockSessionPanel() {
-      SessionPanel result = createMock(SessionPanel.class);
-      ISQLPanelAPI api = getEasyMockSqlPanelApi();
-      expect(result.getSQLPaneAPI()).andReturn(api);
-      ObjectTreePanel mockObjTreePanel = createMock(ObjectTreePanel.class);
-      expect(result.getObjectTreePanel()).andStubReturn(mockObjTreePanel);
-      mockObjTreePanel.addExpander(isA(DatabaseObjectType.class), isA(INodeExpander.class));
-      expectLastCall().anyTimes();
-      mockObjTreePanel.addDetailTab(isA(DatabaseObjectType.class), isA(IObjectTab.class));
-      expectLastCall().anyTimes();
-      replay(mockObjTreePanel);
-      replay(result);
-      return result;
-   }
-
-   public static ISQLPanelAPI getEasyMockSqlPanelApi() {
-      ISQLPanelAPI result = createMock(ISQLPanelAPI.class);
-      ISQLEntryPanel panel = getEasyMockSqlEntryPanel();
-      expect(result.getSQLEntryPanel()).andReturn(panel).anyTimes();
-      result.addExecuterTabListener(isA(ISQLResultExecuterTabListener.class));
-      expectLastCall().anyTimes();
-      result.addExecutor(isA(ISQLResultExecuter.class));
-      expectLastCall().anyTimes();
-      replay(result);
-      return result;
-   }
-
-   public static ISQLEntryPanel getEasyMockSqlEntryPanel() {
-      ISQLEntryPanel result = createMock(ISQLEntryPanel.class);
-      expect(result.getBoundsOfSQLToBeExecuted()).andReturn(new int[] {10, 20}).anyTimes();
-      result.setCaretPosition(org.easymock.EasyMock.anyInt());
-      expectLastCall().anyTimes();
-      replay(result);
-      return result;
-   }
 
    public static IMessageHandler getEasyMockMessageHandler() {
       IMessageHandler result = createMock(IMessageHandler.class);
@@ -218,24 +86,6 @@ public class TestUtil {
       expect(tokenizer.getQueryCount()).andReturn(queryCount).anyTimes();
       replay(tokenizer);
       return tokenizer;
-   }
-
-   /**
-    * Calls replay by default.
-    * 
-    * @param md
-    * @return
-    */
-   public static ISession getEasyMockSession(ISQLDatabaseMetaData md) {
-      return getEasyMockSession(md, true);
-   }
-
-   public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
-         ResultSet rs) throws SQLException {
-      ISQLConnection con = getEasyMockSQLConnection(rs);
-      ISession session = getEasyMockSession(md, con, false);
-      replay(session);
-      return session;
    }
 
    public static SQLConnection getEasyMockSQLConnection() throws SQLException {
@@ -399,9 +249,9 @@ public class TestUtil {
       } else {
          result = createMock(IApplication.class);
       }
-      SquirrelResources resoures = getEasyMockSquirrelResources();
-      SessionProperties props = getEasyMockSessionProperties(";", "--", true);
-      SquirrelPreferences prefs = getEasyMockSquirrelPreferences(props);
+      SquirrelResources resoures = AppTestUtil.getEasyMockSquirrelResources();
+      SessionProperties props = AppTestUtil.getEasyMockSessionProperties(";", "--", true);
+      SquirrelPreferences prefs = AppTestUtil.getEasyMockSquirrelPreferences(props);
       expect(result.getMainFrame()).andReturn(null).anyTimes();
       expect(result.getResources()).andReturn(resoures).anyTimes();
       expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
@@ -409,25 +259,17 @@ public class TestUtil {
       expect(result.getThreadPool()).andReturn(mockThreadPool).anyTimes();
       ActionCollection mockActColl = col;
       if (col == null) {
-         mockActColl = getEasyMockActionCollection();
+         mockActColl = AppTestUtil.getEasyMockActionCollection();
       }
       expect(result.getActionCollection()).andReturn(mockActColl).anyTimes();
       SQLDriverManager driverManager = getEasyMockSQLDriverManager();
       expect(result.getSQLDriverManager()).andReturn(driverManager).anyTimes();
-      SessionManager mockSessionManager = getEasyMockSessionManager();
+      SessionManager mockSessionManager = AppTestUtil.getEasyMockSessionManager();
       expect(result.getSessionManager()).andReturn(mockSessionManager)
                                         .anyTimes();
       if (replay) {
          replay(result);
       }
-      return result;
-   }
-
-   public static SessionManager getEasyMockSessionManager() {
-      SessionManager result = createMock(SessionManager.class);
-      result.addAllowedSchemaChecker(isA(IAllowedSchemaChecker.class));
-      expectLastCall().anyTimes();
-      replay(result);
       return result;
    }
 
@@ -437,61 +279,6 @@ public class TestUtil {
       replay(mockDriver);
       expect(result.getJDBCDriver(isA(IIdentifier.class))).andReturn(mockDriver)
                                                           .anyTimes();
-      replay(result);
-      return result;
-   }
-
-   public static ActionCollection getEasyMockActionCollection() {
-      ActionCollection result = createMock(ActionCollection.class);
-      result.add(isA(Action.class));
-      expectLastCall().anyTimes();
-      expectActionCollectionGet("refreshSchema",
-                                RefreshSchemaInfoAction.class,
-                                result);
-      expectActionCollectionGet("refreshObjectTree",
-                                RefreshObjectTreeAction.class,
-                                result);
-      expectActionCollectionGet("refreshObjectItemTree",
-                                RefreshObjectTreeItemAction.class,
-                                result);
-      expectActionCollectionGet("editWhereColsAction",
-                                EditWhereColsAction.class,
-                                result);
-      expectActionCollectionGet("SQLFilterAction",
-                                SQLFilterAction.class,
-                                result);
-      expectActionCollectionGet("DeleteSelectedTablesAction",
-                                DeleteSelectedTablesAction.class,
-                                result);
-      expectActionCollectionGet("FilterObjectsAction",
-                                FilterObjectsAction.class,
-                                result);
-      replay(result);
-      return result;
-   }
-
-   public static void expectActionCollectionGet(String actionName,
-         Class<? extends Action> actionClass, ActionCollection col) {
-      SquirrelAction action = getEasyMockSquirrelAction(actionName);
-      expect(col.get(actionClass)).andReturn(action).anyTimes();
-   }
-
-   public static SquirrelAction getEasyMockSquirrelAction(String name) {
-      SquirrelAction result = createMock(SquirrelAction.class);
-      expect(result.getValue(Action.NAME)).andReturn(name).anyTimes();
-      expect(result.getValue(Action.SMALL_ICON)).andReturn(null).anyTimes();
-      expect(result.getValue(Action.MNEMONIC_KEY)).andReturn(null).anyTimes();
-      expect(result.getValue(Action.SHORT_DESCRIPTION)).andReturn(null)
-                                                       .anyTimes();
-      expect(result.getValue(Action.ACTION_COMMAND_KEY)).andReturn(null)
-                                                        .anyTimes();
-      expect(result.getValue(Action.ACCELERATOR_KEY)).andReturn(null)
-                                                     .anyTimes();
-      expect(result.isEnabled()).andReturn(true).anyTimes();
-      expect(result.getKeyStroke()).andReturn(null).anyTimes();
-      expect(result.getValue(isA(String.class))).andStubReturn(null);
-      result.addPropertyChangeListener(isA(PropertyChangeListener.class));
-      expectLastCall().anyTimes();
       replay(result);
       return result;
    }
@@ -510,75 +297,11 @@ public class TestUtil {
       return result;
    }
 
-   public static ISQLAliasExt getEasyMockSqlAliasExt() {
-      ISQLAliasExt result = createMock(ISQLAliasExt.class);
-      expect(result.getName()).andReturn("TestAlias").anyTimes();
-      IIdentifier id = getEasyMockIdentifier();
-      expect(result.getDriverIdentifier()).andReturn(id).anyTimes();
-      replay(result);
-      return result;
-   }
-
-   public static ActionCollection getEasyMockActionCollection(boolean replay) {
-      ActionCollection result = createMock(ActionCollection.class);
-      if (replay) {
-         replay(result);
-      }
-      return result;
-   }
-
-   public static IApplication getEasyMockApplication() {
-      return getEasyMockApplication(true, true, null);
-   }
-
-   public static IApplication getEasyMockApplication(ActionCollection col) {
-      IApplication result = getEasyMockApplication(false, false, col);
-      replay(result);
-      return result;
-   }
-
-   public static SquirrelResources getEasyMockSquirrelResources() {
-      SquirrelResources resources = EasyMock.createMock(SquirrelResources.class);
-      resources.setupAction(isA(Action.class), EasyMock.anyBoolean());
-      EasyMock.expectLastCall().times(1, 10000);
-      replay(resources);
-      return resources;
-   }
-
-   public static SessionInternalFrame getEasyMockSessionInternalFrame() {
-      SessionInternalFrame result = createMock(SessionInternalFrame.class);
-      result.addToToolsPopUp(isA(String.class), isA(SquirrelAction.class));
-      expectLastCall().anyTimes();
-      return result;
-   }
-
-   public static SessionProperties getEasyMockSessionProperties(String sep,
-         String solComment, boolean removeMultLineComments) {
-      SessionProperties result = createMock(SessionProperties.class);
-      expect(result.getSQLStatementSeparator()).andReturn(sep).anyTimes();
-      expect(result.getStartOfLineComment()).andReturn(solComment).anyTimes();
-      expect(result.getRemoveMultiLineComment()).andReturn(removeMultLineComments)
-                                                .anyTimes();
-      expect(result.clone()).andReturn(result).anyTimes();
-      replay(result);
-      return result;
-   }
-
    public static TaskThreadPool getThreadPool() {
       TaskThreadPool result = createMock(TaskThreadPool.class);
       result.addTask(isA(Runnable.class));
       replay(result);
       return result;
-   }
-
-   public static SquirrelPreferences getEasyMockSquirrelPreferences(
-         SessionProperties props) {
-      SquirrelPreferences prefs = createMock(SquirrelPreferences.class);
-      expect(prefs.getShowColoriconsInToolbar()).andReturn(true).anyTimes();
-      expect(prefs.getSessionProperties()).andReturn(props).anyTimes();
-      expect(prefs.getWarnJreJdbcMismatch()).andReturn(false).anyTimes();
-      replay(prefs);
-      return prefs;
    }
 
    public static ForeignKeyInfo[] getEasyMockForeignKeyInfos(String fkName,
@@ -912,25 +635,6 @@ public class TestUtil {
       return null;
    }
 
-   public static SQLAlias getEasyMockSQLAlias(IIdentifier SqlAliasId,
-         IIdentifier SqlDriverId) {
-      SQLAlias mockSqlAlias = createMock(SQLAlias.class);
-      SQLDriverPropertyCollection mockSqlDriverPropCol = createMock(SQLDriverPropertyCollection.class);
-      expect(mockSqlAlias.getIdentifier()).andReturn(SqlAliasId).anyTimes();
-      expect(mockSqlAlias.getName()).andReturn("TestAliasName").anyTimes();
-      expect(mockSqlAlias.getDriverIdentifier()).andReturn(SqlDriverId)
-                                                .anyTimes();
-      expect(mockSqlAlias.getUrl()).andReturn("TestUrl").anyTimes();
-      expect(mockSqlAlias.getUserName()).andReturn("TestUserName").anyTimes();
-      expect(mockSqlAlias.getPassword()).andReturn("TestPassword").anyTimes();
-      expect(mockSqlAlias.isAutoLogon()).andReturn(true).anyTimes();
-      expect(mockSqlAlias.getUseDriverProperties()).andReturn(true).anyTimes();
-      expect(mockSqlAlias.getDriverPropertiesClone()).andReturn(mockSqlDriverPropCol)
-                                                     .anyTimes();
-      replay(mockSqlAlias);
-      return mockSqlAlias;
-   }
-
    public static IDatabaseObjectInfo getEasyMockDatabaseObjectInfo(
          String catalog, String schema, String simpleName, String qualName,
          DatabaseObjectType type) {
@@ -940,16 +644,6 @@ public class TestUtil {
       expect(result.getSimpleName()).andReturn(simpleName).anyTimes();
       expect(result.getQualifiedName()).andReturn(qualName).anyTimes();
       expect(result.getDatabaseObjectType()).andReturn(type).anyTimes();
-      replay(result);
-      return result;
-   }
-
-   public static DBCopyPreferenceBean getEasyMockDBCopyPreferenceBean() {
-      DBCopyPreferenceBean result = EasyMock.createMock(DBCopyPreferenceBean.class);
-      expect(result.isCopyForeignKeys()).andReturn(true);
-      expect(result.isCopyPrimaryKeys()).andReturn(true);
-      expect(result.isPruneDuplicateIndexDefs()).andReturn(true);
-      expect(result.isPromptForDialect()).andReturn(false);
       replay(result);
       return result;
    }

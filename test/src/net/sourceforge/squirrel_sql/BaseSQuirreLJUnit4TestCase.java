@@ -4,7 +4,6 @@ import static org.easymock.EasyMock.expect;
 
 import java.sql.SQLException;
 
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -26,11 +25,6 @@ public class BaseSQuirreLJUnit4TestCase
 	public static final String TEST_DATABASE_PRODUCT_VERSION = "testDatabaseProductVersion";
 	
 	protected EasyMockHelper mockHelper = new EasyMockHelper();
-
-	static {
-		ApplicationManager.initApplication();
-		LoggerController.setForceDebug(true);
-	}
 	
 	public BaseSQuirreLJUnit4TestCase()
 	{

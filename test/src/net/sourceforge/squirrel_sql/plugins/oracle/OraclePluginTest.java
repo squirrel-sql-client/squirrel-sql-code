@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheet
 import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
@@ -69,10 +70,10 @@ public class OraclePluginTest extends AbstractSessionPluginTest
 		expect(md.getStringFunctions()).andReturn(functions);
 		replay(md);
 		ActionCollection col = getOraclePluginActionCollection();
-		app = TestUtil.getEasyMockApplication(col);
+		app = AppTestUtil.getEasyMockApplication(col);
 		pluginUnderTest.load(app);
 		pluginUnderTest.initialize();
-		session = TestUtil.getEasyMockSession(md, true);
+		session = AppTestUtil.getEasyMockSession(md, true);
 		classUnderTest = new OraclePlugin();
 	}
 
@@ -100,7 +101,7 @@ public class OraclePluginTest extends AbstractSessionPluginTest
 
 	private ActionCollection getOraclePluginActionCollection()
 	{
-		ActionCollection result = TestUtil.getEasyMockActionCollection(false);
+		ActionCollection result = AppTestUtil.getEasyMockActionCollection(false);
 		Action someAction = createMock(Action.class);
 		replay(someAction);
 		expect(result.get(NewDBOutputWorksheetAction.class)).andReturn(someAction).anyTimes();

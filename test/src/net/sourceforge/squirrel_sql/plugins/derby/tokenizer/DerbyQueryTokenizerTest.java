@@ -18,13 +18,17 @@ package net.sourceforge.squirrel_sql.plugins.derby.tokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.*;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_COURSES;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_PROFESSOR;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_STUDENT;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_TAKE;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_TEACH;
+import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.STUDENTS_NOT_TAKING_CS112;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
 
@@ -33,9 +37,6 @@ public class DerbyQueryTokenizerTest extends TestCase {
     static String nullSQL = null;       
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
-    static {
-        ApplicationManager.initApplication();        
-    }
     
     QueryTokenizer qt = null;
     static int sqlFileStmtCount = 0;
