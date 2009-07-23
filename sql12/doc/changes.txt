@@ -34,6 +34,10 @@ Graph Plugin:
 
 Bug-Fixes:
 
+Schema caching:
+ Removed problems with selective schema caching when the same table name
+ exisits in two different schemas. E.g. column completion didn't word anymore.
+
 SQL Scripts Plugin:
  - When generating insert scripts from a SQL statement the global
    preference "Qualify table names in generated scripts with the schema name" did not work.
