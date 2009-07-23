@@ -490,16 +490,16 @@ public class SchemaInfoCache implements Serializable
              // iterator.remove()
              _iTableInfos.remove(ti);
 
-            CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(ti.getSimpleName());
-            List<ITableInfo> tableInfos = _tableInfosBySimpleName.get(ciSimpleName);
+            CaseInsensitiveString ciSimpleTableName = new CaseInsensitiveString(ti.getSimpleName());
+            List<ITableInfo> tableInfos = _tableInfosBySimpleName.get(ciSimpleTableName);
             tableInfos.remove(ti);
             if(0 == tableInfos.size())
             {
-               _tableInfosBySimpleName.remove(ciSimpleName);
-               _tableNames.remove(ciSimpleName);
+               _tableInfosBySimpleName.remove(ciSimpleTableName);
+               _tableNames.remove(ciSimpleTableName);
             }
 
-            List<ExtendedColumnInfo> ecisInTable = _extendedColumnInfosByTableName.get(ciSimpleName);
+            List<ExtendedColumnInfo> ecisInTable = _extendedColumnInfosByTableName.remove(ciSimpleTableName);
 
             if(null == ecisInTable)
             {
@@ -510,36 +510,8 @@ public class SchemaInfoCache implements Serializable
             for(Iterator<ExtendedColumnInfo> j=ecisInTable.iterator();j.hasNext();)
             {
                ExtendedColumnInfo eci = j.next();
-
-               String qn1 = ti.getCatalogName() + "." + ti.getSchemaName() + "." + ti.getSimpleName();
-               String qn2 = eci.getCatalog() + "." + eci.getSchema() + "." + eci.getSimpleTableName();
-               if(new CaseInsensitiveString(qn1).equals(new CaseInsensitiveString(qn2)))
-               {
-                  j.remove();
-               }
-
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-               List<ExtendedColumnInfo> ecisInColumn =  _extColumnInfosByColumnName.get(ciColName);
-
-               if (ecisInColumn != null) {
-                   ecisInColumn.remove(eci);
-    
-                   if (0 == ecisInColumn.size())
-                   {
-                      _extColumnInfosByColumnName.remove(ciColName);
-                   }
-               } else {
-                   if (s_log.isDebugEnabled()) {
-                       s_log.debug(
-                           "clearTables: no entries in " +
-                           "_extColumnInfosByColumnName for column - "+ciColName);
-                   }
-               }
-            }
-
-            if(0 == ecisInTable.size())
-            {
-               _extendedColumnInfosByTableName.remove(ciSimpleName);
+               _extColumnInfosByColumnName.remove(ciColName);
             }
          }
       }
