@@ -34,6 +34,13 @@ Graph Plugin:
 
 Bug-Fixes:
 
+SQL Scripts Plugin:
+ Indexes and foreign key constraints could not be scripted with qualified table names.
+
+SQL Scripts Plugin:
+ Foreign key constraints with more than one column were not scripted correctly. (Only first column was included.)  
+
+
 Schema caching:
  Removed problems with selective schema caching when the same table name
  exisits in two different schemas. E.g. column completion didn't word anymore.

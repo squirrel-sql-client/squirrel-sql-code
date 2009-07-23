@@ -31,14 +31,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -1838,7 +1831,7 @@ public class DialectUtils implements StringTemplateConstants
 			final List<String> constraints = createConstraints(ti, tables, prefs, md);
 			addConstraintsSQLs(sqls, allconstraints, constraints, prefs);
 
-			final List<String> indexes = createIndexes(ti, md, pkInfos);
+			final List<String> indexes = createIndexes(ti, md, pkInfos, prefs);
 			addConstraintsSQLs(sqls, allconstraints, indexes, prefs);
 		}
 
@@ -2393,10 +2386,11 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param md
 	 * @param primaryKeys
 	 *           can be null
-	 * @return
+	 * @param prefs
+    * @return
 	 */
 	public static List<String> createIndexes(ITableInfo ti, ISQLDatabaseMetaData md,
-		List<PrimaryKeyInfo> primaryKeys)
+                                            List<PrimaryKeyInfo> primaryKeys, CreateScriptPreferences prefs)
 	{
 		if (ti == null) { throw new IllegalArgumentException("ti cannot be null"); }
 		if (md == null) { throw new IllegalArgumentException("md cannot be null"); }
@@ -2446,7 +2440,7 @@ public class DialectUtils implements StringTemplateConstants
 				final List<IndexColInfo> ixCols = new ArrayList<IndexColInfo>();
 
 				ixCols.add(new IndexColInfo(columnName, indexInfo.getOrdinalPosition()));
-				buf.put(indexName, new TableIndexInfo(indexInfo.getTableName(), indexName, ixCols,
+				buf.put(indexName, new TableIndexInfo(indexInfo.getTableName(), indexInfo.getSchemaName(), indexName, ixCols,
 					!indexInfo.isNonUnique()));
 			}
 			else
@@ -2476,9 +2470,17 @@ public class DialectUtils implements StringTemplateConstants
 			indexSQL.append("INDEX ");
 			indexSQL.append(ix.ixName);
 			indexSQL.append(" ON ");
-			indexSQL.append(ix.table);
 
-			if (ix.cols.size() == 1)
+         if (prefs.isQualifyTableNames())
+         {
+            indexSQL.append("\"" + ix.tableSchema + "\".\"" + ix.table + "\"");
+         }
+         else
+         {
+            indexSQL.append(ix.table);
+         }
+
+         if (ix.cols.size() == 1)
 			{
 				indexSQL.append("(").append(ix.cols.get(0));
 
@@ -2538,10 +2540,17 @@ public class DialectUtils implements StringTemplateConstants
 				}
 			}
 
-			sbToAppend.append("ALTER TABLE " + ci.fkTable + "\n");
-			sbToAppend.append("ADD CONSTRAINT " + ci.fkName + "\n");
+         if (prefs.isQualifyTableNames())
+         {
+            sbToAppend.append("ALTER TABLE \"" + ci.fkTableSchema + "\".\"" + ci.fkTable + "\"\n");
+         }
+         else
+         {
+            sbToAppend.append("ALTER TABLE " + ci.fkTable + "\n");
+         }
+         sbToAppend.append("ADD CONSTRAINT " + ci.fkName + "\n");
 
-			if (ci.fkCols.size() == 1)
+         if (ci.fkCols.size() == 1)
 			{
 				sbToAppend.append("FOREIGN KEY (").append(ci.fkCols.get(0));
 
@@ -2551,8 +2560,15 @@ public class DialectUtils implements StringTemplateConstants
 				}
 				sbToAppend.append(")\n");
 
-				sbToAppend.append("REFERENCES " + ci.pkTable + "(");
-				sbToAppend.append(ci.pkCols.get(0));
+            if (prefs.isQualifyTableNames())
+            {
+               sbToAppend.append("REFERENCES \"" + ci.pkTableSchema + "\".\"" + ci.pkTable + "\"(");
+            }
+            else
+            {
+               sbToAppend.append("REFERENCES " + ci.pkTable + "(");
+            }
+            sbToAppend.append(ci.pkCols.get(0));
 				for (int j = 1; j < ci.pkCols.size(); j++)
 				{
 					sbToAppend.append(",").append(ci.pkCols.get(j));
@@ -2576,8 +2592,15 @@ public class DialectUtils implements StringTemplateConstants
 				sbToAppend.append(")\n");
 
 				sbToAppend.append("REFERENCES ");
-				sbToAppend.append(ci.pkTable);
-				sbToAppend.append("\n");
+            if (prefs.isQualifyTableNames())
+            {
+               sbToAppend.append("\"" + ci.pkTableSchema + "\".\"" + ci.pkTable + "\"");
+            }
+            else
+            {
+               sbToAppend.append(ci.pkTable);
+            }
+            sbToAppend.append("\n");
 				sbToAppend.append("(\n");
 				for (int j = 0; j < ci.pkCols.size(); j++)
 				{
@@ -2613,7 +2636,7 @@ public class DialectUtils implements StringTemplateConstants
 				constructFKContraintActionClause(overrideUpdate, conditionClause, overrideAction, rule);
 
 			sbToAppend.append(onUpdateClause);
-			sbToAppend.append("\n");
+			//sbToAppend.append("\n");
 			result.add(sbToAppend.toString());
 			sbToAppend.setLength(0);
 		}
@@ -2672,33 +2695,36 @@ public class DialectUtils implements StringTemplateConstants
 	private static ConstraintInfo[] getConstraintInfos(ITableInfo ti, ISQLDatabaseMetaData md)
 		throws SQLException
 	{
-		final Hashtable<String, ConstraintInfo> buf = new Hashtable<String, ConstraintInfo>();
-		final ForeignKeyInfo[] fkinfos = md.getImportedKeysInfo(ti);
-		for (final ForeignKeyInfo fkinfo : fkinfos)
-		{
-			ConstraintInfo ci = buf.get(fkinfo.getSimpleName());
+      final ArrayList<ConstraintInfo> ret = new ArrayList<ConstraintInfo>();
+      final ForeignKeyInfo[] fkinfos = md.getImportedKeysInfo(ti);
+      for (final ForeignKeyInfo fkinfo : fkinfos)
+      {
+         final Vector<String> fkCols = new Vector<String>();
+         final Vector<String> pkCols = new Vector<String>();
 
-			if (null == ci)
-			{
-				final Vector<String> fkCols = new Vector<String>();
-				final Vector<String> pkCols = new Vector<String>();
-				fkCols.add(fkinfo.getForeignKeyColumnName());
-				pkCols.add(fkinfo.getPrimaryKeyColumnName());
-				ci =
-					new ConstraintInfo(fkinfo.getForeignKeyTableName(), fkinfo.getPrimaryKeyTableName(),
-						fkinfo.getSimpleName(), fkCols, pkCols, (short) fkinfo.getDeleteRule(),
-						(short) fkinfo.getUpdateRule());
-				buf.put(fkinfo.getSimpleName(), ci);
-			}
-			else
-			{
-				ci.fkCols.add(fkinfo.getForeignKeyColumnName());
-				ci.pkCols.add(fkinfo.getPrimaryKeyColumnName());
-			}
 
-		}
-		return buf.values().toArray(new ConstraintInfo[buf.size()]);
-	}
+         for (ForeignKeyColumnInfo fkCol : fkinfo.getForeignKeyColumnInfo())
+         {
+            fkCols.add(fkCol.getForeignKeyColumnName());
+            pkCols.add(fkCol.getPrimaryKeyColumnName());
+         }
+
+         ConstraintInfo ci = new ConstraintInfo(
+            fkinfo.getForeignKeyTableName(),
+            fkinfo.getForeignKeySchemaName(),
+            fkinfo.getPrimaryKeyTableName(),
+            fkinfo.getPrimaryKeySchemaName(),
+            fkinfo.getSimpleName(),
+            fkCols,
+            pkCols,
+            (short) fkinfo.getDeleteRule(),
+            (short) fkinfo.getUpdateRule());
+
+         ret.add(ci);
+
+      }
+      return ret.toArray(new ConstraintInfo[ret.size()]);
+   }
 
 	private static List<PrimaryKeyInfo> getPrimaryKeyInfo(ISQLDatabaseMetaData md, ITableInfo ti,
 		boolean isJdbcOdbc)
