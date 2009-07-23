@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ObjectTreeTest extends BaseSQuirreLTestCase {
@@ -40,8 +40,7 @@ public class ObjectTreeTest extends BaseSQuirreLTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ApplicationManager.initApplication();
-        session = TestUtil.getEasyMockSession("Oracle");
+        session = AppTestUtil.getEasyMockSession("Oracle");
         tree = new ObjectTree(session);
     }
 

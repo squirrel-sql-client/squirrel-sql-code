@@ -2,16 +2,12 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
 
 public class QueryTokenizerTest extends TestCase implements GenericSQL {
 
     static String nullSQL = null;       
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
-    static {
-        ApplicationManager.initApplication();        
-    }
     QueryTokenizer qt = null;
     
     

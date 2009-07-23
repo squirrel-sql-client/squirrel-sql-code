@@ -53,7 +53,7 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
-import net.sourceforge.squirrel_sql.test.TestUtil;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 
 import com.mockobjects.sql.MockConnection2;
 
@@ -72,7 +72,7 @@ public class MockSession implements ISession {
     UidIdentifier id = null;
     boolean closed;
     
-    ISQLPanelAPI panelApi = TestUtil.getEasyMockSqlPanelApi();
+    ISQLPanelAPI panelApi = AppTestUtil.getEasyMockSqlPanelApi();
         
     // These tell the Dialect test runner where tables that is creates can be 
     // found.

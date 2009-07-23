@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
+import net.sourceforge.squirrel_sql.test.AppTestUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.easymock.classextension.EasyMock;
@@ -82,8 +83,8 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 		// Simulate the user changing the session properties
 		props = getEasyMockSessionProperties();
 
-		mockSquirrePrefs = TestUtil.getEasyMockSquirrelPreferences(props);
-		mockSqlAlias = TestUtil.getEasyMockSQLAlias(mockSqlAliasId, mockSqlDriverId);
+		mockSquirrePrefs = AppTestUtil.getEasyMockSquirrelPreferences(props);
+		mockSqlAlias = AppTestUtil.getEasyMockSQLAlias(mockSqlAliasId, mockSqlDriverId);
 		mockSqlConnection = TestUtil.getEasyMockSQLConnection();
 
 		mockSessionManager.addSessionListener(isA(ISessionListener.class));
