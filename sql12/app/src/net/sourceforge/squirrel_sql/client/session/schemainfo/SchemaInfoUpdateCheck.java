@@ -186,6 +186,10 @@ public class SchemaInfoUpdateCheck
          });
       }
 
+      _updateDatabaseObjectInfos.clear();
+      _dropTableSimpleNames.clear();
+      _dropProcedureSimpleNames.clear();
+
    }
 
    private void repaintSqlEditor()
