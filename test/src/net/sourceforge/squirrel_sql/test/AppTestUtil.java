@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.test;
 
+
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
@@ -29,8 +30,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.Action;
-
-import org.easymock.EasyMock;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -67,6 +66,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+
+import org.easymock.classextension.EasyMock;
 
 public class AppTestUtil
 {
