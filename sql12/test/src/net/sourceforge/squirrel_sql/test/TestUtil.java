@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -49,6 +50,7 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
@@ -84,6 +86,14 @@ public class TestUtil {
       expect(tokenizer.isRemoveMultiLineComment()).andReturn(removeMultiLineComment)
                                                   .anyTimes();
       expect(tokenizer.getQueryCount()).andReturn(queryCount).anyTimes();
+      
+      TokenizerSessPropsInteractions tspi = createMock(TokenizerSessPropsInteractions.class);
+      expect(tspi.isTokenizerDefinesRemoveMultiLineComment()).andStubReturn(true);
+      expect(tspi.isTokenizerDefinesStartOfLineComment()).andStubReturn(true);
+      expect(tspi.isTokenizerDefinesStatementSeparator()).andStubReturn(true);
+      
+      expect(tokenizer.getTokenizerSessPropsInteractions()).andStubReturn(tspi);
+      replay(tspi);
       replay(tokenizer);
       return tokenizer;
    }
@@ -316,6 +326,18 @@ public class TestUtil {
                                     .anyTimes();
       expect(result.getUpdateRule()).andReturn(DatabaseMetaData.importedKeyCascade)
                                     .anyTimes();
+      expect(result.getForeignKeySchemaName()).andStubReturn("TestSchema");
+      expect(result.getPrimaryKeySchemaName()).andStubReturn("TestSchema");
+      
+      ForeignKeyColumnInfo mockForeignKeyColumnInfo = createMock("mockForeignKeyColumnInfo", ForeignKeyColumnInfo.class);
+      expect(mockForeignKeyColumnInfo.getForeignKeyColumnName()).andStubReturn(ccol);
+      expect(mockForeignKeyColumnInfo.getPrimaryKeyColumnName()).andStubReturn(pcol);
+      expect(mockForeignKeyColumnInfo.getKeySequence()).andStubReturn(0);
+      
+      
+      expect(result.getForeignKeyColumnInfo()).andStubReturn(new ForeignKeyColumnInfo[] { mockForeignKeyColumnInfo });
+      
+      replay(mockForeignKeyColumnInfo);
       replay(result);
       return new ForeignKeyInfo[] { result };
    }
@@ -328,6 +350,7 @@ public class TestUtil {
       expect(result.getOrdinalPosition()).andReturn((short) 1).anyTimes();
       expect(result.getTableName()).andReturn(tableName).anyTimes();
       expect(result.isNonUnique()).andReturn(false).anyTimes();
+      expect(result.getSchemaName()).andStubReturn("TestSchema");
       replay(result);
       return Arrays.asList(new IndexInfo[] { result });
    }
