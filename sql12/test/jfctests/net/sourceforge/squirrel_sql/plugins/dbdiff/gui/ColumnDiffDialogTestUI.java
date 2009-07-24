@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import static java.sql.Types.*;
 
@@ -37,22 +37,22 @@ public class ColumnDiffDialogTestUI {
     public static void main(String[] args) throws Exception {
         ApplicationArguments.initialize(new String[] {});
         
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle");
+        ISQLDatabaseMetaData md = FwTestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle");
         ColumnDifference diff = new ColumnDifference();
-        TableColumnInfo column1 = TestUtil.getBigintColumnInfo(md, true);
-        TableColumnInfo column2 = TestUtil.getVarcharColumnInfo(md, true, 100);
+        TableColumnInfo column1 = FwTestUtil.getBigintColumnInfo(md, true);
+        TableColumnInfo column2 = FwTestUtil.getVarcharColumnInfo(md, true, 100);
         diff.setColumns(column1, column2);
         diff.execute();
 
         ColumnDifference diff2 = new ColumnDifference();
-        TableColumnInfo column3 = TestUtil.getVarcharColumnInfo(md, true, 200);
-        TableColumnInfo column4 = TestUtil.getVarcharColumnInfo(md, true, 100);
+        TableColumnInfo column3 = FwTestUtil.getVarcharColumnInfo(md, true, 200);
+        TableColumnInfo column4 = FwTestUtil.getVarcharColumnInfo(md, true, 100);
         diff2.setColumns(column3, column4);
         diff2.execute();
         
         ColumnDifference diff3 = new ColumnDifference();
         TableColumnInfo column5 = 
-            TestUtil.getTableColumnInfo(md, "LongColumnNameThatIsUnreal", VARCHAR, 100, 0, false);
+            FwTestUtil.getTableColumnInfo(md, "LongColumnNameThatIsUnreal", VARCHAR, 100, 0, false);
         diff3.setColumn1(column5);
         diff3.setCol2Exists(false);
         

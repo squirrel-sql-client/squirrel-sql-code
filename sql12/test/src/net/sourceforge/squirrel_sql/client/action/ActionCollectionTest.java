@@ -24,7 +24,7 @@ import javax.swing.Action;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.test.TestUtil;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
@@ -39,7 +39,7 @@ public class ActionCollectionTest extends BaseSQuirreLJUnit4TestCase {
     
     @Before
     public void setUp() throws Exception {
-        mockApplication = TestUtil.getEasyMockApplication(false, true, null);
+        mockApplication = FwTestUtil.getEasyMockApplication(false, true, null);
         mockAction = EasyMock.createMock(Action.class);
         
         replay(mockAction);

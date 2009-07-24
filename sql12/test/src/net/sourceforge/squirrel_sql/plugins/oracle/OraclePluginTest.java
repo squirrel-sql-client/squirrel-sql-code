@@ -26,11 +26,13 @@ import static org.easymock.classextension.EasyMock.replay;
 
 import javax.swing.Action;
 
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -39,8 +41,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheet
 import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
-import net.sourceforge.squirrel_sql.test.AppTestUtil;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class OraclePluginTest extends AbstractSessionPluginTest
 	public void setUp() throws Exception
 	{
 		pluginUnderTest = new OraclePlugin();
-		md = TestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle:thin:@host:1521:sid", false, false);
+		md = FwTestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle:thin:@host:1521:sid", false, false);
 		String[] functions = new String[] { OracleExceptionFormatter.OFFSET_FUNCTION_NAME };
 		expect(md.getStringFunctions()).andReturn(functions);
 		replay(md);

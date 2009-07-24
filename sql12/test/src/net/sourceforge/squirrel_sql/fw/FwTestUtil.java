@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.test;
+package net.sourceforge.squirrel_sql.fw;
 
 import static java.sql.Types.BIGINT;
 import static java.sql.Types.BINARY;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -57,11 +58,11 @@ import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import org.easymock.classextension.EasyMock;
 
 /**
- * A utility class for building test objects.
- * 
- * @author manningr
+ * This is intended to provide helper methods to build EasyMock mocks for classes and interfaces located
+ * in the Fw module.  App mocks should be located in the corresponding AppTestUtil class, where as plugins 
+ * mocks should be relocated to individual plugin TestUtil helpers.
  */
-public class TestUtil {
+public class FwTestUtil {
 
    public static IMessageHandler getEasyMockMessageHandler() {
       IMessageHandler result = createMock(IMessageHandler.class);

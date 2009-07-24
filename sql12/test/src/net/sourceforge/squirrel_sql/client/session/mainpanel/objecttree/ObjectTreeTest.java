@@ -22,11 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.test.AppTestUtil;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ObjectTreeTest extends BaseSQuirreLTestCase {
 
@@ -59,7 +59,7 @@ public class ObjectTreeTest extends BaseSQuirreLTestCase {
         map.put(tableKey, null);
         
         IDatabaseObjectInfo dbInfo = 
-            TestUtil.getEasyMockDatabaseObjectInfo("catalog", 
+            FwTestUtil.getEasyMockDatabaseObjectInfo("catalog", 
                                                    "schema", 
                                                    "table", 
                                                    "schema.table",

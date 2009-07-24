@@ -6,9 +6,9 @@ import java.net.URL;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 {
@@ -50,7 +50,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	 */
 	private String getFilePrefixedFilename(String filename)
 	{
-		String distDir = TestUtil.findAncestorSquirrelSqlDistDirBase("squirrel-sql-dist");
+		String distDir = FwTestUtil.findAncestorSquirrelSqlDistDirBase("squirrel-sql-dist");
 		if (distDir == null)
 		{
 			throw new IllegalStateException("Couldn't locate distDir (squirrel-sql-dist)");
