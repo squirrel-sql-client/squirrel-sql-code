@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.AbstractSerializableTest;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -55,7 +55,7 @@ public class SchemaInfoCacheTest extends AbstractSerializableTest {
    @Before
    public void setUp() throws Exception {
    	super.serializableToTest = new SchemaInfoCache();
-      mockMetaData = TestUtil.getEasyMockH2SQLMetaData();
+      mockMetaData = FwTestUtil.getEasyMockH2SQLMetaData();
       for (int i = 0; i < tableInfos.length; i++) {
          String tableName = "table" + i;
          tableInfos[i] = new TableInfo(testCatalog, testSchema, tableName,

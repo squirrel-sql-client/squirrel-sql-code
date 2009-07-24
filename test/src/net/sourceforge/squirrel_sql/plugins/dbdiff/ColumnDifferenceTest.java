@@ -23,9 +23,9 @@ import static java.sql.Types.VARCHAR;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -57,7 +57,7 @@ public class ColumnDifferenceTest extends BaseSQuirreLJUnit4TestCase {
         
         // init mocks
         mockMetaData = 
-            TestUtil.getEasyMockSQLMetaData("Oracle", 
+            FwTestUtil.getEasyMockSQLMetaData("Oracle", 
                                             "oracle:jdbc:thin@localhost:1521:ORCL", 
                                             false);
         
@@ -65,7 +65,7 @@ public class ColumnDifferenceTest extends BaseSQuirreLJUnit4TestCase {
         Integer[] columnTypes = new Integer[] { VARCHAR , INTEGER, VARCHAR};
         
         TableColumnInfo[] columns = 
-            TestUtil.getEasyMockTableColumns("doo", 
+            FwTestUtil.getEasyMockTableColumns("doo", 
                                              "foo", 
                                              "table1", 
                                              asList(columnNames), 
@@ -76,15 +76,15 @@ public class ColumnDifferenceTest extends BaseSQuirreLJUnit4TestCase {
         mockVarcharCol2Table1 = columns[2];
         
         mockVarcharCol1Table2 = 
-            TestUtil.getEasyMockTableColumn("doo", "foo", "table2", "col1", VARCHAR);
+            FwTestUtil.getEasyMockTableColumn("doo", "foo", "table2", "col1", VARCHAR);
         
         mockVarcharCol1Table1Length1000 = 
-            TestUtil.setEasyMockTableColumnInfoSize(mockVarcharCol1Table1, 1000);
+            FwTestUtil.setEasyMockTableColumnInfoSize(mockVarcharCol1Table1, 1000);
         
         mockVarcharCol2Table1Nullable = 
-            TestUtil.setEasyMockTableColumnInfoNullable(mockVarcharCol2Table1, true);
+            FwTestUtil.setEasyMockTableColumnInfoNullable(mockVarcharCol2Table1, true);
         mockVarcharCol2Table1NotNullable = 
-            TestUtil.setEasyMockTableColumnInfoNullable(mockVarcharCol2Table1, false);
+            FwTestUtil.setEasyMockTableColumnInfoNullable(mockVarcharCol2Table1, false);
         
     }
 
@@ -225,7 +225,7 @@ public class ColumnDifferenceTest extends BaseSQuirreLJUnit4TestCase {
     @Test
     public final void testExecuteNoDifferences() {
         TableColumnInfo mockVarcharCol1Table1Copy = 
-            TestUtil.setEasyMockTableColumnInfoType(mockVarcharCol1Table1, VARCHAR);
+            FwTestUtil.setEasyMockTableColumnInfoType(mockVarcharCol1Table1, VARCHAR);
         columnDifference.setColumns(mockVarcharCol1Table1Copy, 
                                     mockVarcharCol1Table1);
         assertFalse(columnDifference.execute());

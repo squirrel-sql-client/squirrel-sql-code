@@ -26,18 +26,18 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
-import net.sourceforge.squirrel_sql.test.AppTestUtil;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
@@ -86,7 +86,7 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 
 		mockSquirrePrefs = AppTestUtil.getEasyMockSquirrelPreferences(props);
 		mockSqlAlias = AppTestUtil.getEasyMockSQLAlias(mockSqlAliasId, mockSqlDriverId);
-		mockSqlConnection = TestUtil.getEasyMockSQLConnection();
+		mockSqlConnection = FwTestUtil.getEasyMockSQLConnection();
 
 		mockSessionManager.addSessionListener(isA(ISessionListener.class));
 		mockSessionManager.addSessionListener(isA(ISessionListener.class));
@@ -171,7 +171,7 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 	@Test
 	public final void testGetQueryTokenizer_Custom()
 	{
-		IQueryTokenizer customTokenizer = TestUtil.getEasyMockQueryTokenizer(CUSTOM_STMT_SEP, "--", true, 0);
+		IQueryTokenizer customTokenizer = FwTestUtil.getEasyMockQueryTokenizer(CUSTOM_STMT_SEP, "--", true, 0);
 
 		sessionUnderTest.setQueryTokenizer(customTokenizer);
 
@@ -187,7 +187,7 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 		IQueryTokenizer initialTokenizer = sessionUnderTest.getQueryTokenizer();
 		assertEquals(FIRST_STMT_SEP, initialTokenizer.getSQLStatementSeparator());
 
-		IQueryTokenizer customTokenizer = TestUtil.getEasyMockQueryTokenizer(CUSTOM_STMT_SEP, "--", true, 0);
+		IQueryTokenizer customTokenizer = FwTestUtil.getEasyMockQueryTokenizer(CUSTOM_STMT_SEP, "--", true, 0);
 
 		// This should override the default tokenizer
 		sessionUnderTest.setQueryTokenizer(customTokenizer);
@@ -204,9 +204,9 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
 	@Test(expected = IllegalStateException.class)
 	public final void testSetQueryTokenizer()
 	{
-		IQueryTokenizer customTokenizer1 = TestUtil.getEasyMockQueryTokenizer(FIRST_STMT_SEP, "--", true, 0);
+		IQueryTokenizer customTokenizer1 = FwTestUtil.getEasyMockQueryTokenizer(FIRST_STMT_SEP, "--", true, 0);
 
-		IQueryTokenizer customTokenizer2 = TestUtil.getEasyMockQueryTokenizer(SECOND_STMT_SEP, "--", true, 0);
+		IQueryTokenizer customTokenizer2 = FwTestUtil.getEasyMockQueryTokenizer(SECOND_STMT_SEP, "--", true, 0);
 
 		sessionUnderTest.setQueryTokenizer(customTokenizer1);
 

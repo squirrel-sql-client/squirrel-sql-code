@@ -34,9 +34,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -46,8 +48,6 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
-import net.sourceforge.squirrel_sql.test.AppTestUtil;
-import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -106,14 +106,14 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         prefs = new CreateScriptPreferences();
         prefs.setIncludeExternalReferences(true);
         
-        mockMetaData = TestUtil.getEasyMockSQLMetaData("oracle", 
+        mockMetaData = FwTestUtil.getEasyMockSQLMetaData("oracle", 
                                                        "jdbc:oracle:thin",
                                                         false,
                                                         false);
         
         
         
-        mockPrimaryKeyInfo = TestUtil.getEasyMockPrimaryKeyInfo(catalog, schema, table, pkCol, (short)1, pkName, true);
+        mockPrimaryKeyInfo = FwTestUtil.getEasyMockPrimaryKeyInfo(catalog, schema, table, pkCol, (short)1, pkName, true);
         
         pkInfos = new PrimaryKeyInfo[] { mockPrimaryKeyInfo };
         
@@ -139,13 +139,13 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
             Arrays.asList(new Integer[] { Types.INTEGER, Types.DATE });
         
         TableColumnInfo[] childColInfos = 
-            TestUtil.getEasyMockTableColumns(catalog, schema, table, columnNames, dataTypes);
+            FwTestUtil.getEasyMockTableColumns(catalog, schema, table, columnNames, dataTypes);
 
         TableColumnInfo[] parentColInfos = 
-            TestUtil.getEasyMockTableColumns(catalog, schema, table, parentColumnNames, parentDataTypes);
+            FwTestUtil.getEasyMockTableColumns(catalog, schema, table, parentColumnNames, parentDataTypes);
         
         ISQLDatabaseMetaData tableMockMetaData = 
-            TestUtil.getEasyMockSQLMetaData("oracle", 
+            FwTestUtil.getEasyMockSQLMetaData("oracle", 
                                             "jdbc:oracle:thin",
                                             false,
                                             true);
@@ -169,9 +169,9 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         twoTableList.add(childTableInfo);
         twoTableList.add(parentTableInfo);
         
-        mockIndexInfos = TestUtil.getEasyMockIndexInfos("testTable", "data1");
+        mockIndexInfos = FwTestUtil.getEasyMockIndexInfos("testTable", "data1");
         
-        fkinfos = TestUtil.getEasyMockForeignKeyInfos("ChildTable_FK", 
+        fkinfos = FwTestUtil.getEasyMockForeignKeyInfos("ChildTable_FK", 
                                                       "childTable",
                                                       "fkcol",
                                                       "parentTable",

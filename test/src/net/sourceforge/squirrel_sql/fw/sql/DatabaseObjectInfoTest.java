@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import static org.junit.Assert.*;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.test.TestUtil;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -48,12 +48,12 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
     @Before
     public void setUp() throws Exception {
         oracleSQLDatabaseMetaData = 
-            TestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle:thin@",
+            FwTestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle:thin@",
                 false, true);
         
-        h2SQLDatabaseMetaData = TestUtil.getEasyMockH2SQLMetaData();
-        sybase12SQLDatabaseMeta = TestUtil.getEasyMockSybase12SQLMetaData();
-        sybase15SQLDatabaseMeta = TestUtil.getEasyMockSybase15SQLMetaData();
+        h2SQLDatabaseMetaData = FwTestUtil.getEasyMockH2SQLMetaData();
+        sybase12SQLDatabaseMeta = FwTestUtil.getEasyMockSybase12SQLMetaData();
+        sybase15SQLDatabaseMeta = FwTestUtil.getEasyMockSybase15SQLMetaData();
     }
 
     @After

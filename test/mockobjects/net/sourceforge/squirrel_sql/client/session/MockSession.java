@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import javax.swing.Action;
 import javax.swing.JComponent;
 
+import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.MockApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -53,7 +54,6 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
-import net.sourceforge.squirrel_sql.test.AppTestUtil;
 
 import com.mockobjects.sql.MockConnection2;
 

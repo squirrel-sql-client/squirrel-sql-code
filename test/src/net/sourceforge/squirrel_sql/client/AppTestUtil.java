@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.test;
+package net.sourceforge.squirrel_sql.client;
 
 
 import static org.easymock.EasyMock.expect;
@@ -58,6 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -69,6 +70,11 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 import org.easymock.classextension.EasyMock;
 
+/**
+ * This is intended to provide helper methods to build EasyMock mocks for classes and interfaces located
+ * in the App module.  Fw mocks should be located in the corresponds FwTestUtil class, where as plugins 
+ * mocks should be relocated to individual plugin TestUtil helpers.
+ */
 public class AppTestUtil
 {
 
@@ -86,7 +92,7 @@ public class AppTestUtil
 
 	public static ISession getEasyMockSession(String dbName, boolean replay) throws SQLException
 	{
-		ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(dbName, "jdbc:oracle");
+		ISQLDatabaseMetaData md = FwTestUtil.getEasyMockSQLMetaData(dbName, "jdbc:oracle");
 		ISession session = AppTestUtil.getEasyMockSession(md, replay);
 		return session;
 	}
@@ -96,7 +102,7 @@ public class AppTestUtil
 		ISession session = null;
 		try
 		{
-			ISQLConnection con = TestUtil.getEasyMockSQLConnection();
+			ISQLConnection con = FwTestUtil.getEasyMockSQLConnection();
 			session = getEasyMockSession(md, con, false);
 			if (replay)
 			{
@@ -113,7 +119,7 @@ public class AppTestUtil
 	public static ISession getEasyMockSession(ISQLDatabaseMetaData md, ISQLConnection con, boolean replay)
 	{
 		ISession session = createMock(ISession.class);
-		IQueryTokenizer tokenizer = TestUtil.getEasyMockQueryTokenizer();
+		IQueryTokenizer tokenizer = FwTestUtil.getEasyMockQueryTokenizer();
 		// IMessageHandler messageHandler = getEasyMockMessageHandler();
 
 		expect(session.getMetaData()).andReturn(md).anyTimes();
@@ -124,7 +130,7 @@ public class AppTestUtil
 		expect(session.getSQLPanelAPIOfActiveSessionWindow()).andReturn(api).anyTimes();
 		// expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
 		expect(session.getAlias()).andReturn(AppTestUtil.getEasyMockSqlAliasExt());
-		expect(session.getIdentifier()).andReturn(TestUtil.getEasyMockIdentifier()).anyTimes();
+		expect(session.getIdentifier()).andReturn(FwTestUtil.getEasyMockIdentifier()).anyTimes();
 		expect(session.getSQLConnection()).andReturn(con).anyTimes();
 		session.setExceptionFormatter(isA(ExceptionFormatter.class));
 		expectLastCall().anyTimes();
@@ -195,7 +201,7 @@ public class AppTestUtil
 
 	public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
 	      ResultSet rs) throws SQLException {
-	   ISQLConnection con = TestUtil.getEasyMockSQLConnection(rs);
+	   ISQLConnection con = FwTestUtil.getEasyMockSQLConnection(rs);
 	   ISession session = getEasyMockSession(md, con, false);
 	   replay(session);
 	   return session;
@@ -267,7 +273,7 @@ public class AppTestUtil
 	public static ISQLAliasExt getEasyMockSqlAliasExt() {
 	   ISQLAliasExt result = createMock(ISQLAliasExt.class);
 	   expect(result.getName()).andReturn("TestAlias").anyTimes();
-	   IIdentifier id = TestUtil.getEasyMockIdentifier();
+	   IIdentifier id = FwTestUtil.getEasyMockIdentifier();
 	   expect(result.getDriverIdentifier()).andReturn(id).anyTimes();
 	   replay(result);
 	   return result;
@@ -282,11 +288,11 @@ public class AppTestUtil
 	}
 
 	public static IApplication getEasyMockApplication() {
-	   return TestUtil.getEasyMockApplication(true, true, null);
+	   return FwTestUtil.getEasyMockApplication(true, true, null);
 	}
 
 	public static IApplication getEasyMockApplication(ActionCollection col) {
-	   IApplication result = TestUtil.getEasyMockApplication(false, false, col);
+	   IApplication result = FwTestUtil.getEasyMockApplication(false, false, col);
 	   replay(result);
 	   return result;
 	}
