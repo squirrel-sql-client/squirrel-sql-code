@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 
 import java.beans.PropertyChangeListener;
@@ -65,8 +66,10 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import org.easymock.classextension.EasyMock;
 
@@ -288,11 +291,11 @@ public class AppTestUtil
 	}
 
 	public static IApplication getEasyMockApplication() {
-	   return FwTestUtil.getEasyMockApplication(true, true, null);
+	   return AppTestUtil.getEasyMockApplication(true, true, null);
 	}
 
 	public static IApplication getEasyMockApplication(ActionCollection col) {
-	   IApplication result = FwTestUtil.getEasyMockApplication(false, false, col);
+	   IApplication result = AppTestUtil.getEasyMockApplication(false, false, col);
 	   replay(result);
 	   return result;
 	}
@@ -351,6 +354,38 @@ public class AppTestUtil
 	                                                  .anyTimes();
 	   replay(mockSqlAlias);
 	   return mockSqlAlias;
+	}
+
+	public static IApplication getEasyMockApplication(boolean nice,
+	      boolean replay, ActionCollection col) {
+	   IApplication result = null;
+	   if (nice) {
+	      result = createNiceMock(IApplication.class);
+	   } else {
+	      result = createMock(IApplication.class);
+	   }
+	   SquirrelResources resoures = getEasyMockSquirrelResources();
+	   SessionProperties props = getEasyMockSessionProperties(";", "--", true);
+	   SquirrelPreferences prefs = getEasyMockSquirrelPreferences(props);
+	   expect(result.getMainFrame()).andReturn(null).anyTimes();
+	   expect(result.getResources()).andReturn(resoures).anyTimes();
+	   expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
+	   TaskThreadPool mockThreadPool = FwTestUtil.getEasyMockTaskThreadPool();
+	   expect(result.getThreadPool()).andReturn(mockThreadPool).anyTimes();
+	   ActionCollection mockActColl = col;
+	   if (col == null) {
+	      mockActColl = getEasyMockActionCollection();
+	   }
+	   expect(result.getActionCollection()).andReturn(mockActColl).anyTimes();
+	   SQLDriverManager driverManager = FwTestUtil.getEasyMockSQLDriverManager();
+	   expect(result.getSQLDriverManager()).andReturn(driverManager).anyTimes();
+	   SessionManager mockSessionManager = getEasyMockSessionManager();
+	   expect(result.getSessionManager()).andReturn(mockSessionManager)
+	                                     .anyTimes();
+	   if (replay) {
+	      replay(result);
+	   }
+	   return result;
 	}
 
 }

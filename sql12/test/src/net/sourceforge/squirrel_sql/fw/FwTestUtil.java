@@ -29,13 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
@@ -250,38 +243,6 @@ public class FwTestUtil {
    public static ISQLDatabaseMetaData getEasyMockSQLMetaData(String dbName,
          String dbURL, boolean nice) throws SQLException {
       return getEasyMockSQLMetaData(dbName, dbURL, nice, true);
-   }
-
-   public static IApplication getEasyMockApplication(boolean nice,
-         boolean replay, ActionCollection col) {
-      IApplication result = null;
-      if (nice) {
-         result = createNiceMock(IApplication.class);
-      } else {
-         result = createMock(IApplication.class);
-      }
-      SquirrelResources resoures = AppTestUtil.getEasyMockSquirrelResources();
-      SessionProperties props = AppTestUtil.getEasyMockSessionProperties(";", "--", true);
-      SquirrelPreferences prefs = AppTestUtil.getEasyMockSquirrelPreferences(props);
-      expect(result.getMainFrame()).andReturn(null).anyTimes();
-      expect(result.getResources()).andReturn(resoures).anyTimes();
-      expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
-      TaskThreadPool mockThreadPool = getEasyMockTaskThreadPool();
-      expect(result.getThreadPool()).andReturn(mockThreadPool).anyTimes();
-      ActionCollection mockActColl = col;
-      if (col == null) {
-         mockActColl = AppTestUtil.getEasyMockActionCollection();
-      }
-      expect(result.getActionCollection()).andReturn(mockActColl).anyTimes();
-      SQLDriverManager driverManager = getEasyMockSQLDriverManager();
-      expect(result.getSQLDriverManager()).andReturn(driverManager).anyTimes();
-      SessionManager mockSessionManager = AppTestUtil.getEasyMockSessionManager();
-      expect(result.getSessionManager()).andReturn(mockSessionManager)
-                                        .anyTimes();
-      if (replay) {
-         replay(result);
-      }
-      return result;
    }
 
    public static SQLDriverManager getEasyMockSQLDriverManager() {
