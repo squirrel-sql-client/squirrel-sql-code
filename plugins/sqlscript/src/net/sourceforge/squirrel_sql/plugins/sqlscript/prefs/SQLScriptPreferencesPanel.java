@@ -53,7 +53,9 @@ public class SQLScriptPreferencesPanel extends JPanel  {
     SQLScriptPreferenceBean _prefs = null;
     
     JCheckBox qualifyTableNamesCheckBox = null;
-    
+
+    JCheckBox useDoubleQuotesCheckBox = null;
+
     JCheckBox deleteReferentialActionCheckbox = null;
     
     JCheckBox updateReferentialActionCheckbox = null;
@@ -90,10 +92,11 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         String borderTitle = s_stringMgr.getString("SQLScriptPreferencesPanel.borderTitle");
         result.setBorder(getTitledBorder(borderTitle));
         addQualifyTableNamesCheckBox(result, 0, 0); 
-        addDeleteRefActionCheckBox(result, 0, 1);
-        addDeleteActionComboBox(result, 0, 2);
-        addUpdateRefActionCheckBox(result, 0, 3);
-        addUpdateActionComboBox(result, 0, 4);
+        addUseDoubleQuotesCheckBox(result, 0, 1);
+        addDeleteRefActionCheckBox(result, 0, 2);
+        addDeleteActionComboBox(result, 0, 3);
+        addUpdateRefActionCheckBox(result, 0, 4);
+        addUpdateActionComboBox(result, 0, 5);
         return result;
     }
     
@@ -111,9 +114,31 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         qualifyTableNamesCheckBox = new JCheckBox(cbLabelStr);
         qualifyTableNamesCheckBox.setToolTipText(cbToolTipText);
         panel.add(qualifyTableNamesCheckBox, c);
+
+        qualifyTableNamesCheckBox.addActionListener(new ActionListener()
+        {
+           @Override
+           public void actionPerformed(ActionEvent e)
+           {
+               onQualifyTableNamesCheckBox();
+           }
+        });
     }
 
-    private void addDeleteRefActionCheckBox(JPanel panel, int col, int row) {
+   private void onQualifyTableNamesCheckBox()
+   {
+      if(qualifyTableNamesCheckBox.isSelected())
+      {
+         useDoubleQuotesCheckBox.setEnabled(true);
+      }
+      else
+      {
+         useDoubleQuotesCheckBox.setSelected(false);
+         useDoubleQuotesCheckBox.setEnabled(false);
+      }
+   }
+
+   private void addDeleteRefActionCheckBox(JPanel panel, int col, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = col;
         c.gridy = row;  
@@ -192,6 +217,18 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         panel.add(subpanel, c);
     }
 
+    private void addUseDoubleQuotesCheckBox(JPanel panel, int col, int row) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = col;
+        c.gridy = row;
+        c.insets = new Insets(5,25,0,0);
+        c.anchor = GridBagConstraints.WEST;
+
+        useDoubleQuotesCheckBox = new JCheckBox(s_stringMgr.getString("SQLScriptPreferencesPanel.useDoubleQuotesForQualifying"));
+
+        panel.add(useDoubleQuotesCheckBox, c);
+    }
+
     private void addUpdateActionComboBox(JPanel panel, int col, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = col;
@@ -230,6 +267,8 @@ public class SQLScriptPreferencesPanel extends JPanel  {
     
     private void loadData() {
         qualifyTableNamesCheckBox.setSelected(_prefs.isQualifyTableNames());
+        useDoubleQuotesCheckBox.setEnabled(_prefs.isQualifyTableNames());
+        useDoubleQuotesCheckBox.setSelected(_prefs.isQualifyTableNames() && _prefs.isUseDoubleQuotes());
         deleteReferentialActionCheckbox.setSelected(_prefs.isDeleteRefAction());
         deleteActionComboBox.setEnabled(deleteReferentialActionCheckbox.isSelected());
         deleteActionComboBox.setSelectedIndex(_prefs.getDeleteAction());
@@ -241,6 +280,7 @@ public class SQLScriptPreferencesPanel extends JPanel  {
     
     private void save() {
         _prefs.setQualifyTableNames(qualifyTableNamesCheckBox.isSelected());
+        _prefs.setUseDoubleQuotes(useDoubleQuotesCheckBox.isSelected());
         _prefs.setDeleteRefAction(deleteReferentialActionCheckbox.isSelected());
         _prefs.setUpdateRefAction(updateReferentialActionCheckbox.isSelected());
         int action = deleteActionComboBox.getSelectedIndex();

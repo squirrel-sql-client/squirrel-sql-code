@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
@@ -118,11 +119,7 @@ public class ScriptUtil
     */
    public static String getTableName(ITableInfo ti) 
    {
-	   String result = ti.getSimpleName();
-	   if (prefs.isQualifyTableNames()) { 
-		   result = ti.getQualifiedName();
-	   }
-	   return result;
+      return DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
    }
 
 }

@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -46,6 +48,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 {
@@ -112,6 +115,9 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 
                   IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
+                  boolean qualifyTableNames = SQLScriptPreferencesManager.getPreferences().isQualifyTableNames();
+                  boolean useDoubleQuotes = SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes();
+
                   for (int k = 0; k < dbObjs.length; k++)
                   {
                      if (dbObjs[k] instanceof ITableInfo)
@@ -121,7 +127,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                         String sTable = ScriptUtil.getTableName(ti);
                         StringBuilder sql = new StringBuilder();
                         sql.append("select * from ");
-                        sql.append(ti.getQualifiedName());
+                        sql.append(DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), qualifyTableNames, useDoubleQuotes));
                         
                         // Some databases cannot order by LONG/LOB columns.
                         if (!JDBCTypeMapper.isLongType(getFirstColumnType(ti))) 

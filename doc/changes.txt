@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+SQL Scripts Plugin:
+ New checkbox 'Use double quotes (") for qualifying' in global scripting preferences. 
+
 Feature Request #2818444:  Oracle: Connecting as SYS not possible - now it is possible to add the necessary 
 driver property to connect as SYS, or any other account that needs to connect as SYSDBA.
 
@@ -35,7 +38,7 @@ Graph Plugin:
 Bug-Fixes:
 
 SQL Scripts Plugin:
- Indexes and foreign key constraints could not be scripted with qualified table names.
+ Several scripting functions did not respect global scripting preferences about qualifying tables.
 
 SQL Scripts Plugin:
  Foreign key constraints with more than one column were not scripted correctly. (Only first column was included.)  

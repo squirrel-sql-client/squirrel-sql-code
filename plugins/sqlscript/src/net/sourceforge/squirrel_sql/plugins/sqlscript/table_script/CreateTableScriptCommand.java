@@ -147,7 +147,8 @@ public class CreateTableScriptCommand implements ICommand
             csprefs.setUpdateAction(prefs.getUpdateAction());
             csprefs.setUpdateRefAction(prefs.isUpdateRefAction());
             csprefs.setQualifyTableNames(prefs.isQualifyTableNames());
-            
+            csprefs.setUseDoubleQuotes(prefs.isUseDoubleQuotes());
+
             List<ITableInfo> tables = convertArrayToList(dbObjs);
             
             HibernateDialect dialect = 
