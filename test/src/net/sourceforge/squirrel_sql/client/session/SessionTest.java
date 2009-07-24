@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -222,6 +223,12 @@ public class SessionTest extends BaseSQuirreLJUnit4TestCase
       expect(result.getStartOfLineComment()).andReturn("--").anyTimes();
       expect(result.clone()).andReturn(result);
       expect(result.getRemoveMultiLineComment()).andReturn(true).anyTimes();
+      result.setSQLStatementSeparator(isA(String.class));
+      expectLastCall().anyTimes();
+      result.setStartOfLineComment(isA(String.class));
+      expectLastCall().anyTimes();
+      result.setRemoveMultiLineComment(EasyMock.anyBoolean());
+      expectLastCall().anyTimes();
       replay(result);
       return result;
   }

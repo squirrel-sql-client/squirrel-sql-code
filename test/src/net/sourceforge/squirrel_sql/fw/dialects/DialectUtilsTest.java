@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -96,7 +97,8 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
     
     List<IndexInfo> mockIndexInfos;
     
-    
+    ForeignKeyColumnInfo mockForeignKeyColumnInfo = 
+   	 mockHelper.createMock("mockForeignKeyColumnInfo", ForeignKeyColumnInfo.class);
     
     @Before
     public void setUp() throws Exception {
