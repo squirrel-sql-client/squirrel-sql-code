@@ -35,7 +35,10 @@ public class SQLScriptPreferenceBean implements Cloneable,
     /** whether or not to qualify table names with the schema when generating 
      *  scripts*/
     private boolean qualifyTableNames = true;
-    
+    private boolean useDoubleQuotes = true;
+
+
+
     public static final int NO_ACTION = 0;
     
     public static final int CASCADE_DELETE = 1;
@@ -57,7 +60,7 @@ public class SQLScriptPreferenceBean implements Cloneable,
      * whether or not to override the update referential action for FK defs.
      */
     private boolean updateRefAction = false;
-    
+
 	public SQLScriptPreferenceBean() {
 		super();
 	}
@@ -177,6 +180,17 @@ public class SQLScriptPreferenceBean implements Cloneable,
                 return "NO ACTION";
         }
     }
- 
+
+   public boolean isUseDoubleQuotes()
+   {
+      return useDoubleQuotes;
+   }
+
+   public void setUseDoubleQuotes(boolean b)
+   {
+      useDoubleQuotes = b;
+   }
+
+
 }
 

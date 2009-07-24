@@ -1765,9 +1765,8 @@ public class DialectUtils implements StringTemplateConstants
 		for (final ITableInfo ti : tables)
 		{
 			final StringBuilder result = new StringBuilder();
-			final String tableName = prefs.isQualifyTableNames() ? ti.getQualifiedName() : ti.getSimpleName();
 			result.append("CREATE TABLE ");
-			result.append(tableName);
+			result.append(formatQualifIntern(ti.getSimpleName(), ti.getSchemaName(), prefs));
 			result.append("\n(");
 
 			final List<PrimaryKeyInfo> pkInfos = getPrimaryKeyInfo(md, ti, isJdbcOdbc);
@@ -2471,14 +2470,7 @@ public class DialectUtils implements StringTemplateConstants
 			indexSQL.append(ix.ixName);
 			indexSQL.append(" ON ");
 
-         if (prefs.isQualifyTableNames())
-         {
-            indexSQL.append("\"" + ix.tableSchema + "\".\"" + ix.table + "\"");
-         }
-         else
-         {
-            indexSQL.append(ix.table);
-         }
+         indexSQL.append(formatQualifIntern(ix.table, ix.tableSchema, prefs));
 
          if (ix.cols.size() == 1)
 			{
@@ -2540,14 +2532,7 @@ public class DialectUtils implements StringTemplateConstants
 				}
 			}
 
-         if (prefs.isQualifyTableNames())
-         {
-            sbToAppend.append("ALTER TABLE \"" + ci.fkTableSchema + "\".\"" + ci.fkTable + "\"\n");
-         }
-         else
-         {
-            sbToAppend.append("ALTER TABLE " + ci.fkTable + "\n");
-         }
+         sbToAppend.append("ALTER TABLE " + formatQualifIntern(ci.fkTable, ci.fkTableSchema, prefs) + "\n");
          sbToAppend.append("ADD CONSTRAINT " + ci.fkName + "\n");
 
          if (ci.fkCols.size() == 1)
@@ -2560,14 +2545,7 @@ public class DialectUtils implements StringTemplateConstants
 				}
 				sbToAppend.append(")\n");
 
-            if (prefs.isQualifyTableNames())
-            {
-               sbToAppend.append("REFERENCES \"" + ci.pkTableSchema + "\".\"" + ci.pkTable + "\"(");
-            }
-            else
-            {
-               sbToAppend.append("REFERENCES " + ci.pkTable + "(");
-            }
+            sbToAppend.append("REFERENCES " + formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs) + "(");
             sbToAppend.append(ci.pkCols.get(0));
 				for (int j = 1; j < ci.pkCols.size(); j++)
 				{
@@ -2592,14 +2570,7 @@ public class DialectUtils implements StringTemplateConstants
 				sbToAppend.append(")\n");
 
 				sbToAppend.append("REFERENCES ");
-            if (prefs.isQualifyTableNames())
-            {
-               sbToAppend.append("\"" + ci.pkTableSchema + "\".\"" + ci.pkTable + "\"");
-            }
-            else
-            {
-               sbToAppend.append(ci.pkTable);
-            }
+            sbToAppend.append(formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs));
             sbToAppend.append("\n");
 				sbToAppend.append("(\n");
 				for (int j = 0; j < ci.pkCols.size(); j++)
@@ -2644,7 +2615,31 @@ public class DialectUtils implements StringTemplateConstants
 		return result;
 	}
 
-	private static String constructFKContraintActionClause(boolean override, String conditionClause,
+   private static String formatQualifIntern(String table, String schema, CreateScriptPreferences prefs)
+   {
+      return formatQualified(table, schema, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
+   }
+
+   public static String formatQualified(String table, String schema, boolean qualifyTableNames, boolean useDoubleQuotes)
+   {
+      if(qualifyTableNames && null != schema && 0 < schema.trim().length())
+      {
+         if(useDoubleQuotes)
+         {
+            return "\"" + schema + "\".\"" + table + "\"";
+         }
+         else
+         {
+            return schema + "." + table;
+         }
+      }
+      else
+      {
+         return table;
+      }
+   }
+
+   private static String constructFKContraintActionClause(boolean override, String conditionClause,
 		String overrideAction, int rule)
 	{
 		// Bug 2531193: Oracle create table script the "ON UPDATE" is wrong

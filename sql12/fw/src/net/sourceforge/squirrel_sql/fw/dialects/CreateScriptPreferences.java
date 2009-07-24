@@ -59,8 +59,9 @@ public class CreateScriptPreferences {
     private boolean includeExternalReferences;
     
     private boolean qualifyTableNames;
-    
-    public void setDeleteRefAction(boolean deleteRefAction) {
+    private boolean useDoubleQuotes;
+
+   public void setDeleteRefAction(boolean deleteRefAction) {
         this.deleteRefAction = deleteRefAction;
     }
 
@@ -148,5 +149,14 @@ public class CreateScriptPreferences {
     public boolean isQualifyTableNames() {
         return qualifyTableNames;
     }
-    
+
+    public boolean isUseDoubleQuotes() {
+        return useDoubleQuotes;
+    }
+
+   public void setUseDoubleQuotes(boolean b) {
+       useDoubleQuotes = b;
+   }
+
+
 }
