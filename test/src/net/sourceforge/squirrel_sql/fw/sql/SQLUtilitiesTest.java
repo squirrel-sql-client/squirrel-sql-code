@@ -62,20 +62,22 @@ public class SQLUtilitiesTest extends BaseSQuirreLJUnit4TestCase
 		tables.add(mockTable2);
 		tables.add(mockTable3);
 
-		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable1)).andStubReturn(null);
-		mockTable1.setImportedKeys(null);
-		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable1)).andStubReturn(null);
-		mockTable1.setExportedKeys(null);
+		final ForeignKeyInfo[] noFkArray = new ForeignKeyInfo[0];
 		
-		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable2)).andStubReturn(null);
-		mockTable2.setImportedKeys(null);
-		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable2)).andStubReturn(null);
-		mockTable2.setExportedKeys(null);
+		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable1)).andStubReturn(noFkArray);
+		mockTable1.setImportedKeys(noFkArray);
+		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable1)).andStubReturn(noFkArray);
+		mockTable1.setExportedKeys(noFkArray);
+		
+		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable2)).andStubReturn(noFkArray);
+		mockTable2.setImportedKeys(noFkArray);
+		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable2)).andStubReturn(noFkArray);
+		mockTable2.setExportedKeys(noFkArray);
 
-		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable3)).andStubReturn(null);
-		mockTable3.setImportedKeys(null);
-		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable3)).andStubReturn(null);
-		mockTable3.setExportedKeys(null);
+		expect(mockSQLDatabaseMetaData.getImportedKeysInfo(mockTable3)).andStubReturn(noFkArray);
+		mockTable3.setImportedKeys(noFkArray);
+		expect(mockSQLDatabaseMetaData.getExportedKeysInfo(mockTable3)).andStubReturn(noFkArray);
+		mockTable3.setExportedKeys(noFkArray);
 		
 		mockHelper.replayAll();
 
