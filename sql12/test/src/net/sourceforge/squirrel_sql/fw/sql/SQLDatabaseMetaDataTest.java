@@ -84,6 +84,7 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet1);
 		expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet2);
 		
+		
 		mockHelper.replayAll();
 		classUnderTest = new SQLDatabaseMetaData(mockSqlConnection);
 
@@ -273,16 +274,16 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLJUnit4TestCase {
 	}
 
 	private ResultSet buildVarcharResultSetAsRows(String mockName, String[] values) throws SQLException {
-		ResultSetMetaData rsmd = mockHelper.createMock(mockName, ResultSetMetaData.class);
-		expect(rsmd.getColumnCount()).andStubReturn(values.length);
-		ResultSet rs = mockHelper.createMock(ResultSet.class);
+		ResultSetMetaData rsmd = mockHelper.createMock(mockName+"MetaData", ResultSetMetaData.class);
+		expect(rsmd.getColumnCount()).andStubReturn(1);
+		ResultSet rs = mockHelper.createMock(mockName, ResultSet.class);
 		expect(rs.getMetaData()).andStubReturn(rsmd);
 		
 		// Setup one column in multiple rows
 		expect(rsmd.getColumnTypeName(1)).andStubReturn("varchar");
 		expect(rsmd.getColumnType(1)).andStubReturn(java.sql.Types.VARCHAR);
 		for (String value : values) {
-			expect(rs.getString(1)).andStubReturn(value);
+			expect(rs.getString(1)).andReturn(value);
 			expect(rs.next()).andReturn(true);
 			expect(rs.wasNull()).andStubReturn(false);
 		}
