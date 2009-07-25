@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
@@ -72,6 +73,8 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 import org.easymock.classextension.EasyMock;
+
+import utils.EasyMockHelper;
 
 /**
  * This is intended to provide helper methods to build EasyMock mocks for classes and interfaces located
@@ -388,4 +391,10 @@ public class AppTestUtil
 	   return result;
 	}
 
+	public static IPlugin getMockPlugin(EasyMockHelper mockHelper)
+   {
+      IPlugin mockPlugin = mockHelper.createMock(IPlugin.class);
+      return mockPlugin;
+   }
+	
 }
