@@ -58,6 +58,7 @@ public abstract class AbstractDialectExtTest extends BaseSQuirreLJUnit4TestCase
 	public AbstractDialectExtTest()
 	{
 		super();
+		disableLogging(org.hibernate.dialect.Dialect.class);
 	}
 
 	private void setCommonExpectations()
