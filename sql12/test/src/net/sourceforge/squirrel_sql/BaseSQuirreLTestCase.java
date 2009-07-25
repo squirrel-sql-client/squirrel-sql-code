@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import org.apache.log4j.Level;
 
-public class BaseSQuirreLTestCase extends TestCase {
+public abstract class BaseSQuirreLTestCase extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
