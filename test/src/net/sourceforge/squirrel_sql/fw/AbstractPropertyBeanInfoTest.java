@@ -34,7 +34,7 @@ import org.junit.Test;
  * to the specific BeanInfo implementation that is being tested.
  * 
  */
-public class AbstractPropertyBeanInfoTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractPropertyBeanInfoTest extends BaseSQuirreLJUnit4TestCase
 {
 	/** subclasses set this to beanInfo impl in @Before method */
 	protected BeanInfo classUnderTest = null;
