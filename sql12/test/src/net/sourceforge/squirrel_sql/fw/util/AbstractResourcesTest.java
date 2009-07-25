@@ -26,7 +26,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 import org.junit.After;
 import org.junit.Test;
@@ -164,10 +163,5 @@ public abstract class AbstractResourcesTest extends BaseSQuirreLJUnit4TestCase
 		mockHelper.verifyAll();
 	}
 
-	protected IPlugin getMockPlugin()
-   {
-      IPlugin mockPlugin = mockHelper.createMock(IPlugin.class);
-      return mockPlugin;
-   }
 
 }
