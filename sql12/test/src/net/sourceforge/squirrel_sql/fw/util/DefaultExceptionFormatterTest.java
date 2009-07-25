@@ -114,14 +114,12 @@ public class DefaultExceptionFormatterTest extends BaseSQuirreLJUnit4TestCase {
      * Test method for {@link net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter#format(java.lang.Throwable)}.
      */    
     @Test
-    public void testDefaultFormatForSQLException() { 
-        SQLException ex = new SQLException("table not found", "FooState", 1000);
+    public void testDefaultFormatForException() { 
+        Exception ex = new Exception("table not found");
         Assert.assertTrue(formatterUnderTest.formatsException(ex));
         
         StringBuilder expectedMessage = 
-            new StringBuilder("Error: table not found\n"); 
-        expectedMessage.append("SQLState:  FooState\n");
-        expectedMessage.append("ErrorCode: 1000");
+            new StringBuilder("java.lang.Exception: table not found"); 
 
         String formattedException = formatterUnderTest.format(ex);
         Assert.assertEquals(expectedMessage.toString(), formattedException);        
