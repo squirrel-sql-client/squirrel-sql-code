@@ -19,13 +19,10 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -34,10 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -47,7 +40,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -75,8 +67,6 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
     
     ISQLDatabaseMetaData mockMetaData;
 
-    ISession mockSession;
-
     ITableInfo childTableInfo;
     
     ITableInfo parentTableInfo;
@@ -85,7 +75,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
 
     List<ITableInfo> twoTableList = new ArrayList<ITableInfo>();
     
-    IPlugin mockPlugin;
+//    IPlugin mockPlugin;
 
     PrimaryKeyInfo mockPrimaryKeyInfo;
     
@@ -116,17 +106,6 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         mockPrimaryKeyInfo = FwTestUtil.getEasyMockPrimaryKeyInfo(catalog, schema, table, pkCol, (short)1, pkName, true);
         
         pkInfos = new PrimaryKeyInfo[] { mockPrimaryKeyInfo };
-        
-        mockSession = AppTestUtil.getEasyMockSession(mockMetaData, false);
-        mockPlugin = createMock(IPlugin.class);
-        
-        String name =
-            new ApplicationFiles().getPluginsUserSettingsDirectory()
-                + File.separator
-                + "sqlscript"
-                + File.separator;
-        
-        File folder = new File(name);
         
         List<String> columnNames = 
             Arrays.asList(new String[] { pkCol, "fkcol", "data" });
@@ -190,28 +169,17 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         expect(mockMetaData.getIndexInfo(childTableInfo)).andReturn(mockIndexInfos).anyTimes();
         expect(mockMetaData.getIndexInfo(parentTableInfo)).andReturn(noIndexList).anyTimes();
         
-        expect(mockPlugin.getPluginUserSettingsFolder()).andReturn(folder).anyTimes();
-        expect(mockPlugin.getDescriptiveName()).andReturn("EasyMock SQLScript Plugin").anyTimes();
-        expect(mockPlugin.getVersion()).andReturn("1.0").anyTimes();
-
         replayMocks();
-        
-        
-        SQLScriptPreferencesManager.initialize(mockPlugin);
-                                  
+                                          
     }    
     
     @After
     public void tearDown() throws Exception {
         mockMetaData = null;
-        mockSession = null;
         childTableInfo = null;
-        mockPlugin = null;
     }
 
     private void replayMocks() {
-        replay(mockPlugin);
-        replay(mockSession);
         replay(mockMetaData);
     }
 
