@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.fw.FwTestUtil;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -14,15 +14,17 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 {
 
 	private static String filePrefix = "file:";
-	static {
-		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+	static
+	{
+		if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
+		{
 			filePrefix = "file:/";
 		}
 	}
 
 	private static String COMMONS_CLI_JAR = "squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
 
-	private static String DBCOPY_JAR = "squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar";
+	private static String ORACLE_PLUGIN_JAR = "squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle.jar";
 
 	private static String BOGUS_ZIP_FILE = "squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties";
 
@@ -30,7 +32,8 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 
 	private static final String COMMONS_CLI_OPTION_CLASS = "org.apache.commons.cli.Option";
 
-	private static final String DBCOPY_PLUGIN_CLASS = "net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin";
+	private static final String ORACLE_PLUGIN_CLASS =
+		"net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin";
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(MyURLClassLoaderTest.class);
@@ -51,28 +54,27 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	private String getFilePrefixedFilename(String filename)
 	{
 		String distDir = FwTestUtil.findAncestorSquirrelSqlDistDirBase("squirrel-sql-dist");
-		if (distDir == null)
-		{
-			throw new IllegalStateException("Couldn't locate distDir (squirrel-sql-dist)");
-		}
+		if (distDir == null) { throw new IllegalStateException("Couldn't locate distDir (squirrel-sql-dist)"); }
 
 		try
 		{
 			File distDirFile = new File(distDir);
 			distDir = distDirFile.getCanonicalPath();
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		File resultFile = new File(distDir, filename);
 		String result = resultFile.getAbsolutePath();
-      try
-      {
-	      result = filePrefix + resultFile.getCanonicalPath();
-      } catch (IOException e)
-      {
-	      e.printStackTrace();
-      }
+		try
+		{
+			result = filePrefix + resultFile.getCanonicalPath();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		System.out.println("Found file: " + result);
 		return result;
 	}
@@ -89,8 +91,9 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 		try
 		{
 			MyURLClassLoader loader = new MyURLClassLoader(".");
-			loader.getAssignableClasses(IPlugin.class, s_log);
-		} catch (IOException e)
+			loader.getAssignableClasses(IQueryTokenizer.class, s_log);
+		}
+		catch (IOException e)
 		{
 			fail(e.getMessage());
 		}
@@ -105,11 +108,11 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	{
 		try
 		{
-			URL url = new URL(getFilePrefixedFilename(DBCOPY_JAR));
-			MyURLClassLoader loader = new MyURLClassLoader(new URL[]
-				{ url });
-			loader.findClass(DBCOPY_PLUGIN_CLASS);
-		} catch (Exception e)
+			URL url = new URL(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
+			MyURLClassLoader loader = new MyURLClassLoader(new URL[] { url });
+			loader.findClass(ORACLE_PLUGIN_CLASS);
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -128,12 +131,13 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	public void testRemoveClassLoaderListener()
 	{
 		MyClassLoaderListener listener = new MyClassLoaderListener();
-		MyURLClassLoader loader = getLoader(getFilePrefixedFilename(DBCOPY_JAR));
+		MyURLClassLoader loader = getLoader(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
 		loader.addClassLoaderListener(listener);
 		try
 		{
-			loader.getAssignableClasses(IPlugin.class, s_log);
-		} catch (Exception e)
+			loader.getAssignableClasses(IQueryTokenizer.class, s_log);
+		}
+		catch (Exception e)
 		{
 			// fail ??
 		}
@@ -143,8 +147,9 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 
 		try
 		{
-			loader.getAssignableClasses(IPlugin.class, s_log);
-		} catch (Exception e)
+			loader.getAssignableClasses(IQueryTokenizer.class, s_log);
+		}
+		catch (Exception e)
 		{
 			// fail ??
 		}
@@ -157,7 +162,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 		Class[] classes = getIPluginAssignableClasses(getFilePrefixedFilename(COMMONS_CLI_JAR));
 		assertEquals(0, classes.length);
 
-		classes = getIPluginAssignableClasses(getFilePrefixedFilename(DBCOPY_JAR));
+		classes = getIPluginAssignableClasses(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
 		assertEquals(1, classes.length);
 
 		classes = getIPluginAssignableClasses(getFilePrefixedFilename(BOGUS_ZIP_FILE));
@@ -174,7 +179,8 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 		try
 		{
 			loader.findClass(COMMONS_CLI_OPTION_CLASS);
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			fail(e.getMessage());
 		}
@@ -187,7 +193,8 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 			MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
 			loader.findClass(COMMONS_CLI_OPTION_CLASS);
 			loader.classHasBeenLoaded(org.apache.commons.cli.Option.class);
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			fail(e.getMessage());
 		}
@@ -198,7 +205,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	private Class[] getIPluginAssignableClasses(String urlToSearch)
 	{
 		MyURLClassLoader loader = getLoader(urlToSearch);
-		return loader.getAssignableClasses(IPlugin.class, s_log);
+		return loader.getAssignableClasses(IQueryTokenizer.class, s_log);
 	}
 
 	private MyURLClassLoader getLoader(String urlToSearch)
@@ -209,7 +216,8 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 			URL url = new URL(urlToSearch);
 			MyURLClassLoader loader = new MyURLClassLoader(url);
 			return loader;
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			fail(e.getMessage());
 		}
