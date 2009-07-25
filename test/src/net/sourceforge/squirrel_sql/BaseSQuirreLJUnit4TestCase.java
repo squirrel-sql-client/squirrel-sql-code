@@ -14,7 +14,7 @@ import org.apache.log4j.Level;
 
 import utils.EasyMockHelper;
 
-public class BaseSQuirreLJUnit4TestCase
+public abstract class BaseSQuirreLJUnit4TestCase
 {
 
 	public static final String TEST_QUALIFIED_NAME = "testQualifiedName";
