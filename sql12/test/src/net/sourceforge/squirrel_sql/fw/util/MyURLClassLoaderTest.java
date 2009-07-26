@@ -30,8 +30,8 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 
 	private static final String COMMONS_CLI_OPTION_CLASS = "org.apache.commons.cli.Option";
 
-	private static final String ORACLE_PLUGIN_CLASS =
-		"net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin";
+	private static final String ORACLE_XMLTYPE_CLASS =
+		"net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeComponent";
 
 	private static final IOUtilities ioutils = new IOUtilitiesImpl();
 
@@ -122,7 +122,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 		try
 		{
 			MyURLClassLoader loader = new MyURLClassLoader(new URL[] { oracleTempFileWrapper.toURL() });
-			loader.findClass(ORACLE_PLUGIN_CLASS);
+			loader.findClass(ORACLE_XMLTYPE_CLASS);
 		}
 		catch (Exception e)
 		{
