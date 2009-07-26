@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -13,27 +12,28 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 {
 
-	private static String filePrefix = "file:";
-	static
-	{
-		if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
-		{
-			filePrefix = "file:/";
-		}
-	}
+	private static String COMMONS_CLI_JAR = "http://www.squirrelsql.org/downloads/commons-cli.jar";
 
-	private static String COMMONS_CLI_JAR = "squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
+	private static FileWrapper commonsCliTempFileWrapper = null;
 
-	private static String ORACLE_PLUGIN_JAR = "squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle.jar";
+	private static String ORACLE_PLUGIN_JAR = "http://www.squirrelsql.org/downloads/oracle.jar";
 
-	private static String BOGUS_ZIP_FILE = "squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties";
+	private static FileWrapper oracleTempFileWrapper = null;
 
-	private static String EXTERNAL_DEPENDS_JAR = "plugins/syntax/lib/syntax.jar";
+	private static String BOGUS_ZIP_FILE = "http://www.squirrelsql.org/downloads/log4j.properties";
+
+	private static FileWrapper bogusZipTempFileWrapper = null;
+
+	private static String EXTERNAL_DEPENDS_JAR = "http://www.squirrelsql.org/downloads/syntax.jar";
+
+	private static FileWrapper extDependsTempFileWrapper = null;
 
 	private static final String COMMONS_CLI_OPTION_CLASS = "org.apache.commons.cli.Option";
 
 	private static final String ORACLE_PLUGIN_CLASS =
 		"net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin";
+
+	private static final IOUtilities ioutils = new IOUtilitiesImpl();
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(MyURLClassLoaderTest.class);
@@ -41,47 +41,19 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	protected void setUp() throws Exception
 	{
 		super.setUp();
-
-	}
-
-	/**
-	 * Try to locate the file using different prefixes so that the test can be run from the ant script, or from
-	 * in Eclipse.
-	 * 
-	 * @param filename
-	 * @return
-	 */
-	private String getFilePrefixedFilename(String filename)
-	{
-		String distDir = FwTestUtil.findAncestorSquirrelSqlDistDirBase("squirrel-sql-dist");
-		if (distDir == null) { throw new IllegalStateException("Couldn't locate distDir (squirrel-sql-dist)"); }
-
-		try
+		if (oracleTempFileWrapper == null)
 		{
-			File distDirFile = new File(distDir);
-			distDir = distDirFile.getCanonicalPath();
+			downloadTestFiles();
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		File resultFile = new File(distDir, filename);
-		String result = resultFile.getAbsolutePath();
-		try
-		{
-			result = filePrefix + resultFile.getCanonicalPath();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		System.out.println("Found file: " + result);
-		return result;
 	}
 
 	protected void tearDown() throws Exception
 	{
 		super.tearDown();
+		oracleTempFileWrapper.deleteOnExit();
+		bogusZipTempFileWrapper.deleteOnExit();
+		extDependsTempFileWrapper.deleteOnExit();
+		commonsCliTempFileWrapper.deleteOnExit();
 	}
 
 	// Constructor Tests
@@ -99,17 +71,57 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 		}
 	}
 
-	public void testMyURLClassLoaderURL()
+	public void testMyURLClassLoaderURL() throws Exception
 	{
-		getIPluginAssignableClasses(getFilePrefixedFilename(COMMONS_CLI_JAR));
+		getIQueryTokenizerAssignableClasses(commonsCliTempFileWrapper.toURL().toString());
+	}
+
+	private void downloadTestFiles()
+	{
+		disableLogging(org.apache.commons.logging.impl.SimpleLog.class);
+		disableLogging(org.apache.commons.httpclient.HttpMethodBase.class);
+		disableLogging(org.apache.commons.httpclient.HttpConnection.class);
+		disableLogging(org.apache.commons.httpclient.HttpClient.class);
+		disableLogging(org.apache.commons.httpclient.params.DefaultHttpParams.class);
+		disableLogging(org.apache.commons.httpclient.methods.GetMethod.class);
+		disableLogging(org.apache.commons.httpclient.HttpState.class);
+		disableLogging(org.apache.commons.httpclient.util.HttpURLConnection.class);
+		commonsCliTempFileWrapper = downloadTestFile(COMMONS_CLI_JAR, "commons-cli", ".jar");
+		oracleTempFileWrapper = downloadTestFile(ORACLE_PLUGIN_JAR, "oracle", ".jar");
+		bogusZipTempFileWrapper = downloadTestFile(BOGUS_ZIP_FILE, "log4j", ".properties");
+		extDependsTempFileWrapper = downloadTestFile(EXTERNAL_DEPENDS_JAR, "syntax", ".jar");
+	}
+
+	private FileWrapper downloadTestFile(String urlStr, String localTempFilePrefix, String localTempFileSuffix)
+	{
+		InputStream is = null;
+		FileWrapper result = null;
+		try
+		{
+			URL url = new URL(urlStr);
+			is = url.openStream();
+			String prefix = "MyURLClassLoaderTest-" + localTempFilePrefix;
+			result = FileWrapperImpl.createTempFile(prefix, localTempFileSuffix);
+			final int bytesRead = ioutils.downloadHttpFile(url, result, null);
+			assertTrue(bytesRead > 0);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		finally
+		{
+			ioutils.closeInputStream(is);
+		}
+		return result;
 	}
 
 	public void testMyURLClassLoaderURLArray()
 	{
 		try
 		{
-			URL url = new URL(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
-			MyURLClassLoader loader = new MyURLClassLoader(new URL[] { url });
+			MyURLClassLoader loader = new MyURLClassLoader(new URL[] { oracleTempFileWrapper.toURL() });
 			loader.findClass(ORACLE_PLUGIN_CLASS);
 		}
 		catch (Exception e)
@@ -121,61 +133,46 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 
 	// Method Tests
 
-	public void testAddClassLoaderListener()
+	public void testAddClassLoaderListener() throws Exception
 	{
 		MyClassLoaderListener listener = new MyClassLoaderListener();
-		MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
+		MyURLClassLoader loader = getLoader(commonsCliTempFileWrapper.toURL().toString());
 		loader.addClassLoaderListener(listener);
 	}
 
-	public void testRemoveClassLoaderListener()
+	public void testRemoveClassLoaderListener() throws Exception
 	{
 		MyClassLoaderListener listener = new MyClassLoaderListener();
-		MyURLClassLoader loader = getLoader(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
+		MyURLClassLoader loader = getLoader(oracleTempFileWrapper.toURL().toString());
 		loader.addClassLoaderListener(listener);
-		try
-		{
-			loader.getAssignableClasses(IQueryTokenizer.class, s_log);
-		}
-		catch (Exception e)
-		{
-			// fail ??
-		}
+		loader.getAssignableClasses(IQueryTokenizer.class, s_log);
 		assertEquals(1, listener.loadingZipFileCount);
 		listener.loadingZipFileCount = 0;
 		loader.removeClassLoaderListener(listener);
-
-		try
-		{
-			loader.getAssignableClasses(IQueryTokenizer.class, s_log);
-		}
-		catch (Exception e)
-		{
-			// fail ??
-		}
+		loader.getAssignableClasses(IQueryTokenizer.class, s_log);
 		assertEquals(0, listener.loadingZipFileCount);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void testGetAssignableClasses()
+	public void testGetAssignableClasses() throws Exception
 	{
-		Class[] classes = getIPluginAssignableClasses(getFilePrefixedFilename(COMMONS_CLI_JAR));
+		Class[] classes = getIQueryTokenizerAssignableClasses(commonsCliTempFileWrapper.toURL().toString());
 		assertEquals(0, classes.length);
 
-		classes = getIPluginAssignableClasses(getFilePrefixedFilename(ORACLE_PLUGIN_JAR));
+		classes = getIQueryTokenizerAssignableClasses(oracleTempFileWrapper.toURL().toString());
 		assertEquals(1, classes.length);
 
-		classes = getIPluginAssignableClasses(getFilePrefixedFilename(BOGUS_ZIP_FILE));
+		classes = getIQueryTokenizerAssignableClasses(bogusZipTempFileWrapper.toURL().toString());
 		assertEquals(0, classes.length);
 
-		classes = getIPluginAssignableClasses(getFilePrefixedFilename(EXTERNAL_DEPENDS_JAR));
+		classes = getIQueryTokenizerAssignableClasses(extDependsTempFileWrapper.toURL().toString());
 		assertEquals(0, classes.length);
 
 	}
 
-	public void testFindClassString()
+	public void testFindClassString() throws Exception
 	{
-		MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
+		MyURLClassLoader loader = getLoader(commonsCliTempFileWrapper.toURL().toString());
 		try
 		{
 			loader.findClass(COMMONS_CLI_OPTION_CLASS);
@@ -190,7 +187,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 	{
 		try
 		{
-			MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
+			MyURLClassLoader loader = getLoader(commonsCliTempFileWrapper.toURL().toString());
 			loader.findClass(COMMONS_CLI_OPTION_CLASS);
 			loader.classHasBeenLoaded(org.apache.commons.cli.Option.class);
 		}
@@ -202,7 +199,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase
 
 	// HELPERS
 	@SuppressWarnings("unchecked")
-	private Class[] getIPluginAssignableClasses(String urlToSearch)
+	private Class[] getIQueryTokenizerAssignableClasses(String urlToSearch)
 	{
 		MyURLClassLoader loader = getLoader(urlToSearch);
 		return loader.getAssignableClasses(IQueryTokenizer.class, s_log);
