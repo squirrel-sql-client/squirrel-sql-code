@@ -34,7 +34,6 @@ import javax.swing.event.UndoableEditListener;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -616,18 +615,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	}
 
    /**
-	 * Execute the passed SQL. Not <TT>synchronized</TT> as multiple SQL statements
-	 * can be executed simultaneously.
-	 *
-	 * @param	sql		SQL to be executed.
-	 */
-	public void executeSQL(String sql)
-	{
-		//JASON: Remove??
-		//_session.getSessionSheet().getSQLPanel().executeSQL(sql);
-	}
-
-	/**
 	 * Close all the SQL result tabs.
 	 */
 	public void closeAllSQLResultTabs()

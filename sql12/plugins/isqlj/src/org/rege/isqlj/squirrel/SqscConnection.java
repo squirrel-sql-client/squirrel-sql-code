@@ -75,14 +75,16 @@ public class SqscConnection
 
 	public ResultSet executeQuery( String sql) throws SQLException
 	{
-		session.getSessionInternalFrame().getSQLPanelAPI().executeSQL( sql);
+      SQLExecuterTask executer = new SQLExecuterTask(session, sql, new DefaultSQLExecuterHandler(session));
+      executer.run();
 		return null;
 	}
 
 	public int executeUpdate( String sql) 
 			throws SQLException
 	{
-		session.getSessionInternalFrame().getSQLPanelAPI().executeSQL( sql);
+      SQLExecuterTask executer = new SQLExecuterTask(session, sql, new DefaultSQLExecuterHandler(session));
+      executer.run();
 		return 0;
 	}
 

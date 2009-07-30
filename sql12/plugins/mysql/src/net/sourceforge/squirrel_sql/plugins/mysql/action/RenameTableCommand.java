@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -83,8 +85,9 @@ public class RenameTableCommand
 
 	public void execute()
 	{
-		String cmd = s_stringMgr.getString("RenameTableCommand.cmd",
-						new Object[]{_ti.getQualifiedName(), _newTableName});
-		_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(cmd);
+		String cmd = "rename table " + _ti.getQualifiedName() + " to " + _newTableName;
+      SQLExecuterTask executer = new SQLExecuterTask(_session, cmd, new DefaultSQLExecuterHandler(_session));
+      executer.run();
+      _session.getSchemaInfo().reloadAllTables();
 	}
 }

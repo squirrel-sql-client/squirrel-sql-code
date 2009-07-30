@@ -22,6 +22,9 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+
 /**
  * DropDatabaseCommand.java
  *
@@ -80,7 +83,8 @@ public class DropDatabaseCommand implements ICommand
 					.append(sqlSep)
 					.append('\n');
 			}
-			_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(buf.toString());
+         SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(), new DefaultSQLExecuterHandler(_session));
+         executer.run();
 		}
 	}
 }
