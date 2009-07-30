@@ -6,6 +6,12 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+MySQL Plugin
+  Fixed object tree menu items:
+   * Create database (on root node)
+   * Drop database (on catalog nodes)
+   * Rename (on table nodes)
+
 SQL Scripts Plugin:
  New checkbox 'Use double quotes (") for qualifying' in global scripting preferences. 
 

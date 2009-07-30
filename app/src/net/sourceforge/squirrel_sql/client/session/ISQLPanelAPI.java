@@ -222,14 +222,7 @@ public interface ISQLPanelAPI
 	 */
 	void setSQLScriptSelectionEnd(int end);
 
-	/**
-	 * Execute the passed SQL.
-	 *
-	 * @param	sql		SQL to be executed.
-	 */
-	void executeSQL(String sql);
-
-	/**
+   /**
 	 * Execute the current SQL.
 	 */
 	void executeCurrentSQL();

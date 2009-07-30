@@ -26,13 +26,16 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+
 /*
- * CreateDatabaseCommand.java
- *
- * Created on June 9, 2003, 11:16 AM
- *
- * @author Arun Kapilan.P
- */
+* CreateDatabaseCommand.java
+*
+* Created on June 9, 2003, 11:16 AM
+*
+* @author Arun Kapilan.P
+*/
 public class CreateDatabaseCommand implements ICommand
 {
 	private static final StringManager s_stringMgr =
@@ -63,7 +66,10 @@ public class CreateDatabaseCommand implements ICommand
 		{
 			final StringBuffer buf = new StringBuffer();
 			buf.append("create database ").append(dbName);
-			_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(buf.toString());
+
+         SQLExecuterTask executer = new SQLExecuterTask(_session, buf.toString(), new DefaultSQLExecuterHandler(_session));
+         executer.run();
+
 			IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 			api.refreshTree();
 		}
