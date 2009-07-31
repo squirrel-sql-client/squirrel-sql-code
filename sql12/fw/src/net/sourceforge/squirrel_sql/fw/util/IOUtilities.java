@@ -108,7 +108,7 @@ public interface IOUtilities
     * @param url the URL of the file to be retrieved
 	 * @param destFile the file to download the URL file into
     * @param proxySettings the ProxySettings to use
-	 * @return
+	 * @return the number of bytes that were read and written to the file.
 	 * @throws Exception
 	 */
 	public int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings)
