@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import static org.easymock.EasyMock.expect;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
 
 import org.junit.Assert;
 import org.junit.Test;
