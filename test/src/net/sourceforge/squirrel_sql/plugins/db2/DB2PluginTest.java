@@ -19,7 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.db2;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
-import net.sourceforge.squirrel_sql.plugins.DatabaseProductVersionData;
+import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
 
 import org.junit.After;
 import org.junit.Before;
