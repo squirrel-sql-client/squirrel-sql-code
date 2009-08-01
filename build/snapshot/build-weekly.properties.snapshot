@@ -85,6 +85,10 @@ launch.jvm=/usr/lib/jvm/java-6-sun
 # files can be uploaded in batch.
 sftp.username=
 
+# The channel of the release (this determines what sub-folder beneath the "updates" directory on the
+# remote update site.  Currently, the only valid values here are "stable" and "snapshot"
+release.channel=snapshot
+
 # This is the top-level release directory beneath which a new release directory will be created.  The new
 # sub-directory that is created will have the same name as the release.  Current valid top-level release 
 # directories are:
