@@ -83,7 +83,19 @@ launch.jvm=/usr/lib/jvm/java-6-sun
 # Sftp username that is used to login to frs.sourceforge.net.  No password is specified for this account
 # as this script only supports the use of public key encryption in which interaction isn't required and the 
 # files can be uploaded in batch.
-sftp.username=manningr
+sftp.username=
+
+# This is the top-level release directory beneath which a new release directory will be created.  The new
+# sub-directory that is created will have the same name as the release.  Current valid top-level release 
+# directories are:
+# 
+# Stable: /home/pfs/project/s/sq/squirrel-sql/1-stable
+# 
+# Snapshots: /home/pfs/project/s/sq/squirrel-sql/3-snapshots
+# 
+# Note: there are other directories, but we have not used them for release files for quite some time. 
+#
+sftp.rootdir=/home/pfs/project/s/sq/squirrel-sql/3-snapshots
 
 #----------------------------------------------------------------------------------------------------------#
 # The following properties are for uploading the release update site files onto a remote host that can then 
