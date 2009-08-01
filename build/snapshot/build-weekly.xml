@@ -290,17 +290,23 @@
 	</target>	
 		
 	<!-- Creates batch.txt from the template file, filtering in the actual names of the files to be 
-	     uploaded using sftp to SourceForge.  Then runs sftp feeding it the batch file to transfer the 
-	     installers and source archives to SourceForge using sftp. -->
+	     uploaded using sftp to SourceForge.  This batch of commands will also create a new release
+	     directory on the remote sftp server to house the release files.  This target then runs sftp 
+	     feeding it the batch file to transfer the installers and source archives to SourceForge using 
+	     sftp. -->
 	<target name="uploadInstallersAndSource" depends="init">
                 <copy file="batch.txt.template" toFile="${dist.dir}/batch.txt" overwrite="true">
                         <filterset>
+                        	<filter token="SFTP_ROOTDIR"
+                        	        value="${sftp.rootdir}" />
+                        	<filter token="SQUIRREL_VERSION"
+                        	        value="${squirrel.version}" />
                                 <filter token="OTHER_INSTALL_JAR" 
-                                	value="${other.install.jar.file}"/>
+                                	value="${other.install.jar.file}" />
                                 <filter token="MACOSX_INSTALL_JAR" 
-                                        value="${macosx.install.jar.file}"/>
+                                        value="${macosx.install.jar.file}" />
                                 <filter token="SOURCE_ZIP" 
-                                        value="${source.zip.file}"/>                        	
+                                        value="${source.zip.file}" />                        	
                         </filterset>
                 </copy> 
                 
@@ -309,7 +315,7 @@
 			
 		        <arg value="-b"/>
 			<arg value="${dist.dir}/batch.txt"/>
-			<arg value="${sftp.username}@frs.sourceforge.net"/>
+			<arg value="${sftp.username},squirrel-sql@frs.sf.net"/>
 		</exec>
 	</target>
 	
