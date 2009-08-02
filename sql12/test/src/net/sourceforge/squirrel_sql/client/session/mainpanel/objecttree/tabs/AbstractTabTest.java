@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
-public class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
 {
 	public static final String STMT_SEP = ";";
 

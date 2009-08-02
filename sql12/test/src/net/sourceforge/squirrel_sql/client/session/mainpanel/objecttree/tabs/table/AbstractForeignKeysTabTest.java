@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AbstractForeignKeysTabTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractForeignKeysTabTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected ForeignKeysBaseTab classUnderTest = null;

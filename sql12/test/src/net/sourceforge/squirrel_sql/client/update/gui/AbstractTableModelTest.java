@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import org.junit.After;
 import org.junit.Test;
 
-public class AbstractTableModelTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractTableModelTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected TableModel classUnderTest = null;
