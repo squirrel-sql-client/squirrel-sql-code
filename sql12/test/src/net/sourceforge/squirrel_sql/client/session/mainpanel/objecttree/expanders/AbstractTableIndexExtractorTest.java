@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
-public class AbstractTableIndexExtractorTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractTableIndexExtractorTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected ITableIndexExtractor classUnderTest = null;
