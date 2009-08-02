@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
-public class AbstractTableTriggerExtractorTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractTableTriggerExtractorTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected ITableTriggerExtractor classUnderTest = null;

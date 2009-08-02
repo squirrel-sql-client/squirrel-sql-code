@@ -32,7 +32,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Test;
 
-public class AbstractSourceTabTest extends AbstractTabTest
+public abstract class AbstractSourceTabTest extends AbstractTabTest
 {
 
 

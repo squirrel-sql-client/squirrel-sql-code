@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 
-public class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected INodeExpander classUnderTest = null;

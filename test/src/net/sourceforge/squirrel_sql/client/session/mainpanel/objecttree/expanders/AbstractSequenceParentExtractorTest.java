@@ -34,7 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
-public class AbstractSequenceParentExtractorTest extends BaseSQuirreLJUnit4TestCase
+public abstract class AbstractSequenceParentExtractorTest extends BaseSQuirreLJUnit4TestCase
 {
 	protected ISequenceParentExtractor classUnderTest = null;
 	

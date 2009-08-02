@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.Test;
 
 
-public class AbstractStatementTabTest extends AbstractTabTest
+public abstract class AbstractStatementTabTest extends AbstractTabTest
 {
 
 	protected BaseObjectTab classUnderTest = null;

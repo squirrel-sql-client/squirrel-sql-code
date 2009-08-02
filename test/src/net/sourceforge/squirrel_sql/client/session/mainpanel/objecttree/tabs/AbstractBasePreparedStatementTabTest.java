@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import org.junit.After;
 import org.junit.Test;
 
-public class AbstractBasePreparedStatementTabTest extends AbstractTabTest
+public abstract class AbstractBasePreparedStatementTabTest extends AbstractTabTest
 {
 
 	protected BasePreparedStatementTab classUnderTest = null;

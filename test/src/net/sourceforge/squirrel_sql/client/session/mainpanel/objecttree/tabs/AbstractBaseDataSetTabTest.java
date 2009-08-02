@@ -38,7 +38,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractBaseDataSetTabTest extends AbstractTabTest
+public abstract class AbstractBaseDataSetTabTest extends AbstractTabTest
 {
 	/** set by subclass in setUp method; the object to test */
 	protected BaseDataSetTab classUnderTest = null;
