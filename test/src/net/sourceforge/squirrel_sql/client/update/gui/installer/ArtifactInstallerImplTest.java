@@ -242,6 +242,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	@Before
 	public void setUp() throws Exception
 	{
+		disableLogging(ArtifactInstallerImpl.class);
 		helper.resetAll();
 		setupUpdateUtil();
 		setupFileAbsolutePathExpectations();
@@ -250,6 +251,7 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 		setupFileGetNameExpectations();
 		setupGetFileExpectations();
 		makeCommonUpdateUtilAssertions();
+		
 	}
 
 	private void setupGetFileExpectations()
