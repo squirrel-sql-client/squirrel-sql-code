@@ -66,7 +66,7 @@ public class UpdateXmlSerializerTest extends BaseSQuirreLJUnit4TestCase {
         String filename = f.getAbsolutePath();
         assertTrue(f.canRead());
         assertTrue(f.canWrite());
-        System.out.println("Persisting to file : "+filename);
+        //System.out.println("Persisting to file : "+filename);
         serializerUnderTest.write(channelBean, filename);
         ChannelXmlBean newBean = serializerUnderTest.readChannelBean(filename);
         assertEquals(channelBean, newBean);
@@ -74,7 +74,7 @@ public class UpdateXmlSerializerTest extends BaseSQuirreLJUnit4TestCase {
         assertEquals(1, newBean.getCurrentRelease().getModules().size());
         assertEquals(2, newBean.getCurrentRelease().getModules().iterator().next().getArtifacts().size());
         
-        printFile(filename);
+        //printFile(filename);
         if (!f.delete()) {
             System.err.println("Failed to delete file");
         }
