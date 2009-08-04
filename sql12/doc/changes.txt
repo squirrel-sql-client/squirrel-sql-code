@@ -1,6 +1,14 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+3.0.3 (??/??/????)
+==================
+
+Bug-Fixes:
+
+2819161:  squirrel-sql.sh in plain zip had an errant apostrophe.  Tested this fix on MacOS 10 and Ubuntu 9.04.  
+Thanks to Jonathan James for vetting the anonymously submitted patch.
+
 3.0.2 (6/19/2009)
 =================
 
