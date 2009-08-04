@@ -17,7 +17,7 @@ esac
 # home as an absolute path, so that the command will work when exec'd from any location. So we attempt to 
 # detect the absolute path using dirname "$0", which should work in most cases.  
 if $macosx ; then
-        SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java'
+        SQUIRREL_SQL_HOME=`dirname "$0"`/Contents/Resources/Java
 else 
         SQUIRREL_SQL_HOME=`dirname "$0"`
 fi
@@ -33,7 +33,7 @@ cd "$UNIX_STYLE_HOME"
 
 # Check to see if the JVM meets the minimum required to run SQuirreL and inform the user if not and skip 
 # launch.  versioncheck.jar is a special jar file which has been compiled with javac version 1.2.2, which 
-# should be able to be run by that version of higher. The arguments to JavaVersionChecker below specify the 
+# should be able to be run by that version or higher. The arguments to JavaVersionChecker below specify the 
 # minimum acceptable version (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should 
 # be all that is necessary for the version form. 
 $JAVA -cp "$UNIX_STYLE_HOME/lib/versioncheck.jar" JavaVersionChecker 1.6 1.7
