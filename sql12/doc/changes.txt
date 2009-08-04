@@ -43,6 +43,9 @@ Graph Plugin:
 
 Bug-Fixes:
 
+2819161:  squirrel-sql.sh in plain zip had an errant apostrophe.  Tested this fix on MacOS 10 and Ubuntu 9.04.  
+Thanks to Jonathan James for vetting the anonymously submitted patch.
+
 SQL Scripts Plugin:
  Several scripting functions did not respect global scripting preferences about qualifying tables.
 
