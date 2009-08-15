@@ -22,45 +22,45 @@
       </dependency>
       <dependency>
          <groupId>net.sourceforge.squirrel_sql</groupId>
-         <artifactId>app</artifactId>
+         <artifactId>squirrel-sql</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
-        <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.6</version>
-                <scope>test</scope>
-        </dependency>
-        <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>2.4</version>
-                <scope>test</scope>
-        </dependency>
-        <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>2.4</version>
-                <scope>test</scope>
-        </dependency>
-        <dependency>
-                <groupId>gsbase</groupId>
-                <artifactId>gsbase</artifactId>
-                <version>2.0.1</version>
-                <scope>test</scope>
-        </dependency>
-  	<dependency>
-                <groupId>net.sourceforge.squirrel_sql</groupId>
-                <artifactId>fw</artifactId>
-                <version>3.1.0-SNAPSHOT</version>
-		<type>test-jar</type>
-        </dependency>
-  	<dependency>
-                <groupId>net.sourceforge.squirrel_sql</groupId>
-                <artifactId>app</artifactId>
-                <version>3.1.0-SNAPSHOT</version>
-		<type>test-jar</type>
-        </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>4.6</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.easymock</groupId>
+         <artifactId>easymock</artifactId>
+         <version>2.4</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.easymock</groupId>
+         <artifactId>easymockclassextension</artifactId>
+         <version>2.4</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>gsbase</groupId>
+         <artifactId>gsbase</artifactId>
+         <version>2.0.1</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>fw</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <type>test-jar</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>app</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <type>test-jar</type>
+      </dependency>
 
    </dependencies>
 
@@ -77,13 +77,13 @@
                   <target>${javac-target-version}</target>
                </configuration>
             </plugin>
-		<plugin> 
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-surefire-plugin</artifactId>
-			<configuration>
-				<redirectTestOutputToFile>true</redirectTestOutputToFile>
-			</configuration>
-		</plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <configuration>
+                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
+               </configuration>
+            </plugin>
 
             <plugin>
                <artifactId>maven-source-plugin</artifactId>
@@ -93,10 +93,9 @@
                   <finalName>${project.artifactId}</finalName>
                   <includePom>true</includePom>
                   <!--
-                     We exclude docs from the source jar, because the assembly
-                     has to have them for the plugin install to work; and we
-                     don't want the source jar to contain them as well as the
-                     assembly jar as that just makes the assembly jar bigger.
+                     We exclude docs from the source jar, because the assembly has to have them for the plugin
+                     install to work; and we don't want the source jar to contain them as well as the assembly
+                     jar as that just makes the assembly jar bigger.
                   -->
                   <excludes>
                      <exclude>**/doc/**</exclude>
@@ -120,8 +119,7 @@
                   </archive>
                   <finalName>${project.artifactId}</finalName>
                   <!--
-                     We exclude docs from the classes jar, for the same reason
-                     as above
+                     We exclude docs from the classes jar, for the same reason as above
                   -->
                   <excludes>
                      <exclude>**/doc/**</exclude>
