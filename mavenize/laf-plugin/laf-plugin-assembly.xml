@@ -1,0 +1,44 @@
+<assembly xmlns="http://maven.apache.org/xsd/assembly-1.1.0.xsd"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+   <!-- 
+   This assembly is almost identical to the standard plugin assembly.  The only difference being that
+   this assembly will package up the lafs directory in the build output folder.
+   -->
+
+   <id>assembly</id>
+   <formats>
+      <format>zip</format>
+   </formats>
+   <includeBaseDirectory>false</includeBaseDirectory>
+   <files>
+      <file>
+         <source>${project.build.directory}/${artifact.artifactId}.jar
+         </source>
+         <outputDirectory>/</outputDirectory>
+      </file>
+      <file>
+         <source>${project.build.directory}/${artifact.artifactId}-sources.jar
+         </source>
+         <outputDirectory>${artifact.artifactId}</outputDirectory>
+      </file>      
+   </files>
+   <fileSets>
+      <fileSet>
+         <directory>src/main/resources/doc</directory>
+         <outputDirectory>${artifact.artifactId}</outputDirectory>
+         <includes>
+            <include>**</include>
+         </includes>
+      </fileSet>
+      <fileSet>
+        <directory>${project.build.directory}/lafs</directory>
+        <outputDirectory>${artifact.artifactId}/lafs</outputDirectory>
+         <includes>
+            <include>**</include>
+         </includes>        
+      </fileSet>
+   </fileSets>
+   
+</assembly>

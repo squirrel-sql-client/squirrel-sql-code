@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <!-- This pom is slightly different from other plugin poms because it requires special assembly 
+        instructions since it includes LAF jars from other projects in the lafs/ folder of the assembly.
+        Since no other plugin has special needs like this, this plugin's pom overrides the plugin parent's
+        assembly definition, providing it's own.  To add/remove/modify the LAFS that get included in the 
+        assembly archive, you must add/remove/modify the dependency below on the maven project that contains 
+        the LAF artifact.
+   -->
+
+   <parent>
+      <groupId>net.sourceforge.squirrel_sql</groupId>
+      <artifactId>squirrelsql-plugins-parent-pom</artifactId>
+      <version>3.1.0-SNAPSHOT</version>
+   </parent>
+
+   <groupId>net.sourceforge.squirrel_sql</groupId>
+   <artifactId>laf</artifactId>
+   <name>Laf Plugin</name>
+   <version>3.1.0-SNAPSHOT</version>
+   <description>Laf Plugin</description>
+
+   <properties>
+      <staging.dir>${project.build.directory}</staging.dir>
+   </properties>
+
+
+   <dependencies>
+      <dependency>
+         <groupId>com.jgoodies</groupId>
+         <artifactId>looks</artifactId>
+         <version>2.2.1</version>
+      </dependency>
+      <dependency>
+         <groupId>org.jvnet.substance</groupId>
+         <artifactId>substance</artifactId>
+         <version>5.2_01</version>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+         </plugin>
+         
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.0</version>
+            <executions>
+
+               <execution>
+                  <id>copy-lafs</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>copy-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <stripVersion>true</stripVersion>
+                     <includeArtifactIds>looks,substance</includeArtifactIds>
+                     <outputDirectory>${staging.dir}/lafs</outputDirectory>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>         
+         
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>create-plugin-archives</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>single</goal>
+                  </goals>
+                  <configuration>
+                     <descriptors>
+                        <descriptor>src/main/resources/assemblies/laf-plugin-assembly.xml</descriptor>
+                     </descriptors>
+                     <appendAssemblyId>true</appendAssemblyId>
+                     <finalName>${project.artifactId}</finalName>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         
+         
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <artifactId>maven-pmd-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+         </plugin>
+
+
+
+
+      </plugins>
+   </build>
+</project>
