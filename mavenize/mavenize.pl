@@ -22,6 +22,7 @@ $mavenizeDir =~ s/\s//g;
 
 $topDir = "/home/manningr/projects/squirrel_maven2/sql12";
 $pluginsDir = $topDir . "/plugins";
+$lafPluginDir = $pluginsDir . "/laf";
 
 # copy in the root pom - this pom builds all of SQuirreL
 `cp root-pom.xml $topDir/pom.xml`;
@@ -51,6 +52,10 @@ chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
 `find . -name *.png -printf "%h\n" | grep -v main | xargs -i mkdir -p main/resources/{}`;
 `find . -type f -name *.png -print | grep -v main | xargs -i cp {} main/resources/{}`;
 
+`find $fwDir/src/main/java -name *.properties | xargs -i rm {}`;
+`find $fwDir/src/main/java -name "*.gif" | xargs -i rm {}`;
+`find $fwDir/src/main/java -name "*.png" | xargs -i rm {}`;
+
 chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
 # restructure app module
@@ -71,9 +76,16 @@ chdir("$appDir/src") or die "Couldn't change directory to $appDir/src: $!\n";
 `find . -type f -name *.png -print | grep -v "^./main" | xargs -i cp {} main/resources/{}`;
 `find . -name "*.xml" -printf "%h\n" | grep -v "^./main" | xargs -i mkdir -p main/resources/{}`;
 `find . -type f -name "*.xml" -print | grep -v "^./main" | xargs -i cp {} main/resources/{}`;
+`find . -name "*.jpg" -printf "%h\n" | grep -v "^./main" | xargs -i mkdir -p main/resources/{}`;
+`find . -type f -name "*.jpg" -print | grep -v "^./main" | xargs -i cp {} main/resources/{}`;
+
 
 `find $appDir/src/main/java -name *.properties | xargs -i rm {}`;
+`find $appDir/src/main/java -name "*.gif" | xargs -i rm {}`;
+`find $appDir/src/main/java -name "*.png" | xargs -i rm {}`;
 `find $appDir/src/main/java -name "*.xml" | xargs -i rm {}`;
+`find $appDir/src/main/java -name "*.jpg" | xargs -i rm {}`;
+
 
 chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
@@ -103,16 +115,6 @@ $isqlj_deps = <<"EOF";
    		<groupId>org.rege</groupId>
    		<artifactId>isqlj.jar</artifactId>
    		<version>1.8</version>
-   	</dependency>
-   </dependencies>
-EOF
-
-$laf_deps = <<"EOF";
-<dependencies>
-   	<dependency>
-   		<groupId>com.jgoodies</groupId>
-   		<artifactId>looks</artifactId>
-   		<version>2.2.1</version>
    	</dependency>
    </dependencies>
 EOF
@@ -225,6 +227,13 @@ find( { wanted => \&wanted_for_packagemap, no_chdir => 0 }, $topDir);
 # Recurse through all test source tree to find java unit test files to copy to the projects under src/main/test
 find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/src");
 
+# Miscellaneous
+print "Installing L&F Plugin Assembly ($mavenizeDir/laf-plugin/laf-plugin-assembly.xml) in $lafPluginDir/src/main/resources/assemblies\n";
+`mkdir -p $lafPluginDir/src/main/resources/assemblies`;
+`cp $mavenizeDir/laf-plugin/laf-plugin-assembly.xml $lafPluginDir/src/main/resources/assemblies`;
+
+# End of script; Begin Subroutines
+
 sub wanted_for_poms {
 
 	if ( $_ !~ 'plugin_build.xml' ) {
@@ -248,7 +257,9 @@ sub wanted_for_poms {
  	} elsif ($artifactId =~ 'isqlj') {
  		$dependencies = $isqlj_deps;
 	} elsif ($artifactId =~ 'laf') {
-		$dependencies = $laf_deps;
+		# laf plugin assembly is a radical departure from other plugins, so it has it's own custom pom now.
+		`cp $mavenizeDir/laf-plugin/pom.xml $newPomFile`;
+		return;		
 	} elsif ($artifactId =~ 'oracle') {
 		$dependencies = $oracle_deps;
         } elsif ($artifactId =~ 'sqlval') {
@@ -439,6 +450,7 @@ sub getPackageFromFile {
 	return $package;	
 }
 
+# Converts the package argument into a directory string
 sub convertPackageToDirectory {
 	$package = shift;
 	$package =~ s/\./\//g;
