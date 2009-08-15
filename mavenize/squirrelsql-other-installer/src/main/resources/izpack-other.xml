@@ -1,0 +1,353 @@
+<installation version="1.0">
+
+   <info>
+      <appname>SQuirreL SQL Client</appname>
+      <appversion>${squirrel.version}</appversion>
+      <authors>
+         <author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner" />
+         <author email="manningr@users.sourceforge.net" name="Rob Manning" />
+         <author email="gwghome@users.sourceforge.net" name="Glenn Griffin" />
+         <author email="colbell@users.sourceforge.net" name="Colin Bell" />
+      </authors>
+      <url>http://www.squirrelsql.org</url>
+      <uninstaller write="yes" />
+      <javaversion>1.6</javaversion>
+   </info>
+
+   <guiprefs height="480" resizable="yes" width="640" />
+
+   <locale>
+      <langpack iso3="eng" />
+   </locale>
+
+   <resources>
+      <res src="classes/installer-readme.html" id="HTMLInfoPanel.info" />
+      <res src="classes/shortcutSpec.xml" id="shortcutSpec.xml" />
+      <res src="classes/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml" />
+   </resources>
+
+   <panels>
+      <panel classname="HelloPanel" />
+      <panel classname="HTMLInfoPanel" />
+      <panel classname="TargetPanel" />
+      <panel classname="PacksPanel" />
+      <panel classname="InstallPanel" />
+      <panel classname="ShortcutPanel" />
+      <panel classname="FinishPanel" />
+   </panels>
+
+   <native type="izpack" name="ShellLink.dll" />
+
+   <listeners>
+      <listener installer="SummaryLoggerInstallerListener" />
+   </listeners>
+
+   <packs>
+      <pack name="Base" required="yes" installGroups="Core">
+         <description>SQL Client</description>
+         <singlefile target="$INSTALL_PATH/plugins/readme.txt" src="launcher/plugins/readme.txt" />
+
+         <!--         <singlefile target="$INSTALL_PATH/update/release.xml"-->
+         <!--            src="../../squirrel-sql-dist/release/release.xml" />-->
+         <!--         <file targetdir="$INSTALL_PATH"-->
+         <!--            src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc" />-->
+         <!--
+            <file targetdir="$INSTALL_PATH/doc" src="../../sql12/web-site/faq.html" />
+         -->
+         <!--
+            <fileset targetdir="$INSTALL_PATH/doc/images" dir="../../sql12/web-site/images">
+         -->
+         <!--            <include name="*.*" />-->
+         <!--         </fileset>-->
+         <file targetdir="$INSTALL_PATH" src="launcher/icons" />
+         <file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.bat" />
+         <file targetdir="$INSTALL_PATH" src="launcher/addpath.bat" />
+         <file targetdir="$INSTALL_PATH" src="launcher/squirrel-sql.sh" />
+         <file targetdir="$INSTALL_PATH" src="launcher/log4j.properties" />
+         <file targetdir="$INSTALL_PATH" src="launcher/update-log4j.properties" />
+
+         <file targetdir="$INSTALL_PATH" src="lib/squirrel-sql.jar" />
+         <fileset targetdir="$INSTALL_PATH/lib" dir="lib">
+            <include name="*.jar" />
+            <exclude name="squirrel-sql.jar" />
+            <exclude name="*-tests.jar" />
+         </fileset>
+
+         <parsable targetfile="$INSTALL_PATH/squirrel-sql.bat" />
+         <parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell" />
+
+         <!--  Make Unix script executable. -->
+         <executable targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never" />
+
+      </pack>
+
+      <pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
+         <description>Standard Plugins - these are not Database-Specific </description>
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/codecompletion.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/codecompletion" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/editextras.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/editextras" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/graph.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/graph" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/laf.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/laf" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlbookmark.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlbookmark" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlscript.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlscript" />
+
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/syntax.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/syntax" />
+
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Data import">
+         <description>
+            This plugin allows you import files into the database.
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins"                               src="plugins/dataimport.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dataimport" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DBCopy">
+         <description>
+            This optional plugin allows database objects to be copied from one database session to
+            another
+        </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DB2">
+         <description>
+            This optional plugin adds functionality that is specific to the DB2 DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/db2.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/db2" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Derby">
+         <description>
+            This optional plugin adds functionality that is specific to the Derby DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/derby.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/derby" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Firebird ">
+         <description>
+            This optional plugin adds functionality that is specific to the Firebird DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/firebird.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/firebird" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Firebird Manager">
+         <description>
+            This optional plugin adds the ability to manage a Firebird server and database
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/firebirdmanager.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/firebirdmanager" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - H2 ">
+         <description>
+            This optional plugin adds functionality that is specific to the H2 DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/h2.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/h2" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Hibernate ">
+         <description>
+            This optional plugin adds development support for Hibernate applications
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/hibernate.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/hibernate" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Informix ">
+         <description>
+            This optional plugin adds functionality that is specific to the Informix DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/informix.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/informix" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Microsoft SQL Server ">
+         <description>
+            This optional plugin allows you to performs MSSQL-specific commands with a few clicks
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/mssql.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/mssql" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - MySQL ">
+         <description>
+            This optional plugin adds MySQL-specific functionality
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/mysql.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/mysql" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Oracle">
+         <description>
+            This optional plugin adds Oracle-specific functionality
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/oracle.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/oracle" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - PostgreSQL ">
+         <description>
+            This optional plugin adds PostgreSQL-specific functionality
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/postgres.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/postgres" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Refactoring">
+         <description>
+            This optional plugin allows you to refactor your database using database refactoring
+            patterns
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Session Scripts">
+         <description>
+            This optional plugin allows you to specify SQL statements to be executed when you first
+            connect to a database.
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sessionscript.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sessionscript" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Smart Tools ">
+         <description>
+            This optional plugin aims to help you with helpful routines to improve your database
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/smarttools.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/smarttools" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Parametrisation ">
+         <description>
+            This plugin allows you to put variables into your SQL statements
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlparam.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlparam" />
+      </pack>
+
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Replace ">
+         <description>
+            This plugin allows you to place environment variables into your SQL statements
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlreplace.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlreplace" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - SQL Validator ">
+         <description>
+            Provides SQL validation (ISO SQL99) based on results of the Mimer SQL web service
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlval.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sqlval" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Sybase ">
+         <description>
+            This optional plugin adds functionality that is specific to the Sybase ASE DBMS
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sybase.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/sybase" />
+      </pack>
+
+      <pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
+         <description>
+            Allows translators to quickly find missing translation files
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/i18n.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/i18n" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Brazilian Portuguese">
+         <description>
+            Provides native labels and user messages for use in a Brazilian locale (Francis Martins)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_pt_BR.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Bulgarian">
+         <description>
+            Provides native labels and user messages for use in a Bulgarian locale (Ivan Dimov)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_bg_BG.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Czech">
+         <description>
+            Provides native labels and user messages for use in a Czech locale (Jan Kostrhun)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_cs_CZ.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Simplified Chinese">
+         <description>
+            Provides native labels and user messages for use in a Chinese locale (xpdz)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_zh_CN.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - French">
+         <description>
+            Provides native labels and user messages for use in a French locale (Erwan Duroselle)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_fr.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - German">
+         <description>
+            Provides native labels and user messages for use in a German locale (Andreas Oswald)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_de_DE.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Italian">
+         <description>
+            Provides native labels and user messages for use in an Italian locale (Ivo Neri)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_it_IT.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Korean">
+         <description>
+            Provides native labels and user messages for use in a Korean locale (Youngwoo)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_ko_KR.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Russian">
+         <description>
+            Provides native labels and user messages for use in a Russian locale (Dmitry Matyukhin)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_ru.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Spanish">
+         <description>
+            Provides native labels and user messages for use in a Spanish locale (Diego Schulz)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_es.jar" />
+      </pack>
+
+   </packs>
+</installation>

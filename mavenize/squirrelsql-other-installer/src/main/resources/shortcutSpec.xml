@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+   <programGroup defaultName="SQuirreL SQL Client"
+      location="applications"/>
+   <shortcut name="SQuirreL SQL Client"
+      target="$INSTALL_PATH/squirrel-sql.bat"
+      workingDirectory="$INSTALL_PATH"
+      description="An ISQL tool"
+      iconFile="$INSTALL_PATH/icons/acorn.ico"
+      initialState="normal"
+      programGroup="yes"
+      desktop="yes"
+      applications="no"
+      startMenu="no"
+      startup="no"
+      encoding="UTF-8">
+      <createForPack name="Base"/>
+   </shortcut>
+</shortcuts>
+

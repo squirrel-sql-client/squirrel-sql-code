@@ -1,0 +1,391 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>squirrelsql-other-installer</groupId>
+   <artifactId>squirrelsql-other-installer</artifactId>
+   <version>3.1.0-SNAPSHOT</version>
+
+   <properties>
+      <squirrel.version>3.1.0</squirrel.version>
+      <staging.dir>${project.build.directory}</staging.dir>
+      <izpack-standalone.version>4.3.1</izpack-standalone.version>
+   </properties>
+
+   <dependencies>
+
+      <!-- SQuirreL Dependencies -->
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>squirrelsql-launcher</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>fw</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>app</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      
+      <!-- Standard Plugins -->
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>codecompletion</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>editextras</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>graph</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>laf</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sqlbookmark</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sqlscript</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>syntax</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <!-- Optional Plugins -->
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>dataimport</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>dbcopy</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>db2</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>derby</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>firebird</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>firebirdmanager</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>h2</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>hibernate</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>informix</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>mssql</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>mysql</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>oracle</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>postgres</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>refactoring</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sessionscript</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>smarttools</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+      
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sqlparam</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sqlreplace</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sqlval</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>sybase</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>i18n</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>squirrelsql-translations</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <type>jar</type>
+      </dependency>
+
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>squirrelsql-java-version-checker</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+         <type>jar</type>
+      </dependency>
+
+      <!-- Other Dependencies -->
+      <dependency>
+         <groupId>org.codehaus.izpack</groupId>
+         <artifactId>izpack-standalone-compiler</artifactId>
+         <version>${izpack-standalone.version}</version>
+      </dependency>
+            
+   </dependencies>
+
+   <build>
+
+      <defaultGoal>package</defaultGoal>
+
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+         </resource>
+      </resources>
+
+      <plugins>
+
+         <!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.0</version>
+            <executions>
+               <execution>
+                  <id>application-libraries</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>copy-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <stripVersion>true</stripVersion>
+                     <excludeGroupIds>org.codehaus,org.apache.maven,jboss</excludeGroupIds>
+                     <excludeArtifactIds>squirrelsql-launcher</excludeArtifactIds>
+                     <excludeTypes>zip</excludeTypes>
+                     <outputDirectory>${staging.dir}/lib</outputDirectory>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>unpack-launcher-scripts</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <includeArtifactIds>squirrelsql-launcher</includeArtifactIds>
+                     <outputDirectory>${staging.dir}/launcher</outputDirectory>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>unpack-plugin-assemblies</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <includeClassifiers>assembly</includeClassifiers>
+                     <includeTypes>zip</includeTypes>
+                     <includeGroupIds>net.sourceforge.squirrel_sql</includeGroupIds>
+                     <outputDirectory>${staging.dir}/plugins</outputDirectory>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>unpack-translations</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <includeArtifactIds>squirrelsql-translations</includeArtifactIds>
+                     <outputDirectory>${staging.dir}/translations</outputDirectory>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>unpack-java-version-checker</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <includeArtifactIds>squirrelsql-java-version-checker</includeArtifactIds>
+                     <includes>*.jar</includes>
+                     <outputDirectory>${staging.dir}/lib</outputDirectory>
+                  </configuration>
+               </execution>
+               
+            </executions>
+         </plugin>
+
+         <plugin>
+            <groupId>org.codehaus.izpack</groupId>
+            <artifactId>izpack-maven-plugin</artifactId>
+            <version>1.0-alpha-4</version>
+            <dependencies>
+               <dependency>
+                  <groupId>org.codehaus.izpack</groupId>
+                  <artifactId>izpack-standalone-compiler</artifactId>
+                  <version>${izpack-standalone.version}</version>
+               </dependency>
+            </dependencies>
+            <configuration>
+               <izpackBasedir>${staging.dir}</izpackBasedir>
+               <descriptor>${staging.dir}/classes/izpack-other.xml</descriptor>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>standard-installer</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>izpack</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+
+      </plugins>
+   </build>
+
+
+</project>
