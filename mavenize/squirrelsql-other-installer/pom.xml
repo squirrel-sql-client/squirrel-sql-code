@@ -4,6 +4,7 @@
    <groupId>squirrelsql-other-installer</groupId>
    <artifactId>squirrelsql-other-installer</artifactId>
    <version>3.1.0-SNAPSHOT</version>
+   <name>SQuirreLSQL Generic Installer</name>
 
    <properties>
       <squirrel.version>3.1.0</squirrel.version>
@@ -29,7 +30,7 @@
          <artifactId>app</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
-      
+
       <!-- Standard Plugins -->
       <dependency>
          <groupId>net.sourceforge.squirrel_sql</groupId>
@@ -210,7 +211,7 @@
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
-      
+
       <dependency>
          <groupId>net.sourceforge.squirrel_sql</groupId>
          <artifactId>sqlparam</artifactId>
@@ -265,13 +266,25 @@
          <type>jar</type>
       </dependency>
 
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>doc</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      
+      <dependency>
+         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <artifactId>website</artifactId>
+         <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      
       <!-- Other Dependencies -->
       <dependency>
          <groupId>org.codehaus.izpack</groupId>
          <artifactId>izpack-standalone-compiler</artifactId>
          <version>${izpack-standalone.version}</version>
       </dependency>
-            
+
    </dependencies>
 
    <build>
@@ -319,6 +332,17 @@
                   </configuration>
                </execution>
                <execution>
+                  <id>unpack-documentation</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack-dependencies</goal>
+                  </goals>
+                  <configuration>
+                     <includeArtifactIds>doc,website</includeArtifactIds>
+                     <outputDirectory>${staging.dir}/doc</outputDirectory>
+                  </configuration>
+               </execution>               
+               <execution>
                   <id>unpack-plugin-assemblies</id>
                   <phase>process-resources</phase>
                   <goals>
@@ -354,7 +378,7 @@
                      <outputDirectory>${staging.dir}/lib</outputDirectory>
                   </configuration>
                </execution>
-               
+
             </executions>
          </plugin>
 
