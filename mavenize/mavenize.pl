@@ -23,6 +23,9 @@ $mavenizeDir =~ s/\s//g;
 $topDir = "/home/manningr/projects/squirrel_maven2/sql12";
 $pluginsDir = $topDir . "/plugins";
 $lafPluginDir = $pluginsDir . "/laf";
+$installerDir = $topDir . "/installer";
+$docDir = $topDir . "/doc";
+$websiteDir = $topDir . "/web-site";
 
 # copy in the root pom - this pom builds all of SQuirreL
 `cp root-pom.xml $topDir/pom.xml`;
@@ -33,10 +36,30 @@ $lafPluginDir = $pluginsDir . "/laf";
 #`cp -r squirrelsql-test-utils $topDir`;
 
 # copy in plugins support projects 
+print "Copying in plugins support projects\n";
+`rm -rf squirrelsql-swingsetthemes/squirrelsql-swingsetthemes`;
 `cp -r squirrelsql-plugins-assembly-descriptor $pluginsDir`;
+`rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
 `cp -r squirrelsql-plugins-parent-pom $pluginsDir`;
+`rm -rf $pluginsDir/squirrelsql-swingsetthemes`;
+`cp -r squirrelsql-swingsetthemes $pluginsDir`;
+
+# copy in the installer projects
+print "Copying in installer projects\n";
+`rm -rf $installerDir`;
+`mkdir -p $installerDir`;
+`cp -r squirrelsql-java-version-checker $installerDir`;
+`cp -r squirrelsql-launcher $installerDir`;
+`cp -r squirrelsql-other-installer $installerDir`;
+`cp installer-pom.xml $installerDir/pom.xml`;
+
+# copy in the translations project
+print "Copying in translations project\n";
+`rm -rf $topDir/squirrelsql-translations`;
+`cp -r squirrelsql-translations $topDir`;
 
 # restructure fw module
+print "Restructuring fw module\n";
 $fwDir = $topDir . "/fw";
 `cp fw-pom.xml $fwDir/pom.xml`;
 `cp test-log4j.properties $fwDir/src/test/resources/log4j.properties`;
@@ -59,6 +82,7 @@ chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
 chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
 # restructure app module
+print "Restructuring app module\n";
 $appDir = $topDir . "/app";
 `cp app-pom.xml $appDir/pom.xml`;
 `mkdir -p $appDir/src/main/java`;
@@ -88,6 +112,24 @@ chdir("$appDir/src") or die "Couldn't change directory to $appDir/src: $!\n";
 
 
 chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+
+# Restructure the doc module
+print "Restructuring doc module\n";
+`cp $mavenizeDir/doc-pom.xml $docDir/pom.xml`;
+`rm -rf $docDir/src`;
+`mkdir -p $docDir/src/main/resources`;
+`cp $docDir/*.txt  $docDir/src/main/resources/`;
+`cp $docDir/*.html  $docDir/src/main/resources/`;
+`cp $docDir/*.css  $docDir/src/main/resources/`;
+`cp -r $docDir/images $docDir/src/main/resources/`;
+`cp -r $docDir/licences $docDir/src/main/resources/`;
+
+# Restructure the web-site module
+print "Restructuring web-site module\n";
+`cp $mavenizeDir/website-pom.xml $websiteDir`;
+`rm -rf $websiteDir/src/main`;
+`mkdir -p $websiteDir/src/main/resources`;
+`cp $websiteDir/faq.html $websiteDir/src/main/resources`;
 
 $cache_deps = <<"EOF";
 <dependencies>
@@ -232,6 +274,8 @@ print "Installing L&F Plugin Assembly ($mavenizeDir/laf-plugin/laf-plugin-assemb
 `mkdir -p $lafPluginDir/src/main/resources/assemblies`;
 `cp $mavenizeDir/laf-plugin/laf-plugin-assembly.xml $lafPluginDir/src/main/resources/assemblies`;
 
+
+
 # End of script; Begin Subroutines
 
 sub wanted_for_poms {
@@ -352,17 +396,21 @@ sub wanted_for_packagemap {
 		#print "Found a plugin package: $package\n\tfor $File::Find::name\n";
 		$packagemap->{$package} = "plugin";	
 
-        } elsif ($parts[0] =~ /build\/$/) {
+    } elsif ($parts[0] =~ /build\/$/) {
 
 		#print "Found a build package: $package\n\tfor $File::Find::name\n";
 		
-        } elsif ($File::Find::name =~ /sql12\/test/) {
+    } elsif ($File::Find::name =~ /sql12\/test/) {
 
 		# ignore test files during this pass
 
-        } elsif ($File::Find::name =~ /sql12\/squirrelsql-test-utils/) {
+    } elsif ($File::Find::name =~ /sql12\/squirrelsql-test-utils/) {
 
 		# ignore maven test utilities project
+
+    } elsif ($File::Find::name =~ /sql12\/installer/) {
+
+        # ignore installer project
 
 	} else {
 		print "Unable to categorize package of file: $File::Find::name\n";
