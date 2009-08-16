@@ -49,8 +49,8 @@
 
          <!--         <singlefile target="$INSTALL_PATH/update/release.xml"-->
          <!--            src="../../squirrel-sql-dist/release/release.xml" />-->
-         <!--         <file targetdir="$INSTALL_PATH"-->
-         <!--            src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc" />-->
+         
+         <file targetdir="$INSTALL_PATH" src="doc" />
          <!--
             <file targetdir="$INSTALL_PATH/doc" src="../../sql12/web-site/faq.html" />
          -->
@@ -111,7 +111,7 @@
          <description>
             This plugin allows you import files into the database.
          </description>
-         <file targetdir="$INSTALL_PATH/plugins"                               src="plugins/dataimport.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dataimport.jar" />
          <file targetdir="$INSTALL_PATH/plugins" src="plugins/dataimport" />
       </pack>
 
