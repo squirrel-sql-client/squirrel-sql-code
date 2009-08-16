@@ -4,6 +4,7 @@
   <artifactId>squirrelsql-translations</artifactId>
   <packaging>jar</packaging>
   <version>3.1.0-SNAPSHOT</version>  
+  <name>SQuirreL-SQL Translations</name>
   
   <!-- This is blatant copy/paste from squirrelsql-launcher pom.xml -->
    <build>
