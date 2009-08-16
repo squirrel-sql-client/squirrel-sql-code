@@ -1,24 +1,42 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.squirrel_sql</groupId>
-  <artifactId>squirrel-root-pom</artifactId>
-  <packaging>pom</packaging>
-  <name>SQuirreL Root POM</name>
-  <description>The top-most POM file for building SQuirreL</description>
-  <version>3.1.0-SNAPSHOT</version>
-  
-  <properties>
-        <javac-source-version>1.6</javac-source-version>
-        <javac-target-version>1.6</javac-target-version>
-        <checkstyle-plugin-version>2.2</checkstyle-plugin-version>
-        <findbugs-plugin-version>2.1</findbugs-plugin-version>
-        <pmd-plugin-version>2.4</pmd-plugin-version>
-  </properties>
-  
-  <modules>
-        <module>fw</module>
-        <module>app</module>
-        <module>plugins</module>
-  </modules>
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>net.sourceforge.squirrel_sql</groupId>
+   <artifactId>squirrel-root-pom</artifactId>
+   <packaging>pom</packaging>
+   <name>SQuirreL Root POM</name>
+   <description>
+        The top-most POM file for building SQuirreL.  If a profile is defined that is called "installer",
+        the build will also include building projects that produce the installer and the installer itself. 
+   </description>
+   <version>3.1.0-SNAPSHOT</version>
+
+   <properties>
+      <javac-source-version>1.6</javac-source-version>
+      <javac-target-version>1.6</javac-target-version>
+      <checkstyle-plugin-version>2.2</checkstyle-plugin-version>
+      <findbugs-plugin-version>2.1</findbugs-plugin-version>
+      <pmd-plugin-version>2.4</pmd-plugin-version>
+   </properties>
+
+   <modules>
+      <module>fw</module>
+      <module>app</module>
+      <module>plugins</module>
+   </modules>
+
+   <profiles>
+      <profile>
+         <id>installer</id>
+         <modules>
+            <module>fw</module>
+            <module>app</module>
+            <module>plugins</module>
+            <module>squirrelsql-translations</module>
+            <module>installer</module>
+         </modules>
+      </profile>
+   </profiles>
+
+
 </project>
