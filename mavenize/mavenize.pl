@@ -126,7 +126,7 @@ print "Restructuring doc module\n";
 
 # Restructure the web-site module
 print "Restructuring web-site module\n";
-`cp $mavenizeDir/website-pom.xml $websiteDir`;
+`cp $mavenizeDir/website-pom.xml $websiteDir/pom.xml`;
 `rm -rf $websiteDir/src/main`;
 `mkdir -p $websiteDir/src/main/resources`;
 `cp $websiteDir/faq.html $websiteDir/src/main/resources`;
@@ -236,7 +236,7 @@ $syntax_deps = <<"EOF";
    </dependencies>
 EOF
 
-$plugin_pom_template = Text::Template->new(DELIMITERS => [ '@@--' , '--@@' ], TYPE => 'FILE',  SOURCE => 'plugin-pom.xml.tmpl');
+$plugin_pom_template = Text::Template->new(DELIMITERS => [ '@@--' , '--@@' ], TYPE => 'FILE',  SOURCE => 'plugin-pom.xml');
 
 
 # Recurse through the plugin directories to find "plugin_build.xml" - this time to create the pom.xml files
@@ -256,7 +256,7 @@ print "Creating modules pom file ( $modulespomfile ) with modules: \n$modules";
 # Create the plugins module pom file
 open (MODULEPOMFILE,"> $modulespomfile")
    or die "Couldn't open file ($modulespomfile): $!\n";
-$plugin_module_pom_template = Text::Template->new(TYPE => 'FILE',  SOURCE => 'plugin-module-pom.xml.tmpl');
+$plugin_module_pom_template = Text::Template->new(TYPE => 'FILE',  SOURCE => 'plugin-module-pom.xml');
 print MODULEPOMFILE $plugin_module_pom_template->fill_in();
 close(MODULEPOMFILE);
 
