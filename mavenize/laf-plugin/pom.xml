@@ -12,16 +12,31 @@
    -->
 
    <parent>
-      <groupId>net.sourceforge.squirrel_sql</groupId>
+      <groupId>net.sf.squirrel_sql</groupId>
       <artifactId>squirrelsql-plugins-parent-pom</artifactId>
       <version>3.1.0-SNAPSHOT</version>
    </parent>
 
-   <groupId>net.sourceforge.squirrel_sql</groupId>
+   <groupId>net.sf.squirrel_sql</groupId>
    <artifactId>laf</artifactId>
-   <name>Laf Plugin</name>
+   <name>Look and Feel Plugin</name>
    <version>3.1.0-SNAPSHOT</version>
-   <description>Laf Plugin</description>
+   <description>
+        This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
+        as well as others that the user can provide.
+   </description>
+
+   <licenses>
+      <license>
+         <name>GNU Lesser</name>
+         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <url>http://www.squirrelsql.org/</url>
+   <scm>
+        <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/plugins/laf</url>
+   </scm>        
 
    <properties>
       <staging.dir>${project.build.directory}</staging.dir>
@@ -29,11 +44,6 @@
    </properties>
 
    <dependencies>
-      <dependency>
-         <groupId>com.jgoodies</groupId>
-         <artifactId>looks</artifactId>
-         <version>2.2.1</version>
-      </dependency>
       <dependency>
          <groupId>org.jvnet.substance</groupId>
          <artifactId>substance</artifactId>
@@ -55,9 +65,9 @@
          <version>1.1</version>
       </dependency>
       <dependency>
-         <groupId>net.infonode</groupId>
+         <groupId>net.sf.squirrel_sql</groupId>
          <artifactId>ilf-gpl</artifactId>
-         <version>1.5.0</version>
+         <version>1.6.1</version>
       </dependency>
       <dependency>
          <groupId>com.incors.plaf</groupId>
@@ -75,14 +85,19 @@
          <version>3.0</version>
       </dependency>
       <dependency>
-         <groupId>org.jvnet.skinlf</groupId>
+         <groupId>net.sf.squirrel_sql</groupId>
          <artifactId>skinlf</artifactId>
          <version>6.7</version>
       </dependency>
       <dependency>
-         <groupId>net.sourceforge.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel_sql</groupId>
          <artifactId>swingsetthemes</artifactId>
          <version>3.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+      	<groupId>com.jgoodies</groupId>
+      	<artifactId>looks</artifactId>
+      	<version>2.2.2</version>
       </dependency>
    </dependencies>
 

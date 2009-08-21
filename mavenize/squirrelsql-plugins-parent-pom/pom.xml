@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <groupId>net.sourceforge.squirrel_sql</groupId>
+   
+   <groupId>net.sf.squirrel_sql</groupId>
    <artifactId>squirrelsql-plugins-parent-pom</artifactId>
    <packaging>pom</packaging>
-   <name>SQuirreLSQL Plugins Parent POM</name>
    <version>3.1.0-SNAPSHOT</version>
+   
+   <name>SQuirreLSQL Plugins Parent POM</name>
    <description>POM file to consolidate common POM specifications</description>
 
    <parent>
@@ -13,6 +15,19 @@
       <artifactId>squirrel-root-pom</artifactId>
       <version>3.1.0-SNAPSHOT</version>
    </parent>
+
+   <licenses>
+      <license>
+         <name>GNU Lesser</name>
+         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <url>http://www.squirrelsql.org/</url>
+   <scm>
+        <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/plugins</url>
+   </scm>        
 
    <dependencies>
       <dependency>
