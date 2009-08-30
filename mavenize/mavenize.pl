@@ -21,6 +21,8 @@ use Text::Template;
 # Global Declarations
 ################################################################################################
 
+$SVN_DELETE_UNUSED_RESOURCES=0;
+
 $mavenizeDir = `pwd`;
 $mavenizeDir =~ s/\s//g;
 
@@ -453,7 +455,7 @@ sub restructureFwModule {
 	print "Restructuring fw module\n";
 
 	# remove effects of previous run
-	`rm -rf $fwDir/src/main`;print "Copying source files into main/java sub-tree\n";
+	`rm -rf $fwDir/src/main`;
 	`rm -rf $fwDir/src/test`;
 
 	# create maven directories
@@ -472,6 +474,8 @@ sub restructureFwModule {
 	findAndCopyResources('*.properties');
 	findAndCopyResources('*.gif');
 	findAndCopyResources('*.png');
+
+    $SVN_DELETE_UNUSED_RESOURCES && `svn delete net`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -521,6 +525,8 @@ sub restructureAppModule {
 	findAndCopyResources('*.xml');
 	findAndCopyResources('*.jpg');
 
+    $SVN_DELETE_UNUSED_RESOURCES && `svn delete net`;
+
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
 
@@ -560,18 +566,12 @@ sub restructureDocModule {
 	`cp *.txt  $docDir/src/main/resources/`;
 	`cp *.html  $docDir/src/main/resources/`;
 	`cp *.css  $docDir/src/main/resources/`;
-
-	#`svn delete *.txt`;
-	#`svn delete *.html`;
-	#`svn delete *.css`;
-
+	
 	`cp ./images/* $docDir/src/main/resources/`;
-
-	#`svn delete images`;
 
 	`cp ./licences/* $docDir/src/main/resources/`;
 
-	#`svn delete licences`;
+	$SVN_DELETE_UNUSED_RESOURCES && `svn delete *.txt *.html *.css images licences`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
