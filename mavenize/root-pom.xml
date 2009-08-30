@@ -1,18 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   
+
    <groupId>net.sf.squirrel_sql</groupId>
    <artifactId>squirrel-root-pom</artifactId>
    <version>3.1.0-SNAPSHOT</version>
    <packaging>pom</packaging>
-   
+
    <name>SQuirreL Root POM</name>
    <description>
         The top-most POM file for building SQuirreL.  If a profile is defined that is called "installer",
         the build will also include building projects that produce the installer and the installer itself. 
    </description>
-
+   <inceptionYear>2001</inceptionYear>
+   <developers>
+      <developer>
+         <name>Gerd Wagner</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Rob Manning</name>
+         <roles>
+            <role>Developer</role>
+            <role>Release Manager</role>
+         </roles>
+      </developer>
+   </developers>
    <licenses>
       <license>
          <name>GNU Lesser General Public License</name>
@@ -22,9 +38,18 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-        <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/</url>
-   </scm>        
-
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/</url>
+   </scm>
+   <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+   </issueManagement>     
+   <ciManagement>
+        <system>Hudson</system>
+        <url>https://www.squirrel-sql.org/hudson/</url>
+   </ciManagement>
+   
+   
    <properties>
       <javac-source-version>1.6</javac-source-version>
       <javac-target-version>1.6</javac-target-version>

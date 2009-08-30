@@ -1,6 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>net.sourceforge.squirrel_sql</groupId>
+      <artifactId>squirrel-root-pom</artifactId>
+      <version>3.1.0-SNAPSHOT</version>
+   </parent>
+
    <groupId>net.sf.squirrel_sql</groupId>
    <artifactId>squirrel-sql</artifactId>
    <version>3.1.0-SNAPSHOT</version>
@@ -9,10 +16,26 @@
    <description>
         This is the jar that contains the main application classes which are very specific to SQuirreLSQL. 
    </description>
-
+   <inceptionYear>2001</inceptionYear>
+   <developers>
+      <developer>
+         <name>Gerd Wagner</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Rob Manning</name>
+         <roles>
+            <role>Developer</role>
+            <role>Release Manager</role>
+         </roles>
+      </developer>
+   </developers>
    <licenses>
       <license>
-         <name>GNU Lesser</name>
+         <name>GNU Lesser General Public License</name>
          <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
          <distribution>repo</distribution>
       </license>
@@ -21,13 +44,15 @@
    <scm>
         <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/</url>
    </scm>        
-
-   <parent>
-      <groupId>net.sourceforge.squirrel_sql</groupId>
-      <artifactId>squirrel-root-pom</artifactId>
-      <version>3.1.0-SNAPSHOT</version>
-   </parent>
-
+   <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+   </issueManagement>     
+   <ciManagement>
+        <system>Hudson</system>
+        <url>https://www.squirrel-sql.org/hudson/</url>
+   </ciManagement>
+   
    <dependencies>
       <dependency>
          <groupId>net.sourceforge.squirrel_sql</groupId>
