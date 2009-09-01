@@ -242,22 +242,19 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		final int rowCount = _resultSetOutput.getRowCount();
 
 		final int maxRows =_exInfo.getMaxRows(); 
+      String escapedSql = escapeHtmlChars(_sql);
+
 		if (maxRows > 0 && rowCount >= maxRows)
 		{
-			String buf = _sql.replaceAll("&", "&amp;");
-			buf = buf.replaceAll("<", "&lt;");
-			buf = buf.replaceAll("<", "&gt;");
-			buf = buf.replaceAll("\"", "&quot;");
-            // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
-            String limitMsg = 
-                s_stringMgr.getString("ResultTab.limitMessage", 
-                                      Integer.valueOf(rowCount));
-			_currentSqlLbl.setText("<html><pre>&nbsp;" + limitMsg +
-                                   ";&nbsp;&nbsp;" + buf + "</pre></html>");
+         // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
+         String limitMsg = s_stringMgr.getString("ResultTab.limitMessage", Integer.valueOf(rowCount));
+         _currentSqlLbl.setText("<html><pre>&nbsp;" + limitMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
 		}
 		else
 		{
-			_currentSqlLbl.setText(_sql);
+         // i18n[ResultTab.rowsMessage=Rows {0}]
+         String rowsMsg = s_stringMgr.getString("ResultTab.rowsMessage", Integer.valueOf(rowCount));
+         _currentSqlLbl.setText("<html><pre>&nbsp;" + rowsMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
 		}
 
 		// Display the result set metadata.
@@ -272,7 +269,16 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_queryInfoPanel.load(rsds, rowCount, exInfo);
 	}
 
-	/**
+   private String escapeHtmlChars(String sql)
+   {
+      String buf = sql.replaceAll("&", "&amp;");
+      buf = buf.replaceAll("<", "&lt;");
+      buf = buf.replaceAll("<", "&gt;");
+      buf = buf.replaceAll("\"", "&quot;");
+      return buf;
+   }
+
+   /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#clear()
      */
 	public void clear()

@@ -1178,8 +1178,9 @@ public class SQLResultExecuterPanel extends JPanel
             double executionLength = ((double)exInfo.getSQLExecutionElapsedMillis())/1000;
             double outputLength = ((double)exInfo.getResultsProcessingElapsedMillis())/1000;            
             double totalLength = executionLength + outputLength;
+            Integer numberResultRowsRead = exInfo.getNumberResultRowsRead();
 
-            if (_largeScript) {
+           if (_largeScript) {
                 // Track the time in aggregate for the script.
                 _scriptQueryTime += executionLength;
                 _scriptOutptutTime += outputLength;
@@ -1194,15 +1195,17 @@ public class SQLResultExecuterPanel extends JPanel
                             _scriptTotalTime);
                 }
             } else {
-                printStatementExecTime(processedStatementCount,
+                printStatementExecTime(
+                        processedStatementCount,
                         statementCount,
+                        numberResultRowsRead,
                         executionLength,
                         outputLength,
                         totalLength);
             }
         }
 
-        private void printScriptExecDetails(int statementCount, 
+        private void printScriptExecDetails(int statementCount,
                 double executionLength,
                 double outputLength,
                 double totalLength) 
@@ -1239,8 +1242,10 @@ public class SQLResultExecuterPanel extends JPanel
             getSession().showMessage(stats);
         }
 
-        private void printStatementExecTime(int processedStatementCount, 
+        private void printStatementExecTime(
+                int processedStatementCount,
                 int statementCount,
+                Integer numberResultRowsRead,
                 double executionLength,
                 double outputLength,
                 double totalLength)
@@ -1250,6 +1255,7 @@ public class SQLResultExecuterPanel extends JPanel
             Object[] args = new Object[] {
                     Integer.valueOf(processedStatementCount),
                     Integer.valueOf(statementCount),
+                    numberResultRowsRead == null ? 0: numberResultRowsRead,
                     nbrFmt.format(totalLength),
                     nbrFmt.format(executionLength),
                     nbrFmt.format(outputLength)
@@ -1342,7 +1348,7 @@ public class SQLResultExecuterPanel extends JPanel
             }
          DialectType dialectType = 
             DialectFactory.getDialectType(getSession().getMetaData());
-			rsds.setResultSet(rs, dialectType);
+			info.setNumberResultRowsRead(rsds.setResultSet(rs, dialectType));
 
 			addResultsTab(info, rsds, rsmdds, _cancelPanel, model, _resultTabToReplace);
 			rsds = null;

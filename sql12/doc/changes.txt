@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Feature request 2826175:
+ Number of rows read is now visible on message panel and results tab.
+
+
 MySQL Plugin
   Fixed object tree menu items:
    * Create database (on root node)

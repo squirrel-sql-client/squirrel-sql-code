@@ -45,8 +45,9 @@ public class SQLExecutionInfo
 
 	/** Number of rows query limited to. */
 	private final int _maxRows;
+   private Integer _numberResultRowsRead;
 
-	/**
+   /**
 	 * Default ctor. Defaults SQL execution start time to the current time.
 	 */
 //	public SQLExecutionInfo()
@@ -221,4 +222,14 @@ public class SQLExecutionInfo
 	{
 		return _maxRows;
 	}
+
+   public void setNumberResultRowsRead(int numberResultRowsRead)
+   {
+      _numberResultRowsRead = numberResultRowsRead;
+   }
+
+   public Integer getNumberResultRowsRead()
+   {
+      return _numberResultRowsRead;
+   }
 }
