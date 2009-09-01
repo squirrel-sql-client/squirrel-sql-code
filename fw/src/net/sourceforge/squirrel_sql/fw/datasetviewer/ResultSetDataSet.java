@@ -79,9 +79,9 @@ public class ResultSetDataSet implements IDataSet {
     *           the type of dialect in use.
     * @throws DataSetException
     */
-   public void setResultSet(ResultSet rs, DialectType dialectType)
+   public int setResultSet(ResultSet rs, DialectType dialectType)
          throws DataSetException {
-      setResultSet(rs, null, false, dialectType);
+      return setResultSet(rs, null, false, dialectType);
    }
 
    /**
@@ -95,9 +95,9 @@ public class ResultSetDataSet implements IDataSet {
     *           the type of dialect in use.
     * @throws DataSetException
     */
-   public void setContentsTabResultSet(ResultSet rs, String fullTableName,
+   public int setContentsTabResultSet(ResultSet rs, String fullTableName,
          DialectType dialectType) throws DataSetException {
-      setResultSet(rs, fullTableName, null, false, true, dialectType);
+      return setResultSet(rs, fullTableName, null, false, true, dialectType);
    }
 
    /**
@@ -111,9 +111,9 @@ public class ResultSetDataSet implements IDataSet {
     *           the type of dialect in use.
     * @throws DataSetException
     */
-   public void setResultSet(ResultSet rs, int[] columnIndices,
+   public int setResultSet(ResultSet rs, int[] columnIndices,
          DialectType dialectType) throws DataSetException {
-      setResultSet(rs, columnIndices, false, dialectType);
+      return setResultSet(rs, columnIndices, false, dialectType);
    }
 
    /**
@@ -121,16 +121,19 @@ public class ResultSetDataSet implements IDataSet {
     * Tab classes except ContentsTab. This tunrs all the data into strings for
     * simplicity of operation.
     */
-   public void setResultSet(ResultSet rs, int[] columnIndices,
+   public int setResultSet(ResultSet rs, int[] columnIndices,
          boolean computeWidths, DialectType dialectType) throws DataSetException {
-      setResultSet(rs, null, columnIndices, computeWidths, false, dialectType);
+      return setResultSet(rs, null, columnIndices, computeWidths, false, dialectType);
    }
 
    /**
     * Internal method to read the contents of a ResultSet that is used by all
     * Tab classes
+    *
+    * @return The number of rows read from the ResultSet
+    *
     */
-   private void setResultSet(ResultSet rs, String fullTableName,
+   private int setResultSet(ResultSet rs, String fullTableName,
          int[] columnIndices, boolean computeWidths, boolean useColumnDefs,
          DialectType dialectType) throws DataSetException {
       reset();
@@ -141,68 +144,73 @@ public class ResultSetDataSet implements IDataSet {
       _iCurrent = -1;
       _alData = new ArrayList<Object[]>();
 
-      if (rs != null) {
-         try {
-            ResultSetMetaData md = rs.getMetaData();
-            _columnCount = columnIndices != null ? columnIndices.length
-                  : md.getColumnCount();
+      if (rs == null)
+      {
+         return 0;
+      }
 
-            // Done before actually reading the data from the ResultSet. If done
-            // after
-            // reading the data from the ResultSet Oracle throws a
-            // NullPointerException
-            // when processing ResultSetMetaData methods for the ResultSet
-            // returned for
-            // DatabasemetaData.getExportedKeys.
-            ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
-                                                                        fullTableName,
-                                                                        columnIndices,
-                                                                        computeWidths);
-            _dataSetDefinition = new DataSetDefinition(colDefs);
+      try {
+         ResultSetMetaData md = rs.getMetaData();
+         _columnCount = columnIndices != null ? columnIndices.length
+               : md.getColumnCount();
 
-            // Read the entire row, since some drivers complain if columns are
-            // read out of sequence
-            rdr = new ResultSetReader(rs, dialectType);
-            Object[] row = null;
+         // Done before actually reading the data from the ResultSet. If done
+         // after
+         // reading the data from the ResultSet Oracle throws a
+         // NullPointerException
+         // when processing ResultSetMetaData methods for the ResultSet
+         // returned for
+         // DatabasemetaData.getExportedKeys.
+         ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
+                                                                     fullTableName,
+                                                                     columnIndices,
+                                                                     computeWidths);
+         _dataSetDefinition = new DataSetDefinition(colDefs);
 
-            while (true) {
-               if (useColumnDefs)
-                  row = rdr.readRow(colDefs);
-               else
-                  row = rdr.readRow();
+         // Read the entire row, since some drivers complain if columns are
+         // read out of sequence
+         rdr = new ResultSetReader(rs, dialectType);
+         Object[] row = null;
 
-               if (row == null)
-                  break;
+         while (true) {
+            if (useColumnDefs)
+               row = rdr.readRow(colDefs);
+            else
+               row = rdr.readRow();
 
-               if (_cancel) {
-                  return;
-               }
+            if (row == null)
+               break;
 
-               // SS: now select/reorder columns
-               if (columnIndices != null) {
-                  Object[] newRow = new Object[_columnCount];
-                  for (int i = 0; i < _columnCount; i++) {
-                     if (columnIndices[i] - 1 < row.length) {
-                        newRow[i] = row[columnIndices[i] - 1];
-                     } else {
-                        newRow[i] = "Unknown";
-                     }
-                  }
-                  row = newRow;
-               }
-               _alData.add(row);
+            if (_cancel) {
+               return _alData.size();
             }
 
-            // ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
-            // columnIndices, computeWidths);
-            // _dataSetDefinition = new DataSetDefinition(colDefs);
-         } catch (SQLException ex) {
-            // Don't log an error message here. It is possible that the user
-            // interrupted the query because it was taking too long. Just
-            // throw the exception, and let the caller decide whether or not
-            // the exception should be logged.
-            throw new DataSetException(ex);
+            // SS: now select/reorder columns
+            if (columnIndices != null) {
+               Object[] newRow = new Object[_columnCount];
+               for (int i = 0; i < _columnCount; i++) {
+                  if (columnIndices[i] - 1 < row.length) {
+                     newRow[i] = row[columnIndices[i] - 1];
+                  } else {
+                     newRow[i] = "Unknown";
+                  }
+               }
+               row = newRow;
+            }
+            _alData.add(row);
          }
+
+         return _alData.size();
+
+         // ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
+         // columnIndices, computeWidths);
+         // _dataSetDefinition = new DataSetDefinition(colDefs);
+      } catch (SQLException ex) {
+         // Don't log an error message here. It is possible that the user
+         // interrupted the query because it was taking too long. Just
+         // throw the exception, and let the caller decide whether or not
+         // the exception should be logged.
+         throw new DataSetException(ex);
       }
    }
 
