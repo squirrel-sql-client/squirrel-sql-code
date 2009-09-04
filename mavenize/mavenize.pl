@@ -21,8 +21,6 @@ use Text::Template;
 # Global Declarations
 ################################################################################################
 
-$SVN_DELETE_UNUSED_RESOURCES=0;
-
 $mavenizeDir = `pwd`;
 $mavenizeDir =~ s/\s//g;
 
@@ -185,10 +183,7 @@ find( { wanted => \&wanted_for_packagemap, no_chdir => 0 }, $topDir );
 find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/src" );
 
 # Miscellaneous
-print
-"Installing L&F Plugin Assembly ($mavenizeDir/laf-plugin/laf-plugin-assembly.xml) in $lafPluginDir/src/main/resources/assemblies\n";
-`mkdir -p $lafPluginDir/src/main/resources/assemblies`;
-`cp $mavenizeDir/laf-plugin/laf-plugin-assembly.xml $lafPluginDir/src/main/resources/assemblies`;
+installLafPluginAssembly();
 
 # End of script; Begin Subroutines
 
@@ -253,14 +248,15 @@ sub wanted_for_create_plugin_poms {
 }
 
 sub wanted_for_source {
-	if ( $_ =~ /^plugin_build.xml$/ ) {
+	if ( $_ =~ /^plugin_build.xml$/) {
+
 		chdir('./src') or die "Couldn't change to src directory in $File::Find::dir : $!\n";
 		print "Removing main directory in $File::Find::dir\n";
 		`rm -rf main`;
 		`rm -rf test`;
 
 		# Java source files into src/main/java
-        findAndCopyJava();
+		findAndCopyJava();
 
 		# Properties files into src/main/resources
 		findAndCopyResources('*.properties');
@@ -272,14 +268,14 @@ sub wanted_for_source {
 		findAndCopyResources('*.jpg');
 
 		# *.png image files into src/main/resources
-        findAndCopyResources('*.png');
+		findAndCopyResources('*.png');
 
 		chdir($File::Find::dir) or die "Couldn't change dir back to $File::Find::dir: $!\n";
 
 		if ( -d "$File::Find::dir/doc" ) {
 			findAndCopyDoc($File::Find::dir);
 		}
-		
+
 		chdir($File::Find::dir) or die "Couldn't change dir back to $File::Find::dir: $!\n";
 	}
 }
@@ -293,31 +289,34 @@ sub wanted_for_packagemap {
 	if ( $_ !~ /\.java$/ ) {
 		return;
 	}
+	
 	$package = getPackageFromFile($File::Find::name);
+
+    print "wanted_for_packagemap: javafile: $_ (package=$package)\n";
 
 	@parts = split /src/, $File::Find::name;
 
 	if ( $parts[0] =~ /app\/$/ ) {
 
-		#print "Found an app package: $package\n\tfor $File::Find::name\n";
+		print "Found an app package: $package\n\tfor $File::Find::name\n";
 		$packagemap->{$package} = "app";
 
 	}
 	elsif ( $parts[0] =~ /fw\/$/ ) {
 
-		#print "Found an fw package: $package\n\tfor $File::Find::name\n";
+		print "Found an fw package: $package\n\tfor $File::Find::name\n";
 		$packagemap->{$package} = "fw";
 
 	}
 	elsif ( $File::Find::name =~ /plugins/ ) {
 
-		#print "Found a plugin package: $package\n\tfor $File::Find::name\n";
+		print "Found a plugin package: $package\n\tfor $File::Find::name\n";
 		$packagemap->{$package} = "plugin";
 
 	}
 	elsif ( $parts[0] =~ /build\/$/ ) {
 
-		#print "Found a build package: $package\n\tfor $File::Find::name\n";
+		print "Found a build package: $package\n\tfor $File::Find::name\n";
 
 	}
 	elsif ( $File::Find::name =~ /sql12\/test/ ) {
@@ -347,7 +346,10 @@ sub wanted_for_testsources {
 	if ( $_ !~ /\.java$/ ) {
 		return;
 	}
+	
 	$package = getPackageFromFile($File::Find::name);
+
+    print "wanted_for_testsources:  \$_= $_  filename=$File::Find::name | package=$package\n";
 
 	$category = $packagemap->{$package};
 
@@ -379,20 +381,19 @@ sub wanted_for_testsources {
 	if ( $category eq 'app' ) {
 
 		#print "copying test $File::Find::name to app folder $relativeDir\n";
-		`mkdir -p $appDir/src/test/java/$relativeDir`;
-		`cp $File::Find::name $appDir/src/test/java/$relativeDir`;
+		svnmkdir("$appDir/src/test/java/$relativeDir");
+
+		`svn move $File::Find::name $appDir/src/test/java/$relativeDir`;
 	}
 	elsif ( $category eq 'fw' ) {
 
 		#print "copying test $File::Find::name to fw folder $relativeDir\n";
-		`mkdir -p $fwDir/src/test/java/$relativeDir`;
-		`cp $File::Find::name $fwDir/src/test/java/$relativeDir`;
+		svnmkdir("$fwDir/src/test/java/$relativeDir");
+		`svn move $File::Find::name $fwDir/src/test/java/$relativeDir`;
 	}
 	elsif ( $category eq 'plugin' ) {
 
-		#if (! defined $onetimeonly) {
-		#$onetimeonly = 1;
-		#print "relativeDir: $relativeDir\n";
+		print "relativeDir: $relativeDir\n";
 		@parts = split /plugins\//, $relativeDir;
 		$pluginName = $parts[1];
 		if ( !defined $pluginName ) {
@@ -401,13 +402,31 @@ sub wanted_for_testsources {
 			$pluginName = "firebird";
 		}
 		print "pluginName: $pluginName\n";
-		`mkdir -p $pluginsDir/$pluginName/src/test/java/$relativeDir`;
-		`cp $File::Find::name $pluginsDir/$pluginName/src/test/java/$relativeDir`;
-		print "Copied $File::Find::name to $pluginsDir/$pluginName/src/test/java/$relativeDir\n";
 
-		#}
+
+		svnmkdir("$pluginsDir/$pluginName/src/test/java/$relativeDir");
+		`svn add $pluginsDir/$pluginName/src/test`;
+		`svn move $File::Find::name $pluginsDir/$pluginName/src/test/java/$relativeDir`;
 
 	}
+}
+
+sub svnmkdir {
+	my $absolutepath = shift;
+	
+	`svn mkdir --parents $absolutepath`;
+	
+#	my @parts = split /\//, $absolutepath;
+#	
+#	my $curpath;
+#	for $part (@parts) {
+#		$curpath .= $part . '/';
+#		if (! -e $curpath) {
+#			print "Path: $curpath doesn't exist.  Creating it with SVN\n";
+#			`svn mkdir --quiet $curpath`;
+#		}
+#	} 
+	
 }
 
 sub getPackageFromFile {
@@ -443,10 +462,14 @@ sub copyPluginsSupportProjects {
 	#`rm -rf $pluginsDir/squirrelsql-swingsetthemes`;
 
 	`rm -rf $pluginsDir/squirrelsql-plugins-assembly-descriptor`;
-	`cp -r squirrelsql-plugins-assembly-descriptor $pluginsDir`;
+	`cp -r $mavenizeDir/squirrelsql-plugins-assembly-descriptor $pluginsDir`;
 
 	`rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
-	`cp -r squirrelsql-plugins-parent-pom $pluginsDir`;
+	`cp -r $mavenizeDir/squirrelsql-plugins-parent-pom $pluginsDir`;
+
+	chdir($pluginsDir) or die "Couldn't change directory to $pluginsDir: $!\n";
+	`svn add squirrelsql-plugins-assembly-descriptor`;
+	`svn add squirrelsql-plugins-parent-pom`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -459,12 +482,12 @@ sub restructureFwModule {
 	`rm -rf $fwDir/src/test`;
 
 	# create maven directories
-	`mkdir -p $fwDir/src/main`;
-	`mkdir -p $fwDir/src/test/resources`;
-	`mkdir -p $fwDir/src/test/java`;
+	svnmkdir("$fwDir/src/main");
+	svnmkdir("$fwDir/src/test/resources");
+	svnmkdir("$fwDir/src/test/java");
 
-	`cp fw-pom.xml $fwDir/pom.xml`;
-	`cp test-log4j.properties $fwDir/src/test/resources/log4j.properties`;
+	`cp $mavenizeDir/fw-pom.xml $fwDir/pom.xml`;
+	`cp $mavenizeDir/test-log4j.properties $fwDir/src/test/resources/log4j.properties`;
 
 	chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
 
@@ -475,31 +498,12 @@ sub restructureFwModule {
 	findAndCopyResources('*.gif');
 	findAndCopyResources('*.png');
 
-    $SVN_DELETE_UNUSED_RESOURCES && `svn delete net`;
+	`svn add --quiet main`;
+	`svn add --quiet test`;
+	`svn delete net`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
-
-sub findAndCopyJava {
-	print "Copying source files from src/... to /src/main/java...\n";
-    `find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i mkdir -p ./main/java/{}`;
-    `find . -type f -name *.java -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i cp {} ./main/java/{}`;
-}
-
-sub findAndCopyResources {
-	my $fileType = shift;
-    `find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | xargs -i mkdir -p main/resources/{}`;
-    `find . -type f -name $fileType -print | grep -v "^./main/" | grep -v ".svn" | xargs -i cp {} main/resources/{}`;
-}
-
-sub findAndCopyDoc {
-	my $baseDir = shift;
-    print "findAndCopyDoc: Copying documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
-    chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";    
-    `find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i mkdir -p $baseDir/src/main/resources/doc/{}`;
-    `find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i cp {} $baseDir/src/main/resources/doc/{}`;
-}
-
 
 sub restructureAppModule {
 
@@ -510,24 +514,52 @@ sub restructureAppModule {
 	`rm -rf $appDir/src/test`;
 
 	`cp app-pom.xml $appDir/pom.xml`;
-	`mkdir -p $appDir/src/main/java`;
-	`mkdir -p $appDir/src/main/resources`;
-	`mkdir -p $appDir/src/test/java`;
+	svnmkdir("$appDir/src/main/java");
+	svnmkdir("$appDir/src/main/resources");
+	svnmkdir("$appDir/src/test/java");
 
 	chdir("$appDir/src") or die "Couldn\'t change directory to $appDir/src: $!\n";
 
 	findAndCopyJava();
 
 	print "Restructuring fw resources\n";
+
 	findAndCopyResources('*.properties');
 	findAndCopyResources('*.gif');
 	findAndCopyResources('*.png');
 	findAndCopyResources('*.xml');
 	findAndCopyResources('*.jpg');
 
-    $SVN_DELETE_UNUSED_RESOURCES && `svn delete net`;
+	`svn delete net`;
+	`svn add test`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+}
+
+sub findAndCopyJava {
+	print "Copying source files from src/... to /src/main/java...\n";
+`find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
+	`svn add --quiet main`;
+	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
+`find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
+}
+
+sub findAndCopyResources {
+	my $fileType = shift;
+`find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti mkdir -p main/resources/{}`;
+	`svn add --quiet main`;
+	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
+`find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
+}
+
+sub findAndCopyDoc {
+	my $baseDir = shift;
+	print
+"findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
+	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
+`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i mkdir -p $baseDir/src/main/resources/doc/{}`;
+	`svn add $baseDir/src/main/resources/doc/`;
+`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
 }
 
 sub copyInstallerProjects {
@@ -537,11 +569,15 @@ sub copyInstallerProjects {
 	print "Copying in installer projects\n";
 	`rm -rf $installerDir`;
 	`mkdir -p $installerDir`;
-	`cp -r squirrelsql-java-version-checker $installerDir`;
-	`cp -r squirrelsql-launcher $installerDir`;
-	`cp -r squirrelsql-other-installer $installerDir`;
-	`cp installer-pom.xml $installerDir/pom.xml`;
+	`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
+	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
+	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
+	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 
+	chdir($topDir);
+	`svn add installer`;
+
+	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
 
 sub copyTranslationProjects {
@@ -550,8 +586,12 @@ sub copyTranslationProjects {
 
 	print "Copying in translations project\n";
 	`rm -rf $topDir/squirrelsql-translations`;
-	`cp -r squirrelsql-translations $topDir`;
+	`cp -r $mavenizeDir/squirrelsql-translations $topDir`;
 
+	chdir($topDir);
+	`svn add squirrelsql-translations`;
+
+	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
 
 sub restructureDocModule {
@@ -563,15 +603,15 @@ sub restructureDocModule {
 
 	chdir("$docDir") or die "Couldn't change directory to $docDir: $!\n";
 
-	`cp *.txt  $docDir/src/main/resources/`;
-	`cp *.html  $docDir/src/main/resources/`;
-	`cp *.css  $docDir/src/main/resources/`;
-	
-	`cp ./images/* $docDir/src/main/resources/`;
+	`svn add pom.xml`;
+	`svn add src`;
 
-	`cp ./licences/* $docDir/src/main/resources/`;
-
-	$SVN_DELETE_UNUSED_RESOURCES && `svn delete *.txt *.html *.css images licences`;
+	print "Creating directories beneath src/main/resources";
+`find . -type f -printf "%h\n" | grep -v .svn| grep -v pom.xml | grep -v target | uniq | sort | xargs -ti mkdir -p src/main/resources/{}`;
+	print "Adding directories beneath src/main/resources to subversion";
+	`find src -type d | egrep -v "\.svn" | uniq | sort | xargs -ti svn add --quiet {}`;
+	print "Moving files in subversion to src/main/resources/...";
+`find . -type f -print | grep -v .svn | grep -v pom.xml | grep -v target | uniq | sort | xargs -ti svn move {} src/main/resources/{}`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -616,4 +656,14 @@ sub generatePluginModulesPomFile {
 	  Text::Template->new( TYPE => 'FILE', SOURCE => "$mavenizeDir/plugin-module-pom.xml" );
 	print MODULEPOMFILE $plugin_module_pom_template->fill_in();
 	close(MODULEPOMFILE);
+}
+
+sub installLafPluginAssembly {
+
+    my $lafPluginAssemblyFile = "$mavenizeDir/laf-plugin/laf-plugin-assembly.xml";
+    my $targetFolder =  "$lafPluginDir/src/main/resources/assemblies";
+	print "Installing L&F Plugin Assembly ($lafPluginAssemblyFile) in $targetFolder\n";
+	`mkdir -p $lafPluginDir/src/main/resources/assemblies`;
+	`cp $lafPluginAssemblyFile $targetFolder`;
+	chdir($lafPluginDir) or die "Couldn't change dir to ($lafPluginDir): $!\n";
 }
