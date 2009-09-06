@@ -65,6 +65,10 @@ public class ReplacementManagerTest extends BaseSQuirreLJUnit4TestCase
 	@After
 	public void tearDown() throws Exception
 	{
+		File f = new File("sqlreplacement.xml");
+		if (f.exists()) {
+			f.delete();
+		}
 	}
 
 	@Test
