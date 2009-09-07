@@ -139,6 +139,7 @@ EOF
 
 # copy in the root pom - this pom builds all of SQuirreL
 `cp root-pom.xml $topDir/pom.xml`;
+`svn add $topDir/pom.xml`;
 
 # copy in the test utilities project - I nix'd this since there were dependency issues
 # with BaseSQuirreLJUnit4TestCase depending on fw's LoggerController.  It proved to be
@@ -202,8 +203,10 @@ sub wanted_for_create_plugin_poms {
 	$pluginName =~ s/\b(\w)/\u$1/g;
 	$pluginDescription = $pluginName;
 
-	print
-"Creating new pom: $newPomFile \n\t artifactId=$artifactId \n\t name=$pluginName \n\t description=$pluginDescription\n";
+	print "Creating new pom: $newPomFile \n"
+	  . "\t artifactId=$artifactId \n"
+	  . "\t name=$pluginName \n"
+	  . "\t description=$pluginDescription\n";
 
 	if ( $artifactId =~ 'cache' ) {
 		$dependencies = $cache_deps;
@@ -245,10 +248,11 @@ sub wanted_for_create_plugin_poms {
 	print POMFILE $result;
 	close(POMFILE);
 
+	`svn add $newPomFile`;
 }
 
 sub wanted_for_source {
-	if ( $_ =~ /^plugin_build.xml$/) {
+	if ( $_ =~ /^plugin_build.xml$/ ) {
 
 		chdir('./src') or die "Couldn't change to src directory in $File::Find::dir : $!\n";
 		print "Removing main directory in $File::Find::dir\n";
@@ -289,10 +293,10 @@ sub wanted_for_packagemap {
 	if ( $_ !~ /\.java$/ ) {
 		return;
 	}
-	
+
 	$package = getPackageFromFile($File::Find::name);
 
-    print "wanted_for_packagemap: javafile: $_ (package=$package)\n";
+	print "wanted_for_packagemap: javafile: $_ (package=$package)\n";
 
 	@parts = split /src/, $File::Find::name;
 
@@ -346,10 +350,10 @@ sub wanted_for_testsources {
 	if ( $_ !~ /\.java$/ ) {
 		return;
 	}
-	
+
 	$package = getPackageFromFile($File::Find::name);
 
-    print "wanted_for_testsources:  \$_= $_  filename=$File::Find::name | package=$package\n";
+	print "wanted_for_testsources:  \$_= $_  filename=$File::Find::name | package=$package\n";
 
 	$category = $packagemap->{$package};
 
@@ -403,7 +407,6 @@ sub wanted_for_testsources {
 		}
 		print "pluginName: $pluginName\n";
 
-
 		svnmkdir("$pluginsDir/$pluginName/src/test/java/$relativeDir");
 		`svn add $pluginsDir/$pluginName/src/test`;
 		`svn move $File::Find::name $pluginsDir/$pluginName/src/test/java/$relativeDir`;
@@ -413,20 +416,20 @@ sub wanted_for_testsources {
 
 sub svnmkdir {
 	my $absolutepath = shift;
-	
+
 	`svn mkdir --parents $absolutepath`;
-	
-#	my @parts = split /\//, $absolutepath;
-#	
-#	my $curpath;
-#	for $part (@parts) {
-#		$curpath .= $part . '/';
-#		if (! -e $curpath) {
-#			print "Path: $curpath doesn't exist.  Creating it with SVN\n";
-#			`svn mkdir --quiet $curpath`;
-#		}
-#	} 
-	
+
+	#	my @parts = split /\//, $absolutepath;
+	#
+	#	my $curpath;
+	#	for $part (@parts) {
+	#		$curpath .= $part . '/';
+	#		if (! -e $curpath) {
+	#			print "Path: $curpath doesn't exist.  Creating it with SVN\n";
+	#			`svn mkdir --quiet $curpath`;
+	#		}
+	#	}
+
 }
 
 sub getPackageFromFile {
@@ -487,7 +490,9 @@ sub restructureFwModule {
 	svnmkdir("$fwDir/src/test/java");
 
 	`cp $mavenizeDir/fw-pom.xml $fwDir/pom.xml`;
+	`svn add $fwDir/pom.xml`;
 	`cp $mavenizeDir/test-log4j.properties $fwDir/src/test/resources/log4j.properties`;
+	`svn add $fwDir/src/test/resources/log4j.properties`;
 
 	chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
 
@@ -514,6 +519,7 @@ sub restructureAppModule {
 	`rm -rf $appDir/src/test`;
 
 	`cp app-pom.xml $appDir/pom.xml`;
+	`svn add $appDir/pom.xml`;
 	svnmkdir("$appDir/src/main/java");
 	svnmkdir("$appDir/src/main/resources");
 	svnmkdir("$appDir/src/test/java");
@@ -538,28 +544,26 @@ sub restructureAppModule {
 
 sub findAndCopyJava {
 	print "Copying source files from src/... to /src/main/java...\n";
-`find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
+    `find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-`find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
+    `find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
 }
 
 sub findAndCopyResources {
 	my $fileType = shift;
-`find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti mkdir -p main/resources/{}`;
+    `find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn mkdir --parents main/resources/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-`find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
+    `find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
 }
 
 sub findAndCopyDoc {
 	my $baseDir = shift;
-	print
-"findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
+	print "findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
 	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
-`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -i mkdir -p $baseDir/src/main/resources/doc/{}`;
-	`svn add $baseDir/src/main/resources/doc/`;
-`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+    `find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
+    `find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
 }
 
 sub copyInstallerProjects {
@@ -586,12 +590,20 @@ sub copyTranslationProjects {
 
 	print "Copying in translations project\n";
 	`rm -rf $topDir/squirrelsql-translations`;
-	`cp -r $mavenizeDir/squirrelsql-translations $topDir`;
+	`svn mkdir --parents $topDir/squirrelsql-translations/src/main/resources`;
+	`cp $mavenizeDir/squirrelsql-translations/pom.xml $topDir/squirrelsql-translations`;
+	`svn add $topDir/squirrelsql-translations/pom.xml`;
 
-	chdir($topDir);
-	`svn add squirrelsql-translations`;
+	chdir("$topDir/translations") or die "Couldn't change directory to $topDir/translations: $!\n";
+
+	`find . -name "*.jar" | xargs -ti svn move {} $topDir/squirrelsql-translations/src/main/resources`;
+
+	chdir("$topDir") or die "Couldn't change directory to $topDir: $!\n";
+
+	`svn remove translations`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+
 }
 
 sub restructureDocModule {
@@ -620,10 +632,11 @@ sub restructureWebsiteModule {
 
 	print "Restructuring web-site module\n";
 	`cp $mavenizeDir/website-pom.xml $websiteDir/pom.xml`;
+	`svn add $websiteDir/pom.xml`;
 	`rm -rf $websiteDir/src/main`;
 	`mkdir -p $websiteDir/src/main/resources`;
 	`cp $websiteDir/faq.html $websiteDir/src/main/resources`;
-
+	`svn add $websiteDir/src`;
 }
 
 sub generatePluginPoms {
@@ -656,14 +669,19 @@ sub generatePluginModulesPomFile {
 	  Text::Template->new( TYPE => 'FILE', SOURCE => "$mavenizeDir/plugin-module-pom.xml" );
 	print MODULEPOMFILE $plugin_module_pom_template->fill_in();
 	close(MODULEPOMFILE);
+
+	`svn add $modulespomfile`;
 }
 
 sub installLafPluginAssembly {
 
-    my $lafPluginAssemblyFile = "$mavenizeDir/laf-plugin/laf-plugin-assembly.xml";
-    my $targetFolder =  "$lafPluginDir/src/main/resources/assemblies";
+	my $lafPluginAssemblyFile = "$mavenizeDir/laf-plugin/laf-plugin-assembly.xml";
+	my $targetFolder          = "$lafPluginDir/src/main/resources/assemblies";
 	print "Installing L&F Plugin Assembly ($lafPluginAssemblyFile) in $targetFolder\n";
-	`mkdir -p $lafPluginDir/src/main/resources/assemblies`;
+	`svn mkdir --parents $targetFolder`;
 	`cp $lafPluginAssemblyFile $targetFolder`;
+	`svn add $lafPluginDir/src`;
+	`svn add $lafPluginDir/pom.xml`;
+	`svn add $targetFolder/laf-plugin-assembly.xml`;
 	chdir($lafPluginDir) or die "Couldn't change dir to ($lafPluginDir): $!\n";
 }
