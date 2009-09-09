@@ -47,6 +47,8 @@ Graph Plugin:
 
 Bug-Fixes:
 
+2853329: Ctrl-S overwrites existing file on 2nd try
+
 2819161:  squirrel-sql.sh in plain zip had an errant apostrophe.  Tested this fix on MacOS 10 and Ubuntu 9.04.  
 Thanks to Jonathan James for vetting the anonymously submitted patch.
 

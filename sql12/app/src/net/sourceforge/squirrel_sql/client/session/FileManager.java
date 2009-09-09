@@ -201,9 +201,12 @@ public class FileManager
             {
                result = true;
                break;
-            } else {
-                result = false;
-                break;
+            }
+            else
+            {
+               _toSaveTo = null;
+               result = false;
+               break;
             }
          }
          else
