@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.9 2008-05-18 16:13:13 gerdwagner Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.10 2009-09-17 05:40:53 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -440,9 +440,11 @@ public class ButtonTableHeader extends JTableHeader
       ButtonTableRenderer(Font font)
       {
          _buttonRaised = new JButton();
+         _buttonRaised.putClientProperty("JButton.buttonType", "gradient"); // Added by Patch 2856103 for Apple/Mac
          _buttonRaised.setMargin(new Insets(0, 0, 0, 0));
          _buttonRaised.setFont(font);
          _buttonLowered = new JButton();
+         _buttonLowered.putClientProperty("JButton.buttonType", "gradient"); // Added by Patch 2856103 for Apple/Mac
          _buttonLowered.setMargin(new Insets(0, 0, 0, 0));
          _buttonLowered.setFont(font);
          _buttonLowered.getModel().setArmed(true);
