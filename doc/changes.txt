@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Better table header rendering for MAC OS
+  Thanks for Brian Mauter's Patch (ID 2856103)
+
+
 Feature request 2826175:
  Number of rows read is now visible on message panel and results tab.
 
