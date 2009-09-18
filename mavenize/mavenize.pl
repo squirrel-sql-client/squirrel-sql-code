@@ -24,7 +24,7 @@ use Text::Template;
 $mavenizeDir = `pwd`;
 $mavenizeDir =~ s/\s//g;
 
-$topDir       = "/home/manningr/projects/tmp/sql12";
+$topDir       = "/home/manningr/projects/squirrel_maven2/sql12";
 $fwDir        = $topDir . "/fw";
 $appDir       = $topDir . "/app";
 $pluginsDir   = $topDir . "/plugins";
@@ -535,6 +535,8 @@ sub restructureAppModule {
 	findAndCopyResources('*.png');
 	findAndCopyResources('*.xml');
 	findAndCopyResources('*.jpg');
+
+    `cp $mavenizeDir/DefaultFormBuilder.java $appDir/src/main/java/net/sourceforge/squirrel_sql/client/gui/builders`;
 
 	`svn delete net`;
 	`svn add test`;
