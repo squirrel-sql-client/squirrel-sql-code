@@ -1,7 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <groupId>net.sf.squirrel_sql</groupId>
+   
+   <groupId>net.sf.squirrel-sql</groupId>
    <artifactId>squirrelsql-other-installer</artifactId>
    <version>3.1.0-SNAPSHOT</version>
    <name>SQuirreLSQL Generic Installer</name>
@@ -53,66 +54,66 @@
 
       <!-- SQuirreL Dependencies -->
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>squirrelsql-launcher</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>fw</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>squirrel-sql</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
 
       <!-- Standard Plugins -->
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>codecompletion</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>editextras</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>graph</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>laf</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sqlbookmark</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sqlscript</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>syntax</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -122,7 +123,7 @@
       <!-- Optional Plugins -->
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>dataimport</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -130,7 +131,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>dbcopy</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -138,7 +139,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>db2</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -146,7 +147,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>derby</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -154,7 +155,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>firebird</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -162,7 +163,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>firebirdmanager</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -170,7 +171,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>h2</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -178,7 +179,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>hibernate</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -186,7 +187,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>informix</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -194,7 +195,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>mssql</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -202,7 +203,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>mysql</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -210,7 +211,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>oracle</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -218,7 +219,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>postgres</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -226,7 +227,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>refactoring</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -234,7 +235,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sessionscript</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -242,7 +243,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>smarttools</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -250,7 +251,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sqlparam</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -258,7 +259,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sqlreplace</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -266,7 +267,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sqlval</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -274,7 +275,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>sybase</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -282,7 +283,7 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>i18n</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <classifier>assembly</classifier>
@@ -290,27 +291,27 @@
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>squirrelsql-translations</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <type>jar</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>squirrelsql-java-version-checker</artifactId>
          <version>3.1.0-SNAPSHOT</version>
          <type>jar</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>doc</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
       
       <dependency>
-         <groupId>net.sf.squirrel_sql</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>website</artifactId>
          <version>3.1.0-SNAPSHOT</version>
       </dependency>
@@ -388,7 +389,7 @@
                   <configuration>
                      <includeClassifiers>assembly</includeClassifiers>
                      <includeTypes>zip</includeTypes>
-                     <includeGroupIds>net.sf.squirrel_sql</includeGroupIds>
+                     <includeGroupIds>net.sf.squirrel-sql</includeGroupIds>
                      <outputDirectory>${staging.dir}/plugins</outputDirectory>
                   </configuration>
                </execution>
