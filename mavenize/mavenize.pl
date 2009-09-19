@@ -36,7 +36,7 @@ $websiteDir   = $topDir . "/web-site";
 $cache_deps = <<"EOF";
 <dependencies>
       <dependency>
-         <groupId>com.intersystems.cachedb</groupId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
          <artifactId>CacheDB</artifactId>
          <version>2008.2.0.526.0</version>
       </dependency>
@@ -45,8 +45,8 @@ EOF
 $firebirdmanager_deps = <<"EOF";
 <dependencies>
     <dependency>
-        <groupId>org.firebird</groupId>
-        <artifactId>jaybird-full</artifactId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>jaybird</artifactId>
         <version>2.1.1</version>
     </dependency>
    </dependencies>
@@ -54,8 +54,8 @@ EOF
 $isqlj_deps = <<"EOF";
 <dependencies>
     <dependency>
-        <groupId>org.rege</groupId>
-        <artifactId>isqlj.jar</artifactId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>isqlj</artifactId>
         <version>1.8</version>
     </dependency>
    </dependencies>
@@ -63,7 +63,7 @@ EOF
 $oracle_deps = <<"EOF";
 <dependencies>
     <dependency>
-        <groupId>com.sun</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>treetable</artifactId>
         <version>20040121</version>
     </dependency>
