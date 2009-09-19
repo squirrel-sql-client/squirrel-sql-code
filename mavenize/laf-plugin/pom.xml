@@ -72,21 +72,19 @@
    <properties>
       <staging.dir>${project.build.directory}</staging.dir>
       <laf.artifactIds>
-         squirrelsql-lf-ilf-gpl,squirrelsql-lf-kunststoff,looks,napkinlaf,squirrelsql-lf-nimrodlf,
-         squirrelsql-lf-oalnf, squirrelsql-lf-skinlf,squirrelsql-lf-substance,squirrelsql-lf-toniclf,
-         squirrelsql-lf-tinylaf
+         ilf-gpl,kunststoff,looks,napkinlaf,nimrodlf,oalnf, skinlf,substance,toniclf,tinylaf
       </laf.artifactIds>
    </properties>
 
    <dependencies>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-ilf-gpl</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>ilf-gpl</artifactId>
          <version>1.6.1</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-kunststoff</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>kunststoff</artifactId>
          <version>2.0.2</version>
       </dependency>
       <dependency>
@@ -95,19 +93,9 @@
          <version>2.2.2</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-metouia</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>metouia</artifactId>
          <version>1.0.0-beta</version>
-      </dependency>
-      <!--
-         I wrote a pom that builds the nimrodlaf jar from source and contributed it to the author - waiting to
-         see if he is interested in deploying to maven central. He contacted me and rightly asked, how to do
-         this without a repository to rsync from. So I am looking into that now
-      -->
-      <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-nimrodlf</artifactId>
-         <version>1.1</version>
       </dependency>
       <!--
          Project napkinlaf uses maven, but curiously doesn't deploy to maven central. I filed an issue to
@@ -118,36 +106,46 @@
          <groupId>net.sourceforge.napkinlaf</groupId>
          <artifactId>napkinlaf</artifactId>
          <version>1.3-SNAPSHOT</version>
+      </dependency>      
+      <!--
+         I wrote a pom that builds the nimrodlaf jar from source and contributed it to the author - waiting to
+         see if he is interested in deploying to maven central. He contacted me and rightly asked, how to do
+         this without a repository to rsync from. So I am looking into that now
+      -->
+      <dependency>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>nimrodlf</artifactId>
+         <version>1.1</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-oalnf</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>oalnf</artifactId>
          <version>3.0</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-skinlf</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>skinlf</artifactId>
          <version>6.7</version>
       </dependency>
       <!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-substance</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>substance</artifactId>
          <version>5.2_01</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
          <artifactId>swingsetthemes</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>b72-17_sep_2009</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-tinylaf</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>tinylaf</artifactId>
          <version>1.3.8</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
-         <artifactId>squirrelsql-lf-toniclf</artifactId>
+         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+         <artifactId>toniclf</artifactId>
          <version>1.0.5</version>
       </dependency>
 
