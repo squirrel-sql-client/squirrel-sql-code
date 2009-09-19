@@ -13,7 +13,7 @@
    <packaging>pom</packaging>
    <version>3.1.0-SNAPSHOT</version>
 
-   <name>SQuirreLSQL Plugins Parent POM</name>
+   <name>SQuirreL-SQL Plugins Parent POM</name>
    <description>POM file to consolidate common POM specifications</description>
 
    <inceptionYear>2001</inceptionYear>
