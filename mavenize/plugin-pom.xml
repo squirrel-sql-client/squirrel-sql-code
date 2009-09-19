@@ -40,7 +40,7 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-        <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/plugins/@@--$pluginName--@@</url>
+        <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/@@--$pluginName--@@</url>
    </scm>        
    <issueManagement>
         <system>SourceForge Tracker</system>

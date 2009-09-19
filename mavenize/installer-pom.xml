@@ -38,7 +38,7 @@
 
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/installer</url>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>
