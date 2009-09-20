@@ -5,6 +5,8 @@
    <groupId>net.sf.squirrel-sql</groupId>
    <artifactId>squirrelsql-other-installer</artifactId>
    <version>3.1.0-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   
    <name>SQuirreL-SQL Generic Installer</name>
    <description>This project is used to build the generic installer</description>
    <inceptionYear>2001</inceptionYear>
