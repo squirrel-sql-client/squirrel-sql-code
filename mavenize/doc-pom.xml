@@ -7,9 +7,9 @@
    <version>3.1.0-SNAPSHOT</version>
    <packaging>jar</packaging>
    
-   <name>SQuirreLSQL Documentation</name>
+   <name>SQuirreL-SQL Documentation</name>
    <description>
-        Project that contains documentation for SQuirreLSQL that gets distributed in the installer
+        Project that contains documentation for SQuirreL SQL Client that gets distributed in the installer
    </description>
    <inceptionYear>2001</inceptionYear>
    <developers>
