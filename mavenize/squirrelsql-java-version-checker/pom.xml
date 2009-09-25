@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>net.sf.squirrel-sql</groupId>
+      <artifactId>squirrel-root-pom</artifactId>
+      <version>3.1.0-SNAPSHOT</version>
+   </parent>
    
    <groupId>net.sf.squirrel-sql</groupId>
    <artifactId>squirrelsql-java-version-checker</artifactId>
@@ -61,6 +67,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
+            <version>${jar-plugin-version}</version>
             <configuration>
                <archive>
                   <addMavenDescriptor>false</addMavenDescriptor>
@@ -69,6 +76,28 @@
          </plugin>
       </plugins>
    </build>
+   <profiles>
+      <profile>
+         <id>sign-jar</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 
 
 </project>
