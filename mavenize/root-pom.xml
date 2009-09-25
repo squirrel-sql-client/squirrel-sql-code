@@ -41,24 +41,34 @@
       <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
    </scm>
    <issueManagement>
-        <system>SourceForge Tracker</system>
-        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+      <system>SourceForge Tracker</system>
+      <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
    </issueManagement>     
    <ciManagement>
         <system>Hudson</system>
         <url>https://www.squirrel-sql.org/hudson/</url>
    </ciManagement>
    
-   
    <properties>
+      <!-- Maven plugin version -->
+      <assembly-plugin-version>2.2-beta-2</assembly-plugin-version>
+      <checkstyle-plugin-version>2.2</checkstyle-plugin-version>
+      <compiler-plugin-version>2.0.2</compiler-plugin-version>
+      <dependency-plugin-version>2.0</dependency-plugin-version>
+      <findbugs-plugin-version>2.1</findbugs-plugin-version>
       <javac-source-version>1.6</javac-source-version>
       <javac-target-version>1.6</javac-target-version>
-      <checkstyle-plugin-version>2.2</checkstyle-plugin-version>
-      <findbugs-plugin-version>2.1</findbugs-plugin-version>
+      <jar-plugin-version>2.2</jar-plugin-version>
       <pmd-plugin-version>2.4</pmd-plugin-version>
+      <source-plugin-version>2.0.4</source-plugin-version>
+      <surefire-plugin-version>2.4</surefire-plugin-version>
+      <!-- Thirdparty Library Versions -->
+      <hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
+      <spring-framework-version>2.5.2</spring-framework-version>
    </properties>
 
    <modules>
+      <module>squirrelsql-test-utils</module>
       <module>fw</module>
       <module>app</module>
       <module>plugins</module>
@@ -68,6 +78,7 @@
       <profile>
          <id>installer</id>
          <modules>
+            <module>squirrelsql-test-utils</module>
             <module>fw</module>
             <module>app</module>
             <module>plugins</module>
@@ -78,6 +89,6 @@
          </modules>
       </profile>
    </profiles>
-
+   
 
 </project>
