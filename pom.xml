@@ -44,7 +44,9 @@
 
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins</url>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>
@@ -57,49 +59,32 @@
 
    <dependencies>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>fw</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrel-sql</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <version>4.6</version>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>squirrelsql-test-utils</artifactId>
+         <version>${project.version}</version>
+         <type>pom</type>
          <scope>test</scope>
-      </dependency>
+      </dependency>      
       <dependency>
-         <groupId>org.easymock</groupId>
-         <artifactId>easymock</artifactId>
-         <version>2.4</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.easymock</groupId>
-         <artifactId>easymockclassextension</artifactId>
-         <version>2.4</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>gsbase</groupId>
-         <artifactId>gsbase</artifactId>
-         <version>2.0.1</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>fw</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <type>test-jar</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrel-sql</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <type>test-jar</type>
       </dependency>
 
@@ -128,7 +113,7 @@
 
             <plugin>
                <artifactId>maven-source-plugin</artifactId>
-               <version>2.1</version>
+               <version>${source-plugin-version}</version>
                <configuration>
                   <outputDirectory>target</outputDirectory>
                   <finalName>${project.artifactId}</finalName>
@@ -154,6 +139,7 @@
             </plugin>
             <plugin>
                <artifactId>maven-jar-plugin</artifactId>
+               <version>${jar-plugin-version}</version>
                <configuration>
                   <archive>
                      <addMavenDescriptor>false</addMavenDescriptor>
@@ -177,12 +163,28 @@
                </executions>
             </plugin>
             <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-javadoc-plugin</artifactId>
+               <version>${javadoc-plugin-version}</version>
+               <executions>
+                  <execution>
+                     <id>attach-javadocs</id>
+                     <phase>package</phase>
+                     <goals>
+                        <goal>jar</goal>
+                     </goals>
+                  </execution>
+               </executions>
+            </plugin>
+
+            <plugin>
                <artifactId>maven-assembly-plugin</artifactId>
+               <version>${assembly-plugin-version}</version>
                <dependencies>
                   <dependency>
-                     <groupId>net.sf.squirrel-sql</groupId>
+                     <groupId>${project.groupId}</groupId>
                      <artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
-                     <version>3.1.0-SNAPSHOT</version>
+                     <version>${project.version}</version>
                   </dependency>
                </dependencies>
                <executions>
@@ -205,6 +207,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-gpg-plugin</artifactId>
+               <version>${gpg-plugin-version}</version>
                <executions>
                   <execution>
                      <id>sign-artifacts</id>
@@ -232,17 +235,15 @@
                <configuration>
                </configuration>
             </plugin>
+            <plugin>
+               <artifactId>maven-checkstyle-plugin</artifactId>
+               <version>${checkstyle-plugin-version}</version>
+               <configuration>
+               </configuration>
+            </plugin>
 
          </plugins>
       </pluginManagement>
-      <plugins>
-         <plugin>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${checkstyle-plugin-version}</version>
-            <configuration>
-            </configuration>
-         </plugin>
-      </plugins>
    </build>
    <reporting>
       <plugins>
