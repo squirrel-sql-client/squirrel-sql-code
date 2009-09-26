@@ -43,7 +43,9 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer</url>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>
@@ -88,6 +90,10 @@
    </build>
 
    <profiles>
+      <!--
+        Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile
+        is activated
+      -->         
       <profile>
          <id>sign-jar</id>
          <build>

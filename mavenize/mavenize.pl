@@ -33,6 +33,8 @@ $installerDir = $topDir . "/installer";
 $docDir       = $topDir . "/doc";
 $websiteDir   = $topDir . "/web-site";
 
+$onlyCopyPoms = 1;
+
 $cache_deps = <<"EOF";
 <dependencies>
       <dependency>
@@ -138,13 +140,10 @@ EOF
 #################################################################################################
 
 # copy in the root pom - this pom builds all of SQuirreL
-`cp root-pom.xml $topDir/pom.xml`;
-`svn add $topDir/pom.xml`;
+copyRootPom();
 
-# copy in the test utilities project - I nix'd this since there were dependency issues
-# with BaseSQuirreLJUnit4TestCase depending on fw's LoggerController.  It proved to be
-# too difficult to move BaseSQuirreLJUnit4TestCase out of the fw module.
-#`cp -r squirrelsql-test-utils $topDir`;
+# copy in test dependencies pom
+copyTestUtilsProject();
 
 # copy in plugins support projects
 copyPluginsSupportProjects();
@@ -203,10 +202,6 @@ sub wanted_for_create_plugin_poms {
 	$pluginName =~ s/\b(\w)/\u$1/g;
 	$pluginDescription = $pluginName;
 
-	print "Creating new pom: $newPomFile \n"
-	  . "\t artifactId=$artifactId \n"
-	  . "\t name=$pluginName \n"
-	  . "\t description=$pluginDescription\n";
 
 	if ( $artifactId =~ 'cache' ) {
 		$dependencies = $cache_deps;
@@ -215,7 +210,15 @@ sub wanted_for_create_plugin_poms {
 		$dependencies = $firebirdmanager_deps;
 	}
 	elsif ( $artifactId =~ 'isqlj' ) {
-		$dependencies = $isqlj_deps;
+		#$dependencies = $isqlj_deps;
+		# 
+		# Since this plugin isn't complete and has dependencies on software of 
+		# unknown origin, we decided to skip including this in maven.  Also, 
+		# we plan to remove it from the repo after our move to SVN.
+		
+		pop @artifacts;
+		
+		return;
 	}
 	elsif ( $artifactId =~ 'laf' ) {
 
@@ -236,6 +239,11 @@ sub wanted_for_create_plugin_poms {
 		$dependencies = '';
 	}
 
+    print "Creating new pom: $newPomFile \n"
+      . "\t artifactId=$artifactId \n"
+      . "\t name=$pluginName \n"
+      . "\t description=$pluginDescription\n";
+
 	open( POMFILE, "> $newPomFile" );
 	my %vars = (
 		artifactId        => $artifactId,
@@ -248,16 +256,19 @@ sub wanted_for_create_plugin_poms {
 	print POMFILE $result;
 	close(POMFILE);
 
-	`svn add $newPomFile`;
+	!$onlyCopyPoms && `svn add $newPomFile`;
 }
 
 sub wanted_for_source {
 	if ( $_ =~ /^plugin_build.xml$/ ) {
 
 		chdir('./src') or die "Couldn't change to src directory in $File::Find::dir : $!\n";
-		print "Removing main directory in $File::Find::dir\n";
-		`rm -rf main`;
-		`rm -rf test`;
+		
+		if (!$onlyCopyPoms) {
+			print "Removing main directory in $File::Find::dir\n";
+			`rm -rf main`;
+			`rm -rf test`;
+		}
 
 		# Java source files into src/main/java
 		findAndCopyJava();
@@ -347,7 +358,7 @@ sub wanted_for_packagemap {
 
 sub wanted_for_testsources {
 
-	if ( $_ !~ /\.java$/ ) {
+	if ( $onlyCopyPoms ||  $_ !~ /\.java$/ ) {
 		return;
 	}
 
@@ -457,18 +468,37 @@ sub convertPackageToDirectory {
 	return $package;
 }
 
+sub copyRootPom {
+	print "Copying in root pom\n";
+	`cp root-pom.xml $topDir/pom.xml`;
+	return if $onlyCopyPoms;
+	`svn add $topDir/pom.xml`;
+}
+
+sub copyTestUtilsProject {
+	print "Copying in test dependencies pom\n";
+
+	if ($onlyCopyPoms) {
+		`cp $mavenizeDir/squirrelsql-test-utils/pom.xml $topDir/squirrelsql-test-utils/pom.xml`;
+		return;
+	}
+
+	`rm -rf $topDir/squirrelsql-test-utils`;
+	svnmkdir("$topDir/squirrelsql-test-utils");
+	`cp $mavenizeDir/squirrelsql-test-utils/pom.xml $topDir/squirrelsql-test-utils/pom.xml`;
+	`svn add $topDir/squirrelsql-test-utils/pom.xml`;
+}
+
 sub copyPluginsSupportProjects {
 	print "Copying in plugins support projects\n";
 
-	#`rm -rf squirrelsql-swingsetthemes/squirrelsql-swingsetthemes`;
-	#`cp -r squirrelsql-swingsetthemes $pluginsDir`;
-	#`rm -rf $pluginsDir/squirrelsql-swingsetthemes`;
-
-	`rm -rf $pluginsDir/squirrelsql-plugins-assembly-descriptor`;
+	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-assembly-descriptor`;
 	`cp -r $mavenizeDir/squirrelsql-plugins-assembly-descriptor $pluginsDir`;
 
-	`rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
+	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
 	`cp -r $mavenizeDir/squirrelsql-plugins-parent-pom $pluginsDir`;
+
+	return if $onlyCopyPoms;
 
 	chdir($pluginsDir) or die "Couldn't change directory to $pluginsDir: $!\n";
 	`svn add squirrelsql-plugins-assembly-descriptor`;
@@ -480,19 +510,23 @@ sub copyPluginsSupportProjects {
 sub restructureFwModule {
 	print "Restructuring fw module\n";
 
-	# remove effects of previous run
-	`rm -rf $fwDir/src/main`;
-	`rm -rf $fwDir/src/test`;
+	if ( !$onlyCopyPoms ) {
 
-	# create maven directories
-	svnmkdir("$fwDir/src/main");
-	svnmkdir("$fwDir/src/test/resources");
-	svnmkdir("$fwDir/src/test/java");
+		# remove effects of previous run
+		`rm -rf $fwDir/src/main`;
+		`rm -rf $fwDir/src/test`;
 
+		# create maven directories
+		svnmkdir("$fwDir/src/main");
+		svnmkdir("$fwDir/src/test/resources");
+		svnmkdir("$fwDir/src/test/java");
+	}
 	`cp $mavenizeDir/fw-pom.xml $fwDir/pom.xml`;
-	`svn add $fwDir/pom.xml`;
+	!$onlyCopyPoms && `svn add $fwDir/pom.xml`;
 	`cp $mavenizeDir/test-log4j.properties $fwDir/src/test/resources/log4j.properties`;
-	`svn add $fwDir/src/test/resources/log4j.properties`;
+	!$onlyCopyPoms && `svn add $fwDir/src/test/resources/log4j.properties`;
+
+	return if $onlyCopyPoms;
 
 	chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
 
@@ -514,11 +548,16 @@ sub restructureAppModule {
 
 	print "Restructuring app module\n";
 
-	# remove effects of previous run
-	`rm -rf $appDir/src/main`;
-	`rm -rf $appDir/src/test`;
-
+	if ( !$onlyCopyPoms ) {
+		# remove effects of previous run
+		`rm -rf $appDir/src/main`;
+		`rm -rf $appDir/src/test`;
+	}
+	
 	`cp app-pom.xml $appDir/pom.xml`;
+	
+	return if $onlyCopyPoms;
+	 
 	`svn add $appDir/pom.xml`;
 	svnmkdir("$appDir/src/main/java");
 	svnmkdir("$appDir/src/main/resources");
@@ -545,27 +584,32 @@ sub restructureAppModule {
 }
 
 sub findAndCopyJava {
+	return if $onlyCopyPoms;
 	print "Copying source files from src/... to /src/main/java...\n";
-    `find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
+`find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-    `find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
+`find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
 }
 
 sub findAndCopyResources {
+	return if $onlyCopyPoms;
 	my $fileType = shift;
-    `find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn mkdir --parents main/resources/{}`;
+`find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn mkdir --parents main/resources/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-    `find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
+`find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
 }
 
 sub findAndCopyDoc {
+	return if $onlyCopyPoms;
+	
 	my $baseDir = shift;
-	print "findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
+	print
+"findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
 	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
-    `find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
-    `find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
+`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
 }
 
 sub copyInstallerProjects {
@@ -573,12 +617,18 @@ sub copyInstallerProjects {
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
 	print "Copying in installer projects\n";
-	`rm -rf $installerDir`;
-	`mkdir -p $installerDir`;
+	
+	if (!$onlyCopyPoms) {
+	   `rm -rf $installerDir`;
+	   `mkdir -p $installerDir`;
+    } 
+    
 	`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
 	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
 	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
+
+    return if $onlyCopyPoms;
 
 	chdir($topDir);
 	`svn add installer`;
@@ -591,9 +641,14 @@ sub copyTranslationProjects {
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
 	print "Copying in translations project\n";
-	`rm -rf $topDir/squirrelsql-translations`;
-	`svn mkdir --parents $topDir/squirrelsql-translations/src/main/resources`;
+	
+	!$onlyCopyPoms && `rm -rf $topDir/squirrelsql-translations`;
+	!$onlyCopyPoms && `svn mkdir --parents $topDir/squirrelsql-translations/src/main/resources`;
+	
 	`cp $mavenizeDir/squirrelsql-translations/pom.xml $topDir/squirrelsql-translations`;
+	
+	return if $onlyCopyPoms;
+	
 	`svn add $topDir/squirrelsql-translations/pom.xml`;
 
 	chdir("$topDir/translations") or die "Couldn't change directory to $topDir/translations: $!\n";
@@ -611,7 +666,11 @@ sub copyTranslationProjects {
 sub restructureDocModule {
 
 	print "Restructuring doc module\n";
+	
 	`cp $mavenizeDir/doc-pom.xml $docDir/pom.xml`;
+	
+	return if $onlyCopyPoms;
+	
 	`rm -rf $docDir/src`;
 	`mkdir -p $docDir/src/main/resources`;
 
@@ -633,7 +692,11 @@ sub restructureDocModule {
 sub restructureWebsiteModule {
 
 	print "Restructuring web-site module\n";
+	
 	`cp $mavenizeDir/website-pom.xml $websiteDir/pom.xml`;
+	
+	return if $onlyCopyPoms;
+	
 	`svn add $websiteDir/pom.xml`;
 	`rm -rf $websiteDir/src/main`;
 	`mkdir -p $websiteDir/src/main/resources`;
@@ -672,16 +735,21 @@ sub generatePluginModulesPomFile {
 	print MODULEPOMFILE $plugin_module_pom_template->fill_in();
 	close(MODULEPOMFILE);
 
-	`svn add $modulespomfile`;
+	!$onlyCopyPoms && `svn add $modulespomfile`;
 }
 
 sub installLafPluginAssembly {
 
 	my $lafPluginAssemblyFile = "$mavenizeDir/laf-plugin/laf-plugin-assembly.xml";
 	my $targetFolder          = "$lafPluginDir/src/main/resources/assemblies";
+	
 	print "Installing L&F Plugin Assembly ($lafPluginAssemblyFile) in $targetFolder\n";
-	`svn mkdir --parents $targetFolder`;
+	
+	!$onlyCopyPoms && `svn mkdir --parents $targetFolder`;
 	`cp $lafPluginAssemblyFile $targetFolder`;
+	
+	return if $onlyCopyPoms;
+	
 	`svn add $lafPluginDir/src`;
 	`svn add $lafPluginDir/pom.xml`;
 	`svn add $targetFolder/laf-plugin-assembly.xml`;

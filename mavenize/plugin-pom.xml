@@ -41,11 +41,13 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-        <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/@@--$pluginName--@@</url>
-   </scm>        
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
    <issueManagement>
-        <system>SourceForge Tracker</system>
-        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+      <system>SourceForge Tracker</system>
+      <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
    </issueManagement>   
    <ciManagement>
         <system>Hudson</system>
@@ -88,6 +90,10 @@
       </plugins>
    </build>
    <profiles>
+   <!--
+      Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile
+      is activated
+   -->
       <profile>
          <id>sign-jar</id>
          <build>
@@ -95,6 +101,7 @@
                <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-gpg-plugin</artifactId>
+                  <version>${gpg-plugin-version}</version>
                   <executions>
                      <execution>
                         <id>sign-artifacts</id>
@@ -104,6 +111,21 @@
                         </goals>
                      </execution>
                   </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+      <!-- 
+        Since generating javadoc can be time-consuming, this is not done unless a "javadoc" profile
+        is activated.
+       -->
+      <profile>
+         <id>javadoc</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-javadoc-plugin</artifactId>
+                  <version>${javadoc-plugin-version}</version>
                </plugin>
             </plugins>
          </build>

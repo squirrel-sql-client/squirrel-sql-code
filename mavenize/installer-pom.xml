@@ -4,8 +4,8 @@
 
    <groupId>net.sf.squirrel-sql</groupId>
    <artifactId>installer</artifactId>
-   <packaging>pom</packaging>
    <version>3.1.0-SNAPSHOT</version>
+   <packaging>pom</packaging>
 
    <name>Installer Module Pom</name>
    <description>
@@ -38,7 +38,9 @@
 
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer</url>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>

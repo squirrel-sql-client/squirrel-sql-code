@@ -8,7 +8,14 @@
    <packaging>pom</packaging>
    
    <name>Plugin Modules POM file</name>
-   <description>This POM lists all of the plugin modules</description>
+   <description>
+        This POM lists all of the plugin modules.  It is important to take the following
+        steps when adding a new plugin:
+        1. This pom's modules section gets a new module whose name matches the directory in which the new 
+           plugin is installed. 
+        2. The new module has a pom which lists the squirrelsql-plugins-parent-pom as it's 
+           parent (not this pom!). 
+   </description>
    <inceptionYear>2001</inceptionYear>
    <developers>
       <developer>
@@ -36,8 +43,10 @@
 
    <url>http://www.squirrelsql.org/</url>
    <scm>
-        <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins</url>
-   </scm>        
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
    <issueManagement>
         <system>SourceForge Tracker</system>
         <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
@@ -46,7 +55,6 @@
         <system>Hudson</system>
         <url>https://www.squirrel-sql.org/hudson/</url>
    </ciManagement>
-
 
    <modules>
       {$modules}

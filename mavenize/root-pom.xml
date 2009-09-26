@@ -9,8 +9,9 @@
 
    <name>SQuirreL Root POM</name>
    <description>
-        The top-most POM file for building SQuirreL.  If a profile is defined that is called "installer",
-        the build will also include building projects that produce the installer and the installer itself. 
+        The top-most POM file for building the SQuirreL SQL Client.  If a profile is defined that is called 
+        "installer", the build will also include building projects that produce the installer and the 
+        installer itself. 
    </description>
    <inceptionYear>2001</inceptionYear>
    <developers>
@@ -38,6 +39,8 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
       <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
    </scm>
    <issueManagement>
@@ -56,11 +59,13 @@
       <compiler-plugin-version>2.0.2</compiler-plugin-version>
       <dependency-plugin-version>2.0</dependency-plugin-version>
       <findbugs-plugin-version>2.1</findbugs-plugin-version>
+      <gpg-plugin-version>1.0-alpha-4</gpg-plugin-version>
       <javac-source-version>1.6</javac-source-version>
       <javac-target-version>1.6</javac-target-version>
       <jar-plugin-version>2.2</jar-plugin-version>
+      <javadoc-plugin-version>2.6</javadoc-plugin-version>
       <pmd-plugin-version>2.4</pmd-plugin-version>
-      <source-plugin-version>2.0.4</source-plugin-version>
+      <source-plugin-version>2.1</source-plugin-version>
       <surefire-plugin-version>2.4</surefire-plugin-version>
       <!-- Thirdparty Library Versions -->
       <hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
@@ -75,6 +80,11 @@
    </modules>
 
    <profiles>
+      <!-- 
+      There are a few additional projects that are needed to build the installer.  These are 
+      probably not needed for developing plugins, so the default is to build them only when the 
+      installer profile is activated. 
+      -->
       <profile>
          <id>installer</id>
          <modules>
@@ -89,6 +99,48 @@
          </modules>
       </profile>
    </profiles>
-   
 
+   <distributionManagement>
+      <repository>
+         <id>sonatype-squirrel-sql-releases</id>
+         <name>SQuirreL-SQL Release Repository</name>
+         <url>http://oss.sonatype.org/content/groups/sourceforge-with-staging/</url>
+      </repository>
+      <snapshotRepository>
+         <id>sonatype-squirrel-sql-snapshots</id>
+         <name>SQuirreL-SQL Snapshot Repository</name>
+         <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+      </snapshotRepository>
+   </distributionManagement>
+   
+   <!-- Releases can always be pulled directly from Maven central after they have been vetted
+        and promoted to the release repo from the staging repo at sonatype.  This means that 
+        the "releases" attribute of each repo below should have enabled == false.  However, 
+        snapshots will never be deployed to maven central - so, this section helps in case 
+        someone wants to develop against our snapshots.  This tells maven that it can find 
+        snapshot versions at sonatype and where exactly to look for them. -->
+   <repositories>
+        <repository>
+            <id>sonatype-squirrel-sql-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+            <releases>
+              <enabled>false</enabled>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype-squirrel-sql-maven-plugin-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+            <releases>
+              <enabled>false</enabled>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

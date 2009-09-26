@@ -35,8 +35,10 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-        <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins</url>
-   </scm>        
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
    <issueManagement>
         <system>SourceForge Tracker</system>
         <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
@@ -56,68 +58,68 @@
 
       <!-- SQuirreL Dependencies -->
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrelsql-launcher</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>fw</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrel-sql</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
 
       <!-- Standard Plugins -->
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>codecompletion</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>editextras</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>graph</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>laf</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sqlbookmark</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sqlscript</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>syntax</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
@@ -125,197 +127,197 @@
       <!-- Optional Plugins -->
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>dataimport</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>dbcopy</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>db2</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>derby</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>firebird</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>firebirdmanager</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>h2</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>hibernate</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>informix</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>mssql</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>mysql</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>oracle</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>postgres</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>refactoring</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sessionscript</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>smarttools</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sqlparam</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sqlreplace</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sqlval</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>sybase</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>i18n</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrelsql-translations</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <type>jar</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>squirrelsql-java-version-checker</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
          <type>jar</type>
       </dependency>
 
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>doc</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       
       <dependency>
-         <groupId>net.sf.squirrel-sql</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>website</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>${project.version}</version>
       </dependency>
       
       <!-- Other Dependencies -->
@@ -391,7 +393,7 @@
                   <configuration>
                      <includeClassifiers>assembly</includeClassifiers>
                      <includeTypes>zip</includeTypes>
-                     <includeGroupIds>net.sf.squirrel-sql</includeGroupIds>
+                     <includeGroupIds>${project.groupId}</includeGroupIds>
                      <outputDirectory>${staging.dir}/plugins</outputDirectory>
                   </configuration>
                </execution>
@@ -447,9 +449,34 @@
                </execution>
             </executions>
          </plugin>
-
       </plugins>
    </build>
+   <profiles>
+      <!--
+        Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile
+        is activated
+      -->      
+      <profile>
+         <id>sign-jar</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 
 
 </project>

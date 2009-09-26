@@ -1,24 +1,98 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>template</groupId>
-  <artifactId>template</artifactId>
-  <version>template</version>
-  <packaging>jar</packaging>
-  
-  <name>template</name>
-  <description>template</description>
-  <url></url>
-  <licenses>
-        <license>
-                <name></name>
-                <url></url>
-                <distribution>repo</distribution>
-        </license>
-  </licenses>
-  <scm>
-        <url>template</url>
-  </scm>
-  
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>net.sf.squirrel-sql</groupId>
+      <artifactId>squirrel-root-pom</artifactId>
+      <version>3.1.0-SNAPSHOT</version>
+   </parent>
+
+   <groupId>net.sf.squirrel-sql</groupId>
+   <artifactId>template</artifactId>
+   <version>3.1.0-SNAPSHOT</version>
+   <packaging>jar</packaging>
+
+   <name>Project Name</name>
+   <description>
+        Project description is normally documented here.
+        
+        This template should be used for creating new POMs for SQuirreL-SQL.  It contains static 
+        content that should be included in every POM that is intended to be deployed to maven central.  Not 
+        including this information can potentially cause delays in getting artifacts deployed to maven 
+        central.  When/If additional information becomes available and/or required in the future, please 
+        update this template so that other yet-to-be-created projects may benefit. 
+   </description>
+   <inceptionYear>2001</inceptionYear>
+   <developers>
+      <developer>
+         <name>Gerd Wagner</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Rob Manning</name>
+         <roles>
+            <role>Release Manager</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+   </developers>   
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <url>http://www.squirrelsql.org/</url>
+   <scm>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
+   <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+   </issueManagement>     
+   <ciManagement>
+        <system>Hudson</system>
+        <url>https://www.squirrel-sql.org/hudson/</url>
+   </ciManagement>
+
+   <build>
+     <!-- Configure maven build plugins here -->
+   </build>
+
+   <profiles>
+      <!--
+        Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile
+        is activated
+      -->         
+      <profile>
+         <id>sign-jar</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>${gpg-plugin-version}</version>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+
+
 </project>
