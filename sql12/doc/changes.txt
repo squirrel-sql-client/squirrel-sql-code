@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+ - New Polish translation available (Thanks to Miron Sadziak)
+
 Better table header rendering for MAC OS
   Thanks for Brian Mauter's Patch (ID 2856103)
 
