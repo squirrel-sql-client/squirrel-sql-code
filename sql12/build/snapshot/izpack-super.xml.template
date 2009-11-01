@@ -469,6 +469,16 @@
                                 src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ko_KR.jar" />
                 </pack>
 
+                <pack required="no" preselected="no" installGroups="Translations"
+                        name="Optional Translation - Polish">
+                        <description>
+                                Provides native labels and user messages for use in
+                                a Polish locale (Miron Sadziak)
+                        </description>
+                        <file targetdir="$INSTALL_PATH/lib"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_pl.jar" />
+                </pack>
+
 	        <pack required="no" preselected="no" installGroups="Translations"
 	        	name="Optional Translation - Russian">
 	        	<description>
