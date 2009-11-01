@@ -64,6 +64,7 @@
       <javac-target-version>1.6</javac-target-version>
       <jar-plugin-version>2.2</jar-plugin-version>
       <javadoc-plugin-version>2.6</javadoc-plugin-version>
+      <maven-plugin-api-version>2.0</maven-plugin-api-version>
       <pmd-plugin-version>2.4</pmd-plugin-version>
       <source-plugin-version>2.1</source-plugin-version>
       <surefire-plugin-version>2.4</surefire-plugin-version>
@@ -96,6 +97,7 @@
             <module>doc</module>
             <module>web-site</module>
             <module>installer</module>
+            <module>update-site</module>
          </modules>
       </profile>
       <!--
