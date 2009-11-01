@@ -34,7 +34,10 @@
         <pack name="Optional Translation - French"               index="25" selected="false"/>
         <pack name="Optional Translation - German"               index="26" selected="false"/>
         <pack name="Optional Translation - Italian"              index="27" selected="false"/>
-        <pack name="Optional Translation - Spanish"              index="28" selected="false"/>
+        <pack name="Optional Translation - Korean"               index="28" selected="false"/>
+        <pack name="Optional Translation - Polish"               index="29" selected="false"/>
+        <pack name="Optional Translation - Russian"              index="30" selected="false"/>
+        <pack name="Optional Translation - Spanish"              index="31" selected="false"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
 <!--    <com.izforge.izpack.panels.ShortcutPanel/> -->
