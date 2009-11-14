@@ -51,7 +51,13 @@ public class FileWrapperImplTest extends BaseSQuirreLJUnit4TestCase
 	
 	@Test
 	public void testGetAbsolutePath() {
-		assertEquals(tmpDir, classUnderTest.getAbsolutePath());
+		// Don't fail if the only difference is a slash on the end of the path
+		if (!classUnderTest.getAbsolutePath().endsWith("\\") && tmpDir.endsWith("\\"))
+		{
+			assertEquals(tmpDir, classUnderTest.getAbsolutePath()+"\\");
+		} else {
+			assertEquals(tmpDir, classUnderTest.getAbsolutePath());
+		}
 	}
 	
 	@Test
