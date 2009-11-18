@@ -820,21 +820,25 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
 
-      DefaultMutableTreeNode[] cutNodes = new DefaultMutableTreeNode[pathsToPaste.length];
+      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
 
       for (int i = 0; i < pathsToPaste.length; i++)
       {
-         cutNodes[i] = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
-         dtm.removeNodeFromParent(cutNodes[i]);
+         if(false == pathsToPaste[i].equals(targetPath))
+         {
+            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
+            cutNodes.add(cutNode);
+            dtm.removeNodeFromParent(cutNode);
+         }
       }
 
       if (null == targetPath)
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
-         for (int i = 0; i < cutNodes.length; i++)
+         for (int i = 0; i < cutNodes.size(); i++)
          {
-            root.add(cutNodes[i]);
+            root.add(cutNodes.get(i));
          }
          dtm.nodeStructureChanged(root);
       }
@@ -845,27 +849,27 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          if (selNode.isLeaf())
          {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-            for (int i = 0; i < cutNodes.length; i++)
+            for (int i = 0; i < cutNodes.size(); i++)
             {
-               parent.insert(cutNodes[i], parent.getIndex(selNode) + 1);
+               parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
             }
             dtm.nodeStructureChanged(parent);
 
          }
          else
          {
-            for (int i = 0; i < cutNodes.length; i++)
+            for (int i = 0; i < cutNodes.size(); i++)
             {
-               selNode.add(cutNodes[i]);
+               selNode.add(cutNodes.get(i));
             }
             dtm.nodeStructureChanged(selNode);
          }
       }
 
-      TreePath[] newSelPaths = new TreePath[cutNodes.length];
+      TreePath[] newSelPaths = new TreePath[cutNodes.size()];
       for (int i = 0; i < newSelPaths.length; i++)
       {
-         newSelPaths[i] = new TreePath(cutNodes[i].getPath());
+         newSelPaths[i] = new TreePath(cutNodes.get(i).getPath());
       }
       _tree.setSelectionPaths(newSelPaths);
    }
