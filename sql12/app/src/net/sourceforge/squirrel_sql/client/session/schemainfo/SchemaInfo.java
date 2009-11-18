@@ -856,7 +856,7 @@ public class SchemaInfo
 
             for (int i = 0; i < sqlKeywords.length; i++)
             {
-               _schemaInfoCache.getKeywordsForReadOnly().put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
+            	keywordsBuf.put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
             }
 
             String catalogTerm = _dmd.getCatalogTerm();
