@@ -6,6 +6,10 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+Correcting the error that database specific keywords are not in the SchemaInfo/SchemaInfoCache
+
+Better table header rendering for MAC OS (Patch ID 2856103)
+
 Bug fix 2853329: Ctrl-S overwrites existing file on 2nd try
 
 Error in Alias tree: Alias vanished / rose error when dragged on itself.
