@@ -57,6 +57,19 @@
         <url>https://www.squirrel-sql.org/hudson/</url>
    </ciManagement>
 
+   <distributionManagement>
+      <repository>
+         <id>sonatype-squirrel-sql-releases</id>
+         <name>SQuirreL-SQL Release Repository</name>
+         <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+      <snapshotRepository>
+         <id>sonatype-squirrel-sql-snapshots</id>
+         <name>SQuirreL-SQL Snapshot Repository</name>
+         <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+      </snapshotRepository>
+   </distributionManagement>
+   
    <modules>
       <module>squirrelsql-update-site</module>
       <module>squirrelsql-update-site-plugin</module>
