@@ -53,15 +53,6 @@ $firebirdmanager_deps = <<"EOF";
     </dependency>
    </dependencies>
 EOF
-$isqlj_deps = <<"EOF";
-<dependencies>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>isqlj</artifactId>
-        <version>1.8</version>
-    </dependency>
-   </dependencies>
-EOF
 $oracle_deps = <<"EOF";
 <dependencies>
     <dependency>
@@ -93,44 +84,39 @@ $sqlval_deps = <<"EOF";
          <artifactId>axis-wsdl4j</artifactId>
          <version>1.2</version>
       </dependency>
-      <dependency>
-         <groupId>com.techtrader</groupId>
-         <artifactId>tt-bytecode</artifactId>
-         <version>1.0</version>
-      </dependency>
    </dependencies>
 EOF
 $syntax_deps = <<"EOF";
 <dependencies>
     <dependency>
-        <groupId>org.netbeans</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>openide</artifactId>
-        <version>041121</version>
+        <version>4.0</version>
     </dependency>
     <dependency>
-        <groupId>org.netbeans</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>org-netbeans-modules-editor</artifactId>
-        <version>041121</version>
+        <version>4.0</version>
     </dependency>
     <dependency>
-        <groupId>org.netbeans</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>org-netbeans-modules-editor-fold</artifactId>
-        <version>041121</version>
+        <version>4.0</version>
     </dependency>
     <dependency>
-        <groupId>org.netbeans</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>org-netbeans-modules-editor-lib</artifactId>
-        <version>041121</version>
+        <version>4.0</version>
     </dependency>
     <dependency>
-        <groupId>org.netbeans</groupId>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>org-netbeans-modules-editor-util</artifactId>
-        <version>041121</version>
+        <version>4.0</version>
     </dependency>
     <dependency>
-        <groupId>com.ostermiller</groupId>
-        <artifactId>syntax</artifactId>
-        <version>1.0</version>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>ostermiller-syntax</artifactId>
+        <version>1.1.1</version>
     </dependency>
    </dependencies>
 EOF
@@ -153,6 +139,9 @@ copyInstallerProjects();
 
 # copy in the translations project
 copyTranslationProjects();
+
+# copy in the update site projects
+copyUpdateSiteProjects();
 
 # restructure fw module
 restructureFwModule();
@@ -256,6 +245,13 @@ sub wanted_for_create_plugin_poms {
 	print POMFILE $result;
 	close(POMFILE);
 
+    # This is painful to do, but InterSystems leaves me with little choice.  Remove Cache plugin from 
+    # the plugin modules pom so that it doesn't get picked up or deployed.  Perhaps we should think about
+    # using reflection for this instead.
+    if ($artifactId =~ 'cache' ) {
+    	pop @artifacts;
+    }
+
 	!$onlyCopyPoms && `svn add $newPomFile`;
 }
 
@@ -285,7 +281,12 @@ sub wanted_for_source {
 		# *.png image files into src/main/resources
 		findAndCopyResources('*.png');
 
+        !$onlyCopyPoms && `svn remove net`;        
+
 		chdir($File::Find::dir) or die "Couldn't change dir back to $File::Find::dir: $!\n";
+
+        #`svn remove plugin_build.xml`;
+        !$onlyCopyPoms && `svn propset --file $mavenizeDir/svn.ignore.prop`;
 
 		if ( -d "$File::Find::dir/doc" ) {
 			findAndCopyDoc($File::Find::dir);
@@ -349,7 +350,11 @@ sub wanted_for_packagemap {
 		# ignore installer project
 
 	}
-	else {
+	elsif ( $File::Find::name =~ /sql12\/update-site/ ) {
+		
+		# ignore update-site project
+		
+	} else {
 		print "Unable to categorize package of file: $File::Find::name\n";
 		exit 1;
 	}
@@ -661,6 +666,28 @@ sub copyTranslationProjects {
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 
+}
+
+sub copyUpdateSiteProjects {
+    chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+
+    print "Copying in update-site project\n";
+    
+	!$onlyCopyPoms && `rm -rf $topDir/update-site`;
+    !$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql`;
+    !$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site`;
+    
+    `cp $mavenizeDir/update-site/pom.xml $topDir/update-site/`;
+    `cp $mavenizeDir/update-site/squirrelsql-update-site/pom.xml $topDir/update-site/squirrelsql-update-site/pom.xml`;
+    `cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/pom.xml $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
+	`cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/`;
+	
+	return if $onlyCopyPoms;
+	
+	`svn add $topDir/update-site/pom.xml`;
+	`svn add $topDir/update-site/squirrelsql-update-site/pom.xml`;
+	`svn add $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
+	`svn add $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java`;
 }
 
 sub restructureDocModule {
