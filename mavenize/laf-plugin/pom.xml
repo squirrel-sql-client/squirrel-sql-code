@@ -26,7 +26,7 @@
    <description>
         This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
         as well as others that the user can provide.  All dependencies listed with a groupId of 
-        net.sf.squirrel-sql and artifactId starting with squirrelsql-lf- are externally available open-source
+        net.sf.squirrel-sql.thirdparty-non-maven are externally available open-source
         look and feels whose project maintainers have decided to not use maven, or those which were built and
         maintained only before the introduction of maven.  Maven's central repository policy requires any 
         pom that is deployed there to reference only artifacts which are also hosted in central.  And a 
@@ -76,7 +76,7 @@
    <properties>
       <staging.dir>${project.build.directory}</staging.dir>
       <laf.artifactIds>
-         ilf-gpl,kunststoff,looks,napkinlaf,nimrodlf,oalnf, skinlf,substance,toniclf,tinylaf
+         ilf-gpl,kunststoff,looks,metouia,napkinlaf,nimrodlf,oalnf,skinlf,substance,swingsetthemes,toniclf,tinylaf
       </laf.artifactIds>
    </properties>
 
