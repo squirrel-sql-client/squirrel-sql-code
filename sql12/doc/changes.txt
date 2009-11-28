@@ -11,10 +11,12 @@ Enhancements:
 Better table header rendering for MAC OS
   Thanks for Brian Mauter's Patch (ID 2856103)
 
-
 Feature request 2826175:
- Number of rows read is now visible on message panel and results tab.
+  Number of rows read is now visible on message panel and results tab.
 
+Feature request 1656320:
+  Background Color Configuration is now available via a new tab ("Color Properties") in Alias 
+  Properties dialog.  
 
 MySQL Plugin
   Fixed object tree menu items:
