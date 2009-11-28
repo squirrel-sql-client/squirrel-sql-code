@@ -43,6 +43,14 @@ public class ColorPropertiesController implements IAliasPropertiesPanelControlle
 
 	private ISQLAliasExt _alias;
 
+	public static interface i18n {
+		// i18n[ColorPropertiesController.title=Color Properties]
+		String TITLE = s_stringMgr.getString("ColorPropertiesController.title");
+		
+		// i18n[ColorPropertiesController.hint=Set session colors for this Alias]
+		String HINT = s_stringMgr.getString("ColorPropertiesController.hint");
+	}
+	
 	public ColorPropertiesController(ISQLAliasExt alias, IApplication app)
 	{
 		_alias = alias;
@@ -61,14 +69,12 @@ public class ColorPropertiesController implements IAliasPropertiesPanelControlle
 
 	public String getTitle()
 	{
-		// i18n[ColorPropertiesController.title=Color Properties]
-		return s_stringMgr.getString("ColorPropertiesController.title");
+		return i18n.TITLE;
 	}
 
 	public String getHint()
 	{
-		// i18n[ColorPropertiesController.hint=Set session colors for this Alias]
-		return s_stringMgr.getString("ColorPropertiesController.hint");
+		return i18n.HINT;
 	}
 
 }
