@@ -95,6 +95,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 
    private SQLAliasSchemaProperties _schemaProperties = new SQLAliasSchemaProperties();
 
+   private SQLAliasColorProperties _colorProperties = new SQLAliasColorProperties();
+   
    /**
     * Default ctor.
     */
@@ -148,6 +150,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       _schemaProperties = 
           (SQLAliasSchemaProperties) Utilities.cloneObject(rhs._schemaProperties, 
                                                            getClass().getClassLoader());
+      _colorProperties = 
+      	(SQLAliasColorProperties) Utilities.cloneObject(rhs._colorProperties, getClass().getClassLoader());
    }
 
    /**
@@ -482,9 +486,24 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       return _schemaProperties;      
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt#setSchemaProperties(net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties)
+    */
    public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
    {
       _schemaProperties = schemaProperties;
    }
+
+	@Override
+	public SQLAliasColorProperties getColorProperties()
+	{
+		return _colorProperties;
+	}
+
+	@Override
+	public void setColorProperties(SQLAliasColorProperties colorProperties)
+	{
+		_colorProperties = colorProperties;
+	}
 
 }

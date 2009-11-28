@@ -1,19 +1,20 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverPropertiesController;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
+
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 public class AliasPropertiesController
 {
@@ -93,7 +94,8 @@ public class AliasPropertiesController
    {
       _iAliasPropertiesPanelControllers.add(new SchemaPropertiesController(_alias, _app));
       _iAliasPropertiesPanelControllers.add(new DriverPropertiesController(_alias, _app));
-
+      _iAliasPropertiesPanelControllers.add(new ColorPropertiesController(_alias, _app));
+      
       IAliasPropertiesPanelController[] pluginAliasPropertiesPanelControllers =
          _app.getPluginManager().getAliasPropertiesPanelControllers(_alias);
 

@@ -217,6 +217,14 @@ public class XMLBeanReader implements Iterable<Object>
 			final Class parmType = setter.getParameterTypes()[0];
 			final Class arrayType = parmType.getComponentType();
 			final String value = propElem.getContent();
+			
+			if (value == null && (parmType.isPrimitive())) {
+				s_log.warn("Parameter type was primitive ("+parmType+"), but the value was null.  " +
+						"Skipping invokation of method: "+setter.getName()+" in declaring class: " + 
+						setter.getDeclaringClass());
+				return;
+			}
+			
 			if (isIndexedElement(propElem))
 			{
 				Object[] data = loadIndexedProperty(propElem);

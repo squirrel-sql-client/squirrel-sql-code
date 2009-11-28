@@ -6,4 +6,7 @@ public interface ISQLAliasExt extends ISQLAlias
 {
    SQLAliasSchemaProperties getSchemaProperties();
    void setSchemaProperties(SQLAliasSchemaProperties schemaProperties);
+   
+   SQLAliasColorProperties getColorProperties();
+   void setColorProperties(SQLAliasColorProperties colorProperties);
 }
