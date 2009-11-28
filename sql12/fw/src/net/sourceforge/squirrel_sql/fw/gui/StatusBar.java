@@ -29,6 +29,8 @@ import javax.swing.border.Border;
  */
 public class StatusBar extends JPanel
 {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Message to display if there is no msg to display. Defaults to a
 	 * blank string.
@@ -223,4 +225,21 @@ public class StatusBar extends JPanel
          repaint();
       }
    }
+
+	/**
+	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
+	 */
+	@Override
+	public void setBackground(Color bg)
+	{
+		super.setBackground(bg);
+		if (_pnlLabelOrProgress != null) {
+			_pnlLabelOrProgress.setBackground(bg);
+		}
+		if (_progressBar != null) {
+			_progressBar.setBackground(bg);
+		}
+	}
+   
+   
 }
