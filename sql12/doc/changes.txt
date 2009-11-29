@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 3.0.3 (??/??/????)
 ==================
 
+Enhancements:
+
+Feature request 1656320:
+  Background Color Configuration is now available via a new tab ("Color Properties") in Alias 
+  Properties dialog.  
+
 Bug-Fixes:
 
 Correcting the error that database specific keywords are not in the SchemaInfo/SchemaInfoCache

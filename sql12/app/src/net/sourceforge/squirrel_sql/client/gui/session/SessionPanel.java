@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -121,7 +123,11 @@ public class SessionPanel extends JPanel
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
         
-
+		SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
+		if (colorProps.isOverrideStatusBarBackgroundColor()) {
+			int rgbValue = colorProps.getStatusBarBackgroundColorRgbValue();
+			_statusBar.setBackground(new Color(rgbValue));
+		}
 	}
 
    protected void initialize(ISession session) {
@@ -514,6 +520,12 @@ public class SessionPanel extends JPanel
       {
          super();
          createGUI(session);
+         SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
+         if (colorProps.isOverrideToolbarBackgroundColor()) {
+         	int rgbValue = colorProps.getToolbarBackgroundColorRgbValue();
+         	super.setBackground(new Color(rgbValue));
+         }
+         
       }
 
       public void addNotify()

@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write toS the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
@@ -46,6 +47,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
@@ -210,7 +212,11 @@ class ObjectTree extends JTree
           }
       });
 
-
+      SQLAliasColorProperties colorProps = session.getAlias().getColorProperties();
+      if (colorProps.isOverrideObjectTreeBackgroundColor()) {
+      	int rgbValue = colorProps.getObjectTreeBackgroundColorRgbValue();
+      	setBackground(new Color(rgbValue));
+      }
    }
 
    // Mouse listener used to display popup menu.
