@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 
 public class HQLEntryPanelManager extends EntryPanelManagerBase
@@ -109,7 +110,7 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
    {
       return new ISyntaxHighlightTokenMatcherFactory()
       {
-         public ISyntaxHighlightTokenMatcher getSyntaxHighlightTokenMatcher(ISession sess, JEditorPane editorPane)
+         public ISyntaxHighlightTokenMatcher getSyntaxHighlightTokenMatcher(ISession sess, JTextComponent editorPane)
          {
             _hqlSyntaxHighlightTokenMatcherProxy.setEditorPane(editorPane);
             return _hqlSyntaxHighlightTokenMatcherProxy;

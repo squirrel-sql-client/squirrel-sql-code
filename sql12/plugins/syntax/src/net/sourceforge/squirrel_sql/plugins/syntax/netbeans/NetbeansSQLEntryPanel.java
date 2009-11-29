@@ -428,7 +428,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void removeSQLTokenListener(SQLTokenListener tl)
 	{
-		_syntaxFactory.addSQLTokenListeners(_session, tl);
+		_syntaxFactory.removeSQLTokenListeners(_session, tl);
 	}
 
 	public ISession getSession()

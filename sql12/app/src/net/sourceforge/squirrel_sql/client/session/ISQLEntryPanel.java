@@ -20,16 +20,14 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.Font;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 
 public interface ISQLEntryPanel extends IHasIdentifier
 {
@@ -153,13 +151,21 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	boolean hasOwnUndoableManager();
 
+   /**
+    * Will only be called if hasOwnUndoableManager() returns true
+    */
+   IUndoHandler createUndoHandler();
+
+   /**
+    * Will only be called if hasOwnUndoableManager() returns false
+    */
     void setUndoManager(UndoManager manager);
     
 	void addUndoableEditListener(UndoableEditListener listener);
 
 	void removeUndoableEditListener(UndoableEditListener listener);
 
-	void setUndoActions(Action undo, Action redo);
+	void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo);
 
 	void addCaretListener(CaretListener lis);
 	void removeCaretListener(CaretListener lis);
@@ -170,4 +176,8 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void dispose();
 
    ISession getSession();
+
+   String getWordAtCursor();
+
+   JScrollPane createScrollPane(JTextComponent textComponent);
 }

@@ -33,7 +33,7 @@ public class SyntaxPreferences implements Serializable, Cloneable
     private static final long serialVersionUID = 1L;
 
 
-    public interface IPropertyNames {
+   public interface IPropertyNames {
 //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 //		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
@@ -59,19 +59,23 @@ public class SyntaxPreferences implements Serializable, Cloneable
       String TABLE_STYLE = "tableStyle";
       String USE_OSTER_CONTROL = "useOsterControl";
       String USE_NETBEANS_CONTROL = "useNetbeansControl";
+      String USE_RSYNTAX_CONTROL = "useRSyntaxControl";
       String USE_PLAIN_CONTROL = "usePlainControl";
       String WHITE_SPACE_STYLE = "whiteSpaceStyle";
       String TEXT_LIMIT_LINE_VISIBLE = "textLimitLineVisible";
       String TEXT_LIMIT_LINE_WIDTH = "textLimitLineWidth";
-   }
+      String HIGHLIGHT_CURRENT_LINE = "highlightCurrentLine";
+      String LINE_NUMBERS_ENABLED = "lineNumbersEnabled";
+    }
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
 	/** If <TT>true</TT> use the Oster text control else use the standard Java control. */
 	private boolean _useOsterTextControl = false;
-   private boolean _useNetbeansTextControl = true;
+   private boolean _useNetbeansTextControl = false;
    private boolean _usePlainTextControl = false;
+   private boolean _useRSyntaxTextArea = true;
 
 	/** If <TT>true</TT> use the block caret. */
 //	private boolean _blockCaretEnabled = false;
@@ -114,6 +118,9 @@ public class SyntaxPreferences implements Serializable, Cloneable
    private boolean _textLimitLineVisible = false;
    private int _textLimitLineWidth = 80;
 
+   private boolean _highlightCurrentLine = true;
+
+   private boolean _lineNumbersEnabled = false;
 
 
    public SyntaxPreferences()
@@ -259,6 +266,21 @@ public class SyntaxPreferences implements Serializable, Cloneable
       }
    }
 
+
+   public boolean getUseRSyntaxTextArea()
+   {
+      return _useRSyntaxTextArea;
+   }
+
+   public void setUseRSyntaxTextArea(boolean data)
+   {
+      if (_useRSyntaxTextArea != data)
+      {
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_RSYNTAX_CONTROL, _useRSyntaxTextArea, data);
+         _useRSyntaxTextArea = data;
+      }
+   }
+
    public boolean getUsePlainTextControl()
    {
       return _usePlainTextControl;
@@ -273,102 +295,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
       }
    }
 
-
-//	public boolean getBracketHighlighting()
-//	{
-//		return _bracketHighlighting;
-//	}
-//
-//	public void setBracketHighlighting(boolean data)
-//	{
-//		if (_bracketHighlighting != data)
-//		{
-//			final boolean oldValue = _bracketHighlighting;
-//			_bracketHighlighting = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.BRACKET_HIGHLIGHTING,
-//				oldValue, _bracketHighlighting);
-//		}
-//	}
-//
-//	public boolean isBlockCaretEnabled()
-//	{
-//		return _blockCaretEnabled;
-//	}
-//
-//	public void setBlockCaretEnabled(boolean data)
-//	{
-//		if (_blockCaretEnabled != data)
-//		{
-//			final boolean oldValue = _blockCaretEnabled;
-//			_blockCaretEnabled = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.BLOCK_CARET_ENABLED,
-//				oldValue, _blockCaretEnabled);
-//		}
-//	}
-//
-//	public boolean getEOLMarkers()
-//	{
-//		return _showEndOfLineMarkers;
-//	}
-//
-//	public void setEOLMarkers(boolean data)
-//	{
-//		if (_showEndOfLineMarkers != data)
-//		{
-//			final boolean oldValue = _showEndOfLineMarkers;
-//			_showEndOfLineMarkers = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.EOL_MARKERS,
-//				oldValue, _showEndOfLineMarkers);
-//		}
-//	}
-//
-//	public boolean getCurrentLineHighlighting()
-//	{
-//		return _currentLineHighlighting;
-//	}
-//
-//	public void setCurrentLineHighlighting(boolean data)
-//	{
-//		if (_currentLineHighlighting != data)
-//		{
-//			final boolean oldValue = _currentLineHighlighting;
-//			_currentLineHighlighting = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CURRENT_LINE_HIGHLIGHTING,
-//				oldValue, _currentLineHighlighting);
-//		}
-//	}
-//
-//	public boolean getBlinkCaret()
-//	{
-//		return _blinkCaret;
-//	}
-//
-//	public void setBlinkCaret(boolean data)
-//	{
-//		if (_blinkCaret != data)
-//		{
-//			final boolean oldValue = _blinkCaret;
-//			_blinkCaret = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.BLINK_CARET,
-//				oldValue, _blinkCaret);
-//		}
-//	}
-//
-//	public boolean getShowLineNumbers()
-//	{
-//		return _showLineNumbers;
-//	}
-//
-//	public void setShowLineNumbers(boolean data)
-//	{
-//		if (_showLineNumbers != data)
-//		{
-//			final boolean oldValue = _showLineNumbers;
-//			_showLineNumbers = data;
-//			getPropertyChangeReporter().firePropertyChange(IPropertyNames.SHOW_LINE_NBRS,
-//				oldValue, _showLineNumbers);
-//		}
-//	}
 
    public boolean isTextLimitLineVisible()
    {
@@ -399,6 +325,42 @@ public class SyntaxPreferences implements Serializable, Cloneable
          _textLimitLineWidth = data;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH,
             oldValue, Integer.valueOf(_textLimitLineWidth));
+      }
+
+   }
+
+
+   public boolean isHighlightCurrentLine()
+   {
+      return _highlightCurrentLine;
+   }
+
+
+   public void setHighlightCurrentLine(boolean data)
+   {
+      if (_highlightCurrentLine != data)
+      {
+         final Boolean oldValue = Boolean.valueOf(_highlightCurrentLine);
+         _highlightCurrentLine = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.HIGHLIGHT_CURRENT_LINE,
+            oldValue, Boolean.valueOf(_highlightCurrentLine));
+      }
+
+   }
+
+   public boolean isLineNumbersEnabled()
+   {
+      return _lineNumbersEnabled;
+   }
+
+   public void setLineNumbersEnabled(boolean data)
+   {
+      if (_lineNumbersEnabled != data)
+      {
+         final Boolean oldValue = Boolean.valueOf(_lineNumbersEnabled);
+         _lineNumbersEnabled = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.LINE_NUMBERS_ENABLED,
+            oldValue, Boolean.valueOf(_lineNumbersEnabled));
       }
 
    }

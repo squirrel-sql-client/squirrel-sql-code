@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.undo.UndoManager;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -26,8 +27,9 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 public class UndoAction extends SquirrelAction
 {
 	private UndoManager _undo;
+   private Action _delegate;
 
-	public UndoAction(IApplication app, UndoManager undo)
+   public UndoAction(IApplication app, UndoManager undo)
 	{
 		super(app);
 		if (undo == null)
@@ -36,14 +38,29 @@ public class UndoAction extends SquirrelAction
 		}
 		_undo = undo;
 	}
-	/*
-	 * @see ActionListener#actionPerformed(ActionEvent)
-	 */
+
+   public UndoAction(IApplication app, Action delegate)
+   {
+      super(app);
+      _delegate = delegate;
+   }
+
+
+   /*
+   * @see ActionListener#actionPerformed(ActionEvent)
+   */
 	public void actionPerformed(ActionEvent e)
 	{
-		if (_undo.canUndo())
-		{
-			_undo.undo();
-		}
-	}
+      if (null == _delegate)
+      {
+         if (_undo.canUndo())
+         {
+            _undo.undo();
+         }
+      }
+      else
+      {
+         _delegate.actionPerformed(e);
+      }
+   }
 }

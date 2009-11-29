@@ -1,15 +1,25 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 
-import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 public class HqlSyntaxHighlightTokenMatcherProxy implements ISyntaxHighlightTokenMatcher
 {
    private ISyntaxHighlightTokenMatcher _delegate;
-   private JEditorPane _editorPane;
+   private JTextComponent _editorPane;
+
+   @Override
+   public boolean isError(int offset, int len)
+   {
+      if(null == _delegate)
+      {
+         return false;
+      }
+
+      return _delegate.isError(offset, len);
+   }
 
    public boolean isTable(char[] buffer, int offset, int len)
    {
@@ -88,7 +98,7 @@ public class HqlSyntaxHighlightTokenMatcherProxy implements ISyntaxHighlightToke
       }
    }
 
-   public void setEditorPane(JEditorPane editorPane)
+   public void setEditorPane(JTextComponent editorPane)
    {
       _editorPane = editorPane;
       _editorPane.repaint();

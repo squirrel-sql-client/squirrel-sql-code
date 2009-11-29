@@ -31,6 +31,14 @@ public class SqlSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
       _editorPane = editorPane;
    }
 
+   @Override
+   public boolean isError(int offset, int len)
+   {
+      // Not nice, see end of ... .netbeans.SQLSyntax
+      // But Netbeans will be replaced by RSyntax soon. Then all Netbeans stuff this will be thrown away.
+      return false;
+   }
+
    public boolean isTable(char[] buffer, int offset, int len)
    {
       _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);

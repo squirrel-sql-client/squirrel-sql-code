@@ -3,16 +3,14 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.awt.Font;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 
 public class MockSQLEntryPanel implements ISQLEntryPanel {
 
@@ -210,7 +208,7 @@ public class MockSQLEntryPanel implements ISQLEntryPanel {
 
 	}
 
-	public void setUndoActions(Action undo, Action redo) {
+	public void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo) {
 		
 
 	}
@@ -233,4 +231,22 @@ public class MockSQLEntryPanel implements ISQLEntryPanel {
         return null;
     }
 
+
+   @Override
+   public IUndoHandler createUndoHandler()
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   @Override
+   public String getWordAtCursor()
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   @Override
+   public JScrollPane createScrollPane(JTextComponent textComponent)
+   {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

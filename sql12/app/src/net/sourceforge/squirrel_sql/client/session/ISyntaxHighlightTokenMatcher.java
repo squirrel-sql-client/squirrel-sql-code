@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.client.session;
 
 public interface ISyntaxHighlightTokenMatcher
 {
+   boolean isError(int offset, int len);
+
    boolean isTable(char[] buffer, int offset, int len);
 
    void removeSQLTokenListener(SQLTokenListener tl);

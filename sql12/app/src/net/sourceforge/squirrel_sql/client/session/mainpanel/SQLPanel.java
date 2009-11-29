@@ -36,12 +36,12 @@ import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
-import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -51,8 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -66,7 +64,6 @@ import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -104,7 +101,6 @@ public class SQLPanel extends JPanel
 	private JCheckBox _limitRowsChk;
 	private IntegerField _nbrRows = new IntegerField();
 
-	private JScrollPane _sqlEntryScroller;
 
 	transient private SqlComboListener _sqlComboListener = new SqlComboListener();
 	transient private MyPropertiesListener _propsListener;
@@ -148,9 +144,7 @@ public class SQLPanel extends JPanel
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
 
-	private UndoManager _undoManager = new SquirrelDefaultUndoManager();
-
-	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
+   /** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 //	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
 	private final List<ISQLResultExecuter> _executors = 
@@ -161,8 +155,6 @@ public class SQLPanel extends JPanel
 	transient private ISQLPanelAPI _panelAPI;
 
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
-   private UndoAction _undoAction;
-   private RedoAction _redoAction;
 
    /**
     * true if this panel is within a SessionInternalFrame
@@ -171,6 +163,7 @@ public class SQLPanel extends JPanel
    private boolean _inMainSessionWindow;
 	transient private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
+   private IUndoHandler _undoHandler;
 
 
    /**
@@ -443,38 +436,27 @@ public class SQLPanel extends JPanel
 		_sqlEntry = pnl;
 
 		final int pos = _splitPane.getDividerLocation();
-		if (!_sqlEntry.getDoesTextComponentHaveScroller())
-		{
-			_sqlEntryScroller = new JScrollPane(_sqlEntry.getTextComponent());
-			_sqlEntryScroller.setBorder(BorderFactory.createEmptyBorder());
-			_splitPane.add(_sqlEntryScroller);
-		}
-		else
-		{
-			_splitPane.add(_sqlEntry.getTextComponent(), JSplitPane.LEFT);
-		}
+
+      JScrollPane  scrollPane = _sqlEntry.createScrollPane(_sqlEntry.getTextComponent());
+      _splitPane.add(scrollPane);
+
+
+
+//		if (!_sqlEntry.getDoesTextComponentHaveScroller())
+//		{
+//         JScrollPane sqlEntryScroller = createScrollPane(_sqlEntry.getTextComponent());
+//			_splitPane.add(sqlEntryScroller);
+//		}
+//		else
+//		{
+//			_splitPane.add(_sqlEntry.getTextComponent(), JSplitPane.LEFT);
+//		}
 		_splitPane.setDividerLocation(pos);
 
-		if (!_sqlEntry.hasOwnUndoableManager())
-		{
-			IApplication app = _session.getApplication();
-			Resources res = app.getResources();
-			_undoAction = new UndoAction(app, _undoManager);
-			_redoAction = new RedoAction(app, _undoManager);
-
-			JComponent comp = _sqlEntry.getTextComponent();
-			comp.registerKeyboardAction(_undoAction, res.getKeyStroke(_undoAction),
-							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			comp.registerKeyboardAction(_redoAction, res.getKeyStroke(_redoAction),
-							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-			_sqlEntry.setUndoActions(_undoAction, _redoAction);
-
-			_sqlEntry.setUndoManager(_undoManager);
-		}
+      _undoHandler = new UndoHandlerImpl(_session.getApplication(), _sqlEntry);
 
       fireSQLEntryAreaInstalled();
 	}
-
 
    public void setVisible(boolean value)
    {
@@ -946,12 +928,12 @@ public class SQLPanel extends JPanel
 
    public Action getUndoAction()
    {
-      return _undoAction;
+      return _undoHandler.getUndoAction();
    }
 
    public Action getRedoAction()
    {
-      return _redoAction;
+      return _undoHandler.getRedoAction();
    }
 
    public boolean isInMainSessionWindow()

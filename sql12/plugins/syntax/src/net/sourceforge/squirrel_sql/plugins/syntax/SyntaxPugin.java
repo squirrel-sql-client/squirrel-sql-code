@@ -17,19 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -51,10 +38,21 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.ReplaceAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.UnmarkAction;
+
+import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the
@@ -77,8 +75,18 @@ public class SyntaxPugin extends DefaultSessionPlugin
          s_stringMgr.getString("SyntaxPlugin.tolowercase");
       //i18n[SyntaxPlugin.find=find]
       String FIND = s_stringMgr.getString("SyntaxPlugin.find");
+      //i18n[SyntaxPlugin.findSelected=findselected]
+      String FIND_SELECTED = s_stringMgr.getString("SyntaxPlugin.findselected");
+      //i18n[SyntaxPlugin.repeatLastFind=findrepeatlast]
+      String REPEAT_LAST_FIND = s_stringMgr.getString("SyntaxPlugin.repeatLastFind");
+      //i18n[SyntaxPlugin.markSelected=markselected]
+      String MARK_SELECTED = s_stringMgr.getString("SyntaxPlugin.markSelected");
       //i18n[SyntaxPlugin.replace=replace]
       String REPLACE = s_stringMgr.getString("SyntaxPlugin.replace");
+      //i18n[SyntaxPlugin.unmark=unmark]
+      String UNMARK = s_stringMgr.getString("SyntaxPlugin.unmark");
+      //i18n[SyntaxPlugin.gotoline=gotoline]
+      String GO_TO_LINE = s_stringMgr.getString("SyntaxPlugin.gotoline");
       //i18n[SyntaxPlugin.autocorr=autocorr]
       String AUTO_CORR = s_stringMgr.getString("SyntaxPlugin.autocorr");
       //i18n[SyntaxPlugin.duplicateline=duplicateline]
@@ -248,7 +256,27 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
+		act = new FindSelectedAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
+		act = new RepeatLastFindAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
+		act = new MarkSelectedAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
 		act = new ReplaceAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
+		act = new UnmarkAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
+		act = new GoToLineAction(getApplication(), _resources);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
@@ -338,8 +366,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
       new ToolsPopupHandler(this).initToolsPopup(sif, coll);
 
       JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
-      JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
       _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
+      JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
       _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
    }
 
@@ -358,9 +386,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
 
+      JMenuItem mnuUnmark = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UnmarkAction.class));
+      _resources.configureMenuItem(coll.get(UnmarkAction.class), mnuUnmark);
 		JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
+      _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
 		JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
-		_resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
 		_resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
 
 	}
@@ -504,7 +534,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 			String propName = evt.getPropertyName();
 
 			if(   false == SyntaxPreferences.IPropertyNames.USE_NETBEANS_CONTROL.equals(propName)
-				&& false == SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL.equals(propName) )
+				&& false == SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL.equals(propName)
+				&& false == SyntaxPreferences.IPropertyNames.USE_RSYNTAX_CONTROL.equals(propName) )
 			{
 
 				// Not the Textcontrol itself changed but some other of the Syntax Preferences, for example a color.
@@ -519,6 +550,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 				if(pluginObject instanceof OsterSQLEntryPanel)
 				{
 					((OsterSQLEntryPanel)pluginObject).updateFromPreferences();
+				}
+
+				if(pluginObject instanceof RSyntaxSQLEntryPanel)
+				{
+					((RSyntaxSQLEntryPanel)pluginObject).updateFromPreferences();
 				}
 			}
 			else
