@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
 
 
 public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
@@ -26,11 +27,13 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
    /** The original Squirrel SQL CLient factory for creating SQL entry panels. */
    private ISQLEntryPanelFactory _originalFactory;
 
+   private RSyntaxSQLEntryAreaFactory _rsyntaxFactory;
 
 
    SQLEntryPanelFactoryProxy(SyntaxPugin syntaxPugin, ISQLEntryPanelFactory originalFactory)
    {
       _originalFactory = originalFactory;
+      _rsyntaxFactory = new RSyntaxSQLEntryAreaFactory(syntaxPugin);
       _netbeansFactory = new NetbeansSQLEntryAreaFactory(syntaxPugin);
       _osterFactory = new OsterSQLEntryAreaFactory(syntaxPugin);
       _syntaxPugin = syntaxPugin;
@@ -55,7 +58,11 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       ISQLEntryPanel newPnl;
 
 
-      if (prefs.getUseNetbeansTextControl())
+      if (prefs.getUseRSyntaxTextArea())
+      {
+         newPnl = _rsyntaxFactory.createSQLEntryPanel(session, props);
+      }
+      else if (prefs.getUseNetbeansTextControl())
       {
          newPnl = _netbeansFactory.createSQLEntryPanel(session, props);
       }

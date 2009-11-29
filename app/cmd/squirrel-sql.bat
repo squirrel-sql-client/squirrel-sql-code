@@ -45,16 +45,18 @@ SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirre
 @rem To add translation working directories to your classpath edit and uncomment this line:
 @rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
+@rem -Dsun.java2d.noddraw=true prevents performance problems on Win32 systems. 
+
 @rem To change the language edit and uncomment this line:
-@rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
+@rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -Dsun.java2d.noddraw=true -cp %TMP_CP%;<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem Run with no command window. This may not work with older versions of Windows. Use the command above then.
-start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %SQUIRREL_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
+start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -Dsun.java2d.noddraw=true -cp %SQUIRREL_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem Run the executable jar file with or without a cmd window. However the
 @rem classes from the %CLASSPATH% environment variable will not be available.
 @rem "%LOCAL_JAVA%" -jar "%SQUIRREL_SQL_HOME%\squirrel-sql.jar" %TMP_PARMS%
-@rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -jar "%SQUIRREL_SQL_HOME%\squirrel-sql.jar" %TMP_PARMS%
+@rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Dsun.java2d.noddraw=true -jar "%SQUIRREL_SQL_HOME%\squirrel-sql.jar" %TMP_PARMS%
 
 :ExitForWrongJavaVersion
 exit

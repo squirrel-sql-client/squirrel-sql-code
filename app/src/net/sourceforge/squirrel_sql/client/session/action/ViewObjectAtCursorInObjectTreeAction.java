@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 
+import javax.swing.text.JTextComponent;
+
 
 public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
    implements ISQLPanelAction
@@ -46,42 +48,8 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
          return;
       }
 
-      String stringAtCursor = getStringAtCursor();
+      String stringAtCursor = _panel.getSQLEntryPanel().getWordAtCursor();
 
       new ObjectTreeSearch().viewObjectInObjectTree(stringAtCursor, _panel.getSession());
-   }
-
-   private String getStringAtCursor()
-   {
-      String text = _panel.getSQLEntryPanel().getText();
-      int caretPos = _panel.getSQLEntryPanel().getCaretPosition();
-
-      int lastIndexOfText = Math.max(0,text.length()-1);
-      int beginPos = Math.min(caretPos, lastIndexOfText); // The Math.min is for the Caret at the end of the text
-      while(0 < beginPos && false == isParseStop(text.charAt(beginPos), false))
-      {
-         --beginPos;
-      }
-
-      int endPos = caretPos;
-      while(endPos < text.length() && false == isParseStop(text.charAt(endPos), true))
-      {
-         ++endPos;
-      }
-
-      return text.substring(beginPos, endPos).trim();
-
-
-   }
-
-   private boolean isParseStop(char c, boolean treatDotAsStop)
-   {
-      return
-         '(' == c ||
-         ')' == c ||
-         '\'' == c ||
-         Character.isWhitespace(c) ||
-         (treatDotAsStop && '.' == c);
-
    }
 }

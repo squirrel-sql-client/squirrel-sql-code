@@ -5,13 +5,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -316,10 +315,10 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		return _textPopupMenu.add(action);
 	}
 
-	/**
-	 * @see ISQLEntryPanel#setUndoActions(javax.swing.Action, javax.swing.Action)
+   /**
+	 * @see ISQLEntryPanel#addRedoUndoActionsToSQLEntryAreaMenu(javax.swing.Action, javax.swing.Action)
 	 */
-	public void setUndoActions(Action undo, Action redo)
+	public void addRedoUndoActionsToSQLEntryAreaMenu(Action undo, Action redo)
 	{
 		_textPopupMenu.addSeparator();
 
@@ -334,12 +333,41 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		_textPopupMenu.addSeparator();
 	}
 
+   @Override
+   public boolean hasOwnUndoableManager()
+   {
+      return false;
+   }
+
+   @Override
+   public IUndoHandler createUndoHandler()
+   {
+      return null;
+   }
+
+
 	public void dispose()
 	{
 		_textPopupMenu.dispose();
 	}
 
-	private final class MyMouseListener extends MouseAdapter
+   @Override
+   public String getWordAtCursor()
+   {
+      int[] beginAndEndPos = SQLEntryPanelUtil.getWordBoundsAtCursor(getTextComponent(), true);
+      return getTextComponent().getText().substring(beginAndEndPos[0], beginAndEndPos[1]).trim();
+   }
+
+   @Override
+   public JScrollPane createScrollPane(JTextComponent textComponent)
+   {
+      JScrollPane sqlEntryScroller = new JScrollPane(textComponent);
+      sqlEntryScroller.setBorder(BorderFactory.createEmptyBorder());
+      return sqlEntryScroller;
+   }
+
+
+   private final class MyMouseListener extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent evt)
 		{

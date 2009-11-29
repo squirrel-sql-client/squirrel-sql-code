@@ -1,41 +1,39 @@
-package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
+package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class FindAction extends SquirrelAction implements ISQLPanelAction
+public class RepeatLastFindAction extends SquirrelAction implements ISQLPanelAction
 {
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(FindAction.class);
+		StringManagerFactory.getStringManager(RepeatLastFindAction.class);
 
 
    private ISession _session;
    private ISQLEntryPanel _sqlEntryPanel;
 
-   public FindAction(IApplication app, SyntaxPluginResources rsrc, ISQLEntryPanel sqlEntryPanel)
+   public RepeatLastFindAction(IApplication app, SyntaxPluginResources rsrc, ISQLEntryPanel sqlEntryPanel)
 	{
 		this(app, rsrc);
       _sqlEntryPanel = sqlEntryPanel;
    }
 
-   public FindAction(IApplication app, SyntaxPluginResources rsrc)
+   public RepeatLastFindAction(IApplication app, SyntaxPluginResources rsrc)
 	{
 		super(app, rsrc);
 	}
-   
+
 
 
    public void actionPerformed(ActionEvent evt)
@@ -54,17 +52,17 @@ public class FindAction extends SquirrelAction implements ISQLPanelAction
 
    private void doActionPerformed(ISQLEntryPanel sqlEntryPanel, ActionEvent evt)
    {
-      if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
+      if(sqlEntryPanel instanceof RSyntaxSQLEntryPanel)
       {
-         String msg =
-            //i18n[syntax.findNetbeansOnly=Find is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
-            s_stringMgr.getString("syntax.findNetbeansOnly");
+         SquirrelRSyntaxTextArea rsep = (SquirrelRSyntaxTextArea) sqlEntryPanel.getTextComponent();
+         rsep.repeatLastFind(evt);
+      }
+      else
+      {
+         String msg = s_stringMgr.getString("syntax.repeatLastfindOnlyOnRecommendedEditors");
          JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-         return;
       }
 
-      NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
-      nsep.showFindDialog(evt);
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)

@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -15,10 +16,10 @@ public class KeyManager
 {
    public static final char[] STOP_AT = new char[]{'.', '(', ')' , '\'', '\n', ',', '=', '<', '>'};
 
-   private JEditorPane _textPane;
+   private JTextComponent _textPane;
 
 
-   public KeyManager(JEditorPane textPane)
+   public KeyManager(JTextComponent textPane)
    {
       _textPane = textPane;
 

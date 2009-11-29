@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import javax.swing.event.CaretListener;
@@ -13,7 +15,11 @@ class RowColumnLabel extends JLabel
 	private ISQLEntryPanel _sqlEntryPanel;
 	private StringBuffer _msg = new StringBuffer();
 
-	RowColumnLabel(ISQLEntryPanel sqlEntryPanel)
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RowColumnLabel.class);
+   private Dimension _dim;
+
+
+   RowColumnLabel(ISQLEntryPanel sqlEntryPanel)
 	{
 		super(" ", JLabel.CENTER);
 
@@ -28,22 +34,24 @@ class RowColumnLabel extends JLabel
 
 		});
 
-		writePosition(0,0);
+		writePosition(0,0, 0);
+
+      setToolTipText(s_stringMgr.getString("RowColumnLabel.tooltip"));
 	}
 
 	private void onCaretUpdate(CaretEvent e)
 	{
 		int caretLineNumber = _sqlEntryPanel.getCaretLineNumber();
 		int caretLinePosition = _sqlEntryPanel.getCaretLinePosition();
+      int caretPosition = _sqlEntryPanel.getCaretPosition();
 
-		writePosition(caretLineNumber, caretLinePosition);
+		writePosition(caretLineNumber, caretLinePosition, caretPosition);
 	}
 
-	private void writePosition(int caretLineNumber, int caretLinePosition)
+	private void writePosition(int caretLineNumber, int caretLinePosition, int caretPosition)
 	{
 		_msg.setLength(0);
-		_msg.append(caretLineNumber + 1)
-			.append(",").append(caretLinePosition + 1);
+		_msg.append(caretLineNumber + 1).append(",").append(caretLinePosition + 1).append(" / ").append(caretPosition + 1);
 		setText(_msg.toString());
 	}
 
@@ -54,25 +62,34 @@ class RowColumnLabel extends JLabel
 	 */
 	public Dimension getPreferredSize()
 	{
-		Dimension dim = super.getPreferredSize();
-		FontMetrics fm = getFontMetrics(getFont());
-		dim.width = fm.stringWidth("000,000");
-		Border border = getBorder();
-		if (border != null)
-		{
-			Insets ins = border.getBorderInsets(this);
-			if (ins != null)
-			{
-				dim.width += (ins.left + ins.right);
-			}
-		}
-		Insets ins = getInsets();
-		if (ins != null)
-		{
-			dim.width += (ins.left + ins.right);
-		}
-		return dim;
+      if (null == _dim)
+      {
+         _dim = calcPrefSize();
+      }
+      return _dim;
 	}
+
+   private Dimension calcPrefSize()
+   {
+      Dimension dim = super.getPreferredSize();
+      FontMetrics fm = getFontMetrics(getFont());
+      dim.width = fm.stringWidth("000,000 / 00000000");
+      Border border = getBorder();
+      if (border != null)
+      {
+         Insets ins = border.getBorderInsets(this);
+         if (ins != null)
+         {
+            dim.width += (ins.left + ins.right);
+         }
+      }
+      Insets ins = getInsets();
+      if (ins != null)
+      {
+         dim.width += (ins.left + ins.right);
+      }
+      return dim;
+   }
 
 
 }

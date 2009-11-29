@@ -328,8 +328,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
 
       DefaultMutableTreeNode parent = (DefaultMutableTreeNode) delNode.getParent();
+      int indexOfChild = treeModel.getIndexOfChild(parent, delNode);
       treeModel.removeNodeFromParent(delNode);
-      treeModel.nodeStructureChanged(parent);
+
+      treeModel.nodesWereRemoved(parent, new int[]{indexOfChild}, new Object[]{delNode});
+      //treeModel.nodeStructureChanged(parent);
 
       if(null != nextToSel)
       {
@@ -484,9 +487,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
             {
                removeAllAliasesFromNode(selNode);
 
-               selNode.removeFromParent();
                DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
-               dtm.nodeStructureChanged(parent);
+               int indexOfChild = dtm.getIndexOfChild(parent, selNode);
+               selNode.removeFromParent();
+               dtm.nodesWereRemoved(parent, new int[]{indexOfChild}, new Object[]{selNode});
+               //dtm.nodeStructureChanged(parent);
             }
          }
       }
@@ -670,8 +675,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          if(tn.isLeaf())
          {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) tn.getParent();
-            parent.insert(newFolder, parent.getIndex(tn) + 1);
-            treeModel.nodeStructureChanged(parent);
+            int childIndex = parent.getIndex(tn) + 1;
+            parent.insert(newFolder, childIndex);
+            treeModel.nodesWereInserted(parent, new int[]{childIndex});
          }
          else
          {
@@ -682,8 +688,10 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       else
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) _tree.getModel().getRoot();
+
+         int[] childIndices = new int[]{root.getChildCount()};
          root.add(newFolder);
-         treeModel.nodeStructureChanged(root);
+         treeModel.nodesWereInserted(root, childIndices);
       }
 
       //_tree.expandPath(new TreePath(newFolder.getPath()));
@@ -836,11 +844,14 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
+         int[] childIndices = new int[cutNodes.size()];
          for (int i = 0; i < cutNodes.size(); i++)
          {
+            childIndices[i] = root.getChildCount();
             root.add(cutNodes.get(i));
          }
-         dtm.nodeStructureChanged(root);
+         //dtm.nodeStructureChanged(root);
+         dtm.nodesWereInserted(root, childIndices);
       }
       else
       {

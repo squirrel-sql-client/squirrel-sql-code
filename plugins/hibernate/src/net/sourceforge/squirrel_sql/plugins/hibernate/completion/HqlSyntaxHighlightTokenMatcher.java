@@ -16,6 +16,12 @@ public class HqlSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    }
 
 
+   @Override
+   public boolean isError(int offset, int len)
+   {
+      return false;
+   }
+
    public boolean isTable(char[] buffer, int offset, int len)
    {
       String classNameCandidate = getString(buffer, offset, len);

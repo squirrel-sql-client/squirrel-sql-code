@@ -173,6 +173,8 @@ public class SyntaxPreferencesPanel
 			String TAB_HINT = s_stringMgr.getString("syntax.prefSyntaxHint");
 			// i18n[syntax.prefUseNetbeans=Use Netbeans editor (recommended)]
          String NETBEANS = s_stringMgr.getString("syntax.prefUseNetbeans");
+			// i18n[syntax.prefUseNetbeans=Use Netbeans editor (recommended)]
+         String RSYNTAX = s_stringMgr.getString("syntax.prefUseRsyntax");
 			// i18n[syntax.prefUseOster=Use Ostermiller editor]
 			String OSTER = s_stringMgr.getString("syntax.prefUseOster");
 			// i18n[syntax.prefUsePlain=Use plain editor]
@@ -183,14 +185,23 @@ public class SyntaxPreferencesPanel
          // i18n[syntax.textLimitLineWidth=Text limit line width]
          String TEXT_LIMIT_LINE_WIDTH = s_stringMgr.getString("syntax.textLimitLineWidth");
 
+         // i18n[syntax.highlightCurrentLine=Highlight current line]
+         String HIGHLIGHT_CURRENT_LINE = s_stringMgr.getString("syntax.highlightCurrentLine");
+
+         // i18n[syntax.lineNumbersEnabled=Enable line numbers]
+         String LINE_NUMBERS_ENABLES = s_stringMgr.getString("syntax.lineNumbersEnabled");
+
       }
 
       private final JRadioButton _netbeansActiveOpt  = new JRadioButton(i18n.NETBEANS);
+      private final JRadioButton _rsyntaxActiveOpt  = new JRadioButton(i18n.RSYNTAX);
 		private final JRadioButton _osterActiveOpt = new JRadioButton(i18n.OSTER);
       private final JRadioButton _plainActiveOpt  = new JRadioButton(i18n.PLAIN);
 
       private final JCheckBox _chkTextLimitLineVisible = new JCheckBox(i18n.TEXT_LIMIT_LINE_VISIBLE);
       private final JTextField _txtTextLimitLineWidth = new JTextField();
+      private final JCheckBox _chkHighlightCurrentLine = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
+      private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(i18n.LINE_NUMBERS_ENABLES);
 
 
       private StylesListSelectionListener _listLis;
@@ -237,9 +248,12 @@ public class SyntaxPreferencesPanel
 		{
 			_osterActiveOpt.setSelected(prefs.getUseOsterTextControl());
          _netbeansActiveOpt.setSelected(prefs.getUseNetbeansTextControl());
+         _rsyntaxActiveOpt.setSelected(prefs.getUseRSyntaxTextArea());
          _plainActiveOpt.setSelected(prefs.getUsePlainTextControl());
 
          _chkTextLimitLineVisible.setSelected(prefs.isTextLimitLineVisible());
+         _chkHighlightCurrentLine.setSelected(prefs.isHighlightCurrentLine());
+         _chkLineNumbersEnabled.setSelected(prefs.isLineNumbersEnabled());
 
          _txtTextLimitLineWidth.setText("" + prefs.getTextLimitLineWidth());
 
@@ -252,6 +266,7 @@ public class SyntaxPreferencesPanel
 
       void applyChanges(SyntaxPreferences prefs)
 		{
+         boolean oldUseRSyntaxTextArea = prefs.getUseRSyntaxTextArea();
          boolean oldUseNetbeansTextControl = prefs.getUseNetbeansTextControl();
          boolean oldUseOsterTextControl = prefs.getUseOsterTextControl();
          boolean oldUsePlainTextControl = prefs.getUsePlainTextControl();
@@ -259,17 +274,21 @@ public class SyntaxPreferencesPanel
          try
          {
             prefs.setUseNetbeansTextControl(_netbeansActiveOpt.isSelected());
+            prefs.setUseRSyntaxTextArea(_rsyntaxActiveOpt.isSelected());
             prefs.setUseOsterTextControl(_osterActiveOpt.isSelected());
             prefs.setUsePlainTextControl(_plainActiveOpt.isSelected());
          }
          catch (SyntaxPrefChangeNotSupportedException e)
          {
             prefs.setUseNetbeansTextControl(oldUseNetbeansTextControl);
+            prefs.setUseRSyntaxTextArea(oldUseRSyntaxTextArea);
             prefs.setUseOsterTextControl(oldUseOsterTextControl);
             prefs.setUsePlainTextControl(oldUsePlainTextControl);
          }
 
          prefs.setTextLimitLineVisible(_chkTextLimitLineVisible.isSelected());
+         prefs.setHighlightCurrentLine(_chkHighlightCurrentLine.isSelected());
+         prefs.setLineNumbersEnabled(_chkLineNumbersEnabled.isSelected());
 
          int limit = 80;
 
@@ -311,18 +330,22 @@ public class SyntaxPreferencesPanel
 		{
 			final boolean useOsterControl = _osterActiveOpt.isSelected();
          final boolean useNetbeansControl = _netbeansActiveOpt.isSelected();
+         final boolean useRSyntaxControl = _rsyntaxActiveOpt.isSelected();
          final boolean usePlainControl = _plainActiveOpt.isSelected();
 
-			_stylesList.setEnabled(useOsterControl || useNetbeansControl);
-			_styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl);
+			_stylesList.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
+			_styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
 
-         _chkTextLimitLineVisible.setEnabled(useNetbeansControl);
-         _txtTextLimitLineWidth.setEnabled(useNetbeansControl);
+         _chkTextLimitLineVisible.setEnabled(useNetbeansControl || useRSyntaxControl);
+         _txtTextLimitLineWidth.setEnabled(useNetbeansControl || useRSyntaxControl);
 
-         if(useNetbeansControl)
+         if(useNetbeansControl || useRSyntaxControl)
          {
             _txtTextLimitLineWidth.setEnabled(_chkTextLimitLineVisible.isSelected());
          }
+
+         _chkHighlightCurrentLine.setEnabled(useRSyntaxControl);
+         _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
       }
 
 		private void createUserInterface(SyntaxPreferences prefs,
@@ -332,6 +355,7 @@ public class SyntaxPreferencesPanel
 			GridBagConstraints gbc;
 
          ButtonGroup bg = new ButtonGroup();
+         bg.add(_rsyntaxActiveOpt);
          bg.add(_netbeansActiveOpt);
          bg.add(_osterActiveOpt);
          bg.add(_plainActiveOpt);
@@ -345,6 +369,14 @@ public class SyntaxPreferencesPanel
 			});
 
          _netbeansActiveOpt.addChangeListener(new ChangeListener()
+         {
+            public void stateChanged(ChangeEvent evt)
+            {
+               updateControlStatus();
+            }
+         });
+
+         _rsyntaxActiveOpt.addChangeListener(new ChangeListener()
          {
             public void stateChanged(ChangeEvent evt)
             {
@@ -367,6 +399,23 @@ public class SyntaxPreferencesPanel
                updateControlStatus();
             }
          });
+
+         _chkHighlightCurrentLine.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               updateControlStatus();
+            }
+         });
+
+         _chkLineNumbersEnabled.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               updateControlStatus();
+            }
+         });
+
 
 
 
@@ -404,19 +453,34 @@ public class SyntaxPreferencesPanel
          GridBagConstraints gbc;
 
          gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-         pnlRet.add(_netbeansActiveOpt, gbc);
+         pnlRet.add(_rsyntaxActiveOpt, gbc);
 
          gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-         pnlRet.add(_osterActiveOpt, gbc);
+         pnlRet.add(_netbeansActiveOpt, gbc);
 
          gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+         pnlRet.add(_osterActiveOpt, gbc);
+
+         gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
          pnlRet.add(_plainActiveOpt, gbc);
 
+
+         gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(40,5,0,5), 0,0);
+         pnlRet.add(createPnlLineLimit(), gbc);
+
+         gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(_chkHighlightCurrentLine, gbc);
+
+         gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(_chkLineNumbersEnabled, gbc);
+
+         return pnlRet;
+      }
+
+      private JPanel createPnlLineLimit()
+      {
+         GridBagConstraints gbc;
          JPanel pnlLineLimit = new JPanel(new GridBagLayout());
-         gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-         pnlRet.add(pnlLineLimit, gbc);
-
-
          gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
          pnlLineLimit.add(_chkTextLimitLineVisible, gbc);
 
@@ -426,8 +490,7 @@ public class SyntaxPreferencesPanel
          _txtTextLimitLineWidth.setColumns(3);
          gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
          pnlLineLimit.add(_txtTextLimitLineWidth, gbc);
-
-         return pnlRet;
+         return pnlLineLimit;
       }
 
 

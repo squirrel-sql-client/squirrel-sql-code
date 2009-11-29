@@ -6,6 +6,19 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New editor component: RSyntaxTextArea by fifesoft.com.
+ New features:
+  - No long line problems
+  - Enhanced search functions:
+      shift F3: Find selected.
+      F3: Repeat last find.
+      control shift F3: Mark selected.
+      escape: Unmark all.
+  - Line numbers can be displayed
+  - Current line can be highlighted
+  Note: On MS-Windows systems the Java-VM parameter -Dsun.java2d.noddraw=true must be set in your SQUirreL start batch to prevent performance problems. 
+
+
  - New Polish translation available (Thanks to Miron Sadziak)
 
 Better table header rendering for MAC OS

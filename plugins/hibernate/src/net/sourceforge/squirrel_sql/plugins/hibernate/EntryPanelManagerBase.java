@@ -3,13 +3,9 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SquirrelDefaultUndoManager;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.UndoHandlerImpl;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -51,23 +47,7 @@ public class EntryPanelManagerBase
          _component.setBorder(BorderFactory.createEmptyBorder());
       }
 
-      if (!_entry.hasOwnUndoableManager())
-      {
-         SquirrelDefaultUndoManager undoManager = new SquirrelDefaultUndoManager();
-         IApplication app = _session.getApplication();
-         Resources res = app.getResources();
-         UndoAction undoAction = new UndoAction(app, undoManager);
-         RedoAction redoAction = new RedoAction(app, undoManager);
-
-         JComponent comp = _entry.getTextComponent();
-         comp.registerKeyboardAction(undoAction, res.getKeyStroke(undoAction),
-            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-         comp.registerKeyboardAction(redoAction, res.getKeyStroke(redoAction),
-            JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-         _entry.setUndoActions(undoAction, redoAction);
-
-         _entry.setUndoManager(undoManager);
-      }
+      new UndoHandlerImpl(_session.getApplication(), _entry);
    }
 
    public JComponent getComponent()
