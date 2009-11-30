@@ -68,6 +68,10 @@ Graph Plugin:
 
 Bug-Fixes:
 
+Fixed startup error:
+ java.lang.NullPointerException
+ at ... .AliasFolderState.applyExpansionAndSelectionToNode(AliasFolderState.java:144)
+
 Error in Alias tree: Alias vanished / rose error when dragged on itself.
 
 2853329: Ctrl-S overwrites existing file on 2nd try
