@@ -147,17 +147,23 @@ public class AliasFolderState implements Comparable<AliasFolderState>
 
    public void applyExpansionAndSelection(JTree tree)
    {
-      if (null != _folderName)
+      if (_node != null)
       {
-         applyExpansionAndSelectionToNode(tree, _node);
-         for (AliasFolderState kid : _kids)
+         // _node is null when there is an _aliasIdentifier with no Alias
+         // This has been seen some times and caused NullPointersHere  
+
+         if (null != _folderName)
          {
-            kid.applyExpansionAndSelection(tree);
+            applyExpansionAndSelectionToNode(tree, _node);
+            for (AliasFolderState kid : _kids)
+            {
+               kid.applyExpansionAndSelection(tree);
+            }
          }
-      }
-      else
-      {
-         applyExpansionAndSelectionToNode(tree, _node);
+         else
+         {
+            applyExpansionAndSelectionToNode(tree, _node);
+         }
       }
    }
 
