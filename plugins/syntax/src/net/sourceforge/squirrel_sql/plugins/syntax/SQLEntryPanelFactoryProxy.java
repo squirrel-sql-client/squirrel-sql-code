@@ -42,6 +42,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
    public void sessionEnding(ISession session)
    {
       _netbeansFactory.sessionEnding(session);
+      _rsyntaxFactory.sessionEnding(session);
    }
 
    public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap<String, Object> props)

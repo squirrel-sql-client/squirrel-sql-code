@@ -451,6 +451,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void sessionEnding()
 	{
+      _textArea.sessionEnding();
 		_session = null;
 	}
 
