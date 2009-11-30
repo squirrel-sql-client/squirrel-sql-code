@@ -19,7 +19,9 @@ import org.fife.ui.rtextarea.RTextAreaUI;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
+import javax.swing.text.DefaultCaret;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 
@@ -206,5 +208,23 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    public void showGoToLineDialog(ActionEvent evt)
    {
       _squirrelRSyntaxSearchEngine.goToLine();
+   }
+
+   public void sessionEnding()
+   {
+      ////////////////////////////////////////////
+      // Better GCing
+      getCaret().deinstall(this);
+      if(getCaret() instanceof DefaultCaret)
+      {
+         ChangeListener[] changeListeners = ((DefaultCaret) getCaret()).getChangeListeners();
+
+         for (ChangeListener changeListener : changeListeners)
+         {
+            getCaret().removeChangeListener(changeListener);
+         }
+      }
+      //
+      ////////////////////////////////////////////
    }
 }
