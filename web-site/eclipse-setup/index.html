@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>SQuirreL SQL Eclipse Setup</title>
+<style type="text/css">
+dt { font-weight: bold }
+</style>
+</head>
+<body>
+<h2>Eclipse setup</h2>
+<p>Here's a detailed guide to checking out squirrel from CVS and building from within eclipse.  
+I've also included some information about project settings that aren't explicitly required.    
+
+<p>You might consider creating a "squirrel" workspace.</p>
+
+
+<h4>Add squirrel cvs repository</h4> 
+<ol>
+<li>Go to Window -> Open Perspective -> Other... and select CVS Perspective<br>
+<img src="cvsperspective.jpg">
+</li>
+<li>Then add a new repository<br>
+<img src="newrepository.jpg">
+</li>
+<li>Enter the following information:
+<dl><dt>host</dt><dd>squirrel-sql.cvs.sourceforge.net<dd>
+<dt>repository path</dt><dd>/cvsroot/squirrel-sql</dd>
+<dt>user</dt><dd>anonymous</dd>
+<dt>password</dt><dd>-- leave blank --</dd>
+<dt>connection type</dt><dd>pserver</dd>
+<dt>save password</dt><dd>-- check this box --</dd>
+</dl>
+<img src="addcvs.jpg">
+</li>
+</ol>
+
+<h4>Check out project</h4>
+<ol>
+<li>Navigate to the sql12 directory, right click and selct "check out project as ..."<br>
+<img src="checkoutasmenu.jpg"></li>
+<li>Then select "Checkout project using the New Project wizard."<br>
+<img src="checkoutas.jpg"></li>
+<li>Select check out as a java project<br>
+<img src="newprojectwizard.jpg"></li>
+<li>Enter a project name and click finish<br>
+<img src="checkoutasjavaproject.jpg"/></li>
+<li>Change to the java perspective by clicking yes when this dialog appears.<br>
+<img src="javaperspective.jpg"></li>
+<li>You'll then see this window, which will take awhile to complete depending on your connection speed.<br>
+<img src="checkingout.jpg"></li>
+
+<h4>Setting project properties</h4>
+<ol>
+<li>Open the project properties dialog<br>
+<img src="projectproperties.jpg">
+</li>
+<li>Add the src directories from areas of the project you intend to work with. 
+(It's recommended that you add all of them, including the test/src directory to avoid classpath problems.)<br>
+<img src="addsrc.jpg"></li>
+<li>Add the jar files from various directories (there are a lot, so this part may take some patience, or 
+it can be skipped if you don't mind compiler errors in your java editor view)<br> 
+<img src="addjars.jpg"></li>
+<li>Click OK and you'll see this in the bottom right corner.<br>
+<img src="buildingworkspace.jpg"></li>
+</ol>
+
+<h4>Running the application</h4>
+Navigate to app/src/net.sourceforge.squirrel_sql.client, right click Main.java and select "run as java application."
+<img src="runas.jpg">
+
+<h4>Building with ant</h4>
+<ol><li>Add the ant build file by opening the ant view from Window -> Show View -> Ant, then adding a build/build.xml 
+as a build file.  There's an ant icon with + next to it that can be used to add build files.  At this point you'll 
+see something like this:<br>
+<img src="antbuild.jpg"></li>
+<li>Execute the "make_dist" target to create distribution.</li>
+<li>You can run the "test" target, but this requires running make_dist first.</li>
+</ol>
+
+</body>
+</html>
