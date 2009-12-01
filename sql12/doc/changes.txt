@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+XML Export:
+ Tables in SQuirreL's GUI now allow to export data as XML (besides CSV and MS-Excel export)
+ Thanks to mironsadziak for the patch (Patch ID 2905595) 
+
 New editor component: RSyntaxTextArea by fifesoft.com.
  New features:
   - No long line problems
