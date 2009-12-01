@@ -36,6 +36,7 @@ public class TableExportCsvController
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
    private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
    private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS";
+   private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
 
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TableExportCsvController.class);
@@ -46,6 +47,7 @@ public class TableExportCsvController
    private boolean _ok = false;
    public static final int EXPORT_FORMAT_CSV = 0;
    public static final int EXPORT_FORMAT_XLS = 1;
+   public static final int EXPORT_FORMAT_XML = 2;
 
    TableExportCsvController()
    {
@@ -118,6 +120,14 @@ public class TableExportCsvController
       });
 
       _dlg.radFormatXLS.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFormat(true);
+         }
+      });
+      
+      _dlg.radFormatXML.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
@@ -201,6 +211,18 @@ public class TableExportCsvController
             replaceFileEnding();
          }
       }
+      else if (_dlg.radFormatXML.isSelected())
+      {
+         _dlg.lblSeparator.setEnabled(false);
+         _dlg.lblCharset.setEnabled(false);
+         _dlg.chkSeparatorTab.setEnabled(false);
+         _dlg.txtSeparatorChar.setEnabled(false);
+         _dlg.charsets.setEnabled(false);
+         if(replaceEnding)
+         {
+            replaceFileEnding();
+         }
+      }
       else
       {
          throw new IllegalStateException("No valid output format");
@@ -218,6 +240,10 @@ public class TableExportCsvController
       else if (_dlg.radFormatXLS.isSelected())
       {
          newEnding = "xls";
+      }
+      else if (_dlg.radFormatXML.isSelected())
+      {
+         newEnding = "xml";
       }
       else
       {
@@ -376,6 +402,7 @@ public class TableExportCsvController
       Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLS.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
       Preferences.userRoot().put(PREF_KEY_LINE_SEPERATOR, ((LineSeparator)_dlg._lineSeparators.getSelectedItem()).name());
@@ -408,6 +435,10 @@ public class TableExportCsvController
       else if(userRoot.getBoolean(PREF_KEY_FORMAT_XLS, false))
       {
          _dlg.radFormatXLS.setSelected(true);
+      }
+      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XML, false))
+      {
+         _dlg.radFormatXML.setSelected(true);
       }
       else
       {
@@ -571,6 +602,10 @@ public class TableExportCsvController
       else if(_dlg.radFormatXLS.isSelected())
       {
          return EXPORT_FORMAT_XLS;
+      }
+      else if(_dlg.radFormatXML.isSelected())
+      {
+         return EXPORT_FORMAT_XML;
       }
       else
       {

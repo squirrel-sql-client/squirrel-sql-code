@@ -2,14 +2,28 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.sql.Types;
 import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import jxl.Workbook;
 import jxl.write.WritableCell;
@@ -207,6 +221,10 @@ public class TableExportCsvCommand
          {
             return writeXLS(file, includeHeaders, nbrSelCols, selCols, nbrSelRows, ctrl, selRows);
          }
+         else if(TableExportCsvController.EXPORT_FORMAT_XML == ctrl.getExportFormat())
+         {
+            return writeXML(file, includeHeaders, nbrSelCols, selCols, nbrSelRows, ctrl, selRows);
+         }
          else
          {
             throw new IllegalStateException("Unknown export format " + ctrl.getExportFormat());
@@ -233,7 +251,21 @@ public class TableExportCsvCommand
          s_log.error(msg, e);
          JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
          return false;
-      }
+      } catch (ParserConfigurationException e) {
+    	  Object[] params = new Object[]{file, e.getMessage()};
+          // i18n[TableExportCsvCommand.failedToWriteFile=Failed to write file\n{0}\nError message\n{1}\nSee last log entry for details.]
+          String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteFile", params);
+          s_log.error(msg, e);
+          JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+          return false;
+	} catch (TransformerException e) {
+		Object[] params = new Object[]{file, e.getMessage()};
+        // i18n[TableExportCsvCommand.failedToWriteFile=Failed to write file\n{0}\nError message\n{1}\nSee last log entry for details.]
+        String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteFile", params);
+        s_log.error(msg, e);
+        JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+        return false;
+	}
 
    }
 
@@ -284,6 +316,124 @@ public class TableExportCsvCommand
 
       return true;
    }
+
+	/**
+	 * Writes the selected table data to XML file.
+	 * 
+	 * <p>
+	 * Uses DOM for output
+	 * </p>
+	 * 
+	 * @param file
+	 *            File to output to
+	 * @param includeHeaders
+	 *            Set to true if header info (column names) should be included
+	 * @param nbrSelCols
+	 *            Number of selected columns
+	 * @param selCols
+	 *            Selected columns
+	 * @param nbrSelRows
+	 *            Number of selected rows
+	 * @param ctrl
+	 *            Export controller
+	 * @param selRows
+	 *            Selected rows
+	 * @return If everything went well returns true
+	 * @throws ParserConfigurationException
+	 *             If the XML DocumentBuilder cannnot be created
+	 * @throws FileNotFoundException
+	 *             When failing to create the file
+	 * @throws TransformerException
+	 *             When failing to output the XML structure to the file
+	 */
+	private boolean writeXML(File file, boolean includeHeaders, int nbrSelCols,
+			int[] selCols, int nbrSelRows, TableExportCsvController ctrl,
+			int[] selRows) throws ParserConfigurationException,
+			FileNotFoundException, TransformerException {
+
+		// Using a factory to get DocumentBuilder for creating XML's
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+
+		// Here instead of parsing an existing document we want to
+		// create a new one.
+		Document testDoc = builder.newDocument();
+
+		// 'table' is the main tag in the XML.
+		Element root = testDoc.createElement("table");
+		testDoc.appendChild(root);
+
+		// 'columns' tag will contain informations about columns
+		Element columns = testDoc.createElement("columns");
+		root.appendChild(columns);
+		int curRow = 0;
+		if (includeHeaders) {
+			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+				String columnName = _table.getColumnName(selCols[colIdx]);
+
+				Element columnEl = testDoc.createElement("column");
+				columnEl.setAttribute("number", String.valueOf(colIdx));
+				columns.appendChild(columnEl);
+
+				Element columnNameEl = testDoc.createElement("name");
+				columnNameEl.setTextContent(columnName);
+				columnEl.appendChild(columnNameEl);
+			}
+			curRow++;
+		}
+
+		// 'rows' tag contains the data extracted from the table
+		Element rows = testDoc.createElement("rows");
+		root.appendChild(rows);
+
+		for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx) {
+			Element row = testDoc.createElement("row");
+			row.setAttribute("rowNumber", String.valueOf(rowIdx));
+			rows.appendChild(row);
+			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx) {
+
+				Element value = testDoc.createElement("value");
+				Object cellValue = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+            String strCellValue = "";
+            if(null != cellValue)
+            {
+               strCellValue = cellValue.toString();
+            }
+
+				value.setAttribute("columnNumber", String.valueOf(colIdx));
+				value.setTextContent(strCellValue);
+				row.appendChild(value);
+
+			}
+			curRow++;
+		}
+
+		// The XML document we created above is still in memory
+		// so we have to output it to a real file.
+		// In order to do it we first have to create
+		// an instance of DOMSource
+		DOMSource source = new DOMSource(testDoc);
+
+		// PrintStream will be responsible for writing
+		// the text data to the file
+		PrintStream ps = new PrintStream(file);
+		StreamResult result = new StreamResult(ps);
+
+		// Once again we are using a factory of some sort,
+		// this time for getting a Transformer instance,
+		// which we use to output the XML
+		TransformerFactory transformerFactory = TransformerFactory
+				.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+
+		// Indenting the XML
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		// The actual output to a file goes here
+		transformer.transform(source, result);
+
+		return true;
+	}
 
    private WritableCell getXlsCell(ExtTableColumn col, int colIdx, int curRow, Object cellObj)
    {

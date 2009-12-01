@@ -33,6 +33,7 @@ public class TableExportCsvDlg extends JDialog
    JButton btnFile;
    JCheckBox chkWithHeaders;
    JRadioButton radFormatXLS;
+   JRadioButton radFormatXML;
    JRadioButton radFormatCSV;
    JLabel lblSeparator;
    JLabel lblLineSeparator;
@@ -74,7 +75,7 @@ public class TableExportCsvDlg extends JDialog
    {
       super(GUIUtils.getMainFrame(), true);
 
-      // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel export]
+      // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));
 
       getContentPane().setLayout(new GridBagLayout());
@@ -137,14 +138,20 @@ public class TableExportCsvDlg extends JDialog
       radFormatXLS = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLS"));
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(radFormatXLS, gbc);
+      
+      // i18n[TableExportCsvDlg.formatXML=Export XML file]
+      radFormatXML = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXML"));
+      gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(radFormatXML, gbc);
 
-      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(2, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(new JPanel(), gbc);
 
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radFormatCSV);
       bg.add(radFormatXLS);
+      bg.add(radFormatXML);
 
       return ret;
    }
