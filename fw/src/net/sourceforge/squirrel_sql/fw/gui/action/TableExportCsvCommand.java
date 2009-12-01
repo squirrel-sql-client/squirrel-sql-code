@@ -342,7 +342,19 @@ public class TableExportCsvCommand
             cal.setTime((java.util.Date) cellObj);
 
             int offset = (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET));
-            java.util.Date xlsUTCDate = new java.util.Date(time + offset);
+            
+            long utcTime = time+offset;
+            /* Work around Excel's problem with dates before 1900-03-01
+             * http://support.microsoft.com/kb/214058
+             * -2203891200000l is 1900-03-01 UTC time
+             * 8640000 means 24 hours
+             */
+            if (utcTime < -2203891200000l)
+            {
+               utcTime += 86400000;
+            }
+
+            java.util.Date xlsUTCDate = new java.util.Date(utcTime);
             ret = new jxl.write.DateTime(colIdx, curRow, xlsUTCDate, jxl.write.DateTime.GMT);
             break;
          case Types.CHAR:
