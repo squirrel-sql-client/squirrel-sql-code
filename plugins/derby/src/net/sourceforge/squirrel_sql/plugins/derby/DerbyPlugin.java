@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.derby.exp.DerbyTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.derby.prefs.DerbyPluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.derby.prefs.DerbyPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.derby.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
@@ -115,7 +116,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @return  the current version of this plugin.
     */
    public String getVersion() {
-      return "0.12";
+      return "0.13";
    }
 
    /**
@@ -261,8 +262,8 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
       _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 
-      //_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-      //        new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+      _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
+              new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
 
       _treeAPI.addDetailTab(DatabaseObjectType.VIEW,
                             new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
