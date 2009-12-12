@@ -24,7 +24,10 @@ use Text::Template;
 $mavenizeDir = `pwd`;
 $mavenizeDir =~ s/\s//g;
 
-$topDir       = "/home/manningr/projects/squirrel_maven2/sql12";
+$topDir       = shift;
+if (! defined $topDir) {
+	exit("Must specify top-level dir (absolute path to sql12)");
+}
 $fwDir        = $topDir . "/fw";
 $appDir       = $topDir . "/app";
 $pluginsDir   = $topDir . "/plugins";
@@ -33,7 +36,7 @@ $installerDir = $topDir . "/installer";
 $docDir       = $topDir . "/doc";
 $websiteDir   = $topDir . "/web-site";
 
-$onlyCopyPoms = 1;
+$onlyCopyPoms = 0;
 
 $cache_deps = <<"EOF";
 <dependencies>
