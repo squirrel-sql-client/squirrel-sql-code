@@ -17,61 +17,53 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the source for a Sybase trigger.
- *
+ * This class provides the necessary information to the parent tab to display the source for a Sybase trigger.
  */
 public class TriggerSourceTab extends FormattedSourceTab
-{
-
-    /** Logger for this class. */
-    private final static ILogger s_log =
-        LoggerController.createLogger(TriggerSourceTab.class);
-                
-	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
-        "SELECT trigger_defs.text " +
-        "FROM sysobjects tables , sysobjects triggers, syscomments trigger_defs " +
-        "where triggers.type = 'TR' " +
-        "and triggers.id = trigger_defs.id " +
-        "and triggers.deltrig = tables.id " +
-        "and tables.loginame = ? " +
-        // TODO: figure out how to get then name of the table that the trigger 
-        //       is on. 
-        //"and tables.name = ? " +
-        "and triggers.name = ? ";
-        
-	public TriggerSourceTab(String hint, String stmtSep)
-	{
+{        
+	/**
+	 * Constructor
+	 * 
+	 * @param hint
+	 *        what the user sees on mouse-over tool-tip
+	 * @param stmtSep
+	 *        the string to use to separate SQL statements
+	 */
+	public TriggerSourceTab(String hint, String stmtSep) {
 		super(hint);
-        super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);
+		super.setCompressWhitespace(true);
+		super.setupFormatter(stmtSep, null);
 	}
 
-	protected PreparedStatement createStatement() throws SQLException
-	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for View source tab: "+SQL);
-            s_log.debug("Binding for param 1: "+doi.getCatalogName());
-            s_log.debug("Binding for param 2: "+doi.getSimpleName());
-        }
-        
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, doi.getCatalogName());
-		pstmt.setString(2, doi.getSimpleName());
-		return pstmt;
-	}
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getSqlStatement()
+	 */
+	@Override
+   protected String getSqlStatement()
+   {
+		return
+      "SELECT trigger_defs.text " +
+      "FROM sysobjects tables , sysobjects triggers, syscomments trigger_defs " +
+      "where triggers.type = 'TR' " +
+      "and triggers.id = trigger_defs.id " +
+      "and triggers.deltrig = tables.id " +
+      "and tables.loginame = ? " +
+      // TODO: figure out how to get the name of the table that the trigger 
+      //       is on. 
+      //"and tables.name = ? " +
+      "and triggers.name = ? ";
+   }
+	
+	/**
+    * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getBindValues()
+    */
+   @Override
+   protected String[] getBindValues()
+   {
+   	final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+   	return new String[] { doi.getCatalogName(), doi.getSimpleName() };
+   }
 }

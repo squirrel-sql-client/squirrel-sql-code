@@ -20,12 +20,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -196,4 +199,61 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
         }
         return result;
     }
+
+	/**
+    * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
+    */
+   @Override
+   protected PreparedStatement createStatement() throws SQLException
+   {
+   	final ISession session = getSession();
+   
+   	ISQLConnection conn = session.getSQLConnection();
+   	
+   	String sqlStatement = getSqlStatement();
+   	String[] bindValues  = getBindValues();
+   	
+   	if (s_log.isDebugEnabled())
+   	{
+   		s_log.debug("Running SQL for index source tab: " + sqlStatement);
+   		s_log.debug("With the following bind variable values: ");
+   		int parameterIndex = 0;
+   		for (String bindValue : bindValues) {
+   			s_log.debug("["+parameterIndex+"] => '"+bindValue+"'");
+   		}
+   	}
+   	PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
+   
+   	int parameterIndex = 0;
+   	for (String bindValue : bindValues) {
+   		pstmt.setString(parameterIndex++, bindValue);
+   	}
+   	
+   	return pstmt;
+   }
+
+	/**
+    * Subclasses must override to provide the SQL necessary to select the source for the selected 
+    * DatabaseObjectInfo.  Note: the default implementation of getBindValues provides values for schema and 
+    * object simple name.  Therefore, it is advantageous if the where clause in the select statement 
+    * returned from this method specify first the schema, and then the object name and no more bind variables.  
+    * If this is possible, then it isn't necessary for subclasses to override getBindValues.   
+    * 
+    * @return an SQL select statement with embedded bind variables (?'s). 
+    */
+   protected abstract String getSqlStatement();
+
+	/**
+    * This method simply returns a String array containing the schema name and the selected object's simple
+    * name, in that order.  If the SQL returned from getSqlStatement must specify a different order, or for
+    * example uses that catalog of the object, instead of or in addition to schema, then this method must be
+    * overridden to return the necessary bind variable values, in the order required by the SQL statement.
+    * 
+    * @return a String array of bind variable values
+    */
+   protected String[] getBindValues()
+   {
+   	final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+   	return new String[] { doi.getSchemaName(), doi.getSimpleName() };		
+   }
 }

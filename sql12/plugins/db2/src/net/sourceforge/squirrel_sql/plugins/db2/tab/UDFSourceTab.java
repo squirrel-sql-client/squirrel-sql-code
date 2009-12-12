@@ -17,20 +17,10 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 /**
- * This class will display the source for an DB2 User-Defined function.
- *
- * @author manningr
+ * This class provides the necessary information to the parent tab to display the source for an DB2 
+ * User-Defined function.
  */
 public class UDFSourceTab extends FormattedSourceTab
 {
@@ -59,50 +49,36 @@ public class UDFSourceTab extends FormattedSourceTab
 	    "where routine_schema = ? " +
 	    "and routine_name = ? ";	    
 	
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(UDFSourceTab.class);
+	/** whether or not we are connected to OS/400 */
+	private boolean isOS400 = false;
 
-    /** whether or not we are connected to OS/400 */
-    private boolean isOS400 = false;	
-	
-    /**
-     * Constructor
-     * 
-     * @param hint
-     * @param stmtSep
-     * @param isOS400 whether or not we are connected to OS/400
-     */
-	public UDFSourceTab(String hint, String stmtSep, boolean isOS400)
-	{
+	/**
+	 * Constructor
+	 * 
+	 * @param hint
+	 *        what the user sees on mouse-over tool-tip
+	 * @param stmtSep
+	 *        the string to use to separate SQL statements
+	 * @param isOS400
+	 *        whether or not we are connected to OS/400
+	 */
+	public UDFSourceTab(String hint, String stmtSep, boolean isOS400) {
 		super(hint);
-        super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);
-        this.isOS400 = isOS400;
+		super.setCompressWhitespace(true);
+		super.setupFormatter(stmtSep, null);
+		this.isOS400 = isOS400;
 	}
 
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
-     */
-    @Override	
-	protected PreparedStatement createStatement() throws SQLException
-	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-        String sql = SQL;
-        if (isOS400) {
-            sql = OS_400_SQL;
-        }		
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL: "+sql);
-            s_log.debug("schema="+doi.getSchemaName());
-            s_log.debug("udf name="+doi.getSimpleName());
-        }
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, doi.getSchemaName());
-		pstmt.setString(2, doi.getSimpleName());
-		return pstmt;
-	}
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getSqlStatement()
+	 */
+	@Override
+   protected String getSqlStatement()
+   {
+      String sql = SQL;
+      if (isOS400) {
+          sql = OS_400_SQL;
+      }		
+      return sql;
+   }
 }

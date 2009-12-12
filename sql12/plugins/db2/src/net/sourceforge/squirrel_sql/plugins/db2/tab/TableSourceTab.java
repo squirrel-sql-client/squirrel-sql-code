@@ -45,12 +45,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class TableSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a MQT. */
-	private static final String MQT_SQL = "SELECT text " + "FROM SYSCAT.VIEWS " + "WHERE viewschema = ? "
-	      + "and viewname = ? ";
+	private static final String MQT_SQL = 
+		"SELECT text " + 
+		"FROM SYSCAT.VIEWS " + 
+		"WHERE viewschema = ? " +
+		"and viewname = ? ";
 
 	/** SQL that retrieves the source of a MQT on OS/400 */
-	private static final String OS400_MQT_SQL = "select mqt_definition " + "from qsys2.systables "
-	      + "where table_schema = ? " + "and table_name = ? ";
+	private static final String OS400_MQT_SQL = 
+		"select mqt_definition " + 
+		"from qsys2.systables " + 
+		"where table_schema = ? " + 
+		"and table_name = ? ";
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(ViewSourceTab.class);
@@ -61,6 +67,10 @@ public class TableSourceTab extends FormattedSourceTab
 	/**
 	 * Constructor
 	 * 
+	 * @param hint
+	 *        what the user sees on mouse-over tool-tip
+	 * @param stmtSep
+	 *        the string to use to separate SQL statements
 	 * @param isOS400
 	 *        whether or not we are connected to an OS/400 system
 	 */
@@ -186,4 +196,9 @@ public class TableSourceTab extends FormattedSourceTab
 		tmp.append("' from sysibm.sysdummy1");
 		return tmp.toString();
 	}
+
+	protected String getSqlStatement()
+   {
+	   return null;
+   }
 }

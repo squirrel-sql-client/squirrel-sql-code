@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.postgres.tab;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,56 +18,28 @@ package net.sourceforge.squirrel_sql.plugins.postgres.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 /**
- * This class will display the source for an PostgreSQL trigger.
- *
- * @author manningr
+ * This class will display the source for an PostgreSQL procedure.
  */
 public class ProcedureSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
-        "SELECT p.prosrc FROM pg_proc p, pg_namespace n " +
-        "where p.pronamespace = n.oid " +
-        "and n.nspname = ? " +
-        "and p.proname = ? ";
-    
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ProcedureSourceTab.class);
-
-	public ProcedureSourceTab(String hint)
-	{
+	public ProcedureSourceTab(String hint) {
 		super(hint);
 		super.setCompressWhitespace(false);
 	}
 
-	protected PreparedStatement createStatement() throws SQLException
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getSqlStatement()
+	 */
+	@Override
+	protected String getSqlStatement()
 	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for procedure source: "+SQL);
-            s_log.debug("schema="+doi.getSchemaName());
-            s_log.debug("procedure name="+doi.getSimpleName());
-        }
-        
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        // Postgres pg_proc table doesn't appear to have schema.  I couldn't
-        // locate another table to join with to get this info either.
-        pstmt.setString(1, doi.getSchemaName());
-		pstmt.setString(2, doi.getSimpleName());
-		return pstmt;
+		return
+      "SELECT p.prosrc FROM pg_proc p, pg_namespace n " +
+      "where p.pronamespace = n.oid " +
+      "and n.nspname = ? " +
+      "and p.proname = ? ";
 	}
 }
