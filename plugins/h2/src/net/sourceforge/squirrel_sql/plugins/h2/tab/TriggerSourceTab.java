@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.h2.tab;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,51 +18,22 @@ package net.sourceforge.squirrel_sql.plugins.h2.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+
 /**
- * This class will display the source for an H2 trigger.
- *
- * @author manningr
+ * This class provides the necessary information to the parent tab to display the source for an H2 trigger.
  */
 public class TriggerSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a trigger. */
-	private static String SQL = "No support for trigger source in H2";
-	    
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(TriggerSourceTab.class);
-
-	public TriggerSourceTab(String hint, String stmtSep)
-	{
+	public TriggerSourceTab(String hint, String stmtSep) {
 		super(hint);
-        super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);
+		super.setCompressWhitespace(true);
+		super.setupFormatter(stmtSep, null);
 	}
 
-	protected PreparedStatement createStatement() throws SQLException
+	@Override
+	protected String getSqlStatement()
 	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL: "+SQL);
-            s_log.debug("schema="+doi.getSchemaName());
-            s_log.debug("trigname="+doi.getSimpleName());
-        }
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        pstmt.setString(1, doi.getSchemaName());
-		pstmt.setString(2, doi.getSimpleName());
-		return pstmt;
+		return "No support for trigger source in H2";
 	}
 }

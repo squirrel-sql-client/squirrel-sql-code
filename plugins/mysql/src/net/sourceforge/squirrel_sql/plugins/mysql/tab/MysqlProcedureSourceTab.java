@@ -17,53 +17,46 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the source for an DB2 trigger.
- *
- * @author manningr
+ * This class provides the necessary information to the parent tab to display the source for an MySQL 
+ * Stored Procedure.
  */
 public class MysqlProcedureSourceTab extends FormattedSourceTab {
-	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
-        "select routine_definition " +
-        "from information_schema.ROUTINES " +
-        "where ROUTINE_SCHEMA = ? " +
-        "and ROUTINE_NAME = ? ";
     
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(MysqlProcedureSourceTab.class);
-
+	/**
+	 * Constructor
+	 * 
+	 * @param hint
+	 *        what the user sees on mouse-over tool-tip
+	 */
 	public MysqlProcedureSourceTab(String hint)
 	{
 		super(hint);
         super.setCompressWhitespace(false);
 	}
 
-	protected PreparedStatement createStatement() throws SQLException
-	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getSqlStatement()
+	 */
+	@Override
+   protected String getSqlStatement()
+   {
+	   return 
+	   "select routine_definition " +
+      "from information_schema.ROUTINES " +
+      "where ROUTINE_SCHEMA = ? " +
+      "and ROUTINE_NAME = ? ";	   
+   }
 
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for procedure source: "+SQL);
-            s_log.debug("schema="+doi.getCatalogName());
-            s_log.debug("procedure name="+doi.getSimpleName());
-        }
-        
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        pstmt.setString(1, doi.getCatalogName());
-		pstmt.setString(2, doi.getSimpleName());
-		return pstmt;
-	}
+	/**
+    * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getBindValues()
+    */
+   @Override
+   protected String[] getBindValues()
+   {
+   	final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+   	return new String[] { doi.getCatalogName(), doi.getSimpleName() };
+   }
 }
