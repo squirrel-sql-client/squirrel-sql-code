@@ -217,14 +217,14 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
    	{
    		s_log.debug("Running SQL for index source tab: " + sqlStatement);
    		s_log.debug("With the following bind variable values: ");
-   		int parameterIndex = 0;
+   		int parameterIndex = 1;
    		for (String bindValue : bindValues) {
-   			s_log.debug("["+parameterIndex+"] => '"+bindValue+"'");
+   			s_log.debug("["+(parameterIndex++)+"] => '"+bindValue+"'");
    		}
    	}
    	PreparedStatement pstmt = conn.prepareStatement(sqlStatement);
    
-   	int parameterIndex = 0;
+   	int parameterIndex = 1;
    	for (String bindValue : bindValues) {
    		pstmt.setString(parameterIndex++, bindValue);
    	}
