@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -135,7 +136,7 @@ public class AppTestUtil
 		ISQLPanelAPI api = AppTestUtil.getEasyMockSqlPanelApi();
 		expect(session.getSQLPanelAPIOfActiveSessionWindow()).andReturn(api).anyTimes();
 		// expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
-		expect(session.getAlias()).andReturn(AppTestUtil.getEasyMockSqlAliasExt());
+		expect(session.getAlias()).andStubReturn(AppTestUtil.getEasyMockSqlAliasExt());
 		expect(session.getIdentifier()).andReturn(FwTestUtil.getEasyMockIdentifier()).anyTimes();
 		expect(session.getSQLConnection()).andReturn(con).anyTimes();
 		session.setExceptionFormatter(isA(ExceptionFormatter.class));
@@ -278,9 +279,11 @@ public class AppTestUtil
 
 	public static ISQLAliasExt getEasyMockSqlAliasExt() {
 	   ISQLAliasExt result = createMock(ISQLAliasExt.class);
+	   SQLAliasColorProperties props = createMock(SQLAliasColorProperties.class);
 	   expect(result.getName()).andReturn("TestAlias").anyTimes();
 	   IIdentifier id = FwTestUtil.getEasyMockIdentifier();
 	   expect(result.getDriverIdentifier()).andReturn(id).anyTimes();
+	   expect(result.getColorProperties()).andStubReturn(props);
 	   replay(result);
 	   return result;
 	}
