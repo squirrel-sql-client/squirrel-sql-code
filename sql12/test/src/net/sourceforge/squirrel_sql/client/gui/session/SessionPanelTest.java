@@ -28,6 +28,8 @@ import javax.swing.ImageIcon;
 import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -52,14 +54,19 @@ public class SessionPanelTest extends AbstractSerializableTest
 	SquirrelResources mockSquirrelResources = mockHelper.createMock(SquirrelResources.class);
 	ImageIcon mockImageIcon = mockHelper.createMock(ImageIcon.class);
 	IMainPanelFactory mockMainPanelFactory = mockHelper.createMock(IMainPanelFactory.class);
+	ISQLAliasExt mockAlias = mockHelper.createMock(ISQLAliasExt.class);
+	SQLAliasColorProperties mockColorProps = 
+		mockHelper.createMock(SQLAliasColorProperties.class);
 	
 	@Before
 	public void setUp() throws Exception
 	{
+		 
 		// mockSession
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockIdentifier);
 		expect(mockSession.getProperties()).andStubReturn(mockSessionProperties);
+		expect(mockSession.getAlias()).andStubReturn(mockAlias);
 		
 		// mockPreferences
 		expect(mockPreferences.getUseScrollableTabbedPanes()).andStubReturn(false);
@@ -75,6 +82,14 @@ public class SessionPanelTest extends AbstractSerializableTest
 		
 		// mockSquirrelResources
 		expect(mockSquirrelResources.getIcon(EasyMock.isA(String.class))).andStubReturn(mockImageIcon);
+		
+		// mockAlias
+		expect(mockAlias.getColorProperties()).andStubReturn(mockColorProps);
+		
+		// mockColorProps
+		expect(mockColorProps.isOverrideObjectTreeBackgroundColor()).andStubReturn(false);
+		expect(mockColorProps.isOverrideStatusBarBackgroundColor()).andStubReturn(false);
+		expect(mockColorProps.isOverrideToolbarBackgroundColor()).andStubReturn(false);
 		
 		mockHelper.replayAll();
 		UIFactory.initialize(mockPreferences, mockApplication);
