@@ -259,11 +259,12 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @param session
     */
    private void updateTreeApi(ISession session) {
-
+   	DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+   	
       _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 
       _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-              new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+              new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, prefBean.getStatementSeparator()));
 
       _treeAPI.addDetailTab(DatabaseObjectType.VIEW,
                             new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));

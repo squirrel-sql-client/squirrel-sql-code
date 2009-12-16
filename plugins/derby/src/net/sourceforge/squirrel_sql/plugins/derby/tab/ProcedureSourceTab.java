@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.derby.tab;
 
 /*
- * Copyright (C) 2009 Rob Manning
- * manningr@users.sourceforge.net
+ * Copyright (C) 2009 Glenn Hobbs
+ * bassnfool2@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,51 +19,37 @@ package net.sourceforge.squirrel_sql.plugins.derby.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-public class ProcedureSourceTab  extends BaseSourceTab {
+public class ProcedureSourceTab  extends FormattedSourceTab {
 
 	private static String SQL = 
-		"SELECT "+ 
-		  " 'CREATE PROCEDURE '||SCHEMAA.SCHEMANAME||'.'||ALIAS.ALIAS||'\n '||"+
-		  " SUBSTR(CAST(ALIASINFO AS VARCHAR(4000)),LOCATE('(',CAST(ALIASINFO AS VARCHAR(4000))))||'\n '||"+
-		  " 'EXTERNAL NAME '''||ALIAS.JAVACLASSNAME||'.'||SUBSTR(CAST(ALIASINFO AS VARCHAR(4000)),1,LOCATE('(',CAST(ALIASINFO AS VARCHAR(4000)))-1)||''''"+
-		" FROM"+ 
-		"  SYS.SYSALIASES ALIAS,"+
-		"  SYS.SYSSCHEMAS SCHEMAA"+
-		" WHERE"+ 
-		"  ALIAS.SCHEMAID = SCHEMAA.SCHEMAID AND" +
-		"  ALIAS = ? and SCHEMAA.SCHEMANAME = ?";		
-	public ProcedureSourceTab(String hint) {
+		"SELECT " +
+		"'CREATE PROCEDURE '||SCHEMAA.SCHEMANAME||'.'||ALIAS.ALIAS||'\n '|| SUBSTR " +
+		"( " +
+		"   CAST(ALIASINFO AS VARCHAR(4000)),LOCATE('(',CAST(ALIASINFO AS VARCHAR(4000))) " +
+		") " +
+		"||'\n '|| 'EXTERNAL NAME '''||ALIAS.JAVACLASSNAME||'.'||SUBSTR " +
+		"( " +
+		"   CAST(ALIASINFO AS VARCHAR(4000)), " +
+		"   1, " +
+		"   LOCATE('(',CAST(ALIASINFO AS VARCHAR(4000)))-1 " +
+		") " +
+		"||'''' " +
+		"FROM SYS.SYSALIASES ALIAS, SYS.SYSSCHEMAS SCHEMAA " +
+		"WHERE ALIAS.SCHEMAID = SCHEMAA.SCHEMAID " +
+		"and SCHEMAA.SCHEMANAME = ? " +
+		"AND ALIAS = ? ";	
+	
+	public ProcedureSourceTab(String hint, String stmtSep) {
 		super(hint);
+		super.setupFormatter(stmtSep, null);
 	}
 
-	private final static ILogger s_log = LoggerController.createLogger(ProcedureSourceTab.class);
-
-	protected PreparedStatement createStatement() throws SQLException
+	@Override
+	protected String getSqlStatement()
 	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-		if (s_log.isDebugEnabled())
-		{
-			s_log.debug("Running SQL: " + SQL);
-			s_log.debug("Trigger Name=" + doi.getSimpleName());
-			s_log.debug("Schema Name=" + doi.getSchemaName());
-		}
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, doi.getSimpleName());
-		pstmt.setString(2, doi.getSchemaName());
-		return pstmt;
+		return SQL;
 	}
 
 }
