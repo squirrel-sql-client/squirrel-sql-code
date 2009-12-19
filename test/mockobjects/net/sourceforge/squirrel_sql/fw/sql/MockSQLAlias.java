@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 
 public class MockSQLAlias implements ISQLAliasExt
@@ -184,6 +185,20 @@ public class MockSQLAlias implements ISQLAliasExt
 
 	@Override
 	public void setColorProperties(SQLAliasColorProperties colorProperties)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SQLAliasConnectionProperties getConnectionProperties()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setConnectionProperties(SQLAliasConnectionProperties connectionProperties)
 	{
 		// TODO Auto-generated method stub
 		

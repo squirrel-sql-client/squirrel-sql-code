@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Aliases now have the ability to setup a keep-alive SQL statement and sleep time (in seconds) to prevent a 
+connection from being disconnected while appearing to be idle.  This is done using the new Connection tab 
+on the Alias properties dialog.
+
 Derby Plugin:
  New tab to display the source code of Derby stored procedures 
  Thanks to Glenn (bassnfool2) for the patch (Patch ID 2907220)

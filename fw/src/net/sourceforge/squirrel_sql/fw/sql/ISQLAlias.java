@@ -48,6 +48,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String USER_NAME = "userName";
 		String SCHEMA_PROPERTIES = "schemaProperties";
 		String COLOR_PROPERTIES = "colorProperties";
+		String CONNECTION_PROPERTIES = "connectionProperties";
 	}
 
 	/**

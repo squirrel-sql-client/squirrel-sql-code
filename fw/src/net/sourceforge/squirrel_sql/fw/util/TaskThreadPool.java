@@ -51,13 +51,40 @@ public class TaskThreadPool
 	private MyCallback _callback = new MyCallback();
    private JFrame _parentForMessages = null;
 
-	/**
+   /**
 	 * Add a task to be executed by the next available thread
 	 * in this thread pool. If there is no free thread available
 	 * but the maximum number of threads hasn't been reached then
 	 * create a new thread.
-	 */
-	public synchronized void addTask(Runnable task)
+	 *  
+    * @param task the Runnable to give to the thread
+    * @param taskName the name of the task (used to set the Thread name)
+    * @throws IllegalArgumentException
+    */
+   public synchronized void addTask(Runnable task, String taskName) 
+   	throws IllegalArgumentException 
+   {
+   	_addTask(task, taskName);
+   }
+   
+   /**
+	 * Add a task to be executed by the next available thread
+	 * in this thread pool. If there is no free thread available
+	 * but the maximum number of threads hasn't been reached then
+	 * create a new thread.
+	 *  
+    * @param task
+    * @throws IllegalArgumentException
+    * @Deprecated Please use the form that accepts a task name instead. 
+    */
+   public synchronized void addTask(Runnable task) 
+		throws IllegalArgumentException 
+	{
+   	_addTask(task, null);
+	}
+   
+   
+	private synchronized void _addTask(Runnable task, String taskName)
 		throws IllegalArgumentException
 	{
 		if (task == null)
@@ -69,6 +96,9 @@ public class TaskThreadPool
 		if (_iFree == 0)
 		{
 			Thread th = new Thread(new TaskExecuter(_callback));
+			if (taskName != null) {
+				th.setName(taskName);
+			}
 			th.setPriority(Thread.MIN_PRIORITY); //??
 			th.setDaemon(true);
 			th.start();

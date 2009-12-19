@@ -95,6 +95,7 @@ public class AliasPropertiesController
       _iAliasPropertiesPanelControllers.add(new SchemaPropertiesController(_alias, _app));
       _iAliasPropertiesPanelControllers.add(new DriverPropertiesController(_alias, _app));
       _iAliasPropertiesPanelControllers.add(new ColorPropertiesController(_alias, _app));
+      _iAliasPropertiesPanelControllers.add(new ConnectionPropertiesController(_alias, _app));
       
       IAliasPropertiesPanelController[] pluginAliasPropertiesPanelControllers =
          _app.getPluginManager().getAliasPropertiesPanelControllers(_alias);

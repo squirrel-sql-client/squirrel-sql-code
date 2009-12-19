@@ -97,6 +97,8 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 
    private SQLAliasColorProperties _colorProperties = new SQLAliasColorProperties();
    
+   private SQLAliasConnectionProperties _connectionProperties = new SQLAliasConnectionProperties();
+   
    /**
     * Default ctor.
     */
@@ -152,6 +154,12 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
                                                            getClass().getClassLoader());
       _colorProperties = 
       	(SQLAliasColorProperties) Utilities.cloneObject(rhs._colorProperties, getClass().getClassLoader());
+      
+      _connectionProperties = new SQLAliasConnectionProperties();
+      SQLAliasConnectionProperties rhsConnProps = rhs.getConnectionProperties();
+		_connectionProperties.setEnableConnectionKeepAlive(rhsConnProps.isEnableConnectionKeepAlive());
+		_connectionProperties.setKeepAliveSleepTimeSeconds(rhsConnProps.getKeepAliveSleepTimeSeconds());
+		_connectionProperties.setKeepAliveSqlStatement(rhsConnProps.getKeepAliveSqlStatement());
    }
 
    /**
@@ -168,25 +176,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       }
       return rc;
    }
-
-//   /**
-//    * Return a clone of this object.
-//    */
-//   public Object clone()
-//   {
-//      try
-//      {
-//         final SQLAlias alias = (SQLAlias)super.clone();
-//         alias._propChgReporter = null;
-//         alias.setDriverProperties(getDriverPropertiesClone());
-//         alias._schemaProperties = (SQLAliasSchemaProperties) Utilities.cloneObject(alias._schemaProperties, getClass().getClassLoader());
-//         return alias;
-//      }
-//      catch (CloneNotSupportedException ex)
-//      {
-//         throw new InternalError(ex.getMessage()); // Impossible.
-//      }
-//   }
 
    /**
     * Returns a hash code value for this object.
@@ -504,6 +493,18 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
 	public void setColorProperties(SQLAliasColorProperties colorProperties)
 	{
 		_colorProperties = colorProperties;
+	}
+
+	@Override
+	public SQLAliasConnectionProperties getConnectionProperties()
+	{
+		return _connectionProperties;
+	}
+
+	@Override
+	public void setConnectionProperties(SQLAliasConnectionProperties connectionProperties)
+	{
+		_connectionProperties = connectionProperties;
 	}
 
 }
