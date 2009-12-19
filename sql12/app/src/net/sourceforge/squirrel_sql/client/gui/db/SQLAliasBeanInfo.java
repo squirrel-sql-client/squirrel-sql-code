@@ -68,7 +68,9 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 						new PropertyDescriptor(IPropNames.SCHEMA_PROPERTIES, SQLAlias.class, "getSchemaProperties",
 							"setSchemaProperties"),
 						new PropertyDescriptor(IPropNames.COLOR_PROPERTIES, SQLAlias.class, "getColorProperties",
-							"setColorProperties") };
+							"setColorProperties"),
+							new PropertyDescriptor(IPropNames.CONNECTION_PROPERTIES, SQLAlias.class, "getConnectionProperties",
+							"setConnectionProperties")};
 			return result;
 		}
 		catch (IntrospectionException e)

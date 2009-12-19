@@ -29,32 +29,32 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * This dialog allows the user to review and maintain background color overrides for an alias.
+ * This dialog allows the user to review and maintain connection properties for an alias.
  */
-public class ColorPropertiesController implements IAliasPropertiesPanelController
+public class ConnectionPropertiesController implements IAliasPropertiesPanelController
 {
 	/**
 	 * Internationalized strings for this class.
 	 */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ColorPropertiesController.class);
+		StringManagerFactory.getStringManager(ConnectionPropertiesController.class);
 
-	private ColorPropertiesPanel _propsPnl;
+	private ConnectionPropertiesPanel _propsPnl;
 
 	private ISQLAliasExt _alias;
 
 	public static interface i18n {
-		// i18n[ColorPropertiesController.title=Color]
-		String TITLE = s_stringMgr.getString("ColorPropertiesController.title");
+		// i18n[ConnectionPropertiesController.title=Connection]
+		String TITLE = s_stringMgr.getString("ConnectionPropertiesController.title");
 		
-		// i18n[ColorPropertiesController.hint=Set session colors for this Alias]
-		String HINT = s_stringMgr.getString("ColorPropertiesController.hint");
+		// i18n[ConnectionPropertiesController.hint=Set session connection properties for this Alias]
+		String HINT = s_stringMgr.getString("ConnectionPropertiesController.hint");
 	}
 	
-	public ColorPropertiesController(ISQLAliasExt alias, IApplication app)
+	public ConnectionPropertiesController(ISQLAliasExt alias, IApplication app)
 	{
 		_alias = alias;
-		_propsPnl = new ColorPropertiesPanel(alias.getColorProperties());
+		_propsPnl = new ConnectionPropertiesPanel(alias.getConnectionProperties());
 	}
 
 	public Component getPanelComponent()
@@ -64,7 +64,7 @@ public class ColorPropertiesController implements IAliasPropertiesPanelControlle
 
 	public void applyChanges()
 	{
-		_alias.setColorProperties(_propsPnl.getSQLAliasColorProperties());
+		_alias.setConnectionProperties(_propsPnl.getSQLAliasConnectionProperties());
 	}
 
 	public String getTitle()

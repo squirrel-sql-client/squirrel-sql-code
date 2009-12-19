@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -358,7 +359,14 @@ public class AppTestUtil
 	   expect(mockSqlAlias.getUseDriverProperties()).andReturn(true).anyTimes();
 	   expect(mockSqlAlias.getDriverPropertiesClone()).andReturn(mockSqlDriverPropCol)
 	                                                  .anyTimes();
+	   SQLAliasConnectionProperties mockConnProps = createMock(SQLAliasConnectionProperties.class);
+	   expect(mockConnProps.isEnableConnectionKeepAlive()).andStubReturn(false);
+	   expect(mockConnProps.getKeepAliveSleepTimeSeconds()).andStubReturn(120);
+	   expect(mockConnProps.getKeepAliveSqlStatement()).andStubReturn("");
+	   expect(mockSqlAlias.getConnectionProperties()).andStubReturn(mockConnProps);
+	   
 	   replay(mockSqlAlias);
+	   replay(mockConnProps);
 	   return mockSqlAlias;
 	}
 

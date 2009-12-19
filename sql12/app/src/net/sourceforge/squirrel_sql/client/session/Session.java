@@ -43,6 +43,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasConnectionProperties;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -58,7 +59,15 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -151,6 +160,8 @@ class Session implements ISession
    /** The default exception formatter */
    private DefaultExceptionFormatter formatter = new DefaultExceptionFormatter();
    
+   private SessionConnectionKeepAlive _sessionConnectionKeepAlive = null;
+   
    /**
     * Create a new session.
     *
@@ -230,9 +241,28 @@ class Session implements ISession
             _finishedLoading = true;
          }
       });
-
+      startKeepAliveTaskIfNecessary();
    }
 
+   private void startKeepAliveTaskIfNecessary() {
+      SQLAliasConnectionProperties connProps = _alias.getConnectionProperties();
+      
+      if (connProps.isEnableConnectionKeepAlive()) {
+      	String keepAliveSql = connProps.getKeepAliveSqlStatement();
+      	long sleepMillis = connProps.getKeepAliveSleepTimeSeconds() * 1000;
+      	_sessionConnectionKeepAlive = new SessionConnectionKeepAlive(_conn, sleepMillis, keepAliveSql, 
+      		_alias.getName());
+			_app.getThreadPool().addTask(_sessionConnectionKeepAlive,
+				"Session Connection Keep-Alive (" + _alias.getName() + ")");
+      }         	
+   }
+   
+   private void stopKeepAliveTaskIfNecessary() {
+   	if (_sessionConnectionKeepAlive != null) {
+   		_sessionConnectionKeepAlive.setStopped(true);
+   	}
+   }
+   
    /**
     * Close this session.
     *
@@ -248,6 +278,7 @@ class Session implements ISession
       	if (s_log.isDebugEnabled()) {
       		s_log.debug("Closing session: " + _id);
       	}
+      	stopKeepAliveTaskIfNecessary();
          _conn.removePropertyChangeListener(_connLis);
          _connLis = null;
 
@@ -476,6 +507,7 @@ class Session implements ISession
    {
       if (_conn != null)
       {
+      	stopKeepAliveTaskIfNecessary();
          try
          {
             _conn.close();
@@ -530,6 +562,7 @@ class Session implements ISession
          final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
          _msgHandler.showMessage(msg);
          _app.getSessionManager().fireReconnected(this);
+         startKeepAliveTaskIfNecessary();
       }
       catch (Throwable t)
       {
