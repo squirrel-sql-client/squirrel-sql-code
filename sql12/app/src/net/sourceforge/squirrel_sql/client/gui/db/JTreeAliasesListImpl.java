@@ -331,8 +331,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       int indexOfChild = treeModel.getIndexOfChild(parent, delNode);
       treeModel.removeNodeFromParent(delNode);
 
-      treeModel.nodesWereRemoved(parent, new int[]{indexOfChild}, new Object[]{delNode});
-      //treeModel.nodeStructureChanged(parent);
 
       if(null != nextToSel)
       {
@@ -499,10 +497,11 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          if (Dialogs.showYesNo(_app.getMainFrame(), s_stringMgr.getString("JTreeAliasesListImpl.confirmDeleteMultible")))
          {
+            final HashSet<TreeNode> parentsRemovedFrom = new HashSet<TreeNode>();
             for (TreePath selectionPath : selectionPaths)
             {
                DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
-               TreeNode parent = selNode.getParent();
+               parentsRemovedFrom.add(selNode.getParent());
 
                if(selNode.getUserObject() instanceof SQLAlias)
                {
@@ -513,10 +512,22 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                {
                   removeAllAliasesFromNode(selNode);
                   selNode.removeFromParent();
-                  DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
-                  dtm.nodeStructureChanged(parent);
                }
             }
+
+            final DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
+
+            SwingUtilities.invokeLater(
+               new Runnable()
+               {
+                  public void run()
+                  {
+                     for (TreeNode node : parentsRemovedFrom)
+                     {
+                        dtm.nodeStructureChanged(node);
+                     }
+                  }
+               });
          }
       }
    }
