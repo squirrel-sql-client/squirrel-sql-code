@@ -1072,9 +1072,11 @@
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*.java"/>
 				</fileset>
+				<!-- This test is run separately in hudson 
 				<fileset dir="test/external">
 					<include name="**/DialectExternalTest.java" />
 				</fileset>
+				-->
 		        	<fileset dir="test/jfctests">
 		        		   <!-- FEST tests must end in UITest.java to get included -->
 		        	      <include name="**/*UITest.java" />
