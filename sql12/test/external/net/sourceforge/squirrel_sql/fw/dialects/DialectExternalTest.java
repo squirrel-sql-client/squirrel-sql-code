@@ -28,8 +28,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.io.FileReader;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -66,6 +69,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.db2.DB2JCCExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeTableCommand;
@@ -82,11 +86,8 @@ import org.junit.Test;
 import utils.EasyMockHelper;
 
 /**
- * The purpose of this class is to hookup to the database(s) specified in dialectLiveTest.properties and test
- * SQL generation parts of the dialect syntatically using the database' native parser. This is not a JUnit
- * test, as it requires a running database to complete.
- * 
- * @author manningr
+ * The purpose of this class is to hookup to the database(s) specified in dialectExternalTest.properties and
+ * test SQL generation parts of the dialect syntactically using the database' native parser.
  */
 public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 {
@@ -115,9 +116,13 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	TableColumnInfo dropCol = null;
 
-	TableColumnInfo noDefaultValueVarcharCol = null;
+	private TableColumnInfo noDefaultValueVarcharCol = null;
 
-	TableColumnInfo noDefaultValueIntegerCol = null;
+	private TableColumnInfo noDefaultValueIntegerCol = null;
+
+	private TableColumnInfo varcharColInfoForAlterDefault = null;
+
+	private TableColumnInfo integerColInfoForAlterDefault = null;
 
 	TableColumnInfo renameCol = null;
 
@@ -177,6 +182,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private static String integerDataTableName = "integerDataTable";
 
+	private static String pkTestTableName = "pktest";
+
 	private static String primaryKeyTestColumnOne = "pk_col_1";
 
 	private static String primaryKeyTestColumnTwo = "pk_col_2";
@@ -225,6 +232,28 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private static String testTableForGetViewDefinition = "testTableForGetViewDef";
 
+	private static String testTableForAlterColumnDefault = "testTableForAlterColDefault";
+
+	private static String varcharColumnForSetDefaultColumnName = "varcharColForSetDefault";
+
+	private static String integerColumnForSetDefaultColumnName = "integerColForSetDefault";
+
+	private static String varcharColumnToRenameColumnName = "varcharColForRename";
+
+	private static String testTableNameForRenameColumn = "testTableForRenameCol";
+
+	private static String testTableZeroTableName = "test";
+
+	private static String testTableOneTableName = "test1";
+
+	private static String testTableTwoTableName = "test2";
+
+	private static String testTableThreeTableName = "test3";
+
+	private static String testTableFourTableName = "test4";
+
+	private static String testTableFiveTableName = "test5";
+
 	/**
 	 * this is set to true to try to derive SQL for the dialect being tested automatically, using other
 	 * dialects
@@ -259,6 +288,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private final Statement mockGenericDialectStatement = mockHelper.createMock(Statement.class);
 
 	private final ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
+
+	private static int testsRun = 0;
 
 	@Before
 	public void setup() throws Exception
@@ -327,9 +358,36 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@After
-	public void teardown()
+	public void teardown() throws Exception
 	{
 		mockHelper.resetAll();
+		testsRun++;
+		Method[] methods = DialectExternalTest.class.getDeclaredMethods();
+
+		int testMethodCount = 0;
+
+		for (Method method : methods)
+		{
+			Annotation[] annotations = method.getAnnotations();
+			for (Annotation annotation : annotations)
+			{
+				if (annotation.toString().contains("Test"))
+				{
+					testMethodCount++;
+				}
+			}
+		}
+
+		if (testsRun == testMethodCount && System.getProperty("soundTestComplete") != null)
+		{
+			Utilities.sleep(500);
+			Toolkit.getDefaultToolkit().beep();
+			Utilities.sleep(500);
+			Toolkit.getDefaultToolkit().beep();
+			Utilities.sleep(500);
+			Toolkit.getDefaultToolkit().beep();
+			Utilities.sleep(500);
+		}
 	}
 
 	@Test
@@ -350,8 +408,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		prefs.setQuoteIdentifiers(quoteIdentifiers);
 		prefs.setSqlStatementSeparator(";");
 
-		
-		if (System.getProperties().containsKey("jdbcUrl")) {
+		if (System.getProperties().containsKey("jdbcUrl"))
+		{
 			Properties sysProps = System.getProperties();
 			String url = sysProps.getProperty("jdbcUrl");
 			String user = sysProps.getProperty("jdbcUser");
@@ -360,7 +418,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			String catalog = sysProps.getProperty("catalog");
 			String schema = sysProps.getProperty("schema");
 			initSession(sessions, url, user, pass, driver, catalog, schema);
-		} else {
+		}
+		else
+		{
 			final String propertyFile = System.getProperty("dialectExternalTestPropertyFile");
 			if (propertyFile == null || "".equals(propertyFile))
 			{
@@ -370,7 +430,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			initSessions(sessions, props.getProperty("dbsToTest"));
 			initReferenceDialects(referenceDialects);
 		}
-		
+
 		runTests(quoteIdentifiers, qualifyTableNames);
 	}
 
@@ -418,14 +478,15 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final MockSession session = new MockSession(driver, url, user, pass);
 		session.setDefaultCatalog(catalog);
 		session.setDefaultSchema(schema);
-		sessionsList.add(session);		
+		sessionsList.add(session);
 	}
-	
+
 	private void initSessions(ArrayList<ISession> sessionsList, String dbsToTest) throws Exception
 	{
 		prefs.setSqlStatementSeparator(";");
 
-		if (props != null) {
+		if (props != null)
+		{
 			dialectDiscoveryMode = Boolean.parseBoolean(props.getProperty("dialectDiscoveryMode", "false"));
 		}
 		if (dialectDiscoveryMode)
@@ -449,51 +510,94 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			sessionsList.add(session);
 		}
 
-		//sessionsList.add(mockGenericDialectSession);
+		// sessionsList.add(mockGenericDialectSession);
+	}
+
+	private void initIdentifiers(ISession session) throws Exception
+	{
+
+		// fix column name case
+		autoIncrementColumnName = fixIdentifierCase(session, autoIncrementColumnName);
+		columnAddedColumnName = fixIdentifierCase(session, columnAddedColumnName);
+		fkChildColumnName = fixIdentifierCase(session, fkChildColumnName);
+		fkChildPrimaryKeyColumnName = fixIdentifierCase(session, fkChildPrimaryKeyColumnName);
+		fkParentColumnName = fixIdentifierCase(session, fkParentColumnName);
+		indexTestColumnName = fixIdentifierCase(session, indexTestColumnName);
+		integerColumnForSetDefaultColumnName = fixIdentifierCase(session, integerColumnForSetDefaultColumnName);
+		nullVarcharColumnName = fixIdentifierCase(session, nullVarcharColumnName);
+		primaryKeyTestColumnOne = fixIdentifierCase(session, primaryKeyTestColumnOne);
+		primaryKeyTestColumnTwo = fixIdentifierCase(session, primaryKeyTestColumnTwo);
+		secondUniqueColumnName = fixIdentifierCase(session, secondUniqueColumnName);
+		uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
+		uniqueIndexTestColumnName = fixIdentifierCase(session, uniqueIndexTestColumnName);
+		varcharColumnToRenameColumnName = fixIdentifierCase(session, varcharColumnToRenameColumnName);
+		varcharColumnForSetDefaultColumnName = fixIdentifierCase(session, varcharColumnForSetDefaultColumnName);
+
+		// Fix sequence name case
+		autoIncrementSequenceName = fixIdentifierCase(session, autoIncrementSequenceName);
+
+		// fix table name case
+		autoIncrementTableName = fixIdentifierCase(session, autoIncrementTableName);
+		fkChildTableName = fixIdentifierCase(session, fkChildTableName);
+		fkParentTableName = fixIdentifierCase(session, fkParentTableName);
+		pkTestTableName = fixIdentifierCase(session, pkTestTableName);
+		testCreateTable = fixIdentifierCase(session, testCreateTable);
+		testCreateViewTable = fixIdentifierCase(session, testCreateViewTable);
+		testRenameTableAfter = fixIdentifierCase(session, testRenameTableAfter);
+		testRenameTableBefore = fixIdentifierCase(session, testRenameTableBefore);
+		testTableNameForRenameColumn = fixIdentifierCase(session, testTableNameForRenameColumn);
+		testTableForAlterColumnDefault = fixIdentifierCase(session, testTableForAlterColumnDefault);
+		testTableZeroTableName = fixIdentifierCase(session, testTableZeroTableName);
+		testTableOneTableName = fixIdentifierCase(session, testTableOneTableName);
+		testTableTwoTableName = fixIdentifierCase(session, testTableTwoTableName);
+		testTableThreeTableName = fixIdentifierCase(session, testTableThreeTableName);
+		testTableFourTableName = fixIdentifierCase(session, testTableFourTableName);
+		testTableFiveTableName = fixIdentifierCase(session, testTableFiveTableName);
+		testUniqueConstraintTableName = fixIdentifierCase(session, testUniqueConstraintTableName);
+
+		// fix view name case
+		testNewViewName = fixIdentifierCase(session, testNewViewName);
+		testViewName = fixIdentifierCase(session, testViewName);
+		testView2Name = fixIdentifierCase(session, testView2Name);
+		testViewToBeDropped = fixIdentifierCase(session, testViewToBeDropped);
 	}
 
 	private void init(ISession session) throws Exception
 	{
+		initIdentifiers(session);
 		final String defaultCatalog = getDefaultCatalog(session);
 		final String defaultSchema = getDefaultSchema(session);
 		qualifier = new DatabaseObjectQualifier(defaultCatalog, defaultSchema);
 
-		uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
-		autoIncrementSequenceName = fixIdentifierCase(session, autoIncrementSequenceName);
-		primaryKeyTestColumnOne = fixIdentifierCase(session, primaryKeyTestColumnOne);
-		primaryKeyTestColumnTwo = fixIdentifierCase(session, primaryKeyTestColumnTwo);
-		nullVarcharColumnName = fixIdentifierCase(session, nullVarcharColumnName);
-		columnAddedColumnName = fixIdentifierCase(session, columnAddedColumnName);
-
 		createTestTables(session);
-		firstCol =
-			getIntegerColumn("nullint", fixIdentifierCase(session, "test1"), true, "0", "An int comment");
-		secondCol =
-			getIntegerColumn("notnullint", fixIdentifierCase(session, "test2"), false, "0", "An int comment");
+		firstCol = getIntegerColumn("nullint", testTableOneTableName, true, "0", "A nullable integer column");
+		secondCol = getIntegerColumn("notnullint", testTableTwoTableName, false, "0", "A not-null int column");
 		thirdCol =
-			getVarcharColumn(nullVarcharColumnName, fixIdentifierCase(session, "test3"), true, "defVal",
-				"A varchar comment");
-		fourthCol =
-			getVarcharColumn("notnullvc", fixIdentifierCase(session, "test4"), false, "defVal",
-				"A varchar comment");
+			getVarcharColumn(nullVarcharColumnName, testTableThreeTableName, true, "defVal", "A varchar comment");
+		fourthCol = getVarcharColumn("notnullvc", testTableFourTableName, false, "defVal", "A varchar comment");
 		noDefaultValueVarcharCol =
-			getVarcharColumn("noDefaultVarcharCol", fixIdentifierCase(session, "test"), true, null,
+			getVarcharColumn("noDefaultVarcharCol", testTableZeroTableName, true, null,
 				"A varchar column with no default value");
-		dropCol =
-			getVarcharColumn("dropCol", fixIdentifierCase(session, "test5"), true, null, "A varchar comment");
+
+		varcharColInfoForAlterDefault =
+			getVarcharColumn(varcharColumnForSetDefaultColumnName, testTableForAlterColumnDefault, true,
+				"defval", "a varchar column to alter the default value on");
+
+		integerColInfoForAlterDefault =
+			getIntegerColumn(integerColumnForSetDefaultColumnName, testTableForAlterColumnDefault, true, "0",
+				"an integer column to alter the default value on");
+
+		dropCol = getVarcharColumn("dropCol", testTableFiveTableName, true, null, "A varchar comment");
 		noDefaultValueIntegerCol =
-			getIntegerColumn("noDefaultIntgerCol", fixIdentifierCase(session, "test5"), true, null,
+			getIntegerColumn("noDefaultIntgerCol", testTableFiveTableName, true, null,
 				"An integer column with no default value");
 		renameCol =
-			getVarcharColumn("renameCol", fixIdentifierCase(session, "test"), true, null,
+			getVarcharColumn(varcharColumnToRenameColumnName, testTableNameForRenameColumn, true, null,
 				"A column to be renamed");
-		pkCol = getIntegerColumn("pkCol", fixIdentifierCase(session, "test"), false, "0", "primary key column");
+		pkCol = getIntegerColumn("pkCol", testTableZeroTableName, false, "0", "primary key column");
 		notNullIntegerCol =
-			getIntegerColumn("notNullIntegerCol", fixIdentifierCase(session, "test5"), false, "0",
-				"potential pk column");
-		db2pkCol =
-			getIntegerColumn(DB2_PK_COLNAME, fixIdentifierCase(session, "test"), false, "0",
-				"A DB2 Primary Key column");
+			getIntegerColumn("notNullIntegerCol", testTableFiveTableName, false, "0", "potential pk column");
+		db2pkCol = getIntegerColumn(DB2_PK_COLNAME, testTableZeroTableName, false, "0", "A DB2 pk column");
 
 		// These two columns will be the only ones in the pktest table. They will
 		// start out being nullable, and we will test that the dialect correctly
@@ -501,27 +605,23 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		// This test shall not be run against any database dialect that claims not
 		// to support changing the nullability of a column.
 		doubleColumnPKOne =
-			getIntegerColumn(primaryKeyTestColumnOne, fixIdentifierCase(session, "pktest"), true, null,
+			getIntegerColumn(primaryKeyTestColumnOne, pkTestTableName, true, null,
 				"an initially nullable field to be made part of a PK");
 		doubleColumnPKTwo =
-			getIntegerColumn(primaryKeyTestColumnTwo, fixIdentifierCase(session, "pktest"), true, null,
+			getIntegerColumn(primaryKeyTestColumnTwo, pkTestTableName, true, null,
 				"an initially nullable field to be made part of a PK");
 
 		autoIncrementColumn =
-			getIntegerColumn(autoIncrementColumnName, fixIdentifierCase(session, autoIncrementTableName), false,
-				null, "Column that will be auto incrementing");
+			getIntegerColumn(autoIncrementColumnName, autoIncrementTableName, false, null,
+				"Column that will be auto incrementing");
 
-		addColumn =
-			getIntegerColumn(columnAddedColumnName, fixIdentifierCase(session, testUniqueConstraintTableName),
-				true, null, null);
+		addColumn = getIntegerColumn(columnAddedColumnName, testUniqueConstraintTableName, true, null, null);
 
 		uniqueConstraintTableColumnInfo =
-			getCharColumn(uniqueConstraintColName, fixIdentifierCase(session, testUniqueConstraintTableName),
-				true, null, null);
+			getCharColumn(uniqueConstraintColName, testUniqueConstraintTableName, true, null, null);
 
 		dropConstraintColumn =
-			getCharColumn(secondUniqueColumnName, fixIdentifierCase(session, testUniqueConstraintTableName),
-				true, null, null);
+			getCharColumn(secondUniqueColumnName, testUniqueConstraintTableName, true, null, null);
 	}
 
 	private String getDefaultCatalog(ISession session)
@@ -665,37 +765,39 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final HibernateDialect dialect = getDialect(session);
 
 		// views will depend on tables, so drop them first
-		dropView(session, fixIdentifierCase(session, testViewName));
-		dropView(session, fixIdentifierCase(session, testView2Name));
-		dropView(session, fixIdentifierCase(session, testNewViewName));
-		dropView(session, fixIdentifierCase(session, testViewToBeDropped));
+		dropView(session, testViewName);
+		dropView(session, testView2Name);
+		dropView(session, testNewViewName);
+		dropView(session, testViewToBeDropped);
 
 		// Tables might have triggers that depend on sequences, so drop tables next.
-		dropTable(session, fixIdentifierCase(session, "test"));
-		dropTable(session, fixIdentifierCase(session, "test1"));
-		dropTable(session, fixIdentifierCase(session, "test2"));
-		dropTable(session, fixIdentifierCase(session, "test3"));
-		dropTable(session, fixIdentifierCase(session, "test4"));
-		dropTable(session, fixIdentifierCase(session, "test5"));
-		dropTable(session, fixIdentifierCase(session, "pktest"));
-		dropTable(session, fixIdentifierCase(session, testRenameTableBefore));
-		dropTable(session, fixIdentifierCase(session, testRenameTableAfter));
-		dropTable(session, fixIdentifierCase(session, testCreateViewTable));
+		dropTable(session, testTableZeroTableName);
+		dropTable(session, testTableOneTableName);
+		dropTable(session, testTableTwoTableName);
+		dropTable(session, testTableThreeTableName);
+		dropTable(session, testTableFourTableName);
+		dropTable(session, testTableFiveTableName);
+		dropTable(session, pkTestTableName);
+		dropTable(session, testRenameTableBefore);
+		dropTable(session, testRenameTableAfter);
+		dropTable(session, testCreateViewTable);
 		dropTable(session, fixIdentifierCase(session, testCreateIndexTable));
+		dropTable(session, fixIdentifierCase(session, testTableForAlterColumnDefault));
 		dropTable(session, fixIdentifierCase(session, testTimestampTable));
 		dropTable(session, fixIdentifierCase(session, testNewTimestampTable));
-		dropTable(session, fixIdentifierCase(session, fkChildTableName));
+		dropTable(session, fkChildTableName);
 		dropTable(session, fixIdentifierCase(session, fkParentTableName));
-		dropTable(session, fixIdentifierCase(session, testUniqueConstraintTableName));
+		dropTable(session, testUniqueConstraintTableName);
 		dropTable(session, fixIdentifierCase(session, autoIncrementTableName));
 		dropTable(session, fixIdentifierCase(session, integerDataTableName));
 		dropTable(session, fixIdentifierCase(session, "a"));
-		dropTable(session, fixIdentifierCase(session, testCreateTable));
+		dropTable(session, testCreateTable);
 		dropTable(session, fixIdentifierCase(session, testInsertIntoTable));
 		dropTable(session, fixIdentifierCase(session, testFirstMergeTable));
 		dropTable(session, fixIdentifierCase(session, testSecondMergeTable));
 		dropTable(session, fixIdentifierCase(session, testTableForDropView));
 		dropTable(session, fixIdentifierCase(session, testTableForGetViewDefinition));
+		dropTable(session, fixIdentifierCase(session, testTableNameForRenameColumn));
 
 		// Now sequences should go.
 		dropSequence(session, testSequenceName);
@@ -723,49 +825,37 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			// you to add a PK to a table after it has been constructed unless the
 			// column(s) that comprise the PK were originally there when created
 			// *and* created not null.
-			runSQL(session, "create table " + fixIdentifierCase(session, "test") + " ( mychar char(10), "
-				+ DB2_PK_COLNAME + " integer not null)");
+			runSQL(session, "create table " + fixIdentifierCase(session, testTableZeroTableName)
+				+ " ( mychar char(10), " + DB2_PK_COLNAME + " integer not null)");
 		}
 		else
 		{
-			runSQL(session, "create table " + fixIdentifierCase(session, "test") + " ( mychar char(10))"
-				+ pageSizeClause);
+			runSQL(session, "create table " + fixIdentifierCase(session, testTableZeroTableName)
+				+ " ( mychar char(10))" + pageSizeClause);
 		}
-		fkParentColumnName = fixIdentifierCase(session, fkParentColumnName);
-		fkChildColumnName = fixIdentifierCase(session, fkChildColumnName);
-		uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
-		secondUniqueColumnName = fixIdentifierCase(session, secondUniqueColumnName);
-		indexTestColumnName = fixIdentifierCase(session, indexTestColumnName);
-		uniqueIndexTestColumnName = fixIdentifierCase(session, uniqueIndexTestColumnName);
-		autoIncrementColumnName = fixIdentifierCase(session, autoIncrementColumnName);
-		fkChildPrimaryKeyColumnName = fixIdentifierCase(session, fkChildPrimaryKeyColumnName);
 
-		runSQL(session, "create table " + fixIdentifierCase(session, "test1") + " ( mychar char(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, "test2") + " ( mychar char(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, "test3") + " ( mychar char(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, "test4") + " ( mychar char(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, "test5") + " ( mychar char(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, testRenameTableBefore)
-			+ " ( mychar char(10))" + pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, testCreateViewTable)
-			+ " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableOneTableName + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableTwoTableName + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableThreeTableName + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableFourTableName + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableFiveTableName + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testRenameTableBefore + " ( mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testCreateViewTable + " ( mychar char(10))" + pageSizeClause);
 		// MySQL spatial index requires a not null column
 		runSQL(session, "create table " + fixIdentifierCase(session, testCreateIndexTable) + " ( "
 			+ indexTestColumnName + " varchar(10) not null, " + uniqueIndexTestColumnName + " varchar(10))"
 			+ pageSizeClause);
+		runSQL(session, "create table " + fixIdentifierCase(session, testTableForAlterColumnDefault) + " ( "
+			+ varcharColumnForSetDefaultColumnName + " varchar(10) , " + integerColumnForSetDefaultColumnName
+			+ " integer ) " + pageSizeClause);
 		/* DB2 requires primary keys to also be declared "not null" */
-		runSQL(session, "create table " + fixIdentifierCase(session, fkParentTableName) + " ( "
-			+ fkParentColumnName + " integer not null primary key, mychar char(10))" + pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, fkChildTableName) + " ( "
-			+ fkChildPrimaryKeyColumnName + " integer, " + fkChildColumnName + " integer)" + pageSizeClause);
+		runSQL(session, "create table " + fkParentTableName + " ( " + fkParentColumnName
+			+ " integer not null primary key, mychar char(10))" + pageSizeClause);
+		runSQL(session, "create table " + fkChildTableName + " ( " + fkChildPrimaryKeyColumnName + " integer, "
+			+ fkChildColumnName + " integer)" + pageSizeClause);
 
-		runSQL(session, "create table " + fixIdentifierCase(session, testUniqueConstraintTableName) + " ( "
-			+ uniqueConstraintColName + " char(10), " + secondUniqueColumnName + " char(10))" + pageSizeClause);
+		runSQL(session, "create table " + testUniqueConstraintTableName + " ( " + uniqueConstraintColName
+			+ " char(10), " + secondUniqueColumnName + " char(10))" + pageSizeClause);
 
 		runSQL(session, "create table " + fixIdentifierCase(session, autoIncrementTableName) + " ( "
 			+ autoIncrementColumnName + " integer)" + pageSizeClause);
@@ -795,7 +885,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (dialect.supportsAlterColumnNull())
 		{
-			runSQL(session, "create table " + fixIdentifierCase(session, "pktest") + " ( "
+			runSQL(session, "create table " + fixIdentifierCase(session, pkTestTableName) + " ( "
 				+ primaryKeyTestColumnOne + " integer, " + primaryKeyTestColumnTwo + " integer )"
 				+ pageSizeClause);
 		}
@@ -829,6 +919,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		runSQL(session, "create table " + fixIdentifierCase(session, testTableForGetViewDefinition)
 			+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
 
+		runSQL(session, "create table " + testTableNameForRenameColumn + " ( "
+			+ varcharColumnToRenameColumnName + " varchar(20)) " + pageSizeClause);
 	}
 
 	private void runTests(boolean quoteIdentifiers, boolean qualifyTableNames) throws Exception
@@ -926,6 +1018,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			testDataScript(session);
 			System.out.println("Completed tests for " + dialect.getDisplayName());
 			session.close();
+			if (System.getProperty("soundSessionClose") != null)
+			{
+				Toolkit.getDefaultToolkit().beep();
+			}
 		}
 	}
 
@@ -996,7 +1092,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final HibernateDialect dialect = getDialect(session);
 
 		final TableColumnInfo newNameCol =
-			getVarcharColumn("newNameCol", "test", true, null, "A column to be renamed");
+			getVarcharColumn(fixIdentifierCase(session, "newNameCol"), testTableZeroTableName, true, null,
+				"A column to be renamed");
 
 		final AlterColumnNameSqlExtractor extractor = new AlterColumnNameSqlExtractor(renameCol, newNameCol);
 		if (dialectDiscoveryMode)
@@ -1098,16 +1195,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testAlterDefaultValue(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final TableColumnInfo varcharColWithDefaultValue =
-			getVarcharColumn("noDefaultVarcharCol", noDefaultValueVarcharCol.getTableName(), true,
-				"Default Value", "A column with a default value");
-
-		final TableColumnInfo integerColWithDefaultVal =
-			getIntegerColumn("noDefaultIntgerCol", noDefaultValueIntegerCol.getTableName(), true, "0",
-				"An integer column with a default value");
 
 		final AlterDefaultValueSqlExtractor extractor =
-			new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue);
+			new AlterDefaultValueSqlExtractor(varcharColInfoForAlterDefault);
 		if (dialectDiscoveryMode)
 		{
 			findSQL(session, extractor);
@@ -1117,10 +1207,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (dialect.supportsAlterColumnDefault())
 		{
 			String defaultValSQL =
-				dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue, qualifier, prefs);
+				dialect.getColumnDefaultAlterSQL(varcharColInfoForAlterDefault, qualifier, prefs);
 			runSQL(session, new String[] { defaultValSQL }, extractor);
 
-			defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal, qualifier, prefs);
+			defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColInfoForAlterDefault, qualifier, prefs);
 			runSQL(session, new String[] { defaultValSQL }, extractor);
 
 		}
@@ -1176,16 +1266,36 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private void testAddColumn(ISession session) throws Exception
 	{
-		addColumn(session, firstCol);
-		addColumn(session, secondCol);
-		addColumn(session, thirdCol);
-		addColumn(session, fourthCol);
-		addColumn(session, dropCol);
-		addColumn(session, noDefaultValueVarcharCol);
-		addColumn(session, noDefaultValueIntegerCol);
-		addColumn(session, renameCol);
-		addColumn(session, pkCol);
-		addColumn(session, notNullIntegerCol);
+		final HibernateDialect dialect = getDialect(session);
+		if (dialect.supportsAddColumn())
+		{
+
+			addColumn(session, firstCol);
+			addColumn(session, secondCol);
+			addColumn(session, thirdCol);
+			addColumn(session, fourthCol);
+			addColumn(session, dropCol);
+			addColumn(session, noDefaultValueVarcharCol);
+			addColumn(session, noDefaultValueIntegerCol);
+			// addColumn(session, renameCol);
+			addColumn(session, pkCol);
+			addColumn(session, notNullIntegerCol);
+
+		}
+		else
+		{
+			try
+			{
+				addColumn(session, firstCol);
+				failDialect(dialect, "adding a column");
+			}
+			catch (final Exception e)
+			{
+				// this is expected
+				System.err.println(e.getMessage());
+			}
+		}
+
 	}
 
 	private void addColumn(ISession session, TableColumnInfo info) throws Exception
@@ -1406,14 +1516,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final String catalog = getDefaultCatalog(session);
 		final String schema = getDefaultSchema(session);
 		final String columnName = "firstCol";
-		final String tableName = fixIdentifierCase(session, testCreateTable);
 
 		final TableColumnInfo firstCol =
 			new TableColumnInfo(catalog, schema, testCreateTable, columnName, Types.BIGINT, "BIGINT", 10, 0, 0,
 				1, null, null, 0, 0, "YES");
 		columns.add(firstCol);
 		final List<TableColumnInfo> pkColumns = null;
-		final CreateTableSqlExtractor extractor = new CreateTableSqlExtractor(tableName, columns, pkColumns);
+		final CreateTableSqlExtractor extractor =
+			new CreateTableSqlExtractor(testCreateTable, columns, pkColumns);
 
 		if (dialectDiscoveryMode)
 		{
@@ -1423,14 +1533,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (dialect.supportsCreateTable())
 		{
-			final String sql = dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
+			final String sql = dialect.getCreateTableSQL(testCreateTable, columns, pkColumns, prefs, qualifier);
 			runSQL(session, new String[] { sql }, extractor);
 		}
 		else
 		{
 			try
 			{
-				dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
+				dialect.getCreateTableSQL(testCreateTable, columns, pkColumns, prefs, qualifier);
 				failDialect(dialect, "creating a table");
 			}
 			catch (final Exception e)
@@ -1445,11 +1555,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testRenameTable(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String oldTableName = fixIdentifierCase(session, testRenameTableBefore);
-		final String newTableName = fixIdentifierCase(session, testRenameTableAfter);
 
 		final RenameTableSqlExtractor renameTableSqlExtractor =
-			new RenameTableSqlExtractor(oldTableName, newTableName);
+			new RenameTableSqlExtractor(testRenameTableBefore, testRenameTableAfter);
 
 		if (dialectDiscoveryMode)
 		{
@@ -1459,7 +1567,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (dialect.supportsRenameTable())
 		{
-			final String sql = dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
+			final String sql =
+				dialect.getRenameTableSQL(testRenameTableBefore, testRenameTableAfter, qualifier, prefs);
 
 			runSQL(session, new String[] { sql }, renameTableSqlExtractor);
 		}
@@ -1467,7 +1576,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 			try
 			{
-				dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
+				dialect.getRenameTableSQL(testRenameTableBefore, testRenameTableAfter, qualifier, prefs);
 				failDialect(dialect, "renaming a table");
 			}
 			catch (final Exception e)
@@ -1483,12 +1592,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final HibernateDialect dialect = getDialect(session);
 
 		String checkOption = "";
-		final String tableToView = fixIdentifierCase(session, testCreateViewTable);
-		final String firstViewName = fixIdentifierCase(session, testViewName);
-		final String secondViewName = fixIdentifierCase(session, testView2Name);
-		final String definition = "select * from " + tableToView;
+		final String definition = "select * from " + testCreateViewTable;
 		final CreateViewSqlExtractor extractor =
-			new CreateViewSqlExtractor(firstViewName, definition, checkOption);
+			new CreateViewSqlExtractor(testViewName, definition, checkOption);
 		if (dialectDiscoveryMode)
 		{
 			findSQL(session, extractor);
@@ -1498,14 +1604,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (dialect.supportsCreateView())
 		{
 
-			String sql = dialect.getCreateViewSQL(firstViewName, definition, checkOption, qualifier, prefs);
+			String sql = dialect.getCreateViewSQL(testViewName, definition, checkOption, qualifier, prefs);
 			runSQL(session, new String[] { sql }, extractor);
 
 			if (dialect.supportsCheckOptionsForViews())
 			{
 				checkOption = "some_check";
-				sql = dialect.getCreateViewSQL(secondViewName, definition, checkOption, qualifier, prefs);
-				runSQL(session, new String[] { sql }, new CreateViewSqlExtractor(secondViewName, definition,
+				sql = dialect.getCreateViewSQL(testView2Name, definition, checkOption, qualifier, prefs);
+				runSQL(session, new String[] { sql }, new CreateViewSqlExtractor(testView2Name, definition,
 					checkOption));
 			}
 
@@ -1529,14 +1635,12 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testRenameView(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String oldViewName = fixIdentifierCase(session, testViewName);
-		final String newViewName = fixIdentifierCase(session, testNewViewName);
 		final String catalog = getDefaultCatalog(session);
 		final String schema = getDefaultSchema(session);
 		final DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
 
 		final RenameViewSqlExtractor renameViewSqlExtractor =
-			new RenameViewSqlExtractor(oldViewName, newViewName);
+			new RenameViewSqlExtractor(testViewName, testNewViewName);
 
 		if (dialectDiscoveryMode)
 		{
@@ -1546,14 +1650,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (dialect.supportsRenameView())
 		{
-			final String[] sql = dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
+			final String[] sql = dialect.getRenameViewSQL(testViewName, testNewViewName, qual, prefs);
 
 			runSQL(session, sql, renameViewSqlExtractor);
 		}
 		else if (dialect.supportsViewDefinition() && dialect.supportsCreateView())
 		{
 
-			final String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);
+			final String viewDefSql = dialect.getViewDefinitionSQL(testViewName, qual, prefs);
 			final ResultSet rs = this.runQuery(session, viewDefSql);
 			final StringBuilder tmp = new StringBuilder();
 			while (rs.next())
@@ -1567,17 +1671,18 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			final int asIndex = viewDefinition.toUpperCase().indexOf("AS");
 			if (asIndex != -1)
 			{
-				viewDefinition = "create view " + newViewName + " as " + viewDefinition.substring(asIndex + 2);
+				viewDefinition =
+					"create view " + testNewViewName + " as " + viewDefinition.substring(asIndex + 2);
 			}
 
-			final String dropOldViewSql = dialect.getDropViewSQL(oldViewName, false, qual, prefs);
+			final String dropOldViewSql = dialect.getDropViewSQL(testViewName, false, qual, prefs);
 			runSQL(session, new String[] { viewDefinition, dropOldViewSql });
 		}
 		else
 		{
 			try
 			{
-				dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
+				dialect.getRenameViewSQL(testViewName, testNewViewName, qual, prefs);
 				failDialect(dialect, "renaming a view");
 			}
 			catch (final Exception e)
@@ -2001,13 +2106,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		localRefColumns.add(new String[] { fkChildColumnName, fkParentColumnName });
 		final String onUpdateAction = null;
 		final String onDeleteAction = null;
-		final String childTable = fixIdentifierCase(session, fkChildTableName);
-		final String parentTable = fixIdentifierCase(session, fkParentTableName);
 
 		final CreateForeignKeyConstraintSqlExtractor extractor =
 			new CreateForeignKeyConstraintSqlExtractor("fk_child_refs_parent", deferrable, initiallyDeferred,
-				matchFull, autoFKIndex, fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, childTable,
-				parentTable);
+				matchFull, autoFKIndex, fkIndexName, localRefColumns, onUpdateAction, onDeleteAction,
+				fkChildTableName, fkParentTableName);
 
 		if (dialectDiscoveryMode)
 		{
@@ -2018,9 +2121,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (dialect.supportsAddForeignKeyConstraint())
 		{
 			final String[] sql =
-				dialect.getAddForeignKeyConstraintSQL(childTable, parentTable, "fk_child_refs_parent",
-					deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns,
-					onUpdateAction, onDeleteAction, qualifier, prefs);
+				dialect.getAddForeignKeyConstraintSQL(fkChildTableName, fkParentTableName,
+					"fk_child_refs_parent", deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName,
+					localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs);
 
 			if (DialectFactory.isFirebird(session.getMetaData()))
 			{
@@ -2043,9 +2146,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 			try
 			{
-				dialect.getAddForeignKeyConstraintSQL(childTable, parentTable, "fk_child_refs_parent",
-					deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns,
-					onUpdateAction, onDeleteAction, qualifier, prefs);
+				dialect.getAddForeignKeyConstraintSQL(fkChildTableName, fkParentTableName,
+					"fk_child_refs_parent", deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName,
+					localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs);
 				failDialect(dialect, "for adding a FK constraint");
 			}
 			catch (final Exception e)
@@ -2060,10 +2163,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	{
 		final HibernateDialect dialect = getDialect(session);
 		TableColumnInfo[] columns = new TableColumnInfo[] { uniqueConstraintTableColumnInfo };
-		final String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
+		// final String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
 
 		final AddUniqueConstraintSqlExtractor extractor =
-			new AddUniqueConstraintSqlExtractor(tableName, secondUniqueConstraintName, columns);
+			new AddUniqueConstraintSqlExtractor(testUniqueConstraintTableName, secondUniqueConstraintName,
+				columns);
 
 		if (dialectDiscoveryMode)
 		{
@@ -2074,15 +2178,16 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (dialect.supportsAddUniqueConstraint())
 		{
 			String[] sql =
-				dialect.getAddUniqueConstraintSQL(tableName, uniqueConstraintName, columns, qualifier, prefs);
+				dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName, uniqueConstraintName, columns,
+					qualifier, prefs);
 			runSQL(session, sql, extractor);
 
 			// We need to add a second column to have a unique constraint so that we can drop that one. Progress
 			// doesn't allow the very first index to ever be dropped.
 			columns = new TableColumnInfo[] { dropConstraintColumn };
 			sql =
-				dialect.getAddUniqueConstraintSQL(tableName, secondUniqueConstraintName, columns, qualifier,
-					prefs);
+				dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName, secondUniqueConstraintName,
+					columns, qualifier, prefs);
 			runSQL(session, sql, extractor);
 
 		}
@@ -2090,7 +2195,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 			try
 			{
-				dialect.getAddUniqueConstraintSQL(tableName, uniqueConstraintName, columns, qualifier, prefs);
+				dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName, uniqueConstraintName, columns,
+					qualifier, prefs);
 				failDialect(dialect, "for adding a unique constraint");
 			}
 			catch (final Exception e)
@@ -2133,10 +2239,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testDropConstraint(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
 
 		final DropConstraintSqlExtractor dropConstraintSqlExtractor =
-			new DropConstraintSqlExtractor(tableName, secondUniqueConstraintName);
+			new DropConstraintSqlExtractor(testUniqueConstraintTableName, secondUniqueConstraintName);
 
 		if (dialectDiscoveryMode)
 		{
@@ -2147,8 +2252,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (dialect.supportsDropConstraint())
 		{
 			final String[] sql =
-				new String[] { dialect.getDropConstraintSQL(tableName, secondUniqueConstraintName, qualifier,
-					prefs) };
+				new String[] { dialect.getDropConstraintSQL(testUniqueConstraintTableName,
+					secondUniqueConstraintName, qualifier, prefs) };
 
 			runSQL(session, sql, dropConstraintSqlExtractor);
 		}
@@ -2156,7 +2261,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 			try
 			{
-				dialect.getDropConstraintSQL(tableName, uniqueConstraintName, qualifier, prefs);
+				dialect.getDropConstraintSQL(testUniqueConstraintTableName, uniqueConstraintName, qualifier,
+					prefs);
 				failDialect(dialect, "for dropping a constraint");
 			}
 			catch (final Exception e)
@@ -2316,21 +2422,22 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		dropTable(session, tableName);
 		runSQL(session, "create table " + tableName + " ( mytime " + timestampTypeName + " )");
-		
+
 		String scale = findMaximumTimestampScale(session, tableName);
 
-		System.out.println("("+dialect.getDisplayName()+") max scale is : "+scale+"("+scale.length()+")");
-		
-		runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23."+scale+"'})");
-		
-//		if (dialect.supportsSubSecondTimestamps())
-//		{
-//			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966123456'})");
-//		}
-//		else
-//		{
-//			runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966'})");
-//		}
+		System.out.println("(" + dialect.getDisplayName() + ") max scale is : " + scale + "(" + scale.length()
+			+ ")");
+
+		runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23." + scale + "'})");
+
+		// if (dialect.supportsSubSecondTimestamps())
+		// {
+		// runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966123456'})");
+		// }
+		// else
+		// {
+		// runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966'})");
+		// }
 
 		final StringBuffer sb = command.getSQL(tableName);
 
@@ -2349,7 +2456,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 				final String nanos = "" + ts.getNanos();
 				if (!scale.equals(nanos))
 				{
-					System.err.println("Expected nanos to be "+scale+", but was instead: " + nanos);
+					System.err.println("Expected nanos to be " + scale + ", but was instead: " + nanos);
 				}
 			}
 			final Statement stmt = rs.getStatement();
@@ -2360,27 +2467,38 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	// Utility methods
 
-	private String findMaximumTimestampScale(ISession session, String tableName) {
+	private String findMaximumTimestampScale(ISession session, String tableName)
+	{
 		boolean done = false;
 		StringBuilder fraction = new StringBuilder();
-		for (int i = 1; i < 20 && !done; i++) {
-			try {
+		for (int i = 1; i < 20 && !done; i++)
+		{
+			try
+			{
 				fraction.append("1");
-				runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23."+fraction+"'})");
-			} catch (Exception e) {
-				fraction.setLength(fraction.length()-1);
+				runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23." + fraction
+					+ "'})");
+			}
+			catch (Exception e)
+			{
+				fraction.setLength(fraction.length() - 1);
 				done = true;
-			} finally {
-				try {
+			}
+			finally
+			{
+				try
+				{
 					runSQL(session, "delete from " + tableName);
-				} catch (Exception e) {
+				}
+				catch (Exception e)
+				{
 					e.printStackTrace();
 				}
 			}
 		}
 		return fraction.toString();
 	}
-	
+
 	private void failDialect(HibernateDialect dialect, String refactoringType)
 	{
 		fail("Expected dialect (" + dialect.getDisplayName() + ") to fail to provide SQL for "
@@ -2683,13 +2801,23 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	{
 		String result = null;
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+
 		if (md.storesUpperCaseIdentifiers())
 		{
 			result = identifier.toUpperCase();
 		}
 		else
 		{
-			result = identifier.toLowerCase();
+			if (DialectFactory.isNetezza(md))
+			{
+				// Netezza driver has a bug
+				// (storesUpperCaseIdentifiers == false; yet it stores them uppercase)
+				result = identifier.toUpperCase();
+			}
+			else
+			{
+				result = identifier.toLowerCase();
+			}
 		}
 		return result;
 	}
