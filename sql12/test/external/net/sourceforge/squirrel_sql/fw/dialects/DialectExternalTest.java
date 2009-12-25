@@ -196,6 +196,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private static String columnAddedColumnName = "columnAdded";
 
+	private static String newNameColumeName = "newNameCol";
+
 	private static String testSequenceName = "testSequence";
 
 	private static String testSequenceName2 = "testSequence2";
@@ -219,6 +221,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private static String testRenameTableAfter = "tableWasRenamed";
 
 	private static String testCreateIndexTable = "createIndexTest";
+
+	private static String testDefaultTableName = "TESTDEFAULT";
 
 	private static String testFirstMergeTable = "firstTableToBeMerged";
 
@@ -253,6 +257,10 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private static String testTableFourTableName = "test4";
 
 	private static String testTableFiveTableName = "test5";
+
+	private static String testTableATableName = "a";
+
+	private static String testMaterializedViewName = "MATVIEW";
 
 	/**
 	 * this is set to true to try to derive SQL for the dialect being tested automatically, using other
@@ -524,6 +532,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		fkParentColumnName = fixIdentifierCase(session, fkParentColumnName);
 		indexTestColumnName = fixIdentifierCase(session, indexTestColumnName);
 		integerColumnForSetDefaultColumnName = fixIdentifierCase(session, integerColumnForSetDefaultColumnName);
+		newNameColumeName = fixIdentifierCase(session, newNameColumeName);
 		nullVarcharColumnName = fixIdentifierCase(session, nullVarcharColumnName);
 		primaryKeyTestColumnOne = fixIdentifierCase(session, primaryKeyTestColumnOne);
 		primaryKeyTestColumnTwo = fixIdentifierCase(session, primaryKeyTestColumnTwo);
@@ -537,22 +546,35 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		autoIncrementSequenceName = fixIdentifierCase(session, autoIncrementSequenceName);
 
 		// fix table name case
+
 		autoIncrementTableName = fixIdentifierCase(session, autoIncrementTableName);
 		fkChildTableName = fixIdentifierCase(session, fkChildTableName);
 		fkParentTableName = fixIdentifierCase(session, fkParentTableName);
+		integerDataTableName = fixIdentifierCase(session, integerDataTableName);
 		pkTestTableName = fixIdentifierCase(session, pkTestTableName);
+		testCreateIndexTable = fixIdentifierCase(session, testCreateIndexTable);
 		testCreateTable = fixIdentifierCase(session, testCreateTable);
 		testCreateViewTable = fixIdentifierCase(session, testCreateViewTable);
+		testDefaultTableName = fixIdentifierCase(session, testDefaultTableName);
+		testFirstMergeTable = fixIdentifierCase(session, testFirstMergeTable);
+		testInsertIntoTable = fixIdentifierCase(session, testInsertIntoTable);
+		testNewTimestampTable = fixIdentifierCase(session, testNewTimestampTable);
 		testRenameTableAfter = fixIdentifierCase(session, testRenameTableAfter);
 		testRenameTableBefore = fixIdentifierCase(session, testRenameTableBefore);
+		testSecondMergeTable = fixIdentifierCase(session, testSecondMergeTable);
+		testTableATableName = fixIdentifierCase(session, testTableATableName);
 		testTableNameForRenameColumn = fixIdentifierCase(session, testTableNameForRenameColumn);
 		testTableForAlterColumnDefault = fixIdentifierCase(session, testTableForAlterColumnDefault);
+		testTableForDropView = fixIdentifierCase(session, testTableForDropView);
+		testTableForGetViewDefinition = fixIdentifierCase(session, testTableForGetViewDefinition);
 		testTableZeroTableName = fixIdentifierCase(session, testTableZeroTableName);
 		testTableOneTableName = fixIdentifierCase(session, testTableOneTableName);
 		testTableTwoTableName = fixIdentifierCase(session, testTableTwoTableName);
 		testTableThreeTableName = fixIdentifierCase(session, testTableThreeTableName);
 		testTableFourTableName = fixIdentifierCase(session, testTableFourTableName);
 		testTableFiveTableName = fixIdentifierCase(session, testTableFiveTableName);
+
+		testTimestampTable = fixIdentifierCase(session, testTimestampTable);
 		testUniqueConstraintTableName = fixIdentifierCase(session, testUniqueConstraintTableName);
 
 		// fix view name case
@@ -560,6 +582,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		testViewName = fixIdentifierCase(session, testViewName);
 		testView2Name = fixIdentifierCase(session, testView2Name);
 		testViewToBeDropped = fixIdentifierCase(session, testViewToBeDropped);
+
+		// fix materialized view name case
+		testMaterializedViewName = fixIdentifierCase(session, testMaterializedViewName);
 	}
 
 	private void init(ISession session) throws Exception
@@ -781,23 +806,23 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		dropTable(session, testRenameTableBefore);
 		dropTable(session, testRenameTableAfter);
 		dropTable(session, testCreateViewTable);
-		dropTable(session, fixIdentifierCase(session, testCreateIndexTable));
-		dropTable(session, fixIdentifierCase(session, testTableForAlterColumnDefault));
-		dropTable(session, fixIdentifierCase(session, testTimestampTable));
-		dropTable(session, fixIdentifierCase(session, testNewTimestampTable));
+		dropTable(session, testCreateIndexTable);
+		dropTable(session, testTableForAlterColumnDefault);
+		dropTable(session, testTimestampTable);
+		dropTable(session, testNewTimestampTable);
 		dropTable(session, fkChildTableName);
-		dropTable(session, fixIdentifierCase(session, fkParentTableName));
+		dropTable(session, fkParentTableName);
 		dropTable(session, testUniqueConstraintTableName);
-		dropTable(session, fixIdentifierCase(session, autoIncrementTableName));
-		dropTable(session, fixIdentifierCase(session, integerDataTableName));
-		dropTable(session, fixIdentifierCase(session, "a"));
+		dropTable(session, autoIncrementTableName);
+		dropTable(session, integerDataTableName);
+		dropTable(session, testTableATableName);
 		dropTable(session, testCreateTable);
-		dropTable(session, fixIdentifierCase(session, testInsertIntoTable));
-		dropTable(session, fixIdentifierCase(session, testFirstMergeTable));
-		dropTable(session, fixIdentifierCase(session, testSecondMergeTable));
-		dropTable(session, fixIdentifierCase(session, testTableForDropView));
-		dropTable(session, fixIdentifierCase(session, testTableForGetViewDefinition));
-		dropTable(session, fixIdentifierCase(session, testTableNameForRenameColumn));
+		dropTable(session, testInsertIntoTable);
+		dropTable(session, testFirstMergeTable);
+		dropTable(session, testSecondMergeTable);
+		dropTable(session, testTableForDropView);
+		dropTable(session, testTableForGetViewDefinition);
+		dropTable(session, testTableNameForRenameColumn);
 
 		// Now sequences should go.
 		dropSequence(session, testSequenceName);
@@ -808,7 +833,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (DialectFactory.isOracle(session.getMetaData()))
 		{
-			dropTable(session, fixIdentifierCase(session, "matview"));
+			dropTable(session, testMaterializedViewName);
 		}
 
 		String pageSizeClause = "";
@@ -825,13 +850,12 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			// you to add a PK to a table after it has been constructed unless the
 			// column(s) that comprise the PK were originally there when created
 			// *and* created not null.
-			runSQL(session, "create table " + fixIdentifierCase(session, testTableZeroTableName)
-				+ " ( mychar char(10), " + DB2_PK_COLNAME + " integer not null)");
+			runSQL(session, "create table " + testTableZeroTableName + " ( mychar char(10), " + DB2_PK_COLNAME
+				+ " integer not null)");
 		}
 		else
 		{
-			runSQL(session, "create table " + fixIdentifierCase(session, testTableZeroTableName)
-				+ " ( mychar char(10))" + pageSizeClause);
+			runSQL(session, "create table " + testTableZeroTableName + " ( mychar char(10))" + pageSizeClause);
 		}
 
 		runSQL(session, "create table " + testTableOneTableName + " ( mychar char(10))" + pageSizeClause);
@@ -842,10 +866,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		runSQL(session, "create table " + testRenameTableBefore + " ( mychar char(10))" + pageSizeClause);
 		runSQL(session, "create table " + testCreateViewTable + " ( mychar char(10))" + pageSizeClause);
 		// MySQL spatial index requires a not null column
-		runSQL(session, "create table " + fixIdentifierCase(session, testCreateIndexTable) + " ( "
-			+ indexTestColumnName + " varchar(10) not null, " + uniqueIndexTestColumnName + " varchar(10))"
-			+ pageSizeClause);
-		runSQL(session, "create table " + fixIdentifierCase(session, testTableForAlterColumnDefault) + " ( "
+		runSQL(session, "create table " + testCreateIndexTable + " ( " + indexTestColumnName
+			+ " varchar(10) not null, " + uniqueIndexTestColumnName + " varchar(10))" + pageSizeClause);
+		runSQL(session, "create table " + testTableForAlterColumnDefault + " ( "
 			+ varcharColumnForSetDefaultColumnName + " varchar(10) , " + integerColumnForSetDefaultColumnName
 			+ " integer ) " + pageSizeClause);
 		/* DB2 requires primary keys to also be declared "not null" */
@@ -857,66 +880,54 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		runSQL(session, "create table " + testUniqueConstraintTableName + " ( " + uniqueConstraintColName
 			+ " char(10), " + secondUniqueColumnName + " char(10))" + pageSizeClause);
 
-		runSQL(session, "create table " + fixIdentifierCase(session, autoIncrementTableName) + " ( "
-			+ autoIncrementColumnName + " integer)" + pageSizeClause);
+		runSQL(session, "create table " + autoIncrementTableName + " ( " + autoIncrementColumnName
+			+ " integer)" + pageSizeClause);
 
-		runSQL(session, "create table " + fixIdentifierCase(session, integerDataTableName) + " ( myid integer)"
-			+ pageSizeClause);
+		runSQL(session, "create table " + integerDataTableName + " ( myid integer)" + pageSizeClause);
 
 		int count = 0;
 		while (count++ < 11)
 		{
-			runSQL(session, "insert into " + fixIdentifierCase(session, integerDataTableName) + " values ("
-				+ count + ")");
+			runSQL(session, "insert into " + integerDataTableName + " values (" + count + ")");
 		}
 
-		runSQL(session, "CREATE TABLE " + fixIdentifierCase(session, "a") + "( "
-			+ "   acol int NOT NULL PRIMARY KEY, " + "   adesc varchar(10), " + "   bdesc varchar(10),"
-			+ "   joined varchar(20) " + ") ");
+		runSQL(session, "CREATE TABLE " + testTableATableName + "( " + "   acol int NOT NULL PRIMARY KEY, "
+			+ "   adesc varchar(10), " + "   bdesc varchar(10)," + "   joined varchar(20) " + ") ");
 
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, "a")
+		runSQL(session, "INSERT INTO " + testTableATableName
 			+ " (acol,adesc,bdesc,joined) VALUES (1,'a1','b1','a1b1') ");
 
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, "a")
+		runSQL(session, "INSERT INTO " + testTableATableName
 			+ " (acol,adesc,bdesc,joined) VALUES (2,'a2','b2','a2b2') ");
 
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, "a")
+		runSQL(session, "INSERT INTO " + testTableATableName
 			+ " (acol,adesc,bdesc,joined) VALUES (3,'a3','b3','a3b3') ");
 
 		if (dialect.supportsAlterColumnNull())
 		{
-			runSQL(session, "create table " + fixIdentifierCase(session, pkTestTableName) + " ( "
-				+ primaryKeyTestColumnOne + " integer, " + primaryKeyTestColumnTwo + " integer )"
-				+ pageSizeClause);
+			runSQL(session, "create table " + pkTestTableName + " ( " + primaryKeyTestColumnOne + " integer, "
+				+ primaryKeyTestColumnTwo + " integer )" + pageSizeClause);
 		}
 
-		runSQL(session, "create table " + fixIdentifierCase(session, testInsertIntoTable) + " ( myid integer)"
+		runSQL(session, "create table " + testInsertIntoTable + " ( myid integer)" + pageSizeClause);
+
+		runSQL(session, "create table " + testFirstMergeTable + " ( myid integer, desc_t1 varchar(20))"
 			+ pageSizeClause);
 
-		runSQL(session, "create table " + fixIdentifierCase(session, testFirstMergeTable)
-			+ " ( myid integer, desc_t1 varchar(20))" + pageSizeClause);
+		runSQL(session, "INSERT INTO " + testFirstMergeTable + " (myid, desc_t1) VALUES (1,'table1-row1') ");
+		runSQL(session, "INSERT INTO " + testFirstMergeTable + " (myid, desc_t1) VALUES (2,'table1-row2') ");
+		runSQL(session, "INSERT INTO " + testFirstMergeTable + " (myid, desc_t1) VALUES (3,'table1-row3') ");
 
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable)
-			+ " (myid, desc_t1) VALUES (1,'table1-row1') ");
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable)
-			+ " (myid, desc_t1) VALUES (2,'table1-row2') ");
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable)
-			+ " (myid, desc_t1) VALUES (3,'table1-row3') ");
+		runSQL(session, "create table " + testSecondMergeTable + " ( myid integer, desc_t2 varchar(20))"
+			+ pageSizeClause);
+		runSQL(session, "INSERT INTO " + testSecondMergeTable + " (myid, desc_t2) VALUES (1,'table2-row1') ");
+		runSQL(session, "INSERT INTO " + testSecondMergeTable + " (myid, desc_t2) VALUES (2,'table2-row2') ");
+		runSQL(session, "INSERT INTO " + testSecondMergeTable + " (myid, desc_t2) VALUES (3,'table2-row3') ");
 
-		runSQL(session, "create table " + fixIdentifierCase(session, testSecondMergeTable)
-			+ " ( myid integer, desc_t2 varchar(20))" + pageSizeClause);
+		runSQL(session, "create table " + testTableForDropView + " ( myid integer, mydesc varchar(20))"
+			+ pageSizeClause);
 
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable)
-			+ " (myid, desc_t2) VALUES (1,'table2-row1') ");
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable)
-			+ " (myid, desc_t2) VALUES (2,'table2-row2') ");
-		runSQL(session, "INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable)
-			+ " (myid, desc_t2) VALUES (3,'table2-row3') ");
-
-		runSQL(session, "create table " + fixIdentifierCase(session, testTableForDropView)
-			+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
-
-		runSQL(session, "create table " + fixIdentifierCase(session, testTableForGetViewDefinition)
+		runSQL(session, "create table " + testTableForGetViewDefinition
 			+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
 
 		runSQL(session, "create table " + testTableNameForRenameColumn + " ( "
@@ -1062,7 +1073,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		if (!DialectFactory.isOracle(session.getMetaData())) { return; }
 		final HibernateDialect dialect = getDialect(session);
 
-		final String dropMatViewSql = "DROP MATERIALIZED VIEW MATVIEW ";
+		final String dropMatViewSql = "DROP MATERIALIZED VIEW " + testMaterializedViewName;
 
 		try
 		{
@@ -1075,14 +1086,14 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		testAddPrimaryKey(session, new TableColumnInfo[] { pkCol });
 		final String createMatViewSQL =
-			"CREATE MATERIALIZED VIEW MATVIEW " + "       REFRESH COMPLETE " + "   NEXT  SYSDATE + 1 "
-				+ "   WITH PRIMARY KEY " + "   AS SELECT * FROM TEST ";
+			"CREATE MATERIALIZED VIEW " + testMaterializedViewName + " REFRESH COMPLETE NEXT SYSDATE + 1 "
+				+ " WITH PRIMARY KEY AS SELECT * FROM TEST ";
 		runSQL(session, createMatViewSQL);
 		final MockSession msession = (MockSession) session;
 		final String cat = msession.getDefaultCatalog();
 		final String schema = msession.getDefaultSchema();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-		final ITableInfo info = new TableInfo(cat, schema, "MATVIEW", "TABLE", "", md);
+		final ITableInfo info = new TableInfo(cat, schema, testMaterializedViewName, "TABLE", "", md);
 		final List<String> dropSQL = dialect.getTableDropSQL(info, true, true, qualifier, prefs);
 		runSQL(session, dropSQL);
 	}
@@ -1092,8 +1103,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final HibernateDialect dialect = getDialect(session);
 
 		final TableColumnInfo newNameCol =
-			getVarcharColumn(fixIdentifierCase(session, "newNameCol"), testTableZeroTableName, true, null,
-				"A column to be renamed");
+			getVarcharColumn(newNameColumeName, testTableZeroTableName, true, null, "A column to be renamed");
 
 		final AlterColumnNameSqlExtractor extractor = new AlterColumnNameSqlExtractor(renameCol, newNameCol);
 		if (dialectDiscoveryMode)
@@ -1161,7 +1171,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		 * alterColTypeSQL);
 		 */
 		final TableColumnInfo thirdColLonger =
-			getVarcharColumn(nullVarcharColumnName, fixIdentifierCase(session, "test3"), true, "defVal",
+			getVarcharColumn(nullVarcharColumnName, testTableThreeTableName, true, "defVal",
 				"A varchar comment", 30);
 
 		final AlterColumnTypeSqlExtractor extractor = new AlterColumnTypeSqlExtractor(thirdCol, thirdColLonger);
@@ -1232,9 +1242,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testAlterNull(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String tableName = fixIdentifierCase(session, "test3");
 		final TableColumnInfo notNullThirdCol =
-			getVarcharColumn(fixIdentifierCase(session, "nullvc"), tableName, false, "defVal",
+			getVarcharColumn(nullVarcharColumnName, testTableThreeTableName, false, "defVal",
 				"A varchar comment");
 
 		final AlterColumnNullSqlExtractor extractor = new AlterColumnNullSqlExtractor(notNullThirdCol);
@@ -1471,28 +1480,27 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		if (!dialect.supportsCreateTable()) { return; }
 
-		final String testTableName = "TESTDEFAULT";
-
-		dropTable(session, testTableName);
+		dropTable(session, testDefaultTableName);
 
 		/* create a table with a default value to use as the model */
-		final String createSql = "create table " + testTableName + " ( mycol integer default 0 )";
+		final String createSql = "create table " + testDefaultTableName + " ( mycol integer default 0 )";
 
 		runSQL(session, createSql);
 
 		/* Build the sql statement(s) to create the table */
-		ITableInfo tableInfo = getTableInfo(session, testTableName);
+		ITableInfo tableInfo = getTableInfo(session, testDefaultTableName);
 		if (tableInfo == null)
 		{
-			tableInfo = getTableInfo(session, testTableName.toLowerCase());
+			tableInfo = getTableInfo(session, testDefaultTableName.toLowerCase());
 		}
 		if (tableInfo == null)
 		{
-			tableInfo = getTableInfo(session, testTableName.toUpperCase());
+			tableInfo = getTableInfo(session, testDefaultTableName.toUpperCase());
 		}
 
-		assertNotNull("Couldn't locate table (" + testTableName + ") that was just created with statement ("
-			+ createSql + ").  Dialect=" + dialect.getDisplayName(), tableInfo);
+		assertNotNull(
+			"Couldn't locate table (" + testDefaultTableName + ") that was just created with statement ("
+				+ createSql + ").  Dialect=" + dialect.getDisplayName(), tableInfo);
 
 		final CreateScriptPreferences prefs = new CreateScriptPreferences();
 		final List<String> sqls =
@@ -1696,10 +1704,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testDropView(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String tableName = fixIdentifierCase(session, testTableForDropView);
-		final String viewName = fixIdentifierCase(session, testViewToBeDropped);
 
-		final DropViewSqlExtractor dropViewSqlExtractor = new DropViewSqlExtractor(viewName, false);
+		final DropViewSqlExtractor dropViewSqlExtractor = new DropViewSqlExtractor(testViewToBeDropped, false);
 		if (dialectDiscoveryMode)
 		{
 			findSQL(session, dropViewSqlExtractor);
@@ -1710,10 +1716,11 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 
 			String sql =
-				dialect.getCreateViewSQL(viewName, "select * from " + tableName, null, qualifier, prefs);
+				dialect.getCreateViewSQL(testViewToBeDropped, "select * from " + testTableForDropView, null,
+					qualifier, prefs);
 			runSQL(session, sql);
 
-			sql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
+			sql = dialect.getDropViewSQL(testViewToBeDropped, false, qualifier, prefs);
 
 			runSQL(session, new String[] { sql }, dropViewSqlExtractor);
 		}
@@ -1723,7 +1730,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			{
 				try
 				{
-					dialect.getDropViewSQL(viewName, false, qualifier, prefs);
+					dialect.getDropViewSQL(testViewToBeDropped, false, qualifier, prefs);
 					failDialect(dialect, "dropping a view");
 				}
 				catch (final Exception e)
@@ -1738,10 +1745,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testGetViewDefinition(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String tableName = fixIdentifierCase(session, testTableForGetViewDefinition);
-		final String viewName = fixIdentifierCase(session, testViewToBeDropped);
 
-		final GetViewdefinitionSqlExtractor extractor = new GetViewdefinitionSqlExtractor(viewName);
+		final GetViewdefinitionSqlExtractor extractor = new GetViewdefinitionSqlExtractor(testViewToBeDropped);
 		if (dialectDiscoveryMode)
 		{
 			findSQL(session, extractor);
@@ -1752,14 +1757,15 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 			/* create a test view that we will get view def for then drop and re-create */
 			final String createViewSql =
-				dialect.getCreateViewSQL(viewName, "select * from " + tableName, null, qualifier, prefs);
+				dialect.getCreateViewSQL(testViewToBeDropped, "select * from " + testTableForGetViewDefinition,
+					null, qualifier, prefs);
 			runSQL(session, createViewSql);
 
 			/* 
 			 * viewDefSql is the SQL that can be used to query the data dictionary for the body of a view. 
 			 * This should exclude the "CREATE VIEW <viewname> AS" prefix and just return the query.
 			 */
-			final String viewDefSql = dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
+			final String viewDefSql = dialect.getViewDefinitionSQL(testViewToBeDropped, qualifier, prefs);
 			final ResultSet rs = runQuery(session, viewDefSql);
 			String viewBody = "";
 			if (rs.next())
@@ -1777,7 +1783,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			 * Now that we have run the view definition query, and retrieved the SQL that is the body of the view
 			 * (that is, it's query part minus the "CREATE VIEW AS" prefix), we can drop the view. 
 			 */
-			final String dropViewSql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
+			final String dropViewSql = dialect.getDropViewSQL(testViewToBeDropped, false, qualifier, prefs);
 			runSQL(session, new String[] { dropViewSql }, extractor);
 
 		}
@@ -1785,7 +1791,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		{
 			try
 			{
-				dialect.getViewDefinitionSQL(viewName, qualifier, prefs);
+				dialect.getViewDefinitionSQL(testViewToBeDropped, qualifier, prefs);
 				failDialect(dialect, "getting the view definition");
 			}
 			catch (final Exception e)
@@ -1806,7 +1812,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		final String indexName1 = "testIndex";
 		final String indexName2 = "testUniqueIndex";
-		final String tableName = fixIdentifierCase(session, testCreateIndexTable);
 
 		if (dialect.supportsCreateIndex() && dialect.supportsDropIndex())
 		{
@@ -1841,12 +1846,12 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 				// create a non-unique index on mychar
 				columns = new String[] { indexTestColumnName };
 				String sql =
-					dialect.getCreateIndexSQL(indexName1, tableName, accessMethod, columns, false, tablespace,
-						constraints, qualifier, prefs);
+					dialect.getCreateIndexSQL(indexName1, testCreateIndexTable, accessMethod, columns, false,
+						tablespace, constraints, qualifier, prefs);
 
 				final CreateIndexSqlExtractor extractor =
-					new CreateIndexSqlExtractor(indexName1, tableName, accessMethod, columns, false, tablespace,
-						constraints);
+					new CreateIndexSqlExtractor(indexName1, testCreateIndexTable, accessMethod, columns, false,
+						tablespace, constraints);
 
 				// create it.
 				runSQL(session, new String[] { sql }, extractor);
@@ -1854,30 +1859,31 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 				// create a unique index on myuniquechar
 				columns = new String[] { uniqueIndexTestColumnName };
 				sql =
-					dialect.getCreateIndexSQL(indexName2, tableName, accessMethod, columns, true, tablespace,
-						constraints, qualifier, prefs);
+					dialect.getCreateIndexSQL(indexName2, testCreateIndexTable, accessMethod, columns, true,
+						tablespace, constraints, qualifier, prefs);
 
 				final CreateIndexSqlExtractor extractor2 =
-					new CreateIndexSqlExtractor(indexName2, tableName, accessMethod, columns, true, tablespace,
-						constraints);
+					new CreateIndexSqlExtractor(indexName2, testCreateIndexTable, accessMethod, columns, true,
+						tablespace, constraints);
 
 				// create it.
 				runSQL(session, new String[] { sql }, extractor2);
 
 				// now drop the second.
-				String dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs);
+				String dropIndexSQL =
+					dialect.getDropIndexSQL(testCreateIndexTable, indexName2, true, qualifier, prefs);
 
 				// TODO: Remove this when Frontbase bug gets fixed.
 				// For some reason, Frontbase renames the unique indexes to a generated value. Since we don't
 				// know what that new name for the index is, skip dropping it for now.
 				if (!DialectFactory.isFrontBase(session.getMetaData()))
 				{
-					runSQL(session, new String[] { dropIndexSQL }, new DropIndexSqlExtractor(tableName,
+					runSQL(session, new String[] { dropIndexSQL }, new DropIndexSqlExtractor(testCreateIndexTable,
 						indexName2, true));
 				}
 
 				// now drop the first
-				dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName1, true, qualifier, prefs);
+				dropIndexSQL = dialect.getDropIndexSQL(testCreateIndexTable, indexName1, true, qualifier, prefs);
 				try
 				{
 					runSQL(session, dropIndexSQL);
@@ -1895,7 +1901,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			{
 				try
 				{
-					dialect.getCreateIndexSQL(indexName1, tableName, null, columns, false, tablespace,
+					dialect.getCreateIndexSQL(indexName1, testCreateIndexTable, null, columns, false, tablespace,
 						constraints, qualifier, prefs);
 					failDialect(dialect, "for creating an index");
 				}
@@ -1909,7 +1915,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			{
 				try
 				{
-					dialect.getDropIndexSQL(tableName, indexName1, false, qualifier, prefs);
+					dialect.getDropIndexSQL(testCreateIndexTable, indexName1, false, qualifier, prefs);
 					failDialect(dialect, "for dropping an index");
 				}
 				catch (final Exception e)
@@ -2163,7 +2169,6 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	{
 		final HibernateDialect dialect = getDialect(session);
 		TableColumnInfo[] columns = new TableColumnInfo[] { uniqueConstraintTableColumnInfo };
-		// final String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
 
 		final AddUniqueConstraintSqlExtractor extractor =
 			new AddUniqueConstraintSqlExtractor(testUniqueConstraintTableName, secondUniqueConstraintName,
@@ -2276,9 +2281,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testInsertIntoSQL(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		String valuesPart = "select distinct myid from " + fixIdentifierCase(session, integerDataTableName);
+		String valuesPart = "select distinct myid from " + integerDataTableName;
 		final ArrayList<String> columns = new ArrayList<String>();
-		final String tableName = fixIdentifierCase(session, testInsertIntoTable);
+		final String tableName = testInsertIntoTable;
 
 		final InsertIntoSqlExtractor insertIntoSqlExtractor =
 			new InsertIntoSqlExtractor(tableName, columns, valuesPart);
@@ -2347,7 +2352,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private void testUpdateSQL(ISession session) throws Exception
 	{
 		final HibernateDialect dialect = getDialect(session);
-		final String tableName = "a";
+		final String tableName = testTableATableName;
 		final String[] setColumns = new String[] { "joined" };
 		final String[] setValues = new String[] { "'a1b1'" };
 		final String[] fromTables = null;
@@ -2397,8 +2402,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			final String schema = getDefaultSchema(session);
 
 			selectedTables[0] =
-				new DatabaseObjectInfoHelper(catalog, schema, fixIdentifierCase(session, testSecondMergeTable),
-					fixIdentifierCase(session, testSecondMergeTable), DatabaseObjectType.TABLE);
+				new DatabaseObjectInfoHelper(catalog, schema, testSecondMergeTable, testSecondMergeTable,
+					DatabaseObjectType.TABLE);
 
 			final MergeTableCommandHelper command = new MergeTableCommandHelper(session, selectedTables, null);
 
@@ -2415,20 +2420,20 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		// Axion cannot handle ts escape sequence - so skip this test for now.
 		if (DialectFactory.isAxion(session.getMetaData())) { return; }
 
-		final String tableName = fixIdentifierCase(session, testTimestampTable);
 		final String timestampTypeName = dialect.getTypeName(Types.TIMESTAMP, 5, 5, 5);
 
 		final CreateDataScriptHelper command = new CreateDataScriptHelper(session, null, false);
 
-		dropTable(session, tableName);
-		runSQL(session, "create table " + tableName + " ( mytime " + timestampTypeName + " )");
+		dropTable(session, testTimestampTable);
+		runSQL(session, "create table " + testTimestampTable + " ( mytime " + timestampTypeName + " )");
 
-		String scale = findMaximumTimestampScale(session, tableName);
+		String scale = findMaximumTimestampScale(session, testTimestampTable);
 
 		System.out.println("(" + dialect.getDisplayName() + ") max scale is : " + scale + "(" + scale.length()
 			+ ")");
 
-		runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23." + scale + "'})");
+		runSQL(session, "insert into " + testTimestampTable + " values ({ts '2008-02-21 21:26:23." + scale
+			+ "'})");
 
 		// if (dialect.supportsSubSecondTimestamps())
 		// {
@@ -2439,17 +2444,16 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		// runSQL(session, "insert into " + tableName + " values ({ts '2008-02-21 21:26:23.966'})");
 		// }
 
-		final StringBuffer sb = command.getSQL(tableName);
+		final StringBuffer sb = command.getSQL(testTimestampTable);
 
-		final String newTableName = fixIdentifierCase(session, testNewTimestampTable);
-		dropTable(session, newTableName);
-		runSQL(session, "create table " + newTableName + " ( mytime " + timestampTypeName + " )");
+		dropTable(session, testNewTimestampTable);
+		runSQL(session, "create table " + testNewTimestampTable + " ( mytime " + timestampTypeName + " )");
 		runSQL(session, sb.toString());
 
 		/* Verify insert worked only if the dialect supports sub-second timestamp values */
 		if (dialect.supportsSubSecondTimestamps())
 		{
-			final ResultSet rs = runQuery(session, "select mytime from " + newTableName);
+			final ResultSet rs = runQuery(session, "select mytime from " + testNewTimestampTable);
 			if (rs.next())
 			{
 				final Timestamp ts = rs.getTimestamp(1);
@@ -2921,17 +2925,15 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 			super(session, info, dialogFactory);
 			final Vector<String> mergeColumns = new Vector<String>();
 			mergeColumns.add("desc_t1");
-			final String referencedTable = fixIdentifierCase(session, testFirstMergeTable);
+
 			final Vector<String[]> whereDataColumns = new Vector<String[]>();
 			whereDataColumns.add(new String[] { "myid", "myid" });
 			final boolean _isMergeData = true;
 			super.customDialog =
-				new MergeTableDialogHelper(mergeColumns, referencedTable, whereDataColumns, _isMergeData);
+				new MergeTableDialogHelper(mergeColumns, testFirstMergeTable, whereDataColumns, _isMergeData);
 			_allTables = new HashMap<String, TableColumnInfo[]>();
-			_allTables.put(fixIdentifierCase(session, testFirstMergeTable), getLiveColumnInfo(session,
-				fixIdentifierCase(session, testFirstMergeTable)));
-			_allTables.put(fixIdentifierCase(session, testSecondMergeTable), getLiveColumnInfo(session,
-				fixIdentifierCase(session, testSecondMergeTable)));
+			_allTables.put(testFirstMergeTable, getLiveColumnInfo(session, testFirstMergeTable));
+			_allTables.put(testSecondMergeTable, getLiveColumnInfo(session, testSecondMergeTable));
 			super._dialect = DialectFactory.getDialect(session.getMetaData());
 		}
 
