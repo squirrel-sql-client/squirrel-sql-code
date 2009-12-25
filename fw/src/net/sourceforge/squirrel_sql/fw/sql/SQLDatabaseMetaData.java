@@ -417,6 +417,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			value = Boolean.TRUE;
 		}
+		else if (DialectFactory.isNetezza(this)) 
+		{
+		// Netezza driver mistakenly reports that it doesn't support stored procedures.
+			value = Boolean.TRUE;
+		}
 		else
 		{
 			value = Boolean.valueOf(privateGetJDBCMetaData().supportsStoredProcedures());
@@ -917,6 +922,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				tableTypes.add("SYSTEM TABLE");
 				tableTypes.add("VIEW");				
 			}
+		} 
+		
+		else if (DialectFactory.getDialectType(this) == DialectType.NETEZZA) {
+			tableTypes.clear();
+			tableTypes.add("SYSTEM TABLE");
+			tableTypes.add("TABLE");
+			tableTypes.add("VIEW");
 		}
 		
 		value = tableTypes.toArray(new String[tableTypes.size()]);
