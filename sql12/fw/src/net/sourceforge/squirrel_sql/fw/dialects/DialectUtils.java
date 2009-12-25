@@ -936,8 +936,11 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. ALTER TABLE table_name [alterClause] column_name
-	 * [renameToClause] column_name
+	 * Returns the SQL that is used to change the column name. <code>
+	 * For example:
+	 * 
+	 * ALTER TABLE table_name [alterClause] column_name [renameToClause] column_name
+	 * </code>
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -982,16 +985,26 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL command to change the specified column's default value ALTER TABLE table_name ALTER
-	 * COLUMN column_name [defaultClause] 'defaultVal' ALTER TABLE table_name ALTER COLUMN column_name
-	 * [defaultClause] 1234
+	 * Returns the SQL command to change the specified column's default value. <code>
+	 * For example: 
+	 * 
+	 * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 'defaultVal'
+	 *  
+	 * or
+	 *  
+	 * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 1234
+	 * </code>
 	 * 
 	 * @param dialect
 	 *           the HibernateDialect representing the target database.
 	 * @param info
 	 *           the column to modify and it's default value.
+	 * @param alterClause
+	 *           alter phrase that precedes the column name (e.g. ALTER COLUMN)
 	 * @param specifyType
 	 *           whether or not to specify the column type
+	 * @param defaultClause
+	 *           alter phrase that precedes the default value (e.g. SET DEFAULT)
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
@@ -1039,8 +1052,14 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type. ALTER TABLE table_name alter_clause column_name
-	 * [setClause] data_type ALTER TABLE table_name alter_clause column_name column_name [setClause] data_type
+	 * Returns the SQL that is used to change the column type. For example:
+	 * <code>
+	 * ALTER TABLE table_name alter_clause column_name [setClause] data_type 
+	 * </code>
+	 * or
+	 * <code>
+	 * ALTER TABLE table_name alter_clause column_name column_name [setClause] data_type
+	 * </code>
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -1090,8 +1109,10 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. RENAME COLUMN table_name.column_name TO
-	 * new_column_name
+	 * Returns the SQL that is used to change the column name. For example:
+	 * <code>
+	 * RENAME COLUMN table_name.column_name TO new_column_name
+	 * </code>
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -1145,44 +1166,38 @@ public class DialectUtils implements StringTemplateConstants
 		switch (featureId)
 		{
 		case COLUMN_COMMENT_ALTER_TYPE:
-			// i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support
-			// column comments]
+			// i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support column comments]
 			msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_DEFAULT_ALTER_TYPE:
-			// i18n[DialectUtils.columnDefaultUnsupported={0} doesn''t support
-			// altering a column''s default value]
+			// i18n[DialectUtils.columnDefaultUnsupported={0} doesn''t support altering a column''s default 
+			// value]
 			msg = s_stringMgr.getString("DialectUtils.columnDefaultUnsupported", dialect.getDisplayName());
 			break;
 
 		case COLUMN_DROP_TYPE:
-			// i18n[DialectUtils.columnDropUnsupported={0} doesn''t support
-			// dropping a column]
+			// i18n[DialectUtils.columnDropUnsupported={0} doesn''t support dropping a column]
 			msg = s_stringMgr.getString("DialectUtils.columnDropUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_NAME_ALTER_TYPE:
-			// i18n[DialectUtils.columnNameUnsupported={0} doesn''t support
-			// altering a column''s name]
+			// i18n[DialectUtils.columnNameUnsupported={0} doesn''t support altering a column''s name]
 			msg = s_stringMgr.getString("DialectUtils.columnNameUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_NULL_ALTER_TYPE:
-			// i18n[DialectUtils.columnNullUnsupported={0} doesn''t support
-			// altering a column's nullable attribute]
+			// i18n[DialectUtils.columnNullUnsupported={0} doesn''t support altering a column's nullable 
+			// attribute]
 			msg = s_stringMgr.getString("DialectUtils.columnNullUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_TYPE_ALTER_TYPE:
-			// i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support
-			// altering a column's type attribute]
+			// i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support altering a column's type attribute]
 			msg = s_stringMgr.getString("DialectUtils.columnTypeUnsupported", dialect.getDisplayName());
 			break;
 		case ADD_PRIMARY_KEY_TYPE:
-			// i18n[DialectUtils.addPrimaryKeyUnsupported={0} doesn''t
-			// support adding primary keys]
+			// i18n[DialectUtils.addPrimaryKeyUnsupported={0} doesn''t support adding primary keys]
 			msg = s_stringMgr.getString("DialectUtils.addPrimaryKeyUnsupported", dialect.getDisplayName());
 			break;
 		case DROP_PRIMARY_KEY_TYPE:
-			// i18n[DialectUtils.dropPrimaryKeyUnsupported={0} doesn''t
-			// support dropping primary keys]
+			// i18n[DialectUtils.dropPrimaryKeyUnsupported={0} doesn''t support dropping primary keys]
 			msg = s_stringMgr.getString("DialectUtils.dropPrimaryKeyUnsupported", dialect.getDisplayName());
 			break;
 		case CREATE_TABLE_TYPE:
@@ -1231,8 +1246,14 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key. alter table table_name drop primary
-	 * key or alter table table_name drop constraint [pkName]
+	 * Returns the SQL command to drop the specified table's primary key. For example:
+	 * <code>
+	 * alter table table_name drop primary key 
+	 * </code>
+	 * or 
+	 * <code>
+	 * alter table table_name drop constraint [pkName]
+	 * </code>
 	 * 
 	 * @param pkName
 	 *           the name of the primary key that should be dropped
