@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class handles the expanding of the "Sequence Group" node. It will give a list of ObjectTreeNodes that
@@ -46,6 +48,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 public class SequenceParentExpander implements INodeExpander
 {
 
+	private final static ILogger s_log = LoggerController.createLogger(SequenceParentExpander.class);
+		
 	/**
 	 * The database-specific class that provides the query for "finding" sequences in a schema/catalog.
 	 */
@@ -89,10 +93,17 @@ public class SequenceParentExpander implements INodeExpander
 		final String schemaName = parentDbinfo.getSchemaName();
 		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
-		final PreparedStatement pstmt = conn.prepareStatement(extractor.getSequenceParentQuery());
+		final String sequenceParentQuerySql = extractor.getSequenceParentQuery();
+		if (s_log.isDebugEnabled()) {
+			s_log.debug("createChildren: running sequence parent query for sequence children: "
+				+ sequenceParentQuerySql);
+		}
+
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try
 		{
+			pstmt = conn.prepareStatement(sequenceParentQuerySql);		
 			extractor.bindParameters(pstmt, parentDbinfo, filterMatcher);
 
 			rs = pstmt.executeQuery();
