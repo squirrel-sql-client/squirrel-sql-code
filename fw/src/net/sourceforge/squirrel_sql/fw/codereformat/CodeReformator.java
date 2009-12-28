@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class CodeReformator {
+public class CodeReformator implements ICodeReformator {
     private static final StringManager s_stringMgr = StringManagerFactory
             .getStringManager(CodeReformator.class);
 
@@ -50,7 +50,10 @@ public class CodeReformator {
         _commentSpecs = commentSpecs;
     }
 
-    public String reformat(String in) {
+    /**
+	 * @see net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator#reformat(java.lang.String)
+	 */
+   public String reformat(String in) {
         in = flatenWhiteSpaces(in, false);
 
         PieceMarkerSpec[] markerExcludeComma = createPieceMarkerSpecExcludeColon();
