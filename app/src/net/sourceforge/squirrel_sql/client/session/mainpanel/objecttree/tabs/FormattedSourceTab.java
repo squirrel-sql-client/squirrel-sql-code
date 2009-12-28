@@ -28,6 +28,7 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -54,7 +55,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 		StringManagerFactory.getStringManager(FormattedSourceTab.class);
 
 	/** does the work of formatting */
-	private CodeReformator formatter = null;
+	private ICodeReformator formatter = null;
 
 	/** whether or not to compress whitespace */
 	private boolean compressWhitespace = true;
@@ -101,6 +102,29 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 		formatter = new CodeReformator(stmtSep, this.commentSpecs);
 	}
 
+	/**
+	 * Sets up a custom formatter implementation which is used to format the source after retrieving it from 
+	 * the ResultSet. If this is not setup prior to loading, then the formatter will not be used - only 
+	 * whitespace compressed if so enabled.
+	 * 
+	 * @param codeReformator
+	 * @param stmtSep
+	 *           the formatter needs to know what the statement separator is.
+	 * @param commentSpecs
+	 *           the types of comments that can be found in the source code. This can be null, and if so, the
+	 *           standard comment styles are used (i.e. -- and c-style comments)
+	 */
+	protected void setupFormatter(ICodeReformator codeReformator, String stmtSep, CommentSpec[] commentSpecs)
+	{
+		if (commentSpecs != null)
+		{
+			this.commentSpecs = commentSpecs;
+		}
+		statementSeparator = stmtSep;
+		formatter = codeReformator;
+	}
+	
+	
 	/**
 	 * Whether or not to convert multiple consecutive spaces into a single space.
 	 * 
@@ -180,6 +204,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 					_ta.setText(processedResult);
 				}
 				_ta.setCaretPosition(0);
+				_ta.setTabSize(4);
 
 			}
 			catch (Exception ex)
