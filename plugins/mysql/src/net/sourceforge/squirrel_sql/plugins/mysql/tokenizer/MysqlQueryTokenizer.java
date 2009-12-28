@@ -116,12 +116,18 @@ public class MysqlQueryTokenizer extends QueryTokenizer implements IQueryTokeniz
     
     /** 
      * This will loop through _queries and break apart lines that look like
+     * <code>
      * 
-     *   <sep>\n\ncreate proc...
+     * list:
+     *   element: <sep>\n\ncreate proc...
+     *   
      * into
      * 
-     *   <sep>
-     *   create proc...
+     * list:
+     *   element: <sep>
+     *   element: create proc...
+     *   
+     * </code>
      */
     private void breakApartNewLines() {
         ArrayList<String> tmp = new ArrayList<String>();
