@@ -46,7 +46,7 @@ import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
  * 	END;
  * END_PROC;
  * 
- * comes out of the proceduresource column of the _v_procedure system tablelooking like this:
+ * comes out of the "proceduresource" column of the _v_procedure system table looking like this:
  * 
  * CREATE OR REPLACE PROCEDURE num() RETURNS BOOL LANGUAGE NZPLSQL AS BEGIN_PROC /nDECLARE/n	n NUMERIC;
  * BEGIN/n	n := 2147483647;RAISE NOTICE 'n is %', n;n := 2147483647 + 1;RAISE NOTICE 
@@ -143,8 +143,6 @@ public class NetezzaProcedureFormator implements ICodeReformator
 				}
 				else
 				{
-					// At this point, we have one long line of code that ends approximately with END;END_PROC with
-					// statement separators interspersed.
 					result.append(part);
 					result.append(" ");
 					if (part.endsWith(stmtSep))
