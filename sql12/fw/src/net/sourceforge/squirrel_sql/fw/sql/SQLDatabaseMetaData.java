@@ -443,8 +443,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/* Not cached.
-	 * (non-Javadoc)
+	/** 
+	 * Not cached because we want to allow the user to pickup changes to this list (e.g. refreshing the object
+	 * tree) without requiring them to delete the cache.
+	 * 
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getCatalogs()
 	 */
 	public synchronized String[] getCatalogs() throws SQLException
@@ -613,6 +615,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				_cache.put(key, value);
 			}
 			throw ex;
+		}
+		
+		// Netezza bug; It supports both catalogs and schemas in SQL statements, yet returns false.
+		if (DialectFactory.isNetezza(this)) {
+			value = true;
 		}
 		_cache.put(key, value);
 
