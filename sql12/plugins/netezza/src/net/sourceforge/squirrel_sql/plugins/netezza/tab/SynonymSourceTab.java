@@ -19,41 +19,38 @@ package net.sourceforge.squirrel_sql.plugins.netezza.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
-import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * This class provides the necessary information to the parent tab to display the source for a Netezza 
- * procedure.  It uses a custom formatter class (NetezzaProcedureFormator) that can handle formatting Netezza 
- * stored procedures (and not much else).
+ * This class provides the necessary information to the parent tab to display the source for a Netezza
+ * synonym.
  */
-public class ProcedureSourceTab extends FormattedSourceTab
+public class SynonymSourceTab extends FormattedSourceTab
 {
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ProcedureSourceTab.class);
+		StringManagerFactory.getStringManager(SynonymSourceTab.class);
 	
 	public static interface i18n
 	{
-		// i18n[ProcedureSourceTab.hint=Shows the source of the selected procedure]
-		String hint = s_stringMgr.getString("ProcedureSourceTab.hint");
-	}	
+		// i18n[SynonymSourceTab.hint=Shows the source of the selected synonym]
+		String hint = s_stringMgr.getString("SynonymSourceTab.hint");
+	}
 	
 	/**
 	 * Constructor
 	 * 
+	 * @param hint
+	 *           what the user sees on mouse-over tool-tip
 	 * @param stmtSep
 	 *           the string to use to separate SQL statements
 	 */
-	public ProcedureSourceTab(String stmtSep)
+	public SynonymSourceTab(String stmtSep)
 	{
 		super(i18n.hint);
-		ICodeReformator formator = new NetezzaProcedureFormator(stmtSep);
-		super.setupFormatter(formator, stmtSep, null);
+		super.setupFormatter(stmtSep, null);
 		super.setCompressWhitespace(true);
-		// Netezza procedure definitions include the statement separator.
-		super.appendSeparator = false;
 	}
 
 	/**
@@ -64,24 +61,24 @@ public class ProcedureSourceTab extends FormattedSourceTab
 	{
 		return 
 		"SELECT " +
-		"'create or replace procedure ' || proceduresignature || ' returns ' || returns || " +
-		"' LANGUAGE NZPLSQL AS BEGIN_PROC ' || proceduresource || ' END_PROC;' " +
-		"FROM _v_procedure " +
-		"WHERE owner = ? " +
-		"and procedure = ? ";
+		"'create synonym ' || synonym_name || ' for ' || refobjname " +
+		"FROM _v_synonym " +
+		"where refdatabase = ? " +
+		"and refschema = ? " +
+		"and synonym_name like ? ";
 	}
 
 	/**
-    * Overridden as the super implementation binds schemaname rather than catalogname as is used
-    * in Netezza.
-    * 
-    * @return a String array of bind variable values
-    */
+	 * Overridden as the super implementation binds just schemaname rather than both catalogname and schemaName
+	 * as is used in Netezza.
+	 * 
+	 * @return a String array of bind variable values
+	 */
 	@Override
-   protected String[] getBindValues()
-   {
-   	final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-   	return new String[] { doi.getSchemaName(), doi.getSimpleName() };		
-   }
+	protected String[] getBindValues()
+	{
+		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+		return new String[] { doi.getCatalogName(), doi.getSchemaName(), doi.getSimpleName() };
+	}
 	
 }

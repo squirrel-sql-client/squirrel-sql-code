@@ -31,13 +31,14 @@ public class NetezzaSequenceParentExtractorImpl implements ISequenceParentExtrac
 {
 	private final static ILogger s_log =
 		LoggerController.createLogger(NetezzaSequenceParentExtractorImpl.class);
-	
-	private static final String SQL = 
-		"SELECT SEQNAME " +
-		"FROM _v_sequence " +
-		"WHERE OWNER = ? " +
-		"and SEQNAME like ? ";
-	
+
+	private static final String SQL =
+		"SELECT OBJNAME FROM _v_objs_owned " + 
+		"where CLASS = 'SEQUENCE' " + 
+		"and DATABASE = ? " + 
+		"and OWNER = ? " + 
+		"and OBJNAME like ? ";
+
 	@Override
 	public String getSequenceParentQuery()
 	{
@@ -48,12 +49,15 @@ public class NetezzaSequenceParentExtractorImpl implements ISequenceParentExtrac
 	public void bindParameters(PreparedStatement pstmt, IDatabaseObjectInfo parentDbinfo,
 		ObjFilterMatcher filterMatcher) throws SQLException
 	{
-		if (s_log.isDebugEnabled()) {
-			s_log.debug("bindParameters: :1 = " + parentDbinfo.getSchemaName() + " :2 = "
-				+ filterMatcher.getSqlLikeMatchString());			
+		if (s_log.isDebugEnabled())
+		{
+			s_log.debug("bindParameters: database = " + parentDbinfo.getCatalogName());
+			s_log.debug("bindParameters: owner = " + parentDbinfo.getSchemaName());
+			s_log.debug("bindParameters: objname = " + filterMatcher.getSqlLikeMatchString());
 		}
-		pstmt.setString(1, parentDbinfo.getSchemaName());
-		pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
+		pstmt.setString(1, parentDbinfo.getCatalogName());
+		pstmt.setString(2, parentDbinfo.getSchemaName());
+		pstmt.setString(3, filterMatcher.getSqlLikeMatchString());
 	}
 
 }
