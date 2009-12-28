@@ -28,6 +28,7 @@ import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.DROP_INDEX_T
 import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.getUnsupportedMessage;
 
 import java.sql.Types;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.hibernate.HibernateException;
  */
 public class NetezzaDialextExt extends CommonHibernateDialect
 {
+
 	// Note that Netezza 4.6 doesn't have support for LOB data types. Under the hood, it appears to use
 	// PostgreSQL, but with some limitations.
 	private class NetezzaDialectHelper extends org.hibernate.dialect.PostgreSQLDialect
@@ -592,7 +594,10 @@ public class NetezzaDialextExt extends CommonHibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
@@ -601,6 +606,162 @@ public class NetezzaDialextExt extends CommonHibernateDialect
 		String alterClause = DialectUtils.RENAME_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.TO_CLAUSE;
 		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause, qualifier, prefs, this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getRenameTableSQL(String oldTableName, String newTableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getCreateViewSQL(String viewName, String definition, String checkOption,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return DialectUtils.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs, this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+
+		String commandPrefix = DialectUtils.ALTER_VIEW_CLAUSE;
+		String renameClause = DialectUtils.RENAME_TO_CLAUSE;
+		return new String[] { DialectUtils.getRenameViewSQL(commandPrefix, renameClause, oldViewName,
+			newViewName, qualifier, prefs, this) };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		return "SELECT 'create or replace view ' || v.VIEWNAME || ' as ' || "
+			+ "v.definition FROM _v_view v, _v_objs_owned o " + "where v.objid = o.objid "
+			+ "and o.DATABASE = '" + qualifier.getCatalog() + "' " + "and v.VIEWNAME = '" + viewName + "'";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final String minimumClause = DialectUtils.MINVALUE_CLAUSE;
+		final String maximumClause = DialectUtils.MAXVALUE_CLAUSE;
+
+		String cycleClause = DialectUtils.CYCLE_CLAUSE;
+		if (!cycle)
+		{
+			cycleClause = DialectUtils.NO_CYCLE_CLAUSE;
+		}
+
+		return DialectUtils.getCreateSequenceSQL(sequenceName, increment, minimumClause, minimum,
+			maximumClause, maximum, start, cache, cycleClause, qualifier, prefs, this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		String cycleClause = DialectUtils.CYCLE_CLAUSE;
+		if (!cycle)
+		{
+			cycleClause = DialectUtils.NO_CYCLE_CLAUSE;
+		}
+
+		return new String[] { DialectUtils.getAlterSequenceSQL(sequenceName, increment, minimum, maximum,
+			restart, cache, cycleClause, qualifier, prefs, this) };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getSequencePropertyMutability()
+	 */
+	@Override
+	public SequencePropertyMutability getSequencePropertyMutability()
+	{
+		SequencePropertyMutability result = new SequencePropertyMutability();
+		result.setCache(false);
+		return result;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean,
+	 *      boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
+		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
+		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
+		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+			deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns, onUpdateAction,
+			onDeleteAction, qualifier, prefs, this);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(tableName, constraintName, columns,
+			qualifier, prefs, this) };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getDropConstraintSQL(String tableName, String constraintName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return DialectUtils.getDropConstraintSQL(tableName, constraintName, qualifier, prefs, this)
+			+ " RESTRICT";
 	}
 
 }
