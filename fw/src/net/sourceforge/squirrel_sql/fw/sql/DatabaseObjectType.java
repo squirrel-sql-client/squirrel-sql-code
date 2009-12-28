@@ -113,6 +113,12 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     */
    public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence");
 
+   /**
+    * An object that is an alias for another object.  While support for this isn't standardized or universal
+    * this type of object is found in a few different databases (e.g. Oracle, Netezza)
+    */
+   public final static DatabaseObjectType SYNONYM = createNewDatabaseObjectTypeI18n("DatabaseObjectType.synonym");
+   
    /** TABLE. */
    public final static DatabaseObjectType TABLE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.table");
 
