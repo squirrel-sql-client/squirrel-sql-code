@@ -20,23 +20,32 @@ package net.sourceforge.squirrel_sql.plugins.netezza.tab;
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * This class provides the necessary information to the parent tab to display the source for a Netezza view.
  */
 public class ViewSourceTab extends FormattedSourceTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ViewSourceTab.class);
+
+	public static interface i18n
+	{
+		// i18n[ViewSourceTab.hint=Shows the source of the selected view]
+		String hint = s_stringMgr.getString("ViewSourceTab.hint");
+	}
+	
 	/**
 	 * Constructor
 	 * 
-	 * @param hint
-	 *           what the user sees on mouse-over tool-tip
 	 * @param stmtSep
 	 *           the string to use to separate SQL statements
 	 */
-	public ViewSourceTab(String hint, String stmtSep)
+	public ViewSourceTab(String stmtSep)
 	{
-		super(hint);
+		super(i18n.hint);
 		super.setupFormatter(stmtSep, null);
 		super.setCompressWhitespace(true);
 		// Netezza view definitions include the statement separator.

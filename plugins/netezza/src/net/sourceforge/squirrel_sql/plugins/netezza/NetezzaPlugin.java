@@ -36,9 +36,13 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSequenceInodeExpanderFactory;
+import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSynonymInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.prefs.NetezzaPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.netezza.tab.ProcedureSourceTab;
+import net.sourceforge.squirrel_sql.plugins.netezza.tab.SynonymDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.netezza.tab.SynonymSourceTab;
 import net.sourceforge.squirrel_sql.plugins.netezza.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.netezza.tokenizer.NetezzaQueryTokenizer;
 
 /**
  * The main controller class for the Netezza plugin.
@@ -56,13 +60,9 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 	private PluginQueryTokenizerPreferencesManager _prefsManager = null;	
 	
 	static interface i18n
-	{
-		// i18n[NetezzaPlugin.viewSourceTabHint=Shows the source of the selected view]
-		String VIEW_SOURCE_TAB_HINT = s_stringMgr.getString("NetezzaPlugin.viewSourceTabHint");
-		
+	{		
 		// i18n[NetezzaPlugin.prefsHint=Preferences for Netezza]
 		String PREFS_HINT = s_stringMgr.getString("NetezzaPlugin.prefsHint");
-		
 	}
 
 	@Override
@@ -126,6 +126,9 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		if (!DialectFactory.isNetezza(session.getMetaData())) {
 			return null;
 		}
+		
+		session.setQueryTokenizer(new NetezzaQueryTokenizer(_prefsManager.getPreferences()));
+		
 		GUIUtils.processOnSwingEventThread(new Runnable() {
 
 			@Override
@@ -141,18 +144,31 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 
 	private void updateObjectTree(final IObjectTreeAPI objTree)
 	{
-		objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
-		objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.VIEW_SOURCE_TAB_HINT, ";"));
-		objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		objTree.addDetailTab(DatabaseObjectType.VIEW, new DatabaseObjectInfoTab());
-		objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.VIEW_SOURCE_TAB_HINT, ";"));
-		
+		String stmtSep = _prefsManager.getPreferences().getStatementSeparator();
 		
 		// ////// Object Tree Expanders ////////
-		// Schema Expanders - sequence
+
+		// Schema Expander - sequences
 		objTree.addExpander(DatabaseObjectType.SCHEMA, 
 			new SchemaExpander(new NetezzaSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
-				
+
+		// Schema Expander - synonyms
+		objTree.addExpander(DatabaseObjectType.SCHEMA, 
+			new SchemaExpander(new NetezzaSynonymInodeExpanderFactory(), DatabaseObjectType.SYNONYM));
+
+		
+		// ////// Object Tree Detail Tabs ////////
+		objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(stmtSep));
+		
+		// Netezza data dictionary lacks sequence details needed for a details tab or a source tab.
+		objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+		
+		objTree.addDetailTab(DatabaseObjectType.SYNONYM, new DatabaseObjectInfoTab());
+		objTree.addDetailTab(DatabaseObjectType.SYNONYM, new SynonymDetailsTab());
+		objTree.addDetailTab(DatabaseObjectType.SYNONYM, new SynonymSourceTab(stmtSep));
+		
+		objTree.addDetailTab(DatabaseObjectType.VIEW, new DatabaseObjectInfoTab());
+		objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(stmtSep));
 	}
 
 	/**
