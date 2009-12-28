@@ -20,7 +20,8 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 /**
  * A class that represents what properties of a sequence can be modified (increment, start, cycle, 
- * cache, etc.)  Some databases (such as HSQLDB) restrict what properties of a sequence can be modified.   
+ * cache, etc.)  Some databases (such as HSQLDB and Netezza) restrict what properties of a sequence can be 
+ * modified.   
  * 
  * @author manningr
  *
