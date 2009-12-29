@@ -62,6 +62,7 @@ driver property to connect as SYS, or any other account that needs to connect as
 
 Look & Feel Plugin
  - Better support for Nimbus: No horizontal scrollbars on pop up lists (e.g. code completion) 
+ - Removed choices for Metouia and OYOAHA as these are not supported for use in Java 6.
 
 Oracle Plugin
  - SQL*Loader control file generation.

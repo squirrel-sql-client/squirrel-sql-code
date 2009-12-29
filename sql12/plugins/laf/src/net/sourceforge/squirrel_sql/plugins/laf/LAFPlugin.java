@@ -107,7 +107,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getVersion()
 	{
-		return "1.1";
+		return "1.1.1";
 	}
 
 	/**
@@ -208,10 +208,6 @@ public class LAFPlugin extends DefaultPlugin
 
 		// Load plugin preferences.
 		loadPrefs();
-
-		// Setup preferences to make jGoodies LAF look better.
-//		UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-//		UIManager.put(Options.USE_NARROW_BUTTONS_KEY, Boolean.TRUE);
 
 		// Create the Look and Feel register.
 		_lafRegister = new LAFRegister(app, this);

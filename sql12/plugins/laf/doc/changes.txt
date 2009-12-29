@@ -1,6 +1,16 @@
 Look and Feel Plugin Change Log
 ===============================
 
+1.1.1
+=====
+
+Changes for Java 6
+------------------
+ 
+- Nimbus look-and-feel is now available as an option (uses the implementation that is shipped in the Java
+    Runtime Environment for Java 6)
+- Metouia and OYOAHA removed now that Java 6 is required to run SQuirreL.
+
 1.1
 ===
 
