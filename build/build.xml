@@ -495,6 +495,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.oracle}" />
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="netezza" />
+			<param name="p_rebuild" value="${rebuild.plugin.netezza}" />
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="postgres" />
 			<param name="p_rebuild" value="${rebuild.plugin.postgres}" />
 		</antcall>
@@ -1377,6 +1381,10 @@
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="mysql" />
 			<param name="shoulddeploy" value="${rebuild.plugin.mysql}" />
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="netezza" />
+			<param name="shoulddeploy" value="${rebuild.plugin.netezza}" />
 		</antcall>
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="oracle" />
