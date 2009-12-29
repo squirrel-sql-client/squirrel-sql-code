@@ -1,0 +1,143 @@
+<html>
+
+<head>
+<title>Netezza Plugin</title>
+</head>
+
+<body>
+<center>
+<h1>Netezza Plugin</h1>
+</center>
+
+<h2>Author</h2>
+<ul>
+	<li>Rob Manning</li>
+</ul>
+
+<h2>Introduction</h2>
+
+<p>The Netezza plugin adds Netezza-specific functionality to the SQuirreL SQL Client. Read access is
+required to the following system views in order for this additional functionality to work correctly:</p>
+<ul>
+	<li>_v_objs_owned</li>
+	<li>_v_procedure</li>
+	<li>_v_synonym</li>
+	<li>_v_view</li>
+</ul>
+
+<p>All objects can be found in folders by object type beneath the tree node of the schema (Netezza User), 
+which is also directly beneath the tree node for the catalog (Netezza Database).  In the screenshot below
+the catalog (or database) is RManning46_DB and the schema (or user) is RManning46.</p>
+
+<center><img src="images/objtree.png" alt="picture of the Object Tree"></center>
+
+<p></p>
+
+<h2>New Tabs</h2>
+
+<p>Synonyms, Sequences, Stored Procedures and Views are shown in the object tree when using this plugin. 
+Synonyms, Stored Procedures and Views have a &quot;Source&quot; tab which displays the source of the selected 
+object. Synonyms also have a &quot;Details&quot; tab which gives synonym-specific information about the 
+object.</p>
+
+<!-- 
+  -- SYNONYM SOURCE 
+  -->
+<h2>Synonym Source Tab</h2>
+The source tab for synonyms displays the source for a synonym and can be accessed by navigating to the
+&quot;SYNONYM&quot; folder beneath a table object in the object tree. An example of this is shown in the
+following picture:
+<p></p>
+<center><img src="images/synsrc.png" alt="source code for the selected synonym"></center>
+<p>The source code for triggers is derived from the following query:</p>
+<p><pre>
+	SELECT 
+	'create synonym ' || synonym_name || ' for ' || refobjname 
+	FROM _v_synonym 
+	where refdatabase = ? 
+	and refschema = ? 
+	and synonym_name like ?
+</pre>
+<p></p>
+<!-- 
+  -- SYNONYM DETAILS 
+  -->
+<h2>Synonym Details Tab</h2>
+The details tab for a synonym displays information about the selected synonym according to the system catalog.
+This includes information such as the object that the synonym is an alias for, and what database that object 
+belongs to. An example of this is shown in the following picture:
+<p></p>
+<center><img src="images/syndet.png" alt="details for the selected synonym"></center>
+<p>The information in the details tab for a synonym is derived from the following query:</p>
+<p></p>
+<pre>
+	SELECT 
+	SYNONYM_NAME, 
+	refobjname as Referenced_Object, 
+	refdatabase as Referenced_Database , 
+	refdatabase || '.' || synonym_name as Qualified_Name 
+	FROM _v_synonym 
+	where synonym_name = ? 
+	and refschema = ? 
+</pre>
+
+<!-- 
+  -- STORED PROCEDURE SOURCE 
+  -->
+<h2>Stored Procedure Source Tab</h2>
+The source tab for synonyms displays the source for the selected stored procedure and can be accessed by 
+navigating to the &quot;PROCEDURE&quot; folder in the object tree. An example of this is shown in the
+following picture:
+<p></p>
+<center><img src="images/procsrc.png" alt="source code for the selected stored procedure"></center>
+<p>The source code for stored procedures is derived from the following query:</p>
+<p><pre>
+	SELECT 
+	'create or replace procedure ' || proceduresignature || ' returns ' || returns || 
+	' LANGUAGE NZPLSQL AS BEGIN_PROC ' || proceduresource || ' END_PROC;' 
+	FROM _v_procedure 
+	WHERE owner = ? 
+	and procedure = ?
+</pre>
+<p></p>
+
+
+<!-- 
+  -- VIEW SOURCE 
+  -->
+
+<h2>View Source Tab</h2>
+The source tab for views displays the source for a view and can be accessed by navigating to the
+&quot;VIEW&quot; folder beneath a schema object in the object tree. An example of this is shown in the
+following picture:
+<p></p>
+<center><img src="images/viewsrc.png" alt=""></center>
+<p>The source code for views is derived from the following query:</p>
+<p><pre>
+	SELECT 'create or replace view ' || v.VIEWNAME || ' as ' || 
+	v.definition FROM _v_view v, _v_objs_owned o 
+	where v.objid = o.objid 
+	and o.DATABASE = ? 
+	and v.VIEWNAME = ? 
+</pre></p>
+<p></p>
+
+<!-- 
+  -- SEQUENCE INFO 
+  -->
+
+<h2>Sequence Info Tab</h2>
+Netezza's data dictionary doesn't provide enough details about sequences to show detailed information such as
+next value, increment, start value, max value, cycle, etc.  Without this information it is also impossible to 
+automatically reconstruct the source code that could be used to re-create the sequence.  However, the 
+sequences are listed in the object tree and minimal information about them is shown in the info tab.
+The info tab for sequences displays minimal info about a sequence and can be accessed by navigating to the
+&quot;SEQUENCE&quot; folder beneath a schema object in the object tree. An example of this is shown in the
+following picture:
+<p></p>
+<center><img src="images/seqinfo.png" alt=""></center>
+
+
+</body>
+</html>
+
