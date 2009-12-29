@@ -65,36 +65,81 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		String PREFS_HINT = s_stringMgr.getString("NetezzaPlugin.prefsHint");
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getAuthor()
+	 */
 	@Override
 	public String getAuthor()
 	{
 		return "Rob Manning";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
+	 */
 	@Override
 	public String getDescriptiveName()
 	{
 		return "Netezza Plugin";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
+	 */
 	@Override
 	public String getInternalName()
 	{
 		return "netezza";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
+	 */
 	@Override
 	public String getVersion()
 	{
 		return "0.01";
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
+	 */
+	@Override
+	public String getChangeLogFileName()
+	{
+		return "changes.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getHelpFileName()
+	 */
+	@Override
+	public String getHelpFileName()
+	{
+		return "readme.html";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getLicenceFileName()
+	 */
+	@Override
+	public String getLicenceFileName()
+	{
+		return "licence.txt";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
+	 */
 	@Override
 	public boolean allowsSessionStartedInBackground()
 	{
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
 	@Override
 	protected boolean isPluginSession(ISession session)
 	{
@@ -119,7 +164,19 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		return new IGlobalPreferencesPanel[] { tab };
 	}
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#initialize()
+	 */
+	@Override
+	public void initialize() throws PluginException
+	{
+		_prefsManager = new PluginQueryTokenizerPreferencesManager();
+		_prefsManager.initialize(this, new NetezzaPreferenceBean());
+	}	
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
 	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
@@ -171,14 +228,5 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(stmtSep));
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#initialize()
-	 */
-	@Override
-	public void initialize() throws PluginException
-	{
-		_prefsManager = new PluginQueryTokenizerPreferencesManager();
-		_prefsManager.initialize(this, new NetezzaPreferenceBean());
-	}
 
 }
