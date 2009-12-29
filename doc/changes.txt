@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New plugin for Netezza NPS database server.  This plugin allows for viewing source and details of Views, 
+Stored Procedures, and synonyms.  It also provides the ability to execute stored procedures in the SQL Editor.
+See Help for screenshots and more details.
+
 Aliases now have the ability to setup a keep-alive SQL statement and sleep time (in seconds) to prevent a 
 connection from being disconnected while appearing to be idle.  This is done using the new Connection tab 
 on the Alias properties dialog.
