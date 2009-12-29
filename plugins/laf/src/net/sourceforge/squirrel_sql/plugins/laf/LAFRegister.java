@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
@@ -38,13 +39,13 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 /**
  * Register of Look and Feels.
  *
@@ -395,14 +396,6 @@ class LAFRegister
 		}
 		try
 		{
-			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
-		}
-		catch (Throwable ex)
-		{
-			s_log.error("Error installing OyoahaLookAndFeelController", ex);
-		}
-		try
-		{
 			PlasticLookAndFeelController ctrl = new PlasticLookAndFeelController(plugin, this);
 			String[] ar = PlasticLookAndFeelController.LAF_CLASS_NAMES;
 			for (int i = 0; i < ar.length; ++i)
@@ -466,15 +459,7 @@ class LAFRegister
 				{
 					break;
 				}
-				
-				// Some LAFs don't work under Java 6 or later.
-				if (Version.isJDK16OrAbove()&&
-						(jarName.equalsIgnoreCase("metouia.jar") ||
-								jarName.equalsIgnoreCase("oalnf.jar")))
-				{
-					continue;
-				}
-		
+						
 				File file = new File(stdLafJarDir, jarName);
 				try
 				{
