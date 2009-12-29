@@ -204,11 +204,19 @@
 		</pack>				
 
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - MySQL ">
-			<description>This optional plugin adds MySQL specific functionality  </description>
+			<description>This optional plugin adds MySQL-specific functionality  </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql.jar"/>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql"/>
+		</pack>				
+
+		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Netezza ">
+			<description>This optional plugin adds Netezza-specific functionality  </description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/netezza/dist/netezza.jar"/>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/netezza/dist/netezza"/>
 		</pack>				
 
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Oracle">
