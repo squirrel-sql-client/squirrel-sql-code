@@ -20,6 +20,8 @@ public class HibernateConfigPanel extends JPanel
    JList lstClassPath;
    JButton btnClassPathAdd;
    JButton btnClassPathRemove;
+   JButton btnClassPathMoveUp;
+   JButton btnClassPathMoveDown;
    JTextField txtConfigName;
    JButton btnApplyConfigChanges;
    JRadioButton radConfiguration;
@@ -140,6 +142,13 @@ public class HibernateConfigPanel extends JPanel
       btnClassPathRemove = new JButton(s_stringMgr.getString("HibernatePanel.classPathRemove"));
       ret.add(btnClassPathRemove, gbc);
 
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      btnClassPathMoveUp = new JButton(s_stringMgr.getString("HibernatePanel.moveUp"));
+      ret.add(btnClassPathMoveUp, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      btnClassPathMoveDown = new JButton(s_stringMgr.getString("HibernatePanel.moveDown"));
+      ret.add(btnClassPathMoveDown, gbc);
 
       return ret;
    }

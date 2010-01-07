@@ -75,6 +75,22 @@ public class HibernateConfigController
          }
       });
 
+      _panel.btnClassPathMoveUp.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onMoveUpClasspathEntries();
+         }
+      });
+
+      _panel.btnClassPathMoveDown.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onMoveDownClasspathEntries();
+         }
+      });
+
 
 
       _panel.btnEditFactoryProviderInfo.addActionListener(new ActionListener()
@@ -116,6 +132,7 @@ public class HibernateConfigController
 
 
    }
+
 
    private void onObtainSessFactChanged()
    {
@@ -334,6 +351,74 @@ public class HibernateConfigController
          }
       }
    }
+
+
+   private void onMoveUpClasspathEntries()
+   {
+      int[] selIx = _panel.lstClassPath.getSelectedIndices();
+
+      if(null == selIx|| 0 == selIx.length)
+      {
+         return;
+      }
+
+      DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
+
+      for (int i : selIx)
+      {
+         if(0 == i)
+         {
+            return;
+         }
+      }
+
+      int[] newSelIx = new int[selIx.length];
+      for (int i =0; i < selIx.length; ++i) 
+      {
+         String file = (String) listModel.remove(selIx[i]);
+         newSelIx[i] = selIx[i] - 1;
+         listModel.insertElementAt(file, newSelIx[i]);
+      }
+
+      _panel.lstClassPath.setSelectedIndices(newSelIx);
+
+      _panel.lstClassPath.ensureIndexIsVisible(newSelIx[0]);
+
+   }
+
+   private void onMoveDownClasspathEntries()
+   {
+      int[] selIx = _panel.lstClassPath.getSelectedIndices();
+
+      if(null == selIx|| 0 == selIx.length)
+      {
+         return;
+      }
+
+      DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
+
+      for (int i : selIx)
+      {
+         if(listModel.getSize() - 1 == i)
+         {
+            return;
+         }
+      }
+
+      int[] newSelIx = new int[selIx.length];
+      for (int i = selIx.length - 1; i >= 0 ; --i)
+      {
+         String file = (String) listModel.remove(selIx[i]);
+         newSelIx[i] = selIx[i] + 1;
+         listModel.insertElementAt(file, newSelIx[i]);
+      }
+
+      _panel.lstClassPath.setSelectedIndices(newSelIx);
+
+      _panel.lstClassPath.ensureIndexIsVisible(newSelIx[newSelIx.length - 1]);
+
+   }
+
 
    private void onNewConfig()
    {
