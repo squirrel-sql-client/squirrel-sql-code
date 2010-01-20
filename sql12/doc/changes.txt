@@ -6,9 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Updated Chinese translation (Thanks to xpdz)
+
 Hibernate Plugin:
   The Classpath configuration now allows to move entries up or down. 
-
 
 New plugin for Netezza NPS database server.  This plugin allows for viewing source and details of Views, 
 Stored Procedures, and synonyms.  It also provides the ability to execute stored procedures in the SQL Editor.
