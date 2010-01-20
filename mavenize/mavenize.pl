@@ -501,10 +501,20 @@ sub copyPluginsSupportProjects {
 	print "Copying in plugins support projects\n";
 
 	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-assembly-descriptor`;
-	`cp -r $mavenizeDir/squirrelsql-plugins-assembly-descriptor $pluginsDir`;
+	
+	$assmeblyDir = 'squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies';
+	
+	svnmkdir("$pluginsDir/$assemblyDir");
+	`cp $mavenizeDir/squirrelsql-plugins-assembly-descriptor/pom.xml $pluginsDir/squirrelsql-plugins-assembly-descriptor/pom.xml`;
+	`cp $mavenizeDir/$assemblyDir/squirrelsql-plugin-assembly.xml $pluginsDir/$assemblyDir/`;
+	`svn add $pluginsDir/squirrelsql-plugins-assembly-descriptor/pom.xml`;
+	`svn add $pluginsDir/$assemblyDir/squirrelsql-plugin-assembly.xml`;
+	
 
 	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
-	`cp -r $mavenizeDir/squirrelsql-plugins-parent-pom $pluginsDir`;
+	svnmkdir("$pluginsDir/squirrelsql-plugins-parent-pom");
+	`cp $mavenizeDir/squirrelsql-plugins-parent-pom/pom.xml $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
+	`svn add $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
 
 	return if $onlyCopyPoms;
 
