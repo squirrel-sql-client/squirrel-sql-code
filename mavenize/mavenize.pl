@@ -641,7 +641,16 @@ sub copyInstallerProjects {
 	   `mkdir -p $installerDir`;
     } 
     
-	`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
+	
+	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
+	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
+	`cp  $mavenizeDir/squirrelsql-java-version-checker/pom.xml $installerDir/squirrelsql-java-version-checker/pom.xml`;
+	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
+	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
+	`svn add $installerDir/pom.xml`;
+	`svn add $installerDir/src/main/java/JavaVersionChecker.java`;
+	`svn add $installerDir/src/main/resources/versioncheck.jar`;
+		
 	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
 	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
