@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Improved display of SQL result metadata
+
 Updated Chinese translation (Thanks to xpdz)
 
 Hibernate Plugin:

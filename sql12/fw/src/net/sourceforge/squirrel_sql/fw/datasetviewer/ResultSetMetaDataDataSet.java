@@ -21,11 +21,7 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -40,7 +36,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		StringManagerFactory.getStringManager(ResultSetMetaDataDataSet.class);
 
 
-	private interface i18n
+   private interface i18n
 	{
 		String UNSUPPORTED = "<Unsupported>";
 		// i18n[resultSetMentaDataSet.propName=Property Name]
@@ -55,7 +51,6 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		LoggerController.createLogger(ResultSetMetaDataDataSet.class);
 
 	private DataSetDefinition _dsDef;
-	private boolean[] _propertyMethodIndicators;
 	private Iterator<Object[]> _rowsIter;
 	private Object[] _row;
 
@@ -69,34 +64,43 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	 * Collection of method names that are considered to the
 	 * &quot;properties&quot; of the <TT>ResultSetMetaData</TT> class.
 	 */
-	private static final Map<String, Object> s_propNames = 
-        new HashMap<String, Object>();
+	private static final Method[] s_methods = createMetaDataMethodArray();
 
-	static
-	{
-		s_propNames.put("getCatalogName", null);
-		s_propNames.put("getColumnClassName", null);
-		s_propNames.put("getColumnDisplaySize", null);
-		s_propNames.put("getColumnLabel", null);
-		s_propNames.put("getColumnName", null);
-		s_propNames.put("getColumnType", null);
-		s_propNames.put("getColumnTypeName", null);
-		s_propNames.put("getPrecision", null);
-		s_propNames.put("getScale", null);
-		s_propNames.put("getSchemaName", null);
-		s_propNames.put("getTableName", null);
-		s_propNames.put("isAutoIncrement", null);
-		s_propNames.put("isCaseSensitive", null);
-		s_propNames.put("isCurrency", null);
-		s_propNames.put("isDefinitelyWritable", null);
-		s_propNames.put("isNullable", null);
-		s_propNames.put("isReadOnly", null);
-		s_propNames.put("isSearchable", null);
-		s_propNames.put("isSigned", null);
-		s_propNames.put("isWritable", null);
-	}
+   private static Method[] createMetaDataMethodArray()
+   {
+      try
+      {
+         return new Method[]
+            {
+               ResultSetMetaData.class.getMethod("getColumnName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getColumnTypeName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getPrecision", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getScale", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isNullable", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getTableName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getSchemaName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getCatalogName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getColumnClassName", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getColumnDisplaySize", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getColumnLabel", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("getColumnType", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isAutoIncrement", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isCaseSensitive", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isCurrency", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isDefinitelyWritable", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isReadOnly", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isSearchable", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isSigned", Integer.TYPE),
+               ResultSetMetaData.class.getMethod("isWritable", Integer.TYPE)
+            };
+      }
+      catch (NoSuchMethodException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
-	public ResultSetMetaDataDataSet(ResultSet rs)
+   public ResultSetMetaDataDataSet(ResultSet rs)
 		throws IllegalArgumentException, DataSetException
 	{
 		this(getMetaDataFromResultSet(rs));
@@ -147,59 +151,34 @@ public class ResultSetMetaDataDataSet implements IDataSet
 
 	private ColumnDisplayDefinition[] createColumnDefinitions()
 	{
-		final Method[] methods = ResultSetMetaData.class.getMethods();
-		_propertyMethodIndicators = new boolean[methods.length];
-		final List<ColumnDisplayDefinition> colDefs = 
-            new ArrayList<ColumnDisplayDefinition>();
-		for (int i = 0; i < methods.length; ++i)
-		{
-			if (isPropertyMethod(methods[i]))
-			{
-				colDefs.add(new ColumnDisplayDefinition(200, methods[i].getName()));
-				_propertyMethodIndicators[i] = true;
-			}
-			else
-			{
-				_propertyMethodIndicators[i] = false;
-			}
-		}
-		return colDefs.toArray(new ColumnDisplayDefinition[colDefs.size()]);
+      ColumnDisplayDefinition[] colDefs = new ColumnDisplayDefinition[s_methods.length + 1];
+
+      colDefs[0] = new ColumnDisplayDefinition(25, "ColumnIndex");
+
+      for (int i = 0; i < s_methods.length; i++)
+      {
+         colDefs[i+1] = new ColumnDisplayDefinition(25, s_methods[i].getName());
+      }
+
+		return colDefs;
 	}
 
 	private void load(ResultSetMetaData md) throws DataSetException
 	{
 		try
 		{
-			final Method[] methods = ResultSetMetaData.class.getMethods();
-			final ArrayList<Object> line = new ArrayList<Object>();
-			for (int metaIdx = 1, metaLimit = md.getColumnCount() + 1;
-				metaIdx < metaLimit;
-				++metaIdx)
-			{
-				Object[] methodParms = new Object[] { Integer.valueOf(metaIdx), };
-				line.clear();
-				line.ensureCapacity(methods.length);
-				for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx)
-				{
-					try
-					{
+         for (int i = 1; i < md.getColumnCount() + 1; ++i)
+         {
+            Object[] line = new Object[s_methods.length + 1];
+            line[0] = i;
 
-						if (_propertyMethodIndicators[methodIdx])
-						{
-							Object obj = executeGetter(md, methods[methodIdx], methodParms);
-							line.add(obj);// != null ? obj.toString() : i18n.NULL);
-						}
-					}
-					catch (Throwable th)
-					{
-						line.add("<Error>");
-						s_log.error("Error reading column metadata", th);
-					}
-
-				}
-
-				_data.add(line.toArray(new Object[line.size()]));
-			}
+            Object[] methodParms = new Object[] { Integer.valueOf(i) };
+            for (int j = 0; j < s_methods.length; j++)
+            {
+               line[j+1] = executeGetter(md, s_methods[j], methodParms);
+            }
+            _data.add(line);
+         }
 
 			_rowsIter = _data.iterator();
 		}
@@ -210,21 +189,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		}
 	}
 
-	/**
-	 * A valid method for a property in <TT>ResultSetMetaData</TT> is one that
-	 * has a non-void ouput and takes a single integer parameter (the column index).
-	 *
-	 * @return	<TT>true</TT> if method is a property getter else <TT>false</TT>.
-	 */
-	protected boolean isPropertyMethod(Method method)
-	{
-		return s_propNames.containsKey(method.getName());
-//		return method.getParameterTypes().length == 1
-//			&& method.getParameterTypes()[0] == int.class
-//			&& method.getReturnType() != Void.TYPE;
-	}
-
-	protected Object executeGetter(Object bean, Method getter, Object[] parms)
+   protected Object executeGetter(Object bean, Method getter, Object[] parms)
 	{
 		try
 		{
