@@ -438,17 +438,6 @@ sub svnmkdir {
 
 	`svn mkdir --parents $absolutepath`;
 
-	#	my @parts = split /\//, $absolutepath;
-	#
-	#	my $curpath;
-	#	for $part (@parts) {
-	#		$curpath .= $part . '/';
-	#		if (! -e $curpath) {
-	#			print "Path: $curpath doesn't exist.  Creating it with SVN\n";
-	#			`svn mkdir --quiet $curpath`;
-	#		}
-	#	}
-
 }
 
 sub getPackageFromFile {
@@ -647,13 +636,23 @@ sub copyInstallerProjects {
 	`cp  $mavenizeDir/squirrelsql-java-version-checker/pom.xml $installerDir/squirrelsql-java-version-checker/pom.xml`;
 	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
 	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
-	`svn add $installerDir/pom.xml`;
+	`svn add $installerDir/squirrelsql-java-version-checker/pom.xml`;
 	`svn add $installerDir/src/main/java/JavaVersionChecker.java`;
 	`svn add $installerDir/src/main/resources/versioncheck.jar`;
 		
+	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
+	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
 	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
+	`svn add $installerDir/squirrelsql-launcher`;
+	`svn add $installerDir/squirrelsql-launcher/pom.xml`;
+	
+	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
 	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
+	`svn add $installerDir/squirrelsql-other-installer`;
+	`svn add $installerDir/squirrelsql-other-installer/pom.xml`;
+	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
+	`svn add $installerDir/pom.xml`; 
 
     return if $onlyCopyPoms;
 
