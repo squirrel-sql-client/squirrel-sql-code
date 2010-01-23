@@ -174,6 +174,8 @@ find( { wanted => \&wanted_for_packagemap, no_chdir => 0 }, $topDir );
 # Recurse through all test source tree to find java unit test files to copy to the projects under src/main/test
 find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/src" );
 
+`svn delete $topDir/test/src`;
+
 # Miscellaneous
 installLafPluginAssembly();
 
@@ -488,28 +490,16 @@ sub copyTestUtilsProject {
 
 sub copyPluginsSupportProjects {
 	print "Copying in plugins support projects\n";
+	
+	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	
+	svnmkdir("$pluginsDir/squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies");
+	`tar --exclude .svn -cvf - squirrelsql-plugins-assembly-descriptor | ( cd $pluginsDir; tar -xvf -)`;
+	`svn st $pluginsDir/squirrelsql-plugins-assembly-descriptor | grep "^\?" | awk '{print $2}' | xargs svn add`;
 
-	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-assembly-descriptor`;
-	
-	$assmeblyDir = 'squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies';
-	
-	svnmkdir("$pluginsDir/$assemblyDir");
-	`cp $mavenizeDir/squirrelsql-plugins-assembly-descriptor/pom.xml $pluginsDir/squirrelsql-plugins-assembly-descriptor/pom.xml`;
-	`cp $mavenizeDir/$assemblyDir/squirrelsql-plugin-assembly.xml $pluginsDir/$assemblyDir/`;
-	`svn add $pluginsDir/squirrelsql-plugins-assembly-descriptor/pom.xml`;
-	`svn add $pluginsDir/$assemblyDir/squirrelsql-plugin-assembly.xml`;
-	
-
-	!$onlyCopyPoms && `rm -rf $pluginsDir/squirrelsql-plugins-parent-pom`;
 	svnmkdir("$pluginsDir/squirrelsql-plugins-parent-pom");
 	`cp $mavenizeDir/squirrelsql-plugins-parent-pom/pom.xml $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
 	`svn add $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
-
-	return if $onlyCopyPoms;
-
-	chdir($pluginsDir) or die "Couldn't change directory to $pluginsDir: $!\n";
-	`svn add squirrelsql-plugins-assembly-descriptor`;
-	`svn add squirrelsql-plugins-parent-pom`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -633,27 +623,15 @@ sub copyInstallerProjects {
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
 	`tar --exclude .svn -cvf - squirrelsql-java-version-checker | ( cd $installerDir; tar -xvf -)`;
-	#`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
-	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
-	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
-	#`svn add $installerDir/squirrelsql-java-version-checker/pom.xml`;
-	#`svn add $installerDir/src/main/java/JavaVersionChecker.java`;
-	#`svn add $installerDir/src/main/resources/versioncheck.jar`;
 		
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
 	`tar --exclude .svn -cvf - squirrelsql-launcher | ( cd $installerDir; tar -xvf -)`;
-	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/icons/*`;
-	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/plugins/*`;
-	#`svn add $installerDir/squirrelsql-launcher/pom.xml`;
 	
 	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
 	`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
-	#`svn add $installerDir/squirrelsql-other-installer/src/main/resources/*`;
-	#`svn add $installerDir/squirrelsql-other-installer/pom.xml`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
-	#`svn add $installerDir/pom.xml`; 
 
 	`svn st $installerDir | grep "^\?" | awk '{print $2}' | xargs svn add`;
 
