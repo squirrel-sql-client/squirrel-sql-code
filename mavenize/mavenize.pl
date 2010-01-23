@@ -628,36 +628,39 @@ sub copyInstallerProjects {
 	if (!$onlyCopyPoms) {
 	   `rm -rf $installerDir`;
 	   `mkdir -p $installerDir`;
-    } 
-    
+    }     
 	
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
-	`cp  $mavenizeDir/squirrelsql-java-version-checker/pom.xml $installerDir/squirrelsql-java-version-checker/pom.xml`;
-	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
-	`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
-	`svn add $installerDir/squirrelsql-java-version-checker/pom.xml`;
-	`svn add $installerDir/src/main/java/JavaVersionChecker.java`;
-	`svn add $installerDir/src/main/resources/versioncheck.jar`;
+	`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
+	 
+	#`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir/squirrelsql-java-version-checker/pom.xml`;
+	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
+	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
+	#`svn add $installerDir/squirrelsql-java-version-checker/pom.xml`;
+	#`svn add $installerDir/src/main/java/JavaVersionChecker.java`;
+	#`svn add $installerDir/src/main/resources/versioncheck.jar`;
 		
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
 	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
-	`svn add $installerDir/squirrelsql-launcher`;
-	`svn add $installerDir/squirrelsql-launcher/pom.xml`;
+	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/icons/*`;
+	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/plugins/*`;
+	#`svn add $installerDir/squirrelsql-launcher/pom.xml`;
 	
 	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
 	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
-	`svn add $installerDir/squirrelsql-other-installer`;
-	`svn add $installerDir/squirrelsql-other-installer/pom.xml`;
+	#`svn add $installerDir/squirrelsql-other-installer/src/main/resources/*`;
+	#`svn add $installerDir/squirrelsql-other-installer/pom.xml`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
-	`svn add $installerDir/pom.xml`; 
+	#`svn add $installerDir/pom.xml`; 
+
+	`find $installerDir -type d -name .svn | xargs rm -rf `;
+	`svn st $installerDir | grep "^\?" | awk '{print $2}' | xargs svn add`;
 
     return if $onlyCopyPoms;
-
-	chdir($topDir);
-	`svn add installer`;
+	
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
