@@ -632,9 +632,8 @@ sub copyInstallerProjects {
 	
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
 	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
-	`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
-	 
-	#`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir/squirrelsql-java-version-checker/pom.xml`;
+	`tar --exclude .svn -cvf - squirrelsql-java-version-checker | ( cd $installerDir; tar -xvf -)`;
+	#`cp -r $mavenizeDir/squirrelsql-java-version-checker $installerDir`;
 	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java $installerDir/squirrelsql-java-version-checker/src/main/java/JavaVersionChecker.java`;
 	#`cp  $mavenizeDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar $installerDir/squirrelsql-java-version-checker/src/main/resources/versioncheck.jar`;
 	#`svn add $installerDir/squirrelsql-java-version-checker/pom.xml`;
@@ -643,24 +642,20 @@ sub copyInstallerProjects {
 		
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
 	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
-	`cp -r $mavenizeDir/squirrelsql-launcher $installerDir`;
+	`tar --exclude .svn -cvf - squirrelsql-launcher | ( cd $installerDir; tar -xvf -)`;
 	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/icons/*`;
 	#`svn add $installerDir/squirrelsql-launcher/src/main/resources/plugins/*`;
 	#`svn add $installerDir/squirrelsql-launcher/pom.xml`;
 	
 	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
-	`cp -r $mavenizeDir/squirrelsql-other-installer $installerDir`;
+	`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
 	#`svn add $installerDir/squirrelsql-other-installer/src/main/resources/*`;
 	#`svn add $installerDir/squirrelsql-other-installer/pom.xml`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 	#`svn add $installerDir/pom.xml`; 
 
-	`find $installerDir -type d -name .svn | xargs rm -rf `;
 	`svn st $installerDir | grep "^\?" | awk '{print $2}' | xargs svn add`;
-
-    return if $onlyCopyPoms;
-	
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
