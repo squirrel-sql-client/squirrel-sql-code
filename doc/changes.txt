@@ -6,9 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Updated Translations:
+ - Korean (Thanks to Youngwoo Kim)
+ - Chinese (Thanks to xpdz)
+ 
 Improved display of SQL result metadata
-
-Updated Chinese translation (Thanks to xpdz)
 
 Hibernate Plugin:
   The Classpath configuration now allows to move entries up or down. 
@@ -25,7 +27,6 @@ Derby Plugin:
  New tab to display the source code of Derby stored procedures 
  Thanks to Glenn (bassnfool2) for the patch (Patch ID 2907220)
 
-
 XML Export:
  Tables in SQuirreL's GUI now allow to export data as XML (besides CSV and MS-Excel export)
  Thanks to mironsadziak for the patch (Patch ID 2905595) 
@@ -40,7 +41,8 @@ New editor component: RSyntaxTextArea by fifesoft.com.
       escape: Unmark all.
   - Line numbers can be displayed
   - Current line can be highlighted
-  Note: On MS-Windows systems the Java-VM parameter -Dsun.java2d.noddraw=true must be set in your SQUirreL start batch to prevent performance problems. 
+  Note: On MS-Windows systems the Java-VM parameter -Dsun.java2d.noddraw=true must be set in your SQUirreL 
+        start batch to prevent performance problems. 
 
 
  - New Polish translation available (Thanks to Miron Sadziak)
@@ -79,58 +81,21 @@ Oracle Plugin
 About dialog now has a clickable link to our home page.
  - Thanks to Hashim Kubba for this patch (ID 2104309)
 
-
 Graph Plugin:
- - Show constraint name can be selected on each constraint separately. See right mouse menu on constraint line.
-
-Graph Plugin:
+ - Show constraint name can be selected on each constraint separately. See right mouse menu on constraint 
+   line.
  - Allowed constraints to be created using drag and drop.
-   To create such a non DB constraint using drag and drop hold
+   To create such a non-DB constraint using drag and drop hold
    down the control key. Then right click the constraint to configure it.  
-
- - Updated Korean translation available (Thanks to Youngwoo Kim)
 
 
 Bug-Fixes:
 
-ArrayIndexOutOfBounds exception occured when more than one Alias was deleted form Alias tree  
-
 2879711: Fix for Excel date export concerning dates earlier than 1900-03-01.
- Thanks to mironsadziak for the patch (Patch ID 2905218)
-
-Fixed startup error:
- java.lang.NullPointerException
- at ... .AliasFolderState.applyExpansionAndSelectionToNode(AliasFolderState.java:144)
-
-Error in Alias tree: Alias vanished / rose error when dragged on itself.
-
+ 		 Thanks to mironsadziak for the patch (Patch ID 2905218)
 2853329: Ctrl-S overwrites existing file on 2nd try
-
 2819161:  squirrel-sql.sh in plain zip had an errant apostrophe.  Tested this fix on MacOS 10 and Ubuntu 9.04.  
-Thanks to Jonathan James for vetting the anonymously submitted patch.
-
-SQL Scripts Plugin:
- Several scripting functions did not respect global scripting preferences about qualifying tables.
-
-SQL Scripts Plugin:
- Foreign key constraints with more than one column were not scripted correctly. (Only first column was included.)  
-
-
-Schema caching:
- Removed problems with selective schema caching when the same table name
- exisits in two different schemas. E.g. column completion didn't word anymore.
-
-SQL Scripts Plugin:
- - When generating insert scripts from a SQL statement the global
-   preference "Qualify table names in generated scripts with the schema name" did not work.
-   Thanks to Johann Geyer for the patch (Patch ID 2365193)
-
-SQL Scripts Plugin:
- - Generating data scripts may throw java.lang.StringIndexOutOfBoundsException when timestamps where scripted
-
-
-SP that returned a mix of update counts and results sets weren't displayed properly.
-
+         Thanks to Jonathan James for vetting the anonymously submitted patch.
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))
 2794860: Sybase (CREATE TABLE script generate numeric(15) instead (15,2))
 2754166: SQLScript plugin loses precision for Timestamp in H2
@@ -138,6 +103,30 @@ SP that returned a mix of update counts and results sets weren't displayed prope
 2713952: Create table script (on Sybase): Always generate "datetime" type for "date" (and datetime)
 2657987: Session was closed even if session closing confirm dialog was not confirmed. Connection was not 
          closed then.
+
+ArrayIndexOutOfBounds exception occured when more than one Alias was deleted form Alias tree  
+
+Fixed startup error:
+ java.lang.NullPointerException
+ at ... .AliasFolderState.applyExpansionAndSelectionToNode(AliasFolderState.java:144)
+
+Error in Alias tree: Alias vanished or gave an error when dragged on itself.
+
+SQL Scripts Plugin:
+ - Several scripting functions did not respect global scripting preferences about qualifying tables.
+ - When generating insert scripts from a SQL statement the global
+   preference "Qualify table names in generated scripts with the schema name" did not work.
+   Thanks to Johann Geyer for the patch (Patch ID 2365193)
+ - Generating data scripts may throw java.lang.StringIndexOutOfBoundsException when timestamps where scripted
+ - Foreign key constraints with more than one column were not scripted correctly. (Only first column was 
+   included.)  
+
+Schema caching:
+ Removed problems with selective schema caching when the same table name
+ exisits in two different schemas. E.g. column completion didn't word anymore.
+
+Stored Procedures that return a mix of update counts and results sets weren't displayed properly.
+
 
 3.0.1 (3/23/2009)
 ================
