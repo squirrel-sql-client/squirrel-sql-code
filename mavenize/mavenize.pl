@@ -93,6 +93,26 @@ $syntax_deps = <<"EOF";
 <dependencies>
     <dependency>
         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>com-fifesoft-common</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>com-fifesoft-rtext</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>com-fifesoft-autocomplete</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <artifactId>com-fifesoft-rsyntaxtextarea</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>openide</artifactId>
         <version>4.0</version>
     </dependency>
