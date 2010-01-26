@@ -31,7 +31,8 @@
       an archive on his website (see scm url below).
    -->
    <scm>
-      <url>http://personales.ya.com/nimrod/download-en.html</url>
+   	  <connection>scm:cvs:pserver:anonymous@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql</connection>
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/mavenize/thirdparty-non-maven/nimrodlf-1.1/</url>
    </scm>
    <build>
       <resources>
