@@ -1,0 +1,21 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Install<%/bte.tpl%>
+<%bte.tpl name=keywords%>install,installation<%/bte.tpl%>
+<%bte.tpl name=description%>Install Java libraries for coloring programming source code to HTML or in a text editor.<%/bte.tpl%>
+<%bte.tpl name=barinstall%><span class=currentpage>Install</span><%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+The syntax coloring libraries are pre-compiled and ready to use. 
+Simply use one of the following to add syntax.jar to your classpath:
+<ul>
+<li>Put syntax.jar in the <a href="http://java.sun.com/products/jdk/1.2/docs/guide/extensions/extensions.html#installed">Java extensions directory</a>.</li>
+<li>Set your <a href="http://java.sun.com/j2se/1.3/docs/tooldocs/win32/classpath.html">CLASSPATH environment variable</a> to include syntax.jar.</li>
+<li>Specify syntax.jar in the command line classpath when you compile and run your programs.</li>
+<li>Extract syntax.jar to a folder already in your classpath.</li>
+<li>Include the contents of syntax.jar in your program's jar file.</li>
+<li>Reference syntax.jar from the manifest file in your program's jar file.</li>
+</ul>
+You can extract the contents of syntax.jar either with the jar tool that comes with java or by 
+renaming syntax.jar to syntax.zip and using any zip file extractor.
+<%/bte.tpl%>
+<%/bte.doc%>
+

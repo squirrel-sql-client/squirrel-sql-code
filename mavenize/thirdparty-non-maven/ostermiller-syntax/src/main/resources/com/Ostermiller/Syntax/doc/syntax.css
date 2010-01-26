@@ -1,0 +1,55 @@
+body {
+	background:white;
+}
+.tag{
+	font-weight:bold;
+	color:blue;
+}
+.endtag{
+	color:blue;	
+}
+.reference{
+	color:black;
+}
+.name{
+	font-weight:bold;
+	color:maroon;
+}
+.value{
+	font-style: italic;
+	color:maroon;
+}
+.text{
+	font-weight:bold;
+	color:black;
+}
+.reservedWord{
+	color:blue;
+}
+.identifier{
+	color:black;
+}
+.literal{
+	color:maroon;
+}
+.separator{
+	color:navy;
+}
+.operator{
+    font-weight:bold;
+    color:navy;
+}
+.comment{
+	color:green;
+}
+.preprocessor{
+	color:purple;
+}
+.whitespace{
+}
+.error{
+	color:red;
+}
+.unknown{
+	color:orange;
+}

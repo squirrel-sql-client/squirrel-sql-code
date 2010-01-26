@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Java Properties Syntax Highlighting Test</title>
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<link rel="stylesheet" media="screen" title="Syntax Highlighting" href="syntax.css" type="text/css">
+</head>
+<body>
+
+<pre><span class=comment>#Comment
+</span><span class=name>name </span><span class=value>value
+</span><span class=comment>!Comment
+</span><span class=name>name </span><span class=value>value
+</span><span class=comment># Comment\
+</span><span class=name>name </span><span class=value>value
+ </span><span class=name>#name </span><span class=value>value
+
+</span><span class=comment>#
+# That was a comment
+
+</span><span class=name>name</span><span class=separator>:</span><span class=value>value
+</span><span class=name>name</span><span class=separator>=</span><span class=value>value
+</span><span class=name>name </span><span class=value>value
+ </span><span class=name>name </span><span class=separator>= </span><span class=value>value 
+	</span><span class=name>name	</span><span class=separator>=	</span><span class=value>value	
+  </span><span class=name>name  </span><span class=separator>=  </span><span class=value>value  
+ 
+</span><span class=comment># empty properties
+</span><span class=name>name
+name</span><span class=separator>=
+</span><span class=name>name</span><span class=separator>:
+	</span><span class=name>name
+  name    
+
+</span><span class=comment># property names of length zero
+</span><span class=separator>:</span><span class=value>value value
+</span><span class=separator>:</span><span class=value>value
+</span><span class=separator>=</span><span class=value>value
+ </span><span class=separator>:</span><span class=value>value
+ </span><span class=separator>=</span><span class=value>value
+</span><span class=separator>:</span><span class=value>value : has colon
+</span><span class=separator>:</span><span class=value>value ends with equal =
+</span><span class=separator>:</span><span class=value>value ends with colon :
+
+</span><span class=name>name</span><span class=separator>:</span><span class=value>:value starts with colon
+</span><span class=name>name</span><span class=separator>=</span><span class=value>:value starts with colon
+</span><span class=name>name </span><span class=separator>:</span><span class=value>value starts with colon
+</span><span class=name>name</span><span class=separator>:</span><span class=value>value ends with colon:
+</span><span class=name>name</span><span class=separator>=</span><span class=value>value ends with colon:
+</span><span class=name>name </span><span class=value>value ends with colon:
+</span><span class=name>name</span><span class=separator>:</span><span class=value>=value starts with equal
+</span><span class=name>name</span><span class=separator>=</span><span class=value>=value starts with equal
+</span><span class=name>name </span><span class=separator>=</span><span class=value>value starts with equal
+</span><span class=name>name</span><span class=separator>:</span><span class=value>value ends with equal=
+</span><span class=name>name</span><span class=separator>=</span><span class=value>value ends with equal=
+</span><span class=name>name </span><span class=value>value ends with equal=
+</span><span class=name>name</span><span class=separator>:</span><span class=value>!value starts with exclamation
+</span><span class=name>name</span><span class=separator>=</span><span class=value>!value starts with exclamation
+</span><span class=name>name </span><span class=value>!value starts with exclamation
+</span><span class=name>name</span><span class=separator>:</span><span class=value>#value starts with pound
+</span><span class=name>name</span><span class=separator>=</span><span class=value>#value starts with pound
+</span><span class=name>name </span><span class=value>#value starts with pound
+</span><span class=name>name</span><span class=separator>=</span><span class=value>value ends with colon :
+</span><span class=name>name</span><span class=separator>=</span><span class=value>value ends with equal =
+
+</span><span class=name>@!#$%^name </span><span class=value>value!@#$%^&amp;*(){}
+
+</span><span class=comment># escapes
+</span><span class=name>\ \=\:name</span><span class=separator>=</span><span class=value>value\ \=\:
+</span><span class=name>\u3443\0233name </span><span class=value>value\u3432\0213
+
+</span><span class=comment># The following demonstrates some of the most unintuitive 
+# behavior of properties files.  Line breaks in the 
+# middle of names or values are not actually part of the
+# name or the value but the name or the value still
+# continues on the next line but leading whitespace is trimmed.
+
+</span><span class=name>name</span><span class=separator>\
+</span><span class=name>stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+  </span><span class=name>stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+</span><span class=name>stillname</span><span class=separator>\
+</span><span class=name>stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+\
+ \
+</span><span class=name>stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+</span><span class=name>#stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+</span><span class=name>!stillname </span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+=</span><span class=value>value
+</span><span class=name>name</span><span class=separator>\
+:</span><span class=value>value
+</span><span class=name>name </span><span class=separator>\
+</span><span class=name>value
+name </span><span class=value>value</span><span class=separator>\
+</span><span class=value>still value
+</span><span class=name>name </span><span class=value>value </span><span class=separator>\
+ </span><span class=value>still value
+</span><span class=name>name </span><span class=value>value</span><span class=separator>\
+</span><span class=value>still value</span><span class=separator>\
+</span><span class=value>still value
+</span><span class=name>name </span><span class=value>value </span><span class=separator>\
+\
+ \
+</span><span class=value>still value
+</span><span class=name>name </span><span class=value>value</span><span class=separator>\
+  </span><span class=value>still value
+</span><span class=comment># empty property
+</span><span class=name>name</span><span class=separator>\
+
+</span><span class=comment>#comment
+</span><span class=name>name</span><span class=separator>= \
+</span><span class=value>value
+</span><span class=name>name</span><span class=separator>: \
+</span><span class=value>value
+</span><span class=name>name</span><span class=separator>:\
+</span><span class=value>value
+</span><span class=name>name</span><span class=separator>=\
+</span><span class=value>value
+</span><span class=name>name</span><span class=separator>=\
+
+</span><span class=comment>#comment
+</span></pre>
+
+</body>
+</html>

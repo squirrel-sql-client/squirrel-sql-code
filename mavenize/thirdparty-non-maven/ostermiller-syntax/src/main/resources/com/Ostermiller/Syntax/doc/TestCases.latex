@@ -1,0 +1,33 @@
+% All commands which have more than one argument 
+% can be used in the following three ways:
+
+\begin{bf}
+Some text.
+\end{bf}
+
+\bf{Some text.}
+
+{\bf Some text.}
+
+% With the third method, it is important that the 
+% command has its own pair of braces, and that 
+% the command immediately follows the first brace. 
+% Otherwise, the parser cannot parse the argument(s) 
+% properly. With multiple arguments, 
+% each should be enclosed in braces.
+% Optional arguments are specified using square brackets or parentheses.
+% Whitespace should be avoided between command names and their arguments.
+
+% A mathematical formula:
+\begin{split}
+  Q &= \int_{\nu} \rho_{\nu}\, d \nu \\
+    &= \int_0^4 \int_0^{\frac{\pi}{2}} \int_0^2 3(z+1) \cos \phi \, d\rho \, d\phi \, dz \, \mu C \\
+    &= \int_0^4 \int_0^{\frac{\pi}{2}} 6 (z+1) \cos \phi \,d\phi \,dz \,\mu C \\
+    &= \int_0^4 6 (z+1) \,dz \,\mu C \\
+    &= \frac{6z^2}{2} + 6z \Bigg|_0^4 \,\mu C \\
+    &= 3(16) + 6(4) \,\mu C \\
+    &= 72 \,\mu C
+\end{split}
+  
+% Nested commands:
+{\em This sentence is {\em emphasized}, with emphasis on the word {\em emphasized}.}

@@ -1,0 +1,89 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Text Editor Tutorial<%/bte.tpl%>
+<%bte.tpl name=keywords%>text editor, text editor, text editor, tutorial, tutorial, howto, write, writing, program, programming, programmer<%/bte.tpl%>
+<%bte.tpl name=description%>A tutorial on writing a text editor in Java that incorporates syntax highlighting.<%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+<p>Despite initial appearances, writing a text editor is not a trivial task.  Creating text editors takes programming experience and a firm basis in theory.  The Internet is littered with hundreds of unfinished or poorly working text editors.  While this this tutorial does not tell you everything you need to know to write your own text editor, you will learn how to add syntax highlighting and and gain a sense of the overall complexity of undertaking such a project.</p>
+
+<p>This tutorial assumes that you have a text area to work with and that you can change the color of the text in that text area.  Luckily, the libraries that come with Java include a JTextPane (<a href="http://java.sun.com/j2se/1.3/docs/api/javax/swing/JTextPane.html">API</a>). The Programmer's Editor Demo included with this tutorial uses JTextPane but the techniques discussed here will work with other base editor classes as well.  Before going any further, it would be a good idea to familiarize yourself the <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/generaltext.html">JTextPane Tutorial</a> in Sun's Java Tutorial.</p>
+
+<h2>What You Will Need</h2>
+<p>If you haven't done so already, <a href="download.html">download</a> the syntax highlighting package and the ProgrammerEditorDemo.java that comes with it.  If you would like you may <a href="http://www.gjt.org/servlets/JCVSlet/show/gjt/com/Ostermiller/Syntax/ProgrammerEditorDemo.java/HEAD">browse</a> the source code for the demo.</p>
+
+<h3><a href="texted.html">Running the Demo</a></h3>
+
+The demo is a very simple text editor:<br>
+<img src="ProgrammerEditorDemo.png" vspace="10" width="627" height="509" alt="Screen-shot of demo with a Java Hello World program displayed."><br>
+The demo supports cut, copy, paste, and syntax highlighting, but little else.  It doesn't even open and save files.  
+
+<h2>The Basics</h2>
+<p>Syntax Highlighting works like this: you give the text to the lexer, it goes through it and gives it back to you piece by piece and tells you what color to make each piece.</p>
+
+<h3>Streams and Readers</h3>
+<p>The syntax lexers accept your document through Streams and Readers.  Fortunately it is very easy to turn just about anything into a Stream or a Reader.  Java comes with many pre-built classes for this purpose.  A FileReader or a StringReader could be used.  The demo uses a custom DocumentReader.</p>
+
+<h3>Tokens</h3>
+<p>The lexer returns <a href="docs/com/Ostermiller/Syntax/Lexer/Token.html">Tokens</a>.  Tokens don't tell you the actual color that the text should be, but they do give you enough information to figure it out.  The token contains such useful information as the type of text, a description of the text, and the position of the text in the file.</p>
+
+<h3>Basic Example</h3>
+<pre>JavaLexer syntaxLexer = new JavaLexer(new StringReader(myDocumentText));
+Token t;
+while ((t = syntaxLexer.getNextToken()) != null){
+    // color the part of the document
+    // to which the token refers here.
+}</pre>
+
+<p>The Demo uses a look-up hashtable to get the color of the text based on the description from the token.</p>
+<pre>SimpleAttributeSet style;
+
+style = new SimpleAttributeSet();
+StyleConstants.setFontFamily(style, "Monospaced");
+StyleConstants.setFontSize(style, 12);
+StyleConstants.setBackground(style, Color.white);
+StyleConstants.setForeground(style, Color.black);
+StyleConstants.setBold(style, false);
+StyleConstants.setItalic(style, false);
+styles.put("body", style);
+
+style = new SimpleAttributeSet();
+StyleConstants.setFontFamily(style, "Monospaced");
+StyleConstants.setFontSize(style, 12);
+StyleConstants.setBackground(style, Color.white);
+StyleConstants.setForeground(style, Color.blue);
+StyleConstants.setBold(style, true);
+StyleConstants.setItalic(style, false);
+styles.put("tag", style);
+
+...</pre>
+
+<p>The section of text in the document is then colored according to the style retrieved from the
+look-up table.</p>
+<pre>document.setCharacterAttributes(
+    t.getCharBegin(),
+    t.getCharEnd()-t.getCharBegin(),
+    getStyle(t.getDescription()),
+    true
+);</pre>
+
+<h2>Coloring Parts of the Document</h2>
+<p>The entire document is colored and it looks good in the editor.  You might think that this is the end of the story.  Sadly, its not.  Editors are meant to edit documents.  The documents change.  The obvious approach is to re-color the document when the text changes.  This may work for small documents, but as the document size gets larger it will quickly become unwieldy.  For a 1000 line document, it could take as much as a few seconds to color the entire document.  Waiting a few seconds each time a character is typed does not make for a good text editor.<p>
+
+<p>The trick is that not all of the document needs to be re-colored when something changes.  But how much really needs to be re-colored?  Not many editors do this part right.  I have seen editors that re-color the previous three lines and the next three lines.  That approach works most of the time, but it is pretty easy to fool.</p>
+
+<h3>Initial State</h3>
+<p>Every so often the syntax lexer returns to what are known as the initial state. At these times, the lexer returns a token and continues lexing as if it were at the beginning of the document again.  Since the lexer acts as if it were at the beginning of the document from an initial state, the lexer could be restarted from this point without effecting the coloring of what comes afterwords.  It can be determined from the last token returned if the lexer is in the initial state after returning that token.</p> 
+
+<p>So that solves half the problem.  Just re-color the document from the last initial state.  If the user is only going to append to the end of the document, this solves the problem.   We can just keep track of the last initial state and re-color from there to the end of the document.  But what if something in the middle of the document changes?  We really need to keep track of <em>all</em> initial states so that we can restart the lexer from near anywhere in the document.  Then we won't need to color the entire rest of the document either.  If the lexer returns to an initial state at the same point that it returned to an initial state the last time, the rest of the document is already colored correctly.</p>
+
+<h4>Example</h4>
+<p>The demo keeps the list of initial states in a balanced tree.  If desired the list could be included with the meta data of the document or stored in some other fashion.  Care must be taken when looking at initial positions after start position.  If text has been added or removed from the document, the positions after the addition/removal will have changed.<P>
+
+<h3>Only what is Visible</h3>
+
+<p>The initial coloring time for a document may become an issue.  One way around this would be to only color what is visible on the screen.  If the user scrolls, then more of the document will have to be colored as the user scrolls.
+
+<p>Another approach that is used by the demo is to start a separate thread to do the coloring.  In this case, the document coloring happens in the background and the user may modify the document while that happens.</p>
+
+<%/bte.tpl%>
+<%/bte.doc%>
+

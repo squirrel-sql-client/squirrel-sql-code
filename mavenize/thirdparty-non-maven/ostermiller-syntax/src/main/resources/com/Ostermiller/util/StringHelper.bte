@@ -1,0 +1,13 @@
+<%bte.doc super="item.bte" %>
+<%bte.tpl name=pageTitle%>String Helper<%/bte.tpl%>
+<%bte.tpl name=description%>Methods for formatting, manipulating, and querying Java Strings.<%/bte.tpl%>
+<%bte.tpl name=keywords%>stringhelper, string helper,library for strings, java string utilities<%/bte.tpl%>
+<%bte.tpl name=content%>
+<p>A String helper class with methods for padding a string to a given length, and splitting a string based on a literal delimiter.</p>
+
+<p>[<a href="download.html">Download /w Source</a> |
+<a href="http://www.gjt.org/servlets/JCVSlet/log/gjt/com/Ostermiller/util/StringHelper.java/0">Version History</a> | <a href="StringHelper.java.html">Browse Source</a> |
+<a href="doc/com/Ostermiller/util/StringHelper.html">Documentation</a>]</p>
+
+<%/bte.tpl%>
+<%/bte.doc%>

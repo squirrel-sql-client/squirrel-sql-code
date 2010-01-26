@@ -1,0 +1,12 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Syntax Highlighting<%/bte.tpl%>
+<%bte.tpl name=keywords%>syntax,highlighting,color,java,library,libraries,free,freeware,gpl,open source,free-ware,source,code,source code,source-code,software,program<%/bte.tpl%>
+<%bte.tpl name=description%>Java libraries for coloring programming source code to HTML or in a text editor.<%/bte.tpl%>
+<%bte.tpl name=baroverview%><span class=currentpage>Overview</span><%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+<p>The com.Ostermiller.Syntax package is designed to add syntax coloring to 
+web pages that display source code or to add color syntax highlighting ability to any 
+text editor written in Java.</p>
+<%/bte.tpl%>
+<%/bte.doc%>
+

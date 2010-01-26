@@ -1,0 +1,453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>C Syntax Highlighting Test</title>
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<link rel="stylesheet" media="screen" title="Syntax Highlighting" href="syntax.css" type="text/css">
+</head>
+<body>
+
+<pre><span class=preprocessor>#define first thing
+</span><span class=reservedWord>if</span><span class=comment>/* First we will test the comments */</span><span class=reservedWord>if
+if</span><span class=comment>/* There should be no if that is commented */</span><span class=reservedWord>if
+if</span><span class=comment>// End of line comment
+</span><span class=reservedWord>if</span><span class=comment>/** Documentation comment */</span><span class=reservedWord>if
+if</span><span class=comment>/* multiple
+ line
+          comment
+   */</span><span class=reservedWord>if
+if</span><span class=comment>/**
+ multiple
+ line
+    doc comment
+   */</span><span class=reservedWord>if
+if</span><span class=comment>/* 
+ * nice
+ * looking
+ * comment
+ */</span><span class=reservedWord>if
+if</span><span class=comment>// /* end of line comment */ more comment
+</span><span class=reservedWord>if</span><span class=comment>// /* end of line comment
+</span><span class=reservedWord>if</span><span class=comment>// end of line comment */ more comment
+</span><span class=reservedWord>if</span><span class=comment>/*back to*//*back*/</span><span class=reservedWord>if
+if</span><span class=comment>/*back to*///back
+</span><span class=reservedWord>if</span><span class=comment>/**/</span><span class=reservedWord>if
+if</span><span class=comment>/***/</span><span class=reservedWord>if
+if</span><span class=comment>/****/</span><span class=reservedWord>if
+if</span><span class=comment>/*****/</span><span class=reservedWord>if
+if</span><span class=comment>/******/</span><span class=reservedWord>if
+if</span><span class=comment>/* */</span><span class=reservedWord>if
+if</span><span class=comment>/* **/</span><span class=reservedWord>if
+if</span><span class=comment>/* ***/</span><span class=reservedWord>if
+if</span><span class=comment>/* ****/</span><span class=reservedWord>if
+if</span><span class=comment>/** */</span><span class=reservedWord>if
+if</span><span class=comment>/** **/</span><span class=reservedWord>if
+if</span><span class=comment>/** ***/</span><span class=reservedWord>if
+if</span><span class=comment>/** ****/</span><span class=reservedWord>if
+if</span><span class=comment>/*** */</span><span class=reservedWord>if
+if</span><span class=comment>/**** */</span><span class=reservedWord>if
+if</span><span class=comment>/* * */</span><span class=reservedWord>if
+if</span><span class=comment>/* ** */</span><span class=reservedWord>if
+if</span><span class=comment>/** * */</span><span class=reservedWord>if
+if</span><span class=comment>/** ** */</span><span class=reservedWord>if
+if</span><span class=comment>/*  * */</span><span class=reservedWord>if
+if</span><span class=comment>/*  ** */</span><span class=reservedWord>if
+if</span><span class=comment>/**  * */</span><span class=reservedWord>if
+if</span><span class=comment>/**  ** */</span><span class=reservedWord>if
+if</span><span class=comment>/* * ** *** **** / // /// //// */</span><span class=reservedWord>if
+if</span><span class=comment>/** * ** *** **** / // /// //// */</span><span class=reservedWord>if
+if</span><span class=comment>/*/*/</span><span class=reservedWord>if
+if</span><span class=comment>/*/**/</span><span class=reservedWord>if
+if</span><span class=comment>/*/***/</span><span class=reservedWord>if
+if</span><span class=comment>/*/****/</span><span class=reservedWord>if
+if</span><span class=comment>/*//*/</span><span class=reservedWord>if
+if</span><span class=comment>/*//**/</span><span class=reservedWord>if
+if</span><span class=comment>/*//***/</span><span class=reservedWord>if
+if</span><span class=comment>/*//****/</span><span class=reservedWord>if
+if</span><span class=comment>/*\*/</span><span class=reservedWord>if
+if</span><span class=comment>/*\\*/</span><span class=reservedWord>if
+if</span><span class=comment>/* *??/*/</span><span class=reservedWord>if
+if</span><span class=comment>// the next line should not be a comment \
+</span><span class=reservedWord>if
+
+</span><span class=comment>/* c and c++ keywords */
+</span><span class=reservedWord>auto
+break
+case
+const
+continue
+default
+do
+else
+enum
+extern
+for
+goto
+if
+register
+return
+sizeof
+static
+struct
+switch
+typedef
+union
+volatile
+while
+
+catch
+class
+const_cast
+delete
+dynamic_cast
+friend
+inline
+mutable
+namespace
+new
+operator
+overload
+private
+protected
+public
+reinterpret_cast
+static_cast
+template
+this
+try
+virtual
+
+bool
+char
+double
+float
+int
+long
+short
+signed
+unsigned
+void
+
+</span><span class=comment>/* pp test (no if should be in a pp or comment) */
+</span><span class=preprocessor>#include
+#include_next
+#define
+#undef
+#if
+#ifdef
+#ifndef
+#else
+#elif
+#endif
+#line
+#pragma
+#error
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define 1 </span><span class=comment>//comment
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define</span><span class=comment>//comment
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define</span><span class=comment>/*comment*/
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define </span><span class=comment>/*comment*/</span><span class=preprocessor> 1
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define</span><span class=comment>/*comment*/</span><span class=preprocessor>1
+</span><span class=reservedWord>if
+</span><span class=preprocessor># define 1</span><span class=comment>// a space after the hash 
+</span><span class=reservedWord>if
+ </span><span class=preprocessor>#define 1 </span><span class=comment>// a space before the hash
+</span><span class=reservedWord>if
+</span><span class=preprocessor>??=define </span><span class=comment>// using a trigraph to represent the hash
+	 </span><span class=preprocessor>??= define 1  </span><span class=comment>// really nasty
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define something </span><span class=comment>/*multiple line */</span><span class=preprocessor> \
+     4
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define aString &quot;A string with escape sequences\n\r\t\\\&quot;&quot;
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#defineNo space after keyword
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define stuff </span><span class=comment>/*how about using a trigraph to get to the next line?*/</span><span class=preprocessor> ??/
+	1 </span><span class=comment>// should be part of define stuff.
+</span><span class=reservedWord>if
+</span><span class=comment>/* Lets try some weird stuff to try and confuse it with trigraphs */
+</span><span class=preprocessor>#define line \\
+1 </span><span class=comment>// still in define (somebody correct me if the pp does something different here)
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define a ??\
+line </span><span class=comment>// still in define
+</span><span class=reservedWord>if
+</span><span class=preprocessor>#define\
+ many ??/
+ multiple \
+ lines 
+</span><span class=reservedWord>if
+
+</span><span class=comment>/* Characters */
+</span><span class=literal>'a'</span><span class=separator>,</span><span class=literal>'b'</span><span class=separator>,</span><span class=literal>'c'</span><span class=separator>,</span><span class=literal>'d'</span><span class=separator>,</span><span class=literal>'x'</span><span class=separator>,</span><span class=literal>'y'</span><span class=separator>,</span><span class=literal>'z'</span><span class=separator>,</span><span class=literal>'1'</span><span class=separator>,</span><span class=literal>'2'</span><span class=separator>,</span><span class=literal>'9'</span><span class=separator>,</span><span class=literal>'0'</span><span class=separator>,</span><span class=literal>'A'</span><span class=separator>,</span><span class=literal>'B'</span><span class=separator>,</span><span class=literal>'C'</span><span class=separator>,</span><span class=literal>'D'</span><span class=separator>,</span><span class=literal>'X'</span><span class=separator>,</span><span class=literal>'Y'</span><span class=separator>,</span><span class=literal>'Z'</span><span class=separator>,</span><span class=literal>' '</span><span class=separator>,</span><span class=literal>'	'</span><span class=separator>,
+</span><span class=literal>'!'</span><span class=separator>,</span><span class=literal>'@'</span><span class=separator>,</span><span class=literal>'#'</span><span class=separator>,</span><span class=literal>'$'</span><span class=separator>,</span><span class=literal>'%'</span><span class=separator>,</span><span class=literal>'^'</span><span class=separator>,</span><span class=literal>'&amp;'</span><span class=separator>,</span><span class=literal>'*'</span><span class=separator>,</span><span class=literal>'('</span><span class=separator>,</span><span class=literal>')'</span><span class=separator>,</span><span class=literal>'{'</span><span class=separator>,</span><span class=literal>'}'</span><span class=separator>,</span><span class=literal>'?'</span><span class=separator>,</span><span class=literal>'='</span><span class=separator>,</span><span class=literal>'+'</span><span class=separator>,</span><span class=literal>'|'</span><span class=separator>,</span><span class=literal>'~'</span><span class=separator>,</span><span class=literal>'`'</span><span class=separator>,</span><span class=literal>'&quot;'</span><span class=separator>,
+</span><span class=comment>// escape sequences
+</span><span class=literal>'\a'</span><span class=separator>,</span><span class=literal>'\b'</span><span class=separator>,</span><span class=literal>'\f'</span><span class=separator>,</span><span class=literal>'\n'</span><span class=separator>,</span><span class=literal>'\r'</span><span class=separator>,</span><span class=literal>'\t'</span><span class=separator>,</span><span class=literal>'\v'</span><span class=separator>,</span><span class=literal>'\''</span><span class=separator>,</span><span class=literal>'\&quot;'</span><span class=separator>,</span><span class=literal>'\?'</span><span class=separator>,</span><span class=literal>'\\'</span><span class=separator>,</span><span class=literal>'\0'</span><span class=separator>,
+</span><span class=literal>'\1'</span><span class=separator>,</span><span class=literal>'\2'</span><span class=separator>,</span><span class=literal>'\03'</span><span class=separator>,</span><span class=literal>'\12'</span><span class=separator>,</span><span class=literal>'\012'</span><span class=separator>,</span><span class=literal>'\111'</span><span class=separator>,</span><span class=literal>'\222'</span><span class=separator>,</span><span class=literal>'\333'</span><span class=separator>,
+</span><span class=literal>'\xFF'</span><span class=separator>,</span><span class=literal>'\x12'</span><span class=separator>,</span><span class=literal>'\x00'</span><span class=separator>,</span><span class=literal>'\xDB'</span><span class=separator>,</span><span class=literal>'\X00'</span><span class=separator>,</span><span class=literal>'\XFF'</span><span class=separator>,</span><span class=literal>'\XDB'
+</span><span class=comment>// trigraphs including escape sequence trigraphs
+</span><span class=literal>'??-'</span><span class=separator>,</span><span class=literal>'??='</span><span class=separator>,</span><span class=literal>'??('</span><span class=separator>,</span><span class=literal>'??)'</span><span class=separator>,</span><span class=literal>'??/0'</span><span class=separator>,</span><span class=literal>'??/xDB'</span><span class=separator>,</span><span class=literal>'??/XDB'</span><span class=separator>,</span><span class=literal>'??/012'</span><span class=separator>,</span><span class=literal>'??/''</span><span class=separator>,</span><span class=literal>'??''</span><span class=separator>,</span><span class=literal>'??&lt;'</span><span class=separator>,</span><span class=literal>'??&gt;'</span><span class=separator>,</span><span class=literal>'??!'</span><span class=separator>,</span><span class=literal>'??-'
+
+</span><span class=comment>/* Strings */
+</span><span class=literal>&quot;hello&quot;</span><span class=separator>,</span><span class=literal>&quot;&quot;</span><span class=separator>,</span><span class=literal>&quot;abcxyz123890ABCXYZ, 	!@#$%^&amp;*(){}?+=|~`'&quot;</span><span class=separator>,
+</span><span class=literal>&quot;\a\b\f\n\r\t\v\'\&quot;\?\\\0&quot;</span><span class=separator>,
+</span><span class=comment>// if you are wondering about why some of the following are valid, consider
+// &quot;\xFFF&quot; = '\xFF' + 'F'
+// &quot;\29&quot; = '\2' + '9'
+</span><span class=literal>&quot;\1\2\03\12\012\111\222\333\x000\xFFF\08\29\444&quot;</span><span class=separator>,
+</span><span class=literal>&quot;??-??=??(??)??'??&lt;??&gt;??!??-??a??b??{??}??&quot;</span><span class=separator>,</span><span class=literal>&quot;?&quot;</span><span class=separator>,</span><span class=literal>&quot;??&quot;</span><span class=separator>,</span><span class=literal>&quot;???&quot;</span><span class=separator>,</span><span class=literal>&quot;??A&quot;</span><span class=separator>,</span><span class=literal>&quot;??/xDB??/0??/012??/&quot;&quot;</span><span class=separator>,
+</span><span class=literal>&quot;string that \
+spans ??/
+multiple \
+lines&quot;</span><span class=separator>,
+
+</span><span class=comment>/* Identifiers */
+/**/</span><span class=identifier>identifier</span><span class=comment>/**/
+/**/</span><span class=identifier>a0b1c2d3e4f5g</span><span class=comment>/**/
+/**/</span><span class=identifier>h6i7j8k9l0mno</span><span class=comment>/**/
+/**/</span><span class=identifier>pqrstuvwxyz</span><span class=comment>/**/
+/**/</span><span class=identifier>ABCDEFGHIJK</span><span class=comment>/**/
+/**/</span><span class=identifier>LMNOPQRSTUVWXYZ</span><span class=comment>/**/
+/**/</span><span class=identifier>dollar$ign</span><span class=comment>/**/
+/**/</span><span class=identifier>under_score</span><span class=comment>/**/
+/**/</span><span class=identifier>_begin_under_score</span><span class=comment>/**/
+
+/* operators and separators */
+</span><span class=operator>++</span><span class=identifier>operand</span><span class=separator>;
+</span><span class=operator>--</span><span class=identifier>operand</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>*=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>/=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>%=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>+=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>-=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>&lt;&lt;=</span><span class=identifier>shift_value</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>&gt;&gt;=</span><span class=identifier>shift_value</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>&amp;=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>^=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>??'=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>|=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1</span><span class=operator>??!=</span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=operator>!</span><span class=identifier>operand
+</span><span class=operator>~</span><span class=identifier>operand
+</span><span class=operator>??-</span><span class=identifier>operand
+expression1</span><span class=operator>+</span><span class=identifier>expression2
+expression1</span><span class=operator>-</span><span class=identifier>expression2
+expression1</span><span class=operator>*</span><span class=identifier>expression2
+expression1</span><span class=operator>/</span><span class=identifier>expression2
+expression1</span><span class=operator>%</span><span class=identifier>expression2
+expression1</span><span class=operator>&amp;</span><span class=identifier>expression2
+expression1</span><span class=operator>|</span><span class=identifier>expression2
+expression1</span><span class=operator>??!</span><span class=identifier>expression2
+expression1</span><span class=operator>^</span><span class=identifier>expression2
+expression1</span><span class=operator>??'</span><span class=identifier>expression2
+expression1</span><span class=operator>&gt;&gt;</span><span class=identifier>shift_value
+expression1</span><span class=operator>&lt;&lt;</span><span class=identifier>shift_value
+expression1</span><span class=operator>&amp;&amp;</span><span class=identifier>expression2
+expression1</span><span class=operator>||</span><span class=identifier>expression2
+expression1</span><span class=operator>??!|</span><span class=identifier>expression2
+expression1</span><span class=operator>|??!</span><span class=identifier>expression2
+expression1</span><span class=operator>??!??!</span><span class=identifier>expression2
+expression1</span><span class=operator>&lt;</span><span class=identifier>expression2
+expression1</span><span class=operator>&gt;</span><span class=identifier>expression2 
+expression1</span><span class=operator>&lt;=</span><span class=identifier>expression2 
+expression1</span><span class=operator>&gt;=</span><span class=identifier>expression2 
+expression1</span><span class=operator>==</span><span class=identifier>expression2 
+expression1</span><span class=operator>!=</span><span class=identifier>expression2
+expression</span><span class=operator>?</span><span class=identifier>expression1</span><span class=operator>:</span><span class=identifier>expression2 
+
+</span><span class=operator>++ </span><span class=identifier>operand</span><span class=separator>;
+</span><span class=operator>-- </span><span class=identifier>operand</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>*= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>/= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>%= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>+= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>-= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>&lt;&lt;= </span><span class=identifier>shift_value</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>&gt;&gt;= </span><span class=identifier>shift_value</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>&amp;= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>^= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>??'= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>|= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>expression1 </span><span class=operator>??!= </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=operator>! </span><span class=identifier>operand
+</span><span class=operator>~ </span><span class=identifier>operand
+</span><span class=operator>??-</span><span class=identifier>operand
+expression1 </span><span class=operator>+ </span><span class=identifier>expression2
+expression1 </span><span class=operator>- </span><span class=identifier>expression2
+expression1 </span><span class=operator>* </span><span class=identifier>expression2
+expression1 </span><span class=operator>/ </span><span class=identifier>expression2
+expression1 </span><span class=operator>% </span><span class=identifier>expression2
+expression1 </span><span class=operator>&amp; </span><span class=identifier>expression2
+expression1 </span><span class=operator>| </span><span class=identifier>expression2
+expression1 </span><span class=operator>??! </span><span class=identifier>expression2
+expression1 </span><span class=operator>^ </span><span class=identifier>expression2
+expression1 </span><span class=operator>??' </span><span class=identifier>expression2
+expression1 </span><span class=operator>&gt;&gt; </span><span class=identifier>shift_value
+expression1 </span><span class=operator>&lt;&lt; </span><span class=identifier>shift_value
+expression1 </span><span class=operator>&amp;&amp; </span><span class=identifier>expression2
+expression1 </span><span class=operator>|| </span><span class=identifier>expression2
+expression1 </span><span class=operator>??!| </span><span class=identifier>expression2
+expression1 </span><span class=operator>|??! </span><span class=identifier>expression2
+expression1 </span><span class=operator>??!??! </span><span class=identifier>expression2
+expression1 </span><span class=operator>&lt; </span><span class=identifier>expression2 
+expression1 </span><span class=operator>&gt; </span><span class=identifier>expression2 
+expression1 </span><span class=operator>&lt;= </span><span class=identifier>expression2 
+expression1 </span><span class=operator>&gt;= </span><span class=identifier>expression2 
+expression1 </span><span class=operator>== </span><span class=identifier>expression2 
+expression1 </span><span class=operator>!= </span><span class=identifier>expression2 
+expression </span><span class=operator>? </span><span class=identifier>expression1 </span><span class=operator>: </span><span class=identifier>expression2
+
+</span><span class=comment>/* separators */
+</span><span class=separator>( ) [ ??( ] ??) { ??&lt; } ??&gt; ; , . -&gt;
+</span><span class=comment>// each separator should be its own token
+</span><span class=separator>()[??(]??){??&lt;}??&gt;;,.-&gt;
+
+
+</span><span class=comment>/* Integer Literals */
+</span><span class=literal>1 2 3 4 99 1370000
+2l 2L 2u 2U 2ul 2Ul 2UL 2uL 2lu 2Lu 2lU 2LU 
+0x0 0x1 0x2 0xA 0xa 0xf 0xF 0x100 0xdeadbeef 
+0x4l 0x4L 0x4u 0x4U 0x4ul 0x4Ul 0x4UL 0x4uL 0x4lu 0x4Lu 0x4lU 0x4LU
+01 02 03 04 0453222 032
+07l 07L 07u 07U 07ul 07Ul 07UL 07uL 07lu 07Lu 07lU 07LU
+
+</span><span class=comment>/* Float Literals */
+</span><span class=literal>0e0 .0 0. 0.0 0.0e0 0.e0 .0e0 0.0e-0 0.0e88
+1e1 .1 1. 1.1 1.1e1 1.e1 .1e1 1.1e-1 3.141592654 6.022e-22
+1.79769313486231570e+308 4.94065645841246544e-324
+1.0 0.1 1.1 2. .3 4e10 4.e23 8.3e88 2.1e-3 2E2
+0e0f 0.0e0F 0.0e-0f 1.1e1f 3.141592654f 6.022e-22f 3.40282347e+38f 1.40239846e-45f
+0e0l 0.0e0L 0.0e-0L 1.1e1L 3.141592654L 6.022e-22L 3.40282347e+38L 1.40239846e-45L
+
+</span><span class=reservedWord>if </span><span class=separator>(</span><span class=identifier>expression1 </span><span class=operator>and </span><span class=identifier>expression2</span><span class=separator>)
+</span><span class=identifier>result </span><span class=operator>and_eq </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>= </span><span class=identifier>expression1 </span><span class=operator>bitand </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>= </span><span class=identifier>expression1 </span><span class=operator>bitor </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>= compl </span><span class=identifier>expression1</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>= </span><span class=identifier>expression1 </span><span class=operator>or </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>or_eq </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>= </span><span class=identifier>expression1 </span><span class=operator>xor </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=identifier>result </span><span class=operator>xor_eq </span><span class=identifier>expression2</span><span class=separator>;
+</span><span class=reservedWord>if </span><span class=separator>(</span><span class=identifier>expression1 </span><span class=operator>not_eq </span><span class=identifier>expression2</span><span class=separator>)
+</span><span class=reservedWord>asm </span><span class=separator>(</span><span class=literal>&quot;eieio&quot;</span><span class=separator>);
+</span><span class=reservedWord>class </span><span class=identifier>C </span><span class=separator>{ </span><span class=reservedWord>explicit </span><span class=identifier>C</span><span class=separator>(</span><span class=reservedWord>int </span><span class=identifier>i</span><span class=separator>) {} };
+</span><span class=reservedWord>export template</span><span class=operator>&lt;</span><span class=reservedWord>class </span><span class=identifier>T</span><span class=operator>&gt; </span><span class=reservedWord>void </span><span class=identifier>out</span><span class=separator>(</span><span class=reservedWord>const </span><span class=identifier>T</span><span class=operator>&amp; </span><span class=identifier>t</span><span class=separator>) { </span><span class=identifier>std</span><span class=operator>::</span><span class=identifier>cerr </span><span class=operator>&lt;&lt; </span><span class=identifier>t</span><span class=separator>; }
+</span><span class=reservedWord>if </span><span class=separator>(</span><span class=identifier>x </span><span class=operator>&lt; </span><span class=literal>0</span><span class=separator>) </span><span class=reservedWord>throw </span><span class=identifier>underflow</span><span class=separator>(</span><span class=identifier>x</span><span class=separator>);
+</span><span class=reservedWord>void </span><span class=identifier>f</span><span class=separator>(</span><span class=identifier>Shape</span><span class=operator>&amp; </span><span class=identifier>r</span><span class=separator>) { </span><span class=reservedWord>typeid</span><span class=separator>(</span><span class=identifier>r</span><span class=separator>); }
+</span><span class=reservedWord>typename </span><span class=identifier>C</span><span class=operator>::</span><span class=identifier>value_type s </span><span class=operator>= </span><span class=literal>0</span><span class=separator>;
+</span><span class=reservedWord>using </span><span class=identifier>std</span><span class=separator>;
+</span><span class=reservedWord>wchar_t </span><span class=identifier>ch </span><span class=operator>= </span><span class=literal>'a'</span><span class=separator>;
+</span><span class=reservedWord>bool </span><span class=identifier>finished </span><span class=operator>= </span><span class=literal>true </span><span class=operator>| </span><span class=literal>false</span><span class=separator>;
+</span><span class=reservedWord>if </span><span class=separator>(</span><span class=operator>not </span><span class=identifier>finished</span><span class=separator>) { </span><span class=identifier>std</span><span class=operator>::</span><span class=identifier>cerr </span><span class=operator>&lt;&lt; </span><span class=identifier>std</span><span class=operator>::</span><span class=identifier>endl</span><span class=separator>; }
+
+</span><span class=comment>/* Errors 
+ * 
+ * Anything after this has some sort of error associated with it.
+ * Since there is no standard definition of what an error is or how
+ * recovery after errors should be done, there is no standard way to 
+ * display errors.  However, if one of the errors gets reported as 
+ * valid that is a problem.
+ */ 
+
+/* Comment Errors */
+</span><span class=error>if??/</span><span class=operator>*</span><span class=identifier>This is </span><span class=operator>not </span><span class=identifier>a comment</span><span class=operator>*/</span><span class=reservedWord>if
+</span><span class=error>if??/</span><span class=operator>/</span><span class=identifier>This is </span><span class=operator>not </span><span class=identifier>a comment
+</span><span class=reservedWord>if
+
+</span><span class=comment>/* pp errors (no if should be in a pp or comment) */
+</span><span class=reservedWord>if
+</span><span class=error>#notdefined</span><span class=preprocessor> This should be an error </span><span class=comment>/* with a */</span><span class=preprocessor> comment in the middle of it \
+      extending to multiple lines. </span><span class=comment>// heck a comment here too.
+</span><span class=reservedWord>if
+</span><span class=error>#net
+</span><span class=reservedWord>if
+</span><span class=error>#something</span><span class=preprocessor> </span><span class=comment>// comment
+</span><span class=reservedWord>if
+</span><span class=error>#frog</span><span class=preprocessor> </span><span class=comment>/* comment */
+</span><span class=reservedWord>if
+</span><span class=error>#bugs</span><span class=comment>// comment
+</span><span class=reservedWord>if
+</span><span class=error>#logs</span><span class=comment>/* comment */
+</span><span class=reservedWord>if
+</span><span class=identifier>identifier </span><span class=error>#define </span><span class=identifier>A pp statement cannot go here
+</span><span class=reservedWord>if
+
+</span><span class=comment>/* Character Errors */
+/**/</span><span class=error>'string'</span><span class=comment>/**/
+/**/</span><span class=error>'\A'</span><span class=comment>/**/
+/**/</span><span class=error>'\N'</span><span class=comment>/**/
+/**/</span><span class=error>'unclosed/**/
+</span><span class=comment>/**/</span><span class=error>'''unclosed/**/
+</span><span class=comment>/**/</span><span class=error>'\'closed'</span><span class=comment>/**/
+/**/</span><span class=error>'\'unclosed/**/
+</span><span class=comment>/**/</span><span class=error>'\8'</span><span class=comment>/**/
+/**/</span><span class=error>'\29'</span><span class=comment>/**/
+/**/</span><span class=error>'\444'</span><span class=comment>/**/
+/**/</span><span class=error>'\1111'</span><span class=comment>/**/
+/**/</span><span class=error>'\xFFF'</span><span class=comment>/**/
+/**/</span><span class=error>'\xGG'</span><span class=comment>/**/
+/**/</span><span class=error>'\x000'</span><span class=comment>/**/
+/**/</span><span class=error>'\x111'</span><span class=comment>/**/
+/**/</span><span class=error>'??a'</span><span class=comment>/**/
+/**/</span><span class=error>'??&quot;'</span><span class=comment>/**/
+/**/</span><span class=error>'??}'</span><span class=comment>/**/
+/**/</span><span class=error>'??/'closed'</span><span class=comment>/**/
+/**/</span><span class=error>'??/'unclosed/**/
+</span><span class=comment>/**/</span><span class=error>'??/444'</span><span class=comment>/**/
+/**/</span><span class=error>'\uFFF'</span><span class=comment>/**/
+/**/</span><span class=error>'\uFFFFF'</span><span class=comment>/**/
+/**/</span><span class=error>'\uu'</span><span class=comment>/**/
+/**/</span><span class=error>'\u0'</span><span class=comment>/**/
+/**/</span><span class=error>'\uFFFF'</span><span class=comment>/**/
+/**/</span><span class=error>'\u1234'</span><span class=comment>/**/
+/**/</span><span class=error>'\u0000'</span><span class=comment>/**/
+
+/* String Errors */
+/**/</span><span class=error>&quot;\A&quot;</span><span class=comment>/**/
+/**/</span><span class=error>&quot;\N&quot;</span><span class=comment>/**/
+/**/</span><span class=error>&quot;unclosed/**/
+</span><span class=comment>/**/</span><span class=error>&quot;\&quot;unclosed/**/
+</span><span class=comment>/**/</span><span class=error>&quot;\8&quot;</span><span class=comment>/**/
+/**/</span><span class=error>&quot;\xGG&quot;</span><span class=comment>/**/
+/**/</span><span class=error>&quot;??/&quot;unclosed/**/
+</span><span class=comment>/**/</span><span class=error>&quot;??/8&quot;</span><span class=comment>/**/
+
+/* Identifier Errors */
+/**/</span><span class=error>1cannot_start_with_number</span><span class=comment>/**/
+/**/</span><span class=error>$cannot_start_with_dollar</span><span class=comment>/**/
+/**/</span><span class=error>weird`character</span><span class=comment>/**/
+/**/</span><span class=error>weird#character</span><span class=comment>/**/
+/**/</span><span class=error>weird??=character</span><span class=comment>/**/
+/**/</span><span class=error>weird@character</span><span class=comment>/**/
+
+/* Integer Literal Errors */
+/**/</span><span class=error>08</span><span class=comment>/**/
+/**/</span><span class=error>09</span><span class=comment>/**/
+/**/</span><span class=error>0xg</span><span class=comment>/**/
+/**/</span><span class=error>0xG</span><span class=comment>/**/
+
+/* Float Literal Errors */
+/**/</span><span class=error>0f</span><span class=comment>/**/
+/**/</span><span class=error>0F</span><span class=comment>/**/
+/**/</span><span class=error>1f</span><span class=comment>/**/
+/**/</span><span class=error>0e</span><span class=comment>/**/
+/**/</span><span class=error>88.8e</span><span class=comment>/**/
+/**/</span><span class=error>1.3d</span><span class=comment>/**/
+/**/</span><span class=error>1.3D</span><span class=comment>/**/
+
+/* Comment at end intentionally
+ * left open. */
+</span><span class=error>/*/
+
+
+</span></pre>
+
+</body>
+</html>

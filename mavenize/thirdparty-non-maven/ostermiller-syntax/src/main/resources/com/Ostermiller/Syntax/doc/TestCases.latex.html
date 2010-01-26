@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>LaTeX Syntax Highlighting Test</title>
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<link rel="stylesheet" media="screen" title="Syntax Highlighting" href="syntax.css" type="text/css">
+</head>
+<body>
+
+<pre><span class=comment>% All commands which have more than one argument 
+% can be used in the following three ways:
+</span><span class=text>
+</span><span class=identifier>\begin</span><span class=operator>{</span><span class=text>bf</span><span class=operator>}</span><span class=text>
+Some text.
+</span><span class=identifier>\end</span><span class=operator>{</span><span class=text>bf</span><span class=operator>}</span><span class=text>
+
+</span><span class=identifier>\bf</span><span class=operator>{</span><span class=text>Some text.</span><span class=operator>}</span><span class=text>
+
+</span><span class=operator>{</span><span class=identifier>\bf</span><span class=text> Some text.</span><span class=operator>}</span><span class=text>
+
+</span><span class=comment>% With the third method, it is important that the 
+% command has its own pair of braces, and that 
+% the command immediately follows the first brace. 
+% Otherwise, the parser cannot parse the argument(s) 
+% properly. With multiple arguments, 
+% each should be enclosed in braces.
+% Optional arguments are specified using square brackets or parentheses.
+% Whitespace should be avoided between command names and their arguments.
+</span><span class=text>
+</span><span class=comment>% A mathematical formula:
+</span><span class=identifier>\begin</span><span class=operator>{</span><span class=text>split</span><span class=operator>}</span><span class=text>
+  Q </span><span class=operator>&amp;</span><span class=text>= </span><span class=identifier>\int</span><span class=operator>_{</span><span class=identifier>\nu</span><span class=operator>}</span><span class=text> </span><span class=identifier>\rho</span><span class=operator>_{</span><span class=identifier>\nu</span><span class=operator>}</span><span class=identifier>\,</span><span class=text> d </span><span class=identifier>\nu</span><span class=text> \\
+    </span><span class=operator>&amp;</span><span class=text>= </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^</span><span class=text>4 </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^{</span><span class=identifier>\frac</span><span class=operator>{</span><span class=identifier>\pi</span><span class=operator>}{</span><span class=text>2</span><span class=operator>}}</span><span class=text> </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^</span><span class=text>2 3</span><span class=operator>(</span><span class=text>z+1</span><span class=operator>)</span><span class=text> </span><span class=identifier>\cos</span><span class=text> </span><span class=identifier>\phi</span><span class=text> </span><span class=identifier>\,</span><span class=text> d</span><span class=identifier>\rho</span><span class=text> </span><span class=identifier>\,</span><span class=text> d</span><span class=identifier>\phi</span><span class=text> </span><span class=identifier>\,</span><span class=text> dz </span><span class=identifier>\,</span><span class=text> </span><span class=identifier>\mu</span><span class=text> C \\
+    </span><span class=operator>&amp;</span><span class=text>= </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^</span><span class=text>4 </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^{</span><span class=identifier>\frac</span><span class=operator>{</span><span class=identifier>\pi</span><span class=operator>}{</span><span class=text>2</span><span class=operator>}}</span><span class=text> 6 </span><span class=operator>(</span><span class=text>z+1</span><span class=operator>)</span><span class=text> </span><span class=identifier>\cos</span><span class=text> </span><span class=identifier>\phi</span><span class=text> </span><span class=identifier>\,d\phi</span><span class=text> </span><span class=identifier>\,dz</span><span class=text> </span><span class=identifier>\,\mu</span><span class=text> C \\
+    </span><span class=operator>&amp;</span><span class=text>= </span><span class=identifier>\int</span><span class=operator>_</span><span class=text>0</span><span class=operator>^</span><span class=text>4 6 </span><span class=operator>(</span><span class=text>z+1</span><span class=operator>)</span><span class=text> </span><span class=identifier>\,dz</span><span class=text> </span><span class=identifier>\,\mu</span><span class=text> C \\
+    </span><span class=operator>&amp;</span><span class=text>= </span><span class=identifier>\frac</span><span class=operator>{</span><span class=text>6z</span><span class=operator>^</span><span class=text>2</span><span class=operator>}{</span><span class=text>2</span><span class=operator>}</span><span class=text> + 6z </span><span class=identifier>\Bigg|</span><span class=operator>_</span><span class=text>0</span><span class=operator>^</span><span class=text>4 </span><span class=identifier>\,\mu</span><span class=text> C \\
+    </span><span class=operator>&amp;</span><span class=text>= 3</span><span class=operator>(</span><span class=text>16</span><span class=operator>)</span><span class=text> + 6</span><span class=operator>(</span><span class=text>4</span><span class=operator>)</span><span class=text> </span><span class=identifier>\,\mu</span><span class=text> C \\
+    </span><span class=operator>&amp;</span><span class=text>= 72 </span><span class=identifier>\,\mu</span><span class=text> C
+</span><span class=identifier>\end</span><span class=operator>{</span><span class=text>split</span><span class=operator>}</span><span class=text>
+  
+</span><span class=comment>% Nested commands:
+</span><span class=operator>{</span><span class=identifier>\em</span><span class=text> This sentence is </span><span class=operator>{</span><span class=identifier>\em</span><span class=text> emphasized</span><span class=operator>}</span><span class=text>, with emphasis on the word </span><span class=operator>{</span><span class=identifier>\em</span><span class=text> emphasized</span><span class=operator>}</span><span class=text>.</span><span class=operator>}</span><span class=text>
+</span></pre>
+
+</body>
+</html>

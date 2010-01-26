@@ -1,0 +1,45 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Syntax Highlighting HTML<%/bte.tpl%>
+<%bte.tpl name=keywords%>web,HTML,tohtml,page,pages,document,documents<%/bte.tpl%>
+<%bte.tpl name=description%>A program to turn source code into colored web pages.<%/bte.tpl%>
+<%bte.tpl name=bartohtml%><span class=currentpage>Color Web Pages</span><%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+
+<p>The com.Ostermiller.Syntax package comes with a program to turn 
+source code into colored web pages.  The program is a command line Java program.</p>
+<p>To run, use the command line:<br>
+<b>java -classpath syntax.jar com.Ostermiller.Syntax.ToHTML --help</b><br>
+<br clear=all>
+<div style='border: black inset;padding:.2cm;'>
+<pre>ToHTML [-mlTitsofr] &lt;files&gt;
+Converts source files to syntax colored HTML.
+If no files are specified standard input will be used.
+ --help               Print this help message.
+ --version            Print out the version number.
+ --about              Print out license and contact info.
+ -m --mime &lt;type&gt;     Input is the given mime type. text/html, text/x-java...
+ -l --lexer &lt;class&gt;   Java class name of the lexer to use.
+ -T --title &lt;title&gt;   Use the given title in the html page.
+ -i --ignore &lt;class&gt;  CSS class name of token to ignore, eg. "whitespace"
+ -t --template &lt;URL&gt;  BTE template to use.  see: <a href="http://ostermiller.org/bte/">ostermiller.org/bte</a>
+ -s --css &lt;URL&gt;       Cascading Style Sheet to which html should be linked.
+ -o --output &lt;file&gt;   Output file, output directory, or -- for standard output.
+ -f --force           Overwrite files without prompting.
+ -r --trans &lt;old=new&gt; translate a CSS style into another style.</pre>
+ </div>
+<p>The resulting html documents will generally be much smaller if the <b>-i&nbsp;whitespace</b> option
+is used. This is acceptable as long as styles used do not effect whitespace.  An example of a style
+that would effect whitespace would be background color.
+Also consider translating styles into styles with shorter names and editing 
+the style sheet.  For example you might want to use <b>-r&nbsp;keyword=k</b>.</p>
+<p> BTE template files are used to customize the output.  The BTE system is a separate 
+download.  It must just be placed in the classpath or placed in the Java extensions directory.
+  The -t option can then be used to specify
+a desired template such as the <a href="page.bte">default template</a>.  Using templates you can easily customize the look
+and feel of the generated html and add your own content.</p>
+
+<p>If you are coloring your source files in a project which you build with Ant, 
+you can use an <a href="ant.html">Ant task</a>.
+<%/bte.tpl%>
+<%/bte.doc%>
+

@@ -1,0 +1,164 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Ant<%/bte.tpl%>
+<%bte.tpl name=keywords%>ant,task,anttask<%/bte.tpl%>
+<%bte.tpl name=description%>Ant task to create colored html from source files.<%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+
+
+<h2><a name="syntax">Syntax</a></h2>
+<h3>Description</h3>
+<p>The com.Ostermiller.Syntax package comes with an 
+<a href="http://ant.apache.org/">Ant</a> task to automate 
+the creation of colored html documents during your Java software 
+build process.  To use the ant task, simply place syntax.jar in Ant's lib 
+directory.</p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">srcdir</td>
+    <td valign="top">Location of the files to color. Defaults to the project's basedir.</td>
+    <td align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">destdir</td>
+    <td valign="top">Location to store the colored files. Defaults to 
+	the srcdir.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">css</td>
+    <td valign="top">URL of the cascading style sheet to which generated
+	files should be linked.  If this option is not specified, the pages
+	are linked to a default "syntax.css".  If this file is not present, the pages
+	will not appear to have any color.  
+	<a href="http://ostermiller.org/syntax/syntax.css">Example 
+	style sheet</a></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">includes</td>
+    <td valign="top">Comma separated list of file globs to accept.  If not
+	specified, all files in all subdirectories are colored.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">excludes</td>
+    <td valign="top">Comma separated list of file globs to reject that would
+	otherwise be accepted.  If not
+	specified, no files are excluded.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">mime</td>
+    <td valign="top">Mime-type of the files to color.  If not specified,
+	the mime-type is guessed from the file extension.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">lexer</td>
+    <td valign="top">Class name to use for the syntax highlighting lexer.
+	If none is specified, it is guessed from the mime-type and file
+	extension.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">title</td>
+    <td valign="top">Title to use for the colored html page.  If none
+	is specified, "HTML of <i>filename</i>" is used.</td>
+    <td align="center" valign="top">No</td>
+  </tr>  
+  <tr>
+    <td valign="top">template</td>
+    <td valign="top">URL of the BTE template file to use.  The URL may
+	be relative to the projects basedir.  If none is 
+	specified, the colored html pages have a simple default look and
+	feel.  For this option to work, the 
+	<a href="http://ostermiller.org/bte/">BTE libraries</a>
+	must be installed.  For a template example, see 
+	<a href="http://ostermiller.org/syntax/page.bte">the template for 
+	the default look and feel. </td>
+    <td align="center" valign="top">No</td>
+  </tr>  
+</table>
+
+<h3>Parameters specified as nested elements</h3>
+<h4>parameter type="ignore"</h4>
+<p>CSS class name of token to ignore.  This is desirable to reduce the size
+of the generated html files.  It is almost always good idea to ignore 
+whitespace.</p>
+
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The name of the style to ignore.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4>parameter type="translate"</h4>
+<p>CSS class name to translate to a new name.  Names can be translated
+for compatibility purposes.  They can also be translated to make files smaller.
+For example, it is possible to have a "k" instead of "keyword".</p>
+
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The original name of the style to translate.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The new name of the style.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h3>Examples</h3>
+
+Create syntax highlighting for java source files:
+<blockquote>
+<pre>&lt;taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask" /&gt;
+&lt;target name="highlight"&gt;
+  &lt;syntax includes="*.java" /&gt;
+&lt;/target&gt;</pre>
+</blockquote>
+
+Create syntax highlighting for all files except the generated highlighted files:
+<blockquote>
+<pre>&lt;taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask" /&gt;
+&lt;target name="highlight"&gt;
+  &lt;syntax excludes="*.*.html" /&gt;
+&lt;/target&gt;</pre>
+</blockquote>
+
+More complete example of highlighting java source files, with some recommended options:
+<blockquote>
+<pre>&lt;taskdef name="syntax" classname="com.Ostermiller.Syntax.ToHTMLAntTask" /&gt;
+&lt;target name="highlight"&gt;
+  &lt;mkdir dir="colored" /&gt;
+  &lt;syntax destdir="colored" includes="*.java" css="mysyntax.css"&gt;
+	&lt;parameter type="ignore" name="whitespace" /&gt;
+  &lt;/syntax&gt;
+  &lt;copy file="mysyntax.css" todir="colored" /&gt;
+&lt;/target&gt;</pre>
+</blockquote>
+
+<%/bte.tpl%>
+<%/bte.doc%>
+

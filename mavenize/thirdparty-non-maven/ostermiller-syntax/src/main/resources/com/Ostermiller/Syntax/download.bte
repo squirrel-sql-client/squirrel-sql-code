@@ -1,0 +1,13 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Download<%/bte.tpl%>
+<%bte.tpl name=keywords%>download,get,get<%/bte.tpl%>
+<%bte.tpl name=description%>Download Java libraries for coloring programming source code to HTML or in a text editor.<%/bte.tpl%>
+<%bte.tpl name=bardownload%><span class=currentpage>Download</span><%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+<p><a href="http://java.sun.com/webapps/getjava/BrowserRedirect?locale=en&host=www.java.com:80" target="_new">Download</a> and install the Java2 Runtime Environment (J2SE JRE) version 1.5 or later from java.sun.com if you do not already have it installed.</p>
+<p><a href="syntax.jar">Download</a> the com.Ostermiller.Syntax package in jar format.  (Includes source code - 346k)</p>
+<p>view the <a href="docs/">documentation.</a></p>
+
+<%/bte.tpl%>
+<%/bte.doc%>
+

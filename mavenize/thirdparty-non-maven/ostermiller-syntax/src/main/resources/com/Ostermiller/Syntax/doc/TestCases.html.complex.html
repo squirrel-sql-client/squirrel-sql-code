@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Complex HTML Syntax Highlighting Test</title>
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<link rel="stylesheet" media="screen" title="Syntax Highlighting" href="syntax.css" type="text/css">
+</head>
+<body>
+
+<pre><span class=text>hi</span><span class=separator>&lt;!</span><span class=tag>DocType</span><span class=name> &quot;some stuff&gt;&quot;</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=tag>DocTypE</span><span class=name> 'more stuff&gt;'</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=tag>dOCtYPE</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=tag>dOcTyPe</span><span class=name>Stuff</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=tag>DOCTYPE</span><span class=name> HTML PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN&quot;</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=tag>doctype</span><span class=name> 'stuff'</span><span class=separator>&gt;</span><span class=text>hi
+
+hi</span><span class=separator>&lt;!</span><span class=comment>--comment--</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=comment>--&lt;tag&gt;--</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=comment>--false close&gt;--</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error> </span><span class=comment>--comment--</span><span class=error> </span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=comment>--comment--</span><span class=error> </span><span class=comment>--comment2--</span><span class=separator>&gt;</span><span class=text>hi
+
+</span><span class=separator>&lt;!</span><span class=comment>--Some-Formatted Text Examples--</span><span class=separator>&gt;
+</span><span class=text>hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>This is pre-formatted.</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>PrE</span><span class=separator>&gt;</span><span class=text>&lt;tag&gt;&lt;/tag&gt;</span><span class=endtag>&lt;/PRe&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>PRE</span><span class=separator>&gt;</span><span class=text>&lt;/&gt;&lt;/p&gt;&lt;/pR&gt;&lt;/pRee&gt;&lt;/pretag&gt;</span><span class=endtag>&lt;/Pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;!--  --&gt;&quot;stuff&quot;'hello'//*=
+//!@#$&gt;&lt;%^&amp;*(){}~|\&quot;-</span><span class=endtag>&lt;/pRe&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;&lt;&lt;&lt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;/p&lt;/p</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;&lt;&lt;/p&lt;&lt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;&lt;/pr&lt;&lt;/ PR&lt;/Pre </span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;&lt;/pre&lt;&lt;/ pre </span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=text>&lt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre</span><span class=separator>&gt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>pre </span><span class=name>align</span><span class=separator>=</span><span class=value>left </span><span class=name>some</span><span class=separator>&gt;</span><span class=endtag>&lt;/pre&gt;</span><span class=text>hi
+
+</span><span class=separator>&lt;!</span><span class=comment>--Some Client Side Scripting Examples--</span><span class=separator>&gt;
+</span><span class=text>hi</span><span class=separator>&lt;</span><span class=tag>script</span><span class=separator>&gt;</span><span class=preprocessor>This is a script</span><span class=endtag>&lt;/script&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>sCript</span><span class=separator>&gt;</span><span class=preprocessor>&lt;tag&gt;&lt;/tag&gt;</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>SCRIPT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;/&gt;&lt;/s&gt;&lt;/SC&gt;&lt;/sCr&gt;&lt;/ScRi&gt;&lt;/SCRIP&gt;
+&lt;/scripttag&gt;&lt;/SCRIPTTAG&gt;&lt;/scRIpttag&gt;</span><span class=endtag>&lt;/Script&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>sCRIPT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;!--  --&gt;&quot;stuff&quot;'hello'//*=
+//!@#$&gt;&lt;%^&amp;*(){}~|\&quot;-</span><span class=endtag>&lt;/sCrIpT&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>sCRIPT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;!-- &lt;/script&gt; --&gt;</span><span class=endtag>&lt;/sCrIpT&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;&lt;&lt;&lt;</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;/s&lt;/s</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;&lt;&lt;/s&lt;&lt;</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;&lt;/scrI&lt;&lt;/ SCR&lt;/ScRIpt </span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;&lt;/scrI&lt;&lt;/ SCR </span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;/SCRIPT&lt;/SCR&lt;/Sc</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=endtag>&lt;/scriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=preprocessor>&lt;</span><span class=endtag>&lt;/SCriPt&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>scripT</span><span class=separator>&gt;</span><span class=endtag>&lt;/SCriPt&gt;</span><span class=text>hi
+
+</span><span class=separator>&lt;!</span><span class=comment>--Some Server Side Scripting Examples--</span><span class=separator>&gt;
+</span><span class=text>hi</span><span class=preprocessor>&lt;? echo (&quot;this is the simplest, an SGML processing instruction\n&quot;); ?&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;?php echo(&quot;if you want to serve XML documents, do like this\n&quot;); ?&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>script </span><span class=name>language</span><span class=separator>=</span><span class=value>&quot;php&quot;</span><span class=separator>&gt;</span><span class=preprocessor> hi
+	echo (&quot;some editors (like FrontPage)
+	don't like processing instructions&quot;);
+</span><span class=endtag>&lt;/script&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;% echo (&quot;ASP-style tags&quot;); %&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;%= $variable; # This is a shortcut for &quot;&lt;%echo ..&quot; %&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;? echo (&quot;hello&quot;); ??&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;? echo (&quot;hello&quot;); ???&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;??&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;?&gt;?&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;???&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;????&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;% echo (&quot;hello&quot;); %%&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;% echo (&quot;hello&quot;); %%%&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;%%&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;%&gt;%&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;%%%&gt;</span><span class=text>hi
+hi</span><span class=preprocessor>&lt;%%%%&gt;</span><span class=text>hi
+
+hi</span><span class=separator>&lt;</span><span class=tag>tag</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>my.tag-your.tag</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>2name</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>.name</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>-name</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>value</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>3value</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>.value</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>-value</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name1</span><span class=separator>=</span><span class=value>value1 </span><span class=name>name2</span><span class=separator>=</span><span class=value>value2</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name1</span><span class=separator>=</span><span class=value>value1 </span><span class=name>name2 name3</span><span class=separator>=</span><span class=value>value3 </span><span class=name>name4</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name1 </span><span class=separator>= </span><span class=value>value1 </span><span class=name>name2 name3 </span><span class=separator>= </span><span class=value>value3 </span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>'value'</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>&quot;value&quot;</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>&quot;&gt;&quot;</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>'&gt;'</span><span class=separator>&gt;</span><span class=text>hi
+
+hi</span><span class=separator>&lt;/</span><span class=endtag>end</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/ </span><span class=endtag>end </span><span class=separator>&gt;</span><span class=text>hi
+
+hi</span><span class=reference>&amp;nbsp;</span><span class=text>hi</span><span class=reference>&amp;lt;</span><span class=text>hi</span><span class=reference>&amp;#23345;</span><span class=text>hi</span><span class=reference>&amp;#xf2;</span><span class=text>hi</span><span class=reference>&amp;#XFa33;</span><span class=text>hi</span><span class=reference>&amp;quot</span><span class=separator>&lt;</span><span class=tag>tag</span><span class=separator>&gt;</span><span class=text>hi</span><span class=reference>&amp;amp 
+</span><span class=text>hi</span><span class=reference>&amp;pi&amp;nu&amp;mu
+
+</span><span class=text>The following may be represented as error:
+hi</span><span class=error>&amp;unknown</span><span class=text>;hi</span><span class=error>&amp;NBSP</span><span class=text>;hi</span><span class=error>&amp;LT</span><span class=text>;hi
+
+Everything else definitly has errors:
+hi</span><span class=separator>&lt;!</span><span class=comment>--comment1--</span><span class=error> notComment </span><span class=comment>--comment2--</span><span class=separator>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>not legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>-not legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>- not legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error> -not legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>dnot legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>Donot legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>DoCnot legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;!</span><span class=error>DoCtypnot legal&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=error> tag&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=error>1tag&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=error>.tag&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=error>-tag&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=error>$tag&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag</span><span class=error>_&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>ta</span><span class=error>#g&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=error>*name&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>n</span><span class=error>&lt;ame&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=error>|&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>&quot;&quot;</span><span class=error>&quot;&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>''</span><span class=error>'&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=error>%value&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>val</span><span class=error>&amp;ue&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=value>value</span><span class=error>)&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>script </span><span class=name>language</span><span class=separator>=</span><span class=error>&gt;</span><span class=preprocessor>this&lt;that</span><span class=endtag>&lt;/script&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/</span><span class=error>&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/</span><span class=error>=end&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/</span><span class=endtag>en</span><span class=error>;d&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/</span><span class=endtag>end</span><span class=error>:&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;/</span><span class=endtag>end </span><span class=error>end&gt;</span><span class=text>hi
+hi</span><span class=separator>&lt;</span><span class=tag>tag </span><span class=name>name</span><span class=separator>=</span><span class=error>&gt;</span><span class=text>hi
+
+</span><span class=separator>&lt;</span><span class=tag>open
+
+
+</span></pre>
+
+</body>
+</html>

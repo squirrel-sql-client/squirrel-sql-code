@@ -1,0 +1,96 @@
+<%bte.doc super="syntax.bte"%>
+<%bte.tpl name=pageTitle%>Features<%/bte.tpl%>
+<%bte.tpl name=keywords%>features,formats,languages,source code<%/bte.tpl%>
+<%bte.tpl name=description%>List of the features supported by the com.Ostermiller.syntax package..<%/bte.tpl%>
+<%bte.tpl name=barfeatures%><span class=currentpage>Supported Formats</span><%/bte.tpl%>
+<%bte.tpl name=pageContent%>
+
+<p>The com.Ostermiller.syntax package supports several programming languages.</p>
+<ul>
+<li>Supports <a href="features.html#java">Java</a>, <a href="features.html#c">C/C++</a>, <a href="features.html#html">HTML</a>, <a href="features.html#latex">LaTeX</a>, <a href="features.html#sql">SQL</a>, and <a href="features.html#properties">Java properties</a>. (More can be added with relative ease)</li>
+<li>True lexer support - language syntax specified using <a href="http://jflex.de/">JFlex</a>.</li>
+<li>Language specification compliant:
+  <ul>
+  <li>C/C++ (<a name=c href="TestCases.c.html">Test Case</a>)
+    <ul>
+    <li>Keywords</li>
+    <li>Precompiler statements (even those with comments)</li>
+    <li>Comments</li>
+    <li>Literals
+    <ul>
+      <li>Integers, Floats, and Doubles</li>      
+      <li>Characters and Strings (with escape sequences)</li>
+    </ul>
+    </li>
+    <li>Identifiers</li>
+    <li>Operands</li>
+    <li>Trigraph escape sequence support</li>
+    <li>Error reporting</li>
+    </ul>
+  </li>
+  <li>Java (<a name=java href="TestCases.java.html">Test Case</a>)
+    <ul>
+    <li>Keywords</li>
+    <li>Comments (including documentation comments)</li>
+    <li>Literals
+    <ul>
+      <li>Integers, Floats and Doubles (with bounds checking)</li>      
+      <li>Characters and Strings (with escape sequences including unicode)</li>
+      <li>true, false, and null</li>
+    </ul>
+    </li>
+    <li>Identifiers</li>
+    <li>Operands</li>
+    <li>Error reporting</li>
+    </ul>
+  </li>
+  <li>HTML (<a href="TestCases.html.simple.html">Simple Test Case</a>)
+    <ul>
+    <li>Text</li>
+    <li>Character entity references</li>
+    <li>Comments</li>   
+    <li>Scripts</li> 
+    <li>Tags</li>
+    <li>Error reporting</li>
+    </ul>
+  </li>
+  <li>HTML (<a name=html href="TestCases.html.complex.html">Complex Test Case</a>)
+    <ul>
+    <li>Text</li>
+    <li>Character entity references</li>
+    <li>Comments</li>
+    <li>Scripts</li>    
+    <li>Tag parts</li>
+    <li>Name/value pairs</li>
+    <li>Error reporting</li>
+    </ul>
+  </li>
+  <li>Java Properties (<a name=properties href="TestCases.properties.html">Test Case</a>)
+    <ul>
+    <li>Name/value pairs</li>
+    <li>Values split across multiple lines.</li>
+    <li>Comments</li> 
+    </ul>
+  </li>
+  <li>LaTeX (<a name=latex href="TestCases.latex.html">Test Case</a>)
+    <ul>
+    <li>Commands</li>
+    <li>Text</li>
+    <li>Operators</li>
+    <li>Comments</li>
+    <li>Escape Sequences</li> 
+    </ul>
+  </li>
+  <li>SQL (<a name=sql href="TestCases.sql.html">Test Case</a>)
+    <ul>
+    <li>About 500 keywords.</li>
+    <li>Comments including nested comments.</li>
+	<li>literals including strings and numbers</li>
+    </ul>
+  </li>
+  </ul>
+</li>
+</ul>
+<%/bte.tpl%>
+<%/bte.doc%>
+
