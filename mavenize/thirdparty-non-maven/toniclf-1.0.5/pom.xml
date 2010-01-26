@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>toniclf</artifactId>
+   <version>1.0.5</version>
+   <packaging>jar</packaging>
+
+   <name>Tonic Look and Feel</name>
+   <description>
+        This is the tonic look-and-feel packaged to be distributed with the SQuirreLSQL client.
+        This pluggable look and feel is a free substitute for the default native look and feel of Swing, 
+        'Metal', distributed under the GNU Lesser General Public License. Metal lacks both in usability and 
+        aesthetics. It contains considerable graphical noise, distracting the user from the key elements of 
+        the GUI.
+        Tonic, on the other hand, tries to provide a clean, balanced look and an improved feel. Tonic is 
+        available free of charge both for commercial and non-commercial applications. It lends a 
+        professional touch and a very tidy and clean interface to your Swing based applications.         
+   </description>
+   <url>http://www.digitprop.com/tonic/tonic.php</url>
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <url>http://www.gnu.org/copyleft/lesser.html</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <scm>
+      <connection>scm:cvs:pserver:anonymous@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql</connection>
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/mavenize/thirdparty-non-maven/toniclf-1.0.5/</url>
+   </scm>
+   <developers>
+      <developer>
+         <name>Markus Fischer</name>
+      </developer>
+   </developers>
+
+</project>
