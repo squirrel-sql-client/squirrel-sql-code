@@ -17,12 +17,9 @@
                 <distribution>repo</distribution>
         </license>
    </licenses>
-   <!--
-      No known source code repository exists for this code, but it is available as a source archive from the
-      scm url below
-   -->
    <scm>
-      <url>http://java.sun.com/products/jfc/tsc/articles/treetable1/downloads/sources.zip</url>
+   	  <connection>scm:cvs:pserver:anonymous@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql</connection>
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/mavenize/thirdparty-non-maven/treetable/</url>
    </scm>
    <developers>
       <developer>
