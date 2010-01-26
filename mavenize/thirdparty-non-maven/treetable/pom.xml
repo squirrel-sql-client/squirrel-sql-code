@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>treetable</artifactId>
+   <version>20040121</version>
+   <packaging>jar</packaging>
+   <name>Tree Table Examples</name>
+   <description>
+        Example code for creating JTables with an embedded tree structure in Swing.  
+   </description>
+
+   <url>http://java.sun.com/products/jfc/tsc/articles/treetable1</url>
+   <licenses>
+        <license>
+                <name>Sun Public License</name>
+                <distribution>repo</distribution>
+        </license>
+   </licenses>
+   <!--
+      No known source code repository exists for this code, but it is available as a source archive from the
+      scm url below
+   -->
+   <scm>
+      <url>http://java.sun.com/products/jfc/tsc/articles/treetable1/downloads/sources.zip</url>
+   </scm>
+   <developers>
+      <developer>
+         <name>Philip Milne</name>
+      </developer>
+      <developer>
+         <name>Scott Violet</name>
+      </developer>
+   </developers>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+               <source>1.5</source>
+               <target>1.5</target>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+               <archive>
+                  <addMavenDescriptor>false</addMavenDescriptor>
+               </archive>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.1</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+   <profiles>
+      <profile>
+         <id>sign-jar</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-gpg-plugin</artifactId>
+                  <version>1.0-alpha-4</version>
+                  <executions>
+                     <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                           <goal>sign</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
+   <distributionManagement>
+      <repository>
+         <id>sonatype-squirrel-sql-releases</id>
+         <name>SQuirreL-SQL Release Repository</name>
+         <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+      <snapshotRepository>
+         <id>sonatype-squirrel-sql-snapshots</id>
+         <name>SQuirreL-SQL Snapshot Repository</name>
+         <url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+      </snapshotRepository>
+   </distributionManagement>
+</project>
