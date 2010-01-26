@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>substance</artifactId>
+   <version>5.2_01</version>
+   <packaging>jar</packaging>
+
+   <name>Substance Look and Feel</name>
+   <description>
+        A rock solid, fast and extensible library for creating visually appealing and consistent 
+        Swing applications.
+   </description>
+   <url>https://substance.dev.java.net/</url>
+   <licenses>
+      <license>
+         <name>Berkeley Software Distribution (BSD) License</name>
+         <url>https://substance.dev.java.net/license.html</url>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <name>Kirill Grouchnikov</name>
+      </developer>
+   </developers>
+   <scm>
+        <url>https://substance.dev.java.net/source/browse/substance/</url>
+        <connection>scm:cvs:pserver:anonymous@cvs.dev.java.net:/cvs/substance</connection>
+        <developerConnection>scm:cvs:pserver:username@cvs.dev.java.net:/cvs/substance</developerConnection>
+   </scm>
+</project>
