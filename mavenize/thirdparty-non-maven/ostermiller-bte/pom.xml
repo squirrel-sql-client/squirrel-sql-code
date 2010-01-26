@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>ostermiller-bte</artifactId>
+   <version>1.6</version>
+   <packaging>jar</packaging>
+   
+   <name>Ostermiller BTE</name>
+   <description>
+        A reference implementation of Better Templates for Everyone. It is written in Java and has been 
+        tested on both Windows and Linux. It is very fast and can compile large sites in seconds.
+   </description>
+   <url>http://ostermiller.org/bte/</url>
+   <licenses>
+      <license>
+         <name>GNU General Public License</name>
+         <url>http://www.gnu.org/copyleft/gpl.html</url>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <name>Stephen Ostermiller</name>
+      </developer>
+   </developers>
+   <!--
+      Source code repository is unavailable at this time. The author only makes the source code available as
+      an archive on his website (see scm url below).
+   -->
+   <scm>
+      <url>http://ostermiller.org/bte/</url>
+      <!-- No source code repository is available -->
+      <connection>http://ostermiller.org/bte</connection>
+   </scm>
+</project>
