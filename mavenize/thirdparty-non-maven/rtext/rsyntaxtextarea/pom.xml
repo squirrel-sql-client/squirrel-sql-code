@@ -1,0 +1,32 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+	<artifactId>com-fifesoft-rsyntaxtextarea</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	<name>RSyntaxTextArea</name>
+	<description> An extension of RTextArea that adds syntax highlighting of certain programming languages 
+	to its list of features.
+  	</description>
+	<url></url>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>http://svn.fifesoft.com/viewvc-1.0.5/bin/cgi/viewvc.cgi/RSyntaxTextArea/?root=RSyntaxTextArea</url>
+		<connection>http://svn.fifesoft.com/svn/RSyntaxTextArea/RSyntaxTextArea/</connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Robert Futrell</name>
+			<url>http://www.fifesoft.com</url>
+		</developer>
+	</developers>
+</project>
