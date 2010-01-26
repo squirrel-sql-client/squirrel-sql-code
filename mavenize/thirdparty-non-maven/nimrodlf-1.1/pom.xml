@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>nimrodlf</artifactId>
+   <version>1.1</version>
+   <packaging>jar</packaging>
+
+   <name>Nimrod Look and Feel</name>
+   <description>
+        NimROD Look and Feel is an extension of the Metal Look and Feel, so it should be a portable 
+        look and feel.  This POM was contributed by Rob Manning and can be used to build this laf
+        from the original source code if the source code is structured according to Maven conventions.
+   </description>
+   <url>http://personales.ya.com/nimrod/index-en.html</url>
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <url>http://personales.ya.com/nimrod/licencia-en.html</url>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <name>Nilo J. González</name>
+         <email>nimrodlf@gmail.com</email>
+      </developer>
+   </developers>
+   <!--
+      Source code repository is unavailable at this time. The author only makes the source code available as
+      an archive on his website (see scm url below).
+   -->
+   <scm>
+      <url>http://personales.ya.com/nimrod/download-en.html</url>
+   </scm>
+   <build>
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+               <include>**/*.png</include>
+            </includes>
+         </resource>
+      </resources>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.5</source>
+               <target>1.5</target>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+               <archive>
+                  <addMavenDescriptor>false</addMavenDescriptor>
+               </archive>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+   <dependencies>
+      <dependency>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+         <version>2.2</version>
+         <type>maven-plugin</type>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-compiler-plugin</artifactId>
+         <version>2.0.2</version>
+         <type>maven-plugin</type>
+      </dependency>
+   </dependencies>
+</project>
