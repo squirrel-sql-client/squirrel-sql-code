@@ -1,0 +1,217 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>org-netbeans-modules-editor-fold</artifactId>
+   <version>4.0</version>
+   <packaging>jar</packaging>
+
+   <name>NetBeans Editor Fold Library</name>
+   <description>
+        The NetBeans Platform is a generic base for desktop applications. It provides the services common 
+        to almost all large desktop applications: window management, menus, settings and storage, an update 
+        manager, and file access. Get a head start by reusing these standard components, allowing you to 
+        concentrate fully on your application's business logic. 
+   </description>
+   <!--
+      Inception Year was determined using the information at the following URL:
+      http://www.netbeans.org/about/history.html
+   -->
+   <inceptionYear>1997</inceptionYear>
+   <!--
+      See CREDITS.html in the NetBeans distribution for the list of developers of NetBeans. Obviously, this is
+      a truncated list, but it highlights those who played a major role in developing NetBeans.
+   -->
+   <developers>
+      <developer>
+         <name>Christina Ahrens</name>
+      </developer>
+      <developer>
+         <name>Asgeir Orn Asgeirsson</name>
+      </developer>
+      <developer>
+         <name>Christopher Atlan</name>
+      </developer>
+      <developer>
+         <name>Carel Bast</name>
+      </developer>
+      <developer>
+         <name>Steve Benigan</name>
+      </developer>
+      <developer>
+         <name>Chris Bishop</name>
+      </developer>
+      <developer>
+         <name>Michael Bishop</name>
+      </developer>
+      <developer>
+         <name>Mauro Botelho</name>
+      </developer>
+      <developer>
+         <name>Vincent Brabant</name>
+      </developer>
+      <developer>
+         <name>Jeff Cantin</name>
+      </developer>
+      <developer>
+         <name>Gabriele Carcassi</name>
+      </developer>
+      <developer>
+         <name>Benoit Cerrina</name>
+      </developer>
+      <developer>
+         <name>Jayme C. Edwards</name>
+      </developer>
+      <developer>
+         <name>Nick Fortescue</name>
+      </developer>
+      <developer>
+         <name>David Freels</name>
+      </developer>
+      <developer>
+         <name>Kenneth N. Fujimoto</name>
+      </developer>
+      <developer>
+         <name>Carl L Gilbert</name>
+      </developer>
+      <developer>
+         <name>Kees van Ginkel</name>
+      </developer>
+      <developer>
+         <name>Andrej Golovnin</name>
+      </developer>
+      <developer>
+         <name>Michel Graciano</name>
+      </developer>
+      <developer>
+         <name>Robert Greig</name>
+      </developer>
+      <developer>
+         <name>Gunnar Grim</name>
+      </developer>
+      <developer>
+         <name>Anuradha Gunasekara</name>
+      </developer>
+      <developer>
+         <name>Sam Halliday</name>
+      </developer>
+      <developer>
+         <name>Eric Hartmann</name>
+      </developer>
+      <developer>
+         <name>Niclas Hedhman</name>
+      </developer>
+      <developer>
+         <name>Leon Chiver</name>
+      </developer>
+      <developer>
+         <name>Jonathan Keller</name>
+      </developer>
+      <developer>
+         <name>Miloš Kleint</name>
+      </developer>
+      <developer>
+         <name>Jeff Keyser</name>
+      </developer>
+      <developer>
+         <name>Arjan Kok</name>
+      </developer>
+      <developer>
+         <name>Holger Krug</name>
+      </developer>
+      <developer>
+         <name>Jan Labrie</name>
+      </developer>
+      <developer>
+         <name>Ross Lamont</name>
+      </developer>
+      <developer>
+         <name>Max Lobel</name>
+      </developer>
+      <developer>
+         <name>Jun Luo</name>
+      </developer>
+      <developer>
+         <name>Roger Martin</name>
+      </developer>
+      <developer>
+         <name>Maxym Mykhalchuk</name>
+      </developer>
+      <developer>
+         <name>Derrick Oswald</name>
+      </developer>
+      <developer>
+         <name>Saptarshi Purkayastha</name>
+      </developer>
+      <developer>
+         <name>John Richardson</name>
+      </developer>
+      <developer>
+         <name>Gerrit Riessen</name>
+      </developer>
+      <developer>
+         <name>Michael Ruflin</name>
+      </developer>
+      <developer>
+         <name>Wiebe Ruiter</name>
+      </developer>
+      <developer>
+         <name>Michael Nascimento Santos</name>
+      </developer>
+      <developer>
+         <name>Kai Rudiger Schobbert</name>
+      </developer>
+      <developer>
+         <name>Thomas Singer</name>
+      </developer>
+      <developer>
+         <name>Evan "Hippy" Slatis</name>
+      </developer>
+      <developer>
+         <name>Christian Stein</name>
+      </developer>
+      <developer>
+         <name>Ted Stockwell</name>
+      </developer>
+      <developer>
+         <name>David Štrupl</name>
+      </developer>
+      <developer>
+         <name>Lukas Tadial</name>
+      </developer>
+      <developer>
+         <name>Alan Tai</name>
+      </developer>
+      <developer>
+         <name>Gili Tzabari</name>
+      </developer>
+      <developer>
+         <name>Rich Unger</name>
+      </developer>
+      <developer>
+         <name>Vladimir Strigun</name>
+      </developer>
+   </developers>
+   <licenses>
+      <license>
+         <name>Dual licensed (GNU Lesser General Public License and CDDL version 1.0)</name>
+         <url>http://www.netbeans.org/cddl-gplv2.html</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <url>http://www.netbeans.org/community/releases/40/</url>
+   <scm>
+      <connection>scm:hg:http://hg.netbeans.org/main</connection>
+      <developerConnection>scm:hg:http://hg.netbeans.org/main</developerConnection>
+      <url>http://www.netbeans.org/community/releases/40/</url>
+   </scm>
+   <issueManagement>
+      <system>NetBeans IssueZilla</system>
+      <url>http://www.netbeans.org/community/issues.html</url>
+   </issueManagement>
+   <ciManagement>
+      <system>Hudson</system>
+      <url>http://deadlock.netbeans.org/hudson/</url>
+   </ciManagement>
+</project>
