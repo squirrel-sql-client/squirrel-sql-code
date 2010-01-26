@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>ilf-gpl</artifactId>
+   <version>1.6.1</version>
+   <packaging>jar</packaging>
+
+   <name>InfoNode Look and Feel</name>
+   <description>
+        InfoNode Look and Feel is developed by NNL Technology AB. Visit 
+        http://www.infonode.net for more information and the latest version of the library.
+   </description>
+   <url>http://www.infonode.net/index.html?ilf</url>
+   <licenses>
+      <license>
+         <name>GNU General Public License (GPL)</name>
+         <url>http://www.gnu.org/copyleft/gpl.html</url>
+      </license>
+      <license>
+         <name>InfoNode Software License Version 1.1</name>
+         <url>http://www.infonode.net/licenses/InfoNodeLicense.html</url>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <name>Bjorn Lind</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Jesper Nordenberg</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Johan Nilsson</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+   </developers>
+   <scm>
+   	  <connection>scm:cvs:pserver:anonymous@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql</connection>
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/mavenize/thirdparty-non-maven/ilf-gpl-1.6.1/</url>
+   </scm>
+   <issueManagement>
+      <system>SourceForge Tracker</system>
+      <url>https://sourceforge.net/tracker/?group_id=110922</url>
+   </issueManagement>
+</project>
