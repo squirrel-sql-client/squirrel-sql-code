@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>jaybird</artifactId>
+   <version>2.1.6</version>
+   <packaging>jar</packaging>
+
+   <name>Jaybird JDBC Driver</name>
+   <description>JDBC Driver for the Firebird RDBMS</description>
+   <url>http://sourceforge.net/projects/firebird/</url>
+   
+   <!--
+      Initial check-in was 2001-05-09 by "d_jencks" according to changelog here:
+      http://firebird.cvs.sourceforge.net/viewvc/firebird/client-java/ChangeLog?revision=1.1&view=markup
+   -->
+   <inceptionYear>2001</inceptionYear>
+
+   <developers>
+      <developer>
+         <name>Roman Rokytskyy</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Adriano dos Santos Fernandes</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Frank Schlottmann-Goedde</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>David Jencks</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Blas Rodriguez Somoza</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Gabriel Reid</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Ryan Baldwin</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Steven Jardine</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Alejandro Alberola Arias</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Rick Fincher</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+      <developer>
+         <name>Pavel Cisar</name>
+         <roles>
+            <role>Developer</role>
+         </roles>
+      </developer>      
+   </developers>
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <comments>
+                The JayBird JCA/JDBC driver is distributed free of charge under the 
+                GNU Lesser General Public License (LGPL). Text of the license can be 
+                obtained from http://www.gnu.org/copyleft/lesser.html
+         </comments>
+         <url>http://www.gnu.org/copyleft/lesser.html</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   
+   <scm>
+      <url>http://cvs.sourceforge.net/viewcvs.py/firebird/client-java/</url>
+      <connection>scm:cvs:pserver:anonymous@firebird.cvs.sourceforge.net:/cvsroot/firebird</connection>
+   </scm>
+   <issueManagement>
+      <system>JIRA Tracker</system>
+      <url>http://tracker.firebirdsql.org/secure/Dashboard.jspa</url>
+   </issueManagement>     
+</project>
