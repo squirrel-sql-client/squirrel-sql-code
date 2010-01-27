@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>skinlf</artifactId>
+   <version>6.7</version>
+   <packaging>jar</packaging>
+
+   <name>Skin Look and Feel</name>
+   <description>
+        Skin Look And Feel allows Java developers to write skin-able application using the Swing toolkit. 
+        Skin Look And Feel is able to load themepacks (a bundle of GTK - The Gimp Toolkit - and KDE - 
+        The K Desktop Environment - skins) to enhance your application GUI controls such as Buttons, Checks, 
+        Radios, Scrollbars, Progress Bar, Lists, Tables, Internal Frames, Colors, Background Textures, 
+        Regular Windows. Skin Look And Feel (aka SkinLF) also includes NativeSkin to create irregular 
+        windows. 
+   </description>
+   <url>http://www.l2fprod.com/skinlf</url>
+   <licenses>
+      <license>
+         <name>Apache Software License</name>
+         <url>http://www.apache.org/LICENSE.txt</url>
+      </license>
+   </licenses>
+   <developers>
+      <developer>
+         <name>Frédéric Lavigne</name>
+         <organizationUrl>www.l2fprod.com</organizationUrl>
+      </developer>
+   </developers>
+   <issueManagement>
+      <system>Java.net Issue Tracker</system>
+      <url>https://skinlf.dev.java.net/servlets/ProjectIssues</url>
+   </issueManagement>
+   <scm>
+      <url>https://skinlf.dev.java.net/source/browse/skinlf/</url>
+      <connection>scm:cvs:pserver:username@cvs.dev.java.net:/cvs/skinlf</connection>
+   </scm>
+</project>

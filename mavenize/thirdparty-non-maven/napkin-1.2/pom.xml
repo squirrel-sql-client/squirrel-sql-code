@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+    <artifactId>napkinlaf</artifactId>
+    <version>1.2</version>
+    <name>Napkin Look and Feel</name>
+    <packaging>jar</packaging>
+
+    <!-- Napkin's project information -->
+    <url>http://napkinlaf.sourceforge.net</url>
+    <issueManagement>
+        <url>http://sourceforge.net/tracker/?group_id=104116</url>
+        <system>SourceForge Tracker</system>
+    </issueManagement>
+    <description>
+        The Napkin Look and Feel is a pluggable look and feel for Java Swing
+        that makes the UI look as if it was hand-sketched on a napkin.
+        This provisional look is designed tfor use during project development
+        so that provisional parts of the UI look provisional, but of course you
+        may use it for anything you like.
+    </description>
+    <licenses>
+        <license>
+            <name>BSD</name>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Ken Arnold</name>
+            <email>kcrca@sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Alex Lam S.L.</name>
+            <email>alexlamsl@sourceforge.net</email>
+        </developer>
+    </developers>
+    <inceptionYear>2004</inceptionYear>
+
+    <scm>
+        <developerConnection>scm:svn:https://napkinlaf.svn.sourceforge.net/svnroot/napkinlaf/trunk</developerConnection>
+        <connection>scm:svn:https://napkinlaf.svn.sourceforge.net/svnroot/napkinlaf/trunk</connection>
+        <url>https://napkinlaf.svn.sourceforge.net/svnroot/napkinlaf/trunk</url>
+    </scm>
+
+</project>
