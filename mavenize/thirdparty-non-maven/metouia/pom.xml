@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+   <artifactId>metouia</artifactId>
+   <version>1.0.0-beta</version>
+   <packaging>jar</packaging>
+
+   <name>Metouia Look And Feel</name>
+   <description>
+        This project was once hosted on SourceForge (http://mlf.sourceforge.net), but SourceForge
+        replaced it with a different project (not sure what the reason for removal was).  It was licensed
+        under an OSI-approved open source license according to the historical page hosted by the Internet
+        Archive's wayback machine.  
+   </description>
+   <url>http://web.archive.org/web/20060820122207/mlf.sourceforge.net/index.php?home</url>
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License (LGPL)</name>
+         <url>http://web.archive.org/web/20060820122442/mlf.sourceforge.net/index.php?license</url>
+      </license>
+   </licenses>
+   <scm>
+   	  <connection>scm:cvs:pserver:anonymous@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql</connection>
+      <url>http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/mavenize/thirdparty-non-maven/metouia/</url>
+   </scm>
+
+   <developers>
+      <developer>
+         <name>Stefan Krause</name>
+      </developer>
+      <developer>
+         <name>Taoufik Romdhane</name>
+      </developer>
+   </developers>
+</project>
