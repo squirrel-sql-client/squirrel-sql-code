@@ -9,6 +9,7 @@ Enhancements:
 Updated Translations:
  - Korean (Thanks to Youngwoo Kim)
  - Chinese (Thanks to xpdz)
+ - French (Thanks to Erwan DUROSELLE)
  
 Improved display of SQL result metadata
 
