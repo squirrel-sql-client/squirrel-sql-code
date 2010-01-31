@@ -19,46 +19,38 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
-import javax.swing.JOptionPane;
-import javax.swing.event.TableModelEvent;
 
-//??import javax.swing.event.TableModelListener;
-//??import javax.swing.event.TableModelEvent;
-
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
-
-// for printing...
- 
-import java.awt.print.Printable;
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterException;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import javax.swing.table.JTableHeader;
-import java.awt.Font;
-import java.util.ArrayList;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
@@ -456,7 +448,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 				ExtTableColumn col = new ExtTableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
-				col.setHeaderValue(colDef.getLabel());
+				col.setHeaderValue(colDef.getColumnName());
 				col.setColumnDisplayDefinition(colDef);
 				cm.addColumn(col);
 			}

@@ -456,7 +456,7 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
     */
    public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
       if (value == null || ((DerbyClobDescriptor) value).getData() == null)
-         return _colDef.getLabel() + " IS NULL";
+         return _colDef.getColumnName() + " IS NULL";
       else
          return ""; // CLOB cannot be used in WHERE clause
    }

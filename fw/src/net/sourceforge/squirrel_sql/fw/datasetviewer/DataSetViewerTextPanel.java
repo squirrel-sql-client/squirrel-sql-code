@@ -72,7 +72,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < colDefs.length; ++i)
 			{
-				buf.append(format(colDefs[i].getLabel(), colDefs[i].getDisplayWidth(), ' '));
+				buf.append(format(colDefs[i].getColumnName(), colDefs[i].getDisplayWidth(), ' '));
 			}
 			addLine(buf.toString());
 			buf = new StringBuffer();
@@ -163,6 +163,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 	private final class MyJTextArea extends JTextArea
 	{
+		private static final long serialVersionUID = 1L;
+		
 		private TextPopupMenu _textPopupMenu;
 
 		MyJTextArea(IDataSetUpdateableModel updateableObject)
@@ -212,6 +214,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 	private static class MyJTextAreaPopupMenu extends TextPopupMenu
 	{
+		private static final long serialVersionUID = 1L;
+
 		private MakeEditableAction _makeEditable = new MakeEditableAction();
 
 		// The following pointer is needed to allow the "Make Editable button
@@ -235,6 +239,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 		private class MakeEditableAction extends BaseAction
 		{
+			private static final long serialVersionUID = 1L;
+
 			MakeEditableAction()
 			{
 				// i18n[dataSetViewerTablePanel.makeEditable=Make Editable]

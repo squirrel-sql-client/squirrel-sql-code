@@ -367,13 +367,13 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 		{
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 
 		}
 		else
 		{
 			String bitValue = DatabaseSpecificBooleanValue.getBooleanValue(value.toString(), md);
-			return _colDef.getLabel() + "=" + bitValue;
+			return _colDef.getColumnName() + "=" + bitValue;
 		}
 	}
 

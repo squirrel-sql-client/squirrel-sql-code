@@ -358,7 +358,7 @@ public class DataTypeUnknown extends BaseDataTypeComponent
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else
 			return "";
 	}

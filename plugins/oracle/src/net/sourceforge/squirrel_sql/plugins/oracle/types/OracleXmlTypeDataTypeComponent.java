@@ -113,7 +113,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 		/*
 		* For Oracle 10g we could say something like : 
 		* 
-		* "where XMLSERIALIZE(CONTENT " + _colDef.getLabel() +") like '<value>'"
+		* "where XMLSERIALIZE(CONTENT " + _colDef.getColumnName() +") like '<value>'"
 		* 
 		* This doesn't appear to work on Oracle 9i at the moment, so we will
 		* avoid using this column in any where clause if the value is non-null,

@@ -299,7 +299,7 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
     */
    public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
       if (value == null || value.toString() == null ) {
-         return _colDef.getLabel() + " IS NULL";
+         return _colDef.getColumnName() + " IS NULL";
      } else {
          return "";
      }

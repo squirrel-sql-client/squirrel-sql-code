@@ -387,7 +387,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       {
          final Statement stmt = conn.createStatement();
          final String queryString =
-            "SELECT " + colDefs[col].getLabel() +" FROM "+ti.getQualifiedName() +
+            "SELECT " + colDefs[col].getColumnName() +" FROM "+ti.getQualifiedName() +
             whereClause;
 
          try
@@ -466,7 +466,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       int count = -1;
 
       final String sql = constructUpdateSql(
-            ti.getQualifiedName(), colDefs[col].getLabel(), whereClause);
+            ti.getQualifiedName(), colDefs[col].getColumnName(), whereClause);
       
       if (s_log.isDebugEnabled()) {
           s_log.debug("updateTableComponent: executing SQL - "+sql);
@@ -589,7 +589,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                // the user has restricted the set of columns to use.
                // If this name is NOT in the list, then skip it; otherwise we fall through
                // and use the column in the WHERE clause
-               if (colNames.get(colDefs[i].getLabel()) == null)
+               if (colNames.get(colDefs[i].getColumnName()) == null)
                   continue;	// go on to the next item
             }
 
@@ -790,7 +790,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
              // Also assume that a value of "" is equivilent to null
              if (defValue != null &&  defValue.length() > 0) {
                 // find the entry in colDefs matching this column
-                if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
+                if (colDefs[expectedColDefIndex].getColumnName().equals(colName)) {
                    // DB cols are in same order as colDefs
                    defaultValues[expectedColDefIndex] = defValue;
                 }
@@ -800,7 +800,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                    // Note: linear search here will NORMALLY be not too bad
                    // because most tables do not have huge numbers of columns.
                    for (int i=0; i<colDefs.length; i++) {
-                      if (colDefs[i].getLabel().equals(colName)) {
+                      if (colDefs[i].getColumnName().equals(colName)) {
                          defaultValues[i] = defValue;
                          break;
                       }

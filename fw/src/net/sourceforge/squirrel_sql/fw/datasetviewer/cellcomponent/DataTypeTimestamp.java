@@ -506,12 +506,12 @@ public class DataTypeTimestamp extends BaseDataTypeComponent
       if (whereClauseUsage == DO_NOT_USE)
          return "";
       if (value == null || value.toString() == null || value.toString().length() == 0)
-         return _colDef.getLabel() + " IS NULL";
+         return _colDef.getColumnName() + " IS NULL";
       else
          if (whereClauseUsage == USE_JDBC_ESCAPE_FORMAT)
-            return _colDef.getLabel() + "={ts '" + value.toString() +"'}";
+            return _colDef.getColumnName() + "={ts '" + value.toString() +"'}";
          else
-            return _colDef.getLabel() + "='" + value.toString() +"'";
+            return _colDef.getColumnName() + "='" + value.toString() +"'";
    }
 
 

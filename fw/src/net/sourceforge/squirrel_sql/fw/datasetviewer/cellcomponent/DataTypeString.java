@@ -325,7 +325,7 @@ public class DataTypeString extends BaseDataTypeComponent
 
 		// check for the case where we are limiting some columns
 		// but not limiting this particular column
-		if (_limitReadColumnNameMap.containsKey(_colDef.getLabel()))
+		if (_limitReadColumnNameMap.containsKey(_colDef.getColumnName()))
 			return true;	// column is limited and length == limit, so need to re-read
 		else return false;	// column is not limited, so we have the whole thing
 	}
@@ -543,7 +543,7 @@ public class DataTypeString extends BaseDataTypeComponent
 				// data is longer than the limit, so we need to do more checking
 				if (_limitReadOnSpecificColumns == false ||
 					(_limitReadOnSpecificColumns == true &&
-						_limitReadColumnNameMap.containsKey(_colDef.getLabel()))) {
+						_limitReadColumnNameMap.containsKey(_colDef.getColumnName()))) {
 					// this column is limited, so truncate the data
 					data = data.substring(0, _limitReadLength);
 				}
@@ -573,17 +573,22 @@ public class DataTypeString extends BaseDataTypeComponent
 		// (Oracle does not allow this.)
 		if (_colDef.getSqlType() == Types.LONGVARCHAR &&
 			_useLongInWhere == false)
-			return "";	// this column cannot be used in a WHERE clause
+			return null;	// this column cannot be used in a WHERE clause
 
 		if (value == null || value.toString() == null )
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else {
 			// We cannot use this data in the WHERE clause if it has been truncated.
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
 			if ( ! needToReRead(value))
-				return _colDef.getLabel() + "='" + escapeLine(value.toString(), md) + "'";
-			else return "";	// value is truncated, so do not use in WHERE clause
+			{
+				return _colDef.getColumnName() + "='" + escapeLine(value.toString(), md) + "'";
+			}
+			else 
+			{ 
+				return null;	// value is truncated, so do not use in WHERE clause
+			}
 		}
 	}
 

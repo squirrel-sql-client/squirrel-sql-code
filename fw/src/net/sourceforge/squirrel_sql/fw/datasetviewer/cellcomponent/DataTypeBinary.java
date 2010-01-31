@@ -410,7 +410,7 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else
 			//?? There does not seem to be any standard way to represent
 			//?? binary data in a WHERE clause...

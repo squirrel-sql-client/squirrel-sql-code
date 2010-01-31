@@ -423,13 +423,13 @@ public class DataTypeFloat extends FloatingPointBase
     * or whatever is appropriate for this column in the database.
     */
    public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
-      if (value == null || value.toString() == null || value.toString().length() == 0)
-         return _colDef.getLabel() + " IS NULL";
-      else
+      if (value == null || value.toString() == null || value.toString().length() == 0) {
+         return _colDef.getColumnName() + " IS NULL";
+      } else {
          // since we cannot do exact matches on floating point
          // numbers, we cannot use this field in the WHERE clause.
-         return "";
-//			return _colDef.getLabel() + "=" + value.toString();
+         return null;
+      }
    }
 
 
