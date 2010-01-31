@@ -593,7 +593,7 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || ((ClobDescriptor)value).getData() == null)
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else
 			return "";	// CLOB cannot be used in WHERE clause
 	}

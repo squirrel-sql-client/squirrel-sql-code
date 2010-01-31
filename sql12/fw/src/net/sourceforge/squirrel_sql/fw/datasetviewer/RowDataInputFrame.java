@@ -52,6 +52,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class RowDataInputFrame extends JDialog
 	implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
+
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(RowDataInputFrame.class);
 
@@ -181,7 +183,7 @@ public class RowDataInputFrame extends JDialog
 	 * JTable for use in creating data for insertion.
 	 */
 	class RowDataJTable extends JTable {
-
+		private static final long serialVersionUID = 1L;
 		private ColumnDisplayDefinition[] _colDefs = null;
 
 		/**
@@ -210,7 +212,7 @@ public class RowDataInputFrame extends JDialog
 
 				TableColumn col = new TableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
-				col.setHeaderValue(colDef.getLabel());
+				col.setHeaderValue(colDef.getColumnName());
 				cm.addColumn(col);
 			}
 
@@ -335,6 +337,8 @@ public class RowDataInputFrame extends JDialog
 	 */
 	class RowDataModel extends DefaultTableModel {
 
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * ctor
 		 */
@@ -345,7 +349,7 @@ public class RowDataInputFrame extends JDialog
 			String[] colNames = new String[colDefs.length];
 			Object[][] rowData = new Object[2][colDefs.length];
 			for (int i=0; i<colDefs.length; i++) {
-				colNames[i] = colDefs[i].getLabel();	// set column heading
+				colNames[i] = colDefs[i].getColumnName();	// set column heading
 				rowData[0][i] = initalValues[i];	// set data in first row
 
 				// put a description of the field in the following rows

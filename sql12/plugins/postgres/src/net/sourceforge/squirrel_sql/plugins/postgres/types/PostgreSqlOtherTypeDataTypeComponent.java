@@ -103,7 +103,7 @@ public class PostgreSqlOtherTypeDataTypeComponent extends BaseDataTypeComponent 
 	{
 		if (value == null || value.toString() == null)
 		{
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		} else
 		{
 			// We don't know if this type can be used in where clauses so always exclude it.

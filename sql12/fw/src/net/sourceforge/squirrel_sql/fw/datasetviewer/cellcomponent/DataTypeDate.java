@@ -519,7 +519,7 @@ public class DataTypeDate extends BaseDataTypeComponent
 	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 		{
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		}
 		else
 		{
@@ -531,17 +531,17 @@ public class DataTypeDate extends BaseDataTypeComponent
             
             if (hasTimeComponent && hasDateComponent) {
                 // treat it like a timestamp
-                return _colDef.getLabel() + "={ts '" + value.toString() + "'}";
+                return _colDef.getColumnName() + "={ts '" + value.toString() + "'}";
             } else if (hasTimeComponent) {
                 // treat it like a time - no date component
-                return _colDef.getLabel() + "={t '" + value.toString() + "'}";
+                return _colDef.getColumnName() + "={t '" + value.toString() + "'}";
             } else {
                 if (DialectFactory.isOracle(md)) {
                     // Oracle stores time information in java.sql.Types.Date columns
                     // This tells Oracle that we are only talking about the date part.                    
-                    return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
+                    return "trunc(" + _colDef.getColumnName() + ")={d '" + value.toString() + "'}";
                 } else {
-                    return _colDef.getLabel() + "={d '" + value.toString() + "'}";
+                    return _colDef.getColumnName() + "={d '" + value.toString() + "'}";
                 }
             }               
 		}

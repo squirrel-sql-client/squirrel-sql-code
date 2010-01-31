@@ -565,7 +565,7 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || ((BlobDescriptor)value).getData() == null)
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else
 			return "";	// BLOB cannot be used in WHERE clause
 	}

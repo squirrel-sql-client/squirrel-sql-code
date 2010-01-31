@@ -163,7 +163,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		{
 			for (int i = 0; i < columnCount; ++i)
 			{
-				data.put(colDefs[i].getLabel(), rsds.get(i));
+				data.put(colDefs[i].getColumnName(), rsds.get(i));
 			}
 		}
 		return new MapDataSet(data);

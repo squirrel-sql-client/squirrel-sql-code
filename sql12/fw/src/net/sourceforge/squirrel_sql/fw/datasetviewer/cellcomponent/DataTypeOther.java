@@ -367,9 +367,9 @@ public class DataTypeOther extends BaseDataTypeComponent
 	 */
 	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null )
-			return _colDef.getLabel() + " IS NULL";
+			return _colDef.getColumnName() + " IS NULL";
 		else
-			return _colDef.getLabel() + "='" + value.toString() + "'";
+			return _colDef.getColumnName() + "='" + value.toString() + "'";
 	}
 	
 	

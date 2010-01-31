@@ -77,7 +77,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 		expect(columnDisplayDefinition.getPrecision()).andStubReturn(10);
 		expect(columnDisplayDefinition.getScale()).andStubReturn(3);
 		expect(columnDisplayDefinition.getColumnSize()).andStubReturn(10);
-		expect(columnDisplayDefinition.getLabel()).andStubReturn("testLabel");
+		expect(columnDisplayDefinition.getColumnName()).andStubReturn("testLabel");
 		expect(columnDisplayDefinition.getSqlType()).andStubReturn(Types.VARCHAR);
 		expect(columnDisplayDefinition.getSqlTypeName()).andStubReturn("VARCHAR");
 		return columnDisplayDefinition;
@@ -88,7 +88,7 @@ public abstract class AbstractDataTypeComponentTest extends BaseSQuirreLJUnit4Te
 	{
 		classUnderTest.setColumnDisplayDefinition(mockColumnDisplayDefinition);
 		classUnderTest.setBeepHelper(mockBeepHelper);
-		expect(mockColumnDisplayDefinition.getLabel()).andStubReturn("testLabel");
+		expect(mockColumnDisplayDefinition.getColumnName()).andStubReturn("testLabel");
 		expect(mockMetaData.getDatabaseProductName()).andStubReturn("testDatabaseProductName");
 		expect(mockMetaData.getDatabaseProductVersion()).andStubReturn("testDatabaseProductVersion");
 		mockBeepHelper.beep(isA(Component.class));

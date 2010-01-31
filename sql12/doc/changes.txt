@@ -91,12 +91,13 @@ Graph Plugin:
 
 
 Bug-Fixes:
-
 2879711: Fix for Excel date export concerning dates earlier than 1900-03-01.
  		 Thanks to mironsadziak for the patch (Patch ID 2905218)
 2853329: Ctrl-S overwrites existing file on 2nd try
 2819161:  squirrel-sql.sh in plain zip had an errant apostrophe.  Tested this fix on MacOS 10 and Ubuntu 9.04.  
          Thanks to Jonathan James for vetting the anonymously submitted patch.
+2818117 ("Make Editable" uses column label instead of name)
+		 Thanks to Christian Gruenberg for the patch (Patch ID 2924887)
 2801011: Sybase (CREATE TABLE script generate decimal(15,2) instead of (15,4))
 2794860: Sybase (CREATE TABLE script generate numeric(15) instead (15,2))
 2754166: SQLScript plugin loses precision for Timestamp in H2

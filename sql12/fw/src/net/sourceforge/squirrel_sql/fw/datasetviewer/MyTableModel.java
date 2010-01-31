@@ -114,7 +114,7 @@ public final class MyTableModel extends AbstractTableModel
 		}
 		else
 		{
-			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
+			return _colDefs != null ? _colDefs[col].getColumnName() : super.getColumnName(col);
 		}
 	}
 
