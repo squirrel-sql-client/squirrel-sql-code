@@ -1,8 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 import org.junit.Before;
+import org.junit.Test;
 
 /*
  * Copyright (C) 2006 Rob Manning
@@ -46,4 +49,17 @@ public class DataTypeFloatTest extends AbstractDataTypeComponentTest {
 		return Float.valueOf(1);
 	}
 
+	@Override
+	@Test
+	public void testGetWhereClauseValue() {
+		ColumnDisplayDefinition localMockColumnDisplayDefinition = 
+			getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest.setColumnDisplayDefinition(localMockColumnDisplayDefinition);
+		assertNotNull(classUnderTest.getWhereClauseValue(null, mockMetaData));
+		// Floats cannot be used as where clause values as there are not precise. 
+		assertNull(classUnderTest.getWhereClauseValue(getWhereClauseValueObject(), mockMetaData));
+		mockHelper.verifyAll();
+	}
+	
 }
