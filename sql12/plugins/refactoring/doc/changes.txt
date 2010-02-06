@@ -1,6 +1,11 @@
 Refactoring Plugin Change Log
 =============================
 
+0.22
+====
+
+ - Fixed missing internationalization translation strings.
+
 0.21
 ====
 
