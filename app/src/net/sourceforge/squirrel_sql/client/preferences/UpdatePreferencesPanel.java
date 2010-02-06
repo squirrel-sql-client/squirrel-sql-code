@@ -89,6 +89,9 @@ public class UpdatePreferencesPanel extends JPanel
 		// i18n[UpdatePreferencesPanel.localPathLabel=Local Path:]
 		String LOCAL_PATH = s_stringMgr.getString("UpdatePreferencesPanel.localPathLabel");
 
+		// i18n[UpdatePreferencesPanel.localSiteButtonLabel=Local]
+		String LOCAL_SITE_BUTTON_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.localSiteButtonLabel");		
+		
 		// i18n[UpdatePreferencesPanel.path=Path:]
 		String PATH = s_stringMgr.getString("UpdatePreferencesPanel.path");
 
@@ -104,6 +107,9 @@ public class UpdatePreferencesPanel extends JPanel
 		// i18n[UpdatePreferencesPanel.weeklyLabel=Weekly]
 		String WEEKLY_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.weeklyLabel");
 
+		// i18n[UpdatePreferencesPanel.remoteSiteButtonLabel=Remote]
+		String REMOTE_SITE_BUTTON_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.remoteSiteButtonLabel");
+		
 		// i18n[UpdatePreferencesPanel.siteTypeLabel=Site Type:]
 		String SITE_TYPE_LABEL = s_stringMgr.getString("UpdatePreferencesPanel.siteTypeLabel");
 
@@ -151,9 +157,9 @@ public class UpdatePreferencesPanel extends JPanel
 
 	private JLabel siteTypeLabel = null;
 
-	private JRadioButton _remoteTypeButton = new JRadioButton("Remote");
+	private JRadioButton _remoteTypeButton = new JRadioButton(i18n.REMOTE_SITE_BUTTON_LABEL);
 
-	private JRadioButton _localTypeButton = new JRadioButton("Local");
+	private JRadioButton _localTypeButton = new JRadioButton(i18n.LOCAL_SITE_BUTTON_LABEL);
 
 	private ButtonGroup _updateSiteTypeGroup = new ButtonGroup();
 
