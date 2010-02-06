@@ -33,6 +33,8 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddAutoIncrementAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddForeignKeyAction;
@@ -66,14 +68,16 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.tab.SupportedRefactoring
 public class RefactoringPlugin extends DefaultSessionPlugin {
     public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.refactoring.refactoring";
 
+    private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(RefactoringPlugin.class);
 
-	private interface IMenuResourceKeys {
+	private static interface IMenuResourceKeys {
         String REFACTORING = "refactoring";
-        String TABLE = "Table";
-        String COLUMN = "Column";
-        String INDEX = "Index";
-        String DATA_QUALITY = "Data Quality";
-        String REFERENTIAL_INTEGRITY = "Referential Integrity";
+        String TABLE = s_stringMgr.getString("RefactoringPlugin.tableMenuItemLabel");
+        String COLUMN = s_stringMgr.getString("RefactoringPlugin.columnMenuItemLabel");
+        String INDEX = s_stringMgr.getString("RefactoringPlugin.indexMenuItemLabel");
+        String DATA_QUALITY = s_stringMgr.getString("RefactoringPlugin.dataQualityMenuItemLabel");
+        String REFERENTIAL_INTEGRITY = s_stringMgr.getString("RefactoringPlugin.referentialIntegrityMenuItemLabel");
     }
                       
     private PluginResources _resources;
@@ -114,7 +118,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
      * @return the current version of this plugin.
      */
     public String getVersion() {
-        return "0.21";
+        return "0.22";
     }
 
 
@@ -280,8 +284,8 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _resources.addToMenu(col.get(AddColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(ModifyColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(MergeColumnAction.class), columnMenu);
-        _resources.addToMenu(col.get(DropColumnAction.class), columnMenu);
-
+        _resources.addToMenu(col.get(DropColumnAction.class), columnMenu);        
+        
         JMenu dataQualityMenu = new JMenu(IMenuResourceKeys.DATA_QUALITY);
         _resources.addToMenu(col.get(AddLookupTableAction.class), dataQualityMenu);
         _resources.addToMenu(col.get(AddAutoIncrementAction.class), dataQualityMenu);
