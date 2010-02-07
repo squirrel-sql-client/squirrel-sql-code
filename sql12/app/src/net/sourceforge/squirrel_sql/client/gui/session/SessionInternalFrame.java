@@ -155,4 +155,14 @@ public class SessionInternalFrame extends SessionTabWidget
       return true;
    }
 
+   @Override
+   public void moveToFront()
+   {
+      super.moveToFront();
+      
+      if(MainPanel.ITabIndexes.SQL_TAB == _sessionPanel.getSelectedMainTabIndex())
+      {
+         _sessionPanel.getSQLEntryPanel().requestFocus();
+      }
+   }
 }

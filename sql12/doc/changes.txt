@@ -91,6 +91,8 @@ Graph Plugin:
 
 
 Bug-Fixes:
+Moved focus to SQL Editor when it gets visible through previous Session / next Session navigation (Alt left/right)
+
 Fixed class not found exception in Oracle Plugin when setting Session Time Zone.
 Thanks to Neville Rowe
 
