@@ -91,6 +91,9 @@ Graph Plugin:
 
 
 Bug-Fixes:
+Fixed class not found exception in Oracle Plugin when setting Session Time Zone.
+Thanks to Neville Rowe
+
 2946165: preferences messages not translatable
 2946160: translation missing in refactoring
 2944128: remote not translatable
