@@ -61,7 +61,7 @@ TMP_CP="$UNIX_STYLE_HOME/squirrel-sql.jar"
 
 # Then add all library jars to the classpath.
 for a in "$UNIX_STYLE_HOME"/lib/*; do
-	TMP_CP="$TMP_CP":"$a";
+	TMP_CP="$TMP_CP":"$a"
 done
 
 # Set the update app's classpath to use jars in download area first, then the installed jars
