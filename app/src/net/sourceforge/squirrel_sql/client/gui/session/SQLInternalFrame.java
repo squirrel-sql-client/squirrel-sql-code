@@ -201,4 +201,11 @@ public class SQLInternalFrame extends SessionTabWidget
    {
       super.dispose();    //To change body of overridden methods use File | Settings | File Templates.
    }
+
+   @Override
+   public void moveToFront()
+   {
+      super.moveToFront();
+      _sqlPanel.getSQLEntryPanel().requestFocus();
+   }
 }
