@@ -480,27 +480,30 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 		Connection con = session.getSQLConnection().getConnection();
 		String timezoneStr = prefs.getSessionTimezone();
-		try
-		{
-			if (s_log.isInfoEnabled())
-			{
-				s_log.info("setTimezoneForSession: attempting to set the session timezone to : " + timezoneStr);
-			}
-			Class oraConClass = Class.forName("oracle.jdbc.OracleConnection");
-			Method setSessionTimeZoneMethod = oraConClass.getMethod("setSessionTimeZone", String.class);
-			if (setSessionTimeZoneMethod != null)
-			{
-				setSessionTimeZoneMethod.invoke(con, timezoneStr);
-			} else
-			{
-				s_log.error("setTimezoneForSession: setSessionTimeZoneMethod returned by reflection was null.  "
-				      + "Skipped setting session timezone");
-			}
-		} catch (Exception e)
-		{
-			s_log.error("Unexpected exception while trying to set session timezone: " + e.getMessage(), e);
-		}
-	}
+      try
+      {
+         if (s_log.isInfoEnabled())
+         {
+            s_log.info("setTimezoneForSession: attempting to set the session timezone to : " + timezoneStr);
+         }
+
+         Method setSessionTimeZoneMethod = con.getClass().getMethod("setSessionTimeZone", String.class);
+         if (setSessionTimeZoneMethod != null)
+         {
+            setSessionTimeZoneMethod.setAccessible(true);
+            setSessionTimeZoneMethod.invoke(con, timezoneStr);
+         }
+         else
+         {
+            s_log.error("setTimezoneForSession: setSessionTimeZoneMethod returned by reflection was null.  "
+               + "Skipped setting session timezone");
+         }
+      }
+      catch (Exception e)
+      {
+         s_log.error("Unexpected exception while trying to set session timezone: " + e.getMessage(), e);
+      }
+   }
 
 	/**
 	 * This will check the setting for using timestamps in where clauses and display a warning message to the
