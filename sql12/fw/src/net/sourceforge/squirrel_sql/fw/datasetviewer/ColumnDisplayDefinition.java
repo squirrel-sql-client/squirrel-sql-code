@@ -125,7 +125,7 @@ public class ColumnDisplayDefinition
 		super();
       init(displayWidth,
            null,
-           null,
+           label,
            label,
            Types.NULL,
            null,
