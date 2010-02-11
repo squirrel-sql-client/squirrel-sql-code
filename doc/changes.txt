@@ -92,12 +92,14 @@ Graph Plugin:
 
 Bug-Fixes:
 
+SQuirreL was seen consuming a lot of memory and CPU.
+ For details about the fix see comments in class ExitParserThreadRequestException
+ See: http://squirrel-sql.cvs.sourceforge.net/viewvc/squirrel-sql/sql12/app/src/net/sourceforge/squirrel_sql/client/session/parser/kernel/ExitParserThreadRequestException.java?view=log
+
 Loading and saving files on Windows produced multiple CR (carriage return) chars in files.
 When copy and paste was used on such files multiple empty lines were created.
 Note: The Windows standard editor Notepad shows multiple CR chars where they exist and allows to remove them.
       SQuirreL does not remove them automatically at any place.
-
-
 
 Moved focus to SQL Editor when it gets visible through previous Session / next Session navigation (Alt left/right)
 

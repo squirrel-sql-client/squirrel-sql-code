@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.9 2007-08-19 20:35:17 manningr Exp $
+ * @version $Id: ParserThread.java,v 1.10 2010-02-11 00:16:27 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -63,7 +63,7 @@ public final class ParserThread extends Thread
 	private ErrorInfo[] _lastRunErrorInfos = new ErrorInfo[0];
 
 
-	private boolean _exitThread;
+	private volatile boolean _exitThread;
 	private ParsingFinishedListener _parsingFinishedListener;
 
 	private int _lastParserRunOffset;
@@ -392,6 +392,10 @@ public final class ParserThread extends Thread
 				}
 			}
 		}
+      catch(ExitParserThreadRequestException eptre)
+      {
+
+      }
 		catch (Exception e)
 		{
 			if(null != _parsingFinishedListener)
@@ -407,8 +411,7 @@ public final class ParserThread extends Thread
 		_errors.reset();
 		Scanner scanner = new Scanner(_workingBuffer, _errors);
 
-		Parser parser = new Parser(scanner);
-		parser.rootSchema = _schema;
+		Parser parser = new Parser(scanner, _schema);
 
 		parser.addParserListener(new ParserListener()
 		{
@@ -450,18 +453,7 @@ public final class ParserThread extends Thread
 		return _lastRunErrorInfos;
 	}
 
-	/**
-	 * reset the parser, starting a new parse on the characters given by the iterator
-	 * @param chars the characters to start parsing from
-	 */
-	public void reset(CharacterIterator chars)
-	{
-		IncrementalBuffer oldBuffer = this._workingBuffer;
-		this._workingBuffer = new IncrementalBuffer(chars);
-		oldBuffer.eof();
-	}
-
-	/**
+   /**
 	 * terminate the parser
 	 */
 	public void end()
@@ -486,7 +478,7 @@ public final class ParserThread extends Thread
 	 * available. The {@link #read} method is invoked from the background parsing thread.
 	 * The parsing thread can be terimated by calling the {@link #eof} method on this object
 	 */
-	private static class IncrementalBuffer extends Scanner.Buffer
+	private class IncrementalBuffer extends Scanner.Buffer
 	{
 		private CharacterIterator chars;
 		private char current;
@@ -505,6 +497,12 @@ public final class ParserThread extends Thread
 		 */
 		protected synchronized char read()
 		{
+
+         if(_exitThread)
+         {
+            throw new ExitParserThreadRequestException();
+         }
+
 			if (atEnd)
 			{
 				return eof;
@@ -530,13 +528,23 @@ public final class ParserThread extends Thread
 				}
 				if (atEnd)
 				{
+               if(_exitThread)
+               {
+                  throw new ExitParserThreadRequestException();
+               }
+
 					current = eof;
 					return eof;
 				}
 				else
 				{
 					char prev = current;
-					//System.out.print(prev);
+
+               if(_exitThread)
+               {
+                  throw new ExitParserThreadRequestException();
+               }
+
 					current = chars.next();
 					return prev;
 				}

@@ -110,19 +110,7 @@ public class Scanner
 	protected int line;          // line number of current character
 	protected int lineStart;     // start position of current line
 
-	public Scanner (File file, ErrorStream e) throws IOException
-	{
-		buf = new FBuffer(file);
-        init(e, file.getName());
-	}
-
-	public Scanner (String parseString, ErrorStream e)
-	{
-		buf = new SBuffer(parseString);
-        init(e, "");
-	}
-
-	public Scanner (Buffer buff, ErrorStream e)
+   public Scanner (Buffer buff, ErrorStream e)
 	{
 		this.buf = buff;
         init(e, "");
