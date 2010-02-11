@@ -91,6 +91,14 @@ Graph Plugin:
 
 
 Bug-Fixes:
+
+Loading and saving files on Windows produced multiple CR (carriage return) chars in files.
+When copy and paste was used on such files multiple empty lines were created.
+Note: The Windows standard editor Notepad shows multiple CR chars where they exist and allows to remove them.
+      SQuirreL does not remove them automatically at any place.
+
+
+
 Moved focus to SQL Editor when it gets visible through previous Session / next Session navigation (Alt left/right)
 
 Fixed class not found exception in Oracle Plugin when setting Session Time Zone.
