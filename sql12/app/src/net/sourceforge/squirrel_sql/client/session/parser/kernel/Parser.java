@@ -17,12 +17,12 @@ public class Parser
 	private Vector<ParserListener> parserListeners = new Vector<ParserListener>();
 	private Vector<SQLSelectStatementListener> sqlSelectStatlisteners = new Vector<SQLSelectStatementListener>();
 
-	protected Scanner scanner;  // input scanner
-	protected Token token;      // last recognized token
-	protected Token t;          // lookahead token
+	private Scanner scanner;  // input scanner
+	private Token token;      // last recognized token
+	private Token t;          // lookahead token
 
-	public List<SQLStatement> statements = new ArrayList<SQLStatement>();
-	public SQLSchema rootSchema;
+	private List<SQLStatement> statements = new ArrayList<SQLStatement>();
+	private SQLSchema rootSchema;
 
 	private Stack<SQLStatementContext> stack;
 
@@ -1863,10 +1863,11 @@ public class Parser
 	}
 
 
-	public Parser(Scanner _scanner)
+	public Parser(Scanner _scanner, SQLSchema schema)
 	{
 		scanner = _scanner;
 		t = new Token();
+      rootSchema = schema;
 	}
 
 	public void parse()
