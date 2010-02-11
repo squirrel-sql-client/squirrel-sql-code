@@ -123,7 +123,7 @@ public class FileManager
             sb.append(new String(bytes, 0, iRead));
             iRead = bis.read(bytes);
          }
-         _sqlPanelAPI.appendSQLScript(sb.toString(), true);
+         _sqlPanelAPI.appendSQLScript(convertPlatformEOLToLineFeed(sb.toString()), true);
          setFile(file);
          prefs.setFilePreviousDir(file.getAbsolutePath());
       }
@@ -137,7 +137,6 @@ public class FileManager
       	ioUtil.closeInputStream(fis);
       }
    }
-
 
    public boolean saveIntern(boolean toNewFile)
    {
@@ -291,15 +290,40 @@ public class FileManager
     * @return a String that represents the SQL Script being saved with adjusted (if necessary) EOL characters.
     */
    private String getEntireSQLScriptWithPlatformEolChar() {
-      String platformEolStr = StringUtilities.getEolStr();
 
       String result  = _sqlPanelAPI.getEntireSQLScript();
-      if (result != null && !"".equals(result) && !platformEolStr.equals("\n")) {
-      	result = result.replaceAll("\\n", platformEolStr);
+
+      return convertLineFeedToPlatformEOL(result);
+   }
+
+   private String convertLineFeedToPlatformEOL(String result)
+   {
+      String platformEolStr = StringUtilities.getEolStr();
+      if( result != null && !"".equals(result) && !platformEolStr.equals("\n") )
+      {
+         result = result.replaceAll("\\n", platformEolStr);
       }
       return result;
    }
-   
+
+   /**
+    * Without calling this method when loading a file on Windows
+    * method convertLineFeedToPlatformEOL() which is called when saving a file
+    * would create duplicate \r each time a file is opened and saved.
+    */
+   private String convertPlatformEOLToLineFeed(String s)
+   {
+      String platformEolStr = StringUtilities.getEolStr();
+
+      if(null == s || "".equals(s) || platformEolStr.equals("\n"))
+      {
+         return s;
+      }
+
+      return s.replaceAll(platformEolStr, "\n");
+   }
+
+
    private void setFile(File file)
    {
       _toSaveTo = file;
