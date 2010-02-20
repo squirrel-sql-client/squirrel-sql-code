@@ -134,13 +134,19 @@ public class XMLBeanReader implements Iterable<Object>
 			final IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 			parser.setReader(new StdXMLReader(rdr));
 			IXMLElement element = (IXMLElement) parser.parse();
-			Iterator it = new EnumerationIterator(element.enumerateChildren());
-			while (it.hasNext())
+			// Bug 2942351 (Program doesn't launch)
+			// looking at the source for StdXMLBuilder, it appears that parser.parse() could possibly return 
+			// null.  So check for null here and skip if necessary.
+			if (element != null) 
 			{
-				final IXMLElement elem = (IXMLElement) it.next();
-				if (isBeanElement(elem))
+				Iterator it = new EnumerationIterator(element.enumerateChildren());
+				while (it.hasNext())
 				{
-					_beanColl.add(loadBean(elem));
+					final IXMLElement elem = (IXMLElement) it.next();
+					if (isBeanElement(elem))
+					{
+						_beanColl.add(loadBean(elem));
+					}
 				}
 			}
 		}
