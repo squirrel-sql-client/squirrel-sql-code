@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.gui.db;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
@@ -28,18 +30,26 @@ import java.io.File;
 
 public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(JTreeAliasesListImpl.class);
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(JTreeAliasesListImpl.class);
 
-   private static enum PasteMode
-   {
-      COPY, CUT;
-   }
+	/** Logger for this class. */
+	private final static ILogger s_log = LoggerController.createLogger(JTreeAliasesListImpl.class);
+
+	private static enum PasteMode
+	{
+		COPY, CUT;
+	}
 
 
    JTree _tree = new JTree()
    {
-      public String getToolTipText(MouseEvent event)
+      /**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 2730266929882888194L;
+
+		public String getToolTipText(MouseEvent event)
       {
          return JTreeAliasesListImpl.this.getToolTipText(event);    //To change body of overridden methods use File | Settings | File Templates.
       }
@@ -106,7 +116,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
       {
-         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
+			/**
+			 * serialVersionUID
+			 */
+			private static final long serialVersionUID = -5605712993858096622L;
+
+			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
          {
             return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
          }
@@ -117,7 +132,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       AbstractAction cancelCutAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+			/**
+			 * serialVersionUID
+			 */
+			private static final long serialVersionUID = -663600537047876086L;
+
+			public void actionPerformed(ActionEvent actionEvent)
          {
             if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
             {
@@ -201,39 +221,60 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    }
 
    private void initTree()
-   {
-      try
-      {
-         DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
-         DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
-         root.removeAllChildren();
+	{
+		DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
+		root.removeAllChildren();
 
+		File file = new ApplicationFiles().getDatabaseAliasesTreeStructureFile();
 
-         File file = new ApplicationFiles().getDatabaseAliasesTreeStructureFile();
+		if (!readTreeStructureFile(root, file))
+		{
+			for (int i = 0; i < _aliasesListModel.size(); i++)
+			{
+				root.add(new DefaultMutableTreeNode(_aliasesListModel.get(i)));
+			}
+			treeModel.nodeStructureChanged(root);
+		}
+	}
 
-         if(file.exists() && file.length() > 0)
-         {
-            XMLBeanReader rdr = new XMLBeanReader();
-            rdr.load(file);
-            AliasFolderState rootState = (AliasFolderState) rdr.iterator().next();
-
-            applyAliasFolderState(root, rootState);
-         }
-         else
-         {
-            for (int i = 0; i < _aliasesListModel.size(); i++)
-            {
-               root.add(new DefaultMutableTreeNode(_aliasesListModel.get(i)));
-            }
-            treeModel.nodeStructureChanged(root);
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
+   /**
+    * Bug 2942351 (Program doesn't launch)
+	 * Safely performs the reading/parsing of the tree structure from the aliases tree structure file so that
+	 * the tree structure can be ignored if the file is somehow corrupt.
+	 * 
+	 * @param root
+	 *           the root node of the treemodel for _tree
+	 * @param file
+	 *           the file that contains the tree structure xml.
+	 * @return true if the file existed and was parsed successfully; false otherwise.
+	 */
+	private boolean readTreeStructureFile(final DefaultMutableTreeNode root, final File file)
+	{
+		boolean result = false;
+		try
+		{
+			if (file.exists() && file.length() > 0)
+			{
+				XMLBeanReader rdr = new XMLBeanReader();
+				rdr.load(file);
+				AliasFolderState rootState = (AliasFolderState) rdr.iterator().next();
+				applyAliasFolderState(root, rootState);
+				result = true;
+			}
+		}
+		catch (Exception e)
+		{
+			// Throwing a runtime exception here will result in failure to launch the application. Since the tree
+			// structure can be recovered more easily than all of the user's aliases, we log an error and forget
+			// about the previous tree structure. Nanoxml will throw a runtime exception for any invalid xml
+			// that it finds, and we squelch that here with a log message so that launch can proceed. 
+			s_log.error("Unexpected exception while applying Aliases tree structure from file: "
+				+ file.getAbsolutePath(), e);
+		}
+		return result;
+	}
+   
    private void applyAliasFolderState(DefaultMutableTreeNode rootNode, AliasFolderState rootState)
    {
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
@@ -328,7 +369,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       }
 
       DefaultMutableTreeNode parent = (DefaultMutableTreeNode) delNode.getParent();
-      int indexOfChild = treeModel.getIndexOfChild(parent, delNode);
       treeModel.removeNodeFromParent(delNode);
 
 
