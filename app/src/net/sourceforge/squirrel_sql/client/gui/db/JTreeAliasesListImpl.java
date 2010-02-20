@@ -211,7 +211,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
          File file = new ApplicationFiles().getDatabaseAliasesTreeStructureFile();
 
-         if(file.exists())
+         if(file.exists() && file.length() > 0)
          {
             XMLBeanReader rdr = new XMLBeanReader();
             rdr.load(file);
