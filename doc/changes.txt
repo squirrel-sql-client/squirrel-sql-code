@@ -106,9 +106,11 @@ Moved focus to SQL Editor when it gets visible through previous Session / next S
 Fixed class not found exception in Oracle Plugin when setting Session Time Zone.
 Thanks to Neville Rowe
 
+
 2946165: preferences messages not translatable
 2946160: translation missing in refactoring
 2944128: remote not translatable
+2942351: Program doesn't launch
 2879711: Fix for Excel date export concerning dates earlier than 1900-03-01.
  		 Thanks to mironsadziak for the patch (Patch ID 2905218)
 2853329: Ctrl-S overwrites existing file on 2nd try
