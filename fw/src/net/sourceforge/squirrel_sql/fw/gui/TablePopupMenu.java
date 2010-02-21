@@ -35,6 +35,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
 public class TablePopupMenu extends BasePopupMenu
 {
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -1016475198906837273L;
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(TablePopupMenu.class);
@@ -121,7 +126,9 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
-		_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
+		if (_updateableModel != null) {
+			_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
+		}
       addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
@@ -240,6 +247,11 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class CopyAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -2067301779079584296L;
+
 		CopyAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copy"));
@@ -256,6 +268,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyWithHeadersAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 5382436496333309089L;
+
 		CopyWithHeadersAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyWithHeaders"));
@@ -274,6 +291,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyHtmlAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 2213871184115799502L;
+
 		CopyHtmlAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyashtml"));
@@ -290,6 +312,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyInStatementAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 1635818404738839629L;
+
 		CopyInStatementAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyasinstatement"));
@@ -306,6 +333,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyWhereStatementAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 5283906236033114554L;
+
 		CopyWhereStatementAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyaswherestatement"));
@@ -322,6 +354,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyUpdateStatementAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -6021874127769966277L;
+
 		CopyUpdateStatementAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyasupdatestatement"));
@@ -338,6 +375,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class CopyInsertStatementAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -7435854038358286356L;
+
 		CopyInsertStatementAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.copyasinsertstatement"));
@@ -355,7 +397,12 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class ExportCsvAction extends BaseAction
    {
-      ExportCsvAction()
+      /**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 6085745835588355015L;
+
+		ExportCsvAction()
       {
          // i18n[TablePopupMenu.export=Export CSV / MS Excel / XML ...]
          super(s_stringMgr.getString("TablePopupMenu.export"));
@@ -373,6 +420,11 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class AdjustAllColWidthsAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -3098803720561054400L;
+
 		AdjustAllColWidthsAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.adoptAllColWidthsAction"));
@@ -393,6 +445,11 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class AlwaysAdjustAllColWidthsAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 1822505497525307610L;
+
 		AlwaysAdjustAllColWidthsAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.alwaysAdoptAllColWiths"));
@@ -410,6 +467,11 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class ShowRowNumbersAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 2334425978292516278L;
+
 		ShowRowNumbersAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.showRowNumbers"));
@@ -429,6 +491,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class MakeEditableAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 8437698495240738702L;
+
 		MakeEditableAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.makeeditable"));
@@ -446,6 +513,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class UndoMakeEditableAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -4529894089150172541L;
+
 		UndoMakeEditableAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.undomakeeditable"));
@@ -461,6 +533,11 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 	private class DeleteRowsAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -1579260225467807234L;
+
 		DeleteRowsAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.deleterows"));
@@ -481,6 +558,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class InsertRowAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -1162317166099751091L;
+
 		InsertRowAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.insertrow"));
@@ -494,6 +576,11 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private class SelectAllAction extends BaseAction
 	{
+		/**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = -1785396901358722169L;
+
 		SelectAllAction()
 		{
 			super(s_stringMgr.getString("TablePopupMenu.selectall"));
@@ -511,7 +598,12 @@ public class TablePopupMenu extends BasePopupMenu
 
    private class PrintAction extends BaseAction
    {
-      PrintAction()
+      /**
+		 * serialVersionUID
+		 */
+		private static final long serialVersionUID = 2017562921244356617L;
+
+		PrintAction()
       {
          super(s_stringMgr.getString("TablePopupMenu.print"));
       }
