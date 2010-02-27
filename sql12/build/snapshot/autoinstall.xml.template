@@ -24,124 +24,128 @@
 			index="3"
 			selected="true" />
 		<pack
-			name="Optional Plugin - DB2"
+			name="Optional Plugin - DBDiff"
 			index="4"
-			selected="true" />
+			selected="true" />			
 		<pack
-			name="Optional Plugin - Derby"
+			name="Optional Plugin - DB2"
 			index="5"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Firebird"
+			name="Optional Plugin - Derby"
 			index="6"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Hibernate"
+			name="Optional Plugin - Firebird"
 			index="7"
 			selected="true" />
 		<pack
-			name="Optional Plugin - H2"
+			name="Optional Plugin - Hibernate"
 			index="8"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Informix"
+			name="Optional Plugin - H2"
 			index="9"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Microsoft SQL Server"
+			name="Optional Plugin - Informix"
 			index="10"
 			selected="true" />
 		<pack
-			name="Optional Plugin - MySQL"
+			name="Optional Plugin - Microsoft SQL Server"
 			index="11"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Netezza"
+			name="Optional Plugin - MySQL"
 			index="12"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Oracle"
+			name="Optional Plugin - Netezza"
 			index="13"
 			selected="true" />
 		<pack
-			name="Optional Plugin - PostgreSQL"
+			name="Optional Plugin - Oracle"
 			index="14"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Refactoring"
+			name="Optional Plugin - PostgreSQL"
 			index="15"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Session Scripts"
+			name="Optional Plugin - Refactoring"
 			index="16"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Smart Tools"
+			name="Optional Plugin - Session Scripts"
 			index="17"
 			selected="true" />
 		<pack
-			name="Optional Plugin - SQL Parametrisation"
+			name="Optional Plugin - Smart Tools"
 			index="18"
 			selected="true" />
 		<pack
-			name="Optional Plugin - SQL Replace"
+			name="Optional Plugin - SQL Parametrisation"
 			index="19"
 			selected="true" />
 		<pack
-			name="Optional Plugin - SQL Validator"
+			name="Optional Plugin - SQL Replace"
 			index="20"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Sybase"
+			name="Optional Plugin - SQL Validator"
 			index="21"
 			selected="true" />
 		<pack
-			name="Optional Plugin - Internationalization"
+			name="Optional Plugin - Sybase"
 			index="22"
 			selected="true" />
 		<pack
-			name="Optional Translation - Brazilian Portuguese"
+			name="Optional Plugin - Internationalization"
 			index="23"
-			selected="false" />
+			selected="true" />
 		<pack
-			name="Optional Translation - Bulgarian"
+			name="Optional Translation - Brazilian Portuguese"
 			index="24"
 			selected="false" />
 		<pack
-			name="Optional Translation - Czech"
+			name="Optional Translation - Bulgarian"
 			index="25"
 			selected="false" />
 		<pack
-			name="Optional Translation - Simplified Chinese"
+			name="Optional Translation - Czech"
 			index="26"
 			selected="false" />
 		<pack
-			name="Optional Translation - French"
+			name="Optional Translation - Simplified Chinese"
 			index="27"
 			selected="false" />
 		<pack
-			name="Optional Translation - German"
+			name="Optional Translation - French"
 			index="28"
 			selected="false" />
 		<pack
-			name="Optional Translation - Italian"
+			name="Optional Translation - German"
 			index="29"
 			selected="false" />
 		<pack
-			name="Optional Translation - Korean"
+			name="Optional Translation - Italian"
 			index="30"
 			selected="false" />
 		<pack
-			name="Optional Translation - Polish"
+			name="Optional Translation - Korean"
 			index="31"
 			selected="false" />
 		<pack
-			name="Optional Translation - Russian"
+			name="Optional Translation - Polish"
 			index="32"
 			selected="false" />
 		<pack
-			name="Optional Translation - Spanish"
+			name="Optional Translation - Russian"
 			index="33"
+			selected="false" />
+		<pack
+			name="Optional Translation - Spanish"
+			index="34"
 			selected="false" />
 	</com.izforge.izpack.panels.PacksPanel>
 	<com.izforge.izpack.panels.InstallPanel />
