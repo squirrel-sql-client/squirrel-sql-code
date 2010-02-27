@@ -204,6 +204,19 @@
 			required="no"
 			preselected="no"
 			installGroups="OptionalPlugins"
+			name="Optional Plugin - DBDiff">
+			<description>This optional plugin lets you compare table structure from one database session to another</description>
+			<file
+				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+				src="../../squirrel-sql-dist/squirrel-sql/plugins/dbdiff/dist/dbdiff" />
+			<file
+				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+				src="../../squirrel-sql-dist/squirrel-sql/plugins/dbdiff/dist/dbdiff.jar" />
+		</pack>		
+		<pack
+			required="no"
+			preselected="no"
+			installGroups="OptionalPlugins"
 			name="Optional Plugin - DB2">
 			<description>This optional plugin adds functionality that is specific to the DB2 DBMS</description>
 			<file
