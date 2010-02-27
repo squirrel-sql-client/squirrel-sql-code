@@ -419,16 +419,76 @@ loaded at all for each schema. The Alias Properties dialog is displayed
 below:</p>
 
 <p align="CENTER"><img src="images/alias_properties_dialog.png"
-	border="0" alt="Alias Properties Dialog"></p>
+	border="0" alt="Alias Properties Dialog (Schema Tab)"></p>
 
 The
 <em>Connect database to refresh Schema table</em>
 button will load all schemas from the database into the table for
 customization.
+
 <br clear="LEFT">
 
+<p/><b>Driver Properties Tab</b> - this tab allows you to configure the driver properties that
+will be used when an alias connects to the database.  Driver properties are a way that
+JDBC vendors can give access to database-specific settings that alter the characteristics
+of the database connection and the session resulting from that connection.  For example, Oracle 
+provides properties that allow you to configure an SSL protected connection to keep your data 
+from traversing a network in the clear.  The set of available properties shown in this tab is 
+reported to SQuirreL by the JDBC driver, so if any appear to be missing, check the vendor's 
+documentation and/or file a bug report with that vendor. Of course, you may also add and remove 
+properties by right-clicking anywhere in the table and accessing the context menu.  The 
+following image shows an alias for Oracle and some of the driver properties that it supports:
 
-<p>As more aliases are added, it can become to difficult locate the
+<p align="CENTER"><img src="images/alias_properties_dialog2.png"
+	border="0" alt="Alias Properties Dialog (Driver Properties Tab)"></p>
+
+<p/><b>Color Tab</b> - this tab allows you to configure a custom background color for some parts
+of SQuirreL to give a visual clue about the session.  This is primarily useful when you have 
+multiple aliases to the same type of database, for example, one for test and one for production.
+SQuirreL makes it easy to connect to multiple databases simultaneously, and since the sessions 
+can appear to be very similar, it is easy to mistake one for another.  Using this tab, you can,
+for example, give your production database alias a background color of red or orange to denote
+caution, whereas a development database alias could be given a color of green or blue to 
+indicate that it's data is safe to modify/destroy. The following image shows an alias whose 
+background color is light red to indicate that caution should be used:
+
+<p align="CENTER"><img src="images/alias_properties_dialog3.png"
+	border="0" alt="Alias Properties Dialog (Color Tab)"></p>
+ 
+The following image shows what the color configuration above looks like for a new session created
+from this alias:
+
+<p align="CENTER"><img src="images/session_background_color_example.png"
+	border="0" alt="Session Background Color Example"></p>
+
+<p/><b>Connection Tab</b> - this tab allows you to configure an SQL statement to execute periodically 
+in the background.  This can help keep the session connection alive for firewalls that terminate 
+connections due to inactivity.  There is no support for working with data returned from the 
+SQL statement so any data returned will be ignored.  Therefore, the SQL statement should be a valid, 
+idempotent one that is not resource intensive (Execution errors will be reported in the squirrel-sql.log).
+Note that the statement separator (";" or "GO") should be omitted here. The period between executions of 
+the SQL statement is specified in seconds.  The following image shows an example configuration for the 
+Oracle database with a commonly used SQL statement for testing Oracle connections:   
+
+<p align="CENTER"><img src="images/alias_properties_dialog4.png"
+	border="0" alt="Alias Properties Dialog (Color Tab)"></p>
+
+<p/><b>Oracle Tab</b> - this tab serves to customize schema loading for Oracle.  The Oracle database driver
+returns metadata that lists all objects (schemas and their objects) in the database, even those that the 
+connected user doesn't have permission to access in any meaningful way.  This can cause a session connection
+to take a long time to initialize as SQuirreL runs through all of the objects reported by the driver to 
+populate the object tree.  SQuirreL employs a strategy to help reduce this initialization time by giving
+you the ability to limit the schemas being loaded to just the ones that the user has access to.  This tab
+provides customizations that work together with the Schemas tab previously introduced above.  Instructions 
+are provided that describe each setting's behavior. The following image shows this tab:
+
+<p align="CENTER"><img src="images/alias_properties_dialog5.png"
+	border="0" alt="Alias Properties Dialog (Oracle Tab)"></p>
+ 
+
+<h3>Alias Organization</h3>
+
+<p>As more aliases are added, it can become difficult to locate the
 desired alias to use or modify. To help organize the aliases in the
 alias window, they can be grouped into folders or even nested folders.
 In order to turn this capability on, you must right-click anywhere in
@@ -466,7 +526,7 @@ shown.</p>
 
 <p>The Object Tree on the left shows the structure of the database.
 Clicking on various nodes within this object tree will show further
-information in the right hand detail panel. In this example the database
+information in the detail panel on the right. In this example the database
 metadata is shown. Clicking on the title of a column will sort the
 display by the data in that column. This is true of all tabular displays
 in SQuirreL.</p>
