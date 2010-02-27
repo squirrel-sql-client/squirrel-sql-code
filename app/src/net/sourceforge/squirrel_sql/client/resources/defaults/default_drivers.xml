@@ -475,7 +475,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>Microsoft MSSQL Server JDBC Driver</name>
-		<url>jdbc:microsoft:sqlserver://&lt;server_name&gt;:&lt;1433&gt;</url>
+		<url>jdbc:sqlserver://&lt;server_name&gt;:1433;databaseName=&lt;db_name&gt;</url>
 		<websiteUrl>http://msdn.microsoft.com/sql</websiteUrl>
 	</Bean>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">

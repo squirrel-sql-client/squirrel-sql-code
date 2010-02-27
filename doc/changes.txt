@@ -112,6 +112,7 @@ Thanks to Neville Rowe
 2944128: remote not translatable
 2942351: Program doesn't launch
 2927576: NPE at Copy as SQL INSERT-VALUES
+2908407: MSSQL driver plugin example URL isn't correct
 2879711: Fix for Excel date export concerning dates earlier than 1900-03-01.
  		 Thanks to mironsadziak for the patch (Patch ID 2905218)
 2853329: Ctrl-S overwrites existing file on 2nd try
