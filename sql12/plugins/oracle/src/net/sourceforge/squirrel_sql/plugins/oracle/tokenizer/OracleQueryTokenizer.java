@@ -283,7 +283,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 				collector.append(";");
 				continue;
 			}
-			if (next.startsWith(sep))
+			if (next.startsWith(sep) && ! next.startsWith("/*"))
 			{
 				inMultiSQLStatement = false;
 				if (collector != null)
