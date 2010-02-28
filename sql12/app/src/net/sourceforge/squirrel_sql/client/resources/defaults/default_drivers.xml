@@ -415,7 +415,7 @@
 		<jarFileName/>
 		<jarFileNames Indexed="true"/>
 		<name>jTDS</name>
-		<url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+		<url>jdbc:jtds:sqlserver://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
 	    <websiteUrl>http://jtds.sourceforge.net</websiteUrl>
 	</Bean>
 
