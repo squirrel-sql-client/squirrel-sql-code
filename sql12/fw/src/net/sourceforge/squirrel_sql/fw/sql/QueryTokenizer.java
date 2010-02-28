@@ -236,7 +236,7 @@ public class QueryTokenizer implements IQueryTokenizer
             int querySepLen = 
                 getLenOfQuerySepIfAtLastCharOfQuerySep(script, i, _querySep, isInLiteral);
 
-            if(-1 < querySepLen)
+            if(-1 < querySepLen && !isInMultiLineComment)
             {
                 int newLength = curQuery.length() - querySepLen;
                 if(-1 < newLength && curQuery.length() > newLength)
