@@ -25,6 +25,7 @@ import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_PA
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECTS_WITH_EMBEDDED_COMMENT;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL_2;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SET_COMMANDS;
@@ -62,7 +63,8 @@ public class OracleQueryTokenizerTest {
         DummyPlugin plugin = new DummyPlugin();
         PluginQueryTokenizerPreferencesManager prefsManager = new PluginQueryTokenizerPreferencesManager();
         prefsManager.initialize(plugin, new OraclePreferenceBean());
-        _prefs = prefsManager.getPreferences();  
+        _prefs = prefsManager.getPreferences();
+        _prefs.setRemoveMultiLineComments(false);
     }
     
     @After
@@ -153,6 +155,12 @@ public class OracleQueryTokenizerTest {
        SQLUtil.checkQueryTokenizer(qt, 2);
     }
     
+    @Test
+    public void testEmbeddedQuote() {
+       qt = new OracleQueryTokenizer(_prefs);
+       qt.setScriptToTokenize(SELECTS_WITH_EMBEDDED_COMMENT);
+       SQLUtil.checkQueryTokenizer(qt, 2);
+    }
     
     private static void createSQLFile() throws IOException {
         if (tmpFilename != null) {
