@@ -114,6 +114,7 @@ Thanks to Neville Rowe
 2927576: NPE at Copy as SQL INSERT-VALUES
 2913463: Problems with system classpath with quotes
 2908407: MSSQL driver plugin example URL isn't correct
+2891190: block comment content produces error
 2879711: Fix for Excel date export concerning dates earlier than 1900-03-01.
  		 Thanks to mironsadziak for the patch (Patch ID 2905218)
 2853329: Ctrl-S overwrites existing file on 2nd try
