@@ -2,6 +2,7 @@
 	version="1.0">
 	<info>
 		<appname>SQuirreL SQL Client</appname>
+		<appsubpath>@app.sub.path@</appsubpath>
 		<appversion>@squirrel.version@</appversion>
 		<authors>
 			<author
