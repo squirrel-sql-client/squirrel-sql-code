@@ -94,6 +94,9 @@
                                 <param type="token"
                                        name="squirrel.version"
                                        value="${squirrel.version}"/>
+                        		<param type = "token"
+                        				name="app.sub.path"
+                        				value="squirrel-sql-${squirrel.version}"/>
                         </filterreader>
                     </filterchain>
                 </copy>
