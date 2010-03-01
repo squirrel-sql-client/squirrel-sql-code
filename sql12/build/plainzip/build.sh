@@ -1,10 +1,17 @@
-export INSTALL_JAR=/home/manningr/squirrel_builds/squirrel_3_0_1_build/squirrel-sql-dist/squirrel-sql-3.0.1-install.jar
 
-export VERSION=3.0.1
+export VERSION=3.1.0
+
+export INSTALL_JAR=/home/manningr/squirrel_builds/squirrel_$VERSION_build/squirrel-sql-dist/squirrel-sql-$VERSION-install.jar
+
+
 
 rm -f *.gz
 rm -rf tmp
 mkdir tmp
+
+perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_base.xml
+perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_standard.xml
+perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_optional.xml
 
 java -jar $INSTALL_JAR auto_install_base.xml
 
