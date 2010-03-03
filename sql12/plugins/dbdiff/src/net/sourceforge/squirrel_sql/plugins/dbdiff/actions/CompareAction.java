@@ -95,12 +95,12 @@ public class CompareAction extends SquirrelAction implements ISessionAction
 	 * Returns a boolean value indicating whether or not the source and destination sessions refer to the same
 	 * schema.
 	 * 
-	 * @return
+	 * @return true if they are different sessions; false otherwise.
 	 */
 	private boolean sourceDestSchemasDiffer()
 	{
 		ISession sourceSession = sessionInfoProv.getDiffSourceSession();
 		ISession destSession = sessionInfoProv.getDiffDestSession();
-		return sourceSession != null && sourceSession.equals(destSession);
+		return sourceSession != null && ! sourceSession.equals(destSession);
 	}
 }
