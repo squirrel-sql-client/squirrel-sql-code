@@ -1,25 +1,27 @@
+#! /bin/bash
 
-export VERSION=3.1.0
+export VERSION=3.1
 
-export INSTALL_JAR=/home/manningr/squirrel_builds/squirrel_$VERSION_build/squirrel-sql-dist/squirrel-sql-$VERSION-install.jar
+export INSTALL_JAR=/home/manningr/squirrel-sql-$VERSION-install.jar
 
 
 
 rm -f *.gz
 rm -rf tmp
 mkdir tmp
+rm *.xml
 
-perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_base.xml
-perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_standard.xml
-perl -pi -e 's/\@squirrel-version\@/$VERSION/' auto_install_optional.xml
+perl -p -e 's/\@squirrel_version\@/$ENV{VERSION}/g' auto_install_base.xml.template > auto_install_base.xml
+perl -p -e 's/\@squirrel_version\@/$ENV{VERSION}/g' auto_install_standard.xml.template > auto_install_standard.xml
+perl -p -e 's/\@squirrel_version\@/$ENV{VERSION}/g' auto_install_optional.xml.template > auto_install_optional.xml
 
 java -jar $INSTALL_JAR auto_install_base.xml
 
-cp squirrel-sql.sh "tmp/SQuirreL SQL Client/"
+cp squirrel-sql.sh "tmp/squirrel-sql-$VERSION/"
 
 cd tmp
 
-tar -cvf squirrel-sql-$VERSION-base.tar "SQuirreL SQL Client"
+tar -cvf squirrel-sql-$VERSION-base.tar "squirrel-sql-$VERSION"
 
 gzip squirrel-sql-$VERSION-base.tar
 
@@ -32,11 +34,11 @@ mkdir tmp
 
 java -jar $INSTALL_JAR auto_install_standard.xml
 
-cp squirrel-sql.sh "tmp/SQuirreL SQL Client/"
+cp squirrel-sql.sh "tmp/squirrel-sql-$VERSION/"
 
 cd tmp
 
-tar -cvf squirrel-sql-$VERSION-standard.tar "SQuirreL SQL Client"
+tar -cvf squirrel-sql-$VERSION-standard.tar "squirrel-sql-$VERSION"
 
 gzip squirrel-sql-$VERSION-standard.tar
 
@@ -49,11 +51,11 @@ mkdir tmp
 
 java -jar $INSTALL_JAR auto_install_optional.xml
 
-cp squirrel-sql.sh "tmp/SQuirreL SQL Client/"
+cp squirrel-sql.sh "tmp/squirrel-sql-$VERSION/"
 
 cd tmp
 
-tar -cvf squirrel-sql-$VERSION-optional.tar "SQuirreL SQL Client"
+tar -cvf squirrel-sql-$VERSION-optional.tar "squirrel-sql-$VERSION"
 
 gzip squirrel-sql-$VERSION-optional.tar
 
@@ -62,3 +64,4 @@ mv "squirrel-sql-$VERSION-optional.tar.gz" ..
 cd ..
 
 rm -rf tmp
+rm *.xml
