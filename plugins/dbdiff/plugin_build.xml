@@ -79,7 +79,7 @@
 		
 		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
 			<fileset dir="doc" >
-				<include name="*.*"/>
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 
