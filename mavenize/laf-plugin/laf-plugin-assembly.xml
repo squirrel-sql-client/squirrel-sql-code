@@ -39,6 +39,13 @@
             <include>**</include>
          </includes>        
       </fileSet>
+      <fileSet>
+      	<directory>${project.build.directory}/skinlf-theme-packs</directory>
+      	<outputDirectory>${artifact.artifactId}/skinlf-theme-packs</outputDirectory>
+         <includes>
+            <include>**</include>
+         </includes>                
+      </fileSet>
    </fileSets>
    
 </assembly>
