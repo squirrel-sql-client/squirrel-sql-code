@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<name>Utilities for RText</name>
 	<description>Utility classes that are commonly used in other RText components</description>
-	<url></url>
+	<url>http://www.fifesoft.com/rtext/</url>
 	<licenses>
 		<license>
 			<name>GNU Lesser General Public License</name>

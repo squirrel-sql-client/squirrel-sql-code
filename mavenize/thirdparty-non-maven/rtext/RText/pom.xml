@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<name>RText Application</name>
 	<description>Programmer's Text Editor Written in Java</description>
-	<url></url>
+	<url>http://www.fifesoft.com/rtext/</url>
 	<licenses>
 		<license>
 			<name>GNU Lesser General Public License</name>

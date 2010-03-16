@@ -11,7 +11,7 @@
 	<description>Adds autocompletion to a text component.  Provides a popup window with a
  	list of autocomplete choices on a given keystroke, such as Crtrl+Space.
   	</description>
-	<url></url>
+	<url>http://www.fifesoft.com/autocomplete/</url>
 	<licenses>
 		<license>
 			<name>GNU Lesser General Public License</name>
