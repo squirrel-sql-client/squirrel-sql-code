@@ -26,7 +26,7 @@
    <description>
         This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
         as well as others that the user can provide.  All dependencies listed with a groupId of 
-        net.sf.squirrel-sql.thirdparty-non-maven are externally available open-source
+        net.sf.squirrel-sql and artifactId starting with squirrelsql-lf- are externally available open-source
         look and feels whose project maintainers have decided to not use maven, or those which were built and
         maintained only before the introduction of maven.  Maven's central repository policy requires any 
         pom that is deployed there to reference only artifacts which are also hosted in central.  And a 
@@ -76,7 +76,7 @@
    <properties>
       <staging.dir>${project.build.directory}</staging.dir>
       <laf.artifactIds>
-         ilf-gpl,kunststoff,looks,metouia,napkinlaf,nimrodlf,oalnf,skinlf,substance,swingsetthemes,toniclf,tinylaf
+         ilf-gpl,kunststoff,looks,napkinlaf,nimrodlf,skinlf,substance,toniclf,tinylaf
       </laf.artifactIds>
    </properties>
 
@@ -95,11 +95,6 @@
          <groupId>com.jgoodies</groupId>
          <artifactId>looks</artifactId>
          <version>2.2.2</version>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>metouia</artifactId>
-         <version>1.0.0-beta</version>
       </dependency>
       <!--
          Project napkinlaf uses maven, but curiously doesn't deploy to maven central. I filed an issue to
@@ -122,16 +117,22 @@
          <artifactId>nimrodlf</artifactId>
          <version>1.1</version>
       </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>oalnf</artifactId>
-         <version>3.0</version>
-      </dependency>
+<!--  This was removed as Oyoaha lnf isn't supported in Java 6 -->
+<!--      <dependency>-->
+<!--         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+<!--         <artifactId>oalnf</artifactId>-->
+<!--         <version>3.0</version>-->
+<!--      </dependency>-->
       <dependency>
          <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
          <artifactId>skinlf</artifactId>
          <version>6.7</version>
       </dependency>
+	<dependency>
+	  <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+	  <artifactId>skinlf-theme-packs</artifactId>
+	  <version>1.0.0</version>
+	</dependency>      
       <!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
       <dependency>
          <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
@@ -186,6 +187,48 @@
                      <includeArtifactIds>${laf.artifactIds}</includeArtifactIds>
                      <outputDirectory>${staging.dir}/lafs</outputDirectory>
                   </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>${dependency-plugin-version}</version>
+            <executions>
+               <execution>
+                  <id>unpack-skinlf-theme-packs</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                     <stripVersion>true</stripVersion>
+                     <artifactItems>
+                        <artifactItem>
+                           <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+                           <artifactId>skinlf-theme-packs</artifactId>
+                           <version>1.0.0</version>
+                        </artifactItem>
+                     </artifactItems>
+                     <outputDirectory>${staging.dir}/skinlf-theme-packs</outputDirectory>
+                     <excludes>META-INF,META-INF/MANIFEST.MF</excludes>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.4.1</version>
+            <configuration>
+               <outputDirectory>${staging.dir}</outputDirectory>
+            </configuration>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>resources</goal>
+                  </goals>
+                  <phase>process-resources</phase>
                </execution>
             </executions>
          </plugin>
