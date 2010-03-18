@@ -150,6 +150,14 @@
 
       <dependency>
          <groupId>${project.groupId}</groupId>
+         <artifactId>dbdiff</artifactId>
+         <version>${project.version}</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+      <dependency>
+         <groupId>${project.groupId}</groupId>
          <artifactId>db2</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -215,6 +223,14 @@
       <dependency>
          <groupId>${project.groupId}</groupId>
          <artifactId>mysql</artifactId>
+         <version>${project.version}</version>
+         <classifier>assembly</classifier>
+         <type>zip</type>
+      </dependency>
+
+ 	  <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>netezza</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
