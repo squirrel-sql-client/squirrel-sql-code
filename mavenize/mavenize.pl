@@ -36,6 +36,7 @@ $installerDir = $topDir . "/installer";
 $docDir       = $topDir . "/doc";
 $websiteDir   = $topDir . "/web-site";
 $testDir      = $topDir . "/test";
+$macDir		  = $topDir . "/mac";
 
 $onlyCopyPoms = 0;
 
@@ -676,6 +677,12 @@ sub copyInstallerProjects {
 
 	svnmkdir("$installerDir/squirrelsql-macosx-installer/src/main/resources");
 	`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
+	
+	`svn move $macDir/Contents/Info.plist $installerDir/squirrelsql-macosx-installer/src/main/resources`;
+	`svn move $macDir/Contents/Resources/acorns.icns $installerDir/squirrelsql-macosx-installer/src/main/resources`;
+	
+	chdir($topDir) or die "Couldn't change directory to $topDir: $!\n";
+	`svn delete mac`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 
