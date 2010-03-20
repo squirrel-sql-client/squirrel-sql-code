@@ -559,6 +559,9 @@ sub restructureFwModule {
 
 	`svn add --quiet main`;
 	`svn add --quiet test`;
+	
+	chdir("$fwDir") or die "Couldn't change directory to $fwDir: $!\n";
+	
 	`svn delete net`;
 	`svn delete lib`;
 
@@ -600,8 +603,23 @@ sub restructureAppModule {
 
 	`svn delete net`;
 	`svn add test`;
-	`svn delete lib`;
+	
+	chdir("$appDir/cmd") or die "Couldn\'t change directory to $appDir/cmd: $!\n";
+	
+	`svn move addpath.bat $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move log4j.properties $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move restore.bar $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move restore.sh $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move squirrel-sql.bat $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move squirrel-sql.sh $installerDir/squirrelsql-launcher/src/main/resources`;
+	`svn move update-log4j.properties $installerDir/squirrelsql-launcher/src/main/resources`;
 
+	chdir("$appDir") or die "Couldn\'t change directory to $appDir: $!\n";
+	
+	`svn delete lib`;
+	`svn delete icons`;
+	`svn delete cmd`;
+	
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
 
