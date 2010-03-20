@@ -61,5 +61,6 @@
       <module>squirrelsql-java-version-checker</module>
       <module>squirrelsql-launcher</module>
       <module>squirrelsql-other-installer</module>
+      <module>squirrelsql-macosx-installer</module>
    </modules>
 </project>
