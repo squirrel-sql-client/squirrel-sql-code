@@ -35,6 +35,7 @@ $lafPluginDir = $pluginsDir . "/laf";
 $installerDir = $topDir . "/installer";
 $docDir       = $topDir . "/doc";
 $websiteDir   = $topDir . "/web-site";
+$testDir      = $topDir . "/test";
 
 $onlyCopyPoms = 0;
 
@@ -198,6 +199,8 @@ find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/sr
 
 # Miscellaneous
 installLafPluginAssembly();
+
+removeRemainingUnnecessaryFiles();
 
 # End of script; Begin Subroutines
 
@@ -557,6 +560,7 @@ sub restructureFwModule {
 	`svn add --quiet main`;
 	`svn add --quiet test`;
 	`svn delete net`;
+	`svn delete lib`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -596,6 +600,7 @@ sub restructureAppModule {
 
 	`svn delete net`;
 	`svn add test`;
+	`svn delete lib`;
 
 	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
 }
@@ -650,6 +655,9 @@ sub copyInstallerProjects {
 	
 	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
 	`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
+
+	svnmkdir("$installerDir/squirrelsql-macosx-installer/src/main/resources");
+	`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 
@@ -798,4 +806,13 @@ sub installLafPluginAssembly {
 	`svn add $lafPluginDir/pom.xml`;
 	`svn add $targetFolder/laf-plugin-assembly.xml`;
 	chdir($lafPluginDir) or die "Couldn't change dir to ($lafPluginDir): $!\n";
+}
+
+sub removeRemainingUnnecessaryFiles {
+	chdir($topDir) or die "Couldn't change dir to ($topDir): $!\n";
+	`svn delete stats`;
+	`svn delete mac`;
+	chdir($testDir) or die "Couldn't change dir to ($testDir): $!\n";
+	`svn delete lib`;
+	
 }
