@@ -250,10 +250,12 @@
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>surefire-report-maven-plugin</artifactId>
+            <version>${surefire-plugin-version}</version>
          </plugin>
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${findbugs-plugin-version}</version>
             <inherited>true</inherited>
             <configuration>
                <findbugsXmlOutput>true</findbugsXmlOutput>
@@ -264,6 +266,7 @@
          <plugin>
             <inherited>true</inherited>
             <artifactId>maven-pmd-plugin</artifactId>
+            <version>${pmd-plugin-version}</version>
             <configuration>
                <targetJdk>${javac-target-version}</targetJdk>
             </configuration>
@@ -271,6 +274,7 @@
          <plugin>
             <inherited>true</inherited>
             <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>${checkstyle-plugin-version}</version>
             <configuration>
                <outputFileFormat>xml</outputFileFormat>
             </configuration>
