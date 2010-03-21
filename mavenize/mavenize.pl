@@ -496,6 +496,9 @@ sub copyRootPom {
 	`cp root-pom.xml $topDir/pom.xml`;
 	return if $onlyCopyPoms;
 	`svn add $topDir/pom.xml`;
+
+	setSvnIgnore($topDir);
+	chdirOrDie($mavenizeDir);	
 }
 
 sub copyTestUtilsProject {
@@ -510,12 +513,15 @@ sub copyTestUtilsProject {
 	svnmkdir("$topDir/squirrelsql-test-utils");
 	`cp $mavenizeDir/squirrelsql-test-utils/pom.xml $topDir/squirrelsql-test-utils/pom.xml`;
 	`svn add $topDir/squirrelsql-test-utils/pom.xml`;
+	
+	setSvnIgnore("$topDir/squirrelsql-test-utils");
+	chdirOrDie($mavenizeDir);
 }
 
 sub copyPluginsSupportProjects {
 	print "Copying in plugins support projects\n";
 	
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	chdirOrDie($mavenizeDir);
 	
 	svnmkdir("$pluginsDir/squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies");
 	`tar --exclude .svn -cvf - squirrelsql-plugins-assembly-descriptor | ( cd $pluginsDir; tar -xvf -)`;
@@ -525,7 +531,10 @@ sub copyPluginsSupportProjects {
 	`cp $mavenizeDir/squirrelsql-plugins-parent-pom/pom.xml $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
 	`svn add $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	setSvnIgnore("$pluginsDir/squirrelsql-plugins-assembly-descriptor");
+	setSvnIgnore("$pluginsDir/squirrelsql-plugins-parent-pom");
+
+	chdirOrDie($mavenizeDir);
 }
 
 sub restructureFwModule {
@@ -549,7 +558,7 @@ sub restructureFwModule {
 
 	return if $onlyCopyPoms;
 
-	chdir("$fwDir/src") or die "Couldn't change directory to $fwDir/src: $!\n";
+	chdirOrDie("$fwDir/src");
 
 	findAndCopyJava();
 
@@ -561,12 +570,14 @@ sub restructureFwModule {
 	`svn add --quiet main`;
 	`svn add --quiet test`;
 	
-	chdir("$fwDir") or die "Couldn't change directory to $fwDir: $!\n";
+	chdirOrDie($fwDir);
 	
 	`svn delete net`;
 	`svn delete lib`;
+	
+	setSvnIgnore($fwDir);
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	chdirOrDie($mavenizeDir);
 }
 
 sub restructureAppModule {
@@ -605,7 +616,7 @@ sub restructureAppModule {
 	`svn delete net`;
 	`svn add test`;
 	
-	chdir("$appDir/cmd") or die "Couldn\'t change directory to $appDir/cmd: $!\n";
+	chdirOrDie("$appDir/cmd");
 	
 	`svn move addpath.bat $installerDir/squirrelsql-launcher/src/main/resources`;
 	`svn move log4j.properties $installerDir/squirrelsql-launcher/src/main/resources`;
@@ -615,13 +626,15 @@ sub restructureAppModule {
 	`svn move squirrel-sql.sh $installerDir/squirrelsql-launcher/src/main/resources`;
 	`svn move update-log4j.properties $installerDir/squirrelsql-launcher/src/main/resources`;
 
-	chdir("$appDir") or die "Couldn\'t change directory to $appDir: $!\n";
+	chdirOrDie($appDir);
 	
 	`svn delete lib`;
 	`svn delete icons`;
 	`svn delete cmd`;
+
+	setSvnIgnore($appDir);
 	
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	chdirOrDie($mavenizeDir);
 }
 
 sub findAndCopyJava {
@@ -655,7 +668,7 @@ sub findAndCopyDoc {
 
 sub copyInstallerProjects {
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	chdirOrDie($mavenizeDir);
 
 	print "Copying in installer projects\n";
 	
@@ -688,7 +701,24 @@ sub copyInstallerProjects {
 
 	`svn st $installerDir | grep "^\?" | awk '{print $2}' | xargs svn add`;
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	setSvnIgnore($installerDir);
+	setSvnIgnore("$installerDir/squirrelsql-launcher");
+	setSvnIgnore("$installerDir/squirrelsql-other-installer");
+	setSvnIgnore("$installerDir/squirrelsql-macosx-installer");
+	setSvnIgnore("$installerDir/squirrelsql-java-version-checker");
+	
+	chdirOrDie($mavenizeDir);
+}
+
+sub setSvnIgnore {
+	my $projectDir = shift;
+	chdirOrDie($projectDir);
+	`svn propset svn:ignore --file $mavenizeDir/svn-ignore.txt  . `;
+}
+
+sub chdirOrDie {
+	my $newDir = shift;
+	chdir($newDir) or die "Couldn't change directory to $newDir: $!\n";
 }
 
 sub copyTranslationProjects {
@@ -714,7 +744,9 @@ sub copyTranslationProjects {
 
 	`svn remove translations`;
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	setSvnIgnore("$topDir/squirrelsql-translations");
+
+	chdirOrDie($mavenizeDir);
 
 }
 
@@ -738,6 +770,12 @@ sub copyUpdateSiteProjects {
 	`svn add $topDir/update-site/squirrelsql-update-site/pom.xml`;
 	`svn add $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
 	`svn add $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java`;
+	
+	setSvnIgnore("$topDir/update-site");
+	setSvnIgnore("$topDir/update-site/squirrelsql-update-site");
+	setSvnIgnore("$topDir/update-site/squirrelsql-update-site-plugin");
+	
+	chdirOrDie($mavenizeDir);
 }
 
 sub restructureDocModule {
@@ -763,7 +801,9 @@ sub restructureDocModule {
 	print "Moving files in subversion to src/main/resources/...";
 `find . -type f -print | grep -v .svn | grep -v pom.xml | grep -v target | uniq | sort | xargs -ti svn move {} src/main/resources/{}`;
 
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+	setSvnIgnore("$docDir");
+
+	chdirOrDie($mavenizeDir);
 }
 
 sub restructureWebsiteModule {
@@ -779,6 +819,10 @@ sub restructureWebsiteModule {
 	`mkdir -p $websiteDir/src/main/resources`;
 	`cp $websiteDir/faq.html $websiteDir/src/main/resources`;
 	`svn add $websiteDir/src`;
+	
+	setSvnIgnore("$websiteDir");
+	
+	chdirOrDie($mavenizeDir);
 }
 
 sub generatePluginPoms {
@@ -834,10 +878,16 @@ sub installLafPluginAssembly {
 }
 
 sub removeRemainingUnnecessaryFiles {
-	chdir($topDir) or die "Couldn't change dir to ($topDir): $!\n";
+	chdirOrDie($topDir);
 	`svn delete stats`;
 	`svn delete mac`;
-	chdir($testDir) or die "Couldn't change dir to ($testDir): $!\n";
+	
+	chdirOrDie($testDir);
 	`svn delete lib`;
 	
+	chdirOrDie($pluginsDir);
+	`find . -name plugin_build.xml | xargs -i svn propset svn:ignore --file $mavenizeDir/svn-ignore.txt {}`;
+	`find . -name plugin_build.xml | xargs svn delete`; 
+	
+	chdirOrDie($mavenizeDir);
 }
