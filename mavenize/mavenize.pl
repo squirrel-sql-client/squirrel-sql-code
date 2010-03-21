@@ -692,14 +692,14 @@ sub copyInstallerProjects {
 	`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
 	
 	`svn move $macDir/Contents/Info.plist $installerDir/squirrelsql-macosx-installer/src/main/resources`;
-	`svn move $macDir/Contents/Resources/acorns.icns $installerDir/squirrelsql-macosx-installer/src/main/resources`;
+	`svn move $macDir/Contents/Resources/acorn.icns $installerDir/squirrelsql-macosx-installer/src/main/resources`;
 	
 	chdir($topDir) or die "Couldn't change directory to $topDir: $!\n";
 	`svn delete mac`;
 	
 	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 
-	`svn st $installerDir | grep "^\?" | awk '{print $2}' | xargs svn add`;
+	`svn st $installerDir | grep "^\?" | awk '{print \$2}' | xargs svn add`;
 
 	setSvnIgnore($installerDir);
 	setSvnIgnore("$installerDir/squirrelsql-launcher");
