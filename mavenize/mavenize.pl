@@ -287,6 +287,8 @@ sub wanted_for_create_plugin_poms {
 sub wanted_for_source {
 	if ( $_ =~ /^plugin_build.xml$/ ) {
 
+		`svn propset svn:ignore --file $mavenizeDir/svn-ignore.txt .`;
+
 		chdir('./src') or die "Couldn't change to src directory in $File::Find::dir : $!\n";
 		
 		if (!$onlyCopyPoms) {
@@ -886,7 +888,6 @@ sub removeRemainingUnnecessaryFiles {
 	`svn delete lib`;
 	
 	chdirOrDie($pluginsDir);
-	`find . -name plugin_build.xml | xargs -i svn propset svn:ignore --file $mavenizeDir/svn-ignore.txt {}`;
 	`find . -name plugin_build.xml | xargs svn delete`; 
 	
 	chdirOrDie($mavenizeDir);
