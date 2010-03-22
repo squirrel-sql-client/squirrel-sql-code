@@ -221,6 +221,9 @@
             <version>${surefire-plugin-version}</version>
             <configuration>
                <redirectTestOutputToFile>true</redirectTestOutputToFile>
+               <excludes>
+               	<exclude>**/*ExternalTest.java</exclude>
+               </excludes>
             </configuration>
          </plugin>
          <plugin>

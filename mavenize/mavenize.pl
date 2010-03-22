@@ -572,6 +572,12 @@ sub restructureFwModule {
 	`svn add --quiet main`;
 	`svn add --quiet test`;
 	
+	$dialectTestLocation = "$testDir/external/net/sourceforge/squirrel_sql/fw/dialects/DialectExternalTest.java";
+	$dialectPropLocation = "$testDir/external/net/sourceforge/squirrel_sql/fw/dialects/dialectExternalTest.properties";
+	
+	`svn move $dialectTestLocation $fwDir/src/test/java/net/sourceforge/squirrel_sql/fw/dialects`;
+	`svn move $dialectPropLocation $fwDir/src/test/resources`;
+	
 	chdirOrDie($fwDir);
 	
 	`svn delete net`;
