@@ -29,13 +29,7 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.DriverManager;
 import java.util.*;
 
@@ -92,6 +86,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -184,6 +179,10 @@ class Application implements IApplication
 	{
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
 		s_log = LoggerController.createLogger(getClass());
+
+      System.setErr(new PrintStream(new SystemOutToLog(System.err)));
+      System.setOut(new PrintStream(new SystemOutToLog(System.out)));
+
 
 		EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
 		q.push(new EventQueue()

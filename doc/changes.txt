@@ -5,6 +5,13 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
+Enhancements:
+
+Hibernate Plugin:
+  - Results of HQL Queries can be displayed as objects
+  - Hibernate logs can be seen in SQuirreL logs when Hibernate logging is configured for console output.
+
+
 Bug-Fixes:
 
 2974533: Informix: Method can be called only once. / ErrorCode: -79

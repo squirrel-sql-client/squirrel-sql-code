@@ -20,6 +20,7 @@ public class HibernateConnection
    private Object _sessionFactoryImpl;
    private URLClassLoader _cl;
    private ArrayList<MappedClassInfo> _mappedClassInfos;
+   private ReflectionCaller m_rcHibernateSession;
 
 
    public HibernateConnection(Object sessionFactoryImpl, URLClassLoader cl)
@@ -88,6 +89,18 @@ public class HibernateConnection
       return _mappedClassInfos;
    }
 
+   public Class getPersistenCollectionClass()
+   {
+      try
+      {
+         return _cl.loadClass("org.hibernate.collection.PersistentCollection");
+      }
+      catch (ClassNotFoundException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
    private void initMappedClassInfos()
    {
       if(null != _mappedClassInfos)
@@ -119,7 +132,7 @@ public class HibernateConnection
 
          HibernatePropertyInfo identifierPropInfo =
             new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, identifierColumnNames);
-         
+
          identifierPropInfo.setIdentifier(true);
 
 
@@ -128,18 +141,18 @@ public class HibernateConnection
          HibernatePropertyInfo[] infos = new HibernatePropertyInfo[propertyNames.length];
          for (int i = 0; i < propertyNames.length; i++)
          {
-            ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", new String[]{propertyNames[i]});
+            ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", propertyNames[i]);
             String mayBeCollectionTypeName = propertyTypeCaller.callMethod("getReturnedClass").getCalleeClass().getName();
 
-            String propTableName = (String) persister.callMethod("getPropertyTableName", new String[]{propertyNames[i]}).getCallee();
-            String[] propertyColumnNames = (String[]) persister.callMethod("getPropertyColumnNames", new String[]{propertyNames[i]}).getCallee();
+            String propTableName = (String) persister.callMethod("getPropertyTableName", propertyNames[i]).getCallee();
+            String[] propertyColumnNames = (String[]) persister.callMethod("getPropertyColumnNames", propertyNames[i]).getCallee();
 
             try
             {
                // If this isn't instanceof org.hibernate.type.CollectionType a NoSuchMethodException will be thrown
                String role = (String) propertyTypeCaller.callMethod("getRole").getCallee();
 
-               ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", new Object[]{role});
+               ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", role);
                String typeName = collectionMetaDataCaller.callMethod("getElementType").callMethod("getReturnedClass").getCalleeClass().getName();
 
                infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, propTableName, propertyColumnNames);
@@ -165,8 +178,28 @@ public class HibernateConnection
 
    public Connection getSqlConnection()
    {
-      ReflectionCaller rc = new ReflectionCaller(_sessionFactoryImpl);
+      return (Connection) getRcHibernateSession().callMethod("getJDBCContext").callMethod("getConnectionManager").callMethod("getConnection").getCallee();
+   }
 
-      return (Connection) rc.callMethod("openSession").callMethod("getJDBCContext").callMethod("getConnectionManager").callMethod("getConnection").getCallee();
+   public List createQueryList(String hqlQuery, int sqlNbrRowsToShow)
+   {
+      ReflectionCaller  rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+
+      if (0 <= sqlNbrRowsToShow)
+      {
+         rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+      }
+
+      return (List) rc.callMethod("list").getCallee();
+   }
+
+   private ReflectionCaller getRcHibernateSession()
+   {
+      if(null == m_rcHibernateSession)
+      {
+         m_rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession");
+      }
+
+      return m_rcHibernateSession;
    }
 }

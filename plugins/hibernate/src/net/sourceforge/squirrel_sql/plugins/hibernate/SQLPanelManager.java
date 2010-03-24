@@ -6,9 +6,10 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects.ObjectResultController;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.prefs.Preferences;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -19,19 +20,21 @@ public class SQLPanelManager extends EntryPanelManagerBase
    private static final String PREF_KEY_APPEND_SQL = "SquirrelSQL.hibernate.sqlAppendSql";
    private static final String PREF_KEY_FORMAT_SQL = "SquirrelSQL.hibernate.sqlFormatSql";
    private static final String PREF_KEY_EXECUTE_SQL = "SquirrelSQL.hibernate.sqlExecuteSql";
+   private static final String PREF_KEY_VIEW_OBJECTS = "SquirrelSQL.hibernate.objViewObjects";
 
    private HibernateSQLPanel _hibernateSQLPanel;
+   private SQLResultExecuterPanel _resultExecuterPanel;
+   private ObjectResultController _objectResultController;
 
-   SQLResultExecuterPanel _resultExecuterPanel;
 
-
-   public SQLPanelManager(final ISession session)
+   public SQLPanelManager(final ISession session, HibernatePluginResources resource)
    {
       super(session);
       init(null, null);
 
       _resultExecuterPanel = new SQLResultExecuterPanel(session);
-      _hibernateSQLPanel = new HibernateSQLPanel(super.getComponent(), _resultExecuterPanel);
+      _objectResultController = new ObjectResultController(session, resource);
+      _hibernateSQLPanel = new HibernateSQLPanel(super.getComponent(), _resultExecuterPanel, _objectResultController.getPanel());
 
 
       session.getApplication().getSessionManager().addSessionListener(
@@ -58,6 +61,7 @@ public class SQLPanelManager extends EntryPanelManagerBase
       _hibernateSQLPanel._chkAppendSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_APPEND_SQL, false));
       _hibernateSQLPanel._chkAlwaysFormatSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_SQL, false));
       _hibernateSQLPanel._chkAlwaysExecuteSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_SQL, false));
+      _hibernateSQLPanel._chkAlwaysViewObjects.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_OBJECTS, false));
    }
 
 
@@ -74,6 +78,7 @@ public class SQLPanelManager extends EntryPanelManagerBase
       Preferences.userRoot().putBoolean(PREF_KEY_APPEND_SQL, _hibernateSQLPanel._chkAppendSql.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_SQL, _hibernateSQLPanel._chkAlwaysFormatSql.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_SQL, _hibernateSQLPanel._chkAlwaysExecuteSql.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_VIEW_OBJECTS, _hibernateSQLPanel._chkAlwaysViewObjects.isSelected());
    }
 
 
@@ -98,6 +103,16 @@ public class SQLPanelManager extends EntryPanelManagerBase
       }
       displaySqlCode(allSqls);
    }
+
+   public void displayObjects(HibernateConnection con, String hqlQuery)
+   {
+      if (_hibernateSQLPanel._chkAlwaysViewObjects.isSelected())
+      {
+         _objectResultController.displayObjects(con, hqlQuery);
+         _hibernateSQLPanel._tabResult_code.setSelectedComponent(_objectResultController.getPanel());
+      }
+   }
+
 
    private void displaySqlResult(String allSqls)
    {
@@ -171,5 +186,11 @@ public class SQLPanelManager extends EntryPanelManagerBase
       {
          getEntryPanel().getTextComponent().scrollRectToVisible(new Rectangle(p.x, p.y, 1, 100));
       }
+   }
+
+
+   public boolean isDisplayObjects()
+   {
+      return _hibernateSQLPanel._chkAlwaysViewObjects.isSelected();  //To change body of created methods use File | Settings | File Templates.
    }
 }

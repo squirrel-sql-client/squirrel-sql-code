@@ -77,17 +77,6 @@ public class ReflectionCaller
       }
    }
 
-   public ReflectionCaller callMethod(String methodName)
-   {
-      try
-      {
-         return new ReflectionCaller(getDeclaredMethodIncludingSuper(methodName).invoke(_callee));
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
 
    public Object getCallee()
    {
@@ -144,27 +133,47 @@ public class ReflectionCaller
 
    }
 
-   public ReflectionCaller callMethod(String methodName, Object[] params)
+   /**
+    * Though this method should normaly be redundant with
+    * callMethod(String methodName, Object... params)
+    * NoSuchMethodErrors occur if it isn't there. 
+    */
+   public ReflectionCaller callMethod(String methodName)
+   {
+      return callMethod(methodName, new RCParam(new Object[0]));
+   }
+
+   public ReflectionCaller callMethod(String methodName, Object... params)
+   {
+      return callMethod(methodName, new RCParam(params));
+   }
+
+
+   public ReflectionCaller callMethod(String methodName, RCParam param)
    {
       try
       {
-         Class[] paramTypes = new Class[params.length];
+         Class[] paramTypes = new Class[param.size()];
+         Object[] paramValues = new Object[param.size()];
 
-         for (int i = 0; i < params.length; i++)
+         for (int i = 0; i < paramTypes.length; i++)
          {
-            paramTypes[i] = params[i].getClass();
+            paramTypes[i] = param.getType(i);
+            paramValues[i] = param.getValue(i);
          }
 
          Method meth = getDeclaredMethodIncludingSuper(methodName, paramTypes);
          meth.setAccessible(true);
 
-         return new ReflectionCaller(meth.invoke(_callee, params));
+         return new ReflectionCaller(meth.invoke(_callee, paramValues));
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
       }
    }
+
+
 
    private Method getDeclaredMethodIncludingSuper(String methodName, Class... paramTypes)
       throws NoSuchMethodException
