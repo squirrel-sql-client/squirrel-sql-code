@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HQLPanelController
 {
@@ -80,53 +81,76 @@ public class HQLPanelController
          }
 
          final IQueryTokenizer queryTokenizer = _sess.getQueryTokenizer();
-		 final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
+         final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
          final String startOfLineComment = queryTokenizer.getLineCommentBegin();
          QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
          qt.setScriptToTokenize(hql);
 
-         if(false == qt.hasQuery())
+
+         while(qt.hasQuery())
          {
-            return;
-         }
-
-
-         ArrayList<String> list;
-
-         long begin = System.currentTimeMillis();
-         long duration;
-         try
-         {
-            list = _con.generateSQL(qt.nextQuery());
-            duration = System.currentTimeMillis() - begin;
-         }
-         catch (Exception e)
-         {
-            Throwable t = Utilities.getDeepestThrowable(e);
-            ExceptionFormatter formatter = _sess.getExceptionFormatter();
-            String message = formatter.format(t);
-            _sess.showErrorMessage(message);
-
-            if (_sess.getProperties().getWriteSQLErrorsToLog() ||
-               (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
+            String hqlQuery = qt.nextQuery();
+            if(false == doSQL(hqlQuery))
             {
-               // If this is not a hibernate error we write a log entry
-               s_log.error(t);
+               continue;
             }
 
-            return;
+            if (_hibernateTabController.isDisplayObjects())
+            {
+               doObjects(hqlQuery);
+            }
          }
 
-         _hibernateTabController.displaySqls(list);
-
-         // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
-         _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess", list.size(), duration));
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
       }
    }
+
+
+   private boolean doSQL(String hqlQuery)
+      throws Exception
+   {
+      ArrayList<String> sqls;
+
+      long begin = System.currentTimeMillis();
+      long duration;
+      try
+      {
+         sqls = _con.generateSQL(hqlQuery);
+         duration = System.currentTimeMillis() - begin;
+
+         _hibernateTabController.displaySqls(sqls);
+
+         // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
+         _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess", sqls.size(), duration));
+         return true;
+      }
+      catch (Exception e)
+      {
+         Throwable t = Utilities.getDeepestThrowable(e);
+         ExceptionFormatter formatter = _sess.getExceptionFormatter();
+         String message = formatter.format(t);
+         _sess.showErrorMessage(message);
+
+         if (_sess.getProperties().getWriteSQLErrorsToLog() ||
+            (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
+         {
+            // If this is not a hibernate error we write a log entry
+            s_log.error(t);
+         }
+
+         return false;
+      }
+   }
+
+   private void doObjects(String hqlQuery) 
+      throws Exception
+   {
+      _hibernateTabController.displayObjects(_con, hqlQuery);
+   }
+
 
 
    public void setConnection(HibernateConnection con)

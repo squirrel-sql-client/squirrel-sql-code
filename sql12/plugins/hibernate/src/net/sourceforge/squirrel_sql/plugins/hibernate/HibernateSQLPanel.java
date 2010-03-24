@@ -3,7 +3,6 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,11 +16,12 @@ public class HibernateSQLPanel extends JPanel
    JButton _btnFormatSql;
    JCheckBox _chkAlwaysFormatSql;
    JCheckBox _chkAlwaysExecuteSql;
+   JCheckBox _chkAlwaysViewObjects;
 
    JTabbedPane _tabResult_code;
 
 
-   public HibernateSQLPanel(JComponent textComp, SQLResultExecuterPanel resultExecuterPanel)
+   public HibernateSQLPanel(JComponent textComp, SQLResultExecuterPanel resultExecuterPanel, JTabbedPane tabbedPane)
    {
 
       setLayout(new BorderLayout());
@@ -33,6 +33,7 @@ public class HibernateSQLPanel extends JPanel
       // i18n[HibernateSQLPanel.result=SQL result]
       _tabResult_code.addTab(s_stringMgr.getString("HibernateSQLPanel.result"), resultExecuterPanel);
 
+      _tabResult_code.addTab(s_stringMgr.getString("HibernateSQLPanel.objects"), tabbedPane);
 
       add(_tabResult_code, BorderLayout.CENTER);
 
@@ -72,8 +73,13 @@ public class HibernateSQLPanel extends JPanel
       _chkAlwaysExecuteSql = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.Execute"));
       ret.add(_chkAlwaysExecuteSql, gbc);
 
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernateSQLPanel.Execute=Execute SQL]
+      _chkAlwaysViewObjects = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.ViewObjects"));
+      ret.add(_chkAlwaysViewObjects, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+
+      gbc = new GridBagConstraints(6,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
 
