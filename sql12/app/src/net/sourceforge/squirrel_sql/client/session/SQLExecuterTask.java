@@ -405,6 +405,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          if (null != res)
          {
+         	boolean moreResultsReceived = false;
             while(true)
             {
                if (!processResultSet(res, exInfo))
@@ -422,6 +423,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                if(supportsMultipleResultSets && _stmt.getMoreResults())
                {
                   res = _stmt.getResultSet();
+                  moreResultsReceived = true;
                }
                else
                {
@@ -429,8 +431,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                }
             }
 
-            // ... now we have reached an output that is not a result. We now have to aks for this outputs update count.
-            updateCount = _stmt.getUpdateCount();
+            if (moreResultsReceived) {
+            	// ... now we have reached an output that is not a result. We now have to ask for this 
+            	// outputs update count - but only if we received more results.
+            	updateCount = _stmt.getUpdateCount();
+            }
          }
 
          if (false == supportsMultipleResultSets)
