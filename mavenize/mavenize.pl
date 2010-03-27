@@ -535,6 +535,7 @@ sub copyPluginsSupportProjects {
 
 	setSvnIgnore("$pluginsDir/squirrelsql-plugins-assembly-descriptor");
 	setSvnIgnore("$pluginsDir/squirrelsql-plugins-parent-pom");
+	setSvnIgnore($pluginsDir);
 
 	chdirOrDie($mavenizeDir);
 }
@@ -580,9 +581,12 @@ sub restructureFwModule {
 	
 	chdirOrDie($fwDir);
 	
-	`svn delete net`;
 	`svn delete lib`;
 	
+	chdirOrDie("$fwDir/src");
+	
+	`svn delete net`;
+		
 	setSvnIgnore($fwDir);
 
 	chdirOrDie($mavenizeDir);
