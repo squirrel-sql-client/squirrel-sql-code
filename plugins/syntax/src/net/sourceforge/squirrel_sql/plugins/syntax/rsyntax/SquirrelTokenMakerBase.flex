@@ -234,7 +234,7 @@ Letter			= ([A-Za-z])
 Digit			= ([0-9])
 Whitespace		= ([ \t]+)
 
-IdentifierStart	= ({Letter})
+IdentifierStart	= ({Letter}|[_])
 IdentifierPart		= ({IdentifierStart}|{Digit}|[_])
 Identifier		= ({IdentifierStart}{IdentifierPart}*)
 
