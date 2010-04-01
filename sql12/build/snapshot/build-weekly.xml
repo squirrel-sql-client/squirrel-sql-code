@@ -142,7 +142,7 @@
 	</target>		
 	
 	<!-- create the source archive for this snapshot -->
-	<target name="createsourcearchive" depends="cvsexport">
+	<target name="createsourcearchive" depends="svnexport">
 		<!-- Copy the (potentially) modified Version.java over the cvsexport'd one -->
 		<copy file="${version.dest.filename}" 
 		      toFile="${dist.dir}/src/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java"/>
@@ -238,6 +238,20 @@
 		
 	</target>
 	
+	<target name="svnco" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${cvs.dest.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>
+	    <mkdir dir="${cvs.dest.dir}/${project.module}"/>
+		<exec executable="svn" dir="${cvs.dest.dir}">
+			<arg value="co"/>
+			<arg value="https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12"/>
+			<arg value="sql12"/>
+			<arg value="--quiet"/>
+		</exec>	
+	</target>
+	
 	<!-- this deletes the files underneath cvs.dest.dir, then checks out the 
 	     distribution from the CVS repository -->
 	<target name="cvsco" depends="init" if="targettest">
@@ -255,6 +269,20 @@
 		/>	
 	</target>
 
+	<target name="svnexport">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist.dir}/src" defaultexcludes="no">
+			</fileset>
+		</delete>		
+		<mkdir dir="${dist.dir}/src"/>
+		<exec executable="svn" dir="${dist.dir}/src">
+			<arg value="export"/>
+			<arg value="-r"/>
+			<arg value="${cvs.tag}"/>
+			<arg value="--force"/>
+		</exec>
+	</target>
+	
 	<!-- exports the source (minus the CVS directories) from the repository. -->
 	<target name="cvsexport">
 		<delete includeEmptyDirs="true" quiet="true">
@@ -524,7 +552,7 @@
 
 		
 		<antcall target="testtrue">
-			<param name="targettocall" value="cvsco"/>
+			<param name="targettocall" value="svnco"/>
 			<param name="propertyvalue" value="${delete.dest.dir}"/>
 		</antcall>	
 		
