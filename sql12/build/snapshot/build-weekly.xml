@@ -281,6 +281,7 @@
 			<arg value="-r"/>
 			<arg value="${cvs.tag}"/>
 			<arg value="--force"/>
+			<arg value="--quiet"/>
 		</exec>
 	</target>
 	
