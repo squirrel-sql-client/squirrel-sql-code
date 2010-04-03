@@ -93,6 +93,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class UpdateUtilImpl implements UpdateUtil
 {
+	// This class is used both inside and outside of SQuirreL (updater application).  When this class is used 
+	// by the updater application, the SQuirreL Main class is not used, and so ApplicationArguments must be 
+	// initialized here or else the logger initialization will fail.
 	static {
 		ApplicationArguments.getInstance();
 	}
