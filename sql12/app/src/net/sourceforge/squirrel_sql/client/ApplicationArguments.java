@@ -18,6 +18,11 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -47,7 +52,7 @@ public class ApplicationArguments
 	 * <LI>element 2 - option description
 	 * </UL>
 	 */
-	private interface IOptions
+	public interface IOptions
 	{
 		String[] HELP = { "h", "help", "Display Help and exit"};
 		String[] SQUIRREL_HOME = { "home", "squirrel-home",
@@ -63,11 +68,13 @@ public class ApplicationArguments
 		String[] USER_SETTINGS_DIR = { "userdir", "user-settings-dir",
 								"User settings directory"};
 		String[] UI_DEBUG = {"uidebug", "user-interface-debugging", 
-			"Provides tool-tips and highlighting of UI components for easy identification" }; 
+			"Provides tool-tips and highlighting of UI components for easy identification" };
+		String[] PLUGIN_LIST = { "pluginlist", "plugin-classpath-list", 
+			"Specify a comma-delimited list of plugins to load from the CLASSPATH" };
 	}
 
 	/** Only instance of this class. */
-	private static ApplicationArguments s_instance;
+	private static volatile ApplicationArguments s_instance;
 
 	/** Collection of possible options that acn be passed. */
 	private final Options _options = new Options();
@@ -90,6 +97,8 @@ public class ApplicationArguments
 	/** Path for logging configuration file */
 	private String _loggingConfigFile = null;
 
+	private List<String> _pluginList = null;
+	
 	/**
 	 * Ctor specifying arguments from command line.
 	 *
@@ -131,6 +140,16 @@ public class ApplicationArguments
 		{
 			_loggingConfigFile = _cmdLine.getOptionValue(IOptions.LOG_FILE[0]);
 		}
+		if (_cmdLine.hasOption(IOptions.PLUGIN_LIST[0]))
+		{
+			String pluginList = _cmdLine.getOptionValue(IOptions.PLUGIN_LIST[0]);
+			if (pluginList != null && !pluginList.isEmpty()) {
+				String[] pluginArr = pluginList.split(",");
+				_pluginList = new ArrayList<String>(Arrays.asList(pluginArr));
+				_pluginList = Collections.unmodifiableList(_pluginList);
+			}
+		}
+		
 	}
 
 	/**
@@ -266,6 +285,10 @@ public class ApplicationArguments
 		return _cmdLine.hasOption(IOptions.UI_DEBUG[0]);
 	}
 	
+	public List<String> getPluginList() {
+		return _pluginList;
+	}
+	
 	void printHelp()
 	{
 		HelpFormatter formatter = new HelpFormatter();
@@ -304,6 +327,9 @@ public class ApplicationArguments
 		_options.addOption(opt);
 		
 		opt = createAnOption(IOptions.UI_DEBUG);
+		_options.addOption(opt);
+		
+		opt = createAnOptionWithArgument(IOptions.PLUGIN_LIST);
 		_options.addOption(opt);
 	}
 

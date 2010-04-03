@@ -720,7 +720,12 @@ class Application implements IApplication
 				ClassLoaderListener listener = splash.getClassLoaderListener();
 				_pluginManager.setClassLoaderListener(listener);
 			}
-			_pluginManager.loadPlugins();
+			
+			if (args.getPluginList() != null) {
+				_pluginManager.loadPluginsFromList(args.getPluginList());
+			} else {
+				_pluginManager.loadPlugins();
+			}
 		}
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
