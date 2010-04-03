@@ -1226,7 +1226,7 @@ public class SchemaInfo
    {
       try
       {
-         if(_schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().containsKey(tableName))
+         if(_schemaInfoCache.didTryLoadingColumns(tableName))
          {
             return false;
          }
@@ -1251,12 +1251,16 @@ public class SchemaInfo
                   try
                   {
                      accessDbToLoadColumns(imutableString);
+                  }
+                  catch (Throwable th)
+                  {
+                     s_log.error("failed to load columns", th);
+                  }
+                  finally
+                  {
                      _tablesLoadingColsInBackground.remove(imutableString);
                   }
-                  catch (SQLException e)
-                  {
-                     throw new RuntimeException(e);
-                  }
+
                }
             });
          }
@@ -1281,11 +1285,19 @@ public class SchemaInfo
          s_log.warn(s_stringMgr.getString("SchemaInfo.UnableToLoadColumns", tableName));
          return;
       }
+
       String name = getCaseSensitiveTableName(tableName.toString());
-      TableInfo ti =
-         new TableInfo(null, null, name, "TABLE", null, _dmd);
-      TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
-      _schemaInfoCache.writeColumsToCache(infos, tableName);
+      TableInfo ti = new TableInfo(null, null, name, "TABLE", null, _dmd);
+
+      try
+      {
+         TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
+         _schemaInfoCache.writeColumsToCache(infos, tableName);
+      }
+      catch (Throwable th)
+      {
+         _schemaInfoCache.writeColumsNotAccessible(th, tableName);
+      }
    }
 
 
@@ -1298,7 +1310,7 @@ public class SchemaInfo
    {
       CaseInsensitiveString cissTableName = new CaseInsensitiveString(tableName);
       loadColumns(cissTableName);
-      List<ExtendedColumnInfo> extColInfo = _schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().get(cissTableName);
+      List<ExtendedColumnInfo> extColInfo = _schemaInfoCache.getExtendedColumnInfosForReadOnly(cissTableName);
 
       if (null == extColInfo)
       {

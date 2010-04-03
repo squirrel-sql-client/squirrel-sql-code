@@ -68,11 +68,7 @@ public class SchemaInfoCache implements Serializable
    private Hashtable<CaseInsensitiveString, List<ITableInfo>> _tableInfosBySimpleName = 
        new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
 
-   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extendedColumnInfosByTableName = 
-       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
-   
-   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extColumnInfosByColumnName = 
-       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
+   private SchemaInfoColumnCache _schemaInfoColumnCache = new SchemaInfoColumnCache();
 
 
    private Map<CaseInsensitiveString, String> _procedureNames = 
@@ -345,28 +341,14 @@ public class SchemaInfoCache implements Serializable
 
    public void writeColumsToCache(TableColumnInfo[] infos, CaseInsensitiveString simpleTableName)
    {
-      ArrayList<ExtendedColumnInfo> ecisInTable = new ArrayList<ExtendedColumnInfo>();
-      for (int i = 0; i < infos.length; i++)
-      {
-         ExtendedColumnInfo eci = new ExtendedColumnInfo(infos[i], simpleTableName.toString());
-         ecisInTable.add(eci);
-
-         CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-         List<ExtendedColumnInfo> ecisInColName = _extColumnInfosByColumnName.get(ciColName);
-         if(null == ecisInColName)
-         {
-            ecisInColName = new ArrayList<ExtendedColumnInfo>();
-            _extColumnInfosByColumnName.put(ciColName, ecisInColName);
-         }
-         ecisInColName.add(eci);
-      }
-
-      // Note: A CaseInsensitiveString can be a mutable string.
-      // In fact it is a mutable string here because this is usually called from
-      // within Syntax coloring which uses a mutable string.
-      CaseInsensitiveString imutableString = new CaseInsensitiveString(simpleTableName.toString());
-      _extendedColumnInfosByTableName.put(imutableString, ecisInTable);
+      _schemaInfoColumnCache.writeColumsToCache(infos, simpleTableName);
    }
+
+   public void writeColumsNotAccessible(Throwable th, CaseInsensitiveString tableName)
+   {
+      _schemaInfoColumnCache.writeColumsNotAccessible(th, tableName);
+   }
+
 
 
    void initialLoadDone()
@@ -432,8 +414,7 @@ public class SchemaInfoCache implements Serializable
       }
       _tableInfosBySimpleName.clear();
 
-      _extColumnInfosByColumnName.clear();
-      _extendedColumnInfosByTableName.clear();
+      _schemaInfoColumnCache.clearColumns();
 
 
       _procedureNames.clear();
@@ -499,20 +480,7 @@ public class SchemaInfoCache implements Serializable
                _tableNames.remove(ciSimpleTableName);
             }
 
-            List<ExtendedColumnInfo> ecisInTable = _extendedColumnInfosByTableName.remove(ciSimpleTableName);
-
-            if(null == ecisInTable)
-            {
-               // Columns have not yet been loaded 
-               continue;
-            }
-
-            for(Iterator<ExtendedColumnInfo> j=ecisInTable.iterator();j.hasNext();)
-            {
-               ExtendedColumnInfo eci = j.next();
-               CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-               _extColumnInfosByColumnName.remove(ciColName);
-            }
+            _schemaInfoColumnCache.clearColumns(ciSimpleTableName);
          }
       }
 
@@ -635,14 +603,21 @@ public class SchemaInfoCache implements Serializable
       return _tableInfosBySimpleName;
    }
 
-   Map<CaseInsensitiveString, List<ExtendedColumnInfo>> getExtendedColumnInfosByTableNameForReadOnly()
+
+   public boolean didTryLoadingColumns(CaseInsensitiveString tableName)
    {
-      return _extendedColumnInfosByTableName;
+      return _schemaInfoColumnCache.didTryLoadingColumns(tableName);
    }
+
+   public List<ExtendedColumnInfo> getExtendedColumnInfosForReadOnly(CaseInsensitiveString cissTableName)
+   {
+      return _schemaInfoColumnCache.getExtendedColumnInfosForReadOnly(cissTableName);
+   }
+
 
    Map<CaseInsensitiveString, List<ExtendedColumnInfo>> getExtColumnInfosByColumnNameForReadOnly()
    {
-      return _extColumnInfosByColumnName;
+      return _schemaInfoColumnCache.getExtColumnInfosByColumnNameForReadOnly();
    }
 
    Map<CaseInsensitiveString, String> getProcedureNamesForReadOnly()
