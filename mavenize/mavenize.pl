@@ -162,6 +162,9 @@ copyPluginsSupportProjects();
 # copy in the installer projects
 copyInstallerProjects();
 
+# copy in the integration environment project
+copyIntegrationEnvironmentProject();
+
 # copy in the translations project
 copyTranslationProjects();
 
@@ -676,6 +679,21 @@ sub findAndCopyDoc {
 	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
 `find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
 `find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+}
+
+sub copyIntegrationEnvironmentProject {
+	
+	chdirOrDie($mavenizeDir);
+	print "Copying in integration environment project\n";
+	
+	svnmkdir("$topDir/squirrelsql-integration-environment/src/main/java");
+	`tar --exclude .svn -cvf - squirrelsql-integration-environment | ( cd $installerDir; tar -xvf -)`;
+	
+	`svn st $topDir/squirrelsql-integration-environment | grep "^\?" | awk '{print \$2}' | xargs svn add`;
+	
+	setSvnIgnore("$topDir/squirrelsql-integration-environment");
+	
+	chdirOrDie($mavenizeDir);
 }
 
 sub copyInstallerProjects {
