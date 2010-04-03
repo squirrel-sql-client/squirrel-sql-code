@@ -21,6 +21,22 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
@@ -34,17 +50,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.*;
 
 /**
  * Manages plugins for the application.
@@ -753,6 +765,30 @@ public class PluginManager implements IPluginManager
 		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPluginManager#loadPluginsFromList(java.util.Iterator)
+	 */
+	@Override
+	public void loadPluginsFromList(List<String> pluginListIterator)
+	{
+		for (String className : pluginListIterator)
+		{
+			try
+			{
+				loadPlugin(Class.forName(className));
+			}
+			catch (Exception e)
+			{
+				s_log.error("Unable to load plugin class (" + className + ") from the classpath.  "
+					+ "This plugin was specified by one of the following program arguments : "
+					+ ApplicationArguments.IOptions.PLUGIN_LIST[0] + " or "
+					+ ApplicationArguments.IOptions.PLUGIN_LIST[1] + ". Either remove this argument, or ensure "
+					+ "that the plugin is on the CLASSPATH");
+			}
+		}
+
+	}
+	
    /**
 	 * A plugin implementation that serves only to identify plugins that aren't being loaded, but which are
 	 * still installed, and available to load on startup if the user changes the isLoadedOnStartup attribute.
@@ -809,4 +845,6 @@ public class PluginManager implements IPluginManager
 		}
 
 	}
+
+
 }

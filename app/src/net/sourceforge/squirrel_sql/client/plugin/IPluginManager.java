@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
 
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
@@ -136,5 +137,13 @@ public interface IPluginManager
 	public abstract void aliasCopied(SQLAlias source, SQLAlias target);
 
 	public abstract void aliasRemoved(SQLAlias alias);
+
+	/**
+	 * Loads plugins from the current CLASSPATH using the specified list of plugin classes. Each member of the 
+	 * list should be a fully qualified classname that is already in the CLASSPATH.
+	 * 
+	 * @param pluginList a list of fully qualified class names
+	 */
+	public abstract void loadPluginsFromList(List<String> pluginList);
 
 }
