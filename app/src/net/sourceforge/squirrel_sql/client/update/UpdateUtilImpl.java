@@ -94,7 +94,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class UpdateUtilImpl implements UpdateUtil
 {
 	static {
-		ApplicationArguments.initialize(new String[] {});
+		ApplicationArguments.getInstance();
 	}
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(UpdateUtilImpl.class);
