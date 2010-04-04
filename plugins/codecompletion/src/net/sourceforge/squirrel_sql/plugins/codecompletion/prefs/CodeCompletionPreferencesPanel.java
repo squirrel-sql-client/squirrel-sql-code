@@ -23,7 +23,8 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
 	JButton btnNewRow;
 	JButton btnDeleteRows;
-   JTextField txtMaxLastSelectedCompletionNamesPanel;
+   JTextField txtMaxLastSelectedCompletionNames;
+   JCheckBox chkShowRemarksInColumnCompletion;
 
 
    public CodeCompletionPreferencesPanel()
@@ -86,6 +87,9 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
       gbc = new GridBagConstraints(0,9,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
       add(createMaxLastSelectedCompletionNamesPanel(),gbc);
+
+      gbc = new GridBagConstraints(0,10,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      add(createShowRemarksInColumnCompletionPanel(),gbc);
    }
 
 
@@ -106,14 +110,40 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
       gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0);
       NumberFormat format = NumberFormat.getIntegerInstance();
-      txtMaxLastSelectedCompletionNamesPanel = new JFormattedTextField(format);
-      txtMaxLastSelectedCompletionNamesPanel.setPreferredSize(new Dimension(30, txtMaxLastSelectedCompletionNamesPanel.getPreferredSize().height));
+      txtMaxLastSelectedCompletionNames = new JFormattedTextField(format);
+      txtMaxLastSelectedCompletionNames.setPreferredSize(new Dimension(30, txtMaxLastSelectedCompletionNames.getPreferredSize().height));
 
-      ret.add(txtMaxLastSelectedCompletionNamesPanel, gbc);
+      ret.add(txtMaxLastSelectedCompletionNames, gbc);
 
       // i18n[CodeCompletionPreferencesPanel.numberOfTables=number of tables]
       gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0);
       ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.numberOfTables")), gbc);
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      return ret;
+   }
+
+   private JPanel createShowRemarksInColumnCompletionPanel()
+   {
+      JPanel ret = new JPanel();
+
+      ret.setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      // i18n[CodeCompletionPreferencesPanel.showRemarksInColumnCompletionNote=
+      // Choose this option to see column remarks in code completion lists.\n
+      // Note: If you change this option on a running Session you need to do a Session cache refresh (F5)]
+      MultipleLineLabel lbl = new MultipleLineLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.showRemarksInColumnCompletionNote"));
+      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+      ret.add(lbl, gbc);
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0);
+      // i18n[CodeCompletionPreferencesPanel.showRemarksInColumnCompletionChk=Show remarks in column completion]
+      chkShowRemarksInColumnCompletion = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.showRemarksInColumnCompletionChk"));
+      ret.add(chkShowRemarksInColumnCompletion, gbc);
+
 
       ret.setBorder(BorderFactory.createEtchedBorder());
 

@@ -15,7 +15,6 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    private String _procName;
    private int _procType;
    private ISession _session;
-	private CodeCompletionPlugin _plugin;
    private boolean _useCompletionPrefs;
    private String _catalog;
    private String _schema;
@@ -30,14 +29,13 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	 */
 	private CodeCompletionPreferences _prefs;
 
-   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema, boolean useCompletionPrefs)
+   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, String catalog, String schema, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
    {
       _procName = procName;
       _procType = procType;
       _session = session;
-      _plugin = plugin;
       _useCompletionPrefs = useCompletionPrefs;
-      _prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
+      _prefs = prefs;
       _catalog = catalog;
       _schema = schema;
 

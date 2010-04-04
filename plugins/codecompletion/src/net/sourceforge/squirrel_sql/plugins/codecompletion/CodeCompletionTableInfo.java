@@ -31,14 +31,18 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    String _toString;
    private String _catalog;
    private String _schema;
+   private boolean _useCompletionPrefs;
+   private boolean _showRemarksInColumnCompletion;
 
 
-   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema)
+   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
    {
       _tableName = tableName;
       _tableType = tableType;
       _catalog = catalog;
       _schema = schema;
+      _useCompletionPrefs = useCompletionPrefs;
+      _showRemarksInColumnCompletion = showRemarksInColumnCompletion;
 
 
       if(null != _tableType && !"TABLE".equals(_tableType))
@@ -90,10 +94,14 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             {
                String columnName = schemColInfos[i].getColumnName();
                String columnType = schemColInfos[i].getColumnType();
+               String remarks = schemColInfos[i].getRemarks();
                int columnSize = schemColInfos[i].getColumnSize();
                int decimalDigits = schemColInfos[i].getDecimalDigits();
                boolean nullable = schemColInfos[i].isNullable();
-               CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
+
+               CodeCompletionColumnInfo buf =
+                  new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _showRemarksInColumnCompletion);
+
                String bufStr = buf.toString();
                if (!uniqCols.contains(bufStr))
                {

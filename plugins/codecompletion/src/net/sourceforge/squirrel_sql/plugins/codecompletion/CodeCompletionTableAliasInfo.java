@@ -25,9 +25,9 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 
    private String _toString;
 
-   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo)
+   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
 	{
-		super(aliasInfo.tableName, "TABLE", null, null);
+		super(aliasInfo.tableName, "TABLE", null, null, useCompletionPrefs, showRemarksInColumnCompletion);
 		_aliasInfo = aliasInfo;
       _toString = _aliasInfo.aliasName + " (Alias for " + _aliasInfo.tableName + ")";
 	}

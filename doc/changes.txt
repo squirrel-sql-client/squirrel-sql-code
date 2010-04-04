@@ -7,6 +7,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Code completion Plugin:
+ - Users may choose to see column remarks in completion lists.
+   See Menu File --> New Session Properties --> Code Completion --> Checkbox an bottom of panel
+
 Hibernate Plugin:
   - Results of HQL Queries can be displayed as objects
   - Hibernate logs can be seen in SQuirreL logs when Hibernate logging is configured for console output.

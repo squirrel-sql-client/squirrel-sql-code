@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 import javax.swing.*;
 import java.util.*;
@@ -34,14 +35,14 @@ public class CodeCompletionInfoCollection
 		StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
 
 
-	private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema = 
+   private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema =
 	    new Hashtable<String, Vector<CodeCompletionInfo>>();
-   private Vector<CodeCompletionInfo> _aliasCompletionInfos = 
+   private Vector<CodeCompletionInfo> _aliasCompletionInfos =
        new Vector<CodeCompletionInfo>();
 
-   private Vector<CodeCompletionSchemaInfo> _schemas = 
+   private Vector<CodeCompletionSchemaInfo> _schemas =
        new Vector<CodeCompletionSchemaInfo>();
-   private Vector<CodeCompletionCatalogInfo> _catalogs = 
+   private Vector<CodeCompletionCatalogInfo> _catalogs =
        new Vector<CodeCompletionCatalogInfo>();
 
 	private ISession _session;
@@ -52,12 +53,15 @@ public class CodeCompletionInfoCollection
 
 	// i18n[codecompletion.listTruncated=Completion list truncated. Narrow by typing to get missing entries.]
 	private static final String TOO_MANY_COMPLETION_INFOS = s_stringMgr.getString("codecompletion.listTruncated");
+   private CodeCompletionPreferences _prefs;
 
-	public CodeCompletionInfoCollection(ISession session, CodeCompletionPlugin plugin, boolean useCompletionPrefs)
+   public CodeCompletionInfoCollection(ISession session, CodeCompletionPlugin plugin, boolean useCompletionPrefs)
 	{
 		_session = session;
 		_plugin = plugin;
       _useCompletionPrefs = useCompletionPrefs;
+
+      _prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
 
       _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
       {
@@ -90,8 +94,9 @@ public class CodeCompletionInfoCollection
 
          ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog, schema);
 
-         Hashtable<String, CodeCompletionInfo> completionInfoByUcTableName = 
-             new Hashtable<String, CodeCompletionInfo>();
+         Hashtable<String, CodeCompletionInfo> completionInfoByUcTableName = new Hashtable<String, CodeCompletionInfo>();
+
+
          for (int i = 0; i < tables.length; i++)
          {
             String ucTableName = tables[i].getSimpleName().toUpperCase();
@@ -101,7 +106,9 @@ public class CodeCompletionInfoCollection
             CodeCompletionTableInfo tableInfo = new CodeCompletionTableInfo(tables[i].getSimpleName(),
                                                                             tables[i].getType(),
                                                                             tables[i].getCatalogName(),
-                                                                            tables[i].getSchemaName());
+                                                                            tables[i].getSchemaName(),
+                                                                            _useCompletionPrefs,
+                                                                            _prefs.isShowRemarksInColumnCompletion());
 
             if(null != dupl)
             {
@@ -120,10 +127,10 @@ public class CodeCompletionInfoCollection
                new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(),
                   storedProceduresInfos[i].getProcedureType(),
                   _session,
-                  _plugin,
                   catalog,
                   schema,
-                  _useCompletionPrefs);
+                  _useCompletionPrefs,
+                  _prefs);
             completionInfos.add(buf);
          }
 
@@ -288,7 +295,7 @@ public class CodeCompletionInfoCollection
 		{
          if(false == aliasInfos[i].aliasName.startsWith("#"))
          {
-			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i]));
+			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i], _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion()));
          }
 		}
 	}
