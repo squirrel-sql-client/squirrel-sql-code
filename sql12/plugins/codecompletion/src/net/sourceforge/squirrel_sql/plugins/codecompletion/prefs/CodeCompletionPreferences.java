@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionPlugin;
+
 import java.io.Serializable;
 
 public class CodeCompletionPreferences implements Serializable
@@ -12,6 +14,7 @@ public class CodeCompletionPreferences implements Serializable
 	private int generalCompletionConfig = CONFIG_SP_WITH_PARARMS;
 	private PrefixedConfig[] prefixedConfigs = new PrefixedConfig[0];
    private int maxLastSelectedCompletionNames = 1;
+   private boolean _showRemarksInColumnCompletion;
 
    public int getGeneralCompletionConfig()
 	{
@@ -42,5 +45,14 @@ public class CodeCompletionPreferences implements Serializable
    {
       this.maxLastSelectedCompletionNames = maxLastSelectedCompletionNames;
    }
+
+   public boolean isShowRemarksInColumnCompletion()
+   {
+      return _showRemarksInColumnCompletion;
+   }
+
+   public void setShowRemarksInColumnCompletion(boolean b)
+   {
+      _showRemarksInColumnCompletion = b;
+   }
 }
-// Just a Test

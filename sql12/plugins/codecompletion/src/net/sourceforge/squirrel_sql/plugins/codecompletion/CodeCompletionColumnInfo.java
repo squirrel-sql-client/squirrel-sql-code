@@ -18,30 +18,43 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 
-import java.sql.Types;
-
-
 public class CodeCompletionColumnInfo extends CodeCompletionInfo
 {
    private String _columnName;
    private String _columnType;
    private int _columnSize;
    private boolean _nullable;
+   private boolean _useCompletionPrefs;
+   private boolean _showRemarksInColumnCompletion;
 
    private String _toString;
    private int _decimalDigits;
 
+   private String _remarks;
 
-   public CodeCompletionColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
+
+   public CodeCompletionColumnInfo(String columnName, String remarks, String columnType, int columnSize, int decimalDigits, boolean nullable, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
    {
       _columnName = columnName;
       _columnType = columnType;
       _columnSize = columnSize;
       _decimalDigits = decimalDigits;
       _nullable = nullable;
-
+      _useCompletionPrefs = useCompletionPrefs;
+      _showRemarksInColumnCompletion = showRemarksInColumnCompletion;
       String decimalDigitsString = 0 == _decimalDigits ? "" : "," + _decimalDigits;
-      _toString = _columnName + "  " + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
+      _remarks = remarks;
+      _toString = _columnName + getRemarksString() + _columnType + "(" + _columnSize + decimalDigitsString + ") " + (_nullable? "NULL": "NOT NULL");
+   }
+
+   private String getRemarksString()
+   {
+      String ret = " ";
+      if (_showRemarksInColumnCompletion && null != _remarks && 0 < _remarks.trim().length())
+      {
+         ret = " (" + _remarks + ")  ";
+      }
+      return ret;
    }
 
    public String getCompareString()

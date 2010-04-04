@@ -34,6 +34,7 @@ public class ExtendedColumnInfo implements Serializable
    private String _schem;
    private String _simpleTableName;
    private String _qualifiedName;
+   private String _remarks;
 
    public ExtendedColumnInfo(TableColumnInfo info, String simpleTableName)
    {
@@ -41,6 +42,7 @@ public class ExtendedColumnInfo implements Serializable
       _columnType = info.getTypeName();
       _columnSize = info.getColumnSize();
       _decimalDigits = info.getDecimalDigits();
+      _remarks = info.getRemarks();
       if ("YES".equals(info.isNullable()))
       {
          _nullable = true;
@@ -89,6 +91,11 @@ public class ExtendedColumnInfo implements Serializable
    public String getSchema()
    {
       return _schem;
+   }
+
+   public String getRemarks()
+   {
+      return _remarks;
    }
 
    public String getSimpleTableName()

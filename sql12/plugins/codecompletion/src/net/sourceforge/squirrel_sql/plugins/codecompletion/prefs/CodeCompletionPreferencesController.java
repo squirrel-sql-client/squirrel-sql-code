@@ -67,7 +67,9 @@ public class CodeCompletionPreferencesController
 		_panel.tblPrefixes.addColumn(tcCompletionConfig);
 
 
-      _panel.txtMaxLastSelectedCompletionNamesPanel.setText("" + _prefs.getMaxLastSelectedCompletionNames());
+      _panel.txtMaxLastSelectedCompletionNames.setText("" + _prefs.getMaxLastSelectedCompletionNames());
+
+      _panel.chkShowRemarksInColumnCompletion.setSelected(_prefs.isShowRemarksInColumnCompletion());
 
 
       _panel.btnNewRow.addActionListener(new ActionListener()
@@ -160,13 +162,14 @@ public class CodeCompletionPreferencesController
 
       try
       {
-         _prefs.setMaxLastSelectedCompletionNames(Math.max(0, Integer.parseInt(_panel.txtMaxLastSelectedCompletionNamesPanel.getText())));
+         _prefs.setMaxLastSelectedCompletionNames(Math.max(0, Integer.parseInt(_panel.txtMaxLastSelectedCompletionNames.getText())));
       }
       catch (NumberFormatException e)
       {
 
       }
 
+      _prefs.setShowRemarksInColumnCompletion(_panel.chkShowRemarksInColumnCompletion.isSelected());
 
    }
 
