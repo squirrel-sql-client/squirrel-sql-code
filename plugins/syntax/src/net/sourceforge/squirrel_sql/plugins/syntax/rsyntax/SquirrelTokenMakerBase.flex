@@ -201,11 +201,11 @@ import org.fife.ui.rsyntaxtextarea.*;
 	 * Resets the scanner to read from a new input stream.
 	 * Does not close the old reader.
 	 *
-	 * All internal variables are reset, the old input stream 
+	 * All internal variables are reset, the old input stream
 	 * <b>cannot</b> be reused (internal buffer is discarded and lost).
 	 * Lexical state is set to <tt>YY_INITIAL</tt>.
 	 *
-	 * @param reader   the new input stream 
+	 * @param reader   the new input stream
 	 */
 	public final void yyreset(java.io.Reader reader) {
 		// 's' has been updated.
@@ -259,35 +259,35 @@ MLCEnd			= "*/"
 %%
 
 <YYINITIAL> {
-	{LineTerminator}				{ addNullToken(); return firstToken; }
+    {LineTerminator}				{ addNullToken(); return firstToken; }
 
-	{Identifier}					{ addToken(Token.IDENTIFIER); }
+    {Identifier}					{ addToken(Token.IDENTIFIER); }
 
-	{Parameter}					{ addToken(Token.IDENTIFIER); }
+    {Parameter}					{ addToken(Token.IDENTIFIER); }
 
-	{Comment}						{ addToken(Token.COMMENT_EOL); }
-	{MLCBegin}					{ start = zzMarkedPos-2; yybegin(MLC); }
+    {Comment}						{ addToken(Token.COMMENT_EOL); }
+    {MLCBegin}					{ start = zzMarkedPos-2; yybegin(MLC); }
 
-	{Whitespace}					{ addToken(Token.WHITESPACE); }
+    {Whitespace}					{ addToken(Token.WHITESPACE); }
 
-	{Operator}					{ addToken(Token.OPERATOR); }
-	{Separator}					{ addToken(Token.SEPARATOR); }
+    {Operator}					{ addToken(Token.OPERATOR); }
+    {Separator}					{ addToken(Token.SEPARATOR); }
 
-	{Integer}						{ addToken(Token.LITERAL_NUMBER_DECIMAL_INT); }
-	{Float}						{ addToken(Token.LITERAL_NUMBER_FLOAT); }
-	{ApproxNum}					{ addToken(Token.LITERAL_NUMBER_FLOAT); }
+    {Integer}						{ addToken(Token.LITERAL_NUMBER_DECIMAL_INT); }
+    {Float}						{ addToken(Token.LITERAL_NUMBER_FLOAT); }
+    {ApproxNum}					{ addToken(Token.LITERAL_NUMBER_FLOAT); }
 
-	"\""							{ start = zzMarkedPos-1; yybegin(STRING); }
-	"\'"							{ start = zzMarkedPos-1; yybegin(CHAR); }
+    "\""							{ start = zzMarkedPos-1; yybegin(STRING); }
+    "\'"							{ start = zzMarkedPos-1; yybegin(CHAR); }
 
-	"["[^\]]*"]"					{ addToken(Token.PREPROCESSOR); }
-	"["[^\]]*						{ addToken(Token.ERROR_IDENTIFIER); addNullToken(); return firstToken; }
+    "["[^\]]*"]"					{ addToken(Token.PREPROCESSOR); }
+    "["[^\]]*						{ addToken(Token.ERROR_IDENTIFIER); addNullToken(); return firstToken; }
 
-	<<EOF>>						{ addNullToken(); return firstToken; }
+    <<EOF>>						{ addNullToken(); return firstToken; }
 
-	/* Catch any other (unhandled) characters and flag them as OK; */
-	/* I don't know enough about SQL to know what's really invalid. */
-	.							{ addToken(Token.IDENTIFIER); }
+    /* Catch any other (unhandled) characters and flag them as OK; */
+    /* I don't know enough about SQL to know what's really invalid. */
+    .							{ addToken(Token.IDENTIFIER); }
 
 }
 
