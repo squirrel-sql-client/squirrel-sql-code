@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -75,6 +76,8 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tokenizer.MysqlQueryTokenizer;
+import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQL5ByteTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.mysql.types.MySQLByteTypeDataTypeComponentFactory;
 
 /**
  * MySQL plugin class.
@@ -256,6 +259,16 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		_prefsManager = new PluginQueryTokenizerPreferencesManager();
 		_prefsManager.initialize(this, new MysqlPreferenceBean());
+		
+      /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
+      CellComponentFactory.registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory(),
+                                                   -6,
+                                                   "TINYINT UNSIGNED");
+      /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
+      CellComponentFactory.registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory(),
+                                                   -6,
+                                                   "TINYINT UNSIGNED");
+
 	}
 
 	/**
