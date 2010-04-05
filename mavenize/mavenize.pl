@@ -162,9 +162,6 @@ copyPluginsSupportProjects();
 # copy in the installer projects
 copyInstallerProjects();
 
-# copy in the integration environment project
-copyIntegrationEnvironmentProject();
-
 # copy in the translations project
 copyTranslationProjects();
 
@@ -203,6 +200,9 @@ find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/sr
 
 # Miscellaneous
 installLafPluginAssembly();
+
+# copy in the integration environment project
+copyIntegrationEnvironmentProject();
 
 removeRemainingUnnecessaryFiles();
 
