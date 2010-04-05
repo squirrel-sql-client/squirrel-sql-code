@@ -458,7 +458,7 @@ sub wanted_for_testsources {
 		print "pluginName: $pluginName\n";
 
 		svnmkdir("$pluginsDir/$pluginName/src/test/java/$relativeDir");
-		`svn add $pluginsDir/$pluginName/src/test`;
+		`svn add --quiet $pluginsDir/$pluginName/src/test`;
 		`svn move $File::Find::name $pluginsDir/$pluginName/src/test/java/$relativeDir`;
 
 	}
@@ -530,7 +530,7 @@ sub copyPluginsSupportProjects {
 	
 	svnmkdir("$pluginsDir/squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies");
 	`tar --exclude .svn -cvf - squirrelsql-plugins-assembly-descriptor | ( cd $pluginsDir; tar -xvf -)`;
-	`svn st $pluginsDir/squirrelsql-plugins-assembly-descriptor | grep "^\?" | awk '{print $2}' | xargs svn add`;
+	`svn st $pluginsDir/squirrelsql-plugins-assembly-descriptor | grep "^\?" | awk '{print \$2}' | xargs svn add`;
 
 	svnmkdir("$pluginsDir/squirrelsql-plugins-parent-pom");
 	`cp $mavenizeDir/squirrelsql-plugins-parent-pom/pom.xml $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
@@ -686,10 +686,7 @@ sub copyIntegrationEnvironmentProject {
 	chdirOrDie($mavenizeDir);
 	print "Copying in integration environment project\n";
 	
-	svnmkdir("$topDir/squirrelsql-integration-environment/src/main/java");
-	`tar --exclude .svn -cvf - squirrelsql-integration-environment | ( cd $installerDir; tar -xvf -)`;
-	
-	`svn st $topDir/squirrelsql-integration-environment | grep "^\?" | awk '{print \$2}' | xargs svn add`;
+	`svn move $mavenizeDir/squirrelsql-integration-environment $topDir`; 
 	
 	setSvnIgnore("$topDir/squirrelsql-integration-environment");
 	
@@ -748,6 +745,7 @@ sub setSvnIgnore {
 
 sub chdirOrDie {
 	my $newDir = shift;
+	print "Changing directory to $newDir";
 	chdir($newDir) or die "Couldn't change directory to $newDir: $!\n";
 }
 
