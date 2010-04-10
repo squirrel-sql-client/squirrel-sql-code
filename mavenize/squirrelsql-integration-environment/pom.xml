@@ -217,6 +217,12 @@
 					<classifier>jdk16</classifier>
 					<scope>test</scope>
 				</dependency>
+				<dependency>
+					<groupId>geronimo-spec</groupId>
+					<artifactId>geronimo-spec-j2ee-connector</artifactId>
+					<version>1.5-rc4</version>				
+					<scope>test</scope>
+				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
