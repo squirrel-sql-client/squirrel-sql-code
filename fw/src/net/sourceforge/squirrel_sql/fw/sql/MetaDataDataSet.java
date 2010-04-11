@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -216,6 +217,29 @@ public class MetaDataDataSet implements IDataSet
 			}
 
 		}
+		else if (line[0].equals("getClientInfoProperties")) 
+		{
+			Object obj = executeGetter(md, getter);
+			if (obj instanceof ResultSet) {
+				ResultSet rs = (ResultSet)obj;
+				try {
+					StringBuilder tmp = new StringBuilder();
+					while (rs.next()) {
+						tmp.append(rs.getString(1)).append("\t");
+						tmp.append(rs.getInt(2)).append("\t");
+						tmp.append(rs.getString(3)).append("\t");
+						tmp.append(rs.getString(4)).append("\n");
+					}
+					line[1] = tmp.toString();
+				} catch (SQLException ex) {
+					_msgHandler.showMessage(ex, null);
+				} finally {
+					SQLUtilities.closeResultSet(rs);
+				}
+			} else {
+				line[1] = obj;
+			}
+		} 
 		else
 		{
 			Object obj = executeGetter(md, getter);
