@@ -304,6 +304,21 @@
 			</dependencies>
 		</profile>
 		<profile>
+			<id>ingres-3.4</id>
+			<activation>
+				<property>
+					<name>ingres-3.4</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.ingres</groupId>
+					<artifactId>iijdbc</artifactId>
+					<version>3.4</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
 			<id>pointbase-5.1</id>
 			<activation>
 				<property>
