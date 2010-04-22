@@ -31,6 +31,13 @@ public class ScriptCdlCommand
 
    public void execute()
    {
+      if(false == VersionInfo.is5(_session))
+      {
+         VersionInfo.showNotSupported(_session);
+         return;
+      }
+
+
       String names = getSelectedNames();
 
       if(null == names || 0 == names.trim().length())
