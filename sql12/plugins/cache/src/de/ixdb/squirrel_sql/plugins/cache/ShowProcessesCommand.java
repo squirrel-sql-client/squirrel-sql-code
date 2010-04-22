@@ -70,6 +70,13 @@ public class ShowProcessesCommand
    {
       try
       {
+
+         if(false == VersionInfo.is5(_session))
+         {
+            VersionInfo.showNotSupported(_session);
+            return 1;
+         }
+         
          Database conn =  (JBindDatabase) CacheDatabase.getDatabase(session.getSQLConnection().getConnection());
 
          Id id = new Id(processData.pid);
@@ -99,7 +106,17 @@ public class ShowProcessesCommand
       throws CacheException, SQLException
    {
       Database conn =  (JBindDatabase) CacheDatabase.getDatabase(session.getSQLConnection().getConnection());
-      CacheQuery qryNamespaces = new CacheQuery(conn, "%SYSTEM.Process", "CONTROLPANEL");
+      CacheQuery qryNamespaces;
+
+      if (VersionInfo.is5(_session))
+      {
+         qryNamespaces = new CacheQuery(conn, "%SYSTEM.Process", "CONTROLPANEL");
+      }
+      else
+      {
+         qryNamespaces = new CacheQuery(conn, "%SYS.ProcessQuery", "CONTROLPANEL");
+      }
+
       ResultSet procList = qryNamespaces.execute(new Object[]{"*"});
 
       Vector procData = new Vector();
@@ -110,9 +127,12 @@ public class ShowProcessesCommand
 
       ProcessData[] ret = (ProcessData[]) procData.toArray(new ProcessData[procData.size()]);
 
-      fillLocks(ret);
+      if (VersionInfo.is5(_session))
+      {
+         fillLocks(ret);
 
-      fillBlocksAndDeadLocks(ret);
+         fillBlocksAndDeadLocks(ret);
+      }
 
 
       return ret;

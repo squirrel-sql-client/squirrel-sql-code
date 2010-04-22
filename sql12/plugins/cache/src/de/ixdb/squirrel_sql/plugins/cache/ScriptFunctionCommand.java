@@ -30,6 +30,13 @@ public class ScriptFunctionCommand
 
    public void execute()
    {
+      if(false == VersionInfo.is5(_session))
+      {
+         VersionInfo.showNotSupported(_session);
+         return;
+      }
+      
+
       String[] funcNames = getSelectedFunctions();
 
       if(0 == funcNames.length)
