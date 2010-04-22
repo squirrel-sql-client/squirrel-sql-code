@@ -11,11 +11,23 @@ public class SingleResult implements IResult
 
    public SingleResult(Object object, MappedClassInfo mappedClassInfo)
    {
+      this(null, object, mappedClassInfo);
+   }
+
+   public SingleResult(String propertyNameInParent, Object object, MappedClassInfo mappedClassInfo)
+   {
       _object = object;
       _mappedClassInfo = mappedClassInfo;
 
 
-      _toString = _mappedClassInfo.getClassName();
+      _toString = "";
+
+      if(null != propertyNameInParent)
+      {
+         _toString = propertyNameInParent + ": ";    
+      }
+
+      _toString += _mappedClassInfo.getClassName();
 
       if (null == _object)
       {

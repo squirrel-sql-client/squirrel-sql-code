@@ -52,7 +52,7 @@ public class ViewObjectsUtil
          }
          else if (null != findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, true))
          {
-            SingleResult buf = new SingleResult(hpr.getValue(), findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, false));
+            SingleResult buf = new SingleResult(propertyName, hpr.getValue(), findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, false));
             parent.add(new DefaultMutableTreeNode(buf));
          }
          else
