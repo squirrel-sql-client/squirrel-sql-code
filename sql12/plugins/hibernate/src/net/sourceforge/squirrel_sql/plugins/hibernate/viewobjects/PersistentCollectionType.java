@@ -14,18 +14,18 @@ public class PersistentCollectionType implements IType
    private boolean _wasInitalized;
    private String _toString;
 
-   public PersistentCollectionType(SingleType singleType, boolean wasInitalized)
+   public PersistentCollectionType(String propertyName, SingleType singleType, boolean wasInitalized)
    {
       _singleType = singleType;
       _wasInitalized = wasInitalized;
 
       if(_wasInitalized)
       {
-         _toString = s_stringMgr.getString("PersistentCollectionType.initialized", _singleType.getMappedClassInfo().getClassName());
+         _toString = s_stringMgr.getString("PersistentCollectionType.initialized", propertyName, _singleType.getMappedClassInfo().getClassName());
       }
       else
       {
-         _toString = s_stringMgr.getString("PersistentCollectionType.uninitialized", _singleType.getMappedClassInfo().getClassName());
+         _toString = s_stringMgr.getString("PersistentCollectionType.uninitialized", propertyName, _singleType.getMappedClassInfo().getClassName());
       }
    }
 

@@ -17,8 +17,14 @@ public class SingleType implements IType
    private Class _persistenCollectionClass;
    private ArrayList<SingleResult> _results = new ArrayList<SingleResult>();
    private ArrayList<IType> _kidTypes;
+   private String _toString;
 
    public SingleType(MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   {
+      this(null, mappedClassInfo, allMappedClassInfos, persistenCollectionClass, objects);
+   }
+
+   public SingleType(String propertyName, MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
    {
       _mappedClassInfo = mappedClassInfo;
       _allMappedClassInfos = allMappedClassInfos;
@@ -26,8 +32,18 @@ public class SingleType implements IType
 
       for (Object object : objects)
       {
-         _results.add(new SingleResult(object, mappedClassInfo));
+         _results.add(new SingleResult(propertyName, object, mappedClassInfo));
       }
+
+      if (null == propertyName)
+      {
+         _toString = _mappedClassInfo.getClassName();
+      }
+      else
+      {
+         _toString = propertyName + ": " + _mappedClassInfo.getClassName();
+      }
+
    }
 
 
@@ -94,10 +110,10 @@ public class SingleType implements IType
 
          if(null != mci)
          {
-            SingleType singleType = new SingleType(mci, _allMappedClassInfos, _persistenCollectionClass, objects);
+            SingleType singleType = new SingleType(propertyName, mci, _allMappedClassInfos, _persistenCollectionClass, objects);
             if(persistentCollection)
             {
-               _kidTypes.add(new PersistentCollectionType(singleType, persistentCollectionInitialized));
+               _kidTypes.add(new PersistentCollectionType(propertyName, singleType, persistentCollectionInitialized));
             }
             else
             {
@@ -141,7 +157,7 @@ public class SingleType implements IType
    @Override
    public String toString()
    {
-      return _mappedClassInfo.getClassName();
+      return _toString;
    }
 
 
