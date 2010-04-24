@@ -1025,19 +1025,18 @@ public class CellComponentFactory {
             dataTypeComponent = new DataTypeByte(table, colDef);
             break;
 
-         // TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-         // brings back -9 for nvarchar columns in
-         // MS SQL Server tables.
          case Types.CHAR:
+         case Types.NCHAR:
          case Types.VARCHAR:
+         case Types.NVARCHAR:
          case Types.LONGVARCHAR:
-         case -9:
+         case Types.LONGNVARCHAR:
             // set up for string types
             dataTypeComponent = new DataTypeString(table, colDef);
             break;
 
          // -8 is ROWID in Oracle. It's a string, but it's auto-assigned
-         case -8:
+         case Types.ROWID:
             dataTypeComponent = new DataTypeString(table, colDef);
             // Oracle jdbc driver doesn't properly identify this column
             // in ResultSetMetaData as read-only. For now, just use
@@ -1060,6 +1059,13 @@ public class CellComponentFactory {
             dataTypeComponent = new DataTypeClob(table, colDef);
             break;
 
+	      // TODO: ResultSet has it's own NCLOB support (rs.getNClob(i)).  It is probably not valid to 
+	      // call getClob on an NClob column ??  So, may need to implement new DataTypeNClob type 
+	      // component (see below):  
+	      // 
+	      //case Types.NCLOB:
+	      //  dataTypeComponent = new DataTypeNClob(table, colDef);
+            
          case Types.OTHER:
             dataTypeComponent = new DataTypeOther(table, colDef);
             break;
