@@ -309,16 +309,13 @@ public class ResultSetReader
                case Types.TINYINT:
                   row[i] = readInt(idx, columnTypeName);
                   break;
-
-               // TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-               // brings back -9 for nvarchar columns in
-               // MS SQL Server tables.
-               // -8 is ROWID in Oracle.
                case Types.CHAR:
+               case Types.NCHAR:
                case Types.VARCHAR:
+               case Types.NVARCHAR:
                case Types.LONGVARCHAR:
-               case -9:
-               case -8:
+               case Types.LONGNVARCHAR:
+               case Types.ROWID:
                   row[i] = _rs.getString(idx);
                   if (_rs.wasNull()) {
                      row[i] = null;
@@ -352,6 +349,13 @@ public class ResultSetReader
 
                   break;
 
+               // TODO: ResultSet has it's own NCLOB support (rs.getNClob(i)).  It is probably not valid to 
+               // call getClob on an NClob column ??  So, may need to implement new DataTypeNClob type 
+               // component (see below):  
+               // 
+               //case Types.NCLOB:
+               //  row[i] = DataTypeNClob.staticReadResultSet(_rs, idx);
+                  
                // Add begin
                case Types.JAVA_OBJECT:
                   row[i] = readObject(idx);
