@@ -378,8 +378,8 @@
 			<dependencies>
 				<dependency>
 					<groupId>com.microsoft</groupId>
-					<artifactId>sqljdbc</artifactId>
-					<version>1.2.2828.100</version>
+					<artifactId>sqljdbc4</artifactId>
+					<version>2.0.1803.100</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
