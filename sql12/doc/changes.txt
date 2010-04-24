@@ -2,8 +2,8 @@ SQuirreL SQL Client Change Log
 ==============================
 
 
-Not yet released - available from SVN or in the latest snapshot:
-----------------------------------------------------------------
+3.1.1 (4/24/2010)
+================
 
 Enhancements:
 
@@ -19,6 +19,7 @@ Hibernate Plugin:
 Bug-Fixes:
 
 2991709: Quotes missing in squirrel-sql.bat
+2990527: nChar() is unknown field
 2982594 / 2988387: RSyntax editor crash
 When database errors occured while loading table columns, SQuirreL slowed down and produced a lot of log messages.
 2981691 / 2981694: squirrel-sql.bat fails on Windows 7 64 bit
