@@ -1,6 +1,6 @@
 @echo off
 
-@rem IZPACK_JAVA is filtered in by the IzPack installer (via %JAVA_HOME) when this script is installed
+@rem IZPACK_JAVA is filtered in by the IzPack installer when this script is installed
 set IZPACK_JAVA=%JAVA_HOME
 
 @rem We detect the java executable to use according to the following algorithm:
