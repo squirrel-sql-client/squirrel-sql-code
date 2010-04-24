@@ -43,23 +43,25 @@ public class ExtendedColumnInfoTest extends AbstractSerializableTest
 	public void setUp() throws Exception
 	{
 
-		expect(tcinfo1.getCatalogName()).andReturn("testCatalog1").anyTimes();
-		expect(tcinfo1.getSchemaName()).andReturn("testSchema1").anyTimes();
-		expect(tcinfo1.getTableName()).andReturn("testTable1").anyTimes();
-		expect(tcinfo1.getColumnName()).andReturn("testColumn1").anyTimes();
-		expect(tcinfo1.getTypeName()).andReturn("integer").anyTimes();
-		expect(tcinfo1.getColumnSize()).andReturn(10).anyTimes();
-		expect(tcinfo1.getDecimalDigits()).andReturn(0).anyTimes();
-		expect(tcinfo1.isNullable()).andReturn("YES").anyTimes();
+		expect(tcinfo1.getCatalogName()).andStubReturn("testCatalog1");
+		expect(tcinfo1.getSchemaName()).andStubReturn("testSchema1");
+		expect(tcinfo1.getTableName()).andStubReturn("testTable1");
+		expect(tcinfo1.getColumnName()).andStubReturn("testColumn1");
+		expect(tcinfo1.getTypeName()).andStubReturn("integer");
+		expect(tcinfo1.getColumnSize()).andStubReturn(10);
+		expect(tcinfo1.getDecimalDigits()).andStubReturn(0);
+		expect(tcinfo1.isNullable()).andStubReturn("YES");
+		expect(tcinfo1.getRemarks()).andStubReturn("testRemarks");
 
-		expect(tcinfo2.getCatalogName()).andReturn("testCatalog2").anyTimes();
-		expect(tcinfo2.getSchemaName()).andReturn("testSchema2").anyTimes();
-		expect(tcinfo2.getTableName()).andReturn("testTable2").anyTimes();
-		expect(tcinfo2.getColumnName()).andReturn("testColumn2").anyTimes();
-		expect(tcinfo2.getTypeName()).andReturn("integer").anyTimes();
-		expect(tcinfo2.getColumnSize()).andReturn(10).anyTimes();
-		expect(tcinfo2.getDecimalDigits()).andReturn(0).anyTimes();
-		expect(tcinfo2.isNullable()).andReturn("YES").anyTimes();
+		expect(tcinfo2.getCatalogName()).andStubReturn("testCatalog2");
+		expect(tcinfo2.getSchemaName()).andStubReturn("testSchema2");
+		expect(tcinfo2.getTableName()).andStubReturn("testTable2");
+		expect(tcinfo2.getColumnName()).andStubReturn("testColumn2");
+		expect(tcinfo2.getTypeName()).andStubReturn("integer");
+		expect(tcinfo2.getColumnSize()).andStubReturn(10);
+		expect(tcinfo2.getDecimalDigits()).andStubReturn(0);
+		expect(tcinfo2.isNullable()).andStubReturn("YES");
+		expect(tcinfo2.getRemarks()).andStubReturn("testRemarks");
 
 		mockHelper.replayAll();
 
