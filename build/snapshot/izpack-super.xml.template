@@ -120,11 +120,8 @@
 				<exclude
 					name="squirrel-sql_*.jar" />
 			</fileset>
-			<parsable
-				targetfile="$INSTALL_PATH/squirrel-sql.bat" />
-			<parsable
-				targetfile="$INSTALL_PATH/squirrel-sql.sh"
-				type="shell" />
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat" type="shell" />
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell" />
 
 			<!-- Make Unix script executable. -->
 			<executable
