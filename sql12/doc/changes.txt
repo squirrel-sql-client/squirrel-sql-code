@@ -18,8 +18,11 @@ Hibernate Plugin:
 
 Bug-Fixes:
 
+2991709: Quotes missing in squirrel-sql.bat
 2982594 / 2988387: RSyntax editor crash
 When database errors occured while loading table columns, SQuirreL slowed down and produced a lot of log messages.
+2981691 / 2981694: squirrel-sql.bat fails on Windows 7 64 bit
+2980873: squirrel-sql.bat doesn't work out of box
 2978540: Identifiers starting with '_' where not handled as identifiers by the RSyntax lexer. This resulted in syntax coloring and completion problems. 
 2974533: Informix: Method can be called only once. / ErrorCode: -79
 2965617: Fail to open session with RSyntax editor
