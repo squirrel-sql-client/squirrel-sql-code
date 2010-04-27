@@ -27,9 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SchemaInfoCache implements Serializable
 {
-   private static final long serialVersionUID = 2L;
-
-   private static final ILogger s_log = 
+   private static final ILogger s_log =
        LoggerController.createLogger(SchemaInfoCache.class);
 
    private List<String> _catalogs = new ArrayList<String>();
