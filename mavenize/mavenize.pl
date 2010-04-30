@@ -52,9 +52,9 @@ EOF
 $firebirdmanager_deps = <<"EOF";
 <dependencies>
     <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+        <groupId>org.firebirdsql.jdbc</groupId>
         <artifactId>jaybird</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.6</version>
     </dependency>
    </dependencies>
 EOF
