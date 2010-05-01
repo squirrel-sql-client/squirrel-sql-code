@@ -4,7 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released - available from SVN or in the latest snapshot:
 ----------------------------------------------------------------
 
+Bug-fixes:
 
+2992443: Cannot use RSyntax or Netbeans editors 
 
 
 
