@@ -25,6 +25,19 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+/**
+ * This class is Serializable and yet doesn't declare serialVersionUID.  This is done intentionally so that 
+ * the SchemaInfoCacheSerializer can detect incompatible class changes (by catching Exception when attempting
+ * to read the serialized file).  This was deemed to be a less error-prone way of handling changes to this
+ * class file's definition, then having to remember to consider whether or not serialVersionUID should be 
+ * incremented for any given change.  Therefore, it is very important to not introduce a serialVersionUID
+ * class member, as forgetting to update it might lead to undetected incompatible class changes that don't 
+ * manifest themselves during de-serialization, but occur later in the application when missing members are
+ * invoked (for example).  This more conservative approach can lead to the serialized file being removed upon
+ * installing a newer version of SQuirreL more often than necessary, but it seemed to us to be better than the 
+ * alternative.
+ */
+@SuppressWarnings("serial")
 public class SchemaInfoCache implements Serializable
 {
    private static final ILogger s_log =
