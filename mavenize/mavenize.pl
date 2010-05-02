@@ -41,34 +41,27 @@ $macDir		  = $topDir . "/mac";
 $onlyCopyPoms = 0;
 
 $cache_deps = <<"EOF";
-<dependencies>
       <dependency>
          <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
          <artifactId>CacheDB</artifactId>
          <version>2008.2.0.526.0</version>
       </dependency>
-   </dependencies>
 EOF
 $firebirdmanager_deps = <<"EOF";
-<dependencies>
     <dependency>
         <groupId>org.firebirdsql.jdbc</groupId>
         <artifactId>jaybird</artifactId>
         <version>2.1.6</version>
     </dependency>
-   </dependencies>
 EOF
 $oracle_deps = <<"EOF";
-<dependencies>
     <dependency>
         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>treetable</artifactId>
         <version>20040121</version>
     </dependency>
-   </dependencies>
 EOF
 $sqlval_deps = <<"EOF";
-<dependencies>
       <dependency>
          <groupId>axis</groupId>
          <artifactId>axis</artifactId>
@@ -89,10 +82,8 @@ $sqlval_deps = <<"EOF";
          <artifactId>axis-wsdl4j</artifactId>
          <version>1.2</version>
       </dependency>
-   </dependencies>
 EOF
 $syntax_deps = <<"EOF";
-<dependencies>
     <dependency>
         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>com-fifesoft-common</artifactId>
@@ -143,7 +134,6 @@ $syntax_deps = <<"EOF";
         <artifactId>ostermiller-syntax</artifactId>
         <version>1.1.1</version>
     </dependency>
-   </dependencies>
 EOF
 
 #################################################################################################
@@ -259,6 +249,7 @@ sub wanted_for_create_plugin_poms {
 	else {
 		$dependencies = '';
 	}
+	
 
     print "Creating new pom: $newPomFile \n"
       . "\t artifactId=$artifactId \n"

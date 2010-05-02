@@ -54,7 +54,31 @@
         <url>https://www.squirrel-sql.org/hudson/</url>
    </ciManagement>
 
+   <dependencies>
+   
    @@--$dependencies--@@
+   
+		<dependency>
+			<groupId>gsbase</groupId>
+			<artifactId>gsbase</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+			<scope>test</scope>
+		</dependency>   
+   </dependencies>
    
    <build>
       <plugins>
