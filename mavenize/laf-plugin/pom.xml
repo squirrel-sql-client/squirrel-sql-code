@@ -72,9 +72,47 @@
 	</ciManagement>
 	<properties>
 		<staging.dir>${project.build.directory}</staging.dir>
-		<laf.artifactIds> ilf-gpl,kunststoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,toniclf,tinylaf </laf.artifactIds>
+		<laf.artifactIds> ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,toniclf,tinylaf </laf.artifactIds>
 	</properties>
 	<dependencies>
+   		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>fw</artifactId>
+	      <version>3.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>squirrel-sql</artifactId>
+	      <version>3.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>squirrel-sql</artifactId>
+	      <version>3.1.0-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>gsbase</groupId>
+			<artifactId>gsbase</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 			<artifactId>ilf-gpl</artifactId>
@@ -82,7 +120,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.incors</groupId>
-			<artifactId>kunststoff-laf</artifactId>
+			<artifactId>kunstoff-laf</artifactId>
 			<version>2.0.2</version>
 		</dependency>
 		<dependency>
@@ -122,9 +160,9 @@
 		</dependency>
 		<!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
 		<dependency>
-			<groupId>org.java.net.substance</groupId>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 			<artifactId>substance</artifactId>
-			<version>5.3</version>
+			<version>5.2_01</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
