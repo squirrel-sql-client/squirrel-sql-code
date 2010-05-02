@@ -1,29 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-
-   <!--
-      This pom is slightly different from other plugin poms because it requires special assembly instructions
-      since it includes LAF jars from other projects in the lafs/ folder of the assembly. Since no other
-      plugin has special needs like this, this plugin's pom overrides the plugin parent's assembly definition,
-      providing it's own. To add/remove/modify the LAFS that get included in the assembly archive, you must
-      add/remove/modify the dependency below on the maven project that contains the LAF artifact *and* add the
-      artifactId to the laf.artifactIds property.
-   -->
-
-   <parent>
-      <groupId>net.sf.squirrel-sql</groupId>
-      <artifactId>squirrelsql-plugins-parent-pom</artifactId>
-      <version>3.1.0-SNAPSHOT</version>
-   </parent>
-
-   <groupId>net.sf.squirrel-sql</groupId>
-   <artifactId>laf</artifactId>
-   <version>3.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging>
-   
-   <name>Look and Feel Plugin</name>
-   <description>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!--
+		This pom is slightly different from other plugin poms because it requires special assembly instructions
+		since it includes LAF jars from other projects in the lafs/ folder of the assembly. Since no other plugin
+		has special needs like this, this plugin's pom overrides the plugin parent's assembly definition, providing
+		it's own. To add/remove/modify the LAFS that get included in the assembly archive, you must
+		add/remove/modify the dependency below on the maven project that contains the LAF artifact *and* add the
+		artifactId to the laf.artifactIds property.
+	-->
+	<parent>
+		<groupId>net.sf.squirrel-sql</groupId>
+		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
+		<version>3.1.0-SNAPSHOT</version>
+	</parent>
+	<groupId>net.sf.squirrel-sql</groupId>
+	<artifactId>laf</artifactId>
+	<version>3.1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Look and Feel Plugin</name>
+	<description>
         This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
         as well as others that the user can provide.  All dependencies listed with a groupId of 
         net.sf.squirrel-sql and artifactId starting with squirrelsql-lf- are externally available open-source
@@ -34,238 +32,221 @@
         option which is to host these external third-party artifacts using our groupId.  The hope is that 
         someday these projects will start using maven and the need for this will no longer be. 
    </description>
-   <inceptionYear>2001</inceptionYear>
-   <developers>
-      <developer>
-         <name>Gerd Wagner</name>
-         <roles>
-            <role>Administrator</role>
-            <role>Developer</role>
-         </roles>
-      </developer>
-      <developer>
-         <name>Rob Manning</name>
-         <roles>
-            <role>Developer</role>
-            <role>Release Manager</role>
-         </roles>
-      </developer>
-   </developers>   
-   <licenses>
-      <license>
-         <name>GNU Lesser</name>
-         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
-         <distribution>repo</distribution>
-      </license>
-   </licenses>
-   <url>http://www.squirrelsql.org/</url>
-   <scm>
-      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
-      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
-   </scm>
-   <issueManagement>
-        <system>SourceForge Tracker</system>
-        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
-   </issueManagement>     
-   <ciManagement>
-        <system>Hudson</system>
-        <url>https://www.squirrel-sql.org/hudson/</url>
-   </ciManagement>
-
-   <properties>
-      <staging.dir>${project.build.directory}</staging.dir>
-      <laf.artifactIds>
-         ilf-gpl,kunststoff,looks,napkinlaf,nimrodlf,skinlf,substance,toniclf,tinylaf
-      </laf.artifactIds>
-   </properties>
-
-   <dependencies>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>ilf-gpl</artifactId>
-         <version>1.6.1</version>
-      </dependency>
-      <dependency>
-         <groupId>com.incors</groupId>
-         <artifactId>kunststoff-laf</artifactId>
-         <version>2.0.2</version>
-      </dependency>
-      <dependency>
-         <groupId>com.jgoodies</groupId>
-         <artifactId>looks</artifactId>
-         <version>2.2.2</version>
-      </dependency>
-      <!--
-         Project napkinlaf uses maven, but curiously doesn't deploy to maven central. I filed an issue to
-         encourage them to:
-         https://sourceforge.net/tracker/?func=detail&atid=636986&aid=2842880&group_id=104116
-      -->
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>napkinlaf</artifactId>
-         <version>1.2</version>
-      </dependency>      
-      <!--
-         I wrote a pom that builds the nimrodlaf jar from source and contributed it to the author. He 
-         contacted me and rightly asked, how to do this without a repository to rsync from.  I told him about
-         Sonatype.  I deployed using our thirdparty group, and am waiting to see if he starts releasing on 
-         his own. 
-      -->
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>nimrodlf</artifactId>
-         <version>1.1</version>
-      </dependency>
-<!--  This was removed as Oyoaha lnf isn't supported in Java 6 -->
-<!--      <dependency>-->
-<!--         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
-<!--         <artifactId>oalnf</artifactId>-->
-<!--         <version>3.0</version>-->
-<!--      </dependency>-->
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>skinlf</artifactId>
-         <version>6.7</version>
-      </dependency>
-	<dependency>
-	  <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-	  <artifactId>skinlf-theme-packs</artifactId>
-	  <version>1.0.0</version>
-	</dependency>      
-      <!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>substance</artifactId>
-         <version>5.2_01</version>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>swingsetthemes</artifactId>
-         <version>20040726</version>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>tinylaf</artifactId>
-         <version>1.4.0</version>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-         <artifactId>toniclf</artifactId>
-         <version>1.0.5</version>
-      </dependency>
-
-   </dependencies>
-
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>${source-plugin-version}</version>
-         </plugin>
-         <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${surefire-plugin-version}</version>
-         </plugin>
-         <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>${jar-plugin-version}</version>
-         </plugin>
-
-         <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>${dependency-plugin-version}</version>
-            <executions>
-               <execution>
-                  <id>copy-lafs</id>
-                  <phase>process-resources</phase>
-                  <goals>
-                     <goal>copy-dependencies</goal>
-                  </goals>
-                  <configuration>
-                     <stripVersion>true</stripVersion>
-                     <includeArtifactIds>${laf.artifactIds}</includeArtifactIds>
-                     <outputDirectory>${staging.dir}/lafs</outputDirectory>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-
-         <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>${dependency-plugin-version}</version>
-            <executions>
-               <execution>
-                  <id>unpack-skinlf-theme-packs</id>
-                  <phase>process-resources</phase>
-                  <goals>
-                     <goal>unpack</goal>
-                  </goals>
-                  <configuration>
-                     <stripVersion>true</stripVersion>
-                     <artifactItems>
-                        <artifactItem>
-                           <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-                           <artifactId>skinlf-theme-packs</artifactId>
-                           <version>1.0.0</version>
-                        </artifactItem>
-                     </artifactItems>
-                     <outputDirectory>${staging.dir}/skinlf-theme-packs</outputDirectory>
-                     <excludes>META-INF,META-INF/MANIFEST.MF</excludes>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-
-         <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.4.1</version>
-            <configuration>
-               <outputDirectory>${staging.dir}</outputDirectory>
-            </configuration>
-            <executions>
-               <execution>
-                  <goals>
-                     <goal>resources</goal>
-                  </goals>
-                  <phase>process-resources</phase>
-               </execution>
-            </executions>
-         </plugin>
-
-         <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>${assembly-plugin-version}</version>
-            <executions>
-               <execution>
-                  <id>create-plugin-archives</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>single</goal>
-                  </goals>
-                  <configuration>
-                     <descriptors>
-                        <descriptor>src/main/resources/assemblies/laf-plugin-assembly.xml</descriptor>
-                     </descriptors>
-                     <appendAssemblyId>true</appendAssemblyId>
-                     <finalName>${project.artifactId}</finalName>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>${findbugs-plugin-version}</version>
-         </plugin>
-         <plugin>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <version>${pmd-plugin-version}</version>
-         </plugin>
-         <plugin>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${checkstyle-plugin-version}</version>
-         </plugin>
-      </plugins>
-   </build>
+	<inceptionYear>2001</inceptionYear>
+	<developers>
+		<developer>
+			<name>Gerd Wagner</name>
+			<roles>
+				<role>Administrator</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Rob Manning</name>
+			<roles>
+				<role>Developer</role>
+				<role>Release Manager</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Lesser</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<url>http://www.squirrelsql.org/</url>
+	<scm>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+		<developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+	</scm>
+	<issueManagement>
+		<system>SourceForge Tracker</system>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://www.squirrel-sql.org/hudson/</url>
+	</ciManagement>
+	<properties>
+		<staging.dir>${project.build.directory}</staging.dir>
+		<laf.artifactIds> ilf-gpl,kunststoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,toniclf,tinylaf </laf.artifactIds>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>ilf-gpl</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.incors</groupId>
+			<artifactId>kunststoff-laf</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jgoodies</groupId>
+			<artifactId>looks</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+		<!--
+			Project napkinlaf uses maven, but curiously doesn't deploy to maven central. I filed an issue to encourage
+			them to: https://sourceforge.net/tracker/?func=detail&atid=636986&aid=2842880&group_id=104116
+		-->
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>napkinlaf</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.nimrod</groupId>
+			<artifactId>nimrod-laf</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<!--  This was removed as Oyoaha lnf isn't supported in Java 6 -->
+		<!--      <dependency>-->
+		<!--         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+		<!--         <artifactId>oalnf</artifactId>-->
+		<!--         <version>3.0</version>-->
+		<!--      </dependency>-->
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>skinlf</artifactId>
+			<version>6.7</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>skinlf-theme-packs</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
+		<dependency>
+			<groupId>org.java.net.substance</groupId>
+			<artifactId>substance</artifactId>
+			<version>5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>swingsetthemes</artifactId>
+			<version>20040726</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.tinylaf</groupId>
+			<artifactId>tinylaf</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>toniclf</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${source-plugin-version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire-plugin-version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar-plugin-version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${dependency-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>copy-lafs</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<stripVersion>true</stripVersion>
+							<includeArtifactIds>${laf.artifactIds}</includeArtifactIds>
+							<outputDirectory>${staging.dir}/lafs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${dependency-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>unpack-skinlf-theme-packs</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<stripVersion>true</stripVersion>
+							<artifactItems>
+								<artifactItem>
+									<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+									<artifactId>skinlf-theme-packs</artifactId>
+									<version>1.0.0</version>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${staging.dir}/skinlf-theme-packs</outputDirectory>
+							<excludes>META-INF,META-INF/MANIFEST.MF</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<outputDirectory>${staging.dir}</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+						<phase>process-resources</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${assembly-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>create-plugin-archives</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/resources/assemblies/laf-plugin-assembly.xml</descriptor>
+							</descriptors>
+							<appendAssemblyId>true</appendAssemblyId>
+							<finalName>${project.artifactId}</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${findbugs-plugin-version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${pmd-plugin-version}</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-plugin-version}</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>
