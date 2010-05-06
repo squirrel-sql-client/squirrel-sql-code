@@ -87,7 +87,7 @@ $syntax_deps = <<"EOF";
 	<dependency>
 		<groupId>com.fifesoft.rtext</groupId>
 		<artifactId>rtext</artifactId>
-		<version>1.1.0</version>
+		<version>1.0.0</version>
 	</dependency>
     <dependency>
         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
