@@ -1,6 +1,4 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -78,21 +76,26 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>squirrelsql-test-utils</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>fw</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+			<type>test-jar</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>squirrel-sql</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+			<type>test-jar</type>
 		</dependency>
 		<dependency>
 			<groupId>mockobjects</groupId>
@@ -105,28 +108,56 @@
 			<version>0.09</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>db2</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>informix</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>refactoring</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>sqlscript</artifactId>
-			<version>${project.version}</version>
+			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>gsbase</groupId>
+			<artifactId>gsbase</artifactId>
+			<version>2.0.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>2.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+			<version>2.4</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<profiles>
-		<!-- This profile must be used in conjunction with one of the driver profiles below -->
+		<!--
+			This profile must be used in conjunction with one of the driver
+			profiles below
+		-->
 		<profile>
 			<id>dialectExternalTest</id>
 			<activation>
@@ -158,11 +189,13 @@
 			</build>
 		</profile>
 		<!--
-			Some of the following jdbc driver profiles contain dependencies that aren't hosted in Maven 
-			Central because they are proprietary. That is one reason they appear in profiles. They each get 
-			their own profile to support running with different versions of the same driver, which would not 
-			be possible if all versions of a given driver were included in a single profile. These 
-			dependencies are hosted on https://www.squirrel-sql.org/nexus/content/groups/public.
+			Some of the following jdbc driver profiles contain dependencies that
+			aren't hosted in Maven Central because they are proprietary. That is
+			one reason they appear in profiles. They each get their own profile
+			to support running with different versions of the same driver, which
+			would not be possible if all versions of a given driver were included
+			in a single profile. These dependencies are hosted on
+			https://www.squirrel-sql.org/nexus/content/groups/public.
 		-->
 		<profile>
 			<id>db2-8.1</id>
@@ -220,7 +253,7 @@
 				<dependency>
 					<groupId>geronimo-spec</groupId>
 					<artifactId>geronimo-spec-j2ee-connector</artifactId>
-					<version>1.5-rc4</version>				
+					<version>1.5-rc4</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
