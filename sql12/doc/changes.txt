@@ -6,9 +6,13 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Bug-fixes:
 
-2992443: Cannot use RSyntax or Netbeans editors 
+2992443: Cannot use RSyntax or Netbeans editors
 
+Parser could be triggered far to often which resulted in high CPU and memory load.
+This problem was caused by redundant carriage return chars (\r).
 
+Any redundant carriage return chars (\r) are removed from files.
+On Win Platforms carriage return line feeds (\r\n) are kept for new lines.
 
 3.1.1 (4/24/2010)
 ================
