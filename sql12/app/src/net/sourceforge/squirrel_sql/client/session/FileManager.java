@@ -299,9 +299,16 @@ public class FileManager
    private String convertLineFeedToPlatformEOL(String result)
    {
       String platformEolStr = StringUtilities.getEolStr();
-      if( result != null && !"".equals(result) && !platformEolStr.equals("\n") )
+      if (result != null && !"".equals(result))
       {
-         result = result.replaceAll("\\n", platformEolStr);
+         // We eagerly take care that no redundant CRs exist
+         // because they hide in files and cause any kind of trouble.
+         result = result.replaceAll("\\r", "");
+
+         if (!platformEolStr.equals("\n"))
+         {
+            result = result.replaceAll("\\n", platformEolStr);
+         }
       }
       return result;
    }
@@ -315,12 +322,19 @@ public class FileManager
    {
       String platformEolStr = StringUtilities.getEolStr();
 
-      if(null == s || "".equals(s) || platformEolStr.equals("\n"))
+      if (null == s || "".equals(s))
       {
          return s;
       }
 
-      return s.replaceAll(platformEolStr, "\n");
+      if (false == platformEolStr.equals("\n"))
+      {
+         s = s.replaceAll(platformEolStr, "\n");
+      }
+
+      // We eagerly take care that no redundant CRs exist
+      // because they hide in files and cause any kind of trouble.
+      return s.replaceAll("\\r", "");
    }
 
 
