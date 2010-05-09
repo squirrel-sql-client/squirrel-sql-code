@@ -27,6 +27,8 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.SQL
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.SQLStatement;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -46,6 +48,7 @@ public final class ParserThread extends Thread
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(ParserThread.class);
 
+   private static final ILogger s_log = LoggerController.createLogger(ParserThread.class);
 
 
    public static final String PARSER_THREAD_NM = "SQLParserThread";
@@ -73,6 +76,8 @@ public final class ParserThread extends Thread
 	private String _workingString;
 	private IncrementalBuffer _workingBuffer;
 	private boolean _errorDetected;
+
+   private boolean _couldNotDetectPosErrorLogged;
 
    public ParserThread(SQLSchema schema)
 	{
@@ -290,14 +295,60 @@ public final class ParserThread extends Thread
 	{
 		int ix = 0;
 
-		for (int i = 0; i < line-1; i++)
-		{
-			ix =_workingString.indexOf('\n', ix) + 1;
-		}
-		ix += column;
+      for (int i = 0; i < line - 1; i++)
+      {
+         ix = getNextLineStartIx(ix);
+
+         if (Integer.MAX_VALUE == ix)
+         {
+            if (false == _couldNotDetectPosErrorLogged)
+            {
+               _couldNotDetectPosErrorLogged = true;
+               String message = "Could not find position for line = " + line + ", column = " + column;
+               s_log.error(message, new IllegalStateException(message));
+            }
+
+            return _workingString.length();
+         }
+
+      }
+      ix += column;
 
 		return ix - 1; // -1 because column starts with 1 put pos with 0
 	}
+
+   private int getNextLineStartIx(int begIx)
+   {
+      int buf;
+
+      int candidate1 = Integer.MAX_VALUE;
+      buf = _workingString.indexOf('\n', begIx);
+      if(0 <= buf)
+      {
+         candidate1 = buf + 1;
+      }
+
+      int candidate2 = Integer.MAX_VALUE;
+      buf = _workingString.indexOf('\r', begIx);
+      if(0 <= buf)
+      {
+         if(buf + 1 <_workingString.length() && '\n' == _workingString.charAt(buf+1))
+         {
+            candidate2 = buf + 2;
+         }
+         else
+         {
+            candidate2 = buf + 1;
+         }
+      }
+
+      int ret = Math.min(candidate1, candidate2);
+
+
+      return ret;
+   }
+
+
 
 	public void notifyParser(String sqlText)
 	{
