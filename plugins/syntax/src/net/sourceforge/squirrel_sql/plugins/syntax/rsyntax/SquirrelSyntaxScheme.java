@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
@@ -22,18 +24,18 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       super(true);
    }
 
-   public void initSytles(SyntaxPreferences prefs)
+   public void initSytles(SyntaxPreferences prefs, FontInfo fontInfo)
    {
       super.restoreDefaults();
       Style[] stylesBuf = new Style[SquirrelTokenMarker.getNumTokenTypes()];
       System.arraycopy(styles, 0, stylesBuf, 0, styles.length);
 
-      Font temp = RSyntaxTextArea.getDefaultFont();
       StyleContext sc = StyleContext.getDefaultStyleContext();
-      Font boldFont = sc.getFont(temp.getFamily(), Font.BOLD,
-                     temp.getSize());
-      Font italicFont = sc.getFont(temp.getFamily(), Font.ITALIC,
-                     temp.getSize());
+
+
+      Font boldFont = sc.getFont(fontInfo.getFamily(), Font.BOLD, fontInfo.getSize());
+      Font italicFont = sc.getFont(fontInfo.getFamily(), Font.ITALIC, fontInfo.getSize());
+
 
 //      stylesBuf[SquirrelTokenMarker.TOKEN_IDENTIFIER_TABLE] = new Style(Color.green, null);
 //      stylesBuf[SquirrelTokenMarker.TOKEN_IDENTIFIER_DATA_TYPE] = new Style(new Color(178,178,0), null, boldFont);

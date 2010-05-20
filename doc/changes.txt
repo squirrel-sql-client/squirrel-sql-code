@@ -6,6 +6,7 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Bug-fixes:
 
+2991971: RSyntax text editor ignores font settings
 2992443: Cannot use RSyntax or Netbeans editors
 
 Parser could be triggered far to often which resulted in high CPU and memory load.
