@@ -14,6 +14,7 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search.SquirrelRSyntaxSearchEngine;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rtextarea.RTextAreaUI;
 
@@ -22,6 +23,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
 import javax.swing.text.DefaultCaret;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 
@@ -122,7 +124,10 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
    public void updateFromPreferences()
    {
-      _squirrelSyntaxScheme.initSytles(_prefs);
+      setFont(_session.getProperties().getFontInfo().createFont());
+      _squirrelSyntaxScheme.initSytles(_prefs, _session.getProperties().getFontInfo());
+      new RSyntaxTextAreaEditorKit.IncreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "foo"), this);
+      new RSyntaxTextAreaEditorKit.DecreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "bar"), this);
       repaint();
    }
 
