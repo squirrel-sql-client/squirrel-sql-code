@@ -145,11 +145,12 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text)
 	{
+      text = removeCarriageReturn(text);
 		setText(text, true);
 		triggerParser();
 	}
 
-	/**
+   /**
 	 * Replace the contents of the SQL entry area with the passed SQL script and
 	 * specify whether to select it.
 	 *
@@ -161,6 +162,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text, boolean select)
 	{
+      text = removeCarriageReturn(text);
 		_textArea.setText(text);
 		if (select)
 		{
@@ -178,6 +180,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript)
 	{
+      sqlScript = removeCarriageReturn(sqlScript);
 		appendText(sqlScript, false);
 	}
 
@@ -193,6 +196,7 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
+      sqlScript = removeCarriageReturn(sqlScript);
 		Document doc = _textArea.getDocument();
 
 		try
@@ -282,11 +286,31 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void replaceSelection(String sqlScript)
 	{
+      sqlScript = removeCarriageReturn(sqlScript);
 		_textArea.replaceSelection(sqlScript);
 
 		triggerParser();
 
 	}
+
+
+   /**
+    * RSyntax does not like CRs, even on Windows.
+    * If you insert ones you find that arrow keys do not work correctly:
+    * When steping over a CR it looks like the arrow key does nothing.
+    *
+    * E.G.: Code reformating comes with CRs in line ends on Windows
+    */
+   private String removeCarriageReturn(String text)
+   {
+      if(null == text)
+      {
+         return null;
+      }
+
+      return text.replaceAll("\r","");
+   }
+
 
 	private void triggerParser()
 	{
