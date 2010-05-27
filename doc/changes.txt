@@ -6,6 +6,10 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Bug-fixes:
 
+RSyntax: When code reformatting was used on Windows, carriage return chars (\r) where inserted in the editor.
+These chars made keyboard arrow keys fail: If you stepped over an \r the key hit did nothing.
+
+
 2991971: RSyntax text editor ignores font settings
 2992443: Cannot use RSyntax or Netbeans editors
 
