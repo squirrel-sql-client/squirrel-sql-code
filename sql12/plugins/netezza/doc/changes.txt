@@ -2,6 +2,11 @@ Netezza Plugin Change Log
 =====================
 
 
+0.02
+====
+
+ - Added support for displaying external tables in the object tree.
+
 0.01
 ====
 
