@@ -1,29 +1,32 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search.SquirrelRSyntaxSearchEngine;
+
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rtextarea.RTextAreaUI;
-
-import javax.swing.*;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.Document;
-import javax.swing.text.DefaultCaret;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
 
 public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 {
@@ -122,7 +125,10 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
    public void updateFromPreferences()
    {
-      _squirrelSyntaxScheme.initSytles(_prefs);
+   	setFont(_session.getProperties().getFontInfo().createFont());
+   	_squirrelSyntaxScheme.initSytles(_prefs, _session.getProperties().getFontInfo());
+   	new RSyntaxTextAreaEditorKit.IncreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "foo"), this);
+   	new RSyntaxTextAreaEditorKit.DecreaseFontSizeAction().actionPerformedImpl(new ActionEvent(this, 1, "bar"), this);
       repaint();
    }
 

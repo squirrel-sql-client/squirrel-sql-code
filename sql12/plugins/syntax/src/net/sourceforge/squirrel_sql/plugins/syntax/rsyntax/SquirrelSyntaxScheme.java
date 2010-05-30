@@ -1,19 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.text.StyleContext;
+
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
+
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
-
-import javax.swing.text.StyleContext;
-import java.awt.*;
-
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 
 public class SquirrelSyntaxScheme extends SyntaxScheme
 {
@@ -22,19 +22,17 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       super(true);
    }
 
-   public void initSytles(SyntaxPreferences prefs)
+   public void initSytles(SyntaxPreferences prefs, FontInfo fontInfo)
    {
       super.restoreDefaults();
       Style[] stylesBuf = new Style[SquirrelTokenMarker.getNumTokenTypes()];
       System.arraycopy(styles, 0, stylesBuf, 0, styles.length);
 
-      Font temp = RSyntaxTextArea.getDefaultFont();
-      StyleContext sc = StyleContext.getDefaultStyleContext();
-      Font boldFont = sc.getFont(temp.getFamily(), Font.BOLD,
-                     temp.getSize());
-      Font italicFont = sc.getFont(temp.getFamily(), Font.ITALIC,
-                     temp.getSize());
 
+      StyleContext sc = StyleContext.getDefaultStyleContext();
+      Font boldFont = sc.getFont(fontInfo.getFamily(), Font.BOLD, fontInfo.getSize());
+      Font italicFont = sc.getFont(fontInfo.getFamily(), Font.ITALIC, fontInfo.getSize());
+      
 //      stylesBuf[SquirrelTokenMarker.TOKEN_IDENTIFIER_TABLE] = new Style(Color.green, null);
 //      stylesBuf[SquirrelTokenMarker.TOKEN_IDENTIFIER_DATA_TYPE] = new Style(new Color(178,178,0), null, boldFont);
 //      stylesBuf[SquirrelTokenMarker.TOKEN_IDENTIFIER_COLUMN] = new Style(new Color(102,102,0), null, boldFont);
