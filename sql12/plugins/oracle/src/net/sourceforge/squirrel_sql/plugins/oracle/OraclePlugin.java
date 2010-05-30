@@ -96,6 +96,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateCon
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.LobDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
@@ -196,7 +197,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.20";
+		return "0.21";
 	}
 
 	/**
@@ -465,7 +466,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setTimezoneForSession(ISession session, OraclePreferenceBean prefs)
 	{
 		if (!prefs.getInitSessionTimezone())
@@ -785,6 +785,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
 		addDetailTab(objTree, IObjectTypes.LOB, new DatabaseObjectInfoTab());
+		addDetailTab(objTree, IObjectTypes.LOB, new LobDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
