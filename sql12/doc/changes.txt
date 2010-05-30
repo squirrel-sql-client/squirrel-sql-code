@@ -7,6 +7,12 @@ SQuirreL SQL Client Change Log
 ==================
 
 Bug-Fixes:
+
+ RSyntax Editor: 
+  - When code reformatting was used on Windows, carriage return chars (\r) where inserted in the 
+ 	editor. These chars made keyboard arrow keys fail: If you stepped over an \r the key hit did 
+    nothing.
+
  - 2992443: Cannot use RSyntax or Netbeans editors
  (Parser could be triggered far to often which resulted in high CPU and memory load. This problem was 
   caused by redundant carriage return chars (\r). Any redundant carriage return chars (\r) are removed from 
