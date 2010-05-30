@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaExtTableInodeExpa
 import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSynonymInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.prefs.NetezzaPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.netezza.tab.ExternalTableDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.netezza.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.netezza.tab.SynonymDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.netezza.tab.SynonymSourceTab;
@@ -99,7 +100,7 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 	@Override
 	public String getVersion()
 	{
-		return "0.01";
+		return "0.02";
 	}
 
 	/**
@@ -233,6 +234,8 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		
 		objTree.addDetailTab(DatabaseObjectType.VIEW, new DatabaseObjectInfoTab());
 		objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(stmtSep));
+		
+		objTree.addDetailTab(DatabaseObjectType.TABLE, new ExternalTableDetailsTab());
 	}
 
 
