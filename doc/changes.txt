@@ -6,6 +6,9 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Bug-fixes:
 
+RSyntax: Turned off drag and drop inside the editor. It conflicted with our
+drag and drop feature for files and caused editor texts to vanish. See bug #3006515. 
+
 RSyntax: When code reformatting was used on Windows, carriage return chars (\r) where inserted in the editor.
 These chars made keyboard arrow keys fail: If you stepped over an \r the key hit did nothing.
 
