@@ -6,7 +6,13 @@ SQuirreL SQL Client Change Log
 3.1.2 (??/??/????)
 ==================
 
-
+Bug-Fixes:
+ - 2992443: Cannot use RSyntax or Netbeans editors
+ (Parser could be triggered far to often which resulted in high CPU and memory load. This problem was 
+  caused by redundant carriage return chars (\r). Any redundant carriage return chars (\r) are removed from 
+  files. On Win Platforms carriage return line feeds (\r\n) are kept for new lines.)
+ - 2991971: RSyntax text editor ignores font settings
+ 
 3.1.1 (4/24/2010)
 ================
 
