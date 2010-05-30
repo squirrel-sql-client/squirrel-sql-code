@@ -112,7 +112,13 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * sequence.
     */
    public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence");
-
+   
+   /**
+    * Database object type for a "Synonym Type" node in the object tree. There is
+    * one node of this type in the object tree for each table and it is labeled "SYNONYM".
+    */   
+   public static final DatabaseObjectType SYNONYM_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.SYNONYM_TYPE_DBO"); //DatabaseObjectType.SEQUENCE_TYPE_DBO=Sequence Type
+   
    /**
     * An object that is an alias for another object.  While support for this isn't standardized or universal
     * this type of object is found in a few different databases (e.g. Oracle, Netezza)
