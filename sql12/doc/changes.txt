@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 Not yet released - available from SVN or in the latest snapshot:
 ----------------------------------------------------------------
 
+Enhancements:
+
+Incorporated patch which provides a node in the object tree called LOB which lists all LOBs, providing 
+details about each (Thanks to Bogdan Cristian Paulon) 
+
+
 Bug-fixes:
 
 RSyntax: Turned off drag and drop inside the editor. It conflicted with our
