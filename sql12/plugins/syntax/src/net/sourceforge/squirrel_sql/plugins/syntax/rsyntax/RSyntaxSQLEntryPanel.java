@@ -84,6 +84,14 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 
 
       dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session));
+
+
+      //////////////////////////////////////////////////////////////////////
+      // Dragging inside the text area itself conflicts with file dnd
+      // so we disable it. See bug #3006515
+      _textArea.setDragEnabled(false);
+      //
+      ////////////////////////////////////////////////////////////////////
 	}
 
    public int getCaretLineNumber()
