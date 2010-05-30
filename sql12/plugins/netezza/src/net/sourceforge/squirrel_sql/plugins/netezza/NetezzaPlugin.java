@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaExtTableInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSequenceInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.exp.NetezzaSynonymInodeExpanderFactory;
 import net.sourceforge.squirrel_sql.plugins.netezza.prefs.NetezzaPreferenceBean;
@@ -204,15 +205,21 @@ public class NetezzaPlugin extends DefaultSessionPlugin
 		String stmtSep = _prefsManager.getPreferences().getStatementSeparator();
 		
 		// ////// Object Tree Expanders ////////
-
+		
 		// Schema Expander - sequences
 		objTree.addExpander(DatabaseObjectType.SCHEMA, 
-			new SchemaExpander(new NetezzaSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
+			new SchemaExpander(new NetezzaSequenceInodeExpanderFactory(), 
+					DatabaseObjectType.SEQUENCE_TYPE_DBO));
 
 		// Schema Expander - synonyms
 		objTree.addExpander(DatabaseObjectType.SCHEMA, 
-			new SchemaExpander(new NetezzaSynonymInodeExpanderFactory(), DatabaseObjectType.SYNONYM));
+			new SchemaExpander(new NetezzaSynonymInodeExpanderFactory(), 
+					DatabaseObjectType.SYNONYM_TYPE_DBO));
 
+		// Schema Expander - external tables
+		objTree.addExpander(DatabaseObjectType.SCHEMA, 
+			new SchemaExpander(new NetezzaExtTableInodeExpanderFactory(), 
+					DatabaseObjectType.TABLE_TYPE_DBO));		
 		
 		// ////// Object Tree Detail Tabs ////////
 		objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(stmtSep));
