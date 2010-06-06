@@ -34,7 +34,10 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverwiewCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -150,7 +153,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	public void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
+	private void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
 	{
 		_creator = creator;
 		_creator.addListener(new DataSetUpdateableTableModelListener()
@@ -460,6 +463,24 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
         String infoTabTitle = 
             s_stringMgr.getString("ResultTab.infoTabTitle");
 		_tp.addTab(infoTabTitle, sp);
+
+
+      final int overViewIx = _tp.getTabCount();
+      final OverwiewCtrl ctrl = new OverwiewCtrl(_session);
+      _tp.addTab(ctrl.getTitle(), ctrl.getPanel());
+
+      _tp.addChangeListener(new ChangeListener()
+      {
+      @Override
+         public void stateChanged(ChangeEvent e)
+         {
+            if (overViewIx == _tp.getSelectedIndex())
+            {
+               ctrl.init(_rsds);
+            }
+         }
+      });
+
 	}
 
 	private final class TabButton extends JButton
