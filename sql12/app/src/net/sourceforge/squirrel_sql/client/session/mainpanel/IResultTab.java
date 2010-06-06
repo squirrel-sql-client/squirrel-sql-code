@@ -30,8 +30,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 public interface IResultTab {
 
-    void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo);
-
     /**
      * Show the results from the passed <TT>IDataSet</TT>.
      *

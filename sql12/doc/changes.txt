@@ -6,6 +6,10 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+New way to view query results: There is an new tab inside a query result named "Overview".
+It might need some trying out to understand what it does.  
+
+
 Incorporated patch which provides a node in the object tree called LOB which lists all LOBs, providing 
 details about each (Thanks to Bogdan Cristian Paulon) 
 

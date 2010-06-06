@@ -77,6 +77,8 @@ public class SquirrelResources extends Resources
       String AUTOHIDE_OFF = "autohideOff";
       String MINIMIZE = "minimize";
 
+      String PREV_SCALE = "prevScale";
+      String NEXT_SCALE = "nextScale";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

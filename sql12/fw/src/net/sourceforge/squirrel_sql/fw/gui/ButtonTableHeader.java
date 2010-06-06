@@ -59,6 +59,8 @@ public class ButtonTableHeader extends JTableHeader
    /** Listens for changes in the underlying data. */
    private TableDataListener _dataListener = new TableDataListener();
 
+   private SortingListener _sortingListener;
+
    /** If <TT>true</TT> then the mouse button is currently pressed. */
    private boolean _pressed;
 
@@ -111,6 +113,34 @@ public class ButtonTableHeader extends JTableHeader
       HeaderListener hl = new HeaderListener();
       addMouseListener(hl);
       addMouseMotionListener(hl);
+
+      _sortingListener = new SortingListener()
+      {
+         @Override
+         public void sortingDone(int column, boolean ascending)
+         {
+            onSortingDone(column, ascending);
+         }
+      };
+
+   }
+
+   private void onSortingDone(int column, boolean ascending)
+   {
+      int modColumn = getTable().convertColumnIndexToModel(column);
+
+      if (ascending)
+      {
+         _currentSortedColumnIcon = s_ascIcon;
+      }
+      else
+      {
+         _currentSortedColumnIcon = s_descIcon;
+      }
+      _currentlySortedColumnIdx = modColumn;
+      _pressedColumnIdx = modColumn;
+
+      repaint();
    }
 
    public void setTable(JTable table)
@@ -121,8 +151,9 @@ public class ButtonTableHeader extends JTableHeader
          Object obj = oldTable.getModel();
          if (obj instanceof SortableTableModel)
          {
-            SortableTableModel model = (SortableTableModel)obj;
-            model.getActualModel().removeTableModelListener(_dataListener);
+            SortableTableModel sortableTableModel = (SortableTableModel)obj;
+            sortableTableModel.getActualModel().removeTableModelListener(_dataListener);
+            sortableTableModel.removeSortingListener(_sortingListener);
          }
       }
 
@@ -133,8 +164,9 @@ public class ButtonTableHeader extends JTableHeader
          Object obj = table.getModel();
          if (obj instanceof SortableTableModel)
          {
-            SortableTableModel model = (SortableTableModel)obj;
-            model.getActualModel().addTableModelListener(_dataListener);
+            SortableTableModel sortableTableModel = (SortableTableModel)obj;
+            sortableTableModel.getActualModel().addTableModelListener(_dataListener);
+            sortableTableModel.addSortingListener(_sortingListener);
          }
       }
       _currentSortedColumnIcon = null;

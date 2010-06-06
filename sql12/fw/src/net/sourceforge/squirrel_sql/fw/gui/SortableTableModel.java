@@ -21,8 +21,10 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -39,14 +41,15 @@ public class SortableTableModel extends AbstractTableModel
     transient private MyTableModelListener _actualModelLis = new MyTableModelListener();
 
 	/** Column currently being sorted by. -1 means unsorted. */
-	protected int _iColumn = -1;
+	private int _sortedColumn = -1;
 
-	private boolean _bAscending;
+	private boolean _ascending;
 
 	/** The actual model that this model is wrapped around. */
 	private TableModel _actualModel;
+   private ArrayList<SortingListener> _sortingListeners = new ArrayList<SortingListener>();
 
-	public TableModel getActualModel()
+   public TableModel getActualModel()
 	{
 		return _actualModel;
 	}
@@ -218,9 +221,9 @@ public class SortableTableModel extends AbstractTableModel
 	public boolean sortByColumn(int column)
 	{
 		boolean b = true;
-		if (column == _iColumn)
+		if (column == _sortedColumn)
 		{
-			b = !_bAscending;
+			b = !_ascending;
 		}
 		sortByColumn(column, b);
 		return b;
@@ -234,28 +237,39 @@ public class SortableTableModel extends AbstractTableModel
 	 */
 	public void sortByColumn(int column, boolean ascending)
 	{
-		_iColumn = column;
-		_bAscending = ascending;
+		_sortedColumn = column;
+		_ascending = ascending;
 		TableModelComparator comparator = new TableModelComparator(column, ascending);
 		// Should the data be first cloned so that the sorting doesn't take place
 		// on the array that is used in getValue()
 		// TODO: This is a must if sorting is done in a thread! ??
 		Arrays.sort(_indexes, comparator);
 		fireTableDataChanged();
+      fireSortingListeners(column, ascending);
 	}
 
-	public boolean isSortedAscending()
+   private void fireSortingListeners(int column, boolean ascending)
+   {
+      SortingListener[] listeners = _sortingListeners.toArray(new SortingListener[_sortingListeners.size()]);
+
+      for (SortingListener listener : listeners)
+      {
+         listener.sortingDone(column, ascending);         
+      }
+   }
+
+   public boolean isSortedAscending()
 	{
-		return _bAscending;
+		return _ascending;
 	}
 
 	public void tableChanged()
 	{
       tableChangedIntern();
 
-      if(-1 != _iColumn)
+      if(-1 != _sortedColumn)
       {
-         sortByColumn(_iColumn, _bAscending);
+         sortByColumn(_sortedColumn, _ascending);
       }
       else
       {
@@ -289,8 +303,18 @@ public class SortableTableModel extends AbstractTableModel
 		return _indexes[row].intValue();
 	}
 
+   public void removeSortingListener(SortingListener sortingListener)
+   {
+      _sortingListeners.remove(sortingListener);
+   }
 
-	class TableModelComparator implements Comparator<Integer>
+   public void addSortingListener(SortingListener sortingListener)
+   {
+      _sortingListeners.add(sortingListener);
+   }
+
+
+   class TableModelComparator implements Comparator<Integer>
 	{
 		private int _iColumn;
 		private int _iAscending;
@@ -374,4 +398,10 @@ public class SortableTableModel extends AbstractTableModel
 			SortableTableModel.this.tableChangedIntern();
 		}
 	}
+
+
+   public int getSortedColumn()
+   {
+      return _sortedColumn;
+   }
 }

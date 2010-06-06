@@ -130,10 +130,6 @@ public class SQLResultExecuterPanel extends JPanel
 	private Map<IIdentifier,ResultTabInfo> _allTabs = 
         new HashMap<IIdentifier,ResultTabInfo>();
 
-	/**
-	 * Pool of <TT>ResultTabInfo</TT> objects available for use.
-	 */
-	private List<ResultTabInfo> _availableTabs = new ArrayList<ResultTabInfo>();
 
 	/**
 	 * Pool of <TT>ResultTabInfo</TT> objects currently being used.
@@ -506,7 +502,6 @@ public class SQLResultExecuterPanel extends JPanel
 		tab.clear();
 		_tabbedExecutionsPanel.remove(tab);
 		ResultTabInfo tabInfo = _allTabs.get(tab.getIdentifier());
-		_availableTabs.add(tabInfo);
 		_usedTabs.remove(tabInfo);
 		tabInfo._resultFrame = null;
 		fireTabRemovedEvent(tab);
@@ -759,32 +754,21 @@ public class SQLResultExecuterPanel extends JPanel
                               final IResultTab resultTabToReplace)
 	{
 		final ResultTab tab;
-		if (_availableTabs.size() > 0)
-		{
-			ResultTabInfo ti = _availableTabs.remove(0);
-			_usedTabs.add(ti);
-			tab = ti._tab;
-			tab.reInit(creator, exInfo);
-			s_log.debug("Using tab " + tab.getIdentifier().toString()
-					+ " for results.");
-		}
-		else
-		{
-         ResultTabListener resultTabListener = new ResultTabListener()
-         {
-            public void rerunSQL(String sql, IResultTab resultTab)
-            {
-               onRerunSQL(sql, resultTab);
-            }
-         };
 
-         tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
-			ResultTabInfo ti = new ResultTabInfo(tab);
-			_allTabs.put(tab.getIdentifier(), ti);
-			_usedTabs.add(ti);
-			s_log.debug("Created new tab " + tab.getIdentifier().toString()
-					+ " for results.");
-		}
+      ResultTabListener resultTabListener = new ResultTabListener()
+      {
+         public void rerunSQL(String sql, IResultTab resultTab)
+         {
+            onRerunSQL(sql, resultTab);
+         }
+      };
+
+      tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
+      ResultTabInfo ti = new ResultTabInfo(tab);
+      _allTabs.put(tab.getIdentifier(), ti);
+      _usedTabs.add(ti);
+      s_log.debug("Created new tab " + tab.getIdentifier().toString()
+            + " for results.");
 
 		try
 		{

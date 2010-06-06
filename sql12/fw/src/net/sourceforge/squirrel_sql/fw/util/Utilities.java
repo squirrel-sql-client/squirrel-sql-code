@@ -233,6 +233,23 @@ public class Utilities
       return "";
    }
 
+   public static boolean equalsRespectNull(Object o1, Object o2)
+   {
+      if(null == o1 && null == o2)
+      {
+         return true;
+      }
+      else if(null == o1 || null == o2)
+      {
+         return false;
+      }
+      else
+      {
+         return o1.equals(o2);
+      }
+
+   }
+
 
    /**
     * Remove the suffix from the passed file name.

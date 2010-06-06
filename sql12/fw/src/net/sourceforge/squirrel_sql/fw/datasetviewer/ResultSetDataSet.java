@@ -449,4 +449,10 @@ public class ResultSetDataSet implements IDataSet {
    	}
    	return result.toString();
    }
+
+
+   public List<Object[]> getAllDataForReadOnly()
+   {
+      return _alData;
+   }
 }
