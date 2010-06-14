@@ -17,7 +17,6 @@ Bug-Fixes:
   caused by redundant carriage return chars (\r). Any redundant carriage return chars (\r) are removed from 
   files. On Win Platforms carriage return line feeds (\r\n) are kept for new lines.)
  - 2991971: RSyntax text editor ignores font settings
- - 2991709: Quotes missing in squirrel-sql.bat
  
 3.1.1 (4/24/2010)
 ================
