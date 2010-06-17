@@ -37,10 +37,6 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SessionProperties implements Cloneable, Serializable, ISessionProperties
 {
-	/**
-	 * Change this when this class changes. 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	public interface IDataSetDestinations
    {
@@ -87,6 +83,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
       String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
       String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
+      String KEEP_TABLE_LAYOUT_ON_RERUN = "keepTableLayoutOnRerun";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
       String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
    }
@@ -228,6 +225,9 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
    /** Should the number of SQL result tabs be limited?. */
    private boolean _limitSqlResultTabs = true;
+
+
+   private boolean _keepTableLayoutOnRerun;
 
 
    /**
@@ -906,6 +906,20 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       return _objectFilterExclude;
    }
+
+   public boolean getKeepTableLayoutOnRerun()
+   {
+      return _keepTableLayoutOnRerun;
+   }
+
+   public synchronized void setKeepTableLayoutOnRerun(boolean data)
+   {
+      final boolean oldValue = _keepTableLayoutOnRerun;
+      _keepTableLayoutOnRerun = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.KEEP_TABLE_LAYOUT_ON_RERUN,
+                                    oldValue, _keepTableLayoutOnRerun);
+   }
+
 
    /**
     * Set the comma-separated list of catalog prefixes to display in the object tree.

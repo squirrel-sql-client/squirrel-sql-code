@@ -95,4 +95,8 @@ public interface IDataSetViewer
 	 * @return	the object IDataSetUpdateableModel object.
 	 */
 	IDataSetUpdateableModel getUpdateableModelReference();
+
+   TableState getResultSortableTableState();
+
+   void applyResultSortableTableState(TableState sortableTableState);
 }

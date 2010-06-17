@@ -483,7 +483,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 	}
 
-	private final class TabButton extends JButton
+   private final class TabButton extends JButton
 	{
 		TabButton(Action action)
 		{
@@ -544,7 +544,19 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		return _id;
 	}
 
-	private static class QueryInfoPanel extends JPanel
+   @Override
+   public TableState getResultSortableTableState()
+   {
+      return _resultSetOutput.getResultSortableTableState();
+   }
+
+   public void applyResultSortableTableState(TableState sortableTableState)
+   {
+      _resultSetOutput.applyResultSortableTableState(sortableTableState);
+   }
+
+
+   private static class QueryInfoPanel extends JPanel
 	{
         private static final long serialVersionUID = 2124193091025851544L;
         

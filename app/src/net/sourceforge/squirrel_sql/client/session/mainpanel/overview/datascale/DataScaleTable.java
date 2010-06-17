@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
@@ -107,7 +108,7 @@ public class DataScaleTable extends SortableTable
 
    public void setParentScaleTable(DataScaleTable parent)
    {
-      ScaleTableState st = new ScaleTableState(parent);
+      TableState st = new TableState(parent);
       st.apply(this);
 
       _parent = parent;

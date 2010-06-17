@@ -72,7 +72,9 @@ public class GeneralSessionPropertiesPanel
 		String TABLE = s_stringMgr.getString("generalSessionPropertiesPanel.table");
 		// i18n[generalSessionPropertiesPanel.editableTable=Editable Table]
 		String EDITABLE_TABLE = s_stringMgr.getString("generalSessionPropertiesPanel.editableTable");
-		// i18n[generalSessionPropertiesPanel.text=Text]
+      // i18n[generalSessionPropertiesPanel.chkKeepTableLayoutOnRerun=Keep table layout on rerun SQL]
+      String KEEP_TABLE_LAYOUT_ON_RERUN= s_stringMgr.getString("generalSessionPropertiesPanel.chkKeepTableLayoutOnRerun");
+      // i18n[generalSessionPropertiesPanel.text=Text]
 		String TEXT = s_stringMgr.getString("generalSessionPropertiesPanel.text");
 
 		// i18n[generalSessionPropertiesPanel.dataTYpe1=Properties for the individual Data Types may be set in the]
@@ -148,6 +150,7 @@ public class GeneralSessionPropertiesPanel
 		private TabPlacementCombo _sqlResultsTabPlacementCmb = new TabPlacementCombo();
 		private OutputTypeCombo _metaDataCmb = new OutputTypeCombo(false);
 		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(true);
+		private JCheckBox _chkKeepTableLayoutOnRerun = new JCheckBox();
 		private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
 
 		MyPanel()
@@ -222,6 +225,7 @@ public class GeneralSessionPropertiesPanel
 
 			_metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
 			_sqlResultsCmb.selectClassName(props.getSQLResultsOutputClassName());
+			_chkKeepTableLayoutOnRerun.setSelected(props.getKeepTableLayoutOnRerun());
 			_tableContentsCmb.selectClassName(props.getTableContentsOutputClassName());
 		}
 
@@ -230,6 +234,7 @@ public class GeneralSessionPropertiesPanel
 			props.setShowToolBar(_showToolBar.isSelected());
 			props.setMetaDataOutputClassName(_metaDataCmb.getSelectedClassName());
 			props.setSQLResultsOutputClassName(_sqlResultsCmb.getSelectedClassName());
+			props.setKeepTableLayoutOnRerun(_chkKeepTableLayoutOnRerun.isSelected());
 			props.setTableContentsOutputClassName(_tableContentsCmb.getSelectedClassName());
 
 			TabPlacement tp = (TabPlacement)_mainTabPlacementCmb.getSelectedItem();
@@ -346,6 +351,13 @@ public class GeneralSessionPropertiesPanel
 
 			++gbc.gridx;
 			pnl.add(_sqlResultsCmb, gbc);
+
+
+         ++gbc.gridy;
+         gbc.gridx = 0;
+         gbc.gridwidth = 2;
+         _chkKeepTableLayoutOnRerun.setText(GeneralSessionPropertiesPanelI18n.KEEP_TABLE_LAYOUT_ON_RERUN);
+         pnl.add(_chkKeepTableLayoutOnRerun, gbc);
 
 			return pnl;
 		}

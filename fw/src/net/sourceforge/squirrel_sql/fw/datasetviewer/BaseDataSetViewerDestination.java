@@ -199,4 +199,15 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		}
 		return dsv;
 	}
+
+   @Override
+   public TableState getResultSortableTableState()
+   {
+      return null;
+   }
+
+   @Override
+   public void applyResultSortableTableState(TableState sortableTableState)
+   {
+   }
 }
