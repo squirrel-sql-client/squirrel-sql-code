@@ -6,6 +6,11 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+Session Property: "Keep SQL result table layout on rerun SQL"
+If this option is checked the layout of the table of a SQL result is tried to be restored after rerunning the SQL.
+Note: You rerun a SQL when you click the running man button on the upper left of a SQL result.
+
+
 New way to view query results: There is an new tab inside a query result named "Overview".
 It might need some trying out to understand what it does.  
 

@@ -837,5 +837,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	//
 	// End of code related to printing
 	//
-	
+
+
+   @Override
+   public TableState getResultSortableTableState()
+   {
+      return new TableState(_table);
+   }
+
+   @Override
+   public void applyResultSortableTableState(TableState sortableTableState)
+   {
+      sortableTableState.apply(_table);
+   }
 }
