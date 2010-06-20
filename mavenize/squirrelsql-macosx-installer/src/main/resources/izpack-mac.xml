@@ -187,6 +187,19 @@
 			installGroups="OptionalPlugins"
 			name="Optional Plugin - DBDiff">
 			<description>This optional plugin lets you compare table structure from one database session to another</description>
+			<file
+				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+				src="plugins/dbdiff" />
+			<file
+				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+				src="plugins/dbdiff.jar" />
+		</pack>		
+		<pack
+			required="no"
+			preselected="no"
+			installGroups="OptionalPlugins"
+			name="Optional Plugin - DBDiff">
+			<description>This optional plugin lets you compare table structure from one database session to another</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" src="plugins/dbdiff" />
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" src="plugins/dbdiff.jar" />
 		</pack>		
