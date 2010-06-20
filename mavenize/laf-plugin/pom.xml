@@ -14,11 +14,11 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.2.0-SNAPSHOT</version>
 	</parent>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>laf</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Look and Feel Plugin</name>
 	<description>
@@ -78,17 +78,17 @@
    		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-	      <version>3.1.0-SNAPSHOT</version>
+	      <version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-	      <version>3.1.0-SNAPSHOT</version>
+	      <version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-	      <version>3.1.0-SNAPSHOT</version>
+	      <version>3.2.0-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
