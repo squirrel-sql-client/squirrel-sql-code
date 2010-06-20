@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.2.0-SNAPSHOT</version>
 	</parent>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>SQuirreL-SQL Plugins Parent POM</name>
 	<description>POM file to consolidate common POM specifications</description>
@@ -57,23 +57,23 @@
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>fw</artifactId>
-				<version>3.1.0-SNAPSHOT</version>
+				<version>3.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrel-sql</artifactId>
-				<version>3.1.0-SNAPSHOT</version>
+				<version>3.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>fw</artifactId>
-				<version>3.1.0-SNAPSHOT</version>
+				<version>3.2.0-SNAPSHOT</version>
 				<type>test-jar</type>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrel-sql</artifactId>
-				<version>3.1.0-SNAPSHOT</version>
+				<version>3.2.0-SNAPSHOT</version>
 				<type>test-jar</type>
 			</dependency>
 			<dependency>
@@ -194,7 +194,7 @@
 						<dependency>
 							<groupId>net.sf.squirrel-sql</groupId>
 							<artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
-							<version>3.1.0-SNAPSHOT</version>
+							<version>3.2.0-SNAPSHOT</version>
 						</dependency>
 					</dependencies>
 					<executions>
