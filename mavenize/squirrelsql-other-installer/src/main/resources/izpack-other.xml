@@ -124,6 +124,14 @@
          <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy" />
       </pack>
 
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DBDiff">
+         <description>
+            This optional plugin lets you compare table structure from one database session to another
+        </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff" />
+      </pack>
+
       <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DB2">
          <description>
             This optional plugin adds functionality that is specific to the DB2 DBMS
@@ -194,6 +202,14 @@
          </description>
          <file targetdir="$INSTALL_PATH/plugins" src="plugins/mysql.jar" />
          <file targetdir="$INSTALL_PATH/plugins" src="plugins/mysql" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Netezza">
+         <description>
+            This optional plugin adds Netezza-specific functionality
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/netezza.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/netezza" />
       </pack>
 
       <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Oracle">
