@@ -47,8 +47,8 @@
          <description>SQL Client</description>
          <singlefile target="$INSTALL_PATH/plugins/readme.txt" src="launcher/plugins/readme.txt" />
 
-         <!--         <singlefile target="$INSTALL_PATH/update/release.xml"-->
-         <!--            src="../../squirrel-sql-dist/release/release.xml" />-->
+         <singlefile target="$INSTALL_PATH/update/release.xml"
+                     src="update-site/release.xml" />
          
          <file targetdir="$INSTALL_PATH" src="doc" />
          <!--
