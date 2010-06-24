@@ -30,6 +30,7 @@ These chars made keyboard arrow keys fail: If you stepped over an \r the key hit
 
 2991971: RSyntax text editor ignores font settings
 2992443: Cannot use RSyntax or Netbeans editors
+2973045: Export to excel results in strange rounding; Thanks to Bogdan Cristian Paulon for the patch 
 
 Parser could be triggered far to often which resulted in high CPU and memory load.
 This problem was caused by redundant carriage return chars (\r).
