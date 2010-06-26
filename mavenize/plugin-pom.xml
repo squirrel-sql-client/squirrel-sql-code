@@ -3,12 +3,12 @@
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
-      <groupId>net.sf.squirrel-sql</groupId>
+      <groupId>net.sf.squirrel-sql.plugin</groupId>
       <artifactId>squirrelsql-plugins-parent-pom</artifactId>
       <version>3.2.0-SNAPSHOT</version>
    </parent>
 
-   <groupId>net.sf.squirrel-sql</groupId>
+   <groupId>net.sf.squirrel-sql.plugins</groupId>
    <artifactId>@@--$artifactId--@@</artifactId>
    <version>3.2.0-SNAPSHOT</version>
    <packaging>jar</packaging>

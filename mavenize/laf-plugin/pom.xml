@@ -12,11 +12,11 @@
 		artifactId to the laf.artifactIds property.
 	-->
 	<parent>
-		<groupId>net.sf.squirrel-sql</groupId>
+		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
 	</parent>
-	<groupId>net.sf.squirrel-sql</groupId>
+	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>laf</artifactId>
 	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>

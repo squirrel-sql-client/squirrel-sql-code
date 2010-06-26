@@ -78,49 +78,49 @@
 
 		<!-- Standard Plugins -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>codecompletion</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>editextras</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>graph</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>laf</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlbookmark</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlscript</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>syntax</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
@@ -135,185 +135,185 @@
 
 		<!-- Optional Plugins -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dataimport</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dbcopy</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dbdiff</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>db2</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>derby</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>firebird</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>firebirdmanager</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>h2</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>hibernate</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>informix</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>mssql</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>mysql</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>netezza</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>oracle</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>postgres</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>refactoring</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sessionscript</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>smarttools</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlparam</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlreplace</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlval</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sybase</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>i18n</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql.translation</groupId>
 			<artifactId>squirrelsql-translations</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrelsql-java-version-checker</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>doc</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>website</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -344,7 +344,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<id>application-libraries</id>
@@ -358,17 +358,12 @@
 							     to exclude.  Also, if we miss an artifact here, then running the installer 
 							     and launching SQuirreL as a test will find it.  However, we may never know 
 							     that we are including jars that are never used (only transitively) -->
-							<includeArtifactIds>
-								antlr,asm,asm-attrs,autocomplete,cglib,common,commons-cli,commons-codec,
-								commons-collections,commons-httpclient,commons-logging,dom4j,ejb-persistence,
-								forms,fw,hibernate-annotations,hibernate-commons-annotations,
-								hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,
-								org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,
-								org-netbeans-modules-editor-util,org-netbeans-modules-editor,spring-beans,
-								spring-context-support,spring-context,spring-core,rsyntaxtextarea,rtext,
-								squirrel-sql
-							</includeArtifactIds>
+
+							<!--  Can we make this list smaller by using groupIds ? -->
+							<includeArtifactIds>antlr,asm,asm-attrs,autocomplete,cglib,common,commons-cli,commons-codec,commons-collections,commons-httpclient,commons-logging,dom4j,ejb-persistence,forms,fw,hibernate-annotations,hibernate-commons-annotations,hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,org-netbeans-modules-editor-util,org-netbeans-modules-editor,rsyntaxtextarea,rtext,spring-beans,squirrel-sql,spring-context-support,spring-context,spring-core</includeArtifactIds>
+							<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
 							<outputDirectory>${staging.dir}/lib</outputDirectory>
+							
 						</configuration>
 					</execution>
 					<execution>
