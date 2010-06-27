@@ -371,7 +371,7 @@
                   <configuration>
                      <artifactItems>
                         <artifactItem>
-                           <groupId>net.sf.squirrel-sql</groupId>
+                           <groupId>net.sf.squirrel-sql.translations</groupId>
                            <artifactId>squirrelsql-translations</artifactId>
                            <version>${project.version}</version>
                            <type>jar</type>
