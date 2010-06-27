@@ -87,49 +87,49 @@
 
       <!-- Standard Plugins -->
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>codecompletion</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>editextras</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>graph</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>laf</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sqlbookmark</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sqlscript</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
          <type>zip</type>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>syntax</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -139,7 +139,7 @@
       <!-- Optional Plugins -->
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>dataimport</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -147,7 +147,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>dbcopy</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -155,7 +155,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>db2</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -163,7 +163,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>derby</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -171,7 +171,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>firebird</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -179,7 +179,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>firebirdmanager</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -187,7 +187,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>h2</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -195,7 +195,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>hibernate</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -203,7 +203,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>informix</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -211,7 +211,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>mssql</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -219,7 +219,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>mysql</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -227,7 +227,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>oracle</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -235,7 +235,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>postgres</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -243,7 +243,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>refactoring</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -251,7 +251,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sessionscript</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -259,7 +259,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>smarttools</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -267,7 +267,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sqlparam</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -275,7 +275,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sqlreplace</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -283,7 +283,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sqlval</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -291,7 +291,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>sybase</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -299,7 +299,7 @@
       </dependency>
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.plugins</groupId>
          <artifactId>i18n</artifactId>
          <version>${project.version}</version>
          <classifier>assembly</classifier>
@@ -309,7 +309,7 @@
       <!-- Non-plugin dependencies -->
 
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql.translations</groupId>
          <artifactId>squirrelsql-translations</artifactId>
          <version>${project.version}</version>
          <type>jar</type>
