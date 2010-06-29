@@ -7,6 +7,7 @@ public class CharRange
 
    private boolean _isInit;
    private boolean _initializing;
+   private boolean _hasNullOrEmptyString;
 
    public char getRange()
    {
@@ -22,6 +23,7 @@ public class CharRange
       
       if(null == s || 0 == s.length())
       {
+         _hasNullOrEmptyString = true;
          return;
       }
 
@@ -51,7 +53,17 @@ public class CharRange
 
    public char getMinChar()
    {
-      return (char) _minChar;
+      if (_hasNullOrEmptyString && 0 < _minChar)
+      {
+         // This makes sure that null or empty string can be separated from other strings.
+         // Before this was done null or empty string could not be in their own interval.
+         // null still cant be separated from empty string.
+         return (char) (_minChar-1);
+      }
+      else
+      {
+         return (char) _minChar;
+      }
    }
 
    public char getMaxChar()
