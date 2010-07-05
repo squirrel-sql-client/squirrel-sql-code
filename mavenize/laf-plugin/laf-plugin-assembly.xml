@@ -40,6 +40,13 @@
          </includes>        
       </fileSet>
       <fileSet>
+        <directory>src/main/resources</directory>
+        <outputDirectory>${artifact.artifactId}/lafs</outputDirectory>
+         <includes>
+            <include>readme.txt</include>
+         </includes>        
+      </fileSet>      
+      <fileSet>
       	<directory>${project.build.directory}/skinlf-theme-packs</directory>
       	<outputDirectory>${artifact.artifactId}/skinlf-theme-packs</outputDirectory>
          <includes>
