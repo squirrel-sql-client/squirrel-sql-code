@@ -95,6 +95,11 @@ $syntax_deps = <<"EOF";
         <version>4.0</version>
     </dependency>
     <dependency>
+       	<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId> 
+   		<artifactId>openide-loaders</artifactId> 
+   		<version>4.0</version>
+   	</dependency> 
+    <dependency>
         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
         <artifactId>org-netbeans-modules-editor</artifactId>
         <version>4.0</version>
