@@ -296,7 +296,7 @@
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.squirrel-sql.translation</groupId>
+			<groupId>net.sf.squirrel-sql.translations</groupId>
 			<artifactId>squirrelsql-translations</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
