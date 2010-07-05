@@ -53,6 +53,13 @@
             <include>**</include>
          </includes>                
       </fileSet>
+      <fileSet>
+      	<directory>src/main/resources/skinlf-theme-packs</directory>
+      	<outputDirectory>${artifact.artifactId}/skinlf-theme-packs</outputDirectory>
+         <includes>
+            <include>skinlf-readme.txt</include>
+         </includes>                
+      </fileSet>      
    </fileSets>
    
 </assembly>
