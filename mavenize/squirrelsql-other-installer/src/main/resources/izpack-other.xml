@@ -2,6 +2,7 @@
 
    <info>
       <appname>SQuirreL SQL Client</appname>
+      <appsubpath>squirrel-sql-${squirrel.version}</appsubpath>
       <appversion>${squirrel.version}</appversion>
       <authors>
          <author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner" />
@@ -349,6 +350,13 @@
             Provides native labels and user messages for use in a Korean locale (Youngwoo)
          </description>
          <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_ko_KR.jar" />
+      </pack>
+
+      <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Polish">
+         <description>
+            Provides native labels and user messages for use in a Polish locale (Miron Sadziak)
+         </description>
+         <file targetdir="$INSTALL_PATH/lib" src="translations/squirrel-sql_pl.jar" />
       </pack>
 
       <pack required="no" preselected="no" installGroups="Translations" name="Optional Translation - Russian">
