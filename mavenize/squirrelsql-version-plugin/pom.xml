@@ -9,18 +9,21 @@
    </parent>
 
    <groupId>net.sf.squirrel-sql</groupId>
-   <artifactId>squirrelsql-test-utils</artifactId>
+   <artifactId>squirrelsql-version-plugin</artifactId>
    <version>3.2.0-SNAPSHOT</version>
-   <packaging>pom</packaging>
+   <packaging>maven-plugin</packaging>
 
-   <name>Test Utilities</name>
+   <name>SQuirreLSQL Version Maven Mojo</name>
    <description>
-        This pom simply collects all of the test-related dependencies so that they don't have 
-        to be duplicated.  Simply include this project as a dependency in any project that depends
-        on JUnit, EasyMock, GSBase, etc.  This is a best practice for optimizing POMs as documented
-        in the Maven Book here: 
-        http://www.sonatype.com/books/maven-book/reference/optimizing-sect-dependencies.html
-   </description>
+		This project produces a maven mojo that can set the System property "squirrelsql.version" so that
+		it can be used globally by the installers and the update-site projects.  It accepts the project 
+		version as an argument which it uses to decide what the squirrelsql.version should be.  If the 
+		project version ends with "-SNAPSHOT", then the squirrelsql.version will be set to 
+		Snapshot-{timestamp} where {timestamp} is the current timestamp in the form of YYYYMMDD_HHMM.  If 
+		however, the project version does not end with "-SNAPSHOT", then squirrelsql.version will be set to 
+		the value of the project version.    
+	</description>
+
    <inceptionYear>2001</inceptionYear>
    <developers>
       <developer>
@@ -54,33 +57,36 @@
    <issueManagement>
       <system>SourceForge Tracker</system>
       <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
-   </issueManagement>     
+   </issueManagement>
    <ciManagement>
-        <system>Hudson</system>
-        <url>https://www.squirrel-sql.org/hudson/</url>
+      <system>Hudson</system>
+      <url>https://www.squirrel-sql.org/hudson/</url>
    </ciManagement>
 
    <dependencies>
       <dependency>
-         <groupId>gsbase</groupId>
-         <artifactId>gsbase</artifactId>
-         <version>${gsbase-version}</version>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>squirrel-sql</artifactId>
+         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.easymock</groupId>
-         <artifactId>easymock</artifactId>
-         <version>${easymock-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.easymock</groupId>
-         <artifactId>easymockclassextension</artifactId>
-         <version>${easymockclassextension-version}</version>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-plugin-api</artifactId>
+         <version>${maven-plugin-api-version}</version>
       </dependency>
    </dependencies>
-   
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+               <source>${javac-source-version}</source>
+               <target>${javac-target-version}</target>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>

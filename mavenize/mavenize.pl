@@ -787,6 +787,21 @@ sub copyUpdateSiteProjects {
 	chdirOrDie($mavenizeDir);
 }
 
+sub copyVersionPluginProject {
+	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+
+    print "Copying in version plugin project\n";
+	
+	`svn mkdir --parents $topDir/squirrelsql-version-plugin`;
+	`svn mkdir --parents $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
+	
+	`cp $mavenizeDir/squirrelsql-version-plugin/pom.xml $topDir/squirrelsql-version-plugin`;
+	`cp $mavenizeDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
+	
+	`svn add $topDir/squirrelsql-version-plugin/pom.xml`;
+	`svn add $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java`;
+}
+
 sub restructureDocModule {
 
 	print "Restructuring doc module\n";

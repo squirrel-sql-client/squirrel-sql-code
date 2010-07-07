@@ -105,6 +105,8 @@
             <version>${surefire-plugin-version}</version>
             <configuration>
                <redirectTestOutputToFile>true</redirectTestOutputToFile>
+				<parallel>${surefire-parallel-type}</parallel>
+               <threadCount>${surefire-thread-count}</threadCount>
             </configuration>
          </plugin>
          <plugin>

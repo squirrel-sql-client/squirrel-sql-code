@@ -53,7 +53,7 @@
    </ciManagement>
    
    <properties>
-      <!-- Maven plugin version -->
+      <!-- Maven plugin versions -->
       <assembly-plugin-version>2.2-beta-2</assembly-plugin-version>
       <checkstyle-plugin-version>2.2</checkstyle-plugin-version>
       <compiler-plugin-version>2.0.2</compiler-plugin-version>
@@ -67,10 +67,19 @@
       <maven-plugin-api-version>2.0</maven-plugin-api-version>
       <pmd-plugin-version>2.4</pmd-plugin-version>
       <source-plugin-version>2.1</source-plugin-version>
-      <surefire-plugin-version>2.4</surefire-plugin-version>
+      <surefire-plugin-version>2.5</surefire-plugin-version>
+      
       <!-- Thirdparty Library Versions -->
+      <easymock-version>2.4</easymock-version>
+      <easymockclassextension-version>2.4</easymockclassextension-version>
+      <gsbase-version>2.0.1</gsbase-version>
       <hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
+      <junit-version>4.7</junit-version>
       <spring-framework-version>2.5.2</spring-framework-version>
+      
+      <!--  Other -->
+      <surefire-parallel-type>classes</surefire-parallel-type>
+      <surefire-thread-count>4</surefire-thread-count>
    </properties>
 
    <modules>
@@ -115,6 +124,7 @@
             <module>app</module>
             <module>plugins</module>
             <module>squirrelsql-translations</module>
+            <module>squirrelsql-version-plugin</module>
             <module>doc</module>
             <module>web-site</module>
             <module>installer</module>

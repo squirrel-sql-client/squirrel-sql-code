@@ -224,6 +224,8 @@
                <excludes>
                	<exclude>**/*ExternalTest.java</exclude>
                </excludes>
+			   <parallel>${surefire-parallel-type}</parallel>
+               <threadCount>${surefire-thread-count}</threadCount>
             </configuration>
          </plugin>
          <plugin>
