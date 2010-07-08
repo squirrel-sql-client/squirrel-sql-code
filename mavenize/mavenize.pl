@@ -186,6 +186,8 @@ copyIntegrationEnvironmentProject();
 
 removeRemainingUnnecessaryFiles();
 
+copyVersionPluginProject();
+
 # End of script; Begin Subroutines
 
 sub wanted_for_create_plugin_poms {
@@ -800,6 +802,8 @@ sub copyVersionPluginProject {
 	
 	`svn add $topDir/squirrelsql-version-plugin/pom.xml`;
 	`svn add $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java`;
+	
+	setSvnIgnore("$topDir/squirrelsql-version-plugin");
 }
 
 sub restructureDocModule {
