@@ -21,9 +21,11 @@ package net.sf.squirrel_sql;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -40,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Goal which sets the System property "squirrelsql.version" based on the value of project version.  Sets the 
@@ -61,6 +64,15 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	private org.apache.maven.plugin.logging.Log log = getLog();
 
 	public static String VERSION_PROPERTY_KEY = "squirrelsql.version";
+	
+   /**
+    * The maven project.
+    * 
+    * @parameter expression="${project}"
+    * @required
+    * @readonly
+    */
+   private MavenProject project;	
 	
 	/**
 	 * The version for the release.
@@ -86,10 +98,11 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 		if (projectVersion == null) { throw new MojoExecutionException("projectVersion cannot be null."); }
 
 		String squirrelsqlVersion = projectVersion;
+		String timestampPattern = "yyyyMMdd_kkmm";
 		
 		if (!projectVersion.toLowerCase().endsWith("-snapshot"))
 		{
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_kkmm");
+			SimpleDateFormat sdf = new SimpleDateFormat(timestampPattern);
 			try
 			{
 				String date = sdf.format(new Date());
@@ -97,6 +110,7 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 			}
 			catch (IllegalStateException e)
 			{
+				
 				log.error("Could not convert date format pattern " + timestampPattern);
 				throw e;
 			}
@@ -104,7 +118,7 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 
 		Properties props = project.getProperties();
 		props.put(VERSION_PROPERTY_KEY, squirrelsqlVersion);
-		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion)
+		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion);
 
 	}
 
