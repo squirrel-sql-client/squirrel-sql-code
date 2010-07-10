@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>net.sf.squirrel-sql</groupId>
+      <artifactId>squirrel-root-pom</artifactId>
+      <version>3.2.0-SNAPSHOT</version>
+   </parent>
+
+   <groupId>net.sf.squirrel-sql</groupId>
+   <artifactId>squirrelsql-update-site-plugin</artifactId>
+   <version>3.2.0-SNAPSHOT</version>
+   <packaging>maven-plugin</packaging>
+
+   <name>SQuirreLSQL Update Site Maven Mojo</name>
+   <description>
+		This project produces the Mojo that can build a proper release.xml for the 
+		SQuirreLSQL update site, given a directory where the updated jar artifacts are located.
+		This plugin accepts a directory in it's configuration and expects to find three sub-directories
+		there : core, plugins and i18n.  It then categorizes the artifacts found in those directories
+		accordingly in the final release.xml file, that is generated in the specified folder.
+	</description>
+
+   <inceptionYear>2001</inceptionYear>
+   <developers>
+      <developer>
+         <name>Gerd Wagner</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Rob Manning</name>
+         <roles>
+            <role>Developer</role>
+            <role>Release Manager</role>
+         </roles>
+      </developer>
+   </developers>
+   <licenses>
+      <license>
+         <name>GNU Lesser</name>
+         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <url>http://www.squirrelsql.org/</url>
+   <scm>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
+   <issueManagement>
+      <system>SourceForge Tracker</system>
+      <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+   </issueManagement>
+   <ciManagement>
+      <system>Hudson</system>
+      <url>https://www.squirrel-sql.org/hudson/</url>
+   </ciManagement>
+
+   <dependencies>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>squirrel-sql</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.maven</groupId>
+         <artifactId>maven-plugin-api</artifactId>
+         <version>${maven-plugin-api-version}</version>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+               <source>${javac-source-version}</source>
+               <target>${javac-target-version}</target>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+</project>
