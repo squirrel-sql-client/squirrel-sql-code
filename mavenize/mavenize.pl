@@ -902,6 +902,10 @@ sub installLafPluginAssembly {
 	`svn add $lafPluginDir/src`;
 	`svn add $lafPluginDir/pom.xml`;
 	`svn add $targetFolder/laf-plugin-assembly.xml`;
+	
+	`svn delete plugins/laf/lafs`;
+	`svn delete plugins/laf/oyoaha-theme-packs`;
+	
 	chdir($lafPluginDir) or die "Couldn't change dir to ($lafPluginDir): $!\n";
 }
 
