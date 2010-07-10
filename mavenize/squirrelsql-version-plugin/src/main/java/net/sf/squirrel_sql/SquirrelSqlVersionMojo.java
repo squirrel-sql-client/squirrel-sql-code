@@ -19,41 +19,25 @@ package net.sf.squirrel_sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerImpl;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Goal which sets the System property "squirrelsql.version" based on the value of project version.  Sets the 
- * System property "squirrelsql.version" so that it can be used globally by the installers and the 
- * update-site projects.  It accepts the project version as an argument which it uses to decide what the 
- * squirrelsql.version should be.  If the project version ends with "-SNAPSHOT", then the squirrelsql.version 
- * will be set to Snapshot-{timestamp} where {timestamp} is the current timestamp in the form of 
- * YYYYMMDD_HHMM.  If however, the project version does not end with "-SNAPSHOT", then squirrelsql.version 
- * will be set to the value of the project version.  This mojo should only be executed once during the 
- * build since it manipulates globally-accessible properties.  This is particularly important in the case 
- * of snapshot project versions.
+ * Goal which sets the System property "squirrelsql.version" based on the value of project version. Sets the
+ * System property "squirrelsql.version" so that it can be used globally by the installers and the update-site
+ * projects. It accepts the project version optionally as an argument which it uses to decide what the
+ * squirrelsql.version should be. If this property is not configured, then the version of the project in which
+ * this plugin is configured will be used. If the project version ends with "-SNAPSHOT", then the
+ * squirrelsql.version will be set to Snapshot-{timestamp} where {timestamp} is the current timestamp in the
+ * form of YYYYMMDD_HHMM. If however, the project version does not end with "-SNAPSHOT", then
+ * squirrelsql.version will be set to the value of the project version. In case this mojo is configured and
+ * executed more than once in a build, the squirrelsqlVersion property is set to the value that it was 
+ * initially set to during the first execution of this plugin.
  * 
  * @goal set-version
  * @phase initialize
@@ -63,22 +47,29 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 
 	private org.apache.maven.plugin.logging.Log log = getLog();
 
+	/** This is the property that will be set for use in the pom */
 	public static String VERSION_PROPERTY_KEY = "squirrelsql.version";
-	
-   /**
-    * The maven project.
-    * 
-    * @parameter expression="${project}"
-    * @required
-    * @readonly
-    */
-   private MavenProject project;	
-	
+
+	/** The format of the timestamp that follows the prefix SNAPSHOT- in the version string */
+	public static String TIMESTAMP_PATTERN = "yyyyMMdd_kkmm";
+
+	/** A place to keep the version after it has been generated. */
+	private static String squirrelsqlVersion = null;
+
 	/**
-	 * The version for the release.
+	 * The maven project in which this plugin is configured.
+	 * 
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	private MavenProject project;
+
+	/**
+	 * The version for the release.  This is optional and if it is not specified then the project.version 
+	 * of the project in which this plugin is configured is used instead.
 	 * 
 	 * @parameter expression="${projectVersion}"
-	 * @required
 	 */
 	private String projectVersion;
 
@@ -95,29 +86,43 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	 */
 	public void execute() throws MojoExecutionException
 	{
-		if (projectVersion == null) { throw new MojoExecutionException("projectVersion cannot be null."); }
-
-		String squirrelsqlVersion = projectVersion;
-		String timestampPattern = "yyyyMMdd_kkmm";
-		
-		if (!projectVersion.toLowerCase().endsWith("-snapshot"))
+		// Skip creating a new version if we have already done so in the past.
+		if (squirrelsqlVersion == null)
 		{
-			SimpleDateFormat sdf = new SimpleDateFormat(timestampPattern);
-			try
+			if (project == null) { throw new MojoExecutionException("project cannot be null."); }
+
+			squirrelsqlVersion = project.getVersion();
+
+			// override the project's version with the value of "projectVersion" if it is configured
+			if (projectVersion != null && !"".equals(projectVersion))
 			{
-				String date = sdf.format(new Date());
-				squirrelsqlVersion = "Snapshot-" + date;
+				squirrelsqlVersion = projectVersion;
 			}
-			catch (IllegalStateException e)
+
+			// If the squirrelsqlVersion ends with -snapshot, then we need to generate a timestamp
+			if (squirrelsqlVersion.toLowerCase().endsWith("-snapshot"))
 			{
-				
-				log.error("Could not convert date format pattern " + timestampPattern);
-				throw e;
+				try
+				{
+					SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
+					String timestampStr = sdf.format(new Date());
+					squirrelsqlVersion = "Snapshot-" + timestampStr;
+				}
+				catch (IllegalStateException e)
+				{
+
+					log.error("Could not convert date format pattern " + TIMESTAMP_PATTERN);
+					throw e;
+				}
 			}
 		}
-
+		
+		// We set this as a property in the current project where the plugin is configured.  This is probably 
+		// unnecessary.
 		Properties props = project.getProperties();
 		props.put(VERSION_PROPERTY_KEY, squirrelsqlVersion);
+		
+		// Also a global system property so that this is accessible from any pom as a pom property.
 		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion);
 
 	}
