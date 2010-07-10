@@ -186,7 +186,7 @@ copyIntegrationEnvironmentProject();
 
 removeRemainingUnnecessaryFiles();
 
-copyVersionPluginProject();
+#copyVersionPluginProject();
 
 # End of script; Begin Subroutines
 
@@ -766,45 +766,51 @@ sub copyUpdateSiteProjects {
 
     print "Copying in update-site project\n";
     
-	!$onlyCopyPoms && `rm -rf $topDir/update-site`;
-    !$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql`;
-    !$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site`;
+	#!$onlyCopyPoms && `rm -rf $topDir/update-site`;
+    #!$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql`;
+    #!$onlyCopyPoms && `svn mkdir --parents $topDir/update-site/squirrelsql-update-site`;
+    !$onlyCopyPoms && `rm -rf $topDir/squirrelsql-update-site`;
+    !$onlyCopyPoms && `svn mkdir --parents $topDir/squirrelsql-update-site`;
     
-    `cp $mavenizeDir/update-site/pom.xml $topDir/update-site/`;
-    `cp $mavenizeDir/update-site/squirrelsql-update-site/pom.xml $topDir/update-site/squirrelsql-update-site/pom.xml`;
-    `cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/pom.xml $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
-	`cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/`;
+    #`cp $mavenizeDir/update-site/pom.xml $topDir/update-site/`;
+    #`cp $mavenizeDir/update-site/squirrelsql-update-site/pom.xml $topDir/update-site/squirrelsql-update-site/pom.xml`;
+    #`cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/pom.xml $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
+	#`cp $mavenizeDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/`;
+	`cp $mavenizeDir/update-site/squirrelsql-update-site/pom.xml $topDir/squirrelsql-update-site/pom.xml`;
 	
 	return if $onlyCopyPoms;
 	
-	`svn add $topDir/update-site/pom.xml`;
-	`svn add $topDir/update-site/squirrelsql-update-site/pom.xml`;
-	`svn add $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
-	`svn add $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java`;
+	#`svn add $topDir/update-site/pom.xml`;
+	#`svn add $topDir/update-site/squirrelsql-update-site/pom.xml`;
+	`svn add $topDir/squirrelsql-update-site/pom.xml`;
 	
-	setSvnIgnore("$topDir/update-site");
-	setSvnIgnore("$topDir/update-site/squirrelsql-update-site");
-	setSvnIgnore("$topDir/update-site/squirrelsql-update-site-plugin");
+	#`svn add $topDir/update-site/squirrelsql-update-site-plugin/pom.xml`;
+	#`svn add $topDir/update-site/squirrelsql-update-site-plugin/src/main/java/net/sf/squirrel_sql/BuildUpdateSiteMojo.java`;
+	
+	#setSvnIgnore("$topDir/update-site");
+	#setSvnIgnore("$topDir/update-site/squirrelsql-update-site");
+	#setSvnIgnore("$topDir/update-site/squirrelsql-update-site-plugin");
+	setSvnIgnore("$topDir/squirrelsql-update-site");
 	
 	chdirOrDie($mavenizeDir);
 }
 
-sub copyVersionPluginProject {
-	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
-
-    print "Copying in version plugin project\n";
-	
-	`svn mkdir --parents $topDir/squirrelsql-version-plugin`;
-	`svn mkdir --parents $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
-	
-	`cp $mavenizeDir/squirrelsql-version-plugin/pom.xml $topDir/squirrelsql-version-plugin`;
-	`cp $mavenizeDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
-	
-	`svn add $topDir/squirrelsql-version-plugin/pom.xml`;
-	`svn add $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java`;
-	
-	setSvnIgnore("$topDir/squirrelsql-version-plugin");
-}
+#sub copyVersionPluginProject {
+#	chdir($mavenizeDir) or die "Couldn't change directory to $mavenizeDir: $!\n";
+#
+#    print "Copying in version plugin project\n";
+#	
+#	`svn mkdir --parents $topDir/squirrelsql-version-plugin`;
+#	`svn mkdir --parents $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
+#	
+#	`cp $mavenizeDir/squirrelsql-version-plugin/pom.xml $topDir/squirrelsql-version-plugin`;
+#	`cp $mavenizeDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql`;
+#	
+#	`svn add $topDir/squirrelsql-version-plugin/pom.xml`;
+#	`svn add $topDir/squirrelsql-version-plugin/src/main/java/net/sf/squirrel_sql/SquirrelSqlVersionMojo.java`;
+#	
+#	setSvnIgnore("$topDir/squirrelsql-version-plugin");
+#}
 
 sub restructureDocModule {
 

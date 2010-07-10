@@ -121,11 +121,10 @@
             <module>app</module>
             <module>plugins</module>
             <module>squirrelsql-translations</module>
-            <module>squirrelsql-version-plugin</module>
             <module>doc</module>
             <module>web-site</module>
             <module>installer</module>
-            <module>update-site</module>
+            <module>squirrelsql-update-site</module>
          </modules>
       </profile>
       <!--
