@@ -2,15 +2,9 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
-   <parent>
-      <groupId>net.sf.squirrel-sql</groupId>
-      <artifactId>squirrel-root-pom</artifactId>
-      <version>3.2.0-SNAPSHOT</version>
-   </parent>
-
    <groupId>net.sf.squirrel-sql</groupId>
    <artifactId>squirrelsql-update-site-plugin</artifactId>
-   <version>3.2.0-SNAPSHOT</version>
+   <version>1.0.0-SNAPSHOT</version>
    <packaging>maven-plugin</packaging>
 
    <name>SQuirreLSQL Update Site Maven Mojo</name>
@@ -63,14 +57,14 @@
 
    <dependencies>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>net.sf.squirrel-sql</groupId>
          <artifactId>squirrel-sql</artifactId>
-         <version>${project.version}</version>
+         <version>3.2.0-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.apache.maven</groupId>
          <artifactId>maven-plugin-api</artifactId>
-         <version>${maven-plugin-api-version}</version>
+         <version>2.0</version>
       </dependency>
    </dependencies>
 
@@ -81,8 +75,8 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
                <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
-               <source>${javac-source-version}</source>
-               <target>${javac-target-version}</target>
+               <source>1.6</source>
+               <target>1.6</target>
             </configuration>
          </plugin>
       </plugins>
