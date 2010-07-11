@@ -904,13 +904,20 @@ sub installLafPluginAssembly {
 	`cp $lafPluginAssemblyFile $targetFolder`;
 	
 	return if $onlyCopyPoms;
-	
+		
 	`svn add $lafPluginDir/src`;
 	`svn add $lafPluginDir/pom.xml`;
 	`svn add $targetFolder/laf-plugin-assembly.xml`;
 	
 	`svn delete plugins/laf/lafs`;
 	`svn delete plugins/laf/oyoaha-theme-packs`;
+	
+	`cp $mavenizeDir/laf-plugin/src/main/resources/readme.txt $lafPluginDir/src/main/resources/`;
+	`svn add $lafPluginDir/src/main/resources/readme.txt`;
+	
+	`svn mkdir --parents $lafPluginDir/src/main/resources/skinlf-theme-packs`;
+	`cp $mavenizeDir/laf-plugin/src/main/resources/skinlf-theme-packs/skinlf-readme.txt $lafPluginDir/src/main/resources/skinlf-theme-packs/`;
+	`svn add $lafPluginDir/src/main/resources/skinlf-theme-packs/skinlf-readme.txt`;
 	
 	chdir($lafPluginDir) or die "Couldn't change dir to ($lafPluginDir): $!\n";
 }
