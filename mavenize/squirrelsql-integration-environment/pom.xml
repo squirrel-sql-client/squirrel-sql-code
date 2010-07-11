@@ -43,8 +43,8 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
-		<developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+		<connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</developerConnection>
 		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
 	</scm>
 	<issueManagement>
