@@ -59,4 +59,31 @@
 		<module>squirrelsql-update-site-plugin</module>
 		<module>squirrelsql-version-plugin</module>
 	</modules>
+	<properties>
+		<compiler-plugin-version>2.0.2</compiler-plugin-version>
+		<gpg-plugin-version>1.0-alpha-4</gpg-plugin-version>
+		<javac-source-version>1.6</javac-source-version>
+		<javac-target-version>1.6</javac-target-version>
+		<maven-plugin-api-version>2.0</maven-plugin-api-version>
+		<maven-project-version>2.0.2</maven-project-version>
+		<maven-settings-version>2.0.2</maven-settings-version>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${gpg-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
