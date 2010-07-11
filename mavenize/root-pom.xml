@@ -68,7 +68,9 @@
       <pmd-plugin-version>2.4</pmd-plugin-version>
       <source-plugin-version>2.1</source-plugin-version>
       <squirrelsql-version-plugin-version>1.0.1</squirrelsql-version-plugin-version>
+      <squirrelsql-update-site-plugin-version>1.0.1</squirrelsql-update-site-plugin-version>
       <surefire-plugin-version>2.5</surefire-plugin-version>      
+      
       
       <!-- Thirdparty Library Versions -->
       <easymock-version>2.4</easymock-version>

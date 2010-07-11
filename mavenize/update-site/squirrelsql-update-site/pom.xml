@@ -376,7 +376,7 @@
 			<plugin>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrelsql-update-site-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>${squirrelsql-update-site-plugin-version}</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
