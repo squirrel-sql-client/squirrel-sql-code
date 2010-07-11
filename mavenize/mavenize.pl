@@ -133,12 +133,6 @@ EOF
 # copy in the root pom - this pom builds all of SQuirreL
 copyRootPom();
 
-# copy in test dependencies pom
-copyTestUtilsProject();
-
-# copy in plugins support projects
-copyPluginsSupportProjects();
-
 # copy in the installer projects
 copyInstallerProjects();
 
@@ -481,43 +475,6 @@ sub copyRootPom {
 	chdirOrDie($mavenizeDir);	
 }
 
-sub copyTestUtilsProject {
-	print "Copying in test dependencies pom\n";
-
-	if ($onlyCopyPoms) {
-		`cp $mavenizeDir/squirrelsql-test-utils/pom.xml $topDir/squirrelsql-test-utils/pom.xml`;
-		return;
-	}
-
-	`rm -rf $topDir/squirrelsql-test-utils`;
-	svnmkdir("$topDir/squirrelsql-test-utils");
-	`cp $mavenizeDir/squirrelsql-test-utils/pom.xml $topDir/squirrelsql-test-utils/pom.xml`;
-	`svn add $topDir/squirrelsql-test-utils/pom.xml`;
-	
-	setSvnIgnore("$topDir/squirrelsql-test-utils");
-	chdirOrDie($mavenizeDir);
-}
-
-sub copyPluginsSupportProjects {
-	print "Copying in plugins support projects\n";
-	
-	chdirOrDie($mavenizeDir);
-	
-	svnmkdir("$pluginsDir/squirrelsql-plugins-assembly-descriptor/src/main/resources/assemblies");
-	`tar --exclude .svn -cvf - squirrelsql-plugins-assembly-descriptor | ( cd $pluginsDir; tar -xvf -)`;
-	`svn st $pluginsDir/squirrelsql-plugins-assembly-descriptor | grep "^\?" | awk '{print \$2}' | xargs svn add`;
-
-	svnmkdir("$pluginsDir/squirrelsql-plugins-parent-pom");
-	`cp $mavenizeDir/squirrelsql-plugins-parent-pom/pom.xml $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
-	`svn add $pluginsDir/squirrelsql-plugins-parent-pom/pom.xml`;
-
-	setSvnIgnore("$pluginsDir/squirrelsql-plugins-assembly-descriptor");
-	setSvnIgnore("$pluginsDir/squirrelsql-plugins-parent-pom");
-	setSvnIgnore($pluginsDir);
-
-	chdirOrDie($mavenizeDir);
-}
-
 sub restructureFwModule {
 	print "Restructuring fw module\n";
 
@@ -662,40 +619,11 @@ sub copyInstallerProjects {
 
 	print "Copying in mac resources to the macos x installer project\n";
 	
-	#if (!$onlyCopyPoms) {
-	#   `rm -rf $installerDir`;
-	#   `mkdir -p $installerDir`;
-    #}     
-	
-	#svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
-	#svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
-	#`tar --exclude .svn -cvf - squirrelsql-java-version-checker | ( cd $installerDir; tar -xvf -)`;
-		
-	#svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
-	#svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
-	#`tar --exclude .svn -cvf - squirrelsql-launcher | ( cd $installerDir; tar -xvf -)`;
-	
-	#svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
-	#`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
-
-	#svnmkdir("$installerDir/squirrelsql-macosx-installer/src/main/resources");
-	#`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
-	
 	`svn move $macDir/Contents/Info.plist $installerDir/squirrelsql-macosx-installer/src/main/resources`;
 	`svn move $macDir/Contents/Resources/acorn.icns $installerDir/squirrelsql-macosx-installer/src/main/resources`;
 	
 	chdir($topDir) or die "Couldn't change directory to $topDir: $!\n";
 	`svn delete mac`;
-	
-	#`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
-
-	#`svn st $installerDir | grep "^\?" | awk '{print \$2}' | xargs svn add`;
-
-	#setSvnIgnore($installerDir);
-	#setSvnIgnore("$installerDir/squirrelsql-launcher");
-	#setSvnIgnore("$installerDir/squirrelsql-other-installer");
-	#setSvnIgnore("$installerDir/squirrelsql-macosx-installer");
-	#setSvnIgnore("$installerDir/squirrelsql-java-version-checker");
 	
 	chdirOrDie($mavenizeDir);
 }
