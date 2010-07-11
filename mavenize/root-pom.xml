@@ -67,7 +67,8 @@
       <maven-plugin-api-version>2.0</maven-plugin-api-version>
       <pmd-plugin-version>2.4</pmd-plugin-version>
       <source-plugin-version>2.1</source-plugin-version>
-      <surefire-plugin-version>2.5</surefire-plugin-version>
+      <squirrelsql-version-plugin-version>1.0.1</squirrelsql-version-plugin-version>
+      <surefire-plugin-version>2.5</surefire-plugin-version>      
       
       <!-- Thirdparty Library Versions -->
       <easymock-version>2.4</easymock-version>
@@ -102,7 +103,7 @@
 		         <plugin>
 		         		<groupId>net.sf.squirrel-sql</groupId>
 		         		<artifactId>squirrelsql-version-plugin</artifactId>
-		         		<version>1.0.0-SNAPSHOT</version>
+		         		<version>${squirrelsql-version-plugin-version}</version>
 						<executions>
 							<execution>
 								<phase>initialize</phase>
