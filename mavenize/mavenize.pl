@@ -728,7 +728,7 @@ sub setSvnIgnore {
 
 sub chdirOrDie {
 	my $newDir = shift;
-	print "Changing directory to $newDir";
+	print "Changing directory to $newDir\n";
 	chdir($newDir) or die "Couldn't change directory to $newDir: $!\n";
 }
 
