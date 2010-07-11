@@ -47,9 +47,9 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.0</connection>
-      <developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.0</developerConnection>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/maven-plugin-workspace-1.0.0</url>
+      <connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace</connection>
+      <developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/maven-plugin-workspace</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>
