@@ -56,7 +56,7 @@
 	</modules>
 	<properties>
 		<compiler-plugin-version>2.0.2</compiler-plugin-version>
-		<gpg-plugin-version>1.0-alpha-4</gpg-plugin-version>
+		<gpg-plugin-version>1.0</gpg-plugin-version>
 		<javac-source-version>1.6</javac-source-version>
 		<javac-target-version>1.6</javac-target-version>
 		<maven-plugin-api-version>2.0</maven-plugin-api-version>
@@ -80,6 +80,7 @@
 									<goal>sign</goal>
 								</goals>
 								<configuration>
+									<homedir>${gpg.homedir}</homedir>
 									<keyname>${gpg.keyname}</keyname>
 									<passphrase>${gpg.passphrase}</passphrase>
 								</configuration>
