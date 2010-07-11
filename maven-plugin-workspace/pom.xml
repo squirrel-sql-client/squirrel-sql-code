@@ -63,31 +63,33 @@
 		<maven-project-version>2.0.2</maven-project-version>
 		<maven-settings-version>2.0.2</maven-settings-version>
 	</properties>
-	<profile>
-		<id>sign-jar</id>
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>${gpg-plugin-version}</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-							<configuration>
-								<keyname>${gpg.keyname}</keyname>
-								<passphrase>${gpg.passphrase}</passphrase>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</build>
-	</profile>
+	<profiles>
+		<profile>
+			<id>sign-jar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${gpg-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<keyname>${gpg.keyname}</keyname>
+									<passphrase>${gpg.passphrase}</passphrase>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<distributionManagement>
 		<repository>
 			<id>sourceforge-releases</id>
