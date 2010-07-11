@@ -209,6 +209,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
+            <version>${compiler-plugin-version}</version>
             <configuration>
                <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
                <source>${javac-source-version}</source>
