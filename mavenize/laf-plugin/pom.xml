@@ -72,7 +72,7 @@
 	</ciManagement>
 	<properties>
 		<staging.dir>${project.build.directory}</staging.dir>
-		<laf.artifactIds> ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,toniclf,tinylaf </laf.artifactIds>
+		<laf.artifactIds> ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf </laf.artifactIds>
 	</properties>
 	<dependencies>
    		<dependency>
