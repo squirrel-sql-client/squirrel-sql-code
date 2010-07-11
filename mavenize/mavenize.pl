@@ -680,26 +680,26 @@ sub copyInstallerProjects {
 
 	chdirOrDie($mavenizeDir);
 
-	print "Copying in installer projects\n";
+	print "Copying in mac resources to the macos x installer project\n";
 	
-	if (!$onlyCopyPoms) {
-	   `rm -rf $installerDir`;
-	   `mkdir -p $installerDir`;
-    }     
+	#if (!$onlyCopyPoms) {
+	#   `rm -rf $installerDir`;
+	#   `mkdir -p $installerDir`;
+    #}     
 	
-	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
-	svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
-	`tar --exclude .svn -cvf - squirrelsql-java-version-checker | ( cd $installerDir; tar -xvf -)`;
+	#svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/java");
+	#svnmkdir("$installerDir/squirrelsql-java-version-checker/src/main/resources");
+	#`tar --exclude .svn -cvf - squirrelsql-java-version-checker | ( cd $installerDir; tar -xvf -)`;
 		
-	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
-	svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
-	`tar --exclude .svn -cvf - squirrelsql-launcher | ( cd $installerDir; tar -xvf -)`;
+	#svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/icons");
+	#svnmkdir("$installerDir/squirrelsql-launcher/src/main/resources/plugins");
+	#`tar --exclude .svn -cvf - squirrelsql-launcher | ( cd $installerDir; tar -xvf -)`;
 	
-	svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
-	`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
+	#svnmkdir("$installerDir/squirrelsql-other-installer/src/main/resources");
+	#`tar --exclude .svn -cvf - squirrelsql-other-installer | ( cd $installerDir; tar -xvf -)`;
 
-	svnmkdir("$installerDir/squirrelsql-macosx-installer/src/main/resources");
-	`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
+	#svnmkdir("$installerDir/squirrelsql-macosx-installer/src/main/resources");
+	#`tar --exclude .svn -cvf - squirrelsql-macosx-installer | ( cd $installerDir; tar -xvf -)`;
 	
 	`svn move $macDir/Contents/Info.plist $installerDir/squirrelsql-macosx-installer/src/main/resources`;
 	`svn move $macDir/Contents/Resources/acorn.icns $installerDir/squirrelsql-macosx-installer/src/main/resources`;
@@ -707,15 +707,15 @@ sub copyInstallerProjects {
 	chdir($topDir) or die "Couldn't change directory to $topDir: $!\n";
 	`svn delete mac`;
 	
-	`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
+	#`cp $mavenizeDir/installer-pom.xml $installerDir/pom.xml`;
 
-	`svn st $installerDir | grep "^\?" | awk '{print \$2}' | xargs svn add`;
+	#`svn st $installerDir | grep "^\?" | awk '{print \$2}' | xargs svn add`;
 
-	setSvnIgnore($installerDir);
-	setSvnIgnore("$installerDir/squirrelsql-launcher");
-	setSvnIgnore("$installerDir/squirrelsql-other-installer");
-	setSvnIgnore("$installerDir/squirrelsql-macosx-installer");
-	setSvnIgnore("$installerDir/squirrelsql-java-version-checker");
+	#setSvnIgnore($installerDir);
+	#setSvnIgnore("$installerDir/squirrelsql-launcher");
+	#setSvnIgnore("$installerDir/squirrelsql-other-installer");
+	#setSvnIgnore("$installerDir/squirrelsql-macosx-installer");
+	#setSvnIgnore("$installerDir/squirrelsql-java-version-checker");
 	
 	chdirOrDie($mavenizeDir);
 }
