@@ -178,9 +178,6 @@ find( { wanted => \&wanted_for_testsources, no_chdir => 0 }, $topDir . "/test/sr
 # Miscellaneous
 installLafPluginAssembly();
 
-# copy in the integration environment project
-copyIntegrationEnvironmentProject();
-
 removeRemainingUnnecessaryFiles();
 
 # End of script; Begin Subroutines
@@ -657,18 +654,6 @@ sub findAndCopyDoc {
 	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
 `find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
 `find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
-}
-
-sub copyIntegrationEnvironmentProject {
-	
-	chdirOrDie($mavenizeDir);
-	print "Copying in integration environment project\n";
-	
-	`svn move $mavenizeDir/squirrelsql-integration-environment $topDir`; 
-	
-	setSvnIgnore("$topDir/squirrelsql-integration-environment");
-	
-	chdirOrDie($mavenizeDir);
 }
 
 sub copyInstallerProjects {
