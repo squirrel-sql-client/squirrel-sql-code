@@ -308,6 +308,11 @@ sub wanted_for_packagemap {
 	if ( $_ !~ /\.java$/ ) {
 		return;
 	}
+	return if ( $File::Find::name =~ /sql12\/installer/ );
+	return if ( $File::Find::name =~ /sql12\/squirrelsql-integration-environment/ );
+	return if ( $File::Find::name =~ /sql12\/squirrelsql-test-utils/ );
+	return if ( $File::Find::name =~ /sql12\/test/ );
+	return if ( $File::Find::name =~ /sql12\/update-site/ );
 
 	$package = getPackageFromFile($File::Find::name);
 
@@ -336,26 +341,6 @@ sub wanted_for_packagemap {
 	elsif ( $parts[0] =~ /build\/$/ ) {
 
 		print "Found a build package: $package\n\tfor $File::Find::name\n";
-
-	}
-	elsif ( $File::Find::name =~ /sql12\/test/ ) {
-
-		# ignore test files during this pass
-
-	}
-	elsif ( $File::Find::name =~ /sql12\/squirrelsql-test-utils/ ) {
-
-		# ignore maven test utilities project
-
-	}
-	elsif ( $File::Find::name =~ /sql12\/installer/ ) {
-
-		# ignore installer project
-
-	}
-	elsif ( $File::Find::name =~ /sql12\/update-site/ ) {
-		
-		# ignore update-site project
 		
 	} else {
 		print "Unable to categorize package of file: $File::Find::name\n";
