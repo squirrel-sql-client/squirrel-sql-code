@@ -409,7 +409,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${wagon-plugin-version}</version>
 				<configuration>
 					<serverId>update-site-ftp-server</serverId>
 					<!-- property update.site.ftp.server defined in settings.xml installer profile -->
@@ -424,7 +424,7 @@
 						</goals>
 						<configuration>
 							<fromDir>target/release</fromDir>
-							<!-- property update.site.ftp.server defined in settings.xml installer profile -->
+							<!-- property update.site.path defined in settings.xml installer profile -->
 							<toDir>${update.site.path}</toDir>
 						</configuration>
 					</execution>
