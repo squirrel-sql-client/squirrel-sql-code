@@ -130,9 +130,6 @@ EOF
 # Begin working
 #################################################################################################
 
-# copy in the root pom - this pom builds all of SQuirreL
-copyRootPom();
-
 # copy in the installer projects
 copyInstallerProjects();
 
@@ -473,16 +470,6 @@ sub convertPackageToDirectory {
 	$package = shift;
 	$package =~ s/\./\//g;
 	return $package;
-}
-
-sub copyRootPom {
-	print "Copying in root pom\n";
-	`cp root-pom.xml $topDir/pom.xml`;
-	return if $onlyCopyPoms;
-	`svn add $topDir/pom.xml`;
-
-	setSvnIgnore($topDir);
-	chdirOrDie($mavenizeDir);	
 }
 
 sub restructureFwModule {
