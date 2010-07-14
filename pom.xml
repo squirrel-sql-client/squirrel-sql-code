@@ -1,0 +1,202 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.squirrel-sql</groupId>
+	<artifactId>squirrel-root-pom</artifactId>
+	<version>3.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>SQuirreL Root POM</name>
+	<description>
+        The top-most POM file for building the SQuirreL SQL Client.  If a profile is defined that is called 
+        "installer", the build will also include building projects that produce the installer and the 
+        installer itself. 
+   </description>
+	<inceptionYear>2001</inceptionYear>
+	<developers>
+		<developer>
+			<name>Gerd Wagner</name>
+			<roles>
+				<role>Administrator</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Rob Manning</name>
+			<roles>
+				<role>Developer</role>
+				<role>Release Manager</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<url>http://www.squirrelsql.org/</url>
+	<scm>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+		<developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+	</scm>
+	<issueManagement>
+		<system>SourceForge Tracker</system>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://www.squirrel-sql.org/hudson/</url>
+	</ciManagement>
+	<properties>
+		<!-- Maven plugin versions -->
+		<assembly-plugin-version>2.2-beta-2</assembly-plugin-version>
+		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
+		<compiler-plugin-version>2.0.2</compiler-plugin-version>
+		<dependency-plugin-version>2.0</dependency-plugin-version>
+		<findbugs-plugin-version>2.1</findbugs-plugin-version>
+		<gpg-plugin-version>1.0-alpha-4</gpg-plugin-version>
+		<javac-source-version>1.6</javac-source-version>
+		<javac-target-version>1.6</javac-target-version>
+		<jar-plugin-version>2.2</jar-plugin-version>
+		<javadoc-plugin-version>2.6</javadoc-plugin-version>
+		<maven-plugin-api-version>2.0</maven-plugin-api-version>
+		<pmd-plugin-version>2.4</pmd-plugin-version>
+		<source-plugin-version>2.1</source-plugin-version>
+		<squirrelsql-version-plugin-version>1.0.1</squirrelsql-version-plugin-version>
+		<squirrelsql-update-site-plugin-version>1.0.1</squirrelsql-update-site-plugin-version>
+		<surefire-plugin-version>2.5</surefire-plugin-version>
+		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
+
+		<!-- Thirdparty Library Versions -->
+		<easymock-version>2.4</easymock-version>
+		<easymockclassextension-version>2.4</easymockclassextension-version>
+		<gsbase-version>2.0.1</gsbase-version>
+		<hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
+		<junit-version>4.7</junit-version>
+		<spring-framework-version>2.5.2</spring-framework-version>
+
+		<!--  Other -->
+		<surefire-parallel-type>classes</surefire-parallel-type>
+		<surefire-thread-count>4</surefire-thread-count>
+	</properties>
+	<modules>
+		<module>squirrelsql-test-utils</module>
+		<module>fw</module>
+		<module>app</module>
+		<module>plugins</module>
+	</modules>
+	<profiles>
+		<!--
+			There are a few additional projects that are needed to build the installer. These are probably not needed
+			for developing plugins, so the default is to build them only when the installer profile is activated.
+		-->
+		<profile>
+			<id>installer</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.sf.squirrel-sql</groupId>
+						<artifactId>squirrelsql-version-plugin</artifactId>
+						<version>${squirrelsql-version-plugin-version}</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>set-version</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<modules>
+				<module>squirrelsql-test-utils</module>
+				<module>fw</module>
+				<module>app</module>
+				<module>plugins</module>
+				<module>squirrelsql-translations</module>
+				<module>doc</module>
+				<module>web-site</module>
+				<module>installer</module>
+				<module>squirrelsql-update-site</module>
+			</modules>
+		</profile>
+		<!--
+			Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile is
+			activated
+		-->
+		<profile>
+			<id>sign-jar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${gpg-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<homedir>${gpg.homedir}</homedir>
+									<keyname>${gpg.keyname}</keyname>
+									<passphrase>${gpg.passphrase}</passphrase>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<distributionManagement>
+		<repository>
+			<id>sonatype-squirrel-sql-releases</id>
+			<name>SQuirreL-SQL Release Repository</name>
+			<url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-squirrel-sql-snapshots</id>
+			<name>SQuirreL-SQL Snapshot Repository</name>
+			<url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<!--
+		Releases can always be pulled directly from Maven central after they have been vetted and promoted to the
+		release repo from the staging repo at sonatype. This means that the "releases" attribute of each repo below
+		should have enabled == false. However, snapshots will never be deployed to maven central - so, this section
+		helps in case someone wants to develop against our snapshots. This tells maven that it can find snapshot
+		versions at sonatype and where exactly to look for them.
+	-->
+	<repositories>
+		<repository>
+			<id>sonatype-squirrel-sql-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-squirrel-sql-maven-plugin-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/sourceforge-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+</project>
