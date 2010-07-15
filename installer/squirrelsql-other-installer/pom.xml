@@ -360,7 +360,7 @@
 							     that we are including jars that are never used (only transitively) -->
 
 							<!--  Can we make this list smaller by using groupIds ? -->
-							<includeArtifactIds>antlr,asm,asm-attrs,autocomplete,cglib,common,commons-cli,commons-codec,commons-collections,commons-httpclient,commons-logging,forms,fw,hibernate-annotations,hibernate-commons-annotations,hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,openide-loaders,org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,org-netbeans-modules-editor-util,org-netbeans-modules-editor,ostermiller-syntax,rsyntaxtextarea,rtext,spring-beans,squirrel-sql,spring-context-support,spring-context,spring-core,stringtemplate</includeArtifactIds>
+							<includeArtifactIds>antlr,asm,asm-attrs,autocomplete,axis,axis-jaxrpc,cglib,common,commons-cli,commons-codec,commons-collections,commons-httpclient,commons-logging,forms,fw,hibernate-annotations,hibernate-commons-annotations,hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,openide-loaders,org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,org-netbeans-modules-editor-util,org-netbeans-modules-editor,ostermiller-syntax,rsyntaxtextarea,rtext,spring-beans,squirrel-sql,spring-context-support,spring-context,spring-core,stringtemplate</includeArtifactIds>
 							<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
 							<outputDirectory>${staging.dir}/lib</outputDirectory>
 							
