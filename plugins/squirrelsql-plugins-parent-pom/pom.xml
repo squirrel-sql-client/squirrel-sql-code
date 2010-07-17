@@ -208,7 +208,7 @@
 								<descriptors>
 									<descriptor>squirrelsql-plugin-assembly.xml</descriptor>
 								</descriptors>
-								<appendAssemblyId>true</appendAssemblyId>
+								<appendAssemblyId>false</appendAssemblyId>
 								<finalName>${project.artifactId}</finalName>
 							</configuration>
 						</execution>
