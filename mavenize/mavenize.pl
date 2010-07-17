@@ -290,6 +290,11 @@ sub wanted_for_source {
 
 		if ( -d "$File::Find::dir/doc" ) {
 			findAndCopyDoc($File::Find::dir);
+			
+		}
+
+		if ( -d "$File::Find::dir/lib" ) {
+			`svn delete "$File::Find::dir/lib"`;
 		}
 
 		chdir($File::Find::dir) or die "Couldn't change dir back to $File::Find::dir: $!\n";
@@ -605,11 +610,11 @@ sub findAndCopyDoc {
 	return if $onlyCopyPoms;
 	
 	my $baseDir = shift;
-	print
-"findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
-	chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
-`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
-`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+	print "findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
+	#chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
+    #`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
+    #`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+    `svn move $baseDir/doc $baseDir/src/main/resources`;
 }
 
 sub copyInstallerProjects {
