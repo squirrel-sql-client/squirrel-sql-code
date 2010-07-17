@@ -423,9 +423,11 @@ sub wanted_for_testsources {
 	}
 	elsif ( $category eq 'plugin' ) {
 
-		print "relativeDir: $relativeDir\n";
-		@parts = split /plugins\//, $relativeDir;
-		$pluginName = $parts[1];
+		print "relativeDir: $relativeDir\n";		
+		@parts = split /\/plugins\//, $relativeDir;
+		@parts = split /\//, $parts[1];
+		$pluginName = $parts[0];
+		
 		if ( !defined $pluginName ) {
 
 		   # Hack : currently, only firebird tests have a package which doesn't contain the "plugins" package.
