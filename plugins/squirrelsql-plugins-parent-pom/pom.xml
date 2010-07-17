@@ -208,7 +208,9 @@
 								<descriptors>
 									<descriptor>squirrelsql-plugin-assembly.xml</descriptor>
 								</descriptors>
-								<appendAssemblyId>false</appendAssemblyId>
+								<!-- This must be true, or else it will cause this to become the main 
+								     artifact for each plugin project -->
+								<appendAssemblyId>true</appendAssemblyId>
 								<finalName>${project.artifactId}</finalName>
 							</configuration>
 						</execution>
