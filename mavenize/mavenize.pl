@@ -39,6 +39,8 @@ $testDir      = $topDir . "/test";
 $macDir		  = $topDir . "/mac";
 
 $onlyCopyPoms = 0;
+%svnmkdirpaths = ( "paths that have already been " => " passed to svnmkdir");
+
 
 $cache_deps = <<"EOF";
       <dependency>
@@ -450,8 +452,13 @@ sub wanted_for_testsources {
 sub svnmkdir {
 	my $absolutepath = shift;
 
-	`svn mkdir --parents $absolutepath`;
-
+	if (exists($svnmkdirpaths{$absolutepath})) {
+		return;
+	} else {
+		print "svnmkdir: $absolutepath\n";
+		`svn mkdir --parents $absolutepath`;
+		$svnmkdirpaths{$absolutepath} = "added";		
+	}
 }
 
 sub getPackageFromFile {
@@ -611,9 +618,11 @@ sub findAndCopyDoc {
 	
 	my $baseDir = shift;
 	print "findAndCopyDoc: moving documentation files from $baseDir/doc/... to $baseDir/src/main/resources/doc...\n";
+	
 	#chdir("$baseDir/doc") or die "findAndCopyDoc: Couldn't chdir to $baseDir: $!\n";
     #`find . -type f -printf "%h\n" | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents $baseDir/src/main/resources/doc/{}`;
     #`find . -type f -print | grep -v "^./main/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} $baseDir/src/main/resources/doc/{}`;
+    svnmkdir("$baseDir/src/main/resources");
     `svn move $baseDir/doc $baseDir/src/main/resources`;
 }
 
