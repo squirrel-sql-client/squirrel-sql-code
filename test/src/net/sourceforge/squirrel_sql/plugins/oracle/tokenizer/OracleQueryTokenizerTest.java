@@ -31,12 +31,13 @@ import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL_2;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SET_COMMANDS;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.STUDENTS_NOT_TAKING_CS112;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.client.plugin.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
@@ -57,12 +58,13 @@ public class OracleQueryTokenizerTest {
     
     static IQueryTokenizerPreferenceBean _prefs;
     
+    private IPlugin mockPlugin = mock(IPlugin.class);  
+    
     @Before
     public void setUp() throws Exception {
         createSQLFile();
-        DummyPlugin plugin = new DummyPlugin();
         PluginQueryTokenizerPreferencesManager prefsManager = new PluginQueryTokenizerPreferencesManager();
-        prefsManager.initialize(plugin, new OraclePreferenceBean());
+        prefsManager.initialize(mockPlugin, new OraclePreferenceBean());
         _prefs = prefsManager.getPreferences();
         _prefs.setRemoveMultiLineComments(false);
     }
