@@ -222,11 +222,10 @@
             <version>${surefire-plugin-version}</version>
             <configuration>
                <redirectTestOutputToFile>true</redirectTestOutputToFile>
-               <excludes>
-               	<exclude>**/*ExternalTest.java</exclude>
-               </excludes>
-			   <parallel>${surefire-parallel-type}</parallel>
-               <threadCount>${surefire-thread-count}</threadCount>
+               <!-- This is temporarily disabled because it prevents any tests from running for some 
+                    unknown reason -->
+<!--			   <parallel>${surefire-parallel-type}</parallel>-->
+<!--               <threadCount>${surefire-thread-count}</threadCount>-->
             </configuration>
          </plugin>
          <plugin>
