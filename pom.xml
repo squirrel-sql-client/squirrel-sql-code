@@ -82,6 +82,9 @@
 		<!--  Other -->
 		<surefire-parallel-type>classes</surefire-parallel-type>
 		<surefire-thread-count>4</surefire-thread-count>
+		<properties>
+			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		</properties>
 	</properties>
 	<modules>
 		<module>squirrelsql-test-utils</module>
