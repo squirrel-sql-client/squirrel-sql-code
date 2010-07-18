@@ -598,19 +598,19 @@ sub restructureAppModule {
 sub findAndCopyJava {
 	return if $onlyCopyPoms;
 	print "Copying source files from src/... to /src/main/java...\n";
-`find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn mkdir --parents ./main/java/{}`;
+`find . -name *.java -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | sort | uniq | xargs -ti svn mkdir --parents ./main/java/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-`find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | sort | xargs -ti svn move {} ./main/java/{}`;
+`find . -type f -name *.java -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | sort | uniq | xargs -ti svn move {} ./main/java/{}`;
 }
 
 sub findAndCopyResources {
 	return if $onlyCopyPoms;
 	my $fileType = shift;
-`find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn mkdir --parents main/resources/{}`;
+`find . -name $fileType -printf "%h\n" | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | sort | uniq | xargs -ti svn mkdir --parents main/resources/{}`;
 	`svn add --quiet main`;
 	`find main -type d | grep -v .svn | sort | xargs -ti svn add --quiet {}`;
-`find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | uniq | xargs -ti svn move {} main/resources/{}`;
+`find . -type f -name $fileType -print | grep -v "^./main/" | grep -v "^./test/" | grep -v ".svn" | sort | uniq | xargs -ti svn move {} main/resources/{}`;
 }
 
 sub findAndCopyDoc {
