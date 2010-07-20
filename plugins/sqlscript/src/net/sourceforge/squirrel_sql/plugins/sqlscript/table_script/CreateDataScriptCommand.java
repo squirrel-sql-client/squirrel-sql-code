@@ -33,9 +33,8 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -59,7 +58,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
    /** flag that gets set when the first timestamp column is encountered */
    private Boolean dialectSupportsSubSecondTimestamps = null; 
    
-	protected AbortController _abortController;
+	protected IAbortController _abortController;
 
    /**
     * Current session.
@@ -83,6 +82,19 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       _templateScriptOnly = templateScriptOnly;
       _abortController = new AbortController(_session.getApplication());
    }
+
+   /**
+    * Ctor specifying the current session and IAbortController.
+    */   
+	public CreateDataScriptCommand(ISession session, IAbortController abortController, SQLScriptPlugin plugin,
+		boolean templateScriptOnly)
+	{
+		super();
+		_session = session;
+		_plugin = plugin;
+		_templateScriptOnly = templateScriptOnly;
+		_abortController = abortController;
+	}
 
    protected void showAbortFrame()
    {
