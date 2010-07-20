@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class AbortController
+public class AbortController implements IAbortController
 {
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(AbortController.class);
@@ -46,16 +46,25 @@ public class AbortController
       });
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController#isStop()
+    */
    public boolean isStop()
    {
       return _stop;
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController#isVisble()
+    */
    public boolean isVisble()
    {
       return _dlg.isVisible();
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController#setVisible(boolean)
+    */
    public void setVisible(final boolean b)
    {
       GUIUtils.processOnSwingEventThread

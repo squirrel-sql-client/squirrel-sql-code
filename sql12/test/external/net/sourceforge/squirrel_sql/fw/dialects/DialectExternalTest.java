@@ -77,11 +77,13 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import utils.EasyMockHelper;
 
@@ -299,6 +301,8 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 	private static int testsRun = 0;
 
+	private final IAbortController mockAbortController = Mockito.mock(IAbortController.class);
+	
 	@Before
 	public void setup() throws Exception
 	{
@@ -2422,7 +2426,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 
 		final String timestampTypeName = dialect.getTypeName(Types.TIMESTAMP, 5, 5, 5);
 
-		final CreateDataScriptHelper command = new CreateDataScriptHelper(session, null, false);
+		final CreateDataScriptHelper command = new CreateDataScriptHelper(session, mockAbortController, null, false);
 
 		dropTable(session, testTimestampTable);
 		runSQL(session, "create table " + testTimestampTable + " ( mytime " + timestampTypeName + " )");
@@ -2946,9 +2950,9 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 	private class CreateDataScriptHelper extends CreateDataScriptCommand
 	{
 
-		public CreateDataScriptHelper(ISession session, SQLScriptPlugin plugin, boolean templateScriptOnly)
+		public CreateDataScriptHelper(ISession session, IAbortController abortController, SQLScriptPlugin plugin, boolean templateScriptOnly)
 		{
-			super(session, plugin, templateScriptOnly);
+			super(session, abortController, plugin, templateScriptOnly);
 		}
 
 		public StringBuffer getSQL(String tableName) throws SQLException
