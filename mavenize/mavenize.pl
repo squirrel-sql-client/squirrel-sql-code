@@ -452,7 +452,7 @@ sub wanted_for_testsources {
 sub svnmkdir {
 	my $absolutepath = shift;
 
-	if (exists($svnmkdirpaths{$absolutepath})) {
+	if (exists($svnmkdirpaths{$absolutepath}) || -d "$absolutepath/.svn") {
 		return;
 	} else {
 		print "svnmkdir: $absolutepath\n";
