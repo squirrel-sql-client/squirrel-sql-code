@@ -206,6 +206,13 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>macosx</artifactId>
+			<version>${project.version}</version>
+			<classifier>assembly</classifier>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>mssql</artifactId>
 			<version>${project.version}</version>
 			<classifier>assembly</classifier>
