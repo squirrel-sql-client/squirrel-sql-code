@@ -48,7 +48,7 @@
 		<panel
 			classname="InstallPanel" />
 		<panel
-			classname="SimpleFinishPanel" />
+			classname="FinishPanel" />
 	</panels>
 	<packs>
 		<pack
@@ -68,19 +68,16 @@
 			<singlefile target="$INSTALL_PATH/Contents/Resources/Java/plugins/readme.txt" 
 			            src="launcher/plugins/readme.txt" />
 
-<!--			<singlefile-->
-<!--				target="$INSTALL_PATH/Contents/Resources/Java/update/release.xml"-->
-<!--				src="../../squirrel-sql-dist/release/release.xml" />-->
+			<singlefile target="$INSTALL_PATH/Contents/Resources/Java/update/release.xml"
+						src="update-site/release.xml" />
 
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java" src="doc" />
 			
-<!--			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/doc" src="../../sql12/web-site/faq.html" />-->
-			
-<!--			<fileset-->
-<!--				targetdir="$INSTALL_PATH/Contents/Resources/Java/doc/images"-->
-<!--				dir="../../sql12/web-site/images">-->
-<!--				<include-->
-<!--					name="*.*" />-->
+<!--			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/doc" -->
+<!--						src="../../sql12/web-site/faq.html" />-->
+<!--			-->
+<!--			<fileset targetdir="$INSTALL_PATH/Contents/Resources/Java/doc/images" dir="doc/images">-->
+<!--				<include name="*.*" />-->
 <!--			</fileset>-->
 
 			<file targetdir="$INSTALL_PATH/Contents/Resources" src="classes/acorn.icns" />
@@ -187,22 +184,9 @@
 			installGroups="OptionalPlugins"
 			name="Optional Plugin - DBDiff">
 			<description>This optional plugin lets you compare table structure from one database session to another</description>
-			<file
-				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
-				src="plugins/dbdiff" />
-			<file
-				targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
-				src="plugins/dbdiff.jar" />
-		</pack>		
-		<pack
-			required="no"
-			preselected="no"
-			installGroups="OptionalPlugins"
-			name="Optional Plugin - DBDiff">
-			<description>This optional plugin lets you compare table structure from one database session to another</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" src="plugins/dbdiff" />
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" src="plugins/dbdiff.jar" />
-		</pack>		
+		</pack>						
 		<pack
 			required="no"
 			preselected="no"

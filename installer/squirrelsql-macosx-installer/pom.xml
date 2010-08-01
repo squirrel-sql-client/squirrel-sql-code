@@ -425,6 +425,18 @@
 							<outputDirectory>${staging.dir}/lib</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>unpack-update-site</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>squirrelsql-update-site</includeArtifactIds>
+							<!--							<includes>*.jar</includes>-->
+							<outputDirectory>${staging.dir}/update-site</outputDirectory>
+						</configuration>
+					</execution>					
 				</executions>
 			</plugin>
 			<plugin>
@@ -449,6 +461,27 @@
 						<goals>
 							<goal>izpack</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-jar</argument>
+						<argument>target/squirrelsql-macosx-installer-${project.version}-standard.jar</argument>
+						<argument>src/test/resources/auto-install.xml</argument>
+					</arguments>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>						
 					</execution>
 				</executions>
 			</plugin>
