@@ -463,6 +463,27 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-jar</argument>
+						<argument>target/squirrelsql-other-installer-${project.version}-standard.jar</argument>
+						<argument>src/test/resources/auto-install.xml</argument>
+					</arguments>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>						
+					</execution>
+				</executions>
+			</plugin>			
 		</plugins>
 	</build>
 </project>
