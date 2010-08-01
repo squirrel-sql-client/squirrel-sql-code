@@ -719,10 +719,10 @@ sub restructureWebsiteModule {
 	return if $onlyCopyPoms;
 	
 	`svn add $websiteDir/pom.xml`;
-	`rm -rf $websiteDir/src/main`;
-	`mkdir -p $websiteDir/src/main/resources`;
-	`cp $websiteDir/faq.html $websiteDir/src/main/resources`;
-	`svn add $websiteDir/src`;
+	
+	svnmkdir("$websiteDir/src/main/resources");
+	`svn move $websiteDir/faq.html $websiteDir/src/main/resources`;
+	`svn move $websiteDir/images $websiteDir/src/main/resources`;
 	
 	setSvnIgnore("$websiteDir");
 	
