@@ -282,12 +282,6 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-dependency-plugin</artifactId>
-			<version>${dependency-plugin-version}</version>
-			<type>maven-plugin</type>
-		</dependency>
 	</dependencies>
 	<properties>
 		<squirrelsql.version>test</squirrelsql.version>
