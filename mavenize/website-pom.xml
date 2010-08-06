@@ -66,9 +66,6 @@
             <artifactId>maven-jar-plugin</artifactId>
             <version>${jar-plugin-version}</version>
             <configuration>
-               <includes>
-                  <include>faq.html</include>
-               </includes>
                <archive>
                   <addMavenDescriptor>false</addMavenDescriptor>
                </archive>
