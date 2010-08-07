@@ -346,6 +346,12 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>			
+			</testResource>		
+		</testResources>
 		<plugins>
 
 			<!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
@@ -479,8 +485,8 @@
 					<executable>java</executable>
 					<arguments>
 						<argument>-jar</argument>
-						<argument>target/squirrelsql-other-installer-${project.version}-standard.jar</argument>
-						<argument>src/test/resources/auto-install.xml</argument>
+						<argument>${project.build.directory}/squirrelsql-other-installer-${project.version}-standard.jar</argument>
+						<argument>${project.build.directory}/test-classes/auto-install.xml</argument>
 					</arguments>
 				</configuration>
 				<executions>
