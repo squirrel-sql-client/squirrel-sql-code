@@ -568,6 +568,7 @@ sub restructureAppModule {
 	findAndCopyResources('*.png');
 	findAndCopyResources('*.xml');
 	findAndCopyResources('*.jpg');
+	findAndCopyResources('*.html');
 
     `cp $mavenizeDir/DefaultFormBuilder.java $appDir/src/main/java/net/sourceforge/squirrel_sql/client/gui/builders`;
 
