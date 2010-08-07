@@ -3,7 +3,7 @@
 <com.izforge.izpack.panels.HelloPanel id="UNKNOWN (com.izforge.izpack.panels.HelloPanel)"/>
 <com.izforge.izpack.panels.HTMLInfoPanel id="UNKNOWN (com.izforge.izpack.panels.HTMLInfoPanel)"/>
 <com.izforge.izpack.panels.TargetPanel id="UNKNOWN (com.izforge.izpack.panels.TargetPanel)">
-<installpath>target/squirrel-install-from-maven</installpath>
+<installpath>${project.build.directory}/squirrel-install-from-maven</installpath>
 </com.izforge.izpack.panels.TargetPanel>
 <com.izforge.izpack.panels.PacksPanel id="UNKNOWN (com.izforge.izpack.panels.PacksPanel)">
 <pack index="0" name="Base" selected="true"/>
