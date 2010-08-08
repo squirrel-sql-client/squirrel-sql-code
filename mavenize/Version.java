@@ -56,9 +56,12 @@ public class Version
 	public static String getVersion()
 	{
 		StringBuffer buf = new StringBuffer();
-		buf.append(APP_NAME)
-			.append(" Version ")
-			.append(getShortVersion());
+		buf.append(APP_NAME);
+		buf.append(" ");
+		if (!isSnapshotVersion()) {
+			buf.append("Version ");
+		}
+		buf.append(getShortVersion());
 		return buf.toString();
 	}
 
