@@ -90,16 +90,15 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<includes>
-					<include>**/Version.java</include>
-				</includes>
 				<filtering>true</filtering>
+				<targetPath>../filtered-sources/java</targetPath>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 			</resource>
 		</resources>
+		<sourceDirectory>target/filtered-sources/java</sourceDirectory>
 		<plugins>
 			<!-- Set the squirrelsql.version property if it has not already been set. -->
 			<plugin>
