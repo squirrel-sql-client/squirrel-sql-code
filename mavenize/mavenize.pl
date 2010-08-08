@@ -571,6 +571,8 @@ sub restructureAppModule {
 	findAndCopyResources('*.html');
 
     `cp $mavenizeDir/DefaultFormBuilder.java $appDir/src/main/java/net/sourceforge/squirrel_sql/client/gui/builders`;
+    # Overwrite Version.java with the one that contains a maven property for version which gets filtered
+	`cp $mavenizeDir/Version.java $appDir/src/main/java/net/sourceforge/squirrel_sql/client/Version.java`;
 
 	`svn delete net`;
 	`svn add test`;
