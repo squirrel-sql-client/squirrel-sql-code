@@ -129,9 +129,15 @@ public class UpdateSettingsTest extends BaseSQuirreLJUnit4TestCase
 	@Test
 	public void testGetSetUpdateServerChannel()
 	{
-		assertEquals("stable", classUnderTest.getUpdateServerChannel());
-		classUnderTest.setUpdateServerChannel("snapshot");
-		assertEquals("snapshot", classUnderTest.getUpdateServerChannel());
+		if (Version.isSnapshotVersion()) {
+			assertEquals("snapshot", classUnderTest.getUpdateServerChannel());
+			classUnderTest.setUpdateServerChannel("stable");			
+			assertEquals("stable", classUnderTest.getUpdateServerChannel());			
+		} else {
+			assertEquals("stable", classUnderTest.getUpdateServerChannel());
+			classUnderTest.setUpdateServerChannel("snapshot");			
+			assertEquals("snapshot", classUnderTest.getUpdateServerChannel());						
+		}
 	}
 
 	@Test
