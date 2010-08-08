@@ -95,6 +95,10 @@
 				</includes>
 				<filtering>true</filtering>
 			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
 		</resources>
 		<plugins>
 			<!-- Set the squirrelsql.version property if it has not already been set. -->
