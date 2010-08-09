@@ -288,7 +288,7 @@
 	</properties>
 	<build>
 		<plugins>
-		    <!-- Set the squirrelsql.version property if it has not already been set. -->
+			<!-- Set the squirrelsql.version property if it has not already been set. -->
 			<plugin>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrelsql-version-plugin</artifactId>
@@ -388,30 +388,6 @@
 					</includes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>${wagon-plugin-version}</version>
-				<configuration>
-					<serverId>update-site-ftp-server</serverId>
-					<!-- property update.site.ftp.server defined in settings.xml installer profile -->
-					<url>ftp://${update.site.ftp.server}</url>
-				</configuration>
-				<executions>
-					<execution>
-						<id>ftp-upload-release</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-						<configuration>
-							<fromDir>target/release</fromDir>
-							<!-- property update.site.path defined in settings.xml installer profile -->
-							<toDir>${update.site.path}</toDir>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
@@ -421,4 +397,42 @@
 			</extension>
 		</extensions>
 	</build>
+	<profiles>
+		<profile>
+			<id>uploadUpdateSite</id>
+			<activation>
+				<property>
+					<name>uploadUpdateSite</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>${wagon-plugin-version}</version>
+						<configuration>
+							<serverId>update-site-ftp-server</serverId>
+							<!-- property update.site.ftp.server defined in settings.xml installer profile -->
+							<url>ftp://${update.site.ftp.server}</url>
+						</configuration>
+						<executions>
+							<execution>
+								<id>ftp-upload-release</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<fromDir>target/release</fromDir>
+									<!-- property update.site.path defined in settings.xml installer profile -->
+									<toDir>${update.site.path}</toDir>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
