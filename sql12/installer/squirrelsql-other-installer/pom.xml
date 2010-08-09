@@ -56,6 +56,7 @@
 		<squirrel.version>3.1.0</squirrel.version>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<izpack-standalone.version>4.3.1</izpack-standalone.version>
+		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrel-sql-${squirrelsql.version}-install.jar</upload-server-path>
 	</properties>
 	<dependencies>
 
@@ -137,7 +138,7 @@
 				<exclusion>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-				</exclusion>				
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -349,11 +350,10 @@
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
-				<filtering>true</filtering>			
-			</testResource>		
+				<filtering>true</filtering>
+			</testResource>
 		</testResources>
 		<plugins>
-
 			<!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -477,6 +477,10 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
+				This plugin configuration performs a test of the installer by running it with an autoinstall configuraion
+				file.
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -494,10 +498,31 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>integration-test</phase>						
+						<phase>integration-test</phase>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<configuration>
+							<executable>sftp</executable>
+							<arguments>
+								<argument>-b</argument>
+								<argument>target/classes/batch.txt</argument>
+								<argument>${file.release.server}</argument>
+							</arguments>
+						</configuration>
+						<phase>deploy</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
