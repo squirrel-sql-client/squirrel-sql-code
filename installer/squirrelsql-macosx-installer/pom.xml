@@ -499,27 +499,40 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<configuration>
-							<executable>sftp</executable>
-							<arguments>
-								<argument>-b</argument>
-								<argument>target/classes/batch.txt</argument>
-								<argument>${file.release.server}</argument>
-							</arguments>
-						</configuration>
-						<phase>deploy</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>			
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<name>uploadInstallers</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<configuration>
+									<executable>sftp</executable>
+									<arguments>
+										<argument>-b</argument>
+										<argument>target/classes/batch.txt</argument>
+										<argument>${file.release.server}</argument>
+									</arguments>
+								</configuration>
+								<phase>deploy</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>							
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
