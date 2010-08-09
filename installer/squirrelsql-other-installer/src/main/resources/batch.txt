@@ -1,0 +1,4 @@
+cd ${file.release.path}
+mkdir ${squirrelsql.version}
+cd ${squirrelsql.version}
+put target/${project.build.finalName} ${upload-server-path} 
