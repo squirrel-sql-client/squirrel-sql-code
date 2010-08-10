@@ -1,0 +1,4 @@
+cd ${file.release.path}
+mkdir ${squirrelsql.version}
+cd ${squirrelsql.version}
+put target/squirrel-sql-source.zip ${upload-server-path} 
