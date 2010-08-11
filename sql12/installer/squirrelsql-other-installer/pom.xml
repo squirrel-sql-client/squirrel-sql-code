@@ -485,23 +485,88 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2</version>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>-jar</argument>
-						<argument>${project.build.directory}/squirrelsql-other-installer-${project.version}-standard.jar</argument>
-						<argument>${project.build.directory}/test-classes/auto-install.xml</argument>
-					</arguments>
-				</configuration>
 				<executions>
 					<execution>
+						<id>test-base-install</id>
 						<goals>
 							<goal>exec</goal>
 						</goals>
 						<phase>integration-test</phase>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-jar</argument>
+								<argument>${project.build.directory}/squirrelsql-other-installer-${project.version}-standard.jar</argument>
+								<argument>${project.build.directory}/test-classes/base-auto-install.xml</argument>
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>test-standard-install</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-jar</argument>
+								<argument>${project.build.directory}/squirrelsql-other-installer-${project.version}-standard.jar</argument>
+								<argument>${project.build.directory}/test-classes/standard-auto-install.xml</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>test-optional-install</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+								<argument>-jar</argument>
+								<argument>${project.build.directory}/squirrelsql-other-installer-${project.version}-standard.jar</argument>
+								<argument>${project.build.directory}/test-classes/optional-auto-install.xml</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>build-plainzips</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<executable>sh</executable>
+							<arguments>
+								<argument>${project.build.directory}/test-classes/build-plainzips.sh</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>			
 		</plugins>
 	</build>
 	<profiles>
@@ -533,10 +598,9 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>							
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-	
 </project>
