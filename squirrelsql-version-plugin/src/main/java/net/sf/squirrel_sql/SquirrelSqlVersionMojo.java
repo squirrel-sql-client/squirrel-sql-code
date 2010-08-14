@@ -37,7 +37,9 @@ import org.apache.maven.project.MavenProject;
  * form of YYYYMMDD_HHMM. If however, the project version does not end with "-SNAPSHOT", then
  * squirrelsql.version will be set to the value of the project version. In case this mojo is configured and
  * executed more than once in a build, the squirrelsqlVersion property is set to the value that it was 
- * initially set to during the first execution of this plugin.
+ * initially set to during the first execution of this plugin.  This mojo will also set a modified form
+ * of the version to a property called "squirrelsql.rpm.version".  This property's value is safe to use for 
+ * the RPM which requires no dashes in the version string.
  * 
  * @goal set-version
  * @phase initialize
@@ -50,12 +52,18 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	/** This is the property that will be set for use in the pom */
 	public static String VERSION_PROPERTY_KEY = "squirrelsql.version";
 
+	/** 
+	 * This is the property for the rpm version that will be set for use in the pom.  RPM doesn't allow 
+	 * dashes in the version so this is a sanitized form.
+	 */
+	public static String RPM_VERSION_PROPERTY_KEY = "squirrelsql.rpm.version";
+	
 	/** The format of the timestamp that follows the prefix SNAPSHOT- in the version string */
 	public static String TIMESTAMP_PATTERN = "yyyyMMdd_kkmm";
 
 	/** A place to keep the version after it has been generated. */
 	private static String squirrelsqlVersion = null;
-
+	
 	/**
 	 * The maven project in which this plugin is configured.
 	 * 
@@ -121,10 +129,11 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 		// unnecessary.
 		Properties props = project.getProperties();
 		props.put(VERSION_PROPERTY_KEY, squirrelsqlVersion);
+		props.put(RPM_VERSION_PROPERTY_KEY, squirrelsqlVersion.replace('-', '_'));
 		
 		// Also a global system property so that this is accessible from any pom as a pom property.
 		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion);
-
+		System.setProperty(RPM_VERSION_PROPERTY_KEY, squirrelsqlVersion.replace('-', '_'));
 	}
 
 }
