@@ -354,6 +354,20 @@
 			</testResource>
 		</testResources>
 		<plugins>
+			<!-- Set the squirrelsql.version property if it has not already been set. -->
+			<plugin>
+				<groupId>net.sf.squirrel-sql</groupId>
+				<artifactId>squirrelsql-version-plugin</artifactId>
+				<version>1.0.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>set-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -566,7 +580,146 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<version>2.1-alpha-1</version>
+				<executions>
+					<execution>
+						<configuration>
+							<version>${squirrelsql.rpm.version}</version>
+							<copyright>LGPL</copyright>
+							<distribution>Red Hat Linux</distribution>
+							<group>Development/Tools</group>
+							<packager>Rob Manning &lt;robert [DOT] m [DOT] manning [AT] gmail.com&gt;</packager>
+							<prefix>/opt</prefix>
+							<summary>A database front-end written in Java</summary>
+							<url>http://squirrelsql.org</url>
+							<requires>
+								<require>java-1.6.0-openjdk</require>
+							</requires>
+							<mappings>
+								<mapping>
+									<!--
+										The "/opt" prefix is necessary here. It is where we install by default, when the rpm is installed
+										without being relocated.
+									-->
+									<directory>/opt/SQuirreLSQLClient/doc</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/doc</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient/icons</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/icons</location>
+										</source>									
+									</sources>								
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient/lib</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>								
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/lib</location>
+										</source>									
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient/plugins</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>								
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/plugins</location>
+										</source>									
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>								
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/squirrel-sql.sh</location>
+										</source>									
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient/update</directory>
+									<filemode>777</filemode>
+									<username>root</username>
+									<groupname>root</groupname>								
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/update</location>
+										</source>									
+									</sources>
+								</mapping>																
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient</directory>
+									<filemode>666</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/log4j.properties</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient</directory>
+									<filemode>666</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/squirrel-sql.jar</location>
+										</source>
+									</sources>
+								</mapping>
+								<mapping>
+									<directory>/opt/SQuirreLSQLClient</directory>
+									<filemode>666</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>target/squirrel-sql-${squirrelsql.version}-base/update-log4j.properties</location>
+										</source>
+									</sources>
+								</mapping>									
+							</mappings>
+							<postinstallScriptlet>
+								<scriptFile>src/main/resources/postinstall.sh</scriptFile>
+								<fileEncoding>utf-8</fileEncoding>
+							</postinstallScriptlet>
+							<postremoveScriptlet>
+								<scriptFile>src/main/resources/postremove.sh</scriptFile>
+								<fileEncoding>utf-8</fileEncoding>
+							</postremoveScriptlet>
+						</configuration>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+						<phase>post-integration-test</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
