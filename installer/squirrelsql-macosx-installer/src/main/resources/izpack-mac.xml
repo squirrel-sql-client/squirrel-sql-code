@@ -3,7 +3,7 @@
 	<info>
 		<appname>SQuirreL SQL Client</appname>
 		<appsubpath>SQuirreLSQL.app</appsubpath>
-		<appversion>${squirrel.version}</appversion>
+		<appversion>${squirrelsql.version}</appversion>
 		<authors>
 			<author
 				email="gerdwagner@users.sourceforge.net"
