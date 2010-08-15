@@ -2,8 +2,8 @@
 
    <info>
       <appname>SQuirreL SQL Client</appname>
-      <appsubpath>squirrel-sql-${squirrel.version}</appsubpath>
-      <appversion>${squirrel.version}</appversion>
+      <appsubpath>squirrel-sql-${squirrelsql.version}</appsubpath>
+      <appversion>${squirrelsql.version}</appversion>
       <authors>
          <author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner" />
          <author email="manningr@users.sourceforge.net" name="Rob Manning" />
