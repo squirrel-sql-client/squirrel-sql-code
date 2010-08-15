@@ -7,3 +7,5 @@ put target/squirrel-sql-${squirrelsql.version}-optional.tar.gz
 mkdir ${squirrelsql.version}
 cd ../${squirrelsql.version}
 put target/${project.build.finalName}-standard.jar ${upload-server-path} 
+put target/rpm/squirrelsql-other-installer/RPMS/noarch/squirrelsql-other-installer-${squirrelsql.rpm.version}-1.noarch.rpm
+
