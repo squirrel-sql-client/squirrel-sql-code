@@ -19,6 +19,9 @@ package net.sf.squirrel_sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -64,6 +67,9 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	/** A place to keep the version after it has been generated. */
 	private static String squirrelsqlVersion = null;
 	
+	/** A place to keep the rpm version after it has been generated from the squirrelsqlVersion */
+	private static String squirrelsqlRpmVersion = null;
+	
 	/**
 	 * The maven project in which this plugin is configured.
 	 * 
@@ -92,7 +98,7 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	 * @throws MojoExecutionException
 	 *            if the projectVersion isn't specified.
 	 */
-	public void execute() throws MojoExecutionException
+	synchronized public void execute() throws MojoExecutionException
 	{
 		// Skip creating a new version if we have already done so in the past.
 		if (squirrelsqlVersion == null)
@@ -123,6 +129,13 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 					throw e;
 				}
 			}
+			// RPM requires that the version string have no dashes.  So create a special RPM-safe version of the 
+			// version string.
+			squirrelsqlRpmVersion = squirrelsqlVersion.replace('-', '_');
+		}
+		
+		if (log.isInfoEnabled()) {
+			log.info("squirrelsqlVersion: "+squirrelsqlVersion);
 		}
 		
 		// We set this as a property in the current project where the plugin is configured.  This is probably 
@@ -134,6 +147,31 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 		// Also a global system property so that this is accessible from any pom as a pom property.
 		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion);
 		System.setProperty(RPM_VERSION_PROPERTY_KEY, squirrelsqlVersion.replace('-', '_'));
+		
+		//writeVersionToFile();
+	}
+	
+	private void writeVersionToFile() {
+		File buildDir = new File(project.getBuild().getDirectory());
+		if (!buildDir.exists()) {
+			buildDir.mkdir();
+		}
+		File versionFile = new File(buildDir, "squirrelsql-version-plugin.log");
+		PrintWriter out = null;
+		try {
+			versionFile.createNewFile();
+			out = new PrintWriter(versionFile);
+			SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
+			out.println(VERSION_PROPERTY_KEY+"="+squirrelsqlVersion);
+			out.println(RPM_VERSION_PROPERTY_KEY+"="+squirrelsqlRpmVersion);
+			out.println("Current Timestamp: "+sdf.format(new Date()));
+		} catch (IOException e) {
+			log.error("Unable to write version ("+squirrelsqlVersion+") to file: "+e.getMessage(), e);
+		} finally {
+			if (out != null) {
+				out.close();
+			}
+		}
 	}
 
 }
