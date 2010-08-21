@@ -36,6 +36,7 @@ public interface IObjectTypes
 	DatabaseObjectType TRIGGER_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Triggers");
 	DatabaseObjectType TYPE_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Types");
 	DatabaseObjectType USER_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Users");
+	DatabaseObjectType CONSTRAINT_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Constraints");
 
 	DatabaseObjectType CONSUMER_GROUP = DatabaseObjectType.createNewDatabaseObjectType("Consumer Group");
 	DatabaseObjectType INSTANCE = DatabaseObjectType.createNewDatabaseObjectType("Instance");
@@ -43,4 +44,5 @@ public interface IObjectTypes
 	DatabaseObjectType PACKAGE = DatabaseObjectType.createNewDatabaseObjectType("Package");
 	DatabaseObjectType SESSION = DatabaseObjectType.createNewDatabaseObjectType("Session");
 	DatabaseObjectType TYPE = DatabaseObjectType.createNewDatabaseObjectType("Type");
+	DatabaseObjectType CONSTRAINT = DatabaseObjectType.createNewDatabaseObjectType("Constraint");
 }
