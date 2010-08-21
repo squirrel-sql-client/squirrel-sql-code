@@ -77,6 +77,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.ConstraintParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.OracleTableParentExpander;
@@ -93,6 +94,9 @@ import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferences
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sqlloader.control.GenerateControlFileAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintColumnInfoTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
@@ -790,7 +794,8 @@ public class OraclePlugin extends DefaultSessionPlugin
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-
+		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new DatabaseObjectInfoTab());
+		
 		// Expanders.
 		addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander());
 		addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
@@ -799,6 +804,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
 		addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander());
 		addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
+		addExpander(objTree, IObjectTypes.CONSTRAINT_PARENT, new ConstraintParentExpander());
 
 		addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab(
 		   "PROCEDURE", "Show stored procedure source"));
@@ -810,6 +816,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		   "PACKAGE BODY", "Body", "Show package body"));
 		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab(
 		   "TYPE", "Specification", "Show type specification"));
+		
 		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
 		addDetailTab(objTree, IObjectTypes.INSTANCE, new InstanceDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
@@ -819,7 +826,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
-
+		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintDetailsTab());
+		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintColumnInfoTab());
+		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintSourceTab());
+		
 		addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
 		addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());
 		

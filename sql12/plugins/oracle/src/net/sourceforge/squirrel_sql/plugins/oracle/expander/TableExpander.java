@@ -61,9 +61,16 @@ public class TableExpander implements INodeExpander
 
 		IDatabaseObjectInfo dbinfo = new TriggerParentInfo(parentDbinfo,
 											schemaName, md);
+		
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		childNodes.add(child);
-
+		
+		IDatabaseObjectInfo cstrinfo = new ConstraintParentInfo(parentDbinfo,
+				schemaName, md);
+		
+		child = new ObjectTreeNode(session, cstrinfo);
+		childNodes.add(child);
+		
 		return childNodes;
 	}
 }
