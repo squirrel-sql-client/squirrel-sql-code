@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   
+   <parent>
+      <groupId>net.sf.squirrel-sql</groupId>
+      <artifactId>squirrel-root-pom</artifactId>
+      <version>3.2.0-SNAPSHOT</version>
+   </parent>      
+   
+   <groupId>net.sf.squirrel-sql.plugins</groupId>
+   <artifactId>plugins</artifactId>
+   <version>3.2.0-SNAPSHOT</version>
+   <packaging>pom</packaging>
+   
+   <name>Plugin Modules POM file</name>
+   <description>
+        This POM lists all of the plugin modules.  It is important to take the following
+        steps when adding a new plugin:
+        1. This pom's modules section gets a new module whose name matches the directory in which the new 
+           plugin is installed. 
+        2. The new module has a pom which lists the squirrelsql-plugins-parent-pom as it's 
+           parent (not this pom!). 
+   </description>
+   <inceptionYear>2001</inceptionYear>
+   <developers>
+      <developer>
+         <name>Gerd Wagner</name>
+         <roles>
+            <role>Administrator</role>
+            <role>Developer</role>
+         </roles>
+      </developer>
+      <developer>
+         <name>Rob Manning</name>
+         <roles>
+            <role>Developer</role>
+            <role>Release Manager</role>
+         </roles>
+      </developer>
+   </developers>   
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License</name>
+         <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <url>http://www.squirrelsql.org/</url>
+   <scm>
+      <connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
+      <developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+   </scm>
+   <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+   </issueManagement>     
+   <ciManagement>
+        <system>Hudson</system>
+        <url>https://www.squirrel-sql.org/hudson/</url>
+   </ciManagement>
+
+   <modules>
+      	<module>squirrelsql-plugins-parent-pom</module>
+	<module>squirrelsql-plugins-assembly-descriptor</module>
+	<module>codecompletion</module>
+	<module>dataimport</module>
+	<module>db2</module>
+	<module>dbcopy</module>
+	<module>dbdiff</module>
+	<module>derby</module>
+	<module>editextras</module>
+	<module>example</module>
+	<module>exportconfig</module>
+	<module>favs</module>
+	<module>firebird</module>
+	<module>firebirdmanager</module>
+	<module>graph</module>
+	<module>h2</module>
+	<module>hibernate</module>
+	<module>i18n</module>
+	<module>informix</module>
+	<module>laf</module>
+	<module>macosx</module>
+	<module>mssql</module>
+	<module>mysql</module>
+	<module>netezza</module>
+	<module>oracle</module>
+	<module>postgres</module>
+	<module>refactoring</module>
+	<module>sessionscript</module>
+	<module>smarttools</module>
+	<module>sqlbookmark</module>
+	<module>sqlparam</module>
+	<module>sqlreplace</module>
+	<module>sqlscript</module>
+	<module>sqlval</module>
+	<module>sybase</module>
+	<module>syntax</module>
+	<module>userscript</module>
+
+   </modules>
+
+</project>
