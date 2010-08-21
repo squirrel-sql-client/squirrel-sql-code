@@ -73,7 +73,7 @@
 		<maven-plugin-api-version>2.0</maven-plugin-api-version>
 		<pmd-plugin-version>2.4</pmd-plugin-version>
 		<source-plugin-version>2.1</source-plugin-version>
-		<squirrelsql-version-plugin-version>1.0.1</squirrelsql-version-plugin-version>
+		<squirrelsql-version-plugin-version>1.0.3</squirrelsql-version-plugin-version>
 		<squirrelsql-update-site-plugin-version>1.0.1</squirrelsql-update-site-plugin-version>
 		<surefire-plugin-version>2.5</surefire-plugin-version>
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
