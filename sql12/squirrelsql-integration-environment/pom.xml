@@ -357,40 +357,6 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>pointbase-5.1</id>
-			<activation>
-				<property>
-					<name>pointbase-5.1</name>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.pointbase</groupId>
-					<artifactId>pbclient</artifactId>
-					<version>5.1</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.pointbase</groupId>
-					<artifactId>pbembedded</artifactId>
-					<version>5.1</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.pointbase</groupId>
-					<artifactId>pbtools</artifactId>
-					<version>5.1</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.pointbase</groupId>
-					<artifactId>pbupgrade</artifactId>
-					<version>5.1</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
 			<id>mysql-5</id>
 			<activation>
 				<property>
