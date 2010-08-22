@@ -1,6 +1,4 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -86,21 +84,30 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<!-- Filter in the version from the version-plugin below, into Version.java -->
+		<!--
+			Filter in the version from the version-plugin below, into
+			Version.properties. Turn off filtering for all other files here
+		-->
 		<resources>
 			<resource>
-				<directory>src/main/java</directory>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
-				<targetPath>../filtered-sources/java</targetPath>
+				<includes>
+					<include>**/Version.properties</include>
+				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/Version.properties</exclude>
+				</excludes>
 			</resource>
 		</resources>
-		<sourceDirectory>target/filtered-sources/java</sourceDirectory>
 		<plugins>
-			<!-- Set the squirrelsql.version property if it has not already been set. -->
+			<!--
+				Set the squirrelsql.version property if it has not already been set.
+			-->
 			<plugin>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrelsql-version-plugin</artifactId>
@@ -164,7 +171,8 @@
 	</build>
 	<profiles>
 		<!--
-			Since generating javadoc can be time-consuming, this is not done unless a "javadoc" profile is activated.
+			Since generating javadoc can be time-consuming, this is not done
+			unless a "javadoc" profile is activated.
 		-->
 		<profile>
 			<id>javadoc</id>

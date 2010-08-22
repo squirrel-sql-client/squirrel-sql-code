@@ -17,6 +17,10 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -35,24 +39,51 @@ public class Version
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
 
 	private static final String WEB_SITE = s_stringMgr.getString("Version.website");
-
+	
+	private static String shortVersion = null;
+	
 	public static String getApplicationName()
 	{
 		return APP_NAME;
 	}
 
 	/**
+	 * Returns a the project version according to the pom.xml file.  If this is a release version (like 3.2.0) 
+	 * then the version will simply be 3.2.0.  However, for a snapshot version (like 3.2.0-SNAPSHOT) the 
+	 * squirrelsql-version-plugin will alter this to have the current timestamp and Snapshot in the form like:
+	 * 
+	 * Snapshot-20100822_1326
+	 * 
 	 * @return the filtered in value of the version from maven.  This property is created in maven by using the
-	 * squirrelsql-version-plugin.  If this string appears as ${squirrelsql.version} in the filtered version 
-	 * of this file (target/classes/net/sourceforge/squirrel_sql/client/Version.java) ensure that the 
-	 * squirrelsql-version-plugin is being bound to the initialize phase, or any phase prior to 
+	 * squirrelsql-version-plugin.  This value is filtered into Version.properties and read from the 
+	 * classloader at runtime.  If this string appears as ${squirrelsql.version} in the filtered version 
+	 * of Version.properties (target/classes/net/sourceforge/squirrel_sql/client/Version.properties) ensure 
+	 * that the squirrelsql-version-plugin is being bound to the initialize phase, or any phase prior to 
 	 * process-resources.  
 	 */
-	public static String getShortVersion()
+	synchronized public static String getShortVersion()
 	{
-		return "${squirrelsql.version}";
+		if (shortVersion == null)
+		{
+			InputStream is = Version.class.getResourceAsStream("Version.properties");
+			Properties props = new Properties();
+			try
+			{
+				props.load(is);
+				shortVersion = props.getProperty("squirrelsql.version");
+			}
+			catch (IOException e)
+			{
+				shortVersion = "Unknown Version";
+			}
+		}		
+		return shortVersion;
 	}
 
+	public static void main(String[] args) {
+		System.out.println("Version: "+getShortVersion());
+	}
+	
 	public static String getVersion()
 	{
 		StringBuffer buf = new StringBuffer();
