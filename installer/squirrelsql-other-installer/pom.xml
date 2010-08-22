@@ -712,6 +712,8 @@
 								<scriptFile>src/main/resources/postremove.sh</scriptFile>
 								<fileEncoding>utf-8</fileEncoding>
 							</postremoveScriptlet>
+							<keyname>${gpg.keyname}</keyname>
+							<keyPassphrase>${gpg.passphrase}</keyPassphrase>
 						</configuration>
 						<goals>
 							<goal>rpm</goal>
