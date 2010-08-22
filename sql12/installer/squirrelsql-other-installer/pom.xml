@@ -713,7 +713,9 @@
 								<fileEncoding>utf-8</fileEncoding>
 							</postremoveScriptlet>
 							<keyname>${gpg.keyname}</keyname>
-							<keyPassphrase>${gpg.passphrase}</keyPassphrase>
+							<keyPassphrase>
+								<passphrase>${gpg.passphrase}</passphrase>
+							</keyPassphrase>
 						</configuration>
 						<goals>
 							<goal>rpm</goal>
