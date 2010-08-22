@@ -309,14 +309,22 @@
 						<executions>
 							<execution>
 								<goals>
-									<goal>java</goal>
+									<goal>exec</goal>
 								</goals>
 								<phase>test</phase>
 								<configuration>
-									<mainClass>net.sourceforge.squirrel_sql.client.Main</mainClass>
+									<executable>java</executable>
 									<arguments>
+										<argument>-Xmx256m</argument>
+										<argument>-Xdebug</argument>
+										<argument>-Xnoagent</argument>
+										<argument>-Xrunjdwp:transport=dt_socket,address=8450,server=y,suspend=n</argument>
+										<argument>-Djava.compiler=NONE</argument>
+										<argument>-classpath</argument>
+										<classpath/>
+										<argument>net.sourceforge.squirrel_sql.client.Main</argument>
 										<argument>-pluginlist</argument>
-										<argument>${pluginClassName}</argument>
+										<argument>${pluginClassName}</argument>										
 									</arguments>
 								</configuration>
 							</execution>
