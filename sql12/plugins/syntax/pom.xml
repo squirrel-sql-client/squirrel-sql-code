@@ -1,6 +1,4 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -77,48 +75,50 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
-			<dependency>
-		<groupId>com.fifesoft.rtext</groupId>
-		<artifactId>rtext</artifactId>
-		<version>1.0.0</version>
-	</dependency>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>openide</artifactId>
-        <version>4.0</version>
-    </dependency>
-    <dependency>
-       	<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId> 
-   		<artifactId>openide-loaders</artifactId> 
-   		<version>4.0</version>
-   	</dependency> 
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>org-netbeans-modules-editor</artifactId>
-        <version>4.0</version>
-    </dependency>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>org-netbeans-modules-editor-fold</artifactId>
-        <version>4.0</version>
-    </dependency>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>org-netbeans-modules-editor-lib</artifactId>
-        <version>4.0</version>
-    </dependency>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>org-netbeans-modules-editor-util</artifactId>
-        <version>4.0</version>
-    </dependency>
-    <dependency>
-        <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-        <artifactId>ostermiller-syntax</artifactId>
-        <version>1.1.1</version>
-    </dependency>
-
+		<dependency>
+			<groupId>com.fifesoft.rtext</groupId>
+			<artifactId>rtext</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>openide</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>openide-loaders</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>org-netbeans-modules-editor</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>org-netbeans-modules-editor-fold</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>org-netbeans-modules-editor-lib</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>org-netbeans-modules-editor-util</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>ostermiller-syntax</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 	</dependencies>
+	<properties>
+		<pluginClassName>net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin</pluginClassName>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -158,7 +158,8 @@
 	</build>
 	<profiles>
 		<!--
-			Since generating javadoc can be time-consuming, this is not done unless a "javadoc" profile is activated.
+			Since generating javadoc can be time-consuming, this is not done
+			unless a "javadoc" profile is activated.
 		-->
 		<profile>
 			<id>javadoc</id>

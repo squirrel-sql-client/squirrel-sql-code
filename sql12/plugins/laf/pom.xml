@@ -71,9 +71,10 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<properties>
+	    <pluginClassName>net.sourceforge.squirrel_sql.plugins.db2.DB2Plugin</pluginClassName>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<laf.artifactIds> ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf </laf.artifactIds>
-	</properties>
+	</properties>	
 	<dependencies>
    		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
@@ -179,7 +180,7 @@
 			<artifactId>toniclf</artifactId>
 			<version>1.0.5</version>
 		</dependency>
-	</dependencies>
+	</dependencies>	
 	<build>
 		<plugins>
 			<plugin>

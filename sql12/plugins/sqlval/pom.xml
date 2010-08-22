@@ -1,6 +1,4 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -77,28 +75,30 @@
 			<type>pom</type>
 			<scope>test</scope>
 		</dependency>
-		      <dependency>
-         <groupId>axis</groupId>
-         <artifactId>axis</artifactId>
-         <version>1.2</version>
-      </dependency>
-      <dependency>
-         <groupId>axis</groupId>
-         <artifactId>axis-jaxrpc</artifactId>
-         <version>1.2</version>
-      </dependency>
-      <dependency>
-         <groupId>axis</groupId>
-         <artifactId>axis-saaj</artifactId>
-         <version>1.2</version>
-      </dependency>
-      <dependency>
-         <groupId>axis</groupId>
-         <artifactId>axis-wsdl4j</artifactId>
-         <version>1.2</version>
-      </dependency>
-
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis-jaxrpc</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis-saaj</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis-wsdl4j</artifactId>
+			<version>1.2</version>
+		</dependency>
 	</dependencies>
+	<properties>
+		<pluginClassName>net.sourceforge.squirrel_sql.plugins.sqlval.SQLValidatorPlugin</pluginClassName>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -138,7 +138,8 @@
 	</build>
 	<profiles>
 		<!--
-			Since generating javadoc can be time-consuming, this is not done unless a "javadoc" profile is activated.
+			Since generating javadoc can be time-consuming, this is not done
+			unless a "javadoc" profile is activated.
 		-->
 		<profile>
 			<id>javadoc</id>
