@@ -292,4 +292,38 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	<profiles>
+		<profile>
+			<id>launch</id>
+			<activation>
+				<property>
+					<name>launch</name>
+			    </property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<mainClass>net.sourceforge.squirrel_sql.client.Main</mainClass>
+									<arguments>
+										<argument>-pluginlist</argument>
+										<argument>${pluginClassName}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>	
+	</profiles>
 </project>
