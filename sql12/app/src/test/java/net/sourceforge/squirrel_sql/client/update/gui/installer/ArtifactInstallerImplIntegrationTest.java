@@ -40,7 +40,7 @@ public class ArtifactInstallerImplIntegrationTest extends AbstractJUnit4SpringCo
 {	
 
 	static {
-		ApplicationArguments.initialize(new String[] {});
+		ApplicationArguments.initialize(new String[] { "-home", "./target" });
 	}
 	
 	public static final String beanIdToTest = 
