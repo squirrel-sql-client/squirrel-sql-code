@@ -85,17 +85,17 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
           }
       }
 
-      DriverPropertyInfo[] infoAr;
+      DriverPropertyInfo[] infoAr = new DriverPropertyInfo[0];
       try
       {
          infoAr = jdbcDriver.getPropertyInfo(alias.getUrl(), new Properties());
       }
-      catch (SQLException e)
+      catch (Exception e)
       {
          // I18n[DriverPropertiesController.gettingDriverPropetiesFailed=Loading the properties from the JDBC driver failed.\nCan not load driver properties tab.]
          _errMsg = s_stringMgr.getString("DriverPropertiesController.gettingDriverPropetiesFailed");
          _app.getMessageHandler().showErrorMessage(_errMsg);
-         return;
+         //return;
       }
 
       SQLDriverPropertyCollection driverPropertiesClone = alias.getDriverPropertiesClone();
