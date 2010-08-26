@@ -368,8 +368,12 @@ public class FirebirdManagerPlugin extends DefaultSessionPlugin {
 			return fb.getMajorVersion() >= 2;
 		} catch (ClassNotFoundException e) {
 			log.error(i18n.ERROR_DRIVER_NOT_INSTALLED);
-			JOptionPane.showMessageDialog(null, i18n.ERROR_DRIVER_NOT_INSTALLED);
-			return false;
+
+         // This was shown at application start up. The message box did hide behind the splash screen.
+         // In general it is not a good idea to pop up message boxes at start up from within Plugin intializations.  
+         // JOptionPane.showMessageDialog(null, i18n.ERROR_DRIVER_NOT_INSTALLED);
+
+         return false;
 		}
 	}
 
