@@ -77,9 +77,7 @@ public class ApplicationArgumentsTest
 		ApplicationArguments.reset();
 	}
 
-	// For reasons unknown to me, this fails when run on the build machine; rawArgs is returned with less than
-	// arguments.length elements and the number varies from test run to run.
-	@Test @Ignore
+	@Test
 	public final void testGetRawArguments() throws Exception
 	{
 		ApplicationArguments applicationArgumentsUnderTest = ApplicationArguments.getInstance();
