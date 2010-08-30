@@ -12,7 +12,9 @@
 	<packaging>jar</packaging>
 	<name>SQuirreL Main Application Jar</name>
 	<description>
-        This is the jar that contains the main application classes which are very specific to SQuirreLSQL. 
+		This is the jar that contains the main application classes
+		which are very
+		specific to SQuirreLSQL. 
    </description>
 	<inceptionYear>2001</inceptionYear>
 	<developers>
@@ -136,7 +138,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire-plugin-version}</version>
 				<configuration>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<excludes>
+						<exclude>**/ApplicationArgumentsTest.java</exclude>
+					</excludes>
+					<parallel>${surefire-parallel-type}</parallel>
+					<threadCount>${surefire-thread-count}</threadCount>
 				</configuration>
 			</plugin>
 			<plugin>
