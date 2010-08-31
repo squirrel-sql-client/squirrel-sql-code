@@ -1,4 +1,3 @@
 cd ${file.release.path}
-mkdir ${squirrelsql.version}
 cd ${squirrelsql.version}
 put target/${project.build.finalName}-standard.jar ${upload-server-path} 
