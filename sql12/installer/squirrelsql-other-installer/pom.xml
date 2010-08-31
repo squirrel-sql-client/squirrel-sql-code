@@ -515,13 +515,6 @@
 							</arguments>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
 					<execution>
 						<id>test-standard-install</id>
 						<goals>
@@ -537,13 +530,6 @@
 							</arguments>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
 					<execution>
 						<id>test-optional-install</id>
 						<goals>
@@ -559,13 +545,6 @@
 							</arguments>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
 					<execution>
 						<id>build-plainzips</id>
 						<goals>
