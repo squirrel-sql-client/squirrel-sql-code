@@ -56,6 +56,7 @@
 		<squirrel.version>3.1.0</squirrel.version>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<izpack-standalone.version>4.3.1</izpack-standalone.version>
+		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar</upload-server-path>		
 	</properties>
 	<dependencies>
 
