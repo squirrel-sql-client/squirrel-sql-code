@@ -1,4 +1,1 @@
-cd ${file.release.path}
-mkdir ${squirrelsql.version}
-cd ${squirrelsql.version}
-put target/squirrel-sql-source.zip ${upload-server-path} 
+put target/squirrel-sql-source.zip ${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-source.zip 
