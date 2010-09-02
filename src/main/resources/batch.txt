@@ -1,1 +1,1 @@
-put target/squirrel-sql-source.zip ${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-source.zip 
+put target/squirrel-sql-source.zip ${file.release.path}/${squirrelsql.version}/squirrel-sql-${squirrelsql.version}-source.zip 
