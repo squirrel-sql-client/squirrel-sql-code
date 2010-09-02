@@ -1,12 +1,12 @@
 cd ${file.release.path}
 mkdir ${squirrelsql.version}-plainzip
 cd ${squirrelsql.version}-plainzip
-put target/squirrelsql-${squirrelsql.version}-base.tar.gz
-put target/squirrelsql-${squirrelsql.version}-standard.tar.gz
-put target/squirrelsql-${squirrelsql.version}-optional.tar.gz
+put target/squirrel-sql-${squirrelsql.version}-base.tar.gz
+put target/squirrel-sql-${squirrelsql.version}-standard.tar.gz
+put target/squirrel-sql-${squirrelsql.version}-optional.tar.gz
 cd ${file.release.path}
 mkdir ${squirrelsql.version}
 cd ${squirrelsql.version}
 put target/${project.build.finalName}-standard.jar ${upload-server-path} 
-put target/rpm/squirrelsql-other-installer/RPMS/noarch/squirrelsql-other-installer-${squirrelsql.rpm.version}-1.noarch.rpm
+put target/rpm/squirrel-sql/RPMS/noarch/squirrel-sql-${squirrelsql.rpm.version}-1.noarch.rpm
 
