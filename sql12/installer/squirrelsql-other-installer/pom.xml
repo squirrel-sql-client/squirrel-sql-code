@@ -567,6 +567,7 @@
 				<executions>
 					<execution>
 						<configuration>
+							<name>squirrel-sql</name>
 							<version>${squirrelsql.rpm.version}</version>
 							<copyright>LGPL</copyright>
 							<distribution>Red Hat Linux</distribution>
@@ -728,7 +729,7 @@
 										<argument>${file.release.server}</argument>
 									</arguments>
 								</configuration>
-								<phase>deploy</phase>
+								<phase>install</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>

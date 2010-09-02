@@ -1,1 +1,1 @@
-put target/${project.build.finalName}-standard.jar ${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar
+put target/${project.build.finalName}-standard.jar ${file.release.path}/${squirrelsql.version}/squirrel-sql-${squirrelsql.version}-MacOSX-install.jar
