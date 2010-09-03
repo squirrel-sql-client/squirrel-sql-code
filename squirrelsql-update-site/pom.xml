@@ -331,7 +331,7 @@
 							<includeClassifiers>assembly</includeClassifiers>
 							<includeTypes>zip</includeTypes>
 							<excludeTransitive>true</excludeTransitive>
-							<outputDirectory>${project.build.directory}/release/plugins</outputDirectory>
+							<outputDirectory>${project.build.directory}/release/plugin</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
