@@ -7,9 +7,6 @@ here are:
            performing some integration test.
            
  * docs - documents that describe the testing process and testing results
-
- * external - integration tests that require some external (non-mocked) resource
-              such as the filesystem or a database.
             
  * jfctests - integration tests that run a particular GUI component for the 
               purpose of testing that component in isolation from SQuirreL.  
