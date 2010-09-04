@@ -83,6 +83,7 @@
 		<easymockclassextension-version>2.4</easymockclassextension-version>
 		<gsbase-version>2.0.1</gsbase-version>
 		<hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
+		<izpack-standalone.version>4.3.1</izpack-standalone.version>
 		<junit-version>4.7</junit-version>
 		<spring-framework-version>2.5.2</spring-framework-version>
 
