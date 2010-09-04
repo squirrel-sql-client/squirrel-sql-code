@@ -63,5 +63,6 @@
       <module>squirrelsql-other-installer</module>
       <module>squirrelsql-macosx-installer</module>
       <module>squirrelsql-source</module>
+      <module>squirrelsql-installer-deps</module>
    </modules>
 </project>
