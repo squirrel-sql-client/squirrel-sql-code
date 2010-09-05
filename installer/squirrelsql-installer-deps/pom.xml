@@ -316,12 +316,6 @@
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>website</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql</groupId>
-			<artifactId>squirrelsql-update-site</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
-		</dependency>
-			
+		</dependency>			
 	</dependencies>
 </project>
