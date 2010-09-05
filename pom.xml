@@ -131,7 +131,6 @@
 				<module>doc</module>
 				<module>web-site</module>
 				<module>installer</module>
-				<module>squirrelsql-update-site</module>
 			</modules>
 		</profile>
 		<!--
