@@ -12,7 +12,7 @@
 	<artifactId>squirrelsql-update-site</artifactId>
 	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>SQuirreLSQL Update Site Project</name>
+	<name>SQuirreL-SQL Update Site Project</name>
 	<description>
    		This project is used to assemble the jars that produce the update site, and 
         run the update site plugin to generate the release.xml file.  Finally, this 
