@@ -7,10 +7,9 @@
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
+		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
-	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>mssql</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Mssql Plugin</name>
 	<description>Mssql Plugin</description>
@@ -56,26 +55,36 @@
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.squirrel-sql</groupId>
-			<artifactId>squirrelsql-test-utils</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
-			<type>pom</type>
-			<scope>test</scope>
+			<groupId>gsbase</groupId>
+			<artifactId>gsbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
 		</dependency>
 	</dependencies>
 	<properties>
@@ -84,54 +93,21 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${source-plugin-version}</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefire-plugin-version}</version>
-				<configuration>
-					<parallel>${surefire-parallel-type}</parallel>
-					<threadCount>${surefire-thread-count}</threadCount>
-				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>${jar-plugin-version}</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${assembly-plugin-version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${findbugs-plugin-version}</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd-plugin-version}</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-plugin-version}</version>
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<!--
-			Since generating javadoc can be time-consuming, this is not done unless a "javadoc" profile is activated.
-		-->
-		<profile>
-			<id>javadoc</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>${javadoc-plugin-version}</version>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

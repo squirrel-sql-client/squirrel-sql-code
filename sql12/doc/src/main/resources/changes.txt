@@ -21,6 +21,8 @@ details about each (Thanks to Bogdan Cristian Paulon)
 Incorporated patch which provides a node under each table in the object tree that lists all of the 
 constraints for that table. (Thanks to Bogdan Cristian Paulon)
 
+Netezza Plugin: Added support for displaying external tables in the object tree.
+
 Bug-fixes:
 
 Firebird Manger Plugin: Removed dialog (that pointed out missig Firebird driver) from startup routines.

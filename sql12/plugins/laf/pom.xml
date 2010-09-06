@@ -15,11 +15,12 @@
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
+		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
-	<groupId>net.sf.squirrel-sql.plugins</groupId>
+
 	<artifactId>laf</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	
 	<name>Look and Feel Plugin</name>
 	<description>
         This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
@@ -76,42 +77,39 @@
 		<laf.artifactIds> ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf </laf.artifactIds>
 	</properties>	
 	<dependencies>
-   		<dependency>
+		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-	      <version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-	      <version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-	      <version>3.2.0-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>gsbase</groupId>
 			<artifactId>gsbase</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymockclassextension</artifactId>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
 		</dependency>
 
 		<dependency>
@@ -184,20 +182,20 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${source-plugin-version}</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefire-plugin-version}</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>${jar-plugin-version}</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>${dependency-plugin-version}</version>
 				<executions>
 					<execution>
 						<id>copy-lafs</id>
@@ -214,6 +212,7 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>${dependency-plugin-version}</version>
 				<executions>
@@ -239,8 +238,8 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${assembly-plugin-version}</version>
 				<executions>
 					<execution>
 						<id>create-plugin-archives</id>
@@ -257,19 +256,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${findbugs-plugin-version}</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd-plugin-version}</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-plugin-version}</version>
 			</plugin>
 		</plugins>
 	</build>

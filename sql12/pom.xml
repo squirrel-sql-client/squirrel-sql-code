@@ -1,24 +1,26 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrel-root-pom</artifactId>
 	<version>3.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>3</version>
-	</parent>	
-	
+	</parent>
+
 	<name>SQuirreL Root POM</name>
 	<description>
-        The top-most POM file for building the SQuirreL SQL Client.  If a profile is defined that is called 
-        "installer", the build will also include building projects that produce the installer and the 
-        installer itself. 
+		The top-most POM file for building the SQuirreL SQL
+		Client. If a profile
+		is defined that is called
+		"installer", the build
+		will also include building projects that produce the
+		installer and the
+		installer itself. 
    </description>
 	<inceptionYear>2001</inceptionYear>
 	<developers>
@@ -48,11 +50,13 @@
 	<scm>
 		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/</connection>
 		<developerConnection>scm:svn:http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/</url>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/
+		</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
-		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414
+		</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Hudson</system>
@@ -64,6 +68,7 @@
 		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
 		<compiler-plugin-version>2.0.2</compiler-plugin-version>
 		<dependency-plugin-version>2.0</dependency-plugin-version>
+		<exec-plugin-version>1.2</exec-plugin-version>
 		<findbugs-plugin-version>2.1</findbugs-plugin-version>
 		<gpg-plugin-version>1.1</gpg-plugin-version>
 		<javac-source-version>1.6</javac-source-version>
@@ -72,10 +77,12 @@
 		<javadoc-plugin-version>2.6</javadoc-plugin-version>
 		<maven-plugin-api-version>2.0</maven-plugin-api-version>
 		<pmd-plugin-version>2.4</pmd-plugin-version>
+		<scm-plugin-version>1.4</scm-plugin-version>
 		<source-plugin-version>2.1</source-plugin-version>
 		<squirrelsql-version-plugin-version>1.0.3</squirrelsql-version-plugin-version>
 		<squirrelsql-update-site-plugin-version>1.0.1</squirrelsql-update-site-plugin-version>
 		<surefire-plugin-version>2.5</surefire-plugin-version>
+		<surefire-report-plugin-version>2.0-beta-1</surefire-report-plugin-version>
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
 
 		<!-- Thirdparty Library Versions -->
@@ -84,7 +91,10 @@
 		<gsbase-version>2.0.1</gsbase-version>
 		<hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
 		<izpack-standalone.version>4.3.1</izpack-standalone.version>
+		<izpack-plugin-version>1.0-alpha-4</izpack-plugin-version>
 		<junit-version>4.7</junit-version>
+		<jgoodies-forms-version>1.0.5</jgoodies-forms-version>
+		<mockito-version>1.8.5</mockito-version>
 		<spring-framework-version>2.5.2</spring-framework-version>
 
 		<!--  Other -->
@@ -93,15 +103,112 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<modules>
-		<module>squirrelsql-test-utils</module>
 		<module>fw</module>
 		<module>app</module>
 		<module>plugins</module>
 	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>jgoodies</groupId>
+				<artifactId>forms</artifactId>
+				<version>${jgoodies-forms-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>gsbase</groupId>
+				<artifactId>gsbase</artifactId>
+				<version>${gsbase-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>${easymock-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymockclassextension</artifactId>
+				<version>${easymockclassextension-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>${mockito-version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<!--
+			Plugin versions are declared here so that they may be omitted in poms
+			that inherit from those that are decendants of this one. This way,
+			plugin versions are only specified in one place.
+		-->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${assembly-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${compiler-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${dependency-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${exec-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${jar-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>${scm-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${source-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${surefire-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.izpack</groupId>
+					<artifactId>izpack-maven-plugin</artifactId>
+					<version>${izpack-plugin-version}</version>
+				</plugin>
+			</plugins>
+
+		</pluginManagement>
+	</build>
 	<profiles>
 		<!--
-			There are a few additional projects that are needed to build the installer. These are probably not needed
-			for developing plugins, so the default is to build them only when the installer profile is activated.
+			There are a few additional projects that are needed to build the
+			installer. These are probably not needed for developing plugins, so
+			the default is to build them only when the installer profile is
+			activated.
 		-->
 		<profile>
 			<id>installer</id>
@@ -123,7 +230,6 @@
 				</plugins>
 			</build>
 			<modules>
-				<module>squirrelsql-test-utils</module>
 				<module>fw</module>
 				<module>app</module>
 				<module>plugins</module>
@@ -134,8 +240,8 @@
 			</modules>
 		</profile>
 		<!--
-			Since signing jars is probably only useful for releasing, this is not done unless the "sign-jar" profile is
-			activated
+			Since signing jars is probably only useful for releasing, this is not
+			done unless the "sign-jar" profile is activated
 		-->
 		<profile>
 			<id>sign-jar</id>
