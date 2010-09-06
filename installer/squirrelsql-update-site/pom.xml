@@ -7,10 +7,9 @@
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>installer</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrelsql-update-site</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>SQuirreL-SQL Update Site Project</name>
 	<description>

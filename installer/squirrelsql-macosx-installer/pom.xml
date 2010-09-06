@@ -7,10 +7,9 @@
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrelsql-macosx-installer</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>SQuirreL-SQL Mac OS X Installer</name>
 	<description>This project is used to build the installer for Mac OS X</description>
@@ -60,15 +59,15 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>net.sf.squirrel-sql</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-installer-deps</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.squirrel-sql</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-update-site</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
