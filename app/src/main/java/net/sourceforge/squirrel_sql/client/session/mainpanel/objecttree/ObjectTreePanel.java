@@ -164,13 +164,13 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
       createGUI();
 
-      session.getApplication().getThreadPool().addTask(new Runnable()
-      {
-         public void run()
-         {
+//      session.getApplication().getThreadPool().addTask(new Runnable()
+//      {
+//         public void run()
+//         {
             doBackgroundInitializations();
-         }
-      });
+//         }
+//      });
    }
 
    private void doBackgroundInitializations()

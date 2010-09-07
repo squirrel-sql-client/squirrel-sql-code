@@ -234,7 +234,8 @@ public class ConnectToAliasCommand implements ICommand
 			_user = user;
 			_password = password;
 			_props = props;
-			_app.getThreadPool().addTask(this);
+			//_app.getThreadPool().addTask(this);
+         run();
 		}
 
 		/**
