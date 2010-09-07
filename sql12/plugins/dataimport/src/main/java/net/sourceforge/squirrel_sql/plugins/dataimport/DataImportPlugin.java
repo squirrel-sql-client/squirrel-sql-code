@@ -141,15 +141,6 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#allowsSessionStartedInBackground()
-	 */
-	@Override
-	public boolean allowsSessionStartedInBackground()
-	{
-		return true;
-	}
-
-	/**
 	 * Called when a session started.
 	 *
 	 * @param   session     The session that is starting.
