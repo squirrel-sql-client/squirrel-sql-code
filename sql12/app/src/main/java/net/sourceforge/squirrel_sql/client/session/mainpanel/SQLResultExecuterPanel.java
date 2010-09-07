@@ -742,16 +742,14 @@ public class SQLResultExecuterPanel extends JPanel
         }
     }
 
-	private void addResultsTab(SQLExecutionInfo exInfo,
-                              ResultSetDataSet rsds,
-                              ResultSetMetaDataDataSet mdds,
+	private void addResultsTab(final SQLExecutionInfo exInfo,
+                              final ResultSetDataSet rsds,
+                              final ResultSetMetaDataDataSet mdds,
                               final JPanel cancelPanel,
-                              IDataSetUpdateableTableModel creator,
+                              final IDataSetUpdateableTableModel creator,
                               final IResultTab resultTabToReplace)
 	{
-		final ResultTab tab;
-
-      ResultTabListener resultTabListener = new ResultTabListener()
+      final ResultTabListener resultTabListener = new ResultTabListener()
       {
          public void rerunSQL(String sql, IResultTab resultTab)
          {
@@ -759,31 +757,33 @@ public class SQLResultExecuterPanel extends JPanel
          }
       };
 
-      tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
-      ResultTabInfo ti = new ResultTabInfo(tab);
-      _allTabs.put(tab.getIdentifier(), ti);
-      _usedTabs.add(ti);
-      s_log.debug("Created new tab " + tab.getIdentifier().toString()
-            + " for results.");
+      // We are in a thread. Do GUI work on event queque
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            try
+            {
+               ResultTab tab = new ResultTab(_session, SQLResultExecuterPanel.this, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
+               ResultTabInfo ti = new ResultTabInfo(tab);
+               _allTabs.put(tab.getIdentifier(), ti);
+               _usedTabs.add(ti);
+               s_log.debug("Created new tab " + tab.getIdentifier().toString()
+                     + " for results.");
 
-		try
-		{
-			tab.showResults(rsds, mdds, exInfo);
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-					_tabbedExecutionsPanel.remove(cancelPanel);
-					addResultsTab(tab, resultTabToReplace);
-					_tabbedExecutionsPanel.setSelectedComponent(tab);
-					fireTabAddedEvent(tab);
-				}
-			});
-		}
-		catch (DataSetException dse)
-		{
-			_session.showErrorMessage(dse);
-		}
+               tab.showResults(rsds, mdds, exInfo);
+
+               _tabbedExecutionsPanel.remove(cancelPanel);
+               addResultsTab(tab, resultTabToReplace);
+               _tabbedExecutionsPanel.setSelectedComponent(tab);
+               fireTabAddedEvent(tab);
+            }
+            catch (Throwable t)
+            {
+               _session.showErrorMessage(t);
+            }
+         }
+      });
 	}
 
 	private void addResultsTab(ResultTab tab, IResultTab resultTabToReplace)
