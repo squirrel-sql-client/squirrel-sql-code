@@ -54,6 +54,7 @@ public class Log4jLogger implements ILogger
 		_listener = listener;
 		_clazz = clazz;
 		_log = Logger.getLogger(clazz);
+      _log.setLevel(Level.DEBUG);
 	}
 
 	/**
