@@ -48,6 +48,8 @@ import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IJOptionPaneService;
+import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -92,6 +94,8 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 	private ArtifactDownloaderFactory _downloaderFactory = null;
 
+	private IJOptionPaneService jOptionPaneService = new JOptionPaneService();
+
 	static interface i18n
 	{
 
@@ -128,7 +132,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle=Updates Available]
 		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE =
 			s_stringMgr.getString("UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle");
-
+				
 	}
 
 	/**
@@ -172,23 +176,31 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void showUpdateDialog()
 	{
-		JFrame parent = _app.getMainFrame();
-		IUpdateSettings settings = getUpdateSettings();
-		boolean isRemoteUpdateSite = settings.isRemoteUpdateSite();
-		UpdateManagerDialog dialog = new UpdateManagerDialog(parent, isRemoteUpdateSite);
-		if (isRemoteUpdateSite)
+		final JFrame parent = _app.getMainFrame();
+		final IUpdateSettings settings = getUpdateSettings();
+		final boolean isRemoteUpdateSite = settings.isRemoteUpdateSite();
+		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
-			dialog.setUpdateServerName(settings.getUpdateServer());
-			dialog.setUpdateServerPort(settings.getUpdateServerPort());
-			dialog.setUpdateServerPath(settings.getUpdateServerPath());
-			dialog.setUpdateServerChannel(settings.getUpdateServerChannel());
-		}
-		else
-		{
-			dialog.setLocalUpdatePath(settings.getFileSystemUpdatePath());
-		}
-		dialog.addCheckUpdateListener(this);
-		dialog.setVisible(true);
+
+			@Override
+			public void run()
+			{
+				UpdateManagerDialog dialog = new UpdateManagerDialog(parent, isRemoteUpdateSite);
+				if (isRemoteUpdateSite)
+				{
+					dialog.setUpdateServerName(settings.getUpdateServer());
+					dialog.setUpdateServerPort(settings.getUpdateServerPort());
+					dialog.setUpdateServerPath(settings.getUpdateServerPath());
+					dialog.setUpdateServerChannel(settings.getUpdateServerChannel());
+				}
+				else
+				{
+					dialog.setLocalUpdatePath(settings.getFileSystemUpdatePath());
+				}
+				dialog.addCheckUpdateListener(UpdateControllerImpl.this);
+				dialog.setVisible(true);
+			}
+		});
 	}
 
 	/**
@@ -372,7 +384,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	public boolean showConfirmMessage(String title, String msg)
 	{
 		int result =
-			JOptionPane.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
+			jOptionPaneService.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		return (result == JOptionPane.YES_OPTION);
 	}
@@ -383,7 +395,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void showMessage(String title, String msg)
 	{
-		JOptionPane.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+		jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 
 	}
 
@@ -391,10 +403,10 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showErrorMessage(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public void showErrorMessage(String title, String msg, Exception e)
+	public void showErrorMessage(final String title, final String msg, final Exception e)
 	{
 		s_log.error(msg, e);
-		JOptionPane.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+		jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -477,9 +489,15 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 			public void updateCheckFailed(final Exception e)
 			{
-				if (e == null || e instanceof FileNotFoundException)
+				if (e == null)
 				{
 					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, i18n.RELEASE_FILE_DOWNLOAD_FAILED_MSG);
+				}
+				else if (e instanceof FileNotFoundException)
+				{
+					String msg = s_stringMgr.getString("UpdateControllerImpl.localReleaseFileNotFound", 
+						_util.getSquirrelHomeDir()+"/"+UpdateUtil.LOCAL_UPDATE_DIR_NAME+"/"+RELEASE_XML_FILENAME);
+					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, msg);
 				}
 				else
 				{
@@ -574,6 +592,17 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	private void saveUpdateSettings(final IUpdateSettings settings)
 	{
 		_app.getSquirrelPreferences().setUpdateSettings(settings);
+	}
+
+	/**
+	 * Setter to allow injection of the service implementation.
+	 * 
+	 * @param jOptionPaneService
+	 *           the non-static service that handles JOptionPane's static calls.
+	 */
+	public void setJOptionPaneService(IJOptionPaneService jOptionPaneService)
+	{
+		this.jOptionPaneService = jOptionPaneService;
 	}
 
 	private class GlobalPrefsListener implements GlobalPreferencesActionListener
