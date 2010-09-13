@@ -23,6 +23,8 @@ Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
 
+Hibernate plugin: Icon buttons for connecting and opening configuration could be very small.
+
 1808038: Splash screen was always on top hiding all other windows behind it
 
 2998121: (Update doesn't work, settings seem correct).  Now, if the local release.xml file 
