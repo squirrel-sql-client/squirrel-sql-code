@@ -60,11 +60,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent(), _resource);
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         Dimension oldSize = _panel.btnConnected.getPreferredSize();
-         Dimension newSize = new Dimension(oldSize.width-20, oldSize.height);
-         _panel.btnConnected.setPreferredSize(newSize);
-
-
+         
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
             public void connected(HibernateConnection con, HibernateConfiguration cfg)
@@ -89,7 +85,6 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          });
 
 
-         _panel.btnOpenConfigs.setPreferredSize(_panel.btnConnected.getPreferredSize());
          _panel.btnOpenConfigs.addActionListener(new ActionListener()
          {
             public void actionPerformed(ActionEvent e)
