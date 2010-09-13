@@ -1,6 +1,13 @@
 package net.sourceforge.squirrel_sql.client;
 
-import javax.swing.JOptionPane;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.io.PrintStream;
 /*
  * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
@@ -26,6 +33,9 @@ import javax.swing.JOptionPane;
  */
 public class Main
 {
+   /** Logger for this class. */
+   private static ILogger s_log;
+
 	/**
 	 * Default ctor. private as class should never be instantiated.
 	 */
@@ -39,8 +49,8 @@ public class Main
 	 *
 	 * @param	args	Arguments passed on command line.
 	 */
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) throws IOException
+   {
 		if (ApplicationArguments.initialize(args))
 		{
 
@@ -57,8 +67,52 @@ public class Main
 			}
 			else
 			{
-				new Application().startup();
-			}
+            startApp();
+         }
 		}
 	}
+
+   private static void startApp() throws IOException
+   {
+      LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
+      s_log = LoggerController.createLogger(Main.class);
+
+      System.setErr(new PrintStream(new SystemOutToLog(System.err)));
+      System.setOut(new PrintStream(new SystemOutToLog(System.out)));
+
+
+
+
+      EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+      q.push(new EventQueue()
+      {
+         protected void dispatchEvent(AWTEvent event)
+         {
+            try
+            {
+               super.dispatchEvent(event);
+            }
+            catch (Throwable t)
+            {
+               if (s_log.isDebugEnabled())
+               {
+                  t.printStackTrace();
+               }
+               s_log.error("Exception occured dispatching Event " + event, t);
+            }
+         }
+      });
+
+
+      Runnable runnable = new Runnable()
+      {
+         public void run()
+         {
+            new Application().startup();
+         }
+      };
+
+      SwingUtilities.invokeLater(runnable);
+   }
+
 }

@@ -24,9 +24,6 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.AWTEvent;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
@@ -44,7 +41,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
-import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
+import net.sourceforge.squirrel_sql.client.gui.SquirrelSplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -72,7 +69,6 @@ import net.sourceforge.squirrel_sql.client.update.autocheck.UpdateCheckTimerImpl
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
@@ -86,7 +82,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -100,7 +95,7 @@ class Application implements IApplication
 {	
 
 	/** Logger for this class. */
-	private static ILogger s_log;
+	private static ILogger s_log = LoggerController.createLogger(Application.class);
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(Application.class);
@@ -177,32 +172,6 @@ class Application implements IApplication
 	 */
 	public void startup()
 	{
-		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
-		s_log = LoggerController.createLogger(getClass());
-
-      System.setErr(new PrintStream(new SystemOutToLog(System.err)));
-      System.setOut(new PrintStream(new SystemOutToLog(System.out)));
-
-
-		EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		q.push(new EventQueue()
-		{
-			protected void dispatchEvent(AWTEvent event)
-			{
-				try
-				{
-					super.dispatchEvent(event);
-				}
-				catch (Throwable t)
-				{
-					if (s_log.isDebugEnabled())
-					{
-						t.printStackTrace();
-					}
-					s_log.error("Exception occured dispatching Event " + event, t);
-				}
-			}
-		});
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
 
@@ -226,39 +195,13 @@ class Application implements IApplication
 			}
 		});
 
-		SplashScreen splash = null;
+		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SplashScreen(_resources, 15, _prefs);
+			splash = new SquirrelSplashScreen(_prefs, 16);
 		}
 
-		try
-		{
-			CursorChanger chg = null;
-			if (splash != null)
-			{
-				chg = new CursorChanger(splash);
-				chg.show();
-			}
-			try
-			{
-				executeStartupTasks(splash, args);
-			}
-			finally
-			{
-				if (chg != null)
-				{
-					chg.restore();
-				}
-			}
-		}
-		finally
-		{
-			if (splash != null)
-			{
-				splash.dispose();
-			}
-		}
+      executeStartupTasks(splash, args);
 	}
 
 	/**
@@ -690,7 +633,7 @@ class Application implements IApplication
 	 * @throws IllegalArgumentException
 	 *            Thrown if <TT>ApplicationArguments<.TT> is null.
 	 */
-	private void executeStartupTasks(SplashScreen splash, ApplicationArguments args)
+	private void executeStartupTasks(SquirrelSplashScreen splash, ApplicationArguments args)
 	{
 		if (args == null) { throw new IllegalArgumentException("ApplicationArguments == null"); }
 
@@ -834,7 +777,7 @@ class Application implements IApplication
 	 * @param taskDescription
 	 *           Description of new task.
 	 */
-	private void indicateNewStartupTask(SplashScreen splash, String taskDescription)
+	private void indicateNewStartupTask(SquirrelSplashScreen splash, String taskDescription)
 	{
 		if (splash != null)
 		{
