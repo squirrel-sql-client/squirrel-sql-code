@@ -44,29 +44,29 @@ public class SubstanceLafData
 
 	private void initLafMap()
 	{
-		putClass("Autumn", "org.jvnet.substance.skin.AutumnSkin");
-		putClass("BusinessBlackSteel", "org.jvnet.substance.skin.BusinessBlackSteelSkin");
-		putClass("BusinessBlueSteelSkin", "org.jvnet.substance.skin.BusinessBlueSteelSkin");
-		putClass("BusinessSkin", "org.jvnet.substance.skin.BusinessSkin");
-		putClass("ChallengerDeepSkin", "org.jvnet.substance.skin.ChallengerDeepSkin");
-		putClass("CremeCoffeeSkin", "org.jvnet.substance.skin.CremeCoffeeSkin");
-		putClass("CremeSkin", "org.jvnet.substance.skin.CremeSkin");
-		putClass("DustCoffeeSkin", "org.jvnet.substance.skin.DustCoffeeSkin");
-		putClass("DustSkin", "org.jvnet.substance.skin.DustSkin");
-		putClass("EmeraldDuskSkin", "org.jvnet.substance.skin.EmeraldDuskSkin");
-		putClass("MagmaSkin", "org.jvnet.substance.skin.MagmaSkin");
-		putClass("MistAquaSkin", "org.jvnet.substance.skin.MistAquaSkin");
-		putClass("MistSilverSkin", "org.jvnet.substance.skin.MistSilverSkin");
-		putClass("ModerateSkin", "org.jvnet.substance.skin.ModerateSkin");
-		putClass("NebulaBrickWallSkin", "org.jvnet.substance.skin.NebulaBrickWallSkin");
-		putClass("NebulaSkin", "org.jvnet.substance.skin.NebulaSkin");
-		putClass("OfficeBlue2007Skin", "org.jvnet.substance.skin.OfficeBlue2007Skin");
-		putClass("OfficeSilver2007Skin", "org.jvnet.substance.skin.OfficeSilver2007Skin");
-		putClass("RavenGraphiteGlassSkin", "org.jvnet.substance.skin.RavenGraphiteGlassSkin");
-		putClass("RavenGraphiteSkin", "org.jvnet.substance.skin.RavenGraphiteSkin");
-		putClass("RavenSkin", "org.jvnet.substance.skin.RavenSkin");
-		putClass("SaharaSkin", "org.jvnet.substance.skin.SaharaSkin");
-		putClass("TwilightSkin", "org.jvnet.substance.skin.TwilightSkin");
+		putClass("Autumn", "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel");
+		putClass("BusinessBlackSteel", "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel");
+		putClass("BusinessBlueSteelSkin", "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel");
+		putClass("BusinessSkin", "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel");
+		putClass("ChallengerDeepSkin", "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel");
+		putClass("CremeCoffeeSkin", "org.jvnet.substance.skin.SubstanceCremeCoffeeLookAndFeel");
+		putClass("CremeSkin", "org.jvnet.substance.skin.SubstanceCremeLookAndFeel");
+		putClass("DustCoffeeSkin", "org.jvnet.substance.skin.SubstanceDustCoffeeLookAndFeel");
+		putClass("DustSkin", "org.jvnet.substance.skin.SubstanceDustLookAndFeel");
+		putClass("EmeraldDuskSkin", "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel");
+		putClass("MagmaSkin", "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel");
+		putClass("MistAquaSkin", "org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel");
+		putClass("MistSilverSkin", "org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel");
+		putClass("ModerateSkin", "org.jvnet.substance.skin.SubstanceModerateLookAndFeel");
+		putClass("NebulaBrickWallSkin", "org.jvnet.substance.skin.SubstanceNebulaBrickWallLookAndFeel");
+		putClass("NebulaSkin", "org.jvnet.substance.skin.SubstanceNebulaLookAndFeel");
+		putClass("OfficeBlue2007Skin", "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel");
+		putClass("OfficeSilver2007Skin", "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel");
+		putClass("RavenGraphiteGlassSkin", "org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel");
+		putClass("RavenGraphiteSkin", "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel");
+		putClass("RavenSkin", "org.jvnet.substance.skin.SubstanceRavenLookAndFeel");
+		putClass("SaharaSkin", "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel");
+		putClass("TwilightSkin", "org.jvnet.substance.skin.SubstanceTwilightLookAndFeel");
 	}
 
 	public Class<?> getSkinClassForName(String skinName) {

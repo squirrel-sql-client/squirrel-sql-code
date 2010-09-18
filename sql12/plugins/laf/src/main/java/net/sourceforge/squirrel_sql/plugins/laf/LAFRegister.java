@@ -221,17 +221,23 @@ class LAFRegister
 			ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
 			lafCont.aboutToBeInstalled(this, laf);
 
-			// Set Look and Feel.
-			if (_lafClassLoader != null)
-			{
-				UIManager.setLookAndFeel(laf);
-				UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
+			// Set Look and Feel.  If this is the Substance placeholder, skip it as it is not a real 
+			// look and feel.  The controller will handle setting the look and feel using the UIManager.
+			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME)) {
+				if (s_log.isInfoEnabled()) {
+					s_log.info("Setting lookandfeel class: "+lafClassName);
+				}
+				
+				if (_lafClassLoader != null)
+				{
+					UIManager.setLookAndFeel(laf);
+					UIManager.getLookAndFeelDefaults().put("ClassLoader", _lafClassLoader);
+				}
+				else
+				{
+					UIManager.setLookAndFeel(laf);
+				}
 			}
-			else
-			{
-				UIManager.setLookAndFeel(laf);
-			}
-
 			lafCont.hasBeenInstalled(this, laf);
 			updateAllFrames();
 		}
@@ -323,8 +329,21 @@ class LAFRegister
 	{
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
 		final Map<String, URL> lafs = loadInstallProperties();
-		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
+
 		final List<URL> lafUrls = new ArrayList<URL>();
+		
+		// Put the lafplugin jar into the list of lafUrls as it contains a LAF placeholder (for Substance).
+		String jarFilePath = _plugin.getPluginJarFilePath();
+		try
+		{
+			lafUrls.add(new File(jarFilePath).toURI().toURL());
+		}
+		catch (Exception e)
+		{
+			s_log.error("Unable to add the plugin jar file ("+jarFilePath+") to the list of classloader URLs");
+		}
+		
+		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		for (Iterator<URL> it = lafs.values().iterator(); it.hasNext();)
 		{
 			lafUrls.add(it.next());
@@ -335,6 +354,7 @@ class LAFRegister
 		{
 			URL[] urls = new URL[lafUrls.size()];
 			_lafClassLoader = new MyURLClassLoader(lafUrls.toArray(urls));
+			
 			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
 				String className = it.next();
@@ -410,7 +430,7 @@ class LAFRegister
 		}
 		try
 		{
-			_lafControllers.put(SubstanceLookAndFeelController.SUBSTANCE_LAF_DEFAULT_CLASS_NAME,
+			_lafControllers.put(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME,
 				new SubstanceLookAndFeelController(plugin, this));
 		}
 		catch (Throwable ex)

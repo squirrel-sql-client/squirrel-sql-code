@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 
 /**
@@ -40,7 +42,7 @@ public class SubstanceLafPlaceholder extends BasicLookAndFeel
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected SubstanceLafPlaceholder()
+	public SubstanceLafPlaceholder()
 	{
 	}
 
@@ -71,7 +73,10 @@ public class SubstanceLafPlaceholder extends BasicLookAndFeel
 	@Override
 	public boolean isSupportedLookAndFeel()
 	{
-		return true;
+		return false;
 	}
 
+	public LookAndFeelInfo getLookAndFeelInfo() {
+		return new UIManager.LookAndFeelInfo(this.getName(), SubstanceLafPlaceholder.class.getCanonicalName());
+	}
 }

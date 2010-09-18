@@ -113,6 +113,13 @@ public class LookAndFeelComboBox extends JComboBox
 			_lafsByName.put(info[i].getName(), info[i]);
 			_lafsByClassName.put(info[i].getClassName(), info[i]);
 		}
+		
+		// Need to populate the list with the Substance placeholder, to allow the user to select substance, 
+		// and then the skin, which is the actual look and feel.
+		SubstanceLafPlaceholder substanceLaf = new SubstanceLafPlaceholder();
+		LookAndFeelInfo substanceLafInfo = substanceLaf.getLookAndFeelInfo();
+		_lafsByName.put(substanceLaf.getName(), substanceLafInfo);
+		_lafsByClassName.put(SubstanceLafPlaceholder.class.getName(), substanceLafInfo);
 
 		// Add the names of all LAF objects to control. By doing thru the Map
 		// these will be sorted.
