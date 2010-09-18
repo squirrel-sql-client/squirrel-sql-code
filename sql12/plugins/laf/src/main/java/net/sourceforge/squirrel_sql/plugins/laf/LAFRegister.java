@@ -410,8 +410,8 @@ class LAFRegister
 		}
 		try
 		{
-			_lafControllers.put(SubstanceLookAndFeelController.SUBSTANCE_CLASS_NAME,
-				new SubstanceLookAndFeelController(plugin));
+			_lafControllers.put(SubstanceLookAndFeelController.SUBSTANCE_LAF_DEFAULT_CLASS_NAME,
+				new SubstanceLookAndFeelController(plugin, this));
 		}
 		catch (Throwable ex)
 		{

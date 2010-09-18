@@ -23,6 +23,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -43,9 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
 
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.api.SubstanceSkin;
-
 /**
  * Behaviour for the Skin Look and Feel.
  * 
@@ -53,31 +52,40 @@ import org.jvnet.substance.api.SubstanceSkin;
  */
 public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 {
+	/** Class name of the Substance LAF class to use by default. This can be re-skinned at any time. */
+	private static final String SUBSTANCE_LOOK_AND_FEEL_CLASS = 
+		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel";
+	
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SubstanceLookAndFeelController.class);
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SubstanceLookAndFeelController.class);
 
-	/** Class name of the Skin class. */
-	public static final String SUBSTANCE_CLASS_NAME =
-		"net.sourceforge.squirrel_sql.plugins.laf.SubstanceLookAndFeel";
+	/** Placeholder LAF that identifies itself as "Substance".  No other LAF does this. */
+	public static final String SUBSTANCE_LAF_DEFAULT_CLASS_NAME =
+		"net.sourceforge.squirrel_sql.plugins.laf.SubstanceLafPlaceholder";
 
 	/** Preferences for this LAF. */
 	private SubstancePreferences _prefs;
 
-	private SubstanceLafData _lafData = new SubstanceLafData();
+	private SubstanceLafData _lafData = null;
 
+	private ClassLoader _cl = null;
+	
 	/**
 	 * Ctor specifying the Look and Feel plugin.
 	 * 
 	 * @param plugin
 	 *           The plugin that this controller is a part of.
 	 */
-	SubstanceLookAndFeelController(LAFPlugin plugin) throws IOException
+	SubstanceLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException
 	{
 		super();
 
+		_cl = register.getLookAndFeelClassLoader();
+		_lafData = new SubstanceLafData(_cl);
+		
 		XMLObjectCache cache = plugin.getSettingsCache();
 		Iterator<?> it = cache.getAllForClass(SubstancePreferences.class);
 		if (it.hasNext())
@@ -104,9 +112,6 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 	 */
 	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf)
 	{
-		final String skinName = _prefs.getSkinName();
-		SubstanceSkin skin = _lafData.getSkinForName(skinName);
-		SubstanceLookAndFeel.setSkin(skin);
 	}
 
 	/**
@@ -115,8 +120,47 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 	public void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf)
 	{
 		final String skinName = _prefs.getSkinName();
-		SubstanceSkin skin = _lafData.getSkinForName(skinName);
-		SubstanceLookAndFeel.setSkin(skin);
+		Class<?> skinClass = _lafData.getSkinClassForName(skinName);
+		Object skinObject;
+		try
+		{
+			skinObject = skinClass.newInstance();
+			Class<?> substancelafclass = Class.forName(SUBSTANCE_LOOK_AND_FEEL_CLASS, true, _cl);
+			Method[] methods = substancelafclass.getMethods();
+			Method setSkinStaticMethod = null;
+			for (Method method : methods) {
+				if (method.getName().equals("setSkin")) {
+					Class<?>[] paramTypes = method.getParameterTypes();
+					String firstParamName = paramTypes[0].getCanonicalName(); 
+					if (firstParamName.equals("org.jvnet.substance.api.SubstanceSkin")) {
+						setSkinStaticMethod = method;
+						break;
+					}
+				}
+			}
+			setSkinStaticMethod.invoke(null, skinObject);
+		}
+		catch (InstantiationException e)
+		{
+			// skinClass.newInstance();
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (IllegalAccessException e)
+		{
+			// skinClass.newInstance();
+			s_log.error("Unable to instantiate skinClass ("+skinName+"):"+e.getMessage(), e);
+		}
+		catch (InvocationTargetException e)
+		{
+			// setSkinStaticMethod.invoke(null, skinObject);
+			s_log.error("Unable to invoke SubstanceLookAndFeel.setSkin for skin ("+skinName+"):"+e.getMessage(), e);
+		
+		}
+		catch (ClassNotFoundException e)
+		{
+			// Class.forName(SUBSTANCE_LOOK_AND_FEEL_CLASS, true, _cl);
+			s_log.error("Unable to find class ("+SUBSTANCE_LOOK_AND_FEEL_CLASS+"):"+e.getMessage(), e);
+		}
 	}
 
 	/**
