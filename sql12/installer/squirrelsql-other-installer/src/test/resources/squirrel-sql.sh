@@ -105,4 +105,4 @@ else
 fi
 
 # Launch SQuirreL application
-$JAVACMD -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
+$JAVACMD -Xmx256m -cp "$TMP_CP" $MACOSX_SQUIRREL_PROPS -splash:icons/splash.jpg net.sourceforge.squirrel_sql.client.Main --log-config-file "$UNIX_STYLE_HOME"/log4j.properties --squirrel-home "$UNIX_STYLE_HOME" $NATIVE_LAF_PROP $SCRIPT_ARGS
