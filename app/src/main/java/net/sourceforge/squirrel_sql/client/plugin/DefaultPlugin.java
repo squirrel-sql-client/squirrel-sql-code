@@ -167,6 +167,11 @@ public abstract class DefaultPlugin implements IPlugin
 	public synchronized File getPluginAppSettingsFolder()
 		throws IllegalStateException, IOException
 	{
+		String pluginAppFolderProp = System.getProperty("pluginAppFolder");
+		if (pluginAppFolderProp != null) {
+			return new File(pluginAppFolderProp);
+		}
+		
 		final String internalName = getInternalName();
 		if (internalName == null || internalName.trim().length() == 0)
 		{
@@ -187,6 +192,20 @@ public abstract class DefaultPlugin implements IPlugin
 		return file;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginJarFilePath()
+	 */
+	public synchronized String getPluginJarFilePath() throws IllegalStateException {
+		final String internalName = getInternalName();
+		final File pluginDir = new ApplicationFiles().getPluginsDirectory();
+		if (internalName == null || internalName.trim().length() == 0)
+		{
+			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
+		}
+		final File resultFile = new File(pluginDir, internalName + ".jar");
+		return resultFile.getAbsolutePath();
+	}
+	
 	/**
 	 * Return the folder with the users home directory
 	 * that belongs to this plugin. If it doesn't exist then

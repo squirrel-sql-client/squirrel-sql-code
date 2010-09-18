@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 /**
@@ -204,5 +204,14 @@ public interface IPlugin
     * @see PluginManager.bindExternalPluginService();
     */
    Object getExternalService();
+
+	/**
+	 * Returns the absolute path to the plugin jar file.
+	 * 
+	 * @return the absolute path to the plugin jar file.
+	 * 
+	 * @throws IllegalStateException if this plugin doesn't have a valid internal name. 
+	 */
+	String getPluginJarFilePath() throws IllegalStateException;
 
 }
