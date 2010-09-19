@@ -24,8 +24,8 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
@@ -34,7 +34,6 @@ import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.MockSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.MockSessionManager;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
@@ -51,7 +50,6 @@ public class MockApplication implements IApplication {
     SquirrelResources resource = null;
     SquirrelPreferences prefs = null;
     SQLHistory history = null;
-    MockSQLEntryPanelFactory sqlEntryPanelFactory = null;
     IMessageHandler messageHandler = null;
     MockSessionManager sessionHandler = null;
     FontInfoStore fontInfoStore = null;
@@ -64,7 +62,6 @@ public class MockApplication implements IApplication {
         pluginManager = new PluginManager(this);
         actions = new ActionCollection(this);
         history = new SQLHistory();
-        sqlEntryPanelFactory = new MockSQLEntryPanelFactory();
         messageHandler = new MockMessageHandler();
         sessionHandler = new MockSessionManager(this);
         fontInfoStore = new FontInfoStore();
@@ -152,7 +149,7 @@ public class MockApplication implements IApplication {
     }
 
     public ISQLEntryPanelFactory getSQLEntryPanelFactory() {
-        return sqlEntryPanelFactory;
+   	 return null;
     }
 
     public SQLHistory getSQLHistory() {
