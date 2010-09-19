@@ -227,6 +227,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       _con = con;
       _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTED_IMAGE));
       _panel.btnConnected.setEnabled(true);
+      _panel.cboConfigurations.setEnabled(false);
       _hqlPanelController.setConnection(con);
 
       for (ConnectionListener listener : _listeners)
@@ -344,6 +345,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private void closeConnection()
    {
       _con.close();
+      _panel.cboConfigurations.setEnabled(true);
 
       for (ConnectionListener listener : _listeners)
       {
