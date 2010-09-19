@@ -23,6 +23,8 @@ Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
 
+Fixed problem with sorting after dragging columns
+
 Button sizes differed in Alias and Driver docking frame  
 
 Hibernate plugin: Icon buttons for connecting and opening configuration could be very small.

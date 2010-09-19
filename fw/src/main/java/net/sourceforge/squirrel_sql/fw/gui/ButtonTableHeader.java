@@ -117,17 +117,18 @@ public class ButtonTableHeader extends JTableHeader
       _sortingListener = new SortingListener()
       {
          @Override
-         public void sortingDone(int column, boolean ascending)
+         public void sortingDone(int modelColumnIx, boolean ascending)
          {
-            onSortingDone(column, ascending);
+            onSortingDone(modelColumnIx, ascending);
          }
       };
 
    }
 
-   private void onSortingDone(int column, boolean ascending)
+   private void onSortingDone(int modelColumnIx, boolean ascending)
    {
-      int modColumn = getTable().convertColumnIndexToModel(column);
+      int viewColumnIndex = getViewColumnIndex(modelColumnIx);
+
 
       if (ascending)
       {
@@ -137,10 +138,24 @@ public class ButtonTableHeader extends JTableHeader
       {
          _currentSortedColumnIcon = s_descIcon;
       }
-      _currentlySortedColumnIdx = modColumn;
-      _pressedColumnIdx = modColumn;
+      _currentlySortedColumnIdx = viewColumnIndex;
+      _pressedColumnIdx = viewColumnIndex;
 
       repaint();
+   }
+
+   private int getViewColumnIndex(int modelColumnIx)
+   {
+      int viewColumnIndex = -1;
+
+      for (int i = 0; i < getTable().getColumnModel().getColumnCount(); i++)
+      {
+           if(modelColumnIx == getTable().getColumnModel().getColumn(i).getModelIndex())
+           {
+               viewColumnIndex = i;
+           }
+      }
+      return viewColumnIndex;
    }
 
    public void setTable(JTable table)
