@@ -60,15 +60,6 @@ public class TableState
 
    private void doApply(JTable table)
    {
-      if (_applySorting && table.getModel() instanceof SortableTableModel)
-      {
-         if(-1 != _sortedColumn)
-         {
-            ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _sortedAscending);
-         }
-      }
-
-
       for (int i = 0; i < table.getColumnModel().getColumnCount(); i++)
       {
          Integer width = _columnWidthsByModelIndex.get(table.getColumnModel().getColumn(i).getModelIndex());
@@ -83,12 +74,18 @@ public class TableState
          moveTo(table.getColumnModel(), modelIndex, _columnIndexByModelIndex.get(modelIndex));
       }
 
-
+      if (_applySorting && table.getModel() instanceof SortableTableModel)
+      {
+         if(-1 != _sortedColumn)
+         {
+            ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _sortedAscending);
+         }
+      }
+      
       if(-1 != _selectedRow)
       {
          table.getSelectionModel().setSelectionInterval(_selectedRow, _selectedRow);
       }
-
 
       table.scrollRectToVisible(_visibleRect);
    }
