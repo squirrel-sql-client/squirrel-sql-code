@@ -43,6 +43,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -448,7 +449,18 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 				ExtTableColumn col = new ExtTableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
-				col.setHeaderValue(colDef.getColumnName());
+
+            String headerValue;
+            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName())
+            {
+               headerValue = colDef.getLabel();
+            }
+            else
+            {
+               headerValue = colDef.getColumnName();
+            }
+            
+            col.setHeaderValue(headerValue);
 				col.setColumnDisplayDefinition(colDef);
 				cm.addColumn(col);
 			}
