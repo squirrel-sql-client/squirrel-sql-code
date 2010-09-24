@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
@@ -72,7 +73,17 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < colDefs.length; ++i)
 			{
-				buf.append(format(colDefs[i].getColumnName(), colDefs[i].getDisplayWidth(), ' '));
+            String headerValue;
+            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName())
+            {
+               headerValue = colDefs[i].getLabel();
+            }
+            else
+            {
+               headerValue = colDefs[i].getColumnName();
+            }
+
+            buf.append(format(headerValue, colDefs[i].getDisplayWidth(), ' '));
 			}
 			addLine(buf.toString());
 			buf = new StringBuffer();

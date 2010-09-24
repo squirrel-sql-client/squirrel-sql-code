@@ -6,6 +6,9 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+Introduced a new general data type property 'Use column labels instead of column names in result headers'.
+See Global Preferences --> Tab 'Data Type Controls'. Will be useful e.g. for MySQL if Aliases are used in Select clauses.
+
 Session Property: "Keep SQL result table layout on rerun SQL"
 If this option is checked the layout of the table of a SQL result is tried to be restored after rerunning the SQL.
 Note: You rerun an SQL statement when you click the running man button on the upper left of a SQL result.

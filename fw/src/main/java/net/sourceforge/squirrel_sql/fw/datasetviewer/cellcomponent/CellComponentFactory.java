@@ -778,6 +778,7 @@ public class CellComponentFactory {
 		 * be local to this directory.
 		 */
 		String [] initialClassNameList = {
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral.class.getName(),
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob.class.getName(),
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob.class.getName(),
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeString.class.getName(),
