@@ -1,8 +1,9 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
+package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class HibernateConfiguration
+public class HibernateConfiguration implements Serializable
 {
    private String _provider;
    private String _name;
@@ -10,6 +11,10 @@ public class HibernateConfiguration
    private boolean _userDefinedProvider;
    private boolean _jpa;
    private String _persistenceUnitName;
+   private boolean _useProcess = false;
+   private String _command;
+   private boolean _endProcessOnDisconnect;
+   private int _processPort;
 
    public String getProvider()
    {
@@ -80,20 +85,65 @@ public class HibernateConfiguration
 
    public String classpathAsString()
    {
-      if(0 == _classpathEntries.length)
+      return classPathToString(_classpathEntries);
+   }
+
+   public static String classPathToString(String[] classpathEntries)
+   {
+      if(0 == classpathEntries.length)
       {
          return "";
       }
       else
       {
-         String ret = _classpathEntries[0];
+         String ret = classpathEntries[0];
 
-         for (String _classpathEntry : _classpathEntries)
+         for (String _classpathEntry : classpathEntries)
          {
             ret += File.pathSeparator + _classpathEntry;
          }
 
          return ret;
       }
+   }
+
+   public boolean isUseProcess()
+   {
+      return _useProcess;
+   }
+
+   public void setUseProcess(boolean useProcess)
+   {
+      _useProcess = useProcess;
+   }
+
+   public String getCommand()
+   {
+      return _command;
+   }
+
+   public void setCommand(String command)
+   {
+      _command = command;
+   }
+
+   public void setEndProcessOnDisconnect(boolean endProcessOnDisconnect)
+   {
+      _endProcessOnDisconnect = endProcessOnDisconnect;
+   }
+
+   public boolean isEndProcessOnDisconnect()
+   {
+      return _endProcessOnDisconnect;
+   }
+
+   public void setProcessPort(int processPort)
+   {
+      _processPort = processPort;
+   }
+
+   public int getProcessPort()
+   {
+      return _processPort;
    }
 }

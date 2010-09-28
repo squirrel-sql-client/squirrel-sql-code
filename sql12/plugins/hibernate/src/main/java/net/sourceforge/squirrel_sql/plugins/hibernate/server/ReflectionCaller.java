@@ -1,15 +1,10 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate;
+package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
-import org.hibernate.engine.SubselectFetch;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;
-import java.net.URLClassLoader;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ReflectionCaller
 {

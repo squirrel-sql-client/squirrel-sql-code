@@ -1,6 +1,8 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
+package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
-public class HibernatePropertyInfo
+import java.io.Serializable;
+
+public class HibernatePropertyInfo implements Serializable
 {
    private String _propertyName;
    private String _className;

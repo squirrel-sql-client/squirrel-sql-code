@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.hibernate.ReflectionCaller;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 

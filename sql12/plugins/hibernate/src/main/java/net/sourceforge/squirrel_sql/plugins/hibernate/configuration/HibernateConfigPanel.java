@@ -28,6 +28,9 @@ public class HibernateConfigPanel extends JPanel
    JRadioButton radUserDefProvider;
    JRadioButton radJPA;
    JTextField txtPersistenceUnitName;
+   JRadioButton radCreateProcess;
+   JButton btnProcessDetails;
+   JRadioButton radInVM;
 
 
    public HibernateConfigPanel()
@@ -78,12 +81,60 @@ public class HibernateConfigPanel extends JPanel
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5),0,0);
       ret.add(createHowToCreateSessionFactoryPanel(), gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5),0,0);
+      ret.add(createProcessPanel(), gbc);
+
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
       // i18n[HibernateConfigPanel.applyConfigChanges=Apply changes to this configuration]
       btnApplyConfigChanges = new JButton(s_stringMgr.getString("HibernatePanel.applyConfigChanges"));
       ret.add(btnApplyConfigChanges, gbc);
 
       return ret;
+   }
+
+   private JPanel createProcessPanel()
+   {
+      JPanel ret = new JPanel();
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+      ret.setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernatePanel.howToAccess=To access Hibernate SQuirreL should:]
+      ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.howToAccess")), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,20,0,5),0,0);
+      // i18n[HibernateConfigPanel.inVM=Run Hibernate in SQUirreL's Java VM]
+      radInVM = new JRadioButton(s_stringMgr.getString("HibernateConfigPanel.inVM"));
+      ret.add(radInVM, gbc);
+
+      gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernateConfigPanel.createProcess=Launch a process that runs Hibernate (default)]
+      radCreateProcess = new JRadioButton(s_stringMgr.getString("HibernateConfigPanel.createProcess"));
+      ret.add(radCreateProcess, gbc);
+
+
+      gbc = new GridBagConstraints(2,1,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      // i18n[HibernateConfigPanel.createProcessDetails=Details ...]
+      btnProcessDetails = new JButton(s_stringMgr.getString("HibernateConfigPanel.createProcessDetails"));
+      ret.add(btnProcessDetails, gbc);
+
+
+      gbc = new GridBagConstraints(3,1,1,1,1,1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(new JPanel(), gbc);
+
+
+
+
+      ButtonGroup btnGr = new ButtonGroup();
+      btnGr.add(radCreateProcess);
+      btnGr.add(radInVM);
+      radCreateProcess.setSelected(true);
+      return ret;
+
    }
 
    private JPanel createConfigNamePanel()

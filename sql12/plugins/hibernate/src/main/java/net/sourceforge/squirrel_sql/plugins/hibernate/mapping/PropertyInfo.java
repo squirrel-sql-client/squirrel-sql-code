@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernatePropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 public class PropertyInfo  extends CompletionInfo
 {
@@ -16,10 +18,10 @@ public class PropertyInfo  extends CompletionInfo
    {
       _hibernatePropertyInfo = hibernatePropertyInfo;
       _fullQualifiedName = mappedClassName + "." +hibernatePropertyInfo;
-      _simpleQualifiedName = MappingUtils.getSimpleClassName(mappedClassName) + "." + hibernatePropertyInfo;
+      _simpleQualifiedName = HibernateUtil.getSimpleClassName(mappedClassName) + "." + hibernatePropertyInfo;
 
       _mappedClassNameWithEndingDot = mappedClassName + ".";
-      _simpleMappedClassNameWithEndingDot = MappingUtils.getSimpleClassName(mappedClassName) + ".";
+      _simpleMappedClassNameWithEndingDot = HibernateUtil.getSimpleClassName(mappedClassName) + ".";
 
    }
 

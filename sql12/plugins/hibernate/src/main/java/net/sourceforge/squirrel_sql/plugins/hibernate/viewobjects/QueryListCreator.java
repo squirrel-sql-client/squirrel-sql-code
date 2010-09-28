@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 
 public class QueryListCreator extends SwingWorker
@@ -116,7 +115,7 @@ public class QueryListCreator extends SwingWorker
 
 
 
-//   private List readObjects(HibernateConnection con, String hqlQuery, int sqlLimitRows)
+//   private List readObjects(HibernateServerConnectionImpl con, String hqlQuery, int sqlLimitRows)
 //   {
 //      long begin = System.currentTimeMillis();
 //      long duration;

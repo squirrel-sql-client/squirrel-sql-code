@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;

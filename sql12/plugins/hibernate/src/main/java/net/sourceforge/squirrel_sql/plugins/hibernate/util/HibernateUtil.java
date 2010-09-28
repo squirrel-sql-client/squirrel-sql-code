@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -28,6 +29,10 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
@@ -36,72 +41,62 @@ import org.hibernate.dialect.DialectFactory;
 
 /**
  * Class that provides utility methods for obtaining SessionFactory objects.
- * 
- * @author manningr
  *
+ * @author manningr
  */
-public class HibernateUtil {
+public class HibernateUtil
+{
 
-    /** Logger for this class. */
-    private static final ILogger s_log =
-        LoggerController.createLogger(HibernateUtil.class);
-    
-    public static SessionFactory getSessionFactory(ISession session, String[] classPathEntries) 
-        throws SQLException 
-    {
-        SessionFactory result = null;
-        Dialect dialect = getHibernateDialectForSession(session);
-        String dialectName = dialect.getClass().getName();
-        Configuration cfg = new Configuration();
-        ISQLAliasExt alias = session.getAlias();
-        ISQLDriver driver = session.getDriver();
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("getSessionFactory: url="+alias.getUrl());
-        }
-        cfg.setProperty(Environment.URL, alias.getUrl());
-        cfg.setProperty(Environment.USER, alias.getUserName());
-        cfg.setProperty(Environment.PASS, alias.getPassword());
-        cfg.setProperty(Environment.DRIVER, driver.getDriverClassName());
-        cfg.setProperty(Environment.DIALECT, dialectName);
-        cfg.setProperty(Environment.SHOW_SQL, "true");
-        cfg.setProperty(Environment.HBM2DDL_AUTO, "create");
-        for (int i = 0; i < classPathEntries.length; i++) {
-            String file = classPathEntries[i];
-            cfg.addDirectory(new File(file));
-        }
-        
-        result = cfg.buildSessionFactory();
-        return result;
-    }
-    
-    /**
-     * Returns the Hibernate dialect for the specified session.
-     * 
-     * @param session the SQuirreL ISession implementation
-     * 
-     * @return an instance of Dialect. 
-     * 
-     * @throws SQLException
-     */
-    public static Dialect getHibernateDialectForSession(ISession session) 
-        throws SQLException 
-    {
-        Dialect result = null;
-        ISQLDatabaseMetaData md = session.getMetaData();
-        String databaseName = md.getDatabaseProductName();
-        int databaseMajorVersion = md.getDatabaseMajorVersion();
-       
-        result = 
-            DialectFactory.determineDialect(databaseName, databaseMajorVersion);
-        
-        if (s_log.isInfoEnabled()) {
-            s_log.info(
-                "Dialect returned from DialectFactory for databaseName="+
-                databaseName+" and databaseMajorVersion="+databaseMajorVersion+
-                " was "+result.getClass().getName());
-        }
-        
-        return result;
-    }
-    
+   /**
+    * Logger for this class.
+    */
+   private static final ILogger s_log =
+         LoggerController.createLogger(HibernateUtil.class);
+
+   public static XMLBeanReader createHibernateConfigsReader(HibernatePlugin plugin)
+         throws IOException, XMLException
+   {
+      XMLBeanReader reader = new XMLBeanReader();
+      File pluginUserSettingsFolder = plugin.getPluginUserSettingsFolder();
+
+
+      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
+
+      if (false == xmlFile.exists())
+      {
+         return null;
+      }
+
+      try
+      {
+         reader.load(xmlFile, plugin.getClass().getClassLoader());
+         return reader;
+      }
+      catch (Exception e)
+      {
+         String message =
+               "Cold not load Hibernate configuration. " +
+               "ClassNotFoundException may be thrown when a version higher then 3.1.x is used for first time. " +
+               "Please define your Hibernate configurations again or edit\n" +
+               plugin.getPluginUserSettingsFolder() + File.separator + HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE +
+               "\nand replace\n" +
+               "net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration\n" +
+               "with\n" +
+               "net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration\n" +
+               "Sorry for the inconvenience.";
+         s_log.error(message, e);
+         plugin.getApplication().getMessageHandler().showErrorMessage(e + "\n" + message);
+
+         return null;
+      }
+
+
+
+   }
+
+   public static String getSimpleClassName(String mappedClassName)
+   {
+      String[] cpTokens = mappedClassName.split("\\.");
+      return cpTokens[cpTokens.length - 1];
+   }
 }

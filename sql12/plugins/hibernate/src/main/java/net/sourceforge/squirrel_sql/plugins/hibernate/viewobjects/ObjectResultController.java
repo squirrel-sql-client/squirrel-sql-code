@@ -37,13 +37,13 @@ public class ObjectResultController
       return _objectResultTabbedPane;
    }
 
-   public void displayObjects(HibernateConnection con, String hqlQuery)
+   public void displayObjects(HibernateConnection con, String hqlQuery, boolean limitObjectCount, int limitObjectCountVal)
    {
 
       int maxNumResults = -1;
-      if (_session.getProperties().getSQLLimitRows())
+      if (limitObjectCount)
       {
-         maxNumResults = _session.getProperties().getSQLNbrRowsToShow();
+         maxNumResults = limitObjectCountVal;
       }
 
       QueryListCreatorListener queryListCreatorListener = new QueryListCreatorListener()

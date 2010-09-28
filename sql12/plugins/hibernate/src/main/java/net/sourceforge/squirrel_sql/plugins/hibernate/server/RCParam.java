@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate;
+package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
 import java.util.ArrayList;
 

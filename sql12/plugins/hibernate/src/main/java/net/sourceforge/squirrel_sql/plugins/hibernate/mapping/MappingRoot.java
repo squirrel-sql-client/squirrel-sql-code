@@ -1,14 +1,14 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateSqlConnectionData;
 
 import java.util.Hashtable;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
 public class MappingRoot extends Object
@@ -57,20 +57,19 @@ public class MappingRoot extends Object
 //         //i18n[MappingRoot.driverClassName=JDBC Driver class name (Hibernate)]
 //         _properties.put(s_stringMgr.getString("MappingRoot.driverClassName"), con.getDriverClassName());
 
-         Connection sqlCon = con.getSqlConnection();
-         DatabaseMetaData md = sqlCon.getMetaData();
+         HibernateSqlConnectionData data = con.getHibernateSqlConnectionData();
 
          //i18n[MappingRoot.url=JDBC Url (Hibernate)]
-         _properties.put(s_stringMgr.getString("MappingRoot.url"), md.getURL());
+         _properties.put(s_stringMgr.getString("MappingRoot.url"), data.getURL());
 
          //i18n[MappingRoot.user=JDBC User (Hibernate)]
-         _properties.put(s_stringMgr.getString("MappingRoot.user"), md.getUserName());
+         _properties.put(s_stringMgr.getString("MappingRoot.user"), data.getUserName());
 
          //i18n[MappingRoot.driverName=JDBC driver name (Hibernate)]
-         _properties.put(s_stringMgr.getString("MappingRoot.driverName"), md.getDriverName());
+         _properties.put(s_stringMgr.getString("MappingRoot.driverName"), data.getDriverName());
 
          //i18n[MappingRoot.driverVersion=JDBC driver version (Hibernate)]
-         _properties.put(s_stringMgr.getString("MappingRoot.driverVersion"), md.getDriverVersion());
+         _properties.put(s_stringMgr.getString("MappingRoot.driverVersion"), data.getDriverVersion());
       }
       catch (Exception e)
       {

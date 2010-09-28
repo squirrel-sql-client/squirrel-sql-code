@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 
 public interface HibnerateConnectorListener
 {

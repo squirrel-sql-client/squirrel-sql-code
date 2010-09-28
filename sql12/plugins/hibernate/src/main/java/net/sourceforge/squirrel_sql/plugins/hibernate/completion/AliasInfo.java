@@ -5,9 +5,6 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Collections;
 import java.util.ArrayList;
 
 public class AliasInfo extends CompletionInfo

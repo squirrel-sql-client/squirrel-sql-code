@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public interface IHibernateTabController
 {
