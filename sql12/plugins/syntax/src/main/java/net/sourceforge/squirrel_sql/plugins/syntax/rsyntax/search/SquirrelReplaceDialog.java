@@ -149,7 +149,8 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    {
       if("Replace".equals(e.getActionCommand()))
       {
-         actionListener.actionPerformed(e);         
+         actionListener.actionPerformed(e);
+         findNextButton.doClick(10);
       }
    }
 

@@ -26,6 +26,8 @@ Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
 
+RSyntax editor: Replace dialog: Replace button now does a find next after replacing. 
+
 Fixed problem with sorting after dragging columns
 
 Button sizes differed in Alias and Driver docking frame  
