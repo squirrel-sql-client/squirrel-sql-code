@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.plugins.hibernate.ReflectionCaller;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 
 import java.util.ArrayList;

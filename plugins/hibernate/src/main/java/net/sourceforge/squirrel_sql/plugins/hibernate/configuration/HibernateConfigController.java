@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePrefsListener;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -14,8 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.util.prefs.Preferences;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
@@ -33,9 +33,13 @@ public class HibernateConfigController
    public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs.xml";
    private HibernatePrefsListener _hibernatePrefsListener;
 
+   private ProcessDetails _processDetails;
+
    public HibernateConfigController(HibernatePlugin plugin)
    {
       _plugin = plugin;
+      _processDetails = new ProcessDetails(_plugin);
+
       _panel = new HibernateConfigPanel();
 
       _hibernatePrefsListener = _plugin.removeHibernatePrefsListener();
@@ -131,6 +135,40 @@ public class HibernateConfigController
       _panel.radUserDefProvider.addItemListener(radObtainSessFactListener);
 
 
+      ItemListener radProcessListener = new ItemListener()
+      {
+         public void itemStateChanged(ItemEvent e)
+         {
+            onProcessChanged();
+         }
+      };
+
+      _panel.radCreateProcess.addItemListener(radProcessListener);
+      _panel.radInVM.addItemListener(radProcessListener);
+
+      _panel.btnProcessDetails.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onProcessDetails();
+         }
+      });
+   }
+
+   private void onProcessDetails()
+   {
+      String[] cp = new String[_panel.lstClassPath.getModel().getSize()];
+      for(int i=0;i < _panel.lstClassPath.getModel().getSize(); ++i)
+      {
+         cp[i] = (String) _panel.lstClassPath.getModel().getElementAt(i);
+      }
+      new ProcessDetailsController(_plugin, _processDetails, cp);
+   }
+
+   private void onProcessChanged()
+   {
+      _panel.btnProcessDetails.setEnabled(_panel.radCreateProcess.isSelected());
    }
 
 
@@ -281,6 +319,10 @@ public class HibernateConfigController
       }
 
 
+      cfg.setUseProcess(_panel.radCreateProcess.isSelected());
+
+      _processDetails.apply(cfg);
+
 
       if(wasNull)
       {
@@ -426,10 +468,10 @@ public class HibernateConfigController
       initConfig(null);
    }
 
-   private void initConfig(HibernateConfiguration config)
+   private void initConfig(HibernateConfiguration cfg)
    {
 
-      if(null == config)
+      if(null == cfg)
       {
          _panel.txtConfigName.setText(null);
 
@@ -444,27 +486,31 @@ public class HibernateConfigController
          _panel.radConfiguration.setSelected(true);
          onObtainSessFactChanged();
 
+         _panel.radCreateProcess.setSelected(true);
+
+         _panel.btnProcessDetails.setEnabled(true);
+
          return;
 
       }
 
-      _panel.txtConfigName.setText(config.getName());
+      _panel.txtConfigName.setText(cfg.getName());
 
 
       DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 
       listModel.clear();
 
-      for (String path : config.getClassPathEntries())
+      for (String path : cfg.getClassPathEntries())
       {
          listModel.addElement(path);
       }
 
-      if(config.isUserDefinedProvider())
+      if(cfg.isUserDefinedProvider())
       {
          _panel.radUserDefProvider.setSelected(true);
       }
-      else if(config.isJPA())
+      else if(cfg.isJPA())
       {
          _panel.radJPA.setSelected(true);
       }
@@ -475,8 +521,18 @@ public class HibernateConfigController
       onObtainSessFactChanged();
 
 
-      _panel.txtFactoryProvider.setText(config.getProvider());
-      _panel.txtPersistenceUnitName.setText(config.getPersistenceUnitName());
+      _panel.txtFactoryProvider.setText(cfg.getProvider());
+      _panel.txtPersistenceUnitName.setText(cfg.getPersistenceUnitName());
+
+      _panel.radCreateProcess.setSelected(cfg.isUseProcess());
+      _panel.btnProcessDetails.setEnabled(cfg.isUseProcess());
+      _panel.radInVM.setSelected(!cfg.isUseProcess());
+
+      if(null != cfg.getCommand())
+      {
+         _processDetails.setCommand(cfg.getCommand());
+         _processDetails.setEndProcessOnDisconnect(cfg.isEndProcessOnDisconnect());
+      }
    }
 
 
@@ -527,19 +583,12 @@ public class HibernateConfigController
    {
       try
       {
-         XMLBeanReader reader = new XMLBeanReader();
-         File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
+         XMLBeanReader reader = HibernateUtil.createHibernateConfigsReader(_plugin);
 
-
-         File xmlFile = new File(pluginUserSettingsFolder.getPath(), HIBERNATE_CONFIGS_XML_FILE);
-
-         if(false == xmlFile.exists())
+         if (reader == null)
          {
             return;
          }
-
-         reader.load(xmlFile, _plugin.getClass().getClassLoader());
-
 
 
          HibernateConfiguration toSel = null;
@@ -553,6 +602,11 @@ public class HibernateConfigController
                cfg.getName().equals(_hibernatePrefsListener.getPreselectedCfg().getName()))
             {
                toSel = cfg;
+            }
+
+            if(null == cfg.getCommand())
+            {
+               _processDetails.apply(cfg);
             }
 
             _panel.cboConfigs.addItem(cfg);
@@ -573,4 +627,5 @@ public class HibernateConfigController
          throw new RuntimeException(e);
       }
    }
+
 }

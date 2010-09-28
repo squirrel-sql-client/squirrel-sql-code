@@ -4,11 +4,11 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 
 import java.util.ArrayList;
 
@@ -79,7 +79,10 @@ public class HQLCodeCompletorModel implements ICompletorModel
 
    private void onAliasesFound(ArrayList<AliasInfo> aliasInfos)
    {
-      _codeCompletionInfos.setCurrentAliasInfos(aliasInfos);
+      if (null != _codeCompletionInfos)
+      {
+         _codeCompletionInfos.setCurrentAliasInfos(aliasInfos);
+      }
    }
 
 }

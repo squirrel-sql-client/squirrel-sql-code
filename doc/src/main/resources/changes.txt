@@ -6,6 +6,12 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+Hibernate Plugin:
+  - New handling of limiting object count for HQL queries.
+  - Hibernate session can now be started in an external process.
+    This can keep SQuirreL from running into memory problems when working with the Hibernate Plugin.
+    See Hibernate configuration panel for details. 
+
 Introduced a new general data type property 'Use column labels instead of column names in result headers'.
 See Global Preferences --> Tab 'Data Type Controls'. Will be useful e.g. for MySQL if Aliases are used in Select clauses.
 

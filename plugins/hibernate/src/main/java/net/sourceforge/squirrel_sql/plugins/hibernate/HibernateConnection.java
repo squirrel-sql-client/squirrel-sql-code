@@ -1,62 +1,140 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import java.net.URLClassLoader;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateServerConnection;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateSqlConnectionData;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ServerMain;
+
+import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
+import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HibernateConnection
 {
    private static ILogger s_log = LoggerController.createLogger(HibernateConnection.class);
-   private Object _sessionFactoryImpl;
-   private URLClassLoader _cl;
+
+   private HibernateServerConnection _hibernateServerConnection;
+   private boolean _process;
+   private ServerMain _serverMain;
+   private boolean _endProcessOnDisconnect;
    private ArrayList<MappedClassInfo> _mappedClassInfos;
-   private ReflectionCaller m_rcHibernateSession;
 
 
-   public HibernateConnection(Object sessionFactoryImpl, URLClassLoader cl)
+   private RMISecurityManager _rmiSecurityManager =
+         new RMISecurityManager()
+         {
+            @Override
+            public void checkPermission(Permission perm)
+            {
+            }
+         };
+
+
+   public HibernateConnection(HibernateServerConnection hibernateServerConnection, boolean process, ServerMain serverMain, boolean endProcessOnDisconnect)
    {
-      _sessionFactoryImpl = sessionFactoryImpl;
-      _cl = cl;
+      _hibernateServerConnection = hibernateServerConnection;
+      _process = process;
+      _serverMain = serverMain;
+      _endProcessOnDisconnect = endProcessOnDisconnect;
    }
-
 
    public ArrayList<String> generateSQL(String hqlQuery)
    {
       try
       {
+         return _hibernateServerConnection.generateSQL(hqlQuery);
+      }
+      catch (RemoteException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
-
-         Class sessionFactoryImplementorClass = (Class) new ReflectionCaller().getClass("org.hibernate.engine.SessionFactoryImplementor", _cl).getCallee();
-
-         List<ReflectionCaller> translators =
-         new ReflectionCaller(_cl)
-            .getClass("org.hibernate.engine.query.HQLQueryPlan", _cl)
-            .callConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass}, new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl})
-            .callArrayMethod("getTranslators");
-
-         ArrayList<String> ret = new ArrayList<String>();
-
-
-         for (ReflectionCaller translator : translators)
+   public void close()
+   {
+      if (_process)
+      {
+         if(_endProcessOnDisconnect)
          {
-            List sqls = (List) translator.callMethod("collectSqlStrings").getCallee();
-
-            for (Object sql : sqls)
+            try
             {
-               ret.add(sql.toString());
+               _hibernateServerConnection.closeConnection();
+            }
+            catch (Throwable t)
+            {
+               s_log.error("Error closing Hibernate connection.", t);
+            }
+
+            try
+            {
+               _serverMain.exit();
+            }
+            catch (Throwable t)
+            {
+               // This call will result in failure because the process VM exits during this call and will not return.
             }
          }
-         return ret;
+      }
+      else
+      {
+         try
+         {
+            _hibernateServerConnection.closeConnection();
+         }
+         catch (Throwable t)
+         {
+            s_log.error("Error closing Hibernate connection.", t);
+         }
+      }
+   }
+
+   public ArrayList<MappedClassInfo> getMappedClassInfos()
+   {
+      try
+      {
+         if(null == _mappedClassInfos)
+         {
+            _mappedClassInfos = new ArrayList<MappedClassInfo>();
+            ArrayList<MappedClassInfoData> mappedClassInfoData = _hibernateServerConnection.getMappedClassInfoData();
+
+            for (MappedClassInfoData aMappedClassInfoData : mappedClassInfoData)
+            {
+               _mappedClassInfos.add(new MappedClassInfo(aMappedClassInfoData));
+            }
+         }
+
+         return _mappedClassInfos;
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+   }
+
+   public Class getPersistenCollectionClass()
+   {
+      try
+      {
+         return _hibernateServerConnection.getPersistenCollectionClass();
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+
+      }
+   }
+
+   public HibernateSqlConnectionData getHibernateSqlConnectionData()
+   {
+      try
+      {
+         return _hibernateServerConnection.getHibernateSqlConnectionData();
       }
       catch (Exception e)
       {
@@ -64,142 +142,32 @@ public class HibernateConnection
       }
    }
 
-
-
-   public void close()
+   public List createQueryList(String hqlQuery, int sqlNbrRowsToShow)
    {
       try
       {
-         new ReflectionCaller(_sessionFactoryImpl).callMethod("close");
-      }
-      catch (Throwable t)
-      {
-         s_log.error(t);
-      }
-      _sessionFactoryImpl = null;
-      _cl = null;
-      _mappedClassInfos = null;
-      System.gc();
-
-   }
-
-   public ArrayList<MappedClassInfo> getMappedClassInfos()
-   {
-      initMappedClassInfos();
-      return _mappedClassInfos;
-   }
-
-   public Class getPersistenCollectionClass()
-   {
-      try
-      {
-         return _cl.loadClass("org.hibernate.collection.PersistentCollection");
-      }
-      catch (ClassNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   private void initMappedClassInfos()
-   {
-      if(null != _mappedClassInfos)
-      {
-         return;
-      }
-
-
-      _mappedClassInfos = new ArrayList<MappedClassInfo>();
-
-      ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
-      Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
-
-      for (ReflectionCaller persister : persisters)
-      {
-         Object entityMode_POJO = persister.getClass("org.hibernate.EntityMode", _cl).getField("POJO").getCallee();
-         Class mappedClass = (Class) persister.callMethod("getMappedClass", new Object[]{entityMode_POJO}).getCallee();
-
-         String identifierPropertyName = (String) persister.callMethod("getIdentifierPropertyName").getCallee();
-
-         Class identifierPropertyClass = persister.callMethod("getIdentifierType").callMethod("getReturnedClass").getCalleeClass();
-
-         String identifierPropertyClassName = identifierPropertyClass.getName();
-
-
-         String tableName = (String) persister.callMethod("getTableName").getCallee();
-         String[] identifierColumnNames = (String[]) persister.callMethod("getIdentifierColumnNames").getCallee();
-
-
-         HibernatePropertyInfo identifierPropInfo =
-            new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, identifierColumnNames);
-
-         identifierPropInfo.setIdentifier(true);
-
-
-         String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
-
-         HibernatePropertyInfo[] infos = new HibernatePropertyInfo[propertyNames.length];
-         for (int i = 0; i < propertyNames.length; i++)
+         if (_process)
          {
-            ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", propertyNames[i]);
-            String mayBeCollectionTypeName = propertyTypeCaller.callMethod("getReturnedClass").getCalleeClass().getName();
-
-            String propTableName = (String) persister.callMethod("getPropertyTableName", propertyNames[i]).getCallee();
-            String[] propertyColumnNames = (String[]) persister.callMethod("getPropertyColumnNames", propertyNames[i]).getCallee();
+            SecurityManager old =System.getSecurityManager();
 
             try
             {
-               // If this isn't instanceof org.hibernate.type.CollectionType a NoSuchMethodException will be thrown
-               String role = (String) propertyTypeCaller.callMethod("getRole").getCallee();
-
-               ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", role);
-               String typeName = collectionMetaDataCaller.callMethod("getElementType").callMethod("getReturnedClass").getCalleeClass().getName();
-
-               infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, propTableName, propertyColumnNames);
-               infos[i].setCollectionClassName(mayBeCollectionTypeName);
+               System.setSecurityManager(_rmiSecurityManager);
+               return _hibernateServerConnection.createQueryList(hqlQuery, sqlNbrRowsToShow);
             }
-            catch(RuntimeException e)
+            finally
             {
-               if(Utilities.getDeepestThrowable(e) instanceof NoSuchMethodException)
-               {
-                  infos[i] = new HibernatePropertyInfo(propertyNames[i], mayBeCollectionTypeName, propTableName, propertyColumnNames);
-               }
-               else
-               {
-                  throw e;
-               }
+               System.setSecurityManager(old);
             }
          }
-
-         _mappedClassInfos.add(new MappedClassInfo(mappedClass.getName(), tableName, identifierPropInfo, infos));
+         else
+         {
+            return _hibernateServerConnection.createQueryList(hqlQuery, sqlNbrRowsToShow);
+         }
       }
-   }
-
-
-   public Connection getSqlConnection()
-   {
-      return (Connection) getRcHibernateSession().callMethod("getJDBCContext").callMethod("getConnectionManager").callMethod("getConnection").getCallee();
-   }
-
-   public List createQueryList(String hqlQuery, int sqlNbrRowsToShow)
-   {
-      ReflectionCaller  rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
-
-      if (0 <= sqlNbrRowsToShow)
+      catch (Exception e)
       {
-         rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+         throw new RuntimeException(e);
       }
-
-      return (List) rc.callMethod("list").getCallee();
-   }
-
-   private ReflectionCaller getRcHibernateSession()
-   {
-      if(null == m_rcHibernateSession)
-      {
-         m_rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession");
-      }
-
-      return m_rcHibernateSession;
    }
 }

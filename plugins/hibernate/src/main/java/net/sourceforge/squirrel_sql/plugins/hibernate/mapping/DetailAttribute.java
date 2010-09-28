@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernatePropertyInfo;
+
 public class DetailAttribute
 {
    private PropertyInfo _attribute;

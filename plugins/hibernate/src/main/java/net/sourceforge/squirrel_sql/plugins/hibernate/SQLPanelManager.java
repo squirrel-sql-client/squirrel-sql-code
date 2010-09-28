@@ -21,6 +21,8 @@ public class SQLPanelManager extends EntryPanelManagerBase
    private static final String PREF_KEY_FORMAT_SQL = "SquirrelSQL.hibernate.sqlFormatSql";
    private static final String PREF_KEY_EXECUTE_SQL = "SquirrelSQL.hibernate.sqlExecuteSql";
    private static final String PREF_KEY_VIEW_OBJECTS = "SquirrelSQL.hibernate.objViewObjects";
+   private static final String PREF_KEY_VIEW_LIMIT_OBJECT_COUNT = "SquirrelSQL.hibernate.limitObjectsCount";
+   private static final String PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL = "SquirrelSQL.hibernate.limitObjectsCountVal";
 
    private HibernateSQLPanel _hibernateSQLPanel;
    private SQLResultExecuterPanel _resultExecuterPanel;
@@ -62,6 +64,58 @@ public class SQLPanelManager extends EntryPanelManagerBase
       _hibernateSQLPanel._chkAlwaysFormatSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_SQL, false));
       _hibernateSQLPanel._chkAlwaysExecuteSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_SQL, false));
       _hibernateSQLPanel._chkAlwaysViewObjects.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_OBJECTS, false));
+      _hibernateSQLPanel._chkLimitObjectCount.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false));
+
+      _hibernateSQLPanel._nbrLimitRows.setInt(Preferences.userRoot().getInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, 100));
+      _hibernateSQLPanel._nbrLimitRows.setEnabled(_hibernateSQLPanel._chkLimitObjectCount.isSelected());
+
+
+      _hibernateSQLPanel._chkAlwaysViewObjects.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onViewObjectsChanged();
+         }
+      });
+      onViewObjectsChanged();
+
+
+      _hibernateSQLPanel._chkLimitObjectCount.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onLimitRowsChanged();
+         }
+      });
+   }
+
+   private void onViewObjectsChanged()
+   {
+      boolean b = _hibernateSQLPanel._chkAlwaysViewObjects.isSelected();
+      _hibernateSQLPanel._chkLimitObjectCount.setEnabled(b);
+      _hibernateSQLPanel._nbrLimitRows.setEnabled(b && _hibernateSQLPanel._chkLimitObjectCount.isSelected());
+   }
+
+   private void onLimitRowsChanged()
+   {
+      if(_hibernateSQLPanel._chkLimitObjectCount.isSelected())
+      {
+         LimitObjectCountDialog locc = new LimitObjectCountDialog(getSession().getApplication().getMainFrame());
+         _hibernateSQLPanel._chkLimitObjectCount.setSelected(locc.check());
+
+         if(locc.checkAndRemember())
+         {
+            Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, true);
+         }
+      }
+      else
+      {
+         Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, false);
+      }
+
+     _hibernateSQLPanel._nbrLimitRows.setEnabled(_hibernateSQLPanel._chkLimitObjectCount.isSelected());
    }
 
 
@@ -79,6 +133,11 @@ public class SQLPanelManager extends EntryPanelManagerBase
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_SQL, _hibernateSQLPanel._chkAlwaysFormatSql.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_SQL, _hibernateSQLPanel._chkAlwaysExecuteSql.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_VIEW_OBJECTS, _hibernateSQLPanel._chkAlwaysViewObjects.isSelected());
+
+      // Omitted intentionally
+      //Preferences.userRoot().putBoolean(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT, _hibernateSQLPanel._chkLimitObjectCount.isSelected());
+
+      Preferences.userRoot().putInt(PREF_KEY_VIEW_LIMIT_OBJECT_COUNT_VAL, _hibernateSQLPanel._nbrLimitRows.getInt());
    }
 
 
@@ -108,7 +167,10 @@ public class SQLPanelManager extends EntryPanelManagerBase
    {
       if (_hibernateSQLPanel._chkAlwaysViewObjects.isSelected())
       {
-         _objectResultController.displayObjects(con, hqlQuery);
+         boolean limitObjectCount = _hibernateSQLPanel._chkLimitObjectCount.isSelected();
+         int limitObjectCountVal = _hibernateSQLPanel._nbrLimitRows.getInt();
+
+         _objectResultController.displayObjects(con, hqlQuery, limitObjectCount, limitObjectCountVal);
          _hibernateSQLPanel._tabResult_code.setSelectedComponent(_objectResultController.getPanel());
       }
    }

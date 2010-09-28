@@ -3,23 +3,23 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigPanel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -60,8 +60,8 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent(), _resource);
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         
-         _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
+
+         HibnerateConnectorListener hibnerateConnectorListener = new HibnerateConnectorListener()
          {
             public void connected(HibernateConnection con, HibernateConfiguration cfg)
             {
@@ -72,7 +72,9 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
             {
                onConnectFailed(t);
             }
-         });
+         };
+
+         _hibnerateConnector = new HibnerateConnector(_plugin, hibnerateConnectorListener);
 
 
 
@@ -145,14 +147,11 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private void loadConfigsFromXml()
       throws IOException, XMLException
    {
-      XMLBeanReader reader = new XMLBeanReader();
-      File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
 
-      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
+      XMLBeanReader reader = HibernateUtil.createHibernateConfigsReader(_plugin);
 
-      if (xmlFile.exists())
+      if (null != reader)
       {
-         reader.load(xmlFile, _plugin.getClass().getClassLoader());
          loadConfigs(reader, Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null));
       }
    }

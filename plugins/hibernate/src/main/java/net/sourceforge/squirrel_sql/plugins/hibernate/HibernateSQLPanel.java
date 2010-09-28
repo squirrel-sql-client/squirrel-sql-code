@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
@@ -17,6 +18,8 @@ public class HibernateSQLPanel extends JPanel
    JCheckBox _chkAlwaysFormatSql;
    JCheckBox _chkAlwaysExecuteSql;
    JCheckBox _chkAlwaysViewObjects;
+   JCheckBox _chkLimitObjectCount;
+   IntegerField _nbrLimitRows;
 
    JTabbedPane _tabResult_code;
 
@@ -73,13 +76,26 @@ public class HibernateSQLPanel extends JPanel
       _chkAlwaysExecuteSql = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.Execute"));
       ret.add(_chkAlwaysExecuteSql, gbc);
 
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernateSQLPanel.Execute=Execute SQL]
+      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,15,5,5),0,0);
+      // i18n[HibernateSQLPanel.ObjectSection=Objects:]
+      ret.add(new JLabel(s_stringMgr.getString("HibernateSQLPanel.ObjectSection")), gbc);
+
+
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       _chkAlwaysViewObjects = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.ViewObjects"));
       ret.add(_chkAlwaysViewObjects, gbc);
 
+      gbc = new GridBagConstraints(7,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      _chkLimitObjectCount = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.LimitRows"));
+      ret.add(_chkLimitObjectCount, gbc);
 
-      gbc = new GridBagConstraints(6,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(8,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      _nbrLimitRows = new IntegerField();
+      ret.add(_nbrLimitRows, gbc);
+      _nbrLimitRows.setColumns(8);
+
+
+      gbc = new GridBagConstraints(9,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
 

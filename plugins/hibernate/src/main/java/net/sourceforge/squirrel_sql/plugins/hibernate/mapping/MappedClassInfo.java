@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.MappingInfoProvider;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,37 +11,31 @@ import java.util.Arrays;
 
 public class MappedClassInfo extends CompletionInfo
 {
-   private String _mappedClassName;
-   private String _tableName;
-   private PropertyInfo[] _propertyInfos;
-   private String _simpleMappedClassName;
    private CompletionParser _lastParser;
+   private MappedClassInfoData _mappedClassInfoData;
+   private PropertyInfo[] _propertyInfos;
 
-   public MappedClassInfo(String mappedClassName, String tableName, HibernatePropertyInfo indentifierHibernatePropertyInfo, HibernatePropertyInfo[] hibernatePropertyInfos)
+   public MappedClassInfo(MappedClassInfoData mappedClassInfoData)
    {
-      _mappedClassName = mappedClassName;
-      _tableName = tableName;
-      _simpleMappedClassName = MappingUtils.getSimpleClassName(mappedClassName);
+      _mappedClassInfoData = mappedClassInfoData;
 
-      _propertyInfos = new PropertyInfo[hibernatePropertyInfos.length + 1];
+      setPropertyInfos(new PropertyInfo[_mappedClassInfoData.getHibernatePropertyInfos().length + 1]);
 
-      _propertyInfos[0] = new PropertyInfo(indentifierHibernatePropertyInfo, _mappedClassName);
-      for (int i = 0; i < hibernatePropertyInfos.length; i++)
+      getPropertyInfos()[0] = new PropertyInfo(_mappedClassInfoData.getIndentifierHibernatePropertyInfo(), _mappedClassInfoData.getMappedClassName());
+      for (int i = 0; i < _mappedClassInfoData.getHibernatePropertyInfos().length; i++)
       {
-         _propertyInfos[i+1] = new PropertyInfo(hibernatePropertyInfos[i], _mappedClassName);
+         getPropertyInfos()[i+1] = new PropertyInfo(_mappedClassInfoData.getHibernatePropertyInfos()[i], _mappedClassInfoData.getMappedClassName());
       }
-
-
    }
 
    public String getCompareString()
    {
-      if(null != _lastParser && _mappedClassName.startsWith(_lastParser.getStringToParse()))
+      if(null != _lastParser && _mappedClassInfoData.getMappedClassName().startsWith(_lastParser.getStringToParse()))
       {
-         return _mappedClassName;
+         return _mappedClassInfoData.getMappedClassName();
       }
 
-      return _simpleMappedClassName;
+      return _mappedClassInfoData.getSimpleMappedClassName();
    }
 
    public boolean matches(CompletionParser parser, boolean matchNameExact, boolean stateless)
@@ -52,11 +47,11 @@ public class MappedClassInfo extends CompletionInfo
 
       if(matchNameExact)
       {
-         return _mappedClassName.equals(parser.getStringToParse()) || _simpleMappedClassName.equals(parser.getStringToParse());
+         return _mappedClassInfoData.getMappedClassName().equals(parser.getStringToParse()) || _mappedClassInfoData.getSimpleMappedClassName().equals(parser.getStringToParse());
       }
       else
       {
-         return _mappedClassName.startsWith(parser.getStringToParse()) || _simpleMappedClassName.startsWith(parser.getStringToParse());
+         return _mappedClassInfoData.getMappedClassName().startsWith(parser.getStringToParse()) || _mappedClassInfoData.getSimpleMappedClassName().startsWith(parser.getStringToParse());
       }
    }
 
@@ -74,13 +69,13 @@ public class MappedClassInfo extends CompletionInfo
 
 
       String propertyChainBegin;
-      if( stringToParse.startsWith(_mappedClassName + ".") )
+      if( stringToParse.startsWith(_mappedClassInfoData.getMappedClassName() + ".") )
       {
-         propertyChainBegin = stringToParse.substring((_mappedClassName + ".").length());
+         propertyChainBegin = stringToParse.substring((_mappedClassInfoData.getMappedClassName() + ".").length());
       }
-      else if ( stringToParse.startsWith(_simpleMappedClassName + ".") )
+      else if ( stringToParse.startsWith(_mappedClassInfoData.getSimpleMappedClassName() + ".") )
       {
-         propertyChainBegin = stringToParse.substring((_simpleMappedClassName + ".").length());
+         propertyChainBegin = stringToParse.substring((_mappedClassInfoData.getSimpleMappedClassName() + ".").length());
       }
       else
       {
@@ -89,7 +84,7 @@ public class MappedClassInfo extends CompletionInfo
 
       ArrayList<String> props = getArrayFormChain(propertyChainBegin);
 
-      PropertyInfo[] propInfoBuf = _propertyInfos;
+      PropertyInfo[] propInfoBuf = getPropertyInfos();
 
       for (int i = 0; i < props.size(); i++)
       {
@@ -141,7 +136,7 @@ public class MappedClassInfo extends CompletionInfo
    {
       ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
 
-      for (PropertyInfo propertyInfo : _propertyInfos)
+      for (PropertyInfo propertyInfo : getPropertyInfos())
       {
          if(propertyInfo.matchesUnQualified(parser.getLastToken()))
          {
@@ -155,26 +150,26 @@ public class MappedClassInfo extends CompletionInfo
 
    public boolean isSame(String name)
    {
-      return _mappedClassName.equals(name) || _simpleMappedClassName.equals(name);
+      return _mappedClassInfoData.getMappedClassName().equals(name) || _mappedClassInfoData.getSimpleMappedClassName().equals(name);
    }
 
    public String getClassName()
    {
-      return _mappedClassName;
+      return _mappedClassInfoData.getMappedClassName();
    }
 
    public String getSimpleClassName()
    {
-      return _simpleMappedClassName;
+      return _mappedClassInfoData.getSimpleMappedClassName();
    }
 
    public String[] getAttributeNames()
    {
-      String[] ret = new String[_propertyInfos.length];
+      String[] ret = new String[getPropertyInfos().length];
 
-      for (int i = 0; i < _propertyInfos.length; i++)
+      for (int i = 0; i < getPropertyInfos().length; i++)
       {
-         ret[i] = _propertyInfos[i].getCompareString();
+         ret[i] = getPropertyInfos()[i].getCompareString();
 
       }
 
@@ -183,7 +178,7 @@ public class MappedClassInfo extends CompletionInfo
 
    public PropertyInfo getAttributeByName(String attrName)
    {
-      for (PropertyInfo propertyInfo : _propertyInfos)
+      for (PropertyInfo propertyInfo : getPropertyInfos())
       {
          if(propertyInfo.getCompareString().equals(attrName))
          {
@@ -198,20 +193,32 @@ public class MappedClassInfo extends CompletionInfo
 
    public PropertyInfo[] getAttributes()
    {
-      return _propertyInfos;
+      return getPropertyInfos();
    }
 
 
    public String getTableName()
    {
-      return _tableName;
+      return _mappedClassInfoData.getTableName();
    }
 
    public void initAttributesWithClassInfo(MappingInfoProvider mappingInfoProvider)
    {
-      for (PropertyInfo propertyInfo : _propertyInfos)
+      for (PropertyInfo propertyInfo : getPropertyInfos())
       {
          propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName(), false, false));
       }
    }
+
+
+   public PropertyInfo[] getPropertyInfos()
+   {
+      return _propertyInfos;
+   }
+
+   public void setPropertyInfos(PropertyInfo[] propertyInfos)
+   {
+      _propertyInfos = propertyInfos;
+   }
+
 }
