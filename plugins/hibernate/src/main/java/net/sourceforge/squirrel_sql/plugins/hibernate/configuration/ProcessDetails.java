@@ -41,18 +41,25 @@ public class ProcessDetails
 
    private String createWindowsCommand(HibernatePlugin plugin)
    {
-      String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "javaw";
-      String command = "" + java + " -cp " + plugin.getPluginJarFilePath() + File.pathSeparator + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
+      String java = "\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\"";
+      String command = java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
 
       return command;
    }
+
 
    private String createLinuxCommand(HibernatePlugin plugin)
    {
-      String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-      String command = "" + java + " -cp " + plugin.getPluginJarFilePath() + File.pathSeparator + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
+      String java = "\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\"";
+      String command = "" + java + " -cp " + getPluginJarFilePath(plugin) + " " + ServerMainImpl.class.getName() + " " + ServerMain.PORT_PARAM_PREFIX + _port;
       return command;
    }
+
+   private String getPluginJarFilePath(HibernatePlugin plugin)
+   {
+      return "\"" + plugin.getPluginJarFilePath() + "\"";
+   }
+
 
    public void apply(HibernateConfiguration cfg)                     
    {
