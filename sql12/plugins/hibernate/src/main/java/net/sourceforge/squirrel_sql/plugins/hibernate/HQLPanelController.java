@@ -25,14 +25,16 @@ public class HQLPanelController
 
    private IHibernateTabController _hibernateTabController;
    private ISession _sess;
+   private HibernatePluginResources _resource;
    private HibernateConnection _con;
-   private AbstractAction _convertToSQL;
+   private AbstractAction _runHQL;
    private HQLEntryPanelManager _hqlEntryPanelManager;
 
    public HQLPanelController(IHibernateTabController hibernateTabController, ISession sess, HibernatePluginResources resource)
    {
       _hibernateTabController = hibernateTabController;
       _sess = sess;
+      _resource = resource;
 
       _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateTabController.getHibernateConnectionProvider());
 
@@ -40,34 +42,38 @@ public class HQLPanelController
 
    void initActions()
    {
-      _convertToSQL = new AbstractAction()
+      _runHQL = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
          {
-            onConvertToSQL();
+            onRunHQL();
          }
       };
 
-      // i18n[hibernate.hqlToSqlLong=HQL to SQL]
-      _convertToSQL.putValue(AbstractAction.NAME,  s_stringMgr.getString("hibernate.hqlToSqlLong"));
 
-      // i18n[hibernate.hqlToSqlShort=Convert HQL to SQL (ctrl + enter)]
-      _convertToSQL.putValue(AbstractAction.SHORT_DESCRIPTION,  s_stringMgr.getString("hibernate.hqlToSqlShort"));
+      _runHQL.putValue(AbstractAction.SMALL_ICON,  _resource.getIcon(HibernatePluginResources.IKeys.RUN_IMAGE));
 
-      _convertToSQL.setEnabled(false);
+      // i18n[hibernate.hqlToSqlLong=Run HQL]
+      _runHQL.putValue(AbstractAction.NAME,  s_stringMgr.getString("hibernate.hqlToSqlLong"));
 
-      _hibernateTabController.addToToolbar(_convertToSQL);
+      // i18n[hibernate.hqlToSqlShort=Run HQL (ctrl + enter)]
+      _runHQL.putValue(AbstractAction.SHORT_DESCRIPTION,  s_stringMgr.getString("hibernate.hqlToSqlShort"));
+
+
+      _runHQL.setEnabled(false);
+
+      _hibernateTabController.addToToolbar(_runHQL);
 
       KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
-      _hqlEntryPanelManager.registerKeyboardAction(_convertToSQL, ctrlEnter);
+      _hqlEntryPanelManager.registerKeyboardAction(_runHQL, ctrlEnter);
    }
 
 
-   private void onConvertToSQL()
+   private void onRunHQL()
    {
       try
       {
-         if (false == _convertToSQL.isEnabled())
+         if (false == _runHQL.isEnabled())
          {
             return;
          }
@@ -158,11 +164,11 @@ public class HQLPanelController
 
       if(null == _con)
       {
-         _convertToSQL.setEnabled(false);
+         _runHQL.setEnabled(false);
       }
       else
       {
-         _convertToSQL.setEnabled(true);
+         _runHQL.setEnabled(true);
       }
    }
 

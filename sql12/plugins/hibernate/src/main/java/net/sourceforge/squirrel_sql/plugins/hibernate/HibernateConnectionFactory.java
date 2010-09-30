@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public class HibernateConnectionFactory
 {
@@ -94,7 +95,7 @@ public class HibernateConnectionFactory
          throws IOException
    {
       String command = cfg.getCommand().trim();
-      Runtime.getRuntime().exec(command);
+      Runtime.getRuntime().exec(toCommandArray(command));
    }
 
    private static ServerMain attachToProcess(HibernateConfiguration cfg, IMessageHandler mh, boolean silent)
@@ -129,4 +130,68 @@ public class HibernateConnectionFactory
       }
       return stub;
    }
+
+
+
+   private static String[] toCommandArray(String cmd)
+   {
+      ArrayList<String> ret = new ArrayList<String>();
+
+      boolean inQuotes = false;
+
+      int startPos = 0;
+      for(int i=0; i < cmd.length(); ++i)
+      {
+         char c = cmd.charAt(i);
+
+         if('"' == c)
+         {
+            inQuotes = !inQuotes;
+         }
+
+         if(inQuotes)
+         {
+            continue;
+         }
+
+         if(Character.isWhitespace(c))
+         {
+            String arrItem = cmd.substring(startPos, i).trim();
+            if (0 < arrItem.length())
+            {
+               ret.add(removeLeadingAndTrailingQuotes(arrItem));
+            }
+            startPos = i;
+         }
+      }
+
+      if(startPos < cmd.length() - 1)
+      {
+         String arrItem = cmd.substring(startPos, cmd.length()).trim();
+         if (0 < arrItem.length())
+         {
+            ret.add(removeLeadingAndTrailingQuotes(arrItem));
+         }
+      }
+
+      return ret.toArray(new String[ret.size()]);
+   }
+
+   private static String removeLeadingAndTrailingQuotes(String s)
+   {
+      String ret = s;
+
+      if(ret.startsWith("\""))
+      {
+         ret = ret.substring(1);
+      }
+
+      if(ret.endsWith("\""))
+      {
+         ret = ret.substring(0, ret.length()-1);
+      }
+
+      return ret;
+   }
+
 }
