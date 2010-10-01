@@ -51,6 +51,12 @@ public class ResultDataSet implements IDataSet
    public Object get(int columnIndex) throws DataSetException
    {
       Object obj = _singleType.getResults().get(_curIx).getObject();
+
+      if(null == obj)
+      {
+         return "<object is null>";
+      }
+
       HibernatePropertyReader hpr = new HibernatePropertyReader(_columnDisplayDefinitions[columnIndex].getColumnName(), obj);
 
       Object value = hpr.getValue();

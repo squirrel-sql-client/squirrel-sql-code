@@ -47,7 +47,24 @@ public class HibernateConnection
    {
       try
       {
-         return _hibernateServerConnection.generateSQL(hqlQuery);
+         if (_process)
+         {
+            SecurityManager old =System.getSecurityManager();
+
+            try
+            {
+               System.setSecurityManager(_rmiSecurityManager);
+               return _hibernateServerConnection.generateSQL(hqlQuery);
+            }
+            finally
+            {
+               System.setSecurityManager(old);
+            }
+         }
+         else
+         {
+            return _hibernateServerConnection.generateSQL(hqlQuery);
+         }
       }
       catch (RemoteException e)
       {
@@ -100,7 +117,27 @@ public class HibernateConnection
          if(null == _mappedClassInfos)
          {
             _mappedClassInfos = new ArrayList<MappedClassInfo>();
-            ArrayList<MappedClassInfoData> mappedClassInfoData = _hibernateServerConnection.getMappedClassInfoData();
+
+            ArrayList<MappedClassInfoData> mappedClassInfoData;
+            if (_process)
+            {
+               SecurityManager old =System.getSecurityManager();
+
+               try
+               {
+                  System.setSecurityManager(_rmiSecurityManager);
+                  mappedClassInfoData = _hibernateServerConnection.getMappedClassInfoData();
+               }
+               finally
+               {
+                  System.setSecurityManager(old);
+               }
+
+            }
+            else
+            {
+               mappedClassInfoData = _hibernateServerConnection.getMappedClassInfoData();
+            }
 
             for (MappedClassInfoData aMappedClassInfoData : mappedClassInfoData)
             {
