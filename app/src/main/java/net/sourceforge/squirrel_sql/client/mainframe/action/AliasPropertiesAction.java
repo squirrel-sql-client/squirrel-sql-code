@@ -19,7 +19,7 @@ public class AliasPropertiesAction  extends SquirrelAction
 
    public void actionPerformed(ActionEvent e)
    {
-      ISQLAlias selectedAlias = _aliasList.getSelectedAlias();
+      ISQLAlias selectedAlias = _aliasList.getSelectedAlias(null);
 
       if(null == selectedAlias)
       {

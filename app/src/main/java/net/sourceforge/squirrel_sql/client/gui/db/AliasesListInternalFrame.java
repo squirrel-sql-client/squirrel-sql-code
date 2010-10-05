@@ -37,6 +37,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
@@ -279,10 +280,10 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			return s_stringMgr.getString("AliasesListInternalFrame.windowtitle");
 		}
 
-		public ICommand getDoubleClickCommand()
+		public ICommand getDoubleClickCommand(MouseEvent evt)
 		{
 			ICommand cmd = null;
-			SQLAlias alias = _aliasesList.getSelectedAlias();
+			SQLAlias alias = _aliasesList.getSelectedAlias(evt);
 			if (alias != null)
 			{
 				cmd = new ConnectToAliasCommand(_app, alias);

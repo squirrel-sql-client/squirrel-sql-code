@@ -108,15 +108,16 @@ public class JListAliasesListImpl extends BaseList implements IAliasesList
 
    /**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
-	 */
-	public SQLAlias getSelectedAlias()
+    * @param evt
+    */
+	public SQLAlias getSelectedAlias(MouseEvent evt)
 	{
 		return (SQLAlias)getList().getSelectedValue();
 	}
 
    public void sortAliases()
    {
-      final ISQLAlias selectedAlias = getSelectedAlias();
+      final ISQLAlias selectedAlias = getSelectedAlias(null);
 
       _model.sortAliases();
 

@@ -34,6 +34,9 @@ Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
 
+Double click in Alias tree always opened the selected Alias even if the mouse pointer wasn't placed on the Alias.
+ This way Aliases where opened when tree nodes where quickly closed or opened.
+
 RSyntax editor: Replace dialog: Replace button now does a find next after replacing. 
 
 Fixed problem with sorting after dragging columns

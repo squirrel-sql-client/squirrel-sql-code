@@ -58,7 +58,7 @@ public class ConnectToAliasAction extends AliasAction
    public void actionPerformed(ActionEvent evt)
    {
       moveToFrontAndSelectAliasFrame();      
-      final SQLAlias alias = _aliases.getSelectedAlias();
+      final SQLAlias alias = _aliases.getSelectedAlias(null);
       if (alias != null)
       {
          new ConnectToAliasCommand(getApplication(), alias).execute();

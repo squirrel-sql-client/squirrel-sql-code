@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
@@ -34,7 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetAdapter;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.WidgetEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
@@ -191,7 +191,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			return s_stringMgr.getString("DriversListInternalFrame.windowtitle");
 		}
 
-		public ICommand getDoubleClickCommand()
+		public ICommand getDoubleClickCommand(MouseEvent evt)
 		{
 			ICommand cmd = null;
 			ISQLDriver driver = _driversList.getSelectedDriver();
