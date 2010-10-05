@@ -18,8 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -60,38 +59,63 @@ public class HibernateUtil
       File pluginUserSettingsFolder = plugin.getPluginUserSettingsFolder();
 
 
-      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
+      File xmlFile = getXmlFile(pluginUserSettingsFolder);
+
 
       if (false == xmlFile.exists())
       {
          return null;
       }
 
+      reader.load(xmlFile, plugin.getClass().getClassLoader());
+      return reader;
+   }
+
+   private static File getXmlFile(File pluginUserSettingsFolder)
+   {
       try
       {
-         reader.load(xmlFile, plugin.getClass().getClassLoader());
-         return reader;
+         File xmlFileOld = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE_OLD);
+         File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
+
+
+         if(xmlFileOld.exists() && false == xmlFile.exists())
+         {
+            FileReader fr = new FileReader(xmlFileOld);
+            BufferedReader br = new BufferedReader(fr);
+
+            FileWriter fw = new FileWriter(xmlFile);
+            PrintWriter pw = new PrintWriter(fw);
+
+            String line = br.readLine();
+            while(null != line)
+            {
+               String s =
+               line.replaceAll("net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration",
+                     "net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration");
+
+               pw.println(s);
+
+               line = br.readLine();
+            }
+
+            br.close();
+            fr.close();
+
+            pw.flush();
+            fw.flush();
+
+            pw.close();
+            fw.close();
+         }
+
+
+         return xmlFile;
       }
       catch (Exception e)
       {
-         String message =
-               "Cold not load Hibernate configuration. " +
-               "ClassNotFoundException may be thrown when a version higher then 3.1.x is used for first time. " +
-               "Please define your Hibernate configurations again or edit\n" +
-               plugin.getPluginUserSettingsFolder() + File.separator + HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE +
-               "\nand replace\n" +
-               "net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration\n" +
-               "with\n" +
-               "net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration\n" +
-               "Sorry for the inconvenience.";
-         s_log.error(message, e);
-         plugin.getApplication().getMessageHandler().showErrorMessage(e + "\n" + message);
-
-         return null;
+         throw new RuntimeException(e);
       }
-
-
-
    }
 
    public static String getSimpleClassName(String mappedClassName)

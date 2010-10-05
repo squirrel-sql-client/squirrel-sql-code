@@ -30,7 +30,8 @@ public class HibernateConfigController
    private HibernateConfigPanel _panel;
 
    static final String PERF_KEY_LAST_DIR = "Squirrel.Hibernate.lastDir";
-   public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs.xml";
+   public static final String HIBERNATE_CONFIGS_XML_FILE_OLD = "hibernateConfigs.xml";
+   public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs32.xml";
    private HibernatePrefsListener _hibernatePrefsListener;
 
    private ProcessDetails _processDetails;
