@@ -65,7 +65,7 @@ public class CopyAliasAction extends AliasAction
    public void actionPerformed(ActionEvent evt)
    {
       moveToFrontAndSelectAliasFrame();
-      SQLAlias alias = _aliases.getSelectedAlias();
+      SQLAlias alias = _aliases.getSelectedAlias(null);
       if (alias != null)
       {
          new CopyAliasCommand(getApplication(), alias).execute();

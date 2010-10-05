@@ -459,7 +459,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       _tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(newNode)));
    }
 
-   public SQLAlias getSelectedAlias()
+   public SQLAlias getSelectedAlias(MouseEvent evt)
    {
       TreePath path = _tree.getSelectionPath();
 
@@ -470,6 +470,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       if(false == path.getLastPathComponent() instanceof DefaultMutableTreeNode)
       {
+         return null;
+      }
+
+      if(null != evt && false == _tree.getPathBounds(path).contains(evt.getPoint()))
+      {
+         // If the mouse wasn't placed on the selected Alias we do nothing. 
          return null;
       }
 

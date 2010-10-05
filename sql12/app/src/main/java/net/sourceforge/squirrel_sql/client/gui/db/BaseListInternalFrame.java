@@ -43,7 +43,7 @@ abstract class BaseListInternalFrame extends DockWidget
 		BasePopupMenu getPopupMenu();
 		IBaseList getList();
 		String getWindowTitle();
-		ICommand getDoubleClickCommand();
+		ICommand getDoubleClickCommand(MouseEvent evt);
 		SquirrelPreferences getPreferences();
 	}
 
@@ -133,7 +133,7 @@ abstract class BaseListInternalFrame extends DockWidget
    {
       if (evt.getClickCount() == 2)
       {
-         ICommand cmd = _uiFactory.getDoubleClickCommand();
+         ICommand cmd = _uiFactory.getDoubleClickCommand(evt);
          if (cmd != null)
          {
             try

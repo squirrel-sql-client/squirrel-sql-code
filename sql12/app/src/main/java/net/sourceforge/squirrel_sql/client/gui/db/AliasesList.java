@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /*
@@ -98,10 +99,11 @@ public class AliasesList implements IToogleableAliasesList
 
    /**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
-	 */
-	public SQLAlias getSelectedAlias()
+    * @param evt
+    */
+	public SQLAlias getSelectedAlias(MouseEvent evt)
 	{
-      return getCurrentImpl().getSelectedAlias();
+      return getCurrentImpl().getSelectedAlias(evt);
    }
 
    public void sortAliases()
