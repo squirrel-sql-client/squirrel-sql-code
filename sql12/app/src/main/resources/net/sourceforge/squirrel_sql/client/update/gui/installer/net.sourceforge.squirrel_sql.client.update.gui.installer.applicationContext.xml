@@ -10,11 +10,27 @@
                 class="net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl">
         </bean>
 
+		<bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.SplashScreenFixer"
+				class="net.sourceforge.squirrel_sql.client.update.gui.installer.SplashScreenFixer">
+		</bean>
+
+		<bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtils"
+			 	class="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtilsImpl">
+		</bean>
+
         <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper"
                 class="net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperImpl">
            <property name="updateUtil" ref="net.sourceforge.squirrel_sql.client.update.UpdateUtil"/>
            <property name="artifactInstallerFactory" 
                      ref="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory" />
+           <property name="scriptLineFixers">
+           		<list>
+           			<ref bean="net.sourceforge.squirrel_sql.client.update.gui.installer.SplashScreenFixer"/>
+           		</list>
+           </property>
+           <property name="fileUtils"
+           			  ref="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtils"	/>
+           
         </bean>
                 
         <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory"
