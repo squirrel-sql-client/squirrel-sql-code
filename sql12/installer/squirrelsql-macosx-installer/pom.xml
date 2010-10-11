@@ -54,7 +54,6 @@
 	<properties>
 		<squirrel.version>3.1.0</squirrel.version>
 		<staging.dir>${project.build.directory}</staging.dir>
-		<izpack-standalone.version>4.3.1</izpack-standalone.version>
 		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar</upload-server-path>		
 	</properties>
 	<dependencies>
@@ -92,12 +91,24 @@
 			</testResource>		
 		</testResources>		
 		<plugins>
-
+			<!-- Set the squirrelsql.version property if it has not already been set. -->
+			<plugin>
+				<groupId>net.sf.squirrel-sql</groupId>
+				<artifactId>squirrelsql-version-plugin</artifactId>
+				<version>${squirrelsql-version-plugin-version}</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>set-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>${dependency-plugin-version}</version>
 				<executions>
 					<execution>
 						<id>application-libraries</id>
@@ -107,9 +118,15 @@
 						</goals>
 						<configuration>
 							<stripVersion>true</stripVersion>
-							<excludeGroupIds>org.codehaus,org.apache.maven,jboss</excludeGroupIds>
-							<excludeArtifactIds>squirrelsql-launcher</excludeArtifactIds>
-							<excludeTypes>zip</excludeTypes>
+							<!--
+								This is a pain in the butt, but it beats the list that would specify what to exclude. Also, if we miss
+								an artifact here, then running the installer and launching SQuirreL as a test will find it. However,
+								we may never know that we are including jars that are never used (only transitively)
+							-->
+
+							<!--  Can we make this list smaller by using groupIds ? -->
+							<includeArtifactIds>antlr,asm,asm-attrs,autocomplete,axis,axis-jaxrpc,cglib,common,commons-cli,commons-codec,commons-collections,commons-httpclient,commons-logging,forms,fw,hibernate-annotations,hibernate-commons-annotations,hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,openide-loaders,org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,org-netbeans-modules-editor-util,org-netbeans-modules-editor,ostermiller-syntax,rsyntaxtextarea,rtext,spring-beans,squirrel-sql,spring-context-support,spring-context,spring-core,stringtemplate,treetable</includeArtifactIds>
+							<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
 							<outputDirectory>${staging.dir}/lib</outputDirectory>
 						</configuration>
 					</execution>
