@@ -64,7 +64,7 @@
 	</ciManagement>
 	<properties>
 		<!-- Maven plugin versions -->
-		<assembly-plugin-version>2.2-beta-2</assembly-plugin-version>
+		<assembly-plugin-version>2.2-beta-5</assembly-plugin-version>
 		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
 		<compiler-plugin-version>2.0.2</compiler-plugin-version>
 		<dependency-plugin-version>2.0</dependency-plugin-version>
