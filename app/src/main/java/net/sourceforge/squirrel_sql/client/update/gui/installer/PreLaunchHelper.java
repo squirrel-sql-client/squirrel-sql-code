@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.IOException;
+
 /**
  * Interface for the class that does the heavy lifting with regard to checking for and installing any updates
  * prior to launching the application.
@@ -37,5 +39,12 @@ public interface PreLaunchHelper
 	 * backup if that is the case.
 	 */
 	void restoreFromBackup();
+
+	/**
+	 * Updates the launch script with changes made necessary by the new release.
+	 *   
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void updateLaunchScript() throws IOException;
 
 }

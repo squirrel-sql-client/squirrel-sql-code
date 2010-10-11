@@ -60,6 +60,7 @@ public class PreLaunchUpdateApplication
 		setupSpringContext();
 		if (!restore) {
 			helper.installUpdates(prompt);
+			helper.updateLaunchScript();
 		} else {
 			helper.restoreFromBackup();
 		}

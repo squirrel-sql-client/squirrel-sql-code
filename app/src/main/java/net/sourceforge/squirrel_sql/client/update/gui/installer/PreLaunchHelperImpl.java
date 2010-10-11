@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.springframework.beans.factory.annotation.Required;
+
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
@@ -32,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -69,23 +72,48 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 	/** Logger for this class. */
 	private ILogger s_log;
-
+	
+	/** Used to override logic for calculating script location for testing purposes */
+	private String scriptLocation = null;
+	
 	/* --------------------------- Spring=injected dependencies --------------------------------------------*/
 
 	/* Spring-injected */
 	private UpdateUtil updateUtil = null;
 
+	@Required
 	public void setUpdateUtil(UpdateUtil util)
 	{
+		Utilities.checkNull("setUpdateUtil", "util", util);
 		this.updateUtil = util;
 	}
 
 	/* Spring-injected */
 	private ArtifactInstallerFactory artifactInstallerFactory = null;
 
+	@Required
 	public void setArtifactInstallerFactory(ArtifactInstallerFactory artifactInstallerFactory)
 	{
+		Utilities.checkNull("setArtifactInstallerFactory", "artifactInstallerFactory", artifactInstallerFactory);
 		this.artifactInstallerFactory = artifactInstallerFactory;
+	}
+	
+	/* Spring-injected */
+	private List<ScriptLineFixer> scriptLineFixers = null;
+	
+	@Required
+	public void setScriptLineFixers(List<ScriptLineFixer> scriptLineFixers) {
+		Utilities.checkNull("setScriptLineFixers", "scriptLineFixers", scriptLineFixers);
+		this.scriptLineFixers = scriptLineFixers;
+	}
+	
+	/* Spring-injected */
+	FileUtils fileUtils = null;
+	
+	@Required
+	public void setFileUtils(FileUtils fileUtils) {
+		Utilities.checkNull("setFileUtils", "fileUtils", fileUtils);
+		this.fileUtils = fileUtils;
 	}
 
 	/* ----------------------------------- Public API ------------------------------------------------------*/
@@ -150,6 +178,67 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	}
 
 	/**
+	 * Updates the launch script with changes made necessary by the new release.
+	 *   
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void updateLaunchScript() throws IOException {
+		
+		// 1. determine which script to fix.
+		String os = System.getProperty("os.name");
+		
+		String scriptFilename = "squirrel-sql.sh";
+		if (scriptLocation != null) {
+			scriptFilename = scriptLocation;
+		} else {		
+			if (os != null && os.toLowerCase().startsWith("windows")) {
+				scriptFilename = "squirrel-sql.bat";
+			}
+		}
+		logInfo("Applying updates to launch script: "+scriptFilename);
+		
+		// 2. Get the lines from the file, applying the line fixers
+		List<String> lines = fileUtils.getLinesFromFile(scriptFilename, scriptLineFixers);
+		
+		// 3. Write the fixed lines back out to the file.
+		fileUtils.writeLinesToFile(scriptFilename, lines);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper#restoreFromBackup()
+	 */
+	public void restoreFromBackup()
+	{
+		if (showConfirmDialog(RESTORE_FROM_BACKUP_MESSAGE, RESTORE_FROM_BACKUP_TITLE))
+		{
+
+			try
+			{
+				FileWrapper backupDir = updateUtil.getBackupDir();
+				FileWrapper changeListFile = updateUtil.getFile(backupDir, UpdateUtil.CHANGE_LIST_FILENAME);
+				ChangeListXmlBean changeList = updateUtil.getChangeList(changeListFile);
+
+				ArtifactInstaller installer = artifactInstallerFactory.create(changeList, null);
+				if (!installer.restoreBackupFiles())
+				{
+					showErrorDialog(RESTORE_FAILED_MESSAGE);
+					s_log.error("restoreFromBackup: " + RESTORE_FAILED_MESSAGE);
+				}
+
+			}
+			catch (Throwable e)
+			{
+				s_log.error("Unexpected error while attempting restore from backup: " + e.getMessage(), e);
+				showErrorDialog(RESTORE_FAILED_MESSAGE);
+			}
+
+		}
+		shutdown("Pre-launch update app finished");
+	}
+
+	/* ------------------------------------- Helper methods ------------------------------------------------*/
+
+	/**
 	 * Peeks into the changelist file to see if there are artifacts to change. This is precautionary as the GUI
 	 * should prevent the changeList file from being created if there are no artifacts to be changed.
 	 * 
@@ -192,41 +281,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 		return result;
 	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper#restoreFromBackup()
-	 */
-	public void restoreFromBackup()
-	{
-		if (showConfirmDialog(RESTORE_FROM_BACKUP_MESSAGE, RESTORE_FROM_BACKUP_TITLE))
-		{
-
-			try
-			{
-				FileWrapper backupDir = updateUtil.getBackupDir();
-				FileWrapper changeListFile = updateUtil.getFile(backupDir, UpdateUtil.CHANGE_LIST_FILENAME);
-				ChangeListXmlBean changeList = updateUtil.getChangeList(changeListFile);
-
-				ArtifactInstaller installer = artifactInstallerFactory.create(changeList, null);
-				if (!installer.restoreBackupFiles())
-				{
-					showErrorDialog(RESTORE_FAILED_MESSAGE);
-					s_log.error("restoreFromBackup: " + RESTORE_FAILED_MESSAGE);
-				}
-
-			}
-			catch (Throwable e)
-			{
-				s_log.error("Unexpected error while attempting restore from backup: " + e.getMessage(), e);
-				showErrorDialog(RESTORE_FAILED_MESSAGE);
-			}
-
-		}
-		shutdown("Pre-launch update app finished");
-	}
-
-	/* ------------------------------------- Helper methods ------------------------------------------------*/
-
+		
 	/**
 	 * Shuts down this small pre-launch helper application.
 	 */
@@ -315,6 +370,22 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 		{
 			s_log.info(message);
 		}
+	}
+
+	/**
+	 * @param scriptLocation the scriptLocation to set
+	 */
+	public void setScriptLocation(String scriptLocation)
+	{
+		this.scriptLocation = scriptLocation;
+	}
+
+	/**
+	 * @return the scriptLocation
+	 */
+	public String getScriptLocation()
+	{
+		return scriptLocation;
 	}
 
 }
