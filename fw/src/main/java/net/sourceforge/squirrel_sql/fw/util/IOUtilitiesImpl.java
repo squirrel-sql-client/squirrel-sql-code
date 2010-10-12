@@ -20,18 +20,27 @@ package net.sourceforge.squirrel_sql.fw.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -48,9 +57,22 @@ public class IOUtilitiesImpl implements IOUtilities
 
 	/** The size of the byte array which is used to fetch data from disk to do various I/O operations */
 	public static final int DISK_DATA_BUFFER_SIZE = 8192;
+
 	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(IOUtilitiesImpl.class);
 
+	/* Spring-Injected */
+	
+	private FileWrapperFactory fileWrapperFactory;
+	/**
+	 * @param fileWrapperFactory the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#closeInputStream(java.io.InputStream)
 	 */
@@ -257,7 +279,8 @@ public class IOUtilitiesImpl implements IOUtilities
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities# downloadHttpFile(java.lang.String, int,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.util.FileWrapper)
 	 */
-	public int downloadHttpFile(URL url, FileWrapper destFile, IProxySettings proxySettings) throws IOException
+	public int downloadHttpFile(URL url, FileWrapper destFile, IProxySettings proxySettings)
+		throws IOException
 	{
 		BufferedInputStream is = null;
 		HttpMethod method = null;
@@ -281,11 +304,8 @@ public class IOUtilitiesImpl implements IOUtilities
 				s_log.debug("downloadHttpFile: response code was: " + resultCode);
 			}
 
-			if (resultCode != 200) 
-			{ 
-				throw new FileNotFoundException(
-					"Failed to download file from url (" + url + "): HTTP Response Code=" + resultCode); 
-			}
+			if (resultCode != 200) { throw new FileNotFoundException("Failed to download file from url (" + url
+				+ "): HTTP Response Code=" + resultCode); }
 			InputStream mis = method.getResponseBodyAsStream();
 
 			is = new BufferedInputStream(mis);
@@ -312,22 +332,24 @@ public class IOUtilitiesImpl implements IOUtilities
 		return result;
 	}
 
-   /**
-    * Setup proxy configuration specified in proxySettings. This setup is skipped if:
-    * 1) proxySettings is null.
-    * 2) proxySettings.getHttpUseProxy() is false (HttpClient doesn't support SOCKS proxy)
-    * 3) The url's host component is in the "non-proxy" host list
-    * 
-    * @param proxySettings the ProxySettings to use
-    * @param client the instance of HttpClient to configure
-    * @param url the URL of the file to be retrieved
-    */
+	/**
+	 * Setup proxy configuration specified in proxySettings. This setup is skipped if: 1) proxySettings is
+	 * null. 2) proxySettings.getHttpUseProxy() is false (HttpClient doesn't support SOCKS proxy) 3) The url's
+	 * host component is in the "non-proxy" host list
+	 * 
+	 * @param proxySettings
+	 *           the ProxySettings to use
+	 * @param client
+	 *           the instance of HttpClient to configure
+	 * @param url
+	 *           the URL of the file to be retrieved
+	 */
 	private void setupProxy(IProxySettings proxySettings, HttpClient client, URL url)
 	{
 		if (proxySettings == null) { return; }
 		if (!proxySettings.getHttpUseProxy()) { return; }
-		if (proxySettings.getHttpNonProxyHosts() != null 
-				&& proxySettings.getHttpNonProxyHosts().contains(url.getHost())) { return; }
+		if (proxySettings.getHttpNonProxyHosts() != null
+			&& proxySettings.getHttpNonProxyHosts().contains(url.getHost())) { return; }
 
 		String proxyHost = proxySettings.getHttpProxyServer();
 		int proxyPort = Integer.parseInt(proxySettings.getHttpProxyPort());
@@ -341,5 +363,78 @@ public class IOUtilitiesImpl implements IOUtilities
 			client.getState().setProxyCredentials(AuthScope.ANY, credentials);
 		}
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#getLinesFromFile(java.lang.String, java.util.List)
+	 */
+	@Override
+	public List<String> getLinesFromFile(String filename, List<ScriptLineFixer> lineFixers) throws IOException
+	{
+		ArrayList<String> lines = new ArrayList<String>();
+
+		BufferedReader reader = new BufferedReader(new FileReader(filename));
+		String line = null;
+
+		while ((line = reader.readLine()) != null)
+		{
+			if (lineFixers != null)
+			{
+				for (ScriptLineFixer fixer : lineFixers)
+				{
+					line = fixer.fixLine(line);
+				}
+			}
+			lines.add(line);
+		}
+		reader.close();
+		return lines;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#writeLinesToFile(java.lang.String, java.util.List)
+	 */
+	@Override
+	public void writeLinesToFile(String filename, List<String> lines) throws FileNotFoundException
+	{
+		PrintWriter out = new PrintWriter(new File(filename));
+		for (String outline : lines)
+		{
+			out.write(outline);
+			out.write(NEW_LINE);
+		}
+		out.close();
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities# copyResourceFromJarFile(java.lang.String,
+	 *      java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void copyResourceFromJarFile(String jarFilename, String resourceName, String destinationFile)
+		throws ZipException, IOException
+	{
+		ZipFile appJar = new ZipFile(new File(jarFilename));
+		Enumeration<? extends ZipEntry> entries = appJar.entries();
+		while (entries.hasMoreElements())
+		{
+			ZipEntry entry = entries.nextElement();
+			String entryName = entry.getName();
+			if (entryName.endsWith(resourceName))
+			{
+				InputStream is = null;
+				try {
+					FileWrapper destinationFileWrapper = fileWrapperFactory.create(destinationFile); 
+					is = appJar.getInputStream(entry);
+					copyBytesToFile(is, destinationFileWrapper);
+				} finally {
+					closeInputStream(is);
+				}
+				break;
+			}
+		}
+
+	}
+
+
 
 }

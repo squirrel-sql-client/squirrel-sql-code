@@ -14,8 +14,8 @@
 				class="net.sourceforge.squirrel_sql.client.update.gui.installer.SplashScreenFixer">
 		</bean>
 
-		<bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtils"
-			 	class="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtilsImpl">
+		<bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.ClasspathFunctionFixer"
+				class="net.sourceforge.squirrel_sql.client.update.gui.installer.ClasspathFunctionFixer">
 		</bean>
 
         <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper"
@@ -26,10 +26,11 @@
            <property name="scriptLineFixers">
            		<list>
            			<ref bean="net.sourceforge.squirrel_sql.client.update.gui.installer.SplashScreenFixer"/>
+           			<ref bean="net.sourceforge.squirrel_sql.client.update.gui.installer.ClasspathFunctionFixer"/>
            		</list>
            </property>
-           <property name="fileUtils"
-           			  ref="net.sourceforge.squirrel_sql.client.update.gui.installer.FileUtils"	/>
+           <property name="ioutils"
+           			  ref="net.sourceforge.squirrel_sql.fw.util.IOUtilities"	/>
            
         </bean>
                 
@@ -48,4 +49,5 @@
            <property name="updateUtil" 
                      ref="net.sourceforge.squirrel_sql.client.update.UpdateUtil"/>
         </bean>
+        
 </beans>        

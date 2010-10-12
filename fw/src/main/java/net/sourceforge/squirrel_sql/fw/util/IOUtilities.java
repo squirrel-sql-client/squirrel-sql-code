@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,9 +27,13 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.zip.ZipException;
 
 public interface IOUtilities
 {
+
+	public static String NEW_LINE = System.getProperty("line.separator");
 
 	String HTTP_PROTOCOL_PREFIX = "http";
 
@@ -105,16 +110,58 @@ public interface IOUtilities
 	/**
 	 * Downloads a file using HTTP.
 	 * 
-    * @param url the URL of the file to be retrieved
-	 * @param destFile the file to download the URL file into
-    * @param proxySettings the ProxySettings to use
+	 * @param url
+	 *           the URL of the file to be retrieved
+	 * @param destFile
+	 *           the file to download the URL file into
+	 * @param proxySettings
+	 *           the ProxySettings to use
 	 * @return the number of bytes that were read and written to the file.
 	 * @throws Exception
 	 */
-	public int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings)
-		throws IOException;
+	int downloadHttpFile(final URL url, FileWrapper destFile, IProxySettings proxySettings) throws IOException;
 
-	public URL constructHttpUrl(final String host, final int port, final String fileToGet)
+	URL constructHttpUrl(final String host, final int port, final String fileToGet)
 		throws MalformedURLException;
+
+	/**
+	 * Reads the file specified by filename and builds a list of lines, applying the line fixers specified.
+	 * 
+	 * @param filename
+	 *           the name of the file to read lines from.
+	 * @param lineFixers
+	 *           a list of fixers to apply to each line. This can be null if no line manipulation is required.
+	 * @return a list of lines
+	 * @throws IOException
+	 *            if an I/O error occurs.
+	 */
+	List<String> getLinesFromFile(String filename, List<ScriptLineFixer> lineFixers) throws IOException;
+
+	/**
+	 * Writes the specified list of line to the specified filename. This will overrite the current contents of
+	 * the file.
+	 * 
+	 * @param filename
+	 *           the file to overwrite
+	 * @param lines
+	 *           the lines to write to the file.
+	 * @throws FileNotFoundException
+	 */
+	void writeLinesToFile(String filename, List<String> lines) throws FileNotFoundException;
+
+	/**
+	 * Copies the resource specified from the jarfile specified to the specified destination directory.
+	 * 
+	 * @param jarFilename
+	 *           the jarfile to look in.
+	 * @param resourceName
+	 *           the resource to pull out.
+	 * @param destinationDir
+	 *           the directory to write the resource to.
+	 * @throws IOException
+	 * @throws ZipException
+	 */
+	void copyResourceFromJarFile(String jarFilename, String resourceName, String destinationDir)
+		throws ZipException, IOException;
 
 }

@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import net.sourceforge.squirrel_sql.fw.util.ScriptLineFixer;
+
+
 /*
  * Copyright (C) 2010 Rob Manning
  * manningr@users.sourceforge.net
@@ -39,7 +42,7 @@ public class SplashScreenFixer implements ScriptLineFixer {
 	public static String newline = System.getProperty("line.separator");
 		
 	/**
-	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ScriptLineFixer#fixLine(java.lang.String)
+	 * @see net.sourceforge.squirrel_sql.fw.util.ScriptLineFixer#fixLine(java.lang.String)
 	 */
 	@Override
 	public String fixLine(String line) {

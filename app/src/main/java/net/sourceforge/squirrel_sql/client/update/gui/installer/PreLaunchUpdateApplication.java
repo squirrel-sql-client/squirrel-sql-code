@@ -30,8 +30,6 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.PropertyConfigurator;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This is a small application that will be launched each time SQuirreL is started to quickly check to see if
@@ -45,7 +43,7 @@ public class PreLaunchUpdateApplication
 	
 	public static final String PROMPT_MODE = "prompt";
 	
-	public static final String RESTORE_MODE = "restore";
+	public static final String RESTORE_MODE = "restore";	
 	
 	/**
 	 * Entry point of the 
@@ -57,10 +55,11 @@ public class PreLaunchUpdateApplication
 		initializeLogger();
 		boolean prompt = getMode(PROMPT_MODE);
 		boolean restore = getMode(RESTORE_MODE);
-		setupSpringContext();
+		setupHelper();
 		if (!restore) {
 			helper.installUpdates(prompt);
 			helper.updateLaunchScript();
+			helper.copySplashImage();
 		} else {
 			helper.restoreFromBackup();
 		}
@@ -68,13 +67,10 @@ public class PreLaunchUpdateApplication
 	
 	// Helper methods
 	
-	private static void setupSpringContext()
+	private static void setupHelper()
 	{
-		String[] appCtx = new String[] {
-			"classpath:net/sourceforge/squirrel_sql/**/*applicationContext.xml"
-		};
-		ApplicationContext ctx = new ClassPathXmlApplicationContext(appCtx);
-		helper = (PreLaunchHelper)ctx.getBean(PreLaunchHelper.class.getName());
+		PreLaunchHelperFactory preLaunchHelperFactory = new PreLaunchHelperFactoryImpl();
+		helper = preLaunchHelperFactory.createPreLaunchHelper();
 	}
 	
 	private static boolean getMode(String mode)

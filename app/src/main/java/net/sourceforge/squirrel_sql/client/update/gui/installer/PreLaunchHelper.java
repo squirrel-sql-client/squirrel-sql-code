@@ -46,5 +46,11 @@ public interface PreLaunchHelper
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void updateLaunchScript() throws IOException;
+	
+	/**
+	 * Copies the splash image from 
+	 * @throws IOException
+	 */
+	public void copySplashImage() throws IOException;
 
 }

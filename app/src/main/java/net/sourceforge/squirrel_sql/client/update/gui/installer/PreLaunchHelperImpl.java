@@ -24,19 +24,21 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.springframework.beans.factory.annotation.Required;
-
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListenerImpl;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.ScriptLineFixer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * This is a bean that the prelaunch app uses. The pre-launch app main class (PreLaunchUpdateApplication)
@@ -108,12 +110,16 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	}
 	
 	/* Spring-injected */
-	FileUtils fileUtils = null;
+	private IOUtilities ioutils = null;
 	
+	/**
+	 * @param ioutils the ioutils to set
+	 */
 	@Required
-	public void setFileUtils(FileUtils fileUtils) {
-		Utilities.checkNull("setFileUtils", "fileUtils", fileUtils);
-		this.fileUtils = fileUtils;
+	public void setIoutils(IOUtilities ioutils)
+	{
+		Utilities.checkNull("setIoutils", "ioutils", ioutils);
+		this.ioutils = ioutils;
 	}
 
 	/* ----------------------------------- Public API ------------------------------------------------------*/
@@ -153,6 +159,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper#installUpdates(boolean)
 	 */
+	@Override
 	public void installUpdates(boolean prompt)
 	{
 		FileWrapper changeListFile = updateUtil.getChangeListFile();
@@ -182,6 +189,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	 *   
 	 * @throws IOException if an I/O error occurs
 	 */
+	@Override
 	public void updateLaunchScript() throws IOException {
 		
 		// 1. determine which script to fix.
@@ -198,15 +206,26 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 		logInfo("Applying updates to launch script: "+scriptFilename);
 		
 		// 2. Get the lines from the file, applying the line fixers
-		List<String> lines = fileUtils.getLinesFromFile(scriptFilename, scriptLineFixers);
+		List<String> lines = ioutils.getLinesFromFile(scriptFilename, scriptLineFixers);
 		
 		// 3. Write the fixed lines back out to the file.
-		fileUtils.writeLinesToFile(scriptFilename, lines);
+		ioutils.writeLinesToFile(scriptFilename, lines);
 	}
 
+	@Override
+	public void copySplashImage() throws IOException
+	{
+		String jarFilename = "update/downloads/core/squirrel-sql.jar";
+		String resourceName = "splash.jpg";
+		String destinationFile = "icons/splash.jpg";
+		
+		ioutils.copyResourceFromJarFile(jarFilename, resourceName, destinationFile);
+	}	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper#restoreFromBackup()
 	 */
+	@Override
 	public void restoreFromBackup()
 	{
 		if (showConfirmDialog(RESTORE_FROM_BACKUP_MESSAGE, RESTORE_FROM_BACKUP_TITLE))
@@ -387,5 +406,6 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	{
 		return scriptLocation;
 	}
+
 
 }
