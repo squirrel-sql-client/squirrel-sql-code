@@ -22,6 +22,11 @@ import net.sourceforge.squirrel_sql.fw.util.ScriptLineFixer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/**
+ * This script line fixer updates the buildCPFromDir function in squirrel-sql.sh to fix a bug that was 
+ * causing the classpath of the update application to prefer the installed jars rather than the ones that 
+ * were downloaded. 
+ */
 public class ClasspathFunctionFixer implements ScriptLineFixer
 {
 
@@ -37,12 +42,7 @@ public class ClasspathFunctionFixer implements ScriptLineFixer
 		if (scriptWasAlreadyFixed) {
 			return line;
 		}
-		
-		String osName = System.getProperty("os.name");
-		if (osName.toLowerCase().startsWith("windows")) {
-			return line;
-		}
-		
+				
 		if (line.contains("buildCPFromDir()")) {
 			inFunctionDeclaration = true;
 			return line;
