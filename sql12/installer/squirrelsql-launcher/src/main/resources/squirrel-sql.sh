@@ -6,6 +6,7 @@
 # this function. 
 buildCPFromDir()
 {
+	CP=""
 	if [ -d "$1"/lib ]; then
 		# First entry in classpath is the Squirrel application.
 		CP="$1/squirrel-sql.jar"
