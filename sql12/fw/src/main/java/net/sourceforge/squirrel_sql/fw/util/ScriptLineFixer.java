@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.update.gui.installer;
+package net.sourceforge.squirrel_sql.fw.util;
 
 /*
  * Copyright (C) 2010 Rob Manning

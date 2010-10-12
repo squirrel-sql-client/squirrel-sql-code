@@ -27,9 +27,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
-import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,6 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestExecutionListeners( {})
 @ContextConfiguration(locations = {
+		"/net/sourceforge/squirrel_sql/fw/util/net.sourceforge.squirrel_sql.fw.util.applicationContext.xml",
 		"/net/sourceforge/squirrel_sql/client/update/gui/installer/net.sourceforge.squirrel_sql.client.update.gui.installer.applicationContext.xml",
 		"/net/sourceforge/squirrel_sql/client/update/gui/installer/event/net.sourceforge.squirrel_sql.client.update.gui.installer.event.applicationContext.xml",
 		"/net/sourceforge/squirrel_sql/client/update/gui/installer/util/net.sourceforge.squirrel_sql.client.update.gui.installer.util.applicationContext.xml",
@@ -54,33 +53,19 @@ public class PreLaunchHelperImplIntegrationTest extends AbstractJUnit4SpringCont
 	{
 		ApplicationArguments.initialize(new String[] { "-home", "./target" });
 	}
-
-	@Autowired
-	private FileUtils fileUtils;
-
+	
 	public static final String beanIdToTest =
 		"net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper";
 
 	private static final String SOURCE_SCRIPT_FILE_TO_TEST = "src/test/resources/squirrel-sql.sh";
 	
 	private static final String TARGET_SCRIPT_FILE_TO_TEST = "target/squirrel-sql-copy.sh";
-	
-	/** TODO: Spring-inject when this class is a Spring bean */
-	private IOUtilities _iou = new IOUtilitiesImpl();
-	
-	public void setIOUtilities(IOUtilities iou)
-	{
-		_iou = iou;
-	}
 
-	/** TODO: Spring-inject when this class is a Spring bean */
-	private FileWrapperFactory _fileWrapperFactory = new FileWrapperFactoryImpl();
+	@Autowired
+	private IOUtilities ioutils;
 
-	public void setFileWrapperFactory(FileWrapperFactory factory)
-	{
-		_fileWrapperFactory = factory;
-	}
-
+	@Autowired
+	private FileWrapperFactory _fileWrapperFactory;
 	
 	/**
 	 * This test confirms that the launch script can be updated to include the new Splash screen icon
@@ -94,7 +79,7 @@ public class PreLaunchHelperImplIntegrationTest extends AbstractJUnit4SpringCont
 		
 		FileWrapper sourceScriptFile = _fileWrapperFactory.create(SOURCE_SCRIPT_FILE_TO_TEST);
 		FileWrapper targetScriptFile = _fileWrapperFactory.create(TARGET_SCRIPT_FILE_TO_TEST);
-		_iou.copyFile(sourceScriptFile, targetScriptFile);
+		ioutils.copyFile(sourceScriptFile, targetScriptFile);
 
 		// Confirm that the script doesn't contain the splash screen icon setting.
 		checkScriptFile(false);
@@ -109,7 +94,7 @@ public class PreLaunchHelperImplIntegrationTest extends AbstractJUnit4SpringCont
 
 	private void checkScriptFile(boolean containsSplashIconArgument) throws IOException
 	{
-		List<String> linesFromScriptFile = fileUtils.getLinesFromFile(TARGET_SCRIPT_FILE_TO_TEST, null);
+		List<String> linesFromScriptFile = ioutils.getLinesFromFile(TARGET_SCRIPT_FILE_TO_TEST, null);
 		boolean foundMainClassLine = false;
 		for (String line : linesFromScriptFile)
 		{
