@@ -8,6 +8,7 @@ Enhancements:
 
 SQL Scripts Plugin:
   New preference that allows to choose the escape string for new lines. See Global Preferences --> Tab SQL Scripts
+  (See patch #3079664 by Paul Wagland)
 
 Hibernate Plugin:
   - New handling of limiting object count for HQL queries. This may prevent severe performance problems.
@@ -36,6 +37,10 @@ constraints for that table. (Thanks to Bogdan Cristian Paulon)
 Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
+
+Popup-Menu for adding or removing driver specific properties didn't appear in driver properties
+ tab of alias properties on Win XP. (See patch 3083166)
+
 
 Double click in Alias tree always opened the selected Alias even if the mouse pointer wasn't placed on the Alias.
  This way Aliases where opened when tree nodes where quickly closed or opened.
