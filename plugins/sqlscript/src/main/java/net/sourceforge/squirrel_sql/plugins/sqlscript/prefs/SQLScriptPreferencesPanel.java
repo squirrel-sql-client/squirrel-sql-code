@@ -18,18 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.prefs;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -67,6 +60,12 @@ public class SQLScriptPreferencesPanel extends JPanel  {
     JLabel deleteActionLabel = null;
     
     JLabel updateActionLabel = null;
+
+
+   JCheckBox escapeNewLineCheckBox;
+   JLabel escapeNewLineLabel;
+   JTextField escapeNewLineTextfield;
+
     
     public SQLScriptPreferencesPanel(SQLScriptPreferenceBean prefs) {
         super();
@@ -91,12 +90,19 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         //i18n[SQLScriptPreferencesPanel.borderTitle=SQL Script Preferences]
         String borderTitle = s_stringMgr.getString("SQLScriptPreferencesPanel.borderTitle");
         result.setBorder(getTitledBorder(borderTitle));
-        addQualifyTableNamesCheckBox(result, 0, 0); 
+
+        addQualifyTableNamesCheckBox(result, 0, 0);
         addUseDoubleQuotesCheckBox(result, 0, 1);
+
         addDeleteRefActionCheckBox(result, 0, 2);
         addDeleteActionComboBox(result, 0, 3);
+
         addUpdateRefActionCheckBox(result, 0, 4);
         addUpdateActionComboBox(result, 0, 5);
+
+        addEscapeNewLineCheckBox(result, 0, 6);
+        addEscapeNewLineTextField(result, 0, 7);
+
         return result;
     }
     
@@ -190,6 +196,28 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         panel.add(updateReferentialActionCheckbox, c);
     }
     
+    private void addEscapeNewLineCheckBox(JPanel panel, int col, int row) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = col;
+        c.gridy = row;
+        c.anchor = GridBagConstraints.WEST;
+
+        String cbLabelStr =
+            s_stringMgr.getString("SQLScriptPreferencesPanel.escapeNewLine");
+
+        escapeNewLineCheckBox = new JCheckBox(cbLabelStr);
+
+        escapeNewLineCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean enabled = escapeNewLineCheckBox.isSelected();
+                escapeNewLineLabel.setEnabled(enabled);
+                escapeNewLineTextfield.setEnabled(enabled);
+            }
+        });
+
+        panel.add(escapeNewLineCheckBox, c);
+    }
+
     private void addDeleteActionComboBox(JPanel panel, int col, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = col;
@@ -256,7 +284,28 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         panel.add(subpanel, c);
     }
 
-    
+    private void addEscapeNewLineTextField(JPanel panel, int col, int row) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = col;
+        c.gridy = row;
+        c.insets = new Insets(5,25,0,0);
+        c.anchor = GridBagConstraints.WEST;
+
+        JPanel subpanel = new JPanel();
+
+        String cbLabelStr =
+            s_stringMgr.getString("SQLScriptPreferencesPanel.escapeNewLineTextfieldLabel");
+        escapeNewLineLabel = new JLabel(cbLabelStr);
+        escapeNewLineLabel.setHorizontalAlignment(JLabel.LEFT);
+
+        escapeNewLineTextfield = new JTextField();
+        escapeNewLineTextfield.setPreferredSize(new Dimension(50, escapeNewLineCheckBox.getPreferredSize().height));
+        subpanel.add(escapeNewLineLabel);
+        subpanel.add(escapeNewLineTextfield);
+        panel.add(subpanel, c);
+    }
+
+
     
     private Border getTitledBorder(String title) {
         CompoundBorder border = 
@@ -275,6 +324,13 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         updateReferentialActionCheckbox.setSelected(_prefs.isUpdateRefAction());
         updateActionComboBox.setEnabled(updateReferentialActionCheckbox.isSelected());
         updateActionComboBox.setSelectedIndex(_prefs.getUpdateAction());
+
+       escapeNewLineCheckBox.setSelected(_prefs.isEscapeNewLine());
+       escapeNewLineTextfield.setText(_prefs.getEscapeNewLineString());
+       escapeNewLineTextfield.setEnabled(_prefs.isEscapeNewLine());
+       escapeNewLineLabel.setEnabled(_prefs.isEscapeNewLine());
+
+
         
     }
     
@@ -287,6 +343,16 @@ public class SQLScriptPreferencesPanel extends JPanel  {
         _prefs.setDeleteAction(action);
         action = updateActionComboBox.getSelectedIndex();
         _prefs.setUpdateAction(action);
+
+        _prefs.setEscapeNewLine(escapeNewLineCheckBox.isSelected());
+
+        String escapeString = SQLScriptPreferenceBean.ESCAPE_NEW_LINE_STRING_DEFAULT;
+        if(null != escapeNewLineTextfield.getText())
+        {
+           escapeString = escapeNewLineTextfield.getText();
+        }
+       _prefs.setEscapeNewLineString(escapeString);
+
         SQLScriptPreferencesManager.savePrefs();
     }
 
