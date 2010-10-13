@@ -389,25 +389,11 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                      sResult = sb.toString();
                   }
 
-                  iIndex = sResult.indexOf('\n');
-                  if (iIndex != -1)
+                  if (SQLScriptPreferencesManager.getPreferences().isEscapeNewLine())
                   {
-                     int iPrev = 0;
-                     StringBuffer sb = new StringBuffer();
-                     sb.append(sResult.substring(iPrev, iIndex));
-                     sb.append("\\n");
-                     iPrev = iIndex + 1;
-                     iIndex = sResult.indexOf('\n', iPrev + 1);
-                     while (iIndex != -1)
-                     {
-                        sb.append(sResult.substring(iPrev, iIndex));
-                        sb.append("\\n");
-                        iPrev = iIndex + 1;
-                        iIndex = sResult.indexOf('\n', iPrev + 1);
-                     }
-                     sb.append(sResult.substring(iPrev));
-                     sResult = sb.toString();
+                     sResult = escapeNewlines(sResult);
                   }
+
                   sbValues.append("\'");
                   sbValues.append(sResult);
                   sbValues.append("\'");
@@ -442,7 +428,34 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       srcResult.close();
    }
 
-	/**
+   private String escapeNewlines(String sResult)
+   {
+      String escape = SQLScriptPreferencesManager.getPreferences().getEscapeNewLineString();
+
+      int iIndex;
+      iIndex = sResult.indexOf('\n');
+      if (iIndex != -1)
+      {
+         int iPrev = 0;
+         StringBuffer sb = new StringBuffer();
+         sb.append(sResult.substring(iPrev, iIndex));
+         sb.append(escape);
+         iPrev = iIndex + escape.length();
+         iIndex = sResult.indexOf('\n', iPrev-1);
+         while (iIndex != -1)
+         {
+            sb.append(sResult.substring(iPrev-1, iIndex));
+            sb.append(escape);
+            iPrev = iIndex + escape.length();
+            iIndex = sResult.indexOf('\n', iPrev-1);
+         }
+         sb.append(sResult.substring(iPrev-1));
+         sResult = sb.toString();
+      }
+      return sResult;
+   }
+
+   /**
 	 * Returns the sub-second precision value from the specified timestamp if supported by the session's
 	 * dialect.
 	 * 

@@ -37,6 +37,8 @@ public class SQLScriptPreferenceBean implements Cloneable,
     private boolean qualifyTableNames = true;
     private boolean useDoubleQuotes = true;
 
+    private boolean escapeNewLine = true;
+    private  String escapeNewLineString = ESCAPE_NEW_LINE_STRING_DEFAULT;
 
 
     public static final int NO_ACTION = 0;
@@ -60,8 +62,9 @@ public class SQLScriptPreferenceBean implements Cloneable,
      * whether or not to override the update referential action for FK defs.
      */
     private boolean updateRefAction = false;
+    public static final String ESCAPE_NEW_LINE_STRING_DEFAULT = "\\n";
 
-	public SQLScriptPreferenceBean() {
+   public SQLScriptPreferenceBean() {
 		super();
 	}
 
@@ -191,6 +194,31 @@ public class SQLScriptPreferenceBean implements Cloneable,
       useDoubleQuotes = b;
    }
 
+   public boolean isEscapeNewLine()
+   {
+      return escapeNewLine;
+   }
 
+   public void setEscapeNewLine(boolean escapeNewLine)
+   {
+      this.escapeNewLine = escapeNewLine;
+   }
+
+   public void setEscapeNewLineString(String escapeNewLineString)
+   {
+      if(null == escapeNewLineString)
+      {
+         this.escapeNewLineString = ESCAPE_NEW_LINE_STRING_DEFAULT;
+      }
+      else
+      {
+         this.escapeNewLineString = escapeNewLineString;
+      }
+   }
+
+   public String getEscapeNewLineString()
+   {
+      return escapeNewLineString;
+   }
 }
 

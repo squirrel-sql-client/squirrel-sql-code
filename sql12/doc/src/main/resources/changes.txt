@@ -6,6 +6,9 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+SQL Scripts Plugin:
+  New preference that allows to choose the escape string for new lines. See Global Preferences --> Tab SQL Scripts
+
 Hibernate Plugin:
   - New handling of limiting object count for HQL queries. This may prevent severe performance problems.
     Formerly the limit was set more or less under the hood (SQL limit was used).
