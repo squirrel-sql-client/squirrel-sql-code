@@ -225,6 +225,10 @@ class DriverPropertiesTable extends JTable implements DriverPropertiesTableModel
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		/* Do Nothing */
+		// According to the JavaDoc isPopupTrigger should be checked at mousePressed and mouseReleased
+		if (e.isPopupTrigger())
+		{
+			popupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 }
