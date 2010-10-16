@@ -609,7 +609,7 @@ public class TableExportCsvCommand
       {
          String ret = cellObj.toString().trim();
 
-         if(0 <= ret.indexOf(sepChar) || 0 <= ret.indexOf('\n'))
+         if(0 <= ret.indexOf(sepChar) || 0 <= ret.indexOf('\n') || 0 <= ret.indexOf('"'))
          {
             ret = "\"" + ret.replaceAll("\"", "\"\"") + "\"";
          }
