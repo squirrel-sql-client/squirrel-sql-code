@@ -36,12 +36,7 @@ public class PreLaunchHelperFactoryImpl implements PreLaunchHelperFactory
 			"classpath:net/sourceforge/squirrel_sql/client/update/gui/installer/util/net.sourceforge.squirrel_sql.client.update.gui.installer.util.applicationContext.xml",
 			"classpath:net/sourceforge/squirrel_sql/client/update/util/net.sourceforge.squirrel_sql.client.update.util.applicationContext.xml"
 		};
-		
-//		System.out.println("Loading beans from the following application context files: ");
-//		for (String location : appCtx) {
-//			System.out.println("appCtx: "+location);
-//		}
-		
+				
 		ApplicationContext ctx = new ClassPathXmlApplicationContext(appCtx);
 		return (PreLaunchHelper)ctx.getBean(PreLaunchHelper.class.getName());
 	}
