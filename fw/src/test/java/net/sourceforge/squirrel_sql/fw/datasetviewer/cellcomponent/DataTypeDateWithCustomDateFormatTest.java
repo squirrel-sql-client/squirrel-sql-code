@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.text.DateFormat;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -13,8 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 /*
- * Copyright (C) 2006 Rob Manning
- * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,16 +31,28 @@ import org.junit.Test;
  */
 
 /**
- * JUnit test for DataTypeDate class.
+ * JUnit test for DataTypeDate class when using custom properties.
  * 
- * @author manningr
+ * @author Stefan Willinger
  */
-public class DataTypeDateTest extends AbstractDataTypeComponentTest
+public class DataTypeDateWithCustomDateFormatTest extends AbstractDataTypeComponentTest
 {
+	
+	private static int userDefinedDateFormat = DateFormat.MEDIUM;
 
+	/**
+	 * Setup the test case with user defined properties
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AbstractDataTypeComponentTest#setUp()
+	 */
 	@Before
 	public void setUp() throws Exception
 	{
+		DTProperties.put(DataTypeDate.class.getName(), "useJavaDefaultFormat", "false");
+		DTProperties.put(DataTypeDate.class.getName(), "localeFormat", ""+DateFormat.MEDIUM);
+		DTProperties.put(DataTypeDate.class.getName(), "lenient", "false");
+		DTProperties.put(DataTypeDate.class.getName(), "readDateAsTimestamp", "true");
+		
+		
 		ColumnDisplayDefinition columnDisplayDefinition = getMockColumnDisplayDefinition();
 		mockHelper.replayAll();
 		classUnderTest = new DataTypeDate(null, columnDisplayDefinition);
@@ -49,19 +60,22 @@ public class DataTypeDateTest extends AbstractDataTypeComponentTest
 		super.setUp();
 	}
 
-	// 1757076 (DATE column seen as TIMESTAMP, update in editable mode fails)
-	// We should always return false for this, when the user hasn't specified
+	/**
+	 *1757076 (DATE column seen as TIMESTAMP, update in editable mode fails)
+	 * Ensure that we use the user specified value
+	 * */
 	@Test
 	public void testGetReadDateAsTimestamp()
 	{
-		assertFalse("Expected default value to be false for read date as timestamp",
+		assertTrue("Expected the user specified value",
 			DataTypeDate.getReadDateAsTimestamp());
 	}
 	
 	
 	/**
 	 * Ensure, that the Bug 3086444 is solved.
-	 * If the user didn't choose a custom DateFormat, then we must use the default.
+	 * If the user defines a custom DateFormat, then we must use this after reading the
+	 * properties at startup.
 	 */
 	@Test
 	public void testUseCustomDateFormatAfterLoadingProperties()
@@ -69,9 +83,10 @@ public class DataTypeDateTest extends AbstractDataTypeComponentTest
 		
 		Date currentDate = Date.valueOf("2010-10-15");		
 		
+		String expectedDate = DateFormat.getDateInstance(userDefinedDateFormat).format(currentDate);
 		
 		String renderedDate = classUnderTest.renderObject(currentDate);
-		assertEquals("Must use the default format", "2010-10-15", renderedDate);
+		assertEquals("Must use the user defined format", expectedDate, renderedDate);
 		
 	}
 

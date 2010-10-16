@@ -32,16 +32,8 @@ public class ThreadSafeDateFormat {
     
     /** internal protected instance of DateFormat */
     private DateFormat dateFormat;
-    
-    /**
-     * Constructor
-     * @param dateFormat the DateFormat instance to protect.
-     */
-    public ThreadSafeDateFormat(DateFormat dateFormat) {
-        this.dateFormat = dateFormat;
-    }
-    
-    /**
+
+   /**
      * Constructor
      * @param style the given formatting style. For example,
      * SHORT for "M/d/yy" in the US locale.
