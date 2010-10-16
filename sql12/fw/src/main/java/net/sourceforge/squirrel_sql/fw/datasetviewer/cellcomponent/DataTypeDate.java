@@ -205,7 +205,21 @@ public class DataTypeDate extends BaseDataTypeComponent
             {
                 readDateAsTimestamp = true;
             }
+            
+            /*
+             * After loading the properties, we must initialize the dateFormat.
+             * See Bug 3086444
+             */
+            initDateFormat(localeFormat, lenient);
 		}
+	}
+	
+	/**
+	 * Defines the dateFormat with the specific format and lenient options
+	 */
+	private static void initDateFormat(int format, boolean lenient) {
+		 dateFormat = new ThreadSafeDateFormat(format);	// lenient is set next
+		 dateFormat.setLenient(lenient);
 	}
 
     public static boolean getReadDateAsTimestamp() {
@@ -909,6 +923,9 @@ public class DataTypeDate extends BaseDataTypeComponent
              DTProperties.put(thisClassName,
                               "readDateAsTimestamp",
                               Boolean.valueOf(readDateAsTimestamp).toString());
+             
+             initDateFormat(localeFormat, lenient);
+             
 		 }
 
 	 } // end of inner class

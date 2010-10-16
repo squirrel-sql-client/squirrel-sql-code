@@ -38,6 +38,10 @@ Netezza Plugin: Added support for displaying external tables in the object tree.
 
 Bug-fixes:
 
+3086444: Date/Time/Timestamp types did not display right after application restart when others than standard
+  formats were chosen in Global Prefs. (See patch 3087989)
+
+
 Popup-Menu for adding or removing driver specific properties didn't appear in driver properties
  tab of alias properties on Win XP. (See patch 3083166)
 

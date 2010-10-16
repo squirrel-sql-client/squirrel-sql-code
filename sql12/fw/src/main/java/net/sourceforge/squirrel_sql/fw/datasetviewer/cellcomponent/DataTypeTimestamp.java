@@ -216,8 +216,20 @@ public class DataTypeTimestamp extends BaseDataTypeComponent
             thisClassName, "whereClauseUsage");
          if (whereClauseUsageString != null)
             whereClauseUsage = Integer.parseInt(whereClauseUsageString);
+
+         initDateFormat(localeFormat, lenient);
+
       }
    }
+
+   /**
+    * Defines the dateFormat with the specific format and lenient options
+    */
+   private static void initDateFormat(int format, boolean lenient) {
+       dateFormat = new ThreadSafeDateFormat(localeFormat, localeFormat);	// lenient is set next
+       dateFormat.setLenient(lenient);
+   }
+
 
    /**
     * Return the name of the java class used to hold this data type.
@@ -925,6 +937,10 @@ public class DataTypeTimestamp extends BaseDataTypeComponent
          DTProperties.put(thisClassName,
                           "whereClauseUsage", 
                           Integer.toString(whereClauseUsage));
+
+
+         initDateFormat(localeFormat, lenient);
+
       }
 
     } // end of inner class

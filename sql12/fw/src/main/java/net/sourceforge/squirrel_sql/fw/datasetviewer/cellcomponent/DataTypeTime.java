@@ -190,8 +190,24 @@ public class DataTypeTime extends BaseDataTypeComponent
             thisClassName, "lenient");
          if (lenientString != null && lenientString.equals("false"))
             lenient =false;
+
+         /*
+          * After loading the properties, we must initialize the dateFormat.
+          * See Bug 3086444
+          */
+         initDateFormat(localeFormat, lenient);
+
       }
    }
+
+   /**
+    * Defines the dateFormat with the specific format and lenient options
+    */
+   private static void initDateFormat(int format, boolean lenient) {
+       dateFormat = new ThreadSafeDateFormat(format, true);	// lenient is set next
+       dateFormat.setLenient(lenient);
+   }
+
 
    /**
     * Return the name of the java class used to hold this data type.
@@ -841,6 +857,9 @@ public class DataTypeTime extends BaseDataTypeComponent
           DTProperties.put(thisClassName,
                            "lenient", 
                            Boolean.valueOf(lenient).toString());
+
+          initDateFormat(localeFormat, lenient);
+          
        }
 
     } // end of inner class
