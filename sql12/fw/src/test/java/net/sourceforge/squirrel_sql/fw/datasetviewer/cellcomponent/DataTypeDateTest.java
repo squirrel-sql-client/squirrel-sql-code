@@ -1,11 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.sql.Date;
-
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import java.text.DateFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
@@ -38,6 +39,7 @@ import org.junit.Test;
  */
 public class DataTypeDateTest extends AbstractDataTypeComponentTest
 {
+	private static int userDefinedDateFormat = DateFormat.MEDIUM;
 
 	@Before
 	public void setUp() throws Exception
@@ -54,31 +56,54 @@ public class DataTypeDateTest extends AbstractDataTypeComponentTest
 	@Test
 	public void testGetReadDateAsTimestamp()
 	{
+		DTProperties.put(DataTypeDate.class.getName(), "readDateAsTimestamp", "false");
 		assertFalse("Expected default value to be false for read date as timestamp",
 			DataTypeDate.getReadDateAsTimestamp());
+
+		DTProperties.put(DataTypeDate.class.getName(), "readDateAsTimestamp", "true");
+		assertTrue("Expected the user specified value", DataTypeDate.getReadDateAsTimestamp());
 	}
-	
-	
+
 	/**
-	 * Ensure, that the Bug 3086444 is solved.
-	 * If the user didn't choose a custom DateFormat, then we must use the default.
+	 * Ensure, that the Bug 3086444 is solved. If the user didn't choose a custom DateFormat, then we must use
+	 * the default.
 	 */
 	@Test
-	public void testUseCustomDateFormatAfterLoadingProperties()
+	public void testUseDefaultDateFormatAfterLoadingProperties() throws Exception
 	{
-		
-		Date currentDate = Date.valueOf("2010-10-15");		
-		
-		
+		resetPropertiesLoadedFlag();
+		DTProperties.put(DataTypeDate.class.getName(), "useJavaDefaultFormat", "true");
+		classUnderTest = new DataTypeDate(null, getMockColumnDisplayDefinition());
+		Date currentDate = Date.valueOf("2010-10-15");
 		String renderedDate = classUnderTest.renderObject(currentDate);
 		assertEquals("Must use the default format", "2010-10-15", renderedDate);
+	}
+
+	@Test
+	public void testUseCustomDateFormatAfterLoadingProperties() throws Exception
+	{
+		resetPropertiesLoadedFlag();
+		DTProperties.put(DataTypeDate.class.getName(), "useJavaDefaultFormat", "false");
+		DTProperties.put(DataTypeDate.class.getName(), "localeFormat", "" + DateFormat.MEDIUM);
+		DTProperties.put(DataTypeDate.class.getName(), "lenient", "false");
+		classUnderTest = new DataTypeDate(null, getMockColumnDisplayDefinition());
 		
+		Date currentDate = Date.valueOf("2010-10-15");
+		String expectedDate = DateFormat.getDateInstance(userDefinedDateFormat).format(currentDate);
+		String renderedDate = classUnderTest.renderObject(currentDate);
+		assertEquals("Must use the user defined format", expectedDate, renderedDate);
 	}
 
 	@Override
 	protected Object getEqualsTestObject()
 	{
 		return new Date(System.currentTimeMillis());
+	}
+	
+	private void resetPropertiesLoadedFlag() throws Exception {
+		Field field = DataTypeDate.class.getDeclaredField("propertiesAlreadyLoaded");
+		field.setAccessible(true);
+		field.set(null, false);
 	}
 
 }
