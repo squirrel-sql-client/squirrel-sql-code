@@ -79,14 +79,15 @@ public class SplashStringWriter
       String[] splits = Version.getCopyrightStatement().split("\\n");
 
       int xVers = (_splashScreen.getSize().width - fontMetrics.getStringBounds(Version.getVersion(), _graphics).getBounds().width) / 2;
-      int yVers = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length + 1) * (fontMetrics.getHeight() + 5)));
+      int yVers = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length + 1) * (fontMetrics.getHeight() + 5))) + 35;
+      
       _graphics.drawString(Version.getVersion(), xVers, yVers);
 
 
       for (int i = 0; i < splits.length; i++)
       {
          int xSpilt = (_splashScreen.getSize().width - fontMetrics.getStringBounds(splits[i], _graphics).getBounds().width) / 2;
-         int ySplit = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length - i) * (fontMetrics.getHeight() + 5)));
+         int ySplit = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length - i) * (fontMetrics.getHeight() + 5))) + 35;
          _graphics.drawString(splits[i], xSpilt, ySplit);
       }
    }
@@ -147,7 +148,10 @@ public class SplashStringWriter
    private void clear()
    {
       _graphics.setColor(BG);
-      _graphics.fillRect(0, _splashScreen.getSize().height - _paintAreaHeight, _splashScreen.getSize().width, _paintAreaHeight);
+      
+      int y = _splashScreen.getSize().height - _paintAreaHeight + 20; 
+            
+      _graphics.fillRect(0, y, _splashScreen.getSize().width, _paintAreaHeight);
    }
 
 
