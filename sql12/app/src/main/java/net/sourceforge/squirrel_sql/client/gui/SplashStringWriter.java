@@ -20,7 +20,7 @@ public class SplashStringWriter
    private static final Color FG_PROGRESS = new Color(74, 91, 153);
    private static final Color FG_LOWER = new Color(74, 91, 153);
    private static final int X_DIST = 10;
-   private static final int Y_DIST = 15;
+   private static final int Y_DIST = 12;
    private static final int X_PROGRESSBAR = X_DIST - 3;
 
    private Graphics2D _graphics;
@@ -66,7 +66,7 @@ public class SplashStringWriter
 
       _heightProgressbar = fontMetrics.getHeight() + 10;
 
-      _paintAreaHeight = 2 * Y_DIST + 2 * fontMetrics.getHeight() + 5;
+      _paintAreaHeight = 2 * Y_DIST + 2 * fontMetrics.getHeight();
 
 
       _graphics.setColor(FG_UPPER);
@@ -79,15 +79,14 @@ public class SplashStringWriter
       String[] splits = Version.getCopyrightStatement().split("\\n");
 
       int xVers = (_splashScreen.getSize().width - fontMetrics.getStringBounds(Version.getVersion(), _graphics).getBounds().width) / 2;
-      int yVers = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length + 1) * (fontMetrics.getHeight() + 5))) + 35;
-      
+      int yVers = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length + 1) * (fontMetrics.getHeight() + 5)));
       _graphics.drawString(Version.getVersion(), xVers, yVers);
 
 
       for (int i = 0; i < splits.length; i++)
       {
          int xSpilt = (_splashScreen.getSize().width - fontMetrics.getStringBounds(splits[i], _graphics).getBounds().width) / 2;
-         int ySplit = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length - i) * (fontMetrics.getHeight() + 5))) + 35;
+         int ySplit = _splashScreen.getSize().height - (_paintAreaHeight + ((splits.length - i) * (fontMetrics.getHeight() + 5)));
          _graphics.drawString(splits[i], xSpilt, ySplit);
       }
    }
@@ -148,10 +147,7 @@ public class SplashStringWriter
    private void clear()
    {
       _graphics.setColor(BG);
-      
-      int y = _splashScreen.getSize().height - _paintAreaHeight + 20; 
-            
-      _graphics.fillRect(0, y, _splashScreen.getSize().width, _paintAreaHeight);
+      _graphics.fillRect(0, _splashScreen.getSize().height - _paintAreaHeight, _splashScreen.getSize().width, _paintAreaHeight);
    }
 
 
