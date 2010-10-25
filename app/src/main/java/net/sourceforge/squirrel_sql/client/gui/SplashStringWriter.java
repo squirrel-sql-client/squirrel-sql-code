@@ -54,10 +54,12 @@ public class SplashStringWriter
       if (_hasTwoLines)
       {
          _yUpper = _yLower - fontMetrics.getHeight()  - Y_DIST;
+         _paintAreaHeight = 2 * (Y_DIST + fontMetrics.getHeight());
       }
       else
       {
          _yUpper = _yLower;
+         _paintAreaHeight = Y_DIST + fontMetrics.getHeight();
       }
 
       _yProgressbar = _yUpper - fontMetrics.getHeight() - 2;
@@ -66,7 +68,6 @@ public class SplashStringWriter
 
       _heightProgressbar = fontMetrics.getHeight() + 10;
 
-      _paintAreaHeight = 2 * Y_DIST + 2 * fontMetrics.getHeight();
 
 
       _graphics.setColor(FG_UPPER);
