@@ -40,6 +40,8 @@ SQuirreL SQL Client is now built, tested and released with Maven.
 
 Bug-fixes:
 
+3085119: NullPointerException when adding tables to graph.
+
 3088284: CSV export doesn't escape quotes. Thanks to wolfgang22 for the patch.
 3086444: Date/Time/Timestamp types did not display right after application restart when others than standard
   formats were chosen in Global Prefs. (See patch 3087989)

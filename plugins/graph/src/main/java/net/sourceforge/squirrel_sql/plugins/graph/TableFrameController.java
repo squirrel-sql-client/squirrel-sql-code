@@ -59,7 +59,7 @@ public class TableFrameController
    private TableFrame _frame;
 
    private ColumnInfo[] _colInfos;
-   private ConstraintView[] _constraintViews;
+   private ConstraintView[] _constraintViews =new ConstraintView[0];
    private String[] _tablesExportedTo;
    //
    ///////////////////////////////////////////
