@@ -40,6 +40,8 @@ SQuirreL SQL Client is now built, tested and released with Maven.
 
 Bug-fixes:
 
+2693968: The "Load columns in background" setting (session properties -> SQL tab) is lost through restarts.
+
 3085119: NullPointerException when adding tables to graph.
 
 3088284: CSV export doesn't escape quotes. Thanks to wolfgang22 for the patch.

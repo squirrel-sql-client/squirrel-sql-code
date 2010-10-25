@@ -119,7 +119,11 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 						new PropertyDescriptor(IPropNames.SCHEMA_FILTER_EXCLUDE, SessionProperties.class,
 							"getSchemaFilterExclude", "setSchemaFilterExclude"),
 						new PropertyDescriptor(IPropNames.OBJECT_FILTER_EXCLUDE, SessionProperties.class,
-							"getObjectFilterExclude", "setObjectFilterExclude") };
+							"getObjectFilterExclude", "setObjectFilterExclude"),
+
+						new PropertyDescriptor(IPropNames.LOAD_COLUMNS_IN_BACKGROUND, SessionProperties.class,
+							"getLoadColumnsInBackground", "setLoadColumnsInBackground") 
+            };
 
 			return result;
 		}
