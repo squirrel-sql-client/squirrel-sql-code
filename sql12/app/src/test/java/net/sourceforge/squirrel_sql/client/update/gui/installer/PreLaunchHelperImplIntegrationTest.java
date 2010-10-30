@@ -102,9 +102,9 @@ public class PreLaunchHelperImplIntegrationTest extends AbstractJUnit4SpringCont
 			{
 				foundMainClassLine = true;
 				if (!containsSplashIconArgument) {
-					assertFalse(line.contains(SplashScreenFixer.SPLASH_ICON_ARGUMENT));
+					assertFalse(line.contains(SplashScreenFixer.SPLASH_ICON));
 				} else {
-					assertTrue(line.contains(SplashScreenFixer.SPLASH_ICON_ARGUMENT));
+					assertTrue(line.contains(SplashScreenFixer.SPLASH_ICON));
 				}
 			}
 		}
