@@ -36,13 +36,20 @@ public class ClasspathFunctionFixer implements ScriptLineFixer
 	
 	private boolean sawOpenCurlyBrace = false; 
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.ScriptLineFixer#fixLine(java.lang.String, java.lang.String)
+	 */
 	@Override
-	public String fixLine(String line)
+	public String fixLine(String scriptFileName, String line)
 	{
 		if (scriptWasAlreadyFixed) {
 			return line;
 		}
-				
+		
+		if (!scriptFileName.toLowerCase().endsWith(".sh")) {
+			return line;
+		}
+		
 		if (line.contains("buildCPFromDir()")) {
 			inFunctionDeclaration = true;
 			return line;
