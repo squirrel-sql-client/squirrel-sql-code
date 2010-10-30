@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static java.lang.System.currentTimeMillis;
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
+import static net.sourceforge.squirrel_sql.fw.util.Utilities.checkNull;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -49,7 +50,8 @@ import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IJOptionPaneService;
-import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -94,7 +96,11 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 	private ArtifactDownloaderFactory _downloaderFactory = null;
 
-	private IJOptionPaneService jOptionPaneService = new JOptionPaneService();
+	/** Service that allows this class to safely present informative JOptionPanes to the user */
+	private IJOptionPaneService _jOptionPaneService = null;
+
+	/** Factory for creating FileWrapper objects */
+	private FileWrapperFactory fileWrapperFactory = null;
 
 	static interface i18n
 	{
@@ -132,7 +138,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// i18n[UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle=Updates Available]
 		String PROMPT_TO_DOWNLOAD_AVAILABLE_UPDATES_TITLE =
 			s_stringMgr.getString("UpdateControllerImpl.promptToDownloadAvailableUpdatesTitle");
-				
+
 	}
 
 	/**
@@ -156,6 +162,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void setArtifactDownloaderFactory(ArtifactDownloaderFactory factory)
 	{
+		checkNull("setArtifactDownloaderFactory", "factory", factory);
 		this._downloaderFactory = factory;
 	}
 
@@ -167,10 +174,33 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void setUpdateUtil(UpdateUtil util)
 	{
+		checkNull("setUpdateUtil","util", util);
 		this._util = util;
 		_util.setPluginManager(_app.getPluginManager());
 	}
 
+	/**
+	 * Setter to allow injection of the service implementation.
+	 * 
+	 * @param jOptionPaneService
+	 *           the non-static service that handles JOptionPane's static calls.
+	 */
+	public void setJOptionPaneService(IJOptionPaneService jOptionPaneService)
+	{
+		checkNull("setJOptionPaneService","jOptionPaneService", jOptionPaneService);
+		this._jOptionPaneService = jOptionPaneService;
+	}
+
+	/**
+	 * @param fileWrapperFactory
+	 *           the fileFileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		checkNull("setFileWrapperFactory","fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showUpdateDialog()
 	 */
@@ -217,19 +247,18 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		// 2. Load the local release.xml file as a ChannelXmlBean.
 		_installedChannelBean = _util.getLocalReleaseInfo(releaseFilename);
 
-		// 3. Determine the channel that the user wants (stable or snapshot)
-		String channelName = getDesiredChannel(settings);
-
-		StringBuilder releasePath = new StringBuilder("/");
-		releasePath.append(getUpdateServerPath());
-		releasePath.append("/");
-		releasePath.append(channelName);
-		releasePath.append("/");
-
 		// 4. Get the release.xml file as a ChannelXmlBean from the server or
 		// filesystem.
 		if (settings.isRemoteUpdateSite())
 		{
+			// 4a. Determine the channel that the user wants (stable or snapshot)
+			String channelName = getDesiredChannel(settings);
+
+			StringBuilder releasePath = new StringBuilder("/");
+			releasePath.append(getUpdateServerPath());
+			releasePath.append("/");
+			releasePath.append(channelName);
+			releasePath.append("/");
 
 			_currentChannelBean =
 				_util.downloadCurrentRelease(getUpdateServerName(), getUpdateServerPortAsInt(),
@@ -237,6 +266,12 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 		}
 		else
 		{
+			// 4b. Copy the release.xml file to the download directory then load the current release channel bean 
+			FileWrapper updateSiteReleaseXmlFilePath =
+				fileWrapperFactory.create(settings.getFileSystemUpdatePath(), RELEASE_XML_FILENAME);
+			FileWrapper downloadReleaseXmlFile = 
+				fileWrapperFactory.create(_util.getDownloadsDir(), RELEASE_XML_FILENAME);
+			_util.copyFile(updateSiteReleaseXmlFilePath, downloadReleaseXmlFile);
 			_currentChannelBean = _util.loadUpdateFromFileSystem(settings.getFileSystemUpdatePath());
 		}
 
@@ -384,7 +419,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	public boolean showConfirmMessage(String title, String msg)
 	{
 		int result =
-			jOptionPaneService.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
+			_jOptionPaneService.showConfirmDialog(_app.getMainFrame(), msg, title, JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		return (result == JOptionPane.YES_OPTION);
 	}
@@ -395,7 +430,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	 */
 	public void showMessage(String title, String msg)
 	{
-		jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
+		_jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.INFORMATION_MESSAGE);
 
 	}
 
@@ -406,7 +441,7 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	public void showErrorMessage(final String title, final String msg, final Exception e)
 	{
 		s_log.error(msg, e);
-		jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
+		_jOptionPaneService.showMessageDialog(_app.getMainFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -495,8 +530,10 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 				}
 				else if (e instanceof FileNotFoundException)
 				{
-					String msg = s_stringMgr.getString("UpdateControllerImpl.localReleaseFileNotFound", 
-						_util.getSquirrelHomeDir()+"/"+UpdateUtil.LOCAL_UPDATE_DIR_NAME+"/"+RELEASE_XML_FILENAME);
+					String msg =
+						s_stringMgr.getString("UpdateControllerImpl.localReleaseFileNotFound",
+							_util.getSquirrelHomeDir() + "/" + UpdateUtil.LOCAL_UPDATE_DIR_NAME + "/"
+								+ RELEASE_XML_FILENAME);
 					showErrorMessage(i18n.UPDATE_CHECK_FAILED_TITLE, msg);
 				}
 				else
@@ -592,17 +629,6 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 	private void saveUpdateSettings(final IUpdateSettings settings)
 	{
 		_app.getSquirrelPreferences().setUpdateSettings(settings);
-	}
-
-	/**
-	 * Setter to allow injection of the service implementation.
-	 * 
-	 * @param jOptionPaneService
-	 *           the non-static service that handles JOptionPane's static calls.
-	 */
-	public void setJOptionPaneService(IJOptionPaneService jOptionPaneService)
-	{
-		this.jOptionPaneService = jOptionPaneService;
 	}
 
 	private class GlobalPrefsListener implements GlobalPreferencesActionListener

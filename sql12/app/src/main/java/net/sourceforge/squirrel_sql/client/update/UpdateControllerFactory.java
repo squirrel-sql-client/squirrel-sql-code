@@ -20,9 +20,19 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactory;
+import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 
 public interface UpdateControllerFactory
 {
-	UpdateController createUpdateController(IApplication app, 
-		ArtifactDownloaderFactory downloaderFactory, UpdateUtil util);
+	/**
+	 * @param app
+	 * @param downloaderFactory
+	 * @param util
+	 * @param jOptionPaneService
+	 * @param fileWrapperFactory
+	 * @return
+	 */
+	UpdateController createUpdateController(IApplication app, ArtifactDownloaderFactory downloaderFactory,
+		UpdateUtil util, JOptionPaneService jOptionPaneService, FileWrapperFactory fileWrapperFactory);
 }
