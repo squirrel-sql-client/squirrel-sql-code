@@ -85,10 +85,16 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 			registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
 			registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
 			registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
-			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
+			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
+			
 			registerColumnType(Types.NUMERIC, "bigint");
+			registerColumnType(Types.NVARCHAR, 4000, "varchar($l)");
+			registerColumnType(Types.NVARCHAR, 32700, "long varchar");
+			registerColumnType(Types.NVARCHAR, 1073741823, "clob($l)");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.NVARCHAR, "clob(1073741823)");						
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "time");
@@ -98,8 +104,8 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 			registerColumnType(Types.VARBINARY, "blob");
 			registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
 			registerColumnType(Types.VARCHAR, 32700, "long varchar");
-			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
+			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.VARCHAR, "clob(1073741823)");			
 		}
 	}
@@ -122,7 +128,6 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 	@Override
 	public boolean canPasteTo(final IDatabaseObjectInfo info)
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 

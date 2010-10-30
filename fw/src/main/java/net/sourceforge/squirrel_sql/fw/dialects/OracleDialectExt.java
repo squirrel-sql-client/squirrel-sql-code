@@ -62,15 +62,21 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			registerColumnType(Types.CHAR, 4000, "varchar2($l)");
 			registerColumnType(Types.CHAR, "clob");
 			registerColumnType(Types.CLOB, "clob");
+			registerColumnType(Types.NCLOB, "nclob");
 			registerColumnType(Types.DATE, "date");
 			registerColumnType(Types.DECIMAL, "decimal($p)");
 			registerColumnType(Types.DOUBLE, "float($p)");
 			registerColumnType(Types.FLOAT, "float($p)");
 			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGNVARCHAR, 2000, "nvarchar2($l)");
+			registerColumnType(Types.LONGNVARCHAR, "nclob");
 			registerColumnType(Types.LONGVARBINARY, "blob");
 			registerColumnType(Types.LONGVARCHAR, 4000, "varchar2($l)");
 			registerColumnType(Types.LONGVARCHAR, "clob");
+			registerColumnType(Types.NCHAR, 2000, "nchar($l)");
 			registerColumnType(Types.NUMERIC, "number($p)");
+			registerColumnType(Types.NVARCHAR, 2000, "nvarchar2($l)");
+			registerColumnType(Types.NVARCHAR, "nclob");
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "date");
@@ -99,6 +105,27 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		return _dialect.getTypeName(code, length, precision, scale);
 	}
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getJavaTypeForNativeType(java.lang.String)
+	 */
+	@Override
+	public int getJavaTypeForNativeType(String nativeColumnTypeName)
+	{
+		if (nativeColumnTypeName.toLowerCase().equals("nvarchar2")) {
+			return Types.NVARCHAR;
+		}
+		if (nativeColumnTypeName.toLowerCase().equals("nchar")) {
+			return Types.NCHAR;
+		}
+		if (nativeColumnTypeName.toLowerCase().equals("nclob")) {
+			return Types.NCLOB;
+		}
+		if (nativeColumnTypeName.toLowerCase().startsWith("TIMESTAMP")) {
+			return Types.TIMESTAMP;
+		}
+		return super.getJavaTypeForNativeType(nativeColumnTypeName);
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
