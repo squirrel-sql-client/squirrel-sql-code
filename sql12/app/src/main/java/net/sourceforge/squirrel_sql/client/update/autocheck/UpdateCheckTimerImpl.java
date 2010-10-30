@@ -28,6 +28,9 @@ import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.client.update.async.ReleaseFileUpdateCheckTask;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -51,23 +54,26 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(UpdateCheckTimerImpl.class);
-	
+
 	private UpdateUtil _util = new UpdateUtilImpl();
+
+	private JOptionPaneService _JOptionPaneService = new JOptionPaneService();
+
+	private FileWrapperFactory _fileWrapperFactory = new FileWrapperFactoryImpl();
 	
 	public UpdateCheckTimerImpl(IApplication app)
 	{
 		this._app = app;
 		_updateSettings = _app.getSquirrelPreferences().getUpdateSettings();
-		
+
 	}
 
 	public void start()
 	{
-		if (!_updateSettings.isEnableAutomaticUpdates()) {
-			return;
-		}
+		if (!_updateSettings.isEnableAutomaticUpdates()) { return; }
 		updateController =
-			updateControllerFactory.createUpdateController(_app, new ArtifactDownloaderFactoryImpl(), _util);
+			updateControllerFactory.createUpdateController(_app, new ArtifactDownloaderFactoryImpl(), _util,
+				_JOptionPaneService, _fileWrapperFactory);
 		Thread t = new Thread(runnable);
 		t.setName("Update Check Timer Thread");
 		t.start();
@@ -75,9 +81,7 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 
 	public void stop()
 	{
-		if (!_updateSettings.isEnableAutomaticUpdates()) {
-			return;
-		}		
+		if (!_updateSettings.isEnableAutomaticUpdates()) { return; }
 		runnable.stop();
 	}
 
@@ -92,7 +96,8 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 		private boolean firstCheck = true;
 
 		/**
-		 * After making an initial check This loops indefinitely 
+		 * After making an initial check This loops indefinitely
+		 * 
 		 * @see java.lang.Runnable#run()
 		 */
 		public void run()
@@ -110,8 +115,8 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 					{
 						logDebug("run: update check configured for startup and software is not up-to-date");
 						updateController.promptUserToDownloadAvailableUpdates();
-						
-						// Since the user only wants to be notified of updates at startup, return here, thereby 
+
+						// Since the user only wants to be notified of updates at startup, return here, thereby
 						// freeing up the thread.
 						return;
 					}
@@ -134,9 +139,11 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 			}
 
 		}
-		
-		private void logDebug(String msg) {
-			if (s_log.isDebugEnabled()) {
+
+		private void logDebug(String msg)
+		{
+			if (s_log.isDebugEnabled())
+			{
 				s_log.debug(msg);
 			}
 		}
@@ -146,19 +153,19 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 			boolean result = true;
 			try
 			{
-				logDebug("isUpToDate: checking to see if software is up-to-date; currentTimeMillis = "+
-					System.currentTimeMillis());
-				
-				ReleaseFileUpdateCheckTask task = 
+				logDebug("isUpToDate: checking to see if software is up-to-date; currentTimeMillis = "
+					+ System.currentTimeMillis());
+
+				ReleaseFileUpdateCheckTask task =
 					new ReleaseFileUpdateCheckTask(null, _updateSettings, _util, _app);
-				
+
 				// Since this thread is not a UI thread, it is ok to run the task synchronously.
 				task.run();
 				result = task.isUpToDate();
 			}
 			catch (Exception e)
 			{
-				s_log.error("isUpToDate: Unable to determine up-to-date status: "+e.getMessage(), e);
+				s_log.error("isUpToDate: Unable to determine up-to-date status: " + e.getMessage(), e);
 			}
 			return result;
 		}
@@ -175,12 +182,12 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 		{
 			stopped = true;
 		}
-		
+
 		private void sleepForAnHour()
 		{
 			Utilities.sleep(1000 * 60 * 60);
 		}
-		
+
 	}
 
 }
