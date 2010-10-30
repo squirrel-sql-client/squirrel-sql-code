@@ -275,9 +275,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#installFiles()
 	 */
 	public void installFiles() throws IOException
-	{
-		sendInstallStarted(_changeList.size());
-
+	{		
 		List<FileWrapper> filesToRemove = new ArrayList<FileWrapper>();
 		List<InstallFileOperationInfo> filesToInstall = new ArrayList<InstallFileOperationInfo>();
 
@@ -666,6 +664,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller
 
 	private boolean installFiles(List<InstallFileOperationInfo> filesToInstall) throws IOException
 	{
+		sendInstallStarted(_changeList.size());
+		breathing();
+
 		boolean result = true;
 		for (InstallFileOperationInfo info : filesToInstall)
 		{
