@@ -723,9 +723,9 @@ public class DBUtil extends I18NBaseObject
 	 * @return the type code of the matching type, or if not found, the type code is taken from the specified
 	 *         colInfo
 	 */
-	public static int replaceDistinctDataType(TableColumnInfo colInfo, ISession session)
+	public static int replaceDistinctDataType(int colJdbcType, TableColumnInfo colInfo, ISession session)
 	{
-		int colJdbcType = colInfo.getDataType();
+		
 		if (colJdbcType == java.sql.Types.DISTINCT && DialectFactory.isPostgreSQL(session.getMetaData()))
 		{
 			Connection con = session.getSQLConnection().getConnection();
