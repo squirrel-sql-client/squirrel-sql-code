@@ -134,9 +134,6 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         //i18n[ColumnDetailsDialog.lengthLabel=Length: ]
         String LENGTH_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.lengthLabel");
-        //i18n[ColumnDetailsDialog.modifyColumnTitle=Modify Column]
-        String MODIFY_TITLE = 
-            s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
         //i18n[ColumnDetailsDialog.nullableLabel=Nullable: ]
         String NULLABLE_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.nullableLabel");
@@ -420,10 +417,10 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         
         lengthSpinner = new JSpinner();
         lengthSpinner.setPreferredSize(mediumField);
-        double value = 10; 
-        double min = 1;
-        double max = Long.MAX_VALUE; 
-        double step = 1; 
+        int value = 10; 
+        int min = 1;
+        int max = Integer.MAX_VALUE; 
+        int step = 1; 
         SpinnerNumberModel model = new SpinnerNumberModel(value, min, max, step);
         lengthSpinner.setModel(model);
         lengthSpinner.setPreferredSize(mediumField);
@@ -438,7 +435,7 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         precisionSpinner.setPreferredSize(mediumField);
         value = 8; 
         min = 0;
-        max = Long.MAX_VALUE; 
+        max = Integer.MAX_VALUE;
         step = 1; 
         SpinnerNumberModel precisionModel = 
             new SpinnerNumberModel(value, min, max, step); 
@@ -455,7 +452,7 @@ public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
         scaleSpinner.setPreferredSize(mediumField);
         value = 8; 
         min = 0;
-        max = Long.MAX_VALUE; 
+        max = Integer.MAX_VALUE;
         step = 1; 
         SpinnerNumberModel scaleModel = 
             new SpinnerNumberModel(value, min, max, step); 

@@ -18,25 +18,30 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
+import java.sql.ResultSet;
+import java.sql.SQLWarning;
+
+import javax.swing.JDialog;
+
+import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
+import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.sql.ResultSet;
-import java.sql.SQLWarning;
 
 public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 {
 	protected ISession _session;
 
-	protected ProgessCallBackDialog _pdialog;
+	protected ProgressCallBack _pdialog;
 
+	protected IProgressCallBackFactory progressCallBackFactory = new ProgressCallBackFactory();
+	
 	protected String _commandPrefix;
 
 	/**
@@ -48,8 +53,13 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 		String commandPrefix)
 	{
 		_session = session;
-		_pdialog = new ProgessCallBackDialog(owner, progressDialogTitle, 0);
+		_pdialog = progressCallBackFactory.create(owner, progressDialogTitle, 0);
 		_commandPrefix = commandPrefix;
+	}
+
+	public void setProgressCallBackFactory(IProgressCallBackFactory progressCallBackFactory)
+	{
+		this.progressCallBackFactory = progressCallBackFactory;
 	}
 
 	public void sqlToBeExecuted(String sql)
@@ -94,13 +104,7 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 
 	public void sqlExecutionCancelled()
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_pdialog.dispose();
-			}
-		});
+		_pdialog.dispose();
 	}
 
 	public void sqlDataUpdated(int updateCount)
@@ -120,12 +124,6 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 		{
 			s_log.info(message);
 		}
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_pdialog.dispose();
-			}
-		});
+		_pdialog.dispose();
 	}
 }

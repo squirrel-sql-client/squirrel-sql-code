@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBackAdaptor;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
@@ -578,8 +579,8 @@ public class SchemaInfo
       try
       {
 
-         ProgressCallBack pcb = new ProgressCallBack()
-         {
+         ProgressCallBack pcb = new ProgressCallBackAdaptor()
+         {  @Override
             public void currentlyLoading(String simpleName)
             {
                setProgress(msg + " (" + simpleName + ")", beginProgress);
@@ -1108,10 +1109,11 @@ public class SchemaInfo
             try
             {
                String[] buf = missingTypes.toArray(new String[missingTypes.size()]);
-               ProgressCallBack pcb = new ProgressCallBack()
+               ProgressCallBack pcb = new ProgressCallBackAdaptor()
                {
+               	@Override
                   public void currentlyLoading(String simpleName)
-                  {
+                  {  
                      StringBuilder tmp = new StringBuilder(i18n.LOADING_TABLES_MSG);
                      tmp.append(" (");
                      tmp.append(simpleName);
@@ -1194,8 +1196,8 @@ public class SchemaInfo
    {
       try
       {
-         ProgressCallBack pcb = new ProgressCallBack()
-         {
+         ProgressCallBack pcb = new ProgressCallBackAdaptor()
+         {  @Override
             public void currentlyLoading(String simpleName)
             {
                setProgress(msg + " (" + simpleName + ")", beginProgress);
@@ -1647,6 +1649,4 @@ public class SchemaInfo
          throw new RuntimeException(e);
       }
    }
-
-
 }

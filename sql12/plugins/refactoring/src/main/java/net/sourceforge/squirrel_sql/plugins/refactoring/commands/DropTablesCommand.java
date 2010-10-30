@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
+import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
+import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
@@ -37,6 +38,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -79,7 +81,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 
 	private List<ITableInfo> orderedTables;
 
-	ProgessCallBackDialog getOrderedTablesCallBack;
+	ProgressCallBack getOrderedTablesCallBack;
+
+	private IProgressCallBackFactory progressCallBackFactory = new ProgressCallBackFactory();
 
 	/**
 	 * A set of materialized view names in the same schema as the table(s) being dropped.
@@ -135,7 +139,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 			if (tables.size() > 1)
 			{
 				orderedTables = getOrderedTables(tables);
-			} else
+			}
+			else
 			{
 				orderedTables = tables;
 			}
@@ -171,7 +176,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 					_dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView, _qualifier, _sqlPrefs);
 				result.addAll(sqls);
 			}
-		} catch (final UnsupportedOperationException e2)
+		}
+		catch (final UnsupportedOperationException e2)
 		{
 			_session.showMessage(s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg",
 				_dialect.getDisplayName()));
@@ -220,17 +226,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		}
 		final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
 
-		// Create the analysis dialog using the EDT, and wait for it to finish.
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				getOrderedTablesCallBack =
-					new ProgessCallBackDialog(customDialog, i18n.PROGRESS_DIALOG_ANALYZE_TITLE, tables.size());
-
-				getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);
-			}
-		}, true);
+		ProgressCallBack getOrderedTablesCallBack =
+			progressCallBackFactory.create(customDialog, i18n.PROGRESS_DIALOG_ANALYZE_TITLE, tables.size());
+		getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);
 
 		// Now, get the drop order (same as delete) and update the dialog
 		// status while doing so.
@@ -293,7 +291,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				final String tableName = rs.getString(1);
 				matViewLookup.add(tableName);
 			}
-		} finally
+		}
+		finally
 		{
 			SQLUtilities.closeResultSet(rs);
 			SQLUtilities.closeStatement(stmt);
@@ -318,16 +317,16 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 						final SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
 						executer.setSchemaCheck(false);
 						executer.run();
-						
+
 						GUIUtils.processOnSwingEventThread(new Runnable()
 						{
 							public void run()
 							{
-								handler.hideProgressDialog();	
+								handler.hideProgressDialog();
 								customDialog.setVisible(false);
 							}
 						});
-						
+
 						_session.getSchemaInfo().reloadAllTables();
 					}
 				});
@@ -352,7 +351,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 
 	private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler
 	{
-		ProgessCallBackDialog cb = null;
+		ProgressCallBack cb = null;
 
 		/**
 		 * This is used to track the number of tables seen so far, so that we can pick the right one from the
@@ -363,20 +362,22 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		public DropTableCommandExecHandler(final ISession session)
 		{
 			super(session);
+
 			cb =
-				new ProgessCallBackDialog(	customDialog,
-													i18n.PROGRESS_DIALOG_DROP_TITLE,
-													DropTablesCommand.this.orderedTables.size());
+				progressCallBackFactory.create(customDialog, i18n.PROGRESS_DIALOG_DROP_TITLE,
+					DropTablesCommand.this.orderedTables.size());
+
 		}
 
 		/**
 		 * hides the progress dialog.
 		 */
-		public void hideProgressDialog() {
+		public void hideProgressDialog()
+		{
 			cb.setVisible(false);
 			cb.dispose();
 		}
-		
+
 		/**
 		 * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlStatementCount(int)
 		 */
@@ -403,7 +404,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				// Hack!!! hopefully the FK name will always be the last token!
 				final String[] parts = StringUtilities.split(sql, ' ');
 				cb.currentlyLoading(parts[parts.length - 1]);
-			} else
+			}
+			else
 			{
 				cb.setLoadingPrefix(i18n.DROPPING_TABLE_PREFIX);
 				if (tableCount < DropTablesCommand.this.orderedTables.size())

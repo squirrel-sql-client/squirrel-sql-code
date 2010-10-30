@@ -24,13 +24,15 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
+import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
+import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -78,6 +80,8 @@ public class DeleteTablesCommand implements ICommand
 	/** API for the current tree. */
 	private IObjectTreeAPI _tree;
 
+	private IProgressCallBackFactory progressCallBackFactory = new ProgressCallBackFactory();
+	
 	/**
 	 * Ctor.
 	 * 
@@ -103,11 +107,11 @@ public class DeleteTablesCommand implements ICommand
 	 * Delete records from the selected tables in the object tree.
 	 */
 	public void execute()
-	{
-		ProgessCallBackDialog cb =
-			new ProgessCallBackDialog(_session.getApplication().getMainFrame(), i18n.PROGRESS_DIALOG_TITLE,
-				_tables.size());
-
+	{		
+		ProgressCallBack cb =
+			progressCallBackFactory.create(_session.getApplication().getMainFrame(), 
+				i18n.PROGRESS_DIALOG_TITLE, _tables.size());
+			
 		cb.setLoadingPrefix(i18n.LOADING_PREFIX);
 		DeleteExecuter executer = new DeleteExecuter(cb);
 		_session.getApplication().getThreadPool().addTask(executer);
@@ -116,9 +120,9 @@ public class DeleteTablesCommand implements ICommand
 	private class DeleteExecuter implements Runnable
 	{
 
-		ProgessCallBackDialog _cb = null;
+		ProgressCallBack _cb = null;
 
-		public DeleteExecuter(ProgessCallBackDialog cb)
+		public DeleteExecuter(ProgressCallBack cb)
 		{
 			Utilities.checkNull("DeleteExecuter.init", "cb", cb);
 			_cb = cb;
@@ -239,6 +243,11 @@ public class DeleteTablesCommand implements ICommand
 			SQLUtilities.closeResultSet(rs, true);
 		}
 
+	}
+
+	public void setProgressCallBackFactory(IProgressCallBackFactory progressCallBackFactory)
+	{
+		this.progressCallBackFactory = progressCallBackFactory;
 	}
 
 }
