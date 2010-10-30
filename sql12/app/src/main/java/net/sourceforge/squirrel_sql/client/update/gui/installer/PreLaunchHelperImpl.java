@@ -18,8 +18,10 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -74,10 +76,10 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 	/** Logger for this class. */
 	private ILogger s_log;
-	
+
 	/** Used to override logic for calculating script location for testing purposes */
 	private String scriptLocation = null;
-	
+
 	/* --------------------------- Spring=injected dependencies --------------------------------------------*/
 
 	/* Spring-injected */
@@ -99,21 +101,23 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 		Utilities.checkNull("setArtifactInstallerFactory", "artifactInstallerFactory", artifactInstallerFactory);
 		this.artifactInstallerFactory = artifactInstallerFactory;
 	}
-	
+
 	/* Spring-injected */
 	private List<ScriptLineFixer> scriptLineFixers = null;
-	
+
 	@Required
-	public void setScriptLineFixers(List<ScriptLineFixer> scriptLineFixers) {
+	public void setScriptLineFixers(List<ScriptLineFixer> scriptLineFixers)
+	{
 		Utilities.checkNull("setScriptLineFixers", "scriptLineFixers", scriptLineFixers);
 		this.scriptLineFixers = scriptLineFixers;
 	}
-	
+
 	/* Spring-injected */
 	private IOUtilities ioutils = null;
-	
+
 	/**
-	 * @param ioutils the ioutils to set
+	 * @param ioutils
+	 *           the ioutils to set
 	 */
 	@Required
 	public void setIoutils(IOUtilities ioutils)
@@ -186,42 +190,86 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 	/**
 	 * Updates the launch script with changes made necessary by the new release.
-	 *   
-	 * @throws IOException if an I/O error occurs
+	 * 
+	 * @throws IOException
+	 *            if an I/O error occurs
 	 */
 	@Override
-	public void updateLaunchScript() throws IOException {
+	public void updateLaunchScript() throws IOException
+	{
+		// 1. determine which script(s) to fix.
+		List<String> launchScriptLocations = getLaunchScriptLocations();
 		
-		// 1. determine which script to fix.
-		String os = System.getProperty("os.name");
-		
-		String scriptFilename = "squirrel-sql.sh";
-		if (scriptLocation != null) {
-			scriptFilename = scriptLocation;
-		} else {		
-			if (os != null && os.toLowerCase().startsWith("windows")) {
-				scriptFilename = "squirrel-sql.bat";
-			}
+		for (String launchScript : launchScriptLocations) {
+			logInfo("Applying updates to launch script: " + launchScript);
+
+			// 2. Get the lines from the file, applying the line fixers
+			List<String> lines = ioutils.getLinesFromFile(launchScript, scriptLineFixers);
+
+			// 3. Write the fixed lines back out to the file.
+			ioutils.writeLinesToFile(launchScript, lines);
 		}
-		logInfo("Applying updates to launch script: "+scriptFilename);
-		
-		// 2. Get the lines from the file, applying the line fixers
-		List<String> lines = ioutils.getLinesFromFile(scriptFilename, scriptLineFixers);
-		
-		// 3. Write the fixed lines back out to the file.
-		ioutils.writeLinesToFile(scriptFilename, lines);
 	}
 
+	private List<String> getLaunchScriptLocations() {
+		List<String> result = new ArrayList<String>();
+		
+		if (scriptLocation != null) {
+			result.add(scriptLocation);
+			return result;
+		}
+		
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().startsWith("windows")) {
+			result.add("squirrel-sql.bat");
+			// And for cygwin users on Windows
+			result.add("squirrel-sql.sh");
+		}
+		else if (os != null && os.toLowerCase().startsWith("mac"))
+		{
+			// Java on Mac OS X doesn't find squirrel-sql.sh; so construct the absolute path.
+			result.add(getMacOSContentsPath() + "/MacOS/squirrel-sql.sh");
+		}
+		else {
+			result.add("squirrel-sql.sh");
+		}
+		
+		return result;
+	}
+	
+	private String getMacOSContentsPath() {
+		// The user.dir property on the Mac is /Applications/SQuirreLSQL.app/Contents/Resources/Java
+		String userdir = System.getProperty("user.dir");
+		String[] parts = userdir.split("Contents");
+		return parts[0] + "/Contents";
+	}
+	
 	@Override
 	public void copySplashImage() throws IOException
 	{
-		String jarFilename = "update/downloads/core/squirrel-sql.jar";
+		// The user.dir property on the Mac is /Applications/SQuirreLSQL.app/Contents/Resources/Java
+		String squirrelHome = System.getProperty("user.dir");
+
+		
+		String jarFilename = squirrelHome + "/update/downloads/core/squirrel-sql.jar";
 		String resourceName = "splash.jpg";
-		String destinationFile = "icons/splash.jpg";
+		String pathToIconsDir  = squirrelHome + "/icons";
+		String destinationFile = pathToIconsDir + "/" + resourceName;
+		
+		File iconsDir = new File(pathToIconsDir);
+		if (!iconsDir.exists()) {
+			logInfo("Icons directory ("+pathToIconsDir+") doesn't exist, so attempting to create it.");
+			boolean result = iconsDir.mkdir();
+			if (!result) {
+				s_log.error("Failed to create icons directory ("+pathToIconsDir+")");
+			}
+		}		
+		
+		logInfo("Copying splash.jpg from jarfile ("+jarFilename+") to "+destinationFile);
 		
 		ioutils.copyResourceFromJarFile(jarFilename, resourceName, destinationFile);
-	}	
-	
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper#restoreFromBackup()
 	 */
@@ -300,7 +348,7 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 
 		return result;
 	}
-		
+
 	/**
 	 * Shuts down this small pre-launch helper application.
 	 */
@@ -392,7 +440,8 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	}
 
 	/**
-	 * @param scriptLocation the scriptLocation to set
+	 * @param scriptLocation
+	 *           the scriptLocation to set
 	 */
 	public void setScriptLocation(String scriptLocation)
 	{
@@ -406,6 +455,5 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	{
 		return scriptLocation;
 	}
-
 
 }
