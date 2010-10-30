@@ -781,9 +781,11 @@ public class ArtifactInstallerImplTest extends BaseSQuirreLJUnit4TestCase
 	private void setupInstallEventsAndListener(int times)
 	{
 		expect(mockInstallStatusEventFactory.create(InstallEventType.INSTALL_STARTED)).andReturn(
-			mockInstallStartedStatusEvent);
+			mockInstallStartedStatusEvent).anyTimes();
 		mockInstallStartedStatusEvent.setNumFilesToUpdate(anyInt());
+		expectLastCall().anyTimes();
 		mockInstallStatusListener.handleInstallStatusEvent(mockInstallStartedStatusEvent);
+		expectLastCall().anyTimes();
 
 		if (times != 0)
 		{
