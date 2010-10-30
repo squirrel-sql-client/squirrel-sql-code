@@ -84,7 +84,7 @@ public class SQLUtilitiesTest extends BaseSQuirreLJUnit4TestCase
 		try
 		{
 			List<ITableInfo> result =
-				SQLUtilities.getInsertionOrder(tables, mockSQLDatabaseMetaData, new MyCallback());
+				SQLUtilities.getInsertionOrder(tables, mockSQLDatabaseMetaData, new ProgressCallBackAdaptor());
 			Assert.assertEquals(tables.size(), result.size());
 		}
 		catch (Exception e)
@@ -117,13 +117,4 @@ public class SQLUtilitiesTest extends BaseSQuirreLJUnit4TestCase
 		assertEquals(tableName, quotedTableName);
 	}
 
-	private static class MyCallback implements ProgressCallBack
-	{
-
-		public void currentlyLoading(String simpleName)
-		{
-			// Do Nothing
-		}
-
-	}
 }

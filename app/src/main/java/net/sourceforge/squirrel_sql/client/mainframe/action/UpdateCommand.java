@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactory;
 import net.sourceforge.squirrel_sql.client.update.UpdateControllerFactoryImpl;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
  * This <CODE>ICommand</CODE> allows the user to check for updates and apply changes to the currently 
@@ -61,7 +63,7 @@ public class UpdateCommand implements ICommand
 	{
 	   UpdateController updateController = 
 	   	updateControllerFactory.createUpdateController(_app,  new ArtifactDownloaderFactoryImpl(),
-	   		new UpdateUtilImpl());
+	   		new UpdateUtilImpl(), new JOptionPaneService(), new FileWrapperFactoryImpl());
 	   updateController.showUpdateDialog();
 	}
 }
