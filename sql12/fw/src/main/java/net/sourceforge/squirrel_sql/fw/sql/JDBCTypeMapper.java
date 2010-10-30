@@ -33,7 +33,7 @@ public class JDBCTypeMapper
 
 	/** logger for this class */
 	private static ILogger s_log = LoggerController.createLogger(JDBCTypeMapper.class);
-	
+
 	/**
 	 * Returns a list of Type names that are found in the java.sql.Types class using reflection.
 	 * 
@@ -41,12 +41,13 @@ public class JDBCTypeMapper
 	 */
 	public static String[] getJdbcTypeList()
 	{
-		ArrayList<String> result = new ArrayList<String>();		
+		ArrayList<String> result = new ArrayList<String>();
 		Field[] fields = java.sql.Types.class.getDeclaredFields();
-      for (int i = 0; i < fields.length; i++) {
-          Field field = fields[i];
-          result.add(field.getName());
-      }
+		for (int i = 0; i < fields.length; i++)
+		{
+			Field field = fields[i];
+			result.add(field.getName());
+		}
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -68,63 +69,61 @@ public class JDBCTypeMapper
 		}
 		catch (SecurityException e)
 		{
-			s_log.error("getJdbcTypeName: unexpected exception: "+e.getMessage(), e);
+			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}
 		catch (IllegalArgumentException e)
 		{
-			s_log.error("getJdbcTypeName: unexpected exception: "+e.getMessage(), e);
+			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}
 		catch (IllegalAccessException e)
 		{
-			s_log.error("getJdbcTypeName: unexpected exception: "+e.getMessage(), e);
+			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the java.sql.Types.java type of the specified type name.  If  the type is not found then 
+	 * Returns the java.sql.Types.java type of the specified type name. If the type is not found then
 	 * defaultVal is returned.
 	 * 
-	 * @param jdbcTypeName the name to lookup.
-	 * 
+	 * @param jdbcTypeName
+	 *           the name to lookup.
 	 * @return the type code
 	 */
-	public static int getJdbcType(String jdbcTypeName, int defaultVal) {
-		
-		if (jdbcTypeName == null) 
-		{ 
-			return Types.NULL; 
-		} 
+	public static int getJdbcType(String jdbcTypeName, int defaultVal)
+	{
+
+		if (jdbcTypeName == null) { return Types.NULL; }
 		int result = defaultVal;
-		
+
 		try
 		{
 			Field[] fields = java.sql.Types.class.getDeclaredFields();
 			for (int i = 0; i < fields.length; i++)
 			{
 				Field field = fields[i];
-				if (field.getName().equalsIgnoreCase(jdbcTypeName)) {
+				if (field.getName().equalsIgnoreCase(jdbcTypeName))
+				{
 					result = field.getInt(null);
 				}
 			}
 		}
 		catch (IllegalArgumentException e)
 		{
-			s_log.error("getJdbcTypeName: unexpected exception: "+e.getMessage(), e);
+			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}
 		catch (IllegalAccessException e)
 		{
-			s_log.error("getJdbcTypeName: unexpected exception: "+e.getMessage(), e);
+			s_log.error("getJdbcTypeName: unexpected exception: " + e.getMessage(), e);
 		}
 		return result;
 	}
-	
-	
+
 	/**
-	 * Returns a type code for the specified type name.  If not found then this will return Types.NULL.
+	 * Returns a type code for the specified type name. If not found then this will return Types.NULL.
 	 * 
-	 * @param jdbcTypeName the name to lookup.
-	 * 
+	 * @param jdbcTypeName
+	 *           the name to lookup.
 	 * @return the type code
 	 */
 	public static int getJdbcType(String jdbcTypeName)
@@ -214,5 +213,37 @@ public class JDBCTypeMapper
 		if (sortOrder.equalsIgnoreCase("D")) { return IndexInfo.SortOrder.DESC; }
 
 		throw new IllegalArgumentException("Unknown index sort order: " + sortOrder);
+	}
+
+	/**
+	 * Returns a boolean indicating whether or not the specified typeCode is a field in the java.sql.Types
+	 * class as implemented in the current JVM.
+	 * 
+	 * @param typeCode
+	 *           the Java sql type code as reported by the JDBC driver.
+	 * @return true if the specified typeCode is standard; false otherwise.
+	 */
+	public static boolean isStandardType(int typeCode)
+	{
+		boolean result = false;
+		Field[] fields = Types.class.getDeclaredFields();
+		for (Field field : fields)
+		{
+			String fieldName = field.getName();
+			try
+			{
+				int fieldValue = field.getInt(null);
+				if (fieldValue == typeCode)
+				{
+					result = true;
+				}
+			}
+			catch (Exception e)
+			{
+				s_log.error("isStandardType: unable to get value for java.sql.Types." + fieldName + " : "
+					+ e.getMessage(), e);
+			}
+		}
+		return result;
 	}
 }

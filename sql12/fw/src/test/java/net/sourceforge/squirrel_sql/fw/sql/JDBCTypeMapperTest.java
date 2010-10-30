@@ -140,6 +140,10 @@ public class JDBCTypeMapperTest extends BaseSQuirreLTestCase {
         }                
     }
     
+    public void testIsStandardType() throws Exception {
+   	 assertTrue(JDBCTypeMapper.isStandardType(Types.VARCHAR));
+    }
+    
     private interface TypeCheck {
         boolean isType(int type);
     }
