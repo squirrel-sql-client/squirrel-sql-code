@@ -381,7 +381,7 @@ public class IOUtilitiesImpl implements IOUtilities
 			{
 				for (ScriptLineFixer fixer : lineFixers)
 				{
-					line = fixer.fixLine(line);
+					line = fixer.fixLine(filename, line);
 				}
 			}
 			lines.add(line);
