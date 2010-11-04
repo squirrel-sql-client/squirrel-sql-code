@@ -2110,7 +2110,7 @@ public class DialectExternalTest extends BaseSQuirreLJUnit4TestCase
 		final boolean deferrable = true;
 		final boolean initiallyDeferred = true;
 		final boolean matchFull = true;
-		final boolean autoFKIndex = false;
+		final boolean autoFKIndex = true;
 		final String fkIndexName = "fk_idx";
 		final ArrayList<String[]> localRefColumns = new ArrayList<String[]>();
 		localRefColumns.add(new String[] { fkChildColumnName, fkParentColumnName });
