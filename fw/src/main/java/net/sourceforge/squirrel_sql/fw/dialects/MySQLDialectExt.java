@@ -580,6 +580,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 			ckIndexSt = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
 			ckIndexValuesMap = new HashMap<String, String>();
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
+			ckIndexValuesMap.put(ST_TABLE_NAME_KEY, localTableName);
 		}
 
 		return DialectUtils.getAddForeignKeyConstraintSQL(fkst, fkValuesMap, ckIndexSt, ckIndexValuesMap,
