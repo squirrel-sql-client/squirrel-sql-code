@@ -6,6 +6,9 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+Updated Translations:
+ - Chinese (Thanks to xpdz)
+ 
 SQL Scripts Plugin:
   New preference that allows to choose the escape string for new lines. See Global Preferences --> Tab SQL Scripts
   (See patch #3079664 by Paul Wagland)
