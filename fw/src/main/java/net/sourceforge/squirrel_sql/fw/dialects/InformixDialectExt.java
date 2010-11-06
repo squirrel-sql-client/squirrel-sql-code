@@ -534,33 +534,13 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		
+		// This method no longer creates an index for the child column.  Informix does this automatically
+		// when the FK constraint is created.
+		
 		prefs.setQuoteColumnNames(false);
 		prefs.setQuoteConstraintNames(false);
 		
-		// We only want the index sql which is the second statement in the array. Informix requires the
-		// constraint stuck onto the end of the statement.
-		String[] utilSql =
-			DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
-				refTableName,
-				constraintName,
-				deferrable,
-				initiallyDeferred,
-				matchFull,
-				autoFKIndex,
-				fkIndexName,
-				localRefColumns,
-				onUpdateAction,
-				onDeleteAction,
-				qualifier,
-				prefs,
-				this);
-
-		String indexSql = null;
-		if (utilSql.length == 2)
-		{
-			indexSql = utilSql[1];
-		}
-
 		/**
 		 * ALTER TABLE fkTestChildTable ADD CONSTRAINT FOREIGN KEY (fkchildid) REFERENCES fkTestParentTable
 		 * (parentid) constraint fk_const_name
@@ -595,17 +575,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 
 		result.append(" CONSTRAINT ");
 		result.append(constraintName);
+		
 
-		String[] retVal = null;
-		if (indexSql != null)
-		{
-			retVal = new String[] { result.toString(), indexSql };
-		} else
-		{
-			retVal = new String[] { result.toString() };
-		}
-
-		return retVal;
+		return new String[] { result.toString() };
 	}
 
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
