@@ -583,7 +583,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 			ckIndexValuesMap.put(ST_TABLE_NAME_KEY, localTableName);
 		}
 
-		// MySQL disallows quoted column identifiers when dropping a column.
+		// MySQL disallows quoted column identifiers when creating an index on a column.
 		prefs.setQuoteColumnNames(false);		
 		
 		return DialectUtils.getAddForeignKeyConstraintSQL(fkst, fkValuesMap, ckIndexSt, ckIndexValuesMap,
