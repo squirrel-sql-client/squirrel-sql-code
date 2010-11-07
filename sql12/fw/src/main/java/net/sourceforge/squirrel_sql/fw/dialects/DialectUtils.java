@@ -2951,7 +2951,7 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
 		}
-		if (ST_COLUMN_NAME_KEY.equals(key))
+		if (ST_COLUMN_NAME_KEY.equals(key) && prefs.isQuoteColumnNames())
 		{
 			value = DialectUtils.shapeIdentifier(value, prefs, dialect);
 		}
