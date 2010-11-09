@@ -1,13 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-		<artifactId>installer</artifactId>
 		<groupId>net.sf.squirrel-sql</groupId>
+		<artifactId>squirrel-root-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>squirrelsql-installer-deps</artifactId>
 	<packaging>pom</packaging>
+
 	<name>Installer Dependencies</name>
 	<description>This pom collects all of the common dependencies shared by each the installers.</description>
 	<inceptionYear>2001</inceptionYear>
@@ -49,7 +53,7 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<dependencies>
-	
+
 		<!-- SQuirreL Dependencies -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -314,6 +318,6 @@
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>website</artifactId>
 			<version>${project.version}</version>
-		</dependency>			
+		</dependency>
 	</dependencies>
 </project>

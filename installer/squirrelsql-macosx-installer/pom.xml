@@ -1,16 +1,17 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>squirrelsql-macosx-installer</artifactId>
 	<packaging>jar</packaging>
+
 	<name>SQuirreL-SQL Mac OS X Installer</name>
 	<description>This project is used to build the installer for Mac OS X</description>
 	<inceptionYear>2001</inceptionYear>
@@ -54,7 +55,7 @@
 	<properties>
 		<squirrel.version>3.1.0</squirrel.version>
 		<staging.dir>${project.build.directory}</staging.dir>
-		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar</upload-server-path>		
+		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar</upload-server-path>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -67,7 +68,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-update-site</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>macosx</artifactId>
@@ -87,9 +88,9 @@
 		<testResources>
 			<testResource>
 				<directory>src/test/resources</directory>
-				<filtering>true</filtering>			
-			</testResource>		
-		</testResources>		
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
 		<plugins>
 			<!-- Set the squirrelsql.version property if it has not already been set. -->
 			<plugin>
@@ -119,9 +120,10 @@
 						<configuration>
 							<stripVersion>true</stripVersion>
 							<!--
-								This is a pain in the butt, but it beats the list that would specify what to exclude. Also, if we miss
-								an artifact here, then running the installer and launching SQuirreL as a test will find it. However,
-								we may never know that we are including jars that are never used (only transitively)
+								This is a pain in the butt, but it beats the list that would specify what to exclude. Also,
+								if we miss an artifact here, then running the installer and launching SQuirreL as a test
+								will find it. However, we may never know that we are including jars that are never used
+								(only transitively)
 							-->
 
 							<!--  Can we make this list smaller by using groupIds ? -->
@@ -199,7 +201,7 @@
 							<!--							<includes>*.jar</includes>-->
 							<outputDirectory>${staging.dir}/update-site</outputDirectory>
 						</configuration>
-					</execution>					
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -244,7 +246,7 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>integration-test</phase>						
+						<phase>integration-test</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -279,7 +281,7 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>							
+					</plugin>
 				</plugins>
 			</build>
 		</profile>

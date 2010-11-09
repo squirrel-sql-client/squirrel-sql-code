@@ -1,16 +1,17 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
-		<artifactId>installer</artifactId>
+		<artifactId>squirrel-root-pom</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>squirrelsql-update-site</artifactId>
 	<packaging>jar</packaging>
+
 	<name>SQuirreL-SQL Update Site Project</name>
 	<description>
    		This project is used to assemble the jars that produce the update site, and 
@@ -56,7 +57,7 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-installer-deps</artifactId>
@@ -127,7 +128,7 @@
 							<stripVersion>true</stripVersion>
 							<includeClassifiers>assembly</includeClassifiers>
 							<includeTypes>zip</includeTypes>
-<!--							<excludeTransitive>true</excludeTransitive>-->
+							<!--							<excludeTransitive>true</excludeTransitive>-->
 							<outputDirectory>${project.build.directory}/release/plugin</outputDirectory>
 						</configuration>
 					</execution>

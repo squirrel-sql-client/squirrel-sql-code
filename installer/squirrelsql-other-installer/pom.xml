@@ -1,16 +1,17 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>installer</artifactId>
 		<version>3.2.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
 	<artifactId>squirrelsql-other-installer</artifactId>
 	<packaging>jar</packaging>
+
 	<name>SQuirreL-SQL Generic Installer</name>
 	<description>This project is used to build the generic installer</description>
 	<inceptionYear>2001</inceptionYear>
@@ -67,7 +68,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-update-site</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 	<build>
 		<defaultGoal>package</defaultGoal>
@@ -112,9 +113,10 @@
 						<configuration>
 							<stripVersion>true</stripVersion>
 							<!--
-								This is a pain in the butt, but it beats the list that would specify what to exclude. Also, if we miss
-								an artifact here, then running the installer and launching SQuirreL as a test will find it. However,
-								we may never know that we are including jars that are never used (only transitively)
+								This is a pain in the butt, but it beats the list that would specify what to exclude. Also,
+								if we miss an artifact here, then running the installer and launching SQuirreL as a test
+								will find it. However, we may never know that we are including jars that are never used
+								(only transitively)
 							-->
 
 							<!--  Can we make this list smaller by using groupIds ? -->
@@ -221,8 +223,8 @@
 				</executions>
 			</plugin>
 			<!--
-				This plugin configuration performs a test of the installer by running it with an autoinstall configuraion
-				file.
+				This plugin configuration performs a test of the installer by running it with an autoinstall
+				configuraion file.
 			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -311,8 +313,8 @@
 							<mappings>
 								<mapping>
 									<!--
-										The "/opt" prefix is necessary here. It is where we install by default, when the rpm is installed
-										without being relocated.
+										The "/opt" prefix is necessary here. It is where we install by default, when the rpm is
+										installed without being relocated.
 									-->
 									<directory>/opt/SQuirreLSQLClient/doc</directory>
 									<filemode>777</filemode>
@@ -332,53 +334,53 @@
 									<sources>
 										<source>
 											<location>target/squirrel-sql-${squirrelsql.version}-base/icons</location>
-										</source>									
-									</sources>								
+										</source>
+									</sources>
 								</mapping>
 								<mapping>
 									<directory>/opt/SQuirreLSQLClient/lib</directory>
 									<filemode>777</filemode>
 									<username>root</username>
-									<groupname>root</groupname>								
+									<groupname>root</groupname>
 									<sources>
 										<source>
 											<location>target/squirrel-sql-${squirrelsql.version}-base/lib</location>
-										</source>									
+										</source>
 									</sources>
 								</mapping>
 								<mapping>
 									<directory>/opt/SQuirreLSQLClient/plugins</directory>
 									<filemode>777</filemode>
 									<username>root</username>
-									<groupname>root</groupname>								
+									<groupname>root</groupname>
 									<sources>
 										<source>
 											<location>target/squirrel-sql-${squirrelsql.version}-base/plugins</location>
-										</source>									
+										</source>
 									</sources>
 								</mapping>
 								<mapping>
 									<directory>/opt/SQuirreLSQLClient</directory>
 									<filemode>777</filemode>
 									<username>root</username>
-									<groupname>root</groupname>								
+									<groupname>root</groupname>
 									<sources>
 										<source>
 											<location>target/squirrel-sql-${squirrelsql.version}-base/squirrel-sql.sh</location>
-										</source>									
+										</source>
 									</sources>
 								</mapping>
 								<mapping>
 									<directory>/opt/SQuirreLSQLClient/update</directory>
 									<filemode>777</filemode>
 									<username>root</username>
-									<groupname>root</groupname>								
+									<groupname>root</groupname>
 									<sources>
 										<source>
 											<location>target/squirrel-sql-${squirrelsql.version}-base/update</location>
-										</source>									
+										</source>
 									</sources>
-								</mapping>																
+								</mapping>
 								<mapping>
 									<directory>/opt/SQuirreLSQLClient</directory>
 									<filemode>666</filemode>
@@ -411,7 +413,7 @@
 											<location>target/squirrel-sql-${squirrelsql.version}-base/update-log4j.properties</location>
 										</source>
 									</sources>
-								</mapping>									
+								</mapping>
 							</mappings>
 							<postinstallScriptlet>
 								<scriptFile>src/main/resources/postinstall.sh</scriptFile>
