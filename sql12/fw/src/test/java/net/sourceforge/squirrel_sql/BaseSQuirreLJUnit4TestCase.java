@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -25,6 +27,8 @@ public abstract class BaseSQuirreLJUnit4TestCase
 	public static final String TEST_DATABASE_PRODUCT_VERSION = "testDatabaseProductVersion";
 	
 	protected EasyMockHelper mockHelper = new EasyMockHelper();
+	
+	protected IOUtilities ioutil = new IOUtilitiesImpl(); 
 	
 	public BaseSQuirreLJUnit4TestCase()
 	{

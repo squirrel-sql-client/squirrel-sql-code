@@ -24,35 +24,51 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
- * Tests for classes that are Serializable should extend this class then implement a @Before method that 
+ * Tests for classes that are Serializable should extend this class then implement a @Before method that
  * initializes the protected serializableToTest to an instance of the classUnderTest.
- * 
  */
 public abstract class AbstractSerializableTest extends BaseSQuirreLJUnit4TestCase
 {
 
 	protected Serializable serializableToTest = null;
-	
+
 	public AbstractSerializableTest()
 	{
 		super();
 	}
 
 	@Test
-	public void serializationTest() throws Exception
+	public void serializationTest()
 	{
 		String tmpDir = System.getProperty("java.io.tmpdir", "/tmp");
-		String filename = tmpDir + File.separator  + "classUnderTest.ser";
+		String filename = tmpDir + File.separator + "classUnderTest.ser";
+		File f = new File(filename);
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
-		fos = new FileOutputStream(filename);
-		out = new ObjectOutputStream(fos);
-		out.writeObject(serializableToTest);
-		out.close();
+
+		try
+		{
+			fos = new FileOutputStream(f);
+			out = new ObjectOutputStream(fos);
+			out.writeObject(serializableToTest);
+		}
+		catch (Exception e)
+		{
+			Assert.fail("serializableToTest class: " + serializableToTest.getClass().getName()
+				+ " cannot be serialized: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			ioutil.closeOutputStream(fos);
+			ioutil.closeOutputStream(out);
+			if (f.exists() && f.canWrite()) {
+				f.delete();
+			}
+		}
+
 	}
 
 	@After
@@ -60,5 +76,5 @@ public abstract class AbstractSerializableTest extends BaseSQuirreLJUnit4TestCas
 	{
 		serializableToTest = null;
 	}
-	
+
 }
