@@ -46,6 +46,7 @@ import org.apache.maven.project.MavenProject;
  * 
  * @goal set-version
  * @phase initialize
+ * @threadSafe
  */
 public class SquirrelSqlVersionMojo extends AbstractMojo
 {
