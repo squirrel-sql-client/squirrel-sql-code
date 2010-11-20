@@ -221,9 +221,9 @@
 								<goal>single</goal>
 							</goals>
 							<configuration>
-								<descriptors>
-									<descriptor>squirrelsql-plugin-assembly.xml</descriptor>
-								</descriptors>
+								<descriptorRefs>
+									<descriptorRef>squirrelsql-plugin-assembly</descriptorRef>
+								</descriptorRefs>
 								<!--
 									This must be true, or else it will cause this to become the main artifact for each plugin
 									project

@@ -57,9 +57,9 @@
 	</ciManagement>
 	<properties>
 		<!-- Maven plugin versions -->
-		<assembly-plugin-version>2.2-beta-5</assembly-plugin-version>
+		<assembly-plugin-version>2.2</assembly-plugin-version>
 		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
-		<compiler-plugin-version>2.0.2</compiler-plugin-version>
+		<compiler-plugin-version>2.3.2</compiler-plugin-version>
 		<dependency-plugin-version>2.0</dependency-plugin-version>
 		<exec-plugin-version>1.2</exec-plugin-version>
 		<findbugs-plugin-version>2.1</findbugs-plugin-version>
@@ -72,10 +72,10 @@
 		<pmd-plugin-version>2.4</pmd-plugin-version>
 		<release-plugin-version>2.1</release-plugin-version>
 		<scm-plugin-version>1.4</scm-plugin-version>
-		<source-plugin-version>2.1</source-plugin-version>
-		<squirrelsql-version-plugin-version>1.0.3</squirrelsql-version-plugin-version>
-		<squirrelsql-update-site-plugin-version>1.0.1</squirrelsql-update-site-plugin-version>
-		<surefire-plugin-version>2.5</surefire-plugin-version>
+		<source-plugin-version>2.1.2</source-plugin-version>
+		<squirrelsql-version-plugin-version>1.0.4</squirrelsql-version-plugin-version>
+		<squirrelsql-update-site-plugin-version>1.0.4</squirrelsql-update-site-plugin-version>
+		<surefire-plugin-version>2.6</surefire-plugin-version>
 		<surefire-report-plugin-version>2.0-beta-1</surefire-report-plugin-version>
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
 
