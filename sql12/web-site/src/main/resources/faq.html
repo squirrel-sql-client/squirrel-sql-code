@@ -24,6 +24,7 @@
 		<p></p>
 
 		<ul>
+		    <li><a href="#faq14">What's a driver and why do I need one?  Is it the same as a plugin?</a></li>
 			<li><a href="#faq13">I removed the directory where SQuirreL
 			was installed, and installed it into a new location. I was surprised
 			to see all of my alias, drivers and preference settings were
@@ -160,6 +161,33 @@
 		<td width='100%' bgcolor="white" valign="top">
 		<h1 class="body">Answers - SQuirreL SQL Client.</h1>
 
+		<h1 class="question"><a name="faq14">What's a driver and why do I need one?  
+		Is it the same as a plugin?</a></h1>
+		
+		<div class="answer">Plugins and drivers are two different types 
+		of software.  A driver allows you to connect to a particular database 
+		(Oracle, Sybase, DB2, etc.) We cannot legally ship most drivers with 
+		SQuirreL (in the installer or from the update site) as they are 
+		proprietary and most database vendors require users to download them 
+		directly from their website.
+		<br/>
+		Plugins are another piece of software whose purpose is to enhance
+		SQuirreL's ability to render and work with objects that are stored 
+		in the database after a connection is made.  Some plugins are 
+		database-specific and are named according to the database that they 
+		are activated for.  When start a session in SQuirreL, if the plugin 
+		that corresponds with that database type is installed, it will be 
+		activated when a connection is made and SQuirreL will have more
+		capabilities than without that plugin installed and activated.  
+		There are other plugins, that are not database-specific (for 
+		example, graph, codecompletion, syntax highlighting, etc.) that 
+		are activated regardless of the type of database, if they have 
+		been installed.  If you choose "standard" and no "optional" 
+		plugins when prompted by the installer, then you get a useful
+		subset of plugins that are helpful regardless of the database type.  
+		You can check to see which plugins you have installed by opening 
+		up the plugin status table (Plugins -&gt; Summary), or by looking 
+		in the &lt;SQUIRREL_INSTALL_DIR&gt;/plugins folder. </div>
 
 		<h1 class="question"><a name="faq13">I removed the directory
 		where SQuirreL was installed, and installed it into a new location. I
