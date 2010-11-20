@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>maven-plugin-workspace</artifactId>
-		<version>1.0.4-SNAPSHOT</version>
+		<version>1.0.4</version>
 	</parent>
 
    <artifactId>squirrelsql-update-site-plugin</artifactId>
@@ -45,9 +45,9 @@
    </licenses>
    <url>http://www.squirrelsql.org/</url>
    <scm>
-      <connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin</connection>
-      <developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin</developerConnection>
-      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin</url>
+      <connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin</connection>
+      <developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin</developerConnection>
+      <url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin</url>
    </scm>
    <issueManagement>
       <system>SourceForge Tracker</system>
