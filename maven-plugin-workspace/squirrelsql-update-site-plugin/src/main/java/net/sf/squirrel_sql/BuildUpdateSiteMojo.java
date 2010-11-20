@@ -46,6 +46,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * 
  * @goal build-update-site
  * @phase package
+ * @threadSafe 
  */
 public class BuildUpdateSiteMojo extends AbstractMojo
 {
@@ -103,7 +104,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	 * @throws MojoExecutionException
 	 *            if the releaseDirectory isn't specified, doesn't exist or cannot be read.
 	 */
-	public void execute() throws MojoExecutionException
+	synchronized public void execute() throws MojoExecutionException
 	{
 		String channelName = "snapshot";
 		String releaseName = "snapshot";
