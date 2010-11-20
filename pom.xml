@@ -80,6 +80,7 @@
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
 
 		<!-- Thirdparty Library Versions -->
+		<clover-version>3.0.2</clover-version>
 		<easymock-version>2.4</easymock-version>
 		<easymockclassextension-version>2.4</easymockclassextension-version>
 		<gsbase-version>2.0.1</gsbase-version>
@@ -90,11 +91,12 @@
 		<jgoodies-forms-version>1.0.5</jgoodies-forms-version>
 		<mockito-version>1.8.5</mockito-version>
 		<spring-framework-version>2.5.2</spring-framework-version>
-
+	
 		<!--  Other -->
 		<surefire-parallel-type>classes</surefire-parallel-type>
 		<surefire-thread-count>4</surefire-thread-count>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
 	</properties>
 	<modules>
 		<module>fw</module>
@@ -200,8 +202,12 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>${release-plugin-version}</version>
 				</plugin>
+		        <plugin>
+		            <groupId>com.atlassian.maven.plugins</groupId>
+		            <artifactId>maven-clover2-plugin</artifactId>
+		            <version>${clover-version}</version>
+		        </plugin>
 			</plugins>
-
 		</pluginManagement>
 	</build>
 	<profiles>
