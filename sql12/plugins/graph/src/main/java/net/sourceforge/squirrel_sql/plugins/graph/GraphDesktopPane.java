@@ -1,16 +1,26 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.IApplication;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.print.Printable;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.swing.RepaintManager;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
 
 
 public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrintable
@@ -18,6 +28,11 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    private static final long serialVersionUID = 1L;
    private Vector<GraphComponent> _graphComponents = new Vector<GraphComponent>();
    private transient ConstraintViewListener _constraintViewListener;
+
+   /////////////////////////////////////////////////////////
+   // Tablegroups
+   private transient Set<TableFrame> _groupFrames = new HashSet<TableFrame>();
+   /////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////
    // Printing
@@ -38,9 +53,73 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
             revalidate();
          }
       };
+      
+      /////////////////////////////////////////////////////////
+      // Tablegroups
+      this.setDesktopManager(new GraphDesktopManager(this));
+      this.addMouseListener(new MouseAdapter() {
+
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            clearGroupFrames();
+         }
+
+      });
+      /////////////////////////////////////////////////////////
    }
 
 
+
+   /////////////////////////////////////////////////////////
+   // Tablegroups
+   public void setGroupFrame(TableFrame f)
+   {
+      List<TableFrame> temp = new ArrayList<TableFrame>(this._groupFrames);
+      this._groupFrames.clear();
+      for (TableFrame current : temp)
+      {
+         current.repaint();
+      }
+      this._groupFrames.add(f);
+      f.repaint();
+   }
+
+   public void addGroupFrame(TableFrame f)
+   {
+      this._groupFrames.add(f);
+      f.repaint();
+   }
+
+   public void removeGroupFrame(TableFrame f)
+   {
+      this._groupFrames.remove(f);
+      f.repaint();
+   }
+
+   public void clearGroupFrames()
+   {
+      List<TableFrame> temp = new ArrayList<TableFrame>(GraphDesktopPane.this._groupFrames);
+      GraphDesktopPane.this._groupFrames.clear();
+      for (TableFrame current : temp)
+      {
+         current.repaint();
+      }
+   }
+
+   public List<TableFrame> getGroupFrames()
+   {
+      return new ArrayList<TableFrame>(this._groupFrames);
+   }
+
+   public boolean isGroupFrame(TableFrame f)
+   {
+      return this._groupFrames.contains(f);
+   }
+   /////////////////////////////////////////////////////////
+
+	
+	
    public void paint(Graphics g)
    {
       super.paintComponent(g);

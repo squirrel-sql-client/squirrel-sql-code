@@ -1,18 +1,30 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageInputStreamImpl;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.net.URL;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 
 public class TableFrame extends JInternalFrame
@@ -79,8 +91,7 @@ public class TableFrame extends JInternalFrame
          {
          }
       };
-
-
+      
       setBorder(new LineBorder(Color.BLACK));
    }
 
@@ -131,10 +142,10 @@ public class TableFrame extends JInternalFrame
       return ret;
 
    }
-
+   
    class MyUI extends BasicInternalFrameUI
    {
-      public MyUI(JInternalFrame frame)
+	   public MyUI(JInternalFrame frame)
       {
          super(frame);
       }
@@ -157,10 +168,48 @@ public class TableFrame extends JInternalFrame
    class MyTitlePaneUI extends BasicInternalFrameTitlePane
    {
       public static final int UNZOOMED_PREF_HEIGHT = 18;
+      private Color groupTitleColor;
+
 
       public MyTitlePaneUI(JInternalFrame f)
       {
          super(f);
+         /////////////////////////////////////////////////////////
+         // Tablegroups
+         this.addMouseListener(new MouseAdapter()
+         {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+               onMouseClickedTitlePane(e);
+            }
+         });
+         /////////////////////////////////////////////////////////
+
+
+      }
+
+      private void onMouseClickedTitlePane(MouseEvent e)
+      {
+         if (e.getButton() == MouseEvent.BUTTON1)
+         {
+            GraphDesktopPane desktopPane = (GraphDesktopPane) TableFrame.this.getDesktopPane();
+            if (e.isControlDown())
+            {
+               if (desktopPane.isGroupFrame(TableFrame.this))
+               {
+                  desktopPane.removeGroupFrame(TableFrame.this);
+               }
+               else
+               {
+                  desktopPane.addGroupFrame(TableFrame.this);
+               }
+            }
+            else
+            {
+               desktopPane.setGroupFrame(TableFrame.this);
+            }
+         }
       }
 
 
@@ -169,6 +218,9 @@ public class TableFrame extends JInternalFrame
          super.installDefaults();
          URL resource = TableFrame.class.getResource("/net/sourceforge/squirrel_sql/plugins/graph/images/win_bigclose-rollover.gif");
          closeIcon = new ImageIcon(resource);
+         groupTitleColor = new Color(200,200,240);
+         selectedTitleColor = new Color(255,255,220);
+         notSelectedTitleColor = new Color(255,255,220);
          selectedTextColor = Color.black;
          notSelectedTextColor = Color.black;
          setFont(new Font(getFont().getFontName(), Font.BOLD, getFont().getSize()));
@@ -176,7 +228,14 @@ public class TableFrame extends JInternalFrame
 
       protected void paintTitleBackground(Graphics g)
       {
-         g.setColor(new Color(255,255,220));
+         if (((GraphDesktopPane) frame.getDesktopPane()).isGroupFrame(TableFrame.this))
+         {
+            g.setColor(groupTitleColor);
+         }
+         else
+         {
+            g.setColor(notSelectedTitleColor);
+         }
          g.fillRect(0, 0, getWidth(), getHeight());
       }
 
@@ -283,6 +342,8 @@ public class TableFrame extends JInternalFrame
             return ret;
          }
       }
+      
+      
 
    }
 }
