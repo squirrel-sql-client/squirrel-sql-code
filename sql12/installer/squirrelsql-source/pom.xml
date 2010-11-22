@@ -16,7 +16,7 @@
 	<description>
   	This is a project to create a single source archive of the entire source tree as a 
   	convenience for those who cannot access Maven Central
-  </description>
+    </description>
 	<inceptionYear>2001</inceptionYear>
 	<developers>
 		<developer>
@@ -69,6 +69,7 @@
 				<executions>
 					<execution>
 						<configuration>
+							<connectionUrl>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12</connectionUrl>
 							<baseDir>sql12</baseDir>
 							<exportDirectory>target/sources</exportDirectory>
 						</configuration>
@@ -94,6 +95,7 @@
 								<descriptor>src/main/resources/assemblies/source-assembly.xml</descriptor>
 							</descriptors>
 							<finalName>squirrel-sql-source</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
