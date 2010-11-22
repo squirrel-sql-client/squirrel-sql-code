@@ -10,7 +10,7 @@
 
 	<artifactId>squirrelsql-source</artifactId>
 	<packaging>jar</packaging>
-	<version>3.2.0</version>
+	<version>3.3.0-SNAPSHOT</version>
 
 	<name>SQuirreL SQL Client Source Archive (Aggregate)</name>
 	<description>
@@ -43,9 +43,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-source-3.2.0</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-source-3.2.0</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-source-3.2.0</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-source</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-source</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer/squirrelsql-source</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
