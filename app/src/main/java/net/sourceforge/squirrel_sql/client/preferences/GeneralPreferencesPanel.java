@@ -106,6 +106,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       private JRadioButton _tabbedStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.tabbedStyle"));      
       private JRadioButton _internalFrameStyle = new JRadioButton(s_stringMgr.getString("GeneralPreferencesPanel.internalFrameStyle"));
+      private JCheckBox _useScrollableTabbedPanesForSessionTabs = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.useScrollableTabbedPanesForSessionTabs"));
       private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
       private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
       private JCheckBox _showTabbedStyleHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showTabbedStyleHint"));
@@ -149,6 +150,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       void loadData(SquirrelPreferences prefs)
       {
          _tabbedStyle.setSelected(prefs.getTabbedStyle());
+         _useScrollableTabbedPanesForSessionTabs.setSelected(prefs.getUseScrollableTabbedPanesForSessionTabs());
          _internalFrameStyle.setSelected(!prefs.getTabbedStyle());
          onStyleChanged();
          _showTabbedStyleHint.setSelected(prefs.getShowTabbedStyleHint());
@@ -201,6 +203,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       private void onStyleChanged()
       {
+         _useScrollableTabbedPanesForSessionTabs.setEnabled(_tabbedStyle.isSelected());
          _showContents.setEnabled(_internalFrameStyle.isSelected());
          _maximimizeSessionSheet.setEnabled(_internalFrameStyle.isSelected());
          _showTabbedStyleHint.setEnabled(_internalFrameStyle.isSelected());
@@ -209,6 +212,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       void applyChanges(SquirrelPreferences prefs)
 		{
          prefs.setTabbedStyle(_tabbedStyle.isSelected());
+         prefs.setUseScrollableTabbedPanesForSessionTabs(_useScrollableTabbedPanesForSessionTabs.isSelected());
          prefs.setShowContentsWhenDragging(_showContents.isSelected());
          prefs.setShowTabbedStyleHint(_showTabbedStyleHint.isSelected());
          prefs.setShowToolTips(_showToolTips.isSelected());
@@ -278,6 +282,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          pnl.add(_internalFrameStyle, gbc);
          ++gbc.gridy;
          
+         _useScrollableTabbedPanesForSessionTabs.setName("useScrollableTabbedPanes");
+			pnl.add(_useScrollableTabbedPanesForSessionTabs, gbc);
+         ++gbc.gridy;
+
          _showContents.setName("showContentsCheckBox");
 			pnl.add(_showContents, gbc);
          ++gbc.gridy;

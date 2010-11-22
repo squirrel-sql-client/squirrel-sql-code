@@ -69,6 +69,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
       String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
       String TABBED_STYLE = "tabbedStyle";
+      String USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS = "useScrollableTabbedPanesForSessionTabs";
       String SHOW_TABBED_STYLE_HINT = "showTabbedStyleHint";
       String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
       String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
@@ -123,6 +124,8 @@ public class SquirrelPreferences implements Serializable
 
 
    private boolean _tabbedStyle = true;
+
+   private boolean _useScrollableTabbedPanesForSessionTabs;
 
    private boolean _showTabbedStyleHint = true;
 
@@ -312,6 +315,22 @@ public class SquirrelPreferences implements Serializable
 												oldValue, _tabbedStyle);
 		}
 	}
+
+   public boolean getUseScrollableTabbedPanesForSessionTabs()
+   {
+      return _useScrollableTabbedPanesForSessionTabs;
+   }
+
+   public synchronized void setUseScrollableTabbedPanesForSessionTabs(boolean data)
+   {
+      if (data != _useScrollableTabbedPanesForSessionTabs)
+      {
+         final boolean oldValue = _useScrollableTabbedPanesForSessionTabs;
+         _useScrollableTabbedPanesForSessionTabs = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS,
+                                    oldValue, _useScrollableTabbedPanesForSessionTabs);
+      }
+   }
 
 	public boolean getShowTabbedStyleHint()
 	{
