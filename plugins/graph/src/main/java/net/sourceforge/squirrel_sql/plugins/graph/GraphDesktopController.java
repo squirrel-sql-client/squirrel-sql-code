@@ -44,6 +44,8 @@ public class GraphDesktopController
    private JMenuItem _mnuRemoveGraph;
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
+   private JMenuItem _mnuSelectAllTables;
+   private JMenuItem _mnuSelectTablesByName;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuZoomPrint;
    private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
@@ -186,6 +188,29 @@ public class GraphDesktopController
          }
       });
 
+      /////////////////////////////////////////////////////////
+      // Tablegroups
+		// i18n[graph.scriptAllTables=Script all tables]
+		_mnuSelectAllTables = new JMenuItem(s_stringMgr.getString("graph.selectAllTables"));
+		_mnuSelectAllTables.addActionListener(new ActionListener()
+	    {
+	       public void actionPerformed(ActionEvent e)
+	       {
+	          onSelectAllTables();
+	       }
+	    });
+
+	// i18n[graph.scriptAllTables=Script all tables]
+	_mnuSelectTablesByName = new JMenuItem(s_stringMgr.getString("graph.selectTablesByName"));
+	_mnuSelectTablesByName.addActionListener(new ActionListener()
+	  {
+	     public void actionPerformed(ActionEvent e)
+	     {
+	        onSelectTablesByName();
+	     }
+	  });
+	  /////////////////////////////////////////////////////////
+
 		// i18n[graph.showConstr=Show constraint names]
 		_mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
       _mnuShowConstraintNames.addActionListener(new ActionListener()
@@ -250,6 +275,12 @@ public class GraphDesktopController
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
       _popUp.add(new JSeparator());
+      /////////////////////////////////////////////////////////
+      // Tablegroups
+      _popUp.add(_mnuSelectAllTables);
+      _popUp.add(_mnuSelectTablesByName);
+      _popUp.add(new JSeparator());
+      /////////////////////////////////////////////////////////
       _popUp.add(_mnuAllTablesDbOrder);
       _popUp.add(_mnuAllTablesByNameOrder);
       _popUp.add(_mnuAllTablesPkConstOrder);
@@ -284,6 +315,33 @@ public class GraphDesktopController
    {
       _listener.scriptAllTablesRequested();
    }
+
+   /////////////////////////////////////////////////////////
+   // Tablegroups
+   private void onSelectAllTables()
+   {
+      for(JInternalFrame f:_desktopPane.getAllFrames()) {
+    	  if(f instanceof TableFrame) {
+    		  _desktopPane.addGroupFrame((TableFrame)f);
+    	  }
+      }
+   }
+
+   private void onSelectTablesByName()
+   {
+      String namePattern=JOptionPane.showInputDialog(_desktopPane, s_stringMgr.getString("graph.selectTablesByName.message"), s_stringMgr.getString("graph.selectTablesByName.title"), JOptionPane.QUESTION_MESSAGE);
+      
+      _desktopPane.clearGroupFrames();
+      for(JInternalFrame f:_desktopPane.getAllFrames()) {
+    	  if(f instanceof TableFrame) {
+    		  TableFrame tf=(TableFrame)f;
+	    	  if(tf.getTitle().matches(namePattern.replace('?', '.').replace("*", ".*"))) {
+	    		  _desktopPane.addGroupFrame(tf);
+	    	  }
+    	  }
+      }
+   }
+   /////////////////////////////////////////////////////////
 
    private void onRefreshAllTables()
    {

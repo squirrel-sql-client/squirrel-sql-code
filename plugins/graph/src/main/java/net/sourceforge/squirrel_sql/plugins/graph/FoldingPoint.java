@@ -36,8 +36,8 @@ public class FoldingPoint
       if(_zoomer.isEnabled())
       {
          double zoom = _zoomer.getZoom();
-         _zoomedPointBuffer.x = (int)(_unzoomedPoint.x*zoom+0.5);
-         _zoomedPointBuffer.y = (int)(_unzoomedPoint.y*zoom+0.5);
+         _zoomedPointBuffer.x = (int)( ((double)_unzoomedPoint.x) * zoom  + 0.5);
+         _zoomedPointBuffer.y = (int)( ((double)_unzoomedPoint.y) * zoom  + 0.5);
 
       }
       else
@@ -62,5 +62,12 @@ public class FoldingPoint
    public Point getUnZoomedPoint()
    {
       return _unzoomedPoint;
+   }
+
+   public void moveBy(Point delta)
+   {
+      double zoom = _zoomer.getZoom();
+      _unzoomedPoint.x += (int)(    ((double)delta.x) / zoom   + Math.signum(delta.x) * 0.5);
+      _unzoomedPoint.y += (int)(    ((double)delta.y) / zoom   + Math.signum(delta.y) * 0.5);
    }
 }

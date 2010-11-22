@@ -761,4 +761,14 @@ public class ConstraintView implements GraphComponent
    {
       return _constraintData.hasOverlap(other._constraintData);
    }
+
+   public Vector<FoldingPoint> getFoldingPoints()
+   {
+      return _constraintGraph.getFoldingPoints();
+   }
+
+   public boolean isAttachedTo(TableFrame tableFrame)
+   {
+      return tableFrame == _pkFramePointingTo.getFrame() || tableFrame == _fkFrameOriginatingFrom.getFrame();
+   }
 }
