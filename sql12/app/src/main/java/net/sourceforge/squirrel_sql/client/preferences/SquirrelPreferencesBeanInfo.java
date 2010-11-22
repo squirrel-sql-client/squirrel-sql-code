@@ -54,6 +54,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 
 						new PropertyDescriptor(TABBED_STYLE, SquirrelPreferences.class,
 							"getTabbedStyle", "setTabbedStyle"),
+						new PropertyDescriptor(USE_SCROLLABLE_TABBED_PANES_FOR_SESSION_TABS, SquirrelPreferences.class,
+							"getUseScrollableTabbedPanesForSessionTabs", "setUseScrollableTabbedPanesForSessionTabs"),
 						new PropertyDescriptor(SHOW_TABBED_STYLE_HINT, SquirrelPreferences.class,
 							"getShowTabbedStyleHint", "setShowTabbedStyleHint"),
 

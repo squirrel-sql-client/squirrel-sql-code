@@ -1,9 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockHandle;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.VerticalToggleButton;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.ApplicationListener;
@@ -52,6 +49,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private JPopupMenu _tabRightMouseMenu;
 
+   private ScrollableTabHandler _scrollableTabHandler;
+
    public DockTabDesktopPane(IApplication app)
    {
       _app = app;
@@ -64,6 +63,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       _split.setLeftComponent(_pnlDock);
 
+      _scrollableTabHandler = new ScrollableTabHandler(_app, _tabbedPane);
 
       _tabbedPane.addChangeListener(new ChangeListener()
       {
@@ -174,6 +174,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _tabHandles.add(tabHandle);
       tabHandle.fireAdded();
       _tabbedPane.setSelectedIndex(tabIx);
+      _scrollableTabHandler.tabAdded();
    }
 
    private void onDockPanelResized()
@@ -322,7 +323,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
                int tabIndex = getTabIndex(tabHandle);
                if (-1 != tabIndex)
                {
-                  _tabbedPane.remove(tabIndex);
+                  removeTabFromTabbedPane(tabIndex);
                }
                tabHandle.fireClosed(e);
                _tabHandles.remove(tabHandle);
@@ -356,7 +357,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
             int tabIndex = getTabIndex(tabHandle);
             if(-1 != tabIndex)
             {
-               _tabbedPane.remove(tabIndex);
+               removeTabFromTabbedPane(tabIndex);
             }
 
             ////////////////////////////////////////////////////
@@ -384,6 +385,12 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       {
          throw new IllegalArgumentException("Unknown TabClosingMode: " + tabClosingMode);
       }
+   }
+
+   private void removeTabFromTabbedPane(int tabIndex)
+   {
+      _tabbedPane.remove(tabIndex);
+      _scrollableTabHandler.tabRemoved();
    }
 
 
