@@ -79,9 +79,6 @@
 		</dependency>
 
 	</dependencies>
-	<properties>
-		<squirrelsql.version>test</squirrelsql.version>
-	</properties>
 	<build>
 		<plugins>
 			<!-- Set the squirrelsql.version property if it has not already been set. -->
