@@ -150,6 +150,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
          try
          {
+            if(props.getSQLUseFetchSize() && props.getSQLFetchSize() > 0)
+            {
+            	setFetchSize(props);
+            }
+             
+             
             final boolean correctlySupportsMaxRows = conn.getSQLMetaData()
                   .correctlySupportsSetMaxRows();
             if (correctlySupportsMaxRows && props.getSQLLimitRows())
@@ -310,6 +316,21 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
       }
    }
+
+	/**
+	 * Set the fetchSize Arrtibute for the SQL-Statement;
+	 */
+	private void setFetchSize(SessionProperties props) 
+	{
+	    try
+		{
+		   _stmt.setFetchSize(props.getSQLFetchSize());
+		}
+		catch (Exception e)
+		{
+		   s_log.error("Can't Set FetchSize", e);
+		}
+	}
 
 	private void setMaxRows(final SessionProperties props)
 	{
