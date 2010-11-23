@@ -216,7 +216,7 @@
 						<executions>
 							<execution>
 								<id>ftp-upload-release</id>
-								<phase>deploy</phase>
+								<phase>install</phase>
 								<goals>
 									<goal>upload</goal>
 								</goals>
