@@ -86,6 +86,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String KEEP_TABLE_LAYOUT_ON_RERUN = "keepTableLayoutOnRerun";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
       String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
+      String SQL_USE_FETCH_SIZE = "sqlUseFetchSize";
+      String SQL_FETCH_SIZE = "sqlFetchSize";
    }
 
    private static final FontInfo DEFAULT_FONT_INFO =
@@ -235,6 +237,16 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     * <= 0 means unlimited.
     */
    private int _sqlResultTabLimit = 15;
+
+   /**
+     * The nuber of rows, which the database driver should fetch at once.
+     */
+    private int _sqlFetchSize=50;
+    
+    /**
+     * Indicates that the we should use the setFetchSize() Method of an Statement. 
+     */
+    private boolean _sqlUseFetchSize;
 
    /**
     * Default ctor.
@@ -564,6 +576,38 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
             IPropertyNames.SQL_LIMIT_ROWS,
             oldValue, _sqlLimitRows);
       }
+   }
+   
+   /**
+    * Sets the number of rows which should be fetched at once.
+    */
+   public void setSQLFetchSize(int value)
+   {
+       if(value < 0){
+    	   throw new IllegalArgumentException("FetchSize must be >= 0. fetchSize=" +value);
+       }
+      if (_sqlFetchSize != value)
+      {
+         final int oldValue = _sqlFetchSize;
+         _sqlFetchSize = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_FETCH_SIZE,
+            oldValue, _sqlFetchSize);
+      }
+   }
+   /**
+    * Defines, if we should use {@link Statement#setFetchSize(int)}
+    */
+   public void setSQLUseFetchSize(boolean value)
+   {
+       if (_sqlUseFetchSize != value)
+       {
+	   final boolean oldValue = _sqlUseFetchSize;
+	   _sqlUseFetchSize = value;
+	   getPropertyChangeReporter().firePropertyChange(
+		   IPropertyNames.SQL_USE_FETCH_SIZE,
+		   oldValue, _sqlUseFetchSize);
+       }
    }
 
 
@@ -1004,4 +1048,14 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
       return _propChgReporter;
    }
+
+    public int getSQLFetchSize() 
+    {
+    	return  _sqlFetchSize;
+    }
+    
+    public boolean getSQLUseFetchSize()
+    {
+	return _sqlUseFetchSize;
+    }
 }

@@ -12,6 +12,10 @@ Feature request 3030479: New global preference that allows scrollable tabbed pan
 Graph Plugin: Multiple tables can now be selected and moved simultanously
   Thanks to Markus Schulz for the patch.
 
+New Session property to let SQuirreL set fetch size (call Statement.setFetchSize(int)).
+  See Session properties --> SQL tab.
+  Thanks to Stefan (wis775) for the patch
+
 
 Bug-fixes:
 

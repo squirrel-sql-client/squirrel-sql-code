@@ -322,5 +322,35 @@ public class SessionPropertiesTest extends AbstractSerializableTest {
 		classUnderTest.setShowResultsMetaData(true);
 		assertEquals(true, classUnderTest.getShowResultsMetaData());
 	}
+	
+	@Test
+	public void testGetUseFetchSize() throws Exception {
+		classUnderTest.setSQLUseFetchSize(true);
+		assertEquals(true, classUnderTest.getSQLUseFetchSize());	
+		
+		classUnderTest.setSQLUseFetchSize(false);
+		assertEquals(false, classUnderTest.getSQLUseFetchSize());	
+	}
+	
+	@Test
+	public void testGetFetchSize() throws Exception {
+		classUnderTest.setSQLFetchSize(99);
+		assertEquals(99, classUnderTest.getSQLFetchSize());
+		
+		// If the fetchSize = 0, then the it will be ignored by the Statement.
+		classUnderTest.setSQLFetchSize(0);
+		assertEquals(0, classUnderTest.getSQLFetchSize());	
+	}
+	
+	@Test
+	public void testSetFetchSizeFailure() throws Exception {
+		try {
+			classUnderTest.setSQLFetchSize(-1);
+			assertEquals("Using a negativ value for the FetchSize isn't allowed",false, true);
+			
+		} catch (IllegalArgumentException e) {
+			assertEquals("FetchSize must be >= 0. fetchSize=-1",e.getMessage());
+		}
+	}
 
 }
