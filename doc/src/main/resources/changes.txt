@@ -7,6 +7,9 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+New translation
+ Japanese (thanks to Toshiki IGA)
+
 Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 
 Graph Plugin: Multiple tables can now be selected and moved simultanously
