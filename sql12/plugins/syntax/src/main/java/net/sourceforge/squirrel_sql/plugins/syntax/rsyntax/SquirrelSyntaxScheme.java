@@ -26,7 +26,7 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
 
    public void initSytles(SyntaxPreferences prefs, FontInfo fontInfo)
    {
-      super.restoreDefaults();
+      super.restoreDefaults(fontInfo.createFont());
       Style[] stylesBuf = new Style[SquirrelTokenMarker.getNumTokenTypes()];
       System.arraycopy(styles, 0, stylesBuf, 0, styles.length);
 
