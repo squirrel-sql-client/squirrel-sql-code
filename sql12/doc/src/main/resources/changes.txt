@@ -7,6 +7,8 @@ Not yet released - available from SVN or in the latest snapshot:
 
 Enhancements:
 
+New icons in Object tree
+
 New translation
  Japanese (thanks to Toshiki IGA)
 

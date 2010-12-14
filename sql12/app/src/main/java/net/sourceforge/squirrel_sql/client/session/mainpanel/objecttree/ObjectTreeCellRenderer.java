@@ -120,7 +120,41 @@ public class ObjectTreeCellRenderer extends DefaultTreeCellRenderer
       }
       else
       {
+         if(value instanceof ObjectTreeNode)
+         {
+            ObjectTreeNode otn = (ObjectTreeNode) value;
+            if (null != otn.getIcon())
+            {
+               ret.setIcon(otn.getIcon());
+            }
+            else
+            {
+               setDefaultIcon(expanded, leaf, ret);
+            }
+
+         }
+         else
+         {
+            setDefaultIcon(expanded, leaf, ret);
+         }
+
          return ret;
+      }
+   }
+
+   private void setDefaultIcon(boolean expanded, boolean leaf, JLabel lbl)
+   {
+      if (leaf)
+      {
+         lbl.setIcon(getLeafIcon());
+      }
+      else if (expanded)
+      {
+         lbl.setIcon(getDefaultOpenIcon());
+      }
+      else
+      {
+         lbl.setIcon(getDefaultClosedIcon());
       }
    }
 }
