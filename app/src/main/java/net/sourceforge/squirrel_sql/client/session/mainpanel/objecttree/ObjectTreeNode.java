@@ -20,10 +20,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
@@ -54,10 +56,11 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	private boolean _allowsChildren = true;
 
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
-	private final List<INodeExpander> _expanders = 
-        new ArrayList<INodeExpander>();
+	private final List<INodeExpander> _expanders = new ArrayList<INodeExpander>();
 
-	/**
+   private ImageIcon _icon;
+
+   /**
 	 * Ctor that assumes node cannot have children.
 	 *
 	 * @param	session	Current session.
@@ -82,6 +85,13 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		_app = session.getApplication();
 		_sessionId = session.getIdentifier();
 		_dboInfo = dboInfo;
+
+      if(null != _dboInfo.getDatabaseObjectType().getImageName())
+      {
+         LibraryResources rsrc = new LibraryResources();
+
+         _icon = rsrc.getIcon(_dboInfo.getDatabaseObjectType().getImageName());
+      }
 	}
 
    public void add(MutableTreeNode newChild)
@@ -183,4 +193,9 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		}
 		return dbinfo.toString();
 	}
+
+   public ImageIcon getIcon()
+   {
+      return _icon;
+   }
 }

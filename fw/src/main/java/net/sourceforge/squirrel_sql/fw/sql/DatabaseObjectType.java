@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import static net.sourceforge.squirrel_sql.fw.resources.LibraryResources.IImageNames.*;
+
 import java.io.Serializable;
 
 /**
@@ -33,8 +35,6 @@ import java.io.Serializable;
  */
 public class DatabaseObjectType implements IHasIdentifier, Serializable
 {
-   static final long serialVersionUID = 2325635336825122256L;
-   
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(DatabaseObjectType.class);
@@ -49,24 +49,24 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    public final static DatabaseObjectType BEST_ROW_ID = createNewDatabaseObjectTypeI18n("DatabaseObjectType.bestRowID");
 
    /** Catalog. */
-   public final static DatabaseObjectType CATALOG = createNewDatabaseObjectTypeI18n("DatabaseObjectType.catalog");
+   public final static DatabaseObjectType CATALOG = createNewDatabaseObjectTypeI18n("DatabaseObjectType.catalog", DOT_CATALOG);
 
    /** Column. */
    public final static DatabaseObjectType COLUMN = createNewDatabaseObjectTypeI18n("DatabaseObjectType.column");
 
    /** Database. */
-   public final static DatabaseObjectType SESSION = createNewDatabaseObjectTypeI18n("DatabaseObjectType.database");
+   public final static DatabaseObjectType SESSION = createNewDatabaseObjectTypeI18n("DatabaseObjectType.database", DOT_DATABASE);
 
 
    /**
     * Datbase object type for a "Database" node in the object tree.  There is onle one
     * node of this type in the object tree and it indicates the alias of the database.
     */
-   public final static DatabaseObjectType DATABASE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.DATABASE_TYPE_DBO"); //DatabaseObjectType.DATABASE_TYPE_DBO=Database Type
+   public final static DatabaseObjectType DATABASE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.DATABASE_TYPE_DBO", DOT_DATABASE); //DatabaseObjectType.DATABASE_TYPE_DBO=Database Type
 
 
    /** Standard datatype. */
-   public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.datatype");
+   public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.datatype", DOT_DATATYPE);
 
     /** Unique Key for a table. */
     public final static DatabaseObjectType PRIMARY_KEY = createNewDatabaseObjectTypeI18n("DatabaseObjectType.primarykey");
@@ -81,78 +81,78 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Index Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "INDEX".
     */   
-   public static final DatabaseObjectType INDEX_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.INDEX_TYPE_DBO"); //DatabaseObjectType.INDEX_TYPE_DBO=Index Type
+   public static final DatabaseObjectType INDEX_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.INDEX_TYPE_DBO", DOT_INDEXES); //DatabaseObjectType.INDEX_TYPE_DBO=Index Type
    
    /** Index. */
-   public final static DatabaseObjectType INDEX = createNewDatabaseObjectTypeI18n("DatabaseObjectType.index");
+   public final static DatabaseObjectType INDEX = createNewDatabaseObjectTypeI18n("DatabaseObjectType.index", DOT_INDEX);
 
    /** Stored procedure. */
-   public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.storproc");
+   public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.storproc", DOT_PROCEDURE);
 
    /**
     * Database object type for a "Procedure Type" node in the object tree. There is
     * only one node of this type in the object tree and it is labeled "PROCEDURE".
     */
-   public final static DatabaseObjectType PROC_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.PROC_TYPE_DBO"); //DatabaseObjectType.PROC_TYPE_DBO=Stored Procedure Type
+   public final static DatabaseObjectType PROC_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.PROC_TYPE_DBO", DOT_PROCEDURES); //DatabaseObjectType.PROC_TYPE_DBO=Stored Procedure Type
 
 
 
    /** Schema. */
-   public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectTypeI18n("DatabaseObjectType.schema");
+   public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectTypeI18n("DatabaseObjectType.schema", DOT_SCHEMA);
 
    /**
     * Database object type for a "Sequence Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "SEQUENCE".
     */   
-   public static final DatabaseObjectType SEQUENCE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.SEQUENCE_TYPE_DBO"); //DatabaseObjectType.SEQUENCE_TYPE_DBO=Sequence Type
+   public static final DatabaseObjectType SEQUENCE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.SEQUENCE_TYPE_DBO", DOT_SEQUENCE); //DatabaseObjectType.SEQUENCE_TYPE_DBO=Sequence Type
    
    
    /**
     * An object that generates uniques IDs for primary keys. E.G. an Oracle
     * sequence.
     */
-   public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence");
-   
+   public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.sequence", DOT_SEQUENCES);
+
    /**
     * Database object type for a "Synonym Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "SYNONYM".
-    */   
+    */
    public static final DatabaseObjectType SYNONYM_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.SYNONYM_TYPE_DBO"); //DatabaseObjectType.SEQUENCE_TYPE_DBO=Sequence Type
-   
+
    /**
     * An object that is an alias for another object.  While support for this isn't standardized or universal
     * this type of object is found in a few different databases (e.g. Oracle, Netezza)
     */
    public final static DatabaseObjectType SYNONYM = createNewDatabaseObjectTypeI18n("DatabaseObjectType.synonym");
-   
+
    /** TABLE. */
-   public final static DatabaseObjectType TABLE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.table");
+   public final static DatabaseObjectType TABLE = createNewDatabaseObjectTypeI18n("DatabaseObjectType.table", DOT_TABLE);
 
    /**
     * Database object type for a "Table Type" node in the object tree. Some examples
     * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
     */
-   public final static DatabaseObjectType TABLE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TABLE_TYPE_DBO"); //DatabaseObjectType.TABLE_TYPE_DBO=Table Type
+   public final static DatabaseObjectType TABLE_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TABLE_TYPE_DBO", DOT_TABLES); //DatabaseObjectType.TABLE_TYPE_DBO=Table Type
 
-   public static final DatabaseObjectType VIEW = createNewDatabaseObjectTypeI18n("DatabaseObjectType.view");
+   public static final DatabaseObjectType VIEW = createNewDatabaseObjectTypeI18n("DatabaseObjectType.view", DOT_VIEW);
 
    /**
     * Database object type for a "Trigger Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "TRIGGER".
     */   
-   public static final DatabaseObjectType TRIGGER_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TRIGGER_TYPE_DBO"); //DatabaseObjectType.TRIGGER_TYPE_DBO=Trigger Type
+   public static final DatabaseObjectType TRIGGER_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.TRIGGER_TYPE_DBO", DOT_TRIGGERS); //DatabaseObjectType.TRIGGER_TYPE_DBO=Trigger Type
    
    /** Trigger. */
-   public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectTypeI18n("DatabaseObjectType.catalog");
+   public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectTypeI18n("DatabaseObjectType.catalog", DOT_TRIGGER);
 
    /** User defined type. */
-   public final static DatabaseObjectType UDT = createNewDatabaseObjectTypeI18n("DatabaseObjectType.udt");
+   public final static DatabaseObjectType UDT = createNewDatabaseObjectTypeI18n("DatabaseObjectType.udt", DOT_DATATYPE);
 
    /**
     * Database object type for a "UDT Type" node in the object tree. There is only one
     * node of this type in the object tree and it says "UDT".
     */
-   public final static DatabaseObjectType UDT_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.UDT_TYPE_DBO"); //DatabaseObjectType.UDT_TYPE_DBO=UDT Type
+   public final static DatabaseObjectType UDT_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.UDT_TYPE_DBO", DOT_DATATYPES); //DatabaseObjectType.UDT_TYPE_DBO=UDT Type
 
    /** User defined function. */
    public final static DatabaseObjectType UDF = createNewDatabaseObjectTypeI18n("DatabaseObjectType.udf");
@@ -164,7 +164,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    public final static DatabaseObjectType UDF_TYPE_DBO = createNewDatabaseObjectTypeI18n("DatabaseObjectType.UDF_TYPE_DBO"); //DatabaseObjectType.UDF_TYPE_DBO=UDF Type
 
    /** A database user. */
-   public final static DatabaseObjectType USER = createNewDatabaseObjectTypeI18n("DatabaseObjectType.user");
+   public final static DatabaseObjectType USER = createNewDatabaseObjectTypeI18n("DatabaseObjectType.user", DOT_USER);
 
    /** Uniquely identifies this Object. */
    private final IIdentifier _id;
@@ -172,13 +172,15 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    /** Describes this object type. */
    private final String _name;
    private String _keyForSerializationReplace;
+   private String _imageName;
 
    /**
     * Default ctor.
     */
-   private DatabaseObjectType(String name, String keyForSerializationReplace)
+   private DatabaseObjectType(String name, String keyForSerializationReplace, String imageName)
    {
       _keyForSerializationReplace = keyForSerializationReplace;
+      _imageName = imageName;
       _id = s_idFactory.createIdentifier();
       _name = name != null ? name : _id.toString();
    }
@@ -209,19 +211,29 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
       return _keyForSerializationReplace;
    }
 
+   public String getImageName()
+   {
+      return _imageName;
+   }
+
    public String toString()
    {
       return getName();
    }
 
+   public static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key, String imageName)
+   {
+      return new DatabaseObjectType(key, s_stringMgr.getString(key), imageName);
+   }
+
    public static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key)
    {
-      return new DatabaseObjectType(key, s_stringMgr.getString(key));
+      return createNewDatabaseObjectTypeI18n(key, null);
    }
 
    public static DatabaseObjectType createNewDatabaseObjectType(String key)
    {
-      return new DatabaseObjectType(key, key);
+      return new DatabaseObjectType(key, key, null);
    }
 
 }

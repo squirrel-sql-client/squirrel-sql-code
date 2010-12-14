@@ -26,6 +26,28 @@ public class LibraryResources extends Resources
       String TABLE_ASCENDING = "table.ascending";
       String TABLE_DESCENDING = "table.descending";
       String OPEN = "open";
+
+      String DOT_CATALOG = "dot.catalog";
+      String DOT_DATABASE = "dot.database";
+      String DOT_DATATYPE = "dot.datatype";
+      String DOT_DATATYPES = "dot.datatypes";
+      String DOT_INDEX = "dot.index";
+      String DOT_INDEXES = "dot.indexes";
+      String DOT_PROCEDURE = "dot.procedure";
+      String DOT_PROCEDURES = "dot.procedures";
+      String DOT_SCHEMA = "dot.schema";
+      String DOT_TABLE = "dot.table";
+      String DOT_TABLES = "dot.tables";
+      String DOT_VIEW = "dot.view";
+      String DOT_USER = "dot.user";
+      String DOT_SEQUENCE = "dot.sequence";
+      String DOT_SEQUENCES = "dot.sequences";
+      String DOT_TRIGGER = "dot.trigger";
+      String DOT_TRIGGERS = "dot.triggers";
+
+
+
+
    }
 
 	public LibraryResources() throws IllegalArgumentException
