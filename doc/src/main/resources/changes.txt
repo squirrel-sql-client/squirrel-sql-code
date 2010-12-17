@@ -9,8 +9,10 @@ Enhancements:
 
 New icons in Object tree
 
+Updated translation for Italian (Thanks to Ivo Neri)
+
 New translation
- Japanese (thanks to Toshiki IGA)
+ Japanese (Thanks to Toshiki IGA)
 
 Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 
