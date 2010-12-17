@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -42,18 +43,18 @@ public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCa
 {
 
 	protected INodeExpander classUnderTest = null;
-	protected ISession mockSession = mockHelper.createMock(ISession.class);
-	protected ObjectTreeNode mockObjectTreeNode = mockHelper.createMock(ObjectTreeNode.class);
-	protected ISQLConnection mockSQLConnection = mockHelper.createMock(ISQLConnection.class);
-	protected SQLDatabaseMetaData mockSQLDatabaseMetaData = mockHelper.createMock(SQLDatabaseMetaData.class);
-	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock(IDatabaseObjectInfo.class);
-	protected PreparedStatement mockPreparedStatement = mockHelper.createMock(PreparedStatement.class);
-	protected ResultSet mockResultSet = mockHelper.createMock(ResultSet.class);
-	protected IApplication mockApplication = mockHelper.createMock(IApplication.class);
-	protected IIdentifier mockIdentifier = mockHelper.createMock(IIdentifier.class);
-	protected SessionProperties mockSessionProperties = mockHelper.createMock(SessionProperties.class);
+	protected ISession mockSession = mockHelper.createMock("mockSession", ISession.class);
+	protected ObjectTreeNode mockObjectTreeNode = mockHelper.createMock("mockObjectTreeNode", ObjectTreeNode.class);
+	protected ISQLConnection mockSQLConnection = mockHelper.createMock("mockSQLConnection", ISQLConnection.class);
+	protected SQLDatabaseMetaData mockSQLDatabaseMetaData = mockHelper.createMock("mockSQLDatabaseMetaData", SQLDatabaseMetaData.class);
+	protected IDatabaseObjectInfo mockDatabaseObjectInfo = mockHelper.createMock("mockDatabaseObjectInfo", IDatabaseObjectInfo.class);
+	protected PreparedStatement mockPreparedStatement = mockHelper.createMock("mockPreparedStatement", PreparedStatement.class);
+	protected ResultSet mockResultSet = mockHelper.createMock("mockResultSet", ResultSet.class);
+	protected IApplication mockApplication = mockHelper.createMock("mockApplication", IApplication.class);
+	protected IIdentifier mockIdentifier = mockHelper.createMock("mockIdentifier", IIdentifier.class);
+	protected SessionProperties mockSessionProperties = mockHelper.createMock("mockSessionProperties", SessionProperties.class);
 	protected Class<?> clazz = null;
-	protected SchemaInfo mockSchemaInfo = mockHelper.createMock(SchemaInfo.class);
+	protected SchemaInfo mockSchemaInfo = mockHelper.createMock("mockSchemaInfo", SchemaInfo.class);
 
 	@Test
 	public void testCreateChildren() throws SQLException
@@ -104,6 +105,7 @@ public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCa
 		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
 		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
 		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
+		expect(mockDatabaseObjectInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.TABLE);
 	}
 
 }
