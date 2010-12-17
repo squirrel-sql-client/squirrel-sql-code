@@ -31,6 +31,8 @@ Bug 3123014: StackOverflow ProgressCallBackDialog.
 Bug 3055859: Regular expressions did not work in find & replace dialog 
 			 Thanks to Stefan (wis775) for the patch.
 
+Fixed translation label that was not being applied to "Initialize Session Timezone" checkbox.
+  Thanks to Ivo Neri for the patch. 
 
 3.2.0 (11/21/2010)
 ==================
