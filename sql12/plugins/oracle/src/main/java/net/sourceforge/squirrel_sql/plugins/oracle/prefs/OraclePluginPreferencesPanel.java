@@ -87,7 +87,7 @@ public class OraclePluginPreferencesPanel extends PluginQueryTokenizerPreference
 	private final static JCheckBox showErrorOffsetCheckBox = new JCheckBox(i18n.SHOW_ERROR_OFFSET_LABEL);
 
 
-	private final static JCheckBox initSessionTimezoneCheckBox = new JCheckBox("Initialize Session Timezone");
+	private final static JCheckBox initSessionTimezoneCheckBox = new JCheckBox(i18n.SESSION_TIMEZONE_LABEL);
 
 	private final static JTextField sessionTimezoneTextField = new JTextField();
 
