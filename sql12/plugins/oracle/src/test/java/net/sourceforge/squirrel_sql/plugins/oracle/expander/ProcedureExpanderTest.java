@@ -27,6 +27,7 @@ import java.sql.DatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 import org.junit.Before;
@@ -38,8 +39,9 @@ public class ProcedureExpanderTest extends AbstractINodeExpanderTest
 	public void setUp() throws Exception
 	{
 
-		IProcedureInfo mockProcedureInfo = mockHelper.createMock(IProcedureInfo.class);
+		IProcedureInfo mockProcedureInfo = mockHelper.createMock("mockProcedureInfo", IProcedureInfo.class);
 		expect(mockProcedureInfo.getProcedureType()).andStubReturn(DatabaseMetaData.procedureNoResult);
+		expect(mockProcedureInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.PROCEDURE);
 		IProcedureInfo[] procedures = new IProcedureInfo[] { mockProcedureInfo };
 		expect(
 			mockSchemaInfo.getStoredProceduresInfos((String)isNull(), eq(TEST_SCHEMA_NAME), isA(ObjFilterMatcher.class)))

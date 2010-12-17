@@ -25,6 +25,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
@@ -36,12 +37,14 @@ public class OracleTableParentExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		OraclePreferenceBean prefs = mockHelper.createMock(OraclePreferenceBean.class);
-		classUnderTest = new OracleTableParentExpander(prefs);
+		OraclePreferenceBean mockOraclePreferenceBean =
+			mockHelper.createMock("mockOraclePreferenceBean", OraclePreferenceBean.class);
+		classUnderTest = new OracleTableParentExpander(mockOraclePreferenceBean);
 
-		expect(prefs.isExcludeRecycleBinTables()).andStubReturn(true);
-		ITableInfo mockTableInfo = mockHelper.createMock(ITableInfo.class);
+		expect(mockOraclePreferenceBean.isExcludeRecycleBinTables()).andStubReturn(true);
+		ITableInfo mockTableInfo = mockHelper.createMock("mockTableInfo", ITableInfo.class);
 		expect(mockTableInfo.getSimpleName()).andReturn(TEST_SIMPLE_NAME);
+		expect(mockTableInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.TABLE);
 		String[] tableTypes = new String[] { TEST_SIMPLE_NAME };
 		ITableInfo[] tables = new ITableInfo[] { mockTableInfo };
 		expect(
