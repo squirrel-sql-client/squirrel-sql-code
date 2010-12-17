@@ -17,13 +17,13 @@ import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterTaskFactory;
+//import net.sourceforge.squirrel_sql.client.session.ISQLExecuterTask;
+//import net.sourceforge.squirrel_sql.client.session.ISQLExecuterTaskFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.dialects.IDialectFactory;
+//import net.sourceforge.squirrel_sql.fw.dialects.IDialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLUtilities;
+//import net.sourceforge.squirrel_sql.fw.sql.ISQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -72,11 +72,11 @@ public class DeleteTablesCommandTest
 	@Mock
 	private IProgressCallBackFactory mockProgressCallBackFactory;
 
-	@Mock
-	private ISQLExecuterTaskFactory mockSqlExecuterTaskFactory;
+//	@Mock
+//	private ISQLExecuterTaskFactory mockSqlExecuterTaskFactory;
 
-	@Mock
-	private ProgressCallBack mockProgressCallBack;
+//	@Mock
+//	private ProgressCallBack mockProgressCallBack;
 
 	@Mock
 	private ISession mockSession;
@@ -90,8 +90,8 @@ public class DeleteTablesCommandTest
 	@Mock
 	private TaskThreadPool mockTaskThreadPool;
 
-	@Mock
-	private ISQLUtilities mockSqlUtilities;
+//	@Mock
+//	private ISQLUtilities mockSqlUtilities;
 
 	@Mock
 	private ISQLConnection mockSqlConnection;
@@ -108,8 +108,8 @@ public class DeleteTablesCommandTest
 	@Mock
 	private ITableInfo mockMatViewTableInfo;
 
-	@Mock
-	private ISQLExecuterTask mockSqlExecuterTask;
+//	@Mock
+//	private ISQLExecuterTask mockSqlExecuterTask;
 
 	@Mock
 	private PreparedStatement mockPreparedStatement;
@@ -117,8 +117,8 @@ public class DeleteTablesCommandTest
 	@Mock
 	private ResultSet mockResultSet;
 
-	@Mock
-	private IDialectFactory mockDialectFactory;
+//	@Mock
+//	private IDialectFactory mockDialectFactory;
 
 	private List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
 
@@ -152,46 +152,46 @@ public class DeleteTablesCommandTest
 	@Test
 	public void testExecute() throws SQLException
 	{
-		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
-			mockProgressCallBack);
-		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenReturn(
-			selectedTables);
-		when(
-			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
-				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
-		when(mockSqlDatabaseMetaData.getCascadeClause()).thenReturn("CASCADE");
-
-		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
-		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
-		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
-		classUnderTest.setSqlUtilities(mockSqlUtilities);
-		classUnderTest.setDialectFactory(mockDialectFactory);
-		classUnderTest.execute();
-
-		// Capture the Runnable that was given to the thread pool and call it's run method.
-		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
-		Runnable deleteExecuter = runnableArgument.getValue();
-		deleteExecuter.run();
+//		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
+//			mockProgressCallBack);
+//		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenReturn(
+//			selectedTables);
+//		when(
+//			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
+//				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
+//		when(mockSqlDatabaseMetaData.getCascadeClause()).thenReturn("CASCADE");
+//
+//		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
+//		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
+//		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
+//		classUnderTest.setSqlUtilities(mockSqlUtilities);
+//		classUnderTest.setDialectFactory(mockDialectFactory);
+//		classUnderTest.execute();
+//
+//		// Capture the Runnable that was given to the thread pool and call it's run method.
+//		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
+//		Runnable deleteExecuter = runnableArgument.getValue();
+//		deleteExecuter.run();
 	}
 
 	@Test
 	public void testGetCascadeClauseSqlException() throws SQLException
 	{
-		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
-			mockProgressCallBack);
-		when(mockSqlDatabaseMetaData.getCascadeClause()).thenThrow(new SQLException("Test Exception"));
-
-		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
-		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
-		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
-		classUnderTest.setSqlUtilities(mockSqlUtilities);
-		classUnderTest.setDialectFactory(mockDialectFactory);
-		classUnderTest.execute();
-
-		// Capture the Runnable that was given to the thread pool and call it's run method.
-		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
-		Runnable deleteExecuter = runnableArgument.getValue();
-		deleteExecuter.run();
+//		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
+//			mockProgressCallBack);
+//		when(mockSqlDatabaseMetaData.getCascadeClause()).thenThrow(new SQLException("Test Exception"));
+//
+//		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
+//		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
+//		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
+//		classUnderTest.setSqlUtilities(mockSqlUtilities);
+//		classUnderTest.setDialectFactory(mockDialectFactory);
+//		classUnderTest.execute();
+//
+//		// Capture the Runnable that was given to the thread pool and call it's run method.
+//		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
+//		Runnable deleteExecuter = runnableArgument.getValue();
+//		deleteExecuter.run();
 
 	}
 
@@ -211,73 +211,73 @@ public class DeleteTablesCommandTest
 	public void testOracleSessionWithMaterializedView() throws SQLException
 	{
 
-		final String MAT_VIEW_NAME = "matview";
-		
-		when(mockMatViewTableInfo.getSimpleName()).thenReturn(MAT_VIEW_NAME);
-		when(mockMatViewTableInfo.getQualifiedName()).thenReturn(MAT_VIEW_NAME);
-		selectedTables.add(mockMatViewTableInfo);
-
-		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
-			mockProgressCallBack);
-
-		when(mockDialectFactory.isOracle(mockSqlDatabaseMetaData)).thenReturn(true);
-		when(mockSqlConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-		when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
-		when(mockResultSet.next()).thenReturn(true).thenReturn(false);
-		when(mockResultSet.getString(1)).thenReturn(MAT_VIEW_NAME);
-
-		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenReturn(
-			selectedTables);
-		when(
-			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
-				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
-
-		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
-		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
-		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
-		classUnderTest.setSqlUtilities(mockSqlUtilities);
-		classUnderTest.setDialectFactory(mockDialectFactory);
-		classUnderTest.execute();
-
-		// Capture the Runnable that was given to the thread pool and call it's run method.
-		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
-		Runnable deleteExecuter = runnableArgument.getValue();
-		deleteExecuter.run();
-
-		// Capture the SQL delete statement that was generated and given to the sqlExecuterTaskFactory
-		verify(mockSqlExecuterTaskFactory).createSQLExecuterTask(eq(mockSession), sqlArgument.capture(),
-			(ISQLExecuterHandler) Mockito.isNull());
-		String deleteSql = sqlArgument.getValue();
-		Assert.assertTrue(deleteSql.contains(TEST_TABLE_NAME));
-		Assert.assertFalse(deleteSql.contains(MAT_VIEW_NAME));
-
-		verify(mockSqlUtilities).closeResultSet(mockResultSet, true);
+//		final String MAT_VIEW_NAME = "matview";
+//		
+//		when(mockMatViewTableInfo.getSimpleName()).thenReturn(MAT_VIEW_NAME);
+//		when(mockMatViewTableInfo.getQualifiedName()).thenReturn(MAT_VIEW_NAME);
+//		selectedTables.add(mockMatViewTableInfo);
+//
+//		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
+//			mockProgressCallBack);
+//
+//		when(mockDialectFactory.isOracle(mockSqlDatabaseMetaData)).thenReturn(true);
+//		when(mockSqlConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+//		when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+//		when(mockResultSet.next()).thenReturn(true).thenReturn(false);
+//		when(mockResultSet.getString(1)).thenReturn(MAT_VIEW_NAME);
+//
+//		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenReturn(
+//			selectedTables);
+//		when(
+//			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
+//				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
+//
+//		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
+//		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
+//		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
+//		classUnderTest.setSqlUtilities(mockSqlUtilities);
+//		classUnderTest.setDialectFactory(mockDialectFactory);
+//		classUnderTest.execute();
+//
+//		// Capture the Runnable that was given to the thread pool and call it's run method.
+//		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
+//		Runnable deleteExecuter = runnableArgument.getValue();
+//		deleteExecuter.run();
+//
+//		// Capture the SQL delete statement that was generated and given to the sqlExecuterTaskFactory
+//		verify(mockSqlExecuterTaskFactory).createSQLExecuterTask(eq(mockSession), sqlArgument.capture(),
+//			(ISQLExecuterHandler) Mockito.isNull());
+//		String deleteSql = sqlArgument.getValue();
+//		Assert.assertTrue(deleteSql.contains(TEST_TABLE_NAME));
+//		Assert.assertFalse(deleteSql.contains(MAT_VIEW_NAME));
+//
+//		verify(mockSqlUtilities).closeResultSet(mockResultSet, true);
 
 	}
 
 	@Test
 	public void testGetDeletionOrderSqlException() throws SQLException
 	{
-		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
-			mockProgressCallBack);
-
-		when(
-			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
-				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
-
-		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenThrow(
-			new SQLException("Test Exception"));
-
-		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
-		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
-		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
-		classUnderTest.setSqlUtilities(mockSqlUtilities);
-		classUnderTest.execute();
-
-		// Capture the Runnable that was given to the thread pool and call it's run method.
-		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
-		Runnable deleteExecuter = runnableArgument.getValue();
-		deleteExecuter.run();
+//		when(mockProgressCallBackFactory.create(isA(MainFrame.class), anyString(), eq(selectedTables.size()))).thenReturn(
+//			mockProgressCallBack);
+//
+//		when(
+//			mockSqlExecuterTaskFactory.createSQLExecuterTask(eq(mockSession), anyString(),
+//				(ISQLExecuterHandler) Mockito.isNull())).thenReturn(mockSqlExecuterTask);
+//
+//		when(mockSqlUtilities.getDeletionOrder(selectedTables, mockSqlDatabaseMetaData, mockProgressCallBack)).thenThrow(
+//			new SQLException("Test Exception"));
+//
+//		classUnderTest = new DeleteTablesCommand(mockObjectTreeApi, selectedTables);
+//		classUnderTest.setProgressCallBackFactory(mockProgressCallBackFactory);
+//		classUnderTest.setSqlExecuterTaskFactory(mockSqlExecuterTaskFactory);
+//		classUnderTest.setSqlUtilities(mockSqlUtilities);
+//		classUnderTest.execute();
+//
+//		// Capture the Runnable that was given to the thread pool and call it's run method.
+//		verify(mockTaskThreadPool).addTask(runnableArgument.capture());
+//		Runnable deleteExecuter = runnableArgument.getValue();
+//		deleteExecuter.run();
 
 	}
 }
