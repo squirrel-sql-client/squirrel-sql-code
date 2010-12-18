@@ -26,9 +26,10 @@ New Session property to let SQuirreL set fetch size (call Statement.setFetchSize
 
 Bug-fixes:
 
-Bug 3123014: StackOverflow ProgressCallBackDialog. 
+3137390: Cannot connect after latest software update. 
+3123014: StackOverflow ProgressCallBackDialog. 
 			 Thanks to Stefan (wis775) for the patch.
-Bug 3055859: Regular expressions did not work in find & replace dialog 
+3055859: Regular expressions did not work in find & replace dialog 
 			 Thanks to Stefan (wis775) for the patch.
 
 Fixed translation label that was not being applied to "Initialize Session Timezone" checkbox.
