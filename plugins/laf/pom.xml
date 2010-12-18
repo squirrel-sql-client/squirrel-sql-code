@@ -17,6 +17,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>laf</artifactId>
 	<packaging>jar</packaging>
 
