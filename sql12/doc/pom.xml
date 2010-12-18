@@ -58,9 +58,34 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>changes.txt</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>changes.txt</include>
+				</includes>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 		<plugins>
+			<!-- Set the squirrelsql.changelog.header if it has not already been set. -->
+			<plugin>
+				<groupId>net.sf.squirrel-sql</groupId>
+				<artifactId>squirrelsql-version-plugin</artifactId>
+				<version>${squirrelsql-version-plugin-version}</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>set-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -72,5 +97,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
