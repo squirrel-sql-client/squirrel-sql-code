@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>maven-plugin-workspace</artifactId>
-		<version>1.0.5</version>
+		<version>1.0.6-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>squirrelsql-version-plugin</artifactId>
@@ -45,9 +45,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin</url>
+		<connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-version-plugin</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-version-plugin</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/maven-plugin-workspace/squirrelsql-version-plugin</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
