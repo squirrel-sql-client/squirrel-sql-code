@@ -62,14 +62,35 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 	 */
 	public static String RPM_VERSION_PROPERTY_KEY = "squirrelsql.rpm.version";
 	
+	/**
+	 * If the version is a snapshot, then this is the contents of the header in changes.txt 
+	 */
+	public static String NOT_YET_RELEASED_HEADER_VALUE =
+		"Not yet released - available from SVN or in the latest snapshot:\n" + 
+		"----------------------------------------------------------------\n";
+	
+	/** 
+	 * The value of this property is what appears at the very top of the changelog 
+	 * (doc/src/main/resources/changes.txt)
+	 */
+	public static String CHANGELOG_HEADER_KEY = "squirrelsql.changelog.header";
+	
 	/** The format of the timestamp that follows the prefix SNAPSHOT- in the version string */
 	public static String TIMESTAMP_PATTERN = "yyyyMMdd_kkmm";
+
+	/** 
+	 * Format of the date that is displayed next to a non-snapshot release version
+	 */	
+	public static String CHANGELOG_DATE_FORMAT = "MM/dd/yyyy";
 
 	/** A place to keep the version after it has been generated. */
 	private static String squirrelsqlVersion = null;
 	
 	/** A place to keep the rpm version after it has been generated from the squirrelsqlVersion */
 	private static String squirrelsqlRpmVersion = null;
+	
+	/** A place to keep the changelog header after it has been generated. */
+	private static String changeLogHeader = null;
 	
 	/**
 	 * The maven project in which this plugin is configured.
@@ -106,6 +127,7 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 		{
 			if (project == null) { throw new MojoExecutionException("project cannot be null."); }
 
+			Date currentDate = new Date();
 			squirrelsqlVersion = project.getVersion();
 
 			// override the project's version with the value of "projectVersion" if it is configured
@@ -117,18 +139,11 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 			// If the squirrelsqlVersion ends with -snapshot, then we need to generate a timestamp
 			if (squirrelsqlVersion.toLowerCase().endsWith("-snapshot"))
 			{
-				try
-				{
-					SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_PATTERN);
-					String timestampStr = sdf.format(new Date());
-					squirrelsqlVersion = "Snapshot-" + timestampStr;
-				}
-				catch (IllegalStateException e)
-				{
-
-					log.error("Could not convert date format pattern " + TIMESTAMP_PATTERN);
-					throw e;
-				}
+				squirrelsqlVersion = "Snapshot-" + getFormattedDate(currentDate, TIMESTAMP_PATTERN);
+				changeLogHeader = NOT_YET_RELEASED_HEADER_VALUE;
+			} else {
+				String releaseDateStr = getFormattedDate(currentDate, CHANGELOG_DATE_FORMAT);
+				changeLogHeader = getReleaseChangeLogHeader(squirrelsqlVersion, releaseDateStr);
 			}
 			// RPM requires that the version string have no dashes.  So create a special RPM-safe version of the 
 			// version string.
@@ -144,12 +159,40 @@ public class SquirrelSqlVersionMojo extends AbstractMojo
 		Properties props = project.getProperties();
 		props.put(VERSION_PROPERTY_KEY, squirrelsqlVersion);
 		props.put(RPM_VERSION_PROPERTY_KEY, squirrelsqlVersion.replace('-', '_'));
+		props.put(CHANGELOG_HEADER_KEY, changeLogHeader);
 		
 		// Also a global system property so that this is accessible from any pom as a pom property.
 		System.setProperty(VERSION_PROPERTY_KEY, squirrelsqlVersion);
 		System.setProperty(RPM_VERSION_PROPERTY_KEY, squirrelsqlVersion.replace('-', '_'));
+		System.setProperty(CHANGELOG_HEADER_KEY, changeLogHeader);
 		
 		//writeVersionToFile();
+	}
+	
+	private String getReleaseChangeLogHeader(String version, String releaseDateStr) {
+		StringBuilder result = new StringBuilder();
+		result.append(version).append(" (").append(releaseDateStr).append(")");
+		int length = result.length();
+		result.append("\n");
+		for (int i = 0; i < length; i++) {
+			result.append("=");
+		}
+		return result.toString();
+	}
+
+	private String getFormattedDate(Date dateToFormat, String formatToApply) {
+		String result = null;
+		try
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat(formatToApply);
+			result = sdf.format(dateToFormat);
+		}
+		catch (IllegalStateException e)
+		{
+			log.error("Could not convert date format pattern " + formatToApply);
+			throw e;
+		}
+		return result;
 	}
 	
 	private void writeVersionToFile() {
