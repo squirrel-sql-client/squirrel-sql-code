@@ -672,7 +672,7 @@ public class UpdateUtilImpl implements UpdateUtil
 
 		for (PluginInfo info : _pluginManager.getPluginInformation())
 		{
-			result.add(info.getInternalName() + ".zip");
+			result.add(info.getInternalName() + "-assembly.zip");
 		}
 		return result;
 	}
