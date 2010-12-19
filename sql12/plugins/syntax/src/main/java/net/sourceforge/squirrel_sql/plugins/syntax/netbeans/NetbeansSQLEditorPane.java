@@ -23,7 +23,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.BaseSettingsInitializer;
@@ -41,13 +41,13 @@ public class NetbeansSQLEditorPane extends JEditorPane
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private SyntaxPreferences _prefs;
    private SyntaxFactory _syntaxFactory;
-   private SyntaxPugin _plugin;
+   private SyntaxPlugin _plugin;
 
    private IIdentifier _sqlEntryPanelIdentifier;
 	private SessionAdapter _sessionListener;
    private NetbeansPropertiesWrapper _propertiesWrapper;
 
-   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier, NetbeansPropertiesWrapper propertiesWrapper)
+   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPlugin plugin, IIdentifier sqlEntryPanelIdentifier, NetbeansPropertiesWrapper propertiesWrapper)
 	{
 		_session = session;
 

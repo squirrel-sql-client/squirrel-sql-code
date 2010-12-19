@@ -22,7 +22,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 
    private NetbeansSQLEntryAreaFactory _netbeansFactory;
    private OsterSQLEntryAreaFactory _osterFactory;
-   private SyntaxPugin _syntaxPugin;
+   private SyntaxPlugin _syntaxPugin;
 
    /** The original Squirrel SQL CLient factory for creating SQL entry panels. */
    private ISQLEntryPanelFactory _originalFactory;
@@ -30,7 +30,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
    private RSyntaxSQLEntryAreaFactory _rsyntaxFactory;
 
 
-   SQLEntryPanelFactoryProxy(SyntaxPugin syntaxPugin, ISQLEntryPanelFactory originalFactory)
+   SQLEntryPanelFactoryProxy(SyntaxPlugin syntaxPugin, ISQLEntryPanelFactory originalFactory)
    {
       _originalFactory = originalFactory;
       _rsyntaxFactory = new RSyntaxSQLEntryAreaFactory(syntaxPugin);

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 
 import org.netbeans.editor.Coloring;
@@ -197,7 +197,7 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
 
    }
 
-   public static Map<String, String> getAbbrevMap(SyntaxPugin plugin)
+   public static Map<String, String> getAbbrevMap(SyntaxPlugin plugin)
    {
       Map<String, String> javaAbbrevMap = new TreeMap<String, String>();
 

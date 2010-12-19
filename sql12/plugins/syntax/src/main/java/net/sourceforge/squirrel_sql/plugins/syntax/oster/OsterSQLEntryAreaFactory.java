@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 /**
  * Factory creating Oster SQL entry area objects.
  *
@@ -30,9 +30,9 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
  */
 public class OsterSQLEntryAreaFactory
 {
-	private SyntaxPugin _plugin;
+	private SyntaxPlugin _plugin;
 
-	public OsterSQLEntryAreaFactory(SyntaxPugin plugin)
+	public OsterSQLEntryAreaFactory(SyntaxPlugin plugin)
 	{
 		if (plugin == null)
 		{

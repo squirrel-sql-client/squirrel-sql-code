@@ -18,9 +18,9 @@ public class AutoCorrectController
 
 
    private AutoCorrectDlg _dlg;
-   private SyntaxPugin _syntaxPugin;
+   private SyntaxPlugin _syntaxPugin;
 
-   public AutoCorrectController(SyntaxPugin syntaxPugin)
+   public AutoCorrectController(SyntaxPlugin syntaxPugin)
    {
       _syntaxPugin = syntaxPugin;
 
