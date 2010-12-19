@@ -29,6 +29,7 @@ New Session property to let SQuirreL set fetch size (call Statement.setFetchSize
 Bug-fixes:
 
 3137390: Cannot connect after latest software update.
+3136386: Deleting table content via context menu does not work
 3123014: StackOverflow ProgressCallBackDialog. 
 			 Thanks to Stefan (wis775) for the patch.
 3055859: Regular expressions did not work in find & replace dialog 
