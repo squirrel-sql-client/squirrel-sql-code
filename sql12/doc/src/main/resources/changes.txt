@@ -6,6 +6,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Feature request #1608435 (checkbox in I18N administration: "show only bundles with missing translations").  
+	Thanks to Ivo Neri for the patch.
+
 New icons in Object tree
 
 Updated translation for Italian (Thanks to Ivo Neri)
