@@ -50,7 +50,11 @@ public class TranslatorsPanel extends JPanel
 
    JCheckBox cbxIncludeTimestamp = null;
    
+   JCheckBox cbxExcludeComplete = null;
+
    private static final String PREF_KEY_INCLUDE_TIMESTAMP = "SquirrelSQL.i18n.includeTimestamp";
+
+   public  static final String PREF_KEY_EXCLUDE_COMPLETE = "SquirrelSQL.i18n.excludeComplete";
 
    public TranslatorsPanel(PluginResources resources)
    {
@@ -70,6 +74,11 @@ public class TranslatorsPanel extends JPanel
           Preferences.userRoot().get(PREF_KEY_INCLUDE_TIMESTAMP, "true");
       
       cbxIncludeTimestamp.setSelected(includeTimestamp.equals("true"));
+
+      String excludeComplete = 
+          Preferences.userRoot().get(PREF_KEY_EXCLUDE_COMPLETE, "false");
+      
+      cbxExcludeComplete.setSelected(excludeComplete.equals("true"));
    }
 
 	private JPanel getTranslationsPanel(PluginResources resources)
@@ -139,12 +148,16 @@ public class TranslatorsPanel extends JPanel
       btnChooseNativeToAsciiOutDir = new JButton(resources.getIcon("Open"));
       gbc = new GridBagConstraints(2, 4, 1, 1, 0, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
       ret.add(btnChooseNativeToAsciiOutDir, gbc);
-
+      
       gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
       // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
       cbxIncludeTimestamp = new JCheckBox(s_stringMgr.getString("I18n.includeTimestamp"));
       ret.add(cbxIncludeTimestamp, gbc);
 
+      // i18n[I18n.excludeComplete=Show only partially translated bundles]
+      cbxExcludeComplete = new JCheckBox(s_stringMgr.getString("I18n.excludeComplete"));
+      gbc = new GridBagConstraints(1,6,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
+      ret.add(cbxExcludeComplete, gbc);
 
 /*      gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
       // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
@@ -152,11 +165,11 @@ public class TranslatorsPanel extends JPanel
       ret.add(timestampLabel, gbc);
 */      
       
-      gbc = new GridBagConstraints(0, 6, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 7, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
 		// i18n[I18n.bundles=Bundles]
 		ret.add(new JLabel(s_stringMgr.getString("I18n.bundles")), gbc);
 
-		gbc = new GridBagConstraints(0, 7, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 8, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
 		ret.add(new JScrollPane(tblBundels), gbc);
 
 		return ret;

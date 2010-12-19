@@ -88,6 +88,16 @@ public class TranslatorsController
 			}
 		});
 
+		_panel.cbxExcludeComplete.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				onLoadBundels(_app);
+				String excludeComplete = Boolean.valueOf(_panel.cbxExcludeComplete.isSelected()).toString();
+				Preferences.userRoot().put(TranslatorsPanel.PREF_KEY_EXCLUDE_COMPLETE, excludeComplete);
+			}
+		});
+
 		_panel.btnChooseWorkDir.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -554,7 +564,9 @@ public class TranslatorsController
 		{
 			I18nProps i18nProps = defaultI18nProps.get(i);
 			I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false), sourceUrls);
-			i18nBundlesByName.put(i18nProps.getPath(), pack);
+			if (!_panel.cbxExcludeComplete.isSelected() || pack.getMissingTranslationsCount()!=0) {
+				i18nBundlesByName.put(i18nProps.getPath(), pack);
+			}
 		}
 
 		for (int i = 0; i < localizedI18nProps.size(); i++)
