@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
 import org.netbeans.editor.BaseKit;
 import org.netbeans.editor.Coloring;
@@ -38,7 +38,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
    private SyntaxPreferences _syntaxPreferences;
 
    private static int MENU_MASK = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-   private SyntaxPugin _plugin;
+   private SyntaxPlugin _plugin;
    private Font _font;
 
 
@@ -49,7 +49,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     * @param syntaxPreferences
     * @param plugin
     */
-   public SQLSettingsInitializer(Class<?> sqlKitClass, SyntaxPreferences syntaxPreferences, Font font, SyntaxPugin plugin)
+   public SQLSettingsInitializer(Class<?> sqlKitClass, SyntaxPreferences syntaxPreferences, Font font, SyntaxPlugin plugin)
    {
       super(NAME);
       this.sqlKitClass = sqlKitClass;

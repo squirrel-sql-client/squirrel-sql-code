@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
 import org.netbeans.editor.DialogSupport;
 import org.netbeans.editor.ImplementationProvider;
@@ -37,7 +37,7 @@ import org.netbeans.modules.editor.NbImplementationProvider;
  */
 public class NetbeansSQLEntryAreaFactory
 {
-	private SyntaxPugin _plugin;
+	private SyntaxPlugin _plugin;
    private SyntaxFactory _syntaxFactory;
    
    /** 
@@ -48,7 +48,7 @@ public class NetbeansSQLEntryAreaFactory
    private HashMap<IIdentifier, NetbeansSQLEntryPanel> _panels = 
       new HashMap<IIdentifier, NetbeansSQLEntryPanel>();
 
-   public NetbeansSQLEntryAreaFactory(SyntaxPugin plugin)
+   public NetbeansSQLEntryAreaFactory(SyntaxPlugin plugin)
 	{
 		if (plugin == null)
 		{

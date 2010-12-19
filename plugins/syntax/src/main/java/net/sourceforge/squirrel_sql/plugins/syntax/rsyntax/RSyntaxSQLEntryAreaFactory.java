@@ -1,23 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
 public class RSyntaxSQLEntryAreaFactory
 {
-	private SyntaxPugin _plugin;
+	private SyntaxPlugin _plugin;
    private HashMap<IIdentifier, ArrayList<RSyntaxSQLEntryPanel>> _rSyntaxSQLEntryPanelsBySessionID = new HashMap<IIdentifier, ArrayList<RSyntaxSQLEntryPanel>>();
 
-   public RSyntaxSQLEntryAreaFactory(SyntaxPugin plugin)
+   public RSyntaxSQLEntryAreaFactory(SyntaxPlugin plugin)
 	{
 		_plugin = plugin;
 	}
