@@ -23,20 +23,21 @@ Graph Plugin: Multiple tables can now be selected and moved simultanously
 
 New Session property to let SQuirreL set fetch size (call Statement.setFetchSize(int)).
   See Session properties --> SQL tab.
-  Thanks to Stefan (wis775) for the patch
+  Thanks to Stefan (wis775) for the patch.
 
 
 Bug-fixes:
 
+3138746: Typo within PluginClassName of SyntaxPlugin.
 3137390: Cannot connect after latest software update.
-3136386: Deleting table content via context menu does not work
-3123014: StackOverflow ProgressCallBackDialog. 
+3136386: Deleting table content via context menu does not work.
+3123014: StackOverflow ProgressCallBackDialog.
 			 Thanks to Stefan (wis775) for the patch.
-3055859: Regular expressions did not work in find & replace dialog 
+3055859: Regular expressions did not work in find & replace dialog.
 			 Thanks to Stefan (wis775) for the patch.
 
 Fixed translation label that was not being applied to "Initialize Session Timezone" checkbox.
-  Thanks to Ivo Neri for the patch. 
+  Thanks to Ivo Neri for the patch.
 
 3.2.0 (11/21/2010)
 ==================
