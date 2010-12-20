@@ -433,6 +433,15 @@
 			required="no"
 			preselected="no"
 			installGroups="Translations"
+			name="Optional Translation - Japanese">
+			<description>Provides native labels and user messages for use in a Japanese locale (Toshiki IGA)
+			</description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/lib" src="translations/squirrel-sql_ja_JP.jar" />
+		</pack>		
+		<pack
+			required="no"
+			preselected="no"
+			installGroups="Translations"
 			name="Optional Translation - Korean">
 			<description>Provides native labels and user messages for use in a Korean locale (Youngwoo)
 			</description>
