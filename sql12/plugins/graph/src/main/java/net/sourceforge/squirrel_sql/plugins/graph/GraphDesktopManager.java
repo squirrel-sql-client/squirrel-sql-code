@@ -27,14 +27,13 @@ public class GraphDesktopManager extends DefaultDesktopManager
       {
          TableFrame tf = (TableFrame) f;
 
-         if (!_graphDesktopPane.isGroupFrame(tf))
-         {
-            _graphDesktopPane.setGroupFrame(tf);
-         }
 
          Point correctDelta = checkBounds(newX - f.getX(), newY - f.getY(), _graphDesktopPane);
          correctX = f.getX() + correctDelta.x;
          correctY = f.getY() + correctDelta.y;
+
+         tolerantlyCheckGroupDissolve(tf, correctDelta);
+
          for (TableFrame current : _graphDesktopPane.getGroupFrames())
          {
             if (current != tf)
@@ -47,7 +46,21 @@ public class GraphDesktopManager extends DefaultDesktopManager
       }
       super.dragFrame(f, correctX, correctY);
 
-      _graphDesktopPane.repaint(); // Needed in case tbles are moved that don't have any constraints.
+      _graphDesktopPane.repaint(); // Needed in case tables are moved that don't have any constraints.
+   }
+
+   private void tolerantlyCheckGroupDissolve(TableFrame tf, Point correctDelta)
+   {
+      double tolerance = 0.005;
+
+      if (     ((double)correctDelta.x) / ((_graphDesktopPane.getWidth())) > tolerance
+            || ((double)correctDelta.y) / ((_graphDesktopPane.getHeight())) > tolerance)
+      {
+         if (!_graphDesktopPane.isGroupFrame(tf))
+         {
+            _graphDesktopPane.setGroupFrame(tf);
+         }
+      }
    }
 
    private void moveFoldingPoints(List<TableFrame> movedTableFrames, Point delta)
