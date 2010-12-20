@@ -38,10 +38,11 @@
 <pack index="29" name="Optional Translation - French" selected="true"/>
 <pack index="30" name="Optional Translation - German" selected="true"/>
 <pack index="31" name="Optional Translation - Italian" selected="true"/>
-<pack index="32" name="Optional Translation - Korean" selected="true"/>
-<pack index="33" name="Optional Translation - Polish" selected="true"/>
-<pack index="34" name="Optional Translation - Russian" selected="true"/>
-<pack index="35" name="Optional Translation - Spanish" selected="true"/>
+<pack index="32" name="Optional Translation - Japanese" selected="true"/>
+<pack index="33" name="Optional Translation - Korean" selected="true"/>
+<pack index="34" name="Optional Translation - Polish" selected="true"/>
+<pack index="35" name="Optional Translation - Russian" selected="true"/>
+<pack index="36" name="Optional Translation - Spanish" selected="true"/>
 </com.izforge.izpack.panels.PacksPanel>
 <com.izforge.izpack.panels.InstallPanel id="UNKNOWN (com.izforge.izpack.panels.InstallPanel)"/>
 <com.izforge.izpack.panels.ShortcutPanel id="UNKNOWN (com.izforge.izpack.panels.ShortcutPanel)"/>
