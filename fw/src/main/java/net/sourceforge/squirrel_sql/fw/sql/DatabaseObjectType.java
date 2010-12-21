@@ -20,8 +20,11 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
 
 import static net.sourceforge.squirrel_sql.fw.resources.LibraryResources.IImageNames.*;
 
@@ -75,7 +78,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectTypeI18n("DatabaseObjectType.foreignkey");
 
    /** Function. */
-   public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectTypeI18n("DatabaseObjectType.function");
+   public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectTypeI18n("DatabaseObjectType.function", DOT_FUNCTION);
 
    /**
     * Database object type for a "Index Type" node in the object tree. There is
@@ -172,15 +175,15 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    /** Describes this object type. */
    private final String _name;
    private String _keyForSerializationReplace;
-   private String _imageName;
+   private Icon _icon;
 
    /**
     * Default ctor.
     */
-   private DatabaseObjectType(String name, String keyForSerializationReplace, String imageName)
+   private DatabaseObjectType(String name, String keyForSerializationReplace, Icon icon)
    {
       _keyForSerializationReplace = keyForSerializationReplace;
-      _imageName = imageName;
+      _icon = icon;
       _id = s_idFactory.createIdentifier();
       _name = name != null ? name : _id.toString();
    }
@@ -211,9 +214,9 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
       return _keyForSerializationReplace;
    }
 
-   public String getImageName()
+   public Icon getIcon()
    {
-      return _imageName;
+      return _icon;
    }
 
    public String toString()
@@ -221,19 +224,31 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
       return getName();
    }
 
-   public static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key, String imageName)
+   private static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key, String imageName)
    {
-      return new DatabaseObjectType(key, s_stringMgr.getString(key), imageName);
+      ImageIcon icon = null;
+
+      if (null != imageName)
+      {
+         icon = new LibraryResources().getIcon(imageName);
+      }
+
+      return createNewDatabaseObjectType(s_stringMgr.getString(key), icon);
    }
 
-   public static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key)
+   private static DatabaseObjectType createNewDatabaseObjectTypeI18n(String key)
    {
       return createNewDatabaseObjectTypeI18n(key, null);
    }
 
    public static DatabaseObjectType createNewDatabaseObjectType(String key)
    {
-      return new DatabaseObjectType(key, key, null);
+      return createNewDatabaseObjectType(key, null);
+   }
+
+   public static DatabaseObjectType createNewDatabaseObjectType(String key, Icon icon)
+   {
+      return new DatabaseObjectType(key, key, icon);
    }
 
 }

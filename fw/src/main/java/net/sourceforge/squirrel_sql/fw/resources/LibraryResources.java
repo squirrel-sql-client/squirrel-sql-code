@@ -44,6 +44,7 @@ public class LibraryResources extends Resources
       String DOT_SEQUENCES = "dot.sequences";
       String DOT_TRIGGER = "dot.trigger";
       String DOT_TRIGGERS = "dot.triggers";
+      String DOT_FUNCTION = "dot.function";
 
 
 

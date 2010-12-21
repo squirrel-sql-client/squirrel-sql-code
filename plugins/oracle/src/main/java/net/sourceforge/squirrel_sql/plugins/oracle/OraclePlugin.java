@@ -45,7 +45,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
@@ -132,7 +131,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(OraclePlugin.class);
 
-	private PluginResources _resources;
+	private OraclePluginResources _resources;
 
 	/**
 	 * A list of Oracle sessions that are open so we'll know when none are left
@@ -157,8 +156,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
 
 	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.oracle.oracle";
+   private ObjectTypes _objectTypes;
 
-	interface i18n
+   interface i18n
 	{
 		// i18n[OraclePlugin.title=Oracle]
 		String title = s_stringMgr.getString("OraclePlugin.title");
@@ -274,9 +274,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 			final IApplication app = getApplication();
 
-			_resources = new OracleResources(OraclePlugin.BUNDLE_BASE_NAME, this);
+			_resources = new OraclePluginResources(OraclePlugin.BUNDLE_BASE_NAME, this);
+         _objectTypes = new ObjectTypes(_resources);
 
-			ActionCollection coll = app.getActionCollection();
+         ActionCollection coll = app.getActionCollection();
 			coll.add(new NewDBOutputWorksheetAction(app, _resources));
 			coll.add(new NewInvalidObjectsWorksheetAction(app, _resources));
 			coll.add(new NewSessionInfoWorksheetAction(app, _resources));
@@ -303,7 +304,8 @@ public class OraclePlugin extends DefaultSessionPlugin
 					_oracleAliasPrefsByAliasIdentifier.put(buf.getAliasIdentifier(), buf);
 				}
 
-			} else
+			}
+         else
 			{
 				_oracleAliasPrefsByAliasIdentifier = new Hashtable<IIdentifier, OracleAliasPrefs>();
 			}
@@ -313,7 +315,8 @@ public class OraclePlugin extends DefaultSessionPlugin
 			/* Register custom DataTypeComponent factory for Oracles XMLType */
 			CellComponentFactory.registerDataTypeFactory(
 			   new OracleXmlTypeDataTypeComponentFactory(), 2007, "SYS.XMLTYPE");
-		} catch (Exception e)
+		}
+      catch (Exception e)
 		{
 			throw new RuntimeException(e);
 		}
@@ -584,7 +587,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		}
 		if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle)
 		{
-			return new DefaultDatabaseExpander(session);
+			return new DefaultDatabaseExpander(session, _objectTypes);
 		}
 		if (type == DatabaseObjectType.TABLE_TYPE_DBO && isOracleWithFlashBack)
 		{
@@ -783,52 +786,52 @@ public class OraclePlugin extends DefaultSessionPlugin
 	{
 		ISession session = objTree.getSession();
 		addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
-		addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
+		addDetailTab(objTree, _objectTypes.getConsumerGroup(), new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
-		addDetailTab(objTree, IObjectTypes.LOB, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.LOB, new LobDetailsTab());
+		addDetailTab(objTree, _objectTypes.getLob(), new DatabaseObjectInfoTab());
+		addDetailTab(objTree, _objectTypes.getLob(), new LobDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new DatabaseObjectInfoTab());
+		addDetailTab(objTree, _objectTypes.getTriggerParent(), new DatabaseObjectInfoTab());
+		addDetailTab(objTree, _objectTypes.getType(), new DatabaseObjectInfoTab());
+		addDetailTab(objTree, _objectTypes.getConstraint(), new DatabaseObjectInfoTab());
 		
 		// Expanders.
-		addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander());
-		addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
-		addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());
-		addExpander(objTree, IObjectTypes.USER_PARENT, new UserParentExpander(session));
-		addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
-		addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander());
-		addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
-		addExpander(objTree, IObjectTypes.CONSTRAINT_PARENT, new ConstraintParentExpander());
+		addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(_objectTypes));
+		addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander(_objectTypes));
+		addExpander(objTree, _objectTypes.getPackage(), new PackageExpander());
+		addExpander(objTree, _objectTypes.getUserParent(), new UserParentExpander(session));
+		addExpander(objTree, _objectTypes.getSessionParent(), new SessionParentExpander(_objectTypes));
+		addExpander(objTree, _objectTypes.getInstanceParent(), new InstanceParentExpander(_objectTypes));
+		addExpander(objTree, _objectTypes.getTriggerParent(), new TriggerParentExpander());
+		addExpander(objTree, _objectTypes.getConstraintParent(), new ConstraintParentExpander(_objectTypes));
 
 		addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab(
 		   "PROCEDURE", "Show stored procedure source"));
 		addDetailTab(objTree, DatabaseObjectType.FUNCTION, new ObjectSourceTab(
 		   "FUNCTION", "Show function source"));
-		addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab(
+		addDetailTab(objTree, _objectTypes.getPackage(), new ObjectSourceTab(
 		   "PACKAGE", "Specification", "Show package specification"));
-		addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab(
+		addDetailTab(objTree, _objectTypes.getPackage(), new ObjectSourceTab(
 		   "PACKAGE BODY", "Body", "Show package body"));
-		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab(
+		addDetailTab(objTree, _objectTypes.getType(), new ObjectSourceTab(
 		   "TYPE", "Specification", "Show type specification"));
 		
-		addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
-		addDetailTab(objTree, IObjectTypes.INSTANCE, new InstanceDetailsTab());
+		addDetailTab(objTree, _objectTypes.getType(), new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
+		addDetailTab(objTree, _objectTypes.getInstance(), new InstanceDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
-		addDetailTab(objTree, IObjectTypes.SESSION, new SessionDetailsTab());
-		addDetailTab(objTree, IObjectTypes.SESSION, new SessionStatisticsTab());
+		addDetailTab(objTree, _objectTypes.getSession(), new SessionDetailsTab());
+		addDetailTab(objTree, _objectTypes.getSession(), new SessionStatisticsTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
 		addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
-		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintDetailsTab());
-		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintColumnInfoTab());
-		addDetailTab(objTree, IObjectTypes.CONSTRAINT, new ConstraintSourceTab());
+		addDetailTab(objTree, _objectTypes.getConstraint(), new ConstraintDetailsTab());
+		addDetailTab(objTree, _objectTypes.getConstraint(), new ConstraintColumnInfoTab());
+		addDetailTab(objTree, _objectTypes.getConstraint(), new ConstraintSourceTab());
 		
 		addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
 		addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());

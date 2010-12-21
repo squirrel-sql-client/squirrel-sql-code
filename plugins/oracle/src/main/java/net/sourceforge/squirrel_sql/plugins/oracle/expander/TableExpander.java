@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
+
 /**
  * This class is an expander for the table nodes. It will add various Object Type
  * nodes to the table node.
@@ -33,13 +35,17 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class TableExpander implements INodeExpander
 {
-	/**
+   private ObjectTypes _objectTypes;
+
+   /**
 	 * Default ctor.
-	 */
-	public TableExpander()
+    * @param objectTypes
+    */
+	public TableExpander(ObjectTypes objectTypes)
 	{
 		super();
-	}
+      _objectTypes = objectTypes;
+   }
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
@@ -60,13 +66,13 @@ public class TableExpander implements INodeExpander
 		final String schemaName = parentDbinfo.getSchemaName();
 
 		IDatabaseObjectInfo dbinfo = new TriggerParentInfo(parentDbinfo,
-											schemaName, md);
+											schemaName, md, _objectTypes);
 		
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		childNodes.add(child);
 		
 		IDatabaseObjectInfo cstrinfo = new ConstraintParentInfo(parentDbinfo,
-				schemaName, md);
+				schemaName, md, _objectTypes);
 		
 		child = new ObjectTreeNode(session, cstrinfo);
 		childNodes.add(child);

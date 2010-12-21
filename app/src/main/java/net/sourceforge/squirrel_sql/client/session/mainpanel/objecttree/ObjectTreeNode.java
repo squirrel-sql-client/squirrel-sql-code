@@ -25,7 +25,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
@@ -58,8 +57,6 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
 	private final List<INodeExpander> _expanders = new ArrayList<INodeExpander>();
 
-   private ImageIcon _icon;
-
    /**
 	 * Ctor that assumes node cannot have children.
 	 *
@@ -86,12 +83,6 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		_sessionId = session.getIdentifier();
 		_dboInfo = dboInfo;
 
-      if(null != _dboInfo.getDatabaseObjectType().getImageName())
-      {
-         LibraryResources rsrc = new LibraryResources();
-
-         _icon = rsrc.getIcon(_dboInfo.getDatabaseObjectType().getImageName());
-      }
 	}
 
    public void add(MutableTreeNode newChild)
@@ -194,8 +185,8 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 		return dbinfo.toString();
 	}
 
-   public ImageIcon getIcon()
+   public Icon getIcon()
    {
-      return _icon;
+      return _dboInfo.getDatabaseObjectType().getIcon();
    }
 }

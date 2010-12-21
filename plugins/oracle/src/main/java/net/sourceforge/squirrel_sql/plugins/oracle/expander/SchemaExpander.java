@@ -27,7 +27,8 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
+
 /**
  * This class is an expander for the schema nodes. It will add various Object Type
  * nodes to the schema node.
@@ -37,13 +38,17 @@ import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 public class SchemaExpander implements INodeExpander
 {
 
-	/**
+   private ObjectTypes _objectTypes;
+
+   /**
 	 * Ctor.
-	 */
-	public SchemaExpander()
+    * @param objectTypes
+    */
+	public SchemaExpander(ObjectTypes objectTypes)
 	{
 		super();
-	}
+      _objectTypes = objectTypes;
+   }
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
@@ -66,38 +71,38 @@ public class SchemaExpander implements INodeExpander
 
 		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(catalogName,
 											schemaName, "PACKAGE",
-											IObjectTypes.PACKAGE_PARENT, md);
+											_objectTypes.getPackageParent(), md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-		child.addExpander(new PackageParentExpander());
+		child.addExpander(new PackageParentExpander(_objectTypes));
 		childNodes.add(child);
 
 		ObjectType objType;
-		objType = new ObjectType(IObjectTypes.CONSUMER_GROUP_PARENT, "CONSUMER GROUP",
-										IObjectTypes.CONSUMER_GROUP);
+		objType = new ObjectType(_objectTypes.getConsumerGroupParent(), "CONSUMER GROUP",
+										_objectTypes.getConsumerGroup());
 		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
 											md, objType));
 
-		objType = new ObjectType(IObjectTypes.FUNCTION_PARENT, "FUNCTION",
+		objType = new ObjectType(_objectTypes.getFunctionParent(), "FUNCTION",
 									DatabaseObjectType.FUNCTION);
 		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
 											md, objType));
 
-		objType = new ObjectType(IObjectTypes.INDEX_PARENT, "INDEX", DatabaseObjectType.INDEX);
+		objType = new ObjectType(_objectTypes.getIndexParent(), "INDEX", DatabaseObjectType.INDEX);
 		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
 											md, objType));
 
-		objType = new ObjectType(IObjectTypes.LOB_PARENT, "LOB", IObjectTypes.LOB);
+		objType = new ObjectType(_objectTypes.getLobParent(), "LOB", _objectTypes.getLob());
 		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
 											md, objType));
 
 		IDatabaseObjectInfo seqInfo = new DatabaseObjectInfo(catalogName,
 										schemaName, "SEQUENCE",
-										IObjectTypes.SEQUENCE_PARENT, md);
+										_objectTypes.getSequenceParent(), md);
 		ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
 		node.addExpander(new SequenceParentExpander());
 		childNodes.add(node);
 
-		objType = new ObjectType(IObjectTypes.TYPE_PARENT, "TYPE", IObjectTypes.TYPE);
+		objType = new ObjectType(_objectTypes.getTypeParent(), "TYPE", _objectTypes.getType());
 		childNodes.add(createObjectTypeNode(session, catalogName, schemaName,
 											md, objType));
 
