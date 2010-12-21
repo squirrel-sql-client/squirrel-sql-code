@@ -30,7 +30,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class handles the expanding of the Constraint node. It will
@@ -45,10 +45,12 @@ public class ConstraintParentExpander implements INodeExpander {
 			+ " where owner = ?"
 			+ " and table_name = ?" 
 			+ " order by constraint_name asc";
-	
-	public ConstraintParentExpander() {
+   private ObjectTypes _objectTypes;
+
+   public ConstraintParentExpander(ObjectTypes objectTypes) {
 		super();
-	}
+      _objectTypes = objectTypes;
+   }
 	
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException {
@@ -70,7 +72,7 @@ public class ConstraintParentExpander implements INodeExpander {
 					DatabaseObjectInfo doi = new DatabaseObjectInfo(null,
 												schemaName, 
 												rs.getString(1),
-												IObjectTypes.CONSTRAINT, 
+												_objectTypes.getConstraint(),
 												md);
 					childNodes.add(new ObjectTreeNode(session, doi));
 				}

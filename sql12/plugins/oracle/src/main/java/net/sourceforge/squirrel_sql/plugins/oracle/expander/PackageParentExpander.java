@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 /**
  * This class handles the expanding of the "Package Type" or "Package Heading"
  * node. It will give a list of all the packages available in the schema.
@@ -38,16 +38,20 @@ import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
  */
 public class PackageParentExpander implements INodeExpander
 {
-	/**
+   private ObjectTypes _objectTypes;
+
+   /**
 	 * Default ctor.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
+    * @param objectTypes
 	 */
-	PackageParentExpander()
+	PackageParentExpander(ObjectTypes objectTypes)
 	{
 		super();
-	}
+      _objectTypes = objectTypes;
+   }
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
@@ -70,14 +74,14 @@ public class PackageParentExpander implements INodeExpander
 
 		// Add package node to contain standalone procedures.
 		IDatabaseObjectInfo dbinfo = new DatabaseObjectInfo(null, schemaName,
-												"", IObjectTypes.PACKAGE, md);
+												"", _objectTypes.getPackage(), md);
 		ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
 		child.setUserObject("Standalone");
 		childNodes.add(child);
 
 		// Add packages.
-		ObjectType objType = new ObjectType(IObjectTypes.PACKAGE, "PACKAGE",
-												IObjectTypes.PACKAGE);
+		ObjectType objType = new ObjectType(_objectTypes.getPackage(), "PACKAGE",
+												_objectTypes.getPackage());
 		INodeExpander exp = new ObjectTypeExpander(objType);
 		childNodes.addAll(exp.createChildren(session, parentNode));
 

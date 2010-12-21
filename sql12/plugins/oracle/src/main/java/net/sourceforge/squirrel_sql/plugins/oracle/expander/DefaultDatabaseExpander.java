@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
 
@@ -40,9 +40,12 @@ public class DefaultDatabaseExpander extends DatabaseExpander
 {
 
 
-   public DefaultDatabaseExpander(ISession session)
+   private ObjectTypes _objectTypes;
+
+   public DefaultDatabaseExpander(ISession session, ObjectTypes objectTypes)
    {
       super(session);
+      _objectTypes = objectTypes;
    }
 
    public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
@@ -55,7 +58,7 @@ public class DefaultDatabaseExpander extends DatabaseExpander
 
          // Users.
          DatabaseObjectInfo dboInfo = new DatabaseObjectInfo(null, null, "USERS",
-            IObjectTypes.USER_PARENT, md);
+            _objectTypes.getUserParent(), md);
          ObjectTreeNode node = new ObjectTreeNode(session, dboInfo);
          childNodes.add(node);
 
@@ -63,7 +66,7 @@ public class DefaultDatabaseExpander extends DatabaseExpander
          {
             // Instances.
             dboInfo = new DatabaseObjectInfo(null, null, "INSTANCES",
-               IObjectTypes.INSTANCE_PARENT, md);
+               _objectTypes.getInstanceParent(), md);
             node = new ObjectTreeNode(session, dboInfo);
             childNodes.add(node);
          }
@@ -72,7 +75,7 @@ public class DefaultDatabaseExpander extends DatabaseExpander
          {
             // Sessions.
             dboInfo = new DatabaseObjectInfo(null, null, "SESSIONS",
-               IObjectTypes.SESSION_PARENT, md);
+               _objectTypes.getSessionParent(), md);
             node = new ObjectTreeNode(session, dboInfo);
             childNodes.add(node);
          }

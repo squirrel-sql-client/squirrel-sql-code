@@ -20,10 +20,36 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
-public final class OracleResources extends PluginResources
+public final class OraclePluginResources extends PluginResources
 {
-	OracleResources(String rsrcBundleBaseName, IPlugin plugin)
+	OraclePluginResources(String rsrcBundleBaseName, IPlugin plugin)
 	{
 		super(rsrcBundleBaseName, plugin);
 	}
+
+   public interface IKeys
+   {
+      String USERS_IMAGE = "users";
+      String FUNCTION_IMAGE = "function";
+      String FUNCTIONS_IMAGE = "functions";
+      String PACKAGE_IMAGE = "package";
+      String PACKAGES_IMAGE = "packages";
+      String SESSION_IMAGE = "session";
+      String SESSIONS_IMAGE = "sessions";
+
+      String INSTANCE_IMAGE = "instance";
+      String INSTANCES_IMAGE = "instances";
+
+      String TYPE_IMAGE = "datatype";
+      String TYPES_IMAGE = "datatypes";
+      String CONSUMERGROUPS_IMAGE = "consumergroups";
+      String INDEXES_IMAGE = "indexes";
+      String LOBS_IMAGE = "lobs";
+      String SQUENCES_IMAGE = "sequences";
+      String TRIGGERS_IMAGE = "triggers";
+      String CONSTRAINTS_IMAGE = "constraints";
+      String CONSUMERGROUP_IMAGE = "consumergroup";
+      String LOB_IMAGE = "lob";
+      String CONSTRAINT_IMAGE = "constraint";
+   }
 }

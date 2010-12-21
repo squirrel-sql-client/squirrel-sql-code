@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+
 /**
  * This class handles the expanding of the "Trigger Parent"
  * node. It will give a list of all the triggers available for the table.
@@ -43,13 +44,13 @@ public class TriggerParentExpander implements INodeExpander
 		"select owner, trigger_name from sys.all_triggers where table_owner = ?" +
 		" and table_name = ?";
 
-	/**
+   /**
 	 * Default ctor.
-	 */
+    */
 	public TriggerParentExpander()
 	{
 		super();
-	}
+   }
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note

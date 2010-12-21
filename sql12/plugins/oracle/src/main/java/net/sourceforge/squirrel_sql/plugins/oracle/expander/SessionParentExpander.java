@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class handles the expanding of the "Session Parent" node. It will give a list of all the sessions.
@@ -44,14 +44,17 @@ public class SessionParentExpander implements INodeExpander
 
 	/** SQL that retrieves the data. */
 	private static String SQL = "select sid||' ('||schemaname||')' from sys.v_$session";
+   private ObjectTypes _objectTypes;
 
-	/**
+   /**
 	 * Default ctor.
-	 */
-	public SessionParentExpander()
+    * @param objectTypes
+    */
+	public SessionParentExpander(ObjectTypes objectTypes)
 	{
 		super();
-	}
+      _objectTypes = objectTypes;
+   }
 
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note that this method should
@@ -86,7 +89,7 @@ public class SessionParentExpander implements INodeExpander
 				// must not use DatabaseObjectType.SESSION, or else these nodes get expanded with the database
 				// DefaultdatabasExpander.
 				IDatabaseObjectInfo doi =
-					new DatabaseObjectInfo(null, schemaName, rs.getString(1), IObjectTypes.SESSION, md);
+					new DatabaseObjectInfo(null, schemaName, rs.getString(1), _objectTypes.getSession(), md);
 				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		}
