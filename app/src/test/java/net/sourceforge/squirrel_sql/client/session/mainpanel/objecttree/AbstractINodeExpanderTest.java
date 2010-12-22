@@ -33,8 +33,10 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -55,11 +57,12 @@ public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCa
 	protected SessionProperties mockSessionProperties = mockHelper.createMock("mockSessionProperties", SessionProperties.class);
 	protected Class<?> clazz = null;
 	protected SchemaInfo mockSchemaInfo = mockHelper.createMock("mockSchemaInfo", SchemaInfo.class);
+	protected IObjectTypes mockObjectTypes = mockHelper.createMock("mockObjectTypes", IObjectTypes.class);
 
 	@Test
 	public void testCreateChildren() throws SQLException
 	{
-		setupMockDatabaseObjectInfo();
+		setupMockObjects();
 		expect(mockSession.getSQLConnection()).andStubReturn(mockSQLConnection);
 		expect(mockSession.getApplication()).andStubReturn(mockApplication);
 		expect(mockSession.getIdentifier()).andStubReturn(mockIdentifier);
@@ -99,13 +102,30 @@ public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCa
 		mockHelper.resetAll();
 	}
 
-	protected void setupMockDatabaseObjectInfo()
+	protected void setupMockObjects()
 	{
 		expect(mockDatabaseObjectInfo.getSchemaName()).andStubReturn(TEST_SCHEMA_NAME);
 		expect(mockDatabaseObjectInfo.getCatalogName()).andStubReturn(TEST_CATALOG_NAME);
 		expect(mockDatabaseObjectInfo.getSimpleName()).andStubReturn(TEST_SIMPLE_NAME);
 		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
 		expect(mockDatabaseObjectInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.TABLE);
+		
+		
+		expect(mockObjectTypes.getConstraintParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConstraintParent"));
+		expect(mockObjectTypes.getConsumerGroup()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConsumerGroup"));
+		expect(mockObjectTypes.getConsumerGroupParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConsumerGroupParent"));
+		expect(mockObjectTypes.getFunctionParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestFunctionParent"));
+		expect(mockObjectTypes.getIndexParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestIndexParent"));
+		expect(mockObjectTypes.getInstance()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestInstance"));
+		expect(mockObjectTypes.getLob()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestLob"));
+		expect(mockObjectTypes.getLobParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestLobParent"));
+		expect(mockObjectTypes.getPackage()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestPackage"));	
+		expect(mockObjectTypes.getPackageParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestPackageParent"));
+		expect(mockObjectTypes.getSession()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestSession"));
+		expect(mockObjectTypes.getSequenceParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestSequenceParent"));
+		expect(mockObjectTypes.getTriggerParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestTriggerParent"));
+		expect(mockObjectTypes.getType()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestType"));
+		expect(mockObjectTypes.getTypeParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestTypeParent"));
 	}
 
 }
