@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-final class MysqlResources extends PluginResources
+public class MysqlResources extends PluginResources
 {
 	interface IMenuResourceKeys
 	{
@@ -32,8 +32,14 @@ final class MysqlResources extends PluginResources
 		String MYSQL = "mysql";
 	}
 
-	MysqlResources(String rsrcBundleBaseName, IPlugin plugin)
+	public MysqlResources(String rsrcBundleBaseName, IPlugin plugin)
 	{
 		super(rsrcBundleBaseName, plugin);
 	}
+
+   public interface IKeys
+   {
+      String USERS_IMAGE = "users";
+   }
+
 }

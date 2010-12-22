@@ -29,7 +29,7 @@ public class InstanceParentExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new InstanceParentExpander();
+		classUnderTest = new InstanceParentExpander(new ObjectTypesMock());
 	}
 
 }

@@ -96,7 +96,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	private final static ILogger s_log = LoggerController.createLogger(MysqlPlugin.class);
 
 	/** Plugin resources. */
-	private PluginResources _resources;
+	private MysqlResources _resources;
 
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
@@ -106,8 +106,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	/** manages our query tokenizing preferences */
 	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+   private ObjectTypes _objectTypes;
 
-	interface i18n
+   interface i18n
 	{
 		// i18n[MysqlPlugin.title=MySQL]
 		String title = s_stringMgr.getString("MysqlPlugin.title");
@@ -177,7 +178,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	{
 		super.load(app);
 		_resources = new MysqlResources(getClass().getName(), this);
-	}
+      _objectTypes = new ObjectTypes(_resources);
+   }
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getChangeLogFileName()
@@ -350,8 +352,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final ActionCollection coll = getApplication().getActionCollection();
 
 		// Show users in the object tee.
-		_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
-		_treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+		_treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander(_objectTypes));
+		_treeAPI.addExpander(_objectTypes.getUserParent(), new UserParentExpander(this));
 
 		// Tabs to add to the database node.
 		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
@@ -383,6 +385,8 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
 
 		updateTreeApiForMysql5(session);
+
+      _treeAPI.refreshTree();
 	}
 
 	private void updateTreeApiForMysql5(ISession session)

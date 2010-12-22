@@ -26,7 +26,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.mysql.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.mysql.ObjectTypes;
+
 /**
  * This class add new child nodes to the Database node.
  *
@@ -34,11 +35,20 @@ import net.sourceforge.squirrel_sql.plugins.mysql.IObjectTypes;
  */
 public class SessionExpander implements INodeExpander
 {
-	/** Logger for this class. */
+   private ObjectTypes _objectTypes;
+
+   /** Logger for this class.
+    * @param objectTypes*/
 //	private static ILogger s_log =
 //		LoggerController.createLogger(SessionExpander.class);
 
-	/**
+
+   public SessionExpander(ObjectTypes objectTypes)
+   {
+      _objectTypes = objectTypes;
+   }
+
+   /**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
 	 * parent node as this is taken care of in the caller.
@@ -57,7 +67,7 @@ public class SessionExpander implements INodeExpander
 
 		// Users.
 		DatabaseObjectInfo dboInfo = new DatabaseObjectInfo(null, null, "USERS",
-											IObjectTypes.USER_PARENT, md);
+											_objectTypes.getUserParent(), md);
 		ObjectTreeNode node = new ObjectTreeNode(session, dboInfo);
 		childNodes.add(node);
 
