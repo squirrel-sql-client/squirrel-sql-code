@@ -23,7 +23,17 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IObjectTypes
+public class ObjectTypes
 {
-	DatabaseObjectType USER_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Users");
+	private DatabaseObjectType _userParent = DatabaseObjectType.createNewDatabaseObjectType("Users");
+
+   public ObjectTypes(MysqlResources resources)
+   {
+      _userParent = DatabaseObjectType.createNewDatabaseObjectType("Users", resources.getIcon(MysqlResources.IKeys.USERS_IMAGE));
+   }
+
+   public DatabaseObjectType getUserParent()
+   {
+      return _userParent;
+   }
 }

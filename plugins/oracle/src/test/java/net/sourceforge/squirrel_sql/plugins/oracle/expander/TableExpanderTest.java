@@ -29,7 +29,7 @@ public class TableExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new TableExpander();
+		classUnderTest = new TableExpander(new ObjectTypesMock());
 	}
 
 }

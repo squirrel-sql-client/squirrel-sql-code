@@ -30,7 +30,7 @@ public class OracleResourcesTest extends AbstractResourcesTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new OracleResources(OraclePlugin.BUNDLE_BASE_NAME, getMockPlugin(mockHelper));
+		classUnderTest = new OraclePluginResources(OraclePlugin.BUNDLE_BASE_NAME, getMockPlugin(mockHelper));
 	}
 
 }

@@ -20,9 +20,9 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
-public final class OraclePluginResources extends PluginResources
+public class OraclePluginResources extends PluginResources
 {
-	OraclePluginResources(String rsrcBundleBaseName, IPlugin plugin)
+	public OraclePluginResources(String rsrcBundleBaseName, IPlugin plugin)
 	{
 		super(rsrcBundleBaseName, plugin);
 	}
