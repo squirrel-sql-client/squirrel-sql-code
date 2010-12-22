@@ -24,8 +24,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class is an expander for the table nodes. It will add various Object Type
@@ -35,13 +35,13 @@ import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
  */
 public class TableExpander implements INodeExpander
 {
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    /**
 	 * Default ctor.
     * @param objectTypes
     */
-	public TableExpander(ObjectTypes objectTypes)
+	public TableExpander(IObjectTypes objectTypes)
 	{
 		super();
       _objectTypes = objectTypes;

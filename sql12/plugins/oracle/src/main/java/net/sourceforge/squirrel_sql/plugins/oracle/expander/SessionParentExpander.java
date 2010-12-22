@@ -29,10 +29,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class handles the expanding of the "Session Parent" node. It will give a list of all the sessions.
@@ -44,13 +44,13 @@ public class SessionParentExpander implements INodeExpander
 
 	/** SQL that retrieves the data. */
 	private static String SQL = "select sid||' ('||schemaname||')' from sys.v_$session";
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    /**
 	 * Default ctor.
     * @param objectTypes
     */
-	public SessionParentExpander(ObjectTypes objectTypes)
+	public SessionParentExpander(IObjectTypes objectTypes)
 	{
 		super();
       _objectTypes = objectTypes;

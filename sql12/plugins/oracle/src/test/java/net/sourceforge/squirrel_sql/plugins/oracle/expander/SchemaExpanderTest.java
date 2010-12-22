@@ -30,7 +30,7 @@ public class SchemaExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SchemaExpander(new ObjectTypesMock());
+		classUnderTest = new SchemaExpander(mockObjectTypes);
 	}
 
 }

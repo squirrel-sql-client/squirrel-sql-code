@@ -26,8 +26,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class is an expander for the schema nodes. It will add various Object Type
@@ -38,13 +38,13 @@ import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 public class SchemaExpander implements INodeExpander
 {
 
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    /**
 	 * Ctor.
     * @param objectTypes
     */
-	public SchemaExpander(ObjectTypes objectTypes)
+	public SchemaExpander(IObjectTypes objectTypes)
 	{
 		super();
       _objectTypes = objectTypes;

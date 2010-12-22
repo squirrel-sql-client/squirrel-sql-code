@@ -24,8 +24,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 public class ConstraintParentInfo extends DatabaseObjectInfo
 {
@@ -34,7 +34,7 @@ public class ConstraintParentInfo extends DatabaseObjectInfo
 	private final IDatabaseObjectInfo _tableInfo;
 
 	public ConstraintParentInfo(IDatabaseObjectInfo tableInfo, String schema,
-                               SQLDatabaseMetaData md, ObjectTypes objectTypes)
+                               SQLDatabaseMetaData md, IObjectTypes objectTypes)
 	{
 		super(null, schema, "CONSTRAINT", objectTypes.getConstraintParent(), md);
 		_tableInfo = tableInfo;

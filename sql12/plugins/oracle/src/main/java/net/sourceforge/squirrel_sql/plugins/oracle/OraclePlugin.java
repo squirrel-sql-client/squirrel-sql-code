@@ -63,6 +63,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -156,7 +157,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
 
 	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.oracle.oracle";
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    interface i18n
 	{

@@ -29,7 +29,7 @@ public class SessionParentExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SessionParentExpander(new ObjectTypesMock());
+		classUnderTest = new SessionParentExpander(mockObjectTypes);
 	}
 
 }
