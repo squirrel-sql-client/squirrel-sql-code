@@ -110,22 +110,25 @@ public abstract class AbstractINodeExpanderTest extends BaseSQuirreLJUnit4TestCa
 		expect(mockDatabaseObjectInfo.getQualifiedName()).andStubReturn(TEST_QUALIFIED_NAME);
 		expect(mockDatabaseObjectInfo.getDatabaseObjectType()).andStubReturn(DatabaseObjectType.TABLE);
 		
-		
+		expect(mockObjectTypes.getConstraint()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConstraint"));
 		expect(mockObjectTypes.getConstraintParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConstraintParent"));
 		expect(mockObjectTypes.getConsumerGroup()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConsumerGroup"));
 		expect(mockObjectTypes.getConsumerGroupParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestConsumerGroupParent"));
 		expect(mockObjectTypes.getFunctionParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestFunctionParent"));
 		expect(mockObjectTypes.getIndexParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestIndexParent"));
 		expect(mockObjectTypes.getInstance()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestInstance"));
+		expect(mockObjectTypes.getInstanceParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestInstanceParent"));
 		expect(mockObjectTypes.getLob()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestLob"));
 		expect(mockObjectTypes.getLobParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestLobParent"));
 		expect(mockObjectTypes.getPackage()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestPackage"));	
 		expect(mockObjectTypes.getPackageParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestPackageParent"));
 		expect(mockObjectTypes.getSession()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestSession"));
+		expect(mockObjectTypes.getSessionParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestSessionParent"));
 		expect(mockObjectTypes.getSequenceParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestSequenceParent"));
 		expect(mockObjectTypes.getTriggerParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestTriggerParent"));
 		expect(mockObjectTypes.getType()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestType"));
 		expect(mockObjectTypes.getTypeParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestTypeParent"));
+		expect(mockObjectTypes.getUserParent()).andStubReturn(DatabaseObjectType.createNewDatabaseObjectType("TestUserParent"));
 	}
 
 }
