@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 /**
  * This class stores information about an Oracle Trigger parent. This just
  * stores info about the table that the trigger relates to.
@@ -33,7 +33,7 @@ public class TriggerParentInfo extends DatabaseObjectInfo
 	private final IDatabaseObjectInfo _tableInfo;
 
 	public TriggerParentInfo(IDatabaseObjectInfo tableInfo, String schema,
-                            SQLDatabaseMetaData md, ObjectTypes objectTypes)
+                            SQLDatabaseMetaData md, IObjectTypes objectTypes)
 	{
 		super(null, schema, "TRIGGER", objectTypes.getTriggerParent(), md);
 		_tableInfo = tableInfo;

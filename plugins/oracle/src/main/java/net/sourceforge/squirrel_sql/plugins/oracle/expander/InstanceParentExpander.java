@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -34,7 +35,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class handles the expanding of the "Instance Parent" node. It will give a list of all the instances.
@@ -47,13 +47,13 @@ public class InstanceParentExpander implements INodeExpander
 	private static String SQL = "select instance_number, instance_name, host_name, version,"
 	      + " startup_time, status, parallel, thread#, archiver, log_switch_wait,"
 	      + " logins, shutdown_pending, database_status, instance_role" + " from sys.v_$instance";
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    /**
 	 * Default ctor.
     * @param objectTypes
     */
-	public InstanceParentExpander(ObjectTypes objectTypes) {
+	public InstanceParentExpander(IObjectTypes objectTypes) {
 		super();
       _objectTypes = objectTypes;
    }

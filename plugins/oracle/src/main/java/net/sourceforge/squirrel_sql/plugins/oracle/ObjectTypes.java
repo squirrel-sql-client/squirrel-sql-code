@@ -18,13 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 
 /**
  * This class contains the different database object types for oracle.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ObjectTypes
+public class ObjectTypes implements IObjectTypes
 {
 	private DatabaseObjectType _consumerGroupParent;
 	private DatabaseObjectType _functionParent;
@@ -71,96 +72,153 @@ public class ObjectTypes
       _constraint = DatabaseObjectType.createNewDatabaseObjectType("Constraint", resources.getIcon(OraclePluginResources.IKeys.CONSTRAINT_IMAGE));
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getConsumerGroupParent()
+	 */
    public DatabaseObjectType getConsumerGroupParent()
    {
       return _consumerGroupParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getFunctionParent()
+	 */
    public DatabaseObjectType getFunctionParent()
    {
       return _functionParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getIndexParent()
+	 */
    public DatabaseObjectType getIndexParent()
    {
       return _indexParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getInstanceParent()
+	 */
    public DatabaseObjectType getInstanceParent()
    {
       return _instanceParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getLobParent()
+	 */
    public DatabaseObjectType getLobParent()
    {
       return _lobParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getPackageParent()
+	 */
    public DatabaseObjectType getPackageParent()
    {
       return _packageParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getSequenceParent()
+	 */
    public DatabaseObjectType getSequenceParent()
    {
       return _sequenceParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getSessionParent()
+	 */
    public DatabaseObjectType getSessionParent()
    {
       return _sessionParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getTriggerParent()
+	 */
    public DatabaseObjectType getTriggerParent()
    {
       return _triggerParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getTypeParent()
+	 */
    public DatabaseObjectType getTypeParent()
    {
       return _typeParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getUserParent()
+	 */
    public DatabaseObjectType getUserParent()
    {
       return _userParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getConstraintParent()
+	 */
    public DatabaseObjectType getConstraintParent()
    {
       return _constraintParent;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getConsumerGroup()
+	 */
    public DatabaseObjectType getConsumerGroup()
    {
       return _consumerGroup;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getInstance()
+	 */
    public DatabaseObjectType getInstance()
    {
       return _instance;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getLob()
+	 */
    public DatabaseObjectType getLob()
    {
       return _lob;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getPackage()
+	 */
    public DatabaseObjectType getPackage()
    {
       return _package;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getSession()
+	 */
    public DatabaseObjectType getSession()
    {
       return _session;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getType()
+	 */
    public DatabaseObjectType getType()
    {
       return _type;
    }
 
+   /**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.IObjectTypes#getConstraint()
+	 */
    public DatabaseObjectType getConstraint()
    {
       return _constraint;

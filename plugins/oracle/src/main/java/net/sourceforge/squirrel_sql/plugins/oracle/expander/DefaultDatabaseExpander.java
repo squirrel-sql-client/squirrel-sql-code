@@ -25,8 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
 
@@ -40,9 +40,9 @@ public class DefaultDatabaseExpander extends DatabaseExpander
 {
 
 
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
-   public DefaultDatabaseExpander(ISession session, ObjectTypes objectTypes)
+   public DefaultDatabaseExpander(ISession session, IObjectTypes objectTypes)
    {
       super(session);
       _objectTypes = objectTypes;

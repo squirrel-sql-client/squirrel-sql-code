@@ -28,9 +28,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 
 /**
  * This class handles the expanding of the Constraint node. It will
@@ -45,9 +45,9 @@ public class ConstraintParentExpander implements INodeExpander {
 			+ " where owner = ?"
 			+ " and table_name = ?" 
 			+ " order by constraint_name asc";
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
-   public ConstraintParentExpander(ObjectTypes objectTypes) {
+   public ConstraintParentExpander(IObjectTypes objectTypes) {
 		super();
       _objectTypes = objectTypes;
    }

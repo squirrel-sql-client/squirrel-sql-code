@@ -23,13 +23,13 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IObjectTypes;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
 /**
  * This class handles the expanding of the "Package Type" or "Package Heading"
  * node. It will give a list of all the packages available in the schema.
@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.ObjectTypes;
  */
 public class PackageParentExpander implements INodeExpander
 {
-   private ObjectTypes _objectTypes;
+   private IObjectTypes _objectTypes;
 
    /**
 	 * Default ctor.
@@ -47,7 +47,7 @@ public class PackageParentExpander implements INodeExpander
 	 * 			Thrown if <TT>null</TT> <TT>OraclePlugin</TT> passed.
     * @param objectTypes
 	 */
-	PackageParentExpander(ObjectTypes objectTypes)
+	PackageParentExpander(IObjectTypes objectTypes)
 	{
 		super();
       _objectTypes = objectTypes;
