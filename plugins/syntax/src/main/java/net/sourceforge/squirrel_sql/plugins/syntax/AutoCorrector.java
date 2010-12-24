@@ -17,13 +17,13 @@ public class AutoCorrector
 
 
    private JTextComponent _txtComp;
-   private SyntaxPugin _plugin;
+   private SyntaxPlugin _plugin;
 
    private int _autocorrectionsCount = 0;
    private static final String PREFS_KEY_AUTO_COORECTIONS_COUNT = "squirrelSql_syntax_autocorrections_count";
 
 
-   public AutoCorrector(JTextComponent txtComp, SyntaxPugin plugin)
+   public AutoCorrector(JTextComponent txtComp, SyntaxPlugin plugin)
    {
       _txtComp = txtComp;
       _plugin = plugin;

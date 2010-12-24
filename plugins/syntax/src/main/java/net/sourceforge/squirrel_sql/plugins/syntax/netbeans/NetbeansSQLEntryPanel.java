@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin;
 
 import org.netbeans.editor.ext.ExtKit;
 
@@ -63,7 +63,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 	private ISession _session;
 
-	private SyntaxPugin _plugin;
+	private SyntaxPlugin _plugin;
 
 	private NetbeansPropertiesWrapper _propertiesWrapper;
 
@@ -71,7 +71,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	private DropTarget dt;
 
 	NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs,
-			SyntaxFactory syntaxFactory, SyntaxPugin plugin,
+			SyntaxFactory syntaxFactory, SyntaxPlugin plugin,
 			HashMap<String, Object> props)
 	{
 		super(session.getApplication());

@@ -1,34 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<!--
 		This pom is slightly different from other plugin poms because it requires special assembly
 		instructions since it includes LAF jars from other projects in the lafs/ folder of the assembly.
-		Since no other plugin has special needs like this, this plugin's pom overrides the plugin parent's
-		assembly definition, providing it's own. To add/remove/modify the LAFS that get included in the
-		assembly archive, you must add/remove/modify the dependency below on the maven project that
+		Since no other plugin has special needs like this, this plugin's pom doesn't inherit from the
+		plugin parent pom (the assembly that is inherited from plugin parent somehow cannot be overridden
+		by this pom's assembly plugin configuration). To add/remove/modify the LAFS that get included in
+		the assembly archive, you must add/remove/modify the dependency below on the maven project that
 		contains the LAF artifact *and* add the artifactId to the laf.artifactIds property.
 	-->
 	<parent>
-		<groupId>net.sf.squirrel-sql.plugins</groupId>
-		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
+		<groupId>net.sf.squirrel-sql</groupId>
+		<artifactId>squirrel-root-pom</artifactId>
 		<version>3.3.0-SNAPSHOT</version>
-		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>laf</artifactId>
 	<packaging>jar</packaging>
 
 	<name>Look and Feel Plugin</name>
 	<description>
-        This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
-        as well as others that the user can provide.  All dependencies listed with a groupId of 
-        net.sf.squirrel-sql and artifactId starting with squirrelsql-lf- are externally available open-source
-        look and feels whose project maintainers have decided to not use maven, or those which were built and
-        maintained only before the introduction of maven.  Maven's central repository policy requires any 
-        pom that is deployed there to reference only artifacts which are also hosted in central.  And a 
-        project may only use the groupId that is related to that project.  So, this only leaves us with one 
-        option which is to host these external third-party artifacts using our groupId.  The hope is that 
-        someday these projects will start using maven and the need for this will no longer be. 
+		This plugin gives SQuirreLSQL client the ability to configure alternate LaFs provided by the plugin
+		as well as others that the user can provide. All dependencies listed with a groupId of
+		net.sf.squirrel-sql and artifactId starting with squirrelsql-lf- are externally available
+		open-source
+		look and feels whose project maintainers have decided to not use maven, or those which were built and
+		maintained only before the introduction of maven. Maven's central repository policy requires any
+		pom that is deployed there to reference only artifacts which are also hosted in central. And a
+		project may only use the groupId that is related to that project. So, this only leaves us with one
+		option which is to host these external third-party artifacts using our groupId. The hope is that
+		someday these projects will start using maven and the need for this will no longer be. 
    </description>
 	<inceptionYear>2001</inceptionYear>
 	<developers>
@@ -78,36 +82,49 @@
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
+			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>gsbase</groupId>
 			<artifactId>gsbase</artifactId>
+			<version>${gsbase-version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
+			<version>${easymock-version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymockclassextension</artifactId>
+			<version>${easymockclassextension-version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
+			<version>${mockito-version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -185,18 +202,71 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>${source-plugin-version}</version>
+				<configuration>
+					<outputDirectory>target</outputDirectory>
+					<finalName>${project.artifactId}</finalName>
+					<includePom>true</includePom>
+					<!--
+						We exclude docs from the source jar, because the assembly has to have them for the plugin
+						install to work; and we don't want the source jar to contain them as well as the assembly jar
+						as that just makes the assembly jar bigger.
+					-->
+					<excludes>
+						<exclude>**/doc/**</exclude>
+						<exclude>**/doc</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire-plugin-version}</version>
+				<configuration>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<parallel>${surefire-parallel-type}</parallel>
+					<threadCount>${surefire-thread-count}</threadCount>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>${jar-plugin-version}</version>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+					<finalName>${project.artifactId}</finalName>
+					<!--
+							We exclude docs from the classes jar, for the same reason as
+							above
+						-->
+					<excludes>
+						<exclude>**/doc/**</exclude>
+						<exclude>**/doc</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${dependency-plugin-version}</version>
 				<executions>
 					<execution>
 						<id>copy-lafs</id>
@@ -210,13 +280,6 @@
 							<outputDirectory>${staging.dir}/lafs</outputDirectory>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>${dependency-plugin-version}</version>
-				<executions>
 					<execution>
 						<id>unpack-skinlf-theme-packs</id>
 						<phase>process-resources</phase>
@@ -241,6 +304,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${assembly-plugin-version}</version>
 				<executions>
 					<execution>
 						<id>create-plugin-archives</id>

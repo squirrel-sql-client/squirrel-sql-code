@@ -192,9 +192,17 @@ public class ProgressCallBackDialog extends JDialog implements ProgressCallBack
 			@Override
 			public void run()
 			{
-				ProgressCallBackDialog.this.dispose();
+				callDisposeFromSuperClass();
 			}
 		});
+	}
+	
+	/**
+	 * Since {@link #dispose()} uses an {@link Runnable}, we needs an
+	 * delegate to call the overridden dispose method.
+	 */
+	private void callDisposeFromSuperClass(){
+		super.dispose();
 	}
 
 	/**
@@ -208,10 +216,19 @@ public class ProgressCallBackDialog extends JDialog implements ProgressCallBack
 			@Override
 			public void run()
 			{
-				ProgressCallBackDialog.this.setVisible(b);
+				callSetVisibleFromSuperClass(b);
 			}
 		});
 	}	
+	
+	/**
+	 * Since {@link #setVisible(boolean)} uses an {@link Runnable}, we needs an
+	 * delegate to call the overridden setVisible method.
+	 */
+	private void callSetVisibleFromSuperClass(final boolean b){
+		super.setVisible(b);
+	}
+	
 
 	private void init(int totalItems)
 	{

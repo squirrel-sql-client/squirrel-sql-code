@@ -60,10 +60,10 @@ import java.util.Map;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SyntaxPugin extends DefaultSessionPlugin
+public class SyntaxPlugin extends DefaultSessionPlugin
 {
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SyntaxPugin.class);
+		StringManagerFactory.getStringManager(SyntaxPlugin.class);
 
    static interface i18n
    {
@@ -99,7 +99,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
    }
 
    /** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(SyntaxPugin.class);
+	private static final ILogger s_log = LoggerController.createLogger(SyntaxPlugin.class);
 
 	/** SyntaxPreferences for new sessions. */
 	private SyntaxPreferences _newSessionPrefs;
@@ -519,10 +519,10 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	private static final class SessionPreferencesListener
 		implements PropertyChangeListener
 	{
-		private SyntaxPugin _plugin;
+		private SyntaxPlugin _plugin;
 		private ISession _session;
 
-		SessionPreferencesListener(SyntaxPugin plugin, ISession session)
+		SessionPreferencesListener(SyntaxPlugin plugin, ISession session)
 		{
 			super();
 			_plugin = plugin;

@@ -8,6 +8,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
 	<packaging>jar</packaging>
 

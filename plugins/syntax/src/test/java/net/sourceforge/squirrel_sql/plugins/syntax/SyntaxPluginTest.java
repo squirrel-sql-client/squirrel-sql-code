@@ -30,7 +30,7 @@ public class SyntaxPluginTest extends AbstractPluginTest implements DatabaseProd
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SyntaxPugin();
+		classUnderTest = new SyntaxPlugin();
 	}
 
 	@After
