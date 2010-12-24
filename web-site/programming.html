@@ -9,71 +9,19 @@
 		<td width='100%' bgcolor="white" valign="top">
          <FONT SIZE=5><B>Programming SQuirreL SQL</B></FONT><p>
 
-         <FONT SIZE=3>This document tries to help you with the first steps to change SQuirreL's source code.
-            These steps are only a rough explanation of the most important things.
-            If you aren't used to Eclipse or Java-IDE's at all it'll probably take you some experimenting. As an alternative to
-            this introduction you may have a look at the very detailed description on how to program SQuirreL using the Netbeans IDE.
-            See <a href="http://wiki.netbeans.org/wiki/view/NetbeansedSQuirreL">NetbeansedSQuirreL</a></FONT><p>
+         <FONT SIZE=3>See the <a href="https://sourceforge.net/apps/trac/squirrel-sql/wiki/DeveloperGuide">Developer Guide</a> 
+         	for instructions on setting up your development environment.  If you are writing a plugin, you may 
+         	also find the 
+         	<a href="https://sourceforge.net/apps/trac/squirrel-sql/wiki/SQuirreLSQLClientPluginAPI">
+         	Plugin Devloper's API</a> useful.</FONT></p>   
 
          <FONT SIZE=3>Note: In case you intend to write a new Plugin we would be grateful if you would
             release it under an Open Source license. In case you change SQuirreL's core or
             existing Open Source Plugins you are obliged to make your changes available to the community.
-            The easiest way to do this is to send us patches of your changes.</FONT><p>
+            The easiest way to do this is to send us patches of your changes.</FONT></p>
 
 
-         <FONT SIZE=4><B>Starting SQuirreL from within a Java IDE</B></FONT><p>
-         <FONT SIZE=3>You may use any editor or IDE to modify SQuirreL source code. The following steps assume you
-                      are using Eclipse (<a href="http://www.eclipse.org/downloads/">http://www.eclipse.org/downloads/</a>).</FONT><p>
-
-         <FONT SIZE=3>First you need SQuirreL's sources that you may either download from our homepage
-            or check out from cvs using the command </FONT><br>
-         <FONT SIZE=3> svn co https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12</FONT><p>
-
-         <FONT SIZE=3>Now create an Eclipse project with the sql12/ directory selected in the &ldquo;Directory&rdquo;
-            text field of the second dialog of Eclipse's project wizard.</FONT><p>
-
-         <FONT SIZE=3>Build the project.</FONT><p>
-
-         <FONT SIZE=3>Using the Eclipse Navigator open</FONT><br>
-         <FONT SIZE=3>app/src/net/sourceforge/squirrel_sql/client/Main.java</FONT><br>
-         <FONT SIZE=3>in the editor. Right click the editor and choose Debug or Run as Java Application.</FONT><p>
-
-         <FONT SIZE=3>You set breakpoints by double clicking the left border of the editor.</FONT><p>
-         <p><FONT SIZE=3>A detailed guide to eclipse setup can be found <a href="eclipse-setup/index.html">here</a></FONT><p>
-
-
-         <FONT SIZE=4><B>Working with Plugins</B></FONT><p>
-         <FONT SIZE=3>To work with plugins you need to build a distribution of SQuirreL and the plugins.
-            To do so in the Eclipse Navigator right mouse click build/build.xml
-            and choose &ldquo;Run as&rdquo; --&gt; &ldquo;Ant Build<B>...</B>&rdquo; (note the three dots).
-            In the dialog make sure only the &ldquo;make_dist&rdquo; target is checked.
-            Then click the &ldquo;Run&rdquo; button.</FONT><p>
-
-         <FONT SIZE=3>Next you need to build the Plugins you want to work with.
-            The plugins' build files are in plugins/&lt;pluginName&gt;/plugin_build.xml.
-            Right click a plugin_build.xml and choose &ldquo;Run as&rdquo; --&gt; &ldquo;Ant Build<B>...</B>&rdquo; (note the three dots).
-            In the dialog make sure only the &ldquo;build&rdquo; target is checked. Then click the &ldquo;Run&rdquo; button.</FONT><p>
-
-         <FONT SIZE=3>Now you need to tell SQuirreL to load the Plugins. To do so you need to set SQuirreL's home directory to </FONT>
-         <FONT SIZE=3>&lt;dirWhereSql12Is&gt;/squirrel-sql-dist/squirrel-sql/core/dist</FONT><p>
-
-         <FONT SIZE=3>To do so in Eclipse you right mouse click the Main class and choose
-            &ldquo;Run As &rdquo; --&gt; &ldquo;Run...&rdquo; (note the three dots) --&gt;
-            On the "Arguments" tab you set the &ldquo;Program arguments&ldquo; to</FONT><p>
-         <FONT SIZE=3>-home &lt;dirWhereSql12Is&gt;/squirrel-sql-dist/squirrel-sql/core/dist</FONT><p>
-
-         <FONT SIZE=3>Now restart SQuirreL and check SQuirreL's Plugin summary to see if the Plugins you built were loaded.</FONT><p><p>
-
-         <P><FONT SIZE=3><B>
-            For a more detailed description on how to program Plugins see the paper by Gerd Wagner and Glenn Griffin:
-            <a href="./paper/SQuirreL_us.pdf">English version</a>
-            <a href="./paper/SQuirreL_de.pdf">German version</a>
-            <a href="./paper/SQuirreL_it.pdf">Italian version</a>
-         </B></FONT></P>
-
-
-
-      </td>
+      	</td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>
 	<tr>
