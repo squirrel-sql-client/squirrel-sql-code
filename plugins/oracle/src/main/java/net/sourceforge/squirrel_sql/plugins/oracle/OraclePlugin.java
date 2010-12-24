@@ -535,6 +535,10 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#
+	 * 			isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
 	@Override
 	protected boolean isPluginSession(ISession session)
 	{
