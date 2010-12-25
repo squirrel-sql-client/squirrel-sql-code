@@ -1,0 +1,17 @@
+<archetype>
+  <id>squirrelsql-plugin-archetype</id>
+  <sources>
+    <source>src/main/java/net/sourceforge/squirrel_sql/plugins/example/ExamplePlugin.java</source>
+    <source>src/main/java/net/sourceforge/squirrel_sql/plugins/example/ScriptDB2ProcedureAction.java</source>
+    <source>src/main/java/net/sourceforge/squirrel_sql/plugins/example/ScriptDB2ViewAction.java</source>
+  </sources>
+  <resources>
+  	<resource>src/main/resources/doc/changes.txt</resource>
+  	<resource>src/main/resources/doc/licence.txt</resource>
+  	<resource>src/main/resources/doc/readme.txt</resource>
+  	<resource>src/main/resources/net/sourceforge/squirrel_sql/plugins/example/example.properties</resource>
+  </resources>
+  <testSources>
+    <source>src/test/java/net/sourceforge/squirrel_sql/plugins/example/ExamplePluginTest.java</source>
+  </testSources>
+</archetype>
