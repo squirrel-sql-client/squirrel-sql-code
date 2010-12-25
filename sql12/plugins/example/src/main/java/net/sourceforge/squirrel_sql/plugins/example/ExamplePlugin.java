@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 /**
@@ -136,13 +137,11 @@ public class ExamplePlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-         String driverName = session.getSQLConnection().getConnection().getMetaData().getDriverName();
-         if(false == driverName.toUpperCase().startsWith("IBM DB2 JDBC"))
-         {
+			if (! DialectFactory.isDB2(session.getMetaData())) {
             // Plugin knows only how to script Views and Stored Procedures on DB2.
             // So if it's not a DB2 Session we tell SQuirreL the Plugin should not be used.
-            return null;
-         }
+            return null;				
+			}
 
          // Add context menu items to the object tree's view and procedure nodes.
          IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
