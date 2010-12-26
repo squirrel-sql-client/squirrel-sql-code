@@ -29,6 +29,7 @@ public class InformixPluginTest extends AbstractSessionPluginTest
 	@Before
 	public void setUp() throws Exception
 	{
+		super.setUp();
 		classUnderTest = new InformixPlugin();
 	}
 
