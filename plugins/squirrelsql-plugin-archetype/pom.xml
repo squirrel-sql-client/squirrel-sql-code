@@ -9,10 +9,89 @@
 		<version>3.3.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
-	
+
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
 	<version>3.3.0-SNAPSHOT</version>
-	<name>Archetype - squirrelsql-plugin-archetype</name>
-	<url>http://maven.apache.org</url>
+	<packaging>maven-archetype</packaging>
+
+	<name>SQuirreL Plugin Archetype</name>
+	<description>
+		This project produces the maven archetype that can be used to generate a SQuirreL Plugin 
+		maven project.  The project that is produced contains an Example plugin that demonstrates the use 
+		of key plugin APIs.
+	</description>
+	<inceptionYear>2001</inceptionYear>
+	<developers>
+		<developer>
+			<name>Gerd Wagner</name>
+			<roles>
+				<role>Administrator</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Rob Manning</name>
+			<roles>
+				<role>Developer</role>
+				<role>Release Manager</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<url>http://www.squirrelsql.org/</url>
+	<scm>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</url>
+	</scm>
+	<issueManagement>
+		<system>SourceForge Tracker</system>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://www.squirrel-sql.org/hudson/</url>
+	</ciManagement>
+
+
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.archetype</groupId>
+				<artifactId>archetype-packaging</artifactId>
+				<version>2.0</version>
+			</extension>
+		</extensions>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-archetype-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
 </project>
