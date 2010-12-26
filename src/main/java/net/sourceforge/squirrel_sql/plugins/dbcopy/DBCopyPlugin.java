@@ -174,7 +174,6 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		ActionCollection coll = app.getActionCollection();
 		
 		PasteTableAction pasteTableAction = new PasteTableAction(app, _resources, this);
-		pasteTableAction.setDbCopyPreferenceBean(PreferencesManager.getPreferences());
 		
 		coll.add(new CopyTableAction(app, _resources, this));
 		coll.add(pasteTableAction);
