@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
  */
 public class ExampleSqlExecutionListener implements ISQLExecutionListener
 {
+	/** This is what gives the ability to print a message to the message panel */
 	private final IMessageHandler _messageHandler;
 	
 	public ExampleSqlExecutionListener(IMessageHandler messageHandler) {
@@ -45,7 +46,8 @@ public class ExampleSqlExecutionListener implements ISQLExecutionListener
 	{
 		_messageHandler.showMessage("statementExecuting: "+sql);
 		
-		// We don't modify the SQL in this example.  We could veto it's execution be returned null.
+		// We don't modify the SQL in this example.  in addition to modifying it, we could veto it's execution 
+		// by returning null.
 		return sql;
 	}
 
