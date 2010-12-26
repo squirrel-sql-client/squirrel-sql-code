@@ -64,6 +64,7 @@ public class OraclePluginTest extends AbstractSessionPluginTest
 	@Before
 	public void setUp() throws Exception
 	{
+		super.setUp();
 		pluginUnderTest = new OraclePlugin();
 		md = FwTestUtil.getEasyMockSQLMetaData("oracle", "jdbc:oracle:thin:@host:1521:sid", false, false);
 		String[] functions = new String[] { OracleExceptionFormatter.OFFSET_FUNCTION_NAME };

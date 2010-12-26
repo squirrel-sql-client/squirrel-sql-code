@@ -18,11 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.plugins.mysql;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,16 +29,11 @@ import org.junit.Test;
 
 public class MysqlPluginTest extends AbstractSessionPluginTest
 {	
-	// Common mocks 
-	
-	private ISQLDatabaseMetaData mockMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
-	private ISession mockSession = mockHelper.createMock(ISession.class);
-
 	
 	@Before
 	public void setUp() throws Exception
 	{
-		expect(mockSession.getMetaData()).andStubReturn(mockMetaData);
+		super.setUp();
 		classUnderTest = new MysqlPlugin();
 	}
 
@@ -72,17 +65,14 @@ public class MysqlPluginTest extends AbstractSessionPluginTest
 	private void testIsPluginSession(String productName, String productVersion, boolean isPluginSession)
 		throws Exception
 	{
-		expect(mockMetaData.getDatabaseProductName()).andReturn(productName).anyTimes();
-		expect(mockMetaData.getDatabaseProductVersion()).andReturn(productVersion).anyTimes();
-
-		mockHelper.replayAll();
-
+		when(super.mockSQLDatabaseMetaData.getDatabaseProductName()).thenReturn(productName);
+		when(super.mockSQLDatabaseMetaData.getDatabaseProductVersion()).thenReturn(productVersion);
+		
 		boolean result = ((MysqlPlugin)classUnderTest).isPluginSession(mockSession);
 
 		assertEquals("isPluginSession() != expected value: ",
 			isPluginSession, result);
 
-		mockHelper.verifyAll();
 	}
 
 	@Override

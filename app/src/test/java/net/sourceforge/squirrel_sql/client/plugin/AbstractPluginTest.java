@@ -18,29 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.client.plugin;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertNotNull;
 
-import org.easymock.EasyMock;
-import org.junit.Assert;
 import org.junit.Test;
-
-import utils.EasyMockHelper;
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import org.junit.runner.RunWith;
 
 /**
  * This class provides common tests for plugins.  Each plugin test should simply extend this class to 
  * pickup the common tests.
  *  
  */
-public abstract class AbstractPluginTest extends BaseSQuirreLJUnit4TestCase
+@RunWith(org.mockito.runners.MockitoJUnitRunner.class)
+public abstract class AbstractPluginTest
 {
 	protected IPlugin classUnderTest = null;
-	protected EasyMockHelper mockHelper = new EasyMockHelper();
 	
 
 	@Test

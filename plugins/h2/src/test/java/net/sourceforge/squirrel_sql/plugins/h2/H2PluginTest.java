@@ -29,6 +29,7 @@ public class H2PluginTest extends AbstractSessionPluginTest
 	@Before
 	public void setUp() throws Exception
 	{
+		super.setUp();
 		classUnderTest = new H2Plugin();
 	}
 

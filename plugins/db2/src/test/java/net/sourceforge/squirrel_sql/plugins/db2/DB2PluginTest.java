@@ -30,6 +30,7 @@ public class DB2PluginTest extends AbstractSessionPluginTest implements Database
 	@Before
 	public void setUp() throws Exception
 	{
+		super.setUp();
 		classUnderTest = new DB2Plugin();
 	}
 
