@@ -13,15 +13,18 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
- * The Example plugin class. This plugin does the following: 1. If the database types is DB2, it registers a
- * menu action in the popup menu for view and procedure nodes in the ObjectTree. For detailed information and
- * usage of the Plugin API see the following:
+ * <pre>
+ * The Example plugin class. If the database session's type is DB2, this plugin registers a menu action in 
+ * the popup menu for view and procedure nodes in the ObjectTree. 
+ * 
+ * For detailed information and usage of the Plugin API see the following:
+ * 
  * https://sourceforge.net/apps/trac/squirrel-sql/wiki/SQuirreLSQLClientPluginAPI
+ * </pre>
  */
 public class ExamplePlugin extends DefaultSessionPlugin
 {
 	private PluginResources _resources;
-
 
 	/**
 	 * Return the internal name of this plugin.
@@ -127,20 +130,20 @@ public class ExamplePlugin extends DefaultSessionPlugin
 	 * 
 	 * @param session
 	 *           The session that is starting.
-	 * @return An implementation of PluginSessionCallback or null to indicate the plugin does not work with this
-	 *         session
+	 * @return An implementation of PluginSessionCallback or null to indicate the plugin does not work with
+	 *         this session
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
 		// Adds the view and procedure script actions if the session is DB2.
 		addTreeNodeMenuActionsForDB2(session);
-		
+
 		// Register a custom ISQLExecutionListener implementation that simply prints all SQL being executed to
 		// the message panel.
 		IMessageHandler messageHandler = session.getApplication().getMessageHandler();
 		ExampleSqlExecutionListener sqlExecutionListener = new ExampleSqlExecutionListener(messageHandler);
 		session.getSessionSheet().getSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
-		
+
 		return new PluginSessionCallbackAdaptor(this);
 	}
 
@@ -155,10 +158,10 @@ public class ExamplePlugin extends DefaultSessionPlugin
 
 				// Add context menu items to the object tree's view and procedure nodes.
 				IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
-				otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptDB2ViewAction(getApplication(), _resources,
-					session));
-				otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptDB2ProcedureAction(getApplication(),
+				otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptDB2ViewAction(session.getApplication(),
 					_resources, session));
+				otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptDB2ProcedureAction(
+					session.getApplication(), _resources, session));
 			}
 		}
 		catch (Exception e)
