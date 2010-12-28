@@ -60,7 +60,7 @@
 		<assembly-plugin-version>2.2</assembly-plugin-version>
 		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
 		<compiler-plugin-version>2.3.2</compiler-plugin-version>
-		<dependency-plugin-version>2.0</dependency-plugin-version>
+		<dependency-plugin-version>2.1</dependency-plugin-version>
 		<exec-plugin-version>1.2</exec-plugin-version>
 		<findbugs-plugin-version>2.1</findbugs-plugin-version>
 		<gpg-plugin-version>1.1</gpg-plugin-version>
