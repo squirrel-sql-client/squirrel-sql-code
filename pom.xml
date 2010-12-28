@@ -17,8 +17,9 @@
 
 	<name>SQuirreL Plugin Archetype</name>
 	<description>
-		This project produces the maven archetype that can be used to generate a SQuirreL Plugin 
-		maven project.  The project that is produced contains an Example plugin that demonstrates the use 
+		This project produces the maven archetype that can be used to generate a SQuirreL
+		Plugin
+		maven project. The project that is produced contains an Example plugin that demonstrates the use
 		of key plugin APIs.
 	</description>
 	<inceptionYear>2001</inceptionYear>
@@ -49,7 +50,8 @@
 	<scm>
 		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</connection>
 		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</url>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype
+		</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
@@ -60,7 +62,21 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 
-
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>example</artifactId>
+			<version>${project.version}</version>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>example</artifactId>
+			<version>${project.version}</version>
+			<classifier>test-sources</classifier>
+		</dependency>
+		
+	</dependencies>
 	<build>
 		<extensions>
 			<extension>
@@ -78,6 +94,132 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
+				<executions>				
+					<execution>
+						<id>copy-example-project-java</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>example</includeArtifactIds>
+							<includeClassifiers>sources</includeClassifiers>
+							<includes>**\/*.java</includes>
+							<excludes>**\/*Test.java</excludes>
+							<outputDirectory>src/main/resources/archetype-resources/src/main/java</outputDirectory>
+							<markersDirectory>target/dependency-maven-plugin-markers-java</markersDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-example-project-java-tests</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>example</includeArtifactIds>
+							<includeClassifiers>test-sources</includeClassifiers>
+							<includes>**\/*Test.java</includes>
+							<outputDirectory>src/main/resources/archetype-resources/src/test/java</outputDirectory>
+							<markersDirectory>target/dependency-maven-plugin-markers-test-java</markersDirectory>
+						</configuration>
+					</execution>					
+					<execution>
+						<id>copy-example-project-properties</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>example</includeArtifactIds>
+							<includeClassifiers>sources</includeClassifiers>
+							<includes>**\/*.properties</includes>
+							<outputDirectory>src/main/resources/archetype-resources/src/main/resources</outputDirectory>
+							<markersDirectory>target/dependency-maven-plugin-markers-properties</markersDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-example-project-docs</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>example</includeArtifactIds>
+							<includeClassifiers>sources</includeClassifiers>
+							<includes>**\/*.txt</includes>
+							<outputDirectory>src/main/resources/archetype-resources/src/main/resources</outputDirectory>
+							<markersDirectory>target/dependency-maven-plugin-markers-docs</markersDirectory>
+						</configuration>
+					</execution>
+					
+				</executions>
+
+			</plugin>
+			<!--
+				This will test that the archetype can be used to create a new plugin project (in
+				target/it/projects) and that the plugin project will successfully build. This pattern was found
+				in a discussion about how to test archetypes here:
+				http://maven.40175.n5.nabble.com/unit-testing-archetypes-td75257.html#a75257 or
+				http://bit.ly/gABNDE if this url ever goes away.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>generate-projects</id>
+						<goals>
+							<goal>install</goal>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<cloneProjectsTo>${project.build.directory}/it/projects</cloneProjectsTo>
+							<goals>
+								<goal>org.apache.maven.plugins:maven-archetype-plugin:generate</goal>
+							</goals>
+							<pomIncludes>
+								<pomInclude>*</pomInclude>
+							</pomIncludes>
+							<projectsDirectory>${basedir}/src/it/projects</projectsDirectory>
+							<properties>
+								<archetypeArtifactId>${project.artifactId}</archetypeArtifactId>
+								<archetypeGroupId>${project.groupId}</archetypeGroupId>
+								<archetypeVersion>${project.version}</archetypeVersion>
+								<interactiveMode>false</interactiveMode>
+							</properties>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify-projects</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+							<pomIncludes>
+								<pomInclude>*/*/pom.xml</pomInclude>
+							</pomIncludes>
+							<projectsDirectory>${project.build.directory}/it/projects</projectsDirectory>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<streamLogs>true</streamLogs>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
 	</build>
 
 	<distributionManagement>
