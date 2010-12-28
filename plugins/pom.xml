@@ -63,6 +63,7 @@
 	<modules>
 		<module>squirrelsql-plugins-parent-pom</module>
 		<module>squirrelsql-plugins-assembly-descriptor</module>
+		<module>squirrelsql-plugin-archetype</module>
 		<module>codecompletion</module>
 		<module>dataimport</module>
 		<module>db2</module>
@@ -98,7 +99,6 @@
 		<module>sybase</module>
 		<module>syntax</module>
 		<module>userscript</module>
-
-	</modules>
+  </modules>
 
 </project>
