@@ -156,6 +156,7 @@
 					</configuration>
 					<executions>
 						<execution>
+							<id>create-source-jar</id>
 							<phase>prepare-package</phase>
 							<goals>
 								<goal>jar</goal>
