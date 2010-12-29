@@ -207,15 +207,33 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${dependency-plugin-version}</version>
+					<executions>
+						<execution>
+							<id>copy-assembly-descriptor-file</id>
+							<goals>
+								<goal>unpack</goal>
+							</goals>
+							<phase>generate-resources</phase>
+							<configuration>
+								<artifactItems>
+									<artifactItem>
+										<groupId>net.sf.squirrel-sql.plugins</groupId>
+										<artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
+										<version>3.3.0-SNAPSHOT</version>
+									</artifactItem>
+								</artifactItems>
+								<outputDirectory>${project.build.directory}</outputDirectory>
+								<includes>**\/*.xml</includes>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>${assembly-plugin-version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>net.sf.squirrel-sql.plugins</groupId>
-							<artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
-							<version>3.3.0-SNAPSHOT</version>
-						</dependency>
-					</dependencies>
 					<executions>
 						<execution>
 							<id>create-plugin-archives</id>
@@ -224,9 +242,9 @@
 								<goal>single</goal>
 							</goals>
 							<configuration>
-								<descriptorRefs>
-									<descriptorRef>squirrelsql-plugin-assembly</descriptorRef>
-								</descriptorRefs>
+								<descriptors>
+									<descriptor>${project.build.directory}/assemblies/squirrelsql-plugin-assembly.xml</descriptor>
+								</descriptors>
 								<!--
 									This must be true, or else it will cause this to become the main artifact for each plugin
 									project
