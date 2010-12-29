@@ -1,0 +1,598 @@
+<?xml version="1.0"?>
+
+<!--
+	This is an Apache Ant build file for Squirrel SQL Client (Weekly Builds)
+	This script's weeekly build target will fetch the latest source from SF
+	(either update or fresh checkout), build the application and installer, run
+	the installer using the autoconfigure option, then launch the installed 
+	application for manual build verification testing. When build testing is 
+	complete, manually shutdown the SQuirreL instance launched by this script
+	and a src zip archive will be produced from cvs export of SQuirreL.  If the
+	manual build verification yields results that indicate that the build has 
+	critical issues that need to be resolved, simply type Ctrl-C in the console
+	window that is running the build to skip the cvs export and subsequent 
+	building of the source zip archive.
+-->
+
+<project name="Squirrel-SQL-Client-WeeklyBuild" default="weeklybuild" basedir=".">
+	
+	<!-- Suck in the properties from the properties file and setup some props 
+	     and directories -->
+	<target name="init">
+		<property file="${basedir}/build-weekly.properties"/>
+		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
+	        <mkdir dir="${dist.dir}"/>
+		<tstamp>
+		        <format property="touch.time" 
+		    	pattern="yyyyMMdd_kkmm"
+	        	unit="hour"
+		    	timezone="GMT"/>
+		</tstamp>
+		<tstamp>
+			<format property="release.time" 
+			    pattern="yyyy/MM/dd kk:mm z"
+				unit="hour"
+			    timezone="GMT"/>
+		</tstamp>
+		
+        	<!-- 
+        	We decided to drop the version from the snapshot build. So snapshot builds
+        	have a date/time stamp in their version. However, if we aren't configured to 
+                replace the version file with a template that accepts the snapshot, then use
+                the appversion property to set squirrel.version
+        	-->
+                <condition property="squirrel.version" 
+                		   value="Snapshot-${touch.time}" 
+                	       else = "${appversion}">
+                	
+                    <istrue value="${replace.version}"/>
+                
+                </condition>
+
+                <property name="other.install.jar.file"
+                          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+
+                <property name="macosx.install.jar.file"
+                          value="${dist.dir}/${name}-${squirrel.version}-MacOSX-install.jar"/>
+		
+		<property name="source.zip.file"
+		          value="${dist.dir}/${name}-${squirrel.version}-src.zip"/>
+
+		
+		<property name="release.dir" value="${dist.dir}/release"/>
+		<mkdir dir="${release.dir}"/>
+
+		<property name="release.core.dir" value="${release.dir}/core"/>
+		<mkdir dir="${release.core.dir}"/>
+		
+		<property name="release.i18n.dir" value="${release.dir}/i18n"/>
+		<mkdir dir="${release.i18n.dir}"/>
+
+		<property name="release.plugin.dir" value="${release.dir}/plugin"/>
+		<mkdir dir="${release.plugin.dir}"/>
+		
+		<property name="target.dir" value="${dist.dir}/squirrel-sql"/>
+		<property name="target.core.lib.dir" value="${target.dir}/core/dist/lib"/>
+		<property name="target.core.doc.dir" value="${target.dir}/core/dist/doc"/>
+		
+	</target>
+
+	<target name="test" depends="init">
+		<echo message="squirrel.version=${squirrel.version}"/>
+	</target>
+	
+	<!-- Creates the squirrel installer using izpack -->
+	<target name="createinstaller">
+		<echo message="Creating the installer with izpack" />
+		<echo message="config file template= ${izpack.config.file.template}" />
+		<echo message="config file = ${izpack.config.file}" />
+		
+                <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
+                      toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
+                    <filterchain>
+                        <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                                <param type="token"
+                                       name="squirrel.version"
+                                       value="${squirrel.version}"/>
+                        		<param type = "token"
+                        				name="app.sub.path"
+                        				value="squirrel-sql-${squirrel.version}"/>
+                        </filterreader>
+                    </filterchain>
+                </copy>
+
+		<!-- This works with the latest version of IzPack - currently 3.11.0 
+		     The arguments are not correct for older versions such as 3.7.0 -->
+		<java jar="${izpack.home.dir}/lib/compiler.jar"
+	              fork="true"
+	              failonerror="true"
+	              maxmemory="128m"
+	        >
+		    <arg value="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}"/>
+		    <arg value="-h"/>
+	            <arg value="${izpack.home.dir}"/>
+		    <arg value="-b"/>
+		    <arg value="${cvs.dest.dir}/${project.module}/build"/>
+		    <arg value="-k"/>
+		    <arg value="standard-kunstoff"/>
+		    <arg value="-o"/>
+		    <arg value="${install.jar.file}"/>
+		    <arg value="-l"/>
+		    <arg value="5"/>
+		    <classpath>
+		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
+		        <pathelement path="${java.class.path}"/>
+		    </classpath>
+	        </java>					
+	</target>
+
+	<!-- Creates the autoinstall.xml file from the template file 
+	     autoinstall.xml.template -->
+	<target name="createinstallscript">
+		<echo message="Copying template autoinstall file to ${auto.install.file}"/>		
+		<copy file="${auto.intall.template}" toFile="${auto.install.file}">
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+					<param type="token" 
+						   name="bv.install.dir" 
+						   value="${bv.install.dir}"/>
+				</filterreader>
+			</filterchain>
+		</copy>	
+	</target>		
+	
+	<!-- create the source archive for this snapshot -->
+	<target name="createsourcearchive" depends="svnexport">
+		<!-- Copy the (potentially) modified Version.java over the cvsexport'd one -->
+		<copy file="${version.dest.filename}" 
+		      toFile="${dist.dir}/src/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java"/>
+
+		 <zip destfile="${source.zip.file}"
+		       basedir="${dist.dir}/src"
+		       update="true"
+		  />	
+	</target>
+	
+	<!-- Create the release update site to make this release available to the 
+	     UpdateManager.  This needs to be done before the installer is built
+	     so that the release.xml file can be included. -->
+	<target name="createupdatesite" depends="init">
+		<!-- copy the core jars (includes libraries) to release core subdir -->
+		<copy todir="${release.core.dir}">
+			<fileset dir="${target.core.lib.dir}">
+			    <include name="*.jar"/>
+				<exclude name="squirrel-sql_*.jar"/>
+			</fileset>
+		</copy>
+		<!-- copy translation jars to the release i18n subdir -->
+		<copy todir="${release.i18n.dir}">
+			<fileset dir="${target.core.lib.dir}" >
+				<include name="squirrel-sql_*.jar"/>	
+			</fileset>
+		</copy>
+		<!-- copy the plugin zip archives to the release directory -->
+                <copy todir="${release.plugin.dir}">
+                        <fileset dir="${target.dir}">
+                                <include name="*.zip"/>
+                        </fileset>
+                </copy>
+		
+                <zip destfile="${release.core.dir}/doc.zip" compress="true">
+                        <zipfileset dir="${target.core.doc.dir}" prefix="doc">
+                                <include name="**/*.*"/>
+                        </zipfileset>
+                </zip>
+		
+		<!-- build the release.xml document -->
+		<java fork="true"  
+		      classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
+			<arg value="${release.channel}"/>
+			<arg value="${squirrel.version}"/>
+			<arg value="${release.dir}"/>
+			<classpath>
+			    <fileset dir="${release.core.dir}">
+			        <include name="*.jar"/>
+		    	    </fileset>
+		        </classpath>
+		</java>
+	</target>
+	
+	<!-- This deletes the files that are in the cvs.dest.dir/project.module/build
+	     directory, then updates the entire source tree, and performs an
+	     "ant clean" -->
+	<target name="cvsupdate" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+        		<fileset dir="${cvs.dest.dir}/${project.module}/build">
+        			<exclude name="CVS/**/*"/>
+        		</fileset>
+		</delete>		
+		<!-- Delete the release directory so that it gets regenerated -->
+		<delete includeEmptyDirs="true" quiet="true">
+                        <fileset dir="${cvs.dest.dir}/squirrel-sql-dist/release">
+                                <exclude name="CVS/**/*"/>
+                        </fileset>			
+		</delete>			
+
+		<cvs command="update -A  -P -d -r ${cvs.tag}"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${cvs.dest.dir}" 
+			 package="${project.module}"
+		/>
+		
+		<!-- Copy the build files so that any local changes can be 
+		     tested.  Otherwise, they would need to be committed in CVS
+		     to test any changes -->
+		<copy overwrite="true" todir="${build.file.dest.dir}/snapshot">
+                        <fileset dir="." >
+                                <include name="*.template"/>    
+                        </fileset>
+                </copy>
+		
+
+		<ant antfile="${build.file.dest.dir}/build.xml" 
+			 target="clean"
+			 inheritAll="false"
+		     dir="${cvs.dest.dir}/${project.module}"
+		/>
+		
+	</target>
+	
+	<target name="svnco" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${cvs.dest.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>
+	    <mkdir dir="${cvs.dest.dir}/${project.module}"/>
+		<exec executable="svn" dir="${cvs.dest.dir}">
+			<arg value="co"/>
+			<arg value="https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12"/>
+			<arg value="sql12"/>
+			<arg value="--quiet"/>
+		</exec>	
+	</target>
+	
+	<!-- this deletes the files underneath cvs.dest.dir, then checks out the 
+	     distribution from the CVS repository -->
+	<target name="cvsco" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${cvs.dest.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>
+	    <mkdir dir="${cvs.dest.dir}/${project.module}"/>
+		<cvs reallyquiet="true"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${cvs.dest.dir}" 
+			 package="${project.module}"
+			 tag="${cvs.tag}"
+		/>	
+	</target>
+
+	<target name="svnexport">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist.dir}/src" defaultexcludes="no">
+			</fileset>
+		</delete>		
+		<mkdir dir="${dist.dir}/src"/>
+		<exec failonerror="true" executable="svn" dir="${dist.dir}/src">
+			<arg value="export"/>
+			<arg value="https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12"/>
+			<arg value="-r"/>
+			<arg value="${cvs.tag}"/>
+			<arg value="--force"/>
+			<arg value="--quiet"/>
+		</exec>
+	</target>
+	
+	<!-- exports the source (minus the CVS directories) from the repository. -->
+	<target name="cvsexport">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist.dir}/src" defaultexcludes="no">
+			</fileset>
+		</delete>		
+		<mkdir dir="${dist.dir}/src"/>
+		<cvs command="export -r ${cvs.tag} ${project.module}"
+			 reallyquiet="true"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${dist.dir}/src" 
+		/>		
+	</target>
+	
+	<!-- calls out to the squirrel trunk build.xml file in the temp build area
+	     to execute a build. -->
+	<target name="executebuild">
+		<echo message="Executing build file ${build.file.dest.dir}/build.xml target=${build.target}" />
+		<ant antfile="${build.file.dest.dir}/build.xml" 
+			 target="${build.target}"
+		     inheritAll="false"
+			 dir="${cvs.dest.dir}/${project.module}">
+			
+			<property name="squirrel.version" value="${squirrel.version}"/>
+			
+		</ant>
+	</target>
+	
+	<!-- Launches the application for manual build verification testing. JAVA_HOME is the environment
+	     variable that the launch.file uses to determine which JVM to use 
+	     TODO: Turn "/tmp/squirreltest" into a property (perhaps 'launch.dir')
+	-->
+	<target name="launchsquirrel">
+		<exec   dir="/tmp/squirreltest" executable="${launch.file}"/>
+	</target>	
+		
+	<!-- Creates batch.txt from the template file, filtering in the actual names of the files to be 
+	     uploaded using sftp to SourceForge.  This batch of commands will also create a new release
+	     directory on the remote sftp server to house the release files.  This target then runs sftp 
+	     feeding it the batch file to transfer the installers and source archives to SourceForge using 
+	     sftp. -->
+	<target name="uploadInstallersAndSource" depends="init">
+                <copy file="batch.txt.template" toFile="${dist.dir}/batch.txt" overwrite="true">
+                        <filterset>
+                        	<filter token="SFTP_ROOTDIR"
+                        	        value="${sftp.rootdir}" />
+                        	<filter token="SQUIRREL_VERSION"
+                        	        value="${squirrel.version}" />
+                                <filter token="OTHER_INSTALL_JAR" 
+                                	value="${other.install.jar.file}" />
+                                <filter token="MACOSX_INSTALL_JAR" 
+                                        value="${macosx.install.jar.file}" />
+                                <filter token="SOURCE_ZIP" 
+                                        value="${source.zip.file}" />                        	
+                        </filterset>
+                </copy> 
+                
+		<exec executable="sftp" failonerror="true" failifexecutionfails="true" 
+		      logerror="true" output="sftp.log" >
+			
+		        <arg value="-b"/>
+			<arg value="${dist.dir}/batch.txt"/>
+			<arg value="${sftp.username},squirrel-sql@frs.sf.net"/>
+		</exec>
+	</target>
+	
+        <!-- Enable Publishing -->
+        <target name="publish.updates" description="turns on publishing files to an external update site" >
+
+            <property name="publish.updates.enabled" value="true" />
+        </target>	
+	
+	<!-- Transfers the update site artifact files to the remote download website.  This has to do
+	     alot more work since it deals with many files in multiple sub-directories 
+	-->
+	<target name="publishUpdateSiteWithFtp" depends="init" if="publish.updates.enabled">
+		
+		<ftp action="del"                           
+		     server="${remoteUpdateSiteHostname}"   userid="${remoteUpdateSiteUsername}"
+                     password="${remoteUpdateSitePassword}" remotedir="${remoteUpdateSiteDir}">
+		
+		    <fileset>
+			<include name="**/*.xml"/>
+		        <include name="**/*.jar"/>
+		    	<include name="**/*.zip"/>
+	            </fileset>
+			
+		</ftp>
+		<ftp action="put"
+		     server="${remoteUpdateSiteHostname}"   userid="${remoteUpdateSiteUsername}"
+		     password="${remoteUpdateSitePassword}" remotedir="${remoteUpdateSiteDir}">
+			
+			<fileset dir="${release.dir}" />
+			
+                </ftp>
+	</target>
+
+	<!-- Transfers the update site files to the remote download website.  This is no longer used as SF 
+	     doesn't want us to use the web-space to distribute updated software.  It would represent far less
+	     bandwidth consumption, but would not go through their File Release System (which is painful to 
+	     use and doesn't allow direct linking - making it difficult to use for the automated update 
+	     feature).  We have since switched to using a commercially hosted site that allows this, with the
+	     hope that someday SF will reconsider this policy. -->
+	<target name="publishUpdateSiteWithScp" depends="init">
+		<!-- zip up the update site files into a single file for tranferring -->
+		<jar destfile="${dist.dir}/release.zip"
+		      basedir="${release.dir}"/>
+
+		<!-- Clean out the previous release -->
+                <sshexec host="${remoteUpdateSiteHostname}"
+                        username="${remoteUpdateSiteUsername}"
+                        command="rm -rf ${remoteUpdateSiteDir}; mkdir ${remoteUpdateSiteDir}"
+                        password="${remoteUpdateSitePassword}"
+                />		
+		
+		<!-- scp the resulting jar up to the website -->
+		<scp localfile="${dist.dir}/release.zip"
+		     todir="${remoteUpdateSiteUsername}@${remoteUpdateSiteHostname}:${remoteUpdateSiteDir}"
+                     password="${remoteUpdateSitePassword}"
+		     trust="true">
+		</scp>
+		
+		<!-- extract the zip using sshexec -->
+		<sshexec host="${remoteUpdateSiteHostname}"
+			username="${remoteUpdateSiteUsername}"
+			command="cd ${remoteUpdateSiteDir}; unzip release.zip"
+			password="${remoteUpdateSitePassword}"
+		/>
+		         
+	</target>
+	
+	<!-- Replaces the Version.java which comes with the trunk, with one that 
+	     has the snapshot build number in it. -->
+	<target name="replaceversion" if="targettest">
+
+		<echo message="Deleting file ${version.dest.filename}"/>
+		<delete file="${version.dest.filename}"/>
+		
+		<echo message="Copying template version file to ${version.dest.filename}"/>		
+		<copy file="${version.template.filename}" toFile="${version.dest.filename}">
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+					<param type="token" 
+						   name="SNAPSHOT_VERSION" 
+						   value="${squirrel.version}"/>
+				</filterreader>
+			</filterchain>
+		</copy>	
+	</target>
+
+	<!-- 
+	Uses the release notes template in the snapshot build directory to 
+	create "releaseNotes.txt" mostly suitable for pasting into the 
+	File Releases page
+	-->
+	<target name="releaseNotes" depends="init">
+
+		<delete file="${java.io.tmpdir}/release_notes.txt"/>
+				
+		<copy file="snapshot_release_notes.template" toFile="${java.io.tmpdir}/release_notes.txt">
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+					<param type="token" 
+						   name="SNAPSHOT_VERSION" 
+						   value="${squirrel.version}"/>
+					<param type="token"
+						   name="SNAPSHOT_TIMESTAMP"
+					       value="${release.time}"/>
+				</filterreader>
+			</filterchain>
+		</copy>	
+	</target>
+	
+	
+	<!-- Runs the installer, feeding it the autoinstall script -->
+	<target name="runinstaller">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${bv.install.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>		
+		
+		<!-- TODO: I just noticed that the value for bv.install.dir (/tmp/squirreltest) is hard-coded
+		           in auto.install.file (autoinstall.xml).  So, we need to setup a template 
+		           (autoinstall.xml.template) that gets the value filtered in. -->
+		
+		<!-- failonerror is false for now because IzPack 3.9.0 has an issue 
+		     processing the shortcut panel (Bug #8912 NPE in Automation) but
+		     the install seems to be ok up until that point.  failonerror can
+		     be set back to true once the bug is fixed -->
+		<java jar="${install.jar.file}"
+		      fork="true"
+			  failonerror="false"
+			  maxmemory="128m"
+	    >
+			<arg value="${auto.install.file}"/>
+	    </java>
+	</target>	
+	
+	<!-- 
+	  * Allows conditional call of a target based on true/false value of some
+	  * property. If propertyvalue is true, then targettocall is called with 
+	  * "targettest" property undefined.
+	  *
+	  * @param propertyvalue the property whose true/false value should 
+	  *                      determine whether or not the targettocall should
+	  *                      execute.
+	  * @param targettocall the target that should be called.  This target 
+	  *                     should have if="targettest" to allow it to be 
+	  *                     turned on or off based on the true/false value of 
+	  *                     targettocall.
+	 -->
+	<target name="testtrue">
+		<condition property="targettest">
+			<istrue value="${propertyvalue}"/>
+		</condition>
+		<antcall target="${targettocall}">
+		</antcall>		
+	</target>	
+
+	<!-- 
+	  * Allows conditional call of a target based on true/false value of some
+	  * property. If propertyvalue is false, then targettocall is called with 
+	  * "targettest" property undefined.
+	  *
+	  * @param propertyvalue the property whose true/false value should 
+	  *                      determine whether or not the targettocall should
+	  *                      execute.
+	  * @param targettocall the target that should be called.  This target 
+	  *                     should have if="targettest" to allow it to be 
+	  *                     turned on or off based on the true/false value of 
+	  *                     targettocall.
+	 -->	
+	<target name="testfalse">
+		<condition property="targettest">
+			<isfalse value="${propertyvalue}"/>
+		</condition>
+		<antcall target="${targettocall}">
+		</antcall>		
+	</target>		
+	
+	<target name="createMacInstaller" depends="init">
+		<antcall target="createinstaller">
+			<param name="izpack.config.file.template" value="${macosx.izpack.config.file.template}"/>
+			<param name="izpack.config.file" value="${macosx.izpack.config.file}"/>
+			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-MacOSX-install.jar"/>			
+		</antcall>	
+	</target>
+	
+	<target name="createOtherInstaller" depends="init">
+		<antcall target="createinstaller">
+			<param name="izpack.config.file.template" value="${other.izpack.config.file.template}"/>
+			<param name="izpack.config.file" value="${other.izpack.config.file}"/>
+		    <param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>						
+		</antcall>	
+	</target>
+	
+	<target name="runOtherInstaller" depends="init">
+		<antcall target="runinstaller">
+			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+		</antcall>	
+	</target>
+	
+	<!-- This does the work of checking out or updating the source, building the
+	     distribution and the install jar. -->
+	<target name="weeklybuild" depends="init">
+
+		
+		<antcall target="testtrue">
+			<param name="targettocall" value="svnco"/>
+			<param name="propertyvalue" value="${delete.dest.dir}"/>
+		</antcall>	
+		
+		<antcall target="testfalse">
+			<param name="targettocall" value="cvsupdate"/>
+			<param name="propertyvalue" value="${delete.dest.dir}"/>
+		</antcall>	
+		
+		<antcall target="testtrue">
+			<param name="targettocall" value="replaceversion"/>
+			<param name="propertyvalue" value="${replace.version}"/>
+		</antcall>			
+		
+		<antcall target="executebuild"/>
+		
+		<antcall target="createupdatesite" />
+		
+		<!-- Create the installer for mac -->
+		<antcall target="createMacInstaller"/>
+
+		<!-- Create the installer for Windows/Linux -->
+		<antcall target="createOtherInstaller"/>
+		
+		<antcall target="createinstallscript"/>
+		
+		<!-- Run the Windows/Linux installer -->
+		<antcall target="runOtherInstaller"/>
+		
+		<antcall target="launchsquirrel"/>
+				
+		<antcall target="createsourcearchive"/>
+		
+		<antcall target="releaseNotes"/>
+		
+		<antcall target="uploadInstallersAndSource"/>
+		
+		<antcall target="publishUpdateSiteWithFtp"/> 
+		
+	</target>
+		
+</project>

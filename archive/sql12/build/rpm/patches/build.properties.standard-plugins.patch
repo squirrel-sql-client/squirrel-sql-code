@@ -1,0 +1,77 @@
+--- sql12/build/build.properties.orig	2010-01-09 12:19:51.000000000 -0500
++++ sql12/build/build.properties	2010-01-09 12:25:32.000000000 -0500
+@@ -9,40 +9,40 @@
+ # optional plugins set to true.
+ 
+ rebuild.plugin.codecompletion=true
+-rebuild.plugin.dataimport=true
+-rebuild.plugin.dbcopy=true
+-rebuild.plugin.dbdiff=true
+-rebuild.plugin.derby=true
+-rebuild.plugin.db2=true
++rebuild.plugin.dataimport=false
++rebuild.plugin.dbcopy=false
++rebuild.plugin.dbdiff=false
++rebuild.plugin.derby=false
++rebuild.plugin.db2=false
+ rebuild.plugin.editextras=true
+-rebuild.plugin.example=true
+-rebuild.plugin.exportconfig=true
+-rebuild.plugin.favs=true
+-rebuild.plugin.firebird=true
+-rebuild.plugin.firebirdmanager=true
++rebuild.plugin.example=false
++rebuild.plugin.exportconfig=false
++rebuild.plugin.favs=false
++rebuild.plugin.firebird=false
++rebuild.plugin.firebirdmanager=false
+ rebuild.plugin.graph=true
+-rebuild.plugin.hibernate=true
+-rebuild.plugin.h2=true
+-rebuild.plugin.informix=true
+-rebuild.plugin.isqlj=true
++rebuild.plugin.hibernate=false
++rebuild.plugin.h2=false
++rebuild.plugin.informix=false
++rebuild.plugin.isqlj=false
+ rebuild.plugin.laf=true
+-rebuild.plugin.i18n=true
+-rebuild.plugin.macosx=true
+-rebuild.plugin.mssql=true
+-rebuild.plugin.mysql=true
+-rebuild.plugin.oracle=true
+-rebuild.plugin.postgres=true
++rebuild.plugin.i18n=false
++rebuild.plugin.macosx=false
++rebuild.plugin.mssql=false
++rebuild.plugin.mysql=false
++rebuild.plugin.oracle=false
++rebuild.plugin.postgres=false
+ rebuild.plugin.refactoring=true
+-rebuild.plugin.sessionscript=true
+-rebuild.plugin.smarttools=true
++rebuild.plugin.sessionscript=false
++rebuild.plugin.smarttools=false
+ rebuild.plugin.sqlbookmark=true
+-rebuild.plugin.sqlparam=true
+-rebuild.plugin.sqlreplace=true
++rebuild.plugin.sqlparam=false
++rebuild.plugin.sqlreplace=false
+ rebuild.plugin.sqlscript=true
+-rebuild.plugin.sqlval=true
+-rebuild.plugin.sybase=true
++rebuild.plugin.sqlval=false
++rebuild.plugin.sybase=false
+ rebuild.plugin.syntax=true
+-rebuild.plugin.userscript=true
++rebuild.plugin.userscript=false
+ 
+ 
+ # Directory where IzPack is installed - only required
+@@ -70,4 +70,4 @@
+ ext.test.config=/home/hudson/hudson-home/jobs/squirrel-sql/workspace/test/external/net/sourceforge/squirrel_sql/fw/dialects/dialectExternalTest.properties
+ 
+ # root directory containing all driver jar files needed for external tests
+-base.jdbc.driver.path=/opt/jdbc-test
+\ No newline at end of file
++base.jdbc.driver.path=/opt/jdbc-test

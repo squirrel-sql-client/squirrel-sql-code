@@ -1,0 +1,486 @@
+diff -Naur sql12/build/build.xml sql12.patched/build/build.xml
+--- sql12/build/build.xml	2010-01-09 10:36:06.000000000 -0500
++++ sql12.patched/build/build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -234,7 +234,7 @@
+ 	        depends="setup"
+ 	        description="Compiles the framework classes that the app depends on">
+ 		<echo message="---------------- Framework ----------------" />
+-		<javac srcdir="fw/src"
++		<javac encoding="utf-8" srcdir="fw/src"
+ 		       destdir="${core_obj_dir}"
+ 		       deprecation="${deprecation}"
+ 		       debug="${debug}"
+@@ -286,7 +286,7 @@
+ 	        depends="compile_fw"
+ 	        description="Compiles the application but doesn't compile any plugins">
+ 		<echo message="---------------- ${name} ----------------" />
+-		<javac srcdir="app/src"
++		<javac encoding="utf-8" srcdir="app/src"
+ 		       destdir="${core_obj_dir}"
+ 		       deprecation="${deprecation}"
+ 		       debug="${debug}"
+@@ -930,7 +930,7 @@
+ 		<mkdir dir="${test.classes.dir}" />
+ 
+ 		<!-- Build the test code -->
+-		<javac destdir="${test.classes.dir}"
++		<javac encoding="utf-8" destdir="${test.classes.dir}"
+ 		       deprecation="${deprecation}"
+ 		       debug="${debug}"
+ 		       optimize="${optimize}"
+diff -Naur sql12/plugins/cache/plugin_build.xml sql12.patched/plugins/cache/plugin_build.xml
+--- sql12/plugins/cache/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/cache/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -46,7 +46,7 @@
+         <mkdir dir="${obj_dir}"/>
+ 
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/codecompletion/plugin_build.xml sql12.patched/plugins/codecompletion/plugin_build.xml
+--- sql12/plugins/codecompletion/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/codecompletion/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -38,7 +38,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/dataimport/plugin_build.xml sql12.patched/plugins/dataimport/plugin_build.xml
+--- sql12/plugins/dataimport/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/dataimport/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -40,7 +40,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/db2/plugin_build.xml sql12.patched/plugins/db2/plugin_build.xml
+--- sql12/plugins/db2/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/db2/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/dbcopy/plugin_build.xml sql12.patched/plugins/dbcopy/plugin_build.xml
+--- sql12/plugins/dbcopy/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/dbcopy/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -46,7 +46,7 @@
+ 		<mkdir dir="${obj_dir}"/>
+ 		<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/dbdiff/plugin_build.xml sql12.patched/plugins/dbdiff/plugin_build.xml
+--- sql12/plugins/dbdiff/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/dbdiff/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -46,7 +46,7 @@
+ 		<mkdir dir="${obj_dir}"/>
+ 		<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/derby/plugin_build.xml sql12.patched/plugins/derby/plugin_build.xml
+--- sql12/plugins/derby/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/derby/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/editextras/plugin_build.xml sql12.patched/plugins/editextras/plugin_build.xml
+--- sql12/plugins/editextras/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/editextras/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/example/plugin_build.xml sql12.patched/plugins/example/plugin_build.xml
+--- sql12/plugins/example/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/example/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/exportconfig/plugin_build.xml sql12.patched/plugins/exportconfig/plugin_build.xml
+--- sql12/plugins/exportconfig/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/exportconfig/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+ 	    <mkdir dir="${obj_dir}"/>
+ 	    <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/favs/plugin_build.xml sql12.patched/plugins/favs/plugin_build.xml
+--- sql12/plugins/favs/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/favs/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -40,7 +40,7 @@
+ 		<mkdir dir="${obj_dir}" />
+ 		<mkdir dir="${p_plugin.dist_dir}" />
+ 
+-		<javac srcdir="src"
++		<javac encoding="utf-8" srcdir="src"
+ 		       destdir="${obj_dir}"
+ 		       deprecation="${deprecation}"
+ 		       debug="${debug}"
+diff -Naur sql12/plugins/firebird/plugin_build.xml sql12.patched/plugins/firebird/plugin_build.xml
+--- sql12/plugins/firebird/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/firebird/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -36,7 +36,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/firebirdmanager/plugin_build.xml sql12.patched/plugins/firebirdmanager/plugin_build.xml
+--- sql12/plugins/firebirdmanager/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/firebirdmanager/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/graph/plugin_build.xml sql12.patched/plugins/graph/plugin_build.xml
+--- sql12/plugins/graph/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/graph/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -36,7 +36,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/h2/plugin_build.xml sql12.patched/plugins/h2/plugin_build.xml
+--- sql12/plugins/h2/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/h2/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/hibernate/plugin_build.xml sql12.patched/plugins/hibernate/plugin_build.xml
+--- sql12/plugins/hibernate/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/hibernate/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/i18n/plugin_build.xml sql12.patched/plugins/i18n/plugin_build.xml
+--- sql12/plugins/i18n/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/i18n/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -36,7 +36,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/informix/plugin_build.xml sql12.patched/plugins/informix/plugin_build.xml
+--- sql12/plugins/informix/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/informix/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/isqlj/plugin_build.xml sql12.patched/plugins/isqlj/plugin_build.xml
+--- sql12/plugins/isqlj/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/isqlj/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -36,7 +36,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/laf/plugin_build.xml sql12.patched/plugins/laf/plugin_build.xml
+--- sql12/plugins/laf/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/laf/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -38,7 +38,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/macosx/plugin_build.xml sql12.patched/plugins/macosx/plugin_build.xml
+--- sql12/plugins/macosx/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/macosx/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -38,7 +38,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/mssql/build.xml sql12.patched/plugins/mssql/build.xml
+--- sql12/plugins/mssql/build.xml	2007-07-25 19:33:42.000000000 -0400
++++ sql12.patched/plugins/mssql/build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -28,7 +28,7 @@
+ 	</target>
+ 	
+ 	<target name="compile" depends="prepare">
+-		<javac destdir="${build.classes}" srcdir="${src.dir}" deprecation="on">
++		<javac encoding="utf-8" destdir="${build.classes}" srcdir="${src.dir}" deprecation="on">
+             <classpath refid="squirrel.libraries" />
+         </javac>
+ 	</target>
+diff -Naur sql12/plugins/mssql/plugin_build.xml sql12.patched/plugins/mssql/plugin_build.xml
+--- sql12/plugins/mssql/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/mssql/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/mysql/plugin_build.xml sql12.patched/plugins/mysql/plugin_build.xml
+--- sql12/plugins/mysql/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/mysql/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 			
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/oracle/plugin_build.xml sql12.patched/plugins/oracle/plugin_build.xml
+--- sql12/plugins/oracle/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/oracle/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/postgres/plugin_build.xml sql12.patched/plugins/postgres/plugin_build.xml
+--- sql12/plugins/postgres/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/postgres/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/refactoring/plugin_build.xml sql12.patched/plugins/refactoring/plugin_build.xml
+--- sql12/plugins/refactoring/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/refactoring/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -46,7 +46,7 @@
+ 		<mkdir dir="${obj_dir}"/>
+ 		<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/sessionscript/plugin_build.xml sql12.patched/plugins/sessionscript/plugin_build.xml
+--- sql12/plugins/sessionscript/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/sessionscript/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/smarttools/plugin_build.xml sql12.patched/plugins/smarttools/plugin_build.xml
+--- sql12/plugins/smarttools/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/smarttools/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/sqlbookmark/plugin_build.xml sql12.patched/plugins/sqlbookmark/plugin_build.xml
+--- sql12/plugins/sqlbookmark/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/sqlbookmark/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/sqlparam/plugin_build.xml sql12.patched/plugins/sqlparam/plugin_build.xml
+--- sql12/plugins/sqlparam/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/sqlparam/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -38,7 +38,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/sqlreplace/plugin_build.xml sql12.patched/plugins/sqlreplace/plugin_build.xml
+--- sql12/plugins/sqlreplace/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/sqlreplace/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -36,7 +36,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/sqlscript/plugin_build.xml sql12.patched/plugins/sqlscript/plugin_build.xml
+--- sql12/plugins/sqlscript/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/sqlscript/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/sqlval/build.xml sql12.patched/plugins/sqlval/build.xml
+--- sql12/plugins/sqlval/build.xml	2003-05-25 06:59:52.000000000 -0400
++++ sql12.patched/plugins/sqlval/build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -35,7 +35,7 @@
+ 		<mkdir dir="${obj_dir}"/>
+ 		<mkdir dir="${plugin_dist_dir}"/>
+ 
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/sqlval/plugin_build.xml sql12.patched/plugins/sqlval/plugin_build.xml
+--- sql12/plugins/sqlval/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/sqlval/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/sybase/plugin_build.xml sql12.patched/plugins/sybase/plugin_build.xml
+--- sql12/plugins/sybase/plugin_build.xml	2008-12-25 21:06:38.000000000 -0500
++++ sql12.patched/plugins/sybase/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+     	<mkdir dir="${p_plugin.dist_dir}"/>
+ 
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"
+diff -Naur sql12/plugins/syntax/plugin_build.xml sql12.patched/plugins/syntax/plugin_build.xml
+--- sql12/plugins/syntax/plugin_build.xml	2009-02-21 16:23:48.000000000 -0500
++++ sql12.patched/plugins/syntax/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+ 		
+-		<javac	srcdir="src"
++		<javac encoding="utf-8"	srcdir="src"
+ 				destdir="${obj_dir}"
+ 				deprecation="${deprecation}"
+ 				debug="${debug}"
+diff -Naur sql12/plugins/userscript/plugin_build.xml sql12.patched/plugins/userscript/plugin_build.xml
+--- sql12/plugins/userscript/plugin_build.xml	2008-12-25 21:06:36.000000000 -0500
++++ sql12.patched/plugins/userscript/plugin_build.xml	2010-01-09 11:09:15.000000000 -0500
+@@ -37,7 +37,7 @@
+         <mkdir dir="${obj_dir}"/>
+         <mkdir dir="${p_plugin.dist_dir}"/>
+     	
+-        <javac  srcdir="src"
++        <javac encoding="utf-8"  srcdir="src"
+                 destdir="${obj_dir}"
+                 deprecation="${deprecation}"
+                 debug="${debug}"

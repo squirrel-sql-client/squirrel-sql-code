@@ -1,0 +1,14 @@
+--- sql12/app/cmd/squirrel-sql.sh.orig	2010-01-09 14:28:55.000000000 -0500
++++ sql12/app/cmd/squirrel-sql.sh	2010-01-09 14:29:22.000000000 -0500
+@@ -15,9 +15,9 @@
+ 
+ # SQuirreL home.
+ if $macosx ; then
+-        SQUIRREL_SQL_HOME='%INSTALL_PATH/Contents/Resources/Java'
++        SQUIRREL_SQL_HOME='/opt/SQuirreLSQLClient/Contents/Resources/Java'
+ else 
+-        SQUIRREL_SQL_HOME='%INSTALL_PATH'
++        SQUIRREL_SQL_HOME='/opt/SQuirreLSQLClient'
+ fi
+ 
+ # SQuirreL home in Unix format.

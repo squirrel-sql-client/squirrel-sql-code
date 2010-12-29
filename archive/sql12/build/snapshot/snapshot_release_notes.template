@@ -1,0 +1,17 @@
+This is a snapshot of the trunk as of @SNAPSHOT_TIMESTAMP@.  The
+installers can be executed as follows:
+
+Win32/Unix:
+
+java -jar squirrel-sql-@SNAPSHOT_VERSION@-install.jar
+
+MacOS X:
+
+Double-click on squirrel-sql-@SNAPSHOT_VERSION@-MacOSX-install.jar
+
+Please see the change log for changes that have been made 
+since 2.6.
+
+Additionally, the source for the application can be found in this file:
+
+squirrel-sql-@SNAPSHOT_VERSION@-src.zip

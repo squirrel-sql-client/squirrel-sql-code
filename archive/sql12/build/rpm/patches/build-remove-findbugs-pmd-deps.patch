@@ -1,0 +1,60 @@
+diff -up sql12/build/build.xml.orig sql12/build/build.xml
+--- sql12/build/build.xml.orig	2010-01-10 12:17:35.266983214 -0500
++++ sql12/build/build.xml	2010-01-10 12:19:46.030856867 -0500
+@@ -93,10 +93,6 @@
+ 		<!-- Load <emma>, <emmajava>, <findbugs>, <pmd> and <cpd> custom tasks so that they can 
+ 		be used in ANT -->
+ 		<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+-		<taskdef name="findbugs"
+-		         classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
+-		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" />
+-		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" />
+ 
+ 		<!-- Classpath that is used to compile tests -->
+ 		<path id="test.compile.classpath">
+@@ -1165,16 +1161,6 @@
+ 		<echo message="Findbugs Auxiliary Classpath = ${fb.classpath}"/>
+                 -->
+ 
+-		<findbugs home="${findbugs.home}"
+-		          output="xml"
+-		          outputFile="${findbugs.report.dir}/squirrel-fb.xml"
+-		          jvmargs="-Xmx512m"
+-		          timeout="3600000">
+-
+-			<auxclasspath refid="findbugs.aux.classpath" />
+-			<sourcePath path="${coverage.sources.dir}" />
+-			<class location="${coverage.classes.dir}" />
+-		</findbugs>
+ 	</target>
+ 
+ 	<!--
+@@ -1185,16 +1171,6 @@
+         -->
+ 	<target name="pmd" depends="init">
+ 		<mkdir dir="${pmd.reports.dir}" />
+-
+-		<pmd >
+-			<formatter type="xml" toFile="${pmd.reports.dir}/pmd.xml" />
+-                        <fileset dir="${coverage.sources.dir}">
+-                                <include name="**/*.java" />
+-                        </fileset>
+-			<ruleset>basic</ruleset>
+-			<ruleset>unusedcode</ruleset>
+-		</pmd>
+-
+ 	</target>
+ 
+ 	<!--
+@@ -1205,11 +1181,6 @@
+         -->
+ 	<target name="cpd" depends="init">
+ 		<mkdir dir="${cpd.reports.dir}" />
+-		<cpd format="xml" minimumTokenCount="100" outputFile="${cpd.reports.dir}/cpd.xml">
+-			<fileset dir="${coverage.sources.dir}">
+-				<include name="**/*.java" />
+-			</fileset>
+-		</cpd>
+ 	</target>
+ 	
+ 	<!--

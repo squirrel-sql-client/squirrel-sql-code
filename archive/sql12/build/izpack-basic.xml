@@ -1,0 +1,125 @@
+<installation version="1.0">
+
+	<!--
+	<variables>
+		<variable name="sqsc-version" value="1.2beta7"/>
+	</variables>
+	-->
+
+	<info>
+		<appname>SQuirreL SQL Client</appname>
+		<appversion>2.0 final</appversion>
+		<authors>
+			<author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner"/>
+			<author email="manningr@users.sourceforge.net" name=" Rob Manning"/>
+			<author email="gwghome@users.sourceforge.net" name="Glenn Griffin"/>
+			<author email="colbell@users.sourceforge.net" name="Colin Bell"/>
+		</authors>
+		<url>http://www.squirrelsql.org</url>
+		<uninstaller write="yes"/>
+	</info>
+
+	<guiprefs height="480" resizable="yes" width="640"/>
+
+	<locale>
+		<langpack iso3="eng"/>
+	</locale>
+
+	<resources>
+		<res	src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc/licences/squirrel_licence.txt"
+				id="LicencePanel.licence"/>
+		<res	src="installer-readme.html"
+				id="HTMLInfoPanel.info"/>
+		<res	src="shortcutSpec.xml"
+				id="shortcutSpec.xml"/>
+      <res	src="Unix_shortcutSpec.xml"
+            id="Unix_shortcutSpec.xml"/>
+	</resources>
+
+	<panels>
+		<panel classname="HelloPanel"/>
+		<panel classname="HTMLInfoPanel"/>
+		<panel classname="LicencePanel"/>
+		<panel classname="TargetPanel"/>
+		<panel classname="PacksPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="ShortcutPanel"/>
+		<panel classname="FinishPanel"/>
+	</panels>
+
+	<native type="izpack" name="ShellLink.dll"/>
+
+	<packs>
+		<pack name="Base" required="yes">
+			<description>SQL Client</description>
+			<singlefile	target="$INSTALL_PATH/plugins/readme.txt"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
+			<file	targetdir="$INSTALL_PATH/doc"
+					src="../../sql12/web-site/faq.html"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/icons"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.bat"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/addpath.bat"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.sh"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/fw.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
+
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell"/>
+
+			<!-- Make Unix script executable. -->
+			<executable	targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never"/>
+
+		</pack>
+
+		<pack name="Standard" required="no" depends="Base">
+			<description>Standard Plugins</description>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/codecompletion"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/codecompletion.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/editextras"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/editextras.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/graph"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/graph.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/laf"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/laf.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/sqlbookmark"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/sqlbookmark.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/sqlscript"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/sqlscript.jar"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax"/>
+			<file	targetdir="$INSTALL_PATH/plugins"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax.jar"/>
+		</pack>
+
+	</packs>
+</installation>

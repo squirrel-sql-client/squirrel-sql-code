@@ -1,0 +1,79 @@
+--- sql12/build/snapshot/autoinstall.xml.template.orig	2008-03-16 18:20:18.000000000 -0400
++++ sql12/build/snapshot/autoinstall.xml.template	2010-01-09 17:22:28.000000000 -0500
+@@ -8,33 +8,6 @@
+     <com.izforge.izpack.panels.PacksPanel>
+         <pack name="Base"                                        index="0" selected="true"/>
+         <pack name="Standard"                                    index="1" selected="true"/>
+-        <pack name="Optional Plugin - Data import"               index="2" selected="true"/>
+-        <pack name="Optional Plugin - DBCopy"                    index="3" selected="true"/>
+-	<pack name="Optional Plugin - DB2"                       index="4" selected="true"/>
+-        <pack name="Optional Plugin - Derby"                     index="5" selected="true"/>
+-        <pack name="Optional Plugin - Firebird"                  index="6" selected="true"/>
+-        <pack name="Optional Plugin - Hibernate"                 index="7" selected="true"/>
+-        <pack name="Optional Plugin - H2"                        index="8" selected="true"/>                
+-        <pack name="Optional Plugin - Informix"                  index="9" selected="true"/>        
+-        <pack name="Optional Plugin - Microsoft SQL Server"      index="10" selected="true"/>
+-        <pack name="Optional Plugin - MySQL"                     index="11" selected="true"/>
+-        <pack name="Optional Plugin - Oracle"                    index="12" selected="true"/>
+-        <pack name="Optional Plugin - PostgreSQL"                index="13" selected="true"/>
+-	<pack name="Optional Plugin - Refactoring"               index="14" selected="true"/>
+-        <pack name="Optional Plugin - Session Scripts"           index="15" selected="true"/>
+-        <pack name="Optional Plugin - SQL Parametrisation"       index="16" selected="true"/>
+-        <pack name="Optional Plugin - SQL Replace"               index="17" selected="true"/>
+-        <pack name="Optional Plugin - SQL Validator"             index="18" selected="true"/>
+-	<pack name="Optional Plugin - Sybase"                    index="19" selected="true"/>
+-        <pack name="Optional Plugin - Internationalization"      index="20" selected="true"/>
+-        <pack name="Optional Translation - Brazilian Portuguese" index="21" selected="false"/>
+-        <pack name="Optional Translation - Bulgarian"            index="22" selected="false"/>
+-        <pack name="Optional Translation - Czech"                index="23" selected="false"/>
+-        <pack name="Optional Translation - Simplified Chinese"   index="24" selected="false"/>
+-        <pack name="Optional Translation - French"               index="25" selected="false"/>
+-        <pack name="Optional Translation - German"               index="26" selected="false"/>
+-        <pack name="Optional Translation - Italian"              index="27" selected="false"/>
+-        <pack name="Optional Translation - Spanish"              index="28" selected="false"/>
+     </com.izforge.izpack.panels.PacksPanel>
+     <com.izforge.izpack.panels.InstallPanel/>
+ <!--    <com.izforge.izpack.panels.ShortcutPanel/> -->
+--- sql12/build/snapshot/build-weekly.properties.orig	2008-05-25 14:47:40.000000000 -0400
++++ sql12/build/snapshot/build-weekly.properties	2010-01-09 17:22:45.000000000 -0500
+@@ -11,7 +11,7 @@
+ 
+ # version that's used in the name of the installer file - this isn't used if 
+ # building a snapshot release (that is, if replace.version is set to true)
+-appversion=2.7
++appversion=3.0.3
+ 
+ # cvs repository cvsroot to checkout the source from.
+ project.cvsroot=:ext:manningr@squirrel-sql.cvs.sourceforge.net:/cvsroot/squirrel-sql
+@@ -23,11 +23,11 @@
+ cvs.tag=HEAD
+ 
+ # What temporary directory to checkout to in order to perform the build in.
+-cvs.dest.dir=/home/manningr/weeklybuild
++cvs.dest.dir=/home/manningr/rpmbuild/BUILD/squirrel-sql
+ 
+ # Delete what's in cvs.dest.dir and do a fresh checkout or simply update it
+ # and do a clean.  
+-delete.dest.dir=true
++delete.dest.dir=false
+ 
+ # The Version.java template file that contains a marker for where to insert the
+ # snapshot number.
+@@ -36,7 +36,7 @@
+ # If true, this replaces the version source file with the template that can be 
+ # used to create a snapshot version.  Otherwise, the stock Version.java that's
+ # on the CVS trunk is used to compile.
+-replace.version=true
++replace.version=false
+ 
+ # The location in the temp build area for where to place the Version.java file
+ # once the template has been filtered. 
+@@ -72,7 +72,7 @@
+ 
+ # The directory that the application gets installed into for build verification
+ # testing
+-bv.install.dir=/tmp/squirreltest
++bv.install.dir=/var/tmp/squirrel-sql-root/opt/SQuirreLSQLClient
+ 
+ # The launch script for the application
+ launch.file=${bv.install.dir}/squirrel-sql.sh
