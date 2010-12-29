@@ -42,9 +42,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/squirrelsql-integration-environment</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/squirrelsql-integration-environment</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-integration-environment</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/squirrelsql-integration-environment</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/squirrelsql-integration-environment</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/squirrel-3_2_1-branch/sql12/squirrelsql-integration-environment</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>

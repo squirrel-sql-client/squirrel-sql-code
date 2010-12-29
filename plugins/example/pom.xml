@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.2.1</version>
 		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
 	<artifactId>example</artifactId>
@@ -36,9 +36,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/example</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/example</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/example</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins/example</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins/example</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins/example</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>

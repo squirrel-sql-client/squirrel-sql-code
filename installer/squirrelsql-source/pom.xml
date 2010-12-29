@@ -10,7 +10,7 @@
 
 	<artifactId>squirrelsql-source</artifactId>
 	<packaging>jar</packaging>
-	<version>3.3.0-SNAPSHOT</version>
+	<version>3.2.1</version>
 
 	<name>SQuirreL SQL Client Source Archive (Aggregate)</name>
 	<description>
@@ -43,9 +43,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-source</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-source</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer/squirrelsql-source</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/installer/squirrelsql-source</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/installer/squirrelsql-source</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/squirrel-3_2_1-branch/sql12/installer/squirrelsql-source</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
@@ -69,7 +69,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<connectionUrl>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12</connectionUrl>
+							<connectionUrl>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12</connectionUrl>
 							<baseDir>sql12</baseDir>
 							<exportDirectory>target/sources</exportDirectory>
 						</configuration>

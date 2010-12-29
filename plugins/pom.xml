@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.2.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -47,9 +47,9 @@
 
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/squirrel-3_2_1-branch/sql12/plugins</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
