@@ -42,9 +42,9 @@
 
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/installer</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/squirrel-3_2_1-branch/sql12/installer</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/squirrel-3_2_1-branch/sql12/installer</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/branches/squirrel-3_2_1-branch/installer</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/branches/squirrel-3_2_1-branch/installer</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/branches/squirrel-3_2_1-branch/installer</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
