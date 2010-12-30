@@ -4,10 +4,25 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
+
 Enhancements:
 
-Feature request #1608435 (checkbox in I18N administration: "show only bundles with missing translations").  
-	Thanks to Ivo Neri for the patch.
+New icons in Object tree
+
+Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
+
+
+Bug-fixes:
+
+
+3.2.1 (12/29/2010)
+==================
+
+Enhancements:
+
+Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
+Feature request 1608435: (checkbox in I18N administration: "show only bundles with missing translations").
+        Thanks to Ivo Neri for the patch.
 
 New icons in Object tree
 
@@ -15,8 +30,6 @@ Updated translation for Italian (Thanks to Ivo Neri)
 
 New translation
  Japanese (Thanks to Toshiki IGA)
-
-Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 
 Graph Plugin: Multiple tables can now be selected and moved simultanously
   Thanks to Markus Schulz for the patch.
@@ -32,12 +45,13 @@ Bug-fixes:
 3137390: Cannot connect after latest software update.
 3136386: Deleting table content via context menu does not work.
 3123014: StackOverflow ProgressCallBackDialog.
-			 Thanks to Stefan (wis775) for the patch.
+                         Thanks to Stefan (wis775) for the patch.
 3055859: Regular expressions did not work in find & replace dialog.
-			 Thanks to Stefan (wis775) for the patch.
+                         Thanks to Stefan (wis775) for the patch.
 
 Fixed translation label that was not being applied to "Initialize Session Timezone" checkbox.
   Thanks to Ivo Neri for the patch.
+
 
 3.2.0 (11/21/2010)
 ==================
