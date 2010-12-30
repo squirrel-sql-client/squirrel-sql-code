@@ -4,14 +4,14 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.DefaultDesktopManager;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
+import javax.swing.*;
 
 public class GraphDesktopManager extends DefaultDesktopManager
 {
    private GraphDesktopPane _graphDesktopPane;
    private HashSet<FoldingPoint> _uniqueFoldingPointsBuffer = new HashSet<FoldingPoint>();
+
+   private GroupDissolveChecker _groupDissolveChecker = new GroupDissolveChecker();
 
    public GraphDesktopManager(GraphDesktopPane graphDesktopPane)
    {
@@ -32,7 +32,7 @@ public class GraphDesktopManager extends DefaultDesktopManager
          correctX = f.getX() + correctDelta.x;
          correctY = f.getY() + correctDelta.y;
 
-         tolerantlyCheckGroupDissolve(tf, correctDelta);
+         _groupDissolveChecker.tolerantlyCheckGroupDissolve(tf, correctDelta, _graphDesktopPane);
 
          for (TableFrame current : _graphDesktopPane.getGroupFrames())
          {
@@ -47,20 +47,6 @@ public class GraphDesktopManager extends DefaultDesktopManager
       super.dragFrame(f, correctX, correctY);
 
       _graphDesktopPane.repaint(); // Needed in case tables are moved that don't have any constraints.
-   }
-
-   private void tolerantlyCheckGroupDissolve(TableFrame tf, Point correctDelta)
-   {
-      double tolerance = 0.005;
-
-      if (     ((double)correctDelta.x) / ((_graphDesktopPane.getWidth())) > tolerance
-            || ((double)correctDelta.y) / ((_graphDesktopPane.getHeight())) > tolerance)
-      {
-         if (!_graphDesktopPane.isGroupFrame(tf))
-         {
-            _graphDesktopPane.setGroupFrame(tf);
-         }
-      }
    }
 
    private void moveFoldingPoints(List<TableFrame> movedTableFrames, Point delta)
