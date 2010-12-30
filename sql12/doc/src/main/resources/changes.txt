@@ -7,10 +7,7 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
-New icons in Object tree
-
-Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
-
+Feature requests 3001253, 2896494: New icons in Object tree
 
 Bug-fixes:
 
@@ -19,6 +16,8 @@ Bug-fixes:
 ==================
 
 Enhancements:
+
+Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 
 Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 Feature request 1608435: (checkbox in I18N administration: "show only bundles with missing translations").
