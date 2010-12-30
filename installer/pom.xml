@@ -72,6 +72,7 @@
 			the installers (uploadInstallers property is set), we exclude it for now in the default build.
 		-->
 		<profile>
+			<id>export-source</id>
 			<activation>
 				<property>
 					<name>uploadInstallers</name>
