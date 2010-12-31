@@ -11,6 +11,8 @@ Feature requests 3001253, 2896494: New icons in Object tree
 
 Bug-fixes:
 
+3148653: Missing App Icon on Mac OS X (Fix is available in the Mac OS X 3.2.1 installer file)
+
 
 3.2.1 (12/29/2010)
 ==================
