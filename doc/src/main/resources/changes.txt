@@ -27,6 +27,7 @@ New Session property to let SQuirreL set fetch size (call Statement.setFetchSize
 
 Bug-fixes:
 
+3148653: Missing App Icon on Mac OS X
 3138746: Typo within PluginClassName of SyntaxPlugin.
 3137390: Cannot connect after latest software update.
 3136386: Deleting table content via context menu does not work.
