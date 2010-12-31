@@ -38,7 +38,7 @@ public abstract class AbstractExceptionFormatterTest
 	 * 
 	 * @return an instance of ExceptionFormatter to test
 	 */
-	protected abstract ExceptionFormatter getExceptionFormatterToTest();
+	protected abstract ExceptionFormatter getExceptionFormatterToTest() throws Exception;
 
 	public AbstractExceptionFormatterTest()
 	{
@@ -46,7 +46,7 @@ public abstract class AbstractExceptionFormatterTest
 	}
 
 	@Before
-	public void setUp()
+	public void setUp() throws Exception
 	{
 		classUnderTest = getExceptionFormatterToTest();
 	}
