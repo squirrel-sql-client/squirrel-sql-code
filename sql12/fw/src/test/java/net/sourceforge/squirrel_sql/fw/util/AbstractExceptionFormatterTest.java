@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +30,9 @@ import org.junit.Test;
 
 public abstract class AbstractExceptionFormatterTest
 {
-	/** The class that will be tested.  See getExceptionFormatterToTest. */
+	/** The class that will be tested. See getExceptionFormatterToTest. */
 	private ExceptionFormatter classUnderTest = null;
-	
+
 	/**
 	 * Sub-class tests need to implement this and return an instance of ExceptionFormatter to test.
 	 * 
@@ -44,37 +43,53 @@ public abstract class AbstractExceptionFormatterTest
 	public AbstractExceptionFormatterTest()
 	{
 		super();
-	}	
-	
+	}
+
 	@Before
 	public void setUp()
 	{
-		classUnderTest = getExceptionFormatterToTest(); 
+		classUnderTest = getExceptionFormatterToTest();
 	}
 
-	
-	@Test (expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testFormatNullArg() throws Exception
 	{
 		classUnderTest.format(null);
 	}
 
 	@Test
-	public void testFormat() throws Exception {
+	public void testFormat() throws Exception
+	{
 		SQLException testException = new SQLException("Test SQL Exception");
-		if (classUnderTest.formatsException(testException)) {
+		if (classUnderTest.formatsException(testException))
+		{
 			final String formattedMessage = classUnderTest.format(testException);
 			assertNotNull(formattedMessage);
-			if ("".equals(formattedMessage)) {
+			if ("".equals(formattedMessage))
+			{
 				fail("Expected formatted message to be non-empty");
 			}
 		}
 	}
-	
-	@Test (expected = IllegalArgumentException.class)
+
+	/**
+	 * For this test of a null Throwable argument, we accept either an IllegalArgumentException, or false to 
+	 * indicate that this exception can't be handled by the custom ExceptionFormatter.
+	 */
+	@Test
 	public void testFormatsExceptionNullArg()
 	{
-		classUnderTest.formatsException(null);
+		try
+		{
+			boolean result = classUnderTest.formatsException(null);
+			assertFalse(result);
+		}
+		catch (Exception e)
+		{
+			if (! (e instanceof IllegalArgumentException)) {
+				fail("Expected IllegalArgumentException. Instead encountered: "+e.getClass());
+			}
+		}
 	}
-	
+
 }
