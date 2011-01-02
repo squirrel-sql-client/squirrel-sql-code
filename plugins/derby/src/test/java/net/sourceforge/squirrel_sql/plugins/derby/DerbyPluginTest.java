@@ -20,25 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.derby;
 
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
-
-import org.junit.After;
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 public class DerbyPluginTest extends AbstractSessionPluginTest
 {
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new DerbyPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
-
 	@Override
 	protected String getDatabaseProductName()
 	{
@@ -49,5 +34,11 @@ public class DerbyPluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		return new DerbyPlugin();
 	}
 }

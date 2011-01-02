@@ -18,25 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-
-public class DBDiffPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
+@RunWith(MockitoJUnitRunner.class)
+public class DBDiffPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
 {	
-	@Before
-	public void setUp() throws Exception
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = new DBDiffPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
+		return new DBDiffPlugin();
 	}		
 
 }
