@@ -29,10 +29,8 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public abstract class Resources
+public abstract class Resources implements IResources
 {
-	public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
-
 	private interface ActionProperties
 	{
 		String DISABLED_IMAGE = "disabledimage";
@@ -91,6 +89,9 @@ public abstract class Resources
 		_imagePath = _bundle.getString("path.images");
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getKeyStroke(javax.swing.Action)
+	 */
 	public KeyStroke getKeyStroke(Action action)
 	{
 		Utilities.checkNull("getKeyStroke", "action", action);
@@ -116,6 +117,9 @@ public abstract class Resources
 		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToPopupMenu(javax.swing.Action, javax.swing.JPopupMenu)
+	 */
 	public JMenuItem addToPopupMenu(Action action, javax.swing.JPopupMenu menu)
 	      throws MissingResourceException
 	{
@@ -148,6 +152,9 @@ public abstract class Resources
 		return item;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JMenu)
+	 */
 	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JMenu menu)
 	      throws MissingResourceException
 	{
@@ -158,6 +165,9 @@ public abstract class Resources
 		return item;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenuAsCheckBoxMenuItem(javax.swing.Action, javax.swing.JPopupMenu)
+	 */
 	public JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Action action, JPopupMenu popupMenu)
 	{
 		final JCheckBoxMenuItem item = new JCheckBoxMenuItem(action);
@@ -166,6 +176,9 @@ public abstract class Resources
 		return item;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#addToMenu(javax.swing.Action, javax.swing.JMenu)
+	 */
 	public JMenuItem addToMenu(Action action, JMenu menu) throws MissingResourceException
 	{
 		final JMenuItem item = menu.add(action);
@@ -173,6 +186,9 @@ public abstract class Resources
 		return item;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#createMenu(java.lang.String)
+	 */
 	public JMenu createMenu(String menuKey) throws MissingResourceException
 	{
 		JMenu menu = new JMenu();
@@ -187,13 +203,7 @@ public abstract class Resources
 	}
 
 	/**
-	 * Setup the passed action from the resource bundle.
-	 * 
-	 * @param action
-	 *        Action being setup.
-	 * 
-	 * @throws IllegalArgumentException
-	 *         thrown if <TT>null</TT> <TT>action</TT> passed.
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#setupAction(javax.swing.Action, boolean)
 	 */
 	public void setupAction(Action action, boolean showColoricons)
 	{
@@ -266,16 +276,25 @@ public abstract class Resources
 		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.String)
+	 */
 	public ImageIcon getIcon(String keyName)
 	{
 		return getIcon(keyName, "image");
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.Class, java.lang.String)
+	 */
 	public ImageIcon getIcon(Class<?> objClass, String propName)
 	{
 		return getIcon(objClass.getName(), propName);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getIcon(java.lang.String, java.lang.String)
+	 */
 	public ImageIcon getIcon(String keyName, String propName)
 	{
 		if (keyName == null)
@@ -309,12 +328,18 @@ public abstract class Resources
 		return icon;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#getString(java.lang.String)
+	 */
 	public String getString(String key)
 	{
 		Utilities.checkNull("getString", "key", key);
 		return _bundle.getString(key);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IResources#configureMenuItem(javax.swing.Action, javax.swing.JMenuItem)
+	 */
 	public void configureMenuItem(Action action, JMenuItem item) throws MissingResourceException
 	{
 		Utilities.checkNull("configureMenuItem", "action", action, "item", item);
