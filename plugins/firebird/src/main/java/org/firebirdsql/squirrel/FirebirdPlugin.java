@@ -7,8 +7,9 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -17,15 +18,16 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Dat
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import org.firebirdsql.squirrel.act.ActivateIndexAction;
 import org.firebirdsql.squirrel.act.DeactivateIndexAction;
+import org.firebirdsql.squirrel.exp.AllIndexesParentExpander;
 import org.firebirdsql.squirrel.exp.DatabaseExpander;
 import org.firebirdsql.squirrel.exp.FirebirdTableIndexExtractorImpl;
 import org.firebirdsql.squirrel.exp.FirebirdTableTriggerExtractorImpl;
-import org.firebirdsql.squirrel.exp.AllIndexesParentExpander;
 import org.firebirdsql.squirrel.tab.DomainDetailsTab;
 import org.firebirdsql.squirrel.tab.GeneratorDetailsTab;
 import org.firebirdsql.squirrel.tab.IndexInfoTab;
@@ -42,9 +44,24 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
     /** API for the Obejct Tree. */
     private IObjectTreeAPI _treeAPI;
 
-	/** Plugin resources. */
-	private PluginResources _resources;
+ 	private IResources _resources;
 
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+    
+	public interface IMenuResourceKeys
+	{
+//		String CHECK_TABLE = "checktable";
+		String FIREBIRD = "firebird";
+	}
+	
+	
 	/** Firebird menu. */
 	private JMenu _firebirdMenu;
 
@@ -120,7 +137,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-		_resources = new FirebirdResources(getClass().getName(), this);
+		_resources = _resourcesFactory.createResource(getClass().getName(), this);
 	}
 
 	/**
@@ -242,7 +259,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu firebirdMenu = _resources.createMenu(FirebirdResources.IMenuResourceKeys.FIREBIRD);
+		final JMenu firebirdMenu = _resources.createMenu(IMenuResourceKeys.FIREBIRD);
 
 		_resources.addToMenu(coll.get(ActivateIndexAction.class), firebirdMenu);
 		_resources.addToMenu(coll.get(DeactivateIndexAction.class), firebirdMenu);
