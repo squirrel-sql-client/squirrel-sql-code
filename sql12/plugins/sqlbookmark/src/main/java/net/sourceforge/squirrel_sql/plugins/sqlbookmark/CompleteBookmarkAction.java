@@ -17,18 +17,16 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
-
-import javax.swing.text.JTextComponent;
-import java.awt.event.ActionEvent;
-import java.awt.*;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 public class CompleteBookmarkAction extends SquirrelAction
 {
@@ -37,9 +35,9 @@ public class CompleteBookmarkAction extends SquirrelAction
    private SQLBookmarkPlugin _plugin;
 
 
-   public CompleteBookmarkAction(IApplication app, PluginResources rsrc, ISQLEntryPanel sqlEntryPanel, SQLBookmarkPlugin plugin)
+   public CompleteBookmarkAction(IApplication app, IResources resources, ISQLEntryPanel sqlEntryPanel, SQLBookmarkPlugin plugin)
    {
-      super(app, rsrc);
+      super(app, resources);
       _sqlEntryPanel = sqlEntryPanel;
       _plugin = plugin;
 

@@ -18,26 +18,20 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
-import net.sourceforge.squirrel_sql.plugins.sqlbookmark.SQLBookmarkPlugin;
-
-import org.junit.After;
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 
-public class SQLBookmarkPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
-{	
-	@Before
-	public void setUp() throws Exception
+public class SQLBookmarkPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
+{
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = new SQLBookmarkPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}		
+		SQLBookmarkPlugin result = new SQLBookmarkPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+		return result;
+	}	
 
 }
