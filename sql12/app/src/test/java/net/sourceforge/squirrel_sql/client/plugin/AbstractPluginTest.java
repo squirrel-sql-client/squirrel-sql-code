@@ -19,64 +19,183 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
+import javax.swing.Action;
+import javax.swing.JMenu;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 /**
- * This class provides common tests for plugins.  Each plugin test should simply extend this class to 
- * pickup the common tests.
- *  
+ * This class provides common tests for plugins. Each plugin test should simply extend this class to pickup
+ * the common tests.
  */
 @RunWith(org.mockito.runners.MockitoJUnitRunner.class)
 public abstract class AbstractPluginTest
 {
 	protected IPlugin classUnderTest = null;
+
+	@Mock
+	protected IApplication mockApplication;
+
+	@Mock
+	protected IMessageHandler mockMessageHandler;
+
+	@Mock
+	protected SquirrelPreferences mockSquirrelPreferences;
+
+	@Mock
+	protected ActionCollection mockActionCollection;
 	
+	@Mock
+	protected SessionManager mockSessionManager;
+
+	@Mock
+	protected IResources mockIResources;
+
+	@Mock
+	protected IPluginResourcesFactory mockIPluginResourcesFactory;
+
+	@Mock
+	protected JMenu mockJMenu;
+
+	@Mock
+	private Action mockAction;
+
+	
+	/**
+	 * Sub-class tests must implement this to return an instance of the Plugin being tested.
+	 * 
+	 * @return an instance of the Plugin being tested.
+	 */
+	protected abstract IPlugin getPluginToTest() throws Exception;
+
+	@Before
+	@SuppressWarnings("unchecked")
+	public void setUp() throws Exception
+	{
+		when(mockApplication.getMessageHandler()).thenReturn(mockMessageHandler);
+		when(mockApplication.getSquirrelPreferences()).thenReturn(mockSquirrelPreferences);
+		when(mockApplication.getActionCollection()).thenReturn(mockActionCollection);
+		when(mockApplication.getSessionManager()).thenReturn(mockSessionManager);
+		when(mockIPluginResourcesFactory.createResource(anyString(), any(IPlugin.class))).thenReturn(
+			mockIResources);
+		when(mockIResources.createMenu(Mockito.anyString())).thenReturn(mockJMenu);
+		when(mockActionCollection.get((Class<? extends Action>)Mockito.any())).thenReturn(mockAction);
+
+		try {
+			UIFactory.initialize(mockSquirrelPreferences, mockApplication);
+		} catch (Exception e) {}
+		
+		classUnderTest = getPluginToTest();
+		classUnderTest.load(mockApplication);
+		classUnderTest.initialize();
+	}
+
+	@After
+	public void tearDown() throws Exception
+	{
+		classUnderTest.unload();
+		classUnderTest = null;
+	}
 
 	@Test
-	public void testGetInternalName() {
+	public void testGetInternalName()
+	{
 		assertNotNull(classUnderTest.getInternalName());
 	}
-	
+
 	@Test
-	public void testGetDescriptiveName() {
+	public void testGetDescriptiveName()
+	{
 		assertNotNull(classUnderTest.getDescriptiveName());
 	}
 
-	@Test 
-	public void testGetVersion() {
+	@Test
+	public void testGetVersion()
+	{
 		assertNotNull(classUnderTest.getVersion());
 	}
 
-	@Test 
-	public void testGetAuthor() {
+	@Test
+	public void testGetAuthor()
+	{
 		assertNotNull(classUnderTest.getAuthor());
 	}
 
-	@Test 
-	public void testGetChangeLogFilename() {
+	@Test
+	public void testGetChangeLogFilename()
+	{
 		assertNotNull(classUnderTest.getChangeLogFileName());
 	}
 
-	@Test 
-	public void testGetHelpFilename() {
+	@Test
+	public void testGetHelpFilename()
+	{
 		assertNotNull(classUnderTest.getHelpFileName());
 	}
-	
+
 	@Test
-	public void testGetLicenseFilename() {
+	public void testGetLicenseFilename()
+	{
 		assertNotNull(classUnderTest.getLicenceFileName());
 	}
-	
+
 	@Test
-	public void testGetWebsite() {
+	public void testGetWebsite()
+	{
 		assertNotNull(classUnderTest.getWebSite());
 	}
 
 	@Test
-	public void testGetContributors() {
+	public void testGetContributors()
+	{
 		assertNotNull(classUnderTest.getContributors());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testLoad() throws Exception
+	{
+		classUnderTest.load(null);
+	}
+
+	@Test
+	public void testGetGlobalPreferencePanels()
+	{
+		// Result should be null or a non-empty array.
+		IGlobalPreferencesPanel[] result = classUnderTest.getGlobalPreferencePanels();
+		if (result != null)
+		{
+			Assert.assertTrue(result.length > 0);
+		}
+	}
+
+	@Test
+	public void testGetNewSessionPropertiesPanel()
+	{
+		// Result should be null or a non-empty array.
+		INewSessionPropertiesPanel[] result = classUnderTest.getNewSessionPropertiesPanels();
+		if (result != null)
+		{
+			Assert.assertTrue(result.length > 0);
+		}
+	}
 }

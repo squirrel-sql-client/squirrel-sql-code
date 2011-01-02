@@ -19,15 +19,16 @@
 package net.sourceforge.squirrel_sql.client.plugin;
 
 import static org.mockito.Mockito.when;
-import net.sourceforge.squirrel_sql.client.IApplication;
+
+import java.sql.Connection;
+
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,39 +46,41 @@ public abstract class AbstractSessionPluginTest extends AbstractPluginTest imple
 	protected ISQLDatabaseMetaData mockSQLDatabaseMetaData;
 
 	@Mock
-	protected IApplication mockApplication;
+	protected SessionInternalFrame mockSessionInternalFrame;
 
 	@Mock
-	protected IMessageHandler mockMessageHandler;
-	
-	@Mock
-	protected SessionInternalFrame mockSessionInternalFrame;
-	
-	@Mock
-	protected SquirrelPreferences mockSquirrelPreferences;
-	
-	@Mock 
 	protected IObjectTreeAPI mockObjectTreeAPI;
 
 	@Mock
 	protected SessionPanel mockSessionPanel;
-	
+
 	@Mock
 	protected ISQLPanelAPI mockPanelAPI;
 	
+	@Mock
+	protected ISQLConnection mockIsqlConnection;
+	
+	@Mock
+	protected Connection mockConnection;
 
 	@Before
-	public void setUp() throws Exception {
-			when(mockApplication.getMessageHandler()).thenReturn(mockMessageHandler);
-			when(mockApplication.getSquirrelPreferences()).thenReturn(mockSquirrelPreferences);
-			when(mockSession.getApplication()).thenReturn(mockApplication);
-			when(mockSession.getMetaData()).thenReturn(mockSQLDatabaseMetaData);
-			when(mockSession.getSessionInternalFrame()).thenReturn(mockSessionInternalFrame);
-			when(mockSession.getSessionSheet()).thenReturn(mockSessionPanel);
-			when(mockSQLDatabaseMetaData.getDatabaseProductName()).thenReturn(getDatabaseProductName());
-			when(mockSQLDatabaseMetaData.getDatabaseProductVersion()).thenReturn(getDatabaseProductVersion());
-			when(mockSessionInternalFrame.getObjectTreeAPI()).thenReturn(mockObjectTreeAPI);
-			when(mockSessionPanel.getSQLPaneAPI()).thenReturn(mockPanelAPI);
+	public void setUp() throws Exception
+	{
+		// Initializes the classUnderTest according to the sub-class test implementation. It is important
+		// for tests that override setUp or declare @Before to call super.setUp to pickup initialization
+		// code in base test classes.
+		super.setUp();
+
+		when(mockSession.getApplication()).thenReturn(mockApplication);
+		when(mockSession.getMetaData()).thenReturn(mockSQLDatabaseMetaData);
+		when(mockSession.getSessionInternalFrame()).thenReturn(mockSessionInternalFrame);
+		when(mockSession.getSessionSheet()).thenReturn(mockSessionPanel);
+		when(mockSession.getSQLConnection()).thenReturn(mockIsqlConnection);
+		when(mockIsqlConnection.getConnection()).thenReturn(mockConnection);
+		when(mockSQLDatabaseMetaData.getDatabaseProductName()).thenReturn(getDatabaseProductName());
+		when(mockSQLDatabaseMetaData.getDatabaseProductVersion()).thenReturn(getDatabaseProductVersion());
+		when(mockSessionInternalFrame.getObjectTreeAPI()).thenReturn(mockObjectTreeAPI);
+		when(mockSessionPanel.getSQLPaneAPI()).thenReturn(mockPanelAPI);
 	}
 
 	@Test
@@ -90,16 +93,28 @@ public abstract class AbstractSessionPluginTest extends AbstractPluginTest imple
 		}
 	}
 
+	@Test
+	public void testAllowSessionStartedInBackground()
+	{
+		((ISessionPlugin) classUnderTest).allowsSessionStartedInBackground();
+	}
+
 	/**
 	 * Subclass tests should provide a database product name for a session that corresponds to the plugin being
-	 * tested by overriding this method
+	 * tested by overriding this method.  If the plugin merely listens for sessions, but doesn't care what 
+	 * type of session they are, then this implementation will suffice.
 	 */
-	protected abstract String getDatabaseProductName();
+	protected String getDatabaseProductName() {
+		return null;
+	}
 
 	/**
 	 * Subclass tests should provide a database product version for a session that corresponds to the plugin
-	 * being tested by overriding this method
+	 * being tested by overriding this method. If the plugin merely listens for sessions, but doesn't care what 
+	 * type of session they are, then this implementation will suffice.
 	 */
-	protected abstract String getDatabaseProductVersion();
+	protected String getDatabaseProductVersion() {
+		return null;
+	}
 
 }
