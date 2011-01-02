@@ -20,23 +20,22 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class ExportConfigPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
-{	
-	@Before
-	public void setUp() throws Exception
+{
+	
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = new ExportConfigPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}		
+		ExportConfigPlugin result = new ExportConfigPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+		return result;
+	}	
 
 }
