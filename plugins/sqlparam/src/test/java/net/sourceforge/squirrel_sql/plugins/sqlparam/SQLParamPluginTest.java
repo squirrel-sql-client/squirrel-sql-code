@@ -20,27 +20,14 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 
 public class SQLParamPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
 {	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new SQLParamPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}		
 
 	// Bug 2746982: Error occured in IPlugin.sessionEnded() for SQL Parametrisat
 	// My theory here is that the session ending method was called twice (possibly user clicked the close 
@@ -78,6 +65,12 @@ public class SQLParamPluginTest extends AbstractSessionPluginTest implements Dat
 		// This plugin is not really database-specific.  SQL execution listener API is tied to sessions, so this
 		// plugin needs to be notified when they are started.
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		return new SQLParamPlugin();
 	}
 	
 }
