@@ -4,8 +4,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /*
@@ -34,6 +34,11 @@ import org.junit.Test;
  */
 public class ExamplePluginTest extends AbstractSessionPluginTest
 {
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		return new ExamplePlugin();
+	}
 
 	/**
 	 * getDatabaseProductName returns "DB2" because that is the product name for sessions that the example
@@ -61,13 +66,6 @@ public class ExamplePluginTest extends AbstractSessionPluginTest
 		return null;
 	}
 
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new ExamplePlugin();
-	}
-
 	@Test
 	public void testSessionStarted() throws Exception
 	{
@@ -90,9 +88,10 @@ public class ExamplePluginTest extends AbstractSessionPluginTest
 			// This is expected.
 		}
 	}
-	
+
 	@Test
-	public void testGetGlobalPreferencePanels() {
+	public void testGetGlobalPreferencePanels()
+	{
 		assertNotNull(classUnderTest.getGlobalPreferencePanels());
 	}
 

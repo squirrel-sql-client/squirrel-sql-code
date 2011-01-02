@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -186,20 +185,6 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 				}
 			}
 		}
-	}
-
-	/**
-	 * Create panel for the Global Properties dialog.
-	 * 
-	 * @return properties panel.
-	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
-	{
-		/*
-		DBCopyGlobalPreferencesTab tab = new DBCopyGlobalPreferencesTab();
-		return new IGlobalPreferencesPanel[] { tab };
-		*/
-		return new IGlobalPreferencesPanel[0];
 	}
 
 	/**
