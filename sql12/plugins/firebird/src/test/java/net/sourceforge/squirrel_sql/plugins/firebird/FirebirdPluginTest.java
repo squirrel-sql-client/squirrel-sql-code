@@ -19,26 +19,15 @@
 package net.sourceforge.squirrel_sql.plugins.firebird;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 import org.firebirdsql.squirrel.FirebirdPlugin;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class FirebirdPluginTest extends AbstractSessionPluginTest
 {	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new FirebirdPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
 
 	@Override
 	protected String getDatabaseProductName()
@@ -50,6 +39,14 @@ public class FirebirdPluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		FirebirdPlugin result = new FirebirdPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+		return result;
 	}		
 
 }

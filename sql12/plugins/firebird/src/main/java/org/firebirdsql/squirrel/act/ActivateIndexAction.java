@@ -1,14 +1,12 @@
 package org.firebirdsql.squirrel.act;
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 /**
  * This <TT>Action</TT> will run a &quot;EXPLAIN TABLE&quot; over the
  * currently selected tables.
@@ -34,7 +32,7 @@ public class ActivateIndexAction extends SquirrelAction implements ISessionActio
 	 * 			Thrown if a<TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>IPlugin</TT> passed.
 	 */
-	public ActivateIndexAction(IApplication app, Resources rsrc,
+	public ActivateIndexAction(IApplication app, IResources rsrc,
 							IPlugin plugin)
 	{
 		super(app, rsrc);

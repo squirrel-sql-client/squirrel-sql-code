@@ -20,25 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.firebirdmanager;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
-
-import org.junit.After;
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 
 public class FirebirdManagerPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
 {	
-	@Before
-	public void setUp() throws Exception
-	{
-		classUnderTest = new FirebirdManagerPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
-
 	@Override
 	protected String getDatabaseProductName()
 	{
@@ -49,6 +35,12 @@ public class FirebirdManagerPluginTest extends AbstractSessionPluginTest impleme
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		return new FirebirdManagerPlugin();
 	}		
 
 }
