@@ -19,14 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This <TT>Action</TT> will run a &quot;EXPLAIN SELECT * FROM TABLE&quot; over the
  * currently selected tables.
@@ -45,22 +43,22 @@ public class ExplainSelectTableAction extends SquirrelAction implements ISession
 	 * Ctor.
 	 *
 	 * @param	app			Application API.
-	 * @param	rsrc		Plugins resources.
+	 * @param	resources		Plugins resources.
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a?<TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
-	public ExplainSelectTableAction(IApplication app, Resources rsrc,
+	public ExplainSelectTableAction(IApplication app, IResources resources,
 							MysqlPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (rsrc == null)
+		if (resources == null)
 		{
 			throw new IllegalArgumentException("Resources == null");
 		}

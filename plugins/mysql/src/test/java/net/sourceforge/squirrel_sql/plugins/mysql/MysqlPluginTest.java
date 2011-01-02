@@ -20,29 +20,25 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+
+import javax.swing.JMenu;
+
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin.IMenuResourceKeys;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class MysqlPluginTest extends AbstractSessionPluginTest
 {	
 	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new MysqlPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
-
+	@Mock
+	private JMenu mockJMenu;
+	
 	@Test
 	public void testIsPluginSessionMySQL5() throws Exception
 	{
@@ -85,6 +81,15 @@ public class MysqlPluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return "5";
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		when(mockIResources.createMenu(MysqlPlugin.IMenuResourceKeys.MYSQL)).thenReturn(mockJMenu);
+		MysqlPlugin result = new MysqlPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+		return result;
 	}
 		
 

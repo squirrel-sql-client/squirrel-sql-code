@@ -19,14 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This <TT>Action</TT> will run a &quot;ANALYZE TABLE&quot; over the
  * currently selected tables.
@@ -45,7 +43,7 @@ public class AnalyzeTableAction extends SquirrelAction implements ISessionAction
 	 * Ctor.
 	 *
 	 * @param	app			Application API.
-	 * @param	rsrc		Plugins resources.
+	 * @param	resources		Plugins resources.
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
@@ -55,15 +53,15 @@ public class AnalyzeTableAction extends SquirrelAction implements ISessionAction
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if an invalid <TT>checktype</TT> passed.
 	 */
-	public AnalyzeTableAction(IApplication app, Resources rsrc,
+	public AnalyzeTableAction(IApplication app, IResources resources,
 							MysqlPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (rsrc == null)
+		if (resources == null)
 		{
 			throw new IllegalArgumentException("Resources == null");
 		}
