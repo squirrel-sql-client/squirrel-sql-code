@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class UpdateStatisticsAction extends SquirrelAction implements ISessionAction {
@@ -33,8 +33,8 @@ public class UpdateStatisticsAction extends SquirrelAction implements ISessionAc
     transient private ISession _session;
 	transient private final MssqlPlugin _plugin;
     
-	public UpdateStatisticsAction(IApplication app, Resources rsrc, MssqlPlugin plugin) {
-		super(app, rsrc);
+	public UpdateStatisticsAction(IApplication app, IResources resources, MssqlPlugin plugin) {
+		super(app, resources);
         _plugin = plugin;
 	}
 

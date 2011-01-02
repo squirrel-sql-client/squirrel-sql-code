@@ -27,8 +27,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
@@ -46,6 +47,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -71,7 +73,26 @@ import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
 	private final static ILogger s_log = LoggerController.createLogger(MssqlPlugin.class);
-	private PluginResources _resources;
+
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
+	public interface IMenuResourceKeys {
+      String SHOW_STATISTICS = "show_statistics";
+      String INDEXDEFRAG = "indexdefrag";
+      String SHRINKDBFILE = "shrinkdbfile";
+      String MSSQL = "mssql";
+	}
+
+	
 	private IObjectTreeAPI _treeAPI;
 	private JMenu _mssqlMenu;
     private ISession _session;
@@ -201,7 +222,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     public void load(net.sourceforge.squirrel_sql.client.IApplication iApplication) throws net.sourceforge.squirrel_sql.client.plugin.PluginException {
         super.load(iApplication);
         
-        _resources = new MssqlResources(getClass().getName(), this);
+        _resources = _resourcesFactory.createResource(getClass().getName(), this);
     }
     
     public void sessionCreated(net.sourceforge.squirrel_sql.client.session.ISession iSession) {
@@ -302,13 +323,13 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
 		final JMenu mssqlMenu;
         if (menu == null)
-            mssqlMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.MSSQL);
+            mssqlMenu = _resources.createMenu(IMenuResourceKeys.MSSQL);
         else
             mssqlMenu = menu;
         
         _resources.addToMenu(coll.get(UpdateStatisticsAction.class), mssqlMenu);
 
-        final JMenu showStatisticsMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.SHOW_STATISTICS);
+        final JMenu showStatisticsMenu = _resources.createMenu(IMenuResourceKeys.SHOW_STATISTICS);
         showStatisticsMenu.addMenuListener(new MenuListener() {
             public void menuSelected(MenuEvent e) {
                 final JMenu menu = (JMenu) e.getSource();
@@ -328,7 +349,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         }
         );
         
-        final JMenu indexDefragMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.INDEXDEFRAG);
+        final JMenu indexDefragMenu = _resources.createMenu(IMenuResourceKeys.INDEXDEFRAG);
         indexDefragMenu.addMenuListener(new MenuListener() {
             public void menuSelected(MenuEvent e) {
                 final JMenu menu = (JMenu) e.getSource();
@@ -418,7 +439,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu mssqlMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.MSSQL);
+		final JMenu mssqlMenu = _resources.createMenu(IMenuResourceKeys.MSSQL);
         
         _resources.addToMenu(coll.get(GenerateSqlAction.class),mssqlMenu);
         
@@ -436,14 +457,14 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
         final JMenu mssqlMenu;
         if (menu == null)
-            mssqlMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.MSSQL);
+            mssqlMenu = _resources.createMenu(IMenuResourceKeys.MSSQL);
         else
             mssqlMenu = menu;
         
         _resources.addToMenu(coll.get(ShrinkDatabaseAction.class),mssqlMenu);
         _resources.addToMenu(coll.get(TruncateLogAction.class),mssqlMenu);
         
-        final JMenu shrinkDBFileMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.SHRINKDBFILE);
+        final JMenu shrinkDBFileMenu = _resources.createMenu(IMenuResourceKeys.SHRINKDBFILE);
         shrinkDBFileMenu.addMenuListener(new MenuListener() {
             public void menuSelected(MenuEvent e) {
                 final JMenu menu = (JMenu) e.getSource();
@@ -498,7 +519,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
         final JMenu mssqlMenu;
         if (menu == null)
-            mssqlMenu = _resources.createMenu(MssqlResources.IMenuResourceKeys.MSSQL);
+            mssqlMenu = _resources.createMenu(IMenuResourceKeys.MSSQL);
         else
             mssqlMenu = menu;
         

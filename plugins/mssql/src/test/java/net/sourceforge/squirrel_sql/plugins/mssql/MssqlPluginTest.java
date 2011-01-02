@@ -19,26 +19,24 @@
 package net.sourceforge.squirrel_sql.plugins.mssql;
 
 
+import static org.mockito.Mockito.when;
+
+import javax.swing.JMenu;
+
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.After;
-import org.junit.Before;
-
+@RunWith(MockitoJUnitRunner.class)
 public class MssqlPluginTest extends AbstractSessionPluginTest
 {
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new MssqlPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
-
+	@Mock
+	private JMenu mockJMenu;
+	
 	@Override
 	protected String getDatabaseProductName()
 	{
@@ -49,5 +47,14 @@ public class MssqlPluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		when(mockIResources.createMenu(Mockito.anyString())).thenReturn(mockJMenu);
+		MssqlPlugin result = new MssqlPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+		return result;
 	}
 }
