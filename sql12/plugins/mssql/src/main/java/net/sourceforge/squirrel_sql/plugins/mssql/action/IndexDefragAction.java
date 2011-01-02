@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class IndexDefragAction extends SquirrelAction implements ISessionAction {
@@ -37,7 +37,7 @@ public class IndexDefragAction extends SquirrelAction implements ISessionAction 
     private final ITableInfo _tableInfo;
     private final String _indexName;
 
-	public IndexDefragAction(IApplication app, Resources rsrc, MssqlPlugin plugin, ITableInfo tableInfo, String indexName) {
+	public IndexDefragAction(IApplication app, IResources rsrc, MssqlPlugin plugin, ITableInfo tableInfo, String indexName) {
 		super(app, rsrc);
 		/* the constructor above sets this from resources, but we'll override it with
          * the name of the index. */
