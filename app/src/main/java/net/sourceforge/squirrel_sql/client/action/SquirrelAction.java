@@ -17,24 +17,23 @@ package net.sourceforge.squirrel_sql.client.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-
-import javax.swing.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 public abstract class SquirrelAction extends BaseAction
 {
 	protected IApplication _app;
-   private Resources _rsrc;
+   private IResources _rsrc;
 
    protected SquirrelAction(IApplication app)
 	{
 		this(app, app.getResources());
 	}
 
-	protected SquirrelAction(IApplication app, Resources rsrc)
+	protected SquirrelAction(IApplication app, IResources rsrc)
 	{
 		super();
       _rsrc = rsrc;
