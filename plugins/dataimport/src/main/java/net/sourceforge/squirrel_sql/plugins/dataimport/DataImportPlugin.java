@@ -20,13 +20,16 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
 import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.PreferencesManager;
 
@@ -36,7 +39,18 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.PreferencesManager;
  * @author Thorsten Mürell
  */
 public class DataImportPlugin extends DefaultSessionPlugin {
-	private Resources resources = null;
+	
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
 
 	/**
 	 * Return the internal name of this plugin.
@@ -113,7 +127,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	@Override
 	public void load(IApplication app) throws PluginException {
 		super.load(app);
-		resources = new Resources(getClass().getName(), this);
+		_resources = this._resourcesFactory.createResource(getClass().getName(), this);
 	}
 
 	/**
@@ -128,7 +142,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
 
-		coll.add(new ImportTableDataAction(app, resources));
+		coll.add(new ImportTableDataAction(app, _resources));
 	}
 
 	/**
@@ -173,6 +187,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 		// Not yet ready
         // DataImportGlobalPreferencesTab tab = new DataImportGlobalPreferencesTab();
         // return new IGlobalPreferencesPanel[] { tab };
-        return new IGlobalPreferencesPanel[] { };
+        return null;
+		
 	}
 }

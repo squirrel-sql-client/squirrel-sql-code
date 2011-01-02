@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 /**
  * An action to import table data from a file.
@@ -42,7 +42,7 @@ public class ImportTableDataAction extends SquirrelAction implements ISessionAct
 	 * @param app The application
 	 * @param resources The resources to work with
 	 */
-	public ImportTableDataAction(IApplication app, Resources resources) {
+	public ImportTableDataAction(IApplication app, IResources resources) {
 		super(app, resources);
 	}
 

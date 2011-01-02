@@ -20,24 +20,15 @@ package net.sourceforge.squirrel_sql.plugins.db2;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
-
-import org.junit.After;
-import org.junit.Before;
-
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 public class DB2PluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
-{	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new DB2Plugin();
-	}
+{
 
-	@After
-	public void tearDown() throws Exception
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = null;
+		return new DB2Plugin();
 	}
 
 	@Override
@@ -50,6 +41,6 @@ public class DB2PluginTest extends AbstractSessionPluginTest implements Database
 	protected String getDatabaseProductVersion()
 	{
 		return null;
-	}		
+	}
 
 }
