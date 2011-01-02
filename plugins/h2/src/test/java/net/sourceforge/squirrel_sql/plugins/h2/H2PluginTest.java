@@ -19,26 +19,11 @@
 package net.sourceforge.squirrel_sql.plugins.h2;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
-
-import org.junit.After;
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 
 public class H2PluginTest extends AbstractSessionPluginTest
 {	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new H2Plugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
-
 	@Override
 	protected String getDatabaseProductName()
 	{
@@ -49,6 +34,12 @@ public class H2PluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		return new H2Plugin();
 	}		
 
 }
