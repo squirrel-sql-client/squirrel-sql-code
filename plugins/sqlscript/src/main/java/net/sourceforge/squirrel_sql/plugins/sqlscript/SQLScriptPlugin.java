@@ -25,14 +25,16 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
@@ -55,7 +57,16 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		String SCRIPTS = "scripts";
 	}
 
-	private PluginResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
 
 	/**
 	 * Return the internal name of this plugin.
@@ -158,7 +169,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 		super.initialize();
 		IApplication app = getApplication();
 
-		_resources = new SQLPluginResources(BUNDLE_BASE_NAME, this);
+		_resources = _resourcesFactory.createResource(BUNDLE_BASE_NAME, this);
 
 		ActionCollection coll = app.getActionCollection();
 		coll.add(new CreateTableScriptAction(app, _resources, this));
