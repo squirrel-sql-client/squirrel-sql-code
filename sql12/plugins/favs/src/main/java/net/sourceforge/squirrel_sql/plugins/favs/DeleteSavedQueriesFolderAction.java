@@ -18,9 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 /**
  * This <CODE>Action</CODE> allows the user to delete a Folder.
@@ -31,8 +31,8 @@ public class DeleteSavedQueriesFolderAction extends BaseFavouriteAction {
     /**
      * Ctor.
      */
-    public DeleteSavedQueriesFolderAction(IApplication app, Resources rsrc) {
-        super(app, rsrc);
+    public DeleteSavedQueriesFolderAction(IApplication app, IResources resources) {
+        super(app, resources);
     }
 
     /**

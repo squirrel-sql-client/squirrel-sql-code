@@ -21,14 +21,14 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 abstract class BaseFavouriteAction extends SquirrelAction {
 	private QueryTree _tree;
 	private TreePath _path;
 
-	protected BaseFavouriteAction(IApplication app, Resources rsrc) {
-		super(app, rsrc);
+	protected BaseFavouriteAction(IApplication app, IResources resources) {
+		super(app, resources);
 	}
 //?? Split these 4 functions off into a subclass of BaseFavouriteAction
 	void setQueryTree(QueryTree value) {
