@@ -18,17 +18,17 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.event.ActionEvent;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 public class OrganizeSavedQueriesAction extends BaseFavouriteAction {
 	private FoldersCache _cache;
 
-	public OrganizeSavedQueriesAction(IApplication app, Resources rsrc,
+	public OrganizeSavedQueriesAction(IApplication app, IResources resources,
 										FoldersCache cache)
 			throws IllegalArgumentException {
-		super(app, rsrc);
+		super(app, resources);
 		if (cache == null) {
 			throw new IllegalArgumentException("Null FoldersCache passed");
 		}

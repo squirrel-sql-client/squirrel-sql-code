@@ -24,11 +24,24 @@ import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 public class SavedQueriesPlugin extends DefaultPlugin {
-	private PluginResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
 	private FoldersCache _cache;
 
 	private interface IMenuResourceKeys {
@@ -107,7 +120,8 @@ public class SavedQueriesPlugin extends DefaultPlugin {
 		}
 		_cache.load();
 
-		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.favs.saved_queries", this);
+		_resources = 
+			_resourcesFactory.createResource("net.sourceforge.squirrel_sql.plugins.favs.saved_queries", this);
 
 		ActionCollection coll = app.getActionCollection();
 
