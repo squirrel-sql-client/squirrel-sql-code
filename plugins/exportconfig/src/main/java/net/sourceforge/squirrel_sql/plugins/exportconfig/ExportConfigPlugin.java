@@ -24,19 +24,19 @@ import java.util.Iterator;
 
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportAliasesAction;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportConfigurationAction;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportDriversAction;
@@ -62,7 +62,21 @@ public class ExportConfigPlugin extends DefaultPlugin
 	private File _userSettingsFolder;
 
 	/** Plugin resources. */
-	private PluginResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
+	public interface IMenuResourceKeys
+	{
+		String EXPORT = "export";
+	}
 
 	/** Export menu. */
 	private JMenu _exportMenu;
@@ -139,7 +153,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 			throw new PluginException(ex);
 		}
 
-		_resources = new ExportConfigResources(getClass().getName(), this);
+		_resources = _resourcesFactory.createResource(getClass().getName(), this);
 	}
 
 	/**
@@ -272,7 +286,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu exportMenu = _resources.createMenu(ExportConfigResources.IMenuResourceKeys.EXPORT);
+		final JMenu exportMenu = _resources.createMenu(IMenuResourceKeys.EXPORT);
 		_resources.addToMenu(coll.get(ExportConfigurationAction.class), exportMenu);
 		_resources.addToMenu(coll.get(ExportAliasesAction.class), exportMenu);
 		_resources.addToMenu(coll.get(ExportDriversAction.class), exportMenu);

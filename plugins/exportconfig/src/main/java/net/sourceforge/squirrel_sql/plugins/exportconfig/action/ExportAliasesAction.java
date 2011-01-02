@@ -19,14 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
 /**
  * This <TT>Action</TT> will allow the user to export the database aliases to
@@ -49,7 +47,7 @@ public class ExportAliasesAction extends SquirrelAction
 	 * Ctor.
 	 *
 	 * @param	app			Application API.
-	 * @param	rsrc		Plugins resources.
+	 * @param	resources		Plugins resources.
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
@@ -59,15 +57,15 @@ public class ExportAliasesAction extends SquirrelAction
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if an invalid <TT>checktype</TT> passed.
 	 */
-	public ExportAliasesAction(IApplication app, Resources rsrc,
+	public ExportAliasesAction(IApplication app, IResources resources,
 							ExportConfigPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (rsrc == null)
+		if (resources == null)
 		{
 			throw new IllegalArgumentException("Resources == null");
 		}
