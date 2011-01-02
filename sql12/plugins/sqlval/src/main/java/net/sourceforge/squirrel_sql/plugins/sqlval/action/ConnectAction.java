@@ -20,15 +20,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JDialog;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlval.LogonDialog;
 import net.sourceforge.squirrel_sql.plugins.sqlval.SQLValidatorPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
@@ -57,18 +55,18 @@ public class ConnectAction extends SquirrelAction implements ISessionAction
 	 * Ctor.
 	 * 
 	 * @param	app		Application API.
-	 * @param	rsrc	Resources to build this action from.
+	 * @param	resources	Resources to build this action from.
 	 * @param	prefs	Plugin preferences.
 	 * @param	plugin	Plugin
 	 * 
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT>WebServicePreferences</TT> passed.
 	 */
-	public ConnectAction(IApplication app, Resources rsrc,
+	public ConnectAction(IApplication app, IResources resources,
 									WebServicePreferences prefs,
 									SQLValidatorPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		if (prefs == null)
 		{
 			throw new IllegalArgumentException("WebServicePreferences == null");

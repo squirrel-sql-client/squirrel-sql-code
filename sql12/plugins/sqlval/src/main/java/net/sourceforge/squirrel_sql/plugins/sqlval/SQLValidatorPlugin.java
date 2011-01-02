@@ -28,8 +28,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -39,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -81,7 +83,17 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	private File _userSettingsFolder;
 
 	/** Resources for this plugin. */
-	private PluginResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
 
 	/** Listener to the SQL panel. */
 	private ISQLPanelListener _lis = new SQLPanelListener();
@@ -183,7 +195,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	{
 		super.initialize();
 
-		_resources = new PluginResources(getClass().getName(), this);
+		_resources = _resourcesFactory.createResource(getClass().getName(), this);
 
 		// Folder to store user settings.
 		try
@@ -288,7 +300,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 			new ValidatorGlobalPreferencesTab(_prefs),		};
 	}
 
-	PluginResources getResources()
+	IResources getResources()
 	{
 		return _resources;
 	}
