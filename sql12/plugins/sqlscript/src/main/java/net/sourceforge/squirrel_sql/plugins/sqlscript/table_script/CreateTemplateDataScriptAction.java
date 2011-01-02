@@ -19,15 +19,13 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateTemplateDataScriptAction extends SquirrelAction implements IObjectTreeAction {
 
@@ -37,8 +35,8 @@ public class CreateTemplateDataScriptAction extends SquirrelAction implements IO
 	/** Current plugin. */
 	private final SQLScriptPlugin _plugin;
 
-    public CreateTemplateDataScriptAction(IApplication app, Resources rsrc, SQLScriptPlugin plugin) {
-        super(app, rsrc);
+    public CreateTemplateDataScriptAction(IApplication app, IResources resources, SQLScriptPlugin plugin) {
+        super(app, resources);
         _plugin = plugin;
     }
 
