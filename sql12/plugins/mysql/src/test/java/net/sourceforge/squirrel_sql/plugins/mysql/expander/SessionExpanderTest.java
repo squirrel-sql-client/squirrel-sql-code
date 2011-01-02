@@ -19,53 +19,31 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.expander;
 
 
+import javax.swing.ImageIcon;
+
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
-
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlResources;
 import net.sourceforge.squirrel_sql.plugins.mysql.ObjectTypes;
+
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.swing.*;
-
+@RunWith(MockitoJUnitRunner.class)
 public class SessionExpanderTest extends AbstractINodeExpanderTest
 {
-
+	@Mock
+	private ObjectTypes mockObjectTypes;
 
 	@Before
 	public void setUp() throws Exception
 	{
-      classUnderTest = new SessionExpander(new ObjectTypesMock());
+		DatabaseObjectType testType = DatabaseObjectType.createNewDatabaseObjectType("USERS", new ImageIcon());
+		Mockito.when(mockObjectTypes.getUserParent()).thenReturn(testType);
+      classUnderTest = new SessionExpander(mockObjectTypes);
 	}
 
-   private static class ObjectTypesMock extends ObjectTypes
-   {
-      private ObjectTypesMock()
-      {
-         super(new MysqlResourcesMock());
-      }
-
-      @Override
-      public DatabaseObjectType getUserParent()
-      {
-         return DatabaseObjectType.createNewDatabaseObjectType("USERS", new ImageIcon());
-      }
-
-   }
-
-   private static class MysqlResourcesMock extends MysqlResources
-   {
-      MysqlResourcesMock()
-      {
-         super(MysqlPlugin.class.getName(), new MysqlPlugin());
-      }
-
-      @Override
-      public ImageIcon getIcon(String keyName)
-      {
-         return new ImageIcon();
-      }
-   }
 
 }

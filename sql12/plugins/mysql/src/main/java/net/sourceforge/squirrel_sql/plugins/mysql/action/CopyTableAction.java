@@ -18,13 +18,11 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * CopyTableAction.java
@@ -41,9 +39,9 @@ public class CopyTableAction extends SquirrelAction implements ISessionAction
 	/** Current plugin. */
 	private final MysqlPlugin _plugin;
 
-	public CopyTableAction(IApplication app, Resources rsrc,MysqlPlugin plugin)
+	public CopyTableAction(IApplication app, IResources resources,MysqlPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		_plugin = plugin;
 	}
 

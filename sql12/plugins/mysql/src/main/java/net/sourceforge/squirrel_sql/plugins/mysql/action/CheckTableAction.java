@@ -19,14 +19,13 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /**
  * This <TT>Action</TT> will run a &quot;CHECK TABLE&quot; over the
  * currently selected tables.
@@ -59,7 +58,7 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 	 * Ctor.
 	 *
 	 * @param	app			Application API.
-	 * @param	rsrc		Plugins resources.
+	 * @param	resources		Plugins resources.
 	 * @param	plugin		This plugin.
 	 * @param	checktype	The type of table check to be done.
 	 *						@see ICheckTypes.
@@ -71,15 +70,15 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if an invalid <TT>checktype</TT> passed.
 	 */
-	private CheckTableAction(IApplication app, Resources rsrc,
+	private CheckTableAction(IApplication app, IResources resources,
 							MysqlPlugin plugin, int checkType)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-		if (rsrc == null)
+		if (resources == null)
 		{
 			throw new IllegalArgumentException("Resources == null");
 		}
@@ -124,20 +123,20 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 	public static final class ChangedCheckTableAction extends CheckTableAction
 	{
         private static final long serialVersionUID = 1L;	    
-		public ChangedCheckTableAction(IApplication app, Resources rsrc,
+		public ChangedCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
-			super(app, rsrc, plugin, ICheckTypes.CHANGED);
+			super(app, resources, plugin, ICheckTypes.CHANGED);
 		}
 	}
 
 	public static final class ExtendedCheckTableAction extends CheckTableAction
 	{
         private static final long serialVersionUID = 1L;	    
-		public ExtendedCheckTableAction(IApplication app, Resources rsrc,
+		public ExtendedCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
-			super(app, rsrc, plugin, ICheckTypes.EXTENDED);
+			super(app, resources, plugin, ICheckTypes.EXTENDED);
 		}
 	}
 
@@ -145,30 +144,30 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 	{
         private static final long serialVersionUID = 1L;
 
-        public FastCheckTableAction(IApplication app, Resources rsrc,
+        public FastCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
-			super(app, rsrc, plugin, ICheckTypes.FAST);
+			super(app, resources, plugin, ICheckTypes.FAST);
 		}
 	}
 
 	public static final class MediumCheckTableAction extends CheckTableAction
 	{
         private static final long serialVersionUID = 1L;	    
-		public MediumCheckTableAction(IApplication app, Resources rsrc,
+		public MediumCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
-			super(app, rsrc, plugin, ICheckTypes.MEDIUM);
+			super(app, resources, plugin, ICheckTypes.MEDIUM);
 		}
 	}
 
 	public static final class QuickCheckTableAction extends CheckTableAction
 	{
         private static final long serialVersionUID = 1L;	    
-		public QuickCheckTableAction(IApplication app, Resources rsrc,
+		public QuickCheckTableAction(IApplication app, IResources resources,
 										MysqlPlugin plugin)
 		{
-			super(app, rsrc, plugin, ICheckTypes.QUICK);
+			super(app, resources, plugin, ICheckTypes.QUICK);
 		}
 	}
 }

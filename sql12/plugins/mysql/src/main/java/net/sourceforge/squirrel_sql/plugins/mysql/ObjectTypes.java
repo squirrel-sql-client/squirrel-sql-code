@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 /**
  * This class contains the different database object types for MySQL.
  *
@@ -27,9 +28,9 @@ public class ObjectTypes
 {
 	private DatabaseObjectType _userParent = DatabaseObjectType.createNewDatabaseObjectType("Users");
 
-   public ObjectTypes(MysqlResources resources)
+   public ObjectTypes(IResources resources)
    {
-      _userParent = DatabaseObjectType.createNewDatabaseObjectType("Users", resources.getIcon(MysqlResources.IKeys.USERS_IMAGE));
+      _userParent = DatabaseObjectType.createNewDatabaseObjectType("Users", resources.getIcon(MysqlPlugin.IKeys.USERS_IMAGE));
    }
 
    public DatabaseObjectType getUserParent()

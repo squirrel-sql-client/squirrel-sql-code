@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
@@ -48,9 +48,9 @@ public class AlterTableAction extends SquirrelAction implements ISessionAction
 	/** Current plugin. */
 	private final MysqlPlugin _plugin;
 
-	public AlterTableAction(IApplication app, Resources rsrc, MysqlPlugin plugin)
+	public AlterTableAction(IApplication app, IResources resources, MysqlPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		_plugin = plugin;
 	}
 

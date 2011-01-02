@@ -23,9 +23,11 @@ import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
@@ -40,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -96,7 +99,28 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	private final static ILogger s_log = LoggerController.createLogger(MysqlPlugin.class);
 
 	/** Plugin resources. */
-	private MysqlResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+	
+	public static interface IMenuResourceKeys
+	{
+		String CHECK_TABLE = "checktable";
+		String MYSQL = "mysql";
+	}
+	
+   public static interface IKeys
+   {
+      String USERS_IMAGE = "users";
+   }
+
 
 	/** API for the Obejct Tree. */
 	private IObjectTreeAPI _treeAPI;
@@ -177,7 +201,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-		_resources = new MysqlResources(getClass().getName(), this);
+		_resources = _resourcesFactory.createResource(getClass().getName(), this); 			
       _objectTypes = new ObjectTypes(_resources);
    }
 
@@ -424,7 +448,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+		final JMenu mysqlMenu = _resources.createMenu(IMenuResourceKeys.MYSQL);
 
 		_resources.addToMenu(coll.get(CreateMysqlTableScriptAction.class), mysqlMenu);
 
@@ -433,7 +457,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(ExplainSelectTableAction.class), mysqlMenu);
 		_resources.addToMenu(coll.get(OptimizeTableAction.class), mysqlMenu);
 
-		final JMenu checkTableMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.CHECK_TABLE);
+		final JMenu checkTableMenu = _resources.createMenu(IMenuResourceKeys.CHECK_TABLE);
 		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), checkTableMenu);
 		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), checkTableMenu);
 		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), checkTableMenu);
@@ -458,7 +482,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
-		final JMenu mysqlMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.MYSQL);
+		final JMenu mysqlMenu = _resources.createMenu(IMenuResourceKeys.MYSQL);
 
 		_resources.addToMenu(coll.get(CreateDatabaseAction.class), mysqlMenu);
 		// _resources.addToMenu(coll.get(DropDatabaseAction.class), mysqlMenu);
@@ -471,7 +495,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(coll.get(ExplainSelectTableAction.class), mysqlMenu);
 		_resources.addToMenu(coll.get(OptimizeTableAction.class), mysqlMenu);
 
-		final JMenu checkTableMenu = _resources.createMenu(MysqlResources.IMenuResourceKeys.CHECK_TABLE);
+		final JMenu checkTableMenu = _resources.createMenu(IMenuResourceKeys.CHECK_TABLE);
 		_resources.addToMenu(coll.get(CheckTableAction.ChangedCheckTableAction.class), checkTableMenu);
 		_resources.addToMenu(coll.get(CheckTableAction.ExtendedCheckTableAction.class), checkTableMenu);
 		_resources.addToMenu(coll.get(CheckTableAction.FastCheckTableAction.class), checkTableMenu);

@@ -19,14 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
-import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
+import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 public class CreateMysqlTableScriptAction extends SquirrelAction
 											implements ISessionAction
@@ -37,10 +35,10 @@ public class CreateMysqlTableScriptAction extends SquirrelAction
 	/** Current plugin. */
 	private final MysqlPlugin _plugin;
 
-	public CreateMysqlTableScriptAction(IApplication app, Resources rsrc,
+	public CreateMysqlTableScriptAction(IApplication app, IResources resources,
 											MysqlPlugin plugin)
 	{
-		super(app, rsrc);
+		super(app, resources);
 		_plugin = plugin;
 	}
 
