@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres.actions;
 */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -26,7 +27,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.commands.VacuumTableCommand
 
 
 public class VacuumTableAction extends AbstractObjectTreeAction {
-    public VacuumTableAction(IApplication app, Resources rsrc) {
+    public VacuumTableAction(IApplication app, IResources rsrc) {
         super(app, rsrc);
     }
 

@@ -19,25 +19,14 @@
 package net.sourceforge.squirrel_sql.plugins.postgres;
 
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class PostgresPluginTest extends AbstractSessionPluginTest
-{	
-	@Before
-	public void setUp() throws Exception
-	{
-		super.setUp();
-		classUnderTest = new PostgresPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
-	}
+{
 
 	@Override
 	protected String getDatabaseProductName()
@@ -49,6 +38,15 @@ public class PostgresPluginTest extends AbstractSessionPluginTest
 	protected String getDatabaseProductVersion()
 	{
 		return POSTGRESQL_8_2_PRODUCT_VERSION;
-	}		
+	}
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
+	{
+		PostgresPlugin result = new PostgresPlugin();
+		result.setResourcesFactory(mockIPluginResourcesFactory);
+
+		return result;
+	}
 
 }

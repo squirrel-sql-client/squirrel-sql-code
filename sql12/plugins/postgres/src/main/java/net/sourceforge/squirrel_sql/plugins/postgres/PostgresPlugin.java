@@ -19,8 +19,9 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -34,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -61,7 +63,16 @@ import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeData
  */
 public class PostgresPlugin extends DefaultSessionPlugin
 {
-	private PluginResources _resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
 
 	/** Logger for this class. */
 	@SuppressWarnings("unused")
@@ -83,7 +94,7 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("PostgresPlugin.showProcedureSource");
 	}
 
-	private interface IMenuResourceKeys
+	public interface IMenuResourceKeys
 	{
 		String POSTGRES = "postgres";
 	}
@@ -172,7 +183,7 @@ public class PostgresPlugin extends DefaultSessionPlugin
 	{
 		super.load(app);
 
-		_resources = new PluginResources(getClass().getName(), this);
+		_resources = _resourcesFactory.createResource(getClass().getName(), this);
 	}
 
 	/**
@@ -335,4 +346,5 @@ public class PostgresPlugin extends DefaultSessionPlugin
 		_resources.addToMenu(col.get(VacuumDatabaseAction.class), sessionMenu);
 		return sessionMenu;
 	}
+
 }

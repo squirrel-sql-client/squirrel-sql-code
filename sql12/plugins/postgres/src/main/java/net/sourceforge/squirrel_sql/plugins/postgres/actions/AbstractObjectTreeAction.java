@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -33,7 +34,7 @@ public abstract class AbstractObjectTreeAction extends SquirrelAction implements
     protected IObjectTreeAPI _tree;
 
 
-    public AbstractObjectTreeAction(IApplication app, Resources rsrc) {
+    public AbstractObjectTreeAction(IApplication app, IResources rsrc) {
         super(app, rsrc);
     }
 
