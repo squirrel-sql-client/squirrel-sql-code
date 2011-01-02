@@ -19,22 +19,14 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 
-import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
-import org.junit.After;
-import org.junit.Before;
-
-public class GraphPluginTest extends AbstractPluginTest
+public class GraphPluginTest extends AbstractSessionPluginTest
 {
-	@Before
-	public void setUp() throws Exception
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = new GraphPlugin();
-	}
-
-	@After
-	public void tearDown() throws Exception
-	{
-		classUnderTest = null;
+		return new GraphPlugin();
 	}
 }
