@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 /**
  * Initiates execution of a bookmark when user clicks on a bookmark
@@ -54,11 +54,11 @@ public class RunBookmarkAction extends SquirrelAction
     */
    transient private SQLBookmarkPlugin plugin;
 
-   public RunBookmarkAction(IApplication app, Resources rsrc,
+   public RunBookmarkAction(IApplication app, IResources resources,
                             SQLBookmarkPlugin plugin)
       throws IllegalArgumentException
    {
-      super(app, rsrc);
+      super(app, resources);
       if (plugin == null)
       {
          throw new IllegalArgumentException("null IPlugin passed");

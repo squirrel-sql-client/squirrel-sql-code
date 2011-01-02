@@ -35,17 +35,18 @@ import javax.swing.JSeparator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -84,7 +85,17 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    private static ILogger logger =
       LoggerController.createLogger(SQLBookmarkPlugin.class);
 
-   private PluginResources resources;
+	private IResources _resources;
+
+	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
+	/**
+	 * @param resourcesFactory the resourcesFactory to set
+	 */
+	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
+	{
+		_resourcesFactory = resourcesFactory;
+	}
+
 
    /**
     * The bookmark menu
@@ -180,9 +191,9 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
     *
     * @return plugin resources.
     */
-   protected PluginResources getResources()
+   protected IResources getResources()
    {
-      return resources;
+      return _resources;
    }
 
    /**
@@ -193,7 +204,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
     */
    protected String getResourceString(String name)
    {
-      return resources.getString(name);
+      return _resources.getString(name);
    }
 
    /**
@@ -232,7 +243,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       IApplication app = getApplication();
 
       // Load resources such as menu items, etc...
-      resources = new SQLBookmarkResources(RESOURCE_PATH, this);
+      _resources = _resourcesFactory.createResource(RESOURCE_PATH, this);
 
       bookmarkManager = new BookmarkManager(this);
       // Load plugin preferences.
@@ -249,9 +260,9 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       }
 
       ActionCollection coll = app.getActionCollection();
-      coll.add(new AddBookmarkAction(app, resources, this));
-      coll.add(new EditBookmarksAction(app, resources, this));
-      coll.add(new RunBookmarkAction(app, resources, this));
+      coll.add(new AddBookmarkAction(app, _resources, this));
+      coll.add(new EditBookmarksAction(app, _resources, this));
+      coll.add(new RunBookmarkAction(app, _resources, this));
       createMenu();
 
       rebuildMenu();
@@ -284,11 +295,11 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
             sqlInternalFrame.addToToolsPopUp("bookmarkedit", coll.get(EditBookmarksAction.class));
 
             ISQLPanelAPI sqlPaneAPI = sqlInternalFrame.getSQLPanelAPI();
-            CompleteBookmarkAction cba = new CompleteBookmarkAction(sess.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), SQLBookmarkPlugin.this);
+            CompleteBookmarkAction cba = new CompleteBookmarkAction(sess.getApplication(), _resources, sqlPaneAPI.getSQLEntryPanel(), SQLBookmarkPlugin.this);
             JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
-            resources.configureMenuItem(cba, item);
+            _resources.configureMenuItem(cba, item);
             JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-            comp.registerKeyboardAction(cba, resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            comp.registerKeyboardAction(cba, _resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             sqlInternalFrame.addToToolsPopUp("bookmarkselect", cba);
          }
 
@@ -311,14 +322,14 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
       CompleteBookmarkAction cba =
          new CompleteBookmarkAction(session.getApplication(),
-            resources,
+            _resources,
             sqlPaneAPI.getSQLEntryPanel(),
             SQLBookmarkPlugin.this);
       JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
-      resources.configureMenuItem(cba, item);
+      _resources.configureMenuItem(cba, item);
       JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
       comp.registerKeyboardAction(cba,
-         resources.getKeyStroke(cba),
+         _resources.getKeyStroke(cba),
          JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
       session.getSessionInternalFrame().addToToolsPopUp("bookmarkselect", cba);
    }
@@ -331,7 +342,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       ActionCollection coll = getApplication().getActionCollection();
 
       menu.removeAll();
-      resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
+      _resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
       menu.add(new JSeparator());
 
       for (Iterator<Bookmark> i = bookmarkManager.iterator(); i.hasNext();)
@@ -367,7 +378,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    {
       IApplication app = getApplication();
 
-      menu = resources.createMenu(IMenuResourceKeys.BOOKMARKS);
+      menu = _resources.createMenu(IMenuResourceKeys.BOOKMARKS);
 
       app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
    }
@@ -382,10 +393,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       IApplication app = getApplication();
       ActionCollection coll = app.getActionCollection();
 
-      SquirrelAction action =
-         (SquirrelAction) coll.get(RunBookmarkAction.class);
-
-      JMenuItem item = new JMenuItem(action);
+      JMenuItem item = new JMenuItem(coll.get(RunBookmarkAction.class));
       item.setText(bookmark.getName());
 
       menu.add(item);

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.IResources;
 
 /**
  * Prompt for name and add a new bookmark into the system.
@@ -40,11 +40,11 @@ public class AddBookmarkAction extends SquirrelAction
     transient private ISession session;
     transient private SQLBookmarkPlugin plugin;
 
-   public AddBookmarkAction(IApplication app, Resources rsrc,
+   public AddBookmarkAction(IApplication app, IResources resources,
                             SQLBookmarkPlugin plugin)
       throws IllegalArgumentException
    {
-      super(app, rsrc);
+      super(app, resources);
       if (plugin == null)
       {
          throw new IllegalArgumentException("null IPlugin passed");
