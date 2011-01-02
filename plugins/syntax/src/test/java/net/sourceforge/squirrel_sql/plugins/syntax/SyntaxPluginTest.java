@@ -18,25 +18,30 @@
  */
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import net.sourceforge.squirrel_sql.client.plugin.AbstractPluginTest;
+import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
-
-import org.junit.After;
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 
-public class SyntaxPluginTest extends AbstractPluginTest implements DatabaseProductVersionData
+public class SyntaxPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
 {	
-	@Before
-	public void setUp() throws Exception
+
+	@Override
+	protected IPlugin getPluginToTest() throws Exception
 	{
-		classUnderTest = new SyntaxPlugin();
+		return new SyntaxPlugin();
 	}
 
-	@After
-	public void tearDown() throws Exception
+	@Override
+	protected String getDatabaseProductName()
 	{
-		classUnderTest = null;
-	}		
+		return "Any Database";
+	}
+
+	@Override
+	protected String getDatabaseProductVersion()
+	{
+		return "Any Database Version";
+	}	
 
 }
