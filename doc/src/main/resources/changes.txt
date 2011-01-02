@@ -21,7 +21,6 @@ Enhancements:
 
 Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 
-Feature request 3030479: New global preference that allows scrollable tabbed pane for Session tabs.
 Feature request 1608435: (checkbox in I18N administration: "show only bundles with missing translations").
         Thanks to Ivo Neri for the patch.
 
