@@ -511,5 +511,10 @@ public class Utilities
 	public static void garbageCollect() {
 		System.gc();
 	}
-	
+
+   public static String escapeHtmlChars(String sql)
+   {
+      return StringUtilities.escapeHtmlChars(sql);
+   }
+
 }

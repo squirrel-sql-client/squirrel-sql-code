@@ -56,8 +56,9 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(MessagePanel.class);
+   public static final Color ERROR_MESSAGE_FG = new Color(255,102,102);
 
-	/** Popup menu for this component. */
+   /** Popup menu for this component. */
 	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
 
 	/**
@@ -150,7 +151,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
       SimpleAttributeSet saSetErrorHistory = new SimpleAttributeSet();
       //StyleConstants.setBackground(saSetErrorHistory, Color.pink);
-      StyleConstants.setForeground(saSetErrorHistory, new Color(255,102,102));
+      StyleConstants.setForeground(saSetErrorHistory, ERROR_MESSAGE_FG);
       _saSetHistoryBySaSet.put(_saSetError, saSetErrorHistory);
       //
       //////////////////////////////////////////////////////////////////

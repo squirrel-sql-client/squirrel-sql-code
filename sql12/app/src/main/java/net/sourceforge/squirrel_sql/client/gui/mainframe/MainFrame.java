@@ -345,6 +345,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		_splitPn.add(new JScrollPane(_msgPnl));
 
       _splitPn.setResizeWeight(1);
+      _splitPn.setOneTouchExpandable(true);
 
       //i18n[MainFrame.saveSize=Save size]
       String key = s_stringMgr.getString("MainFrame.saveSize");

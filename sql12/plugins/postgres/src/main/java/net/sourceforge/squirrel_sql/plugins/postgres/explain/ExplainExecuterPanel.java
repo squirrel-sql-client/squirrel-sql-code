@@ -48,6 +48,7 @@ import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 {
@@ -365,11 +366,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		{
 		}
 
-		public void sqlCloseExecutionHandler()
-		{
-		}
-
-		public void sqlExecutionException(Throwable th, String postErrorString)
+		public String sqlExecutionException(Throwable th, String postErrorString)
 		{
 			String message = _session.formatException(new SQLExecutionException(th, postErrorString));
 			_session.showErrorMessage(message);
@@ -378,8 +375,16 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 			{
 				s_log.info(message);
 			}
+
+         return message;
 		}
-	}
+
+      @Override
+      public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+      {
+         //To change body of implemented methods use File | Settings | File Templates.
+      }
+   }
 
 	public String getTitle()
 	{

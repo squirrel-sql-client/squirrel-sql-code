@@ -101,7 +101,7 @@ public class StringManager
 					sb.append(_bundleLoaderUrLs[i]).append("\n");
 				}
 			}
-			s_log.error(sb.toString());
+			s_log.error(sb.toString(), ex);
 			if (_testMode) {
 				throw new IllegalStateException(sb.toString());
 			}

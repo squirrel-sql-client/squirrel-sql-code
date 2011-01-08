@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
 
 import java.sql.ResultSet;
 import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
@@ -98,10 +99,6 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 		_pdialog.setTotalItems(statementCount + 1);
 	}
 
-	public void sqlCloseExecutionHandler()
-	{
-	}
-
 	public void sqlExecutionCancelled()
 	{
 		_pdialog.dispose();
@@ -115,7 +112,7 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlExecutionException(Throwable th, String postErrorString)
+	public String sqlExecutionException(Throwable th, String postErrorString)
 	{
 		String message = _session.formatException(new SQLExecutionException(th, postErrorString));
 		_session.showErrorMessage(message);
@@ -125,5 +122,15 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 			s_log.info(message);
 		}
 		_pdialog.dispose();
+
+      return message;
 	}
+
+
+   @Override
+   public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
+
 }

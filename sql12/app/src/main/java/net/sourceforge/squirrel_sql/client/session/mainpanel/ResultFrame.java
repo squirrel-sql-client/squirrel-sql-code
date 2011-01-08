@@ -159,4 +159,9 @@ public class ResultFrame extends SessionDialogWidget
 
 		return session.getTitle() + " - " + tab.getViewableSqlString();
 	}
+
+   public IResultTab getTab()
+   {
+      return _tab;
+   }
 }

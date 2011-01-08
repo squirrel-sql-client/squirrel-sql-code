@@ -19,9 +19,9 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 /**
  * This default implementation of the sql executer handler simply notifies the
@@ -59,7 +59,7 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlExecutionException(Throwable th, String postErrorString)
+	public String sqlExecutionException(Throwable th, String postErrorString)
 	{
       String msg = "Error: ";
 
@@ -82,7 +82,8 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
       }
 
       _session.showErrorMessage(msg);
-	}
+      return msg;
+   }
 
 	public void sqlExecutionWarning(SQLWarning warn)
 	{
@@ -93,7 +94,7 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
    {
    }
 
-   public void sqlCloseExecutionHandler()
+   public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
    {
    }
 }

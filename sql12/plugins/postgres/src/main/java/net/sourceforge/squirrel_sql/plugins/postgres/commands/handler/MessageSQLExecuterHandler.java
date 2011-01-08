@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.gui.MessageDialog;
 
 import java.sql.SQLWarning;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandler {
     /** Internationalized strings for this class. */
@@ -76,8 +77,8 @@ public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandl
 
 
     @Override
-    public void sqlCloseExecutionHandler() {
-        super.sqlCloseExecutionHandler();
+    public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement) {
+        super.sqlCloseExecutionHandler(sqlExecErrorMsgs, lastExecutedStatement);
         if (!_exceptionOccured) {
             float executionTime = (float) (System.currentTimeMillis() - _startTime) / 1000;
             _mdialog.writeEmptyLine();
@@ -103,10 +104,12 @@ public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandl
     }
 
 
-    public void sqlExecutionException(Throwable th, String postErrorString) {
-        super.sqlExecutionException(th, postErrorString);
-        _mdialog.writeEmptyLine();
-        _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.aborted", _commandPrefix));
-        _exceptionOccured = true;
+    public String sqlExecutionException(Throwable th, String postErrorString) {
+       String ret = super.sqlExecutionException(th, postErrorString);
+       _mdialog.writeEmptyLine();
+       _mdialog.writeLine(s_stringMgr.getString("MessageSQLExecuterHandler.aborted", _commandPrefix));
+       _exceptionOccured = true;
+
+       return ret;
     }
 }

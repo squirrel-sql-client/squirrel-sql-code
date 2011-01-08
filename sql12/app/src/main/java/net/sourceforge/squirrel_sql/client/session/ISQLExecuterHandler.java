@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.ResultSet;
 import java.sql.SQLWarning;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -70,7 +71,7 @@ public interface ISQLExecuterHandler
 
 	/** Called when the SQLExecutor terminates due to an exception
 	 */
-	public void sqlExecutionException(Throwable ex, String postErrorString);
+	public String sqlExecutionException(Throwable th, String postErrorString);
 
 	/** Called when a SQLWarning is received during execuion of the sql*/
 	public void sqlExecutionWarning(SQLWarning warn);
@@ -84,6 +85,8 @@ public interface ISQLExecuterHandler
     * Tell the execution handler that we don't need it anymore
     * In SQLExecutionHandler this will close the cancel panel.
     *
+    * @param sqlExecErrorMsgs null if no error occurred
+    * @param lastExecutedStatement
     */
-   public void sqlCloseExecutionHandler();
+   public void sqlCloseExecutionHandler(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement);
 }
