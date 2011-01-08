@@ -47,8 +47,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class MessagePanel extends JTextPane implements IMessageHandler
 {
-    static final long serialVersionUID = 5859398063643519072L;
-    
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(MessagePanel.class);
@@ -56,7 +54,6 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(MessagePanel.class);
-   public static final Color ERROR_MESSAGE_FG = new Color(255,102,102);
 
    /** Popup menu for this component. */
 	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
@@ -151,7 +148,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
       SimpleAttributeSet saSetErrorHistory = new SimpleAttributeSet();
       //StyleConstants.setBackground(saSetErrorHistory, Color.pink);
-      StyleConstants.setForeground(saSetErrorHistory, ERROR_MESSAGE_FG);
+      StyleConstants.setForeground(saSetErrorHistory, new Color(255,102,102));
       _saSetHistoryBySaSet.put(_saSetError, saSetErrorHistory);
       //
       //////////////////////////////////////////////////////////////////

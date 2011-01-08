@@ -319,33 +319,40 @@ public class SQLResultExecuterPanel extends JPanel
             }
 
             @Override
-            public void addErrorPanel(ErrorPanel errorPanel)
+            public void displayErrors(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
             {
-               onAddErrorPanel(errorPanel);
+               onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement);
             }
          };
    }
 
-   private void onAddErrorPanel(final ErrorPanel errorPanel)
+   private void onDisplayErrors(final ArrayList<String> sqlExecErrorMsgs, final String lastExecutedStatement)
    {
       Runnable runnable = new Runnable()
       {
          public void run()
          {
-            _tabbedExecutionsPanel.add(s_stringMgr.getString("SQLResultExecuterPanel.ErrorTabHeader"), errorPanel);
-            _tabbedExecutionsPanel.setSelectedComponent(errorPanel);
-            errorPanel.setErrorPanelListener(new ErrorPanelListener()
-            {
-               @Override
-               public void removeErrorPanel(ErrorPanel errorPanel)
-               {
-                  _tabbedExecutionsPanel.remove(errorPanel);
-               }
-            });
+            showErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
          }
       };
 
       SwingUtilities.invokeLater(runnable);
+   }
+
+   private void showErrorPanel(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+   {
+      ErrorPanelListener errorPanelListener = new ErrorPanelListener()
+      {
+         @Override
+         public void removeErrorPanel(ErrorPanel errorPanel)
+         {
+            _tabbedExecutionsPanel.remove(errorPanel);
+         }
+      };
+
+      ErrorPanel errorPanel = new ErrorPanel(_session, errorPanelListener, sqlExecErrorMsgs, lastExecutedStatement);
+      _tabbedExecutionsPanel.add(s_stringMgr.getString("SQLResultExecuterPanel.ErrorTabHeader"), errorPanel);
+      _tabbedExecutionsPanel.setSelectedComponent(errorPanel);
    }
 
    private void onRerunSQL(String sql, IResultTab resultTab)

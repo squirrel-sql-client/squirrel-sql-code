@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableMode
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 
+import java.util.ArrayList;
+
 public interface ISQLExecutionHandlerListener
 {
    void addResultsTab(SQLExecutionInfo info,
@@ -18,5 +20,5 @@ public interface ISQLExecutionHandlerListener
 
    void setCancelPanel(CancelPanelCtrl cancelPanelCtrl);
 
-   void addErrorPanel(ErrorPanel errorPanel);
+   void displayErrors(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement);
 }
