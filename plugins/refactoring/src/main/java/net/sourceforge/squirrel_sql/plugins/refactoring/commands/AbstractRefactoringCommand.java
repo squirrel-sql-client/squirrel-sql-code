@@ -344,10 +344,12 @@ public abstract class AbstractRefactoringCommand implements ICommand
 			super(session);
 		}
 
-		public void sqlExecutionException(Throwable th, String postErrorString)
+		public String sqlExecutionException(Throwable th, String postErrorString)
 		{
 			super.sqlExecutionException(th, postErrorString);
 			exceptionEncountered = true;
+
+         return postErrorString;
 		}
 
 		public boolean exceptionEncountered()

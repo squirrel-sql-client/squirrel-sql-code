@@ -123,6 +123,7 @@ public class SessionSQLPropertiesPanel
 	private static final class SQLPropertiesPanel extends JPanel
 	{
 		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
+		private JCheckBox _showSQLErrorsInTabChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.showSQLErrorsInTab"));
 		private JCheckBox _writeSQLErrorsToLogChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.writesqlerrorstolog"));
 		private JCheckBox _loadColumsInBackgroundChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.loadColumsInBackground"));
 		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
@@ -167,6 +168,7 @@ public class SessionSQLPropertiesPanel
 		void loadData(SessionProperties props)
 		{
 			_abortOnErrorChk.setSelected(props.getAbortOnError());
+         _showSQLErrorsInTabChk.setSelected(props.getShowSQLErrorsInTab());
 			_writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
 			_loadColumsInBackgroundChk.setSelected(props.getLoadColumnsInBackground());
 
@@ -244,6 +246,7 @@ public class SessionSQLPropertiesPanel
 		void applyChanges(SessionProperties props)
 		{
 			props.setAbortOnError(_abortOnErrorChk.isSelected());
+			props.setShowSQLErrorsInTab(_showSQLErrorsInTabChk.isSelected());
 			props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
 			props.setLoadColumnsInBackground(_loadColumsInBackgroundChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
@@ -394,36 +397,21 @@ public class SessionSQLPropertiesPanel
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_abortOnErrorChk, gbc);
 
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_showSQLErrorsInTabChk, gbc);
+
          ++gbc.gridy; // new line
          gbc.gridx = 0;
          gbc.gridwidth = GridBagConstraints.REMAINDER;
          pnl.add(_writeSQLErrorsToLogChk, gbc);
 
 
-			//////////////////////////////////////////////
-			// belong together
-			Insets defaultInsets = gbc.insets;
-
-			gbc.insets = (Insets) defaultInsets.clone();
-			gbc.insets.bottom = 0;
-
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			String loadColsInBackgroundDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.loadColsInBackgroundDescription");
-			pnl.add(new MultipleLineLabel(loadColsInBackgroundDescription), gbc);
-
-			gbc.insets = (Insets) defaultInsets.clone();
-			gbc.insets.top = 0;
-
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(_loadColumsInBackgroundChk, gbc);
-
-			gbc.insets = defaultInsets;
-			//
-			/////////////////////////////////////////////
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         pnl.add(createLoadColumnsInBackkgroundPanel(), gbc);
 
 
          if (null != _session)
@@ -464,7 +452,26 @@ public class SessionSQLPropertiesPanel
 
          return pnl;
 		}
-		private JPanel createFontPanel()
+
+      private JPanel createLoadColumnsInBackkgroundPanel()
+      {
+         JPanel ret = new JPanel(new GridBagLayout());
+
+         GridBagConstraints gbc;
+
+         gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0);
+         String loadColsInBackgroundDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.loadColsInBackgroundDescription");
+         ret.add(new MultipleLineLabel(loadColsInBackgroundDescription), gbc);
+
+         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+         ret.add(_loadColumsInBackgroundChk, gbc);
+
+         ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.columnLoading")));
+
+         return ret;
+      }
+
+      private JPanel createFontPanel()
 		{
 			JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("SessionSQLPropertiesPanel.sqlentryarea")));

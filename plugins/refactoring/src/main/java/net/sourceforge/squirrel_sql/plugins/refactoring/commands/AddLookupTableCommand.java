@@ -522,9 +522,9 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 			_session.getSQLConnection().setAutoCommit(false);
 		}
 
-		public void sqlCloseExecutionHandler()
+		public void sqlCloseExecutionHandler(ArrayList<String> errMsgs, String lastExecutedStatement)
 		{
-			super.sqlCloseExecutionHandler();
+			super.sqlCloseExecutionHandler(errMsgs, lastExecutedStatement);
 			if (_origAutoCommit)
 			{
 				if (exceptionEncountered())

@@ -36,7 +36,7 @@ public class SQLHistoryController
 
 
    @SuppressWarnings("serial")
-public SQLHistoryController(ISession session, ISQLPanelAPI sqlPanelAPI, ArrayList<SQLHistoryItem> items)
+   public SQLHistoryController(ISession session, ISQLPanelAPI sqlPanelAPI, ArrayList<SQLHistoryItem> items)
    {
       _sqlPanelAPI = sqlPanelAPI;
       _sqlHistoryItemWrappers = SQLHistoryItemWrapper.wrap(items);
@@ -94,7 +94,7 @@ public SQLHistoryController(ISession session, ISQLPanelAPI sqlPanelAPI, ArrayLis
 
 
       // i18n[SQLHistoryController.mnuAppendSelectionToEditor=Append selected statements to SQL editor]
-      JMenuItem mnuAppendSelectionToEditor = new JMenuItem("Append selected statements to SQL editor");
+      JMenuItem mnuAppendSelectionToEditor = new JMenuItem(s_stringMgr.getString("SQLHistoryController.mnuAppendSelectionToEditor"));
       mnuAppendSelectionToEditor.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)

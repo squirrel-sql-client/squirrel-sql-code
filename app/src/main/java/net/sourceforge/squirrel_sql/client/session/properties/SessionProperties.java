@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 public class SessionProperties implements Cloneable, Serializable, ISessionProperties
 {
 
-	public interface IDataSetDestinations
+   public interface IDataSetDestinations
    {
       String TEXT = DataSetViewerTextPanel.class.getName();
       String READ_ONLY_TABLE = DataSetViewerTablePanel.class.getName();
@@ -49,6 +49,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    {
       String SQL_RESULT_TAB_LIMIT = "sqlResultTabLimit";
       String ABORT_ON_ERROR = "abortOnError";
+      String SHOW_SQL_ERRORS_IN_TAB = "showSQLErrorsInTab";
       String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
       String LOAD_COLUMNS_IN_BACKGROUND = "loadColumnsInBackground";
       String AUTO_COMMIT = "autoCommit";
@@ -212,6 +213,11 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
     */
    private boolean _abortOnError = true;
+
+   /**
+    * If <TT>true</TT> then show SQL errors in result tab.
+    */
+   private boolean _showSQLErrorsInTab = true;
 
    /**
     * If <TT>true</TT> SQL Errors are written to Log.
@@ -423,6 +429,22 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
          getPropertyChangeReporter().firePropertyChange(
             IPropertyNames.ABORT_ON_ERROR,
             !_abortOnError, _abortOnError);
+      }
+   }
+
+   public boolean getShowSQLErrorsInTab()
+   {
+      return _showSQLErrorsInTab;  //To change body of created methods use File | Settings | File Templates.
+   }
+
+   public void setShowSQLErrorsInTab(boolean value)
+   {
+      if (_showSQLErrorsInTab != value)
+      {
+         _showSQLErrorsInTab = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SHOW_SQL_ERRORS_IN_TAB,
+            !_showSQLErrorsInTab, _showSQLErrorsInTab);
       }
    }
 

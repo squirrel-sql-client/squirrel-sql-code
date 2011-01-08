@@ -296,4 +296,13 @@ public class StringUtilities
     public static String getEolStr() {
    	 return System.getProperty("line.separator", "\n");
     }
+
+   public static String escapeHtmlChars(String sql)
+   {
+      String buf = sql.replaceAll("&", "&amp;");
+      buf = buf.replaceAll("<", "&lt;");
+      buf = buf.replaceAll(">", "&gt;");
+      buf = buf.replaceAll("\"", "&quot;");
+      return buf;
+   }
 }

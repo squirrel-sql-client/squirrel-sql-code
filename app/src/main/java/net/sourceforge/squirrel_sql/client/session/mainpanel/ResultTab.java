@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
@@ -143,7 +144,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _session = session;
       _sqlPanel = sqlPanel;
       _id = id;
-      reInit(creator, exInfo);
+      init(creator, exInfo);
 
 
       createGUI();
@@ -153,7 +154,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
-	private void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
+	private void init(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
 	{
 		_creator = creator;
 		_creator.addListener(new DataSetUpdateableTableModelListener()
@@ -245,7 +246,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		final int rowCount = _resultSetOutput.getRowCount();
 
 		final int maxRows =_exInfo.getMaxRows(); 
-      String escapedSql = escapeHtmlChars(_sql);
+      String escapedSql = Utilities.escapeHtmlChars(_sql);
 
 		if (maxRows > 0 && rowCount >= maxRows)
 		{
@@ -271,15 +272,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		// And the query info.
 		_queryInfoPanel.load(rsds, rowCount, exInfo);
 	}
-
-   private String escapeHtmlChars(String sql)
-   {
-      String buf = sql.replaceAll("&", "&amp;");
-      buf = buf.replaceAll("<", "&lt;");
-      buf = buf.replaceAll("<", "&gt;");
-      buf = buf.replaceAll("\"", "&quot;");
-      return buf;
-   }
 
    /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#clear()
@@ -334,7 +326,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	public void closeTab()
 	{
 		add(_tp, BorderLayout.CENTER);
-		_sqlPanel.closeTab(this);
+		_sqlPanel.closeResultTab(this);
 	}
 
 	/**
@@ -518,7 +510,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			_sqlPanel.createWindow(ResultTab.this);
+			_sqlPanel.createSQLResultFrame(ResultTab.this);
 		}
 	}
 

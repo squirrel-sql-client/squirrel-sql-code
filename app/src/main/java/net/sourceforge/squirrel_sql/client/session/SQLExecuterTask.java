@@ -31,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
@@ -143,6 +144,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       String lastExecutedStatement = null;
       int statementCount = 0;
       final SessionProperties props = _session.getProperties();
+
+      ArrayList<String> sqlExecErrorMsgs = new ArrayList<String>();
+
       try
       {
          final ISQLConnection conn = _session.getSQLConnection();
@@ -237,11 +241,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                          {
                             if(1 < statementCount)
                             {
-                               handleError(ex, "Error occured in:\n" + lastExecutedStatement);
+                               sqlExecErrorMsgs.add(handleError(ex, "Error occured in:\n" + lastExecutedStatement));
                             }
                             else
                             {
-                               handleError(ex, null);
+                               sqlExecErrorMsgs.add(handleError(ex, null));
                             }
                          }
                      }
@@ -266,11 +270,11 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          if(props.getAbortOnError() && 1 < statementCount)
          {
-            handleError(ex, "Error occured in:\n" + lastExecutedStatement);
+            sqlExecErrorMsgs.add(handleError(ex, "Error occured in:\n" + lastExecutedStatement));
          }
          else
          {
-            handleError(ex, null);
+            sqlExecErrorMsgs.add(handleError(ex, null));
          }
 
          if(false == ex instanceof SQLException)
@@ -301,7 +305,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          if (_handler != null)
          {
-            _handler.sqlCloseExecutionHandler();
+            _handler.sqlCloseExecutionHandler(sqlExecErrorMsgs, lastExecutedStatement);
          }
 
          if (schemaCheck) {
@@ -646,10 +650,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       }
    }
 
-   private void handleError(Throwable th, String postErrorString)
+   private String handleError(Throwable th, String postErrorString)
    {
       if (_handler != null)
-         _handler.sqlExecutionException(th, postErrorString);
+      {
+         return _handler.sqlExecutionException(th, postErrorString);
+      }
+
+      return null;
    }
 
 
