@@ -22,10 +22,6 @@ package net.sf.squirrel_sql;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
@@ -34,7 +30,9 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializerImpl;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
@@ -54,6 +52,8 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	private org.apache.maven.plugin.logging.Log log = getLog();
 
 	private IOUtilities _iou = new IOUtilitiesImpl();
+	
+	private FileWrapperFactory _fileWrapperFactory = new FileWrapperFactoryImpl();
 
 	/**
 	 * Transitive dependencies that are not used directly by SQuirreL are excluded so that the update site
@@ -126,6 +126,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 
 		try
 		{
+			copyPluginAssemblies();
 			ChannelXmlBean channelBean =
 				buildChannelRelease(channelName, releaseName, releaseVersion, releaseDir.getAbsolutePath());
 			UpdateXmlSerializer serializer = new UpdateXmlSerializerImpl();
@@ -199,6 +200,36 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 		return result;
 	}
 
+	/**
+	 * In order for versions older than 3.2.1 to be properly upgraded, the plugin assmebly files that have the
+	 * form :
+	 * 
+	 * <pre>
+	 * <plugin internal name>-assembly.zip
+	 * </pre>
+	 * 
+	 * must be copied to the old archive form :
+	 * 
+	 * <pre>
+	 * <plugin internal name>.zip
+	 * </pre> 
+	 * 
+	 * This method loops through all of the plugin assembly archives and copies them to the old format. 
+	 */
+	private void copyPluginAssemblies() throws IOException {
+		FileWrapper pluginsDir = _fileWrapperFactory.create(releaseDirectory, "plugin");
+		String[] pluginsList = pluginsDir.list();
+		for (String plugin : pluginsList) {
+			String oldFormat = plugin.replace("-assembly", "");
+			FileWrapper pluginAssemblyArchiveFile = _fileWrapperFactory.create(pluginsDir, plugin);
+			FileWrapper oldFormatArchiveFile = _fileWrapperFactory.create(pluginsDir, oldFormat);
+			if (log.isInfoEnabled()) {
+				log.info("Copying assembly file ( "+plugin+" ) to old format: "+oldFormat); 
+			}
+			_iou.copyFile(pluginAssemblyArchiveFile, oldFormatArchiveFile);
+		}
+	}
+	
 	/**
 	 * Searches for the specified filename in the excludedPatterns array and compares to see if any pattern
 	 * matches.
