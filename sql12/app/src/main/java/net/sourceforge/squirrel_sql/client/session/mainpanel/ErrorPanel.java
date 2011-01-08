@@ -27,9 +27,10 @@ public class ErrorPanel extends JPanel
    private JTextArea _txtArea;
 
 
-   public ErrorPanel(ISession session, ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+   public ErrorPanel(ISession session, ErrorPanelListener errorPanelListener, ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
    {
       super(new BorderLayout());
+      _errorPanelListener = errorPanelListener;
 
       _txtArea = new JTextArea();
 
@@ -155,11 +156,6 @@ public class ErrorPanel extends JPanel
       ret.add(new TabButton(new CloseAction(session)), gbc);
 
       return ret;
-   }
-
-   public void setErrorPanelListener(ErrorPanelListener errorPanelListener)
-   {
-      _errorPanelListener = errorPanelListener;
    }
 
    private class CloseAction extends SquirrelAction

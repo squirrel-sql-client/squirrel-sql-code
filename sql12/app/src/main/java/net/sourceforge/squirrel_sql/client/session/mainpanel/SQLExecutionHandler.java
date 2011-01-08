@@ -431,7 +431,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
       if (null != sqlExecErrorMsgs && 0 < sqlExecErrorMsgs.size() && _session.getProperties().getShowSQLErrorsInTab())
       {
-         _executionHandlerListener.addErrorPanel(new ErrorPanel(_session, sqlExecErrorMsgs, lastExecutedStatement));
+         _executionHandlerListener.displayErrors(sqlExecErrorMsgs, lastExecutedStatement);
       }
 
       _executer = null;
