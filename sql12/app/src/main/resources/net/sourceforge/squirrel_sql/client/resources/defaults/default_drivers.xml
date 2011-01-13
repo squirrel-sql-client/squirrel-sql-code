@@ -2,17 +2,29 @@
 
 <Beans>
 
-        <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-                <driverClassName>com.ibm.as400.access.AS400JDBCDriver</driverClassName>
-                <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-                        <string>-50</string>
-                </identifier>
-                <jarFileName/>
-                <jarFileNames Indexed="true"/>
-                <name>JTOpen(AS/400)</name>
-                <url>jdbc:as400://&lt;host_name&gt;/&lt;default-schema&gt;;&lt;properties&gt;</url>
-                <websiteUrl>http://jt400.sourceforge.net</websiteUrl>
-        </Bean>
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <name>CUBRID JDBC Driver</name>
+        <driverClassName>cubrid.jdbc.driver.CUBRIDDriver</driverClassName>
+        <url>jdbc:cubrid:&lt;hostname&gt;:33000:&lt;dbname&gt;:&lt;username&gt;:&lt;password&gt;:</url>
+        <usesClassPath>true</usesClassPath>
+        <jarFileNames Indexed="true"/>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-51</string>
+        </identifier>
+        <websiteUrl>http://www.cubrid.org</websiteUrl>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+            <driverClassName>com.ibm.as400.access.AS400JDBCDriver</driverClassName>
+            <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+                    <string>-50</string>
+            </identifier>
+            <jarFileName/>
+            <jarFileNames Indexed="true"/>
+            <name>JTOpen(AS/400)</name>
+            <url>jdbc:as400://&lt;host_name&gt;/&lt;default-schema&gt;;&lt;properties&gt;</url>
+            <websiteUrl>http://jt400.sourceforge.net</websiteUrl>
+    </Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.informix.jdbc.IfxDriver</driverClassName>
@@ -583,7 +595,7 @@
 		</identifier>
 		<websiteUrl>http://www.oracle.com/technology/tech/java/sqlj_jdbc/htdocs/jdbc_faq.htm</websiteUrl>
 	</Bean>
-	
+
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>JDBC ODBC Bridge</name>
 		<driverClassName>sun.jdbc.odbc.JdbcOdbcDriver</driverClassName>
