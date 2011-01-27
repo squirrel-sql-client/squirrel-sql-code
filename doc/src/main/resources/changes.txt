@@ -20,6 +20,9 @@ Bug-fixes:
 
 Fixed NullPointerException in Hibernate Plugin when executing HQL with 'view objects' switched on.
 
+Hibernate Plugin: Made HQL code completion work more exact.
+
+
 3.2.1 (12/29/2010)
 ==================
 
