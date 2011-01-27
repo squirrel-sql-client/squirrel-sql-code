@@ -18,6 +18,7 @@ Bug-fixes:
 
 3148653: Missing App Icon on Mac OS X (Fix is available in the Mac OS X 3.2.1 installer file)
 
+Fixed NullPointerException in Hibernate Plugin when executing HQL with 'view objects' switched on.
 
 3.2.1 (12/29/2010)
 ==================

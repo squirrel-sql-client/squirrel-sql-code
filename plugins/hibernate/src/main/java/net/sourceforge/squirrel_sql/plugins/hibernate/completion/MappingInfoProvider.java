@@ -5,7 +5,9 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 public interface MappingInfoProvider
 {
    // Will be called asynchronously to the event dispatch thread
-   MappedClassInfo getMappedClassInfoFor(String token, boolean matchNameExact, boolean stateless);
+   MappedClassInfo getMappedClassInfoFor(String token);
 
    boolean mayBeClassOrAliasName(String token);
+
+   MappedClassInfo getExactMappedClassInfoFor(String className);
 }

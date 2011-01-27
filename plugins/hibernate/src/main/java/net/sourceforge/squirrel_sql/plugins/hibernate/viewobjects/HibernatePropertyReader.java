@@ -32,7 +32,7 @@ public class HibernatePropertyReader
       }
       catch (Exception e)
       {
-         throw new RuntimeException(e);
+         throw new RuntimeException("Cannot access property: " + _obj.getClass().getName() + "." + _propertyName, e);
       }
    }
 

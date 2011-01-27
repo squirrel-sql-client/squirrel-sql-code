@@ -19,12 +19,12 @@ public class MappedClassInfo extends CompletionInfo
    {
       _mappedClassInfoData = mappedClassInfoData;
 
-      setPropertyInfos(new PropertyInfo[_mappedClassInfoData.getHibernatePropertyInfos().length + 1]);
+      _propertyInfos = new PropertyInfo[_mappedClassInfoData.getHibernatePropertyInfos().length + 1];
 
-      getPropertyInfos()[0] = new PropertyInfo(_mappedClassInfoData.getIndentifierHibernatePropertyInfo(), _mappedClassInfoData.getMappedClassName());
+      _propertyInfos[0] = new PropertyInfo(_mappedClassInfoData.getIndentifierHibernatePropertyInfo(), _mappedClassInfoData.getMappedClassName());
       for (int i = 0; i < _mappedClassInfoData.getHibernatePropertyInfos().length; i++)
       {
-         getPropertyInfos()[i+1] = new PropertyInfo(_mappedClassInfoData.getHibernatePropertyInfos()[i], _mappedClassInfoData.getMappedClassName());
+         _propertyInfos[i+1] = new PropertyInfo(_mappedClassInfoData.getHibernatePropertyInfos()[i], _mappedClassInfoData.getMappedClassName());
       }
    }
 
@@ -84,7 +84,7 @@ public class MappedClassInfo extends CompletionInfo
 
       ArrayList<String> props = getArrayFormChain(propertyChainBegin);
 
-      PropertyInfo[] propInfoBuf = getPropertyInfos();
+      PropertyInfo[] propInfoBuf = _propertyInfos;
 
       for (int i = 0; i < props.size(); i++)
       {
@@ -136,7 +136,7 @@ public class MappedClassInfo extends CompletionInfo
    {
       ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
 
-      for (PropertyInfo propertyInfo : getPropertyInfos())
+      for (PropertyInfo propertyInfo : _propertyInfos )
       {
          if(propertyInfo.matchesUnQualified(parser.getLastToken()))
          {
@@ -165,11 +165,11 @@ public class MappedClassInfo extends CompletionInfo
 
    public String[] getAttributeNames()
    {
-      String[] ret = new String[getPropertyInfos().length];
+      String[] ret = new String[_propertyInfos.length];
 
-      for (int i = 0; i < getPropertyInfos().length; i++)
+      for (int i = 0; i < _propertyInfos.length; i++)
       {
-         ret[i] = getPropertyInfos()[i].getCompareString();
+         ret[i] = _propertyInfos[i].getCompareString();
 
       }
 
@@ -178,7 +178,7 @@ public class MappedClassInfo extends CompletionInfo
 
    public PropertyInfo getAttributeByName(String attrName)
    {
-      for (PropertyInfo propertyInfo : getPropertyInfos())
+      for (PropertyInfo propertyInfo : _propertyInfos )
       {
          if(propertyInfo.getCompareString().equals(attrName))
          {
@@ -193,7 +193,7 @@ public class MappedClassInfo extends CompletionInfo
 
    public PropertyInfo[] getAttributes()
    {
-      return getPropertyInfos();
+      return _propertyInfos;
    }
 
 
@@ -204,21 +204,11 @@ public class MappedClassInfo extends CompletionInfo
 
    public void initAttributesWithClassInfo(MappingInfoProvider mappingInfoProvider)
    {
-      for (PropertyInfo propertyInfo : getPropertyInfos())
+      for (PropertyInfo propertyInfo : _propertyInfos )
       {
-         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName(), false, false));
+         propertyInfo.setMappedClassInfo(mappingInfoProvider.getExactMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName()));
       }
    }
 
-
-   public PropertyInfo[] getPropertyInfos()
-   {
-      return _propertyInfos;
-   }
-
-   public void setPropertyInfos(PropertyInfo[] propertyInfos)
-   {
-      _propertyInfos = propertyInfos;
-   }
 
 }
