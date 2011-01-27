@@ -74,7 +74,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
    public CompletionCandidates getInfosStartingWith(CompletionParser parser)
    {
 
-      // Tricky alias and chaining completion examples 
+      // Tricky alias and chaining completion examples
       //
       // au to auftr in
       // from Kv auftr where au
@@ -194,17 +194,17 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
       _currentAliasInfos = aliasInfos;
    }
 
-   public MappedClassInfo getMappedClassInfoFor(String token, boolean matchNameExact, boolean stateless)
+   public MappedClassInfo getMappedClassInfoFor(String token)
    {
       // Example for this code:
-      // Completion should 
+      // Completion should
       // from Kv k inner join fetch k.positionen as posses where posses.artNr = 'sdfsdf'
 
       CompletionParser cp = new CompletionParser(token);
 
       if(2 > cp.size())
       {
-         return getMappedClassInfoForNonAliasedToken(cp, matchNameExact, stateless);
+         return getMappedClassInfoForNonAliasedToken(cp, true);
       }
 
       String aliasCandidate = cp.getToken(0);
@@ -229,14 +229,14 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
          }
       }
 
-      return getMappedClassInfoForNonAliasedToken(cp, false, stateless);
+      return getMappedClassInfoForNonAliasedToken(cp, false);
    }
 
-   private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp, boolean matchNameExact, boolean stateless)
+   private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp, boolean matchNameExact)
    {
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         if(mappedClassInfo.matches(cp, matchNameExact, stateless))
+         if(mappedClassInfo.matches(cp, matchNameExact, true))
          {
             return mappedClassInfo;
          }
@@ -289,6 +289,12 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
       return true;
 
 
+   }
+
+   @Override
+   public MappedClassInfo getExactMappedClassInfoFor(String className)
+   {
+      return _mappedClassInfoByClassName.get(className);
    }
 
    public ISyntaxHighlightTokenMatcher getHqlSyntaxHighlightTokenMatcher()
