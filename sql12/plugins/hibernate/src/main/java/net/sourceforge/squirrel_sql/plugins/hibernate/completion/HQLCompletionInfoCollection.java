@@ -234,11 +234,20 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
    private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp, boolean matchNameExact)
    {
+      MappedClassInfo ret = null;
+
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         if(mappedClassInfo.matches(cp, matchNameExact, true))
+         if(mappedClassInfo.matches(cp, true, true))
          {
+            // An exact match always ends search
             return mappedClassInfo;
+         }
+         else if(false == matchNameExact && mappedClassInfo.matches(cp, false, true))
+         {
+            // We have a non exact match here.
+            // Nonetheless we continue the loop to see if an exact match exists
+            ret = mappedClassInfo;
          }
 
          if(
@@ -257,7 +266,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
          }
       }
 
-      return null;
+      return ret;
    }
 
    public boolean mayBeClassOrAliasName(String token)
