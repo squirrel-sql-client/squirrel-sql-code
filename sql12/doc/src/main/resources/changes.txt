@@ -11,8 +11,10 @@ Feature requests 3001253, 2896494: New icons in Object tree
 
 Display errors in result tab:
   SQL execution errors are now additionally displayed in a temporary result tab.
-  This new feature is switched on by default and can be switched off in
-  Menu File --> New Session Properties --> Tab SQL --> Show SQL execution errors in result tab
+  - This new feature is switched on by default and can be switched off in
+    Menu File --> New Session Properties --> Tab SQL --> Show SQL execution errors in result tab.
+  - Along with this feature comes a new Message Panel right mouse menu "Save size 0" that allows
+    to hide the Message panel at application start up.
 
 Bug-fixes:
 

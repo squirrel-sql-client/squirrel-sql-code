@@ -84,13 +84,9 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 	private IDesktopContainer _desktop;
 
-
-   private static final String PREFS_KEY_MESSAGEPANEL_HEIGHT = "squirrelSql_msgPanel_height";
-
-
-   private boolean m_hasBeenVisible;
-
    private JSplitPane _splitPn;
+
+   private SplitPnResizeHandler _splitPnResizeHandler;
 
    /**
 	 * Ctor.
@@ -332,7 +328,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
                // had not height = 0. If someone knows a better way
                // please tell me I'll apreciate any advice.
                // gerdwagner@users.sourceforge.net
-               resizeSplitOnStartup();
+               _splitPnResizeHandler.resizeSplitOnStartup();
             }
          }
       };
@@ -346,39 +342,10 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
       _splitPn.setResizeWeight(1);
       _splitPn.setOneTouchExpandable(true);
-
-      //i18n[MainFrame.saveSize=Save size]
-      String key = s_stringMgr.getString("MainFrame.saveSize");
-      Action splitDividerLocAction = new AbstractAction(key)
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            int msgPanelHeight = _splitPn.getBottomComponent().getSize().height;
-            Preferences.userRoot().putInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, msgPanelHeight);
-         }
-      };
-      _msgPnl.addToMessagePanelPopup(splitDividerLocAction);
-
-      //i18n[MainFrame.restoreSize=Restore saved size]
-      key = s_stringMgr.getString("MainFrame.restoreSize");
-      
-      Action setSplitDividerLocAction = new AbstractAction(key)
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            int prefMsgPanelHeight = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
-            if(-1 != prefMsgPanelHeight)
-            {
-               int divLoc = getDividerLocation(prefMsgPanelHeight, _splitPn);
-               _splitPn.setDividerLocation(divLoc);
-            }
-         }
-      };
-      _msgPnl.addToMessagePanelPopup(setSplitDividerLocAction);
+      _splitPnResizeHandler = new SplitPnResizeHandler(_splitPn, _msgPnl);
 
 
-
-		content.add(_splitPn, BorderLayout.CENTER);
+      content.add(_splitPn, BorderLayout.CENTER);
 
 		_statusBar = new MainFrameStatusBar(_app);
 		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
@@ -416,48 +383,6 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 			}
 		});
 	}
-
-
-   public void resizeSplitOnStartup()
-   {
-
-      if(false == m_hasBeenVisible)
-      {
-         m_hasBeenVisible = true;
-         final int prefMsgPanelHeight = Preferences.userRoot().getInt(PREFS_KEY_MESSAGEPANEL_HEIGHT, -1);
-
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               if (-1 == prefMsgPanelHeight)
-               {
-                  int divLoc = getDividerLocation(50, _splitPn);
-                  _splitPn.setDividerLocation(divLoc);
-               }
-               else
-               {
-                  int divLoc = getDividerLocation(prefMsgPanelHeight, _splitPn);
-                  _splitPn.setDividerLocation(divLoc);
-
-               }
-            }
-         });
-            
-      }
-   }
-
-   private int getDividerLocation(int wantedBottomComponentHeight, JSplitPane splitPn)
-   {
-      int splitBarSize =
-         splitPn.getSize().height -
-         splitPn.getBottomComponent().getSize().height -
-         splitPn.getTopComponent().getSize().height - 1;
-
-      int divLoc = splitPn.getSize().height - wantedBottomComponentHeight - splitBarSize;
-      return divLoc;
-   }
-
 
 	private void setupFromPreferences()
 	{
