@@ -102,7 +102,7 @@ public class SplitPnResizeHandler
                {
                   if (0 == prefMsgPanelHeight)
                   {
-                     setUnexpanded();
+                     tryForceUnexpanded();
                   }
                   else
                   {
@@ -115,6 +115,22 @@ public class SplitPnResizeHandler
          });
 
       }
+   }
+
+   /**
+    * Used at startup and almost always makes it to hide the Message panel at startup
+    */
+   private void tryForceUnexpanded()
+   {
+      setUnexpanded();
+      Runnable runnable = new Runnable()
+      {
+         public void run()
+         {
+            setUnexpanded();
+         }
+      };
+      SwingUtilities.invokeLater(runnable);
    }
 
    private int getDividerLocation(int wantedBottomComponentHeight, JSplitPane splitPn)
