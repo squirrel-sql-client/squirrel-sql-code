@@ -24,6 +24,7 @@ Fixed NullPointerException in Hibernate Plugin when executing HQL with 'view obj
 
 Hibernate Plugin: Made HQL code completion work more exact.
 
+Hibernate Plugin: Removed unused imports to regain compile independence from Hibernate API changes, see patch ID 3168381
 
 3.2.1 (12/29/2010)
 ==================
