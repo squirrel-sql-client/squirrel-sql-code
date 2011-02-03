@@ -18,25 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
-import java.io.*;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.DialectFactory;
+
+import java.io.*;
 
 /**
  * Class that provides utility methods for obtaining SessionFactory objects.
