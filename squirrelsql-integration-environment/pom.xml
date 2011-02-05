@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>3.3.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>squirrelsql-integration-environment</artifactId>
@@ -55,6 +55,10 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 
+	<properties>
+		<squirrel-sql-version>3.3.0-SNAPSHOT</squirrel-sql-version>
+	</properties>
+
 	<!-- This is blatant copy/paste from squirrelsql-launcher pom.xml -->
 	<build>
 		<resources>
@@ -78,23 +82,23 @@
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>fw</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 			<type>test-jar</type>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 			<type>test-jar</type>
 		</dependency>
 		<dependency>
@@ -110,22 +114,22 @@
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>db2</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>informix</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>refactoring</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>sqlscript</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>${squirrel-sql-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>gsbase</groupId>
@@ -194,13 +198,11 @@
 			</build>
 		</profile>
 		<!--
-			Some of the following jdbc driver profiles contain dependencies that
-			aren't hosted in Maven Central because they are proprietary. That is
-			one reason they appear in profiles. They each get their own profile
-			to support running with different versions of the same driver, which
-			would not be possible if all versions of a given driver were included
-			in a single profile. These dependencies are hosted on
-			https://www.squirrel-sql.org/nexus/content/groups/public.
+			Some of the following jdbc driver profiles contain dependencies that aren't hosted in Maven
+			Central because they are proprietary. That is one reason they appear in profiles. They each get
+			their own profile to support running with different versions of the same driver, which would not
+			be possible if all versions of a given driver were included in a single profile. These
+			dependencies are hosted on https://www.squirrel-sql.org/nexus/content/groups/public.
 		-->
 		<profile>
 			<id>db2-8.1</id>
