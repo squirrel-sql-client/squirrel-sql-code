@@ -172,7 +172,11 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand
 		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
 		customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
 		customDialog.setMultiSelection();
-		customDialog.setTableName(ti.getQualifiedName());
+		
+		// We use simple name here so that the user can choose for themselves whether or not to qualify the 
+		// table name.  This also addresses Bug #3171762 which results in "double qualifying" the table name
+		// if the user's preference is to qualify table names.
+		customDialog.setTableName(ti.getSimpleName());
 
 		SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
 		PrimaryKeyInfo[] infos = md.getPrimaryKey(ti);
