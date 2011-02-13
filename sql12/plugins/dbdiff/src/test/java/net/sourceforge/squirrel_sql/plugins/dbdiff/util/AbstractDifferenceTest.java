@@ -16,8 +16,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.dbdiff.util;
 
+package net.sourceforge.squirrel_sql.plugins.dbdiff.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -35,7 +35,8 @@ public class AbstractDifferenceTest
 	{
 		classUnderTest.setDifferenceType(null);
 		assertNull(classUnderTest.getDifferenceType());
-		for (DiffType type :AbstractDifference.DiffType.values()) {
+		for (final DiffType type : AbstractDifference.DiffType.values())
+		{
 			classUnderTest.setDifferenceType(type);
 			assertEquals(type, classUnderTest.getDifferenceType());
 		}

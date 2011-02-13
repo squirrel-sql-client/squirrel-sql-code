@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Rob Manning
+ * Copyright (C) 2011 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
-import net.sourceforge.squirrel_sql.fw.util.AbstractResourcesTest;
+package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
 
-public class DBDiffPluginResourcesTest extends AbstractResourcesTest
+/**
+ * Interface for classes that display differences between the two sessions given in the SessionInfoProvider.
+ */
+public interface IDiffPresentation
 {
+	/**
+	 * Set the SessionInfoProvider which contains the two sessions to be compared, along with their selected
+	 * objects.
+	 * 
+	 * @param p
+	 *           the SessionInfoProvider
+	 */
+	void setSessionInfoProvider(SessionInfoProvider p);
 
-	@Before
-	public void setUp() throws Exception
-	{
-		classUnderTest =
-			new DBDiffPluginResources(DBDiffPlugin.BUNDLE_BASE_NAME, AppTestUtil.getMockPlugin(mockHelper));
-	}
-
+	/**
+	 * Execute the comparison.
+	 */
+	void execute();
 }

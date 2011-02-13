@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Rob Manning
+ * Copyright (C) 2011 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
-import net.sourceforge.squirrel_sql.fw.util.AbstractResourcesTest;
+package net.sourceforge.squirrel_sql.plugins.dbdiff.prefs;
 
-import org.junit.Before;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 
-public class DBDiffPluginResourcesTest extends AbstractResourcesTest
+public interface IPluginPreferencesManager
 {
 
-	@Before
-	public void setUp() throws Exception
-	{
-		classUnderTest =
-			new DBDiffPluginResources(DBDiffPlugin.BUNDLE_BASE_NAME, AppTestUtil.getMockPlugin(mockHelper));
-	}
+	/**
+	 * @param thePlugin
+	 * @param preferenceBeanClass
+	 * @throws PluginException
+	 */
+	void initialize(IPlugin thePlugin, Class<? extends IPluginPreferenceBean> preferenceBeanClass)
+		throws PluginException;
+
+	/**
+	 * @return
+	 */
+	IPluginPreferenceBean getPreferences();
+
+	/**
+	 * 
+	 */
+	void unload();
+
+	/**
+	 * Save preferences to disk. Always write to the user settings folder, not the application settings folder.
+	 */
+	void savePrefs();
 
 }
