@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -24,27 +25,27 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
- * 
  * @author manningr
- *
  */
-public class DBDiffPluginSessionCallback implements PluginSessionCallback {
+public class DBDiffPluginSessionCallback implements PluginSessionCallback
+{
 
-    DBDiffPlugin _plugin = null;
-    
-    public DBDiffPluginSessionCallback(DBDiffPlugin plugin) {
-        _plugin = plugin;
-    }
-    
-    public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame,
-                                       ISession session) {
-        // Nothing to do for an SQL internal frame
+	DBDiffPlugin _plugin = null;
 
-    }
+	public DBDiffPluginSessionCallback(DBDiffPlugin plugin)
+	{
+		_plugin = plugin;
+	}
 
-    public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, 
-                                              ISession session) {
-        _plugin.addMenuItemsToContextMenu(session);
-    }
+	public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession session)
+	{
+		// Nothing to do for an SQL internal frame
+
+	}
+
+	public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession session)
+	{
+		_plugin.addMenuItemsToContextMenu(session);
+	}
 
 }

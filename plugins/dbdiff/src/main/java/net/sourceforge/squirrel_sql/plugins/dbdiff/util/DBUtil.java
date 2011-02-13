@@ -77,13 +77,16 @@ public class DBUtil
 	 */
 	public static String getPKColumnString(ISQLConnection sourceConn, ITableInfo ti) throws SQLException
 	{
-		List<String> pkColumns = getPKColumnList(sourceConn, ti);
-		if (pkColumns == null || pkColumns.size() == 0) { return null; }
-		StringBuilder sb = new StringBuilder("(");
-		Iterator<String> i = pkColumns.iterator();
+		final List<String> pkColumns = getPKColumnList(sourceConn, ti);
+		if (pkColumns == null || pkColumns.size() == 0)
+		{
+			return null;
+		}
+		final StringBuilder sb = new StringBuilder("(");
+		final Iterator<String> i = pkColumns.iterator();
 		while (i.hasNext())
 		{
-			String columnName = i.next();
+			final String columnName = i.next();
 			sb.append(columnName);
 			if (i.hasNext())
 			{
@@ -104,8 +107,8 @@ public class DBUtil
 	 */
 	private static List<String> getPKColumnList(ISQLConnection sourceConn, ITableInfo ti) throws SQLException
 	{
-		ArrayList<String> pkColumns = new ArrayList<String>();
-		DatabaseMetaData md = sourceConn.getConnection().getMetaData();
+		final ArrayList<String> pkColumns = new ArrayList<String>();
+		final DatabaseMetaData md = sourceConn.getConnection().getMetaData();
 		ResultSet rs = null;
 		if (md.supportsCatalogsInTableDefinitions())
 		{
@@ -121,13 +124,16 @@ public class DBUtil
 		}
 		while (rs.next())
 		{
-			String keyColumn = rs.getString(4);
+			final String keyColumn = rs.getString(4);
 			if (keyColumn != null)
 			{
 				pkColumns.add(keyColumn);
 			}
 		}
-		if (pkColumns.size() == 0) { return null; }
+		if (pkColumns.size() == 0)
+		{
+			return null;
+		}
 		return pkColumns;
 	}
 
@@ -137,14 +143,14 @@ public class DBUtil
 		boolean result = false;
 		try
 		{
-			SQLDatabaseMetaData md = prov.getDiffDestSession().getSQLConnection().getSQLMetaData();
+			final SQLDatabaseMetaData md = prov.getDestSession().getSQLConnection().getSQLMetaData();
 
-			ITableInfo[] tables =
+			final ITableInfo[] tables =
 				md.getTables(destCatalog, destSchema, destTableName, new String[] { "TABLE" }, null);
 			if (tables != null && tables.length == 1)
 			{
-				ForeignKeyInfo[] fks = SQLUtilities.getImportedKeys(tables[0], md);
-				for (ForeignKeyInfo existingKey : fks)
+				final ForeignKeyInfo[] fks = SQLUtilities.getImportedKeys(tables[0], md);
+				for (final ForeignKeyInfo existingKey : fks)
 				{
 					if (areEqual(existingKey, fkInfo))
 					{
@@ -159,7 +165,7 @@ public class DBUtil
 					+ destSchema + " and catalog " + destCatalog + ". Skipping FK constraint");
 			}
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			log.error("Unexpected exception while attempting to determine if " + "a table (" + destTableName
 				+ ") has a particular foreign " + "key");
@@ -169,26 +175,38 @@ public class DBUtil
 
 	private static boolean areEqual(ForeignKeyInfo fk1, ForeignKeyInfo fk2)
 	{
-		String fk1FKColumn = fk1.getForeignKeyColumnName();
-		String fk2FKColumn = fk2.getForeignKeyColumnName();
-		String fk1PKColumn = fk1.getPrimaryKeyColumnName();
-		String fk2PKColumn = fk2.getPrimaryKeyColumnName();
-		String fk1FKTable = fk1.getForeignKeyTableName();
-		String fk2FKTable = fk2.getForeignKeyTableName();
-		String fk1PKTable = fk1.getPrimaryKeyTableName();
-		String fk2PKTable = fk2.getPrimaryKeyTableName();
+		final String fk1FKColumn = fk1.getForeignKeyColumnName();
+		final String fk2FKColumn = fk2.getForeignKeyColumnName();
+		final String fk1PKColumn = fk1.getPrimaryKeyColumnName();
+		final String fk2PKColumn = fk2.getPrimaryKeyColumnName();
+		final String fk1FKTable = fk1.getForeignKeyTableName();
+		final String fk2FKTable = fk2.getForeignKeyTableName();
+		final String fk1PKTable = fk1.getPrimaryKeyTableName();
+		final String fk2PKTable = fk2.getPrimaryKeyTableName();
 
-		if (!fk1PKColumn.equals(fk2PKColumn)) { return false; }
-		if (!fk1FKColumn.equals(fk2FKColumn)) { return false; }
-		if (!fk1PKTable.equals(fk2PKTable)) { return false; }
-		if (!fk1FKTable.equals(fk2FKTable)) { return false; }
+		if (!fk1PKColumn.equals(fk2PKColumn))
+		{
+			return false;
+		}
+		if (!fk1FKColumn.equals(fk2FKColumn))
+		{
+			return false;
+		}
+		if (!fk1PKTable.equals(fk2PKTable))
+		{
+			return false;
+		}
+		if (!fk1FKTable.equals(fk2FKTable))
+		{
+			return false;
+		}
 		return true;
 	}
 
 	public static boolean containsTable(List<ITableInfo> tableInfos, String table)
 	{
 		boolean result = false;
-		for (ITableInfo ti : tableInfos)
+		for (final ITableInfo ti : tableInfos)
 		{
 			if (table.equalsIgnoreCase(ti.getSimpleName()))
 			{
@@ -213,17 +231,20 @@ public class DBUtil
 	 */
 	public static ResultSet executeQuery(ISession session, String sql) throws SQLException
 	{
-		ISQLConnection sqlcon = session.getSQLConnection();
-		if (sqlcon == null || sql == null) { return null; }
+		final ISQLConnection sqlcon = session.getSQLConnection();
+		if (sqlcon == null || sql == null)
+		{
+			return null;
+		}
 		Statement stmt = null;
 		ResultSet rs = null;
 
-		Connection con = sqlcon.getConnection();
+		final Connection con = sqlcon.getConnection();
 		try
 		{
 			stmt = con.createStatement();
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			// Only close the statement if SQLException - otherwise it has to
 			// remain open until the ResultSet is read through by the caller.
@@ -233,7 +254,7 @@ public class DBUtil
 				{
 					stmt.close();
 				}
-				catch (SQLException ex)
+				catch (final SQLException ex)
 				{ /* Do Nothing */
 				}
 			}
@@ -242,7 +263,7 @@ public class DBUtil
 		if (log.isDebugEnabled())
 		{
 			// i18n[DBUtil.info.executequery=executeQuery: Running SQL:\n '{0}']
-			String msg = s_stringMgr.getString("DBUtil.info.executequery", sql);
+			final String msg = s_stringMgr.getString("DBUtil.info.executequery", sql);
 			log.debug(msg);
 		}
 		try
@@ -250,7 +271,7 @@ public class DBUtil
 			lastStatement = sql;
 			rs = stmt.executeQuery(sql);
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			// Only close the statement if SQLException - otherwise it has to
 			// remain open until the ResultSet is read through by the caller.
@@ -260,7 +281,7 @@ public class DBUtil
 				{
 					stmt.close();
 				}
-				catch (SQLException ex)
+				catch (final SQLException ex)
 				{ /* Do Nothing */
 				}
 			}
@@ -285,14 +306,14 @@ public class DBUtil
 		ResultSet rs = null;
 		try
 		{
-			String sql = "select count(*) from " + tableName;
+			final String sql = "select count(*) from " + tableName;
 			rs = executeQuery(session, sql);
 			if (rs.next())
 			{
 				result = rs.getInt(1);
 			}
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			/* Do Nothing - this can happen when the table doesn't exist */
 		}
@@ -315,15 +336,15 @@ public class DBUtil
 	public static int getTableCount(ISession session, String catalog, String schema, String tableName,
 		int sessionType) throws UserCancelledOperationException
 	{
-		String table = getQualifiedObjectName(session, catalog, schema, tableName, sessionType);
+		final String table = getQualifiedObjectName(session, catalog, schema, tableName, sessionType);
 		return getTableCount(session, table);
 	}
 
 	public static ITableInfo getTableInfo(ISession session, String schema, String tableName)
 		throws SQLException, MappingException, UserCancelledOperationException
 	{
-		ISQLConnection con = session.getSQLConnection();
-		SchemaInfo schemaInfo = session.getSchemaInfo();
+		final ISQLConnection con = session.getSQLConnection();
+		final SchemaInfo schemaInfo = session.getSchemaInfo();
 		// Currently, as of milestone 3, Axion doesn't support "schemas" like
 		// other databases. So, set the schema to emtpy string if we detect
 		// an Axion session.
@@ -370,7 +391,8 @@ public class DBUtil
 		{
 			// i18n[DBUtil.error.tablenotfound=Couldn't locate table '{0}' in
 			// schema '(1)']
-			String msg = s_stringMgr.getString("DBUtil.error.tablenotfound", new String[] { tableName, schema });
+			final String msg =
+				s_stringMgr.getString("DBUtil.error.tablenotfound", new String[] { tableName, schema });
 			throw new MappingException(msg);
 		}
 		if (tis.length > 1)
@@ -398,15 +420,17 @@ public class DBUtil
 		if (colJdbcType == java.sql.Types.OTHER)
 		{
 			String typeName = colInfo.getTypeName().toUpperCase();
-			int parenIndex = typeName.indexOf("(");
+			final int parenIndex = typeName.indexOf("(");
 			if (parenIndex != -1)
 			{
 				typeName = typeName.substring(0, parenIndex);
 			}
 			colJdbcType = JDBCTypeMapper.getJdbcType(typeName);
-			if (colJdbcType == Types.NULL) { throw new MappingException(
-				"Encoutered jdbc type OTHER (1111) and couldn't map " + "the database-specific type name ("
-					+ typeName + ") to a jdbc type"); }
+			if (colJdbcType == Types.NULL)
+			{
+				throw new MappingException("Encoutered jdbc type OTHER (1111) and couldn't map "
+					+ "the database-specific type name (" + typeName + ") to a jdbc type");
+			}
 		}
 		return colJdbcType;
 	}
@@ -423,12 +447,12 @@ public class DBUtil
 		int result = -1;
 		if (ti != null)
 		{
-			TableColumnInfo[] tciArr = con.getSQLMetaData().getColumnInfo(ti);
-			for (int i = 0; i < tciArr.length; i++)
+			final TableColumnInfo[] tciArr = con.getSQLMetaData().getColumnInfo(ti);
+			for (final TableColumnInfo element : tciArr)
 			{
-				if (tciArr[i].getColumnName().equalsIgnoreCase(columnName))
+				if (element.getColumnName().equalsIgnoreCase(columnName))
 				{
-					result = tciArr[i].getDataType();
+					result = element.getDataType();
 					break;
 				}
 			}
@@ -439,14 +463,14 @@ public class DBUtil
 	public static int[] getColumnTypes(ISQLConnection con, ITableInfo ti, String[] colNames)
 		throws SQLException
 	{
-		TableColumnInfo[] tciArr = con.getSQLMetaData().getColumnInfo(ti);
-		int[] result = new int[tciArr.length];
+		final TableColumnInfo[] tciArr = con.getSQLMetaData().getColumnInfo(ti);
+		final int[] result = new int[tciArr.length];
 		for (int i = 0; i < tciArr.length; i++)
 		{
 			boolean found = false;
 			for (int j = 0; j < colNames.length && !found; j++)
 			{
-				String columnName = colNames[j];
+				final String columnName = colNames[j];
 				if (tciArr[i].getColumnName().equalsIgnoreCase(columnName))
 				{
 					result[i] = tciArr[i].getDataType();
@@ -463,10 +487,10 @@ public class DBUtil
 		ResultSet rs = null;
 		try
 		{
-			DatabaseMetaData md = con.getConnection().getMetaData();
-			String cat = ti.getCatalogName();
-			String schema = ti.getSchemaName();
-			String tableName = ti.getSimpleName();
+			final DatabaseMetaData md = con.getConnection().getMetaData();
+			final String cat = ti.getCatalogName();
+			final String schema = ti.getSchemaName();
+			final String tableName = ti.getSimpleName();
 			rs = md.getPrimaryKeys(cat, schema, tableName);
 			if (rs.next())
 			{
@@ -488,12 +512,12 @@ public class DBUtil
 	 */
 	public static String getColumnList(TableColumnInfo[] colInfoArr) throws SQLException
 	{
-		StringBuilder result = new StringBuilder();
+		final StringBuilder result = new StringBuilder();
 
 		for (int i = 0; i < colInfoArr.length; i++)
 		{
-			TableColumnInfo colInfo = colInfoArr[i];
-			String columnName = colInfo.getColumnName();
+			final TableColumnInfo colInfo = colInfoArr[i];
+			final String columnName = colInfo.getColumnName();
 			result.append(columnName);
 			if (i < colInfoArr.length - 1)
 			{
@@ -513,8 +537,8 @@ public class DBUtil
 	public static String getColumnName(ISQLConnection sourceConn, ITableInfo ti, int column)
 		throws SQLException
 	{
-		TableColumnInfo[] infoArr = sourceConn.getSQLMetaData().getColumnInfo(ti);
-		TableColumnInfo colInfo = infoArr[column];
+		final TableColumnInfo[] infoArr = sourceConn.getSQLMetaData().getColumnInfo(ti);
+		final TableColumnInfo colInfo = infoArr[column];
 		return colInfo.getColumnName();
 	}
 
@@ -526,11 +550,11 @@ public class DBUtil
 	 */
 	public static String[] getColumnNames(ISQLConnection sourceConn, ITableInfo ti) throws SQLException
 	{
-		TableColumnInfo[] infoArr = sourceConn.getSQLMetaData().getColumnInfo(ti);
-		String[] result = new String[infoArr.length];
+		final TableColumnInfo[] infoArr = sourceConn.getSQLMetaData().getColumnInfo(ti);
+		final String[] result = new String[infoArr.length];
 		for (int i = 0; i < result.length; i++)
 		{
-			TableColumnInfo colInfo = infoArr[i];
+			final TableColumnInfo colInfo = infoArr[i];
 			result[i] = colInfo.getColumnName();
 		}
 		return result;
@@ -545,10 +569,10 @@ public class DBUtil
 	public static String getSelectQuery(SessionInfoProvider prov, String columnList, ITableInfo ti)
 		throws SQLException, UserCancelledOperationException
 	{
-		StringBuilder result = new StringBuilder("select ");
+		final StringBuilder result = new StringBuilder("select ");
 		result.append(columnList);
 		result.append(" from ");
-		ISession sourceSession = prov.getDiffSourceSession();
+		final ISession sourceSession = prov.getSourceSession();
 
 		// String sourceSchema = null;
 		// MySQL uses catalogs instead of schemas
@@ -569,7 +593,7 @@ public class DBUtil
 		        prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
 		}
 		*/
-		String tableName =
+		final String tableName =
 			getQualifiedObjectName(sourceSession, ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(),
 				DialectFactory.SOURCE_TYPE);
 		result.append(tableName);
@@ -587,7 +611,7 @@ public class DBUtil
 	public static boolean isBinaryType(TableColumnInfo columnInfo)
 	{
 		boolean result = false;
-		int type = columnInfo.getDataType();
+		final int type = columnInfo.getDataType();
 		if (type == Types.BINARY || type == Types.BLOB || type == Types.LONGVARBINARY
 			|| type == Types.VARBINARY)
 		{
@@ -611,17 +635,17 @@ public class DBUtil
 	public static String getQualifiedObjectName(ISession session, String catalogName, String schemaName,
 		String objectName, int sessionType) throws UserCancelledOperationException
 	{
-		String catalog = fixCase(session, catalogName);
-		String schema = fixCase(session, schemaName);
-		String object = fixCase(session, objectName);
-		SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+		final String catalog = fixCase(session, catalogName);
+		final String schema = fixCase(session, schemaName);
+		final String object = fixCase(session, objectName);
+		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		boolean useSchema = true;
 		boolean useCatalog = true;
 		try
 		{
 			useCatalog = md.supportsCatalogsInTableDefinitions();
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			log.info("Encountered unexpected exception while attempting to "
 				+ "determine if catalogs are used in table definitions");
@@ -630,14 +654,20 @@ public class DBUtil
 		{
 			useSchema = md.supportsSchemasInTableDefinitions();
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			log.info("Encountered unexpected exception while attempting to "
 				+ "determine if schemas are used in table definitions");
 		}
-		if (!useCatalog && !useSchema) { return object; }
-		if ((catalog == null || catalog.equals("")) && (schema == null || schema.equals(""))) { return object; }
-		StringBuilder result = new StringBuilder();
+		if (!useCatalog && !useSchema)
+		{
+			return object;
+		}
+		if ((catalog == null || catalog.equals("")) && (schema == null || schema.equals("")))
+		{
+			return object;
+		}
+		final StringBuilder result = new StringBuilder();
 		if (useCatalog && catalog != null && !catalog.equals(""))
 		{
 			result.append(catalog);
@@ -657,10 +687,10 @@ public class DBUtil
 		String catsep = ".";
 		try
 		{
-			SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+			final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 			catsep = md.getCatalogSeparator();
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			log.error("getCatSep: Unexpected Exception - " + e.getMessage(), e);
 		}
@@ -681,14 +711,20 @@ public class DBUtil
 	 */
 	public static String fixCase(ISession session, String identifier)
 	{
-		if (identifier == null || identifier.equals("")) { return identifier; }
+		if (identifier == null || identifier.equals(""))
+		{
+			return identifier;
+		}
 		try
 		{
-			DatabaseMetaData md = session.getSQLConnection().getConnection().getMetaData();
+			final DatabaseMetaData md = session.getSQLConnection().getConnection().getMetaData();
 
 			// Don't change the case of the identifier if database allows mixed
 			// case.
-			if (md.storesMixedCaseIdentifiers()) { return identifier; }
+			if (md.storesMixedCaseIdentifiers())
+			{
+				return identifier;
+			}
 			// Fix the case according to what the database tells us.
 			if (md.storesUpperCaseIdentifiers())
 			{
@@ -699,7 +735,7 @@ public class DBUtil
 				return identifier.toLowerCase();
 			}
 		}
-		catch (SQLException e)
+		catch (final SQLException e)
 		{
 			if (log.isDebugEnabled())
 			{
@@ -729,18 +765,18 @@ public class DBUtil
 	 */
 	public static int getColumnType(ISQLConnection con, ITableInfo ti, int column) throws SQLException
 	{
-		TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
-		TableColumnInfo colInfo = infoArr[column];
+		final TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
+		final TableColumnInfo colInfo = infoArr[column];
 		return colInfo.getDataType();
 	}
 
 	public static int[] getColumnTypes(ISQLConnection con, ITableInfo ti) throws SQLException
 	{
-		TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
-		int[] result = new int[infoArr.length];
+		final TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
+		final int[] result = new int[infoArr.length];
 		for (int i = 0; i < result.length; i++)
 		{
-			TableColumnInfo colInfo = infoArr[i];
+			final TableColumnInfo colInfo = infoArr[i];
 			result[i] = colInfo.getDataType();
 		}
 		return result;
@@ -749,8 +785,8 @@ public class DBUtil
 	public static boolean sameDatabaseType(ISession session1, ISession session2)
 	{
 		boolean result = false;
-		String driver1ClassName = session1.getDriver().getDriverClassName();
-		String driver2ClassName = session2.getDriver().getDriverClassName();
+		final String driver1ClassName = session1.getDriver().getDriverClassName();
+		final String driver2ClassName = session2.getDriver().getDriverClassName();
 		if (driver1ClassName.equals(driver2ClassName))
 		{
 			result = true;
@@ -772,8 +808,8 @@ public class DBUtil
 	public static String getMaxColumnLengthSQL(ISession sourceSession, TableColumnInfo colInfo,
 		String tableName, boolean tableNameIsQualified) throws UserCancelledOperationException
 	{
-		StringBuilder result = new StringBuilder();
-		HibernateDialect dialect =
+		final StringBuilder result = new StringBuilder();
+		final HibernateDialect dialect =
 			DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, sourceSession.getApplication().getMainFrame(),
 				sourceSession.getMetaData());
 		String lengthFunction = dialect.getLengthFunction(colInfo.getDataType());

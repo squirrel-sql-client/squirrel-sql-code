@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
 import java.awt.BorderLayout;
@@ -115,7 +116,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	public void setColumnDifferences(List<ColumnDifference> diffs)
 	{
-		if (diffs == null) { throw new IllegalArgumentException("diffs cannot be null"); }
+		if (diffs == null)
+		{
+			throw new IllegalArgumentException("diffs cannot be null");
+		}
 		final DiffTableModel model = new DiffTableModel(diffs);
 		diffTable.setModel(model);
 		_tableDiffs = diffs;
@@ -154,13 +158,19 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 	public void setSession1Label(String label)
 	{
-		if (label == null) { throw new IllegalArgumentException("label cannot be null"); }
+		if (label == null)
+		{
+			throw new IllegalArgumentException("label cannot be null");
+		}
 		session1Label.setText(getSessionLabel(1, label));
 	}
 
 	public void setSession2Label(String label)
 	{
-		if (label == null) { throw new IllegalArgumentException("label cannot be null"); }
+		if (label == null)
+		{
+			throw new IllegalArgumentException("label cannot be null");
+		}
 		session2Label.setText(getSessionLabel(2, label));
 	}
 
@@ -403,7 +413,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		@Override
 		public int getRowCount()
 		{
-			if (_diffs == null) { return 0; }
+			if (_diffs == null)
+			{
+				return 0;
+			}
 			return _diffs.size();
 		}
 
@@ -427,8 +440,14 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 			final ColumnDifference diff = _diffs.get(row);
 			if (!diff.isCol1Exists() || !diff.isCol2Exists())
 			{
-				if (!diff.isCol1Exists() && column % 2 == 0) { return i18n.MISSING_LABEL; }
-				if (!diff.isCol2Exists() && column % 2 == 1) { return i18n.MISSING_LABEL; }
+				if (!diff.isCol1Exists() && column % 2 == 0)
+				{
+					return i18n.MISSING_LABEL;
+				}
+				if (!diff.isCol2Exists() && column % 2 == 1)
+				{
+					return i18n.MISSING_LABEL;
+				}
 			}
 			Object result = null;
 			switch (column)
@@ -484,7 +503,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		@Override
 		public String getColumnName(int column)
 		{
-			if (column == 0) { return "Table"; }
+			if (column == 0)
+			{
+				return "Table";
+			}
 			return "Column";
 		}
 
@@ -503,7 +525,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		@Override
 		public Object getValueAt(int row, int column)
 		{
-			if (column == 0) { return "Table"; }
+			if (column == 0)
+			{
+				return "Table";
+			}
 			return "Column";
 		}
 
@@ -536,7 +561,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 
 		public RowHeaderTableModel(List<ColumnDifference> diffs)
 		{
-			if (diffs == null) { throw new IllegalArgumentException("diffs cannot be null"); }
+			if (diffs == null)
+			{
+				throw new IllegalArgumentException("diffs cannot be null");
+			}
 			_diffs = diffs;
 		}
 
@@ -555,8 +583,14 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		@Override
 		public String getColumnName(int column)
 		{
-			if (column == 0) { return "Table"; }
-			if (column == 1) { return "Column"; }
+			if (column == 0)
+			{
+				return "Table";
+			}
+			if (column == 1)
+			{
+				return "Column";
+			}
 			throw new IllegalArgumentException("Invalid column: " + column);
 		}
 
@@ -566,7 +600,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		@Override
 		public int getRowCount()
 		{
-			if (_diffs == null) { return 0; }
+			if (_diffs == null)
+			{
+				return 0;
+			}
 			return _diffs.size();
 		}
 
@@ -577,8 +614,14 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 		public Object getValueAt(int row, int column)
 		{
 			final ColumnDifference diff = _diffs.get(row);
-			if (column == 0) { return diff.getTableName(); }
-			if (column == 1) { return diff.getColumnName(); }
+			if (column == 0)
+			{
+				return diff.getTableName();
+			}
+			if (column == 1)
+			{
+				return diff.getColumnName();
+			}
 			throw new IllegalArgumentException("Invalid column: " + column);
 		}
 
@@ -607,7 +650,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog
 			final Component label =
 				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-			if (_tableDiffs == null) { return label; }
+			if (_tableDiffs == null)
+			{
+				return label;
+			}
 			final ColumnDifference diff = _tableDiffs.get(row);
 
 			if (!diff.isCol1Exists() || !diff.isCol2Exists())

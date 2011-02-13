@@ -1,4 +1,3 @@
-package net.sourceforge.squirrel_sql.plugins.dbdiff;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,262 +16,309 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+package net.sourceforge.squirrel_sql.plugins.dbdiff;
+
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-
 /**
- * This class is responsible for identifying and storing differences between
- * columns in a table.
+ * This class is responsible for identifying and storing differences between columns in a table.
  * 
  * @author manningr
  */
-public class ColumnDifference {
+public class ColumnDifference
+{
 
-    private String tableName = "";
-    private String columnName = "";
+	private String tableName = "";
 
-    private int col1Type = -1;
-    private int col2Type = -1;
-    
-    private int col1Length = 0;
-    private int col2Length = 0;
-    
-    private boolean col1IsNullable = false;
-    private boolean col2IsNullable = false;
-    
-    private boolean col1Exists = true;
-    private boolean col2Exists = true;
-    
-    private String col1remarks = "";
-    private String col2remarks = "";
-    
-    private String col1default = "";
-    private String col2default = "";
-    
-    public ColumnDifference() {}
-    
-    public void setColumns(TableColumnInfo c1, TableColumnInfo c2) {
-        if (c1 == null || c2 == null) {
-            throw new IllegalArgumentException("c1, c2 cannot be null");
-        }
-        if (!c1.getTableName().equals(c2.getTableName())) {
-            throw new IllegalArgumentException(
-                "Columns to be compared must be from the same table");
-        }
-        if (!c1.getColumnName().equals(c2.getColumnName())) {
-            throw new IllegalArgumentException(
-                "Columns to be compared must have the same column name");
-        }
-        setColumn1(c1);
-        setColumn2(c2);
-    }
+	private String columnName = "";
 
-    public void setColumn1(TableColumnInfo c1) {
-        col1Type = c1.getDataType();
-        col1Length = c1.getColumnSize();
-        col1IsNullable = c1.isNullable().equalsIgnoreCase("NO") ? false : true;
-        tableName = c1.getTableName();
-        columnName = c1.getColumnName();        
-        col1remarks = c1.getRemarks();
-        col1default = c1.getDefaultValue();
-    }
+	private int col1Type = -1;
 
-    public void setColumn2(TableColumnInfo c2) {
-        col2Type = c2.getDataType();
-        col2Length = c2.getColumnSize();
-        col2IsNullable = c2.isNullable().equalsIgnoreCase("NO") ? false : true;
-        tableName = c2.getTableName();
-        columnName = c2.getColumnName();    
-        col2remarks = c2.getRemarks();
-        col2default = c2.getDefaultValue();
-    }
-    
-    public int getCol1Type() {
-        return col1Type;
-    }
-    
-    public int getCol1Length() {
-        return col1Length;
-    }
-    
-    public boolean col1AllowsNull() {
-        return col1IsNullable;
-    }
+	private int col2Type = -1;
 
-    public int getCol2Type() {
-        return col2Type;
-    }
-    
-    public int getCol2Length() {
-        return col2Length;
-    }
-    
-    public boolean col2AllowsNull() {
-        return col2IsNullable;
-    }
-    
-    public String getCol1Remarks() {
-        return col1remarks;
-    }
-    
-    public String getCol2Remarks() {
-        return col2remarks;
-    }
+	private int col1Length = 0;
 
-    public String getCol1Default() {
-        return col1default;
-    }
-    
-    public String getCol2Default() {
-        return col2default;
-    }
-    
-    /**
-     * Returns a boolean indicating whether or not the two columns are different
-     * in any aspect.
-     * 
-     * @return
-     */
-    public boolean execute() {
-        if (!col1Exists || !col2Exists) {
-            return true;
-        }
-        if (col1Type != col2Type) {
-            return true;
-        }
-        if (col1Length != col2Length) {
-            return true;
-        }
-        if (col1IsNullable != col2IsNullable) {
-            return true;
-        }
-        if (!remarksEqual()) {
-            return true;
-        }
-        return false;
-    }
+	private int col2Length = 0;
 
-    /**
-     * @param tableName the tableName to set
-     */
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
+	private boolean col1IsNullable = false;
 
-    /**
-     * @return the tableName
-     */
-    public String getTableName() {
-        return tableName;
-    }
+	private boolean col2IsNullable = false;
 
-    /**
-     * @param columnName the columnName to set
-     */
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
+	private boolean col1Exists = true;
 
-    /**
-     * @return the columnName
-     */
-    public String getColumnName() {
-        return columnName;
-    }
+	private boolean col2Exists = true;
 
-    /**
-     * @param col1Exists the col1Exists to set
-     */
-    public void setCol1Exists(boolean col1Exists) {
-        this.col1Exists = col1Exists;
-    }
+	private String col1remarks = "";
 
-    /**
-     * @return the col1Exists
-     */
-    public boolean isCol1Exists() {
-        return col1Exists;
-    }
+	private String col2remarks = "";
 
-    /**
-     * @param col2Exists the col2Exists to set
-     */
-    public void setCol2Exists(boolean col2Exists) {
-        this.col2Exists = col2Exists;
-    }
+	private String col1default = "";
 
-    /**
-     * @return the col2Exists
-     */
-    public boolean isCol2Exists() {
-        return col2Exists;
-    }
-    
-    public boolean defaultsEqual() {
-        if (col1default == null && col2default == null) {
-            return true;
-        }
-        if ((col1default == null && col2default != null)
-                || (col1default != null && col2default == null)) {
-            return false;
-        }
-        return col1default.equals(col2default);
-    }
-    
-    public boolean remarksEqual() {
-        if (col1remarks == null && col2remarks == null) {
-            return true;
-        }
-        if ((col1remarks == null && col2remarks != null) 
-                || (col1remarks != null && col2remarks == null)) {
-            return false;
-        }
-        return col1remarks.equals(col2remarks);
-    }
-    
-    public boolean typesEqual() {
-        return col1Type == col2Type;
-    }
-    
-    public boolean lengthsEqual() {
-        return col1Length == col2Length;
-    }
-    
-    public boolean nullableEqual() {
-        return col1IsNullable == col2IsNullable;
-    }
-    
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("TABLE: ");
-        result.append(tableName);
-        result.append(" COLUMN: ");
-        result.append(columnName);
-        result.append("\n");
-        result.append("source colType: ");
-        result.append(col1Type);
-        result.append("\n");
-        
-        result.append("dest colType: ");
-        result.append(col2Type);
-        result.append("\n");
+	private String col2default = "";
 
-        result.append("source colLength: ");
-        result.append(col1Length);
-        result.append("\n");
+	public ColumnDifference()
+	{
+	}
 
-        result.append("dest colLength: ");
-        result.append(col2Length);
-        result.append("\n");
+	public void setColumns(TableColumnInfo c1, TableColumnInfo c2)
+	{
+		if (c1 == null || c2 == null)
+		{
+			throw new IllegalArgumentException("c1, c2 cannot be null");
+		}
+		if (!c1.getColumnName().equals(c2.getColumnName()))
+		{
+			throw new IllegalArgumentException("Columns to be compared must have the same column name");
+		}
+		setColumn1(c1);
+		setColumn2(c2);
+	}
 
-        result.append("source IsNullable: ");
-        result.append(col1IsNullable);
-        result.append("\n");
+	public void setColumn1(TableColumnInfo c1)
+	{
+		col1Type = c1.getDataType();
+		col1Length = c1.getColumnSize();
+		col1IsNullable = c1.isNullable().equalsIgnoreCase("NO") ? false : true;
+		tableName = c1.getTableName();
+		columnName = c1.getColumnName();
+		col1remarks = c1.getRemarks();
+		col1default = c1.getDefaultValue();
+	}
 
-        result.append("dest IsNullable: ");
-        result.append(col2IsNullable);
-        result.append("\n");
-        
-        return result.toString();
-    }
+	public void setColumn2(TableColumnInfo c2)
+	{
+		col2Type = c2.getDataType();
+		col2Length = c2.getColumnSize();
+		col2IsNullable = c2.isNullable().equalsIgnoreCase("NO") ? false : true;
+		tableName = c2.getTableName();
+		columnName = c2.getColumnName();
+		col2remarks = c2.getRemarks();
+		col2default = c2.getDefaultValue();
+	}
+
+	public int getCol1Type()
+	{
+		return col1Type;
+	}
+
+	public int getCol1Length()
+	{
+		return col1Length;
+	}
+
+	public boolean col1AllowsNull()
+	{
+		return col1IsNullable;
+	}
+
+	public int getCol2Type()
+	{
+		return col2Type;
+	}
+
+	public int getCol2Length()
+	{
+		return col2Length;
+	}
+
+	public boolean col2AllowsNull()
+	{
+		return col2IsNullable;
+	}
+
+	public String getCol1Remarks()
+	{
+		return col1remarks;
+	}
+
+	public String getCol2Remarks()
+	{
+		return col2remarks;
+	}
+
+	public String getCol1Default()
+	{
+		return col1default;
+	}
+
+	public String getCol2Default()
+	{
+		return col2default;
+	}
+
+	/**
+	 * Returns a boolean indicating whether or not the two columns are different in any aspect.
+	 * 
+	 * @return
+	 */
+	public boolean execute()
+	{
+		if (!col1Exists || !col2Exists)
+		{
+			return true;
+		}
+		if (col1Type != col2Type)
+		{
+			return true;
+		}
+		if (col1Length != col2Length)
+		{
+			return true;
+		}
+		if (col1IsNullable != col2IsNullable)
+		{
+			return true;
+		}
+		if (!remarksEqual())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param tableName
+	 *           the tableName to set
+	 */
+	public void setTableName(String tableName)
+	{
+		this.tableName = tableName;
+	}
+
+	/**
+	 * @return the tableName
+	 */
+	public String getTableName()
+	{
+		return tableName;
+	}
+
+	/**
+	 * @param columnName
+	 *           the columnName to set
+	 */
+	public void setColumnName(String columnName)
+	{
+		this.columnName = columnName;
+	}
+
+	/**
+	 * @return the columnName
+	 */
+	public String getColumnName()
+	{
+		return columnName;
+	}
+
+	/**
+	 * @param col1Exists
+	 *           the col1Exists to set
+	 */
+	public void setCol1Exists(boolean col1Exists)
+	{
+		this.col1Exists = col1Exists;
+	}
+
+	/**
+	 * @return the col1Exists
+	 */
+	public boolean isCol1Exists()
+	{
+		return col1Exists;
+	}
+
+	/**
+	 * @param col2Exists
+	 *           the col2Exists to set
+	 */
+	public void setCol2Exists(boolean col2Exists)
+	{
+		this.col2Exists = col2Exists;
+	}
+
+	/**
+	 * @return the col2Exists
+	 */
+	public boolean isCol2Exists()
+	{
+		return col2Exists;
+	}
+
+	public boolean defaultsEqual()
+	{
+		if (col1default == null && col2default == null)
+		{
+			return true;
+		}
+		if ((col1default == null && col2default != null) || (col1default != null && col2default == null))
+		{
+			return false;
+		}
+		return col1default.equals(col2default);
+	}
+
+	public boolean remarksEqual()
+	{
+		if (col1remarks == null && col2remarks == null)
+		{
+			return true;
+		}
+		if ((col1remarks == null && col2remarks != null) || (col1remarks != null && col2remarks == null))
+		{
+			return false;
+		}
+		return col1remarks.equals(col2remarks);
+	}
+
+	public boolean typesEqual()
+	{
+		return col1Type == col2Type;
+	}
+
+	public boolean lengthsEqual()
+	{
+		return col1Length == col2Length;
+	}
+
+	public boolean nullableEqual()
+	{
+		return col1IsNullable == col2IsNullable;
+	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder result = new StringBuilder();
+		result.append("TABLE: ");
+		result.append(tableName);
+		result.append(" COLUMN: ");
+		result.append(columnName);
+		result.append("\n");
+		result.append("source colType: ");
+		result.append(col1Type);
+		result.append("\n");
+
+		result.append("dest colType: ");
+		result.append(col2Type);
+		result.append("\n");
+
+		result.append("source colLength: ");
+		result.append(col1Length);
+		result.append("\n");
+
+		result.append("dest colLength: ");
+		result.append(col2Length);
+		result.append("\n");
+
+		result.append("source IsNullable: ");
+		result.append(col1IsNullable);
+		result.append("\n");
+
+		result.append("dest IsNullable: ");
+		result.append(col2IsNullable);
+		result.append("\n");
+
+		return result.toString();
+	}
 }

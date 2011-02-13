@@ -27,11 +27,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DBDiffPluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
-{	
+{
 	@Override
 	protected IPlugin getPluginToTest() throws Exception
 	{
 		return new DBDiffPlugin();
-	}		
+	}
 
 }

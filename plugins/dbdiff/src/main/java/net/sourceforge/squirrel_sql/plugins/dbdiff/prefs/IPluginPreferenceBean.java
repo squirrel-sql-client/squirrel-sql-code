@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Rob Manning
+ * Copyright (C) 2011 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
-import net.sourceforge.squirrel_sql.fw.util.AbstractResourcesTest;
+package net.sourceforge.squirrel_sql.plugins.dbdiff.prefs;
 
-import org.junit.Before;
-
-public class DBDiffPluginResourcesTest extends AbstractResourcesTest
+public interface IPluginPreferenceBean
 {
 
-	@Before
-	public void setUp() throws Exception
-	{
-		classUnderTest =
-			new DBDiffPluginResources(DBDiffPlugin.BUNDLE_BASE_NAME, AppTestUtil.getMockPlugin(mockHelper));
-	}
+	/**
+	 * Retrieve the client to use. This is only used if <TT>useAnonymousClient</TT> is false.
+	 * 
+	 * @return Client name.
+	 */
+	String getClientName();
+
+	/**
+	 * Set the client name.
+	 * 
+	 * @param value
+	 *           Client name
+	 */
+	void setClientName(String value);
+
+	/**
+	 * Retrieve the client version to use. This is only used if <TT>useAnonymousLogon</TT> is false.
+	 * 
+	 * @return Client version.
+	 */
+	String getClientVersion();
+
+	/**
+	 * Set the client version.
+	 * 
+	 * @param value
+	 *           Client version
+	 */
+	void setClientVersion(String value);
 
 }

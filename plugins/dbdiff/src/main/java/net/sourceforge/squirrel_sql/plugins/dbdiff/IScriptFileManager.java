@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Rob Manning
+ * Copyright (C) 2011 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,35 +16,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 package net.sourceforge.squirrel_sql.plugins.dbdiff;
 
+import java.io.IOException;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 /**
- * This is implemented in order to pass needed info along to diff executor.
+ * Interface for manager of script files. Ihis allows the plugin to cleanup any temporary script files that
+ * were created for comparison purposes.
  */
-public interface SessionInfoProvider
+public interface IScriptFileManager
 {
 
-	public void setSourceSession(ISession session);
-
-	public ISession getSourceSession();
-
-	public IDatabaseObjectInfo[] getSourceSelectedDatabaseObjects();
-
-	public IDatabaseObjectInfo[] getDestSelectedDatabaseObjects();
-
-	public void setDestSelectedDatabaseObjects(IDatabaseObjectInfo[] infos);
-
-	public void setSourceSelectedDatabaseObjects(IDatabaseObjectInfo[] infos);
-
-	public void setDestSession(ISession session);
-
-	public ISession getDestSession();
+	/**
+	 * Creates a filename (for a temporary file) based on the specified session information. This should have
+	 * the side effect of storing the filename off for cleanup later.
+	 * 
+	 * @param session
+	 *           the session in which objects have been selected to have their definitions compared
+	 * @param number
+	 *           which of the two sessions (generally, 1 or 2) is one being passed.
+	 * @return a temporary filename
+	 * @throws IOException
+	 */
+	String getOutputFilenameForSession(ISession session, int number) throws IOException;
 
 	/**
-	 * @return the scriptFileManager
+	 * Remove the previously created filenames if they exist.
 	 */
-	public IScriptFileManager getScriptFileManager();
+	void cleanupScriptFiles();
+
 }

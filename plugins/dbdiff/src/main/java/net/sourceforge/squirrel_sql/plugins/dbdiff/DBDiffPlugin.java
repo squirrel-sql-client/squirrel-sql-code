@@ -1,5 +1,3 @@
-package net.sourceforge.squirrel_sql.plugins.dbdiff;
-
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -19,6 +17,8 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package net.sourceforge.squirrel_sql.plugins.dbdiff;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -29,14 +29,21 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.actions.CompareAction;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.actions.SelectAction;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferencesPanel;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DefaultPluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DefaultPluginPreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.IPluginPreferencesManager;
 
 /**
  * The class that sets up the various resources required by SQuirreL to implement a plugin. This plugin
@@ -54,59 +61,70 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
 	private ISession diffDestSession = null;
 
-	private IDatabaseObjectInfo[] selectedDatabaseObjects = null;
+	private IDatabaseObjectInfo[] selectedSourceDatabaseObjects = null;
 
 	private IDatabaseObjectInfo[] selectedDestDatabaseObjects = null;
 
+	private IPluginPreferencesManager pluginPreferencesManager = new DefaultPluginPreferencesManager();
+
+	private IScriptFileManager scriptFileManager = new ScriptFileManager();
+
 	public static final String BUNDLE_BASE_NAME = "net.sourceforge.squirrel_sql.plugins.dbdiff.dbdiff";
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#
+	 *      sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
+	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		addMenuItemsToContextMenu(session);
 		return new DBDiffPluginSessionCallback(this);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
 	 */
+	@Override
 	public String getInternalName()
 	{
 		return "dbdiff";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
 	 */
+	@Override
 	public String getDescriptiveName()
 	{
 		return "DBDiff Plugin";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getAuthor()
 	 */
+	@Override
 	public String getAuthor()
 	{
 		return "Rob Manning";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#getContributors()
 	 */
+	@Override
 	public String getContributors()
 	{
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
 	 */
+	@Override
 	public String getVersion()
 	{
-		return "0.01";
+		return "0.02";
 	}
 
 	/**
@@ -115,6 +133,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	 * 
 	 * @return the Help file name or <TT>null</TT> if plugin doesn't have a help file.
 	 */
+	@Override
 	public String getHelpFileName()
 	{
 		return "readme.html";
@@ -126,6 +145,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	 * 
 	 * @return the changelog file name or <TT>null</TT> if plugin doesn't have a change log.
 	 */
+	@Override
 	public String getChangeLogFileName()
 	{
 		return "changes.txt";
@@ -140,6 +160,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		return "licence.txt";
 	}
 
+	@Override
 	public void initialize() throws PluginException
 	{
 		super.initialize();
@@ -150,33 +171,53 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		}
 
 		_resources = new DBDiffPluginResources(DBDiffPlugin.BUNDLE_BASE_NAME, this);
+		pluginPreferencesManager.initialize(this, DBDiffPreferenceBean.class);
 
-		IApplication app = getApplication();
-		ActionCollection coll = app.getActionCollection();
-		coll.add(new SelectAction(app, _resources, this));
-		coll.add(new CompareAction(app, _resources, this));
+		final IApplication app = getApplication();
+		final ActionCollection coll = app.getActionCollection();
 
-	}
+		final SelectAction selectAction = new SelectAction(app, _resources, this);
+		selectAction.setPluginPreferencesManager(pluginPreferencesManager);
+		final CompareAction compareAction = new CompareAction(app, _resources, this);
+		compareAction.setPluginPreferencesManager(pluginPreferencesManager);
 
-	public void unload()
-	{
-		super.unload();
-		/*
-		diffSourceSession = null;
-		setPasteMenuEnabled(false);
-		PreferencesManager.unload();
-		*/
+		coll.add(selectAction);
+		coll.add(compareAction);
+
 	}
 
 	/**
-	 * @param selectedDatabaseObjects
+	 * Create panel for the Global Properties dialog.
+	 * 
+	 * @return properties panel.
+	 */
+	@Override
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+	{
+		final DBDiffPreferencesPanel preferencesPanel = new DBDiffPreferencesPanel(pluginPreferencesManager);
+		final DefaultPluginGlobalPreferencesTab tab = new DefaultPluginGlobalPreferencesTab(preferencesPanel);
+		return new IGlobalPreferencesPanel[] { tab };
+	}
+
+	@Override
+	public void unload()
+	{
+		super.unload();
+		diffSourceSession = null;
+		diffDestSession = null;
+		pluginPreferencesManager.unload();
+		scriptFileManager.cleanupScriptFiles();
+	}
+
+	/**
+	 * @param selectedSourceDatabaseObjects
 	 *           The selectedDatabaseObjects to set.
 	 */
 	public void setSelectedDatabaseObjects(IDatabaseObjectInfo[] dbObjArr)
 	{
 		if (dbObjArr != null)
 		{
-			selectedDatabaseObjects = dbObjArr;
+			selectedSourceDatabaseObjects = dbObjArr;
 			for (int i = 0; i < dbObjArr.length; i++)
 			{
 				if (s_log.isDebugEnabled())
@@ -216,10 +257,10 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	{
 
 		// Uses menu.dbdiff.* in dbdiff.properties
-		JMenu dbdiffMenu = _resources.createMenu("dbdiff");
+		final JMenu dbdiffMenu = _resources.createMenu("dbdiff");
 
-		JMenuItem selectItem = new JMenuItem(coll.get(SelectAction.class));
-		JMenuItem compareItem = new JMenuItem(coll.get(CompareAction.class));
+		final JMenuItem selectItem = new JMenuItem(coll.get(SelectAction.class));
+		final JMenuItem compareItem = new JMenuItem(coll.get(CompareAction.class));
 		dbdiffMenu.add(selectItem);
 		dbdiffMenu.add(compareItem);
 
@@ -230,34 +271,30 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 
 	}
 
-	/*
-	private class DBCopyPluginResources extends PluginResources {
-	DBCopyPluginResources(String rsrcBundleBaseName, IPlugin plugin) {
-	    super(rsrcBundleBaseName, plugin);
-	}
-	}
-	*/
 	public void setCompareMenuEnabled(boolean enabled)
 	{
 		final ActionCollection coll = getApplication().getActionCollection();
-		CompareAction compareAction = (CompareAction) coll.get(CompareAction.class);
+		final CompareAction compareAction = (CompareAction) coll.get(CompareAction.class);
 		compareAction.setEnabled(enabled);
 	}
 
 	// Interface SessionInfoProvider implementation
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getCopySourceSession()
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#getSourceSession()
 	 */
-	public ISession getDiffSourceSession()
+	@Override
+	public ISession getSourceSession()
 	{
 		return diffSourceSession;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setCopySourceSession(net.sourceforge.squirrel_sql.client.session.ISession)
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#
+	 *      setSourceSession(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
-	public void setDiffSourceSession(ISession session)
+	@Override
+	public void setSourceSession(ISession session)
 	{
 		if (session != null)
 		{
@@ -265,40 +302,84 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getSelectedDatabaseObjects()
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#getSourceSelectedDatabaseObjects()
 	 */
+	@Override
 	public IDatabaseObjectInfo[] getSourceSelectedDatabaseObjects()
 	{
-		return selectedDatabaseObjects;
+		return selectedSourceDatabaseObjects;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getCopyDestSession()
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#getDestSession()
 	 */
-	public ISession getDiffDestSession()
+	@Override
+	public ISession getDestSession()
 	{
 		return diffDestSession;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestCopySession(net.sourceforge.squirrel_sql.client.session.ISession)
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#
+	 *      setDestSession(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
-	public void setDestDiffSession(ISession session)
+	@Override
+	public void setDestSession(ISession session)
 	{
 		diffDestSession = session;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#getDestSelectedDatabaseObject()
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#getDestSelectedDatabaseObjects()
 	 */
+	@Override
 	public IDatabaseObjectInfo[] getDestSelectedDatabaseObjects()
 	{
 		return selectedDestDatabaseObjects;
 	}
 
-	public void setDestSelectedDatabaseObjects(IDatabaseObjectInfo[] info)
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider#
+	 *      setDestSelectedDatabaseObjects(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+	 */
+	@Override
+	public void setDestSelectedDatabaseObjects(IDatabaseObjectInfo[] infos)
 	{
-		selectedDestDatabaseObjects = info;
+		selectedDestDatabaseObjects = infos;
 	}
+
+	@Override
+	public void setSourceSelectedDatabaseObjects(IDatabaseObjectInfo[] infos)
+	{
+		this.selectedSourceDatabaseObjects = infos;
+	}
+
+	/**
+	 * @param pluginPreferencesManager
+	 *           the pluginPreferencesManager to set
+	 */
+	public void setPluginPreferencesManager(IPluginPreferencesManager pluginPreferencesManager)
+	{
+		Utilities.checkNull("setPluginPreferencesManager", pluginPreferencesManager, "pluginPreferencesManager");
+		this.pluginPreferencesManager = pluginPreferencesManager;
+	}
+
+	/**
+	 * @param scriptFileManager
+	 *           the scriptFileManager to set
+	 */
+	public void setScriptFileManager(IScriptFileManager scriptFileManager)
+	{
+		this.scriptFileManager = scriptFileManager;
+	}
+
+	/**
+	 * @return the scriptFileManager
+	 */
+	public IScriptFileManager getScriptFileManager()
+	{
+		return scriptFileManager;
+	}
+
 }
