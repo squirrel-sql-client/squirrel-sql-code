@@ -402,7 +402,8 @@ public interface HibernateDialect extends StringTemplateConstants
 		SqlGenerationPreferences prefs);
 
 	/**
-	 * Returns the SQL command to create the specified table.
+	 * Returns the SQL command to create the specified table (columns appear in the same order as they are 
+	 * stored in the database).
 	 * 
 	 * @param tables
 	 *           the tables to get create statements for
@@ -417,6 +418,26 @@ public interface HibernateDialect extends StringTemplateConstants
 	List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException;
 
+	/**
+	 * Returns the SQL command to create the specified table.  Optionally, if sortColumns is true, colums will 
+	 * be sorted by column name in ascending order.
+	 * 
+	 * @param tables
+	 *           the tables to get create statements for
+	 * @param md
+	 *           the metadata from the ISession
+	 * @param prefs
+	 *           preferences about how the resultant SQL commands should be formed.
+	 * @param isJdbcOdbc
+	 *           whether or not the connection is via JDBC-ODBC bridge.
+	 * @param sortColumns
+	 * 			 whether or not to sort columns according to their column name.
+	 * 
+	 * @return the SQL that is used to create the specified table
+	 */
+	List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
+		CreateScriptPreferences prefs, boolean isJdbcOdbc, boolean sortColumns) throws SQLException;
+	
 	/**
 	 * Returns the DialectType enum value associated with this dialect.
 	 * 

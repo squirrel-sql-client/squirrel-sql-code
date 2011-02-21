@@ -1780,6 +1780,13 @@ public class DialectUtils implements StringTemplateConstants
 	public static List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		HibernateDialect dialect, CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
 	{
+		return getCreateTableSQL(tables, md, dialect, prefs, isJdbcOdbc, false);
+	}
+	
+	public static List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
+		HibernateDialect dialect, CreateScriptPreferences prefs, boolean isJdbcOdbc, boolean sortColumns)
+		throws SQLException
+	{
 		final List<String> sqls = new ArrayList<String>();
 		final List<String> allconstraints = new ArrayList<String>();
 
@@ -1793,6 +1800,9 @@ public class DialectUtils implements StringTemplateConstants
 			final List<PrimaryKeyInfo> pkInfos = getPrimaryKeyInfo(md, ti, isJdbcOdbc);
 			final List<String> pks = getPKSequenceList(pkInfos);
 			final TableColumnInfo[] infos = md.getColumnInfo(ti);
+			if (sortColumns) {
+				Arrays.sort(infos);
+			}
 			for (final TableColumnInfo tcInfo : infos)
 			{
 				final String columnName = tcInfo.getColumnName();

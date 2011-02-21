@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -65,6 +66,8 @@ public class DBDiffPreferencesPanel extends JPanel implements IOptionPanel
 
 	JTextField externalDiffToolCommandTextField = null;
 
+	JCheckBox sortColumnsCheckBox = null; 
+	
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DBDiffPreferencesPanel.class);
@@ -119,9 +122,28 @@ public class DBDiffPreferencesPanel extends JPanel implements IOptionPanel
 		addexternalDiffToolCommandLabel(result, 0, 3);
 		addExternalDiffToolCommandTextField(result, 1, 3);
 
-		addTabularPresentationRadioButton(result, 0, 4);
+		addSortColumnsCheckBoxLabel(result, 0, 4);
+		
+		addTabularPresentationRadioButton(result, 0, 5);
 
 		return result;
+	}
+
+	private void addSortColumnsCheckBoxLabel(JPanel panel, int col, int row)
+	{
+		final GridBagConstraints c = new GridBagConstraints();
+		c.gridx = col;
+		c.gridy = row;
+		c.gridwidth = 2; // Span across two columns
+		c.insets = new Insets(5, 20, 0, 0);
+		c.anchor = GridBagConstraints.WEST;
+		final String sortColumnsCheckBoxLabel = 
+			s_stringMgr.getString("DBDiffPreferencesPanel.sortColumnsForSideBySideComparisonLabel");
+		final String sortColumnsCheckBoxToolTip =
+			s_stringMgr.getString("DBDiffPreferencesPanel.sortColumnsForSideBySideComparisonToolTip");
+		sortColumnsCheckBox = new JCheckBox(sortColumnsCheckBoxLabel);
+		sortColumnsCheckBox.setToolTipText(sortColumnsCheckBoxToolTip);
+		panel.add(sortColumnsCheckBox, c);
 	}
 
 	private void addTabularPresentationRadioButton(JPanel panel, int col, int row)
