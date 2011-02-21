@@ -416,10 +416,18 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 		SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		boolean addDefaultClause = true;
+		boolean addDefaultClause = false;
 		boolean supportsNullQualifier = false;
 		boolean addNullClause = false;
 
+		// In Ingres2006, these work:
+		// ALTER TABLE test1 ADD "nullint" integer 
+		// ALTER TABLE test1 ADD "nullint" integer not null with default
+		// 
+		// This doesn't:
+		// ALTER TABLE test1 ADD "nullint" integer with default
+		
+		
 		String sql =
 			DialectUtils.getAddColumSQL(column,
 				this,
