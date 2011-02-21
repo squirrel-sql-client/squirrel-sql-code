@@ -21,10 +21,8 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
 import java.io.IOException;
 
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
 
 /**
  * A DiffPresentation implementation that creates a script from both schemas to be compared, then launches a
@@ -36,11 +34,6 @@ public class ExternalToolSideBySideDiffPresentation extends AbstractSideBySideDi
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExternalToolSideBySideDiffPresentation.class);
-
-	/**
-	 * preferenceBean
-	 */
-	private DBDiffPreferenceBean preferenceBean = null;
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbdiff.gui.AbstractSideBySideDiffPresentation#
@@ -58,16 +51,6 @@ public class ExternalToolSideBySideDiffPresentation extends AbstractSideBySideDi
 		}
 
 		Runtime.getRuntime().exec(toolCommand);
-	}
-
-	/**
-	 * @param preferenceBean
-	 *           the preferenceBean to set
-	 */
-	public void setPreferenceBean(DBDiffPreferenceBean preferenceBean)
-	{
-		Utilities.checkNull("setPreferenceBean", preferenceBean, "preferenceBean");
-		this.preferenceBean = preferenceBean;
 	}
 
 }

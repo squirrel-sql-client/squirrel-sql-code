@@ -291,6 +291,17 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.util.List,
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences, boolean, boolean)
+	 */
+	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
+		CreateScriptPreferences prefs, boolean isJdbcOdbc, boolean sortColumns) throws SQLException
+	{
+		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc, sortColumns);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.util.List,
+	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences, boolean)
 	 */
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
@@ -298,7 +309,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	{
 		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
-
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,

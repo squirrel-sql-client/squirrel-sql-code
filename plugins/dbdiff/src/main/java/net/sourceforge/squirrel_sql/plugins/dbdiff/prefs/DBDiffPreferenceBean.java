@@ -46,6 +46,9 @@ public class DBDiffPreferenceBean implements Cloneable, Serializable, IPluginPre
 
 	/** The graphical tool command that launches the diff tool. It should handle two file arguments */
 	private String graphicalToolCommand = "";
+	
+	/** Whether or not to sort columns by column name when generating table definitions */
+	private boolean sortColumnsForSideBySideComparison = false; 
 
 	public DBDiffPreferenceBean()
 	{
@@ -159,6 +162,22 @@ public class DBDiffPreferenceBean implements Cloneable, Serializable, IPluginPre
 	public boolean isUseTabularDiffPresenation()
 	{
 		return useTabularDiffPresenation;
+	}
+
+	/**
+	 * @return the sortColumnsForSideBySideComparison
+	 */
+	public boolean isSortColumnsForSideBySideComparison()
+	{
+		return sortColumnsForSideBySideComparison;
+	}
+
+	/**
+	 * @param sortColumnsForSideBySideComparison the sortColumnsForSideBySideComparison to set
+	 */
+	public void setSortColumnsForSideBySideComparison(boolean sortColumnsForSideBySideComparison)
+	{
+		this.sortColumnsForSideBySideComparison = sortColumnsForSideBySideComparison;
 	}
 
 }

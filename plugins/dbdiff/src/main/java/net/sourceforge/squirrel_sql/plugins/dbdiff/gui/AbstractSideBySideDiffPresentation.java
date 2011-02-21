@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.IScriptFileManager;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
 
 /**
  * Base class for all DiffPresentation implementations that display a comparison of the contents of two files
@@ -59,6 +60,11 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 	protected IOUtilities ioutils = new IOUtilitiesImpl();
 
 	private IDialectFactory dialectFactory = new DialectFactoryImpl();
+
+	/**
+	 * preferenceBean
+	 */
+	protected DBDiffPreferenceBean preferenceBean = null;
 
 	/**
 	 * Sub-class implementations should override this method to provide the implementation for comparing the
@@ -98,13 +104,14 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 
 		try
 		{
+
 			final String script1 =
 				constructScriptFromList(dialect.getCreateTableSQL(sourcetables, sourceSession.getMetaData(),
-					csprefs, false));
+					csprefs, false, preferenceBean.isSortColumnsForSideBySideComparison()));
 
 			final String script2 =
 				constructScriptFromList(dialect.getCreateTableSQL(desttables, destSession.getMetaData(), csprefs,
-					false));
+					false, preferenceBean.isSortColumnsForSideBySideComparison()));
 
 			final String sourceFilename = scriptFileManager.getOutputFilenameForSession(sourceSession, 1);
 			final String destFilename = scriptFileManager.getOutputFilenameForSession(destSession, 2);
@@ -184,6 +191,16 @@ public abstract class AbstractSideBySideDiffPresentation extends AbstractDiffPre
 	{
 		Utilities.checkNull("setDialectFactory", "dialectFactory", dialectFactory);
 		this.dialectFactory = dialectFactory;
+	}
+
+	/**
+	 * @param preferenceBean
+	 *           the preferenceBean to set
+	 */
+	public void setPreferenceBean(DBDiffPreferenceBean preferenceBean)
+	{
+		Utilities.checkNull("setPreferenceBean", preferenceBean, "preferenceBean");
+		this.preferenceBean = preferenceBean;
 	}
 
 }
