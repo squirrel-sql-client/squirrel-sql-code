@@ -20,6 +20,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
 
 /**
  * Interface for classes that display differences between the two sessions given in the SessionInfoProvider.
@@ -39,4 +40,10 @@ public interface IDiffPresentation
 	 * Execute the comparison.
 	 */
 	void execute();
+
+	/**
+	 * @param preferenceBean
+	 *           the preferenceBean to set
+	 */
+	public void setPreferenceBean(DBDiffPreferenceBean preferenceBean);
 }
