@@ -55,6 +55,7 @@ public class DiffPresentationFactoryImpl implements IDiffPresentationFactory
 		}
 
 		result.setSessionInfoProvider(sessionInfoProvider);
+		result.setPreferenceBean(preferenceBean);
 		return result;
 	}
 

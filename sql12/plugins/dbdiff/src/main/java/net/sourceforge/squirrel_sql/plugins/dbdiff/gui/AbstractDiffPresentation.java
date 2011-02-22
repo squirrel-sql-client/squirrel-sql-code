@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff.gui;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
+import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
 
 /**
  * Base class for all DiffPresentation implementations that supports the common requirement to have access to
@@ -39,12 +40,27 @@ public abstract class AbstractDiffPresentation implements IDiffPresentation
 	/** the destination session. This comes from prov */
 	protected ISession destSession = null;
 
+	/**
+	 * preferenceBean
+	 */
+	protected DBDiffPreferenceBean preferenceBean = null;
+
 	public void setSessionInfoProvider(SessionInfoProvider provider)
 	{
 		Utilities.checkNull("setSessionInfoProvider", "provider", provider);
 		sessionInfoProvider = provider;
 		sourceSession = sessionInfoProvider.getSourceSession();
 		destSession = sessionInfoProvider.getDestSession();
+	}
+
+	/**
+	 * @param preferenceBean
+	 *           the preferenceBean to set
+	 */
+	public void setPreferenceBean(DBDiffPreferenceBean preferenceBean)
+	{
+		Utilities.checkNull("setPreferenceBean", "preferenceBean", preferenceBean);
+		this.preferenceBean = preferenceBean;
 	}
 
 }
