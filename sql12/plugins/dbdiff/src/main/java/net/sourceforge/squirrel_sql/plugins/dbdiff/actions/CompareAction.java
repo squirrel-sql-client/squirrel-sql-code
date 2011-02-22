@@ -62,6 +62,7 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
+		final ISession sourceSession = sessionInfoProv.getSourceSession();
 		final ISession destSession = sessionInfoProv.getDestSession();
 		final IObjectTreeAPI api = destSession.getObjectTreeAPIOfActiveSessionWindow();
 		if (api == null)
@@ -70,28 +71,28 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 		}
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
-		if (sessionInfoProv.getSourceSession() != null)
+		// sourceSession can be null in the case where two tables are selected in the same schema for direct
+		// compare.
+		if (sourceSession != null && !sourceSession.getIdentifier().equals(destSession.getIdentifier()))
 		{
 			sessionInfoProv.setDestSelectedDatabaseObjects(dbObjs);
 		}
 		else
 		{
-
 			// User didn't 'select' any objects in a different session to compare. If there are two objects
 			// that are selected in this session, then compare them. Otherwise, we need to inform the user
 			// how object selection in the diff plugin works.
 			if (dbObjs.length == 2)
 			{
-
 				sessionInfoProv.setSourceSession(destSession);
 				sessionInfoProv.setSourceSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[0] });
 				sessionInfoProv.setDestSession(destSession);
 				sessionInfoProv.setDestSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[1] });
-
 			}
 			else
 			{
-				// TODO: tell the user what we expected.
+				destSession.showErrorMessage("To compare, you must have exactly two tables selected in the "
+					+ "object tree");
 			}
 		}
 
