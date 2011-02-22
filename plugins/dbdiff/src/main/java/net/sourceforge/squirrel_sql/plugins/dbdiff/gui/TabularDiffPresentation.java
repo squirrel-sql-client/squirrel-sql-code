@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -60,15 +59,9 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 
 	static interface i18n
 	{
-		// i18n[DiffExecutor.noDiffsMessage=No differences were detected]
-		String NO_DIFFS_MESSAGE = s_stringMgr.getString("DiffExecutor.noDiffsMessage");
+		// i18n[TabularDiffPresentation.noDiffsMessage=No differences were detected]
+		String NO_DIFFS_MESSAGE = s_stringMgr.getString("TabularDiffPresentation.noDiffsMessage");
 	}
-
-	/** the source session. This comes from prov */
-	ISession sourceSession = null;
-
-	/** the destination session. This comes from prov */
-	ISession destSession = null;
 
 	/** the thread we do the work in */
 	private Thread execThread = null;
@@ -152,18 +145,28 @@ public class TabularDiffPresentation extends AbstractDiffPresentation
 								colDifferences.addAll(columnDiffs);
 								for (final ColumnDifference colDiff : columnDiffs)
 								{
-									System.out.println(colDiff.toString());
+									if (s_log.isDebugEnabled()) {
+										s_log.debug(colDiff.toString());
+									}
 								}
 							}
 						}
 						else
 						{
 							// table exists in source db but not dest
+							if (s_log.isInfoEnabled()) {
+								s_log.info("Skipping Table ("+table+") that exists in database ("+sourceSession+
+									"), but not in the database ("+destSession+")");
+							}									
 						}
 					}
 					else
 					{
 						// table doesn't exist in source db
+						if (s_log.isInfoEnabled()) {
+							s_log.info("Skipping Table ("+table+") that exists in database ("+destSession+
+								"), but not in the database ("+sourceSession+")");
+						}						
 					}
 				}
 			}
