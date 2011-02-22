@@ -334,25 +334,14 @@ public class DBDiffPreferencesPanel extends JPanel implements IOptionPanel
 
 	private void save()
 	{
-		if (tabularPresentationRadioButton.isSelected())
-		{
-			_prefs.setUseTabularDiffPresenation(true);
-		}
-		else
-		{
-			_prefs.setUseTabularDiffPresenation(false);
-		}
-
+		_prefs.setUseTabularDiffPresenation(tabularPresentationRadioButton.isSelected());
+		_prefs.setUseExternalGraphicalDiffTool(externalDiffToolRadionButton.isSelected());
 		if (externalDiffToolRadionButton.isSelected())
 		{
-			_prefs.setUseExternalGraphicalDiffTool(true);
 			_prefs.setGraphicalToolCommand(externalDiffToolCommandTextField.getText());
 		}
-		else
-		{
-			_prefs.setUseExternalGraphicalDiffTool(false);
-		}
-
+		_prefs.setSortColumnsForSideBySideComparison(sortColumnsCheckBox.isSelected());
+		
 		pluginPreferencesManager.savePrefs();
 	}
 
