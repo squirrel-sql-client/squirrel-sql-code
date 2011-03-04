@@ -71,11 +71,15 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 		}
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
+
+      boolean clearSource = false;
+
 		// sourceSession can be null in the case where two tables are selected in the same schema for direct
 		// compare.
-		if (sourceSession != null && !sourceSession.getIdentifier().equals(destSession.getIdentifier()))
+		if (  sourceExists() )
 		{
 			sessionInfoProv.setDestSelectedDatabaseObjects(dbObjs);
+         clearSource = true;
 		}
 		else
 		{
@@ -88,6 +92,7 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 				sessionInfoProv.setSourceSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[0] });
 				sessionInfoProv.setDestSession(destSession);
 				sessionInfoProv.setDestSelectedDatabaseObjects(new IDatabaseObjectInfo[] { dbObjs[1] });
+            clearSource = true;
 			}
 			else
 			{
@@ -115,9 +120,21 @@ public class CompareAction extends AbstractDiffAction implements ISessionAction
 		command.setPluginPreferencesManager(pluginPreferencesManager);
 		command.execute();
 
+      if(clearSource)
+      {
+         sessionInfoProv.setSourceSelectedDatabaseObjects(new IDatabaseObjectInfo[0]);
+      }
+
 	}
 
-	/**
+   private boolean sourceExists()
+   {
+      return sessionInfoProv.getSourceSession() != null &&
+            null != sessionInfoProv.getSourceSelectedDatabaseObjects()
+            && 0 < sessionInfoProv.getSourceSelectedDatabaseObjects().length;
+   }
+
+   /**
 	 * Set the current session.
 	 * 
 	 * @param session
