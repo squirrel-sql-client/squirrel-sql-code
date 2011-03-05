@@ -457,6 +457,31 @@
 			</dependencies>
 		</profile>
 		<profile>
+			<id>progress-3.0</id>
+			<activation>
+				<property>
+					<name>progress-3.0</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.progress</groupId>
+					<artifactId>openedge</artifactId>
+					<version>3.0</version>
+				</dependency>
+				<dependency>
+					<groupId>com.progress</groupId>
+					<artifactId>openedge-base</artifactId>
+					<version>3.0</version>
+				</dependency>
+				<dependency>
+					<groupId>com.progress</groupId>
+					<artifactId>openedge-util</artifactId>
+					<version>3.0</version>
+				</dependency>				
+			</dependencies>
+		</profile>
+		<profile>
 			<id>sybase-6.05-build-25773</id>
 			<activation>
 				<property>
