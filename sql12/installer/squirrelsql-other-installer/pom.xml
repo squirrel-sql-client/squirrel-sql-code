@@ -3,9 +3,9 @@
 
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
-		<artifactId>squirrel-root-pom</artifactId>
+		<artifactId>installer</artifactId>
 		<version>3.3.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>squirrelsql-other-installer</artifactId>
@@ -100,30 +100,13 @@
 			</plugin>
 			<!--  prepare dependencies so that izpack jar tag to pickup at compile time -->
 			<plugin>
+				<groupId>net.sf.squirrel-sql</groupId>
+				<artifactId>squirrelsql-dependency-plugin</artifactId>
+			</plugin>		
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
-					<execution>
-						<id>application-libraries</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<stripVersion>true</stripVersion>
-							<!--
-								This is a pain in the butt, but it beats the list that would specify what to exclude. Also,
-								if we miss an artifact here, then running the installer and launching SQuirreL as a test
-								will find it. However, we may never know that we are including jars that are never used
-								(only transitively)
-							-->
-
-							<!--  Can we make this list smaller by using groupIds ? -->
-							<includeArtifactIds>antlr,asm,asm-attrs,autocomplete,axis,axis-jaxrpc,cglib,common,commons-cli,commons-codec,commons-collections,commons-httpclient,commons-logging,forms,fw,hibernate-annotations,hibernate-commons-annotations,hibernate-entitymanager,hibernate,jxl,log4j,nanoxml,openide,openide-loaders,org-netbeans-modules-editor-fold,org-netbeans-modules-editor-lib,org-netbeans-modules-editor-util,org-netbeans-modules-editor,ostermiller-syntax,rsyntaxtextarea,rtext,spring-beans,squirrel-sql,spring-context-support,spring-context,spring-core,stringtemplate,treetable,x86,core,jmeld,javahelp,jide-oss,swing-worker,icu4j,osgi</includeArtifactIds>
-							<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
-							<outputDirectory>${staging.dir}/lib</outputDirectory>
-						</configuration>
-					</execution>
 					<execution>
 						<id>unpack-launcher-scripts</id>
 						<phase>process-resources</phase>
