@@ -2,8 +2,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+
+import java.lang.reflect.Field;
+import java.sql.Date;
+import java.text.NumberFormat;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,35 +38,44 @@ import org.junit.Test;
  * 
  * @author manningr
  */
-public class DataTypeFloatTest extends AbstractDataTypeComponentTest {
+public class DataTypeFloatTest extends FloatingPointBaseTest <Float> {
+
 
 	@Before
 	public void setUp() throws Exception {
-		ColumnDisplayDefinition mockColumnDisplayDefinition = getMockColumnDisplayDefinition();
-		mockHelper.replayAll();
-		classUnderTest = new DataTypeFloat(null, mockColumnDisplayDefinition);
-		mockHelper.resetAll();
+		initClassUnderTest();
 		super.setUp();
-		
-	}
 
+	}
+	
 	@Override
-	protected Object getEqualsTestObject()
-	{
+	protected Object getEqualsTestObject() {
 		return Float.valueOf(1);
 	}
 
 	@Override
 	@Test
 	public void testGetWhereClauseValue() {
-		ColumnDisplayDefinition localMockColumnDisplayDefinition = 
-			getMockColumnDisplayDefinition();
+		ColumnDisplayDefinition localMockColumnDisplayDefinition = getMockColumnDisplayDefinition();
 		mockHelper.replayAll();
 		classUnderTest.setColumnDisplayDefinition(localMockColumnDisplayDefinition);
 		assertNotNull(classUnderTest.getWhereClauseValue(null, mockMetaData));
-		// Floats cannot be used as where clause values as there are not precise. 
+		// Floats cannot be used as where clause values as there are not
+		// precise.
 		assertNull(classUnderTest.getWhereClauseValue(getWhereClauseValueObject(), mockMetaData));
 		mockHelper.verifyAll();
 	}
-	
+
+	@Override
+	protected void initClassUnderTest() {
+		ColumnDisplayDefinition mockColumnDisplayDefinition = getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeFloat(null, mockColumnDisplayDefinition);
+		mockHelper.resetAll();		
+	}
+
+	@Override
+	protected Float getValueForRenderingTests() {
+		return new Float(1234.1456789F);
+	}
 }

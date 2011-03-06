@@ -122,10 +122,9 @@ public class DataTypeBigDecimal extends FloatingPointBase
 
       _numberFormat = NumberFormat.getInstance();
 
-      // This is a bit hard coded but if we use _scale here
-      // some number displays go crazy.
+      // If we use _scale here some number displays go crazy.
       //_numberFormat.setMaximumFractionDigits(_scale);
-      _numberFormat.setMaximumFractionDigits(5);      
+      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);      
       
       _numberFormat.setMinimumFractionDigits(0);
 

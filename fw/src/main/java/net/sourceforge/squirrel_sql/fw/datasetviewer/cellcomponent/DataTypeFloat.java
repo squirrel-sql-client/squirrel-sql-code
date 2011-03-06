@@ -108,9 +108,8 @@ public class DataTypeFloat extends FloatingPointBase
       _numberFormat = NumberFormat.getInstance();
 
 
-      // This is a bit hard coded but if we use _scale here
-      // some number displays go crazy.
-      _numberFormat.setMaximumFractionDigits(5);
+      // If we use _scale here some number displays go crazy.
+      _numberFormat.setMaximumFractionDigits(maximumFractionDigits);
 
 
       _numberFormat.setMinimumFractionDigits(0);
