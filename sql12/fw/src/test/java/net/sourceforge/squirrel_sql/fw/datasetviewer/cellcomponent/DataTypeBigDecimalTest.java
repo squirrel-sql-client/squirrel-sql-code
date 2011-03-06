@@ -1,10 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 import org.junit.Before;
+import org.junit.Test;
 
 /*
  * Copyright (C) 2006 Rob Manning
@@ -30,23 +34,33 @@ import org.junit.Before;
  * 
  * @author manningr
  */
-public class DataTypeBigDecimalTest extends AbstractDataTypeComponentTest
+public class DataTypeBigDecimalTest extends FloatingPointBaseTest<BigDecimal>
 {
 
 	@Before
 	public void setUp() throws Exception
 	{
+		initClassUnderTest();
+		super.setUp();
+	}
+
+	@Override
+	protected void initClassUnderTest() {
 		ColumnDisplayDefinition columnDisplayDefinition = getMockColumnDisplayDefinition();
 		mockHelper.replayAll();
 		classUnderTest = new DataTypeBigDecimal(null, columnDisplayDefinition);
 		mockHelper.resetAll();
-		super.setUp();
 	}
 
 	@Override
 	protected Object getEqualsTestObject()
 	{
 		return BigDecimal.ONE;
+	}
+
+	@Override
+	protected BigDecimal getValueForRenderingTests() {
+		return new BigDecimal(1234.1456789);
 	}
 
 }

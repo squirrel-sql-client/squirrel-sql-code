@@ -3,15 +3,25 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public abstract class FloatingPointBase extends BaseDataTypeComponent
 {
@@ -25,6 +35,13 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 	// flag for whether to use the default Java format (true)
 	// or the Locale-dependent format (false)
 	protected static boolean useJavaDefaultFormat = false;
+	
+	
+	/**
+	 * How many Digits after the comma should be shown?
+	 */
+	protected static int maximumFractionDigits = 5;
+	
 
 	/**
 	 * Generate a JPanel containing controls that allow the user
@@ -84,6 +101,14 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 			{
 				useJavaDefaultFormat =true;
 			}
+			
+			maximumFractionDigits = 5; // by default use 5
+			String maximumFractionDigitsString = DTProperties.get(DataTypeBigDecimal.class.getName(), "maximumFractionDigits");
+
+			if (StringUtilities.isEmpty(maximumFractionDigitsString) == false)
+			{
+				maximumFractionDigits =Integer.valueOf(maximumFractionDigitsString);
+			}
 		}
 	}
 
@@ -98,26 +123,30 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 
         JRadioButton optUseDefaultFormat;
 		JRadioButton optUseLocaleDependendFormat;
-
+		IntegerField maximumFraction;
+		
 		public FloatingPointOkJPanel()
 		{
-			NumberFormat numberFormat = NumberFormat.getInstance();
-			numberFormat.setMaximumFractionDigits(5);
+			
 
 			optUseDefaultFormat =
 				new JRadioButton(s_stringMgr.getString("floatingPointBase.useDefaultFormat", new Double(3.14159).toString()));
 			optUseLocaleDependendFormat =
-				new JRadioButton(s_stringMgr.getString("floatingPointBase.uselocaleDependendFormat", numberFormat.format(new Double(3.14159))));
-
-
-
+				new JRadioButton(createTextForOptUseLocaleDependendFormat(maximumFractionDigits));
+			
+			maximumFraction = new IntegerField(2);
+			
 			setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("floatingPointBase.typeBigDecimal")));
 
 			setLayout(new GridBagLayout());
 
 			GridBagConstraints gbc;
-			gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+			gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
 			add(optUseLocaleDependendFormat, gbc);
+			
+			gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4),0,0);
+			add(maximumFraction, gbc);
+			
 			gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(0, 4, 4, 4),0,0);
 			add(optUseDefaultFormat, gbc);
 
@@ -127,8 +156,60 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 			bg.add(optUseDefaultFormat);
 			bg.add(optUseLocaleDependendFormat);
 
+			
+			
+			// Register listeners, for enabling/disabling the integer-field "maximumFraction"
+			optUseLocaleDependendFormat.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if(optUseLocaleDependendFormat.isSelected()){
+						maximumFraction.setEditable(true);
+						maximumFraction.setEnabled(true);
+					}
+				}
+			});			
+			
+			optUseDefaultFormat.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if(optUseDefaultFormat.isSelected()){
+						maximumFraction.setEditable(false);
+						maximumFraction.setEnabled(false);
+					}
+				}
+			});
+			
+			
+			// Register a listener for updating the example text with the actual settings of maximumFractions
+			maximumFraction.addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					optUseLocaleDependendFormat.setText(createTextForOptUseLocaleDependendFormat(maximumFraction.getInt()));
+					maximumFraction.repaint();
+				}
+				
+				@Override
+				public void focusGained(FocusEvent e) {
+					// do nothing
+				}
+			});
+			
+			
+			// set the initial value
 			optUseLocaleDependendFormat.setSelected(!useJavaDefaultFormat);
 			optUseDefaultFormat.setSelected(useJavaDefaultFormat);
+			maximumFraction.setInt(maximumFractionDigits);
+			
+		}
+
+		/**
+		 * Creates the text for the {@link JRadioButton} of "use locale depended format" with respect of maxFractionDigits
+		 * @param maxFractionDigits Number of digits after the comma to use in the example.  
+		 */
+		private String createTextForOptUseLocaleDependendFormat(int maxFractionDigits) {
+			NumberFormat numberFormat = NumberFormat.getInstance();
+			numberFormat.setMaximumFractionDigits(maxFractionDigits);
+			return s_stringMgr.getString("floatingPointBase.uselocaleDependendFormat", numberFormat.format(new Double(3.14159)));
 		}
 
 		/**
@@ -142,9 +223,12 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 			DTProperties.put(DataTypeBigDecimal.class.getName(), 
 			                 "useJavaDefaultFormat", 
 			                 Boolean.valueOf(useJavaDefaultFormat).toString());
+			
+			maximumFractionDigits = maximumFraction.getInt();
+			DTProperties.put(DataTypeBigDecimal.class.getName(), 
+	                 "maximumFractionDigits", 
+	                 Integer.valueOf(maximumFractionDigits).toString());
 		}
 	} // end of inner class
-
-
 
 }

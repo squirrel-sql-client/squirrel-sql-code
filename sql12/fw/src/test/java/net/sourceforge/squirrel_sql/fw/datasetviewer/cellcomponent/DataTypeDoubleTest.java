@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import org.junit.Before;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /*
@@ -26,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * 
  * @author manningr
  */
-public class DataTypeDoubleTest extends AbstractDataTypeComponentTest {
+public class DataTypeDoubleTest extends FloatingPointBaseTest<Double> {
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AbstractDataTypeComponentTest#getWhereClauseValueObject()
@@ -37,12 +39,9 @@ public class DataTypeDoubleTest extends AbstractDataTypeComponentTest {
 		return null;
 	}
 
+	@Before
 	public void setUp() throws Exception {
-		ColumnDisplayDefinition columnDisplayDefinition = 
-			super.getMockColumnDisplayDefinition();
-		mockHelper.replayAll();
-		classUnderTest = new DataTypeDouble(null, columnDisplayDefinition);
-		mockHelper.resetAll();
+		initClassUnderTest();
 		super.setUp();
 	}
 
@@ -50,6 +49,20 @@ public class DataTypeDoubleTest extends AbstractDataTypeComponentTest {
 	protected Object getEqualsTestObject()
 	{
 		return new Double(0);
+	}
+
+	@Override
+	protected void initClassUnderTest() {
+		ColumnDisplayDefinition columnDisplayDefinition = 
+			super.getMockColumnDisplayDefinition();
+		mockHelper.replayAll();
+		classUnderTest = new DataTypeDouble(null, columnDisplayDefinition);
+		mockHelper.resetAll();
+	}
+
+	@Override
+	protected Double getValueForRenderingTests() {
+		return new Double(1234.1456789);
 	}
 
 
