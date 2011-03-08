@@ -118,7 +118,7 @@
 									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-syntax</includedArtifact>
 									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-bte</includedArtifact>
 									<includedArtifact>com.fifesoft:rsyntaxtextarea</includedArtifact>
-									<includedArtifact>com.fifesoft.rtext</includedArtifact>
+									<includedArtifact>com.fifesoft.rtext:rtext</includedArtifact>
 									<includedArtifact>org.springframework:spring-beans</includedArtifact>
 									<includedArtifact>net.sf.squirrel-sql:squirrel-sql</includedArtifact>
 									<includedArtifact>org.springframework:spring-context-support</includedArtifact>
