@@ -76,7 +76,7 @@ public class TableScriptConfigFrame extends JDialog
 		getContentPane().add(new JPanel(), BorderLayout.CENTER);
 
 
-		setSize(326,178);
+		setSize(420,200);
 
 		AbstractAction closeAction = new AbstractAction()
 					{

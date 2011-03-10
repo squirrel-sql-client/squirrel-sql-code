@@ -25,6 +25,8 @@ Display errors in result tab:
 
 Bug-fixes:
 
+SQL Scripts Plugin: Increased multi table script configuration dialog's size.
+
 3171762: Wrong syntax for DROP KEY (When qualify table name preference is selected this produced two schema
          or catalog prefixes on the table name)
 3148653: Missing App Icon on Mac OS X (Fix is available in the Mac OS X 3.2.1 installer file)
