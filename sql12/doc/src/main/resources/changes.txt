@@ -7,6 +7,11 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+DB-Diff-Plugin:
+  Allowed to compare tables within one Session the same way as with different Sessions using select and
+  compare of the Object tree's right mouse menu. It is still possible to compare tables inside the
+  same Session without using select by marking two tables and just using the compare.
+
 Feature request 3129413: The number of decimal digits are now configurable (See Global Preferences --> 'Data Type Controls')
 
 Feature requests 3001253, 2896494: New icons in Object tree
