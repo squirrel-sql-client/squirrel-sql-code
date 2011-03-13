@@ -349,6 +349,8 @@
 										<argument>-classpath</argument>
 										<classpath />
 										<argument>net.sourceforge.squirrel_sql.client.Main</argument>
+										<argument>-home</argument>
+										<argument>./target</argument>
 										<argument>-pluginlist</argument>
 										<argument>${pluginClassName}</argument>
 									</arguments>
