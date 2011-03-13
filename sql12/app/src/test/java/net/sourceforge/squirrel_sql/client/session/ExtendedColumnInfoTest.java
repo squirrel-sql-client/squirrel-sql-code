@@ -52,6 +52,7 @@ public class ExtendedColumnInfoTest extends AbstractSerializableTest
 		expect(tcinfo1.getDecimalDigits()).andStubReturn(0);
 		expect(tcinfo1.isNullable()).andStubReturn("YES");
 		expect(tcinfo1.getRemarks()).andStubReturn("testRemarks");
+		expect(tcinfo1.getDataType()).andStubReturn(java.sql.Types.INTEGER);
 
 		expect(tcinfo2.getCatalogName()).andStubReturn("testCatalog2");
 		expect(tcinfo2.getSchemaName()).andStubReturn("testSchema2");
@@ -62,6 +63,7 @@ public class ExtendedColumnInfoTest extends AbstractSerializableTest
 		expect(tcinfo2.getDecimalDigits()).andStubReturn(0);
 		expect(tcinfo2.isNullable()).andStubReturn("YES");
 		expect(tcinfo2.getRemarks()).andStubReturn("testRemarks");
+		expect(tcinfo2.getDataType()).andStubReturn(java.sql.Types.INTEGER);
 
 		mockHelper.replayAll();
 
