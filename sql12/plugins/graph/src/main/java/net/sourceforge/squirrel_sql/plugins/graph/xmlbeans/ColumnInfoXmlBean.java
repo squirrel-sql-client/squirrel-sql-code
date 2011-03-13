@@ -13,6 +13,7 @@ public class ColumnInfoXmlBean
    private boolean _nonDbConstraint;
    private String constraintName;
    private int decimalDigits;
+   private QueryDataXmlBean _queryDataXmlBean;
 
    public String getColumnName()
    {
@@ -122,5 +123,15 @@ public class ColumnInfoXmlBean
    public void setNonDbConstraint(boolean nonDbConstraint)
    {
       _nonDbConstraint = nonDbConstraint;
+   }
+
+   public void setQueryDataXmlBean(QueryDataXmlBean queryDataXmlBean)
+   {
+      _queryDataXmlBean = queryDataXmlBean;
+   }
+
+   public QueryDataXmlBean getQueryDataXmlBean()
+   {
+      return _queryDataXmlBean;
    }
 }

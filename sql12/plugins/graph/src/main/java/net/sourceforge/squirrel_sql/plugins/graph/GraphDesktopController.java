@@ -1,31 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.util.Vector;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeDndTransfer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.*;
+import java.util.TooManyListenersException;
+import java.util.Vector;
 
 
 public class GraphDesktopController
@@ -34,8 +21,7 @@ public class GraphDesktopController
 		StringManagerFactory.getStringManager(GraphDesktopController.class);
 
 
-	private GraphDesktopPane _desktopPane;
-   private JScrollPane _scrollPane;
+   private GraphDesktopPane _desktopPane;
    private ConstraintView _lastPressedConstraintView;
 
    private JPopupMenu _popUp;
@@ -47,31 +33,49 @@ public class GraphDesktopController
    private JMenuItem _mnuSelectAllTables;
    private JMenuItem _mnuSelectTablesByName;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
-   private JCheckBoxMenuItem _mnuZoomPrint;
    private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
    private GraphDesktopListener _listener;
    private ISession _session;
    private GraphPlugin _plugin;
-   private ZoomPrintController _zoomPrintController;
-   private JPanel _graphPanel;
+   private ModeManager _modeManager;
+
    private JMenuItem _mnuAllTablesDbOrder;
    private JMenuItem _mnuAllTablesByNameOrder;
    private JMenuItem _mnuAllTablesPkConstOrder;
+   private JMenuItem _mnuAllFilteredSelectedOrder;
+   private GraphPluginResources _graphPluginResources;
 
 
-   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin)
+   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager)
    {
       _listener = listener;
       _session = session;
       _plugin = plugin;
+      _graphPluginResources = new GraphPluginResources(_plugin);
       _desktopPane = new GraphDesktopPane(_session.getApplication());
       _desktopPane.setBackground(Color.white);
 
-      _scrollPane = new JScrollPane(_desktopPane);
+      _modeManager = modeManager;
 
-      _graphPanel = new JPanel(new BorderLayout());
-      _graphPanel.add(_scrollPane, BorderLayout.CENTER);
 
+      DropTarget dt = new DropTarget();
+
+      try
+      {
+         dt.addDropTargetListener(new DropTargetAdapter()
+         {
+            public void drop(DropTargetDropEvent dtde)
+            {
+               onTablesDroped(dtde);
+            }
+         });
+      }
+      catch (TooManyListenersException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      _desktopPane.setDropTarget(dt);
 
       _desktopPane.addMouseListener(new MouseAdapter()
       {
@@ -103,20 +107,35 @@ public class GraphDesktopController
 
    }
 
-   void initZoomer(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean)
+   private void onTablesDroped(DropTargetDropEvent dtde)
    {
-      EdgesListener edgesListener = new EdgesListener()
+      try
+      {
+         Object transferData = dtde.getTransferable().getTransferData(dtde.getTransferable().getTransferDataFlavors()[0]);
+
+         if(transferData instanceof ObjectTreeDndTransfer)
+         {
+            ObjectTreeDndTransfer objectTreeDndTransfer = (ObjectTreeDndTransfer) transferData;
+            _listener.tablesDropped(objectTreeDndTransfer.getSelectedTables(), dtde.getLocation());
+         }
+
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+   EdgesListener createEdgesListener()
+   {
+      return new EdgesListener()
       {
          public void edgesGraphComponentChanged(EdgesGraphComponent edgesGraphComponent, boolean put)
          {
             onEdgesGraphComponentChanged(edgesGraphComponent, put);
          }
       };
-
-      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, _desktopPane, _session, _plugin);
-      _graphPanel.add(_zoomPrintController.getPanel(), BorderLayout.SOUTH);
-      _mnuZoomPrint.setSelected(_zoomPrintController.getZoomer().isEnabled());
-      onZoomPrint();
    }
 
    private void onEdgesGraphComponentChanged(EdgesGraphComponent edgesGraphComponent, boolean put)
@@ -231,15 +250,6 @@ public class GraphDesktopController
          }
       });
 
-		// i18n[graph.zoomPrint=Zoom/Print]
-		_mnuZoomPrint = new JCheckBoxMenuItem(s_stringMgr.getString("graph.zoomPrint"));
-      _mnuZoomPrint.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onZoomPrint();
-         }
-      });
 
 		_mnuAllTablesDbOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesDbOrderRequested"));
       _mnuAllTablesDbOrder.addActionListener(new ActionListener()
@@ -268,6 +278,15 @@ public class GraphDesktopController
          }
       });
 
+		_mnuAllFilteredSelectedOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesFilteredSelectedOrderRequested"));
+      _mnuAllFilteredSelectedOrder.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onAllTablesFilteredSelectedOrder();
+         }
+      });
+
       _popUp.add(_mnuSaveGraph);
       _popUp.add(_mnuRenameGraph);
       _popUp.add(_mnuRemoveGraph);
@@ -284,11 +303,12 @@ public class GraphDesktopController
       _popUp.add(_mnuAllTablesDbOrder);
       _popUp.add(_mnuAllTablesByNameOrder);
       _popUp.add(_mnuAllTablesPkConstOrder);
+      _popUp.add(_mnuAllFilteredSelectedOrder);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
       _popUp.add(_mnuShowQualifiedTableNames);
       _popUp.add(new JSeparator());
-      _popUp.add(_mnuZoomPrint);
+      _popUp.add(_modeManager.getModeMenuItem());
    }
 
    private void onShowQualifiedTableNames()
@@ -311,6 +331,12 @@ public class GraphDesktopController
       _listener.allTablesDbOrderRequested();
    }
 
+   private void onAllTablesFilteredSelectedOrder()
+   {
+      _listener.allTablesFilteredSelectedOrderRequested();
+   }
+
+
    private void onScriptAllTables()
    {
       _listener.scriptAllTablesRequested();
@@ -330,15 +356,23 @@ public class GraphDesktopController
    private void onSelectTablesByName()
    {
       String namePattern=JOptionPane.showInputDialog(_desktopPane, s_stringMgr.getString("graph.selectTablesByName.message"), s_stringMgr.getString("graph.selectTablesByName.title"), JOptionPane.QUESTION_MESSAGE);
-      
+
+      if(null == namePattern || 0 == namePattern.trim().length())
+      {
+         return;
+      }
+
       _desktopPane.clearGroupFrames();
-      for(JInternalFrame f:_desktopPane.getAllFrames()) {
-    	  if(f instanceof TableFrame) {
-    		  TableFrame tf=(TableFrame)f;
-	    	  if(tf.getTitle().matches(namePattern.replace('?', '.').replace("*", ".*"))) {
-	    		  _desktopPane.addGroupFrame(tf);
-	    	  }
-    	  }
+      for (JInternalFrame f : _desktopPane.getAllFrames())
+      {
+         if (f instanceof TableFrame)
+         {
+            TableFrame tf = (TableFrame) f;
+            if (tf.getTitle().matches(namePattern.replace('?', '.').replace("*", ".*")))
+            {
+               _desktopPane.addGroupFrame(tf);
+            }
+         }
       }
    }
    /////////////////////////////////////////////////////////
@@ -346,11 +380,6 @@ public class GraphDesktopController
    private void onRefreshAllTables()
    {
       _listener.refreshAllTablesRequested();
-   }
-
-   private void onZoomPrint()
-   {
-      _zoomPrintController.setVisible(_mnuZoomPrint.isSelected());
    }
 
    private void onRemoveGraph()
@@ -383,6 +412,8 @@ public class GraphDesktopController
    {
       if (e.isPopupTrigger())
       {
+         _mnuAllFilteredSelectedOrder.setEnabled(_modeManager.getMode().isQueryBuilder());
+
          _popUp.show(e.getComponent(), e.getX(), e.getY());
       }
    }
@@ -443,12 +474,12 @@ public class GraphDesktopController
    {
       _lastPressedConstraintView = null;
 
-      ConstraintView hitOne = findHit(e);
-      if(null != hitOne)
+      ConstraintHitData hitData = findHit(e);
+      if(ConstraintHit.LINE == hitData.getConstraintHit())
       {
-         hitOne.mouseReleased(e);
+         hitData.getConstraintView().mouseReleased(e);
       }
-      else
+      else if(ConstraintHit.NONE == hitData.getConstraintHit())
       {
          maybeShowPopup(e);
       }
@@ -456,28 +487,28 @@ public class GraphDesktopController
 
    public void onMousePressed(final MouseEvent e)
    {
-      final ConstraintView hitOne = findHit(e);
-      if(null != hitOne)
+      final ConstraintHitData hitData = findHit(e);
+      if(ConstraintHit.LINE == hitData.getConstraintHit())
       {
-         _lastPressedConstraintView = hitOne;
+         _lastPressedConstraintView = hitData.getConstraintView();
 
          if(InputEvent.BUTTON3_MASK == e.getModifiers())
          {
-            refreshSelection(hitOne, false);
+            refreshSelection(hitData.getConstraintView(), false);
             SwingUtilities.invokeLater(new Runnable()
             {
                public void run()
                {
-                  hitOne.mousePressed(e);
+                  hitData.getConstraintView().mousePressed(e);
                }
             });
          }
          else
          {
-            hitOne.mousePressed(e);
+            hitData.getConstraintView().mousePressed(e);
          }
       }
-      else
+      else if(ConstraintHit.NONE == hitData.getConstraintHit())
       {
          maybeShowPopup(e);
       }
@@ -485,16 +516,16 @@ public class GraphDesktopController
 
    public void onMouseClicked(final MouseEvent e)
    {
-      final ConstraintView hitOne = findHit(e);
+      final ConstraintHitData hitData = findHit(e);
 
-      if(null != hitOne)
+      if(ConstraintHit.LINE == hitData.getConstraintHit())
       {
-         refreshSelection(hitOne, InputEvent.BUTTON1_MASK == e.getModifiers() );
+         refreshSelection(hitData.getConstraintView(), InputEvent.BUTTON1_MASK == e.getModifiers() );
          SwingUtilities.invokeLater(new Runnable()
          {
             public void run()
             {
-               hitOne.mouseClicked(e);
+               hitData.getConstraintView().mouseClicked(e);
             }
          });
       }
@@ -508,7 +539,7 @@ public class GraphDesktopController
       }
    }
 
-   private ConstraintView findHit(MouseEvent e)
+   private ConstraintHitData findHit(MouseEvent e)
    {
       Vector<GraphComponent> graphComponents = _desktopPane.getGraphComponents();
 
@@ -520,24 +551,20 @@ public class GraphDesktopController
          if(graphComponent instanceof ConstraintView)
          {
             ConstraintView constraintView = (ConstraintView)graphComponents.elementAt(i);
-            if(constraintView.hitMe(e))
+            ConstraintHit constraintHit = constraintView.hitMe(e);
+            if(ConstraintHit.NONE != constraintHit)
             {
-               return constraintView;
+               return new ConstraintHitData(constraintView, constraintHit);
             }
          }
       }
-      return null;
+      return new ConstraintHitData(null, ConstraintHit.NONE);
    }
 
 
    public void repaint()
    {
       _desktopPane.repaint();
-   }
-
-   public Component getGraphPanel()
-   {
-      return _graphPanel;
    }
 
    public void addFrame(JInternalFrame frame)
@@ -562,17 +589,17 @@ public class GraphDesktopController
 
    public Zoomer getZoomer()
    {
-      return _zoomPrintController.getZoomer();
+      return _modeManager.getZoomer();
    }
 
    public ZoomPrintController getZoomPrintController()
    {
-      return _zoomPrintController;
+      return _modeManager.getZoomPrintController();
    }
 
    public void sessionEnding()
    {
-      _zoomPrintController.sessionEnding();
+      _modeManager.sessionEnding();
    }
 
    public void setShowQualifiedTableNames(boolean showQualifiedTableNames)
@@ -584,5 +611,15 @@ public class GraphDesktopController
    public boolean isShowQualifiedTableNames()
    {
       return _mnuShowQualifiedTableNames.isSelected();
+   }
+
+   public ModeManager getModeManager()
+   {
+      return _modeManager;
+   }
+
+   public GraphPluginResources getResource()
+   {
+      return _graphPluginResources;
    }
 }

@@ -1,22 +1,19 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate;
+package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.UndoHandlerImpl;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
-import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 
 import javax.swing.*;
 import java.util.HashMap;
 
-public class EntryPanelManagerBase
+public class EntryPanelManager
 {
    private ISession _session;
    private ISQLEntryPanel _entry;
    private JComponent _component;
 
-   public EntryPanelManagerBase(ISession session)
+   public EntryPanelManager(ISession session)
    {
       _session = session;
    }

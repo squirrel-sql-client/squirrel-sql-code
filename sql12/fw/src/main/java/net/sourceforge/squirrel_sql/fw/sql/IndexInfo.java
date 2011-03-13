@@ -25,8 +25,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class IndexInfo extends DatabaseObjectInfo {
     
-    private static final long serialVersionUID = 4146807206360206252L;
-
     public static enum IndexType {
         STATISTIC,
         CLUSTERED,

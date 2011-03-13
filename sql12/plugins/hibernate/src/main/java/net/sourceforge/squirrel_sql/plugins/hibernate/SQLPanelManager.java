@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -15,7 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class SQLPanelManager extends EntryPanelManagerBase
+public class SQLPanelManager extends EntryPanelManager
 {
    private static final String PREF_KEY_APPEND_SQL = "SquirrelSQL.hibernate.sqlAppendSql";
    private static final String PREF_KEY_FORMAT_SQL = "SquirrelSQL.hibernate.sqlFormatSql";

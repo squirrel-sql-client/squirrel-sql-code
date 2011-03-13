@@ -14,21 +14,15 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.List;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -38,7 +32,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 
 
@@ -50,7 +43,8 @@ public class TableFrameController
     /** Logger for this class. */
     private final static ILogger s_log =
         LoggerController.createLogger(TableFrameController.class);
-    
+
+
    ////////////////////////////////////////
    // Serialized attributes
    private String _schema;
@@ -58,8 +52,8 @@ public class TableFrameController
    private String _tableName;
    private TableFrame _frame;
 
-   private ColumnInfo[] _colInfos;
-   private ConstraintView[] _constraintViews =new ConstraintView[0];
+   private ColumnInfoModel _colInfoModel = new ColumnInfoModel();
+   private ConstraintViewsModel _constraintViewsModel;
    private String[] _tablesExportedTo;
    //
    ///////////////////////////////////////////
@@ -93,27 +87,31 @@ public class TableFrameController
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
    private JCheckBoxMenuItem _mnuDbOrder;
+   private JCheckBoxMenuItem _mnuQueryFiltersAndSelectedOnTop;
+   private JMenuItem _mnuQuerySelectAll;
+   private JMenuItem _mnuQueryUnselectAll;
+   private JMenuItem _mnuQueryClearAllFilters;
    private JMenuItem _mnuClose;
    private AddTableListener _addTablelListener;
    private ConstraintViewListener _constraintViewListener;
 
-   private int _columnOrder = ORDER_DB;
-   private static final int ORDER_DB = 0;
-   private static final int ORDER_NAME = 1;
-   private static final int ORDER_PK_CONSTRAINT = 2;
-   private ColumnInfo[] _orderedColumnInfos;
+   private OrderType _columnOrderType = OrderType.ORDER_DB;
+
+
    private static final String MNU_PROP_COLUMN_INFO = "MNU_PROP_COLUMN_INFO";
+   private ModeManagerListener _modeManagerListener;
    private ZoomerListener _zoomerListener;
    private Rectangle _adjustBeginBounds;
    private double _adjustBeginZoom;
    private GraphControllerAccessor _graphControllerAccessor;
 
 
-   public TableFrameController(ISession session, GraphDesktopController desktopController, GraphControllerAccessor graphControllerAccessor, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
+   public TableFrameController(GraphPlugin plugin, ISession session, GraphDesktopController desktopController, GraphControllerAccessor graphControllerAccessor, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
    {
       try
       {
          _session = session;
+         _constraintViewsModel = new ConstraintViewsModel(_session);
          _desktopController = desktopController;
          _addTablelListener = listener;
          _graphControllerAccessor = graphControllerAccessor;
@@ -131,7 +129,7 @@ public class TableFrameController
             _catalog = catalogName;
             _schema = schemaName;
             _tableName = tableName;
-            _frame = new TableFrame(getDisplayName(), null, toolTipProvider, _desktopController.getZoomer(), createDndCallback(), _session);
+            _frame = new TableFrame(_session, plugin, getDisplayName(), null, toolTipProvider, _desktopController.getModeManager(), createDndCallback());
 
 
             initFromDB();
@@ -142,21 +140,20 @@ public class TableFrameController
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
             _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getZoomer(), createDndCallback(), _session);
-            _columnOrder = xmlBean.getColumOrder();
-            _colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
-            for (int i = 0; i < _colInfos.length; i++)
+            _frame = new TableFrame(_session, plugin, getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getModeManager(), createDndCallback());
+            _columnOrderType = OrderType.getByIx(xmlBean.getColumOrder());
+            ColumnInfo[] colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
+            for (int i = 0; i < colInfos.length; i++)
             {
-               _colInfos[i] = new ColumnInfo(xmlBean.getColumnIfoXmlBeans()[i]);
+               colInfos[i] = new ColumnInfo(xmlBean.getColumnIfoXmlBeans()[i]);
             }
+            _colInfoModel.initCols(colInfos, _columnOrderType);
 
-            _constraintViews = new ConstraintView[xmlBean.getConstraintViewXmlBeans().length];
-            for (int i = 0; i < _constraintViews.length; i++)
-            {
-               _constraintViews[i] = new ConstraintView(xmlBean.getConstraintViewXmlBeans()[i], _desktopController, _session);
-               _constraintViews[i].replaceCopiedColsByReferences(_colInfos, false);
-            }
+            _constraintViewsModel.initByXmlBeans(xmlBean.getConstraintViewXmlBeans(), _desktopController, _colInfoModel.getAll());
+
          }
+         _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
+
 
 
          _constraintViewListener = new ConstraintViewListener()
@@ -221,19 +218,28 @@ public class TableFrameController
                onZoomChanged(newZoom, oldZoom, adjusting);
             }
 
-            public void zoomEnabled(boolean b)
-            {
-               onZoomEnabled(b);
-            }
-
             public void setHideScrollBars(boolean b)
             {
                onHideScrollBars(b);
             }
          };
 
+         _modeManagerListener = new ModeManagerListener()
+         {
+            @Override
+            public void modeChanged(Mode newMode)
+            {
+               onModeChanged(newMode);
+            }
+         };
+
+         _desktopController.getModeManager().addModeManagerListener(_modeManagerListener);
          _desktopController.getZoomer().addZoomListener(_zoomerListener);
-         onHideScrollBars(_desktopController.getZoomer().isHideScrollbars() );
+
+         if (Mode.ZOOM_PRINT == _desktopController.getModeManager().getMode())
+         {
+            onHideScrollBars(_desktopController.getZoomer().isHideScrollbars() );
+         }
 
       }
       catch (SQLException e)
@@ -285,21 +291,14 @@ public class TableFrameController
 
       TableFrameController fkTable = e.getTableFrameController();
 
-      ArrayList<ConstraintView> buf = new ArrayList<ConstraintView>();
-      buf.addAll(Arrays.asList(fkTable._constraintViews));
-      buf.add(constView);
-      fkTable._constraintViews = buf.toArray(new ConstraintView[buf.size()]);
+      fkTable._constraintViewsModel.addConst(constView);
 
       fkTable.recalculateAllConnections(true);
    }
 
    private void onRemoveNonDbConstraint(ConstraintView constraintView)
    {
-      constraintView.clearColumnImportData();
-      ArrayList<ConstraintView> buf = new ArrayList<ConstraintView>();
-      buf.addAll(Arrays.asList(_constraintViews));
-      buf.remove(constraintView);
-      _constraintViews = buf.toArray(new ConstraintView[buf.size()]);
+      _constraintViewsModel.removeConst(constraintView);
 
       _desktopController.removeConstraintViews(new ConstraintView[]{constraintView}, false);
 
@@ -348,7 +347,6 @@ public class TableFrameController
    {
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
       SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-      Hashtable<String, ConstraintData> dbConstraintInfosByConstraintName = new Hashtable<String, ConstraintData>();
       Vector<ColumnInfo> colInfosBuf = new Vector<ColumnInfo>();
       if (s_log.isDebugEnabled()) {
           s_log.debug("initFromDB: _catalog="+_catalog+" _schema="+_schema+
@@ -373,12 +371,14 @@ public class TableFrameController
          colInfosBuf.add(colInfo);
          
       }
-      
-      _colInfos = colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
 
-      if(0 == _colInfos.length)
+      _colInfoModel.initCols(colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]), _columnOrderType);
+
+
+      if(0 == _colInfoModel.getColCount())
       {
          // Table was deleted from DB
+         _desktopController.removeConstraintViews(_constraintViewsModel.getConstViews(), false);
          return false;
       }
 
@@ -387,11 +387,11 @@ public class TableFrameController
               md.getPrimaryKey(_catalog, _schema, _tableName);
           for (int i = 0; i < pkinfos.length; i++) {
              PrimaryKeyInfo info = pkinfos[i];
-             for (int c = 0; c < _colInfos.length; c++)
+             for (int c = 0; c < _colInfoModel.getColCount(); c++)
              {
-                if(_colInfos[c].getName().equals(info.getColumnName()))
+                if(_colInfoModel.getColAt(c).getName().equals(info.getColumnName()))
                 {
-                   _colInfos[c].markPrimaryKey();
+                   _colInfoModel.getColAt(c).markPrimaryKey();
                 }
              }
           }          
@@ -399,116 +399,22 @@ public class TableFrameController
           s_log.error("Unable to get Primary Key info", e);
       } 
       
-      ResultSet res = null;
-      try {
-          res = metaData.getImportedKeys(_catalog, _schema, _tableName);
-          while(res.next())
-          {
-             String pkTable = res.getString(3);   // PKTABLE_NAME
-             String pkColName = res.getString(4); // PKCOLUMN_NAME         
-             String fkColName = res.getString(8); // FKCOLUMN_NAME
-             String fkName = res.getString(12);   // FK_NAME
-             
-             ColumnInfo colInfo = findColumnInfo(fkColName);
-             colInfo.setImportData(pkTable, pkColName, fkName, false);
-    
-             ConstraintData  dbConstraintData = dbConstraintInfosByConstraintName.get(fkName);
-    
-             if(null == dbConstraintData)
-             {
-                dbConstraintData = new ConstraintData(pkTable, _tableName, fkName);
-                dbConstraintInfosByConstraintName.put(fkName, dbConstraintData);
-             }
-             dbConstraintData.addColumnInfo(colInfo);
-          }
-      } catch (SQLException e) {
-          s_log.error("Unable to get Foriegn Key info", e);
-      } finally {
-          if (res != null) {
-              try { res.close(); } catch (SQLException e) {}
-          }
-      }
+      _constraintViewsModel.initFromDB(metaData, _catalog, _schema, _tableName, _colInfoModel, _desktopController);
 
-      ConstraintData[] newDBconstraintData = dbConstraintInfosByConstraintName.values().toArray(new ConstraintData[0]);
-      Hashtable<String, ConstraintView> oldDBConstraintViewsByConstraintName = new Hashtable<String, ConstraintView>();
-      ArrayList<ConstraintView> oldNonDBConstraintViews = new ArrayList<ConstraintView>();
-
-      if(null != _constraintViews)
-      {
-         _desktopController.removeConstraintViews(_constraintViews, true);
-         for (int i = 0; i < _constraintViews.length; i++)
-         {
-            if (_constraintViews[i].getData().isNonDbConstraint())
-            {
-               _constraintViews[i].replaceCopiedColsByReferences(_colInfos, true);
-               oldNonDBConstraintViews.add(_constraintViews[i]);
-            }
-            else
-            {
-               String constraintName = _constraintViews[i].getData().getConstraintName();
-               oldDBConstraintViewsByConstraintName.put(constraintName, _constraintViews[i]);
-            }
-
-         }
-      }
-
-      ArrayList<ConstraintView> newConstraintViewsBuf = new ArrayList<ConstraintView>();
-      for (int i = 0; i < newDBconstraintData.length; i++)
-      {
-         ConstraintView oldCV = 
-             oldDBConstraintViewsByConstraintName.get(newDBconstraintData[i].getConstraintName());
-
-         if(null != oldCV)
-         {
-            // The old view is preserved to eventually preserve folding points
-            oldCV.setData(newDBconstraintData[i]);
-            newConstraintViewsBuf.add(oldCV);
-         }
-         else
-         {
-            newConstraintViewsBuf.add(new ConstraintView(newDBconstraintData[i], _desktopController, _session));
-         }
-      }
-
-      removeOverlappingConstraints(newConstraintViewsBuf, oldNonDBConstraintViews);
-
-
-      newConstraintViewsBuf.addAll(oldNonDBConstraintViews);
-
-      _constraintViews = newConstraintViewsBuf.toArray(new ConstraintView[newConstraintViewsBuf.size()]);
 
       return true;
    }
 
-   private void removeOverlappingConstraints(ArrayList<ConstraintView> master, ArrayList<ConstraintView> toRemoveFrom)
+
+   private void onModeChanged(Mode mode)
    {
-      ArrayList<ConstraintView> removeBuf = new ArrayList<ConstraintView>();
-
-      for (ConstraintView cvRemoveCand : toRemoveFrom)
+      if(Mode.ZOOM_PRINT == mode)
       {
-         for (ConstraintView cvMaster : master)
-         {
-            if(cvMaster.hasOverlap(cvRemoveCand))
-            {
-               removeBuf.add(cvRemoveCand);
-               break;
-            }
-         }
-      }
-
-      toRemoveFrom.removeAll(removeBuf);
-
-   }
-
-   private void onZoomEnabled(boolean b)
-   {
-      if(false == b)
-      {
-         onHideScrollBars(false);
+         onHideScrollBars(_desktopController.getZoomer().isHideScrollbars());
       }
       else
       {
-         onHideScrollBars(_desktopController.getZoomer().isHideScrollbars());
+         onHideScrollBars(false);
       }
    }
 
@@ -565,15 +471,13 @@ public class TableFrameController
 
    private ColumnInfo getColumnInfoForPoint(Point point)
    {
-      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
-
-      int zoomedFontHeight = (int)(  fm.getHeight() * _desktopController.getZoomer().getZoom()  + 0.5);
-      for (int i = 0; i < _colInfos.length; i++)
+      int zoomedFontHeight = (int)(  _frame.txtColumsFactory.getColumnHeight() * _desktopController.getZoomer().getZoom()  + 0.5);
+      for (int i = 0; i < _colInfoModel.getColCount(); i++)
       {
-         int unscrolledHeight = _colInfos[i].getIndex() * zoomedFontHeight;
+         int unscrolledHeight = _colInfoModel.getColAt(i).getIndex() * zoomedFontHeight;
          if(unscrolledHeight <= point.y &&  point.y  <= unscrolledHeight +  zoomedFontHeight)
          {
-            return _colInfos[i];
+            return _colInfoModel.getColAt(i);
          }
       }
 
@@ -587,21 +491,16 @@ public class TableFrameController
       ret.setCatalog(_catalog);
       ret.setTablename(_tableName);
       ret.setTableFrameXmlBean(_frame.getXmlBean());
-      ret.setColumOrder(_columnOrder);
+      ret.setColumOrder(_columnOrderType.getIx());
 
-      ColumnInfoXmlBean[] colXmlBeans = new ColumnInfoXmlBean[_colInfos.length];
-      for (int i = 0; i < _colInfos.length; i++)
+      ColumnInfoXmlBean[] colXmlBeans = new ColumnInfoXmlBean[_colInfoModel.getColCount()];
+      for (int i = 0; i < _colInfoModel.getColCount(); i++)
       {
-         colXmlBeans[i] = _colInfos[i].getXmlBean();
+         colXmlBeans[i] = _colInfoModel.getColAt(i).getXmlBean();
       }
       ret.setColumnIfoXmlBeans(colXmlBeans);
 
-      ConstraintViewXmlBean[] constViewXmlBeans = new ConstraintViewXmlBean[_constraintViews.length];
-      for (int i = 0; i < _constraintViews.length; i++)
-      {
-         constViewXmlBeans[i] =_constraintViews[i].getXmlBean();
-      }
-      ret.setConstraintViewXmlBeans(constViewXmlBeans);
+      ret.setConstraintViewXmlBeans(_constraintViewsModel.getXmlBeans());
 
       ret.setTablesExportedTo(_tablesExportedTo);
 
@@ -733,6 +632,16 @@ public class TableFrameController
          }
       });
 
+		// i18n[graph.orderPksConstr=order PKs/constraints on top]
+		_mnuQueryFiltersAndSelectedOnTop = new JCheckBoxMenuItem(s_stringMgr.getString("graph.orderFilteredSelected"));
+      _mnuQueryFiltersAndSelectedOnTop.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            filteredSelectedOrder();
+         }
+      });
+
 		// i18n[graph.close=close]
 		_mnuClose = new JMenuItem(s_stringMgr.getString("graph.close"));
       _mnuClose.addActionListener(new ActionListener()
@@ -744,6 +653,42 @@ public class TableFrameController
             _frame.dispose();
          }
       });
+
+
+//      _mnuQuerySelectAll
+//      _mnuQueryUnselectAll
+//      _mnuQueryClearAllFilters
+
+		// i18n[graph.QuerySelectAll=Check all columns for SQL-SELECT clause]
+		_mnuQuerySelectAll = new JMenuItem(s_stringMgr.getString("graph.QuerySelectAll"));
+      _mnuQuerySelectAll.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onQuerySelectAll(true);
+         }
+      });
+
+		// i18n[graph.QueryUnselectAll=Uncheck all columns for SQL-SELECT clause]
+		_mnuQueryUnselectAll = new JMenuItem(s_stringMgr.getString("graph.QueryUnselectAll"));
+      _mnuQueryUnselectAll.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onQuerySelectAll(false);
+         }
+      });
+
+		// i18n[graph.QueryClearAllFilters=Clear all filters]
+		_mnuQueryClearAllFilters = new JMenuItem(s_stringMgr.getString("graph.QueryClearAllFilters"));
+      _mnuQueryClearAllFilters.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onQueryClearAllFilters();
+         }
+      });
+
 
 
       _popUp.add(_mnuAddTableForForeignKey);
@@ -758,11 +703,27 @@ public class TableFrameController
       _popUp.add(_mnuScriptTable);
       _popUp.add(_mnuViewTableInObjectTree);
       _popUp.add(new JSeparator());
+
+
+      ButtonGroup bg = new ButtonGroup();
       _popUp.add(_mnuDbOrder);
+      bg.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
+      bg.add(_mnuOrderByName);
       _popUp.add(_mnuPksAndConstraintsOnTop);
+      bg.add(_mnuPksAndConstraintsOnTop);
+      _popUp.add(_mnuQueryFiltersAndSelectedOnTop);
+      bg.add(_mnuQueryFiltersAndSelectedOnTop);
+
+
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuQuerySelectAll);
+      _popUp.add(_mnuQueryUnselectAll);
+      _popUp.add(_mnuQueryClearAllFilters);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuClose);
+
+
 
       _frame.txtColumsFactory.addMouseListener(new MouseAdapter()
       {
@@ -779,6 +740,34 @@ public class TableFrameController
 
 
    }
+
+   private void onQueryClearAllFilters()
+   {
+      int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.tableFrameController.queryClearAllFilters"));
+
+      if (JOptionPane.YES_OPTION != opt)
+      {
+         return;
+      }
+
+      _colInfoModel.clearAllFilters();
+   }
+
+   private void onQuerySelectAll(boolean b)
+   {
+      if(false == b)
+      {
+         int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.tableFrameController.queryUnselectAll"));
+
+         if(JOptionPane.YES_OPTION != opt)
+         {
+            return;
+         }
+      }
+
+      _colInfoModel.querySelectAll(b);
+   }
+
 
    private void onCopyTableName(boolean qualified)
    {
@@ -807,7 +796,7 @@ public class TableFrameController
       SqlScriptAcessor.scriptTablesToSQLEntryArea(_session, new ITableInfo[]{getTableInfo()});
    }
 
-   ITableInfo getTableInfo()
+   public ITableInfo getTableInfo()
    {
       return _session.getSchemaInfo().getITableInfos(_catalog, _schema, new ObjFilterMatcher(_tableName), new String[]{"TABLE"})[0];
    }
@@ -846,37 +835,30 @@ public class TableFrameController
       _addTablelListener.addTablesRequest(new String[]{columnInfo.getImportedTableName()}, _schema, _catalog);
    }
 
+   void filteredSelectedOrder()
+   {
+      orderBy(OrderType.ORDER_FILTERED_SELECTED);
+   }
+
+
    void pkConstraintOrder()
    {
-      _columnOrder = ORDER_PK_CONSTRAINT;
-      orderColumns();
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            recalculateAllConnections(false);
-            fireSortListeners();
-         }
-      });
+      orderBy(OrderType.ORDER_PK_CONSTRAINT);
    }
 
    void nameOrder()
    {
-      _columnOrder = ORDER_NAME;
-      orderColumns();
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            recalculateAllConnections(false);
-            fireSortListeners();
-         }
-      });
+      orderBy(OrderType.ORDER_NAME);
    }
 
    void dbOrder()
    {
-      _columnOrder = ORDER_DB;
+      orderBy(OrderType.ORDER_DB);
+   }
+
+   private void orderBy(OrderType orderType)
+   {
+      _columnOrderType = orderType;
       orderColumns();
       SwingUtilities.invokeLater(new Runnable()
       {
@@ -908,86 +890,23 @@ public class TableFrameController
 
    private void orderColumns()
    {
-      Comparator<ColumnInfo> comp;
+      _colInfoModel.orderBy(_columnOrderType);
 
-      switch(_columnOrder)
+      switch (_columnOrderType)
       {
          case ORDER_DB:
-            _orderedColumnInfos = _colInfos;
             _mnuDbOrder.setSelected(true);
-            _mnuOrderByName.setSelected(false);
-            _mnuPksAndConstraintsOnTop.setSelected(false);
             break;
          case ORDER_NAME:
-            _orderedColumnInfos = new ColumnInfo[_colInfos.length];
-            System.arraycopy(_colInfos, 0, _orderedColumnInfos, 0, _colInfos.length);
-
-            comp = new Comparator<ColumnInfo>()
-            {
-               public int compare(ColumnInfo c1, ColumnInfo c2)
-               {
-                  return c1.getName().compareTo(c2.getName());
-               }
-            };
-            Arrays.sort(_orderedColumnInfos, comp);
-
-            _mnuDbOrder.setSelected(false);
             _mnuOrderByName.setSelected(true);
-            _mnuPksAndConstraintsOnTop.setSelected(false);
             break;
          case ORDER_PK_CONSTRAINT:
-            _orderedColumnInfos = new ColumnInfo[_colInfos.length];
-            System.arraycopy(_colInfos, 0, _orderedColumnInfos, 0, _colInfos.length);
-
-            comp = new Comparator<ColumnInfo>()
-            {
-               public int compare(ColumnInfo c1, ColumnInfo c2)
-               {
-                  if(c1.isPrimaryKey() && false == c2.isPrimaryKey())
-                  {
-                     return -1;
-                  }
-                  else if(false == c1.isPrimaryKey() && c2.isPrimaryKey())
-                  {
-                     return 1;
-                  }
-                  else
-                  {
-                     if(null != c1.getConstraintName() && null == c2.getConstraintName())
-                     {
-                        return -1;
-                     }
-                     else if(null == c1.getConstraintName() && null != c2.getConstraintName())
-                     {
-                        return 1;
-                     }
-                     else
-                     {
-                        if(null != c1.getConstraintName() && null != c2.getConstraintName())
-                        {
-                           String s1 = c1.getConstraintName() + "_" + c1.getName();
-                           String s2 = c2.getConstraintName() + "_" + c2.getName();
-                           return s1.compareTo(s2);
-                        }
-                        else
-                        {
-                           return c1.getName().compareTo(c2.getName());
-                        }
-                     }
-                  }
-               }
-            };
-            Arrays.sort(_orderedColumnInfos, comp);
-
-            _mnuDbOrder.setSelected(false);
-            _mnuOrderByName.setSelected(false);
             _mnuPksAndConstraintsOnTop.setSelected(true);
             break;
-         default:
-            throw new IllegalStateException("Unknown order " + _columnOrder);
+         case ORDER_FILTERED_SELECTED:
+            _mnuQueryFiltersAndSelectedOnTop.setSelected(true);
+            break;
       }
-
-      _frame.txtColumsFactory.setColumns(_orderedColumnInfos);
 
       SwingUtilities.invokeLater(new Runnable()
       {
@@ -1044,9 +963,10 @@ public class TableFrameController
    {
       HashSet<String> tablesToAdd = new HashSet<String>();
 
-      for (int i = 0; i < _constraintViews.length; i++)
+      ConstraintView[] constViews = _constraintViewsModel.getConstViews();
+      for (int i = 0; i < constViews.length; i++)
       {
-         tablesToAdd.add(_constraintViews[i].getData().getPkTableName());
+         tablesToAdd.add(constViews[i].getData().getPkTableName());
       }
 
       _addTablelListener.addTablesRequest(tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
@@ -1073,6 +993,11 @@ public class TableFrameController
 				_mnuAddTableForForeignKey.setText(s_stringMgr.getString("graph.addTableRefBy",ci.getName()));
             _mnuAddTableForForeignKey.putClientProperty(MNU_PROP_COLUMN_INFO, ci);
          }
+
+         _mnuQueryFiltersAndSelectedOnTop.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
+         _mnuQuerySelectAll.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
+         _mnuQueryUnselectAll.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
+         _mnuQueryClearAllFilters.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
 
          _popUp.show(e.getComponent(), e.getX(), e.getY());
       }
@@ -1108,7 +1033,8 @@ public class TableFrameController
 
    private void onClose()
    {
-      _desktopController.removeConstraintViews(_constraintViews, false);
+      _desktopController.removeConstraintViews(_constraintViewsModel.getConstViews(), false);
+      _desktopController.getModeManager().removeModeManagerListener(_modeManagerListener);
       _desktopController.getZoomer().removeZoomListener(_zoomerListener);
 
 
@@ -1118,12 +1044,14 @@ public class TableFrameController
          tableFrameControllerListener.closed(this);
       }
 
-      for(TableFrameController tfc : _compListenersToOtherFramesByFrameCtrlr.keySet()) {
+      for(TableFrameController tfc : _compListenersToOtherFramesByFrameCtrlr.keySet())
+      {
          ComponentAdapter listenerToRemove = _compListenersToOtherFramesByFrameCtrlr.get(tfc);
          tfc._frame.removeComponentListener(listenerToRemove);
       }
 
-      for(TableFrameController tfc : _scrollListenersToOtherFramesByFrameCtrlr.keySet()) {
+      for(TableFrameController tfc : _scrollListenersToOtherFramesByFrameCtrlr.keySet())
+      {
          AdjustmentListener listenerToRemove = _scrollListenersToOtherFramesByFrameCtrlr.get(tfc);
          tfc._frame.scrollPane.getVerticalScrollBar().removeAdjustmentListener(listenerToRemove);
       }
@@ -1204,7 +1132,7 @@ public class TableFrameController
    {
       if(checkForNewConnections)
       {
-         Vector<TableFrameController> openTableFrameControllers = _graphControllerAccessor.getOpenTableFrameControllers();
+         Vector<TableFrameController> openTableFrameControllers = _graphControllerAccessor.getTableFrameModel().getTblCtrls();
 
          for (int i = 0; i < openTableFrameControllers.size(); i++)
          {
@@ -1239,20 +1167,9 @@ public class TableFrameController
    {
       _openFramesConnectedToMe.remove(tfc);
 
-      List<ConstraintView> constraintDataToRemove = new ArrayList<ConstraintView>();
-      List<ConstraintView> newConstraintData = new ArrayList<ConstraintView>();
 
-      for (int i = 0; i < _constraintViews.length; i++)
-      {
-         if(_constraintViews[i].getData().getPkTableName().equals(tfc._tableName))
-         {
-            constraintDataToRemove.add(_constraintViews[i]);
-         }
-         else
-         {
-            newConstraintData.add(_constraintViews[i]);
-         }
-      }
+      ConstraintView[] constraintDataToRemove = _constraintViewsModel.removeConstraintsForTable(tfc._tableName);
+
 
       ComponentAdapter compListenerToRemove = 
           _compListenersToOtherFramesByFrameCtrlr.remove(tfc);
@@ -1276,9 +1193,7 @@ public class TableFrameController
          tfc.removeSortListener(columnSortListener);
       }
 
-      ConstraintView[] buf = 
-          constraintDataToRemove.toArray(new ConstraintView[constraintDataToRemove.size()]);
-      _desktopController.removeConstraintViews(buf, false);
+      _desktopController.removeConstraintViews(constraintDataToRemove, false);
    }
 
    private boolean recalculateConnectionsTo(TableFrameController other)
@@ -1369,30 +1284,23 @@ public class TableFrameController
 
 
 
-   private ConstraintView[] findConstraintViews(String tableName)
+   public ConstraintView[] findConstraintViews(String tableName)
    {
-      List<ConstraintView> ret = new ArrayList<ConstraintView>();
-      for (int i = 0; i < _constraintViews.length; i++)
-      {
-         if(_constraintViews[i].getData().getPkTableName().equals(tableName))
-         {
-            ret.add(_constraintViews[i]);
-         }
-      }
-      return ret.toArray(new ConstraintView[ret.size()]);
+      return _constraintViewsModel.findConstraintViews(tableName);
    }
 
 
    private int[] calculateRelativeConnectionPointHeights(ColumnInfo[] colInfos)
    {
       Hashtable<Integer, Integer> buf = new Hashtable<Integer, Integer>();
-      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
+
+      int height = _frame.txtColumsFactory.getColumnHeight();
 
       for (int i = 0; i < colInfos.length; i++)
       {
          double zoom = _desktopController.getZoomer().getZoom();
 
-         int unscrolledHeight = (int)((colInfos[i].getIndex() * fm.getHeight() + fm.getHeight() / 2) * zoom + 0.5);
+         int unscrolledHeight = (int)((colInfos[i].getIndex() * height + height / 2) * zoom + 0.5);
          int scrolledHeight;
          Rectangle viewRect = _frame.scrollPane.getViewport().getViewRect();
 
@@ -1422,44 +1330,21 @@ public class TableFrameController
 
    private ColumnInfo findColumnInfo(String colName)
    {
-      for (int i = 0; i < _colInfos.length; i++)
-      {
-         if(_colInfos[i].getName().equals(colName))
-         {
-            return _colInfos[i];
-         }
-      }
-
-      throw new IllegalArgumentException("Column " + colName + " not found");
+      return _colInfoModel.findColumnInfo(colName);
    }
 
    private void calculateStartSize()
    {
       int maxViewingCols = 15;
 
-      FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
-      int width = getMaxSize(_colInfos, fm) + 30;
-      int height = Math.min(_colInfos.length, maxViewingCols) * (fm.getHeight()) + 47;
+      int height1 = _frame.txtColumsFactory.getColumnHeight();
+
+      int width = _frame.txtColumsFactory.getMaxWidht() + 30;
+      int height = Math.min(_colInfoModel.getColCount(), maxViewingCols) * height1 + 47;
       _startSize = new Rectangle(width, height);
    }
 
-   private int getMaxSize(ColumnInfo[] infos, FontMetrics fontMetrics)
-   {
-      int maxSize = 0;
-      for (int i = 0; i < infos.length; i++)
-      {
-         int buf = fontMetrics.stringWidth(infos[i].toString());
-         if(maxSize < buf)
-         {
-            maxSize = buf;
-         }
-      }
-      return maxSize;
-
-   }
-
-
-   TableFrame getFrame()
+   public TableFrame getFrame()
    {
       return _frame;
    }
@@ -1491,6 +1376,16 @@ public class TableFrameController
 
    public ColumnInfo[] getColumnInfos()
    {
-      return _colInfos;
+      return _colInfoModel.getAll();
+   }
+
+   public ConstraintViewsModel getConstraintViewsModel()
+   {
+      return _constraintViewsModel;
+   }
+
+   public ColumnInfoModel getColumnInfoModel()
+   {
+      return _colInfoModel;
    }
 }

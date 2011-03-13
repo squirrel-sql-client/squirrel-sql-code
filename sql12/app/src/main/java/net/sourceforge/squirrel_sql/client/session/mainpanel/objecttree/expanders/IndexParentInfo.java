@@ -32,8 +32,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class IndexParentInfo extends DatabaseObjectInfo
 {
-    private static final long serialVersionUID = 1L;
-
     public interface IPropertyNames {
         String SIMPLE_NAME = "simpleName";
         String TABLE_INFO = "tableInfo";

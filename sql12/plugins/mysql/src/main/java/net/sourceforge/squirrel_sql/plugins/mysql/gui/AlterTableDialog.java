@@ -111,7 +111,7 @@ public class AlterTableDialog extends JDialog
 //		builder.nextLine();
 //		builder.append(buildToolBar());
 //
-//		return builder.getPanel();
+//		return builder.getBottomPanel();
 }
 
 	private JTabbedPane buildMainPanel(ISession session, ITableInfo ti)

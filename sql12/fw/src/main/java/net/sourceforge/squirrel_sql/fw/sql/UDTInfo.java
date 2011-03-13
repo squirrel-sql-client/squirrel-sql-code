@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
 
 public class UDTInfo extends DatabaseObjectInfo implements IUDTInfo
 {
-	static final long serialVersionUID = 8215062701260471438L;
-
     /** Java class name. */
 	private final String _javaClassName;
 

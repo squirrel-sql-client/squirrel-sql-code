@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import java.io.Serializable;
+import java.sql.Types;
 
 public class ExtendedColumnInfo implements Serializable
 {
@@ -35,11 +36,13 @@ public class ExtendedColumnInfo implements Serializable
    private String _simpleTableName;
    private String _qualifiedName;
    private String _remarks;
+   private int _columnTypeID;
 
    public ExtendedColumnInfo(TableColumnInfo info, String simpleTableName)
    {
       _columnName = info.getColumnName();
       _columnType = info.getTypeName();
+      _columnTypeID = info.getDataType();
       _columnSize = info.getColumnSize();
       _decimalDigits = info.getDecimalDigits();
       _remarks = info.getRemarks();
@@ -102,6 +105,20 @@ public class ExtendedColumnInfo implements Serializable
    {
       return _simpleTableName;
    }
+
+   public int getColumnTypeID()
+   {
+      return _columnTypeID;
+   }
+
+   public boolean isCharacterType()
+   {
+      return   Types.VARCHAR == _columnTypeID
+            || Types.LONGVARCHAR == _columnTypeID
+            || Types.CHAR  == _columnTypeID
+            || Types.NVARCHAR  == _columnTypeID;
+   }
+
 
    /**
     * @see java.lang.Object#hashCode()

@@ -10,29 +10,30 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerX
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.Vector;
+import java.util.*;
+import java.util.List;
 
 
 public class GraphController implements GraphControllerAccessor
 {
    private ISession _session;
    private GraphMainPanelTab _graphPane;
-   private GraphDesktopController _desktopController;
+   private GraphPanelController _panelController;
 
-   private Vector<TableFrameController> _openTableFrameCtrls = 
-       new Vector<TableFrameController>();
-   private TableFrameControllerListener _tableFrameControllerListener;
+   private TableFramesModel _tableFramesModel = new TableFramesModel();
    private static final int BORDER_X = ConstraintView.STUB_LENGTH + 10;
    private static final int BORDER_Y = 10;
    private AddTableListener _addTableListener;
    private GraphDesktopListener _graphDesktopListener;
    private GraphPlugin _plugin;
+   private DefaultGraphDisplay _graphDisplay;
    private GraphXmlSerializer _xmlSerializer;
 
-   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer)
+   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer, DefaultGraphDisplay graphDisplay)
    {
       _session = session;
       _plugin = plugin;
+      _graphDisplay = graphDisplay;
 
       _graphDesktopListener = new GraphDesktopListener()
       {
@@ -63,27 +64,39 @@ public class GraphController implements GraphControllerAccessor
 
          public void allTablesPkConstOrderRequested()
          {
-            allTablesPkConstOrder();
+            _tableFramesModel.allTablesPkConstOrder();
          }
 
          public void allTablesByNameOrderRequested()
          {
-            allTablesByNameOrder();
+            _tableFramesModel.allTablesByNameOrder();
          }
 
          public void allTablesDbOrderRequested()
          {
-            allTablesDbOrder();
+            _tableFramesModel.allTablesDbOrder();
+         }
+
+         @Override
+         public void allTablesFilteredSelectedOrderRequested()
+         {
+            _tableFramesModel.allTablesFilteredSelectedOrder();
          }
 
          public void showQualifiedTableNamesRequested()
          {
-            refreshTableNames();
+            _tableFramesModel.refreshTableNames();
+         }
+
+         @Override
+         public void tablesDropped(List<ITableInfo> tis, Point dropPoint)
+         {
+            onTablesDropped(tis, dropPoint);
          }
       };
 
-      _desktopController = new GraphDesktopController(_graphDesktopListener, _session, _plugin);
-      _graphPane = new GraphMainPanelTab(_desktopController);
+      _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin);
+      _graphPane = new GraphMainPanelTab(_panelController, _plugin);
 
       if(null == xmlSerializer)
       {
@@ -93,15 +106,6 @@ public class GraphController implements GraphControllerAccessor
       {
          _xmlSerializer = xmlSerializer;
       }
-
-
-      _tableFrameControllerListener = new TableFrameControllerListener()
-      {
-         public void closed(TableFrameController tfc)
-         {
-            onTableFrameControllerClosed(tfc);
-         }
-      };
 
       _addTableListener = new AddTableListener()
       {
@@ -116,67 +120,48 @@ public class GraphController implements GraphControllerAccessor
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _graphPane.setTitle(graphControllerXmlBean.getTitle());
-         _desktopController.initZoomer(graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
-         _desktopController.setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
-         _desktopController.setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
+         _panelController.initMode(Mode.getForIndex(graphControllerXmlBean.getModeIndex()), graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
+         _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
+         _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
       }
       else
       {
          _graphPane.setTitle(_plugin.patchName(_graphPane.getTitle(), _session));
-         _desktopController.initZoomer(null, null);
+         _panelController.initMode(Mode.DEFAULT, null, null);
       }
 
-      _session.getSessionSheet().addMainTab(_graphPane);
+      _graphDisplay.showGraph(_graphPane, _session);
 
       if(null != graphControllerXmlBean)
       {
          TableFrameControllerXmlBean[] tableFrameControllerXmls = graphControllerXmlBean.getTableFrameControllerXmls();
          for (int i = 0; i < tableFrameControllerXmls.length; i++)
          {
-            addTableIntern(null, null, null, null, tableFrameControllerXmls[i]);
+            addTableIntern(new Positioner(), null, null, null, tableFrameControllerXmls[i]);
          }
       }
    }
 
-   private void refreshTableNames()
+   private void onTablesDropped(List<ITableInfo> tis, Point dropPoint)
    {
-      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      Positioner positioner = new Positioner(dropPoint);
+      for (ITableInfo ti : tis)
       {
-         openTableFrameCtrl.refreshTableName();
+         addTableIntern(positioner, ti.getSimpleName(), ti.getSchemaName(), ti.getCatalogName(), null);
       }
    }
 
-   private void allTablesDbOrder()
-   {
-      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
-      {
-         openTableFrameCtrl.dbOrder();
-      }
-   }
 
-   private void allTablesByNameOrder()
-   {
-      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
-      {
-         openTableFrameCtrl.nameOrder();
-      }
-   }
-
-   private void allTablesPkConstOrder()
-   {
-      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
-      {
-         openTableFrameCtrl.pkConstraintOrder();
-      }
-   }
 
    private void scriptAllTables()
    {
-      ITableInfo[] tableInfos = new ITableInfo[_openTableFrameCtrls.size()];
+      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
 
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      ITableInfo[] tableInfos = new ITableInfo[tblCtrls.size()];
+
+      for (int i = 0; i < tblCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = tblCtrls.get(i);
          tableInfos[i] = tableFrameController.getTableInfo();
       }
 
@@ -185,17 +170,13 @@ public class GraphController implements GraphControllerAccessor
 
    private void refreshAllTables()
    {
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
-      {
-         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
-         tableFrameController.refresh();
-      }
+      _tableFramesModel.refreshAllTables();
    }
 
    private void removeGraph()
    {
       _xmlSerializer.remove();
-      _session.getSessionSheet().removeMainTab(_graphPane);
+      _graphDisplay.removeGraph(_graphPane, _session);
       _plugin.removeGraphController(this, _session);
    }
 
@@ -208,9 +189,9 @@ public class GraphController implements GraphControllerAccessor
 
       newName = _plugin.patchName(newName, _session);
       _xmlSerializer.rename(newName);
-      int index = _session.getSessionSheet().removeMainTab(_graphPane);
-      _graphPane.setTitle(newName);
-      _session.getSessionSheet().insertMainTab(_graphPane, index);
+
+      _graphDisplay.renameGraph(_graphPane, _session, newName);
+
       saveGraph();
    }
 
@@ -218,15 +199,19 @@ public class GraphController implements GraphControllerAccessor
    {
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
       xmlBean.setTitle(_graphPane.getTitle());
-      xmlBean.setShowConstraintNames(_desktopController.isShowConstraintNames());
-      xmlBean.setZoomerXmlBean(_desktopController.getZoomer().getXmlBean());
-      xmlBean.setPrintXmlBean(_desktopController.getZoomPrintController().getPrintXmlBean());
+      xmlBean.setShowConstraintNames(_panelController.getDesktopController().isShowConstraintNames());
+      xmlBean.setZoomerXmlBean(_panelController.getDesktopController().getZoomer().getXmlBean());
+      xmlBean.setPrintXmlBean(_panelController.getDesktopController().getZoomPrintController().getPrintXmlBean());
+      xmlBean.setModeIndex(_panelController.getModeManager().getMode().getIndex());
 
-      TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[_openTableFrameCtrls.size()];
+      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
 
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      TableFrameControllerXmlBean[] frameXmls = new TableFrameControllerXmlBean[tblCtrls.size()];
+
+
+      for (int i = 0; i < tblCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = tblCtrls.get(i);
          frameXmls[i] = tableFrameController.getXmlBean(); 
       }
       xmlBean.setTableFrameControllerXmls(frameXmls);
@@ -239,115 +224,117 @@ public class GraphController implements GraphControllerAccessor
 
    private void onAddTablesRequest(String[] tablenames, String schema, String catalog)
    {
-      Point[] refCascadeIndent = new Point[1];
+      Positioner positioner = new Positioner();
+
       for (int i = 0; i < tablenames.length; i++)
       {
-         addTableIntern(refCascadeIndent, tablenames[i], schema, catalog, null);
+         addTableIntern(positioner, tablenames[i], schema, catalog, null);
       }
    }
 
-   private void onTableFrameControllerClosed(TableFrameController tfc)
-   {
-      _openTableFrameCtrls.remove(tfc);
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
-      {
-         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
-         tableFrameController.tableFrameRemoved(tfc);
-      }
 
-   }
 
-   public void addTable(ObjectTreeNode selectedNode, final Point[] refCascadeIndent)
+   public void addTable(ObjectTreeNode selectedNode, final Positioner positioner)
    {
       String catalog = selectedNode.getDatabaseObjectInfo().getCatalogName();
       String schema = selectedNode.getDatabaseObjectInfo().getSchemaName();
       String table = selectedNode.getDatabaseObjectInfo().getSimpleName();
 
-      addTableIntern(refCascadeIndent, table, schema, catalog,  null);
+      addTableIntern(positioner, table, schema, catalog,  null);
    }
 
 
-   private void addTableIntern(final Point[] refCascadeIndent, String tableName, String schemaName, String catalogName, final TableFrameControllerXmlBean xmlBean)
+   private void addTableIntern(final Positioner positioner, String tableName, String schemaName, String catalogName, final TableFrameControllerXmlBean xmlBean)
    {
-
-
       final TableFrameController tfc;
 
       if(null == xmlBean)
       {
-         tfc = new TableFrameController(_session, _desktopController, this, _addTableListener, tableName, schemaName, catalogName, null);
+         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), this, _addTableListener, tableName, schemaName, catalogName, null);
       }
       else
       {
-         tfc = new TableFrameController(_session, _desktopController, this ,_addTableListener, null, null, null, xmlBean);
+         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), this ,_addTableListener, null, null, null, xmlBean);
       }
 
-      if (_openTableFrameCtrls.contains(tfc))
+      if (_tableFramesModel.containsTable(tfc))
       {
          return;
       }
 
 
-      tfc.addTableFrameControllerListener(_tableFrameControllerListener);
+      //tfc.addTableFrameControllerListener(_tableFrameControllerListener);
 
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-             _desktopController.addFrame(tfc.getFrame());
-             _openTableFrameCtrls.add(tfc);             
-            initsAfterFrameAdded(tfc, refCascadeIndent, null == xmlBean);
+             _panelController.getDesktopController().addFrame(tfc.getFrame());
+             _tableFramesModel.addTable(tfc);
+            initsAfterFrameAdded(tfc, positioner, null == xmlBean);
          }
       });
 
    }
 
 
-   public Vector<TableFrameController> getOpenTableFrameControllers()
+   public TableFramesModel getTableFrameModel()
    {
-      return _openTableFrameCtrls;
+      return _tableFramesModel;
    }
 
-   private void calcPosition(final TableFrameController tfc, Point[] lastCascadePointRef)
+   private void calcPosition(final TableFrameController tfc, Positioner positioner)
    {
       Dimension frmSize = tfc.getFrame().getSize();
 
-      ///////////////////////////////////////////////////////////////////////////
-      // We try to find a completely free space for the new table frame.
-      for (int y = 0; y < _desktopController.getDesktopPane().getSize().getHeight(); y += frmSize.height + BORDER_Y)
-      {
-         for (int x = 0; x < _desktopController.getDesktopPane().getSize().getWidth(); x += frmSize.width + BORDER_X)
-         {
-            Point leftUp = new Point(x, y);
-            Point rightDown = new Point(x + frmSize.width, y + frmSize.height);
 
-            if (isInDesktop(leftUp) && isInDesktop(rightDown) && false == isRectangleOccupied(leftUp, rightDown, tfc))
+      if (null == positioner.getDropPointClone())
+      {
+         ///////////////////////////////////////////////////////////////////////////
+         // We try to find a completely free space for the new table frame.
+         for (int y = 0; y < _panelController.getDesktopController().getDesktopPane().getSize().getHeight(); y += frmSize.height + BORDER_Y)
+         {
+            for (int x = 0; x < _panelController.getDesktopController().getDesktopPane().getSize().getWidth(); x += frmSize.width + BORDER_X)
             {
-               tfc.getFrame().setBounds(leftUp.x, leftUp.y, tfc.getFrame().getBounds().width, tfc.getFrame().getBounds().height);
-               return;
+               Point leftUp = new Point(x, y);
+               Point rightDown = new Point(x + frmSize.width, y + frmSize.height);
+
+               if (isInDesktop(leftUp) && isInDesktop(rightDown) && false == isRectangleOccupied(leftUp, rightDown, tfc))
+               {
+                  tfc.getFrame().setBounds(leftUp.x, leftUp.y, tfc.getFrame().getBounds().width, tfc.getFrame().getBounds().height);
+                  return;
+               }
             }
          }
+         //
+         //////////////////////////////////////////////////////////////////////////
       }
-      //
-      //////////////////////////////////////////////////////////////////////////
 
 
       ////////////////////////////////////////////////////////////////////////////////
       // We try to cascade
       int cascadeIndent = tfc.getFrame().getTitlePane().getSize().height;
 
-      if (null == lastCascadePointRef[0])
+      if (null == positioner.getRefPoint())
       {
-         lastCascadePointRef[0] = new Point(cascadeIndent, cascadeIndent);
+         if (null != positioner.getDropPointClone())
+         {
+            positioner.setRefPoint(positioner.getDropPointClone());
+         }
+         else
+         {
+            positioner.setRefPoint(new Point(cascadeIndent, cascadeIndent));
+         }
       }
       else
       {
-         lastCascadePointRef[0] = new Point(lastCascadePointRef[0].x + cascadeIndent, lastCascadePointRef[0].y + cascadeIndent);
+         Point refPoint = positioner.getRefPoint();
+         positioner.setRefPoint(new Point(refPoint .x + cascadeIndent, refPoint .y + cascadeIndent));
       }
 
-      for (int x = lastCascadePointRef[0].x; x < _desktopController.getDesktopPane().getSize().getWidth(); x += cascadeIndent)
+      for (int x = positioner.getRefPoint().x; x < _panelController.getDesktopController().getDesktopPane().getSize().getWidth(); x += cascadeIndent)
       {
-         for (int y = lastCascadePointRef[0].y; y < _desktopController.getDesktopPane().getSize().getHeight(); y += cascadeIndent)
+         for (int y = positioner.getRefPoint().y; y < _panelController.getDesktopController().getDesktopPane().getSize().getHeight(); y += cascadeIndent)
          {
             Point leftUp = new Point(x, y);
             Point rightDown = new Point(x + frmSize.width, y + frmSize.height);
@@ -355,11 +342,11 @@ public class GraphController implements GraphControllerAccessor
             if (isInDesktop(leftUp) && isInDesktop(rightDown))
             {
                tfc.getFrame().setBounds(leftUp.x, leftUp.y, tfc.getFrame().getBounds().width, tfc.getFrame().getBounds().height);
-               lastCascadePointRef[0].y += cascadeIndent;
+               positioner.getRefPoint().y += cascadeIndent;
                return;
             }
          }
-         lastCascadePointRef[0].y = cascadeIndent;
+         positioner.getRefPoint().y = cascadeIndent;
       }
       //
       //////////////////////////////////////////////////////////////////////////////////
@@ -373,9 +360,11 @@ public class GraphController implements GraphControllerAccessor
 
    private boolean isRectangleOccupied(Point leftUp, Point rightDown, TableFrameController toExclude)
    {
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
+
+      for (int i = 0; i < tblCtrls.size(); i++)
       {
-         TableFrameController tfc = _openTableFrameCtrls.elementAt(i);
+         TableFrameController tfc = tblCtrls.get(i);
 
          if (tfc.equals(toExclude))
          {
@@ -400,32 +389,35 @@ public class GraphController implements GraphControllerAccessor
 
    private boolean isInDesktop(Point p)
    {
-      if (_desktopController.getDesktopPane().getSize().width >= p.x && _desktopController.getDesktopPane().getSize().height >= p.y)
+      if (_panelController.getDesktopController().getDesktopPane().getSize().width >= p.x && _panelController.getDesktopController().getDesktopPane().getSize().height >= p.y)
       {
          return true;
       }
       return false;
    }
 
-   private void initsAfterFrameAdded(TableFrameController tfc, Point[] refCascadeIndent, boolean resetBounds)
+   private void initsAfterFrameAdded(TableFrameController tfc, Positioner positioner, boolean resetBounds)
    {
-      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+
+      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
+
+      for (int i = 0; i < tblCtrls.size(); i++)
       {
-         TableFrameController buf = _openTableFrameCtrls.elementAt(i);
+         TableFrameController buf = tblCtrls.get(i);
          if (false == buf.equals(tfc))
          {
             buf.tableFrameOpen(tfc);
          }
       }
 
-      Vector<TableFrameController> others = new  Vector<TableFrameController>(_openTableFrameCtrls);
+      Vector<TableFrameController> others = new  Vector<TableFrameController>(_tableFramesModel.getTblCtrls());
       others.remove(tfc);
       TableFrameController[] othersArr = others.toArray(new TableFrameController[others.size()]);
       tfc.initAfterAddedToDesktop(othersArr, resetBounds);
 
       if(resetBounds)
       {
-         calcPosition(tfc, refCascadeIndent);
+         calcPosition(tfc, positioner);
       }
 
    }
@@ -442,7 +434,7 @@ public class GraphController implements GraphControllerAccessor
 
    public void sessionEnding()
    {
-      _desktopController.sessionEnding();
+      _panelController.sessionEnding();
    }
 }
 

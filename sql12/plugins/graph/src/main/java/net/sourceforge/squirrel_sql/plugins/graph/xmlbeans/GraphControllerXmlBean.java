@@ -9,6 +9,7 @@ public class GraphControllerXmlBean
    private ZoomerXmlBean zoomerXmlBean;
    private PrintXmlBean printXmlBean;
    private boolean _showQualifiedTableNames;
+   private int _modeIndex;
 
 
    public String getTitle()
@@ -69,5 +70,15 @@ public class GraphControllerXmlBean
    public void setShowQualifiedTableNames(boolean showQualifiedTableNames)
    {
       _showQualifiedTableNames = showQualifiedTableNames;
+   }
+
+   public int getModeIndex()
+   {
+      return _modeIndex;
+   }
+
+   public void setModeIndex(int modeIndex)
+   {
+      _modeIndex = modeIndex;
    }
 }

@@ -25,7 +25,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDeskto
 
 public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrintable
 {
-   private static final long serialVersionUID = 1L;
    private Vector<GraphComponent> _graphComponents = new Vector<GraphComponent>();
    private transient ConstraintViewListener _constraintViewListener;
 

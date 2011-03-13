@@ -8,10 +8,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 
-public class ZoomableColumnTextArea extends JPanel implements DndColumn
+public class ZoomableColumnTextArea extends JPanel implements DndColumn, IColumnTextArea
 {
    private TableToolTipProvider _toolTipProvider;
-   private ColumnInfo[] _columnInfos;
+   private ColumnInfoModel _columnInfoModel;
    private Zoomer _zoomer;
    private DndHandler _dndHandler;
 
@@ -28,9 +28,9 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn
       return _toolTipProvider.getToolTipText(event);
    }
 
-   public void setGraphColumns(ColumnInfo[] columnInfos)
+   public void setColumnInfoModel(ColumnInfoModel columnInfoModel)
    {
-      _columnInfos = columnInfos;
+      _columnInfoModel = columnInfoModel;
    }
 
 
@@ -51,9 +51,9 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn
          int textHeight = getTextHeight();
 
          int curBaseLine = textHeight - 3;
-         for (int i = 0; i < _columnInfos.length; i++)
+         for (int i = 0; i < _columnInfoModel.getColCount(); i++)
          {
-            g2d.drawString(_columnInfos[i].toString(), 0, curBaseLine);
+            g2d.drawString(_columnInfoModel.getOrderedColAt(i).toString(), 0, curBaseLine);
             curBaseLine += textHeight;
          }
       }
@@ -75,10 +75,10 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn
    {
       FontMetrics fm = getFontMetrics(getFont());
 
-      int maxTextWidht = fm.stringWidth(_columnInfos[0].toString());
-      for (int i = 1; i < _columnInfos.length; i++)
+      int maxTextWidht = fm.stringWidth(_columnInfoModel.getColAt(0).toString());
+      for (int i = 1; i < _columnInfoModel.getColCount(); i++)
       {
-         maxTextWidht = Math.max(maxTextWidht, fm.stringWidth(_columnInfos[0].toString()));
+         maxTextWidht = Math.max(maxTextWidht, fm.stringWidth(_columnInfoModel.getColAt(0).toString()));
       }
 
       return (int)(maxTextWidht * _zoomer.getZoom() + 0.5);
@@ -90,7 +90,7 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn
    {
       Dimension ret = new Dimension();
       ret.width = getMaxTextWidht();
-      ret.height = (int)(_zoomer.getZoom() * _columnInfos.length * getTextHeight() + 0.5);
+      ret.height = (int)(_zoomer.getZoom() * _columnInfoModel.getColCount() * getTextHeight() + 0.5);
       return ret;
    }
 
@@ -105,4 +105,34 @@ public class ZoomableColumnTextArea extends JPanel implements DndColumn
       _dndHandler.setDndEvent(dndEvent);
    }
 
+   @Override
+   public Point getLocationInColumnTextArea()
+   {
+      return new Point(0,0);
+   }
+
+   @Override
+   public int getColumnHeight()
+   {
+      FontMetrics fm = getGraphics().getFontMetrics(getFont());
+      return fm.getHeight();
+   }
+
+   @Override
+   public int getMaxWidth()
+   {
+      int maxSize = 0;
+      FontMetrics fm = getFontMetrics(getFont());
+
+      for (int i = 0; i < _columnInfoModel.getColCount(); i++)
+      {
+         int buf = fm.stringWidth(_columnInfoModel.getColAt(i).toString());
+         if(maxSize < buf)
+         {
+            maxSize = buf;
+         }
+      }
+
+      return maxSize;
+   }
 }

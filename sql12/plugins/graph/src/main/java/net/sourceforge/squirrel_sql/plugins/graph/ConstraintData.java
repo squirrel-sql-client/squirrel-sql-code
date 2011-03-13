@@ -16,6 +16,7 @@ public class ConstraintData
 
    private ColumnInfo[] _columnInfos = new ColumnInfo[0];
    private boolean _showThisConstraintName;
+   private ConstraintQueryData _constraintQueryData = new ConstraintQueryData();
 
 
    public ConstraintData(String pkTableName, String fkTableName, String constraintName)
@@ -29,7 +30,13 @@ public class ConstraintData
       _fkTableName = constraintDataXmlBean.getFkTableName();
       _constraintName = constraintDataXmlBean.getConstraintName();
       _nonDbConstraint = constraintDataXmlBean.isNonDbConstraint();
-      _showThisConstraintName = constraintDataXmlBean.isShowThisConstraintName(); 
+      _showThisConstraintName = constraintDataXmlBean.isShowThisConstraintName();
+
+      if(null != constraintDataXmlBean.getConstraintQueryDataXmlBean())
+      {
+         _constraintQueryData = new ConstraintQueryData(constraintDataXmlBean.getConstraintQueryDataXmlBean());
+      }
+
 
       _columnInfos = new ColumnInfo[constraintDataXmlBean.getColumnInfoXmlBeans().length];
       for (int i = 0; i < _columnInfos.length; i++)
@@ -55,6 +62,9 @@ public class ConstraintData
       ret.setConstraintName(_constraintName);
       ret.setNonDbConstraint(_nonDbConstraint);
       ret.setShowThisConstraintName(_showThisConstraintName);
+
+      ret.setConstraintQueryDataXmlBean(_constraintQueryData.getXmlBean());
+
 
       ColumnInfoXmlBean[] colInfoXmlBeans = new ColumnInfoXmlBean[_columnInfos.length];
       for (int i = 0; i < _columnInfos.length; i++)
@@ -245,5 +255,15 @@ public class ConstraintData
    public void setShowThisConstraintName(boolean showThisConstraintName)
    {
       _showThisConstraintName = showThisConstraintName;
+   }
+
+   public ConstraintQueryData getConstraintQueryData()
+   {
+      return _constraintQueryData;
+   }
+
+   public void setConstraintQueryData(ConstraintQueryData constraintQueryData)
+   {
+      _constraintQueryData = constraintQueryData;
    }
 }

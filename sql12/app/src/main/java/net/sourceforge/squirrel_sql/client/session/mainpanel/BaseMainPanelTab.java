@@ -21,6 +21,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import java.awt.*;
+
 /**
  * Base class for tabs to the added to the main tabbed panel.
  *
@@ -89,7 +92,13 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
 		}
 	}
 
-	/**
+   @Override
+   public Component getTabComponent()
+   {
+      return null;
+   }
+
+   /**
 	 * Refresh the component.
 	 */
 	protected abstract void refreshComponent();

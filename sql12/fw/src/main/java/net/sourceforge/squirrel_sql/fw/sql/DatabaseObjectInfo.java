@@ -41,7 +41,6 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       String QUALIFIED_NAME = "qualifiedName";
    }
 
-   static final long serialVersionUID = -7138016566181091160L;
 
 /** Catalog name. Can be <CODE>null</CODE> */
    private final String _catalog;

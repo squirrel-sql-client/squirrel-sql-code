@@ -160,7 +160,6 @@ public class StylesList extends JList
 			setForeground(new Color(style.getTextRGB()));
 			setBackground(new Color(style.getBackgroundRGB()));
 
-//TODO:			setFont(style.createStyledFont(getFont()));
 			setText(s_styleTitles[idx]);
 
 			if (isSelected)

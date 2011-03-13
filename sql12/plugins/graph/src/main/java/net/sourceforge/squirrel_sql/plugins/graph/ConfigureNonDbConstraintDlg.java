@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -34,32 +35,37 @@ public class ConfigureNonDbConstraintDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       _table = new DataSetViewerTablePanel();
       _table.init(null);
-      getContentPane().add(new JScrollPane(_table.getComponent()), gbc);
+      JPanel pnlBordered = new JPanel(new GridLayout(1,1));
+      pnlBordered.add(new JScrollPane(_table.getComponent()));
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(s_stringMgr.getString("graph.ConfigureNonDbConstraintDlg.tblTitle"));
+      titledBorder.setTitleFont(titledBorder.getTitleFont().deriveFont(Font.BOLD));
+      pnlBordered.setBorder(titledBorder);
+      getContentPane().add(pnlBordered, gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,10,5), 0,0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,10,5), 0,0);
       _btnRemove = new JButton(s_stringMgr.getString("graph.ConfigureNonDbConstraintDlg.remove"));
       getContentPane().add(_btnRemove, gbc);
 
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createControlsPanel(fkTableName, pkTableName), gbc);
 
-      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createNamePanel(), gbc);
 
-      gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       MultipleLineLabel lblHint = new MultipleLineLabel(s_stringMgr.getString("graph.ConfigureNonDbConstraintDlg.NonDbConstraintHint"));
       lblHint.setForeground(Color.red);
       getContentPane().add(lblHint, gbc);
 
-      gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,6,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       getContentPane().add(createButtonsPanel(), gbc);
 
 
-      setSize(800, 500);
+      setSize(800, 530);
 
       GUIUtils.centerWithinScreen(this);
 
@@ -146,6 +152,9 @@ public class ConfigureNonDbConstraintDlg extends JDialog
       ret.add(createAddButtonsPanel(), gbc);
 
 
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(s_stringMgr.getString("graph.ConfigureNonDbConstraintDlg.AddColsTitle"));
+      titledBorder.setTitleFont(titledBorder.getTitleFont().deriveFont(Font.BOLD));
+      ret.setBorder(titledBorder);
 
       return ret;
    }
