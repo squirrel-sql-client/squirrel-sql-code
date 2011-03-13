@@ -39,6 +39,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 /**
@@ -381,11 +384,11 @@ public class DataTypeJavaObject extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null )
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		else
-			return _colDef.getColumnName() + "='" + value.toString() + "'";
+			return new ParameterWhereClausePart(_colDef, value, this);
 	}
 
 

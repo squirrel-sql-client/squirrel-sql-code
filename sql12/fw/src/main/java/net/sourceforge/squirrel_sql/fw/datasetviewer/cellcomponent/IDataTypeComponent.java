@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 import java.sql.PreparedStatement;
@@ -162,8 +163,9 @@ public interface IDataTypeComponent {
      * value. This function must also include the column label so that its
      * output is of the form: "columnName = value" or "columnName is null" or
      * whatever is appropriate for this column in the database.
+     * @see IWhereClausePart
      */
-    public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md);
+    public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md);
 
     /**
      * When updating the database, insert the appropriate datatype into the

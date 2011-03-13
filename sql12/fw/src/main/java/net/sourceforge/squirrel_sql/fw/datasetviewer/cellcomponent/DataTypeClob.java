@@ -47,6 +47,9 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
@@ -591,11 +594,13 @@ public class DataTypeClob extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || ((ClobDescriptor)value).getData() == null)
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		else
-			return "";	// CLOB cannot be used in WHERE clause
+			// CLOB cannot be used in WHERE clause
+			// TODO Review, if this DataType could not be used in a where clause
+			return new EmptyWhereClausePart();	
 	}
 
 	/**

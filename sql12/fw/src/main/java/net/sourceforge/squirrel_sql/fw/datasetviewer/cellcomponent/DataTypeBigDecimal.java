@@ -38,6 +38,9 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -125,6 +128,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
       // If we use _scale here some number displays go crazy.
       //_numberFormat.setMaximumFractionDigits(_scale);
       _numberFormat.setMaximumFractionDigits(maximumFractionDigits);      
+         
       
       _numberFormat.setMinimumFractionDigits(0);
 
@@ -494,11 +498,11 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		else
-			return _colDef.getColumnName() + "=" + value.toString();
+			return new ParameterWhereClausePart(_colDef, value, this);
 	}
 
 

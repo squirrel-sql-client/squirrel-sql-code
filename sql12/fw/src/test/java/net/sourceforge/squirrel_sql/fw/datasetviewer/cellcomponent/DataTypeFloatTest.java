@@ -1,16 +1,12 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Field;
-import java.sql.Date;
-import java.text.NumberFormat;
-
+import static org.junit.Assert.*;
+import junit.framework.Assert;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,29 +36,35 @@ import org.junit.Test;
  */
 public class DataTypeFloatTest extends FloatingPointBaseTest <Float> {
 
-
 	@Before
 	public void setUp() throws Exception {
 		initClassUnderTest();
 		super.setUp();
 
 	}
-	
+
 	@Override
-	protected Object getEqualsTestObject() {
+	protected Object getEqualsTestObject()
+	{
 		return Float.valueOf(1);
 	}
 
 	@Override
 	@Test
 	public void testGetWhereClauseValue() {
-		ColumnDisplayDefinition localMockColumnDisplayDefinition = getMockColumnDisplayDefinition();
+		ColumnDisplayDefinition localMockColumnDisplayDefinition = 	getMockColumnDisplayDefinition();
 		mockHelper.replayAll();
 		classUnderTest.setColumnDisplayDefinition(localMockColumnDisplayDefinition);
-		assertNotNull(classUnderTest.getWhereClauseValue(null, mockMetaData));
-		// Floats cannot be used as where clause values as there are not
-		// precise.
-		assertNull(classUnderTest.getWhereClauseValue(getWhereClauseValueObject(), mockMetaData));
+		IWhereClausePart whereClauseValue = classUnderTest.getWhereClauseValue(null, mockMetaData);
+		assertNotNull(whereClauseValue);
+		assertEquals(IsNullWhereClausePart.class, whereClauseValue.getClass());
+		// Floats cannot be used as where clause values as there are not precise. 
+		
+		whereClauseValue = classUnderTest.getWhereClauseValue(getWhereClauseValueObject(), mockMetaData);
+		assertNotNull(whereClauseValue);
+		assertEquals(EmptyWhereClausePart.class, whereClauseValue.getClass());
+		
+		
 		mockHelper.verifyAll();
 	}
 

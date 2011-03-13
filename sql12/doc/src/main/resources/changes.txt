@@ -25,6 +25,8 @@ Display errors in result tab:
 
 Bug-fixes:
 
+3088572: Squirrel fails when user tries to edit DB fields which have particular characters.
+
 3175871: On export to Excel, some numeric values are not exported correctly.  
 
 SQL Scripts Plugin: Increased multi table script configuration dialog's size.

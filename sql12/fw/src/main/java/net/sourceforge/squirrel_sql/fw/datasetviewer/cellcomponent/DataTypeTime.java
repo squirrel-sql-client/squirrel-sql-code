@@ -47,6 +47,9 @@ import java.text.DateFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -501,11 +504,11 @@ public class DataTypeTime extends BaseDataTypeComponent
     * 	"columnName is null"
     * or whatever is appropriate for this column in the database.
     */
-   public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+   public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
       if (value == null || value.toString() == null || value.toString().length() == 0)
-         return _colDef.getColumnName() + " IS NULL";
+         return new IsNullWhereClausePart(_colDef);
       else
-         return _colDef.getColumnName() + "={t '" + value.toString() +"'}";
+         return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={t '" + value.toString() +"'}");
    }
 
 

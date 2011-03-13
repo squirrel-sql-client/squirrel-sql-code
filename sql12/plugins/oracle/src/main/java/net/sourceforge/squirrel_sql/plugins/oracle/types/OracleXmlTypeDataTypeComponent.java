@@ -26,6 +26,7 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -108,7 +109,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent implem
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
 	@Override
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		/*
 		* For Oracle 10g we could say something like : 

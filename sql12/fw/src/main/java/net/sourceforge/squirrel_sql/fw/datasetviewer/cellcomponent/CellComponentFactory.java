@@ -22,7 +22,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -589,7 +591,7 @@ public class CellComponentFactory {
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public static String getWhereClauseValue(ColumnDisplayDefinition colDef,
+	public static IWhereClausePart getWhereClauseValue(ColumnDisplayDefinition colDef,
          Object value, ISQLDatabaseMetaData md) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
@@ -1087,5 +1089,5 @@ public class CellComponentFactory {
       }
       return dataTypeComponent;
    }
-	
+   
 }

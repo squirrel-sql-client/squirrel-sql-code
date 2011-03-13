@@ -24,6 +24,9 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -99,15 +102,15 @@ public class PostgreSqlOtherTypeDataTypeComponent extends BaseDataTypeComponent 
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object,
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		if (value == null || value.toString() == null)
 		{
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		} else
 		{
 			// We don't know if this type can be used in where clauses so always exclude it.
-			return "";
+			return new EmptyWhereClausePart();
 		}
 	}
 

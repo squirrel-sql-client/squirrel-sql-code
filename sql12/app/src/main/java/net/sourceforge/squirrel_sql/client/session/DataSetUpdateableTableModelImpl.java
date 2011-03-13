@@ -3,8 +3,9 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -12,9 +13,12 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.WhereClausePartUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -76,6 +80,11 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * ResultSet, and thus we never have any legal column index here.
     */
    int _rowIDcol = -1;
+   
+   /**
+    * A util for handling parts of an where clause.
+    */
+   private IWhereClausePartUtil whereClausePartUtil = new WhereClausePartUtil();
 
    public void setTableInfo(ITableInfo ti)
    {
@@ -205,15 +214,17 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       if (ti == null)
          return TI_ERROR_MESSAGE;
 
-      String whereClause = getWhereClause(values, colDefs, col, oldValue);
+      List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
 
+      
       // It is possible for a table to contain only columns of types that
       // we cannot process or do selects on, so check for that.
       // Since this check is on the structure of the table rather than the contents,
       // we only need to do it once (ie: it is not needed in getWarningOnProjectedUpdate)
-      if (whereClause.length() == 0)
+      if (whereClausePartUtil.hasUsableWhereClause(whereClauseParts) == false){
          // i18n[DataSetUpdateableTableModelImpl.confirmupdateallrows=The table has no columns that can be SELECTed on.\nAll rows will be updated.\nDo you wish to proceed?]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.confirmupdateallrows");
+      }
 
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
@@ -222,24 +233,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       try
       {
-         Statement stmt = null;
-         ResultSet rs = null;
-         try
-         {
-            stmt = conn.createStatement();
-            String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
-            rs = stmt.executeQuery(countSql);
-            rs.next();
-            count = rs.getInt(1);
-         }
-         finally
-         {
-            // We don't care if these throw an SQLException.  Just squelch them
-            // and report to the user what the outcome of the previous statements
-            // were.
-            SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(stmt);
-         }
+         count = count(whereClauseParts, conn);
       }
       catch (SQLException ex)
       {
@@ -270,6 +264,42 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    }
 
    /**
+    * Counts the number of affected rows, using this where clause.
+    * @param whereClauseParts where clause to use
+    * @param conn connection to use
+    * @return number of rows in the database, which will be selected by the given whereClauseParts
+    * @throws SQLException if an SQLExcetpion occurs.
+    */
+   private int count(List<IWhereClausePart> whereClauseParts,
+		   final ISQLConnection conn) throws SQLException {
+	   int count;
+	   PreparedStatement pstmt = null;
+	   ResultSet rs = null;
+	   try
+	   {
+		   String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
+		   String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
+		   pstmt = conn.prepareStatement(countSql);
+		   whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
+
+		   rs = pstmt.executeQuery();
+		   rs.next();
+		   count = rs.getInt(1);
+	   }
+	   finally
+	   {
+		   // We don't care if these throw an SQLException.  Just squelch them
+		   // and report to the user what the outcome of the previous statements
+		   // were.
+		   SQLUtilities.closeResultSet(rs);
+		   SQLUtilities.closeStatement(pstmt);
+	   }
+	   return count;
+   }
+
+
+
+/**
     * Link from fw to check on whether there are any unusual conditions
     * that will occur after the update has been done.
     */
@@ -285,8 +315,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          if (ti == null)
             return TI_ERROR_MESSAGE;
 
-         String whereClause = getWhereClause(values, colDefs, col, newValue);
-
+         List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, newValue);
+         
          final ISession session = _session;
          final ISQLConnection conn = session.getSQLConnection();
 
@@ -294,18 +324,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
          try
          {
-            final Statement stmt = conn.createStatement();
-            try
-            {
-               final ResultSet rs = stmt.executeQuery("select count(*) from "
-                              + ti.getQualifiedName() + whereClause);
-               rs.next();
-               count = rs.getInt(1);
-            }
-            finally
-            {
-               stmt.close();
-            }
+        	count = count(whereClauseParts, conn);
+        	
          }
          catch (SQLException ex)
          {
@@ -376,8 +396,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       // In some cases it may be possible for the DataType to use the
       // partial data, such as "matches <data>*", but that may not be
       // standard accross all Databases and thus may be risky.
-      String whereClause = getWhereClause(values, colDefs, -1, null);
-
+      
+      
+      List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, -1, null);
+      String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts); 
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
 
@@ -385,14 +407,17 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       try
       {
-         final Statement stmt = conn.createStatement();
-         final String queryString =
-            "SELECT " + colDefs[col].getColumnName() +" FROM "+ti.getQualifiedName() +
-            whereClause;
+    	  final String queryString =
+              "SELECT " + colDefs[col].getColumnName() +" FROM "+ti.getQualifiedName() +
+              whereClause;
+    	  
+         final PreparedStatement pstmt = conn.prepareStatement(queryString);
+         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
+         
 
          try
          {
-            ResultSet rs = stmt.executeQuery(queryString);
+            ResultSet rs = pstmt.executeQuery(queryString);
 
             // There should be one row in the data, so try to move to it
             if (rs.next() == false) {
@@ -417,7 +442,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          }
          finally
          {
-            stmt.close();
+            pstmt.close();
          }
       }
       catch (Exception ex)
@@ -454,8 +479,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          return TI_ERROR_MESSAGE;
 
       // get WHERE clause using original value
-      String whereClause = getWhereClause(values, colDefs, col, oldValue);
-
+       List<IWhereClausePart> whereClauseParts = getWhereClause(values, colDefs, col, oldValue);
+       String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
       if (s_log.isDebugEnabled()) {
           s_log.debug("updateTableComponent: whereClause = "+whereClause);
       }
@@ -476,10 +501,15 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       {
          pstmt = conn.prepareStatement(sql);
 
-         // have the DataType object fill in the appropriate kind of value
-         // into the first (and only) variable position in the prepared stmt
+         /* 
+          * have the DataType object fill in the appropriate kind of value of the changed data
+          * into the first variable position in the prepared stmt
+          */
          CellComponentFactory.setPreparedStatementValue(
                 colDefs[col], pstmt, newValue, 1);
+         
+         // Fill the parameters of the where clause - start at position 2 because the data which is updated is at position 1
+         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 2);
          count = pstmt.executeUpdate();
       }
       catch (SQLException ex)
@@ -550,7 +580,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * If the col number is < 0, then the colValue is ignored
     * and the WHERE clause is constructed using only the values[].
     */
-   private String getWhereClause(
+   private List<IWhereClausePart> getWhereClause(
       Object[] values,
       ColumnDisplayDefinition[] colDefs,
       int col,
@@ -558,20 +588,19 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    {
       try
       {
-         StringBuffer whereClause = new StringBuffer("");
 
          // For tables that have a lot of columns, the user may have limited the set of columns
          // to use in the where clause, so see if there is a table of col names
          HashMap<String, String> colNames = (EditWhereCols.get(getFullTableName()));
 
-
-
-			ColumnDisplayDefinition editedCol = null;
+         
+         ColumnDisplayDefinition editedCol = null;
 			if(-1 != col)
 			{
 				editedCol = colDefs[col];
 			}
 
+			List<IWhereClausePart> clauseParts = new ArrayList<IWhereClausePart>();
 			
 			for (int i=0; i< colDefs.length; i++) {
 
@@ -606,26 +635,16 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
             // do different things depending on data type
             ISQLDatabaseMetaData md = _session.getMetaData();
-            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value, md);
+            IWhereClausePart clausePart = CellComponentFactory.getWhereClauseValue(colDefs[i], value, md);
 
-            if (clause != null && clause.length() > 0)
-               if (whereClause.length() == 0)
-               {
-                  whereClause.append(clause);
-               }
-               else
-               {
-                  whereClause.append(" AND ");
-                  whereClause.append(clause);
-               }
+            
+            if (clausePart.shouldBeUsed())
+            	// Now we know that the part should not we ignoredshould
+            	clauseParts.add(clausePart);
          }
+			
+			return clauseParts;
 
-         // insert the "WHERE" at the front if there is anything in the clause
-         if (whereClause.length() == 0)
-            return "";
-
-         whereClause.insert(0, " WHERE ");
-         return whereClause.toString();
       }
       catch (Exception e)
       {
@@ -660,20 +679,14 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // get WHERE clause for the selected row
          // the -1 says to just use the contents of the values without
          // any substitutions
-         String whereClause = getWhereClause(rowData[i], colDefs, -1, null);
-
+         List<IWhereClausePart> whereClauseParts = getWhereClause(rowData[i], colDefs, -1, null);
+         
          // count how many rows this WHERE matches
          try {
-            // do the delete and add the number of rows deleted to the count
-            final Statement stmt = conn.createStatement();
-            try
-            {
-               ResultSet rs = stmt.executeQuery("SELECT count(*) FROM " +
-                  ti.getQualifiedName()+whereClause);
-
-               rs.next();
-               if (rs.getInt(1) != 1) {
-                  if (rs.getInt(1) == 0) {
+        	 
+        	 int count = count(whereClauseParts, conn);
+               if (count != 1) {
+                  if (count == 0) {
                       // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
                      rowCountErrorMessage += 
                          s_stringMgr.getString(
@@ -684,14 +697,9 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                       rowCountErrorMessage += 
                           s_stringMgr.getString(
                                   "DataSetUpdateableTableModelImpl.error.rowmatched", 
-                                  new Object[] { Integer.valueOf(i+1), Integer.valueOf(rs.getInt(1)) });
+                                  new Object[] { Integer.valueOf(i+1), Integer.valueOf(count) });
                   }
                }
-            }
-            finally
-            {
-               stmt.close();
-            }
          }
          catch (Exception e) {
             // some kind of problem - tell user
@@ -727,20 +735,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // get WHERE clause for the selected row
          // the -1 says to just use the contents of the values without
          // any substitutions
-         String whereClause = getWhereClause(rowData[i], colDefs, -1, null);
-
+          List<IWhereClausePart> whereClauseParts = getWhereClause(rowData[i], colDefs, -1, null);
+          String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
          // try to delete
          try {
             // do the delete and add the number of rows deleted to the count
-            final Statement stmt = conn.createStatement();
+        	 String sql = "DELETE FROM " +
+		      ti.getQualifiedName() + whereClause;
+        	 final PreparedStatement pstmt = conn.prepareStatement(sql);
+        	 whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
             try
             {
-               stmt.executeUpdate("DELETE FROM " +
-                  ti.getQualifiedName() + whereClause);
+            	pstmt.executeUpdate();
             }
             finally
             {
-               stmt.close();
+               pstmt.close();
             }
          }
          catch (Exception e) {
@@ -947,5 +957,9 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    public void setRowIDCol(int rowIDCol)
    {
       _rowIDcol = rowIDCol;
+   }
+
+   public void setWhereClausePartUtil(IWhereClausePartUtil whereClausePartUtil) {
+	   this.whereClausePartUtil = whereClausePartUtil;
    }
 }

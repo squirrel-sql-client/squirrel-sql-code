@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeC
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.StringFieldKeyTextHandler;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -95,7 +96,7 @@ public class PostgreSqlXmlTypeDataTypeComponent extends BaseDataTypeComponent im
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object,
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		// This results in "ERROR: operator does not exist: xml = unknown"
 		// return _colDef.getLabel() + "='" + SQLUtilities.escapeLine(value.toString(), md) + "'";
