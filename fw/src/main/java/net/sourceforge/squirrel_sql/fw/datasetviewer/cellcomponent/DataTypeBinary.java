@@ -35,6 +35,9 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
@@ -408,13 +411,16 @@ public class DataTypeBinary extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
-		if (value == null || value.toString() == null || value.toString().length() == 0)
-			return _colDef.getColumnName() + " IS NULL";
-		else
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+		if (value == null || value.toString() == null || value.toString().length() == 0){
+			return new IsNullWhereClausePart(_colDef);
+		}else{
 			//?? There does not seem to be any standard way to represent
 			//?? binary data in a WHERE clause...
-			return null;	// tell caller we cannot use this in Where clause
+			// tell caller we cannot use this in Where clause
+			// TODO Review, if this DataType could not be used in a where clause
+			return new EmptyWhereClausePart();
+		}
 	}
 	
 	

@@ -46,6 +46,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComp
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IRestorableTextComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
@@ -454,11 +457,12 @@ public class DerbyClobDataTypeComponent extends BaseDataTypeComponent implements
     * the form: "columnName = value" or "columnName is null" or whatever is
     * appropriate for this column in the database.
     */
-   public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+   public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
       if (value == null || ((DerbyClobDescriptor) value).getData() == null)
-         return _colDef.getColumnName() + " IS NULL";
+         return new IsNullWhereClausePart(_colDef);
       else
-         return ""; // CLOB cannot be used in WHERE clause
+    	// CLOB cannot be used in WHERE clause
+         return new EmptyWhereClausePart(); 
    }
 
    /**

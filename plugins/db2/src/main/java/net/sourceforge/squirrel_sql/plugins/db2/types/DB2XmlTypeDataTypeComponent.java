@@ -23,6 +23,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -92,7 +94,7 @@ public class DB2XmlTypeDataTypeComponent extends BaseDataTypeComponent
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object,
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		StringBuilder where = new StringBuilder();
 		if (value == null || value.toString() == null) {
 			where.append(_colDef.getFullTableColumnName());
@@ -104,7 +106,7 @@ public class DB2XmlTypeDataTypeComponent extends BaseDataTypeComponent
 			where.append(value);
 			where.append("'");
 		}
-		return where.toString();
+		return new NoParameterWhereClausePart(_colDef, where.toString());
 	}
 
 	/**

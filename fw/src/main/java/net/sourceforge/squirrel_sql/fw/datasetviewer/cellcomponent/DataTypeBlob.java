@@ -48,6 +48,9 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -563,11 +566,14 @@ public class DataTypeBlob extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || ((BlobDescriptor)value).getData() == null)
-			return _colDef.getColumnName() + " IS NULL";
-		else
-			return "";	// BLOB cannot be used in WHERE clause
+			return new IsNullWhereClausePart(_colDef);
+		else{
+			// BLOB cannot be used in WHERE clause
+			// TODO Review, if this DataType could not be used in a where clause
+			return new EmptyWhereClausePart();
+		}
 	}
 
 

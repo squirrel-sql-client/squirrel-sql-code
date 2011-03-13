@@ -46,6 +46,9 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.NoParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
@@ -529,11 +532,11 @@ public class DataTypeDate extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 		{
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		}
 		else
 		{
@@ -545,17 +548,17 @@ public class DataTypeDate extends BaseDataTypeComponent
             
             if (hasTimeComponent && hasDateComponent) {
                 // treat it like a timestamp
-                return _colDef.getColumnName() + "={ts '" + value.toString() + "'}";
+                return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={ts '" + value.toString() + "'}");
             } else if (hasTimeComponent) {
                 // treat it like a time - no date component
-                return _colDef.getColumnName() + "={t '" + value.toString() + "'}";
+                return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={t '" + value.toString() + "'}");
             } else {
                 if (DialectFactory.isOracle(md)) {
                     // Oracle stores time information in java.sql.Types.Date columns
                     // This tells Oracle that we are only talking about the date part.                    
-                    return "trunc(" + _colDef.getColumnName() + ")={d '" + value.toString() + "'}";
+                    return new NoParameterWhereClausePart(_colDef, "trunc(" + _colDef.getColumnName() + ")={d '" + value.toString() + "'}");
                 } else {
-                    return _colDef.getColumnName() + "={d '" + value.toString() + "'}";
+                    return new NoParameterWhereClausePart(_colDef, _colDef.getColumnName() + "={d '" + value.toString() + "'}");
                 }
             }               
 		}

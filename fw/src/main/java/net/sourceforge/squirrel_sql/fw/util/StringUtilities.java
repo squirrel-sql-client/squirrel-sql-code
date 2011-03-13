@@ -37,6 +37,19 @@ public class StringUtilities
 	{
 		return str == null || str.length() == 0;
 	}
+	
+	/**
+	 * Return <tt>true</tt> if the passed string is <tt>null</tt> or empty or contains only blanks.
+	 *
+	 * @param	str		String to be tested.
+	 *
+	 * @return	<tt>true</tt> if the passed string is <tt>null</tt> or empty or contains only blanks.
+	 */
+	public static boolean isBlank(String str)
+	{
+		return isEmpty(str) || str.trim().length() == 0;
+	}
+
 
 	/**
 	 * Return whether the 2 passed strings are equal. This function

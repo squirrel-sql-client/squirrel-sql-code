@@ -47,6 +47,10 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -567,7 +571,7 @@ public class DataTypeString extends BaseDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		// first do special check to see if we should use LONGVARCHAR
 		// in the WHERE clause.
 		// (Oracle does not allow this.)
@@ -576,18 +580,18 @@ public class DataTypeString extends BaseDataTypeComponent
 			return null;	// this column cannot be used in a WHERE clause
 
 		if (value == null || value.toString() == null )
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 		else {
 			// We cannot use this data in the WHERE clause if it has been truncated.
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
 			if ( ! needToReRead(value))
 			{
-				return _colDef.getColumnName() + "='" + escapeLine(value.toString(), md) + "'";
+				return new ParameterWhereClausePart(_colDef, value, this);
 			}
 			else 
 			{ 
-				return null;	// value is truncated, so do not use in WHERE clause
+				return new EmptyWhereClausePart();	// value is truncated, so do not use in WHERE clause
 			}
 		}
 	}
@@ -632,29 +636,6 @@ public class DataTypeString extends BaseDataTypeComponent
 		return "";
 	}
 
-	/**
-	 * When strings are used in the WHERE clause, any single quote characters must be
-	 * "escaped" so that they are not confused with the "end of string"
-	 * single quote used by SQL.  The escape sequence is that a single quote
-	 * is represented by two single quotes in a row.
-	 */
-	static public String escapeLine(String s, ISQLDatabaseMetaData md) {
-		String retvalue = s;
-		if (s.indexOf ("'") != -1 ) {
-			StringBuffer hold = new StringBuffer();
-			char c;
-			for(int i=0; i < s.length(); i++ ) {
-				if ((c=s.charAt(i)) == '\'' ) {
-					hold.append ("''");
-				}
-				else {
-					hold.append(c);
-				}
-			}
-			retvalue = hold.toString();
-		}
-		return DatabaseSpecificEscape.escapeSQL(retvalue, md);
-	}
 
 	/*
 		 * File IO related functions

@@ -35,6 +35,9 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -297,11 +300,11 @@ public abstract class BaseDataTypeComponent implements IDataTypeComponent {
     *  
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#getWhereClauseValue(java.lang.Object, net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
     */
-   public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
+   public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
       if (value == null || value.toString() == null ) {
-         return _colDef.getColumnName() + " IS NULL";
+    	  return new IsNullWhereClausePart(_colDef);
      } else {
-         return "";
+         return new EmptyWhereClausePart();
      }
    }
  

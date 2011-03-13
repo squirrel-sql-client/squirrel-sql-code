@@ -38,6 +38,9 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.ParameterWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 /**
@@ -363,17 +366,16 @@ public class DataTypeBoolean extends BaseDataTypeComponent implements IDataTypeC
 	 * label so that its output is of the form: "columnName = value" or "columnName is null" or whatever is
 	 * appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
+	public IWhereClausePart getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 		{
-			return _colDef.getColumnName() + " IS NULL";
+			return new IsNullWhereClausePart(_colDef);
 
 		}
 		else
 		{
-			String bitValue = DatabaseSpecificBooleanValue.getBooleanValue(value.toString(), md);
-			return _colDef.getColumnName() + "=" + bitValue;
+			return new ParameterWhereClausePart(_colDef, value, this);
 		}
 	}
 
