@@ -71,7 +71,7 @@
 				<plugin>
 					<groupId>net.sf.squirrel-sql</groupId>
 					<artifactId>squirrelsql-dependency-plugin</artifactId>
-					<version>1.0.7</version>
+					<version>1.0.8-SNAPSHOT</version>
 					<executions>
 						<execution>
 							<id>application-libraries</id>
@@ -93,12 +93,15 @@
 									<includedArtifact>com.fifesoft:autocomplete</includedArtifact>
 									<includedArtifact>axis:axis</includedArtifact>
 									<includedArtifact>axis:axis-jaxrpc</includedArtifact>
+									<includedArtifact>axis:axis-saaj</includedArtifact>
+									<includedArtifact>axis:axis-wsdl4j</includedArtifact>
 									<includedArtifact>cglib:cglib</includedArtifact>
 									<includedArtifact>com.fifesoft.rtext:common</includedArtifact>
 									<includedArtifact>commons-cli:commons-cli</includedArtifact>
 									<includedArtifact>commons-codec:commons-codec</includedArtifact>
 									<includedArtifact>commons-collections:commons-collections</includedArtifact>
 									<includedArtifact>commons-httpclient:commons-httpclient</includedArtifact>
+									<includedArtifact>commons-lang:commons-lang</includedArtifact>
 									<includedArtifact>commons-logging:commons-logging</includedArtifact>
 									<includedArtifact>com.jgoodies:forms</includedArtifact>
 									<includedArtifact>net.sf.squirrel-sql:fw</includedArtifact>
@@ -134,6 +137,7 @@
 									<includedArtifact>org.swinglabs:swing-worker</includedArtifact>
 									<includedArtifact>com.ibm.icu:icu4j</includedArtifact>
 									<includedArtifact>org.mod4j.org.eclipse:osgi</includedArtifact>
+									<includedArtifact>xml-apis:xml-apis</includedArtifact>
 								</includedArtifacts>
 								<outputDirectory>${staging.dir}/lib</outputDirectory>
 							</configuration>
