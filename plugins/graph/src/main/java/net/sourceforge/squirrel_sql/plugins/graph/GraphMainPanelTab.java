@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.*;
 import java.awt.*;
 
 
@@ -12,24 +13,49 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(GraphMainPanelTab.class);
 
-	private GraphDesktopController _desktopController;
+	private GraphPanelController _panelController;
 	// i18n[graph.newGraph=New table graph]
-	private String _title = s_stringMgr.getString("graph.newGraph");
 
-   public GraphMainPanelTab(GraphDesktopController desktopController)
+   private JPanel _tabComponent;
+
+   private JLabel _lblTitle;
+
+   public GraphMainPanelTab(GraphPanelController panelController, GraphPlugin plugin)
    {
-      _desktopController = desktopController;
+      _panelController = panelController;
+      _tabComponent = new JPanel(new BorderLayout(3,0));
+      _tabComponent.setOpaque(false);
+
+      _lblTitle = new JLabel(s_stringMgr.getString("graph.newGraph"));
+      _lblTitle.setOpaque(false);
+
+      _tabComponent.add(_lblTitle, BorderLayout.CENTER);
+      ImageIcon icon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.TO_WINDOW);
+
+      JButton btnToWindow = new JButton(icon);
+      btnToWindow.setBorder(BorderFactory.createEmptyBorder());
+      btnToWindow.setOpaque(false);
+      _tabComponent.add(btnToWindow, BorderLayout.EAST);
    }
 
 
    protected void refreshComponent()
    {
-      _desktopController.repaint();
+      _panelController.repaint();
    }
 
    public String getTitle()
    {
-      return _title;
+      return _lblTitle.getText();
+   }
+
+
+   @Override
+   public Component getTabComponent()
+   {
+      // return _tabComponent;
+      return null;
+
    }
 
    public String getHint()
@@ -40,12 +66,11 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 
    public Component getComponent()
    {
-      return _desktopController.getGraphPanel();
+      return _panelController.getGraphPanel();
    }
 
    public void setTitle(String title)
    {
-      _title = title;      
+      _lblTitle.setText(title);
    }
-
 }

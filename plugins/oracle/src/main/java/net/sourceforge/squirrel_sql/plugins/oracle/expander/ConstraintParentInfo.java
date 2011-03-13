@@ -29,8 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class ConstraintParentInfo extends DatabaseObjectInfo
 {
-	private static final long serialVersionUID = 1L;
-	
 	private final IDatabaseObjectInfo _tableInfo;
 
 	public ConstraintParentInfo(IDatabaseObjectInfo tableInfo, String schema,

@@ -3,14 +3,15 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
 
 
-public class ColumnTextArea extends JTextArea implements DndColumn
+public class ColumnTextArea extends JTextArea implements DndColumn, IColumnTextArea
 {
    private TableToolTipProvider _toolTipProvider;
    private DndHandler _dndHandler;
+   private ColumnInfoModel _columnInfoModel;
 
    public ColumnTextArea(TableToolTipProvider toolTipProvider, DndCallback dndCallback, ISession session)
    {
@@ -26,15 +27,34 @@ public class ColumnTextArea extends JTextArea implements DndColumn
 
    /**
     * Not named setColumns() because it would be an overload.
-    * @param columnInfos
+    * @param columnInfoModel
     */
-   public void setGraphColumns(ColumnInfo[] columnInfos)
+   public void setColumnInfoModel(ColumnInfoModel columnInfoModel)
+   {
+      _columnInfoModel = columnInfoModel;
+
+      _columnInfoModel.addColumnInfoModelListener(new ColumnInfoModelListener()
+      {
+         @Override
+         public void columnInfosChanged(TableFramesModelChangeType changeType)
+         {
+            if (TableFramesModelChangeType.COLUMN_SORTING == changeType)
+            {
+               initColumnInfos();
+            }
+         }
+      });
+
+      initColumnInfos();
+   }
+
+   private void initColumnInfos()
    {
       StringBuffer sb = new StringBuffer();
-      for (int i = 0; i < columnInfos.length; i++)
+      for (int i = 0; i < _columnInfoModel.getColCount(); i++)
       {
-         columnInfos[i].setIndex(i);
-         sb.append(columnInfos[i]).append('\n');
+         //_columnInfoModel.getOrderedColAt(i).setIndex(i);
+         sb.append(_columnInfoModel.getOrderedColAt(i)).append('\n');
       }
       setText(sb.toString());
    }
@@ -47,5 +67,36 @@ public class ColumnTextArea extends JTextArea implements DndColumn
    public void setDndEvent(DndEvent dndEvent)
    {
       _dndHandler.setDndEvent(dndEvent);
+   }
+
+   @Override
+   public Point getLocationInColumnTextArea()
+   {
+      return new Point(0,0);
+   }
+
+   @Override
+   public int getColumnHeight()
+   {
+      FontMetrics fm = getGraphics().getFontMetrics(getFont());
+      return fm.getHeight();
+   }
+
+   @Override
+   public int getMaxWidth()
+   {
+      int maxSize = 0;
+      FontMetrics fm = getFontMetrics(getFont());
+
+      for (int i = 0; i < _columnInfoModel.getColCount(); i++)
+      {
+         int buf = fm.stringWidth(_columnInfoModel.getColAt(i).toString());
+         if(maxSize < buf)
+         {
+            maxSize = buf;
+         }
+      }
+
+      return maxSize;
    }
 }

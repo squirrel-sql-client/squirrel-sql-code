@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
@@ -12,7 +13,7 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 
-public class HQLEntryPanelManager extends EntryPanelManagerBase
+public class HQLEntryPanelManager extends EntryPanelManager
 {
 
    private static final StringManager s_stringMgr =

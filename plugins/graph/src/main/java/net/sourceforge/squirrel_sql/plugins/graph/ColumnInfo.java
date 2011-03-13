@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.QueryDataXmlBean;
 
 
 public class ColumnInfo extends Object
@@ -20,6 +21,8 @@ public class ColumnInfo extends Object
 
    private String _toString;
 
+   private QueryData _queryData = new QueryData();
+   private ColumnInfoModelEventDispatcher _columnInfoModelEventDispatcher;
 
    public ColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable)
    {
@@ -37,6 +40,7 @@ public class ColumnInfo extends Object
    public ColumnInfo(ColumnInfoXmlBean xmlBean)
    {
       this(xmlBean.getColumnName(), xmlBean.getColumnType(), xmlBean.getColumnSize(), xmlBean.getDecimalDigits(), xmlBean.isNullable());
+      _queryData = new QueryData(xmlBean.getQueryDataXmlBean());
       _index = xmlBean.getIndex();
       if(xmlBean.isPrimaryKey())
       {
@@ -64,6 +68,15 @@ public class ColumnInfo extends Object
       ret.setImportedColumn(_importedColumn);
       ret.setConstraintName(_constraintName);
       ret.setNonDbConstraint(_nonDbConstraint);
+
+      QueryDataXmlBean queryDataXmlBean = new QueryDataXmlBean();
+      queryDataXmlBean.setOperatorIndex(_queryData.getOperator().getIndex());
+      queryDataXmlBean.setAggregateFunctionIndex(_queryData.getAggregateFunction().getIndex());
+      queryDataXmlBean.setFilterValue(_queryData.getFilterValue());
+      queryDataXmlBean.setInSelectClause(_queryData.isInSelectClause());
+
+      ret.setQueryDataXmlBean(queryDataXmlBean);
+
 
       return ret;
    }
@@ -154,5 +167,31 @@ public class ColumnInfo extends Object
    public boolean isNonDbConstraint()
    {
       return _nonDbConstraint;
+   }
+
+
+   public QueryData getQueryData()
+   {
+      return _queryData;
+   }
+
+   public String getColumnName()
+   {
+      return _columnName;
+   }
+
+   public void setQueryData(QueryData queryData)
+   {
+      _queryData = queryData;
+   }
+
+   public void setColumnInfoModelEventDispatcher(ColumnInfoModelEventDispatcher columnInfoModelEventDispatcher)
+   {
+      _columnInfoModelEventDispatcher = columnInfoModelEventDispatcher;
+   }
+
+   public ColumnInfoModelEventDispatcher getColumnInfoModelEventDispatcher()
+   {
+      return _columnInfoModelEventDispatcher;
    }
 }

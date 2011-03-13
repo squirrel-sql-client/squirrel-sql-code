@@ -34,6 +34,13 @@ public interface IMainPanelTab {
 	 */
 	String getTitle();
 
+   /**
+    *
+    * @return if != null the return component is displayed instead of the title
+    */
+   Component getTabComponent();
+
+
 	/**
 	 * Return the hint for the tab.
 	 *

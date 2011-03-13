@@ -26,6 +26,12 @@ public class Zoomer
 
    public void setEnabled(boolean b)
    {
+      if(_enabled == b)
+      {
+         // This is to keep _oldZoom form being wrongly replaced
+         return;
+      }
+
       _enabled = b;
 
       if(_enabled)
@@ -36,17 +42,12 @@ public class Zoomer
       {
          setZoom(1, false);
       }
-
-      ZoomerListener[] listeners = _listeners.toArray(new ZoomerListener[_listeners.size()]);
-      for (int i = 0; i < listeners.length; i++)
-      {
-         listeners[i].zoomEnabled(b);
-      }
    }
 
    public void setZoom(double zoom, boolean adjusting)
    {
       _oldZoom = _zoom;
+
       _zoom = zoom;
 
       ZoomerListener[] listeners = _listeners.toArray(new ZoomerListener[_listeners.size()]);

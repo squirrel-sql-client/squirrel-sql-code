@@ -24,8 +24,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class ForeignKeyInfo extends DatabaseObjectInfo
 {
-    static final long serialVersionUID = -4223544514849570902L;
-    
 	/**
 	 * JavaBean property names for this class.
 	 */

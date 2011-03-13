@@ -45,18 +45,30 @@ public class DndHandler
          @Override
          public void mousePressed(MouseEvent e)
          {
-            if (1 == e.getClickCount() && false == e.isPopupTrigger() && 0 != (e.getModifiers() & MouseEvent.CTRL_MASK) )
-            {
-               _lastExportedMouseEvent = e;
-               comp.getTransferHandler().exportAsDrag(comp, e, DnDConstants.ACTION_COPY);
-            }
-            else if(false == _dndMessageShown && 1 == e.getClickCount() && false == e.isPopupTrigger())
-            {
-               session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("graph.DndHandler.dndMessage"));   
-               _dndMessageShown = true;
-            }
+            onMousePressed(e, comp, session);
          }
       });
+   }
+
+   private void onMousePressed(MouseEvent e, JComponent comp, ISession session)
+   {
+      if (1 == e.getClickCount() && false == e.isPopupTrigger() && 0 != (e.getModifiers() & MouseEvent.CTRL_MASK) )
+      {
+         _lastExportedMouseEvent = e;
+         if(comp instanceof DndColumn)
+         {
+            Point lp = ((DndColumn)comp).getLocationInColumnTextArea();
+            _lastExportedMouseEvent.translatePoint(lp.x, lp.y);
+         }
+
+
+         comp.getTransferHandler().exportAsDrag(comp, e, DnDConstants.ACTION_COPY);
+      }
+      else if(false == _dndMessageShown && 1 == e.getClickCount() && false == e.isPopupTrigger())
+      {
+         session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("graph.DndHandler.dndMessage"));
+         _dndMessageShown = true;
+      }
    }
 
    private TransferHandler createTransferHandler()
@@ -66,6 +78,13 @@ public class DndHandler
          public boolean importData(TransferSupport support)
          {
             _dropPoint = support.getDropLocation().getDropPoint();
+
+            Component comp = support.getComponent();
+            if (comp instanceof DndColumn)
+            {
+               Point lp = ((DndColumn) comp).getLocationInColumnTextArea();
+               _dropPoint.translate(lp.x, lp.y);
+            }
             return super.importData(support);
          }
 
@@ -88,7 +107,15 @@ public class DndHandler
             if(c instanceof DndColumn)
             {
                DndColumn dndCol = (DndColumn) c;
-               return new DataHandler(dndCol.getDndEvent(), DataFlavor.javaJVMLocalObjectMimeType);
+               DndEvent dndEvent = dndCol.getDndEvent();
+               if (null == dndEvent)
+               {
+                  return super.createTransferable(c);
+               }
+               else
+               {
+                  return new DataHandler(dndEvent, DataFlavor.javaJVMLocalObjectMimeType);
+               }
             }
             else
             {
@@ -100,6 +127,12 @@ public class DndHandler
 
    public DndEvent getDndEvent()
    {
+      if (null == _lastExportedMouseEvent)
+      {
+         // happens when text copy is done within a table frames text area
+         return null;
+      }
+
       return _dndCallback.createDndEvent(_lastExportedMouseEvent);
    }
 

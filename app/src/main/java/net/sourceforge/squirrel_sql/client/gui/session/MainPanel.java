@@ -186,9 +186,11 @@ public class MainPanel extends JPanel
 			throw new IllegalArgumentException("Null IMainPanelTab passed");
 		}
 		tab.setSession(_session);
-		final String title = tab.getTitle();
-		int idx = _tabPnl.indexOfTab(title);
-		if (idx != -1)
+
+      int idx = getTabIndex(tab);
+
+
+      if (idx != -1)
 		{
 			_tabPnl.removeTabAt(idx);
 			_tabs.set(idx, tab);
@@ -198,7 +200,13 @@ public class MainPanel extends JPanel
 			idx = _tabPnl.getTabCount();
 			_tabs.add(tab);
 		}
-		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+
+      _tabPnl.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
+      if(null != tab.getTabComponent())
+      {
+         _tabPnl.setTabComponentAt(idx, tab.getTabComponent());
+      }
+
 
       int prefIx = Preferences.userRoot().getInt(PREFS_KEY_SELECTED_TAB_IX, ITabIndexes.OBJECT_TREE_TAB);
       if(idx == prefIx)
@@ -237,15 +245,22 @@ public class MainPanel extends JPanel
 		}
 
 		tab.setSession(_session);
-		final String title = tab.getTitle();
-		int checkIdx = _tabPnl.indexOfTab(title);
-		if (checkIdx != -1)
+
+      int checkIdx = getTabIndex(tab);
+
+
+      if (checkIdx != -1)
 		{
 			throw new IllegalArgumentException("A tab with the same title already exists at index " + checkIdx);
 		}
 
 		_tabs.add(idx, tab);
-		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
+		_tabPnl.insertTab(tab.getTitle(), null, tab.getComponent(), tab.getHint(), idx);
+
+      if(null != tab.getTabComponent())
+      {
+         _tabPnl.setTabComponentAt(idx, tab.getTabComponent());
+      }
 
       if(selectInsertedTab)
       {
@@ -253,15 +268,28 @@ public class MainPanel extends JPanel
       }
    }
 
-	public int removeMainPanelTab(IMainPanelTab tab)
+   private int getTabIndex(IMainPanelTab tab)
+   {
+      int checkIdx;
+      if(null == tab.getTabComponent())
+      {
+         checkIdx = _tabPnl.indexOfTab(tab.getTitle());
+      }
+      else
+      {
+         checkIdx = _tabPnl.indexOfTabComponent(tab.getTabComponent());
+      }
+      return checkIdx;
+   }
+
+   public int removeMainPanelTab(IMainPanelTab tab)
 	{
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("Null IMainPanelTab passed");
 		}
 
-		final String title = tab.getTitle();
-		int idx = _tabPnl.indexOfTab(title);
+		int idx = getTabIndex(tab);
 		if (idx == -1)
 		{
 			return idx;

@@ -262,6 +262,12 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       return s_stringMgr.getString("HQLTabController.title");
    }
 
+   @Override
+   public Component getTabComponent()
+   {
+      return null;
+   }
+
    public String getHint()
    {
       // i18n[HibernateTabController.hint=Support for Hibernate]

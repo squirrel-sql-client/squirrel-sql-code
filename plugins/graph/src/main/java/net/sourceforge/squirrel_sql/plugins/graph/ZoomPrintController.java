@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class ZoomPrintController
 {
-   Zoomer _zoomer;
+   private Zoomer _zoomer;
    private boolean _dontReactToSliderChanges = false;
    private ISession _session;
    private FormatController _formatController;
@@ -30,7 +30,7 @@ public class ZoomPrintController
    private GraphPlugin _plugin;
    private GraphPrintable _printable;
 
-   ZoomPrintPanel _panel = null;
+   private ZoomPrintPanel _panel = null;
 
 
    public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphPrintable printable, ISession session, GraphPlugin plugin)
@@ -301,8 +301,6 @@ public class ZoomPrintController
       _session = session;
       _zoomer = new Zoomer(zoomerXmlBean);
 
-      _panel.setVisible(false);
-
       _panel.sldZoom.addChangeListener(new ChangeListener()
       {
          public void stateChanged(ChangeEvent e)
@@ -347,14 +345,13 @@ public class ZoomPrintController
       _zoomer.setZoom(_panel.sldZoom.getValue() / 100.0, _panel.sldZoom.getValueIsAdjusting());
    }
 
-   public ZoomPrintPanel getPanel()
+   public ZoomPrintPanel getBottomPanel()
    {
       return _panel;
    }
 
-   public void setVisible(boolean b)
+   public void activate(boolean b)
    {
-      _panel.setVisible(b);
       _zoomer.setEnabled(b);
       fireEdgesGraphComponentChanged(b);
 

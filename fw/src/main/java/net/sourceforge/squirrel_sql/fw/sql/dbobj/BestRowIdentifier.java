@@ -28,9 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class BestRowIdentifier extends DatabaseObjectInfo
 {
-	static final long serialVersionUID = 7587093034289367642L;
-    
-    final private int _scope;
+   final private int _scope;
 	final private String _colName;
 	final private short _sqlDataType;
 	final private String _typeName;

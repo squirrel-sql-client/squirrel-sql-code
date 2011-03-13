@@ -38,7 +38,7 @@ public class AddToGraphAction extends SquirrelAction implements ISessionAction
       {
          ObjectTreeNode[] selectedNodes = _session.getSessionSheet().getObjectTreePanel().getSelectedNodes();
 
-         Point[] refCascadeIndent = new Point[1];
+         Positioner positioner = new Positioner();
          GraphController toAddTo = null;
 
          for (int i = 0; i < selectedNodes.length; i++)
@@ -72,7 +72,7 @@ public class AddToGraphAction extends SquirrelAction implements ISessionAction
                   }
                }
 
-               toAddTo.addTable(selectedNodes[i], refCascadeIndent);
+               toAddTo.addTable(selectedNodes[i], positioner);
             }
 
          }

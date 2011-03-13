@@ -9,6 +9,7 @@ public class ConstraintDataXmlBean
    private boolean nonDbConstraint;
    private ColumnInfoXmlBean[] columnInfoXmlBeans;
    private boolean _showThisConstraintName;
+   private ConstraintQueryDataXmlBean _constraintQueryDataXmlBean;
 
    public String getPkTableName()
    {
@@ -68,5 +69,15 @@ public class ConstraintDataXmlBean
    public void setShowThisConstraintName(boolean showThisConstraintName)
    {
       _showThisConstraintName = showThisConstraintName;
+   }
+
+   public void setConstraintQueryDataXmlBean(ConstraintQueryDataXmlBean constraintQueryDataXmlBean)
+   {
+      _constraintQueryDataXmlBean = constraintQueryDataXmlBean;
+   }
+
+   public ConstraintQueryDataXmlBean getConstraintQueryDataXmlBean()
+   {
+      return _constraintQueryDataXmlBean;
    }
 }

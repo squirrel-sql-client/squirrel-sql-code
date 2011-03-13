@@ -19,59 +19,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SchemasTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnPriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ExportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ImportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.IndexesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PrimaryKeyTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowCountTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.FilterMatcher;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -86,6 +42,21 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.activation.DataHandler;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This is the panel for the Object Tree tab.
  *
@@ -93,9 +64,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 {
-
-   private static final long serialVersionUID = -2257109602127706539L;
-
    /** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreePanel.class);
@@ -110,8 +78,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	private ObjectTree _tree;
 
 	/** Split pane between the object tree and the data panel. */
-	private final JSplitPane _splitPane =
-		new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	private final JSplitPane _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	/**
 	 * Empty data panel. Used if the object selected in the object
@@ -151,7 +118,6 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	public ObjectTreePanel(ISession session)
 	{
-		super();
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
@@ -164,16 +130,32 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
       createGUI();
 
-//      session.getApplication().getThreadPool().addTask(new Runnable()
-//      {
-//         public void run()
-//         {
-            doBackgroundInitializations();
-//         }
-//      });
+      init();
+
+      initDnD();
+
    }
 
-   private void doBackgroundInitializations()
+   private void initDnD()
+   {
+      _tree.setTransferHandler(new TransferHandler("DragedTreeNode")
+      {
+         @Override
+         protected Transferable createTransferable(JComponent c)
+         {
+            return new DataHandler(new ObjectTreeDndTransfer(getSelectedTables()), DataFlavor.javaJVMLocalObjectMimeType);
+         }
+
+         public int getSourceActions(JComponent c)
+         {
+            return COPY;
+         }
+
+      });
+      _tree.setDragEnabled(true);
+   }
+
+   private void init()
    {
       try
       {
@@ -925,18 +907,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
-//		final JScrollPane sp = new JScrollPane();
-//		sp.setBorder(BorderFactory.createEmptyBorder());
-//		sp.setViewportView(_tree);
-//		sp.setPreferredSize(new Dimension(200, 200));
 
 		_splitPane.add(new LeftPanel(), JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
-
-//		_tree.addTreeSelectionListener(new ObjectTreeSelectionListener());
-//		_objTreeSelLis = new ObjectTreeSelectionListener();
-//		_tree.addTreeSelectionListener(_objTreeSelLis);
 
 		_tree.setSelectionRow(0);
 	}

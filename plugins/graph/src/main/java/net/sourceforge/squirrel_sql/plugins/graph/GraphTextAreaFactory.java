@@ -4,38 +4,57 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.InputEvent;
 
 public class GraphTextAreaFactory
 {
+   public static final Color TEXTAREA_BG = new Color(255,255,204);
+
    private ColumnTextArea _txtColumns;
    private ZoomableColumnTextArea _txtZoomColumns;
+   private QueryTextArea _txtQueryTextArea;
 
-   public GraphTextAreaFactory(TableToolTipProvider toolTipProvider, Zoomer zoomer, DndCallback dndCallback, ISession session)
+   public GraphTextAreaFactory(String tableName, ISession session, GraphPlugin plugin, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback)
    {
       _txtColumns = new ColumnTextArea(toolTipProvider, dndCallback, session);
       _txtColumns.setEditable(false);
-      _txtColumns.setBackground(new Color(255,255,204));
+      _txtColumns.setBackground(TEXTAREA_BG);
 
-      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, zoomer, dndCallback, session);
-      _txtZoomColumns.setBackground(new Color(255,255,204));
+      _txtZoomColumns = new ZoomableColumnTextArea(toolTipProvider, modeManager.getZoomer(), dndCallback, session);
+      _txtZoomColumns.setBackground(TEXTAREA_BG);
 
+      _txtQueryTextArea = new QueryTextArea(tableName, plugin, dndCallback, session);
+   }
+
+   public int getColumnHeight()
+   {
+      JComponent bestReadyComponent = getBestReadyComponent();
+      if(null == bestReadyComponent)
+      {
+         return 0;
+      }
+
+      return ((IColumnTextArea)bestReadyComponent).getColumnHeight();
    }
 
 
-   public JComponent getComponent(boolean zoomEnabled)
+   public JComponent getComponent(Mode mode)
    {
-      if(zoomEnabled)
+      if(Mode.ZOOM_PRINT == mode)
       {
          return _txtZoomColumns;
       }
-      else
+      else if(Mode.DEFAULT == mode)
       {
          return _txtColumns;
+      }
+      else if(Mode.QUERY_BUILDER == mode)
+      {
+         return _txtQueryTextArea;
+      }
+      else
+      {
+         throw new IllegalArgumentException("Unknown mode: " + mode);
       }
    }
 
@@ -50,15 +69,20 @@ public class GraphTextAreaFactory
    public JComponent getBestReadyComponent()
    {
 
-      if( getComponent(true).isShowing() ||
-          (getComponent(true).isVisible() && null != getComponent(true).getGraphics())  )
+      if( getComponent(Mode.DEFAULT).isShowing() ||
+          (getComponent(Mode.DEFAULT).isVisible() && null != getComponent(Mode.DEFAULT).getGraphics())  )
       {
-         return getComponent(true);
+         return getComponent(Mode.DEFAULT);
       }
-      else if( getComponent(false).isShowing() ||
-               (getComponent(false).isVisible() && null != getComponent(false).getGraphics()) )
+      else if( getComponent(Mode.ZOOM_PRINT).isShowing() ||
+               (getComponent(Mode.ZOOM_PRINT).isVisible() && null != getComponent(Mode.ZOOM_PRINT).getGraphics()) )
       {
-         return getComponent(false);
+         return getComponent(Mode.ZOOM_PRINT);
+      }
+      else if( getComponent(Mode.QUERY_BUILDER).isShowing() ||
+               (getComponent(Mode.QUERY_BUILDER).isVisible() && null != getComponent(Mode.QUERY_BUILDER).getGraphics()) )
+      {
+         return getComponent(Mode.QUERY_BUILDER);
       }
       else
       {
@@ -67,35 +91,28 @@ public class GraphTextAreaFactory
    }
 
 
-   public Graphics getGraphics()
+   public void setColumnInfoModel(ColumnInfoModel columnInfoModel)
    {
-      JComponent bestReadyComponent = getBestReadyComponent();
-      if(null == bestReadyComponent)
-      {
-         return null;
-      }
-      return bestReadyComponent.getGraphics();
-   }
-
-   public Font getFont()
-   {
-      JComponent bestReadyComponent = getBestReadyComponent();
-      if(null == bestReadyComponent)
-      {
-         return null;
-      }
-      return bestReadyComponent.getGraphics().getFont();
-   }
-
-   public void setColumns(ColumnInfo[] columnInfos)
-   {
-      _txtColumns.setGraphColumns(columnInfos);
-      _txtZoomColumns.setGraphColumns(columnInfos);
+      _txtColumns.setColumnInfoModel(columnInfoModel);
+      _txtZoomColumns.setColumnInfoModel(columnInfoModel);
+      _txtQueryTextArea.setColumnInfoModel(columnInfoModel);
    }
 
    public void addMouseListener(MouseListener ml)
    {
       _txtColumns.addMouseListener(ml);
       _txtZoomColumns.addMouseListener(ml);
+      _txtQueryTextArea.addQueryAreaMouseListener(ml);
+   }
+
+   public int getMaxWidht()
+   {
+      JComponent bestReadyComponent = getBestReadyComponent();
+      if(null == bestReadyComponent)
+      {
+         return 0;
+      }
+
+      return ((IColumnTextArea)bestReadyComponent).getMaxWidth();
    }
 }

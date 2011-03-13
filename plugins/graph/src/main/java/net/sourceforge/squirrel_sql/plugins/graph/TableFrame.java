@@ -32,13 +32,14 @@ public class TableFrame extends JInternalFrame
    GraphTextAreaFactory txtColumsFactory;
    JScrollPane scrollPane;
    private MyUI _myUI;
-   private Zoomer _zoomer;
+   private ModeManager _modeManager;
+   private ModeManagerListener _modeManagerListener;
    private ZoomerListener _zoomerListener;
 
 
-   public TableFrame(String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, Zoomer zoomer, DndCallback dndCallback, ISession session)
+   public TableFrame(ISession session, GraphPlugin plugin, String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback)
    {
-      _zoomer = zoomer;
+      _modeManager = modeManager;
 
       scrollPane = new JScrollPane();
       scrollPane.setBorder(null);
@@ -60,12 +61,12 @@ public class TableFrame extends JInternalFrame
       _myUI = new MyUI(this);
       setUI(_myUI);
 
-      txtColumsFactory = new GraphTextAreaFactory(toolTipProvider, zoomer, dndCallback, session);
-      scrollPane.setViewportView(txtColumsFactory.getComponent(zoomer.isEnabled()));
+      txtColumsFactory = new GraphTextAreaFactory(tableName, session, plugin, toolTipProvider, modeManager, dndCallback);
+      scrollPane.setViewportView(txtColumsFactory.getComponent(modeManager.getMode()));
       
       if(null != xmlBean)
       {
-         double zoom = _zoomer.getZoom();
+         double zoom = _modeManager.getZoomer().getZoom();
 
          Rectangle r = new Rectangle();
          r.x = (int)(zoom*xmlBean.getX() + 0.5);
@@ -73,7 +74,7 @@ public class TableFrame extends JInternalFrame
          r.width = (int)(zoom*xmlBean.getWidht() + 0.5);
          r.height = (int)(zoom*xmlBean.getHeight() + 0.5);
          setBounds(r);
-         setClosable(!_zoomer.isEnabled());
+         setClosable(Mode.ZOOM_PRINT != _modeManager.getMode());
       }
 
       _zoomerListener = new ZoomerListener()
@@ -82,13 +83,18 @@ public class TableFrame extends JInternalFrame
          {
          }
 
-         public void zoomEnabled(boolean b)
-         {
-            onZoomEnabled(b);
-         }
 
          public void setHideScrollBars(boolean b)
          {
+         }
+      };
+
+      _modeManagerListener = new ModeManagerListener()
+      {
+         @Override
+         public void modeChanged(Mode newMode)
+         {
+            onModeChanged(newMode);
          }
       };
       
@@ -97,16 +103,18 @@ public class TableFrame extends JInternalFrame
 
    public void setVisible(boolean b)
    {
-      if (null != _zoomer)
+      if (null != _modeManager)
       {
          if (b)
          {
-            _zoomer.addZoomListener(_zoomerListener);
-            onZoomEnabled(_zoomer.isEnabled());
+            _modeManager.getZoomer().addZoomListener(_zoomerListener);
+            _modeManager.addModeManagerListener(_modeManagerListener);
+            onModeChanged(_modeManager.getMode());
          }
          else
          {
-            _zoomer.removeZoomListener(_zoomerListener);
+            _modeManager.getZoomer().removeZoomListener(_zoomerListener);
+            _modeManager.removeModeManagerListener(_modeManagerListener);
          }
       }
 
@@ -116,10 +124,10 @@ public class TableFrame extends JInternalFrame
 
 
 
-   private void onZoomEnabled(boolean b)
+   private void onModeChanged(Mode newMode)
    {
-      scrollPane.setViewportView(txtColumsFactory.getComponent(_zoomer.isEnabled()));
-      setClosable(!b);
+      scrollPane.setViewportView(txtColumsFactory.getComponent(_modeManager.getMode()));
+      setClosable(Mode.ZOOM_PRINT != newMode);
    }
 
    public TableFrame.MyTitlePaneUI getTitlePane()
@@ -131,7 +139,7 @@ public class TableFrame extends JInternalFrame
    {
       TableFrameXmlBean ret = new TableFrameXmlBean();
 
-      double zoom = _zoomer.getZoom();
+      double zoom = _modeManager.getZoomer().getZoom();
 
       Rectangle bounds = getBounds();
       ret.setX((int)(bounds.x/zoom + 0.5));
@@ -256,7 +264,7 @@ public class TableFrame extends JInternalFrame
             // Center text vertically.
             FontMetrics fm = g.getFontMetrics();
 
-            double s = _zoomer.getZoom();
+            double s = _modeManager.getZoomer().getZoom();
             int baseline = ((int)(getHeight()/s) + fm.getAscent() - fm.getLeading() - fm.getDescent()) / 2;
 
             int titleX;
@@ -272,14 +280,14 @@ public class TableFrame extends JInternalFrame
 
             if (r.x == 0) r.x = frame.getWidth() - frame.getInsets().right;
             titleX = menuBar.getX() + menuBar.getWidth() + 2;
-            titleW = (int)(  (r.x - titleX - 3)/_zoomer.getZoom() + 0.5  );
+            titleW = (int)(  (r.x - titleX - 3)/ _modeManager.getZoomer().getZoom() + 0.5  );
             title = getTitle(frame.getTitle(), fm, titleW);
 
             Graphics2D g2d = (Graphics2D) g;
             AffineTransform origTrans = g2d.getTransform();
 
             AffineTransform at = new AffineTransform(origTrans);
-            at.scale(_zoomer.getZoom(), _zoomer.getZoom());
+            at.scale(_modeManager.getZoomer().getZoom(), _modeManager.getZoomer().getZoom());
             g2d.setTransform(at);
 
             g.drawString(title, titleX, baseline);
@@ -301,7 +309,7 @@ public class TableFrame extends JInternalFrame
          Dimension ret = super.getPreferredSize();
 
 
-         ret.height = (int) (UNZOOMED_PREF_HEIGHT * _zoomer.getZoom() + 0.5);
+         ret.height = (int) (UNZOOMED_PREF_HEIGHT * _modeManager.getZoomer().getZoom() + 0.5);
          return ret;
       }
 
@@ -337,8 +345,8 @@ public class TableFrame extends JInternalFrame
          public Dimension minimumLayoutSize(Container c)
          {
             Dimension ret = super.minimumLayoutSize(c);
-            ret.width *= _zoomer.getZoom();
-            ret.height *= _zoomer.getZoom();
+            ret.width *= _modeManager.getZoomer().getZoom();
+            ret.height *= _modeManager.getZoomer().getZoom();
             return ret;
          }
       }

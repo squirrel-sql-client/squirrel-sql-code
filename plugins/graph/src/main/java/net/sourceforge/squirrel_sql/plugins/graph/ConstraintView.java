@@ -46,6 +46,7 @@ public class ConstraintView implements GraphComponent
    private TableFrameController _fkFrameOriginatingFrom;
    private TableFrameController _pkFramePointingTo;
    private Vector<ConstraintViewListener> _constraintViewListeners = new Vector<ConstraintViewListener>();
+   private ConstraintIconHandler _constraintIconHandler = new ConstraintIconHandler();
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
    {
@@ -331,11 +332,13 @@ public class ConstraintView implements GraphComponent
          paintArrow(g, linesToArrow[i].getEnd().x, linesToArrow[i].getEnd().y, linesToArrow[i].getBegin().x, linesToArrow[i].getBegin().y);
       }
 
+      GraphLine mainLine = _constraintGraph.getMainLine();
       if(_desktopController.isShowConstraintNames() || _constraintData.isShowThisConstraintName())
       {
-         GraphLine mainLine = _constraintGraph.getMainLine();
          drawConstraintNameOnLine(g, mainLine);
       }
+
+      _constraintIconHandler.paintJoinIcon(g, mainLine, _fkFrameOriginatingFrom, _pkFramePointingTo, _desktopController, _constraintData);
 
       Vector<FoldingPoint> foldingPoints = _constraintGraph.getFoldingPoints();
 
@@ -365,7 +368,7 @@ public class ConstraintView implements GraphComponent
 //            line = new GraphLine(line, zoom);
 //         }
 
-         int lineLen = (int) Math.sqrt((line.getBegin().x - line.getEnd().x) * (line.getBegin().x - line.getEnd().x) + (line.getBegin().y - line.getEnd().y) * (line.getBegin().y - line.getEnd().y));
+         int lineLen = getLineLen(line);
 
          FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
          while (lineLen < (fontMetrics.stringWidth(drawText.toString()) * zoom + 0.5))
@@ -434,6 +437,11 @@ public class ConstraintView implements GraphComponent
       {
          g2d.setTransform(origTrans);
       }
+   }
+
+   private int getLineLen(GraphLine line)
+   {
+      return (int) Math.sqrt((line.getBegin().x - line.getEnd().x) * (line.getBegin().x - line.getEnd().x) + (line.getBegin().y - line.getEnd().y) * (line.getBegin().y - line.getEnd().y));
    }
 
    public Dimension getRequiredSize()
@@ -592,8 +600,16 @@ public class ConstraintView implements GraphComponent
 
    }
 
-   public boolean hitMe(MouseEvent e)
+   public ConstraintHit hitMe(MouseEvent e)
    {
+
+      GraphLine mainLine = _constraintGraph.getMainLine();
+      if(_constraintIconHandler.hitMe(e, mainLine, _fkFrameOriginatingFrom, _pkFramePointingTo, _desktopController, _constraintData))
+      {
+         return ConstraintHit.JOIN_ICON;
+      }
+
+
       Vector<FoldingPoint> foldingPoints = _constraintGraph.getFoldingPoints();
 
 
@@ -605,7 +621,7 @@ public class ConstraintView implements GraphComponent
             && Math.abs(e.getPoint().y - foldingPoint.getZoomedPoint().y) < hitDist)
          {
             _constraintGraph.setHitFoldingPoint(foldingPoint);
-            return true;
+            return ConstraintHit.LINE;
          }
       }
 
@@ -618,11 +634,11 @@ public class ConstraintView implements GraphComponent
          if (pg.contains(e.getPoint()))
          {
             _constraintGraph.setHitConnectLine(lines[i]);
-            return true;
+            return ConstraintHit.LINE;
          }
       }
 
-      return false;
+      return ConstraintHit.NONE;
    }
 
    public void setSelected(boolean b)
