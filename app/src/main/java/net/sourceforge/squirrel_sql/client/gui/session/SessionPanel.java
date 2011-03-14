@@ -508,8 +508,13 @@ public class SessionPanel extends JPanel
 	{
 		_mainPanelFactory = panelFactory;
 	}
-   
-   
+
+   public int getTabCount()
+   {
+      return _mainTabPane.getTabbedPane().getTabCount();
+   }
+
+
    private class MyToolBar extends ToolBar
    {
       private static final long serialVersionUID = 1L;

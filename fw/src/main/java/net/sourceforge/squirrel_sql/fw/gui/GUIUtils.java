@@ -456,4 +456,29 @@ public class GUIUtils
        }
        return result.toString();
    }
+
+   public static Point getScreenLocationFor(Component component)
+   {
+      Component comp = component;
+
+      Point ret = new Point(0,0);
+
+      for(;;)
+      {
+         Point buf;
+         if(comp instanceof Window)
+         {
+            buf = comp.getLocationOnScreen();
+            ret.translate(buf.x, buf.y);
+            return ret;
+         }
+         else
+         {
+            buf = comp.getLocation();
+            ret.translate(buf.x, buf.y);
+            comp = comp.getParent();
+         }
+
+      }
+   }
 }
