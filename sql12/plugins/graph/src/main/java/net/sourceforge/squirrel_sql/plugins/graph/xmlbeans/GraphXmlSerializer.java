@@ -28,7 +28,7 @@ public class GraphXmlSerializer
    /**
     * Either graphPane or graphFileName might be null.
     */
-   public GraphXmlSerializer(GraphPlugin plugin, ISession session, GraphMainPanelTab graphPane, String graphFileName)
+   public GraphXmlSerializer(GraphPlugin plugin, ISession session, String title, String graphFileName)
    {
       try
       {
@@ -38,7 +38,7 @@ public class GraphXmlSerializer
 
          if(null == graphFileName)
          {
-            _graphFile = getFileName(plugin.getPluginUserSettingsFolder().getPath(), url, graphPane.getTitle());
+            _graphFile = getFileName(plugin.getPluginUserSettingsFolder().getPath(), url, title);
          }
          else
          {

@@ -19,6 +19,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    private JPanel _tabComponent;
 
    private JLabel _lblTitle;
+   private JButton _btnToWindow;
 
    public GraphMainPanelTab(GraphPanelController panelController, GraphPlugin plugin)
    {
@@ -32,10 +33,10 @@ public class GraphMainPanelTab extends BaseMainPanelTab
       _tabComponent.add(_lblTitle, BorderLayout.CENTER);
       ImageIcon icon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.TO_WINDOW);
 
-      JButton btnToWindow = new JButton(icon);
-      btnToWindow.setBorder(BorderFactory.createEmptyBorder());
-      btnToWindow.setOpaque(false);
-      _tabComponent.add(btnToWindow, BorderLayout.EAST);
+      _btnToWindow = new JButton(icon);
+      _btnToWindow.setBorder(BorderFactory.createEmptyBorder());
+      _btnToWindow.setOpaque(false);
+      _tabComponent.add(_btnToWindow, BorderLayout.EAST);
    }
 
 
@@ -53,9 +54,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    @Override
    public Component getTabComponent()
    {
-      // return _tabComponent;
-      return null;
-
+      return _tabComponent;
    }
 
    public String getHint()
@@ -72,5 +71,10 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    public void setTitle(String title)
    {
       _lblTitle.setText(title);
+   }
+
+   public JButton getToWindowButton()
+   {
+      return _btnToWindow;
    }
 }

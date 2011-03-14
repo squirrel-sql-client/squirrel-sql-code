@@ -171,7 +171,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       for (int i = 0; i < controllers.length; i++)
       {
-         controllers[i] = new GraphController(session, this, serializers[i], new DefaultGraphDisplay());
+         controllers[i] = new GraphController(session, this, serializers[i]);
       }
 
 
@@ -269,7 +269,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       {
          v.addAll(Arrays.asList(controllers));
       }
-      GraphController ret = new GraphController(session, this, null, new DefaultGraphDisplay());
+      GraphController ret = new GraphController(session, this, null);
       v.add(ret);
 
       controllers = v.toArray(new GraphController[v.size()]);

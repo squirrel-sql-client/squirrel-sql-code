@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
@@ -17,7 +18,6 @@ import java.util.List;
 public class GraphController implements GraphControllerAccessor
 {
    private ISession _session;
-   private GraphMainPanelTab _graphPane;
    private GraphPanelController _panelController;
 
    private TableFramesModel _tableFramesModel = new TableFramesModel();
@@ -26,14 +26,13 @@ public class GraphController implements GraphControllerAccessor
    private AddTableListener _addTableListener;
    private GraphDesktopListener _graphDesktopListener;
    private GraphPlugin _plugin;
-   private DefaultGraphDisplay _graphDisplay;
+   private TabToWindowHandler _tabToWindowHandler;
    private GraphXmlSerializer _xmlSerializer;
 
-   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer, DefaultGraphDisplay graphDisplay)
+   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer)
    {
       _session = session;
       _plugin = plugin;
-      _graphDisplay = graphDisplay;
 
       _graphDesktopListener = new GraphDesktopListener()
       {
@@ -96,11 +95,12 @@ public class GraphController implements GraphControllerAccessor
       };
 
       _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin);
-      _graphPane = new GraphMainPanelTab(_panelController, _plugin);
+      _tabToWindowHandler = new TabToWindowHandler(_panelController, _session, _plugin);
+
 
       if(null == xmlSerializer)
       {
-         _xmlSerializer = new GraphXmlSerializer(_plugin, _session, _graphPane, null);
+         _xmlSerializer = new GraphXmlSerializer(_plugin, _session, _tabToWindowHandler.getTitle(), null);
       }
       else
       {
@@ -119,18 +119,18 @@ public class GraphController implements GraphControllerAccessor
       if(null != xmlSerializer)
       {
          graphControllerXmlBean = _xmlSerializer.read();
-         _graphPane.setTitle(graphControllerXmlBean.getTitle());
+         _tabToWindowHandler.setTitle(graphControllerXmlBean.getTitle());
          _panelController.initMode(Mode.getForIndex(graphControllerXmlBean.getModeIndex()), graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
          _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
          _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
       }
       else
       {
-         _graphPane.setTitle(_plugin.patchName(_graphPane.getTitle(), _session));
+         _tabToWindowHandler.setTitle(_plugin.patchName(_tabToWindowHandler.getTitle(), _session));
          _panelController.initMode(Mode.DEFAULT, null, null);
       }
 
-      _graphDisplay.showGraph(_graphPane, _session);
+      _tabToWindowHandler.showGraph();
 
       if(null != graphControllerXmlBean)
       {
@@ -176,13 +176,13 @@ public class GraphController implements GraphControllerAccessor
    private void removeGraph()
    {
       _xmlSerializer.remove();
-      _graphDisplay.removeGraph(_graphPane, _session);
+      _tabToWindowHandler.removeGraph();
       _plugin.removeGraphController(this, _session);
    }
 
    private void renameGraph(String newName)
    {
-      if(newName.equals(_graphPane.getTitle()))
+      if(newName.equals(_tabToWindowHandler.getTitle()))
       {
          return;
       }
@@ -190,7 +190,7 @@ public class GraphController implements GraphControllerAccessor
       newName = _plugin.patchName(newName, _session);
       _xmlSerializer.rename(newName);
 
-      _graphDisplay.renameGraph(_graphPane, _session, newName);
+      _tabToWindowHandler.renameGraph(newName);
 
       saveGraph();
    }
@@ -198,7 +198,7 @@ public class GraphController implements GraphControllerAccessor
    public void saveGraph()
    {
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
-      xmlBean.setTitle(_graphPane.getTitle());
+      xmlBean.setTitle(_tabToWindowHandler.getTitle());
       xmlBean.setShowConstraintNames(_panelController.getDesktopController().isShowConstraintNames());
       xmlBean.setZoomerXmlBean(_panelController.getDesktopController().getZoomer().getXmlBean());
       xmlBean.setPrintXmlBean(_panelController.getDesktopController().getZoomPrintController().getPrintXmlBean());
@@ -424,7 +424,7 @@ public class GraphController implements GraphControllerAccessor
 
    public String getTitle()
    {
-      return _graphPane.getTitle();
+      return _tabToWindowHandler.getTitle();
    }
 
    public String toString()
