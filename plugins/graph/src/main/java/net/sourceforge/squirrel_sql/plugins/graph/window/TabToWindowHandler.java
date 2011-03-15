@@ -14,6 +14,7 @@ public class TabToWindowHandler
 {
    private GraphMainPanelTab _graphMainPanelTab;
    private ISession _session;
+   private GraphWindowController _graphWindowController;
 
    public TabToWindowHandler(GraphPanelController panelController, ISession session, GraphPlugin plugin)
    {
@@ -53,22 +54,23 @@ public class TabToWindowHandler
          }
       };
 
-      GraphWindowController graphWindowController =
-            new GraphWindowController(_session, _graphMainPanelTab, tabIdx, tabBoundsOnScreen, listener);
-
-
+      _graphWindowController = new GraphWindowController(_session, _graphMainPanelTab, tabIdx, tabBoundsOnScreen, listener);
    }
 
    private void onWindowClosing(int tabIdx)
    {
+      _graphWindowController = null;
+
       if(tabIdx <_session.getSessionSheet().getTabCount())
       {
          _session.getSessionSheet().insertMainTab(_graphMainPanelTab, tabIdx);
       }
       else
       {
-         _session.getSessionSheet().addMainTab(_graphMainPanelTab);
+         tabIdx = _session.getSessionSheet().addMainTab(_graphMainPanelTab);
+         _session.getSessionSheet().selectMainTab(tabIdx);
       }
+
    }
 
    public void showGraph()
@@ -78,14 +80,30 @@ public class TabToWindowHandler
 
    public void removeGraph()
    {
-      _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
+      if (null == _graphWindowController)
+      {
+         _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
+      }
+      else
+      {
+         _graphWindowController.close();
+         _graphWindowController = null;
+      }
    }
 
    public void renameGraph(String newName)
    {
-      int index = _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
       _graphMainPanelTab.setTitle(newName);
-      _session.getSessionSheet().insertMainTab(_graphMainPanelTab, index);
+
+      if (null == _graphWindowController)
+      {
+         int index = _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
+         _session.getSessionSheet().insertMainTab(_graphMainPanelTab, index);
+      }
+      else
+      {
+         _graphWindowController.rename(newName);
+      }
    }
 
    public String getTitle()
