@@ -20,10 +20,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.*;
 import java.util.List;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
+import javax.swing.*;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
@@ -281,4 +281,6 @@ public interface IObjectTreeAPI extends IHasIdentifier
 
 
    FindInObjectTreeController getFindController();
+
+   Component getDetailTabComp();
 }

@@ -29,9 +29,9 @@ public class QueryFilterDlg extends JDialog
    private static final String PREF_KEY_QUERY_FILTER_HEIGHT = "Squirrel.queryFilterDlg.height";
 
 
-   public QueryFilterDlg(MainFrame mainFrame, String qualifiedColumn)
+   public QueryFilterDlg(Window parent, String qualifiedColumn)
    {
-      super(mainFrame, s_stringMgr.getString("QueryFilterDlg.title"));
+      super(parent, s_stringMgr.getString("QueryFilterDlg.title"));
 
       getContentPane().setLayout(new GridBagLayout());
 

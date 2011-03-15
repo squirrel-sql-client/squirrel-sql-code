@@ -22,10 +22,11 @@ public class FormatDlg extends JDialog
    JComboBox cboUnit;
 
 
-   public FormatDlg(JFrame parent)
+   public FormatDlg(Window parent)
    {
 		// i18n[graph.formats=Formats]
-		super(parent, s_stringMgr.getString("graph.formats"), false);
+		super(parent, s_stringMgr.getString("graph.formats"));
+      setModal(false);
 
       getContentPane().setLayout(new GridLayout(1,2,10,0));
 

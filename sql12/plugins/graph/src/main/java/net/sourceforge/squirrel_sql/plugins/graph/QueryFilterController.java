@@ -28,7 +28,7 @@ public class QueryFilterController
    private SessionAdapter _sessionAdapter;
 
 
-   public QueryFilterController(String tableName, ColumnInfo columnInfo, GraphPlugin graphPlugin, ISession session, QueryFilterListener queryFilterListener)
+   public QueryFilterController(Window parent, String tableName, ColumnInfo columnInfo, GraphPlugin graphPlugin, ISession session, QueryFilterListener queryFilterListener)
    {
       _tableName = tableName;
       _columnInfo = columnInfo;
@@ -48,7 +48,7 @@ public class QueryFilterController
       _session.getApplication().getSessionManager().addSessionListener(_sessionAdapter);
 
       _queryFilterListener = queryFilterListener;
-      _queryFilterDlg = new QueryFilterDlg(graphPlugin.getApplication().getMainFrame(), tableName + "." + _columnInfo.toString());
+      _queryFilterDlg = new QueryFilterDlg(parent, tableName + "." + _columnInfo.toString());
 
 
       boolean applyQuotes = Preferences.userRoot().getBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, false);

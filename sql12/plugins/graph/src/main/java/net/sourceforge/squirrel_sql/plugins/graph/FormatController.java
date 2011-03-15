@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.Arrays;
@@ -214,107 +215,103 @@ public class FormatController
       };
    }
 
-   public void setVisible(boolean b)
+   public void setVisible(Window parent, boolean b)
    {
-      if (null == _dlg)
-      {
-         _dlg = new FormatDlg(_session.getApplication().getMainFrame());
+      _dlg = new FormatDlg(parent);
 
-         if(null == _formats)
+      if(null == _formats)
+      {
+         _formats = getDefaultFormats();
+      }
+
+      _dlg.lstFormats.setListData(_formats);
+
+
+      _dlg.cboUnit.addItem(Unit.UNIT_CM);
+      _dlg.cboUnit.addItem(Unit.UNIT_INCH);
+       m_currentUnit = Unit.UNIT_CM;
+      _dlg.cboUnit.setSelectedItem(Unit.UNIT_CM);
+
+      _dlg.lstFormats.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+      _dlg.lstFormats.addListSelectionListener(new ListSelectionListener()
+      {
+         public void valueChanged(ListSelectionEvent e)
          {
-            _formats = getDefaultFormats();
+            onListSelectionChanged(e);
+         }
+      });
+
+
+
+      _dlg.lstFormats.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowListPopUp(e);
          }
 
-         _dlg.lstFormats.setListData(_formats);
-
-
-         _dlg.cboUnit.addItem(Unit.UNIT_CM);
-         _dlg.cboUnit.addItem(Unit.UNIT_INCH);
-          m_currentUnit = Unit.UNIT_CM;
-         _dlg.cboUnit.setSelectedItem(Unit.UNIT_CM);
-
-         _dlg.lstFormats.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-         _dlg.lstFormats.addListSelectionListener(new ListSelectionListener()
+         public void mouseReleased(MouseEvent e)
          {
-            public void valueChanged(ListSelectionEvent e)
-            {
-               onListSelectionChanged(e);
-            }
-         });
+            maybeShowListPopUp(e);
+         }
+      });
 
+      m_lstPopup = new JPopupMenu();
 
-
-         _dlg.lstFormats.addMouseListener(new MouseAdapter()
+      // i18n[graph.mnuDelete=delete]
+      JMenuItem mnuDeleteFomat = new JMenuItem(s_stringMgr.getString("graph.mnuDelete"));
+      mnuDeleteFomat.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
          {
-            public void mousePressed(MouseEvent e)
-            {
-               maybeShowListPopUp(e);
-            }
+            onDeleteSeletedListItems();
+         }
+      });
+      m_lstPopup.add(mnuDeleteFomat);
 
-            public void mouseReleased(MouseEvent e)
-            {
-               maybeShowListPopUp(e);
-            }
-         });
-
-         m_lstPopup = new JPopupMenu();
-
-			// i18n[graph.mnuDelete=delete]
-			JMenuItem mnuDeleteFomat = new JMenuItem(s_stringMgr.getString("graph.mnuDelete"));
-         mnuDeleteFomat.addActionListener(new ActionListener()
+      // i18n[graph.landscape=landscape]
+      JMenuItem mnuLandscape = new JMenuItem(s_stringMgr.getString("graph.landscape"));
+      mnuLandscape.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
          {
-            public void actionPerformed(ActionEvent e)
-            {
-               onDeleteSeletedListItems();
-            }
-         });
-         m_lstPopup.add(mnuDeleteFomat);
+            onLandscape();
+         }
+      });
+      m_lstPopup.add(mnuLandscape);
 
-			// i18n[graph.landscape=landscape]
-			JMenuItem mnuLandscape = new JMenuItem(s_stringMgr.getString("graph.landscape"));
-         mnuLandscape.addActionListener(new ActionListener()
+      _dlg.btnNew.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
          {
-            public void actionPerformed(ActionEvent e)
-            {
-               onLandscape();
-            }
-         });
-         m_lstPopup.add(mnuLandscape);
+            onNew();
+         }
+      });
 
-         _dlg.btnNew.addActionListener(new ActionListener()
+      _dlg.btnSave.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
          {
-            public void actionPerformed(ActionEvent e)
-            {
-               onNew();
-            }
-         });
+            onSave();
+         }
+      });
 
-         _dlg.btnSave.addActionListener(new ActionListener()
+      _dlg.addWindowListener(new WindowAdapter()
+      {
+         public void windowClosing(WindowEvent e)
          {
-            public void actionPerformed(ActionEvent e)
-            {
-               onSave();
-            }
-         });
+            onWindowClosing();
+         }
+      });
 
-         _dlg.addWindowListener(new WindowAdapter()
+      _dlg.cboUnit.addItemListener(new ItemListener()
+      {
+         public void itemStateChanged(ItemEvent e)
          {
-            public void windowClosing(WindowEvent e)
-            {
-               onWindowClosing();
-            }
-         });
-
-         _dlg.cboUnit.addItemListener(new ItemListener()
-         {
-            public void itemStateChanged(ItemEvent e)
-            {
-               onUnitChanged(e);
-            }
-         });
-
-      }
+            onUnitChanged(e);
+         }
+      });
 
       GUIUtils.centerWithinParent(_dlg);
 

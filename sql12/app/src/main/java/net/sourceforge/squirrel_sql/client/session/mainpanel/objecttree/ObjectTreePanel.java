@@ -980,6 +980,12 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       return _findInObjectTreeController;   
    }
 
+   @Override
+   public Component getDetailTabComp()
+   {
+      return _splitPane.getRightComponent();
+   }
+
    private final class LeftPanel extends JPanel
 	{
 		private static final long serialVersionUID = 1L;

@@ -130,4 +130,10 @@ public class ModeManager
    {
       _listeners.remove(modeManagerListener);
    }
+
+   public void setMode(Mode mode)
+   {
+      _mnuMode.setMode(mode);
+      onModeChanged();
+   }
 }

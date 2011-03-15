@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.graphtofiles.GraphToFilesCtrlr;
 import net.sourceforge.squirrel_sql.plugins.graph.graphtofiles.SaveToFilePageFormat;
 
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
@@ -230,8 +231,8 @@ public class ZoomPrintController
             images.add(img);
          }
 
-         new GraphToFilesCtrlr(images.toArray(new BufferedImage[images.size()]),
-                                              _session.getApplication().getMainFrame());
+         Window parent = SwingUtilities.windowForComponent(_panel);
+         new GraphToFilesCtrlr(images.toArray(new BufferedImage[images.size()]), parent);
 
       }
       catch (PrinterException e)
@@ -328,7 +329,8 @@ public class ZoomPrintController
 
    private void onBtnFormat()
    {
-      _formatController.setVisible(true);
+      Window parent = SwingUtilities.windowForComponent(_panel);
+      _formatController.setVisible(parent, true);
    }
 
    private void onHideScrollbars()

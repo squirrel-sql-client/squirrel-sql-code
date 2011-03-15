@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.graph;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.util.*;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.*;
@@ -30,6 +28,11 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * The SQL Script plugin class.
@@ -146,6 +149,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       ActionCollection coll = app.getActionCollection();
       coll.add(new AddToGraphAction(app, _resources, this));
+      coll.add(new NewQueryBuilderWindowAction(app, _resources, this));
    }
 
    /**
@@ -182,6 +186,10 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       ActionCollection coll = getApplication().getActionCollection();
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
+
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(NewQueryBuilderWindowAction.class));
+
 
       return new PluginSessionCallbackAdaptor(this);
    }

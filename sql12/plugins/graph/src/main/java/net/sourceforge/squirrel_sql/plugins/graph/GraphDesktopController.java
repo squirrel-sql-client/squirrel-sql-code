@@ -385,7 +385,8 @@ public class GraphDesktopController
    private void onRemoveGraph()
    {
 		// i18n[graph.delGraph=Do you really wish to delete this graph?]
-		int res = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.delGraph"));
+      Window parent = SwingUtilities.windowForComponent(_desktopPane);
+      int res = JOptionPane.showConfirmDialog(parent, s_stringMgr.getString("graph.delGraph"));
       if(res == JOptionPane.YES_OPTION)
       {
          _listener.removeRequest();
@@ -396,7 +397,8 @@ public class GraphDesktopController
    {
 
 		// i18n[graph.newName=Please enter a new name]
-		String newName = JOptionPane.showInputDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.newName"));
+      Window parent = SwingUtilities.windowForComponent(_desktopPane);
+		String newName = JOptionPane.showInputDialog(parent, s_stringMgr.getString("graph.newName"));
       if(null != newName && 0 != newName.trim().length())
       {
          _listener.renameRequest(newName);

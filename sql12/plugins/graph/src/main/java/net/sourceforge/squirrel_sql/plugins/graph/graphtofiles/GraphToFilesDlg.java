@@ -21,10 +21,10 @@ public class GraphToFilesDlg extends JDialog
       StringManagerFactory.getStringManager(GraphToFilesCtrlr.class);
 
 
-   public GraphToFilesDlg(Frame owner, BufferedImage[] images)
+   public GraphToFilesDlg(Window parent, BufferedImage[] images)
       throws HeadlessException
    {
-      super(owner);
+      super(parent);
 
       // i18n[graphToClipboard.title=Copy graph image pages to clipboard]
       setTitle(s_stringMgr.getString("graphToFile.title"));
