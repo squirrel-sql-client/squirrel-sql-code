@@ -28,9 +28,10 @@ public class ConfigureNonDbConstraintDlg extends JDialog
    JComboBox _cboLocalCol;
    JTextField _txtContstrName;
 
-   public ConfigureNonDbConstraintDlg(MainFrame mainFrame, String fkTableName, String pkTableName)
+   public ConfigureNonDbConstraintDlg(Window parent, String fkTableName, String pkTableName)
    {
-      super(mainFrame, s_stringMgr.getString("graph.ConfigureNonDbConstraintDlgConfigureNonDBConstraint"), true);
+      super(parent, s_stringMgr.getString("graph.ConfigureNonDbConstraintDlgConfigureNonDBConstraint"));
+      setModal(true);
       getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
@@ -67,7 +68,7 @@ public class ConfigureNonDbConstraintDlg extends JDialog
 
       setSize(800, 530);
 
-      GUIUtils.centerWithinScreen(this);
+      GUIUtils.centerWithinParent(this);
 
 
       getRootPane().setDefaultButton(_btnOk);

@@ -2,10 +2,12 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Vector;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -36,7 +38,8 @@ public class ConfigureNonDbConstraintController
          String fkTableName = fkFrameOriginatingFrom.getTableInfo().getSimpleName();
          String pkTableName = pkFramePointingTo.getTableInfo().getSimpleName();
 
-         _dlg = new ConfigureNonDbConstraintDlg(session.getApplication().getMainFrame(), fkTableName, pkTableName);
+         Window parent = SwingUtilities.windowForComponent(fkFrameOriginatingFrom.getFrame());
+         _dlg = new ConfigureNonDbConstraintDlg(parent, fkTableName, pkTableName);
 
          _constraintDataSet = new ConstraintDataSet(constraintView, fkTableName, pkTableName);
          _dlg._table.show(_constraintDataSet);

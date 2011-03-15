@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.graph.graphtofiles;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.io.File;
@@ -23,13 +23,13 @@ public class GraphToFilesCtrlr
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(GraphToFilesCtrlr.class);
    private BufferedImage[] _images;
-   private MainFrame _mainFrame;
+   private Window _parent;
 
-   public GraphToFilesCtrlr(BufferedImage[] images, MainFrame mainFrame)
+   public GraphToFilesCtrlr(BufferedImage[] images, Window parent)
    {
       _images = images;
-      _mainFrame = mainFrame;
-      _dlg = new GraphToFilesDlg(mainFrame, images);
+      _parent = parent;
+      _dlg = new GraphToFilesDlg(parent, images);
 
       _dlg.btnClose.addActionListener(new ActionListener()
       {
@@ -92,7 +92,7 @@ public class GraphToFilesCtrlr
             fc.setFileFilter(ef);
          }
 
-         if (fc.showSaveDialog(_mainFrame) == JFileChooser.APPROVE_OPTION)
+         if (fc.showSaveDialog(_parent) == JFileChooser.APPROVE_OPTION)
          {
             File selectedFile = fc.getSelectedFile();
             if (null != selectedFile)

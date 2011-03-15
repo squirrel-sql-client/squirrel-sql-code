@@ -743,7 +743,9 @@ public class TableFrameController
 
    private void onQueryClearAllFilters()
    {
-      int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.tableFrameController.queryClearAllFilters"));
+
+      Window parent = SwingUtilities.windowForComponent(_frame);
+      int opt = JOptionPane.showConfirmDialog(parent, s_stringMgr.getString("graph.tableFrameController.queryClearAllFilters"));
 
       if (JOptionPane.YES_OPTION != opt)
       {
@@ -757,7 +759,8 @@ public class TableFrameController
    {
       if(false == b)
       {
-         int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.tableFrameController.queryUnselectAll"));
+         Window parent = SwingUtilities.windowForComponent(_frame);
+         int opt = JOptionPane.showConfirmDialog(parent, s_stringMgr.getString("graph.tableFrameController.queryUnselectAll"));
 
          if(JOptionPane.YES_OPTION != opt)
          {
@@ -793,7 +796,8 @@ public class TableFrameController
 
    private void onScriptTable()
    {
-      SqlScriptAcessor.scriptTablesToSQLEntryArea(_session, new ITableInfo[]{getTableInfo()});
+      Window parent = SwingUtilities.windowForComponent(_frame);
+      SqlScriptAcessor.scriptTablesToSQLEntryArea(parent, _session, new ITableInfo[]{getTableInfo()});
    }
 
    public ITableInfo getTableInfo()

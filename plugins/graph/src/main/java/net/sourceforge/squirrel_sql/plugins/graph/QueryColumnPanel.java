@@ -176,7 +176,8 @@ class QueryColumnPanel extends JPanel
          }
       };
 
-      new QueryFilterController(_tableName, _columnInfo, graphPlugin, _session, queryFilterListener);
+      Window parent = SwingUtilities.windowForComponent(txtColumn);
+      new QueryFilterController(parent,_tableName, _columnInfo, graphPlugin, _session, queryFilterListener);
    }
 
    int getMaxWidth(ColumnInfo[] allColumnInfos)

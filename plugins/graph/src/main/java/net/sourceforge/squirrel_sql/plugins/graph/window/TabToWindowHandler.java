@@ -42,7 +42,11 @@ public class TabToWindowHandler
       tabBoundsOnScreen.height = size.height;
 
 
+      toWindowAtBounds(tabBoundsOnScreen);
+   }
 
+   private void toWindowAtBounds(Rectangle tabBoundsOnScreen)
+   {
       final int tabIdx = _session.getSessionSheet().removeMainTab(_graphMainPanelTab);
 
       GraphWindowControllerListener listener = new GraphWindowControllerListener()
@@ -114,5 +118,17 @@ public class TabToWindowHandler
    public void setTitle(String title)
    {
       _graphMainPanelTab.setTitle(title);
+   }
+
+   public void showInWindowBesidesObjectTree()
+   {
+      _session.selectMainTab(ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB);
+
+      Component detailTabComp = _session.getObjectTreeAPIOfActiveSessionWindow().getDetailTabComp();
+      Point locOnScreen = GUIUtils.getScreenLocationFor(detailTabComp);
+
+      Rectangle bounds = new Rectangle(locOnScreen.x, locOnScreen.y, detailTabComp.getWidth(), detailTabComp.getHeight());
+
+      toWindowAtBounds(bounds);
    }
 }

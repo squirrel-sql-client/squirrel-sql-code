@@ -165,7 +165,8 @@ public class GraphController implements GraphControllerAccessor
          tableInfos[i] = tableFrameController.getTableInfo();
       }
 
-      SqlScriptAcessor.scriptTablesToSQLEntryArea(_session, tableInfos);
+      Window parent = SwingUtilities.windowForComponent(_panelController.getGraphPanel());
+      SqlScriptAcessor.scriptTablesToSQLEntryArea(parent, _session, tableInfos);
    }
 
    private void refreshAllTables()
@@ -435,6 +436,12 @@ public class GraphController implements GraphControllerAccessor
    public void sessionEnding()
    {
       _panelController.sessionEnding();
+   }
+
+   public void showQueryBuilderInWindowBesidesObjectTree()
+   {
+      _panelController.getModeManager().setMode(Mode.QUERY_BUILDER);
+      _tabToWindowHandler.showInWindowBesidesObjectTree();
    }
 }
 
