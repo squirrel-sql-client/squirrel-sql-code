@@ -161,7 +161,7 @@ public class GraphWindowController
       onWindowClosing();
    }
 
-   private void close()
+   void close()
    {
       if (null != _dlgWindow)
       {
@@ -210,5 +210,17 @@ public class GraphWindowController
    private void onWindowClosing()
    {
       _listener.closing(_tabIdx);
+   }
+
+   public void rename(String newName)
+   {
+      if(null != _dlgWindow)
+      {
+         _dlgWindow.setTitle(newName);
+      }
+      else
+      {
+         _frameWindow.setTitle(newName);
+      }
    }
 }
