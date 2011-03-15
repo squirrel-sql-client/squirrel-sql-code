@@ -66,8 +66,17 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_MASK));
       shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
 
+      /*
+       *       Remove this Keystroke, because it triggers auto-complete of the current word with a matching most recent word,
+       *       as long the shift and space key are pressed.
+       *       See RTADefaultInputMap()
+       *       put(KeyStroke.getKeyStroke(' '), RTextAreaEditorKit.rtaDumbCompleteWordAction); 
+       */
+      shared.remove(KeyStroke.getKeyStroke(' '));
+
       shared.put(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), RTextAreaEditorKit.rtaUpperSelectionCaseAction);
       shared.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+      
       
 
       KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
