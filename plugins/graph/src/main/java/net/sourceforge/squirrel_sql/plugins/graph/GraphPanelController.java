@@ -119,4 +119,9 @@ public class GraphPanelController
    {
       _graphDesktopController.sessionEnding();
    }
+
+   public void removeGraph()
+   {
+      _graphDesktopController.removeGraph();
+   }
 }

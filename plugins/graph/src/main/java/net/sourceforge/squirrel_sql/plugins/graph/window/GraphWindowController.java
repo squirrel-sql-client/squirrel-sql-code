@@ -23,10 +23,12 @@ public class GraphWindowController
 
 
    private ISession _session;
+   private GraphMainPanelTab _graphMainPanelTab;
    private int _tabIdx;
    private GraphWindowControllerListener _listener;
    private JCheckBox _chkStayOnTop;
    private JButton _btnReturn;
+   private JButton _btnRemove;
    private JPanel _contentPanel;
 
    private JDialog _dlgWindow;
@@ -38,6 +40,7 @@ public class GraphWindowController
    public GraphWindowController(ISession session, GraphMainPanelTab graphMainPanelTab, int tabIdx, Rectangle tabBoundsOnScreen, GraphWindowControllerListener listener)
    {
       _session = session;
+      _graphMainPanelTab = graphMainPanelTab;
       _tabIdx = tabIdx;
       _listener = listener;
 
@@ -86,6 +89,15 @@ public class GraphWindowController
          public void actionPerformed(ActionEvent e)
          {
             onReturn();
+         }
+      });
+
+      _btnRemove.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onRemove();
          }
       });
    }
@@ -161,6 +173,12 @@ public class GraphWindowController
       onWindowClosing();
    }
 
+   private void onRemove()
+   {
+      _graphMainPanelTab.removeGraph();
+   }
+
+
    void close()
    {
       if (null != _dlgWindow)
@@ -201,7 +219,11 @@ public class GraphWindowController
       _btnReturn = new JButton(s_stringMgr.getString("graph.window.return"));
       ret.add(_btnReturn, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      _btnRemove = new JButton(s_stringMgr.getString("graph.window.removeGraph"));
+      ret.add(_btnRemove, gbc);
+
+      gbc = new GridBagConstraints(3,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
       return ret;
