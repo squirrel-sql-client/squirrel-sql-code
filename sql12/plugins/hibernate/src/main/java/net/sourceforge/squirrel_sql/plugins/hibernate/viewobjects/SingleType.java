@@ -164,4 +164,9 @@ public class SingleType implements IType
    {
       return _persistenCollectionClass;
    }
+
+   public ArrayList<MappedClassInfo> getAllMappedClassInfos()
+   {
+      return _allMappedClassInfos;
+   }
 }
