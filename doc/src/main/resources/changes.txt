@@ -7,6 +7,10 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Hibernate Plugin: Improved display of mapped objects in table cells:
+                  Class name, primary key and toString() ist displayed instead of toString() only.
+
+
 DB-Diff-Plugin:
   Allowed to compare tables within one Session the same way as with different Sessions using select and
   compare of the Object tree's right mouse menu. It is still possible to compare tables inside the
