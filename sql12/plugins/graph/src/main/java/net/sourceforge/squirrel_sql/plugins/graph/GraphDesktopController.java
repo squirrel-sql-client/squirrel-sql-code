@@ -624,4 +624,9 @@ public class GraphDesktopController
    {
       return _graphPluginResources;
    }
+
+   public void removeGraph()
+   {
+      onRemoveGraph();
+   }
 }

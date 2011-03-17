@@ -77,4 +77,9 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    {
       return _btnToWindow;
    }
+
+   public void removeGraph()
+   {
+      _panelController.removeGraph();
+   }
 }
