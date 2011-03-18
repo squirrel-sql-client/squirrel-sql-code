@@ -29,6 +29,8 @@ Display errors in result tab:
 
 Bug-fixes:
 
+3222350: Cannot enter negative values for numeric fields when editing the result table.
+
 3196153: When typing using shift, you must release shift to type space
 
 3088572: Squirrel fails when user tries to edit DB fields which have particular characters.

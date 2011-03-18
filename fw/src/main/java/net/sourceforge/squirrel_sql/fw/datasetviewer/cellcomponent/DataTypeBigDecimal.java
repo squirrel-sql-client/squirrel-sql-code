@@ -36,6 +36,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
@@ -410,12 +412,22 @@ public class DataTypeBigDecimal extends FloatingPointBase
 						e.consume();
 					}
 				}
-
+					
+				
+				
 				if ( (c == '-' || c=='+') &&
-					! (text.equals("<null>") || text.length() == 0)) {
-					// user entered '+' or '-' at a bad place
-					_beepHelper.beep(_theComponent);
-					e.consume();
+					! (text.equals("<null>") || text.length() == 0)
+					) {
+					int caretPosition = _theComponent.getCaretPosition();
+					if(caretPosition != 0 || !StringUtils.isNumeric(text.substring(0, 1))
+							){
+						/*
+						 *  user entered '+' or '-' at a bad place,
+						 *  Maybe not at the first position, or there is not a numeric char at the beginning - maybe we have already a sign
+						 */
+						_beepHelper.beep(_theComponent);
+						e.consume();
+					}
 				}
 
 				if ( ! ( Character.isDigit(c) ||
