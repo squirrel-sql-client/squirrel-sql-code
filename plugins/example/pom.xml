@@ -104,6 +104,12 @@
 			<version>${mockito-version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-swing-junit-4.5</artifactId>
+			<version>${fest-version}</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 	<properties>
 		<pluginClassName>net.sourceforge.squirrel_sql.plugins.example.ExamplePlugin</pluginClassName>
