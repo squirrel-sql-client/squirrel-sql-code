@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrel-root-pom</artifactId>
@@ -84,6 +85,7 @@
 		<clover-version>3.0.2</clover-version>
 		<easymock-version>2.4</easymock-version>
 		<easymockclassextension-version>2.4</easymockclassextension-version>
+		<fest-version>1.2.1</fest-version>
 		<gsbase-version>2.0.1</gsbase-version>
 		<hibernate-annotations-version>3.3.0.ga</hibernate-annotations-version>
 		<izpack-standalone.version>4.3.1</izpack-standalone.version>
@@ -92,12 +94,12 @@
 		<jgoodies-forms-version>1.0.5</jgoodies-forms-version>
 		<mockito-version>1.8.5</mockito-version>
 		<spring-framework-version>2.5.2</spring-framework-version>
-	
+
 		<!--  Other -->
 		<surefire-parallel-type>classes</surefire-parallel-type>
 		<surefire-thread-count>4</surefire-thread-count>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 	</properties>
 	<modules>
 		<module>fw</module>
@@ -139,6 +141,12 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>${mockito-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.easytesting</groupId>
+				<artifactId>fest-swing-junit-4.5</artifactId>
+				<version>${fest-version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -190,6 +198,19 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${surefire-plugin-version}</version>
 					<configuration>
+						<excludes>
+							<!-- 
+							Until ApplicationArguments can be isolated from being accessed statically by 
+							all code that currently relies on it, we exclude ApplicationArgumentsTest it here 
+							so that it doesn't poison other tests that happen to run after it in the same 
+							JVM. This is only technically required by the "app" project, but at the moment
+							we wish to share the commonly needed additional exclusion for UI Test classes.
+							-->
+							<exclude>**/ApplicationArgumentsTest.java</exclude>
+							<exclude>**/*UITest.java</exclude>
+						</excludes>
+						<parallel>${surefire-parallel-type}</parallel>
+						<threadCount>${surefire-thread-count}</threadCount>
 						<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					</configuration>
 				</plugin>
@@ -203,11 +224,11 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>${release-plugin-version}</version>
 				</plugin>
-		        <plugin>
-		            <groupId>com.atlassian.maven.plugins</groupId>
-		            <artifactId>maven-clover2-plugin</artifactId>
-		            <version>${clover-version}</version>
-		        </plugin>
+				<plugin>
+					<groupId>com.atlassian.maven.plugins</groupId>
+					<artifactId>maven-clover2-plugin</artifactId>
+					<version>${clover-version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -269,6 +290,43 @@
 									<homedir>${gpg.homedir}</homedir>
 									<keyname>${gpg.keyname}</keyname>
 									<passphrase>${gpg.passphrase}</passphrase>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>uitests</id>
+			<activation>
+				<property>
+					<name>uitests</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${surefire-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>uitests</id>
+								<phase>test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
+									<includes>
+										<include>**/*UITest.java</include>
+									</includes>
+									<excludes>
+										<exclude>**/Abstract*UITest.java</exclude>
+									</excludes>
+									<parallel>${surefire-parallel-type}</parallel>
+									<threadCount>${surefire-thread-count}</threadCount>
 								</configuration>
 							</execution>
 						</executions>

@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.easytesting</groupId>
 			<artifactId>fest-swing-junit-4.5</artifactId>
-			<version>1.2.1</version>
+			<version>${fest-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -223,40 +223,43 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>uitests</id>
-			<activation>
-				<property>
-					<name>uitests</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>${surefire-plugin-version}</version>
-						<executions>
-							<execution>
-								<id>uitests</id>
-								<phase>test</phase>
-								<goals>
-									<goal>test</goal>
-								</goals>
-								<configuration>
-									<redirectTestOutputToFile>true</redirectTestOutputToFile>
-									<includes>
-										<include>**/*UITest.java</include>
-									</includes>
-									<parallel>${surefire-parallel-type}</parallel>
-									<threadCount>${surefire-thread-count}</threadCount>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>uitests</id>-->
+<!--			<activation>-->
+<!--				<property>-->
+<!--					<name>uitests</name>-->
+<!--				</property>-->
+<!--			</activation>-->
+<!--			<build>-->
+<!--				<plugins>-->
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-surefire-plugin</artifactId>-->
+<!--						<version>${surefire-plugin-version}</version>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>uitests</id>-->
+<!--								<phase>test</phase>-->
+<!--								<goals>-->
+<!--									<goal>test</goal>-->
+<!--								</goals>-->
+<!--								<configuration>-->
+<!--									<redirectTestOutputToFile>true</redirectTestOutputToFile>-->
+<!--									<includes>-->
+<!--										<include>**/*UITest.java</include>-->
+<!--									</includes>-->
+<!--									<excludes>-->
+<!--										<exclude>**/Abstract*UITest.java</exclude>-->
+<!--									</excludes>-->
+<!--									<parallel>${surefire-parallel-type}</parallel>-->
+<!--									<threadCount>${surefire-thread-count}</threadCount>-->
+<!--								</configuration>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--					</plugin>-->
+<!--				</plugins>-->
+<!--			</build>-->
+<!--		</profile>-->
+<!--	</profiles>-->
 </project>
