@@ -29,6 +29,8 @@ Display errors in result tab:
 
 Bug-fixes:
 
+Now, "Press to open logs" shows  the current log file by default instead of a random one.
+
 3222350: Cannot enter negative values for numeric fields when editing the result table.
 
 3196153: When typing using shift, you must release shift to type space
