@@ -34,12 +34,12 @@ public class ZoomPrintController
    private ZoomPrintPanel _panel = null;
 
 
-   public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphPrintable printable, ISession session, GraphPlugin plugin)
+   public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphPrintable printable, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
    {
       _printable = printable;
       _plugin = plugin;
 
-      _panel = new ZoomPrintPanel(new GraphPluginResources(_plugin));
+      _panel = new ZoomPrintPanel(new GraphPluginResources(_plugin), startButtonHandler);
 
       initZoom(session, zoomerXmlBean);
       initPrint(printXmlBean, edgesListener);

@@ -27,11 +27,20 @@ public class ZoomPrintPanel extends JPanel
    JButton btnPrint;
    JButton btnSaveImages;
 
-   public ZoomPrintPanel(GraphPluginResources rsrc)
+   public ZoomPrintPanel(GraphPluginResources rsrc, StartButtonHandler startButtonHandler)
    {
-      setLayout(new GridLayout(1,2, 20, 0));
-      add(createZoomPanel());
-      add(createPrintPanel(rsrc));
+      setLayout(new BorderLayout(10,0));
+      add(startButtonHandler.getButton(), BorderLayout.WEST);
+      add(createZoomPrintPanel(rsrc), BorderLayout.CENTER);
+   }
+
+   private JPanel createZoomPrintPanel(GraphPluginResources rsrc)
+   {
+      JPanel ret = new JPanel(new GridLayout(1,2, 20, 0));
+      ret.add(createZoomPanel());
+      ret.add(createPrintPanel(rsrc));
+
+      return ret;
    }
 
    private JPanel createPrintPanel(GraphPluginResources rsrc)

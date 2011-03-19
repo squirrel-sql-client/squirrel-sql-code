@@ -32,7 +32,7 @@ public class QueryBuilderController
    private GraphQuerySQLPanelCtrl _graphQuerySQLPanelCtrl;
    private SessionAdapter _sessionAdapter;
 
-   public QueryBuilderController(TableFramesModel tableFramesModel, GraphDockHandleFactory graphDockHandleFactory, ISession session)
+   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, ISession session, StartButtonHandler startButtonHandler)
    {
       _tableFramesModel = tableFramesModel;
       _session = session;
@@ -41,20 +41,24 @@ public class QueryBuilderController
       GridBagConstraints gbc;
 
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,5),0,0);
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _panel.add(startButtonHandler.getButton(), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,0,5),0,0);
       _btnSQL = new JToggleButton(s_stringMgr.getString("QueryBuilderController.SQL"));
       _panel.add(_btnSQL, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _btnResult = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Result"));
       _panel.add(_btnResult, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(3,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _panel.add(new JPanel(), gbc);
 
       _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session);
 
-      initHandels(graphDockHandleFactory);
+      initHandels(graphControllerFacade);
+
 
 
       _sessionAdapter = new SessionAdapter()
@@ -67,6 +71,7 @@ public class QueryBuilderController
       };
 
       _session.getApplication().getSessionManager().addSessionListener(_sessionAdapter);
+
 
       _btnSQL.addActionListener(new ActionListener()
       {
@@ -94,8 +99,8 @@ public class QueryBuilderController
             onModelChanged();
          }
       });
-
    }
+
 
    private void onModelChanged()
    {
@@ -105,13 +110,13 @@ public class QueryBuilderController
       }
    }
 
-   private void initHandels(GraphDockHandleFactory graphDockHandleFactory)
+   private void initHandels(GraphControllerFacade graphControllerFacade)
    {
       int sqlHeight = Preferences.userRoot().getInt(PREF_KEY_SQL_DOCK_HEIGHT, 250);
-      _sqlDockHandle = graphDockHandleFactory.createHandle(sqlHeight, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel());
+      _sqlDockHandle = new GraphDockHandle(graphControllerFacade, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel(), sqlHeight);
 
       int resHeight = Preferences.userRoot().getInt(PREF_KEY_RESULT_DOCK_HEIGHT, 250);
-      _resultDockHandle = graphDockHandleFactory.createHandle(resHeight, new GraphQueryResultPanel());
+      _resultDockHandle = new GraphDockHandle(graphControllerFacade, new GraphQueryResultPanel(), resHeight);
    }
 
    private void onSessionClosing()
