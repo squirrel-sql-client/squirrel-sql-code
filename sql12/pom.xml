@@ -199,16 +199,22 @@
 					<version>${surefire-plugin-version}</version>
 					<configuration>
 						<excludes>
-							<!-- 
-							Until ApplicationArguments can be isolated from being accessed statically by 
-							all code that currently relies on it, we exclude ApplicationArgumentsTest it here 
-							so that it doesn't poison other tests that happen to run after it in the same 
-							JVM. This is only technically required by the "app" project, but at the moment
-							we wish to share the commonly needed additional exclusion for UI Test classes.
+							<!--
+								Until ApplicationArguments can be isolated from being accessed statically by all code that
+								currently relies on it, we exclude ApplicationArgumentsTest it here so that it doesn't
+								poison other tests that happen to run after it in the same JVM. This is only technically
+								required by the "app" project, but at the moment we wish to share the commonly needed
+								additional exclusion for UI Test classes.
 							-->
 							<exclude>**/ApplicationArgumentsTest.java</exclude>
 							<exclude>**/*UITest.java</exclude>
 						</excludes>
+						<systemProperties>
+							<property>
+								<name>derby.stream.error.file</name>
+								<value>target/derby.log</value>
+							</property>
+						</systemProperties>
 						<parallel>${surefire-parallel-type}</parallel>
 						<threadCount>${surefire-thread-count}</threadCount>
 						<redirectTestOutputToFile>true</redirectTestOutputToFile>
@@ -297,6 +303,16 @@
 				</plugins>
 			</build>
 		</profile>
+		<!--
+			This profile disables the normal execution of unit tests (src/test/java) and instead runs only
+			the UI Tests (tests ending in *UITest.java). This was done because when the normal tests are run
+			along with the UI tests in this configuration it obstructs the normal processing of the Emma code
+			coverage plugin to have two test phases, where the second one removes the output of the first. So
+			since the normal tests must be run in Emma without the UI tests, this requires another job in
+			Hudson to run the UI tests. Rather than have the normal tests run twice, once for code coverage
+			without UI tests, and once with the UI tests, it was decided to simply disable them in this
+			profile.
+		-->
 		<profile>
 			<id>uitests</id>
 			<activation>
@@ -311,6 +327,12 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${surefire-plugin-version}</version>
 						<executions>
+							<execution>
+								<id>default-test</id>
+								<configuration>
+									<skip>true</skip>
+								</configuration>
+							</execution>
 							<execution>
 								<id>uitests</id>
 								<phase>test</phase>
