@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
@@ -95,11 +96,17 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-swing-junit-4.5</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<!--
-			Filter in the version from the version-plugin below, into Version.properties. Turn off filtering
-			for all other files here
+			Filter in the version from the version-plugin below, into
+			Version.properties. Turn off filtering for all other files here
 		-->
 		<resources>
 			<resource>
@@ -154,14 +161,24 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire-plugin-version}</version>
-				<configuration>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<excludes>
-						<exclude>**/ApplicationArgumentsTest.java</exclude>
-					</excludes>
-					<parallel>${surefire-parallel-type}</parallel>
-					<threadCount>${surefire-thread-count}</threadCount>
-				</configuration>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<redirectTestOutputToFile>true</redirectTestOutputToFile>
+							<excludes>
+								<exclude>**/ApplicationArgumentsTest.java</exclude>
+								<exclude>**/*UITest.java</exclude>
+							</excludes>
+							<parallel>${surefire-parallel-type}</parallel>
+							<threadCount>${surefire-thread-count}</threadCount>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -206,4 +223,40 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>uitests</id>
+			<activation>
+				<property>
+					<name>uitests</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${surefire-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>uitests</id>
+								<phase>test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
+									<includes>
+										<include>**/*UITest.java</include>
+									</includes>
+									<parallel>${surefire-parallel-type}</parallel>
+									<threadCount>${surefire-thread-count}</threadCount>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
