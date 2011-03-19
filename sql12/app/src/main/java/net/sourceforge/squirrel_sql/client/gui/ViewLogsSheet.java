@@ -54,7 +54,6 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -460,7 +459,8 @@ public class ViewLogsSheet extends DialogWidget
 
 		if (_logDirCmb.getModel().getSize() > 0)
 		{
-			_logDirCmb.setSelectedItem(appLogFile.getName());
+			LogFile logFile = new LogFile(appLogFile);
+			_logDirCmb.setSelectedItem(logFile);
 		}
 
 		// Done after the set of the selected item above so that we control
@@ -570,27 +570,6 @@ public class ViewLogsSheet extends DialogWidget
 		public void addItem(Object anObject)
 		{
 			super.addItem(new LogFile(_dir, anObject.toString()));
-		}
-	}
-
-	private static final class LogFile extends File
-	{
-		private static final long serialVersionUID = 1L;
-
-		private final String _stringRep;
-
-		LogFile(File dir, String name)
-		{
-			super(dir, name);
-			final StringBuffer buf = new StringBuffer();
-			buf.append(getName()).append(" (").append(Utilities.formatSize(length())).append(")");
-			_stringRep = buf.toString();
-		}
-
-		@Override
-		public String toString()
-		{
-			return _stringRep;
 		}
 	}
 }
