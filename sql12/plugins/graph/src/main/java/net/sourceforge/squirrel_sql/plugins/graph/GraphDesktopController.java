@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -44,6 +46,7 @@ public class GraphDesktopController
    private JMenuItem _mnuAllTablesPkConstOrder;
    private JMenuItem _mnuAllFilteredSelectedOrder;
    private GraphPluginResources _graphPluginResources;
+   private GraphControllerPopupListener _currentGraphControllerPopupListener;
 
 
    public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager)
@@ -219,16 +222,16 @@ public class GraphDesktopController
 	       }
 	    });
 
-	// i18n[graph.scriptAllTables=Script all tables]
-	_mnuSelectTablesByName = new JMenuItem(s_stringMgr.getString("graph.selectTablesByName"));
-	_mnuSelectTablesByName.addActionListener(new ActionListener()
-	  {
-	     public void actionPerformed(ActionEvent e)
-	     {
-	        onSelectTablesByName();
-	     }
-	  });
-	  /////////////////////////////////////////////////////////
+      // i18n[graph.scriptAllTables=Script all tables]
+      _mnuSelectTablesByName = new JMenuItem(s_stringMgr.getString("graph.selectTablesByName"));
+      _mnuSelectTablesByName.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSelectTablesByName();
+         }
+      });
+      /////////////////////////////////////////////////////////
 
 		// i18n[graph.showConstr=Show constraint names]
 		_mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
@@ -309,6 +312,37 @@ public class GraphDesktopController
       _popUp.add(_mnuShowQualifiedTableNames);
       _popUp.add(new JSeparator());
       _popUp.add(_modeManager.getModeMenuItem());
+
+      _modeManager.addModeManagerListener(new ModeManagerListener()
+      {
+         @Override
+         public void modeChanged(Mode newMode)
+         {
+            _popUp.setVisible(false);
+         }
+      });
+
+      _popUp.addPopupMenuListener(new PopupMenuListener()
+      {
+         @Override
+         public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
+         {
+            onPopupMenuWillBecomeInvisible();
+         }
+
+         @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+         @Override public void popupMenuCanceled(PopupMenuEvent e) {}
+      });
+
+   }
+
+   private void onPopupMenuWillBecomeInvisible()
+   {
+      if(null != _currentGraphControllerPopupListener)
+      {
+         _currentGraphControllerPopupListener.hiding();
+         _currentGraphControllerPopupListener = null;
+      }
    }
 
    private void onShowQualifiedTableNames()
@@ -628,5 +662,24 @@ public class GraphDesktopController
    public void removeGraph()
    {
       onRemoveGraph();
+   }
+
+   public void showPopupAbove(Point loc, GraphControllerPopupListener graphControllerPopupListener)
+   {
+      if (_popUp.isVisible())
+      {
+         _popUp.setVisible(false);
+      }
+      else
+      {
+         _popUp.show(_desktopPane,0,0);
+         _popUp.setLocation(loc.x, loc.y - _popUp.getHeight());
+      }
+      _currentGraphControllerPopupListener = graphControllerPopupListener;
+   }
+
+   public void hidePopup()
+   {
+      _popUp.setVisible(false);
    }
 }

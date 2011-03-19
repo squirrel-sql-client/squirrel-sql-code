@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class ModeManager
 {
+   private DefaultController _defaultController;
    private ZoomPrintController _zoomPrintController;
    private QueryBuilderController _queryBuilderController;
 
@@ -19,16 +20,16 @@ public class ModeManager
    private TableFramesModel _tableFramesModel;
    private ISession _session;
    private GraphPlugin _plugin;
-   private GraphDockHandleFactory _graphDockHandleFactory;
+   private GraphControllerFacade _graphControllerFacade;
 
    private ArrayList<ModeManagerListener> _listeners = new ArrayList<ModeManagerListener>();
 
-   public ModeManager(TableFramesModel tableFramesModel, ISession session, GraphPlugin plugin, GraphDockHandleFactory graphDockHandleFactory)
+   public ModeManager(TableFramesModel tableFramesModel, ISession session, GraphPlugin plugin, GraphControllerFacade graphControllerFacade)
    {
       _tableFramesModel = tableFramesModel;
       _session = session;
       _plugin = plugin;
-      _graphDockHandleFactory = graphDockHandleFactory;
+      _graphControllerFacade = graphControllerFacade;
 
       _mnuMode = new ModeMenuItem(new ActionListener()
       {
@@ -47,17 +48,13 @@ public class ModeManager
 
    public JPanel getBottomPanel()
    {
-      JPanel ret = new JPanel(new GridLayout(1,1));
       switch (_mnuMode.getMode())
       {
          case DEFAULT:
-            ret.add(new JLabel("Default Bottom Panel Dummy"));
-            return ret;
+            return _defaultController.getBottomPanel();
          case ZOOM_PRINT:
             return _zoomPrintController.getBottomPanel();
          case QUERY_BUILDER:
-            //ret.add(new JLabel("Query Builder Bottom Panel Dummy"));
-            //return ret;
             return _queryBuilderController.getBottomPanel();
          default:
             throw new IllegalStateException("Unknown mode " + _mnuMode.getMode());
@@ -80,14 +77,17 @@ public class ModeManager
       switch (_mnuMode.getMode())
       {
          case DEFAULT:
+            _defaultController.activate(true);
             _zoomPrintController.activate(false);
             _queryBuilderController.activate(false);
             break;
          case ZOOM_PRINT:
+            _defaultController.activate(false);
             _zoomPrintController.activate(true);
             _queryBuilderController.activate(false);
             break;
          case QUERY_BUILDER:
+            _defaultController.activate(false);
             _zoomPrintController.activate(false);
             _queryBuilderController.activate(true);
             break;
@@ -114,8 +114,17 @@ public class ModeManager
 
    public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphDesktopPane desktopPane)
    {
-      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, desktopPane, _session, _plugin);
-      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphDockHandleFactory, _session);
+      StartButtonHandler startButtonHandler;
+      GraphPluginResources rsrc = new GraphPluginResources(_plugin);
+
+      startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
+      _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, desktopPane, _session, _plugin, startButtonHandler);
+
+      startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
+      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphControllerFacade, _session, startButtonHandler);
+
+      startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
+      _defaultController = new DefaultController(startButtonHandler);
 
       _mnuMode.setMode(mode);
    }

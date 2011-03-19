@@ -4,14 +4,14 @@ import javax.swing.*;
 
 public class GraphDockHandle
 {
-   private GraphDockHandleListener _graphDockHandleListener;
+   private GraphControllerFacade _graphControllerFacade;
    private JPanel _panel;
    private int _lastHeight;
    private boolean _showing;
 
-   public GraphDockHandle(GraphDockHandleListener graphDockHandleListener, JPanel panel, int height)
+   public GraphDockHandle(GraphControllerFacade graphControllerFacade, JPanel panel, int height)
    {
-      _graphDockHandleListener = graphDockHandleListener;
+      _graphControllerFacade = graphControllerFacade;
       _panel = panel;
       _lastHeight = height;
    }
@@ -19,7 +19,7 @@ public class GraphDockHandle
    public void show()
    {
       _showing = true;
-      _graphDockHandleListener.show(_panel, _lastHeight);
+      _graphControllerFacade.showDock(_panel, _lastHeight);
    }
 
    public int getLastHeigth()
@@ -31,7 +31,7 @@ public class GraphDockHandle
    {
       _showing = false;
       _lastHeight = _panel.getHeight();
-      _graphDockHandleListener.hide();
+      _graphControllerFacade.hideDock();
    }
 
    public boolean isShowing()

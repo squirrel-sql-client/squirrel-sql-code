@@ -31,5 +31,7 @@ public final class GraphPluginResources extends PluginResources
 
 
       String TO_WINDOW = "ToWindow";
+
+      String SHOW_MENU = "Showmenu";
    }
 }

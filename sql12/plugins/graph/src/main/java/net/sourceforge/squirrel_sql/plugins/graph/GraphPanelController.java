@@ -18,22 +18,34 @@ public class GraphPanelController
 
    public GraphPanelController(TableFramesModel tableFramesModel, GraphDesktopListener graphDesktopListener, ISession session, GraphPlugin plugin)
    {
-      GraphDockHandleListener graphDockHandleListener = new GraphDockHandleListener()
+      GraphControllerFacade graphControllerFacade = new GraphControllerFacade()
       {
          @Override
-         public void show(JPanel panel, int lastHeight)
+         public void showDock(JPanel panel, int lastHeight)
          {
             onShow(panel, lastHeight);
          }
 
          @Override
-         public void hide()
+         public void hideDock()
          {
             onHide();
          }
+
+         @Override
+         public void showPopupAbove(Point loc, GraphControllerPopupListener graphControllerPopupListener)
+         {
+            _graphDesktopController.showPopupAbove(loc, graphControllerPopupListener);
+         }
+
+         @Override
+         public void hidePopup()
+         {
+            _graphDesktopController.hidePopup();
+         }
       };
 
-      _modeManager = new ModeManager(tableFramesModel, session, plugin, new GraphDockHandleFactory(graphDockHandleListener));
+      _modeManager = new ModeManager(tableFramesModel, session, plugin, graphControllerFacade);
       _graphDesktopController = new GraphDesktopController(graphDesktopListener, session, plugin, _modeManager);
 
       JScrollPane scrollPane = new JScrollPane(_graphDesktopController.getDesktopPane());
@@ -83,25 +95,25 @@ public class GraphPanelController
    {
       _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, _graphDesktopController.createEdgesListener(), _graphDesktopController.getDesktopPane());
 
-      onModeChanged(mode);
+      onModeChanged();
       _modeManager.addModeManagerListener(new ModeManagerListener()
       {
          @Override
          public void modeChanged(Mode newMode)
          {
-            onModeChanged(newMode);
+            onModeChanged();
          }
       });
 
       //_graphPanel.add(_modeManager.getBottomPanel(), BorderLayout.SOUTH);
    }
 
-   private void onModeChanged(Mode newMode)
+   private void onModeChanged()
    {
       _bottomPanelContainer.removeAll();
       _bottomPanelContainer.add(_modeManager.getBottomPanel());
       _bottomPanelContainer.revalidate();
-      //_bottomPanelContainer.repaint();
+      _bottomPanelContainer.repaint();
 
       if (null != _split.getBottomComponent())
       {
