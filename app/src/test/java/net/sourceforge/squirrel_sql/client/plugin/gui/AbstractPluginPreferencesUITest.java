@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -40,6 +41,7 @@ import org.fest.swing.fixture.JTextComponentFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test base class for UI tests on database-specific plugin preferences panels. 
@@ -54,6 +56,8 @@ public abstract class AbstractPluginPreferencesUITest extends BaseSQuirreLJUnit4
 	protected PluginQueryTokenizerPreferencesManager prefsManager =
 		new PluginQueryTokenizerPreferencesManager();
 	protected JCheckBoxFixture useCustomQTCheckBox = null;
+	
+	protected IPlugin mockPlugin = Mockito.mock(IPlugin.class); 
 
 	@Before
    public void setUp() throws Exception
@@ -103,7 +107,7 @@ public abstract class AbstractPluginPreferencesUITest extends BaseSQuirreLJUnit4
    	f.getContentPane().setLayout(new BorderLayout());
    	File prefsFile = new File("prefs.xml");
    	prefsFile.delete();
-   	prefsManager.initialize(new DummyPlugin(), getPreferenceBean());
+   	prefsManager.initialize(mockPlugin, getPreferenceBean());
    	classUnderTest = getPrefsPanelToTest();
    	JScrollPane sp = new JScrollPane(classUnderTest);
    	f.getContentPane().add(sp, BorderLayout.CENTER);
