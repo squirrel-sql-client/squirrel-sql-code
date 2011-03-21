@@ -377,11 +377,6 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		Component comp = SwingUtilities.getRoot(table);
 
-      if(null == comp || false == comp instanceof JFrame)
-      {
-         return;
-      }
-
 		// get the default values from the DB for the table columns
 		String[] dbDefaultValues = 
 			((IDataSetUpdateableTableModel)getUpdateableModelReference()).
@@ -399,7 +394,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// and instanceof BaseMDIParentFrame.
 		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
 		// Frame, then other code must be used.
-		RowDataInputFrame rdif = new RowDataInputFrame((JFrame) comp, _colDefs, initialValues, this);
+		RowDataInputFrame rdif = new RowDataInputFrame( table, _colDefs, initialValues, this);
 //		((IMainFrame)comp).addInternalFrame(rdif, false);
 //		rdif.setLayer(JLayeredPane.POPUP_LAYER);
 		rdif.pack();

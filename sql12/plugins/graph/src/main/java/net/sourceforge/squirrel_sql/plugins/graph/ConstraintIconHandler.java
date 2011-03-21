@@ -13,6 +13,12 @@ public class ConstraintIconHandler
 {
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(ConstraintIconHandler.class);
+   private ConstraintIconHandlerListener _constraintIconHandlerListener;
+
+   public ConstraintIconHandler(ConstraintIconHandlerListener constraintIconHandlerListener)
+   {
+      _constraintIconHandlerListener = constraintIconHandlerListener;
+   }
 
 
    void paintJoinIcon(Graphics g,
@@ -228,6 +234,7 @@ public class ConstraintIconHandler
       if (noneMenuItem.isSelected())
       {
          constraintData.getConstraintQueryData().setNoJoin();
+         _constraintIconHandlerListener.constraintTypeChanged();
       }
    }
 
@@ -236,6 +243,7 @@ public class ConstraintIconHandler
       if (leftmenuItem.isSelected())
       {
          constraintData.getConstraintQueryData().setOuterJoin(outerTableName);
+         _constraintIconHandlerListener.constraintTypeChanged();
       }
    }
 
@@ -244,6 +252,7 @@ public class ConstraintIconHandler
       if (innerMenuItem.isSelected())
       {
          constraintData.getConstraintQueryData().setInnerJoin();
+         _constraintIconHandlerListener.constraintTypeChanged();
       }
    }
 }

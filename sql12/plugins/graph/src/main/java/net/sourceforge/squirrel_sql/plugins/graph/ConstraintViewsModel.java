@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
@@ -16,15 +18,27 @@ import java.util.List;
 public class ConstraintViewsModel
 {
    private final static ILogger s_log = LoggerController.createLogger(ConstraintViewsModel.class);
+   static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ConstraintViewsModel.class);
 
 
    private ConstraintView[] _constraintViews = new ConstraintView[0];
    private ISession _session;
    private ArrayList<ConstraintViewsModelListener> _listeners = new ArrayList<ConstraintViewsModelListener>();
+   private ConstraintIconHandlerListener _constraintIconHandlerListener;
 
    public ConstraintViewsModel(ISession session)
    {
       _session = session;
+
+      _constraintIconHandlerListener = new ConstraintIconHandlerListener()
+      {
+         @Override
+         public void constraintTypeChanged()
+         {
+            fireListeners();
+         }
+      };
+
    }
 
 
@@ -38,7 +52,7 @@ public class ConstraintViewsModel
       _constraintViews = new ConstraintView[constraintViewXmlBeans.length];
       for (int i = 0; i < _constraintViews.length; i++)
       {
-         _constraintViews[i] = new ConstraintView(constraintViewXmlBeans[i], desktopController, _session);
+         _constraintViews[i] = new ConstraintView(constraintViewXmlBeans[i], desktopController, _session, _constraintIconHandlerListener);
          _constraintViews[i].replaceCopiedColsByReferences(colInfos, false);
       }
    }
@@ -156,7 +170,7 @@ public class ConstraintViewsModel
          }
          else
          {
-            newConstraintViewsBuf.add(new ConstraintView(newDBconstraintData[i], desktopController, _session));
+            newConstraintViewsBuf.add(new ConstraintView(newDBconstraintData[i], desktopController, _session, _constraintIconHandlerListener));
          }
       }
 
@@ -167,6 +181,44 @@ public class ConstraintViewsModel
 
       _constraintViews = newConstraintViewsBuf.toArray(new ConstraintView[newConstraintViewsBuf.size()]);
    }
+
+   public ConstraintView createConstraintView(DndEvent e, TableFrameController sourceTable, ColumnInfo sourceColumnInfo, GraphDesktopController desktopController, ISession session)
+   {
+      ColumnInfo targetColumnInfo = e.getColumnInfo();
+      TableFrameController targetTable = e.getTableFrameController();
+
+      if(null == targetColumnInfo || null == sourceColumnInfo || targetTable == sourceTable)
+      {
+         return null;
+      }
+
+      if(null != targetColumnInfo.getImportedColumnName())
+      {
+         // i18n[graph.nonDbConstraintCreationError_already_points=A column cannot reference more than one other column. Non DB constraint could not be created.]
+         session.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("graph.nonDbConstraintCreationError_already_points"));
+         return null;
+      }
+
+      String constName = "SquirrelGeneratedConstraintName";
+
+      ConstraintData data = new ConstraintData(
+         sourceTable.getTableInfo().getSimpleName(),
+         targetTable.getTableInfo().getSimpleName(),
+         constName,
+         true);
+
+
+
+      targetColumnInfo.setImportData(sourceTable.getTableInfo().getSimpleName(), sourceColumnInfo.getName(), constName, true);
+
+
+      data.addColumnInfo(targetColumnInfo);
+      ConstraintView ret = new ConstraintView(data, desktopController, session, _constraintIconHandlerListener);
+
+      addConst(ret);
+      return ret;
+   }
+
 
 
    private void removeOverlappingConstraints(ArrayList<ConstraintView> master, ArrayList<ConstraintView> toRemoveFrom)

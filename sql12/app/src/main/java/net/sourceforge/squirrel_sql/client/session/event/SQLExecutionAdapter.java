@@ -46,4 +46,9 @@ public class SQLExecutionAdapter implements ISQLExecutionListener
    public void statementExecuted(String sql)
    {
    }
+
+   @Override
+   public void executionFinished()
+   {
+   }
 }

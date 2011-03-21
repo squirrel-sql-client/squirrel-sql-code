@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.example;
 
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /*
@@ -26,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
  * A simple ISQLExecutionListener that displays the SQL as it is being executed in the main application 
  * message panel (at the bottom of the application).
  */
-public class ExampleSqlExecutionListener implements ISQLExecutionListener
+public class ExampleSqlExecutionListener extends SQLExecutionAdapter
 {
 	/** This is what gives the ability to print a message to the message panel */
 	private final IMessageHandler _messageHandler;
@@ -50,5 +51,9 @@ public class ExampleSqlExecutionListener implements ISQLExecutionListener
 		// by returning null.
 		return sql;
 	}
+
+   public void executionFinished()
+   {
+   }
 
 }

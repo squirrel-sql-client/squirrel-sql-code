@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -29,7 +30,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author Dieter
  *
  */
-public class SQLReplaceExecutionListener implements ISQLExecutionListener {
+public class SQLReplaceExecutionListener extends SQLExecutionAdapter
+{
 
 	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
 	private ISession session = null;

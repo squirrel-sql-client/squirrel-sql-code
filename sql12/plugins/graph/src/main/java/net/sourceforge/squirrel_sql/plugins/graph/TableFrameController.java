@@ -22,7 +22,6 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -274,26 +273,21 @@ public class TableFrameController
 
    private void onDndImportDone(DndEvent e, Point dropPoint)
    {
-      ConstraintView constView = ConstraintViewCreator.createConstraintView(
-         e,
-         this,
-         getColumnInfoForPoint(dropPoint),
-         _desktopController,
-         _session
-      );
-
-      if(null == constView)
-      {
-         return;
-      }
-
-
-
       TableFrameController fkTable = e.getTableFrameController();
 
-      fkTable._constraintViewsModel.addConst(constView);
+      ConstraintView constraintView = fkTable._constraintViewsModel.createConstraintView(
+            e,
+            this,
+            getColumnInfoForPoint(dropPoint),
+            _desktopController,
+            _session
+      );
 
-      fkTable.recalculateAllConnections(true);
+      if (null != constraintView)
+      {
+         fkTable.recalculateAllConnections(true);
+      }
+
    }
 
    private void onRemoveNonDbConstraint(ConstraintView constraintView)

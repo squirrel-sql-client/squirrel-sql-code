@@ -318,10 +318,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                 s_log.error("Could not update cache ", t);
              }
          }
+
+         fireExecutionListenersFinshed();
       }
    }
 
-	/**
+   /**
 	 * Set the fetchSize Arrtibute for the SQL-Statement;
 	 */
 	private void setFetchSize(SessionProperties props) 
@@ -559,6 +561,24 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
       });
    }
+
+   private void fireExecutionListenersFinshed()
+   {
+      // This method is called from a thread.
+      // In case listeners update Swing controls we invoke later here.
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            for (int i = 0; i < _executionListeners.length; i++)
+            {
+               _executionListeners[i].executionFinished();
+            }
+         }
+      });
+   }
+
+
 
    private boolean processResultSet(final ResultSet rs, final SQLExecutionInfo exInfo)
    {

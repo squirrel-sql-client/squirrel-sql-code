@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetComm
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -39,7 +40,8 @@ import java.util.regex.Pattern;
  * 
  * @author Thorsten Mürell
  */
-public class SQLParamExecutionListener implements ISQLExecutionListener {
+public class SQLParamExecutionListener extends SQLExecutionAdapter
+{
 
 	private final static ILogger log = LoggerController.createLogger(SQLParamPlugin.class);
 	private ISession session = null;
