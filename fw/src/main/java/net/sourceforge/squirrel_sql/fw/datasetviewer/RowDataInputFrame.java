@@ -52,7 +52,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class RowDataInputFrame extends JDialog
 	implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(RowDataInputFrame.class);
@@ -66,12 +65,12 @@ public class RowDataInputFrame extends JDialog
 	/**
 	 * ctor.
 	 */
-	public RowDataInputFrame(JFrame parent, ColumnDisplayDefinition[] colDefs,
+	public RowDataInputFrame(Component comp, ColumnDisplayDefinition[] colDefs,
 									 Object[] initialValues,
 									 DataSetViewerEditableTablePanel caller) {
 
 		// i18n[rowDataInputFrame.propName=Input New Row Data]
-		super(parent, s_stringMgr.getString("rowDataInputFrame.propName"), false);
+		super(SwingUtilities.windowForComponent(comp), s_stringMgr.getString("rowDataInputFrame.propName"));
 
 		// get the ConentPane into a variable for convenience
 		Container pane = getContentPane();
@@ -183,7 +182,6 @@ public class RowDataInputFrame extends JDialog
 	 * JTable for use in creating data for insertion.
 	 */
 	class RowDataJTable extends JTable {
-		private static final long serialVersionUID = 1L;
 		private ColumnDisplayDefinition[] _colDefs = null;
 
 		/**
@@ -337,7 +335,6 @@ public class RowDataInputFrame extends JDialog
 	 */
 	class RowDataModel extends DefaultTableModel {
 
-		private static final long serialVersionUID = 1L;
 
 		/**
 		 * ctor

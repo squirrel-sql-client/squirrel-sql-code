@@ -13,6 +13,8 @@ public class SelectClauseGenerator
 
       boolean colAdded = false;
       boolean hasAggFct = false;
+      boolean groupByHasCols = false;
+
 
       for (TableFrameController tfc : fromClause.getTables())
       {
@@ -27,6 +29,7 @@ public class SelectClauseGenerator
                   String s = tfc.getTableInfo().getSimpleName() + "." + columnInfo.getColumnName() + ",";
                   select.append(s);
                   groupBy.append(s);
+                  groupByHasCols = true;
                }
                else
                {
@@ -45,7 +48,7 @@ public class SelectClauseGenerator
 
       select.setLength(select.length() - 1); // cut off the last comma.
 
-      if(hasAggFct)
+      if(hasAggFct && groupByHasCols)
       {
          groupBy.setLength(groupBy.length() - 1); // cut off the last comma.
          return new SelectClauseRes(select, groupBy);

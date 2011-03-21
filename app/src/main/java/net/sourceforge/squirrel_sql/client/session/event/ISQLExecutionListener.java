@@ -50,4 +50,6 @@ public interface ISQLExecutionListener extends EventListener
 	 *
 	 */
    void statementExecuted(String sql);
+
+   void executionFinished();
 }

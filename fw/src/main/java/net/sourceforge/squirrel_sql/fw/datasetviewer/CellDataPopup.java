@@ -17,11 +17,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -75,21 +71,10 @@ public class CellDataPopup
       Component comp = SwingUtilities.getRoot(table);
       Component newComp = null;
 
-      if (false == comp instanceof JFrame)
-      {
-         // Fixes ClassCastException, see below.
-         return;
-      }
-
-      // The following only works if SwingUtilities.getRoot(table) returns
-      // and instanceof BaseMDIParentFrame.
-      // If SwingTUilities.getRoot(table) returns and instance of Dialog or
-      // Frame, then other code must be used.
       TextAreaInternalFrame taif =
-         new TextAreaInternalFrame((JFrame) comp, table.getColumnName(col), colDef, obj,
+         new TextAreaInternalFrame(table, table.getColumnName(col), colDef, obj,
             row, col, isModelEditable, table);
-      //((IMainFrame) comp).addInternalFrame(taif, false);
-      //taif.setLayer(JLayeredPane.POPUP_LAYER);
+
       taif.pack();
       newComp = taif;
 
@@ -176,7 +161,6 @@ public class CellDataPopup
 	//
 	private static class ColumnDataPopupPanel extends JPanel {
 
-      private static final long serialVersionUID = 1L;
       private final PopupEditableIOPanel ioPanel;
 		private JDialog _parentFrame = null;
 		private int _row;
@@ -298,14 +282,14 @@ _table.setValueAt(newValue, _row, _col);
 	// root type is Dialog or Frame, then other code must be used.
 	class TextAreaInternalFrame extends JDialog
 	{
-        private static final long serialVersionUID = 1L;
 
-        public TextAreaInternalFrame(JFrame owner, String columnName, ColumnDisplayDefinition colDef,
+        public TextAreaInternalFrame(Component comp, String columnName, ColumnDisplayDefinition colDef,
 			Object value, int row, int col,
 			boolean isModelEditable, JTable table)
 		{
-			// i18n[cellDataPopup.valueofColumn=Value of column {0}]
-			super(owner, s_stringMgr.getString("cellDataPopup.valueofColumn", columnName), false);
+
+         // i18n[cellDataPopup.valueofColumn=Value of column {0}]
+			super(SwingUtilities.windowForComponent(comp), s_stringMgr.getString("cellDataPopup.valueofColumn", columnName));
 			ColumnDataPopupPanel popup =
 				new ColumnDataPopupPanel(value, colDef, isModelEditable);
 			popup.setUserActionInfo(this, row, col, table);
@@ -313,7 +297,6 @@ _table.setValueAt(newValue, _row, _col);
 
          AbstractAction closeAction = new AbstractAction()
          {
-            private static final long serialVersionUID = 1L;
 
             public void actionPerformed(ActionEvent actionEvent)
             {

@@ -18,9 +18,7 @@ public class QueryBuilderController
    private static final String PREF_KEY_SQL_DOCK_HEIGHT = "Squirrel.graph.sqldock.height";
    private static final String PREF_KEY_RESULT_DOCK_HEIGHT = "Squirrel.graph.resultdock.height";
 
-
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(QueryBuilderController.class);
-
 
    private JPanel _panel;
    private JToggleButton _btnSQL;
@@ -30,9 +28,10 @@ public class QueryBuilderController
    private TableFramesModel _tableFramesModel;
    private ISession _session;
    private GraphQuerySQLPanelCtrl _graphQuerySQLPanelCtrl;
+   private GraphQueryResultPanelCtrl _graphQueryResultPanelCtrl;
    private SessionAdapter _sessionAdapter;
 
-   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, ISession session, StartButtonHandler startButtonHandler)
+   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
    {
       _tableFramesModel = tableFramesModel;
       _session = session;
@@ -55,7 +54,9 @@ public class QueryBuilderController
       gbc = new GridBagConstraints(3,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _panel.add(new JPanel(), gbc);
 
-      _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session);
+      GraphPluginResources rsrc = new GraphPluginResources(plugin);
+      _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session, new HideDockButtonHandler(_btnSQL, rsrc), createSQLSyncListener());
+      _graphQueryResultPanelCtrl = new GraphQueryResultPanelCtrl(_session, new HideDockButtonHandler(_btnResult, rsrc), createResultSyncListener());
 
       initHandels(graphControllerFacade);
 
@@ -101,12 +102,41 @@ public class QueryBuilderController
       });
    }
 
+   private SyncListener createResultSyncListener()
+   {
+      return new SyncListener()
+      {
+         @Override
+         public void synRequested()
+         {
+            _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel));
+         }
+      };
+   }
+
+   private SyncListener createSQLSyncListener()
+   {
+      return new SyncListener()
+      {
+         @Override
+         public void synRequested()
+         {
+            _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel));
+         }
+      };
+
+   }
+
 
    private void onModelChanged()
    {
-      if (_sqlDockHandle.isShowing())
+      if (_sqlDockHandle.isShowing() && _graphQuerySQLPanelCtrl.isAutoSync())
       {
          _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel));
+      }
+      else if(_resultDockHandle.isShowing()  && _graphQueryResultPanelCtrl.isAutoSync())
+      {
+         _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel));
       }
    }
 
@@ -116,7 +146,7 @@ public class QueryBuilderController
       _sqlDockHandle = new GraphDockHandle(graphControllerFacade, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel(), sqlHeight);
 
       int resHeight = Preferences.userRoot().getInt(PREF_KEY_RESULT_DOCK_HEIGHT, 250);
-      _resultDockHandle = new GraphDockHandle(graphControllerFacade, new GraphQueryResultPanel(), resHeight);
+      _resultDockHandle = new GraphDockHandle(graphControllerFacade, _graphQueryResultPanelCtrl.getGraphQuerySQLPanel(), resHeight);
    }
 
    private void onSessionClosing()
@@ -139,6 +169,7 @@ public class QueryBuilderController
             _btnSQL.setSelected(false);
          }
          _resultDockHandle.show();
+         onModelChanged();
       }
       else
       {

@@ -121,7 +121,7 @@ public class ModeManager
       _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, desktopPane, _session, _plugin, startButtonHandler);
 
       startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
-      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphControllerFacade, _session, startButtonHandler);
+      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphControllerFacade, _session, _plugin, startButtonHandler);
 
       startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
       _defaultController = new DefaultController(startButtonHandler);

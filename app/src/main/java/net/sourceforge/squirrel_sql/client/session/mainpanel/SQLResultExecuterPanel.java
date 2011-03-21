@@ -272,6 +272,8 @@ public class SQLResultExecuterPanel extends JPanel
 	{
       if (sql != null && sql.trim().length() > 0)
       {
+         removeErrorPanels();
+
          String origSQL = sql;
          sql = fireSQLToBeExecutedEvent(sql);
 

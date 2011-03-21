@@ -46,10 +46,11 @@ public class ConstraintView implements GraphComponent
    private TableFrameController _fkFrameOriginatingFrom;
    private TableFrameController _pkFramePointingTo;
    private Vector<ConstraintViewListener> _constraintViewListeners = new Vector<ConstraintViewListener>();
-   private ConstraintIconHandler _constraintIconHandler = new ConstraintIconHandler();
+   private ConstraintIconHandler _constraintIconHandler;
 
-   public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
+   public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session, ConstraintIconHandlerListener constraintIconHandlerListener)
    {
+      _constraintIconHandler = new ConstraintIconHandler(constraintIconHandlerListener);
       _constraintData = constraintData;
       _desktopController = desktopController;
       _session = session;
@@ -57,8 +58,9 @@ public class ConstraintView implements GraphComponent
       createPopup();
    }
 
-   public ConstraintView(ConstraintViewXmlBean constraintViewXmlBean, GraphDesktopController desktopController, ISession session)
+   public ConstraintView(ConstraintViewXmlBean constraintViewXmlBean, GraphDesktopController desktopController, ISession session, ConstraintIconHandlerListener constraintIconHandlerListener)
    {
+      _constraintIconHandler = new ConstraintIconHandler(constraintIconHandlerListener);
       _desktopController = desktopController;
       _session = session;
       _constraintData = new ConstraintData(constraintViewXmlBean.getConstraintDataXmlBean());
