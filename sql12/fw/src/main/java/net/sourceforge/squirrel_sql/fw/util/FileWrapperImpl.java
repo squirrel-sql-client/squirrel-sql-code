@@ -19,10 +19,17 @@
 
 package net.sourceforge.squirrel_sql.fw.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -665,6 +672,13 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 		return wrappedFiles;
 	}
 
+	/**
+	 * @param prefix
+	 * @param suffix
+	 * @param directory
+	 * @return
+	 * @throws IOException
+	 */
 	public static FileWrapperImpl createTempFile(String prefix, String suffix, FileWrapperImpl directory)
 		throws IOException
 	{
@@ -673,6 +687,60 @@ public class FileWrapperImpl implements Serializable, Comparable<FileWrapperImpl
 		} else {
 			return new FileWrapperImpl(File.createTempFile(prefix, suffix, null));
 		}
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getFileInputStream()
+	 */
+	@Override
+	public FileInputStream getFileInputStream() throws FileNotFoundException
+	{
+		return new FileInputStream(this._wrappedFile);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getFileOutputStream()
+	 */
+	@Override
+	public FileOutputStream getFileOutputStream() throws FileNotFoundException
+	{
+		return new FileOutputStream(this._wrappedFile);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getFileWriter()
+	 */
+	@Override
+	public FileWriter getFileWriter() throws IOException
+	{
+		return new FileWriter(this._wrappedFile);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getFileReader()
+	 */
+	@Override
+	public FileReader getFileReader() throws IOException
+	{
+		return new FileReader(this._wrappedFile);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getBufferedReader()
+	 */
+	@Override
+	public BufferedReader getBufferedReader() throws IOException
+	{
+		return new BufferedReader(getFileReader());
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapper#getPrintWriter()
+	 */
+	@Override
+	public PrintWriter getPrintWriter() throws IOException
+	{
+		return new PrintWriter(getFileWriter());
 	}
 
 }

@@ -19,7 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -46,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -442,8 +442,8 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       {
          if(null == _boomarkProps)
          {
-            File usf = getPluginUserSettingsFolder();
-            File boomarkPropsFile = new File(usf, BOOKMARKS_PROPS_FILE);
+            FileWrapper usf = getPluginUserSettingsFolder();
+            FileWrapper boomarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
 
             if(false == boomarkPropsFile.exists())
             {
@@ -451,7 +451,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
             }
             else
             {
-               fis = new FileInputStream(boomarkPropsFile);
+               fis = boomarkPropsFile.getFileInputStream();
                _boomarkProps = new Properties();
                _boomarkProps.load(fis);
             }
@@ -483,9 +483,9 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
             return;
          }
 
-         File usf = getPluginUserSettingsFolder();
-         File boomarkPropsFile = new File(usf, BOOKMARKS_PROPS_FILE);
-         fos = new FileOutputStream(boomarkPropsFile);
+         FileWrapper usf = getPluginUserSettingsFolder();
+         FileWrapper boomarkPropsFile = fileWrapperFactory.create(usf, BOOKMARKS_PROPS_FILE);
+         fos = boomarkPropsFile.getFileOutputStream();
          _boomarkProps.store(fos, "Bookmark properties");
       } catch (IOException e) {
           throw new RuntimeException(e);

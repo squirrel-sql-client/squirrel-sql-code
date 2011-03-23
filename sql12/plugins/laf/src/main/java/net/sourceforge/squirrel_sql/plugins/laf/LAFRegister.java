@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
 import java.awt.Frame;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,7 +43,11 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -105,6 +108,9 @@ class LAFRegister
 	/** <UI defaults prior to us modifying them. */
 	private UIDefaults _origUIDefaults;
 
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+
 	/**
 	 * Ctor. Load all Look and Feels from the Look and Feel folder. Set the current Look and Feel to that
 	 * specified in the application preferences.
@@ -119,8 +125,14 @@ class LAFRegister
 	LAFRegister(IApplication app, LAFPlugin plugin) throws IllegalArgumentException
 	{
 		super();
-		if (app == null) { throw new IllegalArgumentException("Null IApplication passed"); }
-		if (plugin == null) { throw new IllegalArgumentException("Null LAFPlugin passed"); }
+		if (app == null)
+		{
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		if (plugin == null)
+		{
+			throw new IllegalArgumentException("Null LAFPlugin passed");
+		}
 		_app = app;
 		_plugin = plugin;
 		// Save the current UI defaults.
@@ -172,7 +184,10 @@ class LAFRegister
 	 */
 	ILookAndFeelController getLookAndFeelController(String lafClassName)
 	{
-		if (lafClassName == null) { throw new IllegalArgumentException("lafClassName == null"); }
+		if (lafClassName == null)
+		{
+			throw new IllegalArgumentException("lafClassName == null");
+		}
 		ILookAndFeelController ctrl = _lafControllers.get(lafClassName);
 		if (ctrl == null)
 		{
@@ -221,13 +236,15 @@ class LAFRegister
 			ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
 			lafCont.aboutToBeInstalled(this, laf);
 
-			// Set Look and Feel.  If this is the Substance placeholder, skip it as it is not a real 
-			// look and feel.  The controller will handle setting the look and feel using the UIManager.
-			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME)) {
-				if (s_log.isInfoEnabled()) {
-					s_log.info("Setting lookandfeel class: "+lafClassName);
+			// Set Look and Feel. If this is the Substance placeholder, skip it as it is not a real
+			// look and feel. The controller will handle setting the look and feel using the UIManager.
+			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME))
+			{
+				if (s_log.isInfoEnabled())
+				{
+					s_log.info("Setting lookandfeel class: " + lafClassName);
 				}
-				
+
 				if (_lafClassLoader != null)
 				{
 					UIManager.setLookAndFeel(laf);
@@ -331,7 +348,7 @@ class LAFRegister
 		final Map<String, URL> lafs = loadInstallProperties();
 
 		final List<URL> lafUrls = new ArrayList<URL>();
-		
+
 		// Put the lafplugin jar into the list of lafUrls as it contains a LAF placeholder (for Substance).
 		String jarFilePath = _plugin.getPluginJarFilePath();
 		try
@@ -340,9 +357,10 @@ class LAFRegister
 		}
 		catch (Exception e)
 		{
-			s_log.error("Unable to add the plugin jar file ("+jarFilePath+") to the list of classloader URLs");
+			s_log.error("Unable to add the plugin jar file (" + jarFilePath
+				+ ") to the list of classloader URLs");
 		}
-		
+
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		for (Iterator<URL> it = lafs.values().iterator(); it.hasNext();)
 		{
@@ -354,7 +372,7 @@ class LAFRegister
 		{
 			URL[] urls = new URL[lafUrls.size()];
 			_lafClassLoader = new MyURLClassLoader(lafUrls.toArray(urls));
-			
+
 			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
 				String className = it.next();
@@ -455,7 +473,7 @@ class LAFRegister
 	{
 		Map<String, URL> lafs = new HashMap<String, URL>();
 		// Directory containing the standard LAF jar files.
-		final File stdLafJarDir = _plugin.getLookAndFeelFolder();
+		final FileWrapper stdLafJarDir = _plugin.getLookAndFeelFolder();
 		// Load info about the standard LAFs that come with this plugin.
 		PluginResources rsrc = _plugin.getResources();
 		for (int i = 0; /* forever */; ++i)
@@ -473,7 +491,7 @@ class LAFRegister
 					break;
 				}
 
-				File file = new File(stdLafJarDir, jarName);
+				FileWrapper file = fileWrapperFactory.create(stdLafJarDir, jarName);
 				try
 				{
 					if (file.isFile() && file.exists())
@@ -495,9 +513,10 @@ class LAFRegister
 		// Load info about any extra LAFs supplied by the user.
 		try
 		{
-			final File extraLafsDir = _plugin.getUsersExtraLAFFolder();
-			File extraFile = new File(extraLafsDir, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
-			BufferedInputStream is = new BufferedInputStream(new FileInputStream(extraFile));
+			final FileWrapper extraLafsDir = _plugin.getUsersExtraLAFFolder();
+			FileWrapper extraFile =
+				fileWrapperFactory.create(extraLafsDir, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+			BufferedInputStream is = new BufferedInputStream(extraFile.getFileInputStream());
 			try
 			{
 				Properties props = new Properties();
@@ -514,7 +533,7 @@ class LAFRegister
 					{
 						break;
 					}
-					File file = new File(extraLafsDir, jarName);
+					FileWrapper file = fileWrapperFactory.create(extraLafsDir, jarName);
 					try
 					{
 						if (file.isFile() && file.exists())
@@ -539,4 +558,15 @@ class LAFRegister
 		}
 		return lafs;
 	}
+
+	/**
+	 * @param fileWrapperFactory
+	 *           the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+
 }

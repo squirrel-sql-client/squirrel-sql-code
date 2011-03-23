@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -68,7 +69,7 @@ public class SQLReplacePlugin extends DefaultSessionPlugin
 	 * The app folder for this plugin.
 	 */
 	@SuppressWarnings("unused")
-	private File pluginAppFolder;
+	private FileWrapper pluginAppFolder;
 
 	private PluginResources resources;
 

@@ -5,11 +5,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 
 
@@ -151,10 +151,10 @@ public class GraphXmlSerializer
    {
       try
       {
-         File settingsPath = plugin.getPluginUserSettingsFolder();
+         FileWrapper settingsPath = plugin.getPluginUserSettingsFolder();
          final String urlPrefix = javaNormalize(session.getAlias().getUrl()) + ".";
 
-         File[] graphXmlFiles = settingsPath.listFiles(new FilenameFilter()
+         FileWrapper[] graphXmlFiles = settingsPath.listFiles(new FilenameFilter()
                   {
                      public boolean accept(File dir, String name)
                      {

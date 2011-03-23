@@ -16,6 +16,11 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.Iterator;
+
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -23,23 +28,20 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferencesController;
-
-import javax.swing.*;
-import java.io.File;
-import java.util.Iterator;
 
 /**
  * The plugin class.
@@ -169,7 +171,8 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-			File prefsFile = new File(getPluginUserSettingsFolder(), PREFS_FILE_NAME);
+			FileWrapper prefsFile =
+				fileWrapperFactory.create(getPluginUserSettingsFolder().getAbsolutePath(), PREFS_FILE_NAME);
 			final XMLBeanWriter wtr = new XMLBeanWriter(_newSessionPrefs);
 			wtr.save(prefsFile);
 		}
@@ -186,7 +189,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 		try
 		{
 			_newSessionPrefs = new CodeCompletionPreferences();
-			File prefsFile = new File(getPluginUserSettingsFolder(), PREFS_FILE_NAME);
+			FileWrapper prefsFile = fileWrapperFactory.create(getPluginUserSettingsFolder(), PREFS_FILE_NAME);
 			if(prefsFile.exists())
 			{
 				XMLBeanReader reader = new XMLBeanReader();

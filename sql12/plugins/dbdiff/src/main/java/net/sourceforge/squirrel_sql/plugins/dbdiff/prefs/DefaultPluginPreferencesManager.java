@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PreferenceUtil;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -47,7 +48,7 @@ public class DefaultPluginPreferencesManager implements IPluginPreferencesManage
 	private final String USER_PREFS_FILE_NAME = "prefs.xml";
 
 	/** Folder to store user settings in. */
-	protected File _userSettingsFolder;
+	protected FileWrapper _userSettingsFolder;
 
 	protected IPluginPreferenceBean _prefs = null;
 
@@ -102,7 +103,7 @@ public class DefaultPluginPreferencesManager implements IPluginPreferencesManage
 		try
 		{
 			final XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-			wtr.save(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
+			wtr.save(new File(_userSettingsFolder.getAbsolutePath(), USER_PREFS_FILE_NAME));
 		}
 		catch (final Exception ex)
 		{
@@ -115,7 +116,7 @@ public class DefaultPluginPreferencesManager implements IPluginPreferencesManage
 	 */
 	private void loadPrefs()
 	{
-		File prefFile = null;
+		FileWrapper prefFile = null;
 		try
 		{
 			final XMLBeanReader doc = new XMLBeanReader();

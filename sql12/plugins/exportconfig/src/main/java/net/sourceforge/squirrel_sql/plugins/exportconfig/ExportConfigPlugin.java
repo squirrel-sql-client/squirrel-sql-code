@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.plugins.exportconfig;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginResourcesFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResourcesFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -59,7 +60,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 	private static final String USER_PREFS_FILE_NAME = "prefs.xml";
 
 	/** Folder to store user settings in. */
-	private File _userSettingsFolder;
+	private FileWrapper _userSettingsFolder;
 
 	/** Plugin resources. */
 	private IResources _resources;
@@ -235,8 +236,8 @@ public class ExportConfigPlugin extends DefaultPlugin
 		try
 		{
 			XMLBeanReader doc = new XMLBeanReader();
-			doc.load(new File(_userSettingsFolder, USER_PREFS_FILE_NAME),
-								getClass().getClassLoader());
+			doc.load(fileWrapperFactory.create(_userSettingsFolder, USER_PREFS_FILE_NAME),
+				getClass().getClassLoader());
 			final Iterator<?> it = doc.iterator();
 			if (it.hasNext())
 			{
@@ -267,7 +268,7 @@ public class ExportConfigPlugin extends DefaultPlugin
 		try
 		{
 			XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-			wtr.save(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
+			wtr.save(fileWrapperFactory.create(_userSettingsFolder.getAbsolutePath(), USER_PREFS_FILE_NAME));
 		}
 		catch (Exception ex)
 		{

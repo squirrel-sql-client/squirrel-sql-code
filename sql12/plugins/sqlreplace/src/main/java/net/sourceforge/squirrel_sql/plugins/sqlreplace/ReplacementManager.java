@@ -18,12 +18,15 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlreplace;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -41,13 +44,16 @@ public class ReplacementManager
 	/**
 	 * The file to save/load replacements to/from
 	 */
-	private File replacementFile;
+	private FileWrapper replacementFile;
 
 	private ArrayList<Replacement> replacements = new ArrayList<Replacement>();
 
 	IMessageHandler mpan;
 
 	private final static ILogger log = LoggerController.createLogger(SQLReplacePlugin.class);
+
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
 
 	/**
 	 * @param _plugin
@@ -56,7 +62,8 @@ public class ReplacementManager
 	{
 		try
 		{
-			replacementFile = new File(_plugin.getPluginUserSettingsFolder(), "sqlreplacement.xml");
+			replacementFile =
+				fileWrapperFactory.create(_plugin.getPluginUserSettingsFolder(), "sqlreplacement.xml");
 			mpan = _plugin.getApplication().getMessageHandler();
 		}
 		catch (final IOException e)
@@ -183,15 +190,27 @@ public class ReplacementManager
 			if (toReplace.indexOf(r.getVariable()) > -1)
 			{
 				String replacementMsg = "Replace-Rule: " + r.toString();
-				if (log.isInfoEnabled()) {
+				if (log.isInfoEnabled())
+				{
 					log.info(replacementMsg);
 				}
 				mpan.showMessage(replacementMsg);
-				
+
 				toReplace = toReplace.replace(r.getVariable(), r.getValue());
 			}
 		}
 
 		return toReplace;
 	}
+
+	/**
+	 * @param fileWrapperFactory
+	 *           the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+
 }

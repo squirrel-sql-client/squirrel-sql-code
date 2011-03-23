@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import java.io.File;
 import java.io.IOException;
 
@@ -26,9 +27,15 @@ import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasProperti
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappersImpl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 public abstract class DefaultPlugin implements IPlugin
 {
@@ -39,6 +46,12 @@ public abstract class DefaultPlugin implements IPlugin
 	/** Current application API. */
 	protected IApplication _app;
 
+	/** A FileWrapper-enhanced version of ApplicationFiles that removes direct references to File */
+	protected ApplicationFileWrappers applicationFiles = new ApplicationFileWrappersImpl();
+	
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	protected FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+	
 	/**
 	 * Called on application startup before application started up.
 	 *
@@ -143,7 +156,7 @@ public abstract class DefaultPlugin implements IPlugin
 	 *
 	 * @return	The current application API.
 	 */
-	public final IApplication getApplication()
+	public IApplication getApplication()
 	{
 		return _app;
 	}
@@ -164,12 +177,12 @@ public abstract class DefaultPlugin implements IPlugin
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	public synchronized File getPluginAppSettingsFolder()
+	public synchronized FileWrapper getPluginAppSettingsFolder()
 		throws IllegalStateException, IOException
 	{
 		String pluginAppFolderProp = System.getProperty("pluginAppFolder");
 		if (pluginAppFolderProp != null) {
-			return new File(pluginAppFolderProp);
+			return fileWrapperFactory.create(pluginAppFolderProp);
 		}
 		
 		final String internalName = getInternalName();
@@ -177,8 +190,8 @@ public abstract class DefaultPlugin implements IPlugin
 		{
 			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
 		}
-		final File pluginDir = new ApplicationFiles().getPluginsDirectory();
-		final File file = new File(pluginDir, internalName);
+		final FileWrapper pluginDir = applicationFiles.getPluginsDirectory();
+		final FileWrapper file = fileWrapperFactory.create(pluginDir, internalName);
 		if (!file.exists())
 		{
 			file.mkdirs();
@@ -197,12 +210,12 @@ public abstract class DefaultPlugin implements IPlugin
 	 */
 	public synchronized String getPluginJarFilePath() throws IllegalStateException {
 		final String internalName = getInternalName();
-		final File pluginDir = new ApplicationFiles().getPluginsDirectory();
+		final FileWrapper pluginDir = applicationFiles.getPluginsDirectory();
 		if (internalName == null || internalName.trim().length() == 0)
 		{
 			throw new IllegalStateException("IPlugin doesn't have a valid internal name");
 		}
-		final File resultFile = new File(pluginDir, internalName + ".jar");
+		final FileWrapper resultFile = fileWrapperFactory.create(pluginDir, internalName + ".jar");
 		return resultFile.getAbsolutePath();
 	}
 	
@@ -221,8 +234,10 @@ public abstract class DefaultPlugin implements IPlugin
 	 *
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
+	 * 
+	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getPluginUserSettingsFolder()
 	 */
-	public synchronized File getPluginUserSettingsFolder()
+	public synchronized FileWrapper getPluginUserSettingsFolder()
 		throws IllegalStateException, IOException
 	{
 		final String internalName = getInternalName();
@@ -235,7 +250,7 @@ public abstract class DefaultPlugin implements IPlugin
 				+ File.separator
 				+ internalName
 				+ File.separator;
-		File file = new File(name);
+		FileWrapper file = fileWrapperFactory.create(name);
 		if (!file.exists())
 		{
 			file.mkdirs();
@@ -293,6 +308,24 @@ public abstract class DefaultPlugin implements IPlugin
    {
       return null;
    }
+
+	/**
+	 * @param applicationFiles the applicationFiles to set
+	 */
+	public void setApplicationFiles(ApplicationFileWrappers applicationFiles)
+	{
+		Utilities.checkNull("setApplicationFiles", "applicationFiles", applicationFiles);
+		this.applicationFiles = applicationFiles;
+	}
+
+	/**
+	 * @param fileWrapperFactory the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
    
 
 }

@@ -19,7 +19,6 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +27,10 @@ import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
@@ -44,13 +47,17 @@ public class BookmarkManager implements ICompletorModel
    /**
     * The file to save/load bookmarks to/from
     */
-   private File bookmarkFile;
+   private FileWrapper bookmarkFile;
 
    /**
     * List of all the loaded bookmarks
     */
    private ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
 
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+
+   
    /**
     * Index of bookmark names to indexes in the bookmarks array
     */
@@ -62,7 +69,7 @@ public class BookmarkManager implements ICompletorModel
       try
       {
          _plugin = plugin;
-         bookmarkFile = new File(_plugin.getPluginUserSettingsFolder(), "bookmarks.xml");
+         bookmarkFile = fileWrapperFactory.create(_plugin.getPluginUserSettingsFolder(), "bookmarks.xml");
       }
       catch (IOException e)
       {
@@ -217,4 +224,14 @@ public class BookmarkManager implements ICompletorModel
       bookmarks = new ArrayList<Bookmark>();
       bookmarkIdx = new HashMap<String, Integer>();
    }
+   
+	/**
+	 * @param fileWrapperFactory the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+   
 }
