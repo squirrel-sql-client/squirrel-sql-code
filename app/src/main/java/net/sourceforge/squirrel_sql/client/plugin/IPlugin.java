@@ -17,7 +17,7 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
+
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -25,6 +25,9 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 /**
  * Base interface for all plugins.
  * <P>
@@ -179,7 +182,7 @@ public interface IPlugin
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	File getPluginAppSettingsFolder() throws IOException, IllegalStateException;
+	FileWrapper getPluginAppSettingsFolder() throws IOException, IllegalStateException;
 
 	/**
 	 * Return the folder with the users home directory
@@ -197,7 +200,7 @@ public interface IPlugin
 	 * @throws	IOException
 	 * 			An error occured retrieving/creating the folder.
 	 */
-	File getPluginUserSettingsFolder() throws IllegalStateException, IOException;
+	FileWrapper getPluginUserSettingsFolder() throws IllegalStateException, IOException;
 
    /**
     * Allows a plugin to provide services to other plugins.
@@ -213,5 +216,16 @@ public interface IPlugin
 	 * @throws IllegalStateException if this plugin doesn't have a valid internal name. 
 	 */
 	String getPluginJarFilePath() throws IllegalStateException;
+
+	/**
+	 * @param applicationFiles the applicationFiles to set
+	 */
+	public void setApplicationFiles(ApplicationFileWrappers applicationFiles);
+
+	/**
+	 * @param fileWrapperFactory the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory);
+
 
 }

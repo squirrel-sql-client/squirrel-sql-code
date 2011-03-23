@@ -58,6 +58,14 @@ public interface IOUtilities
 	void closeWriter(Writer writer);
 
 	/**
+	 * Flushes the specified writer which can be null. Logs an error if an exception occurs while closing.
+	 * 
+	 * @param writer
+	 *           the Writer to flush.
+	 */	
+	void flushWriter(Writer writer);
+		
+	/**
 	 * Reads from the specified InputStream and copies bytes read to the specified OuputStream.
 	 * 
 	 * @param is
@@ -163,5 +171,7 @@ public interface IOUtilities
 	 */
 	void copyResourceFromJarFile(String jarFilename, String resourceName, String destinationDir)
 		throws ZipException, IOException;
+	
+	
 
 }

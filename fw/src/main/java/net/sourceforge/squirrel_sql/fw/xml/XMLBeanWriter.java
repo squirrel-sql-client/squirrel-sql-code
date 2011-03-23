@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.xml;
+
 /*
  * Copyright (C) 2001 Colin Bell
  * colbell@users.sourceforge.net
@@ -32,6 +33,7 @@ import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.XMLElement;
 import net.n3.nanoxml.XMLWriter;
 
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public final class XMLBeanWriter
@@ -73,15 +75,31 @@ public final class XMLBeanWriter
 		}
 	}
 
+	/**
+	 * Saves this xml bean to the specified FileWrapper
+	 * 
+	 * @param file the FileWrapper that wraps the file to be written to
+	 * 
+	 * @throws IOException if an error occurs while writing the bean to the specified FileWrapper
+	 */
+	public void save(FileWrapper file) throws IOException
+	{
+		save(file.getFileOutputStream());
+	}
+
 	public void save(String fileName) throws IOException
 	{
-		save(new File(fileName));
+		save(new FileOutputStream(fileName));
 	}
 
 	public void save(File file) throws IOException
 	{
-		BufferedOutputStream os =
-			new BufferedOutputStream(new FileOutputStream(file));
+		save(new FileOutputStream(file));
+	}
+
+	private void save(FileOutputStream fos) throws IOException
+	{
+		BufferedOutputStream os = new BufferedOutputStream(fos);
 		try
 		{
 			XMLWriter wtr = new XMLWriter(os);
@@ -93,8 +111,7 @@ public final class XMLBeanWriter
 		}
 	}
 
-	private IXMLElement createElement(Object bean, String name)
-		throws XMLException
+	private IXMLElement createElement(Object bean, String name) throws XMLException
 	{
 		IXMLElement elem = null;
 		BeanInfo info = null;
@@ -118,8 +135,7 @@ public final class XMLBeanWriter
 			}
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
 			elem = new XMLElement(name != null ? name : XMLConstants.BEAN_ELEMENT_NAME);
-			elem.setAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME,
-											bean.getClass().getName());
+			elem.setAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, bean.getClass().getName());
 			for (int i = 0; i < propDesc.length; ++i)
 			{
 				processProperty(propDesc[i], bean, elem);
@@ -128,8 +144,7 @@ public final class XMLBeanWriter
 		return elem;
 	}
 
-	private void processProperty(PropertyDescriptor propDescr,
-									Object bean, IXMLElement beanElem)
+	private void processProperty(PropertyDescriptor propDescr, Object bean, IXMLElement beanElem)
 		throws XMLException
 	{
 		final Method getter = propDescr.getReadMethod();
@@ -142,7 +157,7 @@ public final class XMLBeanWriter
 				if (returnType.isArray())
 				{
 					final boolean isStringArray = returnType.getName().equals("[Ljava.lang.String;");
-					Object[] props = (Object[]) getter.invoke(bean, (Object[])null);
+					Object[] props = (Object[]) getter.invoke(bean, (Object[]) null);
 					if (props != null)
 					{
 						IXMLElement indexElem = new XMLElement(propName);
@@ -152,39 +167,33 @@ public final class XMLBeanWriter
 						{
 							if (isStringArray)
 							{
-								StringWrapper sw = new StringWrapper((String)props[i]);
-								indexElem.addChild(createElement(sw,
-											XMLConstants.BEAN_ELEMENT_NAME));
+								StringWrapper sw = new StringWrapper((String) props[i]);
+								indexElem.addChild(createElement(sw, XMLConstants.BEAN_ELEMENT_NAME));
 							}
 							else
 							{
-								indexElem.addChild(createElement(props[i],
-												XMLConstants.BEAN_ELEMENT_NAME));
+								indexElem.addChild(createElement(props[i], XMLConstants.BEAN_ELEMENT_NAME));
 							}
 						}
 					}
 				}
-				else if (returnType == boolean.class
-						|| returnType == int.class
-						|| returnType == short.class
-						|| returnType == long.class
-						|| returnType == float.class
-						|| returnType == double.class
-						|| returnType == char.class)
+				else if (returnType == boolean.class || returnType == int.class || returnType == short.class
+					|| returnType == long.class || returnType == float.class || returnType == double.class
+					|| returnType == char.class)
 				{
 					IXMLElement propElem = new XMLElement(propName);
-					propElem.setContent("" + getter.invoke(bean, (Object[])null));
+					propElem.setContent("" + getter.invoke(bean, (Object[]) null));
 					beanElem.addChild(propElem);
 				}
 				else if (returnType == String.class)
 				{
 					IXMLElement propElem = new XMLElement(propName);
-					propElem.setContent((String) getter.invoke(bean, (Object[])null));
+					propElem.setContent((String) getter.invoke(bean, (Object[]) null));
 					beanElem.addChild(propElem);
 				}
 				else
 				{
-					beanElem.addChild(createElement(getter.invoke(bean, (Object[])null), propName));
+					beanElem.addChild(createElement(getter.invoke(bean, (Object[]) null), propName));
 				}
 			}
 			catch (Exception ex)

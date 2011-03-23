@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
+
 /*
  * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
@@ -27,6 +28,7 @@ import javax.swing.JTabbedPane;
 import com.jgoodies.looks.Options;
 
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -42,16 +44,16 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+
 /**
  * The Look and Feel plugin class.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class LAFPlugin extends DefaultPlugin
 {
 	/** Logger for this class. */
-	private final static ILogger
-			s_log = LoggerController.createLogger(LAFPlugin.class);
+	private final static ILogger s_log = LoggerController.createLogger(LAFPlugin.class);
 
 	/** Old name of file to store user prefs in. Replaced by USER_PREFS_FILE_NAME. */
 	static final String OLD_USER_PREFS_FILE_NAME = "LAFPrefs.xml";
@@ -69,21 +71,21 @@ public class LAFPlugin extends DefaultPlugin
 	private LAFRegister _lafRegister;
 
 	/** The folder that contains LAF jars. */
-	private File _lafFolder;
+	private FileWrapper _lafFolder;
 
 	/** Folder to store user settings in. */
-	private File _userSettingsFolder;
+	private FileWrapper _userSettingsFolder;
 
 	/** Folder to store extra LAFs supplied by the user. */
-	private File _userExtraLAFFolder;
+	private FileWrapper _userExtraLAFFolder;
 
 	/** Cache of settings for the plugin. */
 	private final XMLObjectCache<LAFPreferences> _settingsCache = new XMLObjectCache<LAFPreferences>();
 
 	/**
 	 * Return the internal name of this plugin.
-	 *
-	 * @return  the internal name of this plugin.
+	 * 
+	 * @return the internal name of this plugin.
 	 */
 	public String getInternalName()
 	{
@@ -92,8 +94,8 @@ public class LAFPlugin extends DefaultPlugin
 
 	/**
 	 * Return the descriptive name of this plugin.
-	 *
-	 * @return  the descriptive name of this plugin.
+	 * 
+	 * @return the descriptive name of this plugin.
 	 */
 	public String getDescriptiveName()
 	{
@@ -102,8 +104,8 @@ public class LAFPlugin extends DefaultPlugin
 
 	/**
 	 * Returns the current version of this plugin.
-	 *
-	 * @return  the current version of this plugin.
+	 * 
+	 * @return the current version of this plugin.
 	 */
 	public String getVersion()
 	{
@@ -112,8 +114,8 @@ public class LAFPlugin extends DefaultPlugin
 
 	/**
 	 * Returns the authors name.
-	 *
-	 * @return  the authors name.
+	 * 
+	 * @return the authors name.
 	 */
 	public String getAuthor()
 	{
@@ -121,12 +123,10 @@ public class LAFPlugin extends DefaultPlugin
 	}
 
 	/**
-	 * Returns the name of the change log for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
-	 * 			a change log.
+	 * Returns the name of the change log for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the changelog file name or <TT>null</TT> if plugin doesn't have a change log.
 	 */
 	public String getChangeLogFileName()
 	{
@@ -134,12 +134,10 @@ public class LAFPlugin extends DefaultPlugin
 	}
 
 	/**
-	 * Returns the name of the Help file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
-	 * 			a help file.
+	 * Returns the name of the Help file for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the Help file name or <TT>null</TT> if plugin doesn't have a help file.
 	 */
 	public String getHelpFileName()
 	{
@@ -147,12 +145,10 @@ public class LAFPlugin extends DefaultPlugin
 	}
 
 	/**
-	 * Returns the name of the Licence file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
-	 * 			a licence file.
+	 * Returns the name of the Licence file for the plugin. This should be a text or HTML file residing in the
+	 * <TT>getPluginAppSettingsFolder</TT> directory.
+	 * 
+	 * @return the Licence file name or <TT>null</TT> if plugin doesn't have a licence file.
 	 */
 	public String getLicenceFileName()
 	{
@@ -161,8 +157,9 @@ public class LAFPlugin extends DefaultPlugin
 
 	/**
 	 * Load this plugin.
-	 *
-	 * @param   app	 Application API.
+	 * 
+	 * @param app
+	 *           Application API.
 	 */
 	public synchronized void load(IApplication app) throws PluginException
 	{
@@ -173,7 +170,7 @@ public class LAFPlugin extends DefaultPlugin
 
 		// Folder within plugins folder that belongs to this
 		// plugin.
-		File pluginAppFolder = null;
+		FileWrapper pluginAppFolder = null;
 		try
 		{
 			pluginAppFolder = getPluginAppSettingsFolder();
@@ -184,7 +181,7 @@ public class LAFPlugin extends DefaultPlugin
 		}
 
 		// Folder that stores Look and Feel jars.
-		_lafFolder = new File(pluginAppFolder, "lafs");
+		_lafFolder = fileWrapperFactory.create(pluginAppFolder, "lafs");
 		if (!_lafFolder.exists())
 		{
 			_lafFolder.mkdir();
@@ -201,7 +198,8 @@ public class LAFPlugin extends DefaultPlugin
 		}
 
 		// Folder to contain extra LAFs supplied by the user.
-		_userExtraLAFFolder = new File(_userSettingsFolder, ILAFConstants.USER_EXTRA_LAFS_FOLDER); 
+		_userExtraLAFFolder =
+			fileWrapperFactory.create(_userSettingsFolder, ILAFConstants.USER_EXTRA_LAFS_FOLDER);
 
 		// Create empty required files in user settings directory.
 		createEmptyRequiredUserFiles();
@@ -226,63 +224,54 @@ public class LAFPlugin extends DefaultPlugin
 	{
 		try
 		{
-			savePrefs(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
+			savePrefs(fileWrapperFactory.create(_userSettingsFolder, USER_PREFS_FILE_NAME));
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error occured writing to preferences file: "
-							+ USER_PREFS_FILE_NAME,
-						ex);
+			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 		catch (XMLException ex)
 		{
-			s_log.error("Error occured writing to preferences file: "
-							+ USER_PREFS_FILE_NAME,
-						ex);
+			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
 		}
 		super.unload();
 	}
 
 	/**
 	 * Create Look and Feel preferences panels for the Global Preferences dialog.
-	 *
-	 * @return  Look and Feel preferences panels.
+	 * 
+	 * @return Look and Feel preferences panels.
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
-		return new IGlobalPreferencesPanel[]
-			{
-				new LAFPreferencesTab(this, _lafRegister),
-				new LAFFontsTab(this, _lafRegister),
-			};
+		return new IGlobalPreferencesPanel[] { new LAFPreferencesTab(this, _lafRegister),
+				new LAFFontsTab(this, _lafRegister), };
 	}
 
 	/**
 	 * Return the folder that contains LAF jars.
-	 *
-	 * @return  folder as <TT>File</TT> that contains LAF jars.
+	 * 
+	 * @return folder as <TT>File</TT> that contains LAF jars.
 	 */
-	File getLookAndFeelFolder()
+	FileWrapper getLookAndFeelFolder()
 	{
 		return _lafFolder;
 	}
 
 	/**
-	 * Retrieve the directory that contains the extra LAFs supplied
-	 * by the user.
+	 * Retrieve the directory that contains the extra LAFs supplied by the user.
 	 * 
-	 * @return	folder as <TT>File</TT> that contains the extra LAFs supplied
-	 * 			by the user.
+	 * @return folder as <TT>File</TT> that contains the extra LAFs supplied by the user.
 	 */
-	File getUsersExtraLAFFolder()
+	FileWrapper getUsersExtraLAFFolder()
 	{
 		return _userExtraLAFFolder;
 	}
 
 	/**
 	 * Get the preferences info object for this plugin.
-	 *
-	 * @return	The preferences info object for this plugin.
+	 * 
+	 * @return The preferences info object for this plugin.
 	 */
 	LAFPreferences getLAFPreferences()
 	{
@@ -292,7 +281,7 @@ public class LAFPlugin extends DefaultPlugin
 	/**
 	 * Retrieve plugins resources.
 	 * 
-	 * @return	Plugins resources.
+	 * @return Plugins resources.
 	 */
 	PluginResources getResources()
 	{
@@ -309,8 +298,9 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	private void loadPrefs()
 	{
-		final File oldPrefsFile = new File(_userSettingsFolder, OLD_USER_PREFS_FILE_NAME);
-		final File newPrefsFile = new File(_userSettingsFolder, USER_PREFS_FILE_NAME);
+		final FileWrapper oldPrefsFile =
+			fileWrapperFactory.create(_userSettingsFolder, OLD_USER_PREFS_FILE_NAME);
+		final FileWrapper newPrefsFile = fileWrapperFactory.create(_userSettingsFolder, USER_PREFS_FILE_NAME);
 		final boolean oldExists = oldPrefsFile.exists();
 		final boolean newExists = newPrefsFile.exists();
 
@@ -332,7 +322,7 @@ public class LAFPlugin extends DefaultPlugin
 				{
 					s_log.error("Unable to delete old LAF preferences file");
 				}
-				
+
 			}
 			else if (newExists)
 			{
@@ -348,11 +338,10 @@ public class LAFPlugin extends DefaultPlugin
 			s_log.error("Error occured in preferences file", ex);
 		}
 
-		
 		if (_lafPrefs == null)
 		{
 			_lafPrefs = new LAFPreferences(IdentifierFactory.getInstance().createIdentifier());
-         _lafPrefs.setLookAndFeelClassName(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
+			_lafPrefs.setLookAndFeelClassName(MetalLookAndFeelController.METAL_LAF_CLASS_NAME);
 			try
 			{
 				_settingsCache.add(_lafPrefs);
@@ -367,11 +356,12 @@ public class LAFPlugin extends DefaultPlugin
 	/**
 	 * Load preferences from the old file format.
 	 * 
-	 * @param	oldPrefsFile	File containing the preferences info.
-	 * 
-	 * @throws	XMLException	Thrown if an error occurs eradign the rpeferences data.
+	 * @param oldPrefsFile
+	 *           FileWrapper containing the preferences info.
+	 * @throws XMLException
+	 *            Thrown if an error occurs eradign the rpeferences data.
 	 */
-	private void loadOldPrefs(File oldPrefsFile) throws XMLException
+	private void loadOldPrefs(FileWrapper oldPrefsFile) throws XMLException
 	{
 		try
 		{
@@ -392,11 +382,12 @@ public class LAFPlugin extends DefaultPlugin
 	/**
 	 * Load preferences from the new file format.
 	 * 
-	 * @param	newPerfsFile	File containing the preferences information.
-	 * 
-	 * @throws	XMLException	Thrown if error reading preferences file.
+	 * @param newPerfsFile
+	 *           FileWrapper containing the preferences information.
+	 * @throws XMLException
+	 *            Thrown if error reading preferences file.
 	 */
-	private void loadNewPrefs(File newPrefsFile) throws XMLException
+	private void loadNewPrefs(FileWrapper newPrefsFile) throws XMLException
 	{
 		try
 		{
@@ -408,8 +399,7 @@ public class LAFPlugin extends DefaultPlugin
 			{
 				s_log.error("Cache should have been empty", ex);
 			}
-			Iterator<LAFPreferences> it = 
-                _settingsCache.getAllForClass(LAFPreferences.class);
+			Iterator<LAFPreferences> it = _settingsCache.getAllForClass(LAFPreferences.class);
 			if (it.hasNext())
 			{
 				_lafPrefs = it.next();
@@ -428,10 +418,10 @@ public class LAFPlugin extends DefaultPlugin
 	/**
 	 * Save preferences to disk.
 	 * 
-	 * @param	prefsFile	File to save preferences to.
+	 * @param prefsFile
+	 *           File to save preferences to.
 	 */
-	private void savePrefs(File prefsFile)
-		throws IOException, XMLException
+	private void savePrefs(FileWrapper prefsFile) throws IOException, XMLException
 	{
 		_settingsCache.save(prefsFile.getPath());
 	}
@@ -440,10 +430,15 @@ public class LAFPlugin extends DefaultPlugin
 	{
 		_userExtraLAFFolder.mkdirs();
 
-		File file = new File(_userExtraLAFFolder, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
+		FileWrapper file =
+			fileWrapperFactory.create(_userExtraLAFFolder, ILAFConstants.USER_EXTRA_LAFS_PROPS_FILE);
 		try
 		{
-			file.createNewFile();
+			boolean result = file.createNewFile();
+			if (!result)
+			{
+				s_log.warn("Failed to create empty required user files");
+			}
 		}
 		catch (IOException ex)
 		{
@@ -456,11 +451,12 @@ public class LAFPlugin extends DefaultPlugin
 		/**
 		 * A tabbed panel object has been created.
 		 * 
-		 * @param	evt	event object.
+		 * @param evt
+		 *           event object.
 		 */
 		public void tabbedPaneCreated(UIFactoryComponentCreatedEvent evt)
 		{
-			final JTabbedPane pnl = (JTabbedPane)evt.getComponent();
+			final JTabbedPane pnl = (JTabbedPane) evt.getComponent();
 			pnl.putClientProperty(Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
 		}
 	}

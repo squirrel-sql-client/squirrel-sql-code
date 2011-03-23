@@ -41,7 +41,7 @@ import org.apache.commons.cli.ParseException;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class ApplicationArguments
+public class ApplicationArguments implements IApplicationArguments
 {
 	/**
 	 * Option descriptions.
@@ -201,8 +201,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return	override for the user settings directory. Will be
-	 * 				<TT>null</TT> if not overridden.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getSquirrelHomeDirectory()
 	 */
 	public String getSquirrelHomeDirectory()
 	{
@@ -210,7 +209,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return The name of the directory that Squirrel is installed into.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getUserSettingsDirectoryOverride()
 	 */
 	public String getUserSettingsDirectoryOverride()
 	{
@@ -218,7 +217,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return <TT>true</TT> if splashscreen should be shown.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getShowSplashScreen()
 	 */
 	public boolean getShowSplashScreen()
 	{
@@ -226,8 +225,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return <TT>true</TT> if help information should be written to
-	 * standard output.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getShowHelp()
 	 */
 	public boolean getShowHelp()
 	{
@@ -235,8 +233,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return	the logging configuration file name. Will be
-	 * 			<TT>null</TT> if not passed.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getLoggingConfigFileName()
 	 */
 	public String getLoggingConfigFileName()
 	{
@@ -244,7 +241,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return	<TT>true</TT> if the plugins should be loaded.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getLoadPlugins()
 	 */
 	public boolean getLoadPlugins()
 	{
@@ -252,8 +249,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return	<TT>true</TT> if the default metal theme should be used
-	 *			rather than the SQuirreL metal theme.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#useDefaultMetalTheme()
 	 */
 	public boolean useDefaultMetalTheme()
 	{
@@ -261,9 +257,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * Retrieve whether to use the native Look and Feel.
-	 *
-	 * @return		<TT>true</TT> to use the native LAF.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#useNativeLAF()
 	 */
 	public boolean useNativeLAF()
 	{
@@ -271,7 +265,7 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return The raw arguments passed on the command line.
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getRawArguments()
 	 */
 	public String[] getRawArguments()
 	{
@@ -279,12 +273,15 @@ public class ApplicationArguments
 	}
 
 	/**
-	 * @return a boolean indicating whether or not to enable user interface debugging mode
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getUserInterfaceDebugEnabled()
 	 */
 	public boolean getUserInterfaceDebugEnabled() {
 		return _cmdLine.hasOption(IOptions.UI_DEBUG[0]);
 	}
 	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getPluginList()
+	 */
 	public List<String> getPluginList() {
 		return _pluginList;
 	}

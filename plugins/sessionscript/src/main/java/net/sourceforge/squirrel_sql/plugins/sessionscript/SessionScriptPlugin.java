@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -31,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallbackAdaptor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -47,11 +47,11 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 
 	/** The app folder for this plugin. */
 	@SuppressWarnings("unused")
-	private File _pluginAppFolder;
+	private FileWrapper _pluginAppFolder;
 
 	/** Folder to store user settings in. */
 	@SuppressWarnings("unused")
-	private File _userSettingsFolder;
+	private FileWrapper _userSettingsFolder;
 
 	/** Cache of session scripts. */
 	private AliasScriptCache _cache;

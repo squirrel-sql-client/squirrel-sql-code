@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -169,15 +170,15 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         return retValue;
     }
     
-    public java.io.File getPluginAppSettingsFolder() throws java.io.IOException {
-        java.io.File retValue;
+    public FileWrapper getPluginAppSettingsFolder() throws java.io.IOException {
+   	 FileWrapper retValue;
         
         retValue = super.getPluginAppSettingsFolder();
         return retValue;
     }
     
-    public java.io.File getPluginUserSettingsFolder() throws java.io.IOException {
-        java.io.File retValue;
+    public FileWrapper getPluginUserSettingsFolder() throws java.io.IOException {
+        FileWrapper retValue;
         
         retValue = super.getPluginUserSettingsFolder();
         return retValue;

@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
+
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -36,29 +37,31 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+
 /**
  * Behaviour for the Skin Look and Feel.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SkinLookAndFeelController extends DefaultLookAndFeelController
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SkinLookAndFeelController.class);
 
-
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(SkinLookAndFeelController.class);
+	private static final ILogger s_log = LoggerController.createLogger(SkinLookAndFeelController.class);
 
 	/** Class name of the Skin Look and Feel. */
-	public static final String SKINNABLE_LAF_CLASS_NAME =
-		"com.l2fprod.gui.plaf.skin.SkinLookAndFeel";
+	public static final String SKINNABLE_LAF_CLASS_NAME = "com.l2fprod.gui.plaf.skin.SkinLookAndFeel";
 
 	/** Class name of the Skin class. */
 	public static final String SKIN_CLASS_NAME = "com.l2fprod.gui.plaf.skin.Skin";
@@ -66,10 +69,14 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 	/** Preferences for this LAF. */
 	private SkinPreferences _prefs;
 
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+
 	/**
 	 * Ctor specifying the Look and Feel plugin.
 	 * 
-	 * @param	plugin	The plugin that this controller is a part of.
+	 * @param plugin
+	 *           The plugin that this controller is a part of.
 	 */
 	SkinLookAndFeelController(LAFPlugin plugin) throws IOException
 	{
@@ -79,7 +86,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		Iterator<?> it = cache.getAllForClass(SkinPreferences.class);
 		if (it.hasNext())
 		{
-			_prefs = (SkinPreferences)it.next();
+			_prefs = (SkinPreferences) it.next();
 		}
 		else
 		{
@@ -95,7 +102,8 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		}
 
 		// Folder that stores themepacks for this LAF.
-		File themePackDir = new File(plugin.getPluginAppSettingsFolder(), "skinlf-theme-packs");
+		FileWrapper themePackDir =
+			fileWrapperFactory.create(plugin.getPluginAppSettingsFolder(), "skinlf-theme-packs");
 		_prefs.setThemePackDirectory(themePackDir.getAbsolutePath());
 		if (!themePackDir.exists())
 		{
@@ -104,8 +112,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 	}
 
 	/**
-	 * This Look and Feel is about to be installed. Load the selected
-	 * themepack.
+	 * This Look and Feel is about to be installed. Load the selected themepack.
 	 */
 	public void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf)
 	{
@@ -119,17 +126,11 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class<?> skinLafClass = 
-						Class.forName(SKINNABLE_LAF_CLASS_NAME, false, cl);
-					Class<?> skinClass = 
-						Class.forName(SKIN_CLASS_NAME, false, cl);
+					Class<?> skinLafClass = Class.forName(SKINNABLE_LAF_CLASS_NAME, false, cl);
+					Class<?> skinClass = Class.forName(SKIN_CLASS_NAME, false, cl);
 
-					Method loadThemePack =
-						skinLafClass.getMethod("loadThemePack",
-											new Class[] { String.class });
-					Method setSkin =
-						skinLafClass.getMethod(
-							"setSkin", new Class[] { skinClass });
+					Method loadThemePack = skinLafClass.getMethod("loadThemePack", new Class[] { String.class });
+					Method setSkin = skinLafClass.getMethod("setSkin", new Class[] { skinClass });
 
 					Object[] parms = new Object[] { dir + "/" + name };
 					Object skin = loadThemePack.invoke(skinLafClass, parms);
@@ -159,23 +160,34 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		return new SkinPrefsPanel(this);
 	}
 
+	/**
+	 * @param fileWrapperFactory
+	 *           the fileWrapperFactory to set
+	 */
+	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		this.fileWrapperFactory = fileWrapperFactory;
+	}
+
 	private static final class SkinPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-        private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-        /**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
+		/**
+		 * This interface defines locale specific strings. This should be replaced with a property file.
 		 */
 		interface SkinPrefsPanelI18n
 		{
 			// i18n[laf.skinThemPack=Theme Pack:]
 			String THEME_PACK = s_stringMgr.getString("laf.skinThemPack");
+
 			// i18n[laf.skinThemePackDir=Theme Pack Directory:]
 			String THEMEPACK_LOC = s_stringMgr.getString("laf.skinThemePackDir");
 		}
 
 		private SkinLookAndFeelController _ctrl;
+
 		private DirectoryListComboBox _themePackCmb = new DirectoryListComboBox();
 
 		SkinPrefsPanel(SkinLookAndFeelController ctrl)
@@ -207,7 +219,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
 			add(new OutputLabel(themePackDir), gbc);
 		}
-	
+
 		/**
 		 * @see BaseLAFPreferencesPanelComponent#loadPreferencesPanel()
 		 */
@@ -216,11 +228,11 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 			super.loadPreferencesPanel();
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
 			// i18n[laf.jarZip=JAR/Zip files]
-			final FileExtensionFilter filter = new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
+			final FileExtensionFilter filter =
+				new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
-			if (_themePackCmb.getSelectedIndex() == -1 &&
-					_themePackCmb.getModel().getSize() > 0)
+			if (_themePackCmb.getSelectedIndex() == -1 && _themePackCmb.getModel().getSize() > 0)
 			{
 				_themePackCmb.setSelectedIndex(0);
 			}
@@ -232,8 +244,8 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		public boolean applyChanges()
 		{
 			super.applyChanges();
-			_ctrl._prefs.setThemePackName((String)_themePackCmb.getSelectedItem());
-			
+			_ctrl._prefs.setThemePackName((String) _themePackCmb.getSelectedItem());
+
 			// Force the LAF to be set even if Skin is the current one. This
 			// allows a change in theme to take affect.
 			return true;
@@ -243,7 +255,9 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 	public static final class SkinPreferences implements IHasIdentifier
 	{
 		private String _themePackDir;
+
 		private String _themePackName;
+
 		private IntegerIdentifier _id = new IntegerIdentifier(1);
 
 		public String getThemePackDirectory()
@@ -267,7 +281,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		}
 
 		/**
-		 * @return		The unique identifier for this object.
+		 * @return The unique identifier for this object.
 		 */
 		public IIdentifier getIdentifier()
 		{
@@ -275,4 +289,3 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		}
 	}
 }
-

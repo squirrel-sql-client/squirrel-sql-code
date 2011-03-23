@@ -18,6 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
+import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -41,14 +47,20 @@ public class HibernateUtil
    private static final ILogger s_log =
          LoggerController.createLogger(HibernateUtil.class);
 
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private static FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+   
+	
+	private static IOUtilities ioutils = new IOUtilitiesImpl();
+   
    public static XMLBeanReader createHibernateConfigsReader(HibernatePlugin plugin)
          throws IOException, XMLException
    {
       XMLBeanReader reader = new XMLBeanReader();
-      File pluginUserSettingsFolder = plugin.getPluginUserSettingsFolder();
+      FileWrapper pluginUserSettingsFolder = plugin.getPluginUserSettingsFolder();
 
 
-      File xmlFile = getXmlFile(pluginUserSettingsFolder);
+      FileWrapper xmlFile = getXmlFile(pluginUserSettingsFolder);
 
 
       if (false == xmlFile.exists())
@@ -60,21 +72,31 @@ public class HibernateUtil
       return reader;
    }
 
-   private static File getXmlFile(File pluginUserSettingsFolder)
+   private static FileWrapper getXmlFile(FileWrapper pluginUserSettingsFolder)
    {
+   	FileReader fr = null;
+   	BufferedReader br = null;
+   	FileWriter fw = null;
+   	PrintWriter pw = null;
+   	
+   	FileWrapper xmlFile = null;
+   	
       try
       {
-         File xmlFileOld = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE_OLD);
-         File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
-
+			FileWrapper xmlFileOld =
+				fileWrapperFactory.create(pluginUserSettingsFolder,
+					HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE_OLD);
+			xmlFile =
+				fileWrapperFactory.create(pluginUserSettingsFolder,
+					HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
 
          if(xmlFileOld.exists() && false == xmlFile.exists())
          {
-            FileReader fr = new FileReader(xmlFileOld);
-            BufferedReader br = new BufferedReader(fr);
+            fr = xmlFileOld.getFileReader();
+            br = new BufferedReader(fr);
 
-            FileWriter fw = new FileWriter(xmlFile);
-            PrintWriter pw = new PrintWriter(fw);
+            fw = xmlFile.getFileWriter();
+            pw = new PrintWriter(fw);
 
             String line = br.readLine();
             while(null != line)
@@ -97,14 +119,23 @@ public class HibernateUtil
             pw.close();
             fw.close();
          }
-
-
-         return xmlFile;
       }
       catch (Exception e)
       {
-         throw new RuntimeException(e);
+			s_log.error("Unexpected exception while attempting to get hibernate config xml file ("
+				+ HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE + ") " + "from settings directory ("
+				+ pluginUserSettingsFolder);
+			throw new RuntimeException(e);
+      } finally {
+      	ioutils.closeReader(br);
+      	ioutils.closeReader(fr);
+      	ioutils.flushWriter(pw);
+      	ioutils.flushWriter(fw);
+      	ioutils.closeWriter(pw);
+      	ioutils.closeWriter(fw);
       }
+      
+      return xmlFile;
    }
 
    public static String getSimpleClassName(String mappedClassName)
@@ -112,4 +143,23 @@ public class HibernateUtil
       String[] cpTokens = mappedClassName.split("\\.");
       return cpTokens[cpTokens.length - 1];
    }
+   
+	/**
+	 * @param fileWrapperFactory the fileWrapperFactory to set
+	 */
+	public static void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		HibernateUtil.fileWrapperFactory = fileWrapperFactory;
+	}
+
+	/**
+	 * @param ioutils the ioutils to set
+	 */
+	public static void setIoutils(IOUtilities ioutils)
+	{
+		HibernateUtil.ioutils = ioutils;
+	}
+
+   
 }

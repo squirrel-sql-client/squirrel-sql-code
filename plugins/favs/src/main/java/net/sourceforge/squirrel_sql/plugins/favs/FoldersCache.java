@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
@@ -45,7 +46,7 @@ public final class FoldersCache
 
 	private String _queriesFileName;
 
-	public FoldersCache(IApplication app, File userSettingsFolder)
+	public FoldersCache(IApplication app, FileWrapper userSettingsFolder)
 	{
 		super();
 		_app = app;

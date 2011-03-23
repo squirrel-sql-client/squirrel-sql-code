@@ -21,7 +21,6 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,6 +32,8 @@ import net.sourceforge.squirrel_sql.fw.FwTestUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
@@ -41,7 +42,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 public class ColTypeMapperTest extends BaseSQuirreLTestCase {
 
     static ILogger s_log = null; 
-        
+
+    static FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
     
     static String[] dbNames = {
         "Axion",
@@ -78,7 +80,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
             String dbcopyPrefsDir = 
                 System.getProperty("user.home") + "/.squirrel-sql/plugins/dbcopy";
             expect(plugin.getPluginUserSettingsFolder())
-                            .andReturn(new File(dbcopyPrefsDir)).anyTimes();
+                            .andReturn(fileWrapperFactory.create(dbcopyPrefsDir)).anyTimes();
             replay(plugin);
             PreferencesManager.initialize(plugin);
         } catch (Exception e) {

@@ -33,6 +33,10 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFileWrappers;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 
@@ -79,7 +83,18 @@ public abstract class AbstractPluginTest
 
 	@Mock
 	private Action mockAction;
-
+	
+	@Mock
+	protected ApplicationFileWrappers mockApplicationFileWrappers;
+	
+	protected FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+	
+	// Locations for various commonly accessed directories
+	protected FileWrapper targetDirectory = fileWrapperFactory.create("./target");
+	protected FileWrapper testHomeDirectory = fileWrapperFactory.create(targetDirectory, "test-home-dir");
+	protected FileWrapper testUpdateDirectory = fileWrapperFactory.create(testHomeDirectory, "update");
+	protected FileWrapper testPluginsDirectory = fileWrapperFactory.create(testHomeDirectory, "plugins");
+	protected FileWrapper testLibDirectory = fileWrapperFactory.create(testHomeDirectory, "lib");
 	
 	/**
 	 * Sub-class tests must implement this to return an instance of the Plugin being tested.
@@ -106,6 +121,16 @@ public abstract class AbstractPluginTest
 		} catch (Exception e) {}
 		
 		classUnderTest = getPluginToTest();
+		
+		classUnderTest.setFileWrapperFactory(fileWrapperFactory);
+		classUnderTest.setApplicationFiles(mockApplicationFileWrappers);
+		
+		when(mockApplicationFileWrappers.getPluginsDirectory()).thenReturn(testPluginsDirectory);
+		when(mockApplicationFileWrappers.getLibraryDirectory()).thenReturn(testLibDirectory);
+		when(mockApplicationFileWrappers.getPluginsUserSettingsDirectory()).thenReturn(testPluginsDirectory);
+		when(mockApplicationFileWrappers.getSquirrelHomeDir()).thenReturn(testHomeDirectory);
+		when(mockApplicationFileWrappers.getUpdateDirectory()).thenReturn(testUpdateDirectory);
+		
 		classUnderTest.load(mockApplication);
 		classUnderTest.initialize();
 	}

@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.xml;
+
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -38,6 +39,7 @@ import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -45,26 +47,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class XMLBeanReader implements Iterable<Object>
 {
 	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(XMLBeanReader.class);
+	private static final ILogger s_log = LoggerController.createLogger(XMLBeanReader.class);
 
-	private String[][] _fixStrings = new String[][]
-	{
-		{
-			"com.bigfoot.colbell.squirrel",
-			"net.sourceforge.squirrel_sql.client"
-		},
-		{
-			"com.bigfoot.colbell.fw",
-			"net.sourceforge.squirrel_sql.fw"
-		},
-		{
-			"net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState",
-			"net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState"
-		}
-	};
+	private String[][] _fixStrings =
+		new String[][] {
+				{ "com.bigfoot.colbell.squirrel", "net.sourceforge.squirrel_sql.client" },
+				{ "com.bigfoot.colbell.fw", "net.sourceforge.squirrel_sql.fw" },
+				{ "net.sourceforge.squirrel_sql.client.mainframe.MainFrameWindowState",
+						"net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState" } };
 
 	private ClassLoader _cl;
+
 	private final List<Object> _beanColl = new ArrayList<Object>();
 
 	public XMLBeanReader()
@@ -72,13 +65,17 @@ public class XMLBeanReader implements Iterable<Object>
 		super();
 	}
 
+	public void load(FileWrapper xmlFileWrapper) throws FileNotFoundException, XMLException
+	{
+		load(xmlFileWrapper.getAbsolutePath());
+	}
+
 	public void load(File xmlFile) throws FileNotFoundException, XMLException
 	{
 		load(xmlFile, null);
 	}
 
-	public void load(File xmlFile, ClassLoader cl)
-		throws FileNotFoundException, XMLException
+	public void load(FileWrapper xmlFile, ClassLoader cl) throws FileNotFoundException, XMLException
 	{
 		if (!xmlFile.exists())
 		{
@@ -87,14 +84,22 @@ public class XMLBeanReader implements Iterable<Object>
 		load(xmlFile.getAbsolutePath(), cl);
 	}
 
-	public void load(String xmlFileName)
-		throws FileNotFoundException, XMLException
+	public void load(File xmlFile, ClassLoader cl) throws FileNotFoundException, XMLException
+	{
+		if (!xmlFile.exists())
+		{
+			throw new FileNotFoundException(xmlFile.getName());
+		}
+		load(xmlFile.getAbsolutePath(), cl);
+	}
+
+	public void load(String xmlFileName) throws FileNotFoundException, XMLException
 	{
 		load(xmlFileName, null);
 	}
 
-	public synchronized void load(String xmlFileName, ClassLoader cl)
-		throws FileNotFoundException, IllegalArgumentException, XMLException
+	public synchronized void load(String xmlFileName, ClassLoader cl) throws FileNotFoundException,
+		IllegalArgumentException, XMLException
 	{
 		if (xmlFileName == null)
 		{
@@ -135,9 +140,9 @@ public class XMLBeanReader implements Iterable<Object>
 			parser.setReader(new StdXMLReader(rdr));
 			IXMLElement element = (IXMLElement) parser.parse();
 			// Bug 2942351 (Program doesn't launch)
-			// looking at the source for StdXMLBuilder, it appears that parser.parse() could possibly return 
-			// null.  So check for null here and skip if necessary.
-			if (element != null) 
+			// looking at the source for StdXMLBuilder, it appears that parser.parse() could possibly return
+			// null. So check for null here and skip if necessary.
+			if (element != null)
 			{
 				Iterator it = new EnumerationIterator(element.enumerateChildren());
 				while (it.hasNext())
@@ -163,7 +168,7 @@ public class XMLBeanReader implements Iterable<Object>
 
 	private Object loadBean(IXMLElement beanElement) throws XMLException
 	{
-	    String beanClassName = null;
+		String beanClassName = null;
 		try
 		{
 			beanClassName = getClassNameFromElement(beanElement);
@@ -178,13 +183,9 @@ public class XMLBeanReader implements Iterable<Object>
 				beanClass = Class.forName(beanClassName, true, _cl);
 			}
 			Object bean = beanClass.newInstance();
-			BeanInfo info =
-				Introspector.getBeanInfo(
-					bean.getClass(),
-					Introspector.USE_ALL_BEANINFO);
+			BeanInfo info = Introspector.getBeanInfo(bean.getClass(), Introspector.USE_ALL_BEANINFO);
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
-			Map<String, PropertyDescriptor> props = 
-                new HashMap<String, PropertyDescriptor>();
+			Map<String, PropertyDescriptor> props = new HashMap<String, PropertyDescriptor>();
 			for (int i = 0; i < propDesc.length; ++i)
 			{
 				props.put(propDesc[i].getName(), propDesc[i]);
@@ -204,17 +205,12 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 		catch (Exception ex)
 		{
-		    s_log.error(
-		        "Unexpected exception while attempting to load xml bean "+
-		        ex.getMessage(), ex);
+			s_log.error("Unexpected exception while attempting to load xml bean " + ex.getMessage(), ex);
 			throw new XMLException(ex);
 		}
 	}
 
-	private void loadProperty(
-		Object bean,
-		PropertyDescriptor propDescr,
-		IXMLElement propElem)
+	private void loadProperty(Object bean, PropertyDescriptor propDescr, IXMLElement propElem)
 		throws XMLException
 	{
 		final Method setter = propDescr.getWriteMethod();
@@ -223,14 +219,15 @@ public class XMLBeanReader implements Iterable<Object>
 			final Class parmType = setter.getParameterTypes()[0];
 			final Class arrayType = parmType.getComponentType();
 			final String value = propElem.getContent();
-			
-			if (value == null && (parmType.isPrimitive())) {
-				s_log.warn("Parameter type was primitive ("+parmType+"), but the value was null.  " +
-						"Skipping invokation of method: "+setter.getName()+" in declaring class: " + 
-						setter.getDeclaringClass());
+
+			if (value == null && (parmType.isPrimitive()))
+			{
+				s_log.warn("Parameter type was primitive (" + parmType + "), but the value was null.  "
+					+ "Skipping invokation of method: " + setter.getName() + " in declaring class: "
+					+ setter.getDeclaringClass());
 				return;
 			}
-			
+
 			if (isIndexedElement(propElem))
 			{
 				Object[] data = loadIndexedProperty(propElem);
@@ -246,11 +243,12 @@ public class XMLBeanReader implements Iterable<Object>
 					// in the following arrayCopy. Therefore we need to convert
 					// the data that is currently in the StringWrapper objects
 					// into actual Strings.
-					if (arrayType.getName().equals("java.lang.String")) {
+					if (arrayType.getName().equals("java.lang.String"))
+					{
 						// convert data from StringWrappers to Strings
 						Object[] stringData = new Object[data.length];
-						for (int i=0; i<data.length; i++)
-							stringData[i] = ((StringWrapper)data[i]).getString();
+						for (int i = 0; i < data.length; i++)
+							stringData[i] = ((StringWrapper) data[i]).getString();
 						data = stringData;
 					}
 
@@ -382,8 +380,7 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 	}
 
-	private Object[] loadIndexedProperty(IXMLElement beanElement)
-		throws XMLException
+	private Object[] loadIndexedProperty(IXMLElement beanElement) throws XMLException
 	{
 		final List<Object> beans = new ArrayList<Object>();
 		final List<IXMLElement> children = beanElement.getChildren();
@@ -396,8 +393,7 @@ public class XMLBeanReader implements Iterable<Object>
 
 	private boolean isBeanElement(IXMLElement elem)
 	{
-		return elem.getAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, null)
-			!= null;
+		return elem.getAttribute(XMLConstants.CLASS_ATTRIBUTE_NAME, null) != null;
 	}
 
 	private boolean isIndexedElement(IXMLElement elem)
@@ -418,8 +414,7 @@ public class XMLBeanReader implements Iterable<Object>
 			String from = _fixStrings[i][0];
 			if (className.startsWith(from))
 			{
-				className =
-					_fixStrings[i][1] + className.substring(from.length());
+				className = _fixStrings[i][1] + className.substring(from.length());
 				break;
 			}
 		}

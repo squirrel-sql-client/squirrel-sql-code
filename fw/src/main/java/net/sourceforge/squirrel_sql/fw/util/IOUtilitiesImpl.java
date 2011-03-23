@@ -122,7 +122,7 @@ public class IOUtilitiesImpl implements IOUtilities
 			}
 			catch (Exception e)
 			{
-				s_log.error("closeReader: Unable to close FileReader - " + e.getMessage(), e);
+				s_log.error("closeReader: Unable to close Reader - " + e.getMessage(), e);
 			}
 		}
 	}
@@ -140,11 +140,31 @@ public class IOUtilitiesImpl implements IOUtilities
 			}
 			catch (Exception e)
 			{
-				s_log.error("closeReader: Unable to close FileWriter - " + e.getMessage(), e);
+				s_log.error("closeReader: Unable to close Writer - " + e.getMessage(), e);
 			}
 		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities#flushWriter(java.io.Writer)
+	 */
+	@Override
+	public void flushWriter(Writer writer)
+	{
+		if (writer != null)
+		{
+			try
+			{
+				writer.flush();
+			}
+			catch (Exception e)
+			{
+				s_log.error("flushReader: Unable to flush Writer - " + e.getMessage(), e);
+			}
+		}
+	}
+	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.util.IOUtilities# copyBytes(java.io.InputStream,
 	 *      java.io.OutputStream)
@@ -434,7 +454,5 @@ public class IOUtilitiesImpl implements IOUtilities
 		}
 
 	}
-
-
 
 }

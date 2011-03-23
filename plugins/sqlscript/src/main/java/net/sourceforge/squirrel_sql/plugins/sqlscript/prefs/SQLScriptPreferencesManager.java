@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.prefs;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
@@ -27,88 +26,121 @@ import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PreferenceUtil;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
+import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
-public class SQLScriptPreferencesManager {
+public class SQLScriptPreferencesManager
+{
 
-    /** Logger for this class. */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(SQLScriptPreferencesManager.class);
-    
-    /** Name of preferences file. */
-    private static final String USER_PREFS_FILE_NAME = "prefs.xml";    
-    
-    /** Folder to store user settings in. */
-    private static File _userSettingsFolder;
-    
-    private static SQLScriptPreferenceBean _prefs = null;
-    
-    private static IPlugin plugin = null;
-    
-    public static void initialize(IPlugin thePlugin) throws PluginException {
-        plugin = thePlugin;
-        
-        // Folder to store user settings.
-        try {
-            _userSettingsFolder = plugin.getPluginUserSettingsFolder();
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }        
-        
-        loadPrefs();
-    }
-    
-    public static SQLScriptPreferenceBean getPreferences() {
-        return _prefs;
-    }
-    
-    public static void unload() {
-        savePrefs();
-    }
-    
-    /**
-     * Save preferences to disk.
-     */
-    public static void savePrefs() {
-        try {
-            XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
-            wtr.save(new File(_userSettingsFolder, USER_PREFS_FILE_NAME));
-        } catch (Exception ex) {
-            s_log.error("Error occured writing to preferences file: "
-                    + USER_PREFS_FILE_NAME, ex);
-        }
-    }
+	/** Logger for this class. */
+	private final static ILogger s_log = LoggerController.createLogger(SQLScriptPreferencesManager.class);
 
-    /**
-     * Load from preferences file.
-     */
-    private static void loadPrefs() {
-        try {
-            XMLBeanReader doc = new XMLBeanReader();
-            
-            File prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
-            
-            doc.load(prefFile, SQLScriptPreferenceBean.class.getClassLoader());            
+	/** Name of preferences file. */
+	private static final String USER_PREFS_FILE_NAME = "prefs.xml";
 
-            Iterator<?> it = doc.iterator();
-            if (it.hasNext()) {
-                _prefs = (SQLScriptPreferenceBean)it.next();
-            }
-        } catch (FileNotFoundException ignore) {
-            s_log.info(USER_PREFS_FILE_NAME + " not found - will be created");
-        } catch (Exception ex) {
-            s_log.error("Error occured reading from preferences file: "
-                    + USER_PREFS_FILE_NAME, ex);
-        }
-        if (_prefs == null) {
-            _prefs = new SQLScriptPreferenceBean();
-        }
+	/** Folder to store user settings in. */
+	private static FileWrapper _userSettingsFolder;
 
-        _prefs.setClientName(Version.getApplicationName() + "/" + plugin.getDescriptiveName());
-        _prefs.setClientVersion(Version.getShortVersion() + "/" + plugin.getVersion());
-    }    
-    
+	private static SQLScriptPreferenceBean _prefs = null;
+
+	private static IPlugin plugin = null;
+
+	/** factory for creating FileWrappers which insulate the application from direct reference to File */
+	private static FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
+
+	public static void initialize(IPlugin thePlugin) throws PluginException
+	{
+		plugin = thePlugin;
+
+		// Folder to store user settings.
+		try
+		{
+			_userSettingsFolder = plugin.getPluginUserSettingsFolder();
+		}
+		catch (IOException ex)
+		{
+			throw new PluginException(ex);
+		}
+
+		loadPrefs();
+	}
+
+	public static SQLScriptPreferenceBean getPreferences()
+	{
+		return _prefs;
+	}
+
+	public static void unload()
+	{
+		savePrefs();
+	}
+
+	/**
+	 * Save preferences to disk.
+	 */
+	public static void savePrefs()
+	{
+		try
+		{
+			XMLBeanWriter wtr = new XMLBeanWriter(_prefs);
+			wtr.save(fileWrapperFactory.create(_userSettingsFolder, USER_PREFS_FILE_NAME));
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured writing to preferences file: " + USER_PREFS_FILE_NAME, ex);
+		}
+	}
+
+	/**
+	 * @param fileWrapperFactory
+	 *           the fileWrapperFactory to set
+	 */
+	public static void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory)
+	{
+		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
+		SQLScriptPreferencesManager.fileWrapperFactory = fileWrapperFactory;
+	}
+
+	/**
+	 * Load from preferences file.
+	 */
+	private static void loadPrefs()
+	{
+		try
+		{
+			XMLBeanReader doc = new XMLBeanReader();
+
+			FileWrapper prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
+
+			doc.load(prefFile, SQLScriptPreferenceBean.class.getClassLoader());
+
+			Iterator<?> it = doc.iterator();
+			if (it.hasNext())
+			{
+				_prefs = (SQLScriptPreferenceBean) it.next();
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			s_log.info(USER_PREFS_FILE_NAME + " not found - will be created");
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error occured reading from preferences file: " + USER_PREFS_FILE_NAME, ex);
+		}
+		if (_prefs == null)
+		{
+			_prefs = new SQLScriptPreferenceBean();
+		}
+
+		_prefs.setClientName(Version.getApplicationName() + "/" + plugin.getDescriptiveName());
+		_prefs.setClientVersion(Version.getShortVersion() + "/" + plugin.getVersion());
+	}
+
 }

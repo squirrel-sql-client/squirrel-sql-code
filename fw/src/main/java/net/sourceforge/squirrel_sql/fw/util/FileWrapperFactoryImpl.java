@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -78,6 +79,28 @@ public class FileWrapperFactoryImpl implements FileWrapperFactory
 	public FileWrapper create(File f)
 	{
 		return new FileWrapperImpl(f);
+	}
+	
+	/**
+	 * @param prefix
+	 * @param suffix
+	 * @param directory
+	 * @return
+	 * @throws IOException
+	 */
+	public FileWrapperImpl createTempFile(String prefix, String suffix, FileWrapper directory)
+		throws IOException
+	{
+		return FileWrapperImpl.createTempFile(prefix, suffix, (FileWrapperImpl) directory);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory#createTempFile(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public FileWrapper createTempFile(String prefix, String suffix) throws IOException
+	{
+		return FileWrapperImpl.createTempFile(prefix, suffix);
 	}
 	
 	
