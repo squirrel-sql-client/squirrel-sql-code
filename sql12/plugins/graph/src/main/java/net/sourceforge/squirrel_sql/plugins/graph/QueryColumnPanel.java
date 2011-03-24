@@ -35,6 +35,7 @@ class QueryColumnPanel extends JPanel
       _columnInfo = columnInfo;
       _session = session;
       _graphPluginResources = new GraphPluginResources(graphPlugin);
+      setBorder(BorderFactory.createEmptyBorder());
 
       JPanel pnlButtons = new JPanel(new GridBagLayout());
       pnlButtons.setBackground(GraphTextAreaFactory.TEXTAREA_BG);

@@ -131,4 +131,16 @@ public class TabToWindowHandler
 
       toWindowAtBounds(bounds);
    }
+
+   public void toggleWindowTab()
+   {
+      if(null == _graphWindowController)
+      {
+         toWindow();
+      }
+      else
+      {
+         _graphWindowController.returnToTab();
+      }
+   }
 }

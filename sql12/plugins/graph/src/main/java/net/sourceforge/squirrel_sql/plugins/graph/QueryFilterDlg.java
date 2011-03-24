@@ -16,7 +16,7 @@ public class QueryFilterDlg extends JDialog
 {
 
    private static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(QueryFilterDlg.class);
-   private  static final int MIN_HEIGHT = 240;
+   private  static final int MIN_HEIGHT = 270;
 
    JTextField _txtFilter;
    JButton _btnOk;
@@ -86,6 +86,8 @@ public class QueryFilterDlg extends JDialog
       getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
       getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
       getRootPane().getActionMap().put("CloseAction", closeAction);
+
+      getRootPane().setDefaultButton(_btnOk);
 
       int width = Preferences.userRoot().getInt(PREF_KEY_QUERY_FILTER_WIDTH, 500);
       int height = Preferences.userRoot().getInt(PREF_KEY_QUERY_FILTER_HEIGHT, MIN_HEIGHT);
