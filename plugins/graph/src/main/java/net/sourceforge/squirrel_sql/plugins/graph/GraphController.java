@@ -92,6 +92,12 @@ public class GraphController implements GraphControllerAccessor
          {
             onTablesDropped(tis, dropPoint);
          }
+
+         @Override
+         public void toggleWindowTab()
+         {
+            _tabToWindowHandler.toggleWindowTab();
+         }
       };
 
       _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin);

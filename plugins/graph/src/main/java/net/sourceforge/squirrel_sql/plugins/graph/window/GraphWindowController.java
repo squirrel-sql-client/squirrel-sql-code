@@ -245,4 +245,9 @@ public class GraphWindowController
          _frameWindow.setTitle(newName);
       }
    }
+
+   public void returnToTab()
+   {
+      onReturn();
+   }
 }

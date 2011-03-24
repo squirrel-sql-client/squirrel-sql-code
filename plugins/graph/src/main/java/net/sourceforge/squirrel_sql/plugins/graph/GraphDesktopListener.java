@@ -25,4 +25,5 @@ public interface GraphDesktopListener
 
    void tablesDropped(List<ITableInfo> tis, Point dropPoint);
 
+   void toggleWindowTab();
 }

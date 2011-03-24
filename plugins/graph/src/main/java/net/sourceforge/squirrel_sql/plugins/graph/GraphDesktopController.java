@@ -36,6 +36,7 @@ public class GraphDesktopController
    private JMenuItem _mnuSelectTablesByName;
    private JCheckBoxMenuItem _mnuShowConstraintNames;
    private JCheckBoxMenuItem _mnuShowQualifiedTableNames;
+   private JMenuItem _mnuToggleWindowTab;
    private GraphDesktopListener _listener;
    private ISession _session;
    private GraphPlugin _plugin;
@@ -253,6 +254,17 @@ public class GraphDesktopController
          }
       });
 
+      ImageIcon toWInIcon = _graphPluginResources.getIcon(GraphPluginResources.IKeys.TO_WINDOW);
+      _mnuToggleWindowTab = new JMenuItem(s_stringMgr.getString("graph.toggleWindowTab"), toWInIcon);
+      _mnuToggleWindowTab.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onToggleWindowTab();
+         }
+      });
+
 
 		_mnuAllTablesDbOrder = new JMenuItem(s_stringMgr.getString("graph.allTablesDbOrderRequested"));
       _mnuAllTablesDbOrder.addActionListener(new ActionListener()
@@ -310,6 +322,8 @@ public class GraphDesktopController
       _popUp.add(new JSeparator());
       _popUp.add(_mnuShowConstraintNames);
       _popUp.add(_mnuShowQualifiedTableNames);
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuToggleWindowTab);
       _popUp.add(new JSeparator());
       _popUp.add(_modeManager.getModeMenuItem());
 
@@ -369,6 +383,12 @@ public class GraphDesktopController
    {
       _listener.allTablesFilteredSelectedOrderRequested();
    }
+
+   private void onToggleWindowTab()
+   {
+      _listener.toggleWindowTab();
+   }
+
 
 
    private void onScriptAllTables()
