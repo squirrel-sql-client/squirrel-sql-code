@@ -85,6 +85,7 @@ public abstract class AbstractSessionPluginTest extends AbstractPluginTest imple
 		when(mockSession.getSessionSheet()).thenReturn(mockSessionPanel);
 		when(mockSession.getSQLConnection()).thenReturn(mockIsqlConnection);
 		when(mockSession.getQueryTokenizer()).thenReturn(mockQueryTokenizer);
+		when(mockSession.getObjectTreeAPIOfActiveSessionWindow()).thenReturn(mockObjectTreeAPI);
 		when(mockIsqlConnection.getConnection()).thenReturn(mockConnection);
 		when(mockSQLDatabaseMetaData.getDatabaseProductName()).thenReturn(getDatabaseProductName());
 		when(mockSQLDatabaseMetaData.getDatabaseProductVersion()).thenReturn(getDatabaseProductVersion());
