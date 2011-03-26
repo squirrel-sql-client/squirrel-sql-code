@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
  import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -234,11 +235,18 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 		// i18n[popupeditableIoPanel.useFile=Use File: ]
 		eiPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.useFile")), gbc);
 
-
-		fileNameField = new JTextField(TEMP_FILE_FLAG, 19);
+		// ensure, that the text field can use the extra space if the user resize the dialog.
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx=0.5;
+		fileNameField = new JTextField(TEMP_FILE_FLAG, 17);
+		Dimension preferredSize = fileNameField.getPreferredSize();
+		// ensure, that the text field has a suitable size, even the panel is too small.
+		fileNameField.setMinimumSize(new Dimension(preferredSize.width/2, preferredSize.height));
 		gbc.gridx++;
+		
 		eiPanel.add(fileNameField, gbc);
-
+		gbc.fill = GridBagConstraints.NONE;;
+		gbc.weightx=0.0;
 
 		// add button for Brows
 		// i18n[popupeditableIoPanel.browse=Browse]
@@ -288,9 +296,16 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
 		// make this the same size as the fileNameField
 		externalCommandCombo.setPreferredSize(fileNameField.getPreferredSize());
-
+		externalCommandCombo.setMinimumSize(fileNameField.getMinimumSize());
+		
+		// ensure, that the text field can use the extra space if the user resize the dialog.
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx=0.5;
 		eiPanel.add(externalCommandCombo, gbc);
-
+		gbc.fill = GridBagConstraints.NONE;;
+		gbc.weightx=0.0;
+		
+		
 		// add button to execute external command
 		// i18n[popupeditableIoPanel.execute34=Execute]
 		JButton externalCommandButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.execute34"));
