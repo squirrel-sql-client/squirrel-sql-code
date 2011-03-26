@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Editing numeric values: Now, Squirrel has the same behavior for signed values for all different numeric data types. 
+  A minus sign is allowed only at the first position and if the data type is signed.
+
 Hibernate Plugin: Improved display of mapped objects in table cells:
                   Class name, primary key and toString() ist displayed instead of toString() only.
 
@@ -28,6 +31,9 @@ Display errors in result tab:
     to hide the Message panel at application start up.
 
 Bug-fixes:
+
+When editing table cells in a text area, the input field for the file name will be shown in an appropriate size 
+  instead of being very small. If the user change the size of the dialog, the input field for the file name will use the extra space.
 
 3238037: It's impossible to create a foreign key in oracle 10g, if some tables contains a / in their name eg. recycle bins
 
