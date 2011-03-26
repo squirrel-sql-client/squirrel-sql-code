@@ -164,6 +164,8 @@ class Application implements IApplication
 	
 	private PreLaunchHelperFactory preLaunchHelperFactory = new PreLaunchHelperFactoryImpl();
 	
+	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
+	
 	/**
 	 * Default ctor.
 	 */
@@ -212,7 +214,7 @@ class Application implements IApplication
 	/**
 	 * Application is shutting down.
 	 */
-	public boolean shutdown()
+	public boolean shutdown(boolean updateLaunchScript)
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown", Calendar.getInstance().getTime()));
 
@@ -229,7 +231,9 @@ class Application implements IApplication
 
 		SchemaInfoCacheSerializer.waitTillStoringIsDone();
 		
-		updateLaunchScript();
+		if (updateLaunchScript) {
+			updateLaunchScript();
+		}
 
 		String msg = s_stringMgr.getString("Application.shutdowncomplete", Calendar.getInstance().getTime());
 		s_log.info(msg);
@@ -492,6 +496,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(String msg)
 	{
+		s_log.error(msg);
 		new ErrorDialog(getMainFrame(), msg).setVisible(true);
 	}
 
@@ -503,6 +508,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(Throwable th)
 	{
+		s_log.error(th);
 		new ErrorDialog(getMainFrame(), th).setVisible(true);
 	}
 
@@ -516,6 +522,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(String msg, Throwable th)
 	{
+		s_log.error(msg, th);
 		new ErrorDialog(getMainFrame(), msg, th).setVisible(true);
 	}
 
@@ -795,6 +802,12 @@ class Application implements IApplication
 		
 		updateCheckTimer = new UpdateCheckTimerImpl(this);
 		updateCheckTimer.start();
+		
+		if (args.getShutdownTimerSeconds() != null) {
+			_shutdownTimer.setShutdownSeconds(args.getShutdownTimerSeconds());
+			_shutdownTimer.setApplication(this);
+			_shutdownTimer.start();
+		}
 	}
 
 	/**
@@ -1220,5 +1233,13 @@ class Application implements IApplication
 	public void setPreLaunchHelperFactory(PreLaunchHelperFactory preLaunchHelperFactory)
 	{
 		this.preLaunchHelperFactory = preLaunchHelperFactory;
+	}
+
+	/**
+	 * @param shutdownTimer the _shutdownTimer to set
+	 */
+	public void setShutdownTimer(IShutdownTimer shutdownTimer)
+	{
+		_shutdownTimer = shutdownTimer;
 	}	
 }

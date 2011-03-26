@@ -134,7 +134,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 	public void dispose()
 	{
       boolean shouldDispose = true;
-      if (!_app.shutdown())
+      if (!_app.shutdown(true))
       {
          String msg = s_stringMgr.getString("MainFrame.errorOnClose");
          shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
