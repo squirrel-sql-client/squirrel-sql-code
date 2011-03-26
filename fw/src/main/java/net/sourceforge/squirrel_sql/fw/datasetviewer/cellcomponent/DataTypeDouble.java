@@ -342,7 +342,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 			
 			checkSignCharacter(e, _theComponent, _colDef, _beepHelper);
 
-			if (!(Character.isDigit(c) || (c == '-') || (c == '+') || (c == 'e') || (c == 'E') || (c == 'f')
+			if (!(Character.isDigit(c) || (isSignCharacter(c)) || (c == 'e') || (c == 'E') || (c == 'f')
 				|| (c == 'F') || (c == 'd') || (c == 'D') || (c == '.') || (c == ',') || // several number formats
 																													// use '.' as decimal
 																													// separator, others
