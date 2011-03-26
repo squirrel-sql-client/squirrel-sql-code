@@ -31,7 +31,7 @@ import org.junit.Test;
 public abstract class AbstractExceptionFormatterTest
 {
 	/** The class that will be tested. See getExceptionFormatterToTest. */
-	private ExceptionFormatter classUnderTest = null;
+	protected ExceptionFormatter classUnderTest = null;
 
 	/**
 	 * Sub-class tests need to implement this and return an instance of ExceptionFormatter to test.
