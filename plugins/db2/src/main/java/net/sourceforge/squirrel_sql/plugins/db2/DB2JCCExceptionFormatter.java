@@ -40,10 +40,10 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 	 */
 
 	// Prefix for the JCC SqlException class name
-	private static final String JCC_EXCEPTION_PREFIX = "com.ibm.db2.jcc";
+	public static final String JCC_EXCEPTION_PREFIX = "com.ibm.db2.jcc";
 
 	// Class name for the JCC SqlException class
-	private static final String JCC_EXCEPTION_CLASS = "SqlException";
+	public static final String JCC_EXCEPTION_CLASS = "SqlException";
 
 	// Names of the various methods we need to invoke
 	private static final String METHOD_GET_SQLCA = "getSqlca";
