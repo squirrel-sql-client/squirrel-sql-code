@@ -76,6 +76,20 @@
 			<version>10.5.3.0_1</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+			<artifactId>jaybird</artifactId>
+			<version>2.1.6</version>
+			<classifier>jdk16</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>geronimo-spec</groupId>
+			<artifactId>geronimo-spec-j2ee-connector</artifactId>
+			<version>1.5-rc4</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<defaultGoal>package</defaultGoal>
@@ -183,20 +197,6 @@
 							<includeArtifactIds>squirrelsql-update-site</includeArtifactIds>
 							<!--							<includes>*.jar</includes>-->
 							<outputDirectory>${staging.dir}/update-site</outputDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-derby-driver-for-test</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/derby-driver</outputDirectory>
-							<includeGroupIds>org.apache.derby</includeGroupIds>
-							<includeArtifactIds>derby</includeArtifactIds>
-
-							<stripVersion>true</stripVersion>
 						</configuration>
 					</execution>
 				</executions>
@@ -487,38 +487,106 @@
 				</plugins>
 			</build>
 		</profile>
-<!--		<profile>-->
-<!--			<id>testInstallers</id>-->
-<!--			<activation>-->
-<!--				<property>-->
-<!--					<name>testInstallers</name>-->
-<!--				</property>-->
-<!--			</activation>-->
-<!--			<build>-->
-<!--				<plugins>-->
-<!--					<plugin>-->
-<!--						<groupId>org.codehaus.mojo</groupId>-->
-<!--						<artifactId>exec-maven-plugin</artifactId>-->
-<!--						<version>1.2</version>-->
-<!--						<executions>-->
-<!--							<execution>-->
-<!--								<configuration>-->
-<!--									<executable>${project.build.directory}/squirrel-sql-${squirrelsql.version}-optional/squirrel-sql.sh</executable>-->
-<!--									<arguments>-->
-<!---->
-<!--										<argument>-userdir</argument>-->
-<!--										<argument>${project.build.directory}/test-classes/user-settings-dir</argument>-->
-<!--									</arguments>-->
-<!--								</configuration>-->
-<!--								<phase>integration-test</phase>-->
-<!--								<goals>-->
-<!--									<goal>exec</goal>-->
-<!--								</goals>-->
-<!--							</execution>-->
-<!--						</executions>-->
-<!--					</plugin>-->
-<!--				</plugins>-->
-<!--			</build>-->
-<!--		</profile>-->
+		<profile>
+			<id>testInstallers</id>
+			<activation>
+				<property>
+					<name>testInstallers</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+
+						<executions>
+							<execution>
+								<id>copy-derby-driver-for-test</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/derby-driver</outputDirectory>
+									<includeGroupIds>org.apache.derby</includeGroupIds>
+									<includeArtifactIds>derby</includeArtifactIds>
+									<stripVersion>true</stripVersion>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-firebird-driver-for-test</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/squirrel-sql-${squirrelsql.version}-optional/lib</outputDirectory>
+									<includeGroupIds>net.sf.squirrel-sql.thirdparty-non-maven</includeGroupIds>
+									<includeArtifactIds>jaybird</includeArtifactIds>
+									<stripVersion>true</stripVersion>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-j2ee-spec-driver-for-test</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/squirrel-sql-${squirrelsql.version}-optional/lib</outputDirectory>
+									<includeGroupIds>geronimo-spec</includeGroupIds>
+									<includeArtifactIds>geronimo-spec-j2ee-connector</includeArtifactIds>
+									<stripVersion>true</stripVersion>
+								</configuration>
+							</execution>
+
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>launch-squirrel-for-connect-test</id>
+								<configuration>
+									<executable>${project.build.directory}/squirrel-sql-${squirrelsql.version}-optional/squirrel-sql.sh</executable>
+									<arguments>
+										<argument>-userdir</argument>
+										<argument>${project.build.directory}/test-classes/user-settings-dir</argument>
+										<argument>-s</argument>
+										<argument>20</argument>
+									</arguments>
+								</configuration>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${surefire-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>find-errors-in-logfile</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>
