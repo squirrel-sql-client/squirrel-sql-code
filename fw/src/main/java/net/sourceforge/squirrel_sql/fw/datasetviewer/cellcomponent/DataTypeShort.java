@@ -271,12 +271,7 @@ public class DataTypeShort extends BaseDataTypeComponent
 				JTextComponent _theComponent = (JTextComponent)DataTypeShort.this._textComponent;
 				String text = _theComponent.getText();
 	
-				// look for illegal chars
-				if ( ! DataTypeShort.this._isSigned && c == '-') {
-					// cannot use '-' when unsigned
-					_beepHelper.beep(_theComponent);
-					e.consume();
-				}
+				checkSignCharacter(e, _theComponent, _colDef, _beepHelper);
 												
 				// tabs and newlines get put into the text before this check,
 				// so remove them

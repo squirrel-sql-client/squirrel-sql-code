@@ -21,6 +21,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import org.apache.commons.lang.StringUtils;
+
 public class BaseKeyTextHandler extends KeyAdapter {
     
     /**
@@ -72,4 +78,63 @@ public class BaseKeyTextHandler extends KeyAdapter {
             }
         }
     }
+    
+	/**
+	 * Ensure, that a sign character is entered at the right position.
+	 * Valid characters for a sign is the <code>-</code>. If the corresponding {@link ColumnDisplayDefinition#isSigned()} is 
+	 * <code>false</code>, than a sign is not allowed for this column.
+	 * Otherwise, a sign character is allowed at the first position of the text if there is not already a sign char present.
+	 * <B>If the entered sign character is not valid, then the keyEvent will be consumed and a beep will be processed.</B>
+	 * <p>For example:</p>
+	 * Allowed:
+	 * <li>42</li>
+	 * <li>-42</li>
+	 * Not allowed:
+	 * <li>-.42</li>
+	 * <li>--42</li>
+	 * <li>42-42</li>
+	 * <li>-42-42</li>
+	 * <li>42-</li>
+	 * @param keyEvent KeyEvent, which insert a character
+	 * @param textComponent Text component, where the character was typed.
+	 * @param colDef Display definition of the affected column. This will be used, for finding out, if the data type can be signed.
+	 * @param beepHelper Helper for beeping, if a sign char is would be inserted at a wrong position.
+	 */
+	protected void checkSignCharacter(KeyEvent keyEvent, JTextComponent textComponent, ColumnDisplayDefinition colDef, IToolkitBeepHelper beepHelper) {
+		char c = keyEvent.getKeyChar();
+		String text = textComponent.getText();
+		
+		if ( isSignCharacter(c)){
+			boolean ok = true;
+			if(colDef.isSigned() == false){
+				ok = false;
+			}else if(!text.equals("<null>") && text.length() != 0){
+				int caretPosition = textComponent.getCaretPosition();
+				if(caretPosition != 0 || isSignCharacter(text.charAt(0))){
+					ok = false;
+				}
+			}
+			if(ok == false){
+				/*
+				 *  user entered '+' or '-' at a bad place,
+				 *  Maybe not at the first position, or there is not a numeric char at the beginning - maybe we have already a sign
+				 */
+				beepHelper.beep(textComponent);
+				keyEvent.consume();
+			}
+		}
+	}
+	
+	/**
+	 * Checks, if the specified character is a <code>-</code>;
+	 * @param c Character, which should be checked.
+	 * @return true, if the character is a sign character, otherwise false
+	 */
+	protected boolean isSignCharacter(char c){
+		if(c == '-'){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }
