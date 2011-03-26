@@ -18,9 +18,17 @@
  */
 package net.sourceforge.squirrel_sql.plugins.db2;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.DatabaseProductVersionData;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+
+import org.junit.Test;
 
 public class DB2PluginTest extends AbstractSessionPluginTest implements DatabaseProductVersionData
 {
@@ -41,6 +49,14 @@ public class DB2PluginTest extends AbstractSessionPluginTest implements Database
 	protected String getDatabaseProductVersion()
 	{
 		return null;
+	}
+
+	@Test
+	public void testSessionStarted() throws SQLException
+	{
+		when(mockDatabaseMetaData.getDriverName()).thenReturn(DB2Plugin.JCC_DRIVER_NAME);
+		PluginSessionCallback result = ((DB2Plugin) super.classUnderTest).sessionStarted(mockSession);
+		assertNotNull(result);
 	}
 
 }

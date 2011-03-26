@@ -21,12 +21,14 @@ package net.sourceforge.squirrel_sql.client.plugin;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
@@ -63,6 +65,12 @@ public abstract class AbstractSessionPluginTest extends AbstractPluginTest imple
 	@Mock
 	protected Connection mockConnection;
 
+	@Mock
+	protected DatabaseMetaData mockDatabaseMetaData; 
+	
+	@Mock
+	protected IQueryTokenizer mockQueryTokenizer;
+	
 	@Before
 	public void setUp() throws Exception
 	{
@@ -76,11 +84,14 @@ public abstract class AbstractSessionPluginTest extends AbstractPluginTest imple
 		when(mockSession.getSessionInternalFrame()).thenReturn(mockSessionInternalFrame);
 		when(mockSession.getSessionSheet()).thenReturn(mockSessionPanel);
 		when(mockSession.getSQLConnection()).thenReturn(mockIsqlConnection);
+		when(mockSession.getQueryTokenizer()).thenReturn(mockQueryTokenizer);
 		when(mockIsqlConnection.getConnection()).thenReturn(mockConnection);
 		when(mockSQLDatabaseMetaData.getDatabaseProductName()).thenReturn(getDatabaseProductName());
 		when(mockSQLDatabaseMetaData.getDatabaseProductVersion()).thenReturn(getDatabaseProductVersion());
+		when(mockSQLDatabaseMetaData.getJDBCMetaData()).thenReturn(mockDatabaseMetaData);
 		when(mockSessionInternalFrame.getObjectTreeAPI()).thenReturn(mockObjectTreeAPI);
 		when(mockSessionPanel.getSQLPaneAPI()).thenReturn(mockPanelAPI);
+		when(mockQueryTokenizer.getSQLStatementSeparator()).thenReturn(";");
 	}
 
 	@Test
