@@ -195,11 +195,16 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	/**
 	 * @param enabled
 	 */
-	public void setCopyMenuEnabled(boolean enabled)
+	public void setCopyMenuEnabled(final boolean enabled)
 	{
-		final ActionCollection coll = getApplication().getActionCollection();
-		CopyTableAction copyAction = (CopyTableAction) coll.get(CopyTableAction.class);
-		copyAction.setEnabled(enabled);
+		GUIUtils.processOnSwingEventThread(new Runnable()
+		{
+			public void run()
+			{
+				final ActionCollection coll = getApplication().getActionCollection();
+				coll.get(CopyTableAction.class).setEnabled(enabled);
+			}
+		});
 	}
 
 	/**
@@ -212,8 +217,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 			public void run()
 			{
 				final ActionCollection coll = getApplication().getActionCollection();
-				PasteTableAction pasteAction = (PasteTableAction) coll.get(PasteTableAction.class);
-				pasteAction.setEnabled(enabled);
+				coll.get(PasteTableAction.class).setEnabled(true);
 			}
 		});
 	}
