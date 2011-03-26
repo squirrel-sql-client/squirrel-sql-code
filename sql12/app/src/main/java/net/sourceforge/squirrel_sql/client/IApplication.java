@@ -207,8 +207,10 @@ public interface IApplication
 
 	/**
 	 * Application shutdown processing.
+	 * 
+	 * @param whether or not to update the launch script before shutdown.
 	 */
-	boolean shutdown();
+	boolean shutdown(boolean updateLaunchScript);
     
     /**
      * Launches the specified url in the system default web-browser

@@ -1,0 +1,5 @@
+<Beans>
+    <Bean Class="net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols">
+        <dataArray Indexed="true"/>
+    </Bean>
+</Beans>

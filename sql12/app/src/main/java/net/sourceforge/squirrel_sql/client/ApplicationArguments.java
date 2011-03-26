@@ -71,6 +71,9 @@ public class ApplicationArguments implements IApplicationArguments
 			"Provides tool-tips and highlighting of UI components for easy identification" };
 		String[] PLUGIN_LIST = { "pluginlist", "plugin-classpath-list", 
 			"Specify a comma-delimited list of plugins to load from the CLASSPATH" };
+		String[] SHUTDOWN_TIMEOUT_SECONDS = { "s", "shutdown-timeout-seconds", 
+			"Specify the number of seconds to allow the application to run before exiting the VM" };
+
 	}
 
 	/** Only instance of this class. */
@@ -97,7 +100,11 @@ public class ApplicationArguments implements IApplicationArguments
 	/** Path for logging configuration file */
 	private String _loggingConfigFile = null;
 
+	/** List of plugins to load from the classloader */
 	private List<String> _pluginList = null;
+	
+	/** Time in seconds to allow the application to run prior to exiting the VM */
+	private Integer _shutdownTimerSeconds = null;
 	
 	/**
 	 * Ctor specifying arguments from command line.
@@ -148,6 +155,9 @@ public class ApplicationArguments implements IApplicationArguments
 				_pluginList = new ArrayList<String>(Arrays.asList(pluginArr));
 				_pluginList = Collections.unmodifiableList(_pluginList);
 			}
+		}
+		if (_cmdLine.hasOption(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0])) {
+			_shutdownTimerSeconds = Integer.parseInt(_cmdLine.getOptionValue(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0]));
 		}
 		
 	}
@@ -286,6 +296,10 @@ public class ApplicationArguments implements IApplicationArguments
 		return _pluginList;
 	}
 	
+	public Integer getShutdownTimerSeconds() {
+		return _shutdownTimerSeconds;
+	}
+	
 	void printHelp()
 	{
 		HelpFormatter formatter = new HelpFormatter();
@@ -327,6 +341,9 @@ public class ApplicationArguments implements IApplicationArguments
 		_options.addOption(opt);
 		
 		opt = createAnOptionWithArgument(IOptions.PLUGIN_LIST);
+		_options.addOption(opt);
+		
+		opt = createAnOptionWithArgument(IOptions.SHUTDOWN_TIMEOUT_SECONDS);
 		_options.addOption(opt);
 	}
 
