@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -1689,7 +1690,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 	private ResultSet getColumns(ITableInfo ti) throws SQLException
 	{
-		return privateGetJDBCMetaData().getColumns(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(),
+		return privateGetJDBCMetaData().getColumns(ti.getCatalogName(), ti.getSchemaName(), escapeTableNames(ti.getSimpleName()),
 			"%");
 	}
 
@@ -1730,6 +1731,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		throws SQLException
 	{
 		ResultSet rs = null;
+		
+		table = escapeTableNames(table);
+		
 		try
 		{
 			final Map<Integer, TableColumnInfo> columns = new TreeMap<Integer, TableColumnInfo>();
@@ -1795,6 +1799,27 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
 			SQLUtilities.closeResultSet(rs);
 		}
+	}
+
+	/**
+	 * For some databases, we need to escape table names.
+	 * e.g. for Oracle, we need to escape the slash in BIN$ objects, because the JDBC-driver could not handle them until now (version 11.2.0.2.0)
+	 * @param table name of the table, which might contains some chars to escape
+	 * @return the escaped table name, or the original, if escaping is not necessary.
+	 */
+	private String escapeTableNames(String table) {
+		if(DialectFactory.isOracle(this) && table != null){
+			/*
+			 *  For some names of BIN$ objects, the jdbc driver could not catch the columns.
+			 *  Calling DatabaseMetaData#getColumns for a table like BIN$nPl/2NHWRNXgQKjAQgFYEQ==$0 will end in a 
+			 *  ORA-01424: missing or illegal character following the escape character.
+			 *  
+			 */
+			if(table.startsWith("BIN$")){
+				table = table.replaceAll("/", "//");
+			}
+		}
+		return table;
 	}
 
 	/**
