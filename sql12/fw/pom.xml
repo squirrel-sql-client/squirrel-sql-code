@@ -226,6 +226,10 @@
 			<artifactId>mockito-all</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.easytesting</groupId>
+			<artifactId>fest-swing-junit-4.5</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.0.b2</version>

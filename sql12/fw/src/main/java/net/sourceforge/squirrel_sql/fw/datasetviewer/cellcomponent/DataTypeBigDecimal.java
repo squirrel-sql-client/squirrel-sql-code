@@ -415,23 +415,10 @@ public class DataTypeBigDecimal extends FloatingPointBase
 					
 				
 				
-				if ( (c == '-' || c=='+') &&
-					! (text.equals("<null>") || text.length() == 0)
-					) {
-					int caretPosition = _theComponent.getCaretPosition();
-					if(caretPosition != 0 || !StringUtils.isNumeric(text.substring(0, 1))
-							){
-						/*
-						 *  user entered '+' or '-' at a bad place,
-						 *  Maybe not at the first position, or there is not a numeric char at the beginning - maybe we have already a sign
-						 */
-						_beepHelper.beep(_theComponent);
-						e.consume();
-					}
-				}
+				checkSignCharacter(e, _theComponent, _colDef, _beepHelper);
 
 				if ( ! ( Character.isDigit(c) ||
-					(c == '-') || (c == '+') ||
+					(isSignCharacter(c)) ||
 					(c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
 					(c == KeyEvent.VK_BACK_SPACE) ||
 					(c == KeyEvent.VK_DELETE) ) ) {
@@ -475,6 +462,8 @@ public class DataTypeBigDecimal extends FloatingPointBase
                     handleNotNullableField(text, c, e, _textComponent);
 				}
 			}
+
+
 		}
 
 

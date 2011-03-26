@@ -340,10 +340,12 @@ public class DataTypeFloat extends FloatingPointBase
                }
                e.consume();
             }
+            
+            checkSignCharacter(e, _theComponent, _colDef, _beepHelper);
 
 
             if ( ! ( Character.isDigit(c) ||
-               (c == '-') || (c == '+') ||
+               (isSignCharacter(c)) ||
                (c == 'e') || (c == 'E') ||
                (c == 'f') || (c == 'F') ||
                (c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','

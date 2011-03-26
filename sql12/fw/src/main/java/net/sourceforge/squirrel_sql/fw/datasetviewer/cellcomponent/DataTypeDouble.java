@@ -315,7 +315,7 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 			// could typecast every reference, but this makes the code cleaner
 			JTextComponent _theComponent = (JTextComponent) DataTypeDouble.this._textComponent;
 			String text = _theComponent.getText();
-
+			
 			// tabs and newlines get put into the text before this check,
 			// so remove them
 			// This only applies to Popup editing since these chars are
@@ -339,6 +339,8 @@ public class DataTypeDouble extends FloatingPointBase implements IDataTypeCompon
 				}
 				e.consume();
 			}
+			
+			checkSignCharacter(e, _theComponent, _colDef, _beepHelper);
 
 			if (!(Character.isDigit(c) || (c == '-') || (c == '+') || (c == 'e') || (c == 'E') || (c == 'f')
 				|| (c == 'F') || (c == 'd') || (c == 'D') || (c == '.') || (c == ',') || // several number formats
