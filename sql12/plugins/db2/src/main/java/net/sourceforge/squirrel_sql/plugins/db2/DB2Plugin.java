@@ -63,7 +63,7 @@ import net.sourceforge.squirrel_sql.plugins.db2.types.DB2XmlTypeDataTypeComponen
 public class DB2Plugin extends DefaultSessionPlugin
 {
 
-	private static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
+	public static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
 
 	/** The product name that indicates we need to use os/400 queries */
 	private static final String OS_400_PRODUCT_NAME = "DB2 UDB for AS/400";
