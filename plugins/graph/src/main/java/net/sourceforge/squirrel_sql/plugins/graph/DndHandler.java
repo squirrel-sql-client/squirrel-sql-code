@@ -8,8 +8,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.activation.DataHandler;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.MouseAdapter;
@@ -119,9 +122,33 @@ public class DndHandler
             }
             else
             {
-               return super.createTransferable(c);    //To change body of overridden methods use File | Settings | File Templates.
+               return super.createTransferable(c);
             }
          }
+
+         @Override // To bring text copy and paste back to work on Win-Platforms
+         public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException
+         {
+            if (comp instanceof JTextComponent)
+            {
+               JTextComponent txtComp = (JTextComponent) comp;
+               String selText = txtComp.getSelectedText();
+               if (null == selText || 0 == selText.length())
+               {
+                  super.exportToClipboard(comp, clip, action);
+               }
+               else
+               {
+                  StringSelection data = new StringSelection(selText);
+                  clip.setContents(data, data);
+               }
+            }
+            else
+            {
+               super.exportToClipboard(comp, clip, action);
+            }
+         }
+
       };
    }
 
