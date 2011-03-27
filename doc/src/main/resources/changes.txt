@@ -7,6 +7,13 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Feature Request 3185630: SQL Panel layout:
+ - Squirrel uses a vertical layout for the SQL Panel. Now, this layout can be changed to horizontal,
+   which might be useful on wide screen displays. This can be configured within the 
+   Session Properties and New Session Properties => Tab General => Combo Box: SQL Panel layout 
+ - A double click on the divider restores the divider position to the default value.
+  
+
 Editing numeric values: Now, Squirrel has the same behavior for signed values for all different numeric data types. 
   A minus sign is allowed only at the first position and if the data type is signed.
 

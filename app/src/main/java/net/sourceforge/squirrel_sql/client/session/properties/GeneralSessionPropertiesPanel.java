@@ -81,6 +81,8 @@ public class GeneralSessionPropertiesPanel
 		String DATA_TYPE1 = s_stringMgr.getString("generalSessionPropertiesPanel.dataTYpe1");
 		// i18n[generalSessionPropertiesPanel.dataTYpe2='General Preferences' window under the 'Data Type Controls' tab.]
 		String DATA_TYPE2 = s_stringMgr.getString("generalSessionPropertiesPanel.dataTYpe2");
+		
+		String SQL_PANEL_ORIENTATION = s_stringMgr.getString("generalSessionPropertiesPanel.sqlPanelOrientation");
 	}
 
 	private SessionProperties _props;
@@ -152,6 +154,7 @@ public class GeneralSessionPropertiesPanel
 		private OutputTypeCombo _sqlResultsCmb = new OutputTypeCombo(true);
 		private JCheckBox _chkKeepTableLayoutOnRerun = new JCheckBox();
 		private OutputTypeCombo _tableContentsCmb = new OutputTypeCombo(true);
+		private SplitPaneOrientationCombo _splitPaneOrientationCmb = new SplitPaneOrientationCombo();
 
 		MyPanel()
 		{
@@ -223,6 +226,24 @@ public class GeneralSessionPropertiesPanel
 				_sqlResultsTabPlacementCmb.setSelectedIndex(0);
 			}
 
+			int splitPaneOrientation = props.getSqlPanelOrientation();
+			
+			
+			for (int i = 0, limit = _splitPaneOrientationCmb.getModel().getSize(); i < limit; ++i)
+			{
+				SplitPaneOrientation spo = (SplitPaneOrientation)_splitPaneOrientationCmb.getItemAt(i);
+				if (spo.getValue() == splitPaneOrientation)
+				{
+					_splitPaneOrientationCmb.setSelectedIndex(i);
+					break;
+				}
+			}
+			if (_splitPaneOrientationCmb.getSelectedIndex() == -1)
+			{
+				_splitPaneOrientationCmb.setSelectedIndex(0);
+			}
+			
+			
 			_metaDataCmb.selectClassName(props.getMetaDataOutputClassName());
 			_sqlResultsCmb.selectClassName(props.getSQLResultsOutputClassName());
 			_chkKeepTableLayoutOnRerun.setSelected(props.getKeepTableLayoutOnRerun());
@@ -248,6 +269,9 @@ public class GeneralSessionPropertiesPanel
 
 			tp = (TabPlacement)_sqlResultsTabPlacementCmb.getSelectedItem();
 			props.setSQLResultsTabPlacement(tp.getValue());
+			
+			SplitPaneOrientation spOrientation = (SplitPaneOrientation) _splitPaneOrientationCmb.getSelectedItem();
+			props.setSqlPanelOrientation(spOrientation.getValue());
 		}
 
 		private void createGUI()
@@ -317,6 +341,16 @@ public class GeneralSessionPropertiesPanel
 			++gbc.gridx;
 			gbc.weightx = 0.5;
 			pnl.add(_sqlResultsTabPlacementCmb, gbc);
+			
+			gbc.gridx = 0;
+			++gbc.gridy;
+			pnl.add(new JLabel(GeneralSessionPropertiesPanelI18n.SQL_PANEL_ORIENTATION, SwingConstants.RIGHT), gbc);
+
+			++gbc.gridx;
+			gbc.weightx = 0.5;
+			gbc.gridwidth=3;
+			pnl.add(_splitPaneOrientationCmb, gbc);
+
 
 			return pnl;
 		}
@@ -492,6 +526,42 @@ public class GeneralSessionPropertiesPanel
 		String getSelectedClassName()
 		{
 			return ((OutputType) getSelectedItem()).getPanelClassName();
+		}
+	}
+	
+	private static final class SplitPaneOrientation
+	{
+		static final SplitPaneOrientation HORIZONTAL = new SplitPaneOrientation(s_stringMgr.getString("generalPropertiesPanel.horizontal"), JSplitPane.HORIZONTAL_SPLIT);
+		static final SplitPaneOrientation VERTICAL = new SplitPaneOrientation(s_stringMgr.getString("generalPropertiesPanel.vertical"), JSplitPane.VERTICAL_SPLIT);
+
+		private final String _name;
+		private final int _value;
+
+		SplitPaneOrientation(String name, int value)
+		{
+			super();
+			_name = name;
+			_value = value;
+		}
+
+		public String toString()
+		{
+			return _name;
+		}
+
+		int getValue()
+		{
+			return _value;
+		}
+	}
+
+	private static final class SplitPaneOrientationCombo extends JComboBox
+	{
+		SplitPaneOrientationCombo()
+		{
+			super();
+			addItem(SplitPaneOrientation.VERTICAL);
+			addItem(SplitPaneOrientation.HORIZONTAL);
 		}
 	}
 }
