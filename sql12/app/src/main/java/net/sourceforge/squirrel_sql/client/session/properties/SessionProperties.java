@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
+import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
@@ -69,6 +70,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
       String LOAD_SCHEMAS_CATALOGS = "loadCatalogsSchemas";
       String MAIN_TAB_PLACEMENT = "mainTabPlacement";
+      String SQL_PANEL_ORIENTATION = "sqlPanelOrientation";
       String META_DATA_OUTPUT_CLASS_NAME = "metaDataOutputClassName";
       String OBJECT_TAB_PLACEMENT = "objectTabPlacement";
       String SQL_ENTRY_HISTORY_SIZE = "sqlEntryHistorySize";
@@ -187,6 +189,12 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     */
    private int _sqlEntryHistorySize = 100;
 
+   /** Orientation of the split pane dividing sql entry area from result area
+    * @see JSplitPane#VERTICAL_SPLIT
+    * @see JSplitPane#HORIZONTAL_SPLIT
+    *  */
+   private int _sqlPanelOrientation = JSplitPane.VERTICAL_SPLIT;
+   
    /** Placement of main tabs. See javax.swing.SwingConstants for valid values. */
    private int _mainTabPlacement = SwingConstants.TOP;
 
@@ -812,6 +820,25 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
          oldValue, _sqlEntryHistorySize);
    }
 
+   
+   public int getSqlPanelOrientation()
+   {
+      return _sqlPanelOrientation;
+   }
+
+   public void setSqlPanelOrientation(int value)
+   {
+      if (_sqlPanelOrientation != value)
+      {
+         final int oldValue = _sqlPanelOrientation;
+         _sqlPanelOrientation = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_PANEL_ORIENTATION,
+            oldValue, _sqlPanelOrientation);
+      }
+   }
+   
+   
    public int getMainTabPlacement()
    {
       return _mainTabPlacement;

@@ -27,6 +27,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
@@ -35,13 +37,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
+import javax.swing.plaf.SplitPaneUI;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
@@ -155,6 +170,7 @@ public class SQLPanel extends JPanel
 	transient private ISQLPanelAPI _panelAPI;
 
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
+   private static final String PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL = "squirrelSql_sqlPanel_divider_loc_horizontal";
 
    /**
     * true if this panel is within a SessionInternalFrame
@@ -404,8 +420,8 @@ public class SQLPanel extends JPanel
 
       if(_hasBeenVisible)
       {
-         int dividerLoc = _splitPane.getDividerLocation();
-         Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
+    	 saveOrientationDependingDividerLocation();
+         
       }
 
 		_sqlCombo.removeActionListener(_sqlComboListener);
@@ -425,6 +441,20 @@ public class SQLPanel extends JPanel
 
    }
 
+
+   /**
+    * Save the location of the divider depending on the orientation.
+    * @see #PREFS_KEY_SPLIT_DIVIDER_LOC
+    * @see #PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL
+    */
+   private void saveOrientationDependingDividerLocation() {
+	   int dividerLoc = _splitPane.getDividerLocation();
+	   if(_splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT){
+		   Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
+	   }else{
+		   Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, dividerLoc);
+	   }
+   }
 
 	private void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
@@ -838,7 +868,10 @@ public class SQLPanel extends JPanel
 			add(pnl, BorderLayout.NORTH);
 		}
 
-      createSplitPaneWithHackToSetSplitLocation();
+	  // TODO Stefan, clean up one of this
+	  createSplitPaneAndSetSplitLocation();	
+//      createSplitPaneWithHackToSetSplitLocation();
+	  
 		_splitPane.setOneTouchExpandable(true);
 
 		installSQLEntryPanel(
@@ -867,10 +900,12 @@ public class SQLPanel extends JPanel
 		});
 	}
 
+	// TODO Stefan, if createSplitPaneAndSetSplitLocation works correctly, remove this.
    private void createSplitPaneWithHackToSetSplitLocation()
    {
-      final int dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, 50);
-
+   	  final int spOrientation = getSession().getProperties().getSqlPanelOrientation();
+   	  final int dividerLoc = calculateDivederLocation(spOrientation, false);
+   
       final Timer timer = new Timer(500, new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -881,7 +916,7 @@ public class SQLPanel extends JPanel
 
       timer.setRepeats(false);
 
-      _splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT)
+      _splitPane = new JSplitPane(spOrientation)
       {
 //         @Override
 //         public void setDividerLocation(double proportionalLocation)
@@ -923,6 +958,128 @@ public class SQLPanel extends JPanel
             timer.restart();
          }
       });
+      /*
+       * Add a PropertyChangeListener for the SessionProperties for changing the orientation
+       * of the split pane, if the user change the settings.
+       */
+      getSession().getProperties().addPropertyChangeListener(new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if(SessionProperties.IPropertyNames.SQL_PANEL_ORIENTATION.equals(evt.getPropertyName())){
+				saveOrientationDependingDividerLocation();
+				_splitPane.setOrientation((Integer) evt.getNewValue());
+				_splitPane.setDividerLocation(calculateDivederLocation(_splitPane.getOrientation(), false));
+				_splitPane.repaint();
+			}
+		}
+      });
+      
+      /*
+       * Add a mouse event listener to the divider, so that we can reset the divider location when a doulbe click 
+       * occurs on the divider.
+       */
+      SplitPaneUI spUI = _splitPane.getUI();
+      if (spUI instanceof BasicSplitPaneUI) {
+		BasicSplitPaneUI bspUI = (BasicSplitPaneUI) spUI;
+		bspUI.getDivider().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+					_splitPane.setDividerLocation(calculateDivederLocation(_splitPane.getOrientation(), true));
+				}			
+			}
+		});
+		
+	}
+      
+   }
+   
+   
+   private void createSplitPaneAndSetSplitLocation()
+   {
+   	  final int spOrientation = getSession().getProperties().getSqlPanelOrientation();
+
+      _splitPane = new JSplitPane(spOrientation);
+   
+      int dividerLoc = calculateDivederLocation(spOrientation, false);
+      _splitPane.setDividerLocation(dividerLoc);
+
+      /*
+       * Add a PropertyChangeListener for the SessionProperties for changing the orientation
+       * of the split pane, if the user change the settings.
+       */
+      getSession().getProperties().addPropertyChangeListener(new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if(SessionProperties.IPropertyNames.SQL_PANEL_ORIENTATION.equals(evt.getPropertyName())){
+				saveOrientationDependingDividerLocation();
+				_splitPane.setOrientation((Integer) evt.getNewValue());
+				_splitPane.setDividerLocation(calculateDivederLocation(_splitPane.getOrientation(), false));
+				_splitPane.repaint();
+			}
+		}
+      });
+      
+      
+      /*
+       * Add a mouse event listener to the divider, so that we can reset the divider location when a doulbe click 
+       * occurs on the divider.
+       */
+      SplitPaneUI spUI = _splitPane.getUI();
+      if (spUI instanceof BasicSplitPaneUI) {
+		BasicSplitPaneUI bspUI = (BasicSplitPaneUI) spUI;
+		bspUI.getDivider().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+					_splitPane.setDividerLocation(calculateDivederLocation(_splitPane.getOrientation(), true));
+				}			
+			}
+		});
+		
+	}
+      
+   }
+
+   /**
+    * Calculates the divider location of the split pane, depending on a orientation.
+ * @param useDefault TODO
+    * @see #PREFS_KEY_SPLIT_DIVIDER_LOC
+    * @see #PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL
+    */
+   private int calculateDivederLocation(int orientation, boolean useDefault) {
+	   int dividerLoc;	
+	   
+	   // TODO Stefan: If createSplitPaneAndSetSplitLocation works, than there is no need for a default dimension, as the panel could not be null.
+	   
+	   /*
+	    * Parent size for calculating the default location.
+	    * If the split pane isnt' initialized, assume a default dimension.
+	    */
+	   Dimension parentDim;
+	   
+	   if(_splitPane != null){
+		   parentDim = _splitPane.getSize();
+	   }else{
+		   parentDim = new Dimension(500,500);
+	   }
+
+	   if(orientation == JSplitPane.VERTICAL_SPLIT){
+		   int def = parentDim.height-200;
+		   if(useDefault == false){
+			   dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC, def);
+		   }else{
+			   dividerLoc = def;
+		   }
+	   }else{
+		   int def = parentDim.width/2;
+		   if(useDefault == false){
+			   dividerLoc = Preferences.userRoot().getInt(PREFS_KEY_SPLIT_DIVIDER_LOC_HORIZONTAL, def);
+		   }else{
+			   dividerLoc = def;
+		   }
+	   }
+	  return dividerLoc;
 
    }
 

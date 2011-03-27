@@ -91,6 +91,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 							"getSQLExecutionTabPlacement", "setSQLExecutionTabPlacement"),
 						new PropertyDescriptor(IPropNames.SQL_RESULTS_TAB_PLACEMENT, SessionProperties.class,
 							"getSQLResultsTabPlacement", "setSQLResultsTabPlacement"),
+						new PropertyDescriptor(IPropNames.SQL_PANEL_ORIENTATION, SessionProperties.class,
+									"getSqlPanelOrientation", "setSqlPanelOrientation"),
 						new PropertyDescriptor(IPropNames.SQL_USE_FETCH_SIZE, SessionProperties.class,
 							"getSQLFetchSize", "setSQLFetchSize"),
 						new PropertyDescriptor(IPropNames.SQL_FETCH_SIZE, SessionProperties.class,
