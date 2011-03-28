@@ -7,6 +7,8 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Detached result windows now can be rerun.
+
 Feature Request 3185630: SQL Panel layout:
  - Squirrel uses a vertical layout for the SQL Panel. Now, this layout can be changed to horizontal,
    which might be useful on wide screen displays. This can be configured within the 

@@ -79,6 +79,7 @@ public class SquirrelResources extends Resources
 
       String PREV_SCALE = "prevScale";
       String NEXT_SCALE = "nextScale";
+      String RERUN = "rerun";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

@@ -32,6 +32,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -84,7 +86,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	private JTabbedPane _tp;
 
 	/** <TT>SQLExecuterPanel</TT> that this tab is showing results for. */
-	private SQLResultExecuterPanel _sqlPanel;
+	private SQLResultExecuterPanelFacade _sqlResultExecuterPanelFacade;
 
 	/** Label shows the current SQL script. */
 	private JLabel _currentSqlLbl = new JLabel();
@@ -113,7 +115,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     * Ctor.
     *
     * @param	session		Current session.
-    * @param	sqlPanel	<TT>SQLResultExecuterPanel</TT> that this tab is
+    * @param	sqlResultExecuterPanelFacade	<TT>SQLResultExecuterPanel</TT> that this tab is
     *						showing results for.
     * @param	id			Unique ID for this object.
     *
@@ -121,7 +123,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
     *			Thrown if a <TT>null</TT> <TT>ISession</TT>,
     *			<<TT>SQLResultExecuterPanel</TT> or <TT>IIdentifier</TT> passed.
     */
-   public ResultTab(ISession session, SQLResultExecuterPanel sqlPanel,
+   public ResultTab(ISession session, SQLResultExecuterPanelFacade sqlResultExecuterPanelFacade,
                     IIdentifier id, SQLExecutionInfo exInfo,
                     IDataSetUpdateableTableModel creator, ResultTabListener resultTabListener)
       throws IllegalArgumentException
@@ -132,7 +134,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       {
          throw new IllegalArgumentException("Null ISession passed");
       }
-      if (sqlPanel == null)
+      if (sqlResultExecuterPanelFacade == null)
       {
          throw new IllegalArgumentException("Null SQLPanel passed");
       }
@@ -142,7 +144,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
 
       _session = session;
-      _sqlPanel = sqlPanel;
+      _sqlResultExecuterPanelFacade = sqlResultExecuterPanelFacade;
       _id = id;
       init(creator, exInfo);
 
@@ -326,7 +328,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	public void closeTab()
 	{
 		add(_tp, BorderLayout.CENTER);
-		_sqlPanel.closeResultTab(this);
+		_sqlResultExecuterPanelFacade.closeResultTab(this);
 	}
 
 	/**
@@ -335,12 +337,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	public void returnToTabbedPane()
 	{
 		add(_tp, BorderLayout.CENTER);
-		_sqlPanel.returnToTabbedPane(this);
+		_sqlResultExecuterPanelFacade.returnToTabbedPane(this);
 	}
 
-	/**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getOutputComponent()
-     */
 	public Component getOutputComponent()
 	{
 		return _tp;
@@ -510,7 +509,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			_sqlPanel.createSQLResultFrame(ResultTab.this);
+			_sqlResultExecuterPanelFacade.createSQLResultFrame(ResultTab.this);
 		}
 	}
 
@@ -550,9 +549,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private static class QueryInfoPanel extends JPanel
 	{
-        private static final long serialVersionUID = 2124193091025851544L;
-        
-        private MultipleLineLabel _queryLbl = new MultipleLineLabel();
+
+      private MultipleLineLabel _queryLbl = new MultipleLineLabel();
 		private JLabel _rowCountLbl = new JLabel();
 		private JLabel _executedLbl = new JLabel();
 		private JLabel _elapsedLbl = new JLabel();

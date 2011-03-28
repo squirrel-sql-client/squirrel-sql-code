@@ -38,7 +38,6 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -328,36 +327,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
 		_panel.removeSQLExecutionListener(lis);
-	}
-
-	/**
-	 * Add a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-// JASON: Do we need these?
-	public synchronized void addResultTabListener(IResultTabListener lis)
-	{
-//		if (lis == null)
-//		{
-//			throw new IllegalArgumentException("null IResultTabListener passed");
-//		}
-//		_session.getSessionSheet().getSQLPanel().addResultTabListener(lis);
-	}
-
-	/**
-	 * Remove a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-//	 JASON: Do we need these?
-	public synchronized void removeResultTabListener(IResultTabListener lis)
-	{
-//		if (lis == null)
-//		{
-//			throw new IllegalArgumentException("null IResultTabListener passed");
-//		}
-//		_session.getSessionSheet().getSQLPanel().removeResultTabListener(lis);
 	}
 
 	/**
