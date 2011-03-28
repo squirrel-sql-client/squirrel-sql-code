@@ -66,14 +66,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.event.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
@@ -83,6 +76,19 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.prefs.Preferences;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -612,50 +618,6 @@ public class SQLPanel extends JPanel
          }
       }
    }
-
-   @SuppressWarnings("unused")
-   private void fireTabTornOffEvent(IResultTab tab)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		ResultTabEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == IResultTabListener.class)
-			{
-				// Lazily create the event:
-				if (evt == null)
-				{
-					evt = new ResultTabEvent(_session, tab);
-				}
-				((IResultTabListener) listeners[i + 1]).resultTabTornOff(evt);
-			}
-		}
-	}
-
-   @SuppressWarnings("unused")
-	private void fireTornOffResultTabReturned(IResultTab tab)
-	{
-		// Guaranteed to be non-null.
-		Object[] listeners = _listeners.getListenerList();
-		// Process the listeners last to first, notifying
-		// those that are interested in this event.
-		ResultTabEvent evt = null;
-		for (int i = listeners.length - 2; i >= 0; i -= 2)
-		{
-			if (listeners[i] == IResultTabListener.class)
-			{
-				// Lazily create the event:
-				if (evt == null)
-				{
-					evt = new ResultTabEvent(_session, tab);
-				}
-				((IResultTabListener) listeners[i + 1]).tornOffResultTabReturned(evt);
-			}
-		}
-	}
 
    private void fireExecuterTabAdded(ISQLResultExecuter exec)
 	{

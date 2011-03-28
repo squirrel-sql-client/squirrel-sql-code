@@ -25,6 +25,7 @@ public class ErrorPanel extends JPanel
 
    private JPopupMenu _popUp = new JPopupMenu();
    private JTextArea _txtArea;
+   private TabButton _btnClose;
 
 
    public ErrorPanel(ISession session, ErrorPanelListener errorPanelListener, ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
@@ -153,9 +154,15 @@ public class ErrorPanel extends JPanel
 
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0 );
-      ret.add(new TabButton(new CloseAction(session)), gbc);
+      _btnClose = new TabButton(new CloseAction(session));
+      ret.add(_btnClose, gbc);
 
       return ret;
+   }
+
+   public void hideCloseButton()
+   {
+      _btnClose.setVisible(false);
    }
 
    private class CloseAction extends SquirrelAction

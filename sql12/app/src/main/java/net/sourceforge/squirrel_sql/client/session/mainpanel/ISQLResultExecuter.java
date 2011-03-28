@@ -28,18 +28,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public interface ISQLResultExecuter
 {
-	/** The factory interface that will create ISQLResultExecuter objects
-	 *  that will be attached to SQLPanels. The factory is required because
-	 *  there will be potentially many sqlpanels for a session each with their own
-	 *  set of resultexecuters
-	 */
-	public static interface ISQLResultExecuterFactory
-	{
-		public ISQLResultExecuter createSQLResultExecuter(ISession session,
-															ISQLPanelAPI sqlpanel);
-	}
 
-	/** Returns the title of this executor.*/
+   /** Returns the title of this executor.*/
 	public String getTitle();
 
 	public JComponent getComponent();

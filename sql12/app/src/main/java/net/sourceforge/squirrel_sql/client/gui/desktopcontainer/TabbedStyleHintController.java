@@ -50,7 +50,7 @@ public class TabbedStyleHintController
 
 
 
-      _dlg.setSize(350, 180);
+      _dlg.setSize(350, 250);
       GUIUtils.centerWithinParent(_dlg);
       _dlg.setVisible(true);
    }

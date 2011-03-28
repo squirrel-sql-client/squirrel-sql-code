@@ -21,11 +21,16 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopContainerFactory;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.ReturnResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -35,6 +40,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 /**
  * JASON: Rename to ResultInternalFrame
  * Torn off frame that contains SQL results.
@@ -46,49 +53,52 @@ public class ResultFrame extends SessionDialogWidget
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 
-       private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ResultFrame.class);
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultFrame.class);
 
+   private ISession _session;
    /** SQL Results. */
 	private IResultTab _tab;
+   private ResultTabFactory _resultTabFactory;
+   private ResultFrameListener _resultFrameListener;
+   private JButton _btnReturnToTab;
    private JCheckBox _chkOnTop;
+   private JButton _btnReRun;
+   private JPanel _centerPanel;
 
    /**
     * Ctor.
     *
+    *
+    *
+    *
+    *
     * @param	session		Current session.
     * @param	tab			SQL results tab.
     *
-    * @throws	IllegalArgumentException
+    * @param resultTabFactory
+    * @param resultFrameListener
+    *@param isOnRerun  @throws	IllegalArgumentException
     * 			If a <TT>null</TT> <TT>ISession</TT> or
     *			<TT>ResultTab</TT> passed.
     */
-   public ResultFrame(ISession session, IResultTab tab)
+   public ResultFrame(final ISession session, IResultTab tab, ResultTabFactory resultTabFactory, ResultFrameListener resultFrameListener, boolean checkStayOnTop, boolean isOnRerun)
    {
       super(getFrameTitle(session, tab), true, true, true, true, session);
+      _session = session;
       _tab = tab;
+      _resultTabFactory = resultTabFactory;
+      _resultFrameListener = resultFrameListener;
 
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-      final Container cont = getContentPane();
-      cont.setLayout(new BorderLayout());
+      getContentPane().setLayout(new BorderLayout());
       final IApplication app = session.getApplication();
 
 
-      JPanel pnlButtons = new JPanel(new GridBagLayout());
-      GridBagConstraints gbc;
-
-      JButton rtnBtn = new JButton(new ReturnResultTabAction(app, this));
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
-      pnlButtons.add(rtnBtn, gbc);
-
-      // i18n[resultFrame.stayOnTop=Stay on top]
-      _chkOnTop = new JCheckBox(s_stringMgr.getString("resultFrame.stayOnTop"));
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
-      pnlButtons.add(_chkOnTop, gbc);
-      _chkOnTop.setSelected(true);
-
-      _chkOnTop.setVisible(session.getApplication().getDesktopStyle().supportsLayers());
+      getContentPane().add(createButtonPanel(session, app, checkStayOnTop), BorderLayout.NORTH);
+      _centerPanel = new JPanel(new GridLayout(1,1));
+      getContentPane().add(_centerPanel, BorderLayout.CENTER);
+      _centerPanel.add(_tab.getOutputComponent());
 
       _chkOnTop.addActionListener(new ActionListener()
       {
@@ -98,16 +108,176 @@ public class ResultFrame extends SessionDialogWidget
          }
       });
 
-      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
+      _btnReRun.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onRerun();
+         }
+      });
+
+      if (false == isOnRerun)
+      {
+         showFrame(this, false);
+      }
+   }
+
+   private void onRerun()
+   {
+      _btnReturnToTab.setEnabled(false);
+      _btnReRun.setEnabled(false);
+      _centerPanel.removeAll();
+      new SQLExecutionHandler(_tab, _session, _tab.getSqlString(), createSQLExecutionHandlerListener(), new ISQLExecutionListener[0]);
+   }
+
+   private ISQLExecutionHandlerListener createSQLExecutionHandlerListener()
+   {
+      return new ISQLExecutionHandlerListener()
+      {
+         @Override
+         public void addResultsTab(SQLExecutionInfo info, ResultSetDataSet rsds, ResultSetMetaDataDataSet rsmdds, IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
+         {
+            onAddResultsTab(info, rsds, rsmdds, creator, resultTabToReplace);
+         }
+
+         @Override
+         public void removeCancelPanel(CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
+         {
+            onRemoveCancelPanel(cancelPanelCtrl, resultTabToReplace);
+         }
+
+         @Override
+         public void setCancelPanel(CancelPanelCtrl cancelPanelCtrl)
+         {
+            onSetCancelPanel(cancelPanelCtrl);
+         }
+
+         @Override
+         public void displayErrors(ArrayList<String> sqlExecErrorMsgs, String lastExecutedStatement)
+         {
+            onDisplayErrors(sqlExecErrorMsgs, lastExecutedStatement);
+         }
+      };
+   }
+
+   private void onDisplayErrors(final ArrayList<String> sqlExecErrorMsgs, final String lastExecutedStatement)
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _centerPanel.removeAll();
+            ErrorPanel errorPanel = _resultTabFactory.createErrorPanel(sqlExecErrorMsgs, lastExecutedStatement);
+            errorPanel.hideCloseButton();
+            _centerPanel.add(errorPanel);
+            _btnReRun.setEnabled(true);
+         }
+      });
+   }
+
+   private void onSetCancelPanel(final CancelPanelCtrl cancelPanelCtrl)
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _centerPanel.removeAll();
+            _centerPanel.add(cancelPanelCtrl.getPanel(), BorderLayout.CENTER);
+         }
+      });
+   }
+
+   private void onRemoveCancelPanel(CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _centerPanel.removeAll();
+         }
+      });
+   }
+
+   private void onAddResultsTab(final SQLExecutionInfo info, final ResultSetDataSet rsds, final ResultSetMetaDataDataSet rsmdds, final IDataSetUpdateableTableModel creator, IResultTab resultTabToReplace)
+   {
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            try
+            {
+               _centerPanel.removeAll();
+               ResultTab tab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
+               ResultFrame frame = new ResultFrame(_session, tab, _resultTabFactory, _resultFrameListener, _chkOnTop.isSelected(), true);
+               showFrame(frame, true);
+               setVisible(false);
+               dispose();
+
+               _resultFrameListener.frameReplaced(ResultFrame.this, frame);
+            }
+            catch (Throwable t)
+            {
+               _session.showErrorMessage(t);
+            }
+         }
+      });
+   }
+
+   private void showFrame(ResultFrame frame, boolean isOnRerun)
+   {
+      _session.getApplication().getMainFrame().addWidget(frame);
+      if (isOnRerun)
+      {
+         frame.setBounds(getBounds());
+      }
+      else
+      {
+         frame.pack();
+         DialogWidget.centerWithinDesktop(frame);
+      }
+
+      frame.setVisible(true);
+      frame.toFront();
+      frame.requestFocus();
+   }
+
+   private JPanel createButtonPanel(ISession session, IApplication app, boolean checkStayOnTop)
+   {
+      JPanel pnlButtons = new JPanel(new GridBagLayout());
+      GridBagConstraints gbc;
+
+      _btnReturnToTab = new JButton(new ReturnResultTabAction(app, this));
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
+      pnlButtons.add(_btnReturnToTab, gbc);
+
+      // i18n[resultFrame.stayOnTop=Stay on top]
+      _chkOnTop = new JCheckBox(s_stringMgr.getString("resultFrame.stayOnTop"));
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
+      pnlButtons.add(_chkOnTop, gbc);
+      _chkOnTop.setSelected(checkStayOnTop);
+      initLayer();
+
+      _chkOnTop.setVisible(session.getApplication().getDesktopStyle().supportsLayers());
+
+      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(new JPanel(), gbc);
 
+      ImageIcon icon = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
+      _btnReRun = new JButton(icon);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
+      pnlButtons.add(_btnReRun, gbc);
 
-
-      cont.add(pnlButtons, BorderLayout.NORTH);
-      cont.add(tab.getOutputComponent(), BorderLayout.CENTER);
+      return pnlButtons;
    }
 
    private void onStayOnTopChanged()
+   {
+      initLayer();
+      toFront();
+   }
+
+   private void initLayer()
    {
       if(_chkOnTop.isSelected())
       {
@@ -117,10 +287,6 @@ public class ResultFrame extends SessionDialogWidget
       {
          setLayer(JLayeredPane.DEFAULT_LAYER.intValue());
       }
-
-      // Needs to be done in both cases because if the window goes back to
-      // the default layer it goes back behind all other windows too.
-      toFront();
    }
 
    /**

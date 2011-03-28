@@ -22,7 +22,6 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
@@ -65,19 +64,6 @@ public interface ISQLPanelAPI
 	 */
 	void removeSQLExecutionListener(ISQLExecutionListener lis);
 
-	/**
-	 * Add a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	void addResultTabListener(IResultTabListener lis);
-
-	/**
-	 * Remove a listener for events in this sessions result tabs.
-	 *
-	 * @param	lis		The listener.
-	 */
-	void removeResultTabListener(IResultTabListener lis);
 
 	/**
 	 * Add a listener for events in this SQL Panel.
