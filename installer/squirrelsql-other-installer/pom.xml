@@ -557,7 +557,7 @@
 										<argument>-userdir</argument>
 										<argument>${project.build.directory}/test-classes/user-settings-dir</argument>
 										<argument>-s</argument>
-										<argument>20</argument>
+										<argument>60</argument>
 									</arguments>
 								</configuration>
 								<phase>integration-test</phase>
