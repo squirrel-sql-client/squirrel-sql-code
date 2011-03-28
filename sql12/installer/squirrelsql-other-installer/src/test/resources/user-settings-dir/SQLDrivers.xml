@@ -14,22 +14,4 @@
         <url>jdbc:derby:&lt;database&gt;[;create=true]</url>
         <websiteUrl>http://db.apache.org/derby</websiteUrl>
     </Bean>
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-        <driverClassName>org.firebirdsql.jdbc.FBDriver</driverClassName>
-        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
-            <string>-28</string>
-        </identifier>
-        <jarFileName/>
-        <jarFileNames Indexed="true">
-            <Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
-                <string>${project.build.directory}/firebird-driver/jaybird-jdk16.jar</string>
-            </Bean>
-            <Bean Class="net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper">
-                <string>${project.build.directory}/firebird-driver/geronimo-spec-j2ee-connector.jar</string>
-            </Bean>            
-        </jarFileNames>
-        <name>Firebird JayBird</name>
-        <url>jdbc:firebirdsql:[//host[:port]/]&lt;database&gt;</url>
-        <websiteUrl>http://www.firebirdsql.org</websiteUrl>
-    </Bean>    
 </Beans>
