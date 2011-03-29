@@ -207,6 +207,7 @@ public class ResultFrame extends SessionDialogWidget
          {
             try
             {
+               // We start a new frame here because reusing the current one for the new result led to repaint problems
                _centerPanel.removeAll();
                ResultTab tab = _resultTabFactory.createResultTab(info, creator, rsds, rsmdds);
                ResultFrame frame = new ResultFrame(_session, tab, _resultTabFactory, _resultFrameListener, _chkOnTop.isSelected(), true);
