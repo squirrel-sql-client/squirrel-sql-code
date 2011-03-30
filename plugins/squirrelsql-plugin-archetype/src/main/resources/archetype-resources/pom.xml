@@ -58,6 +58,12 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>fw</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
 			<artifactId>squirrel-sql</artifactId>
 		</dependency>
 		<dependency>

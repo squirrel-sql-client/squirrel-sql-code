@@ -75,7 +75,6 @@
 			<version>${project.version}</version>
 			<classifier>test-sources</classifier>
 		</dependency>
-		
 	</dependencies>
 	<build>
 		<extensions>
