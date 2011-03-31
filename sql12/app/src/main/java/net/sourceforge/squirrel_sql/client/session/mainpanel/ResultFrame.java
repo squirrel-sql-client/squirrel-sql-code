@@ -266,6 +266,7 @@ public class ResultFrame extends SessionDialogWidget
 
       ImageIcon icon = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
       _btnReRun = new JButton(icon);
+      _btnReRun.setToolTipText(s_stringMgr.getString("ResultFrame.rerun"));
       gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(_btnReRun, gbc);
 
