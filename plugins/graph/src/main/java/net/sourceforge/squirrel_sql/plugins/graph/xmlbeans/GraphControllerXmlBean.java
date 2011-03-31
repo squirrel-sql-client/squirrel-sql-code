@@ -10,6 +10,7 @@ public class GraphControllerXmlBean
    private PrintXmlBean printXmlBean;
    private boolean _showQualifiedTableNames;
    private int _modeIndex;
+   private boolean _queryHideNoJoins;
 
 
    public String getTitle()
@@ -80,5 +81,15 @@ public class GraphControllerXmlBean
    public void setModeIndex(int modeIndex)
    {
       _modeIndex = modeIndex;
+   }
+
+   public void setQueryHideNoJoins(boolean queryHideNoJoins)
+   {
+      _queryHideNoJoins = queryHideNoJoins;
+   }
+
+   public boolean isQueryHideNoJoins()
+   {
+      return _queryHideNoJoins;
    }
 }

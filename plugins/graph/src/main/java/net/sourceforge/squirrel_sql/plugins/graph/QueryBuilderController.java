@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
@@ -8,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.sqlgen.QueryBuilderSQLGenerator;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicRadioButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,18 +25,25 @@ public class QueryBuilderController
    private JPanel _panel;
    private JToggleButton _btnSQL;
    private JToggleButton _btnResult;
+   private TrippleStateCheckBox _chkHideNoJoins;
    private GraphDockHandle _sqlDockHandle;
    private GraphDockHandle _resultDockHandle;
    private TableFramesModel _tableFramesModel;
+   private GraphControllerFacade _graphControllerFacade;
+   private boolean _queryHideNoJoins;
    private ISession _session;
+   private GraphPlugin _plugin;
    private GraphQuerySQLPanelCtrl _graphQuerySQLPanelCtrl;
    private GraphQueryResultPanelCtrl _graphQueryResultPanelCtrl;
    private SessionAdapter _sessionAdapter;
 
-   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
+   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, boolean queryHideNoJoins, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
    {
       _tableFramesModel = tableFramesModel;
+      _graphControllerFacade = graphControllerFacade;
+      _queryHideNoJoins = queryHideNoJoins;
       _session = session;
+      _plugin = plugin;
       _panel = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
@@ -51,16 +60,19 @@ public class QueryBuilderController
       _btnResult = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Result"));
       _panel.add(_btnResult, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _chkHideNoJoins = new TrippleStateCheckBox(s_stringMgr.getString("QueryBuilderController.HideNoJoins"));
+      _panel.add(_chkHideNoJoins, gbc);
+      _chkHideNoJoins.setSelected(queryHideNoJoins);
+
+      gbc = new GridBagConstraints(4,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _panel.add(new JPanel(), gbc);
 
       GraphPluginResources rsrc = new GraphPluginResources(plugin);
       _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session, new HideDockButtonHandler(_btnSQL, rsrc), createSQLSyncListener());
       _graphQueryResultPanelCtrl = new GraphQueryResultPanelCtrl(_session, new HideDockButtonHandler(_btnResult, rsrc), createResultSyncListener());
 
-      initHandels(graphControllerFacade);
-
-
+      initHandels();
 
       _sessionAdapter = new SessionAdapter()
       {
@@ -97,9 +109,25 @@ public class QueryBuilderController
          @Override
          public void modelChanged(TableFramesModelChangeType changeType)
          {
-            onModelChanged();
+            onModelChanged(changeType);
          }
       });
+
+      _chkHideNoJoins.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onNoJoin();
+         }
+      });
+   }
+
+
+   private void onNoJoin()
+   {
+      _tableFramesModel.hideNoJoins(_chkHideNoJoins.isSelected());
+      _graphControllerFacade.repaint();
    }
 
    private SyncListener createResultSyncListener()
@@ -128,7 +156,7 @@ public class QueryBuilderController
    }
 
 
-   private void onModelChanged()
+   private void onModelChanged(TableFramesModelChangeType changeType)
    {
       if (_sqlDockHandle.isShowing() && _graphQuerySQLPanelCtrl.isAutoSync())
       {
@@ -138,15 +166,25 @@ public class QueryBuilderController
       {
          _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel));
       }
+
+      if(null != changeType && changeType == TableFramesModelChangeType.CONSTRAINT && _chkHideNoJoins.isSelected() && _tableFramesModel.containsUniddenNoJoins())
+      {
+         _chkHideNoJoins.setUndefined(true);
+      }
+
+      if(null != changeType && changeType == TableFramesModelChangeType.TABLE && false == _chkHideNoJoins.isUndefined())
+      {
+         onNoJoin();
+      }
    }
 
-   private void initHandels(GraphControllerFacade graphControllerFacade)
+   private void initHandels()
    {
       int sqlHeight = Preferences.userRoot().getInt(PREF_KEY_SQL_DOCK_HEIGHT, 250);
-      _sqlDockHandle = new GraphDockHandle(graphControllerFacade, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel(), sqlHeight);
+      _sqlDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQuerySQLPanelCtrl.getGraphQuerySQLPanel(), sqlHeight);
 
       int resHeight = Preferences.userRoot().getInt(PREF_KEY_RESULT_DOCK_HEIGHT, 250);
-      _resultDockHandle = new GraphDockHandle(graphControllerFacade, _graphQueryResultPanelCtrl.getGraphQuerySQLPanel(), resHeight);
+      _resultDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryResultPanelCtrl.getGraphQuerySQLPanel(), resHeight);
    }
 
    private void onSessionClosing()
@@ -169,7 +207,7 @@ public class QueryBuilderController
             _btnSQL.setSelected(false);
          }
          _resultDockHandle.show();
-         onModelChanged();
+         onModelChanged(null);
       }
       else
       {
@@ -187,7 +225,7 @@ public class QueryBuilderController
             _btnResult.setSelected(false);
          }
          _sqlDockHandle.show();
-         onModelChanged();
+         onModelChanged(null);
       }
       else
       {
@@ -207,5 +245,10 @@ public class QueryBuilderController
          _btnSQL.setSelected(false);
          _btnResult.setSelected(false);
       }
+   }
+
+   public boolean isHideNoJoins()
+   {
+      return _chkHideNoJoins.isSelected();
    }
 }

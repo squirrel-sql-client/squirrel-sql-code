@@ -11,4 +11,6 @@ public interface GraphControllerFacade
    void showPopupAbove(Point loc, GraphControllerPopupListener graphControllerPopupListener);
 
    void hidePopup();
+
+   void repaint();
 }

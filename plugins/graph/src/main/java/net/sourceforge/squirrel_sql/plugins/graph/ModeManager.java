@@ -112,7 +112,7 @@ public class ModeManager
       return _mnuMode.getMode();
    }
 
-   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphDesktopPane desktopPane)
+   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins, EdgesListener edgesListener, GraphDesktopPane desktopPane)
    {
       StartButtonHandler startButtonHandler;
       GraphPluginResources rsrc = new GraphPluginResources(_plugin);
@@ -121,7 +121,7 @@ public class ModeManager
       _zoomPrintController = new ZoomPrintController(zoomerXmlBean, printXmlBean, edgesListener, desktopPane, _session, _plugin, startButtonHandler);
 
       startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
-      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphControllerFacade, _session, _plugin, startButtonHandler);
+      _queryBuilderController = new QueryBuilderController(_tableFramesModel, _graphControllerFacade, queryHideNoJoins, _session, _plugin, startButtonHandler);
 
       startButtonHandler = new StartButtonHandler(_graphControllerFacade, rsrc);
       _defaultController = new DefaultController(startButtonHandler);
@@ -144,5 +144,10 @@ public class ModeManager
    {
       _mnuMode.setMode(mode);
       onModeChanged();
+   }
+
+   public boolean isQueryHideNoJoins()
+   {
+      return _queryBuilderController.isHideNoJoins();
    }
 }

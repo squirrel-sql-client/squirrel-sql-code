@@ -210,4 +210,27 @@ public class TableFramesModel
       _listeners.remove(tableFramesModelListener);
       _listeners.add(tableFramesModelListener);
    }
+
+   public void hideNoJoins(boolean b)
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.getConstraintViewsModel().hideNoJoins(b);
+      }
+
+
+   }
+
+   public boolean containsUniddenNoJoins()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         if(openTableFrameCtrl.getConstraintViewsModel().containsUniddenNoJoins())
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
 }
