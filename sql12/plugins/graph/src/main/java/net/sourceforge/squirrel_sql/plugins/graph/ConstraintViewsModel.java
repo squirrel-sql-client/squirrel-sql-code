@@ -292,4 +292,24 @@ public class ConstraintViewsModel
       _listeners.add(l);
 
    }
+
+   public void hideNoJoins(boolean b)
+   {
+      for (ConstraintView constraintView : _constraintViews)
+      {
+         constraintView.setHideIfNoJoin(b);
+      }
+   }
+
+   public boolean containsUniddenNoJoins()
+   {
+      for (ConstraintView constraintView : _constraintViews)
+      {
+         if(constraintView.isUniddenNoJoin())
+         {
+            return true;
+         }
+      }
+      return false;
+   }
 }

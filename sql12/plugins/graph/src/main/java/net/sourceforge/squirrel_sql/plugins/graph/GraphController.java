@@ -126,14 +126,15 @@ public class GraphController implements GraphControllerAccessor
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _tabToWindowHandler.setTitle(graphControllerXmlBean.getTitle());
-         _panelController.initMode(Mode.getForIndex(graphControllerXmlBean.getModeIndex()), graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean());
+         Mode modeIndex = Mode.getForIndex(graphControllerXmlBean.getModeIndex());
+         _panelController.initMode(modeIndex, graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean(), graphControllerXmlBean.isQueryHideNoJoins());
          _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
          _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
       }
       else
       {
          _tabToWindowHandler.setTitle(_plugin.patchName(_tabToWindowHandler.getTitle(), _session));
-         _panelController.initMode(Mode.DEFAULT, null, null);
+         _panelController.initMode(Mode.DEFAULT, null, null, false);
       }
 
       _tabToWindowHandler.showGraph();
@@ -210,6 +211,7 @@ public class GraphController implements GraphControllerAccessor
       xmlBean.setZoomerXmlBean(_panelController.getDesktopController().getZoomer().getXmlBean());
       xmlBean.setPrintXmlBean(_panelController.getDesktopController().getZoomPrintController().getPrintXmlBean());
       xmlBean.setModeIndex(_panelController.getModeManager().getMode().getIndex());
+      xmlBean.setQueryHideNoJoins(_panelController.getModeManager().isQueryHideNoJoins());
 
       Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
 

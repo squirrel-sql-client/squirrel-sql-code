@@ -43,6 +43,12 @@ public class GraphPanelController
          {
             _graphDesktopController.hidePopup();
          }
+
+         @Override
+         public void repaint()
+         {
+            GraphPanelController.this.repaint();
+         }
       };
 
       _modeManager = new ModeManager(tableFramesModel, session, plugin, graphControllerFacade);
@@ -91,9 +97,9 @@ public class GraphPanelController
       return _graphPanel;
    }
 
-   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean)
+   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins)
    {
-      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, _graphDesktopController.createEdgesListener(), _graphDesktopController.getDesktopPane());
+      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, queryHideNoJoins, _graphDesktopController.createEdgesListener(), _graphDesktopController.getDesktopPane());
 
       onModeChanged();
       _modeManager.addModeManagerListener(new ModeManagerListener()

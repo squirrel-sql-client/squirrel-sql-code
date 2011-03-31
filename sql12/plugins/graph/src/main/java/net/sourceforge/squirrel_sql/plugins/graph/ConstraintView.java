@@ -47,6 +47,7 @@ public class ConstraintView implements GraphComponent
    private TableFrameController _pkFramePointingTo;
    private Vector<ConstraintViewListener> _constraintViewListeners = new Vector<ConstraintViewListener>();
    private ConstraintIconHandler _constraintIconHandler;
+   private boolean _hide;
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session, ConstraintIconHandlerListener constraintIconHandlerListener)
    {
@@ -310,6 +311,12 @@ public class ConstraintView implements GraphComponent
 
    public void paint(Graphics g, boolean isPrinting)
    {
+      if(false == isVisible())
+      {
+         return;
+      }
+
+
       Color colBuf = g.getColor();
 
       if(_constraintData.isNonDbConstraint())
@@ -353,6 +360,19 @@ public class ConstraintView implements GraphComponent
       }
 
       g.setColor(colBuf);
+   }
+
+   private boolean isVisible()
+   {
+      if(_desktopController.getModeManager().getMode().isQueryBuilder())
+      {
+         if (_hide && getData().getConstraintQueryData().isNoJoin())
+         {
+            return false;
+         }
+      }
+
+      return true;
    }
 
    private void drawConstraintNameOnLine(Graphics g, GraphLine line)
@@ -604,6 +624,12 @@ public class ConstraintView implements GraphComponent
 
    public ConstraintHit hitMe(MouseEvent e)
    {
+      if(false == isVisible())
+      {
+         return ConstraintHit.NONE;
+      }
+
+
 
       GraphLine mainLine = _constraintGraph.getMainLine();
       if(_constraintIconHandler.hitMe(e, mainLine, _fkFrameOriginatingFrom, _pkFramePointingTo, _desktopController, _constraintData))
@@ -788,5 +814,15 @@ public class ConstraintView implements GraphComponent
    public boolean isAttachedTo(TableFrame tableFrame)
    {
       return tableFrame == _pkFramePointingTo.getFrame() || tableFrame == _fkFrameOriginatingFrom.getFrame();
+   }
+
+   public void setHideIfNoJoin(boolean hideIfNoJoin)
+   {
+      _hide = getData().getConstraintQueryData().isNoJoin() && hideIfNoJoin;
+   }
+
+   public boolean isUniddenNoJoin()
+   {
+      return isVisible() && getData().getConstraintQueryData().isNoJoin();
    }
 }
