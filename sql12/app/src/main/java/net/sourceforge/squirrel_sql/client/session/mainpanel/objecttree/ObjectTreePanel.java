@@ -908,7 +908,9 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setContinuousLayout(true);
 
-		_splitPane.add(new LeftPanel(), JSplitPane.LEFT);
+      LeftPanel leftPanel = new LeftPanel();
+      leftPanel.setMinimumSize(new Dimension(50,50));
+      _splitPane.add(leftPanel, JSplitPane.LEFT);
 		add(_splitPane, BorderLayout.CENTER);
 		_splitPane.setDividerLocation(200);
 
