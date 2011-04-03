@@ -466,7 +466,7 @@ public class SQLPanel extends JPanel
 		final int pos = _splitPane.getDividerLocation();
 
       JScrollPane  scrollPane = _sqlEntry.createScrollPane(_sqlEntry.getTextComponent());
-      _splitPane.add(scrollPane);
+      _splitPane.add(scrollPane, JSplitPane.LEFT);
 
 
 
@@ -832,6 +832,9 @@ public class SQLPanel extends JPanel
 		                new HashMap<String, Object>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
+      _executerPanleHolder.setMinimumSize(new Dimension(50,50));
+
+
       _simpleExecuterPanel = new JPanel(new GridLayout(1,1));
       _executerPanleHolder.add(_simpleExecuterPanel);
       _splitPane.add(_executerPanleHolder, JSplitPane.RIGHT);
