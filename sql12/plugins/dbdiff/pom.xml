@@ -111,6 +111,11 @@
 			<version>3.3.0-v3346</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.eclipse.equinox</groupId>
+		    <artifactId>org.eclipse.equinox.common</artifactId>
+		    <version>3.6.0.v20100503</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mod4j.org.eclipse.compare</groupId>
 			<artifactId>core</artifactId>
 			<version>3.5.0</version>
