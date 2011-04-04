@@ -1,10 +1,12 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.ConstraintView;
+import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
 import javax.swing.*;
 import java.awt.*;

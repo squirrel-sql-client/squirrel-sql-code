@@ -1,11 +1,10 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

@@ -24,6 +24,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameXmlBean;
 
 

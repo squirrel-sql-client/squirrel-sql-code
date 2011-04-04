@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
