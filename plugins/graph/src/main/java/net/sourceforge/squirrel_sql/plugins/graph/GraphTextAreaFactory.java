@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 
 import javax.swing.*;
 import java.awt.*;

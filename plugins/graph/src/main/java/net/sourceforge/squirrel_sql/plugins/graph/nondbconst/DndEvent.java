@@ -1,4 +1,7 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
+
+import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
 public class DndEvent
 {

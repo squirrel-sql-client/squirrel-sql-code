@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.ConfigureNonDbConstraintController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
