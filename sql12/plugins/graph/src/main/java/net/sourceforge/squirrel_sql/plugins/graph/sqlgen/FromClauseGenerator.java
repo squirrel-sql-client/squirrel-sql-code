@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph.sqlgen;
 
 import net.sourceforge.squirrel_sql.plugins.graph.*;
-import net.sourceforge.squirrel_sql.plugins.graph.ConstraintData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
