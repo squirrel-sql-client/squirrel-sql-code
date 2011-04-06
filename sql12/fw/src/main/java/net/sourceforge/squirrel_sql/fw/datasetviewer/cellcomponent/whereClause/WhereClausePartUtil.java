@@ -10,8 +10,8 @@ import java.util.List;
  *
  */
 public class WhereClausePartUtil implements IWhereClausePartUtil {
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil2#createWhereClause(java.util.List)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil#createWhereClause(java.util.List)
 	 */
 	@Override
 	public String createWhereClause(
@@ -30,8 +30,8 @@ public class WhereClausePartUtil implements IWhereClausePartUtil {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil2#setParameters(java.sql.PreparedStatement, java.util.List, int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil#setParameters(java.sql.PreparedStatement, java.util.List, int)
 	 */
 	@Override
 	public int setParameters(PreparedStatement pstmt,
@@ -51,8 +51,8 @@ public class WhereClausePartUtil implements IWhereClausePartUtil {
 		return position++;
 	}
 	
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil2#hasUsableWhereClause(java.util.List)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil#hasUsableWhereClause(java.util.List)
 	 */
 	@Override
 	public boolean hasUsableWhereClause(List<IWhereClausePart> whereClauseParts){
