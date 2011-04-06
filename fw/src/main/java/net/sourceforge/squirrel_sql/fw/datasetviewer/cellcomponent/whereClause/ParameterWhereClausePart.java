@@ -82,7 +82,7 @@ public class ParameterWhereClausePart extends AbstractWhereClausePart {
 		return parameterValue;
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see

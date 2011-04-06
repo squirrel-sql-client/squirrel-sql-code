@@ -57,7 +57,7 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 
 	
 
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart#getWhereClause()
 	 */
 	@Override
@@ -73,7 +73,7 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 	
 	
 	
-	/* (non-Javadoc)
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart#appendToClause(java.lang.StringBuilder)
 	 */
 	@Override
