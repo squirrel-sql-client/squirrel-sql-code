@@ -211,7 +211,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	 * must be copied to the old archive form :
 	 * 
 	 * <pre>
-	 * <plugin internal name>.zip
+	 * <plugin internal name>.jar
 	 * </pre> 
 	 * 
 	 * This method loops through all of the plugin assembly archives and copies them to the old format. 
@@ -220,7 +220,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 		FileWrapper pluginsDir = _fileWrapperFactory.create(releaseDirectory, "plugin");
 		String[] pluginsList = pluginsDir.list();
 		for (String plugin : pluginsList) {
-			String oldFormat = plugin.replace("-assembly", "");
+			String oldFormat = plugin.replace("-assembly", "").replace(".zip", ".jar");
 			FileWrapper pluginAssemblyArchiveFile = _fileWrapperFactory.create(pluginsDir, plugin);
 			FileWrapper oldFormatArchiveFile = _fileWrapperFactory.create(pluginsDir, oldFormat);
 			if (log.isInfoEnabled()) {
