@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.client.session;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
@@ -27,9 +28,7 @@ import java.sql.SQLException;
 import javax.swing.Action;
 import javax.swing.JComponent;
 
-import net.sourceforge.squirrel_sql.client.AppTestUtil;
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.MockApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -53,29 +52,17 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
-import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
-
-import org.mockito.Mockito;
-
-import com.mockobjects.sql.MockConnection2;
 
 public class MockSession implements ISession
 {
 
 	ISQLAliasExt sqlAlias = null;
 
-	ISQLDriver sqlDriver = Mockito.mock(ISQLDriver.class);
+	ISQLDriver sqlDriver = mock(ISQLDriver.class);
 
 	SQLConnection con = null;
 
-	MockDatabaseMetaData mdata = null;
-
-	MockApplication app = null;
-
 	SessionProperties props = null;
-
-	IMessageHandler messageHandler = null;
 
 	SchemaInfo schemaInfo = null;
 
@@ -87,18 +74,19 @@ public class MockSession implements ISession
 
 	boolean closed;
 
-	ISQLPanelAPI panelApi = AppTestUtil.getEasyMockSqlPanelApi();
-
 	// These tell the Dialect test runner where tables that it creates can be found.
 	private String defaultCatalog = "";
 
 	private String defaultSchema = "";
 
-	public MockSession()
-	{
-		init(true);
-	}
+	private ISQLPanelAPI mockPanelApi = mock(ISQLPanelAPI.class);
+	
+	private IApplication mockApplication = mock(IApplication.class);
+	
+	private SessionManager mockSessionManager = mock(SessionManager.class);
 
+	private IMessageHandler mockMessageHandler = mock(IMessageHandler.class);	
+	
 	public MockSession(String className, String jdbcUrl, String u, String p) throws Exception
 	{
 		System.out.println("Attempting to load class=" + className);
@@ -107,7 +95,7 @@ public class MockSession implements ISession
 		Connection c = DriverManager.getConnection(jdbcUrl, u, p);
 		initMockDriver(className, jdbcUrl);
 		con = new SQLConnection(c, null, sqlDriver);
-		init(false);
+		init();
 		sqlAlias.setUrl(jdbcUrl);
 		sqlAlias.setUserName(u);
 		sqlAlias.setPassword(p);
@@ -121,49 +109,33 @@ public class MockSession implements ISession
 		when(sqlDriver.getName()).thenReturn("MockitoSQLDriver");
 	}
 
-	private void init(boolean initConnection)
+	private void init() throws SQLException
 	{
-		if (initConnection)
-		{
-			// MockConnection2 mockCon = getMockConnection();
-			con = new SQLConnection(getMockConnection(), null, sqlDriver);
-		}
 		id = new UidIdentifier();
-		messageHandler = new MockMessageHandler();
+		
 		props = new SessionProperties();
 		props.setLoadSchemasCatalogs(false);
-		app = new MockApplication();
-		app.getMockSessionManager().setSession(this);
+		
+		when(mockApplication.getSessionManager()).thenReturn(mockSessionManager);
+		
+		when(mockSessionManager.getActiveSession()).thenReturn(this);
+		when(mockSessionManager.getSession(id)).thenReturn(this);
+		when(mockSessionManager.getNextSession(this)).thenReturn(this);
+		when(mockSessionManager.getPreviousSession(this)).thenReturn(this);
+		when(mockSessionManager.getAllowedSchemas(this)).thenReturn(con.getSQLMetaData().getSchemas());
+		
 		sqlAlias = new SQLAlias(new UidIdentifier());
-		schemaInfo = new SchemaInfo(app);
+		schemaInfo = new SchemaInfo(mockApplication);
 		schemaInfo.initialLoad(this);
-		prefs = app.getSquirrelPreferences();
+		prefs = mockApplication.getSquirrelPreferences();
 		try
 		{
-			UIFactory.initialize(prefs, app);
+			UIFactory.initialize(prefs, mockApplication);
 		}
 		catch (Throwable e)
 		{
 
 		}
-		// If we are connecting to a database, then this is fine. However, when
-		// using MockObjects, this is problematic since there are many
-		// unimplemented methods in the MockObjects implementation that are
-		// required by this.
-		if (!initConnection)
-		{
-			// sessionPanel = new SessionPanel(this);
-		}
-	}
-
-	private MockConnection2 getMockConnection()
-	{
-		MockConnection2 result = new MockConnection2();
-		initMockDriver("JUnitTestClassName", "JUnitJDBCURL");
-		mdata = new MockDatabaseMetaData();
-		mdata.setupDriverName("junit");
-		result.setupMetaData(mdata);
-		return result;
 	}
 
 	/**
@@ -192,7 +164,7 @@ public class MockSession implements ISession
 
 	public IApplication getApplication()
 	{
-		return app;
+		return mockApplication;
 	}
 
 	public ISQLConnection getSQLConnection()
@@ -286,12 +258,12 @@ public class MockSession implements ISession
 
 	public void setMessageHandler(IMessageHandler handler)
 	{
-		messageHandler = handler;
+		mockMessageHandler = handler;
 	}
 
 	public IMessageHandler getMessageHandler()
 	{
-		return messageHandler;
+		return mockMessageHandler;
 	}
 
 	public SessionPanel getSessionSheet()
@@ -306,9 +278,6 @@ public class MockSession implements ISession
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.client.session.ISession#getSchemaInfo()
-	 */
 	public SchemaInfo getSchemaInfo()
 	{
 		return schemaInfo;
@@ -394,7 +363,7 @@ public class MockSession implements ISession
 
 	public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow()
 	{
-		return panelApi;
+		return mockPanelApi;
 	}
 
 	public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow()
@@ -427,11 +396,6 @@ public class MockSession implements ISession
 	public IIdentifier getIdentifier()
 	{
 		return id;
-	}
-
-	public MockDatabaseMetaData getMockDatabaseMetaData()
-	{
-		return mdata;
 	}
 
 	/**
