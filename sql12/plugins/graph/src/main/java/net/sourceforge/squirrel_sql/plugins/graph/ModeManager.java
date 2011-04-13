@@ -150,4 +150,9 @@ public class ModeManager
    {
       return _queryBuilderController.isHideNoJoins();
    }
+
+   public TableFramesModel getTableFramesModel()
+   {
+      return _tableFramesModel;
+   }
 }

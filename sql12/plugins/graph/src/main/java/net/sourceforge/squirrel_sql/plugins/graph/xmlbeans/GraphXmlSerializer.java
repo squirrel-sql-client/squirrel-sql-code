@@ -56,6 +56,8 @@ public class GraphXmlSerializer
    {
       try
       {
+         Version32Converter.markConverted(xmlBean);
+
          XMLBeanWriter bw = new XMLBeanWriter(xmlBean);
          bw.save(_graphFile);
 
@@ -77,7 +79,10 @@ public class GraphXmlSerializer
       {
          XMLBeanReader br = new XMLBeanReader();
          br.load(_graphFile, this.getClass().getClassLoader());
-         return (GraphControllerXmlBean) br.iterator().next();
+         GraphControllerXmlBean ret = (GraphControllerXmlBean) br.iterator().next();
+         Version32Converter.convert(ret);
+
+         return ret;
       }
       catch (Exception e)
       {

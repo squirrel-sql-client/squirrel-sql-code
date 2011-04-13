@@ -702,4 +702,9 @@ public class GraphDesktopController
    {
       _popUp.setVisible(false);
    }
+
+   public TableFramesModel getTableFramesModel()
+   {
+      return _modeManager.getTableFramesModel();
+   }
 }

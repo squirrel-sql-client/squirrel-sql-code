@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.List;
 
 
-public class GraphController implements GraphControllerAccessor
+public class GraphController
 {
    private ISession _session;
    private GraphPanelController _panelController;
@@ -23,7 +23,7 @@ public class GraphController implements GraphControllerAccessor
    private TableFramesModel _tableFramesModel = new TableFramesModel();
    private static final int BORDER_X = ConstraintView.STUB_LENGTH + 10;
    private static final int BORDER_Y = 10;
-   private AddTableListener _addTableListener;
+   private AddTableRequestListener _addTableRequestListener;
    private GraphDesktopListener _graphDesktopListener;
    private GraphPlugin _plugin;
    private TabToWindowHandler _tabToWindowHandler;
@@ -113,7 +113,7 @@ public class GraphController implements GraphControllerAccessor
          _xmlSerializer = xmlSerializer;
       }
 
-      _addTableListener = new AddTableListener()
+      _addTableRequestListener = new AddTableRequestListener()
       {
          public void addTablesRequest(String[] tablenames, String schema, String catalog)
          {
@@ -259,11 +259,11 @@ public class GraphController implements GraphControllerAccessor
 
       if(null == xmlBean)
       {
-         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), this, _addTableListener, tableName, schemaName, catalogName, null);
+         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), _addTableRequestListener, tableName, schemaName, catalogName, null);
       }
       else
       {
-         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), this ,_addTableListener, null, null, null, xmlBean);
+         tfc = new TableFrameController(_plugin, _session, _panelController.getDesktopController(), _addTableRequestListener, null, null, null, xmlBean);
       }
 
       if (_tableFramesModel.containsTable(tfc))
@@ -278,19 +278,19 @@ public class GraphController implements GraphControllerAccessor
       {
          public void run()
          {
-             _panelController.getDesktopController().addFrame(tfc.getFrame());
-             _tableFramesModel.addTable(tfc);
-            initsAfterFrameAdded(tfc, positioner, null == xmlBean);
+            boolean readingXml = (null != xmlBean);
+            _panelController.getDesktopController().addFrame(tfc.getFrame());
+            _tableFramesModel.addTable(tfc, readingXml);
+            if (false == readingXml)
+            {
+               calcPosition(tfc, positioner);
+            }
+
          }
       });
 
    }
 
-
-   public TableFramesModel getTableFrameModel()
-   {
-      return _tableFramesModel;
-   }
 
    private void calcPosition(final TableFrameController tfc, Positioner positioner)
    {
@@ -405,31 +405,6 @@ public class GraphController implements GraphControllerAccessor
       return false;
    }
 
-   private void initsAfterFrameAdded(TableFrameController tfc, Positioner positioner, boolean resetBounds)
-   {
-
-      Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
-
-      for (int i = 0; i < tblCtrls.size(); i++)
-      {
-         TableFrameController buf = tblCtrls.get(i);
-         if (false == buf.equals(tfc))
-         {
-            buf.tableFrameOpen(tfc);
-         }
-      }
-
-      Vector<TableFrameController> others = new  Vector<TableFrameController>(_tableFramesModel.getTblCtrls());
-      others.remove(tfc);
-      TableFrameController[] othersArr = others.toArray(new TableFrameController[others.size()]);
-      tfc.initAfterAddedToDesktop(othersArr, resetBounds);
-
-      if(resetBounds)
-      {
-         calcPosition(tfc, positioner);
-      }
-
-   }
 
    public String getTitle()
    {

@@ -61,15 +61,7 @@ public class ColumnInfoModel
 
    public ColumnInfo findColumnInfo(String colName)
    {
-      for (int i = 0; i < _colInfos.length; i++)
-      {
-         if(_colInfos[i].getName().equals(colName))
-         {
-            return _colInfos[i];
-         }
-      }
-
-      throw new IllegalArgumentException("Column " + colName + " not found");
+      return GraphUtil.findColumnInfo(colName, _colInfos);
    }
 
    public ColumnInfo getOrderedColAt(int ix)

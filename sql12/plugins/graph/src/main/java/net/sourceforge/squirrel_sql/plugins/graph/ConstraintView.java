@@ -14,6 +14,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Vector;
 
 
@@ -178,13 +179,44 @@ public class ConstraintView implements GraphComponent
 
    private void onConfigureNonDbConstraint()
    {
-      new ConfigureNonDbConstraintController(_session, this, _fkFrameOriginatingFrom, _pkFramePointingTo);
-      _fkFrameOriginatingFrom.refresh();
+      new ConfigureNonDbConstraintController(this, _fkFrameOriginatingFrom, _pkFramePointingTo);
+
+      generateFoldingPointIfLinesWouldCoverEachOther();
+
+      _fkFrameOriginatingFrom.recalculateConnections();
+   }
+
+   public void generateFoldingPointIfLinesWouldCoverEachOther()
+   {
+      ArrayList<ConstraintView> matches = _fkFrameOriginatingFrom.getConstraintViewsModel().checkForMatches(this);
+      if(0 < matches.size() && null == getFirstFoldingPoint())
+      {
+         boolean allMachesHaveFoldingPoints = true;
+
+         for (ConstraintView match : matches)
+         {
+            if(null == match.getFirstFoldingPoint())
+            {
+               allMachesHaveFoldingPoints = false;
+               break;
+            }
+         }
+
+         if (false == allMachesHaveFoldingPoints)
+         {
+            Point p = new Point(_constraintGraph.getMainLine().getBegin());
+            p.x += (_constraintGraph.getMainLine().getEnd().x - _constraintGraph.getMainLine().getBegin().x)/2 + 30 * matches.size();
+            p.y += (_constraintGraph.getMainLine().getEnd().y - _constraintGraph.getMainLine().getBegin().y)/2 + 30 * matches.size();
+
+            _constraintGraph.setHitConnectLine(_constraintGraph.getMainLine());
+            addFoldingPointAt(p);
+         }
+      }
    }
 
    private void onRemoveNonDbConstraint()
    {
-      ConstraintViewListener[] clone = (ConstraintViewListener[]) _constraintViewListeners.toArray(new ConstraintViewListener[0]);
+      ConstraintViewListener[] clone = _constraintViewListeners.toArray(new ConstraintViewListener[0]);
 
       for (ConstraintViewListener listener : clone)
       {
@@ -263,8 +295,13 @@ public class ConstraintView implements GraphComponent
 
    private void onAddFoldingPoint()
    {
+      addFoldingPointAt(_lastPopupClickPoint);
+   }
+
+   private void addFoldingPointAt(Point lastPopupClickPoint)
+   {
       double zoom = _desktopController.getZoomer().getZoom();
-      Point backTransformedPoint = new Point((int)(_lastPopupClickPoint.x/zoom+0.5), (int)(_lastPopupClickPoint.y/zoom+0.5));
+      Point backTransformedPoint = new Point((int)(lastPopupClickPoint.x/zoom+0.5), (int)(lastPopupClickPoint.y/zoom+0.5));
 
       _constraintGraph.addFoldingPointToHitConnectLine(new FoldingPoint(backTransformedPoint, _desktopController.getZoomer()));
       _desktopController.repaint();
@@ -781,11 +818,6 @@ public class ConstraintView implements GraphComponent
       return _pkFramePointingTo;
    }
 
-   public void replaceCopiedColsByReferences(ColumnInfo[] colInfos, boolean retainImportData)
-   {
-      _constraintData.replaceCopiedColsByReferences(colInfos, retainImportData);
-   }
-
    public void addConstraintViewListener(ConstraintViewListener constraintViewListener)
    {
       _constraintViewListeners.remove(constraintViewListener);
@@ -795,16 +827,6 @@ public class ConstraintView implements GraphComponent
    public void setData(ConstraintData constraintData)
    {
       _constraintData = constraintData;
-   }
-
-   public void clearColumnImportData()
-   {
-      _constraintData.clearColumnImportData();
-   }
-
-   public boolean hasOverlap(ConstraintView other)
-   {
-      return _constraintData.hasOverlap(other._constraintData);
    }
 
    public Vector<FoldingPoint> getFoldingPoints()
@@ -825,5 +847,10 @@ public class ConstraintView implements GraphComponent
    public boolean isUniddenNoJoin()
    {
       return isVisible() && getData().getConstraintQueryData().isNoJoin();
+   }
+
+   public boolean matches(ConstraintView view)
+   {
+      return _constraintData.matches(view.getData());
    }
 }

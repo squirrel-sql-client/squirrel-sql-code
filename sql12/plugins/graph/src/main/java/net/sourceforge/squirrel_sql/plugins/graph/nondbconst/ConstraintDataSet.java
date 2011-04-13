@@ -29,10 +29,14 @@ public class ConstraintDataSet implements IDataSet
    public ConstraintDataSet(ConstraintView constraintView, String fkTableName, String pkTableName)
    {
 
-      for (ColumnInfo columnInfo : constraintView.getData().getColumnInfos())
+      for (int i = 0; i < constraintView.getData().getFkColumnInfos().length; i++)
       {
-         ContraintDisplayData buf = new ContraintDisplayData(columnInfo.getName(), columnInfo.getImportedColumnName());
+         ColumnInfo fkCol = constraintView.getData().getFkColumnInfos()[i];
+         ColumnInfo pkCol = constraintView.getData().getPkColumnInfos()[i];
+
+         ContraintDisplayData buf = new ContraintDisplayData(fkCol, pkCol);
          _contraintDisplayData.add(buf);
+
       }
 
 
@@ -65,19 +69,19 @@ public class ConstraintDataSet implements IDataSet
       switch(columnIndex)
       {
          case 0:
-            return _contraintDisplayData.get(_curIx).getColumnName();
+            return _contraintDisplayData.get(_curIx).getFkCol();
          case 1:
-            return _contraintDisplayData.get(_curIx).getImportedColumnName();
+            return _contraintDisplayData.get(_curIx).getPkCol();
          default:
             throw new IndexOutOfBoundsException("Invalid column index " + columnIndex);
       }
    }
 
-   public boolean removeRows(int[] rows)
+   public ArrayList<ContraintDisplayData> removeRows(int[] rows)
    {
       if(0 == rows.length)
       {
-         return false;
+         return new ArrayList<ContraintDisplayData>();
       }
 
       ArrayList<ContraintDisplayData> toRemove = new ArrayList<ContraintDisplayData>();
@@ -94,51 +98,27 @@ public class ConstraintDataSet implements IDataSet
 
       _curIx = -1;
 
-      return true;
+      return toRemove;
    }
 
-   public boolean addRow(ColumnInfo fkColumn, ColumnInfo pkColumn)
+   public void addRow(ColumnInfo fkCol, ColumnInfo pkCol)
    {
-
-      for (ContraintDisplayData contraintDisplayData : _contraintDisplayData)
-      {
-         if(   contraintDisplayData.getColumnName().equalsIgnoreCase(fkColumn.getName())
-            || contraintDisplayData.getImportedColumnName().equalsIgnoreCase(pkColumn.getName()))
-         {
-            // The rule for adding is: A fkColumn as well as a pkColumn should only occur once.
-            return false;
-         }
-      }
-
-      _contraintDisplayData.add(new ContraintDisplayData(fkColumn.getName(), pkColumn.getName()));
+      _contraintDisplayData.add(new ContraintDisplayData(fkCol, pkCol));
       _curIx = -1;
-
-      return true;
    }
 
    public void writeConstraintView(ConstraintView constraintView, TableFrameController fkFrameOriginatingFrom, TableFrameController pkFramePointingTo)
    {
       constraintView.getData().removeAllColumns();
+
+      ArrayList<ColumnInfo> pkCols = new ArrayList<ColumnInfo>();
+      ArrayList<ColumnInfo> fkCols = new ArrayList<ColumnInfo>();
       for (ContraintDisplayData contraintDisplayData : _contraintDisplayData)
       {
-         ColumnInfo fkCol = findColumnByName(fkFrameOriginatingFrom, contraintDisplayData.getColumnName());
-         ColumnInfo pkCol = findColumnByName(pkFramePointingTo, contraintDisplayData.getImportedColumnName());
-         fkCol.setImportData(pkFramePointingTo.getTableInfo().getSimpleName(), pkCol.getName(), constraintView.getData().getConstraintName(), true);
-         constraintView.getData().addColumnInfo(fkCol);
+         fkCols.add(contraintDisplayData.getFkCol());
+         pkCols.add(contraintDisplayData.getPkCol());
       }
-   }
-
-   private ColumnInfo findColumnByName(TableFrameController toFindIn, String columnName)
-   {
-      for (ColumnInfo columnInfo : toFindIn.getColumnInfos())
-      {
-         if(columnInfo.getName().equalsIgnoreCase(columnName))
-         {
-            return columnInfo;
-         }
-      }
-
-      throw new IllegalArgumentException("Column not found: " + columnName);
+      constraintView.getData().setColumnInfos(pkCols, fkCols);
    }
 
    public boolean isEmpty()
@@ -146,25 +126,4 @@ public class ConstraintDataSet implements IDataSet
       return _contraintDisplayData.isEmpty();
    }
 
-   private static class ContraintDisplayData
-   {
-      private String _colName;
-      private String _importedColumnName;
-
-      public ContraintDisplayData(String colName, String importedColumnName)
-      {
-         _colName = colName;
-         _importedColumnName = importedColumnName;
-      }
-
-      public String getColumnName()
-      {
-         return _colName;
-      }
-
-      public String getImportedColumnName()
-      {
-         return _importedColumnName;
-      }
-   }
 }

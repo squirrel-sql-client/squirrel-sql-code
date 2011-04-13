@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
@@ -14,9 +14,15 @@ public class ConstraintData
    private String _constraintName;
    private boolean _nonDbConstraint;
 
-   private ColumnInfo[] _columnInfos = new ColumnInfo[0];
    private boolean _showThisConstraintName;
    private ConstraintQueryData _constraintQueryData = new ConstraintQueryData();
+
+   ///////////////////////////////////////////////////////
+   // These two arrays match index wise
+   private ArrayList<ColumnInfo> _pkCols = new ArrayList<ColumnInfo>();
+   private ArrayList<ColumnInfo> _fkCols = new ArrayList<ColumnInfo>();
+   //
+   ////////////////////////////////////////////////////////
 
 
    public ConstraintData(String pkTableName, String fkTableName, String constraintName)
@@ -38,11 +44,20 @@ public class ConstraintData
       }
 
 
-      _columnInfos = new ColumnInfo[constraintDataXmlBean.getColumnInfoXmlBeans().length];
-      for (int i = 0; i < _columnInfos.length; i++)
+
+      _pkCols = new ArrayList<ColumnInfo>();
+      for (ColumnInfoXmlBean columnInfoXmlBean : constraintDataXmlBean.getPkColumns())
       {
-         _columnInfos[i] = new ColumnInfo(constraintDataXmlBean.getColumnInfoXmlBeans()[i]);
+         _pkCols.add(new ColumnInfo(columnInfoXmlBean));
       }
+
+      _fkCols = new ArrayList<ColumnInfo>();
+      for (ColumnInfoXmlBean columnInfoXmlBean : constraintDataXmlBean.getFkColumns())
+      {
+         _fkCols.add(new ColumnInfo(columnInfoXmlBean));
+      }
+
+
    }
 
    public ConstraintData(String pkTableName, String fkTableName, String constraintName, boolean nonDbConstraint)
@@ -66,36 +81,41 @@ public class ConstraintData
       ret.setConstraintQueryDataXmlBean(_constraintQueryData.getXmlBean());
 
 
-      ColumnInfoXmlBean[] colInfoXmlBeans = new ColumnInfoXmlBean[_columnInfos.length];
-      for (int i = 0; i < _columnInfos.length; i++)
+      ColumnInfoXmlBean[] pkColInfoXmlBeans = new ColumnInfoXmlBean[_pkCols.size()];
+      for (int i = 0; i < _pkCols.size(); i++)
       {
-         colInfoXmlBeans[i] = _columnInfos[i].getXmlBean();
+         pkColInfoXmlBeans[i] = _pkCols.get(i).getXmlBean();
       }
-      ret.setColumnInfoXmlBeans(colInfoXmlBeans);
+      ret.setPkColumns(pkColInfoXmlBeans);
+
+      ColumnInfoXmlBean[] fkColInfoXmlBeans = new ColumnInfoXmlBean[_fkCols.size()];
+      for (int i = 0; i < _fkCols.size(); i++)
+      {
+         fkColInfoXmlBeans[i] = _fkCols.get(i).getXmlBean();
+      }
+      ret.setFkColumns(fkColInfoXmlBeans);
+
+
 
       return ret;
    }
 
-
-
-   public void addColumnInfo(ColumnInfo colInfo)
-   {
-      Vector<ColumnInfo> buf = new Vector<ColumnInfo>();
-      buf.addAll(Arrays.asList(_columnInfos));
-      buf.add(colInfo);
-
-      _columnInfos = buf.toArray(new ColumnInfo[buf.size()]);
-   }
 
    public String getPkTableName()
    {
       return _pkTableName;
    }
 
-   public ColumnInfo[] getColumnInfos()
+   public ColumnInfo[] getFkColumnInfos()
    {
-      return _columnInfos;
+      return _fkCols.toArray(new ColumnInfo[_pkCols.size()]);
    }
+
+   public ColumnInfo[] getPkColumnInfos()
+   {
+      return _pkCols.toArray(new ColumnInfo[_pkCols.size()]);
+   }
+
 
    public String getTitle()
    {
@@ -114,14 +134,14 @@ public class ConstraintData
       ret.add("ALTER TABLE " + _fkTableName);
       ret.add("ADD CONSTRAINT " + _constraintName);
 
-      if(_columnInfos.length == 1)
+      if(_fkCols.size() == 1)
       {
          StringBuffer sb = new StringBuffer();
-         sb.append("FOREIGN KEY (").append(_columnInfos[0].getName());
+         sb.append("FOREIGN KEY (").append(_fkCols.get(0).getName());
 
-         for (int i = 1; i < _columnInfos.length; i++)
+         for (int i = 1; i < _fkCols.size(); i++)
          {
-            sb.append(",").append(_columnInfos[i].getName());
+            sb.append(",").append(_fkCols.get(i).getName());
          }
          sb.append(")");
          ret.add(sb.toString());
@@ -129,10 +149,10 @@ public class ConstraintData
          sb.setLength(0);
 
          sb.append("REFERENCES ").append(_pkTableName).append("(");
-         sb.append(_columnInfos[0].getImportedColumnName());
-         for (int i = 1; i < _columnInfos.length; i++)
+         sb.append(_pkCols.get(0).getColumnName());
+         for (int i = 1; i < _pkCols.size(); i++)
          {
-            sb.append(",").append(_columnInfos[i].getImportedColumnName());
+            sb.append(",").append(_pkCols.get(i).getColumnName());
          }
          sb.append(")");
          ret.add(sb.toString());
@@ -143,30 +163,30 @@ public class ConstraintData
       {
          ret.add("FOREIGN KEY");
          ret.add("(");
-         for (int i = 0; i < _columnInfos.length; i++)
+         for (int i = 0; i < _fkCols.size(); i++)
          {
-            if(i < _columnInfos.length -1)
+            if(i < _fkCols.size() -1)
             {
-               ret.add("  " + _columnInfos[i].getName() + ",");
+               ret.add("  " + _fkCols.get(i).getName() + ",");
             }
             else
             {
-               ret.add("  " + _columnInfos[i].getName());
+               ret.add("  " + _fkCols.get(i).getName());
             }
          }
          ret.add(")");
 
          ret.add("REFERENCES " + _pkTableName);
          ret.add("(");
-         for (int i = 0; i < _columnInfos.length; i++)
+         for (int i = 0; i < _pkCols.size(); i++)
          {
-            if(i < _columnInfos.length -1)
+            if(i < _pkCols.size() -1)
             {
-               ret.add("  " + _columnInfos[i].getImportedColumnName() + ",");
+               ret.add("  " + _pkCols.get(i).getColumnName() + ",");
             }
             else
             {
-               ret.add("  " + _columnInfos[i].getImportedColumnName());
+               ret.add("  " + _pkCols.get(i).getColumnName());
             }
          }
          ret.add(")");
@@ -177,69 +197,15 @@ public class ConstraintData
       return ret.toArray(new String[ret.size()]);
    }
 
-   public void replaceCopiedColsByReferences(ColumnInfo[] colInfoRefs, boolean retainImportData)
-   {
-      for (int i = 0; i < colInfoRefs.length; i++)
-      {
-         for (int j = 0; j < _columnInfos.length; j++)
-         {
-            if(colInfoRefs[i].getName().equals(_columnInfos[j].getName()))
-            {
-               if(retainImportData)
-               {
-                  colInfoRefs[i].setImportData(
-                     _columnInfos[j].getImportedTableName(),
-                     _columnInfos[j].getImportedColumnName(),
-                     _columnInfos[j].getConstraintName(),
-                     _columnInfos[j].isNonDbConstraint());
-               }
-
-               _columnInfos[j] = colInfoRefs[i];
-               break;
-            }
-         }
-      }
-   }
-
    public String getConstraintName()
    {
       return _constraintName;
    }
 
-   public void clearColumnImportData()
-   {
-      for (ColumnInfo columnInfo : _columnInfos)
-      {
-         columnInfo.clearImportData();
-      }
-   }
-
-   public boolean hasOverlap(ConstraintData other)
-   {
-      if(false == other._pkTableName.equalsIgnoreCase(_pkTableName) || false == other._fkTableName.equalsIgnoreCase(_fkTableName))
-      {
-         return false;
-      }
-
-      for (ColumnInfo ci : _columnInfos)
-      {
-         for (ColumnInfo otherCi : other._columnInfos)
-         {
-            if(ci.getName().equalsIgnoreCase(otherCi.getName()))
-            {
-               return true;
-            }
-
-         }
-      }
-
-      return false;
-   }
-
    public void removeAllColumns()
    {
-      clearColumnImportData();
-      _columnInfos = new ColumnInfo[0];
+      _pkCols.clear();
+      _fkCols.clear();
    }
 
    public void setConstraintName(String name)
@@ -262,8 +228,21 @@ public class ConstraintData
       return _constraintQueryData;
    }
 
-   public void setConstraintQueryData(ConstraintQueryData constraintQueryData)
+   public void setColumnInfos(ArrayList<ColumnInfo> pkCols, ArrayList<ColumnInfo> fkCols)
    {
-      _constraintQueryData = constraintQueryData;
+      _pkCols = pkCols;
+      _fkCols = fkCols;
    }
+
+   public void addColumnInfos(ColumnInfo pkCol, ColumnInfo fkCol)
+   {
+      _pkCols.add(pkCol);
+      _fkCols.add(fkCol);
+   }
+
+   public boolean matches(ConstraintData other)
+   {
+      return GraphUtil.columnsMatch(other._pkCols, _pkCols) && GraphUtil.columnsMatch(other._fkCols, _fkCols);
+   }
+
 }

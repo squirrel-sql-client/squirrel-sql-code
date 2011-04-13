@@ -19,12 +19,12 @@ public class ConfigureNonDbConstraintDlg extends JDialog
 
 
    DataSetViewerTablePanel _table;
-   JComboBox _cboReferencingCol;
+   JComboBox _cboPkCol;
    JButton _btnOk;
    JButton _btnCancel;
    JButton _btnAdd;
    JButton _btnRemove;
-   JComboBox _cboLocalCol;
+   JComboBox _cboFkCol;
    JTextField _txtContstrName;
 
    public ConfigureNonDbConstraintDlg(Window parent, String fkTableName, String pkTableName)
@@ -130,8 +130,8 @@ public class ConfigureNonDbConstraintDlg extends JDialog
       ret.add(lblLocalCol, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      _cboLocalCol = new JComboBox();
-      ret.add(_cboLocalCol, gbc);
+      _cboFkCol = new JComboBox();
+      ret.add(_cboFkCol, gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
@@ -139,8 +139,8 @@ public class ConfigureNonDbConstraintDlg extends JDialog
       ret.add(lblRefrencing, gbc);
 
       gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      _cboReferencingCol = new JComboBox();
-      ret.add(_cboReferencingCol, gbc);
+      _cboPkCol = new JComboBox();
+      ret.add(_cboPkCol, gbc);
 
       Dimension preferredSize = lblLocalCol.getPreferredSize();
       preferredSize.width = Math.max(lblLocalCol.getPreferredSize().width, lblRefrencing.getPreferredSize().width);

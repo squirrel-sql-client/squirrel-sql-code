@@ -17,7 +17,6 @@ public class ColumnInfo extends Object
    private String _importedFromTable;
    private String _importedColumn;
    private String _constraintName;
-   private boolean _nonDbConstraint;
 
    private String _toString;
 
@@ -49,7 +48,7 @@ public class ColumnInfo extends Object
 
       if(null != xmlBean.getImportedFromTable())
       {
-         setImportData(xmlBean.getImportedFromTable(), xmlBean.getImportedColumn(), xmlBean.getConstraintName(), xmlBean.isNonDbConstraint());
+         setDBImportData(xmlBean.getImportedFromTable(), xmlBean.getImportedColumn(), xmlBean.getConstraintName());
       }
 
    }
@@ -67,7 +66,6 @@ public class ColumnInfo extends Object
       ret.setImportedFromTable(_importedFromTable);
       ret.setImportedColumn(_importedColumn);
       ret.setConstraintName(_constraintName);
-      ret.setNonDbConstraint(_nonDbConstraint);
 
       QueryDataXmlBean queryDataXmlBean = new QueryDataXmlBean();
       queryDataXmlBean.setOperatorIndex(_queryData.getOperator().getIndex());
@@ -92,33 +90,21 @@ public class ColumnInfo extends Object
       return _columnName;
    }
 
-   public void setImportData(String importedFromTable, String importedColumn, String constraintName, boolean nonDbConstraint)
+   public void setDBImportData(String importedFromTable, String importedColumn, String constraintName)
    {
       _importedFromTable = importedFromTable;
       _importedColumn = importedColumn;
       _constraintName = constraintName;
-      _nonDbConstraint = nonDbConstraint;
 
       String fkString = " (FK)";
 
-      if(null != importedColumn && false == nonDbConstraint && false == _toString.endsWith(fkString))
+      if(null != importedColumn && false == _toString.endsWith(fkString))
       {
          _toString += fkString;
       }
    }
 
-   public void clearImportData()
-   {
-      setImportData(null, null, null, false);
-   }
-
-
-   public boolean isImportedFrom(String tableName)
-   {
-      return tableName.equals(_importedFromTable);
-   }
-
-   public String getConstraintName()
+   public String getDBConstraintName()
    {
       return _constraintName;
    }
@@ -126,11 +112,6 @@ public class ColumnInfo extends Object
    public int getIndex()
    {
       return _index;
-   }
-
-   public String getImportedColumnName()
-   {
-      return _importedColumn;
    }
 
    public void markPrimaryKey()
@@ -159,14 +140,9 @@ public class ColumnInfo extends Object
       return _importedFromTable + "." + _importedColumn + " (" + _constraintName + ")";
    }
 
-   public String getImportedTableName()
+   public String getDBImportedTableName()
    {
       return _importedFromTable;
-   }
-
-   public boolean isNonDbConstraint()
-   {
-      return _nonDbConstraint;
    }
 
 
@@ -193,5 +169,22 @@ public class ColumnInfo extends Object
    public ColumnInfoModelEventDispatcher getColumnInfoModelEventDispatcher()
    {
       return _columnInfoModelEventDispatcher;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if(false == obj instanceof ColumnInfo)
+      {
+         return false;
+      }
+
+      return _columnName.equalsIgnoreCase(((ColumnInfo)obj)._columnName);
+   }
+
+   @Override
+   public int hashCode()
+   {
+      return _columnName.hashCode();
    }
 }

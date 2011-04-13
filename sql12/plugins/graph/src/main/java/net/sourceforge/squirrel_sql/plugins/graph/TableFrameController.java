@@ -23,9 +23,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -93,7 +90,7 @@ public class TableFrameController
    private JMenuItem _mnuQueryUnselectAll;
    private JMenuItem _mnuQueryClearAllFilters;
    private JMenuItem _mnuClose;
-   private AddTableListener _addTablelListener;
+   private AddTableRequestListener _addTablelRequestListener;
    private ConstraintViewListener _constraintViewListener;
 
    private OrderType _columnOrderType = OrderType.ORDER_DB;
@@ -104,18 +101,25 @@ public class TableFrameController
    private ZoomerListener _zoomerListener;
    private Rectangle _adjustBeginBounds;
    private double _adjustBeginZoom;
-   private GraphControllerAccessor _graphControllerAccessor;
+   private TableFramesModelListener _tableFramesModelListener;
+   private ComponentAdapter _componentListener;
+   private InternalFrameAdapter _internalFrameListener;
 
 
-   public TableFrameController(GraphPlugin plugin, ISession session, GraphDesktopController desktopController, GraphControllerAccessor graphControllerAccessor, AddTableListener listener, String tableName, String schemaName, String catalogName, TableFrameControllerXmlBean xmlBean)
+   public TableFrameController(GraphPlugin plugin,
+                               ISession session,
+                               GraphDesktopController desktopController,
+                               AddTableRequestListener listener,
+                               String tableName, String schemaName,
+                               String catalogName,
+                               TableFrameControllerXmlBean xmlBean)
    {
       try
       {
          _session = session;
          _constraintViewsModel = new ConstraintViewsModel(_session);
          _desktopController = desktopController;
-         _addTablelListener = listener;
-         _graphControllerAccessor = graphControllerAccessor;
+         _addTablelRequestListener = listener;
 
          TableToolTipProvider toolTipProvider = new TableToolTipProvider()
          {
@@ -150,7 +154,7 @@ public class TableFrameController
             }
             _colInfoModel.initCols(colInfos, _columnOrderType);
 
-            _constraintViewsModel.initByXmlBeans(xmlBean.getConstraintViewXmlBeans(), _desktopController, _colInfoModel.getAll());
+            _constraintViewsModel.initByXmlBeans(xmlBean.getConstraintViewXmlBeans(), _desktopController);
 
          }
          _frame.txtColumsFactory.setColumnInfoModel(_colInfoModel);
@@ -172,17 +176,7 @@ public class TableFrameController
             }
          };
 
-
-
-         _frame.addInternalFrameListener(new InternalFrameAdapter()
-         {
-            public void internalFrameClosing(InternalFrameEvent e)
-            {
-               onClose();
-            }
-         });
-
-         _frame.addComponentListener(new ComponentAdapter()
+         _componentListener = new ComponentAdapter()
          {
             public void componentMoved(ComponentEvent e)
             {
@@ -198,7 +192,20 @@ public class TableFrameController
             {
                recalculateAllConnections(false);
             }
-         });
+         };
+
+
+         _internalFrameListener = new InternalFrameAdapter()
+         {
+            public void internalFrameClosing(InternalFrameEvent e)
+            {
+               onClose();
+            }
+         };
+
+         _frame.addInternalFrameListener(_internalFrameListener);
+
+         _frame.addComponentListener(_componentListener);
 
          _frame.scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener()
          {
@@ -234,14 +241,41 @@ public class TableFrameController
             }
          };
 
+         _tableFramesModelListener = new TableFramesModelListener()
+         {
+            @Override
+            public void modelChanged(TableFramesModelChangeType changeType)
+            {
+               onTableFramesModelChanged(changeType);
+            }
+         };
+
+
          _desktopController.getModeManager().addModeManagerListener(_modeManagerListener);
          _desktopController.getZoomer().addZoomListener(_zoomerListener);
+         _desktopController.getTableFramesModel().addTableFramesModelListener(_tableFramesModelListener);
 
          if (Mode.ZOOM_PRINT == _desktopController.getModeManager().getMode())
          {
             onHideScrollBars(_desktopController.getZoomer().isHideScrollbars() );
          }
 
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private void onTableFramesModelChanged(TableFramesModelChangeType changeType)
+   {
+      try
+      {
+         if(TableFramesModelChangeType.TABLE == changeType)
+         {
+            DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
+            completeConstraints(metaData);
+         }
       }
       catch (SQLException e)
       {
@@ -275,9 +309,9 @@ public class TableFrameController
 
    private void onDndImportDone(DndEvent e, Point dropPoint)
    {
-      TableFrameController fkTable = e.getTableFrameController();
+      final TableFrameController fkTable = e.getTableFrameController();
 
-      ConstraintView constraintView = fkTable._constraintViewsModel.createConstraintView(
+      final ConstraintView constraintView = fkTable._constraintViewsModel.createConstraintView(
             e,
             this,
             getColumnInfoForPoint(dropPoint),
@@ -287,7 +321,14 @@ public class TableFrameController
 
       if (null != constraintView)
       {
-         fkTable.recalculateAllConnections(true);
+//         SwingUtilities.invokeLater(new Runnable()
+//         {
+//            public void run()
+//            {
+               fkTable.recalculateAllConnections(true);
+               constraintView.generateFoldingPointIfLinesWouldCoverEachOther();
+//            }
+//         });
       }
 
    }
@@ -342,31 +383,8 @@ public class TableFrameController
       throws SQLException
    {
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-      Vector<ColumnInfo> colInfosBuf = new Vector<ColumnInfo>();
-      if (s_log.isDebugEnabled()) {
-          s_log.debug("initFromDB: _catalog="+_catalog+" _schema="+_schema+
-                      " _tableName="+_tableName);
-      }
 
-          
-      TableColumnInfo[] infos = md.getColumnInfo(_catalog, _schema, _tableName);
-      for (int i = 0; i < infos.length; i++) {
-         TableColumnInfo info = infos[i];
-         String columnName = info.getColumnName();
-         String columnType = info.getTypeName();
-         int columnSize = info.getColumnSize();
-         int decimalDigits = info.getDecimalDigits();
-         boolean nullable = "YES".equalsIgnoreCase(info.isNullable());
-
-         ColumnInfo colInfo = new ColumnInfo(columnName, 
-                                             columnType, 
-                                             columnSize, 
-                                             decimalDigits,
-                                             nullable);
-         colInfosBuf.add(colInfo);
-         
-      }
+      ArrayList<ColumnInfo> colInfosBuf = GraphUtil.createColumnInfos(_session, _catalog, _schema, _tableName);
 
       _colInfoModel.initCols(colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]), _columnOrderType);
 
@@ -378,27 +396,14 @@ public class TableFrameController
          return false;
       }
 
-      try {
-          PrimaryKeyInfo[] pkinfos = 
-              md.getPrimaryKey(_catalog, _schema, _tableName);
-          for (int i = 0; i < pkinfos.length; i++) {
-             PrimaryKeyInfo info = pkinfos[i];
-             for (int c = 0; c < _colInfoModel.getColCount(); c++)
-             {
-                if(_colInfoModel.getColAt(c).getName().equals(info.getColumnName()))
-                {
-                   _colInfoModel.getColAt(c).markPrimaryKey();
-                }
-             }
-          }          
-      } catch (SQLException e) {
-          s_log.error("Unable to get Primary Key info", e);
-      } 
-      
-      _constraintViewsModel.initFromDB(metaData, _catalog, _schema, _tableName, _colInfoModel, _desktopController);
-
+      completeConstraints(metaData);
 
       return true;
+   }
+
+   private void completeConstraints(DatabaseMetaData metaData)
+   {
+      _constraintViewsModel.initFromDB(metaData, _catalog, _schema, _tableName, _colInfoModel, _desktopController);
    }
 
 
@@ -798,6 +803,7 @@ public class TableFrameController
 
    public ITableInfo getTableInfo()
    {
+      _session.getSchemaInfo().waitTillTablesLoaded();
       return _session.getSchemaInfo().getITableInfos(_catalog, _schema, new ObjFilterMatcher(_tableName), new String[]{"TABLE"})[0];
    }
 
@@ -832,7 +838,7 @@ public class TableFrameController
 
    private void onAddTableForForeignKey(ColumnInfo columnInfo)
    {
-      _addTablelListener.addTablesRequest(new String[]{columnInfo.getImportedTableName()}, _schema, _catalog);
+      _addTablelRequestListener.addTablesRequest(new String[]{columnInfo.getDBImportedTableName()}, _schema, _catalog);
    }
 
    void filteredSelectedOrder()
@@ -948,7 +954,7 @@ public class TableFrameController
             }
             _tablesExportedTo = exportBuf.keySet().toArray(new String[0]);
          }
-         _addTablelListener.addTablesRequest(_tablesExportedTo, _schema, _catalog);
+         _addTablelRequestListener.addTablesRequest(_tablesExportedTo, _schema, _catalog);
 
       }
       catch (SQLException e)
@@ -963,13 +969,21 @@ public class TableFrameController
    {
       HashSet<String> tablesToAdd = new HashSet<String>();
 
-      ConstraintView[] constViews = _constraintViewsModel.getConstViews();
-      for (int i = 0; i < constViews.length; i++)
+//      ConstraintView[] constViews = _constraintViewsModel.getConstViews();
+//      for (int i = 0; i < constViews.length; i++)
+//      {
+//         tablesToAdd.add(constViews[i].getData().getPkTableName());
+//      }
+
+      for (ColumnInfo columnInfo : _colInfoModel.getAll())
       {
-         tablesToAdd.add(constViews[i].getData().getPkTableName());
+         if (null != columnInfo.getDBImportedTableName())
+         {
+            tablesToAdd.add(columnInfo.getDBImportedTableName());
+         }
       }
 
-      _addTablelListener.addTablesRequest(tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
+      _addTablelRequestListener.addTablesRequest(tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
    }
 
 
@@ -980,7 +994,7 @@ public class TableFrameController
       {
 
          ColumnInfo ci = getColumnInfoForPoint(e.getPoint());
-         if(null == ci || null == ci.getImportedTableName())
+         if(null == ci || null == ci.getDBImportedTableName())
          {
             _mnuAddTableForForeignKey.setEnabled(false);
 				// i18n[graph.addTableRefByNoHit=add table referenced by (no hit on FK)]
@@ -1004,9 +1018,9 @@ public class TableFrameController
       else if(2 == e.getClickCount() && e.getID() == MouseEvent.MOUSE_PRESSED)
       {
          ColumnInfo ci = getColumnInfoForPoint(e.getPoint());
-         if(null != ci && null != ci.getImportedTableName())
+         if(null != ci && null != ci.getDBImportedTableName())
          {
-            _addTablelListener.addTablesRequest(new String[]{ci.getImportedTableName()}, _schema, _catalog);
+            _addTablelRequestListener.addTablesRequest(new String[]{ci.getDBImportedTableName()}, _schema, _catalog);
          }
       }
 
@@ -1036,13 +1050,15 @@ public class TableFrameController
       _desktopController.removeConstraintViews(_constraintViewsModel.getConstViews(), false);
       _desktopController.getModeManager().removeModeManagerListener(_modeManagerListener);
       _desktopController.getZoomer().removeZoomListener(_zoomerListener);
+      _desktopController.getTableFramesModel().removeTableFramesModelListener(_tableFramesModelListener);
 
-
-      for (int i = 0; i < _listeners.size(); i++)
-      {
-         TableFrameControllerListener tableFrameControllerListener = _listeners.elementAt(i);
-         tableFrameControllerListener.closed(this);
-      }
+      ///////////////////////////////////////////////////////////////////
+      // Is needed in case the frame was selected before closing
+      // the grouping featur might send one more of these events.
+      _frame.removeComponentListener(_componentListener);
+      _frame.removeInternalFrameListener(_internalFrameListener);
+      //
+      ////////////////////////////////////////////////////////////////////
 
       for(TableFrameController tfc : _compListenersToOtherFramesByFrameCtrlr.keySet())
       {
@@ -1056,7 +1072,11 @@ public class TableFrameController
          tfc._frame.scrollPane.getVerticalScrollBar().removeAdjustmentListener(listenerToRemove);
       }
 
-
+      for (int i = 0; i < _listeners.size(); i++)
+      {
+         TableFrameControllerListener tableFrameControllerListener = _listeners.elementAt(i);
+         tableFrameControllerListener.closed(this);
+      }
    }
 
    void tableFrameOpen(final TableFrameController tfc)
@@ -1127,28 +1147,46 @@ public class TableFrameController
       _mySortListeners.remove(sortListener);
    }
 
-
-   private void recalculateAllConnections(boolean checkForNewConnections)
+   public void recalculateConnections()
    {
-      if(checkForNewConnections)
+      recalculateAllConnections(true);
+   }
+
+   private void recalculateAllConnections(boolean checkConnections)
+   {
+      if(checkConnections)
       {
-         Vector<TableFrameController> openTableFrameControllers = _graphControllerAccessor.getTableFrameModel().getTblCtrls();
+         Vector<TableFrameController> openTableFrameControllers = _desktopController.getModeManager().getTableFramesModel().getTblCtrls();
 
          for (int i = 0; i < openTableFrameControllers.size(); i++)
          {
             boolean found = false;
+            TableFrameController tfc = openTableFrameControllers.get(i);
+
+            if(this == tfc)
+            {
+               continue;
+            }
+
             for (int j = 0; j < _openFramesConnectedToMe.size(); j++)
             {
-               if(openTableFrameControllers.get(i) == _openFramesConnectedToMe.get(j))
+               if(tfc == _openFramesConnectedToMe.get(j))
                {
                   found = true;
                   break;
                }
             }
 
-            if(false == found)
+            if(found)
             {
-               tableFrameOpen(openTableFrameControllers.get(i));
+               if(0 == findConstraintViews(tfc.getTableInfo().getSimpleName()).length)
+               {
+                  disconnectTableFrame(tfc);
+               }
+            }
+            else
+            {
+               tableFrameOpen(tfc);
             }
          }
       }
@@ -1163,7 +1201,7 @@ public class TableFrameController
    }
 
 
-   public void tableFrameRemoved(TableFrameController tfc)
+   public void disconnectTableFrame(TableFrameController tfc)
    {
       _openFramesConnectedToMe.remove(tfc);
 
@@ -1207,7 +1245,7 @@ public class TableFrameController
 
       for (int i = 0; i < constraintView.length; i++)
       {
-         ColumnInfo[] colInfos = constraintView[i].getData().getColumnInfos();
+         ColumnInfo[] colInfos = constraintView[i].getData().getFkColumnInfos();
 
          FoldingPoint firstFoldingPoint = constraintView[i].getFirstFoldingPoint();
          FoldingPoint lastFoldingPoint = constraintView[i].getLastFoldingPoint();
@@ -1215,9 +1253,11 @@ public class TableFrameController
          ConnectionPoints fkPoints = getConnectionPoints(colInfos, this, other, firstFoldingPoint);
 
          ColumnInfo[] othersColInfos = new ColumnInfo[colInfos.length];
-         for (int j = 0; j < othersColInfos.length; j++)
+
+         ColumnInfo[] pkColumnInfos = constraintView[i].getData().getPkColumnInfos();
+         for (int j = 0; j < pkColumnInfos.length; j++)
          {
-            othersColInfos[j] = other.findColumnInfo(colInfos[j].getImportedColumnName());
+            othersColInfos[j] = other.findColumnInfo(pkColumnInfos[j].getColumnName());
          }
 
          ConnectionPoints pkPoints = getConnectionPoints(othersColInfos, other, this, lastFoldingPoint);
@@ -1388,4 +1428,5 @@ public class TableFrameController
    {
       return _colInfoModel;
    }
+
 }
