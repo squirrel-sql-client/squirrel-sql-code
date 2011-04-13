@@ -113,18 +113,19 @@ public class FromClauseGenerator
 
 
 
-         for (int j = 0; j < data.getColumnInfos().length; j++)
+         for (int j = 0; j < data.getFkColumnInfos().length; j++)
          {
-            ColumnInfo columnInfo = data.getColumnInfos()[j];
+            ColumnInfo fkCol = data.getFkColumnInfos()[j];
+            ColumnInfo pkCol = data.getPkColumnInfos()[j];
 
             if(0 < j)
             {
                fromClauseRes.append(" AND ");
             }
 
-            fromClauseRes.append(tableNameFrom + "." + getJoinColName(columnInfo, tableNameFrom));
+            fromClauseRes.append(tableNameFrom + "." + fkCol.getColumnName());
             fromClauseRes.append(" = ");
-            fromClauseRes.append(tableNameTo_aliased + "." + getJoinColName(columnInfo, tableNameTo_aliased));
+            fromClauseRes.append(tableNameTo_aliased + "." + pkCol.getColumnName());
 
          }
       }
@@ -142,16 +143,6 @@ public class FromClauseGenerator
       }
 
       return "INNER";
-   }
-
-   private String getJoinColName(ColumnInfo columnInfo, String tableName)
-   {
-      if(columnInfo.getImportedTableName().equalsIgnoreCase(tableName))
-      {
-         return columnInfo.getImportedColumnName();
-      }
-
-      return columnInfo.getColumnName();
    }
 
    private HashSet<TableFrameController> getRelatives(TableFramesModel tableFramesModel, TableFrameController tfc)

@@ -114,20 +114,20 @@ enum OrderType
       }
       else
       {
-         if(null != c1.getConstraintName() && null == c2.getConstraintName())
+         if(null != c1.getDBConstraintName() && null == c2.getDBConstraintName())
          {
             return -1;
          }
-         else if(null == c1.getConstraintName() && null != c2.getConstraintName())
+         else if(null == c1.getDBConstraintName() && null != c2.getDBConstraintName())
          {
             return 1;
          }
          else
          {
-            if(null != c1.getConstraintName() && null != c2.getConstraintName())
+            if(null != c1.getDBConstraintName() && null != c2.getDBConstraintName())
             {
-               String s1 = c1.getConstraintName() + "_" + c1.getName();
-               String s2 = c2.getConstraintName() + "_" + c2.getName();
+               String s1 = c1.getDBConstraintName() + "_" + c1.getName();
+               String s2 = c2.getDBConstraintName() + "_" + c2.getName();
                return s1.compareTo(s2);
             }
             else

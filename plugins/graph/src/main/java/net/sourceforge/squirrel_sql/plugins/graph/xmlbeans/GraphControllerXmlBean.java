@@ -11,6 +11,7 @@ public class GraphControllerXmlBean
    private boolean _showQualifiedTableNames;
    private int _modeIndex;
    private boolean _queryHideNoJoins;
+   private boolean _32Converted;
 
 
    public String getTitle()
@@ -91,5 +92,15 @@ public class GraphControllerXmlBean
    public boolean isQueryHideNoJoins()
    {
       return _queryHideNoJoins;
+   }
+
+   public void set32Converted(boolean a32Converted)
+   {
+      _32Converted = a32Converted;
+   }
+
+   public boolean is32Converted()
+   {
+      return _32Converted;
    }
 }

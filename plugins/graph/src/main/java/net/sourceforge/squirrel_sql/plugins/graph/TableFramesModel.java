@@ -113,10 +113,11 @@ public class TableFramesModel
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
          TableFrameController tableFrameController = _openTableFrameCtrls.get(i);
-         tableFrameController.tableFrameRemoved(tfc);
+         tableFrameController.disconnectTableFrame(tfc);
       }
 
       fireListeners(TableFramesModelChangeType.TABLE);
+      recalculateAllConnections();
    }
 
    private void fireListeners(TableFramesModelChangeType changeType)
@@ -132,7 +133,6 @@ public class TableFramesModel
 
    void refreshAllTables()
    {
-
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
          TableFrameController tableFrameController = _openTableFrameCtrls.get(i);
@@ -140,6 +140,7 @@ public class TableFramesModel
       }
 
       fireListeners(TableFramesModelChangeType.TABLE);
+      recalculateAllConnections();
    }
 
 
@@ -148,7 +149,19 @@ public class TableFramesModel
       return _openTableFrameCtrls.contains(tfc);
    }
 
-   public void addTable(TableFrameController tfc)
+   public boolean containsTable(String tableName)
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         if(openTableFrameCtrl.getTableInfo().getSimpleName().equalsIgnoreCase(tableName))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   public void addTable(TableFrameController tfc, boolean readingXMLBean)
    {
       tfc.addTableFrameControllerListener(_tableFrameControllerListener);
       tfc.getConstraintViewsModel().addListener(_constraintViewsModelListener);
@@ -171,8 +184,33 @@ public class TableFramesModel
 
 
       _openTableFrameCtrls.add(tfc);
-      fireListeners(TableFramesModelChangeType.TABLE);
+
+      initsAfterFrameAdded(tfc, false == readingXMLBean);
+      if (false == readingXMLBean)
+      {
+         fireListeners(TableFramesModelChangeType.TABLE);
+      }
+      recalculateAllConnections();
    }
+
+   private void initsAfterFrameAdded(TableFrameController tfc, boolean resetBounds)
+   {
+
+      for (int i = 0; i < _openTableFrameCtrls.size(); i++)
+      {
+         TableFrameController buf = _openTableFrameCtrls.get(i);
+         if (false == buf.equals(tfc))
+         {
+            buf.tableFrameOpen(tfc);
+         }
+      }
+
+      Vector<TableFrameController> others = new  Vector<TableFrameController>(_openTableFrameCtrls);
+      others.remove(tfc);
+      TableFrameController[] othersArr = others.toArray(new TableFrameController[others.size()]);
+      tfc.initAfterAddedToDesktop(othersArr, resetBounds);
+   }
+
 
    private void onTableFrameMoved()
    {
@@ -211,6 +249,11 @@ public class TableFramesModel
       _listeners.add(tableFramesModelListener);
    }
 
+   public void removeTableFramesModelListener(TableFramesModelListener tableFramesModelListener)
+   {
+      _listeners.remove(tableFramesModelListener);
+   }
+
    public void hideNoJoins(boolean b)
    {
       for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
@@ -233,4 +276,13 @@ public class TableFramesModel
 
       return false;
    }
+
+   private void recalculateAllConnections()
+   {
+      for (TableFrameController tfc : _openTableFrameCtrls)
+      {
+         tfc.recalculateConnections();
+      }
+   }
+
 }

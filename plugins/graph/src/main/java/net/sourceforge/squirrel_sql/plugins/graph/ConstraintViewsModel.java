@@ -48,13 +48,12 @@ public class ConstraintViewsModel
       return _constraintViews;
    }
 
-   public void initByXmlBeans(ConstraintViewXmlBean[] constraintViewXmlBeans, GraphDesktopController desktopController, ColumnInfo[] colInfos)
+   public void initByXmlBeans(ConstraintViewXmlBean[] constraintViewXmlBeans, GraphDesktopController desktopController)
    {
       _constraintViews = new ConstraintView[constraintViewXmlBeans.length];
       for (int i = 0; i < _constraintViews.length; i++)
       {
          _constraintViews[i] = new ConstraintView(constraintViewXmlBeans[i], desktopController, _session, _constraintIconHandlerListener);
-         _constraintViews[i].replaceCopiedColsByReferences(colInfos, false);
       }
    }
 
@@ -69,7 +68,6 @@ public class ConstraintViewsModel
 
    public void removeConst(ConstraintView constraintView)
    {
-      constraintView.clearColumnImportData();
       ArrayList<ConstraintView> buf = new ArrayList<ConstraintView>();
       buf.addAll(Arrays.asList(_constraintViews));
       buf.remove(constraintView);
@@ -96,24 +94,33 @@ public class ConstraintViewsModel
       try
       {
          res = metaData.getImportedKeys(catalog, schema, tableName);
+
          while (res.next())
          {
+            String pkCat = res.getString(1);   // PKTABLE_CAT
+            String pkSchem = res.getString(2);   // PKTABLE_SCHEM
             String pkTable = res.getString(3);   // PKTABLE_NAME
             String pkColName = res.getString(4); // PKCOLUMN_NAME
+
             String fkColName = res.getString(8); // FKCOLUMN_NAME
             String fkName = res.getString(12);   // FK_NAME
 
-            ColumnInfo colInfo = colInfoModel.findColumnInfo(fkColName);
-            colInfo.setImportData(pkTable, pkColName, fkName, false);
+            ColumnInfo fkCol = colInfoModel.findColumnInfo(fkColName);
+            fkCol.setDBImportData(pkTable, pkColName, fkName);
 
-            ConstraintData dbConstraintData = dbConstraintInfosByConstraintName.get(fkName);
-
-            if (null == dbConstraintData)
+            if (desktopController.getModeManager().getTableFramesModel().containsTable(pkTable))
             {
-               dbConstraintData = new ConstraintData(pkTable, tableName, fkName);
-               dbConstraintInfosByConstraintName.put(fkName, dbConstraintData);
+               ConstraintData dbConstraintData = dbConstraintInfosByConstraintName.get(fkName);
+
+               if (null == dbConstraintData)
+               {
+                  dbConstraintData = new ConstraintData(pkTable, tableName, fkName);
+                  dbConstraintInfosByConstraintName.put(fkName, dbConstraintData);
+               }
+
+               ColumnInfo pkCol = GraphUtil.createColumnInfo(_session, pkCat, pkSchem, pkTable, pkColName);
+               dbConstraintData.addColumnInfos(pkCol, fkCol);
             }
-            dbConstraintData.addColumnInfo(colInfo);
          }
       }
       catch (SQLException e)
@@ -146,7 +153,6 @@ public class ConstraintViewsModel
       {
          if (_constraintViews[i].getData().isNonDbConstraint())
          {
-            _constraintViews[i].replaceCopiedColsByReferences(colInfoModel.getAll(), true);
             oldNonDBConstraintViews.add(_constraintViews[i]);
          }
          else
@@ -175,7 +181,7 @@ public class ConstraintViewsModel
          }
       }
 
-      removeOverlappingConstraints(newConstraintViewsBuf, oldNonDBConstraintViews);
+      removeMatchingConstraints(newConstraintViewsBuf, oldNonDBConstraintViews);
 
 
       newConstraintViewsBuf.addAll(oldNonDBConstraintViews);
@@ -193,12 +199,12 @@ public class ConstraintViewsModel
          return null;
       }
 
-      if(null != targetColumnInfo.getImportedColumnName())
-      {
-         // i18n[graph.nonDbConstraintCreationError_already_points=A column cannot reference more than one other column. Non DB constraint could not be created.]
-         session.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("graph.nonDbConstraintCreationError_already_points"));
-         return null;
-      }
+//      if(null != targetColumnInfo.getImportedColumnName())
+//      {
+//         // i18n[graph.nonDbConstraintCreationError_already_points=A column cannot reference more than one other column. Non DB constraint could not be created.]
+//         session.getApplication().getMessageHandler().showErrorMessage(s_stringMgr.getString("graph.nonDbConstraintCreationError_already_points"));
+//         return null;
+//      }
 
       String constName = "SquirrelGeneratedConstraintName";
 
@@ -209,11 +215,7 @@ public class ConstraintViewsModel
          true);
 
 
-
-      targetColumnInfo.setImportData(sourceTable.getTableInfo().getSimpleName(), sourceColumnInfo.getName(), constName, true);
-
-
-      data.addColumnInfo(targetColumnInfo);
+      data.addColumnInfos(sourceColumnInfo, targetColumnInfo);
       ConstraintView ret = new ConstraintView(data, desktopController, session, _constraintIconHandlerListener);
 
       addConst(ret);
@@ -222,7 +224,7 @@ public class ConstraintViewsModel
 
 
 
-   private void removeOverlappingConstraints(ArrayList<ConstraintView> master, ArrayList<ConstraintView> toRemoveFrom)
+   private void removeMatchingConstraints(ArrayList<ConstraintView> master, ArrayList<ConstraintView> toRemoveFrom)
    {
       ArrayList<ConstraintView> removeBuf = new ArrayList<ConstraintView>();
 
@@ -230,7 +232,7 @@ public class ConstraintViewsModel
       {
          for (ConstraintView cvMaster : master)
          {
-            if(cvMaster.hasOverlap(cvRemoveCand))
+            if(cvMaster.matches(cvRemoveCand))
             {
                removeBuf.add(cvRemoveCand);
                break;
@@ -261,7 +263,7 @@ public class ConstraintViewsModel
 
       for (int i = 0; i < _constraintViews.length; i++)
       {
-         if(_constraintViews[i].getData().getPkTableName().equals(tableName))
+         if(_constraintViews[i].getData().getPkTableName().equalsIgnoreCase(tableName))
          {
             constraintDataToRemove.add(_constraintViews[i]);
          }
@@ -271,6 +273,8 @@ public class ConstraintViewsModel
          }
       }
 
+      _constraintViews = newConstraintData.toArray(new ConstraintView[newConstraintData.size()]);
+
       return constraintDataToRemove.toArray(new ConstraintView[constraintDataToRemove.size()]);
    }
 
@@ -279,7 +283,7 @@ public class ConstraintViewsModel
       List<ConstraintView> ret = new ArrayList<ConstraintView>();
       for (int i = 0; i < _constraintViews.length; i++)
       {
-         if(_constraintViews[i].getData().getPkTableName().equals(tableName))
+         if(_constraintViews[i].getData().getPkTableName().equalsIgnoreCase(tableName))
          {
             ret.add(_constraintViews[i]);
          }
@@ -312,5 +316,18 @@ public class ConstraintViewsModel
          }
       }
       return false;
+   }
+
+   public ArrayList<ConstraintView> checkForMatches(ConstraintView v)
+   {
+      ArrayList<ConstraintView> ret = new ArrayList<ConstraintView>();
+      for (ConstraintView view : _constraintViews)
+      {
+         if(v != view && v.matches(view))
+         {
+            ret.add(view);
+         }
+      }
+      return ret;
    }
 }

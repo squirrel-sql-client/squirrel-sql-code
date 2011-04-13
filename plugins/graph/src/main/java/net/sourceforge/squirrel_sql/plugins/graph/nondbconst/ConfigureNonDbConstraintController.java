@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -10,9 +9,10 @@ import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class ConfigureNonDbConstraintController
@@ -25,29 +25,29 @@ public class ConfigureNonDbConstraintController
    private ConfigureNonDbConstraintDlg _dlg;
    private ConstraintDataSet _constraintDataSet;
    private ConstraintView _constraintView;
-   private TableFrameController _fkFrameOriginatingFrom;
-   private TableFrameController _pkFramePointingTo;
+   private TableFrameController _fkTable;
+   private TableFrameController _pkTable;
 
 
 
-   public ConfigureNonDbConstraintController(ISession session, ConstraintView constraintView, TableFrameController fkFrameOriginatingFrom, TableFrameController pkFramePointingTo)
+   public ConfigureNonDbConstraintController(ConstraintView constraintView, TableFrameController fkTable, TableFrameController pkTable)
    {
       _constraintView = constraintView;
-      _fkFrameOriginatingFrom = fkFrameOriginatingFrom;
-      _pkFramePointingTo = pkFramePointingTo;
+      _fkTable = fkTable;
+      _pkTable = pkTable;
       try
       {
-         String fkTableName = fkFrameOriginatingFrom.getTableInfo().getSimpleName();
-         String pkTableName = pkFramePointingTo.getTableInfo().getSimpleName();
+         String fkTableName = fkTable.getTableInfo().getSimpleName();
+         String pkTableName = pkTable.getTableInfo().getSimpleName();
 
-         Window parent = SwingUtilities.windowForComponent(fkFrameOriginatingFrom.getFrame());
+         Window parent = SwingUtilities.windowForComponent(fkTable.getFrame());
          _dlg = new ConfigureNonDbConstraintDlg(parent, fkTableName, pkTableName);
 
          _constraintDataSet = new ConstraintDataSet(constraintView, fkTableName, pkTableName);
          _dlg._table.show(_constraintDataSet);
          _dlg._txtContstrName.setText(constraintView.getData().getConstraintName());
 
-         initCbos(fkFrameOriginatingFrom, pkFramePointingTo, constraintView);
+         initCbos(fkTable, pkTable, constraintView);
 
          _dlg._btnRemove.addActionListener(new ActionListener()
          {
@@ -107,7 +107,7 @@ public class ConfigureNonDbConstraintController
          return;
       }
 
-      _constraintDataSet.writeConstraintView(_constraintView, _fkFrameOriginatingFrom, _pkFramePointingTo);
+      _constraintDataSet.writeConstraintView(_constraintView, _fkTable, _pkTable);
 
       _constraintView.getData().setConstraintName(_dlg._txtContstrName.getText().trim());
       close();
@@ -123,28 +123,59 @@ public class ConfigureNonDbConstraintController
    {
       try
       {
-         ColumnInfo fkColumn = (ColumnInfo) _dlg._cboLocalCol.getSelectedItem();
-         ColumnInfo pkColumn = (ColumnInfo) _dlg._cboReferencingCol.getSelectedItem();
-         if(_constraintDataSet.addRow(fkColumn, pkColumn))
+         ColumnInfo fkColumn = (ColumnInfo) _dlg._cboFkCol.getSelectedItem();
+         ColumnInfo pkColumn = (ColumnInfo) _dlg._cboPkCol.getSelectedItem();
+
+         if(null == fkColumn || null == pkColumn)
          {
-            _dlg._table.show(_constraintDataSet);
+            return;
          }
+
+         removeFromCbo(fkColumn, _dlg._cboFkCol);
+         removeFromCbo(pkColumn, _dlg._cboPkCol);
+
+         _constraintDataSet.addRow(fkColumn, pkColumn);
+         _dlg._table.show(_constraintDataSet);
       }
       catch (DataSetException e)
       {
          throw new RuntimeException(e);
       }
 
+   }
+
+   private void removeFromCbo(ColumnInfo col, JComboBox cbo)
+   {
+      if(null == col)
+      {
+         return;
+      }
+
+      ((DefaultComboBoxModel) cbo.getModel()).removeElement(col);
+      if(0 < cbo.getItemCount())
+      {
+         cbo.setSelectedIndex(0);
+      }
    }
 
    private void onRemoveSelectedRow()
    {
       try
       {
-         if (_constraintDataSet.removeRows(_dlg._table.getSeletedRows()))
+         ArrayList<ContraintDisplayData> displayDatas = _constraintDataSet.removeRows(_dlg._table.getSeletedRows());
+         if (0 < displayDatas.size())
          {
             _dlg._table.show(_constraintDataSet);
          }
+
+
+         for (ContraintDisplayData displayData : displayDatas)
+         {
+            ((DefaultComboBoxModel)_dlg._cboFkCol.getModel()).addElement(displayData.getFkCol());
+            ((DefaultComboBoxModel)_dlg._cboPkCol.getModel()).addElement(displayData.getPkCol());
+         }
+
+
       }
       catch (DataSetException e)
       {
@@ -153,45 +184,17 @@ public class ConfigureNonDbConstraintController
    }
 
 
-   private void initCbos(TableFrameController fkFrameOriginatingFrom, TableFrameController pkFramePointingTo, ConstraintView constraintView)
+   private void initCbos(TableFrameController fkTable, TableFrameController pkTable, ConstraintView constraintView)
    {
-      _dlg._cboLocalCol.setModel(new DefaultComboBoxModel(getCleanedFkColumnInfos(fkFrameOriginatingFrom, constraintView)));
-      _dlg._cboReferencingCol.setModel(new DefaultComboBoxModel(pkFramePointingTo.getColumnInfos()));
+      _dlg._cboFkCol.setModel(new DefaultComboBoxModel(getUnused(fkTable.getColumnInfos(), constraintView.getData().getFkColumnInfos())));
+      _dlg._cboPkCol.setModel(new DefaultComboBoxModel(getUnused(pkTable.getColumnInfos(), constraintView.getData().getPkColumnInfos())));
    }
 
-   private Vector<ColumnInfo> getCleanedFkColumnInfos(TableFrameController fkFrameOriginatingFrom, ConstraintView constraintView)
+   private ColumnInfo[] getUnused(ColumnInfo[] all, ColumnInfo[] used)
    {
-      Vector<ColumnInfo> cleanedFkColumnInfos = new Vector<ColumnInfo>();
-      ColumnInfo[] fkColumnInfos = fkFrameOriginatingFrom.getColumnInfos();
-
-      for (ColumnInfo fkColumnInfo : fkColumnInfos)
-      {
-         boolean toAdd = false;
-
-         if(null == fkColumnInfo.getImportedColumnName())
-         {
-            // We add if the fkColumnInfo is not yet referencing any column.
-            toAdd = true;
-         }
-         else
-         {
-            // Or we add if the fkColumnInfo is already part of the constraint to configure.
-            for (ColumnInfo columnInfo : constraintView.getData().getColumnInfos())
-            {
-               if(fkColumnInfo.getName().equalsIgnoreCase(columnInfo.getName()))
-               {
-                  toAdd = true;
-                  break;
-               }
-            }
-         }
-
-
-         if(toAdd)
-         {
-            cleanedFkColumnInfos.add(fkColumnInfo);
-         }
-      }
-      return cleanedFkColumnInfos;
+      ArrayList<ColumnInfo> ret = new ArrayList<ColumnInfo>();
+      ret.addAll(Arrays.asList(all));
+      ret.removeAll(Arrays.asList(used));
+      return ret.toArray(new ColumnInfo[ret.size()]);
    }
 }
