@@ -146,6 +146,15 @@ public class GraphController
          {
             addTableIntern(new Positioner(), null, null, null, tableFrameControllerXmls[i]);
          }
+
+         final GraphControllerXmlBean finalGraphControllerXmlBean = graphControllerXmlBean;
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _tableFramesModel.hideNoJoins(finalGraphControllerXmlBean.isQueryHideNoJoins());
+            }
+         });
       }
    }
 
