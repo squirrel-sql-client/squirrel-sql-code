@@ -1,19 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.ConfigureNonDbConstraintController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -186,7 +186,7 @@ public class ConstraintView implements GraphComponent
       _fkFrameOriginatingFrom.recalculateConnections();
    }
 
-   public void generateFoldingPointIfLinesWouldCoverEachOther()
+   public boolean generateFoldingPointIfLinesWouldCoverEachOther()
    {
       ArrayList<ConstraintView> matches = _fkFrameOriginatingFrom.getConstraintViewsModel().checkForMatches(this);
       if(0 < matches.size() && null == getFirstFoldingPoint())
@@ -210,8 +210,11 @@ public class ConstraintView implements GraphComponent
 
             _constraintGraph.setHitConnectLine(_constraintGraph.getMainLine());
             addFoldingPointAt(p);
+            return true;
          }
       }
+
+      return false;
    }
 
    private void onRemoveNonDbConstraint()
@@ -852,5 +855,10 @@ public class ConstraintView implements GraphComponent
    public boolean matches(ConstraintView view)
    {
       return _constraintData.matches(view.getData());
+   }
+
+   public boolean hasOverlap(ConstraintView mergeTarget)
+   {
+      return _constraintData.hasOverlap(mergeTarget.getData());
    }
 }

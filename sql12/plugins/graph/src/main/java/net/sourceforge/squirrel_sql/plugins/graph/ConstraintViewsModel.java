@@ -8,6 +8,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndEvent;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
 
+import javax.swing.*;
+import java.awt.*;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -329,5 +331,88 @@ public class ConstraintViewsModel
          }
       }
       return ret;
+   }
+
+   public ArrayList<ConstraintView> checkMerges(GraphDesktopController desktopController,
+                                                TableFrameController fkTable,
+                                                TableFrameController pkTable,
+                                                ConstraintView newConstraint)
+   {
+      ArrayList<ConstraintView> ret = new ArrayList<ConstraintView>();
+
+      if(false == newConstraint.generateFoldingPointIfLinesWouldCoverEachOther())
+      {
+         Mode mode = desktopController.getModeManager().getMode();
+         String pkTableName = pkTable.getTableInfo().getSimpleName();
+
+         if(   mode.isQueryBuilder()
+            && 2 == nonDbJoinCountTo(pkTableName))
+         {
+            Window parent = SwingUtilities.windowForComponent(pkTable.getFrame());
+
+            String fkTableName = fkTable.getTableInfo().getSimpleName();
+            String msg = s_stringMgr.getString("graph.ConstraintViewsModel.joinMergeMsg", fkTableName, pkTableName);
+
+            int opt = JOptionPane.showConfirmDialog(parent, msg);
+            if (JOptionPane.NO_OPTION == opt)
+            {
+               return mergeNonDBJoinsTo(newConstraint, pkTableName);
+            }
+            else if (JOptionPane.CANCEL_OPTION == opt)
+            {
+               ret.add(newConstraint);
+            }
+         }
+      }
+
+      return ret;
+   }
+
+
+   private int nonDbJoinCountTo(String pkTableName)
+   {
+      int ret = 0;
+      for (ConstraintView constraintView : _constraintViews)
+      {
+         if(pkTableName.equalsIgnoreCase(constraintView.getData().getPkTableName())
+            &&  constraintView.getData().isNonDbConstraint()
+            && false == constraintView.getData().getConstraintQueryData().isNoJoin())
+         {
+            ++ret;
+         }
+      }
+
+      return ret;
+   }
+
+   private ArrayList<ConstraintView> mergeNonDBJoinsTo(ConstraintView mergeTarget, String pkTableName)
+   {
+      ArrayList<ConstraintView> toRemove = new ArrayList<ConstraintView>();
+
+      for (ConstraintView constraintView : _constraintViews)
+      {
+         if(   pkTableName.equalsIgnoreCase(constraintView.getData().getPkTableName())
+            && mergeTarget != constraintView
+            && false == constraintView.hasOverlap(mergeTarget))
+         {
+            for (int i = 0; i < constraintView.getData().getFkColumnInfos().length; i++)
+            {
+               ColumnInfo fkCol = constraintView.getData().getFkColumnInfos()[i];
+               ColumnInfo pkCol = constraintView.getData().getPkColumnInfos()[i];
+               mergeTarget.getData().addColumnInfos(pkCol, fkCol);
+            }
+            toRemove.add(constraintView);
+         }
+      }
+
+      return toRemove;
+   }
+
+   public void replaceColumnClonesInConstraintsByRefrences(TableFramesModel tableFramesModel)
+   {
+      for (ConstraintView constraintView : _constraintViews)
+      {
+         constraintView.getData().replaceColumnClonesInConstraintsByRefrences(tableFramesModel);
+      }
    }
 }

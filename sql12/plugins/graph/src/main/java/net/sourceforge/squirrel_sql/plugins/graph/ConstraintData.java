@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintDataXmlBean;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 
 public class ConstraintData
@@ -245,4 +245,49 @@ public class ConstraintData
       return GraphUtil.columnsMatch(other._pkCols, _pkCols) && GraphUtil.columnsMatch(other._fkCols, _fkCols);
    }
 
+   public boolean hasOverlap(ConstraintData other)
+   {
+      if(   false == other._pkTableName.equalsIgnoreCase(_pkTableName)
+         || false == other._fkTableName.equalsIgnoreCase(_fkTableName))
+      {
+         return false;
+      }
+
+      for (ColumnInfo pkCol : _pkCols)
+      {
+         for (ColumnInfo otherPkCol : other._pkCols)
+         {
+            if(pkCol.equals(otherPkCol))
+            {
+               return true;
+            }
+         }
+      }
+
+      for (ColumnInfo fkCol : _fkCols)
+      {
+         for (ColumnInfo otherFkCol : other._fkCols)
+         {
+            if(fkCol.equals(otherFkCol))
+            {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   public void replaceColumnClonesInConstraintsByRefrences(TableFramesModel tableFramesModel)
+   {
+      for (int i = 0; i < _pkCols.size(); i++)
+      {
+         _pkCols.set(i, tableFramesModel.findColumn(_pkTableName, _pkCols.get(i).getColumnName()));
+      }
+
+      for (int i = 0; i < _fkCols.size(); i++)
+      {
+         _fkCols.set(i, tableFramesModel.findColumn(_fkTableName, _fkCols.get(i).getColumnName()));
+      }
+   }
 }

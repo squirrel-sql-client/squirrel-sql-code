@@ -1,24 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
@@ -31,6 +12,20 @@ import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndEvent;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
+
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Vector;
 
 
 public class TableFrameController
@@ -321,14 +316,15 @@ public class TableFrameController
 
       if (null != constraintView)
       {
-//         SwingUtilities.invokeLater(new Runnable()
-//         {
-//            public void run()
-//            {
-               fkTable.recalculateAllConnections(true);
-               constraintView.generateFoldingPointIfLinesWouldCoverEachOther();
-//            }
-//         });
+         fkTable.recalculateAllConnections(true);
+
+         ArrayList<ConstraintView> toRemove =
+               fkTable._constraintViewsModel.checkMerges(_desktopController, fkTable, this, constraintView);
+
+         for (ConstraintView view : toRemove)
+         {
+            fkTable.onRemoveNonDbConstraint(view);
+         }
       }
 
    }
