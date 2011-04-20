@@ -33,7 +33,8 @@ import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Dialog that gets displayed when a user chooses to add a driver property to the table.
@@ -104,7 +105,7 @@ public class AddDriverPropertyDialog extends JDialog
 			public void actionPerformed(ActionEvent arg0)
 			{
 				String name = propertyNameTF.getText();
-				if (!StringUtilities.isEmpty(name))
+				if (!StringUtils.isEmpty(name))
 				{
 					String value = propertyValueTF.getText();
 					String desc = propertyDescriptionTF.getText();

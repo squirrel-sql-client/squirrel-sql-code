@@ -32,9 +32,10 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This represents a connection to an SQL server. it is basically a wrapper around
@@ -297,7 +298,7 @@ public class SQLConnection implements ISQLConnection
 		final Connection conn = getConnection();
 		final String oldValue = conn.getCatalog();
 		final DialectType dialectType = DialectFactory.getDialectType(metaData);
-		if (!StringUtilities.areStringsEqual(oldValue, catalogName))
+		if (!StringUtils.equals(oldValue, catalogName))
 		{
 			setDbSpecificCatalog(dialectType, catalogName);
 			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG, oldValue, catalogName);

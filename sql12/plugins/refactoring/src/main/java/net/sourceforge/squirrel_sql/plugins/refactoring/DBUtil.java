@@ -27,7 +27,8 @@ import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 public class DBUtil
 {
@@ -109,7 +110,7 @@ public class DBUtil
 		{
 			return null;
 		}
-		if (StringUtilities.isEmpty(oldComment) && StringUtilities.isEmpty(newComment)) {
+		if (StringUtils.isEmpty(oldComment) && StringUtils.isEmpty(newComment)) {
 			return null;
 		}
 		if (oldComment == null || !oldComment.equals(newComment))

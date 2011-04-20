@@ -99,6 +99,6 @@
 		<module>sybase</module>
 		<module>syntax</module>
 		<module>userscript</module>
-  </modules>
+	</modules>
 
 </project>

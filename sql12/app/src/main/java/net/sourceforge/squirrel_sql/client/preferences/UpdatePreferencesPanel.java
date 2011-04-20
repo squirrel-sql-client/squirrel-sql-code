@@ -50,7 +50,8 @@ import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 public class UpdatePreferencesPanel extends JPanel
 {
@@ -533,7 +534,7 @@ public class UpdatePreferencesPanel extends JPanel
 		String portStr = _updateServerPort.getText();
 		StringBuilder tmp = new StringBuilder("http://");
 		tmp.append(_updateServerName.getText());
-		if (!StringUtilities.isEmpty(portStr))
+		if (!StringUtils.isEmpty(portStr))
 		{
 			tmp.append(":");
 			tmp.append(_updateServerPort.getText());
@@ -647,7 +648,7 @@ public class UpdatePreferencesPanel extends JPanel
 			try
 			{
 				int port = 80;
-				if (!StringUtilities.isEmpty(portString))
+				if (!StringUtils.isEmpty(portString))
 				{
 					port = Integer.parseInt(_updateServerPort.getText());
 				}

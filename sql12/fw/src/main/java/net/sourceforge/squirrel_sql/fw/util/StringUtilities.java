@@ -19,59 +19,20 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 /**
  * String handling utilities.
- *
+ * 
+ * This class contains additional methods, that not exists in commons-lang from apache.
+ * Methods, that are identical to commons-lang are removed. e.g. {@link StringUtils#isEmpty(String)}. 
+ * Some other methods (e.g. {@link #join(String[], String)} are still available, because they have a slightly different behavior as the methods in commons-lang.
+ * 
+ * @see StringUtils
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class StringUtilities
 {
-	/**
-	 * Return <tt>true</tt> if the passed string is <tt>null</tt> or empty.
-	 *
-	 * @param	str		String to be tested.
-	 *
-	 * @return	<tt>true</tt> if the passed string is <tt>null</tt> or empty.
-	 */
-	public static boolean isEmpty(String str)
-	{
-		return str == null || str.length() == 0;
-	}
-	
-	/**
-	 * Return <tt>true</tt> if the passed string is <tt>null</tt> or empty or contains only blanks.
-	 *
-	 * @param	str		String to be tested.
-	 *
-	 * @return	<tt>true</tt> if the passed string is <tt>null</tt> or empty or contains only blanks.
-	 */
-	public static boolean isBlank(String str)
-	{
-		return isEmpty(str) || str.trim().length() == 0;
-	}
-
-
-	/**
-	 * Return whether the 2 passed strings are equal. This function
-	 * allows for <TT>null</TT> strings. If <TT>s1</TT> and <TT>s1</TT> are
-	 * both <TT>null</TT> they are considered equal.
-	 *
-	 * @param		str1	First string to check.
-	 * @param		str2	Second string to check.
-	 */
-	public static boolean areStringsEqual(String str1, String str2)
-	{
-		if (str1 == null && str2 == null)
-		{
-			return true;
-		}
-		if (str1 != null)
-		{
-			return str1.equals(str2);
-		}
-		return str2.equals(str1);
-	}
-
 	/**
 	 * Clean the passed string. Replace whitespace characters with a single
 	 * space. If a <TT>null</TT> string passed return an empty string. E.G.
@@ -126,7 +87,7 @@ public class StringUtilities
 	 */
 	public static int countOccurences(String str, int ch)
 	{
-		if (isEmpty(str))
+		if (StringUtils.isEmpty(str))
 		{
 			return 0;
 		}
@@ -151,7 +112,8 @@ public class StringUtilities
 	 *
 	 * @param	str			The string to be split.
 	 * @param	delimiter	Split string based on this delimiter.
-	 *
+	 * <p />
+     * <b>Not compatible to {@link StringUtils#split(String)}<b>
 	 * @return	Array of split strings. Guaranteeded to be not null.
 	 */
 	public static String[] split(String str, char delimiter)
@@ -166,7 +128,8 @@ public class StringUtilities
 	 * @param	str			The string to be split.
 	 * @param	delimiter	Split string based on this delimiter.
 	 * @param	removeEmpty	If <tt>true</tt> then remove empty elements.
-	 *
+	 * <p />
+     * <b>Not compatible to {@link StringUtils#split(String)}<b>
 	 * @return	Array of split strings. Guaranteeded to be not null.
 	 */
 	public static String[] split(String str, char delimiter,
@@ -199,6 +162,8 @@ public class StringUtilities
      * Joins the specified parts separating each from one another with the 
      * specified delimiter.  If delim is null, then this merely returns the 
      * concatenation of all the parts.
+     * <p />
+     * <b>Could not be replaced by {@link StringUtils#join(Object[], char)} because the handling of <code>null</code> as value is different<b>
      * 
      * @param parts the strings to be joined
      * @param delim the char(s) that should separate the parts in the result
@@ -283,7 +248,8 @@ public class StringUtilities
     
     /**
      * Chops off the very last character of the given string.
-     * 
+     * <p />
+     * <b>Could not be replaced by {@link StringUtils#chop(String)} because the handling of <code>\r\n</code> are different<b>
      * @param aString a string to chop
      * @return the specified string minus it's last character, or null for null
      *         or empty string for a string with length == 0|1.

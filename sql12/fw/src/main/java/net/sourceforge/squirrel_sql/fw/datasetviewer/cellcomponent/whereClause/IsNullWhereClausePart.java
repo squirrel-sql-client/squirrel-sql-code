@@ -1,11 +1,10 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * The part of an where-clause, which presents an <code>column is null</code>
@@ -36,7 +35,7 @@ public class IsNullWhereClausePart extends NoParameterWhereClausePart {
 		if(columnDef == null){
 			throw new IllegalArgumentException("columnDef must not be null");
 		}
-		if(StringUtilities.isBlank(columnDef.getColumnName())){
+		if(StringUtils.isBlank(columnDef.getColumnName())){
 			throw new IllegalArgumentException("columnDef contains not an usable columnName");
 		}
 		return (columnDef.getColumnName() + " is null");

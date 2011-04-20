@@ -29,9 +29,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.lang.StringUtils;
 
 public class TranslatorsController
 {
@@ -719,7 +720,7 @@ public class TranslatorsController
 	 */
 	private boolean isTranslationPropertyFile(String filename)
 	{
-		if (StringUtilities.isEmpty(filename))
+		if (StringUtils.isEmpty(filename))
 		{
 			return false;
 		}

@@ -58,10 +58,11 @@ import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactory;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This window shows the SQuirreL Help files.
@@ -529,7 +530,7 @@ public class HelpViewerWindow extends JFrame
 				if (docURL != null)
 				{
 					String docTitle = dn.toString();
-					if (StringUtilities.isEmpty(docTitle))
+					if (StringUtils.isEmpty(docTitle))
 					{
 						docTitle = docURL.toExternalForm();
 					}

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -177,7 +179,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
          _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
          String preferredLocalString = prefs.getPreferredLocale();
-         if (StringUtilities.isEmpty(preferredLocalString))
+         if (StringUtils.isEmpty(preferredLocalString))
          {
             preferredLocalString = "en_US";
          }

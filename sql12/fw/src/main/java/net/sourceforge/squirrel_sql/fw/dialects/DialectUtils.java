@@ -28,17 +28,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 
 /**
@@ -2455,12 +2463,12 @@ public class DialectUtils implements StringTemplateConstants
 		for (final IndexInfo indexInfo : indexInfos)
 		{
 			final String indexName = indexInfo.getSimpleName();
-			if (StringUtilities.isEmpty(indexName))
+			if (StringUtils.isEmpty(indexName))
 			{
 				continue;
 			}
 			final String columnName = indexInfo.getColumnName();
-			if (StringUtilities.isEmpty(columnName))
+			if (StringUtils.isEmpty(columnName))
 			{
 				continue;
 			}

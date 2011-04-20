@@ -7,6 +7,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.*;
+
+import org.apache.commons.lang.StringUtils;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -62,12 +65,12 @@ public class ObjectTreeCellRenderer extends DefaultTreeCellRenderer
 
       String filterhint = "";
 
-      if(false == StringUtilities.isEmpty(objectFilterInclude))
+      if(false == StringUtils.isEmpty(objectFilterInclude))
       {
          filterhint += "Inc:" + objectFilterInclude;
       }
 
-      if(false == StringUtilities.isEmpty(objectFilterExclude))
+      if(false == StringUtils.isEmpty(objectFilterExclude))
       {
          if(0 == filterhint.length())
          {
