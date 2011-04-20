@@ -4,15 +4,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
 import java.util.List;
+import java.util.Vector;
 
 
 public class GraphController
@@ -127,7 +125,12 @@ public class GraphController
          graphControllerXmlBean = _xmlSerializer.read();
          _tabToWindowHandler.setTitle(graphControllerXmlBean.getTitle());
          Mode modeIndex = Mode.getForIndex(graphControllerXmlBean.getModeIndex());
-         _panelController.initMode(modeIndex, graphControllerXmlBean.getZoomerXmlBean(), graphControllerXmlBean.getPrintXmlBean(), graphControllerXmlBean.isQueryHideNoJoins());
+
+         ZoomerXmlBean zoomerXmlBean = graphControllerXmlBean.getZoomerXmlBean();
+         PrintXmlBean printXmlBean = graphControllerXmlBean.getPrintXmlBean();
+         boolean queryHideNoJoins = graphControllerXmlBean.isQueryHideNoJoins();
+         _panelController.initMode(modeIndex, zoomerXmlBean, printXmlBean, queryHideNoJoins);
+
          _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
          _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
       }
@@ -153,6 +156,7 @@ public class GraphController
             public void run()
             {
                _tableFramesModel.hideNoJoins(finalGraphControllerXmlBean.isQueryHideNoJoins());
+               _tableFramesModel.replaceColumnClonesInConstraintsByRefrences();
             }
          });
       }

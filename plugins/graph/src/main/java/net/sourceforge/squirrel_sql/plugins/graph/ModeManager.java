@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -100,6 +99,15 @@ public class ModeManager
       {
          listener.modeChanged(_mnuMode.getMode());
       }
+
+      SwingUtilities.invokeLater(
+      new Runnable()
+      {
+         public void run()
+         {
+            _tableFramesModel.recalculateAllConnections();
+         }
+      });
    }
 
    public ModeMenuItem getModeMenuItem()

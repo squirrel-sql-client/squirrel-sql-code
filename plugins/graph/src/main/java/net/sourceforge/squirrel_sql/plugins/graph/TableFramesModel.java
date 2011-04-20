@@ -2,7 +2,10 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -277,7 +280,7 @@ public class TableFramesModel
       return false;
    }
 
-   private void recalculateAllConnections()
+   public void recalculateAllConnections()
    {
       for (TableFrameController tfc : _openTableFrameCtrls)
       {
@@ -285,4 +288,33 @@ public class TableFramesModel
       }
    }
 
+   /**
+    * Needed to draw constraint lines right, when Graph was loaded from XML and colums are reordered.
+    */
+   public void replaceColumnClonesInConstraintsByRefrences()
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         openTableFrameCtrl.getConstraintViewsModel().replaceColumnClonesInConstraintsByRefrences(this);
+      }
+   }
+
+   public ColumnInfo findColumn(String tableName, String columnName)
+   {
+      for (TableFrameController openTableFrameCtrl : _openTableFrameCtrls)
+      {
+         if(openTableFrameCtrl.getTableInfo().getSimpleName().equalsIgnoreCase(tableName))
+         {
+            for (ColumnInfo columnInfo : openTableFrameCtrl.getColumnInfos())
+            {
+               if(columnInfo.getColumnName().equalsIgnoreCase(columnName))
+               {
+                  return columnInfo;
+               }
+            }
+         }
+      }
+
+      throw new IllegalArgumentException("Column " + tableName + "." + columnName + " does not exist.");
+   }
 }
