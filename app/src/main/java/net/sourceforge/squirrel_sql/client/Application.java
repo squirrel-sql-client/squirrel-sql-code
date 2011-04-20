@@ -39,6 +39,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SquirrelSplashScreen;
@@ -284,7 +286,7 @@ class Application implements IApplication
 	private Locale constructPreferredLocale(SquirrelPreferences prefs)
 	{
 		String langCountryPair = prefs.getPreferredLocale();
-		if (StringUtilities.isEmpty(langCountryPair))
+		if (StringUtils.isEmpty(langCountryPair))
 		{
 			langCountryPair = "en_US";
 		}

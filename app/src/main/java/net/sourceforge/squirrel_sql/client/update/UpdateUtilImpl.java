@@ -56,9 +56,10 @@ import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 import net.sourceforge.squirrel_sql.fw.util.IProxySettings;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Low-level utility methods for the UpdateController.  Among other things this class provides file locations
@@ -308,7 +309,7 @@ public class UpdateUtilImpl implements UpdateUtil
 	public void moveFiles(FileWrapper fromDir, String filePattern, boolean matchPattern, FileWrapper toDir)
 		throws FileNotFoundException, IOException
 	{
-		if (StringUtilities.isEmpty(filePattern)) {
+		if (StringUtils.isEmpty(filePattern)) {
 			throw new IllegalArgumentException("filePattern arg cannot be empty or null");
 		}
 		if (!fromDir.isDirectory()) { throw new IllegalArgumentException("Expected fromDir("
@@ -355,7 +356,7 @@ public class UpdateUtilImpl implements UpdateUtil
 	public void copyDir(FileWrapper fromDir, String filePattern, boolean matchPattern, FileWrapper toDir)
 		throws FileNotFoundException, IOException
 	{
-		if (StringUtilities.isEmpty(filePattern)) {
+		if (StringUtils.isEmpty(filePattern)) {
 			throw new IllegalArgumentException("filePattern arg cannot be empty or null");
 		}
 		verifyDirectory(fromDir, toDir);

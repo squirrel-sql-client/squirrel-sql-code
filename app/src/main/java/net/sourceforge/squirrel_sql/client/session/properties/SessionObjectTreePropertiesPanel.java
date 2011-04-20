@@ -40,7 +40,8 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This panel allows the user to tailor object tree settings for a session.
@@ -244,13 +245,13 @@ public class SessionObjectTreePropertiesPanel
                oldLoadSchemasCatalogs != newLoadSchemasCatalogs ||
                oldShowRowCount != newShowRowCount ||
 
-              !StringUtilities.areStringsEqual(oldCatalogFilterInclude, newCatalogFilterInclude) ||
-              !StringUtilities.areStringsEqual(oldSchemaFilterInclude, newSchemaFilterInclude) ||
-              !StringUtilities.areStringsEqual(oldObjectFilterInclude, newObjectFilterInclude) ||
+              !StringUtils.equals(oldCatalogFilterInclude, newCatalogFilterInclude) ||
+              !StringUtils.equals(oldSchemaFilterInclude, newSchemaFilterInclude) ||
+              !StringUtils.equals(oldObjectFilterInclude, newObjectFilterInclude) ||
 
-              !StringUtilities.areStringsEqual(oldCatalogFilterExclude, newCatalogFilterExclude) ||
-              !StringUtilities.areStringsEqual(oldSchemaFilterExclude, newSchemaFilterExclude) ||
-              !StringUtilities.areStringsEqual(oldObjectFilterExclude, newObjectFilterExclude)
+              !StringUtils.equals(oldCatalogFilterExclude, newCatalogFilterExclude) ||
+              !StringUtils.equals(oldSchemaFilterExclude, newSchemaFilterExclude) ||
+              !StringUtils.equals(oldObjectFilterExclude, newObjectFilterExclude)
             )
          {
             _objectTreeRefreshNeeded = true;

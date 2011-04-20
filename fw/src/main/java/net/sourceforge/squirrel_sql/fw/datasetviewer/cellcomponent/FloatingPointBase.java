@@ -3,17 +3,13 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -21,7 +17,8 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 public abstract class FloatingPointBase extends BaseDataTypeComponent
 {
@@ -105,7 +102,7 @@ public abstract class FloatingPointBase extends BaseDataTypeComponent
 			maximumFractionDigits = 5; // by default use 5
 			String maximumFractionDigitsString = DTProperties.get(DataTypeBigDecimal.class.getName(), "maximumFractionDigits");
 
-			if (StringUtilities.isEmpty(maximumFractionDigitsString) == false)
+			if (StringUtils.isEmpty(maximumFractionDigitsString) == false)
 			{
 				maximumFractionDigits =Integer.valueOf(maximumFractionDigitsString);
 			}

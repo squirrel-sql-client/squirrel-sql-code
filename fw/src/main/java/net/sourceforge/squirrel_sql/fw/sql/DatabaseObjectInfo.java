@@ -21,7 +21,8 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import org.apache.commons.lang.StringUtils;
 
 public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
 {
@@ -226,7 +227,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       }
       
       
-      if (StringUtilities.isEmpty(catSep))
+      if (StringUtils.isEmpty(catSep))
       {
           catSep = ".";
       }
@@ -252,7 +253,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
                   
       StringBuilder buf = new StringBuilder();
       if (supportsCatalogsInDataManipulation
-            && !StringUtilities.isEmpty(_catalog))	  
+            && !StringUtils.isEmpty(_catalog))	  
       {
          if (identifierQuoteString != null)
          {

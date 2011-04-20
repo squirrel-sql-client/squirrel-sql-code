@@ -30,7 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
 
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -114,9 +114,9 @@ public class DebugEventListener implements AWTEventListener
 			toolTipText.append("Button with parentClass=");
 			toolTipText.append(parentClassName);
 		} else {
-			if (!StringUtilities.isEmpty(sourceName)) {
+			if (!StringUtils.isEmpty(sourceName)) {
 				toolTipText.append(sourceName);
-			} else if (!StringUtilities.isEmpty(sourceClassName)) {
+			} else if (!StringUtils.isEmpty(sourceClassName)) {
 				toolTipText.append(sourceClassName);
 			} 
 		}

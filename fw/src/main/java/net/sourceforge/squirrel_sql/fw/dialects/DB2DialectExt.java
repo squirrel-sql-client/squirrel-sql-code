@@ -35,9 +35,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 
 /**
@@ -1228,12 +1228,12 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		final String schema = qualifier.getSchema();
 		final String catalog = qualifier.getCatalog();
 		final StringBuilder result = new StringBuilder();
-		if (!StringUtilities.isEmpty(catalog))
+		if (!StringUtils.isEmpty(catalog))
 		{
 			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
 			result.append(".");
 		}
-		if (!StringUtilities.isEmpty(schema))
+		if (!StringUtils.isEmpty(schema))
 		{
 			result.append(DialectUtils.shapeIdentifier(schema, prefs, this));
 			result.append(".");

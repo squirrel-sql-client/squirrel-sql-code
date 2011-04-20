@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -103,7 +102,7 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 	 * @param clause
 	 */
 	protected void setWhereClause(String clause){
-		if(StringUtilities.isBlank(clause)){
+		if(StringUtils.isBlank(clause)){
 			throw new IllegalArgumentException("clause must not be blank.");
 		}
 		this.whereClause = clause;

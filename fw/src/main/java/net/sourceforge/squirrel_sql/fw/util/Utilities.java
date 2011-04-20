@@ -17,13 +17,21 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * General purpose utilities functions.
@@ -197,19 +205,6 @@ public class Utilities
    }
 
    /**
-    * Return whether the 2 passed strings are equal. This function
-    * allows for <TT>null</TT> strings. If <TT>s1</TT> and <TT>s1</TT> are
-    * both <TT>null</TT> they are considered equal.
-    *
-    * @deprecated	Use <tt>StringUtilities.areStringsEqual(String, String)</tt>
-    *				instead.
-    */
-   public static boolean areStringsEqual(String s1, String s2)
-   {
-      return StringUtilities.areStringsEqual(s1, s2);
-   }
-
-   /**
     * Return the suffix of the passed file name.
     *
     * @param	fileName	File name to retrieve suffix for.
@@ -274,19 +269,6 @@ public class Utilities
       return fileName;
    }
 
-   /**
-    * Return <tt>true</tt> if the passed string is <tt>null</tt> or empty.
-    *
-    * @deprecated	Use <tt>StringUtilities.isEmpty(String)</tt> instead.
-    *
-    * @param	str		String to be tested.
-    *
-    * @return	<tt>true</tt> if the passed string is <tt>null</tt> or empty.
-    */
-   public static boolean isStringEmpty(String str)
-   {
-      return StringUtilities.isEmpty(str);
-   }
 
    public static String formatSize(long longSize)
    {

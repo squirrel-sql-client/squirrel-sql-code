@@ -19,9 +19,10 @@ import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import org.apache.commons.lang.StringUtils;
 
 public class CatalogsPanel extends JPanel 
 {
@@ -66,7 +67,7 @@ public class CatalogsPanel extends JPanel
 				if (_catalogsCmb != null)
 				{
 					final ISQLConnection conn = _session.getSQLConnection();
-					if (!StringUtilities.areStringsEqual(conn.getCatalog(), _catalogsCmb.getSelectedCatalog()))
+					if (!StringUtils.equals(conn.getCatalog(), _catalogsCmb.getSelectedCatalog()))
 					{
 						_catalogsCmb.setSelectedCatalog(conn.getCatalog());
 					}

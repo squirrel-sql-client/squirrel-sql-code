@@ -19,8 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import org.antlr.stringtemplate.StringTemplate;
-
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * There are a number of dialects which produce DDL statements which have "optional" clauses such
@@ -69,7 +68,7 @@ public class OptionalSqlClause
 				result = _st.toString();
 			}
 		} else {
-			if (!StringUtilities.isEmpty(_variablePart)) {
+			if (!StringUtils.isEmpty(_variablePart)) {
 				result = new StringBuilder(_staticPart).append(" ").append(_variablePart).toString();
 			}
 		}

@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import org.junit.Test;
-
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 
 public class StringUtilitiesTest extends BaseSQuirreLTestCase {
@@ -84,13 +82,5 @@ public class StringUtilitiesTest extends BaseSQuirreLTestCase {
         String afterChop = StringUtilities.chop(toChop);
         assertEquals(expAfterChop, afterChop);
     }
-    
-    @Test
-    public void testBlank(){
-    	assertFalse(StringUtilities.isBlank("1"));
-    	assertTrue(StringUtilities.isBlank(null));
-    	assertTrue(StringUtilities.isBlank(""));
-    	assertTrue(StringUtilities.isBlank("  "));
-    	assertFalse(StringUtilities.isBlank(" 1 "));
-    }
+  
 }
