@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -207,7 +206,7 @@ public class ConnectToAliasCommand implements ICommand
 			{
 				throw new IllegalArgumentException("ISQLAlias == null");
 			}
-			if (alias == null)
+			if (callback == null)
 			{
 				throw new IllegalArgumentException("ICompletionCallback == null");
 			}
