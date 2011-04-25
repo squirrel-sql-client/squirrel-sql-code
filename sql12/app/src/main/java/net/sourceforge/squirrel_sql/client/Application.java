@@ -75,6 +75,10 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -149,6 +153,11 @@ class Application implements IApplication
 
 	/** Application level SQL History. */
 	private SQLHistory _sqlHistory;
+	
+	/**
+	 * Configuration factory for WIKI tables.
+	 */
+	private IWikiTableConfigurationFactory wikiTableConfigFactory = WikiTableConfigurationFactory.getInstance();
 
 	/** Current type of JDBC debug logging that we are doing. */
 	private int _jdbcDebugType = SquirrelPreferences.IJdbcDebugTypes.NONE;
@@ -272,6 +281,9 @@ class Application implements IApplication
 
 		// Save options selected for DataType-specific properties
 		saveDataTypePreferences();
+		
+		// Save user specific WIKI configurations
+		saveUserSpecificWikiConfigurations();
 
 		_prefs.save();
 	}
@@ -778,6 +790,10 @@ class Application implements IApplication
 		// i18n[Application.splash.loaddatatypeprops=Loading Data Type Properties...]
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loaddatatypeprops"));
 		loadDTProperties();
+		
+		// i18n[Application.splash.loadsqlhistory=Loading user specific WIKI configurations...]
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadUserSpecificWikiConfiguration"));
+		loadUserSpecificWikiTableConfigurations();
 
 		// i18n[Application.splash.showmainwindow=Showing main window...]
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.showmainwindow"));
@@ -886,6 +902,43 @@ class Application implements IApplication
 			}
 		}
 	}
+	
+	/**
+	 * Load the configurations for WIKI tables.
+	 * @see WikiTableConfigurationStorage
+	 */
+	@SuppressWarnings("unchecked")
+	private void loadUserSpecificWikiTableConfigurations()
+	{
+		try
+		{
+			WikiTableConfigurationStorage data;
+			
+			XMLBeanReader doc = new XMLBeanReader();
+			doc.load(new ApplicationFiles().getUserSpecificWikiConfigurationsFile());
+			Iterator it = doc.iterator();
+			if (it.hasNext()){
+				data =   (WikiTableConfigurationStorage) it.next();
+				wikiTableConfigFactory.replaceUserSpecificConfigurations(data.configurationsAsList());
+			}
+		}
+		catch (FileNotFoundException ignore)
+		{
+			// History file not found for user - first time user ran pgm.
+		}
+		catch (Exception ex)
+		{
+			// i18n[Application.error.loadsqlhistory=Unable to load SQL history from persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.loadUserSpecificWikiConfiguration"), ex);
+		}
+		finally
+		{
+			if (_sqlHistory == null)
+			{
+				_sqlHistory = new SQLHistory();
+			}
+		}
+	}
 
 	/**
 	 * Save application level SQL history for current user.
@@ -915,6 +968,25 @@ class Application implements IApplication
 		{
 			// i18n[Application.error.savesqlhistory=Unable to write SQL queries to persistant storage.]
 			s_log.error(s_stringMgr.getString("Application.error.savesqlhistory"), ex);
+		}
+	}
+	
+	/**
+	 * Save user specific configurations for WIKI tables
+	 */
+	private void saveUserSpecificWikiConfigurations()
+	{
+		// Get the history into an array.
+		try
+		{
+			WikiTableConfigurationStorage data = new WikiTableConfigurationStorage(wikiTableConfigFactory.getUserSpecificConfigurations());
+			
+			XMLBeanWriter wtr = new XMLBeanWriter(data);
+			wtr.save(new ApplicationFiles().getUserSpecificWikiConfigurationsFile());
+		}
+		catch (Exception ex)
+		{
+			s_log.error(s_stringMgr.getString("Application.error.saveUserSpecificWikiConfiguration"), ex);
 		}
 	}
 
@@ -1106,6 +1178,9 @@ class Application implements IApplication
 		case EDITWHERECOL_PREFERENCES:
 			saveEditWhereColsInfo();
 			break;
+		case WIKI_CONFIGURATION:
+			saveUserSpecificWikiConfigurations();
+			break;
 		default:
 			s_log.error("Unknown preference type: " + preferenceType);
 		}
@@ -1243,5 +1318,17 @@ class Application implements IApplication
 	public void setShutdownTimer(IShutdownTimer shutdownTimer)
 	{
 		_shutdownTimer = shutdownTimer;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.IApplication#getWikiTableConfigFactory()
+	 */
+	@Override
+	public IWikiTableConfigurationFactory getWikiTableConfigFactory() {
+		return wikiTableConfigFactory;
+	}
+
+	public void setWikiTableConfigFactory(IWikiTableConfigurationFactory wikiTableConfigFactory) {
+		this.wikiTableConfigFactory = wikiTableConfigFactory;
 	}	
 }
