@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007 Rob Manning
- * manningr@users.sourceforge.net
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.preferences;
+package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
+
+import javax.swing.JTable;
 
 /**
- * A type-safe way to specify a class of preferences/properties that needs to 
- * be persisted at the user's request.
- * 
- * @author manningr
+ * A <tt>IWikiTableTransformer</tt> transforms the selected area of a {@link JTable} into a WIKI table.
+ * An IWikiTableTransformer should always be created by a {@link IWikiTableConfiguration}.
+ * @see IWikiTableConfiguration
+ * @see IWikiTableConfiguration#createTransformer()
+ * @author Stefan Willinger
+ *
  */
-public enum PreferenceType {
-    
-    ALIAS_DEFINITIONS,
-    DRIVER_DEFINITIONS,
-    DATATYPE_PREFERENCES,
-    CELLIMPORTEXPORT_PREFERENCES,
-    SQLHISTORY,
-    EDITWHERECOL_PREFERENCES,
-    WIKI_CONFIGURATION
+public interface IWikiTableTransformer {
+	
+	/**
+	 * Transform the selected area of the table into a WIKI table.
+	 * @param table Table, which should be transformed into a WIKI table
+	 * @return String, which represents a WIKI table.
+	 */
+	String transform(JTable table);
 }

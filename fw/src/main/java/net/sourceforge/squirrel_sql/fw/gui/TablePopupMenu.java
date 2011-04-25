@@ -27,6 +27,10 @@ import java.awt.print.PrinterJob;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
+import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
@@ -53,13 +57,14 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_IN_STATEMENT = 3;
 		int COPY_WHERE_STATEMENT = 4;
 		int COPY_UPDATE_STATEMENT = 5;
-      int COPY_INSERT_STATEMENT = 6;
+		int COPY_INSERT_STATEMENT = 6;
 		int EXPORT_CSV = 7;
 		int SELECT_ALL = 8;
-      int ADJUST_ALL_COL_WIDTHS_ACTION = 9;
-      int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
-      int SHOW_ROW_NUMBERS = 11;
-		int LAST_ENTRY = 12;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 9;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
+		int SHOW_ROW_NUMBERS = 11;
+		int COPY_WIKI = 12;
+		int LAST_ENTRY = 13;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -75,6 +80,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyAction _copy = new CopyAction();
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
+	
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
@@ -99,6 +105,8 @@ public class TablePopupMenu extends BasePopupMenu
 	// pointer to the viewer
 	// This is needed for insert and delete operations
 	private DataSetViewerTablePanel _viewer = null;
+	
+	private ICopyWikiTableActionFactory copyWikiTableActionFactory = CopyWikiTableActionFactory.getInstance();
 
 	/**
 	 * Constructor used when caller wants to be able to make table editable.
@@ -123,6 +131,13 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY].setAccelerator(COPY_STROKE);
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
+
+		_menuItems[IOptionTypes.COPY_WIKI] = add(copyWikiTableActionFactory.createMenueItem(new ITableActionCallback() {
+			@Override
+			public JTable getJTable() {
+				return _table;
+			}
+		}));
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
@@ -309,6 +324,8 @@ public class TablePopupMenu extends BasePopupMenu
 			}
 		}
 	}
+	
+	
 
 	private class CopyInStatementAction extends BaseAction
 	{

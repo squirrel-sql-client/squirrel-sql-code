@@ -7,6 +7,10 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Export as WIKI table:
+  Squirrel is now able, to copy the selection of a result table as WIKI text into the clipboard. (Right click on the result table => Copy as WIKI table) 
+  At the new preferences panel "Global Preferences => Wiki Tables", the user can configure individual templates for the WIKI syntax.
+
 Detached result windows now can be rerun.
 
 Feature Request 3185630: SQL Panel layout:

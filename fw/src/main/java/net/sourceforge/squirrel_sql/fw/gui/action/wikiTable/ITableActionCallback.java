@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007 Rob Manning
- * manningr@users.sourceforge.net
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.preferences;
+package net.sourceforge.squirrel_sql.fw.gui.action.wikiTable;
+
+import javax.swing.JTable;
 
 /**
- * A type-safe way to specify a class of preferences/properties that needs to 
- * be persisted at the user's request.
- * 
- * @author manningr
+ * The {@link CopyWikiTableAction} needs to know, which table should be handeld.
+ * In the fact that the {@link JTable} could be instantiated more then once, we cannot store a reference to the table.
+ * We have to provide the table through a callback method.
+ * @author Stefan Willinger
+ *
  */
-public enum PreferenceType {
-    
-    ALIAS_DEFINITIONS,
-    DRIVER_DEFINITIONS,
-    DATATYPE_PREFERENCES,
-    CELLIMPORTEXPORT_PREFERENCES,
-    SQLHISTORY,
-    EDITWHERECOL_PREFERENCES,
-    WIKI_CONFIGURATION
+public interface ITableActionCallback {
+	/**
+	 * @return A {@link JTable} or null.
+	 */
+	JTable getJTable();
 }

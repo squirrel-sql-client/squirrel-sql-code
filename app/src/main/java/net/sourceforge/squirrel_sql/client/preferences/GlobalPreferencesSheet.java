@@ -308,6 +308,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
 		_panels.add(new UpdatePreferencesTab());
+		_panels.add(new WikiTablePreferencesTab());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
