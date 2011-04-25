@@ -99,6 +99,7 @@
 		<module>sybase</module>
 		<module>syntax</module>
 		<module>userscript</module>
+		<module>wikiTableConfigurations</module>
 	</modules>
 
 </project>
