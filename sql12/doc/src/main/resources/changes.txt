@@ -7,7 +7,14 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
-Export as WIKI table:
+New plugin "WIKI table configurations":
+  This plugin provides some pre-defined configurations for various WIKI engines. With this configurations, Squirrel knows, how to transform the selection
+  of a result table into a WIKI table. At the moment, configurations for the following WIKI's are provided:
+    - Mediawiki
+    - TiddlyWiki
+  This plugin is a enhancement for the functionality "Copy as WIKI table"
+
+Copy as WIKI table:
   Squirrel is now able, to copy the selection of a result table as WIKI text into the clipboard. (Right click on the result table => Copy as WIKI table) 
   At the new preferences panel "Global Preferences => Wiki Tables", the user can configure individual templates for the WIKI syntax.
 
