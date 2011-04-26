@@ -43,6 +43,7 @@
 <pack index="34" name="Optional Translation - Polish" selected="true"/>
 <pack index="35" name="Optional Translation - Russian" selected="true"/>
 <pack index="36" name="Optional Translation - Spanish" selected="true"/>
+<pack index="37" name="Optional Plugin - WIKI table configurations" selected="true"/>
 </com.izforge.izpack.panels.PacksPanel>
 <com.izforge.izpack.panels.InstallPanel id="UNKNOWN (com.izforge.izpack.panels.InstallPanel)"/>
 <com.izforge.izpack.panels.FinishPanel id="UNKNOWN (com.izforge.izpack.panels.FinishPanel)"/>
