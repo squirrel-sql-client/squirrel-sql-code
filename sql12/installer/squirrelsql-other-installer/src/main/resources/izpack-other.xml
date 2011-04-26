@@ -108,6 +108,15 @@
 
       </pack>
 
+
+	  <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - WIKI table configurations">
+         <description>
+            This plugin provides you configurations for various WIKI tables.
+         </description>
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/wikiTableConfigurations.jar" />
+         <file targetdir="$INSTALL_PATH/plugins" src="plugins/wikiTableConfigurations" />
+      </pack>
+      
       <pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Data import">
          <description>
             This plugin allows you import files into the database.
