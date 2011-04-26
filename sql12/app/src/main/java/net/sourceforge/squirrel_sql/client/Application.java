@@ -216,7 +216,7 @@ class Application implements IApplication
 		SquirrelSplashScreen splash = null;
 		if (args.getShowSplashScreen())
 		{
-			splash = new SquirrelSplashScreen(_prefs, 16);
+			splash = new SquirrelSplashScreen(_prefs, 17);
 		}
 
       executeStartupTasks(splash, args);
