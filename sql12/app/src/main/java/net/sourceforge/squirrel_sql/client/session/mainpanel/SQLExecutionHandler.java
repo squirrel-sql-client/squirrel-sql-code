@@ -218,7 +218,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
     * message panel, otherwise the UI will get behind and slow the execution
     * of the script and prevent the user from cancelling the operation.  So
     * this method will track the total time when executing a large script,
-    * otherwise for small scripts it puts out a message for every statement.
+    * otherwise for small scripts it puts out a message for every statemselect * from employeeent.
     */
    public void sqlExecutionComplete(SQLExecutionInfo exInfo,
                                     int processedStatementCount,
@@ -409,7 +409,8 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       }
       DialectType dialectType =
             DialectFactory.getDialectType(_session.getMetaData());
-      info.setNumberResultRowsRead(rsds.setResultSet(rs, dialectType));
+      
+      info.setNumberResultRowsRead(rsds.setContentsTabResultSet(rs, null, dialectType));
 
       _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
       rsds = null;
