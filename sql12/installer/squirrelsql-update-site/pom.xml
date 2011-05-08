@@ -3,9 +3,9 @@
 
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
-		<artifactId>squirrel-root-pom</artifactId>
+		<artifactId>installer</artifactId>
 		<version>3.3.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>squirrelsql-update-site</artifactId>
@@ -55,8 +55,13 @@
 		<system>Hudson</system>
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
+	
+	
+	<properties>
+		<app-lib-output-dir>${project.build.directory}/release/core</app-lib-output-dir>
+	</properties>
+	
 	<dependencies>
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>squirrelsql-installer-deps</artifactId>
@@ -77,8 +82,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 	</dependencies>
+
 	<build>
 		<plugins>
 			<!-- Set the squirrelsql.version property if it has not already been set. -->
@@ -96,24 +101,14 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>net.sf.squirrel-sql</groupId>
+				<artifactId>squirrelsql-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>${dependency-plugin-version}</version>
 				<executions>
-					<execution>
-						<id>copy-core-artifacts</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<stripVersion>true</stripVersion>
-							<outputDirectory>${project.build.directory}/release/core</outputDirectory>
-							<excludeClassifiers>assembly</excludeClassifiers>
-							<excludeTypes>zip</excludeTypes>
-							<excludeArtifactIds>squirrelsql-installer-deps,squirrelsql-java-version-checker</excludeArtifactIds>
-						</configuration>
-					</execution>
 					<execution>
 						<id>copy-plugin-artifacts</id>
 						<phase>process-resources</phase>

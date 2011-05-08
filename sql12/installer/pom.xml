@@ -65,13 +65,17 @@
 		<module>squirrelsql-update-site</module>
 	</modules>
 
+	<properties>
+		<app-lib-output-dir>${staging.dir}/lib</app-lib-output-dir>
+	</properties>
+
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>net.sf.squirrel-sql</groupId>
 					<artifactId>squirrelsql-dependency-plugin</artifactId>
-					<version>1.0.7</version>
+					<version>1.0.8-SNAPSHOT</version>
 					<executions>
 						<execution>
 							<id>application-libraries</id>
@@ -140,7 +144,7 @@
 									<includedArtifact>org.mod4j.org.eclipse:osgi</includedArtifact>
 									<includedArtifact>xml-apis:xml-apis</includedArtifact>
 								</includedArtifacts>
-								<outputDirectory>${staging.dir}/lib</outputDirectory>
+								<outputDirectory>${app-lib-output-dir}</outputDirectory>
 							</configuration>
 						</execution>
 					</executions>
