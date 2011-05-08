@@ -65,12 +65,9 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	 * release directory that match any pattern in this list will not be included and will also be deleted.
 	 */
 	private static final String[] excludedPatterns =
-		new String[] { "maven", "plexus", "ant.jar", "ant-", "aopalliance", "axis", "classworlds",
-				"commons-beanutils", "commons-digester", "commons-lang", "commons-validator", "doxia", "ehcache",
-				"file-management", "tests", "hibernate-validator", "ilf-gpl", "javassist", "jboss", "jsch",
-				"jtidy", "junit", "kunststoff", "looks", "metouia", "napkinlaf", "nimrodlf", "oalnf", "oro.jar",
-				"persistence.jar", "skinlf", "squirrelsql-translations", "substance", "swingsetthemes",
-				"tinylaf", "toniclf", "velocity", "wagon", "xml-apis" };
+		new String[] { 
+			"maven", "plexus", "ant.jar", "ant-", "classworlds", "tests"  
+		};
 
 	/**
 	 * Location of the directory which contains the release artifacts
