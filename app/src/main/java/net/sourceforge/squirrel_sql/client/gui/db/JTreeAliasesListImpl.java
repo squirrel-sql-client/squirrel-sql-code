@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -35,8 +37,9 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(JTreeAliasesListImpl.class);
+   private TreeDnDHandler _treeDnDHandler;
 
-	private static enum PasteMode
+   private static enum PasteMode
 	{
 		COPY, CUT;
 	}
@@ -44,10 +47,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    JTree _tree = new JTree()
    {
-      /**
-		 * serialVersionUID
-		 */
-		private static final long serialVersionUID = 2730266929882888194L;
 
 		public String getToolTipText(MouseEvent event)
       {
@@ -116,11 +115,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
    {
       DefaultTreeCellRenderer treeCellRenderer = new DefaultTreeCellRenderer()
       {
-			/**
-			 * serialVersionUID
-			 */
-			private static final long serialVersionUID = -5605712993858096622L;
-
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
          {
             return modifyRenderer(super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus), value);
@@ -132,11 +126,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
       AbstractAction cancelCutAction = new AbstractAction()
       {
-			/**
-			 * serialVersionUID
-			 */
-			private static final long serialVersionUID = -663600537047876086L;
-
 			public void actionPerformed(ActionEvent actionEvent)
          {
             if (null != _pathsToPaste && PasteMode.CUT.equals(_pasteMode))
@@ -182,43 +171,29 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
 
    private void initDnD()
    {
-      try
+      TreeDnDHandlerCallback treeDnDHandlerCallback = new TreeDnDHandlerCallback()
       {
-         _tree.setDragEnabled(true);
-         DropTarget dt = new DropTarget();
-
-         dt.addDropTargetListener(new DropTargetAdapter()
+         @Override
+         public boolean nodeAcceptsKids(DefaultMutableTreeNode selNode)
          {
-            public void drop(DropTargetDropEvent dtde)
-            {
-               onDrop(dtde);
-            }
-         });
+            return onNodeAcceptsKids(selNode);
+         }
 
-         _tree.setDropTarget(dt);
-      }
-      catch (TooManyListenersException e)
-      {
-         throw new RuntimeException(e);
-      }
+         @Override
+         public void dndExecuted()
+         {
+            //To change body of implemented methods use File | Settings | File Templates.
+         }
+      };
+
+      _treeDnDHandler = new TreeDnDHandler(_tree, treeDnDHandlerCallback);
    }
 
-   private void onDrop(DropTargetDropEvent dtde)
+   private boolean onNodeAcceptsKids(DefaultMutableTreeNode selNode)
    {
-      if(false == dtde.isLocalTransfer())
-      {
-         return;
-      }
-
-      TreePath targetPath = _tree.getPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
-
-      TreePath[] toPaste = _tree.getSelectionPaths();
-
-      if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
-      {
-         execCut(toPaste, targetPath);
-      }
+      return false == selNode.isLeaf();
    }
+
 
    private void initTree()
 	{
@@ -778,7 +753,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
                execCopyToPaste(_pathsToPaste, _tree.getSelectionPath());
                break;
             case CUT:
-               execCut(_pathsToPaste, _tree.getSelectionPath());
+               _treeDnDHandler.execCut(_pathsToPaste, _tree.getSelectionPath());
                break;
          }
       }
@@ -879,67 +854,6 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       {
          throw new RuntimeException(e);
       }
-   }
-
-   private void execCut(TreePath[] pathsToPaste, TreePath targetPath)
-   {
-      DefaultTreeModel dtm = (DefaultTreeModel) _tree.getModel();
-
-      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
-
-      for (int i = 0; i < pathsToPaste.length; i++)
-      {
-         if(false == pathsToPaste[i].equals(targetPath))
-         {
-            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
-            cutNodes.add(cutNode);
-            dtm.removeNodeFromParent(cutNode);
-         }
-      }
-
-      if (null == targetPath)
-      {
-         DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
-
-         int[] childIndices = new int[cutNodes.size()];
-         for (int i = 0; i < cutNodes.size(); i++)
-         {
-            childIndices[i] = root.getChildCount();
-            root.add(cutNodes.get(i));
-         }
-         //dtm.nodeStructureChanged(root);
-         dtm.nodesWereInserted(root, childIndices);
-      }
-      else
-      {
-         DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
-
-         if (selNode.isLeaf())
-         {
-            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-            for (int i = 0; i < cutNodes.size(); i++)
-            {
-               parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
-            }
-            dtm.nodeStructureChanged(parent);
-
-         }
-         else
-         {
-            for (int i = 0; i < cutNodes.size(); i++)
-            {
-               selNode.add(cutNodes.get(i));
-            }
-            dtm.nodeStructureChanged(selNode);
-         }
-      }
-
-      TreePath[] newSelPaths = new TreePath[cutNodes.size()];
-      for (int i = 0; i < newSelPaths.length; i++)
-      {
-         newSelPaths[i] = new TreePath(cutNodes.get(i).getPath());
-      }
-      _tree.setSelectionPaths(newSelPaths);
    }
 
    public void copyToPasteSelected()

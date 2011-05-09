@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 public final class GraphPluginResources extends PluginResources
 {
-   GraphPluginResources(IPlugin plugin)
+   public GraphPluginResources(IPlugin plugin)
    {
       super(GraphPluginResources.class.getName(), plugin);
    }
@@ -36,5 +36,8 @@ public final class GraphPluginResources extends PluginResources
 
       String HIDE_DOCK = "Hidedock";
       String HIDE_DOCK_SEL = "HidedockSel";
+      String NEW_AND_FOLDER = "newandfolder";
+      String NEW_OR_FOLDER = "neworfolder";
+      String DELETE_FOLDER = "deletefolder";
    }
 }

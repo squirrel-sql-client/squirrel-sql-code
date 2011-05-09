@@ -1,7 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 public enum QueryFilterOperators
 {
@@ -36,6 +33,11 @@ public enum QueryFilterOperators
    public String toString()
    {
       return _toString;
+   }
+
+   public boolean isNoArgOperator()
+   {
+      return isNoArgOperator(this);
    }
 
    public static boolean isNoArgOperator(QueryFilterOperators operator)

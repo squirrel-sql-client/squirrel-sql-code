@@ -42,8 +42,6 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    private Hashtable<IIdentifier, GraphController[]> _grapControllersBySessionID = new Hashtable<IIdentifier, GraphController[]>();
 
-   private HashMap<IIdentifier,QueryBuilder> _queryBuilderBySessionID = new HashMap<IIdentifier, QueryBuilder>();
-
    /**
     * Logger for this class.
     */
@@ -197,8 +195,6 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public void sessionEnding(ISession session)
    {
-      _queryBuilderBySessionID.remove(session.getIdentifier());
-
       GraphController[] controllers = _grapControllersBySessionID.remove(session.getIdentifier());
 
       for (int i = 0; i < controllers.length; i++)

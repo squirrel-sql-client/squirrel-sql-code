@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.graph.sqlgen;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen;
 
 import net.sourceforge.squirrel_sql.plugins.graph.AggregateFunctions;
 import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;

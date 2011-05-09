@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 
 
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
+
 public class GraphControllerXmlBean
 {
    private String title;
@@ -12,6 +14,7 @@ public class GraphControllerXmlBean
    private int _modeIndex;
    private boolean _queryHideNoJoins;
    private boolean _32Converted;
+   private WhereTreeNodeStructure _whereTreeNodeStructure;
 
 
    public String getTitle()
@@ -102,5 +105,15 @@ public class GraphControllerXmlBean
    public boolean is32Converted()
    {
       return _32Converted;
+   }
+
+   public WhereTreeNodeStructure getWhereTreeNodeStructure()
+   {
+      return _whereTreeNodeStructure;
+   }
+
+   public void setWhereTreeNodeStructure(WhereTreeNodeStructure whereTreeNodeStructure)
+   {
+      _whereTreeNodeStructure = whereTreeNodeStructure;
    }
 }

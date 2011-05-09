@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.graph.sqlgen;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen;
 
 import net.sourceforge.squirrel_sql.plugins.graph.*;
 
@@ -123,9 +123,22 @@ public class FromClauseGenerator
                fromClauseRes.append(" AND ");
             }
 
-            fromClauseRes.append(tableNameFrom + "." + fkCol.getColumnName());
+            String fromCol;
+            String toCol;
+            if(tableNameFrom.equalsIgnoreCase(data.getPkTableName()))
+            {
+               fromCol = pkCol.getColumnName();
+               toCol = fkCol.getColumnName();
+            }
+            else
+            {
+               toCol = pkCol.getColumnName();
+               fromCol = fkCol.getColumnName();
+            }
+
+            fromClauseRes.append(tableNameFrom + "." + fromCol);
             fromClauseRes.append(" = ");
-            fromClauseRes.append(tableNameTo_aliased + "." + pkCol.getColumnName());
+            fromClauseRes.append(tableNameTo_aliased + "." + toCol);
 
          }
       }

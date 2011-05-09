@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterOperators;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.QueryDataXmlBean;
 
 public class QueryData

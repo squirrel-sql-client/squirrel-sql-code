@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
@@ -97,9 +98,9 @@ public class GraphPanelController
       return _graphPanel;
    }
 
-   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins)
+   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins, WhereTreeNodeStructure whereTreeNodeStructure)
    {
-      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, queryHideNoJoins, _graphDesktopController.createEdgesListener(), _graphDesktopController.getDesktopPane());
+      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, queryHideNoJoins, whereTreeNodeStructure, _graphDesktopController.createEdgesListener(), _graphDesktopController.getDesktopPane());
 
       onModeChanged();
       _modeManager.addModeManagerListener(new ModeManagerListener()

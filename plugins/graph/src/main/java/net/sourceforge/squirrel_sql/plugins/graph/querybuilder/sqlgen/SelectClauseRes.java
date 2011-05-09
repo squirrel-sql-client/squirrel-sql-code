@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.graph.sqlgen;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen;
 
 public class SelectClauseRes
 {

@@ -1,4 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
+
+import net.sourceforge.squirrel_sql.plugins.graph.GraphControllerFacade;
 
 import javax.swing.*;
 
