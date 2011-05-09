@@ -1,12 +1,9 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
-import com.sun.java.swing.plaf.motif.MotifBorders;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

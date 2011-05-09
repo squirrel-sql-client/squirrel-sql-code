@@ -1,10 +1,13 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
+import net.sourceforge.squirrel_sql.plugins.graph.TableFramesModelChangeType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.Types;
 import java.util.prefs.Preferences;
 
 public class QueryFilterController

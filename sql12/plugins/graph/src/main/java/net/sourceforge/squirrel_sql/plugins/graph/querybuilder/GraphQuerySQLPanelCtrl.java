@@ -1,7 +1,8 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.client.session.EntryPanelManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.graph.HideDockButtonHandler;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

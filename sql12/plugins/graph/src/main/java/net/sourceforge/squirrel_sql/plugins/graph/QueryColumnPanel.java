@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.nondbconst.DndCallback;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterController;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.QueryFilterListener;
 
 import javax.swing.*;
 import java.awt.*;

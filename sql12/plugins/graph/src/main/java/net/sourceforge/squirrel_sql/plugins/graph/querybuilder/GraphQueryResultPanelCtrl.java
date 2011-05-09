@@ -1,7 +1,8 @@
-package net.sourceforge.squirrel_sql.plugins.graph;
+package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
+import net.sourceforge.squirrel_sql.plugins.graph.HideDockButtonHandler;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,7 +92,7 @@ public class GraphQueryResultPanelCtrl
       _lastSQL = sql;
    }
 
-   public GraphQueryResultPanel getGraphQuerySQLPanel()
+   public GraphQueryResultPanel getGraphQueryResultPanel()
    {
       return _graphQueryResultPanel;
    }

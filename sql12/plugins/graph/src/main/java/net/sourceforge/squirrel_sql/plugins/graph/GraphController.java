@@ -129,7 +129,7 @@ public class GraphController
          ZoomerXmlBean zoomerXmlBean = graphControllerXmlBean.getZoomerXmlBean();
          PrintXmlBean printXmlBean = graphControllerXmlBean.getPrintXmlBean();
          boolean queryHideNoJoins = graphControllerXmlBean.isQueryHideNoJoins();
-         _panelController.initMode(modeIndex, zoomerXmlBean, printXmlBean, queryHideNoJoins);
+         _panelController.initMode(modeIndex, zoomerXmlBean, printXmlBean, queryHideNoJoins, graphControllerXmlBean.getWhereTreeNodeStructure());
 
          _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
          _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
@@ -137,7 +137,7 @@ public class GraphController
       else
       {
          _tabToWindowHandler.setTitle(_plugin.patchName(_tabToWindowHandler.getTitle(), _session));
-         _panelController.initMode(Mode.DEFAULT, null, null, false);
+         _panelController.initMode(Mode.DEFAULT, null, null, false, null);
       }
 
       _tabToWindowHandler.showGraph();
@@ -225,6 +225,7 @@ public class GraphController
       xmlBean.setPrintXmlBean(_panelController.getDesktopController().getZoomPrintController().getPrintXmlBean());
       xmlBean.setModeIndex(_panelController.getModeManager().getMode().getIndex());
       xmlBean.setQueryHideNoJoins(_panelController.getModeManager().isQueryHideNoJoins());
+      xmlBean.setWhereTreeNodeStructure(_panelController.getModeManager().getWhereTreeNodeStructure());
 
       Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
 
