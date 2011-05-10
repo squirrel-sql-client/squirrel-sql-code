@@ -594,7 +594,11 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 			result.append("UNIQUE ");
 		}
 		result.append(" INDEX ");
-		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
+		// Progress version 10.1C yields the following error for a qualified index name:
+		//   [DataDirect][OpenEdge JDBC Driver][OpenEdge] Syntax error in SQL statement at or 
+		//   about ".testIndex ON MANNINGR.CREATEINDEXTEST(IDXTESTCOLUMNNAME)
+		//result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
+		result.append(indexName);
 		result.append(" ON ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
 		result.append("(");
