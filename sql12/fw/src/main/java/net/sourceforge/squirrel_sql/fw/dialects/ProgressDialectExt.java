@@ -553,8 +553,12 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 		final StringTemplate st = new StringTemplate(templateStr);
 
+		final String constraintNameValue = 
+			prefs.isQuoteConstraintNames() ? 
+				DialectUtils.shapeIdentifier(constraintName, prefs, this) : constraintName; 
+		
 		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintNameValue);
 
 		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs,
 			this) };
