@@ -78,8 +78,8 @@
 		<source-plugin-version>2.1.2</source-plugin-version>
 		<squirrelsql-version-plugin-version>1.0.8</squirrelsql-version-plugin-version>
 		<squirrelsql-update-site-plugin-version>1.0.8</squirrelsql-update-site-plugin-version>
-		<surefire-plugin-version>2.6</surefire-plugin-version>
-		<surefire-report-plugin-version>2.0-beta-1</surefire-report-plugin-version>
+		<surefire-plugin-version>2.8.1</surefire-plugin-version>
+		<surefire-report-plugin-version>2.8.1</surefire-report-plugin-version>
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
 
 		<!-- Thirdparty Library Versions -->
