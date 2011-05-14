@@ -9,7 +9,7 @@
 
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>maven-plugin-workspace</artifactId>
-	<version>1.0.8-SNAPSHOT</version>
+	<version>1.0.8</version>
 	<packaging>pom</packaging>
 	<name>Maven Plugin Workspace</name>
 	<description>
@@ -41,9 +41,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/maven-plugin-workspace</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/maven-plugin-workspace</url>
+		<connection>scm:svn:http://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.8</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/maven-plugin-workspace-1.0.8</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/maven-plugin-workspace-1.0.8</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
