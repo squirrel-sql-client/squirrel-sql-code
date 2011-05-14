@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>3</version>
+		<version>7</version>
 	</parent>
 
 	<name>SQuirreL Root POM</name>
@@ -58,6 +58,7 @@
 	</ciManagement>
 	<properties>
 		<!-- Maven plugin versions -->
+		<aspectj-plugin-version>1.3.1</aspectj-plugin-version>
 		<assembly-plugin-version>2.2</assembly-plugin-version>
 		<checkstyle-plugin-version>2.2</checkstyle-plugin-version>
 		<compiler-plugin-version>2.3.2</compiler-plugin-version>
@@ -75,8 +76,8 @@
 		<release-plugin-version>2.1</release-plugin-version>
 		<scm-plugin-version>1.4</scm-plugin-version>
 		<source-plugin-version>2.1.2</source-plugin-version>
-		<squirrelsql-version-plugin-version>1.0.5</squirrelsql-version-plugin-version>
-		<squirrelsql-update-site-plugin-version>1.0.8-SNAPSHOT</squirrelsql-update-site-plugin-version>
+		<squirrelsql-version-plugin-version>1.0.8</squirrelsql-version-plugin-version>
+		<squirrelsql-update-site-plugin-version>1.0.8</squirrelsql-update-site-plugin-version>
 		<surefire-plugin-version>2.6</surefire-plugin-version>
 		<surefire-report-plugin-version>2.0-beta-1</surefire-report-plugin-version>
 		<wagon-plugin-version>1.0-beta-3</wagon-plugin-version>
@@ -173,6 +174,21 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${compiler-plugin-version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>aspectj-maven-plugin</artifactId>
+					<version>${aspectj-plugin-version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>compile</goal>
+							</goals>
+							<configuration>
+								<complianceLevel>${javac-source-version}</complianceLevel>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>							
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
