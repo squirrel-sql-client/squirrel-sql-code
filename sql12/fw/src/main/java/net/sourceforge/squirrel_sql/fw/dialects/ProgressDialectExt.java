@@ -1113,7 +1113,17 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsSubSecondTimestamps()
 	{
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTimestampMaximumFractionalDigits()
+	 */
+	@Override
+	public int getTimestampMaximumFractionalDigits()
+	{
+		return 9;
+	}
+
+	
 }
