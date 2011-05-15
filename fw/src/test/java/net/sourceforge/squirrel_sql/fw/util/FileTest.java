@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.UUID;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 
@@ -1458,14 +1459,18 @@ public class FileTest extends BaseSQuirreLTestCase {
         // Finding a non-existent directory to create.
         int dirNumber = 1;
         boolean dirExists = true;
-        FileWrapper baseDir = new FileWrapperImpl(base, platformId + String.valueOf(dirNumber));
+        String randomUuidString = UUID.randomUUID().toString();
+        FileWrapper baseDir = 
+      	  new FileWrapperImpl(base, platformId + "-" + randomUuidString + "-" + String.valueOf(dirNumber));
         // Making sure that the directory does not exist.
         while (dirExists) {
             // If the directory exists, add one to the directory number (making
             // it a new directory name.)
             if (baseDir.exists()) {
                 dirNumber++;
-                baseDir = new FileWrapperImpl(base, String.valueOf(dirNumber));
+                baseDir = 
+               	 new FileWrapperImpl(base, 
+               		 	platformId + "-" + randomUuidString + "-" + String.valueOf(dirNumber));
             } else {
                 dirExists = false;
             }
@@ -1478,6 +1483,20 @@ public class FileTest extends BaseSQuirreLTestCase {
             }
         };
 
+        FileWrapper[] fileList = baseDir.listFiles(dirFilter);
+        if (fileList != null) {
+      	  StringBuilder failureMessage = new StringBuilder();
+      	  failureMessage.append("listFiles should have returned null for a non-existent directory ("+
+      		  baseDir.getAbsolutePath()+") but " +
+      	  		"instead returned the following list:\n");
+      	  for (FileWrapper filewrapper : fileList) {
+      		  failureMessage.append("\t");
+      		  failureMessage.append(filewrapper.toString());
+      		  failureMessage.append("\n");
+      	  }
+      	  fail(failureMessage.toString());
+        }
+        
         assertNull("listFiles Should Return Null.", baseDir
                 .listFiles(dirFilter));
 
