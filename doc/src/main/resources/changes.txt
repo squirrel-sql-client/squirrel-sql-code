@@ -52,6 +52,8 @@ Display errors in result tab:
 
 Bug-fixes:
 
+3137852: DB2 Plugin - The source code is not visible, if a char column contains a default value.
+
 3293737: A exception occurs if the value of a SMALLINT column is edited in a result table.
 
 When editing table cells in a text area, the input field for the file name will be shown in an appropriate size 
