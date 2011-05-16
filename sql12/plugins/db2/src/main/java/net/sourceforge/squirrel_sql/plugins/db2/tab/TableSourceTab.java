@@ -182,7 +182,10 @@ public class TableSourceTab extends FormattedSourceTab
 			List<String> sqls = dialect.getCreateTableSQL(tableList, md, prefs, false);
 			for (String sql : sqls)
 			{
-				tmp.append(sql);
+				/*
+				 * If the generated statement contains a ', then escape it.
+				 */
+				tmp.append(sql.replace("'", "''"));
 				tmp.append(statementSeparator);
 				tmp.append("\n");
 				tmp.append("\n");
