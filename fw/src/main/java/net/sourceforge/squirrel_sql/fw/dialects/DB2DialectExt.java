@@ -1259,4 +1259,14 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		return 6;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getBinaryLiteralString(byte[])
+	 */
+	@Override
+	public String getBinaryLiteralString(byte[] binaryData)
+	{
+		return "BLOB(x'" + DialectUtils.toHexString(binaryData) + "')";
+	}
+
+
 }

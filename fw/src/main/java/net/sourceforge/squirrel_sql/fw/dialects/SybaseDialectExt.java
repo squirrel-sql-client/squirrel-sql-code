@@ -1104,5 +1104,14 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		return true;
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getBinaryLiteralString(byte[])
+	 */
+	@Override
+	public String getBinaryLiteralString(byte[] binaryData)
+	{
+		return "0x" + DialectUtils.toHexString(binaryData);
+	}
 	
 }

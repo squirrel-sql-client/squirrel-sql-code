@@ -1178,4 +1178,13 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		return super.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getBinaryLiteralString(byte[])
+	 */
+	@Override
+	public String getBinaryLiteralString(byte[] binaryData)
+	{
+		return "x" + DialectUtils.toHexString(binaryData);
+	}
+
 }
