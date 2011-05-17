@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  */
 
 import java.awt.event.WindowAdapter;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -203,6 +204,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       throws SQLException
    {
       ResultSetMetaData metaData = srcResult.getMetaData();
+      final HibernateDialect dialect = DialectFactory.getDialect(_session.getMetaData());
 
       int iColumnCount = metaData.getColumnCount();
       ColumnInfo[] colInfo = new ColumnInfo[iColumnCount];
@@ -347,17 +349,34 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                   sbValues.append(getNullableComment(metaData, i+1));
                }
             }
+            else if (Types.BLOB == colInfo[i].sqlType
+            			|| Types.BINARY == colInfo[i].sqlType) {
+            	if(fromResultSet) {            
+                	if(srcResult.wasNull()) {
+                		sbValues.append("null");
+                	} else {
+                		byte[] binaryData = null;
+                		if (Types.BLOB == colInfo[i].sqlType) {
+                   		Blob blobResult = srcResult.getBlob(i+1);
+                   		binaryData = blobResult.getBytes(1, (int)blobResult.length());                			
+                		} else {
+                			binaryData = srcResult.getBytes(i+1);
+                		}
+                		sbValues.append(dialect.getBinaryLiteralString(binaryData));                			
+                	}
+            	} else {
+            		sbValues.append("'CAFEBABE'").append(getNullableComment(metaData, i+1));
+            	}
+            } 
             else // Types.CHAR,
                  // Types.VARCHAR,
                  // Types.LONGVARCHAR,
-                 // Types.BINARY,
                  // Types.VARBINARY
                  // Types.LONGVARBINARY
                  // Types.NULL
                  // Types.JAVA_OBJECT
                  // Types.DISTINCT
                  // Types.ARRAY
-                 // Types.BLOB
                  // Types.CLOB
                  // Types.REF
                  // Types.DATALINK
