@@ -725,9 +725,11 @@ public class DialectUtils implements StringTemplateConstants
 		final ArrayList<String> result = new ArrayList<String>();
 
 		// ALTER TABLE localTableName
-		// ADD CONSTRAINT constraintName FOREIGN KEY (localColumn1, localColumn2)
+		// ADD CONSTRAINT constraintName FOREIGN KEY (localColumn1,
+		// localColumn2)
 		// REFERENCES referencedTableName (referencedColumn1, referencedColumn2)
-		// MATCH FULL ON UPDATE RESTRICT ON DELETE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+		// MATCH FULL ON UPDATE RESTRICT ON DELETE NO ACTION DEFERRABLE
+		// INITIALLY DEFERRED;
 		final StringBuilder sql = new StringBuilder();
 
 		sql.append(DialectUtils.ALTER_TABLE_CLAUSE + " ");
@@ -1060,12 +1062,9 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type. For example:
-	 * <code>
+	 * Returns the SQL that is used to change the column type. For example: <code>
 	 * ALTER TABLE table_name alter_clause column_name [setClause] data_type 
-	 * </code>
-	 * or
-	 * <code>
+	 * </code> or <code>
 	 * ALTER TABLE table_name alter_clause column_name column_name [setClause] data_type
 	 * </code>
 	 * 
@@ -1117,8 +1116,7 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. For example:
-	 * <code>
+	 * Returns the SQL that is used to change the column name. For example: <code>
 	 * RENAME COLUMN table_name.column_name TO new_column_name
 	 * </code>
 	 * 
@@ -1174,38 +1172,46 @@ public class DialectUtils implements StringTemplateConstants
 		switch (featureId)
 		{
 		case COLUMN_COMMENT_ALTER_TYPE:
-			// i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support column comments]
+			// i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support
+			// column comments]
 			msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_DEFAULT_ALTER_TYPE:
-			// i18n[DialectUtils.columnDefaultUnsupported={0} doesn''t support altering a column''s default 
+			// i18n[DialectUtils.columnDefaultUnsupported={0} doesn''t support
+			// altering a column''s default
 			// value]
 			msg = s_stringMgr.getString("DialectUtils.columnDefaultUnsupported", dialect.getDisplayName());
 			break;
 
 		case COLUMN_DROP_TYPE:
-			// i18n[DialectUtils.columnDropUnsupported={0} doesn''t support dropping a column]
+			// i18n[DialectUtils.columnDropUnsupported={0} doesn''t support
+			// dropping a column]
 			msg = s_stringMgr.getString("DialectUtils.columnDropUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_NAME_ALTER_TYPE:
-			// i18n[DialectUtils.columnNameUnsupported={0} doesn''t support altering a column''s name]
+			// i18n[DialectUtils.columnNameUnsupported={0} doesn''t support
+			// altering a column''s name]
 			msg = s_stringMgr.getString("DialectUtils.columnNameUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_NULL_ALTER_TYPE:
-			// i18n[DialectUtils.columnNullUnsupported={0} doesn''t support altering a column's nullable 
+			// i18n[DialectUtils.columnNullUnsupported={0} doesn''t support
+			// altering a column's nullable
 			// attribute]
 			msg = s_stringMgr.getString("DialectUtils.columnNullUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_TYPE_ALTER_TYPE:
-			// i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support altering a column's type attribute]
+			// i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support
+			// altering a column's type attribute]
 			msg = s_stringMgr.getString("DialectUtils.columnTypeUnsupported", dialect.getDisplayName());
 			break;
 		case ADD_PRIMARY_KEY_TYPE:
-			// i18n[DialectUtils.addPrimaryKeyUnsupported={0} doesn''t support adding primary keys]
+			// i18n[DialectUtils.addPrimaryKeyUnsupported={0} doesn''t support
+			// adding primary keys]
 			msg = s_stringMgr.getString("DialectUtils.addPrimaryKeyUnsupported", dialect.getDisplayName());
 			break;
 		case DROP_PRIMARY_KEY_TYPE:
-			// i18n[DialectUtils.dropPrimaryKeyUnsupported={0} doesn''t support dropping primary keys]
+			// i18n[DialectUtils.dropPrimaryKeyUnsupported={0} doesn''t support
+			// dropping primary keys]
 			msg = s_stringMgr.getString("DialectUtils.dropPrimaryKeyUnsupported", dialect.getDisplayName());
 			break;
 		case CREATE_TABLE_TYPE:
@@ -1254,12 +1260,9 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key. For example:
-	 * <code>
+	 * Returns the SQL command to drop the specified table's primary key. For example: <code>
 	 * alter table table_name drop primary key 
-	 * </code>
-	 * or 
-	 * <code>
+	 * </code> or <code>
 	 * alter table table_name drop constraint [pkName]
 	 * </code>
 	 * 
@@ -1527,7 +1530,8 @@ public class DialectUtils implements StringTemplateConstants
 		String accessMethod, String[] columns, boolean unique, String tablespace, String constraints,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// CREATE UNIQUE INDEX indexName ON tableName USING btree (column1, column2) TABLESPACE
+		// CREATE UNIQUE INDEX indexName ON tableName USING btree (column1,
+		// column2) TABLESPACE
 		// WHERE constraints;
 		final StringBuilder sql = new StringBuilder();
 
@@ -1765,9 +1769,9 @@ public class DialectUtils implements StringTemplateConstants
 
 		if (primaryKeys != null && primaryKeys.size() > 1)
 		{
-			sql.append(" " + DialectUtils.CONSTRAINT_CLAUSE + " ").append(
-				shapeIdentifier(simpleName + "_pkey", prefs, dialect)).append(
-				" " + DialectUtils.PRIMARY_KEY_CLAUSE + "(");
+			sql.append(" " + DialectUtils.CONSTRAINT_CLAUSE + " ")
+				.append(shapeIdentifier(simpleName + "_pkey", prefs, dialect))
+				.append(" " + DialectUtils.PRIMARY_KEY_CLAUSE + "(");
 			for (final TableColumnInfo pkPart : primaryKeys)
 			{
 				sql.append(shapeIdentifier(pkPart.getColumnName(), prefs, dialect)).append(",");
@@ -1790,7 +1794,7 @@ public class DialectUtils implements StringTemplateConstants
 	{
 		return getCreateTableSQL(tables, md, dialect, prefs, isJdbcOdbc, false);
 	}
-	
+
 	public static List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		HibernateDialect dialect, CreateScriptPreferences prefs, boolean isJdbcOdbc, boolean sortColumns)
 		throws SQLException
@@ -1808,7 +1812,8 @@ public class DialectUtils implements StringTemplateConstants
 			final List<PrimaryKeyInfo> pkInfos = getPrimaryKeyInfo(md, ti, isJdbcOdbc);
 			final List<String> pks = getPKSequenceList(pkInfos);
 			final TableColumnInfo[] infos = md.getColumnInfo(ti);
-			if (sortColumns) {
+			if (sortColumns)
+			{
 				Arrays.sort(infos);
 			}
 			for (final TableColumnInfo tcInfo : infos)
@@ -1828,7 +1833,8 @@ public class DialectUtils implements StringTemplateConstants
 				}
 				else
 				{
-					// in Sybase, DEFAULT keyword must appear prior to NULL/NOT NULL
+					// in Sybase, DEFAULT keyword must appear prior to NULL/NOT
+					// NULL
 					if (defaultVal != null && !"".equals(defaultVal))
 					{
 						result.append(" DEFAULT ");
@@ -1955,8 +1961,9 @@ public class DialectUtils implements StringTemplateConstants
 		// AS definition;
 		final StringBuilder sql = new StringBuilder();
 
-		sql.append(DialectUtils.CREATE_VIEW_CLAUSE + " ").append(
-			shapeQualifiableIdentifier(viewName, qualifier, prefs, dialect)).append("\n");
+		sql.append(DialectUtils.CREATE_VIEW_CLAUSE + " ")
+			.append(shapeQualifiableIdentifier(viewName, qualifier, prefs, dialect))
+			.append("\n");
 		sql.append(" AS ").append(definition);
 		if (dialect.supportsCheckOptionsForViews() && checkOption != null && !checkOption.equals(""))
 		{
@@ -2243,7 +2250,8 @@ public class DialectUtils implements StringTemplateConstants
 	{
 		final ArrayList<String> result = new ArrayList<String>();
 
-		// Since dialect doesn't support altering sequences, drop then re-create.
+		// Since dialect doesn't support altering sequences, drop then
+		// re-create.
 		result.add(dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs));
 		result.add(dialect.getCreateSequenceSQL(sequenceName, increment, minimum, maximum, minimum, cache,
 			cycle, qualifier, prefs));
@@ -2252,9 +2260,11 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * Gets the SQL command to insert data into a table. <p/> If the list of columns is empty or null the SQL
-	 * will look like: INSERT INTO tablename query; <p/> instead of: INSERT INTO tablename ( column1, column2,
-	 * ... ) query;
+	 * Gets the SQL command to insert data into a table.
+	 * <p/>
+	 * If the list of columns is empty or null the SQL will look like: INSERT INTO tablename query;
+	 * <p/>
+	 * instead of: INSERT INTO tablename ( column1, column2, ... ) query;
 	 * 
 	 * @param tableName
 	 *           simple name of the table
@@ -2341,10 +2351,14 @@ public class DialectUtils implements StringTemplateConstants
 		if (fromTables == null && setValues == null) { throw new IllegalArgumentException(
 			"One of fromTables or setValues args must be non-null"); }
 
-		// Since we can use a correlated sub-query to update all rows in one statement, we don't care about the
-		// set values, unless fromTables is null, in which case we go with a normal update. Using the set
-		// values would require an update statement for each row in the merged table for each column that was
-		// merged in, which is incredibly inefficient. However, the API is intended to support database
+		// Since we can use a correlated sub-query to update all rows in one
+		// statement, we don't care about the
+		// set values, unless fromTables is null, in which case we go with a
+		// normal update. Using the set
+		// values would require an update statement for each row in the merged
+		// table for each column that was
+		// merged in, which is incredibly inefficient. However, the API is
+		// intended to support database
 		// dialects that can't handle correlated sub-queries.
 
 		final ArrayList<String> result = new ArrayList<String>();
@@ -2368,7 +2382,7 @@ public class DialectUtils implements StringTemplateConstants
 		// // update <destTableName> dest
 		// // set <setColumnName> = <setValue>
 		// // where f.<whereColumn> = s.<whereValue>)
-		//			
+		//
 		// templateStr =
 		// "UPDATE $destTableName$ " +
 		// "SET $columnName$ = $columnValue$ " +
@@ -2425,10 +2439,10 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param primaryKeys
 	 *           can be null
 	 * @param prefs
-    * @return
+	 * @return
 	 */
 	public static List<String> createIndexes(ITableInfo ti, ISQLDatabaseMetaData md,
-                                            List<PrimaryKeyInfo> primaryKeys, CreateScriptPreferences prefs)
+		List<PrimaryKeyInfo> primaryKeys, CreateScriptPreferences prefs)
 	{
 		if (ti == null) { throw new IllegalArgumentException("ti cannot be null"); }
 		if (md == null) { throw new IllegalArgumentException("md cannot be null"); }
@@ -2452,7 +2466,8 @@ public class DialectUtils implements StringTemplateConstants
 		}
 		catch (final SQLException e)
 		{
-			// i18n[DialectUtils.error.getprimarykey=Unable to get primary key info for table {0}]
+			// i18n[DialectUtils.error.getprimarykey=Unable to get primary key
+			// info for table {0}]
 			final String msg = s_stringMgr.getString("DialectUtils.error.getprimarykey", ti.getSimpleName());
 			log.error(msg, e);
 			return result;
@@ -2478,8 +2493,8 @@ public class DialectUtils implements StringTemplateConstants
 				final List<IndexColInfo> ixCols = new ArrayList<IndexColInfo>();
 
 				ixCols.add(new IndexColInfo(columnName, indexInfo.getOrdinalPosition()));
-				buf.put(indexName, new TableIndexInfo(indexInfo.getTableName(), indexInfo.getSchemaName(), indexName, ixCols,
-					!indexInfo.isNonUnique()));
+				buf.put(indexName, new TableIndexInfo(indexInfo.getTableName(), indexInfo.getSchemaName(),
+					indexName, ixCols, !indexInfo.isNonUnique()));
 			}
 			else
 			{
@@ -2494,9 +2509,12 @@ public class DialectUtils implements StringTemplateConstants
 
 			if (pkCols.equals(ix.cols))
 			{
-				// Serveral DBs automatically create an index for primary key fields
-				// and return this index in getIndexInfo(). We remove this index from the script
-				// because it would break the script with an index already exists error.
+				// Serveral DBs automatically create an index for primary key
+				// fields
+				// and return this index in getIndexInfo(). We remove this index
+				// from the script
+				// because it would break the script with an index already
+				// exists error.
 				continue;
 			}
 
@@ -2509,9 +2527,9 @@ public class DialectUtils implements StringTemplateConstants
 			indexSQL.append(ix.ixName);
 			indexSQL.append(" ON ");
 
-         indexSQL.append(formatQualifIntern(ix.table, ix.tableSchema, prefs));
+			indexSQL.append(formatQualifIntern(ix.table, ix.tableSchema, prefs));
 
-         if (ix.cols.size() == 1)
+			if (ix.cols.size() == 1)
 			{
 				indexSQL.append("(").append(ix.cols.get(0));
 
@@ -2571,10 +2589,10 @@ public class DialectUtils implements StringTemplateConstants
 				}
 			}
 
-         sbToAppend.append("ALTER TABLE " + formatQualifIntern(ci.fkTable, ci.fkTableSchema, prefs) + "\n");
-         sbToAppend.append("ADD CONSTRAINT " + ci.fkName + "\n");
+			sbToAppend.append("ALTER TABLE " + formatQualifIntern(ci.fkTable, ci.fkTableSchema, prefs) + "\n");
+			sbToAppend.append("ADD CONSTRAINT " + ci.fkName + "\n");
 
-         if (ci.fkCols.size() == 1)
+			if (ci.fkCols.size() == 1)
 			{
 				sbToAppend.append("FOREIGN KEY (").append(ci.fkCols.get(0));
 
@@ -2584,8 +2602,8 @@ public class DialectUtils implements StringTemplateConstants
 				}
 				sbToAppend.append(")\n");
 
-            sbToAppend.append("REFERENCES " + formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs) + "(");
-            sbToAppend.append(ci.pkCols.get(0));
+				sbToAppend.append("REFERENCES " + formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs) + "(");
+				sbToAppend.append(ci.pkCols.get(0));
 				for (int j = 1; j < ci.pkCols.size(); j++)
 				{
 					sbToAppend.append(",").append(ci.pkCols.get(j));
@@ -2609,8 +2627,8 @@ public class DialectUtils implements StringTemplateConstants
 				sbToAppend.append(")\n");
 
 				sbToAppend.append("REFERENCES ");
-            sbToAppend.append(formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs));
-            sbToAppend.append("\n");
+				sbToAppend.append(formatQualifIntern(ci.pkTable, ci.pkTableSchema, prefs));
+				sbToAppend.append("\n");
 				sbToAppend.append("(\n");
 				for (int j = 0; j < ci.pkCols.size(); j++)
 				{
@@ -2626,27 +2644,26 @@ public class DialectUtils implements StringTemplateConstants
 
 			sbToAppend.append(")");
 
-			
 			boolean overrideUpdate = prefs.isDeleteRefAction();
 			String conditionClause = " ON DELETE ";
 			String overrideAction = prefs.getRefActionByType(prefs.getDeleteAction());
 			int rule = ci.deleteRule;
-			
-			String onDeleteClause =
+
+			final String onDeleteClause =
 				constructFKContraintActionClause(overrideUpdate, conditionClause, overrideAction, rule);
-						
+
 			sbToAppend.append(onDeleteClause);
-			
+
 			overrideUpdate = prefs.isUpdateRefAction();
 			conditionClause = " ON UPDATE ";
 			overrideAction = prefs.getRefActionByType(prefs.getUpdateAction());
 			rule = ci.updateRule;
-			
-			String onUpdateClause =
+
+			final String onUpdateClause =
 				constructFKContraintActionClause(overrideUpdate, conditionClause, overrideAction, rule);
 
 			sbToAppend.append(onUpdateClause);
-			//sbToAppend.append("\n");
+			// sbToAppend.append("\n");
 			result.add(sbToAppend.toString());
 			sbToAppend.setLength(0);
 		}
@@ -2654,111 +2671,119 @@ public class DialectUtils implements StringTemplateConstants
 		return result;
 	}
 
-   private static String formatQualifIntern(String table, String schema, CreateScriptPreferences prefs)
-   {
-      return formatQualified(table, schema, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
-   }
+	private static String formatQualifIntern(String table, String schema, CreateScriptPreferences prefs)
+	{
+		return formatQualified(table, schema, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
+	}
 
-   public static String formatQualified(String table, String schema, boolean qualifyTableNames, boolean useDoubleQuotes)
-   {
-      if(qualifyTableNames && null != schema && 0 < schema.trim().length())
-      {
-         if(useDoubleQuotes)
-         {
-            return "\"" + schema + "\".\"" + table + "\"";
-         }
-         else
-         {
-            return schema + "." + table;
-         }
-      }
-      else
-      {
-         return table;
-      }
-   }
+	public static String formatQualified(String table, String schema, boolean qualifyTableNames,
+		boolean useDoubleQuotes)
+	{
+		if (qualifyTableNames && null != schema && 0 < schema.trim().length())
+		{
+			if (useDoubleQuotes)
+			{
+				return "\"" + schema + "\".\"" + table + "\"";
+			}
+			else
+			{
+				return schema + "." + table;
+			}
+		}
+		else
+		{
+			return table;
+		}
+	}
 
-   private static String constructFKContraintActionClause(boolean override, String conditionClause,
+	private static String constructFKContraintActionClause(boolean override, String conditionClause,
 		String overrideAction, int rule)
 	{
 		// Bug 2531193: Oracle create table script the "ON UPDATE" is wrong
-		StringBuilder tmp = new StringBuilder();
-		if (override) {
-			if ("NO ACTION".equals(overrideAction)) {
+		final StringBuilder tmp = new StringBuilder();
+		if (override)
+		{
+			if ("NO ACTION".equals(overrideAction))
+			{
 				return "";
-			} else {
+			}
+			else
+			{
 				tmp.append(conditionClause);
 				tmp.append(overrideAction);
 				return tmp.toString();
 			}
 		}
-	
+
 		switch (rule)
 		{
 		case DatabaseMetaData.importedKeyCascade:
 			tmp.append(conditionClause);
-			if (override) {
+			if (override)
+			{
 				tmp.append(overrideAction);
-			} else {
+			}
+			else
+			{
 				tmp.append("CASCADE");
 			}
 			break;
 		case DatabaseMetaData.importedKeySetNull:
-			if (override) {
+			if (override)
+			{
 				tmp.append(overrideAction);
-			} else {
+			}
+			else
+			{
 				tmp.append("SET NULL");
 			}
 			break;
 		case DatabaseMetaData.importedKeySetDefault:
-			if (override) {
+			if (override)
+			{
 				tmp.append(overrideAction);
-			} else {
+			}
+			else
+			{
 				tmp.append("SET DEFAULT");
 			}
 			break;
 		case DatabaseMetaData.importedKeyRestrict:
 		case DatabaseMetaData.importedKeyNoAction:
 		default:
-			// Append nothing - standard says this is equivalent to NO ACTION and some DBs 
+			// Append nothing - standard says this is equivalent to NO ACTION
+			// and some DBs
 			// (e.g. Oracle don't accept ... NO ACTION)
 		}
 		return tmp.toString();
 	}
-	
+
 	private static ConstraintInfo[] getConstraintInfos(ITableInfo ti, ISQLDatabaseMetaData md)
 		throws SQLException
 	{
-      final ArrayList<ConstraintInfo> ret = new ArrayList<ConstraintInfo>();
-      final ForeignKeyInfo[] fkinfos = md.getImportedKeysInfo(ti);
-      for (final ForeignKeyInfo fkinfo : fkinfos)
-      {
-         final Vector<String> fkCols = new Vector<String>();
-         final Vector<String> pkCols = new Vector<String>();
+		final ArrayList<ConstraintInfo> ret = new ArrayList<ConstraintInfo>();
+		final ForeignKeyInfo[] fkinfos = md.getImportedKeysInfo(ti);
+		for (final ForeignKeyInfo fkinfo : fkinfos)
+		{
+			final Vector<String> fkCols = new Vector<String>();
+			final Vector<String> pkCols = new Vector<String>();
 
+			for (final ForeignKeyColumnInfo fkCol : fkinfo.getForeignKeyColumnInfo())
+			{
+				fkCols.add(fkCol.getForeignKeyColumnName());
+				pkCols.add(fkCol.getPrimaryKeyColumnName());
+			}
 
-         for (ForeignKeyColumnInfo fkCol : fkinfo.getForeignKeyColumnInfo())
-         {
-            fkCols.add(fkCol.getForeignKeyColumnName());
-            pkCols.add(fkCol.getPrimaryKeyColumnName());
-         }
+			final ConstraintInfo ci =
+				new ConstraintInfo(fkinfo.getForeignKeyTableName(), fkinfo.getForeignKeySchemaName(),
+					fkinfo.getPrimaryKeyTableName(), fkinfo.getPrimaryKeySchemaName(), fkinfo.getSimpleName(),
+					fkCols, pkCols, (short) fkinfo.getDeleteRule(), (short) fkinfo.getUpdateRule());
 
-         ConstraintInfo ci = new ConstraintInfo(
-            fkinfo.getForeignKeyTableName(),
-            fkinfo.getForeignKeySchemaName(),
-            fkinfo.getPrimaryKeyTableName(),
-            fkinfo.getPrimaryKeySchemaName(),
-            fkinfo.getSimpleName(),
-            fkCols,
-            pkCols,
-            (short) fkinfo.getDeleteRule(),
-            (short) fkinfo.getUpdateRule());
+			ret.add(ci);
 
-         ret.add(ci);
-
-      }
-      return ret.toArray(new ConstraintInfo[ret.size()]);
-   }
+		}
+		return ret.toArray(new ConstraintInfo[ret.size()]);
+	}
 
 	private static List<PrimaryKeyInfo> getPrimaryKeyInfo(ISQLDatabaseMetaData md, ITableInfo ti,
 		boolean isJdbcOdbc)
@@ -2857,7 +2882,8 @@ public class DialectUtils implements StringTemplateConstants
 		final String columnName = shapeIdentifier(column.getColumnName(), prefs, dialect);
 		final String sequenceName = shapeIdentifier(tableName + "_" + columnName + "_" + "seq", prefs, dialect);
 
-		// TODO Probably want to allow the user to set these sequence properties ??
+		// TODO Probably want to allow the user to set these sequence properties
+		// ??
 		// Sequence settings.
 		final String sequenceIncrement = "1";
 		final String minimum = "1";
@@ -3080,4 +3106,26 @@ public class DialectUtils implements StringTemplateConstants
 		return strWithQuotes.replaceAll(tmp.toString(), identifier);
 	}
 
+	/**
+	 * Converts the specified byte array into a String containing hex characters that represent the nibbles
+	 * that form the butes in the array.
+	 * 
+	 * @param bytes
+	 *           the byte array to convert
+	 * @return a hex string representing the bytes in the specified byte array.
+	 */
+	public static String toHexString(byte[] bytes)
+	{
+		final char[] hexArray =
+			{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		final char[] hexChars = new char[bytes.length * 2];
+		int v;
+		for (int j = 0; j < bytes.length; j++)
+		{
+			v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v / 16];
+			hexChars[j * 2 + 1] = hexArray[v % 16];
+		}
+		return new String(hexChars);
+	}
 }

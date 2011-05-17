@@ -995,4 +995,11 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		return 3;
 	}
 
+	@Override
+	public String getBinaryLiteralString(byte[] binaryData) {
+		StringBuilder result = new StringBuilder();
+		result.append("'").append(DialectUtils.toHexString(binaryData)).append("'");
+		return result.toString();
+	}
+
 }
