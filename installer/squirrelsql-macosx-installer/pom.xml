@@ -55,6 +55,7 @@
 		<squirrel.version>3.1.0</squirrel.version>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<upload-server-path>${file.release.path}/${squirrelsql.version}/squirrelsql-${squirrelsql.version}-MacOSX-install.jar</upload-server-path>
+		<izpack-config-filename>izpack-mac.xml</izpack-config-filename>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -196,30 +197,11 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- The property izpack-config-filename must be defined so that it can be used in the plugin 
+			     configuration which is inherited from the installer module pom. -->
 			<plugin>
 				<groupId>org.codehaus.izpack</groupId>
 				<artifactId>izpack-maven-plugin</artifactId>
-				<version>1.0-alpha-4</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.izpack</groupId>
-						<artifactId>izpack-standalone-compiler</artifactId>
-						<version>${izpack-standalone.version}</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<izpackBasedir>${staging.dir}</izpackBasedir>
-					<descriptor>${staging.dir}/classes/izpack-mac.xml</descriptor>
-				</configuration>
-				<executions>
-					<execution>
-						<id>standard-installer</id>
-						<phase>package</phase>
-						<goals>
-							<goal>izpack</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
