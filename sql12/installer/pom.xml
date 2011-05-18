@@ -85,10 +85,8 @@
 							</goals>
 							<configuration>
 								<stripVersion>true</stripVersion>
-								<!--
-									This is a scaled down list of artifacts that we need at runtime, minus any that are not
-									needed
-								-->
+								<!-- This is a scaled down list of artifacts that we need at runtime, minus 
+								     any that are not needed -->
 								<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
 								<includedArtifacts>
 									<includedArtifact>antlr:antlr</includedArtifact>
@@ -149,17 +147,40 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.izpack</groupId>
+					<artifactId>izpack-maven-plugin</artifactId>
+					<version>${izpack-plugin-version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.izpack</groupId>
+							<artifactId>izpack-standalone-compiler</artifactId>
+							<version>${izpack-standalone.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<izpackBasedir>${staging.dir}</izpackBasedir>
+						<descriptor>${staging.dir}/classes/${izpack-config-filename}</descriptor>
+					</configuration>
+					<executions>
+						<execution>
+							<id>standard-installer</id>
+							<phase>package</phase>
+							<goals>
+								<goal>izpack</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<profiles>
-		<!--
-			The only difference here is that we want to include the squirrelsql-source project as a module
-			when the uploadInstallers property is set. Since the squirrelsql-source project takes some time
-			to export the source from subversion, and there is very little use for it except when uploading
-			the installers (uploadInstallers property is set), we exclude it for now in the default build.
-		-->
+		<!-- The only difference here is that we want to include the squirrelsql-source project as a module 
+			when the uploadInstallers property is set. Since the squirrelsql-source project takes some time to export 
+			the source from subversion, and there is very little use for it except when uploading the installers 
+			(uploadInstallers property is set), we exclude it for now in the default build. -->
 		<profile>
 			<id>export-source</id>
 			<activation>
