@@ -155,7 +155,7 @@
 						<dependency>
 							<groupId>org.codehaus.izpack</groupId>
 							<artifactId>izpack-standalone-compiler</artifactId>
-							<version>${izpack-standalone.version}</version>
+							<version>${izpack-standalone-version}</version>
 						</dependency>
 					</dependencies>
 					<configuration>
