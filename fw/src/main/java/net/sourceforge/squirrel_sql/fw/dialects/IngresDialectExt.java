@@ -261,8 +261,9 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
+		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
