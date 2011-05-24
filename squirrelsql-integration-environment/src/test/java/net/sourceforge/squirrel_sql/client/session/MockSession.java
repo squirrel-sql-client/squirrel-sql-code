@@ -87,6 +87,8 @@ public class MockSession implements ISession
 
 	private IMessageHandler mockMessageHandler = mock(IMessageHandler.class);	
 	
+	private ISQLEntryPanel mockSqlEntryPanel = mock(ISQLEntryPanel.class);
+	
 	public MockSession(String className, String jdbcUrl, String u, String p) throws Exception
 	{
 		System.out.println("Attempting to load class=" + className);
@@ -123,6 +125,9 @@ public class MockSession implements ISession
 		when(mockSessionManager.getNextSession(this)).thenReturn(this);
 		when(mockSessionManager.getPreviousSession(this)).thenReturn(this);
 		when(mockSessionManager.getAllowedSchemas(this)).thenReturn(con.getSQLMetaData().getSchemas());
+		
+		when(mockPanelApi.getSQLEntryPanel()).thenReturn(mockSqlEntryPanel);
+		when(mockSqlEntryPanel.getBoundsOfSQLToBeExecuted()).thenReturn(new int[] {0,1});
 		
 		sqlAlias = new SQLAlias(new UidIdentifier());
 		schemaInfo = new SchemaInfo(mockApplication);
