@@ -246,7 +246,11 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		return true;
+		// I see this on Ingres 2006 R3 when altering a column to be not null
+		// com.ingres.gcf.util.SqlEx: ALTER TABLE: invalid change of attributes on an ALTER COLUMN
+		//   at com.ingres.gcf.jdbc.DrvObj.readError(DrvObj.java:844)
+		//   at com.ingres.gcf.jdbc.JdbcStmt.readError(JdbcStmt.java:2412)
+		return false;
 	}
 
 	/**
