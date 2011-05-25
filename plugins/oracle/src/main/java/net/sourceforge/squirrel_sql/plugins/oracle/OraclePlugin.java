@@ -99,6 +99,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ConstraintSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.LobDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
@@ -796,6 +797,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
 		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
+		addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexSourceTab());
 		addDetailTab(objTree, _objectTypes.getLob(), new DatabaseObjectInfoTab());
 		addDetailTab(objTree, _objectTypes.getLob(), new LobDetailsTab());
 		addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
