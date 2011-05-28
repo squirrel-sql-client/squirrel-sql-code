@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.plugins.graph.AggregateFunctions;
 import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
 import net.sourceforge.squirrel_sql.plugins.graph.TableFrameController;
 
+import java.util.ArrayList;
+
 public class SelectClauseGenerator
 {
    public SelectClauseRes createSelectClause(FromClauseRes fromClause)
@@ -15,6 +17,7 @@ public class SelectClauseGenerator
       boolean hasAggFct = false;
       boolean groupByHasCols = false;
 
+      ArrayList<String> qualifiedColsOrderedAsTheyAppearInSelect = new ArrayList<String>();
 
       for (TableFrameController tfc : fromClause.getTables())
       {
@@ -24,18 +27,21 @@ public class SelectClauseGenerator
             {
                AggregateFunctions af = columnInfo.getQueryData().getAggregateFunction();
 
+               String qualifiedCol = tfc.getTableInfo().getSimpleName() + "." + columnInfo.getColumnName();
+
                if (AggregateFunctions.NONE == af)
                {
-                  String s = tfc.getTableInfo().getSimpleName() + "." + columnInfo.getColumnName() + ",";
+                  String s = qualifiedCol + ",";
                   select.append(s);
                   groupBy.append(s);
                   groupByHasCols = true;
                }
                else
                {
-                  select.append(af.getSQL() + "(" + tfc.getTableInfo().getSimpleName() + "." + columnInfo.getColumnName() + "),");
+                  select.append(af.getSQL() + "(" + qualifiedCol + "),");
                   hasAggFct = true;
                }
+               qualifiedColsOrderedAsTheyAppearInSelect.add(qualifiedCol);
                colAdded = true;
             }
          }
@@ -51,11 +57,11 @@ public class SelectClauseGenerator
       if(hasAggFct && groupByHasCols)
       {
          groupBy.setLength(groupBy.length() - 1); // cut off the last comma.
-         return new SelectClauseRes(select, groupBy);
+         return new SelectClauseRes(select, groupBy, qualifiedColsOrderedAsTheyAppearInSelect);
       }
       else
       {
-         return new SelectClauseRes(select);
+         return new SelectClauseRes(select, qualifiedColsOrderedAsTheyAppearInSelect);
       }
    }
 }

@@ -15,6 +15,7 @@ public class GraphControllerXmlBean
    private boolean _queryHideNoJoins;
    private boolean _32Converted;
    private WhereTreeNodeStructure _whereTreeNodeStructure;
+   private OrderStructureXmlBean _orderStructure;
 
 
    public String getTitle()
@@ -115,5 +116,15 @@ public class GraphControllerXmlBean
    public void setWhereTreeNodeStructure(WhereTreeNodeStructure whereTreeNodeStructure)
    {
       _whereTreeNodeStructure = whereTreeNodeStructure;
+   }
+
+   public void setOrderStructure(OrderStructureXmlBean orderStructure)
+   {
+      _orderStructure = orderStructure;
+   }
+
+   public OrderStructureXmlBean getOrderStructure()
+   {
+      return _orderStructure;
    }
 }

@@ -800,7 +800,20 @@ public class TableFrameController
    public ITableInfo getTableInfo()
    {
       _session.getSchemaInfo().waitTillTablesLoaded();
-      return _session.getSchemaInfo().getITableInfos(_catalog, _schema, new ObjFilterMatcher(_tableName), new String[]{"TABLE"})[0];
+      ITableInfo[] tableInfos = _session.getSchemaInfo().getITableInfos(_catalog, _schema, new ObjFilterMatcher(_tableName), new String[]{"TABLE"});
+
+      /////////////////////////////////////////////////////////////////////////////////////
+      // This used to cause a ArrayIndexOutOfBoundsException
+      if(0 == tableInfos.length)
+      {
+         String errMsg = s_stringMgr.getString("TableFrameController.tableDoesNotExist", _tableName);
+         _session.getApplication().getMessageHandler().showErrorMessage(errMsg);
+         throw new IllegalStateException(errMsg);
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////////////////
+
+      return tableInfos[0];
    }
 
 

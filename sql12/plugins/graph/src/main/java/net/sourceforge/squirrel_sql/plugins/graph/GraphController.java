@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.*;
 
@@ -129,7 +130,9 @@ public class GraphController
          ZoomerXmlBean zoomerXmlBean = graphControllerXmlBean.getZoomerXmlBean();
          PrintXmlBean printXmlBean = graphControllerXmlBean.getPrintXmlBean();
          boolean queryHideNoJoins = graphControllerXmlBean.isQueryHideNoJoins();
-         _panelController.initMode(modeIndex, zoomerXmlBean, printXmlBean, queryHideNoJoins, graphControllerXmlBean.getWhereTreeNodeStructure());
+         WhereTreeNodeStructure whereTreeNodeStructure = graphControllerXmlBean.getWhereTreeNodeStructure();
+         OrderStructureXmlBean orderStructure = graphControllerXmlBean.getOrderStructure();
+         _panelController.initMode(modeIndex, zoomerXmlBean, printXmlBean, queryHideNoJoins, whereTreeNodeStructure, orderStructure);
 
          _panelController.getDesktopController().setShowConstraintNames(graphControllerXmlBean.isShowConstraintNames());
          _panelController.getDesktopController().setShowQualifiedTableNames(graphControllerXmlBean.isShowQualifiedTableNames());
@@ -137,7 +140,7 @@ public class GraphController
       else
       {
          _tabToWindowHandler.setTitle(_plugin.patchName(_tabToWindowHandler.getTitle(), _session));
-         _panelController.initMode(Mode.DEFAULT, null, null, false, null);
+         _panelController.initMode(Mode.DEFAULT, null, null, false, null, null);
       }
 
       _tabToWindowHandler.showGraph();
@@ -226,6 +229,7 @@ public class GraphController
       xmlBean.setModeIndex(_panelController.getModeManager().getMode().getIndex());
       xmlBean.setQueryHideNoJoins(_panelController.getModeManager().isQueryHideNoJoins());
       xmlBean.setWhereTreeNodeStructure(_panelController.getModeManager().getWhereTreeNodeStructure());
+      xmlBean.setOrderStructure(_panelController.getModeManager().getOrderStructure());
 
       Vector<TableFrameController> tblCtrls = _tableFramesModel.getTblCtrls();
 

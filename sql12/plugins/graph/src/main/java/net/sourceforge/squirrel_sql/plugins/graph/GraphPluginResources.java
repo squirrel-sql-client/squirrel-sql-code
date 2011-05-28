@@ -17,6 +17,10 @@ public final class GraphPluginResources extends PluginResources
       String FILTER = "Filter";
       String FILTER_CHECKED = "FilterChecked";
 
+      String SORT_NONE = "sort";
+      String SORT_ASC = "sort_asc";
+      String SORT_DESC = "sort_desc";
+
       String AGG_FCT = "AggFct";
       String AGG_FCT_CHECKED = "AggFctChecked";
       String AGG_SUM = "AggSum";

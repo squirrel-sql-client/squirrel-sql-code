@@ -9,6 +9,7 @@ public class QueryData
    private QueryFilterOperators _operator = QueryFilterOperators.EQUAL;
    private AggregateFunctions _aggregateFunction = AggregateFunctions.NONE;
    private boolean _inSelectClause;
+   private Sorting _sorting = Sorting.NONE;
 
    public QueryData(QueryDataXmlBean queryDataXmlBean)
    {
@@ -18,6 +19,7 @@ public class QueryData
          _filterValue = queryDataXmlBean.getFilterValue();
          _operator = QueryFilterOperators.getForIndex(queryDataXmlBean.getOperatorIndex());
          _aggregateFunction = AggregateFunctions.getForIndex(queryDataXmlBean.getAggregateFunctionIndex());
+         _sorting = Sorting.getByIndex(queryDataXmlBean.getSortingIndex());
       }
    }
 
@@ -91,5 +93,25 @@ public class QueryData
    {
       _filterValue = null;
       _operator = QueryFilterOperators.EQUAL;
+   }
+
+   public Sorting getSorting()
+   {
+      return _sorting;
+   }
+
+   public void setSorting(Sorting sorting)
+   {
+      _sorting = sorting;
+   }
+
+   public boolean isSorted()
+   {
+      return _sorting != Sorting.NONE;
+   }
+
+   public boolean isSortedAsc()
+   {
+      return _sorting != Sorting.ASC;
    }
 }

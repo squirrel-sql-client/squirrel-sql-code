@@ -7,13 +7,13 @@ import static net.sourceforge.squirrel_sql.plugins.graph.GraphPluginResources.IK
 
 public enum AggregateFunctions
 {
-   NONE(0, "<NONE>",AGG_FCT,  AggFct18n.s_stringMgr.getString("AggregateFunctions.undefined"), AggFct18n.s_stringMgr.getString("AggregateFunctions.undefinedTT")),
-   SUM(1, "SUM", AGG_SUM,  AggFct18n.s_stringMgr.getString("AggregateFunctions.sum"), AggFct18n.s_stringMgr.getString("AggregateFunctions.sumTT")),
-   MAX(2, "MAX", AGG_MAX, AggFct18n.s_stringMgr.getString("AggregateFunctions.max"), AggFct18n.s_stringMgr.getString("AggregateFunctions.maxTT")),
-   MIN(3, "MIN", AGG_MIN, AggFct18n.s_stringMgr.getString("AggregateFunctions.min"), AggFct18n.s_stringMgr.getString("AggregateFunctions.minTT")),
-   COUNT(4, "COUNT", AGG_COUNT, AggFct18n.s_stringMgr.getString("AggregateFunctions.count"), AggFct18n.s_stringMgr.getString("AggregateFunctions.countTT"));
+   NONE(0, "<NONE>",AGG_FCT,  AggFctI18n.s_stringMgr.getString("AggregateFunctions.undefined"), AggFctI18n.s_stringMgr.getString("AggregateFunctions.undefinedTT")),
+   SUM(1, "SUM", AGG_SUM,  AggFctI18n.s_stringMgr.getString("AggregateFunctions.sum"), AggFctI18n.s_stringMgr.getString("AggregateFunctions.sumTT")),
+   MAX(2, "MAX", AGG_MAX, AggFctI18n.s_stringMgr.getString("AggregateFunctions.max"), AggFctI18n.s_stringMgr.getString("AggregateFunctions.maxTT")),
+   MIN(3, "MIN", AGG_MIN, AggFctI18n.s_stringMgr.getString("AggregateFunctions.min"), AggFctI18n.s_stringMgr.getString("AggregateFunctions.minTT")),
+   COUNT(4, "COUNT", AGG_COUNT, AggFctI18n.s_stringMgr.getString("AggregateFunctions.count"), AggFctI18n.s_stringMgr.getString("AggregateFunctions.countTT"));
 
-   public static final Object CLIENT_PROP_NAME = AggregateFunctions.class.getName();
+   public static final String CLIENT_PROP_NAME = AggregateFunctions.class.getName();
 
    private int _index;
    private String _image;
@@ -74,8 +74,7 @@ public enum AggregateFunctions
    }
 }
 
-class AggFct18n
+class AggFctI18n
 {
-   static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(AggFct18n.class);
-
+   static final StringManager s_stringMgr =  StringManagerFactory.getStringManager(AggFctI18n.class);
 }

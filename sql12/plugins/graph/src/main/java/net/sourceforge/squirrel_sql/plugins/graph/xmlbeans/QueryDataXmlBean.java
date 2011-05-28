@@ -6,6 +6,7 @@ public class QueryDataXmlBean
    private int _aggregateFunctionIndex;
    private int _operatorIndex;
    private boolean _inSelectClause;
+   private int _sortingIndex;
 
    public void setOperatorIndex(int operatorIndex)
    {
@@ -45,5 +46,15 @@ public class QueryDataXmlBean
    public boolean isInSelectClause()
    {
       return _inSelectClause;
+   }
+
+   public int getSortingIndex()
+   {
+      return _sortingIndex;
+   }
+
+   public void setSortingIndex(int sortingIndex)
+   {
+      _sortingIndex = sortingIndex;
    }
 }

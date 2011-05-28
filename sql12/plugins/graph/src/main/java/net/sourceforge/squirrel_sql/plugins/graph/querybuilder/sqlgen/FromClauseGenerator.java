@@ -55,6 +55,12 @@ public class FromClauseGenerator
 
    private void appendJoins(FromClauseRes fromClauseRes, TableFrameController tfcFrom, TableFrameController tfcTo, TableFramesModel tableFramesModel)
    {
+      if(tfcFrom == tfcTo)
+      {
+         return;
+      }
+
+
       ConstraintView[] bauf;
 
       String tableNameFrom = tfcFrom.getTableInfo().getSimpleName();

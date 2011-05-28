@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.*;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen.QueryBuilderSQLGenerator;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,7 +44,7 @@ public class QueryBuilderController
    private SessionAdapter _sessionAdapter;
    private GraphDockHandleAdmin _graphDockHandleAdmin;
 
-   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, boolean queryHideNoJoins, WhereTreeNodeStructure whereTreeNodeStructure, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
+   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, boolean queryHideNoJoins, WhereTreeNodeStructure whereTreeNodeStructure, OrderStructureXmlBean orderStructure, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
    {
       _tableFramesModel = tableFramesModel;
       _graphControllerFacade = graphControllerFacade;
@@ -83,7 +84,7 @@ public class QueryBuilderController
       GraphPluginResources rsrc = new GraphPluginResources(plugin);
       _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session, new HideDockButtonHandler(_btnSQL, rsrc), createSQLSyncListener());
       _graphQueryResultPanelCtrl = new GraphQueryResultPanelCtrl(_session, new HideDockButtonHandler(_btnResult, rsrc), createResultSyncListener());
-      _graphQueryOrderPanelCtrl = new GraphQueryOrderPanelCtrl();
+      _graphQueryOrderPanelCtrl = new GraphQueryOrderPanelCtrl(new HideDockButtonHandler(_btnOrder, rsrc), orderStructure);
       _graphQueryWherePanelCtrl = new GraphQueryWherePanelCtrl(_session, new HideDockButtonHandler(_btnWhere, rsrc), rsrc, whereTreeNodeStructure);
 
       initHandels();
@@ -133,11 +134,12 @@ public class QueryBuilderController
          @Override
          public void synRequested()
          {
-            WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-            _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts));
+            syncResult();
          }
       };
    }
+
+
 
    private SyncListener createSQLSyncListener()
    {
@@ -146,29 +148,29 @@ public class QueryBuilderController
          @Override
          public void synRequested()
          {
-            WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-            _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts));
+            syncSql();
          }
       };
 
    }
 
-
    private void onModelChanged(TableFramesModelChangeType changeType)
    {
       if (_sqlDockHandle.isShowing() && _graphQuerySQLPanelCtrl.isAutoSync())
       {
-         WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-         _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts));
+         syncSql();
       }
       else if(_resultDockHandle.isShowing()  && _graphQueryResultPanelCtrl.isAutoSync())
       {
-         WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-         _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts));
+         syncResult();
       }
       else if(_whereDockHandle.isShowing())
       {
          _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
+      }
+      else if(_orderDockHandle.isShowing())
+      {
+         _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
       }
 
       if(null != changeType && changeType == TableFramesModelChangeType.CONSTRAINT && _chkHideNoJoins.isSelected() && _tableFramesModel.containsUniddenNoJoins())
@@ -181,6 +183,21 @@ public class QueryBuilderController
          onNoJoin();
       }
    }
+
+   private void syncResult()
+   {
+      OrderStructure orderStructure = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
+      _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, orderStructure));
+   }
+
+   private void syncSql()
+   {
+      OrderStructure orderStructure = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
+      _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, orderStructure));
+   }
+
 
    private void initHandels()
    {
@@ -242,5 +259,10 @@ public class QueryBuilderController
    public WhereTreeNodeStructure getWhereTreeNodeStructure()
    {
       return _graphQueryWherePanelCtrl.getWhereTreeNodeStructure();
+   }
+
+   public OrderStructureXmlBean getOrderStructure()
+   {
+      return _graphQueryOrderPanelCtrl.getOrderStructure();
    }
 }
