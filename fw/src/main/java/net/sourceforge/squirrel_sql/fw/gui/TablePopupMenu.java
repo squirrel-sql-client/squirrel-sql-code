@@ -64,7 +64,8 @@ public class TablePopupMenu extends BasePopupMenu
 		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
 		int SHOW_ROW_NUMBERS = 11;
 		int COPY_WIKI = 12;
-		int LAST_ENTRY = 13;
+		int SELECT_ROWS = 13;
+		int LAST_ENTRY = 14;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -95,6 +96,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
 	private InsertRowAction _insertRow = new InsertRowAction();
 	private SelectAllAction _select = new SelectAllAction();
+	private SelectRowsAction _selectRows = new SelectRowsAction();
 	private PrintAction _print = new PrintAction();
 
 
@@ -174,6 +176,9 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 		addSeparator();
 		_menuItems[IOptionTypes.SELECT_ALL] = add(_select);
+		
+		_menuItems[IOptionTypes.SELECT_ROWS] = add(_selectRows);
+		
 
 		// add entries for insert and delete rows
 		// only if table is updateable and already editable (ie. allowEditing is false)
@@ -612,6 +617,28 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 
+	/**
+	 * Select the entire rows of the current selection.
+	 * @author Stefan Willinger
+	 *
+	 */
+	private class SelectRowsAction extends BaseAction
+	{
+
+		SelectRowsAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.selectEntireRows"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableSelectEntireRowsCommand(_table).execute();
+			}
+		}
+	}
+	
 
    private class PrintAction extends BaseAction
    {
