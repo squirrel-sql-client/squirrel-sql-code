@@ -9,8 +9,6 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 import java.awt.event.ActionEvent;
-import java.awt.*;
-import java.util.Vector;
 
 
 public class AddToGraphAction extends SquirrelAction implements ISessionAction
@@ -50,7 +48,7 @@ public class AddToGraphAction extends SquirrelAction implements ISessionAction
                   GraphController[] controllers = _plugin.getGraphControllers(_session);
                   if (0 == controllers.length)
                   {
-                     toAddTo = _plugin.createNewGraphControllerForSession(_session);
+                     toAddTo = _plugin.createNewGraphControllerForSession(_session, false);
                   }
                   else
                   {
@@ -63,7 +61,7 @@ public class AddToGraphAction extends SquirrelAction implements ISessionAction
                      }
                      if(null == dlg.getSelectedController())
                      {
-                        toAddTo = _plugin.createNewGraphControllerForSession(_session);
+                        toAddTo = _plugin.createNewGraphControllerForSession(_session, false);
                      }
                      else
                      {

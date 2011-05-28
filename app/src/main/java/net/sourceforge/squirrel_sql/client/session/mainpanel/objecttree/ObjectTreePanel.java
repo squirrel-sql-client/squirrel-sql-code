@@ -143,7 +143,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
          @Override
          protected Transferable createTransferable(JComponent c)
          {
-            return new DataHandler(new ObjectTreeDndTransfer(getSelectedTables()), DataFlavor.javaJVMLocalObjectMimeType);
+            return new DataHandler(new ObjectTreeDndTransfer(getSelectedTables(), _session.getIdentifier()), DataFlavor.javaJVMLocalObjectMimeType);
          }
 
          public int getSourceActions(JComponent c)

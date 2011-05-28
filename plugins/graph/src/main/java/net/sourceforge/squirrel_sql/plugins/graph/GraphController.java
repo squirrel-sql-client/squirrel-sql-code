@@ -28,7 +28,7 @@ public class GraphController
    private TabToWindowHandler _tabToWindowHandler;
    private GraphXmlSerializer _xmlSerializer;
 
-   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer)
+   public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer, boolean showDndDesktopImageAtStartup)
    {
       _session = session;
       _plugin = plugin;
@@ -99,7 +99,7 @@ public class GraphController
          }
       };
 
-      _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin);
+      _panelController = new GraphPanelController(_tableFramesModel, _graphDesktopListener, _session, _plugin, showDndDesktopImageAtStartup);
       _tabToWindowHandler = new TabToWindowHandler(_panelController, _session, _plugin);
 
 

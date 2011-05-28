@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -173,7 +172,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       for (int i = 0; i < controllers.length; i++)
       {
-         controllers[i] = new GraphController(session, this, serializers[i]);
+         controllers[i] = new GraphController(session, this, serializers[i], false);
       }
 
 
@@ -264,7 +263,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       }
    }
 
-   public GraphController createNewGraphControllerForSession(ISession session)
+   public GraphController createNewGraphControllerForSession(ISession session, boolean showDndDesktopImageAtStartup)
    {
       GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
 
@@ -273,7 +272,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       {
          v.addAll(Arrays.asList(controllers));
       }
-      GraphController ret = new GraphController(session, this, null);
+      GraphController ret = new GraphController(session, this, null, showDndDesktopImageAtStartup);
       v.add(ret);
 
       controllers = v.toArray(new GraphController[v.size()]);

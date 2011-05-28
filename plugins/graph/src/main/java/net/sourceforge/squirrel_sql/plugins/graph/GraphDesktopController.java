@@ -50,13 +50,13 @@ public class GraphDesktopController
    private GraphControllerPopupListener _currentGraphControllerPopupListener;
 
 
-   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager)
+   public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager, boolean showDndDesktopImageAtStartup)
    {
       _listener = listener;
       _session = session;
       _plugin = plugin;
       _graphPluginResources = new GraphPluginResources(_plugin);
-      _desktopPane = new GraphDesktopPane(_session.getApplication());
+      _desktopPane = new GraphDesktopPane(_session.getApplication(), _graphPluginResources.getIcon(GraphPluginResources.IKeys.DND));
       _desktopPane.setBackground(Color.white);
 
       _modeManager = modeManager;
@@ -120,6 +120,16 @@ public class GraphDesktopController
          if(transferData instanceof ObjectTreeDndTransfer)
          {
             ObjectTreeDndTransfer objectTreeDndTransfer = (ObjectTreeDndTransfer) transferData;
+
+            if(false == objectTreeDndTransfer.getSessionIdentifier().equals(_session.getIdentifier()))
+            {
+               JOptionPane.showMessageDialog(SwingUtilities.windowForComponent(_desktopPane), s_stringMgr.getString("GraphDesktopController.tableDropedFormOtherSession"));
+               return;
+            }
+
+
+
+
             _listener.tablesDropped(objectTreeDndTransfer.getSelectedTables(), dtde.getLocation());
          }
 
@@ -625,6 +635,7 @@ public class GraphDesktopController
 
    public void addFrame(JInternalFrame frame)
    {
+      _desktopPane.hideStartupImage();
       _desktopPane.add(frame);
    }
 
