@@ -21,6 +21,7 @@ class QueryColumnPanel extends JPanel
    private JCheckBox chkSelect;
    private JButton btnAggFct;
    private JButton btnFilter;
+   private JButton btnSorting;
    private QueryColumnTextField txtColumn;
    private String _tableName;
    private ColumnInfo _columnInfo;
@@ -29,7 +30,8 @@ class QueryColumnPanel extends JPanel
 
 
 
-   private JPopupMenu _popUp;
+   private JPopupMenu _popUpAggregate;
+   private JPopupMenu _popUpSorting;
 
    QueryColumnPanel(final GraphPlugin graphPlugin, String tableName, ColumnInfo columnInfo, DndCallback dndCallback, ISession session)
    {
@@ -45,6 +47,8 @@ class QueryColumnPanel extends JPanel
 
       GridBagConstraints gbc;
 
+      int xPos = 0;
+
       chkSelect = new JCheckBox();
       chkSelect.setToolTipText(s_stringMgr.getString("QueryColumn.select"));
       chkSelect.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
@@ -57,46 +61,27 @@ class QueryColumnPanel extends JPanel
             onChkSelectedChanged();
          }
       });
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
       pnlButtons.add(chkSelect, gbc);
 
-      btnAggFct = new JButton();
-      btnAggFct.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
-      btnAggFct.setBorder(BorderFactory.createEmptyBorder());
-      //btnAggFct.setEnabled(false);
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(btnAggFct, gbc);
-      btnAggFct.setEnabled(chkSelect.isSelected());
-      btnAggFct.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onBtnAggFct(e);
-         }
-      });
-      onAggSelected(_columnInfo.getQueryData().getAggregateFunction(), false);
+      initAggregate(pnlButtons, ++xPos);
 
+      initFilter(graphPlugin, pnlButtons, ++xPos);
 
-      _popUp = new JPopupMenu();
-      for (final AggregateFunctions af : AggregateFunctions.values())
-      {
-         JMenuItem menuItem = new JMenuItem(af.toString(), _graphPluginResources.getIcon(af.getImage()));
-         menuItem.putClientProperty(AggregateFunctions.CLIENT_PROP_NAME, af);
+      initSorting(pnlButtons, ++xPos);
 
-         menuItem.addActionListener(new ActionListener()
-         {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-               onAggSelected(af, true);
-            }
-         });
+      add(pnlButtons, BorderLayout.WEST);
+      txtColumn = new QueryColumnTextField(_columnInfo.toString(), dndCallback, _session);
+      txtColumn.setEditable(false);
+      txtColumn.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      txtColumn.setBorder(BorderFactory.createEmptyBorder());
 
-         _popUp.add(menuItem);
-      }
+      add(txtColumn, BorderLayout.CENTER);
+   }
 
-
+   private void initFilter(final GraphPlugin graphPlugin, JPanel pnlButtons, int xPos)
+   {
+      GridBagConstraints gbc;
       btnFilter = new JButton();
       initFilterButtonIcon();
       btnFilter.setToolTipText(s_stringMgr.getString("QueryColumn.filterButton"));
@@ -114,17 +99,93 @@ class QueryColumnPanel extends JPanel
          }
       });
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,3), 0,0);
+      gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(btnFilter, gbc);
-
-      add(pnlButtons, BorderLayout.WEST);
-      txtColumn = new QueryColumnTextField(_columnInfo.toString(), dndCallback, _session);
-      txtColumn.setEditable(false);
-      txtColumn.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
-      txtColumn.setBorder(BorderFactory.createEmptyBorder());
-
-      add(txtColumn, BorderLayout.CENTER);
    }
+
+   private void initAggregate(JPanel pnlButtons, int xPos)
+   {
+      GridBagConstraints gbc;
+      btnAggFct = new JButton();
+      btnAggFct.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      btnAggFct.setBorder(BorderFactory.createEmptyBorder());
+      //btnAggFct.setEnabled(false);
+      gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      pnlButtons.add(btnAggFct, gbc);
+      btnAggFct.setEnabled(chkSelect.isSelected());
+      btnAggFct.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onBtnAggFct(e);
+         }
+      });
+      onAggSelected(_columnInfo.getQueryData().getAggregateFunction(), false);
+
+
+      _popUpAggregate = new JPopupMenu();
+      for (final AggregateFunctions af : AggregateFunctions.values())
+      {
+         JMenuItem menuItem = new JMenuItem(af.toString(), _graphPluginResources.getIcon(af.getImage()));
+         menuItem.putClientProperty(AggregateFunctions.CLIENT_PROP_NAME, af);
+
+         menuItem.addActionListener(new ActionListener()
+         {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               onAggSelected(af, true);
+            }
+         });
+
+         _popUpAggregate.add(menuItem);
+      }
+   }
+
+   private void initSorting(JPanel pnlButtons, int xPos)
+   {
+      GridBagConstraints gbc;
+      btnSorting = new JButton();
+      btnSorting.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      btnSorting.setBorder(BorderFactory.createEmptyBorder());
+      gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,3), 0,0);
+      pnlButtons.add(btnSorting, gbc);
+      btnSorting.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onBtnSorting(e);
+         }
+      });
+      onSortingSelected(_columnInfo.getQueryData().getSorting(), false);
+
+
+      _popUpSorting = new JPopupMenu();
+      for (final Sorting sorting : Sorting.values())
+      {
+         JMenuItem menuItem = new JMenuItem(sorting.toString(), _graphPluginResources.getIcon(sorting.getImage()));
+         menuItem.putClientProperty(Sorting.CLIENT_PROP_NAME, sorting);
+
+         menuItem.addActionListener(new ActionListener()
+         {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               onSortingSelected(sorting, true);
+            }
+         });
+
+         _popUpSorting.add(menuItem);
+      }
+   }
+
+   private void onBtnSorting(ActionEvent e)
+   {
+      _popUpSorting.show(btnSorting, 0, 0);
+   }
+
 
    private void onChkSelectedChanged()
    {
@@ -152,9 +213,21 @@ class QueryColumnPanel extends JPanel
       }
    }
 
+   private void onSortingSelected(Sorting sorting, boolean fireChanged)
+   {
+      btnSorting.setIcon(_graphPluginResources.getIcon(sorting.getImage()));
+      btnSorting.setToolTipText(sorting.getToolTip());
+      _columnInfo.getQueryData().setSorting(sorting);
+
+      if (fireChanged)
+      {
+         _columnInfo.getColumnInfoModelEventDispatcher().fireChanged(TableFramesModelChangeType.COLUMN_SELECT);
+      }
+   }
+
    private void onBtnAggFct(ActionEvent e)
    {
-      _popUp.show(btnAggFct, 0, 0);
+      _popUpAggregate.show(btnAggFct, 0, 0);
    }
 
    private void initFilterButtonIcon()

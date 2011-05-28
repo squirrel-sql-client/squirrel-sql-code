@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.plugins.graph.TableFramesModel;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderCol;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 
 public class QueryBuilderSQLGenerator
@@ -15,7 +17,7 @@ public class QueryBuilderSQLGenerator
       _session = session;
    }
 
-   public String generateSQL(TableFramesModel tableFramesModel, WhereTreeNodeStructure wts)
+   public String generateSQL(TableFramesModel tableFramesModel, WhereTreeNodeStructure wts, OrderStructure orderStructure)
    {
       FromClauseRes fromClause = new FromClauseGenerator().createFrom(tableFramesModel);
 
@@ -32,9 +34,14 @@ public class QueryBuilderSQLGenerator
          return null;
       }
 
-      StringBuffer where = new StringBuffer(wts.generateWhereClause());
+      String rawSql =
+               selectClause.getSelectClause() + " " +
+               fromClause.getFromClause() + "  " +
+               wts.generateWhereClause() + " " +
+               selectClause.getGroupByClause() + " " +
+               orderStructure.generateOrderBy(selectClause);
 
-      return format(selectClause.getSelectClause() + " " + fromClause.getFromClause() + "  " + where + " " + selectClause.getGroupByClause(), _session).trim();
+      return format(rawSql, _session).trim();
    }
 
 

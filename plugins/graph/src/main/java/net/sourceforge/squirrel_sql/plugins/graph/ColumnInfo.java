@@ -72,6 +72,7 @@ public class ColumnInfo extends Object
       queryDataXmlBean.setAggregateFunctionIndex(_queryData.getAggregateFunction().getIndex());
       queryDataXmlBean.setFilterValue(_queryData.getFilterValue());
       queryDataXmlBean.setInSelectClause(_queryData.isInSelectClause());
+      queryDataXmlBean.setSortingIndex(_queryData.getSorting().getIndex());
 
       ret.setQueryDataXmlBean(queryDataXmlBean);
 
