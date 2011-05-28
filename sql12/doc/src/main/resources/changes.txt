@@ -7,9 +7,11 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Feature Request: 3307812: Select an entire row via the table's pop-up menu.
+
 Oracle Plugin: 
    The DDL of a index could be displayed under the source tab.
-
+   
 New plugin "WIKI table configurations":
   This plugin provides some pre-defined configurations for various WIKI engines. With this configurations, Squirrel knows, how to transform the selection
   of a result table into a WIKI table. At the moment, configurations for the following WIKI's are provided:
