@@ -18,7 +18,7 @@ public class GraphPanelController
    private JPanel _bottomPanelContainer;
    private int _standardDividerSize;
 
-   public GraphPanelController(TableFramesModel tableFramesModel, GraphDesktopListener graphDesktopListener, ISession session, GraphPlugin plugin)
+   public GraphPanelController(TableFramesModel tableFramesModel, GraphDesktopListener graphDesktopListener, ISession session, GraphPlugin plugin, boolean showDndDesktopImageAtStartup)
    {
       GraphControllerFacade graphControllerFacade = new GraphControllerFacade()
       {
@@ -54,7 +54,7 @@ public class GraphPanelController
       };
 
       _modeManager = new ModeManager(tableFramesModel, session, plugin, graphControllerFacade);
-      _graphDesktopController = new GraphDesktopController(graphDesktopListener, session, plugin, _modeManager);
+      _graphDesktopController = new GraphDesktopController(graphDesktopListener, session, plugin, _modeManager, showDndDesktopImageAtStartup);
 
       JScrollPane scrollPane = new JScrollPane(_graphDesktopController.getDesktopPane());
 

@@ -22,7 +22,7 @@ public class NewQueryBuilderWindowAction extends SquirrelAction implements ISess
    @Override
    public void actionPerformed(ActionEvent e)
    {
-      GraphController gc = _graphPlugin.createNewGraphControllerForSession(_session);
+      GraphController gc = _graphPlugin.createNewGraphControllerForSession(_session, true);
       gc.showQueryBuilderInWindowBesidesObjectTree();
    }
 

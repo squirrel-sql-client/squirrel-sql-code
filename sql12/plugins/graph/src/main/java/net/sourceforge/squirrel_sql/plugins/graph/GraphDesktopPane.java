@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.RepaintManager;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
@@ -39,12 +39,23 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    private double _formatHeightInPixel;
    private double _formatScale;
    private boolean _isPrinting;
+   private ImageIcon _desktopImage;
+   private boolean _showStartupImage;
    //
    /////////////////////////////////////////////////////////
 
-   public GraphDesktopPane(IApplication app)
+   public GraphDesktopPane(IApplication app, ImageIcon desktopImage)
    {
       super(app);
+
+      _desktopImage = desktopImage;
+
+      if(null != _desktopImage)
+      {
+         _showStartupImage = true;
+      }
+
+
       _constraintViewListener = new ConstraintViewAdapter()
       {
          public void foldingPointMoved(ConstraintView source)
@@ -124,9 +135,24 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
       super.paintComponent(g);
       super.paintBorder(g);
 
+      paintStartupImage(g);
+
       paintGraphComponents(g);
 
       super.paintChildren(g);
+   }
+
+   private void paintStartupImage(Graphics g)
+   {
+      if (_showStartupImage)
+      {
+         Dimension size = getSize();
+
+         int x= (size.width - _desktopImage.getIconWidth())/2;
+         int y= (size.height - _desktopImage.getIconHeight())/2;
+
+         g.drawImage(_desktopImage.getImage(), x, y, null);
+      }
    }
 
    private void paintGraphComponents(Graphics g)
@@ -295,4 +321,9 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    ///////////////////////////////////////////////////////////////////////////////////////
 
 
+   public void hideStartupImage()
+   {
+      _showStartupImage = false;
+      repaint();
+   }
 }
