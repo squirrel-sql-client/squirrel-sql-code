@@ -32,6 +32,7 @@ class QueryColumnPanel extends JPanel
 
    private JPopupMenu _popUpAggregate;
    private JPopupMenu _popUpSorting;
+   private JPanel _pnlButtons;
 
    QueryColumnPanel(final GraphPlugin graphPlugin, String tableName, ColumnInfo columnInfo, DndCallback dndCallback, ISession session)
    {
@@ -42,8 +43,9 @@ class QueryColumnPanel extends JPanel
       _graphPluginResources = new GraphPluginResources(graphPlugin);
       setBorder(BorderFactory.createEmptyBorder());
 
-      JPanel pnlButtons = new JPanel(new GridBagLayout());
-      pnlButtons.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
+      _pnlButtons = new JPanel(new GridBagLayout());
+
+      _pnlButtons.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
 
       GridBagConstraints gbc;
 
@@ -62,15 +64,19 @@ class QueryColumnPanel extends JPanel
          }
       });
       gbc = new GridBagConstraints(xPos,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
-      pnlButtons.add(chkSelect, gbc);
+      _pnlButtons.add(chkSelect, gbc);
 
-      initAggregate(pnlButtons, ++xPos);
+      initAggregate(_pnlButtons, ++xPos);
 
-      initFilter(graphPlugin, pnlButtons, ++xPos);
+      initFilter(graphPlugin, _pnlButtons, ++xPos);
 
-      initSorting(pnlButtons, ++xPos);
+      initSorting(_pnlButtons, ++xPos);
 
-      add(pnlButtons, BorderLayout.WEST);
+      add(_pnlButtons, BorderLayout.WEST);
+
+
+
+
       txtColumn = new QueryColumnTextField(_columnInfo.toString(), dndCallback, _session);
       txtColumn.setEditable(false);
       txtColumn.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
@@ -271,7 +277,8 @@ class QueryColumnPanel extends JPanel
          }
       }
 
-      return maxSize + chkSelect.getWidth() + btnFilter.getWidth();
+      //return maxSize + chkSelect.getWidth() + btnFilter.getWidth();
+      return maxSize + _pnlButtons.getWidth();
    }
 
    public void addColumnMouseListener(MouseListener mouseListener)
