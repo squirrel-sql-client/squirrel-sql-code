@@ -393,6 +393,7 @@ public class ConstraintViewsModel
       {
          if(   pkTableName.equalsIgnoreCase(constraintView.getData().getPkTableName())
             && mergeTarget != constraintView
+            && constraintView.getData().isNonDbConstraint()
             && false == constraintView.hasOverlap(mergeTarget))
          {
             for (int i = 0; i < constraintView.getData().getFkColumnInfos().length; i++)
