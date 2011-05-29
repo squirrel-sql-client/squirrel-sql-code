@@ -27,6 +27,7 @@ public class GraphController
    private GraphPlugin _plugin;
    private TabToWindowHandler _tabToWindowHandler;
    private GraphXmlSerializer _xmlSerializer;
+   private boolean _lazyLoadDone;
 
    public GraphController(ISession session, GraphPlugin plugin, GraphXmlSerializer xmlSerializer, boolean showDndDesktopImageAtStartup)
    {
@@ -143,10 +144,25 @@ public class GraphController
          _panelController.initMode(Mode.DEFAULT, null, null, false, null, null);
       }
 
-      _tabToWindowHandler.showGraph();
 
-      if(null != graphControllerXmlBean)
+      final GraphControllerXmlBean finalGraphControllerXmlBean = graphControllerXmlBean;
+
+      LazyLoadListener lazyLoadListener = new LazyLoadListener()
       {
+         @Override
+         public void lazyLoadTables()
+         {
+            onLazyLoadTables(finalGraphControllerXmlBean);
+         }
+      };
+      _tabToWindowHandler.showGraph(lazyLoadListener);
+   }
+
+   private void onLazyLoadTables(GraphControllerXmlBean graphControllerXmlBean)
+   {
+      if(null != graphControllerXmlBean && false == _lazyLoadDone)
+      {
+         _lazyLoadDone = true;
          TableFrameControllerXmlBean[] tableFrameControllerXmls = graphControllerXmlBean.getTableFrameControllerXmls();
          for (int i = 0; i < tableFrameControllerXmls.length; i++)
          {

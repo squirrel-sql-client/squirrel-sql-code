@@ -56,7 +56,15 @@ public class GraphDesktopController
       _session = session;
       _plugin = plugin;
       _graphPluginResources = new GraphPluginResources(_plugin);
-      _desktopPane = new GraphDesktopPane(_session.getApplication(), _graphPluginResources.getIcon(GraphPluginResources.IKeys.DND));
+
+      ImageIcon startUpImage = null;
+
+      if (showDndDesktopImageAtStartup)
+      {
+         startUpImage = _graphPluginResources.getIcon(GraphPluginResources.IKeys.DND);
+      }
+
+      _desktopPane = new GraphDesktopPane(_session.getApplication(), startUpImage);
       _desktopPane.setBackground(Color.white);
 
       _modeManager = modeManager;

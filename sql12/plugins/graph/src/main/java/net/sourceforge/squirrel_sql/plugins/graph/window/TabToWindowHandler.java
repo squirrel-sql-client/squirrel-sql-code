@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPanelController;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
+import net.sourceforge.squirrel_sql.plugins.graph.LazyLoadListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ public class TabToWindowHandler
    private GraphMainPanelTab _graphMainPanelTab;
    private ISession _session;
    private GraphWindowController _graphWindowController;
+   private LazyLoadListener _lazyLoadListener;
 
    public TabToWindowHandler(GraphPanelController panelController, ISession session, GraphPlugin plugin)
    {
@@ -32,6 +34,8 @@ public class TabToWindowHandler
 
    private void toWindow()
    {
+      _lazyLoadListener.lazyLoadTables();
+
       Dimension size = _graphMainPanelTab.getComponent().getSize();
       Point screenLoc = GUIUtils.getScreenLocationFor(_graphMainPanelTab.getComponent());
 
@@ -77,8 +81,10 @@ public class TabToWindowHandler
 
    }
 
-   public void showGraph()
+   public void showGraph(LazyLoadListener lazyLoadListener)
    {
+      _lazyLoadListener = lazyLoadListener;
+      _graphMainPanelTab.setLazyLoadListener(_lazyLoadListener);
       _session.getSessionSheet().addMainTab(_graphMainPanelTab);
    }
 

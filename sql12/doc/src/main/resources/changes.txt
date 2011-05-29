@@ -7,6 +7,15 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Query Builder / New features in Graph plugin:
+   The Query Builder is part of the Graph plugin. That means besides the former default and Zoom/Print modes
+   Query Builder is a new mode of the Graph Plugin. Any existing Graph can be switched to the new mode.
+   Besides the Query Builder itself several new features have been added to the Graph plugin:
+   - A Graph can be viewed in separate window.
+   - Tables can be dragged from the Object tree to a Graph window. For convenience there is a
+     new Session tool bar button that creates a new Graph window and places it right besides the Session's Object tree.
+   - Graphs have a Kick off/Start button on the lower left of a Graph panel to give more intuitive access to Graph functions.
+
 Feature Request: 3307812: Select an entire row via the table's pop-up menu.
 
 Oracle Plugin: 
@@ -48,7 +57,7 @@ Feature request 3129413: The number of decimal digits are now configurable (See 
 
 Feature requests 3001253, 2896494: New icons in Object tree
 
-Display errors in result tab:
+Display errors in result tab (Feature requests 2826179):
   SQL execution errors are now additionally displayed in a temporary result tab.
   - This new feature is switched on by default and can be switched off in
     Menu File --> New Session Properties --> Tab SQL --> Show SQL execution errors in result tab.
