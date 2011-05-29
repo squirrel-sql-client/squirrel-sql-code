@@ -295,6 +295,7 @@ public class MainPanel extends JPanel
 			return idx;
 		}
 
+      _tabs.remove(idx);
 		_tabPnl.removeTabAt(idx);
 
 		return idx;

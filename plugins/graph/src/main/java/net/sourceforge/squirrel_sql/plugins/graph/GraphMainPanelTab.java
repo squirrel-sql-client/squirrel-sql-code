@@ -14,12 +14,13 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 		StringManagerFactory.getStringManager(GraphMainPanelTab.class);
 
 	private GraphPanelController _panelController;
-	// i18n[graph.newGraph=New table graph]
+   // i18n[graph.newGraph=New table graph]
 
    private JPanel _tabComponent;
 
    private JLabel _lblTitle;
    private JButton _btnToWindow;
+   private LazyLoadListener _lazyLoadListener;
 
    public GraphMainPanelTab(GraphPanelController panelController, GraphPlugin plugin)
    {
@@ -43,6 +44,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    protected void refreshComponent()
    {
       _panelController.repaint();
+      _lazyLoadListener.lazyLoadTables();
    }
 
    public String getTitle()
@@ -81,5 +83,10 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    public void removeGraph()
    {
       _panelController.removeGraph();
+   }
+
+   public void setLazyLoadListener(LazyLoadListener lazyLoadListener)
+   {
+      _lazyLoadListener = lazyLoadListener;
    }
 }
