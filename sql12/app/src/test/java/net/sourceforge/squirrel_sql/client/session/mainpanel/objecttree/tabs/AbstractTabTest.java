@@ -22,6 +22,8 @@ import java.sql.Connection;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -42,6 +44,10 @@ public abstract class AbstractTabTest extends BaseSQuirreLJUnit4TestCase
 	protected ISQLConnection mockSQLConnection = mockHelper.createMock("mockSQLConnection", ISQLConnection.class);
 
 	protected IApplication mockApplication = mockHelper.createMock("mockApplication", IApplication.class);
+	
+	protected ISQLEntryPanelFactory mockSQLPanelFactory = mockHelper.createMock("mockSQLPanelFactory", ISQLEntryPanelFactory.class);
+	
+	protected ISQLEntryPanel mockSQLEntryPanel = mockHelper.createMock("mockSQLEntryPanel", ISQLEntryPanel.class);
 
 	protected IIdentifier mockSessionId = mockHelper.createMock(IIdentifier.class);
 

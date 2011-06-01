@@ -17,14 +17,11 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
@@ -72,25 +69,18 @@ public abstract class OracleSourceTab extends BaseSourceTab {
     public OracleSourceTab(String hint)
     {
         super(hint);
-        super.setSourcePanel(new OracleSourcePanel());
     }
 
     private final class OracleSourcePanel extends BaseSourcePanel
     {
         private static final long serialVersionUID = 7855991042669454322L;
 
-        private JTextArea _ta;
-
-        OracleSourcePanel()
-        {
-            super(new BorderLayout());
-            createUserInterface();
+        OracleSourcePanel(ISession session){
+        	super(session);
         }
 
         public void load(ISession session, PreparedStatement stmt)
         {
-            _ta.setText("");
-            _ta.setWrapStyleWord(true);
             ResultSet rs = null;
             try
             {
@@ -133,8 +123,8 @@ public abstract class OracleSourceTab extends BaseSourceTab {
                     }
                     source = formatter.reformat(buf.toString());
                 }
-                _ta.setText(source);
-                _ta.setCaretPosition(0);
+                getTextArea().setText(source);
+                getTextArea().setCaretPosition(0);
             }
             catch (SQLException ex)
             {
@@ -146,12 +136,14 @@ public abstract class OracleSourceTab extends BaseSourceTab {
 
         }
 
-        private void createUserInterface()
-        {
-            _ta = new JTextArea();
-            _ta.setEditable(false);
-            add(_ta, BorderLayout.CENTER);
-        }
+        
     }
-
+    
+    /**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createSourcePanel()
+	 */
+	@Override
+	protected BaseSourcePanel createSourcePanel() {
+		return new OracleSourcePanel(getSession());
+	}
 }

@@ -24,7 +24,12 @@ import static org.easymock.EasyMock.isA;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
 
+import javax.swing.JTextArea;
+
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
@@ -75,6 +80,12 @@ public abstract class AbstractSourceTabTest extends AbstractTabTest
 		
 		expect(mockApplication.getSessionManager()).andStubReturn(mockSessionManager);
 		expect(mockSessionManager.getSession(mockSessionId)).andStubReturn(mockSession);
+		expect(mockApplication.getSQLEntryPanelFactory()).andReturn(mockSQLPanelFactory);
+		
+		HashMap<String, Object> props = new HashMap<String, Object>();
+		props.put(IParserEventsProcessorFactory.class.getName(), null);
+		expect(mockSQLPanelFactory.createSQLEntryPanel(mockSession, props)).andStubReturn(mockSQLEntryPanel);
+		expect(mockSQLEntryPanel.getTextComponent()).andStubReturn(new JTextArea());
 		
 		expect(mockSQLConnection.prepareStatement(isA(String.class))).andStubReturn(mockPreparedStatement);
 		mockPreparedStatement.setString(EasyMock.anyInt(), isA(String.class));
@@ -85,8 +96,8 @@ public abstract class AbstractSourceTabTest extends AbstractTabTest
 		mockPreparedStatement.close();
 
 		mockHelper.replayAll();
-		classUnderTest.getComponent();
 		classUnderTest.setSession(mockSession);
+		classUnderTest.getComponent();
 		classUnderTest.setDatabaseObjectInfo(mockDatabaseObjectInfo);
 		classUnderTest.select();
 		mockHelper.verifyAll();

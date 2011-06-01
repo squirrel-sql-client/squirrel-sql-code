@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Source Tabs:
+	Syntax highlighting is used for displaying the source of database objects, if the syntax plugin is installed.
+
 Query Builder / New features in Graph plugin:
    The Query Builder is part of the Graph plugin. That means besides the former default and Zoom/Print modes
    Query Builder is a new mode of the Graph Plugin. Any existing Graph can be switched to the new mode.
