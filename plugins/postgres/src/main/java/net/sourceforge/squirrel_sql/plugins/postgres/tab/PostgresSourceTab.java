@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.postgres.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -60,24 +59,19 @@ public abstract class PostgresSourceTab extends BaseSourceTab
 
 	public PostgresSourceTab(String hint) {
 		super(hint);
-		super.setSourcePanel(new PostgresSourcePanel());
 	}
 
 	private final class PostgresSourcePanel extends BaseSourcePanel
 	{
 		private static final long serialVersionUID = 1L;
 
-		private JTextArea _ta;
-
-		PostgresSourcePanel() {
-			super(new BorderLayout());
-			createUserInterface();
+		PostgresSourcePanel(ISession session) {
+			super(session);
 		}
 
 		public void load(ISession session, PreparedStatement stmt)
 		{
-			_ta.setText("");
-			_ta.setWrapStyleWord(true);
+			getTextArea().setText("");
 			ResultSet rs = null;
 			try
 			{
@@ -109,12 +103,12 @@ public abstract class PostgresSourceTab extends BaseSourceTab
 					{
 						s_log.debug("View source before formatting: " + buf.toString());
 					}
-					_ta.setText(formatter.reformat(buf.toString()));
+					getTextArea().setText(formatter.reformat(buf.toString()));
 				} else
 				{
-					_ta.setText(buf.toString());
+					getTextArea().setText(buf.toString());
 				}
-				_ta.setCaretPosition(0);
+				getTextArea().setCaretPosition(0);
 			} catch (SQLException ex)
 			{
 				session.showErrorMessage(ex);
@@ -125,12 +119,12 @@ public abstract class PostgresSourceTab extends BaseSourceTab
 
 		}
 
-		private void createUserInterface()
-		{
-			_ta = new JTextArea();
-			_ta.setEditable(false);
-			add(_ta, BorderLayout.CENTER);
-		}
 	}
-
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createSourcePanel()
+	 */
+	@Override
+	protected BaseSourcePanel createSourcePanel() {
+		return new PostgresSourcePanel(getSession());
+	}
 }

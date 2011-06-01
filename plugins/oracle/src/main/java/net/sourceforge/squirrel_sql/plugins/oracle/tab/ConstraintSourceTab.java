@@ -17,12 +17,9 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
-import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
@@ -65,7 +62,7 @@ public class ConstraintSourceTab extends BaseSourceTab {
 	public ConstraintSourceTab() {
 		// i18n[oracle.showConstraintSource=Show constraint source]
 		super(s_stringMgr.getString("oracle.showConstraintSource"));
-		super.setSourcePanel(new ConstraintSourcePanel());
+		
 	}
 
 	@Override
@@ -86,18 +83,12 @@ public class ConstraintSourceTab extends BaseSourceTab {
 	private final class ConstraintSourcePanel extends BaseSourcePanel {
 		private static final long serialVersionUID = 1L;
 
-		private JTextArea textArea;
 
-		ConstraintSourcePanel() {
-			super(new BorderLayout());
-			textArea = new JTextArea();
-			textArea.setEditable(false);
-			add(textArea, BorderLayout.CENTER);
+		ConstraintSourcePanel(ISession session) {
+			super(session);
 		}
 
 		public void load(ISession session, PreparedStatement stmt) {
-			// always wrap on word boundaries
-			textArea.setWrapStyleWord(true);
 			ConstraintSourceBuilder csb = new ConstraintSourceBuilder(session);
 
 			ResultSet rs = null;
@@ -120,9 +111,9 @@ public class ConstraintSourceTab extends BaseSourceTab {
 					csb.buildConstraintSource(ci);
 					
 					if (csb.getConstraintSource() != null) {
-						textArea.setText(csb.getConstraintSource());
+						getTextArea().setText(csb.getConstraintSource());
 					} else {
-						textArea.setText("Source NOT available");
+						getTextArea().setText("Source NOT available");
 					}
 				}
 			} catch (Exception ex) {
@@ -135,5 +126,13 @@ public class ConstraintSourceTab extends BaseSourceTab {
 				SQLUtilities.closeResultSet(rs, true);
 			}
 		}
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createSourcePanel()
+	 */
+	@Override
+	protected BaseSourcePanel createSourcePanel() {
+		return new ConstraintSourcePanel(getSession());
 	}
 }

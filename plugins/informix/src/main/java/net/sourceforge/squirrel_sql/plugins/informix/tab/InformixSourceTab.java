@@ -18,12 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.informix.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
@@ -65,25 +62,19 @@ public abstract class InformixSourceTab extends BaseSourceTab
 
 	public InformixSourceTab(String hint) {
 		super(hint);
-		super.setSourcePanel(new InformixSourcePanel());
 	}
 
 	private final class InformixSourcePanel extends BaseSourcePanel
 	{
 		private static final long serialVersionUID = 1L;
 
-		private JTextArea _ta;
-
-		InformixSourcePanel() {
-			super(new BorderLayout());
-			createUserInterface();
+		InformixSourcePanel(ISession session) {
+			super(session);
 		}
 
 		public void load(ISession session, PreparedStatement stmt)
 		{
-			_ta.setText("");
-			_ta.setWrapStyleWord(true);
-
+			getTextArea().setText("");
 			ResultSet rs = null;
 			try
 			{
@@ -128,22 +119,22 @@ public abstract class InformixSourceTab extends BaseSourceTab
 					{
 						s_log.debug("View source before formatting: " + trimmedSource);
 					}
-					_ta.setText(formatter.reformat(trimmedSource));
+					getTextArea().setText(formatter.reformat(trimmedSource));
 				} else if (sourceType == TRIGGER_TYPE)
 				{
 					if (s_log.isDebugEnabled())
 					{
 						s_log.debug("Trigger source before formatting: " + trimmedSource);
 					}
-					_ta.setText(formatter.reformat(trimmedSource));
+					getTextArea().setText(formatter.reformat(trimmedSource));
 				} else
 				{
 					// Skip formatting for Stored Procedures - They can have
 					// comments embedded in them, and I'm presently not sure
 					// how the formatter handles this.
-					_ta.setText(trimmedSource);
+					getTextArea().setText(trimmedSource);
 				}
-				_ta.setCaretPosition(0);
+				getTextArea().setCaretPosition(0);
 			} catch (SQLException ex)
 			{
 				session.showErrorMessage(ex);
@@ -153,13 +144,13 @@ public abstract class InformixSourceTab extends BaseSourceTab
 			}
 
 		}
-
-		private void createUserInterface()
-		{
-			_ta = new JTextArea();
-			_ta.setEditable(false);
-			add(_ta, BorderLayout.CENTER);
-		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createSourcePanel()
+	 */
+	@Override
+	protected BaseSourcePanel createSourcePanel() {
+		return new InformixSourcePanel(getSession());
+	}
 }

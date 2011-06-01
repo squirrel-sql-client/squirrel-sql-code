@@ -18,12 +18,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
@@ -79,7 +76,6 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 	public FormattedSourceTab(String hint)
 	{
 		super(hint);
-		super.setSourcePanel(new FormattedSourcePanel());
 	}
 
 	/**
@@ -142,22 +138,13 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 	{
 		private static final long serialVersionUID = 1L;
 
-		private JTextArea _ta;
-
-		FormattedSourcePanel()
-		{
-			super(new BorderLayout());
-			_ta = new JTextArea();
-			_ta.setEditable(false);
-			add(_ta, BorderLayout.CENTER);
+		FormattedSourcePanel(ISession session){
+			super(session);
 		}
 
 		public void load(ISession session, PreparedStatement stmt)
 		{
-			_ta.setText("");
-
-			// always wrap on word boundaries
-			_ta.setWrapStyleWord(true);
+			getTextArea().setText("");
 
 			ResultSet rs = null;
 			try
@@ -193,7 +180,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 					{
 						s_log.debug("Object source code before formatting: " + processedResult);
 					}
-					_ta.setText(format(processedResult));
+					getTextArea().setText(format(processedResult));
 				}
 				else
 				{
@@ -201,11 +188,9 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 					{
 						buf.append(i18n.NO_SOURCE_AVAILABLE);
 					}
-					_ta.setText(processedResult);
+					getTextArea().setText(processedResult);
 				}
-				_ta.setCaretPosition(0);
-				_ta.setTabSize(4);
-
+				getTextArea().setCaretPosition(0);
 			}
 			catch (Exception ex)
 			{
@@ -315,5 +300,13 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 	{
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 		return new String[] { doi.getSchemaName(), doi.getSimpleName() };
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createSourcePanel()
+	 */
+	@Override
+	protected BaseSourcePanel createSourcePanel() {
+		return new FormattedSourcePanel(getSession());
 	}
 }

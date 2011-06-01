@@ -18,13 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -34,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * @author Stefan Willinger
  *
  */
-public class IndexSourceTab extends BaseSourceTab {
+public class IndexSourceTab extends FormattedSourceTab {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(IndexSourceTab.class);
 
@@ -49,15 +44,22 @@ public class IndexSourceTab extends BaseSourceTab {
 		super(s_stringMgr.getString("oracle.showIndexSource"));
 	}
 
-	protected PreparedStatement createStatement() throws SQLException
-	{
-		final ISession session = getSession();
-		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
-		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, doi.getSimpleName());
-		pstmt.setString(2, doi.getSchemaName());
-		return pstmt;
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab#getSqlStatement()
+	 */
+	@Override
+	protected String getSqlStatement() {
+		return SQL;
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab#getBindValues()
+	 */
+	@Override
+	protected String[] getBindValues() {
+		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+		return new String[]{doi.getSimpleName(), doi.getSchemaName()};
+	}
+	
+	
 }
