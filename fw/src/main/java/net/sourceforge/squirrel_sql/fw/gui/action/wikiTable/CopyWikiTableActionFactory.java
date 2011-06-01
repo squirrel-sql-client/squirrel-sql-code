@@ -109,9 +109,9 @@ public class CopyWikiTableActionFactory implements ICopyWikiTableActionFactory {
 	 */
 	private JMenuItem createMenuForExactlyOneConfiguration(ITableActionCallback callback,
 			IWikiTableConfiguration configuration) {
-		JMenuItem item = new JMenuItem(s_stringMgr.getString("TablePopupMenu.copyaswikitableSpecific", configuration.getName()));
-		item.setAction(new CopyWikiTableAction(configuration .getName(), configuration, callback));
-		return item;
+		String actionName = s_stringMgr.getString("TablePopupMenu.copyaswikitableSpecific", configuration.getName());
+		CopyWikiTableAction action = new CopyWikiTableAction(actionName, configuration, callback);
+		return new JMenuItem(action);
 	}
 
 

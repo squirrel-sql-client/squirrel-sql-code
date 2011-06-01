@@ -105,6 +105,7 @@ public class CopyWikiTableActionFactoryTest extends BaseSQuirreLJUnit4TestCase{
 		JMenuItem menuItem = classUnderTest.createMenueItem(mockCallback);
 		assertNotNull(menuItem);
 		assertEquals(JMenuItem.class, menuItem.getClass());
+		assertEquals("Copy as WIKI table (MockConfig)", menuItem.getText());
 	}	
 	
 	
