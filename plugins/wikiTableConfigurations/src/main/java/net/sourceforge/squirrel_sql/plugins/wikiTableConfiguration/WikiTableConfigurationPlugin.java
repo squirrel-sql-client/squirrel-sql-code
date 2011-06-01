@@ -84,14 +84,14 @@ public class WikiTableConfigurationPlugin extends DefaultSessionPlugin {
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
 	 */
 	public String getInternalName() {
-		return "WIKI tables";
+		return "wiki tables";
 	}
 
 	/* (non-Javadoc)
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getDescriptiveName()
 	 */
 	public String getDescriptiveName() {
-		return "Provides configurations for exporting the result table as a WIKI table";
+		return "Configurations for exporting the result table as a WIKI table";
 	}
 
 	/* (non-Javadoc)
