@@ -21,6 +21,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -33,6 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLConnectionState
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(SQLConnectionState.class);
+	
 	private final static ILogger s_log =
 		LoggerController.createLogger(SQLConnectionState.class);
 
@@ -60,10 +65,13 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			String msg =
-				"Error saving transaction isolation.\n" +
-				"This might happen when reconnecting a Session to restore a broken connection.\n" +
-				"The new connection will use the default transaction isolation.";
+			/*
+			 * i18n [SQLConnectionState.errorSavingIsolationState]
+			 *  Error saving transaction isolation.\n" +
+			 *  "This might happen when reconnecting a Session to restore a broken connection.\n" +
+			 *  "The new connection will use the default transaction isolation.";
+			 */
+			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingIsolationState");
 
 			s_log.error(msg, ex);
 			if (msgHandler == null)
@@ -79,10 +87,13 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			String msg =
+			/*
+			 * i18n [SQLConnectionState.errorSavingCatalog]
 				"Error saving current catalog.\n" +
 				"This might happen when reconnecting a Session to restore a broken connection.\n" +
 				"The new connection will use the default catalog.";
+			 */
+			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingCatalog");
 
 			s_log.error(msg, ex);
 			if (msgHandler == null)
@@ -102,11 +113,13 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			String msg =
+			/*
+			 * i18n [SQLConnectionState.errorSavingAutoCommit]
 				"Error saving autocommit state.\n" +
 				"This might happen when reconnecting a Session to restore a broken connection.\n" +
 				"The new connection will use the autocommit state.";
-
+			 */
+			String msg = s_stringMgr.getString("SQLConnectionState.errorSavingAutoCommit");
 
 			s_log.error(msg, ex);
 			if (msgHandler == null)
