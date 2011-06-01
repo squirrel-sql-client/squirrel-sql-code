@@ -16,6 +16,7 @@ public class GraphControllerXmlBean
    private boolean _32Converted;
    private WhereTreeNodeStructure _whereTreeNodeStructure;
    private OrderStructureXmlBean _orderStructure;
+   private SelectStructureXmlBean _selectStructure;
 
 
    public String getTitle()
@@ -126,5 +127,16 @@ public class GraphControllerXmlBean
    public OrderStructureXmlBean getOrderStructure()
    {
       return _orderStructure;
+   }
+
+
+   public SelectStructureXmlBean getSelectStructure()
+   {
+      return _selectStructure;
+   }
+
+   public void setSelectStructure(SelectStructureXmlBean selectStructure)
+   {
+      _selectStructure = selectStructure;
    }
 }

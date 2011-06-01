@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.plugins.graph.TableFramesModel;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderCol;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderStructure;
+import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.SelectStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 
 public class QueryBuilderSQLGenerator
@@ -17,7 +18,7 @@ public class QueryBuilderSQLGenerator
       _session = session;
    }
 
-   public String generateSQL(TableFramesModel tableFramesModel, WhereTreeNodeStructure wts, OrderStructure orderStructure)
+   public String generateSQL(TableFramesModel tableFramesModel, WhereTreeNodeStructure wts, OrderStructure orderStructure, SelectStructure selS)
    {
       FromClauseRes fromClause = new FromClauseGenerator().createFrom(tableFramesModel);
 
@@ -27,7 +28,7 @@ public class QueryBuilderSQLGenerator
       }
 
 
-      SelectClauseRes selectClause = new SelectClauseGenerator().createSelectClause(fromClause);
+      SelectClauseRes selectClause = new SelectClauseGenerator().createSelectClause(fromClause, selS);
 
       if(null == selectClause)
       {
