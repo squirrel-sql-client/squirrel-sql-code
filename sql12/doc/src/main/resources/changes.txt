@@ -66,6 +66,8 @@ Display errors in result tab (Feature requests 2826179):
 
 Bug-fixes:
 
+3309565: Not possible to translate SQL connection error messages, because they are hard coded.
+
 3303174: Installer hangs on linux.  Updated version of IzPack compiler to 4.3.4.
 
 3137852: DB2 Plugin - The source code is not visible, if a char column contains a default value.
