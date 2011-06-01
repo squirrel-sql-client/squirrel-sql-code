@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
 import javax.swing.*;
@@ -99,12 +100,12 @@ public class GraphPanelController
       return _graphPanel;
    }
 
-   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins, WhereTreeNodeStructure whereTreeNodeStructure, OrderStructureXmlBean orderStructure)
+   public void initMode(Mode mode, ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, boolean queryHideNoJoins, SelectStructureXmlBean selectStructure, WhereTreeNodeStructure whereTreeNodeStructure, OrderStructureXmlBean orderStructure)
    {
       EdgesListener edgesListener = _graphDesktopController.createEdgesListener();
       GraphDesktopPane desktopPane = _graphDesktopController.getDesktopPane();
 
-      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, queryHideNoJoins, whereTreeNodeStructure, orderStructure, edgesListener, desktopPane);
+      _modeManager.initMode(mode, zoomerXmlBean, printXmlBean, queryHideNoJoins, selectStructure, whereTreeNodeStructure, orderStructure, edgesListener, desktopPane);
 
       onModeChanged();
       _modeManager.addModeManagerListener(new ModeManagerListener()

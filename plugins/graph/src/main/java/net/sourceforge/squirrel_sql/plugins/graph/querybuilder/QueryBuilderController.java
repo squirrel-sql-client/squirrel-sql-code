@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.*;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen.QueryBuilderSQLGenerator;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.OrderStructureXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.SelectStructureXmlBean;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,32 +20,36 @@ public class QueryBuilderController
 {
    private static final String PREF_KEY_SQL_DOCK_HEIGHT = "Squirrel.graph.sqldock.height";
    private static final String PREF_KEY_RESULT_DOCK_HEIGHT = "Squirrel.graph.resultdock.height";
-   private static final String PREF_KEY_ORDER_DOCK_HEIGHT = "Squirrel.graph.orderdock.height";
+   private static final String PREF_KEY_SELECT_DOCK_HEIGHT = "Squirrel.graph.selectdock.height";
    private static final String PREF_KEY_WHERE_DOCK_HEIGHT = "Squirrel.graph.wheredock.height";
+   private static final String PREF_KEY_ORDER_DOCK_HEIGHT = "Squirrel.graph.orderdock.height";
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(QueryBuilderController.class);
 
    private JPanel _panel;
    private JToggleButton _btnSQL;
    private JToggleButton _btnResult;
+   private JToggleButton _btnSelect;
    private JToggleButton _btnOrder;
    private JToggleButton _btnWhere;
    private TrippleStateCheckBox _chkHideNoJoins;
    private GraphDockHandle _sqlDockHandle;
    private GraphDockHandle _resultDockHandle;
-   private GraphDockHandle _orderDockHandle;
+   private GraphDockHandle _selectDockHandle;
    private GraphDockHandle _whereDockHandle;
+   private GraphDockHandle _orderDockHandle;
    private TableFramesModel _tableFramesModel;
    private GraphControllerFacade _graphControllerFacade;
    private ISession _session;
    private GraphQuerySQLPanelCtrl _graphQuerySQLPanelCtrl;
    private GraphQueryResultPanelCtrl _graphQueryResultPanelCtrl;
+   private GraphQuerySelectPanelCtrl _graphQuerySelectPanelCtrl;
    private GraphQueryOrderPanelCtrl _graphQueryOrderPanelCtrl;
    private GraphQueryWherePanelCtrl _graphQueryWherePanelCtrl;
    private SessionAdapter _sessionAdapter;
    private GraphDockHandleAdmin _graphDockHandleAdmin;
 
-   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, boolean queryHideNoJoins, WhereTreeNodeStructure whereTreeNodeStructure, OrderStructureXmlBean orderStructure, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
+   public QueryBuilderController(TableFramesModel tableFramesModel, GraphControllerFacade graphControllerFacade, boolean queryHideNoJoins, SelectStructureXmlBean selectStructure, WhereTreeNodeStructure whereTreeNodeStructure, OrderStructureXmlBean orderStructure, ISession session, GraphPlugin plugin, StartButtonHandler startButtonHandler)
    {
       _tableFramesModel = tableFramesModel;
       _graphControllerFacade = graphControllerFacade;
@@ -66,24 +71,29 @@ public class QueryBuilderController
       _panel.add(_btnResult, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      _btnOrder = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Order"));
-      _panel.add(_btnOrder, gbc);
+      _btnSelect = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Select"));
+      _panel.add(_btnSelect, gbc);
 
       gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _btnWhere = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Where"));
       _panel.add(_btnWhere, gbc);
 
       gbc = new GridBagConstraints(5,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      _btnOrder = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Order"));
+      _panel.add(_btnOrder, gbc);
+
+      gbc = new GridBagConstraints(6,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _chkHideNoJoins = new TrippleStateCheckBox(s_stringMgr.getString("QueryBuilderController.HideNoJoins"));
       _panel.add(_chkHideNoJoins, gbc);
       _chkHideNoJoins.setSelected(queryHideNoJoins);
 
-      gbc = new GridBagConstraints(6,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(7,0,1,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       _panel.add(new JPanel(), gbc);
 
       GraphPluginResources rsrc = new GraphPluginResources(plugin);
       _graphQuerySQLPanelCtrl = new GraphQuerySQLPanelCtrl(_session, new HideDockButtonHandler(_btnSQL, rsrc), createSQLSyncListener());
       _graphQueryResultPanelCtrl = new GraphQueryResultPanelCtrl(_session, new HideDockButtonHandler(_btnResult, rsrc), createResultSyncListener());
+      _graphQuerySelectPanelCtrl = new GraphQuerySelectPanelCtrl(new HideDockButtonHandler(_btnSelect, rsrc), selectStructure);
       _graphQueryOrderPanelCtrl = new GraphQueryOrderPanelCtrl(new HideDockButtonHandler(_btnOrder, rsrc), orderStructure);
       _graphQueryWherePanelCtrl = new GraphQueryWherePanelCtrl(_session, new HideDockButtonHandler(_btnWhere, rsrc), rsrc, whereTreeNodeStructure);
 
@@ -164,6 +174,10 @@ public class QueryBuilderController
       {
          syncResult();
       }
+      else if(_selectDockHandle.isShowing())
+      {
+         _graphQuerySelectPanelCtrl.syncSelectCols(_tableFramesModel);
+      }
       else if(_whereDockHandle.isShowing())
       {
          _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
@@ -186,16 +200,18 @@ public class QueryBuilderController
 
    private void syncResult()
    {
-      OrderStructure orderStructure = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      SelectStructure selS = _graphQuerySelectPanelCtrl.syncSelectCols(_tableFramesModel);
       WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-      _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, orderStructure));
+      OrderStructure os = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, os, selS));
    }
 
    private void syncSql()
    {
-      OrderStructure orderStructure = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      SelectStructure selS = _graphQuerySelectPanelCtrl.syncSelectCols(_tableFramesModel);
       WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
-      _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, orderStructure));
+      OrderStructure os = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
+      _graphQuerySQLPanelCtrl.setSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, os, selS));
    }
 
 
@@ -218,13 +234,19 @@ public class QueryBuilderController
       _resultDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryResultPanelCtrl.getGraphQueryResultPanel(), resHeight);
       _graphDockHandleAdmin.add(_resultDockHandle, _btnResult);
 
-      int orderHeight = Preferences.userRoot().getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
-      _orderDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryOrderPanelCtrl.getGraphQueryOrderPanel(), orderHeight);
-      _graphDockHandleAdmin.add(_orderDockHandle, _btnOrder);
+      int selectHeight = Preferences.userRoot().getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
+      _selectDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQuerySelectPanelCtrl.getGraphQueryOrderPanel(), selectHeight);
+      _graphDockHandleAdmin.add(_selectDockHandle, _btnSelect);
+
 
       int whereHeight = Preferences.userRoot().getInt(PREF_KEY_WHERE_DOCK_HEIGHT, 250);
       _whereDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryWherePanelCtrl.getGraphQueryWherePanel(), whereHeight);
       _graphDockHandleAdmin.add(_whereDockHandle, _btnWhere);
+
+      int orderHeight = Preferences.userRoot().getInt(PREF_KEY_ORDER_DOCK_HEIGHT, 250);
+      _orderDockHandle = new GraphDockHandle(_graphControllerFacade, _graphQueryOrderPanelCtrl.getGraphQueryOrderPanel(), orderHeight);
+      _graphDockHandleAdmin.add(_orderDockHandle, _btnOrder);
+
    }
 
    private void onSessionClosing()
@@ -264,5 +286,10 @@ public class QueryBuilderController
    public OrderStructureXmlBean getOrderStructure()
    {
       return _graphQueryOrderPanelCtrl.getOrderStructure();
+   }
+
+   public SelectStructureXmlBean getSelectStructure()
+   {
+      return _graphQuerySelectPanelCtrl.getSelectStructure();
    }
 }
