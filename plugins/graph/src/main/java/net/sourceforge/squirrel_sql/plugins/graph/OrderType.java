@@ -97,7 +97,18 @@ enum OrderType
          }
          else
          {
-            return c1.getName().compareTo(c2.getName());
+            if(c1.getQueryData().isSorted() && false == c2.getQueryData().isSorted())
+            {
+               return -1;
+            }
+            else if(false == c1.getQueryData().isSorted() && c2.getQueryData().isSorted())
+            {
+               return 1;
+            }
+            else
+            {
+               return c1.getName().compareTo(c2.getName());
+            }
          }
       }
    }
