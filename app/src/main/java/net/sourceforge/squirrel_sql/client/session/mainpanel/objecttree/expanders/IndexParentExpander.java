@@ -27,13 +27,12 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo.IndexType;
-import net.sourceforge.squirrel_sql.fw.sql.IndexInfo.SortOrder;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -107,22 +106,7 @@ public class IndexParentExpander implements INodeExpander
 				String indexName = rs.getString(1);
 				String cat = parentDbinfo.getCatalogName();
 				String schema = parentDbinfo.getSchemaName();
-				String tableName = tableInfo.getSimpleName();
-				// This info is merely a placeholder in the tree that we can use to get index name and
-				// parent name more easily. We probably should create a IndexColumnInfo that has this
-				// extra info in it.
-				String columnName = null;
-				boolean nonUnique = true;
-				String indexQualifier = null;
-				IndexType indexType = null;
-				short ordinalPosition = 0;
-				SortOrder sortOrder = null;
-				int cardinality = 0;
-				int pages = 0;
-				String filterCondition = null;
-				IndexInfo doi = new IndexInfo(
-				   cat, schema, indexName, tableName, columnName, nonUnique, indexQualifier, indexType,
-				   ordinalPosition, sortOrder, cardinality, pages, filterCondition, md);
+				DatabaseObjectInfo doi = new DatabaseObjectInfo(cat, schema, indexName, DatabaseObjectType.INDEX, md);
 				childNodes.add(new ObjectTreeNode(session, doi));
 			}
 		} catch (SQLException e)
