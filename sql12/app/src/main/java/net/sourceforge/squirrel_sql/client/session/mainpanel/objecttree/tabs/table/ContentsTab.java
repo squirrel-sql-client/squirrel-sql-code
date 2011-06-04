@@ -458,13 +458,13 @@ public class ContentsTab extends BaseTableTab
     */
    private void disposeWaitDialog() {
    	if (!_prefs.getShowPleaseWaitDialog()) return;
-      if (_waitDialog != null) {
           GUIUtils.processOnSwingEventThread(new Runnable() {
               public void run() {
+            	  if (_waitDialog != null) {
                   _waitDialog.dispose();
               }
+        	  }       
           });
-      }       
    }
    
    public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
