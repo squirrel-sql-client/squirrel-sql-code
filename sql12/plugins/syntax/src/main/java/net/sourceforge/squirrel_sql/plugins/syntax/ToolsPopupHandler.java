@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import java.util.HashMap;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -9,17 +14,14 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEditorPane;
-import net.sourceforge.squirrel_sql.plugins.syntax.ReplaceAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLKit;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsInitializer;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
-import net.sourceforge.squirrel_sql.plugins.syntax.UnmarkAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
+
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
 import org.netbeans.editor.BaseKit;
-
-import javax.swing.*;
-import java.util.HashMap;
 
 public class ToolsPopupHandler
 {
@@ -79,7 +81,8 @@ public class ToolsPopupHandler
          Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
          toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
          tpa.addToToolsPopup(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
-
+         
+         tpa.addToToolsPopup(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
       }
    }
 
@@ -126,6 +129,7 @@ public class ToolsPopupHandler
          toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
          sif.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
 
+         sif.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
       }
 
    }
@@ -169,6 +173,7 @@ public class ToolsPopupHandler
          toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
          sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
 
+         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.COPY_AS_RTF,_syntaxPugin.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
       }
    }
 
