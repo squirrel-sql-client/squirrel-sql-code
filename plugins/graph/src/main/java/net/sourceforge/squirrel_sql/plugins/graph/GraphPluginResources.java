@@ -44,5 +44,6 @@ public final class GraphPluginResources extends PluginResources
       String NEW_OR_FOLDER = "neworfolder";
       String DELETE_FOLDER = "deletefolder";
       String DND = "dnd";
+      String ESCAPE_DATE = "escapedate";
    }
 }

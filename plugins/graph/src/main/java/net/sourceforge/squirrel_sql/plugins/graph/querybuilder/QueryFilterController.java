@@ -5,9 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
-import net.sourceforge.squirrel_sql.plugins.graph.TableFramesModelChangeType;
+import net.sourceforge.squirrel_sql.plugins.graph.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +20,6 @@ public class QueryFilterController
    private QueryFilterDlg _queryFilterDlg;
    private String _tableName;
    private ColumnInfo _columnInfo;
-   private GraphPlugin _graphPlugin;
    private ISession _session;
    private QueryFilterListener _queryFilterListener;
 
@@ -34,7 +31,6 @@ public class QueryFilterController
    {
       _tableName = tableName;
       _columnInfo = columnInfo;
-      _graphPlugin = graphPlugin;
       _session = session;
 
       _sessionAdapter = new SessionAdapter()
@@ -50,7 +46,7 @@ public class QueryFilterController
       _session.getApplication().getSessionManager().addSessionListener(_sessionAdapter);
 
       _queryFilterListener = queryFilterListener;
-      _queryFilterDlg = new QueryFilterDlg(parent, tableName + "." + _columnInfo.toString());
+      _queryFilterDlg = new QueryFilterDlg(parent, new GraphPluginResources(graphPlugin), tableName + "." + _columnInfo.toString());
 
 
       boolean applyQuotes = Preferences.userRoot().getBoolean(PREF_KEY_QUERY_ALWAYS_APPEND_QUOTES, false);
@@ -95,6 +91,16 @@ public class QueryFilterController
          }
       });
 
+      _queryFilterDlg._btnEscapeDate.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onEscapeDate();
+         }
+      });
+
+
 
       if (null == columnInfo.getQueryData().getOperator())
       {
@@ -112,6 +118,16 @@ public class QueryFilterController
       GUIUtils.centerWithinParent(_queryFilterDlg);
       _queryFilterDlg.setVisible(true);
       _queryFilterDlg._txtFilter.requestFocus();
+   }
+
+   private void onEscapeDate()
+   {
+      String dateEscape = EditExtrasAccessor.getDateEscape(_queryFilterDlg, _session);
+
+      if (null != dateEscape && 0 < dateEscape.trim().length())
+      {
+         _queryFilterDlg._txtFilter.setText(dateEscape);
+      }
    }
 
    private void onSessionClosing(SessionEvent evt)
@@ -136,10 +152,12 @@ public class QueryFilterController
       if(QueryFilterOperators.isNoArgOperator(selectedOp))
       {
          _queryFilterDlg._txtFilter.setEnabled(false);
+         _queryFilterDlg._btnEscapeDate.setEnabled(false);
       }
       else
       {
          _queryFilterDlg._txtFilter.setEnabled(true);
+         _queryFilterDlg._btnEscapeDate.setEnabled(true);
       }
 
    }
