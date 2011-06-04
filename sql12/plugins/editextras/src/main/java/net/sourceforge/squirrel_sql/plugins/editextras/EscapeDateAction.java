@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 import java.awt.event.ActionEvent;
@@ -21,7 +20,14 @@ public class EscapeDateAction extends SquirrelAction implements ISQLPanelAction
 
    public void actionPerformed(ActionEvent e)
    {
-      new EscapeDateController(_session, getApplication().getMainFrame());
+      new EscapeDateController(getApplication().getMainFrame(), new EscapeDateListener()
+      {
+         @Override
+         public void setDateString(String escapedString)
+         {
+             _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(escapedString);
+         }
+      }, false);
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)

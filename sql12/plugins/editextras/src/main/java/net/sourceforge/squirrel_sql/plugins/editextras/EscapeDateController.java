@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -12,13 +13,14 @@ import java.util.Calendar;
 public class EscapeDateController
 {
    private EscapeDateFrame _frame;
-   private ISession _session;
+   private EscapeDateListener _escapeDateListener;
 
 
-   public EscapeDateController(ISession session, MainFrame mainFrame)
+   public EscapeDateController(Window parent, EscapeDateListener escapeDateListener, boolean modal)
    {
-      _session = session;
-      _frame = new EscapeDateFrame(mainFrame);
+      _escapeDateListener = escapeDateListener;
+      _frame = new EscapeDateFrame(parent);
+      _frame.setModal(modal);
 
       _frame.btnTimestamp.addActionListener(new ActionListener()
       {
@@ -76,7 +78,7 @@ public class EscapeDateController
                             prefixNulls(_frame.txtMinute.getText(), 2) + ":" +
                             prefixNulls(_frame.txtSecond.getText(),2) + "'}";
 
-      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
+      _escapeDateListener.setDateString(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }
@@ -87,7 +89,7 @@ public class EscapeDateController
                             prefixNulls(_frame.txtMonth.getText(), 2) + "-" +
                             prefixNulls(_frame.txtDay.getText(), 2) + "'}";
 
-      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
+      _escapeDateListener.setDateString(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }
@@ -101,7 +103,7 @@ public class EscapeDateController
                              prefixNulls(_frame.txtMinute.getText(), 2) + ":" +
                              prefixNulls(_frame.txtSecond.getText(), 2) + "'}";
 
-      _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().replaceSelection(esc);
+      _escapeDateListener.setDateString(esc);
       _frame.setVisible(false);
       _frame.dispose();
    }

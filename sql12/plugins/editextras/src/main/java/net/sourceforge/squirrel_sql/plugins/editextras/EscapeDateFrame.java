@@ -28,7 +28,7 @@ public class EscapeDateFrame extends JDialog
 	// i18n[editextras.time=Time]
 	JButton btnTime = new JButton(s_stringMgr.getString("editextras.time"));
 
-	public EscapeDateFrame(Frame owner)
+	public EscapeDateFrame(Window owner)
 	{
 		// i18n[editextras.escapeDate=Escape date]
 		super(owner, s_stringMgr.getString("editextras.escapeDate"));

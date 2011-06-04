@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.querybuilder;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPluginResources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +22,14 @@ public class QueryFilterDlg extends JDialog
    JButton _btnClearFilter;
    JCheckBox _chkApplyQuotes;
    JComboBox _cboOperator;
+   JButton _btnEscapeDate;
+
 
    private static final String PREF_KEY_QUERY_FILTER_WIDTH = "Squirrel.queryFilterDlg.widht";
    private static final String PREF_KEY_QUERY_FILTER_HEIGHT = "Squirrel.queryFilterDlg.height";
 
 
-   public QueryFilterDlg(Window parent, String qualifiedColumn)
+   public QueryFilterDlg(Window parent, GraphPluginResources rsrc, String qualifiedColumn)
    {
       super(parent, s_stringMgr.getString("QueryFilterDlg.title"));
 
@@ -52,8 +55,7 @@ public class QueryFilterDlg extends JDialog
       getContentPane().add(new JLabel(s_stringMgr.getString("QueryFilterDlg.filterValue")), gbc);
 
       gbc = new GridBagConstraints(1,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
-      _txtFilter = new JTextField();
-      getContentPane().add(_txtFilter, gbc);
+      getContentPane().add(createFilterPanel(rsrc), gbc);
 
 
       gbc = new GridBagConstraints(0,3,2,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(30,5,5,5),0,0);
@@ -92,6 +94,21 @@ public class QueryFilterDlg extends JDialog
 
       setSize(new Dimension(width, height));
 
+   }
+
+   private JPanel createFilterPanel(GraphPluginResources rsrc)
+   {
+      JPanel ret = new JPanel(new BorderLayout(5, 0));
+
+      _txtFilter = new JTextField();
+      ret.add(_txtFilter, BorderLayout.CENTER);
+
+      _btnEscapeDate = new JButton(rsrc.getIcon(GraphPluginResources.IKeys.ESCAPE_DATE));
+      _btnEscapeDate.setToolTipText(s_stringMgr.getString("QueryFilterDlg.btnEscapeDate"));
+      _btnEscapeDate.setBorder(BorderFactory.createEmptyBorder());
+      ret.add(_btnEscapeDate, BorderLayout.EAST);
+
+      return ret;
    }
 
    private JPanel createButtonPanel()
