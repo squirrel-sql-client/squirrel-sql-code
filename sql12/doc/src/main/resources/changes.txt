@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Feature Request 1744964: Copy text from the SQL editor panel as rich text. 
+	This functionality is available via the pop-up menu and the tools pop-up. To use this, the RSyntax editor (Syntax Plugin) must be activated.
+
 Source Tabs:
 	Syntax highlighting is used for displaying the source of database objects, if the syntax plugin is installed.
 
@@ -19,7 +22,7 @@ Query Builder / New features in Graph plugin:
      new Session tool bar button that creates a new Graph window and places it right besides the Session's Object tree.
    - Graphs have a Kick off/Start button on the lower left of a Graph panel to give more intuitive access to Graph functions.
 
-Feature Request: 3307812: Select an entire row via the table's pop-up menu.
+Feature Request 3307812: Select an entire row via the table's pop-up menu.
 
 Oracle Plugin: 
    The DDL of a index could be displayed under the source tab.
