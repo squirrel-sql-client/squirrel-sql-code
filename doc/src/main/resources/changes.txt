@@ -74,6 +74,9 @@ Display errors in result tab (Feature requests 2826179):
 
 Bug-fixes:
 
+When displaying the content of a table, the dialog "Please wait while the query is executed" may not dispose.
+  This may occurs only for tables of a "In Memory Database" with only a few rows of data. 
+
 3309565: Not possible to translate SQL connection error messages, because they are hard coded.
 
 3303174: Installer hangs on linux.  Updated version of IzPack compiler to 4.3.4.
