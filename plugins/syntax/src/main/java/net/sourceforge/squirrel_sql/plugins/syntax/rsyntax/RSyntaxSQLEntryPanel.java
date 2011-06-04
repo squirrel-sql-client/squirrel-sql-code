@@ -19,6 +19,21 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.Font;
+import java.awt.dnd.DropTarget;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
+
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
+import javax.swing.undo.UndoManager;
+
 import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -29,19 +44,7 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-
-import javax.swing.*;
-import javax.swing.event.CaretListener;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.PlainDocument;
-import javax.swing.undo.UndoManager;
-import java.awt.*;
-import java.awt.dnd.DropTarget;
-import java.awt.event.MouseListener;
-import java.util.HashMap;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -73,25 +76,27 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 		}
 		_session = session;
 
-      _propertiesWrapper = new RSyntaxPropertiesWrapper(props);
+		_propertiesWrapper = new RSyntaxPropertiesWrapper(props);
 
 
 		_textArea = new SquirrelRSyntaxTextArea(session, prefs, _propertiesWrapper, getIdentifier());
 
-      _textScrollPane = new RTextScrollPane(_textArea);
+		super.addToSQLEntryAreaMenu(session.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
 
-      _textScrollPane.setLineNumbersEnabled(prefs.isLineNumbersEnabled());
+		_textScrollPane = new RTextScrollPane(_textArea);
+
+		_textScrollPane.setLineNumbersEnabled(prefs.isLineNumbersEnabled());
 
 
-      dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session));
+		dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session));
 
 
-      //////////////////////////////////////////////////////////////////////
-      // Dragging inside the text area itself conflicts with file dnd
-      // so we disable it. See bug #3006515
-      _textArea.setDragEnabled(false);
-      //
-      ////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////
+		// Dragging inside the text area itself conflicts with file dnd
+		// so we disable it. See bug #3006515
+		_textArea.setDragEnabled(false);
+		//
+		////////////////////////////////////////////////////////////////////
 	}
 
    public int getCaretLineNumber()

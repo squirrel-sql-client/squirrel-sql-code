@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
 
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the SQL entry area.
@@ -106,6 +107,9 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
 		// i18n[SyntaxPlugin.uncomment=uncomment]
 		String UNCOMMENT = s_stringMgr.getString("SyntaxPlugin.uncomment");
+
+		// i18n[SyntaxPlugin.copyasrtf=copyasrtf]
+		String COPY_AS_RTF = s_stringMgr.getString("SyntaxPlugin.copyasrtf");;
 
 	}
 
@@ -242,6 +246,21 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		_autoCorrectProvider = new AutoCorrectProviderImpl(_userSettingsFolder);
 
 		createMenu();
+		
+		createAdditionalActions();
+	}
+
+	/**
+	 * Create some additional actions and add them to the application.
+	 * These actions are not part of the menu, but needs to be initialized with the resources of the syntax plugin.
+	 * Some of these actions may be depend on a concrete editor. 
+	 */
+	private void createAdditionalActions() {
+		IApplication app = getApplication();
+		ActionCollection coll = app.getActionCollection();
+		
+		coll.add(new SquirrelCopyAsRtfAction(getApplication(), _resources));
+		
 	}
 
 	private void createMenu()
@@ -295,7 +314,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		act = new UncommentAction(getApplication(), _resources);
 		coll.add(act);
 		_resources.addToMenu(act, menu);
-
+		
 	}
 
 	/**
