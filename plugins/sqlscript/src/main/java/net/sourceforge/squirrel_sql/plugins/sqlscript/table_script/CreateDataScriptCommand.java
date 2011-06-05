@@ -135,7 +135,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                   {
                      if (dbObjs[k] instanceof ITableInfo)
                      {
-                        if (_abortController.isStop()) break;
+                        if (isAborted()) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ScriptUtil.getTableName(ti);
                         StringBuilder sql = new StringBuilder();
@@ -179,7 +179,7 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 
                      _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                   }
-                  _abortController.setVisible(false);
+                  hideAbortFrame();
                }
             });
          }
