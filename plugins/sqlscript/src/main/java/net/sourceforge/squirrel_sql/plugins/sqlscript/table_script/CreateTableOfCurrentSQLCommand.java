@@ -77,12 +77,23 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       final boolean dropTable = ctrl.isDropTable();
 
 
-
+	
       _session.getApplication().getThreadPool().addTask(new Runnable()
       {
          public void run()
          {
-
+        	 /*
+        	  * Ok, this sleep is a hack. (Stefan)
+        	  * On my system (Ubuntu 10.10 Java 1.6.0_24), I get the cancel dialog in a unusable state.
+        	  * On my Windows system, this problem doesn't occurs.
+        	  * This small sleep does the tick, where synchronization fails :-(
+        	  * 
+        	  */
+        	 try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// nothing to do
+			}
             doCreateTableOfCurrentSQL(sTable, scriptOnly, dropTable);
          }
       });
@@ -95,6 +106,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       final StringBuffer sbScript = new StringBuffer();
       try
       {
+//    	  Thread.sleep(100);
           ISQLPanelAPI api = 
               FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
           
