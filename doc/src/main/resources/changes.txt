@@ -7,6 +7,10 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+New Plugin: Greenplum DB Plugin
+  New Plugin for the Greenplum DB. Thanks to Adam Winn for the patch (Patch ID 3217167)
+
+
 Feature Request 1744964: Copy text from the SQL editor panel as rich text. 
 	This functionality is available via the pop-up menu and the tools pop-up. To use this, the RSyntax editor (Syntax Plugin) must be activated.
 

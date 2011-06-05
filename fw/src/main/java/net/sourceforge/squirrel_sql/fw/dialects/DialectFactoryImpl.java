@@ -207,6 +207,15 @@ public class DialectFactoryImpl implements IDialectFactory
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.IDialectFactory#
+	 *      isGreenplum(net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
+	 */
+	public boolean isGreenplum(ISQLDatabaseMetaData md)
+	{
+		return DialectFactory.isGreenplum(md);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.IDialectFactory#
 	 *      isOracle(net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
 	public boolean isOracle(ISQLDatabaseMetaData md)

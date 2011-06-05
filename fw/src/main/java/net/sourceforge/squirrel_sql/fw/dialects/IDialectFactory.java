@@ -223,6 +223,16 @@ public interface IDialectFactory
 	boolean isNetezza(ISQLDatabaseMetaData md);
 
 	/**
+	 * Returns a boolean value indicating whether or not the specified metadata indicates that it is Greenplum
+	 *
+	 * @param md
+	 *           The SQLDatabaseMetaData retrieved from either ISQLConnection.getSQLMetaData() or
+	 *           ISession.getMetaData()
+	 * @return boolean indicating whether or not the specified metadata matches the database type
+	 */
+	boolean isGreenplum(ISQLDatabaseMetaData md);
+
+	/**
 	 * Returns a boolean value indicating whether or not the specified metadata indicates that it is Oracle
 	 * 
 	 * @param md
