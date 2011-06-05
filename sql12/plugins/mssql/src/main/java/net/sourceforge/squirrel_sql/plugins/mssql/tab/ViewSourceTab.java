@@ -17,14 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.mssql.tab;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * This class will display the source for an MS-SQLServer view.
@@ -52,11 +52,13 @@ public class ViewSourceTab extends BaseSourceTab
 	 * query can return a result-set with multiple rows that should be concatenated.  They should be correctly
 	 * ordered by the SYSCOMMENT.COLID field.
 	 */
-	private static final String BIGVIEW_SQL = 
-		"SELECT text  FROM sysobjects o , syscomments c " +
-		"where  o.name = ? " +
-		"and o.id = c.id " +
-		"order by c.colid ";		
+    private static final String BIGVIEW_SQL =
+        "SELECT text " +
+        "FROM   sys.objects o " +
+        "INNER JOIN sys.schemas ON o.schema_id = sys.schemas.schema_id " +
+        "INNER JOIN syscomments c  ON o.object_id = c.id " +
+        "WHERE sys.schemas.name = ? " +
+        "AND o.name = ?";
 		
 		
     
@@ -70,7 +72,8 @@ public class ViewSourceTab extends BaseSourceTab
 		ISession session = getSession();
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(BIGVIEW_SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		pstmt.setString(1, doi.getSimpleName());
+        pstmt.setString(1, doi.getSchemaName());
+		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;
 	}
 }

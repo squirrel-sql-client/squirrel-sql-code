@@ -7,6 +7,13 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+MSSQL Plugin:
+  - Added display of triggers source code.
+  - If two views with same name in different schemas exist now the views' source code is
+    displayed correctly according to the selected Object tree node.
+  Thanks to damluar for the patch (Patch ID: 3310900)
+
+
 New Plugin: Greenplum DB Plugin
   New Plugin for the Greenplum DB. Thanks to Adam Winn for the patch (Patch ID 3217167)
 

@@ -18,11 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -37,40 +32,36 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.IndexDefragAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureExecAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.ShowStatisticsAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
+import net.sourceforge.squirrel_sql.plugins.mssql.action.*;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
+import net.sourceforge.squirrel_sql.plugins.mssql.exp.MssqlTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
+import net.sourceforge.squirrel_sql.plugins.mssql.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.mssql.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.tokenizer.MSSQLQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
+
+import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
 	private final static ILogger s_log = LoggerController.createLogger(MssqlPlugin.class);
@@ -282,6 +273,13 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
         _session = iSession;
+
+        TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
+        trigExp.setTableTriggerExtractor(new MssqlTableTriggerExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
+
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
         
         MonitorPanel monitorPanel = new MonitorPanel();
         iSession.addMainTab(monitorPanel);        
