@@ -1,0 +1,7 @@
+Greenplum External Tables Plugin Change Log
+=====================
+
+0.01
+====
+
+- Initial release.
