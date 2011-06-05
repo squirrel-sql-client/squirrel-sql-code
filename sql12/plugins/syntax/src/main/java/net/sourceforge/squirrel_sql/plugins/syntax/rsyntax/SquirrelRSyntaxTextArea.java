@@ -1,31 +1,35 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+
+import javax.swing.InputMap;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IUndoHandler;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search.SquirrelRSyntaxSearchEngine;
+
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rtextarea.RTextAreaUI;
-
-import javax.swing.*;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.Document;
-import javax.swing.text.DefaultCaret;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
 
 public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 {
@@ -56,7 +60,12 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
       _rSyntaxHighlightTokenMatcherProxy.setDelegate(_propertiesWrapper.getSyntaxHighlightTokenMatcher(session, this, sqlEntryPanelIdentifier));
 
+      
+      modifiyKeystrokesFromPreferences(prefs);
+      
+      
       updateFromPreferences();
+      
 
       new KeyManager(this);
 
@@ -78,7 +87,27 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
    }
 
 
-   protected RTextAreaUI createRTextAreaUI()
+   /**
+    * Modifies the current {@link InputMap} of this component according to the actual preferences.
+    * Within the preferences of the syntax plugin, the user can change the behavior of some key strokes. e.g. the copy action.
+    * Because we have no access to the syntax preferences at the moment, the UI is created, we have to modify them after the creation. 
+    * @param prefs Preferences to use.
+    */
+   private void modifiyKeystrokesFromPreferences(SyntaxPreferences prefs) {
+	   InputMap shared = getInputMap();
+	   if(prefs.isUseCopyAsRtf()){
+		   // Replace the default copy behavior for all key bindings
+		   KeyStroke[] allKeys = shared.allKeys();
+		   for (KeyStroke keyStroke : allKeys) {
+			   Object object = shared.get(keyStroke);
+			   if(DefaultEditorKit.copyAction.equals(object)){
+				   shared.put(keyStroke, RSyntaxTextAreaEditorKit.rstaCopyAsRtfAction);
+			   }
+		   }
+	   }
+   }	
+
+protected RTextAreaUI createRTextAreaUI()
    {
       // Will be called from the super class constructor
       SquirreLRSyntaxTextAreaUI ret = new SquirreLRSyntaxTextAreaUI(this);
