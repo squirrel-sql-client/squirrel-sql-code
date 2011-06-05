@@ -122,6 +122,10 @@ public class SyntaxPreferences implements Serializable, Cloneable
 
    private boolean _lineNumbersEnabled = false;
 
+   /**
+    * Indicates, that copy in rich text format should be used as default copy action (if possible)
+    */
+   private boolean _useCopyAsRtf = false;
 
    public SyntaxPreferences()
 	{
@@ -726,5 +730,19 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		}
 
 		return _propChgReporter;
+	}
+
+	/**
+	 * @return the useCopyAsRtf
+	 */
+	public boolean isUseCopyAsRtf() {
+		return _useCopyAsRtf;
+	}
+
+	/**
+	 * @param _useCopyAsRtf the useCopyAsRtf to set
+	 */
+	public void setUseCopyAsRtf(boolean useCopyAsRtf) {
+		this._useCopyAsRtf = useCopyAsRtf;
 	}
 }

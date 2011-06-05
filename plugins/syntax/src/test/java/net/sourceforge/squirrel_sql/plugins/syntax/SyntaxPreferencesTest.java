@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import net.sourceforge.squirrel_sql.AbstractSerializableTest;
 
@@ -165,5 +166,12 @@ public class SyntaxPreferencesTest extends AbstractSerializableTest {
 	{
 		classUnderTest.setWhiteSpaceStyle(testStyle);
 		assertEquals(testStyle, classUnderTest.getWhiteSpaceStyle());
+	}
+	
+	@Test
+	public void testIsUseCopyAsRtf() throws Exception
+	{
+		classUnderTest.setUseCopyAsRtf(true);
+		assertTrue(classUnderTest.isUseCopyAsRtf());
 	}
 }

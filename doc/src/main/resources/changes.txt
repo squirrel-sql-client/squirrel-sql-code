@@ -12,7 +12,9 @@ New Plugin: Greenplum DB Plugin
 
 
 Feature Request 1744964: Copy text from the SQL editor panel as rich text. 
-	This functionality is available via the pop-up menu and the tools pop-up. To use this, the RSyntax editor (Syntax Plugin) must be activated.
+	This functionality is available via the pop-up menu and the tools pop-up. Additional this mode can be activated for copy shortcuts. 
+	See: Session Properties => Syntax => Copy shortcuts use the "Rich Text Format"
+	To use this, the RSyntax editor (Syntax Plugin) must be activated.
 
 Source Tabs:
 	Syntax highlighting is used for displaying the source of database objects, if the syntax plugin is installed.

@@ -191,6 +191,9 @@ public class SyntaxPreferencesPanel
          // i18n[syntax.lineNumbersEnabled=Enable line numbers]
          String LINE_NUMBERS_ENABLES = s_stringMgr.getString("syntax.lineNumbersEnabled");
 
+         // i18n[syntax.useCopyAsRtf=Copy in rich text format per default]
+         String USE_COPY_AS_RTF = s_stringMgr.getString("syntax.useCopyAsRtf");
+
       }
 
       private final JRadioButton _netbeansActiveOpt  = new JRadioButton(i18n.NETBEANS);
@@ -202,6 +205,8 @@ public class SyntaxPreferencesPanel
       private final JTextField _txtTextLimitLineWidth = new JTextField();
       private final JCheckBox _chkHighlightCurrentLine = new JCheckBox(i18n.HIGHLIGHT_CURRENT_LINE);
       private final JCheckBox _chkLineNumbersEnabled = new JCheckBox(i18n.LINE_NUMBERS_ENABLES);
+      
+      private final JCheckBox _useCopyAsRtf = new JCheckBox(i18n.USE_COPY_AS_RTF);
 
 
       private StylesListSelectionListener _listLis;
@@ -257,9 +262,12 @@ public class SyntaxPreferencesPanel
 
          _txtTextLimitLineWidth.setText("" + prefs.getTextLimitLineWidth());
 
+         _useCopyAsRtf.setSelected(prefs.isUseCopyAsRtf());
+         
          _stylesList.loadData(prefs);
 			_styleMaintPnl.setStyle(_stylesList.getSelectedSyntaxStyle());
-
+			
+			
 			updateControlStatus();
 		}
 
@@ -289,7 +297,8 @@ public class SyntaxPreferencesPanel
          prefs.setTextLimitLineVisible(_chkTextLimitLineVisible.isSelected());
          prefs.setHighlightCurrentLine(_chkHighlightCurrentLine.isSelected());
          prefs.setLineNumbersEnabled(_chkLineNumbersEnabled.isSelected());
-
+         prefs.setUseCopyAsRtf(_useCopyAsRtf.isSelected());
+         
          int limit = 80;
 
          try
@@ -326,26 +335,27 @@ public class SyntaxPreferencesPanel
 			prefs.setDataTypeStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.DATA_TYPES));
 		}
 
-		private void updateControlStatus()
-		{
-			final boolean useOsterControl = _osterActiveOpt.isSelected();
-         final boolean useNetbeansControl = _netbeansActiveOpt.isSelected();
-         final boolean useRSyntaxControl = _rsyntaxActiveOpt.isSelected();
-         final boolean usePlainControl = _plainActiveOpt.isSelected();
+      private void updateControlStatus()
+      {
+    	  final boolean useOsterControl = _osterActiveOpt.isSelected();
+    	  final boolean useNetbeansControl = _netbeansActiveOpt.isSelected();
+    	  final boolean useRSyntaxControl = _rsyntaxActiveOpt.isSelected();
+    	  final boolean usePlainControl = _plainActiveOpt.isSelected();
 
-			_stylesList.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
-			_styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
+    	  _stylesList.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
+    	  _styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl || useRSyntaxControl);
 
-         _chkTextLimitLineVisible.setEnabled(useNetbeansControl || useRSyntaxControl);
-         _txtTextLimitLineWidth.setEnabled(useNetbeansControl || useRSyntaxControl);
+    	  _chkTextLimitLineVisible.setEnabled(useNetbeansControl || useRSyntaxControl);
+    	  _txtTextLimitLineWidth.setEnabled(useNetbeansControl || useRSyntaxControl);
 
-         if(useNetbeansControl || useRSyntaxControl)
-         {
-            _txtTextLimitLineWidth.setEnabled(_chkTextLimitLineVisible.isSelected());
-         }
+    	  if(useNetbeansControl || useRSyntaxControl)
+    	  {
+    		  _txtTextLimitLineWidth.setEnabled(_chkTextLimitLineVisible.isSelected());
+    	  }
 
-         _chkHighlightCurrentLine.setEnabled(useRSyntaxControl);
-         _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
+    	  _chkHighlightCurrentLine.setEnabled(useRSyntaxControl);
+    	  _chkLineNumbersEnabled.setEnabled(useRSyntaxControl);
+    	  _useCopyAsRtf.setEnabled(useRSyntaxControl);
       }
 
 		private void createUserInterface(SyntaxPreferences prefs,
@@ -474,6 +484,9 @@ public class SyntaxPreferencesPanel
          gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          pnlRet.add(_chkLineNumbersEnabled, gbc);
 
+         gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(_useCopyAsRtf, gbc);
+         
          return pnlRet;
       }
 
