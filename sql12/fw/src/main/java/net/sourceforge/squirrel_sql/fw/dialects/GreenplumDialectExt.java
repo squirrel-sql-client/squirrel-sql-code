@@ -397,8 +397,13 @@ public class GreenplumDialectExt extends CommonHibernateDialect
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
 		if (databaseProductName == null) { return false; }
-		if (   -1 < databaseProductName.trim().toUpperCase().indexOf("GREEN")
-          && -1 < databaseProductName.trim().toUpperCase().indexOf("PLUM"))
+		if (
+             (  -1 < databaseProductName.trim().toUpperCase().indexOf("GREEN")
+             && -1 < databaseProductName.trim().toUpperCase().indexOf("PLUM"))
+          ||
+             (  -1 < databaseProductVersion.trim().toUpperCase().indexOf("GREEN")
+             && -1 < databaseProductVersion.trim().toUpperCase().indexOf("PLUM"))
+         )
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
