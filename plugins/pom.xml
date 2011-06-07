@@ -100,6 +100,7 @@
 		<module>syntax</module>
 		<module>userscript</module>
 		<module>wikiTableConfigurations</module>
+        <module>greenplum</module>
 	</modules>
 
 </project>
