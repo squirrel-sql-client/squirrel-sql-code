@@ -33,17 +33,14 @@ import java.sql.SQLException;
 import javax.swing.Icon;
 
 import junit.framework.Assert;
-
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
-import org.fest.assertions.AssertExtension;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import utils.EasyMockHelper;
 
@@ -340,7 +337,7 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	public void testGetDialectForDb2() throws SQLException
 	{
 		final String productName = DB2_PRODUCT_NAME;
-		final String productVersion = DB2_PRODUCT_NAME;
+		final String productVersion = DB2_PRODUCT_VERSION;
 		final String expectedDialectClassname = DB2DialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}		
@@ -349,7 +346,7 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	public void testGetDialectForDerby() throws SQLException
 	{
 		final String productName = DERBY_PRODUCT_NAME;
-		final String productVersion = DERBY_PRODUCT_NAME;
+		final String productVersion = DERBY_PRODUCT_VERSION;
 		final String expectedDialectClassname = DerbyDialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}		
@@ -358,7 +355,7 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	public void testGetDialectForIngres() throws SQLException
 	{
 		final String productName = INGRES_PRODUCT_NAME;
-		final String productVersion = INGRES_PRODUCT_NAME;
+		final String productVersion = INGRES_PRODUCT_VERSION;
 		final String expectedDialectClassname = IngresDialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}	
