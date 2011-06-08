@@ -69,6 +69,18 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String INGRES_PRODUCT_VERSION = "II 9.1.1 (int.rpl/103)";
 
+	private static final String MSSQL_PRODUCT_NAME = "Microsoft SQL Server";
+
+	private static final String MSSQL_PRODUCT_VERSION = "9.00.3077";	
+
+	private static final String MYSQL_PRODUCT_NAME = "MySQL";
+
+	private static final String MYSQL_PRODUCT_VERSION = "4.1.22-standard";		
+
+	private static final String MYSQL5_PRODUCT_NAME = "MySQL";
+
+	private static final String MYSQL5_PRODUCT_VERSION = "5.1.41-3ubuntu12.10";		
+	
 	private static final String POSTGRESQL_PRODUCT_NAME = "PostgreSQL";
 
 	private static final String POSTGRESQL_PRODUCT_VERSION = "8.3.1";
@@ -357,6 +369,33 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		final String productName = INGRES_PRODUCT_NAME;
 		final String productVersion = INGRES_PRODUCT_VERSION;
 		final String expectedDialectClassname = IngresDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+
+	@Test
+	public void testGetDialectForMssql() throws SQLException
+	{
+		final String productName = MSSQL_PRODUCT_NAME;
+		final String productVersion = MSSQL_PRODUCT_VERSION;
+		final String expectedDialectClassname = SQLServerDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+
+	@Test
+	public void testGetDialectForMysql() throws SQLException
+	{
+		final String productName = MYSQL_PRODUCT_NAME;
+		final String productVersion = MYSQL_PRODUCT_VERSION;
+		final String expectedDialectClassname = MySQLDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+	
+	@Test
+	public void testGetDialectForMysql5() throws SQLException
+	{
+		final String productName = MYSQL5_PRODUCT_NAME;
+		final String productVersion = MYSQL5_PRODUCT_VERSION;
+		final String expectedDialectClassname = MySQL5DialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}	
 	
