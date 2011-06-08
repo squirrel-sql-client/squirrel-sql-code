@@ -25,30 +25,56 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.awt.Component;
+import java.sql.SQLException;
 
 import javax.swing.Icon;
+
+import junit.framework.Assert;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 import net.sourceforge.squirrel_sql.fw.gui.IDialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
+import org.fest.assertions.AssertExtension;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import utils.EasyMockHelper;
 
 public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 {
 
-	EasyMockHelper mockHelper = new EasyMockHelper();
+	private EasyMockHelper mockHelper = new EasyMockHelper();
 
-	IDialogUtils mockDialogUtils = mockHelper.createMock(IDialogUtils.class);
+	private IDialogUtils mockDialogUtils = mockHelper.createMock(IDialogUtils.class);
 
-	ISQLDatabaseMetaData mockSqlDatabaseMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
+	private ISQLDatabaseMetaData mockSqlDatabaseMetaData = mockHelper.createMock(ISQLDatabaseMetaData.class);
+
+	private IDialectFactory classUnderTest = null;
+
+	// Actual values reported by vendor JDBC drivers
+
+	private static final String DB2_PRODUCT_NAME = "DB2/LINUX";
+	
+	private static final String DB2_PRODUCT_VERSION = "SQL09050";
+
+	private static final String DERBY_PRODUCT_NAME = "Apache Derby";
+	
+	private static final String DERBY_PRODUCT_VERSION = "10.6.2.1 - (999685)";
+	
+	private static final String INGRES_PRODUCT_NAME = "INGRES";
+
+	private static final String INGRES_PRODUCT_VERSION = "II 9.1.1 (int.rpl/103)";
+
+	private static final String POSTGRESQL_PRODUCT_NAME = "PostgreSQL";
+
+	private static final String POSTGRESQL_PRODUCT_VERSION = "8.3.1";
 
 	@Before
 	public void setUp() throws Exception
@@ -58,11 +84,14 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		// Not a real database, but no driver should match this.
 		expect(mockSqlDatabaseMetaData.getDatabaseProductName()).andStubReturn("FooBar Database");
 		expect(mockSqlDatabaseMetaData.getDatabaseProductVersion()).andStubReturn("FooBar-v1.0.0");
+
+		classUnderTest = new DialectFactoryImpl();
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
+		classUnderTest = null;
 	}
 
 	@Test
@@ -308,11 +337,41 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
-	@Ignore
-	public void testGetDialectISQLDatabaseMetaData()
+	public void testGetDialectForDb2() throws SQLException
 	{
-		fail("Not yet implemented"); // TODO
+		final String productName = DB2_PRODUCT_NAME;
+		final String productVersion = DB2_PRODUCT_NAME;
+		final String expectedDialectClassname = DB2DialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+
+	@Test
+	public void testGetDialectForDerby() throws SQLException
+	{
+		final String productName = DERBY_PRODUCT_NAME;
+		final String productVersion = DERBY_PRODUCT_NAME;
+		final String expectedDialectClassname = DerbyDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+	
+	@Test
+	public void testGetDialectForIngres() throws SQLException
+	{
+		final String productName = INGRES_PRODUCT_NAME;
+		final String productVersion = INGRES_PRODUCT_NAME;
+		final String expectedDialectClassname = IngresDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+	
+	@Test
+	public void testGetDialectForPostgreSQL() throws SQLException
+	{
+		final String productName = POSTGRESQL_PRODUCT_NAME;
+		final String productVersion = POSTGRESQL_PRODUCT_VERSION;
+		final String expectedDialectClassname = PostgreSQLDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}
+
 
 	@Test(expected = UserCancelledOperationException.class)
 	public void testGetDialect_ShowDialog_UserCancelled() throws UserCancelledOperationException
@@ -343,4 +402,35 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		fail("Not yet implemented"); // TODO
 	}
 
+	private void testGetDialectForDatabase(final String productName, final String productVersion,
+		String expectedDialectClassname) throws SQLException
+	{
+		final ISQLDatabaseMetaData databaseMetaData = org.mockito.Mockito.mock(ISQLDatabaseMetaData.class);
+		when(databaseMetaData.getDatabaseProductName()).thenReturn(productName);
+		when(databaseMetaData.getDatabaseProductVersion()).thenReturn(productVersion);
+		final HibernateDialect dialect = classUnderTest.getDialect(databaseMetaData);
+		final String actualDialectClassname = dialect.getClass().getName();
+
+		Assert.assertEquals(
+			getUnexpectedDialectMessage(productName, productVersion, expectedDialectClassname,
+				actualDialectClassname), expectedDialectClassname, actualDialectClassname);
+	}	
+	
+	private String getUnexpectedDialectMessage(final String productName, final String productVersion,
+		final String expectedClassName, final String actualClassName)
+	{
+
+		StringBuilder logMessage = new StringBuilder();
+		logMessage.append("For product name (");
+		logMessage.append(POSTGRESQL_PRODUCT_NAME);
+		logMessage.append(") and version (");
+		logMessage.append(POSTGRESQL_PRODUCT_VERSION);
+		logMessage.append("), this test expected \nto get Class: ");
+		logMessage.append(expectedClassName);
+		logMessage.append(" for getDialect(ISQLDatabaseMetaData).");
+		logMessage.append("\nInstead, it received Class: ");
+		logMessage.append(actualClassName);
+		return logMessage.toString();
+	}
+	
 }
