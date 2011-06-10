@@ -65,6 +65,10 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	
 	private static final String DERBY_PRODUCT_VERSION = "10.6.2.1 - (999685)";
 	
+	private static final String INFORMIX_PRODUCT_NAME = "Informix Dynamic Server";
+
+	private static final String INFORMIX_PRODUCT_VERSION = "10.00.UC6E";
+	
 	private static final String INGRES_PRODUCT_NAME = "INGRES";
 
 	private static final String INGRES_PRODUCT_VERSION = "II 9.1.1 (int.rpl/103)";
@@ -80,6 +84,10 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	private static final String MYSQL5_PRODUCT_NAME = "MySQL";
 
 	private static final String MYSQL5_PRODUCT_VERSION = "5.1.41-3ubuntu12.10";		
+
+	private static final String POINTBASE_PRODUCT_NAME = "PointBase";
+
+	private static final String POINTBASE_PRODUCT_VERSION = "5.1 ECF build 300";
 	
 	private static final String POSTGRESQL_PRODUCT_NAME = "PostgreSQL";
 
@@ -373,6 +381,15 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	}	
 
 	@Test
+	public void testGetDialectForInformix() throws SQLException
+	{
+		final String productName = INFORMIX_PRODUCT_NAME;
+		final String productVersion = INFORMIX_PRODUCT_VERSION;
+		final String expectedDialectClassname = InformixDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+	
+	@Test
 	public void testGetDialectForMssql() throws SQLException
 	{
 		final String productName = MSSQL_PRODUCT_NAME;
@@ -408,7 +425,15 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}
 
-
+	@Test
+	public void testGetDialectForPointbase() throws SQLException
+	{
+		final String productName = POINTBASE_PRODUCT_NAME;
+		final String productVersion = POINTBASE_PRODUCT_VERSION;
+		final String expectedDialectClassname = PointbaseDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}
+	
 	@Test(expected = UserCancelledOperationException.class)
 	public void testGetDialect_ShowDialog_UserCancelled() throws UserCancelledOperationException
 	{
