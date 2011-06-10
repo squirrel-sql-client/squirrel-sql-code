@@ -57,6 +57,10 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 
 	// Actual values reported by vendor JDBC drivers
 
+	private static final String AXION_PRODUCT_NAME = "AxionDB";
+	
+	private static final String AXION_PRODUCT_VERSION = "1.0M3-dev";
+	
 	private static final String DB2_PRODUCT_NAME = "DB2/LINUX";
 	
 	private static final String DB2_PRODUCT_VERSION = "SQL09050";
@@ -64,6 +68,22 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	private static final String DERBY_PRODUCT_NAME = "Apache Derby";
 	
 	private static final String DERBY_PRODUCT_VERSION = "10.6.2.1 - (999685)";
+
+	private static final String FIREBIRD_PRODUCT_NAME = "Firebird 2.11LI-V2.1.3.18185 Firebird 2.1/tcp (dell-devpc)/P10";
+	
+	private static final String FIREBIRD_PRODUCT_VERSION = "4.2.9";
+	
+	private static final String FRONTBASE_PRODUCT_NAME = "FrontBase";
+	
+	private static final String FRONTBASE_PRODUCT_VERSION = "4.2.9";
+	
+	private static final String HSQL_PRODUCT_NAME = "HSQL Database Engine";
+	
+	private static final String HSQL_PRODUCT_VERSION = "1.8.0";
+	
+	private static final String H2_PRODUCT_NAME = "H2";
+	
+	private static final String H2_PRODUCT_VERSION = "1.0.65 (2008-01-18)";
 	
 	private static final String INFORMIX_PRODUCT_NAME = "Informix Dynamic Server";
 
@@ -85,6 +105,12 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String MYSQL5_PRODUCT_VERSION = "5.1.41-3ubuntu12.10";		
 
+	private static final String ORACLE_PRODUCT_NAME = "Oracle";
+	
+	private static final String ORACLE_PRODUCT_VERSION = 
+		"Oracle Database 11g Enterprise Edition Release 11.1.0.7.0 - " +
+		"Productio With the Partitioning, OLAP, Data Mining and Real Application Testing options";
+	
 	private static final String POINTBASE_PRODUCT_NAME = "PointBase";
 
 	private static final String POINTBASE_PRODUCT_VERSION = "5.1 ECF build 300";
@@ -93,6 +119,16 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 
 	private static final String POSTGRESQL_PRODUCT_VERSION = "8.3.1";
 
+	private static final String PROGRESS_PRODUCT_NAME = "OpenEdge RDBMS";
+
+	private static final String PROGRESS_PRODUCT_VERSION = "10.1C";
+	
+	private static final String SYBASE_PRODUCT_NAME = "Adaptive Server Enterprise";
+	
+	private static final String SYBASE_PRODUCT_VERSION = 
+		"Adaptive Server Enterprise/15.0.2/EBF 15654 " +
+		"ESD#4/P/Linux Intel/Linux 2.4.21-47.ELsmp i686/ase1502/2528/32-bit/FBO/Sat Apr  5 05:18:42 2008";
+	
 	@Before
 	public void setUp() throws Exception
 	{
@@ -354,6 +390,15 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
+	public void testGetDialectForAxion() throws SQLException
+	{
+		final String productName = AXION_PRODUCT_NAME;
+		final String productVersion = AXION_PRODUCT_VERSION;
+		final String expectedDialectClassname = AxionDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}			
+	
+	@Test
 	public void testGetDialectForDb2() throws SQLException
 	{
 		final String productName = DB2_PRODUCT_NAME;
@@ -368,6 +413,43 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		final String productName = DERBY_PRODUCT_NAME;
 		final String productVersion = DERBY_PRODUCT_VERSION;
 		final String expectedDialectClassname = DerbyDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+
+	@Test
+	public void testGetDialectForFirebird() throws SQLException
+	{
+		final String productName = FIREBIRD_PRODUCT_NAME;
+		final String productVersion = FIREBIRD_PRODUCT_VERSION;
+		final String expectedDialectClassname = FirebirdDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+	
+	
+	@Test
+	public void testGetDialectForFrontbase() throws SQLException
+	{
+		final String productName = FRONTBASE_PRODUCT_NAME;
+		final String productVersion = FRONTBASE_PRODUCT_VERSION;
+		final String expectedDialectClassname = FrontBaseDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+	
+	@Test
+	public void testGetDialectForHsql() throws SQLException
+	{
+		final String productName = HSQL_PRODUCT_NAME;
+		final String productVersion = HSQL_PRODUCT_VERSION;
+		final String expectedDialectClassname = HSQLDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}		
+
+	@Test
+	public void testGetDialectForH2() throws SQLException
+	{
+		final String productName = H2_PRODUCT_NAME;
+		final String productVersion = H2_PRODUCT_VERSION;
+		final String expectedDialectClassname = H2DialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}		
 	
@@ -415,6 +497,24 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 		final String expectedDialectClassname = MySQL5DialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}	
+
+	@Test
+	public void testGetDialectForOracle() throws SQLException
+	{
+		final String productName = ORACLE_PRODUCT_NAME;
+		final String productVersion = ORACLE_PRODUCT_VERSION;
+		final String expectedDialectClassname = OracleDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}	
+
+	@Test
+	public void testGetDialectForPointbase() throws SQLException
+	{
+		final String productName = POINTBASE_PRODUCT_NAME;
+		final String productVersion = POINTBASE_PRODUCT_VERSION;
+		final String expectedDialectClassname = PointbaseDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}
 	
 	@Test
 	public void testGetDialectForPostgreSQL() throws SQLException
@@ -426,13 +526,23 @@ public class DialectFactoryTest extends BaseSQuirreLJUnit4TestCase
 	}
 
 	@Test
-	public void testGetDialectForPointbase() throws SQLException
+	public void testGetDialectForProgress() throws SQLException
 	{
-		final String productName = POINTBASE_PRODUCT_NAME;
-		final String productVersion = POINTBASE_PRODUCT_VERSION;
-		final String expectedDialectClassname = PointbaseDialectExt.class.getName();
+		final String productName = PROGRESS_PRODUCT_NAME;
+		final String productVersion = PROGRESS_PRODUCT_VERSION;
+		final String expectedDialectClassname = ProgressDialectExt.class.getName();
 		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
 	}
+
+	@Test
+	public void testGetDialectForSybase() throws SQLException
+	{
+		final String productName = SYBASE_PRODUCT_NAME;
+		final String productVersion = SYBASE_PRODUCT_VERSION;
+		final String expectedDialectClassname = SybaseDialectExt.class.getName();
+		testGetDialectForDatabase(productName, productVersion, expectedDialectClassname);
+	}
+
 	
 	@Test(expected = UserCancelledOperationException.class)
 	public void testGetDialect_ShowDialog_UserCancelled() throws UserCancelledOperationException
