@@ -114,14 +114,14 @@
 									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>log4j:log4j</includedArtifact>
 									<includedArtifact>be.cyberelf.nanoxml:nanoxml</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide-loaders</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-fold</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-lib</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-util</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-syntax</includedArtifact>
-									<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-bte</includedArtifact>
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide-loaders</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-fold</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-lib</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-util</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-syntax</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-bte</includedArtifact>-->
 									<includedArtifact>com.fifesoft:rsyntaxtextarea</includedArtifact>
 									<includedArtifact>com.fifesoft.rtext:rtext</includedArtifact>
 									<includedArtifact>org.springframework:spring-beans</includedArtifact>

@@ -19,19 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -53,10 +40,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
-import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
+
+import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The Ostermiller plugin class. This plugin adds syntax highlighting to the SQL entry area.
@@ -543,9 +537,7 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 		{
 			String propName = evt.getPropertyName();
 
-			if (false == SyntaxPreferences.IPropertyNames.USE_NETBEANS_CONTROL.equals(propName)
-				&& false == SyntaxPreferences.IPropertyNames.USE_OSTER_CONTROL.equals(propName)
-				&& false == SyntaxPreferences.IPropertyNames.USE_RSYNTAX_CONTROL.equals(propName))
+			if (false == SyntaxPreferences.IPropertyNames.USE_RSYNTAX_CONTROL.equals(propName))
 			{
 
 				// Not the Textcontrol itself changed but some other of the Syntax Preferences, for example a
@@ -554,15 +546,6 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 				Object pluginObject =
 					_session.getPluginObject(_plugin, IConstants.ISessionKeys.SQL_ENTRY_CONTROL);
 
-				if (pluginObject instanceof NetbeansSQLEntryPanel)
-				{
-					((NetbeansSQLEntryPanel) pluginObject).updateFromPreferences();
-				}
-
-				if (pluginObject instanceof OsterSQLEntryPanel)
-				{
-					((OsterSQLEntryPanel) pluginObject).updateFromPreferences();
-				}
 
 				if (pluginObject instanceof RSyntaxSQLEntryPanel)
 				{

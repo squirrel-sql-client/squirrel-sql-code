@@ -50,20 +50,6 @@ public class SyntaxPreferencesTest extends AbstractSerializableTest {
 	}
 
 	@Test
-	public void testGetUseOsterTextControl() throws Exception
-	{
-		classUnderTest.setUseOsterTextControl(true);
-		assertEquals(true, classUnderTest.getUseOsterTextControl());
-	}
-
-	@Test
-	public void testGetUseNetbeansTextControl() throws Exception
-	{
-		classUnderTest.setUseNetbeansTextControl(true);
-		assertEquals(true, classUnderTest.getUseNetbeansTextControl());
-	}
-
-	@Test
 	public void testGetUsePlainTextControl() throws Exception
 	{
 		classUnderTest.setUsePlainTextControl(true);

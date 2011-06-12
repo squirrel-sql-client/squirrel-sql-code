@@ -104,41 +104,41 @@
 			<artifactId>rsyntaxtextarea</artifactId>
 			<version>r239</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>openide</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>openide-loaders</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>org-netbeans-modules-editor</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>org-netbeans-modules-editor-fold</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>org-netbeans-modules-editor-lib</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>org-netbeans-modules-editor-util</artifactId>
-			<version>4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-			<artifactId>ostermiller-syntax</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>openide</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>openide-loaders</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>org-netbeans-modules-editor</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>org-netbeans-modules-editor-fold</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>org-netbeans-modules-editor-lib</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>org-netbeans-modules-editor-util</artifactId>-->
+			<!--<version>4.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
+			<!--<artifactId>ostermiller-syntax</artifactId>-->
+			<!--<version>1.1.1</version>-->
+		<!--</dependency>-->
 	</dependencies>
 	<properties>
 		<pluginClassName>net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPlugin</pluginClassName>
