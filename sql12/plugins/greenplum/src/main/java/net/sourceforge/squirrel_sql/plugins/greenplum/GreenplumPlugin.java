@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.preferences.BaseQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -144,22 +145,22 @@ public class GreenplumPlugin extends DefaultSessionPlugin
         return DialectFactory.isGreenplum(session.getMetaData());
 	}
 
-	/**
-	 * Create panel for the Global Properties dialog.
-	 * 
-	 * @return properties panel.
-	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
-	{
-		PluginQueryTokenizerPreferencesPanel _prefsPanel = new PluginQueryTokenizerPreferencesPanel(_prefsManager, "Greenplum");
-
-		PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
-
-		tab.setHint(i18n.PREFS_HINT);
-		tab.setTitle("Greenplum");
-
-		return new IGlobalPreferencesPanel[] { tab };
-	}
+//	/**
+//	 * Create panel for the Global Properties dialog.
+//	 *
+//	 * @return properties panel.
+//	 */
+//	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+//	{
+//		PluginQueryTokenizerPreferencesPanel _prefsPanel = new PluginQueryTokenizerPreferencesPanel(_prefsManager, "Greenplum");
+//
+//		PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+//
+//		tab.setHint(i18n.PREFS_HINT);
+//		tab.setTitle("Greenplum");
+//
+//		return new IGlobalPreferencesPanel[] { tab };
+//	}
 	
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultPlugin#initialize()
@@ -168,6 +169,7 @@ public class GreenplumPlugin extends DefaultSessionPlugin
 	public void initialize() throws PluginException
 	{
 		_prefsManager = new PluginQueryTokenizerPreferencesManager();
+      _prefsManager.initialize(this, new BaseQueryTokenizerPreferenceBean());
 	}
 	
 	/**
