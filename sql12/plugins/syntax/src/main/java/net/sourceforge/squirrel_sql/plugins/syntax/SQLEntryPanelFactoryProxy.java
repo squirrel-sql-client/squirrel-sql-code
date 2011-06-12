@@ -1,17 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import java.util.HashMap;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
-import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryAreaFactory;
+
+import java.util.HashMap;
 
 
 public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
@@ -20,8 +16,6 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 		StringManagerFactory.getStringManager(SQLEntryPanelFactoryProxy.class);
 
 
-   private NetbeansSQLEntryAreaFactory _netbeansFactory;
-   private OsterSQLEntryAreaFactory _osterFactory;
    private SyntaxPlugin _syntaxPugin;
 
    /** The original Squirrel SQL CLient factory for creating SQL entry panels. */
@@ -34,14 +28,11 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
    {
       _originalFactory = originalFactory;
       _rsyntaxFactory = new RSyntaxSQLEntryAreaFactory(syntaxPugin);
-      _netbeansFactory = new NetbeansSQLEntryAreaFactory(syntaxPugin);
-      _osterFactory = new OsterSQLEntryAreaFactory(syntaxPugin);
       _syntaxPugin = syntaxPugin;
    }
 
    public void sessionEnding(ISession session)
    {
-      _netbeansFactory.sessionEnding(session);
       _rsyntaxFactory.sessionEnding(session);
    }
 
@@ -62,24 +53,6 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       if (prefs.getUseRSyntaxTextArea())
       {
          newPnl = _rsyntaxFactory.createSQLEntryPanel(session, props);
-      }
-      else if (prefs.getUseNetbeansTextControl())
-      {
-         newPnl = _netbeansFactory.createSQLEntryPanel(session, props);
-      }
-      else if (prefs.getUseOsterTextControl())
-      {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               session.showMessage(
-						// i18n[syntax.osterWarning=You are using the Oster editor. Please consider using the Netbeans editor. See menu File --> New Session Properties --> Syntax]
-						s_stringMgr.getString("syntax.osterWarning"));
-            }
-         });
-
-         newPnl = _osterFactory.createSQLEntryPanel(session);
       }
       else
       {

@@ -1,10 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import java.util.HashMap;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -13,15 +8,13 @@ import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEditorPane;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLKit;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsInitializer;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
-
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
-import org.netbeans.editor.BaseKit;
+
+import javax.swing.*;
+import java.util.HashMap;
 
 public class ToolsPopupHandler
 {
@@ -59,18 +52,7 @@ public class ToolsPopupHandler
       tpa.addToToolsPopup(SyntaxPlugin.i18n.COMMENT , new CommentAction(app, rsrc, isqlEntryPanel));
       tpa.addToToolsPopup(SyntaxPlugin.i18n.UNCOMMENT , new UncommentAction(app,rsrc,isqlEntryPanel));
 
-      if (isqlEntryPanel.getTextComponent() instanceof NetbeansSQLEditorPane)
-      {
-         NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) isqlEntryPanel.getTextComponent();
-         Action toUpperAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toUpperCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-         tpa.addToToolsPopup(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
-
-         Action toLowerAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toLowerCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-         tpa.addToToolsPopup(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
-      }
-      else if (isqlEntryPanel.getTextComponent() instanceof SquirrelRSyntaxTextArea)
+      if (isqlEntryPanel.getTextComponent() instanceof SquirrelRSyntaxTextArea)
       {
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) isqlEntryPanel.getTextComponent();
 
@@ -104,20 +86,7 @@ public class ToolsPopupHandler
       sif.addToToolsPopUp(SyntaxPlugin.i18n.COMMENT, coll.get(CommentAction.class));
       sif.addToToolsPopUp(SyntaxPlugin.i18n.UNCOMMENT, coll.get(UncommentAction.class));
 
-      if (sep.getTextComponent() instanceof NetbeansSQLEditorPane)
-      {
-         NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) septc;
-         SQLKit kit = (SQLKit) nbEdit.getEditorKit();
-
-         Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-         sif.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
-
-         Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-         sif.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
-      }
-      else if (sep.getTextComponent() instanceof SquirrelRSyntaxTextArea)
+      if (sep.getTextComponent() instanceof SquirrelRSyntaxTextArea)
       {
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sep.getTextComponent();
 
@@ -150,18 +119,7 @@ public class ToolsPopupHandler
 
       ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
 
-      if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof NetbeansSQLEditorPane)
-      {
-         NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
-         Action toUpperAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toUpperCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.TO_UPPER_CASE, toUpperAction);
-
-         Action toLowerAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toLowerCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-         sqlInternalFrame.addToToolsPopUp(SyntaxPlugin.i18n.TO_LOWER_CASE, toLowerAction);
-      }
-      else if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
+      if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
       {
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
 

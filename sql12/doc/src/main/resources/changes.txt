@@ -7,6 +7,11 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Syntax Plugin:
+  Ostermiller and Netbeans editors were removed. Users that still used these editors are automatically
+  switched to the RSyntax editor.
+
+
 MSSQL Plugin:
   - Added display of triggers source code.
   - If two views with same name in different schemas exist now the views' source code is

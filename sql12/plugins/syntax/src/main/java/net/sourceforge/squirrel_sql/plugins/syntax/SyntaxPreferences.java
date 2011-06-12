@@ -30,9 +30,6 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
-    private static final long serialVersionUID = 1L;
-
-
    public interface IPropertyNames {
 //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
@@ -57,8 +54,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		String SELECTION_COLOR = "selectionColor";
 //		String SHOW_LINE_NBRS = "showLineNumbers";
       String TABLE_STYLE = "tableStyle";
-      String USE_OSTER_CONTROL = "useOsterControl";
-      String USE_NETBEANS_CONTROL = "useNetbeansControl";
       String USE_RSYNTAX_CONTROL = "useRSyntaxControl";
       String USE_PLAIN_CONTROL = "usePlainControl";
       String WHITE_SPACE_STYLE = "whiteSpaceStyle";
@@ -71,9 +66,6 @@ public class SyntaxPreferences implements Serializable, Cloneable
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
-	/** If <TT>true</TT> use the Oster text control else use the standard Java control. */
-	private boolean _useOsterTextControl = false;
-   private boolean _useNetbeansTextControl = false;
    private boolean _usePlainTextControl = false;
    private boolean _useRSyntaxTextArea = true;
 
@@ -241,32 +233,30 @@ public class SyntaxPreferences implements Serializable, Cloneable
 		getPropertyChangeReporter().removePropertyChangeListener(listener);
 	}
 
-	public boolean getUseOsterTextControl()
-	{
-		return _useOsterTextControl;
-	}
 
+   /**
+    * @deprecated Oster editor has been removed. This is just here to automatically switch
+    * users of the Oster editor to RSyntax
+    */
 	public void setUseOsterTextControl(boolean data)
 	{
-		if (_useOsterTextControl != data)
-		{
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_OSTER_CONTROL, _useOsterTextControl, data);
-         _useOsterTextControl = data;
+      if(data)
+      {
+         setUseRSyntaxTextArea(true);
       }
 	}
 
 
-   public boolean getUseNetbeansTextControl()
-   {
-      return _useNetbeansTextControl;
-   }
 
+   /**
+    * @deprecated Netbeans editor has been removed. This is just here to automatically switch
+    * users of the Netbeans editor to RSyntax
+    */
    public void setUseNetbeansTextControl(boolean data)
    {
-      if (_useNetbeansTextControl != data)
+      if(data)
       {
-         getPropertyChangeReporter().firePropertyChange(IPropertyNames.USE_NETBEANS_CONTROL, _useNetbeansTextControl, data);
-         _useNetbeansTextControl = data;
+         setUseRSyntaxTextArea(true);
       }
    }
 
