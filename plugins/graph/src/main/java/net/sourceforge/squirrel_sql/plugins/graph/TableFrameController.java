@@ -67,7 +67,6 @@ public class TableFrameController
    private Vector<ColumnSortListener> _mySortListeners = 
        new Vector<ColumnSortListener>();
 
-   private JPopupMenu _popUp;
    private JMenuItem _mnuAddTableForForeignKey;
    private JMenuItem _mnuAddChildTables;
    private JMenuItem _mnuAddParentTables;
@@ -129,7 +128,7 @@ public class TableFrameController
             _catalog = catalogName;
             _schema = schemaName;
             _tableName = tableName;
-            _frame = new TableFrame(_session, plugin, getDisplayName(), null, toolTipProvider, _desktopController.getModeManager(), createDndCallback());
+            _frame = new TableFrame(_session, plugin, getDisplayName(), null, toolTipProvider, _desktopController.getModeManager(), createDndCallback(), createSortColumnsListener());
 
 
             initFromDB();
@@ -140,7 +139,7 @@ public class TableFrameController
             _catalog = xmlBean.getCatalog();
             _schema = xmlBean.getSchema();
             _tableName = xmlBean.getTablename();
-            _frame = new TableFrame(_session, plugin, getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getModeManager(), createDndCallback());
+            _frame = new TableFrame(_session, plugin, getDisplayName(), xmlBean.getTableFrameXmlBean(), toolTipProvider, _desktopController.getModeManager(), createDndCallback(), createSortColumnsListener());
             _columnOrderType = OrderType.getByIx(xmlBean.getColumOrder());
             ColumnInfo[] colInfos = new ColumnInfo[xmlBean.getColumnIfoXmlBeans().length];
             for (int i = 0; i < colInfos.length; i++)
@@ -210,7 +209,7 @@ public class TableFrameController
             }
          });
 
-         createPopUp();
+         preparePopUp();
 
          orderColumns();
 
@@ -260,6 +259,25 @@ public class TableFrameController
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private SortColumnsListener createSortColumnsListener()
+   {
+      return new SortColumnsListener()
+      {
+         @Override
+         public void sortButtonClicked(JButton sortButton)
+         {
+            onSortButtonClicked(sortButton);
+         }
+      };
+   }
+
+   private void onSortButtonClicked(JButton sortButton)
+   {
+      JPopupMenu popupMenu = new JPopupMenu();
+      addColumnOrderMenuItems(popupMenu);
+      popupMenu.show(sortButton, 0,0);
    }
 
    private void onTableFramesModelChanged(TableFramesModelChangeType changeType)
@@ -506,10 +524,8 @@ public class TableFrameController
    }
 
 
-   private void createPopUp()
+   private void preparePopUp()
    {
-      _popUp = new JPopupMenu();
-
       _mnuAddTableForForeignKey = new JMenuItem();
       _mnuAddTableForForeignKey.addActionListener(new ActionListener()
       {
@@ -686,56 +702,82 @@ public class TableFrameController
          }
       });
 
-
-
-      _popUp.add(_mnuAddTableForForeignKey);
-      _popUp.add(_mnuAddChildTables);
-      _popUp.add(_mnuAddParentTables);
-      _popUp.add(_mnuAddAllRelatedTables);
-      _popUp.add(new JSeparator());
-      _popUp.add(_mnuCopyTableName);
-      _popUp.add(_mnuCopyQualifiedTableName);
-      _popUp.add(new JSeparator());
-      _popUp.add(_mnuRefreshTable);
-      _popUp.add(_mnuScriptTable);
-      _popUp.add(_mnuViewTableInObjectTree);
-      _popUp.add(new JSeparator());
-
-
-      ButtonGroup bg = new ButtonGroup();
-      _popUp.add(_mnuDbOrder);
-      bg.add(_mnuDbOrder);
-      _popUp.add(_mnuOrderByName);
-      bg.add(_mnuOrderByName);
-      _popUp.add(_mnuPksAndConstraintsOnTop);
-      bg.add(_mnuPksAndConstraintsOnTop);
-      _popUp.add(_mnuQueryFiltersAndSelectedOnTop);
-      bg.add(_mnuQueryFiltersAndSelectedOnTop);
-
-
-      _popUp.add(new JSeparator());
-      _popUp.add(_mnuQuerySelectAll);
-      _popUp.add(_mnuQueryUnselectAll);
-      _popUp.add(_mnuQueryClearAllFilters);
-      _popUp.add(new JSeparator());
-      _popUp.add(_mnuClose);
-
-
-
       _frame.txtColumsFactory.addMouseListener(new MouseAdapter()
       {
+         @Override
          public void mousePressed(MouseEvent e)
          {
-            maybeShowPopup(e);
+            maybeShowPopup(e, false);
          }
 
+         @Override
          public void mouseReleased(MouseEvent e)
          {
-            maybeShowPopup(e);
+            maybeShowPopup(e, false);
+         }
+      });
+
+      _frame.getTitlePane().addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowPopup(e, true);
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPopup(e, true);
          }
       });
 
 
+   }
+
+   private JPopupMenu createFramePopup()
+   {
+      JPopupMenu ret = new JPopupMenu();
+      ret.add(_mnuAddTableForForeignKey);
+      ret.add(_mnuAddChildTables);
+      ret.add(_mnuAddParentTables);
+      ret.add(_mnuAddAllRelatedTables);
+      ret.add(new JSeparator());
+      ret.add(_mnuCopyTableName);
+      ret.add(_mnuCopyQualifiedTableName);
+      ret.add(new JSeparator());
+      ret.add(_mnuRefreshTable);
+      ret.add(_mnuScriptTable);
+      ret.add(_mnuViewTableInObjectTree);
+      ret.add(new JSeparator());
+
+
+      addColumnOrderMenuItems(ret);
+
+
+      ret.add(new JSeparator());
+      ret.add(_mnuQuerySelectAll);
+      ret.add(_mnuQueryUnselectAll);
+      ret.add(_mnuQueryClearAllFilters);
+      ret.add(new JSeparator());
+      ret.add(_mnuClose);
+
+      return ret;
+   }
+
+   private void addColumnOrderMenuItems(JPopupMenu popUp)
+   {
+      ButtonGroup bg = new ButtonGroup();
+      popUp.add(_mnuDbOrder);
+      bg.add(_mnuDbOrder);
+      popUp.add(_mnuOrderByName);
+      bg.add(_mnuOrderByName);
+      popUp.add(_mnuPksAndConstraintsOnTop);
+      bg.add(_mnuPksAndConstraintsOnTop);
+      popUp.add(_mnuQueryFiltersAndSelectedOnTop);
+      bg.add(_mnuQueryFiltersAndSelectedOnTop);
+
+      _mnuQueryFiltersAndSelectedOnTop.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
    }
 
    private void onQueryClearAllFilters()
@@ -997,12 +1039,18 @@ public class TableFrameController
 
 
 
-   private void maybeShowPopup(MouseEvent e)
+   private void maybeShowPopup(MouseEvent e, boolean isOnTitlePane)
    {
       if (e.isPopupTrigger())
       {
 
-         ColumnInfo ci = getColumnInfoForPoint(e.getPoint());
+         ColumnInfo ci =null;
+         if (false == isOnTitlePane)
+         {
+            ci = getColumnInfoForPoint(e.getPoint());
+         }
+
+
          if(null == ci || null == ci.getDBImportedTableName())
          {
             _mnuAddTableForForeignKey.setEnabled(false);
@@ -1017,12 +1065,11 @@ public class TableFrameController
             _mnuAddTableForForeignKey.putClientProperty(MNU_PROP_COLUMN_INFO, ci);
          }
 
-         _mnuQueryFiltersAndSelectedOnTop.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
          _mnuQuerySelectAll.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
          _mnuQueryUnselectAll.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
          _mnuQueryClearAllFilters.setEnabled(_desktopController.getModeManager().getMode().isQueryBuilder());
 
-         _popUp.show(e.getComponent(), e.getX(), e.getY());
+         createFramePopup().show(e.getComponent(), e.getX(), e.getY());
       }
       else if(2 == e.getClickCount() && e.getID() == MouseEvent.MOUSE_PRESSED)
       {

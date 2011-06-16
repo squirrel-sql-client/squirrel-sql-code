@@ -44,7 +44,7 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
          @Override
          public void columnInfosChanged(TableFramesModelChangeType changeType)
          {
-            if (TableFramesModelChangeType.COLUMN_SORTING == changeType)
+            if (TableFramesModelChangeType.COLUMN_SORTING == changeType || TableFramesModelChangeType.COLUMN_SELECT_ALL == changeType || TableFramesModelChangeType.COLUMN_WHERE_ALL == changeType)
             {
                initColumnInfos();
             }

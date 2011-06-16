@@ -9,16 +9,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -33,14 +29,18 @@ public class TableFrame extends JInternalFrame
    GraphTextAreaFactory txtColumsFactory;
    JScrollPane scrollPane;
    private MyUI _myUI;
+   private GraphPlugin _plugin;
    private ModeManager _modeManager;
+   private SortColumnsListener _sortColumnsListener;
    private ModeManagerListener _modeManagerListener;
    private ZoomerListener _zoomerListener;
 
 
-   public TableFrame(ISession session, GraphPlugin plugin, String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback)
+   public TableFrame(ISession session, GraphPlugin plugin, String tableName, TableFrameXmlBean xmlBean, TableToolTipProvider toolTipProvider, ModeManager modeManager, DndCallback dndCallback, SortColumnsListener sortColumnsListener)
    {
+      _plugin = plugin;
       _modeManager = modeManager;
+      _sortColumnsListener = sortColumnsListener;
 
       scrollPane = new JScrollPane();
       scrollPane.setBorder(null);
@@ -48,8 +48,7 @@ public class TableFrame extends JInternalFrame
       getContentPane().add(scrollPane);
 
       setMaximizable(false);
-      setClosable(true);
-      setIconifiable(false);
+      setTitleBarIconsVisible(true);
 
       setTitle(tableName);
       setBackground(new Color(255,255,204));
@@ -75,7 +74,8 @@ public class TableFrame extends JInternalFrame
          r.width = (int)(zoom*xmlBean.getWidht() + 0.5);
          r.height = (int)(zoom*xmlBean.getHeight() + 0.5);
          setBounds(r);
-         setClosable(Mode.ZOOM_PRINT != _modeManager.getMode());
+
+         setTitleBarIconsVisible(Mode.ZOOM_PRINT != _modeManager.getMode());
       }
 
       _zoomerListener = new ZoomerListener()
@@ -100,6 +100,14 @@ public class TableFrame extends JInternalFrame
       };
       
       setBorder(new LineBorder(Color.BLACK));
+   }
+
+   private void setTitleBarIconsVisible(boolean visible)
+   {
+      setClosable(visible);
+
+      // Iconify is abused for sort
+      setIconifiable(visible);
    }
 
    public void setVisible(boolean b)
@@ -128,7 +136,7 @@ public class TableFrame extends JInternalFrame
    private void onModeChanged(Mode newMode)
    {
       scrollPane.setViewportView(txtColumsFactory.getComponent(_modeManager.getMode()));
-      setClosable(Mode.ZOOM_PRINT != newMode);
+      setTitleBarIconsVisible(Mode.ZOOM_PRINT != newMode);
    }
 
    public TableFrame.MyTitlePaneUI getTitlePane()
@@ -225,14 +233,37 @@ public class TableFrame extends JInternalFrame
       protected void installDefaults()
       {
          super.installDefaults();
-         URL resource = TableFrame.class.getResource("/net/sourceforge/squirrel_sql/plugins/graph/images/win_bigclose-rollover.gif");
-         closeIcon = new ImageIcon(resource);
+
+
+         GraphPluginResources rsc = new GraphPluginResources(_plugin);
+
+         closeIcon = rsc.getIcon(GraphPluginResources.IKeys.TABLE_FRAME_CLOSE);
+
+         // Iconify is abused for sort
+         iconIcon = rsc.getIcon(GraphPluginResources.IKeys.SORT_NONE);
+
          groupTitleColor = new Color(200,200,240);
          selectedTitleColor = new Color(255,255,220);
          notSelectedTitleColor = new Color(255,255,220);
          selectedTextColor = Color.black;
          notSelectedTextColor = Color.black;
          setFont(new Font(getFont().getFontName(), Font.BOLD, getFont().getSize()));
+      }
+
+      @Override
+      protected void createActions()
+      {
+         super.createActions();
+
+         // Iconify is abused for sort
+         iconifyAction = new AbstractAction()
+         {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               _sortColumnsListener.sortButtonClicked(iconButton);
+            }
+         };
       }
 
       protected void paintTitleBackground(Graphics g)

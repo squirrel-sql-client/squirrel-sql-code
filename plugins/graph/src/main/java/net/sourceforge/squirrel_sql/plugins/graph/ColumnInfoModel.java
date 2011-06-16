@@ -81,7 +81,7 @@ public class ColumnInfoModel
          colInfo.getQueryData().setInSelectClause(b);
       }
 
-      fireChanged(TableFramesModelChangeType.COLUMN_SELECT);
+      fireChanged(TableFramesModelChangeType.COLUMN_SELECT_ALL);
    }
 
 
@@ -92,7 +92,7 @@ public class ColumnInfoModel
          colInfo.getQueryData().clearFilter();
       }
 
-      fireChanged(TableFramesModelChangeType.COLUMN_WHERE);
+      fireChanged(TableFramesModelChangeType.COLUMN_WHERE_ALL);
    }
 
    private void fireChanged(TableFramesModelChangeType changeType)
