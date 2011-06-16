@@ -12,6 +12,8 @@ public final class GraphPluginResources extends PluginResources
 
    public interface IKeys
    {
+      String TABLE_FRAME_CLOSE = "TableFrameClose";
+
       String PRINT_IMAGE = "Print";
       String SAVE_IMAGES_TO_FILE = "SaveImagesToFile";
       String FILTER = "Filter";

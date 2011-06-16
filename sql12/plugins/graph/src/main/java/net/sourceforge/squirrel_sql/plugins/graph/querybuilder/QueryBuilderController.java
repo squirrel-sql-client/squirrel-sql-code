@@ -66,7 +66,7 @@ public class QueryBuilderController
       _btnSQL = new JToggleButton(s_stringMgr.getString("QueryBuilderController.SQL"));
       _panel.add(_btnSQL, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,20),0,0);
       _btnResult = new JToggleButton(s_stringMgr.getString("QueryBuilderController.Result"));
       _panel.add(_btnResult, gbc);
 

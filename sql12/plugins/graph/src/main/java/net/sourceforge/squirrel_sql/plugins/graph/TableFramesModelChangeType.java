@@ -8,4 +8,5 @@ public enum TableFramesModelChangeType
    COLUMN_WHERE,
    COLUMN_SORTING,
    ROOT_TABLE,
+   COLUMN_SELECT_ALL, COLUMN_WHERE_ALL,
 }
