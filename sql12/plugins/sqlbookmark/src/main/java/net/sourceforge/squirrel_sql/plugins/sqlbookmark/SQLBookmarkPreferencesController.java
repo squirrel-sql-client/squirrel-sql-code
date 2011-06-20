@@ -414,7 +414,10 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       ((DefaultTreeModel)_pnlPrefs.treBookmarks.getModel()).nodeStructureChanged(_nodeUserMarks);
 
-      selectNode(nextSel);
+      if (null != nextSel)
+      {
+         selectNode(nextSel);
+      }
 
    }
 
