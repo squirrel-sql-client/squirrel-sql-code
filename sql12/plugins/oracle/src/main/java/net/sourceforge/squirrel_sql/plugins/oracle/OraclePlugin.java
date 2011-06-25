@@ -143,7 +143,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * SQL to find schemas to which the logged in user has access
 	 */
-	private static String SCHEMA_ACCESS_SQL = "SELECT DISTINCT OWNER FROM ALL_OBJECTS";
+	//private static String SCHEMA_ACCESS_SQL = "SELECT DISTINCT OWNER FROM ALL_OBJECTS";
+   private static String SCHEMA_ACCESS_SQL = "SELECT owner FROM ALL_OBJECTS group by owner";
+
 
 	/**
 	 * SQL to determine whether or not this account is a DBA account
