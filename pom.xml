@@ -84,6 +84,7 @@
 
 		<!-- Thirdparty Library Versions -->
 		<clover-version>3.0.2</clover-version>
+		<commons-cli-version>1.2</commons-cli-version>
 		<easymock-version>2.4</easymock-version>
 		<easymockclassextension-version>2.4</easymockclassextension-version>
 		<fest-version>1.2.1</fest-version>
