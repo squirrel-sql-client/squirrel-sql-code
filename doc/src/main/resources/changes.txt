@@ -7,10 +7,12 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+DBCopy Plugin: (Feature request #3291501) This plugin now has a command-line interface (via DBCopyCLI).  See
+               DBCopy plugin documentation for usage details.
+
 Syntax Plugin:
   Ostermiller and Netbeans editors were removed. Users that still used these editors are automatically
   switched to the RSyntax editor.
-
 
 MSSQL Plugin:
   - Added display of triggers source code.
