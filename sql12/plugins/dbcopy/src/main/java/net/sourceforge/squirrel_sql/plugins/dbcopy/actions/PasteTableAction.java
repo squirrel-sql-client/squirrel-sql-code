@@ -78,7 +78,7 @@ public class PasteTableAction extends SquirrelAction
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent evt) {
-        ISession destSession = sessionInfoProv.getCopyDestSession();
+        ISession destSession = sessionInfoProv.getDestSession();
         IObjectTreeAPI api = 
             destSession.getObjectTreeAPIOfActiveSessionWindow();
         if (api == null) {
@@ -86,7 +86,7 @@ public class PasteTableAction extends SquirrelAction
         }
         IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
         if (dbObjs.length > 1) {
-            sessionInfoProv.setDestSelectedDatabaseObject(null);
+            sessionInfoProv.setDestDatabaseObject(null);
             //i18n[PasteTableAction.error.multischemapaste=The paste 
             //operation may only be applied to one schema at a time]
             String msg =
@@ -110,16 +110,16 @@ public class PasteTableAction extends SquirrelAction
         								   tableLabelInfo.getSchemaName(),
         								   DatabaseObjectType.SCHEMA,
         								   md);
-        		sessionInfoProv.setDestSelectedDatabaseObject(schema);
+        		sessionInfoProv.setDestDatabaseObject(schema);
         	} else {
-        		sessionInfoProv.setDestSelectedDatabaseObject(dbObjs[0]);
+        		sessionInfoProv.setDestDatabaseObject(dbObjs[0]);
         	}
             
         }
         
         try {
             IDatabaseObjectInfo info
-                            = sessionInfoProv.getDestSelectedDatabaseObject();
+                            = sessionInfoProv.getDestDatabaseObject();
             if (info == null || destSession == null) {
                 return;
             }
@@ -129,7 +129,7 @@ public class PasteTableAction extends SquirrelAction
         } catch (UserCancelledOperationException e) {
             return;
         }
-        if (sessionInfoProv.getCopySourceSession() == null) {
+        if (sessionInfoProv.getSourceSession() == null) {
             return;
         }        
         if (!sourceDestSchemasDiffer()) {
@@ -147,7 +147,7 @@ public class PasteTableAction extends SquirrelAction
 	 * @param	session		The current session.
 	 */
     public void setSession(ISession session) {
-        sessionInfoProv.setDestCopySession(session);        
+        sessionInfoProv.setDestSession(session);        
     }
     
     /**

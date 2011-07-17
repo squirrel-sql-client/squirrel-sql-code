@@ -23,6 +23,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.jboss.util.collection.CollectionsUtil;
+
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -117,7 +120,7 @@ public class CopyTableCommand implements ICommand
 				}
 			}
 
-			_plugin.setCopySourceSession(_session);
+			_plugin.setSourceSession(_session);
 			final IDatabaseObjectInfo[] fdbObjs = dbObjs;
 			final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
 			_session.getApplication().getThreadPool().addTask(new Runnable()
@@ -141,16 +144,11 @@ public class CopyTableCommand implements ICommand
 
 	private void getInsertionOrder(IDatabaseObjectInfo[] dbObjs, SQLDatabaseMetaData md) throws SQLException
 	{
-
+		List<ITableInfo> selectedTables = DBUtil.convertObjectArrayToTableList(dbObjs);
+		
 		// Only concerned about order when more than one table.
-		if (dbObjs.length > 1)
+		if (selectedTables.size() > 1)
 		{
-			List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
-			for (int i = 0; i < dbObjs.length; i++)
-			{
-				selectedTables.add((ITableInfo) dbObjs[i]);
-			}
-
 			ProgressCallBack cb =
 				progressCallBackFactory.create(_session.getApplication().getMainFrame(),
 					i18n.PROGRESS_DIALOG_TITLE, dbObjs.length);
@@ -159,15 +157,13 @@ public class CopyTableCommand implements ICommand
 			selectedTables = SQLUtilities.getInsertionOrder(selectedTables, md, cb);
 			cb.setVisible(false);
 			cb.dispose();
-
-			_plugin.setSelectedDatabaseObjects(selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]));
+			_plugin.setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
 
 		}
 		else
 		{
-			_plugin.setSelectedDatabaseObjects(dbObjs);
+			_plugin.setSourceDatabaseObjects(DBUtil.convertTableToObjectList(selectedTables));
 		}
 	}
-
 
 }
