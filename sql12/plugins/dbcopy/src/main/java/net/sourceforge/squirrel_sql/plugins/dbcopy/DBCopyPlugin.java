@@ -124,7 +124,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	 */
 	public String getVersion()
 	{
-		return "1.14";
+		return "1.15";
 	}
 
 	/**
