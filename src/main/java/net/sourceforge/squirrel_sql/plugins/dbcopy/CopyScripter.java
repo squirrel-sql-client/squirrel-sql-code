@@ -63,8 +63,8 @@ public class CopyScripter extends CopyTableAdaptor implements CopyTableListener 
      * @param prov
      */
     private void initializeScript(SessionInfoProvider prov) {
-        ISession source = prov.getCopySourceSession();
-        ISession dest = prov.getCopyDestSession();
+        ISession source = prov.getSourceSession();
+        ISession dest = prov.getDestSession();
         ScriptWriter.open(source,dest);
     }
     

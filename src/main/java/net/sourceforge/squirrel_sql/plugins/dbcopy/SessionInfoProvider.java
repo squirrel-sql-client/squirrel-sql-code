@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
@@ -27,17 +29,19 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
  */
 public interface SessionInfoProvider {
     
-    public void setCopySourceSession(ISession session);
+    public void setSourceSession(ISession session);
     
-    public ISession getCopySourceSession();
+    public ISession getSourceSession();
     
-    public IDatabaseObjectInfo[] getSourceSelectedDatabaseObjects();
+    public void setSourceDatabaseObjects(List<IDatabaseObjectInfo> dbObjList);
     
-    public IDatabaseObjectInfo getDestSelectedDatabaseObject();
+    public List<IDatabaseObjectInfo> getSourceDatabaseObjects();
     
-    public void setDestSelectedDatabaseObject(IDatabaseObjectInfo info);
+    public IDatabaseObjectInfo getDestDatabaseObject();
     
-    public void setDestCopySession(ISession session);
+    public void setDestDatabaseObject(IDatabaseObjectInfo info);
     
-    public ISession getCopyDestSession();
+    public void setDestSession(ISession session);
+    
+    public ISession getDestSession();
 }
