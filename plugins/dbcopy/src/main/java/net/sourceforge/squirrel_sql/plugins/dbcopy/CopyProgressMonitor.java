@@ -82,7 +82,7 @@ public class CopyProgressMonitor extends I18NBaseObject
     
     public CopyProgressMonitor(SessionInfoProvider provider) {
         prov = provider;
-        parent = prov.getCopyDestSession().getApplication().getMainFrame();
+        parent = prov.getDestSession().getApplication().getMainFrame();
     }
     
     // CopyTableListener interface methods
@@ -95,7 +95,7 @@ public class CopyProgressMonitor extends I18NBaseObject
             pm.setProgress(pm.getMaximum());
         }
         prov = e.getSessionInfoProvider();
-        int numTables = prov.getSourceSelectedDatabaseObjects().length;
+        int numTables = prov.getSourceDatabaseObjects().size();
         int[] tableCounts = e.getTableCounts();
         
         createProgressDialog();
@@ -459,7 +459,7 @@ public class CopyProgressMonitor extends I18NBaseObject
         pm.setProgress(e.getTableNumber());
     }
 
-    /* (non-Javadoc)
+    /**
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#tableAnalysisStarted(net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent)
      */
     public void tableAnalysisStarted(AnalysisEvent e) {
@@ -469,7 +469,7 @@ public class CopyProgressMonitor extends I18NBaseObject
                                  "Analyzing column names in tables to be copied",
                                  "",
                                  0,
-                                 prov.getSourceSelectedDatabaseObjects().length); 
+                                 prov.getSourceDatabaseObjects().size()); 
         
     }
 

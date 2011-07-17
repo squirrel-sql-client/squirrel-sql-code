@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -42,8 +42,6 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -90,11 +88,7 @@ public class CopyExecutor extends I18NBaseObject {
     /** Logger for this class. */
     private final static ILogger log = 
                          LoggerController.createLogger(CopyExecutor.class);
-    
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(CopyExecutor.class);
-    
+        
     /** the list of ITableInfos that represent the user's last selection. */
     private ArrayList<ITableInfo> selectedTableInfos = null;    
     
@@ -121,8 +115,8 @@ public class CopyExecutor extends I18NBaseObject {
      */
     public CopyExecutor(SessionInfoProvider p) {
         prov = p;
-        sourceSession = prov.getCopySourceSession();
-        destSession = prov.getCopyDestSession();
+        sourceSession = prov.getSourceSession();
+        destSession = prov.getDestSession();
     }
     
     /**
@@ -158,17 +152,19 @@ public class CopyExecutor extends I18NBaseObject {
             return;
         }
         setupAutoCommit(destConn);
-        IDatabaseObjectInfo[] sourceObjs = prov.getSourceSelectedDatabaseObjects();
+        List<IDatabaseObjectInfo> sourceObjs = prov.getSourceDatabaseObjects();
         int[] counts = getTableCounts();
         sendCopyStarted(counts);
-        String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
-        for (int i = 0; i < sourceObjs.length; i++) {
-            if (false == sourceObjs[i] instanceof ITableInfo) {
+        String destSchema = prov.getDestDatabaseObject().getSimpleName();
+        String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+        
+        int sourceObjectCount = 0;
+        for (IDatabaseObjectInfo info : sourceObjs) {
+            if (! (info instanceof ITableInfo)) {
                 continue;
             }
-            ITableInfo sourceTI = (ITableInfo)sourceObjs[i];
-            sendTableCopyStarted(sourceTI, i+1);
+            ITableInfo sourceTI = (ITableInfo)info;
+            sendTableCopyStarted(sourceTI, sourceObjectCount+1);
             try {
                 int destTableCount = DBUtil.getTableCount(destSession,
                                                           destCatalog,
@@ -199,9 +195,9 @@ public class CopyExecutor extends I18NBaseObject {
                     }
                 } 
                 
-                copyTable(sourceTI, counts[i]);
+                copyTable(sourceTI, counts[sourceObjectCount]);
                 
-                if (i == sourceObjs.length - 1 && !cancelled) {
+                if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled) {
                     // We just copied the last table.  Now it is safe to copy the
                     // constraints.(Well, that is, if all FK dependencies are met
                     // in the group of tables being copied. 
@@ -211,7 +207,7 @@ public class CopyExecutor extends I18NBaseObject {
                     copyConstraints(sourceObjs);
                 }
                 if (!cancelled) {
-                    sendTableCopyFinished(sourceTI, i+1);
+                    sendTableCopyFinished(sourceTI, sourceObjectCount+1);
                     sleep(prefs.getTableDelayMillis());
                 }
             } catch (SQLException e) {
@@ -230,6 +226,7 @@ public class CopyExecutor extends I18NBaseObject {
                 sendErrorEvent(ErrorEvent.GENERIC_EXCEPTION, e);
                 break;
             }
+            sourceObjectCount++;
         }        
         restoreAutoCommit(destConn);
         if (cancelled) {
@@ -241,9 +238,11 @@ public class CopyExecutor extends I18NBaseObject {
         }         
         end = System.currentTimeMillis();
         
-        ISession session = prov.getCopyDestSession();
-        session.getSchemaInfo().reload(prov.getDestSelectedDatabaseObject());
-        session.getSchemaInfo().fireSchemaInfoUpdate();
+        ISession session = prov.getDestSession();
+        if (session.getSessionSheet() != null) {
+      	  session.getSchemaInfo().reload(prov.getDestDatabaseObject());
+      	  session.getSchemaInfo().fireSchemaInfoUpdate();
+        }
 
         notifyCopyFinished();
     }
@@ -293,8 +292,8 @@ public class CopyExecutor extends I18NBaseObject {
         if (!prefs.isTestColumnNames()) {
             return true;
         }
-        if (DBUtil.sameDatabaseType(prov.getCopySourceSession(), 
-                                    prov.getCopyDestSession()))
+        if (DBUtil.sameDatabaseType(prov.getSourceSession(), 
+                                    prov.getDestSession()))
         {
             // No need to check column name validity when source and dest are
             // of the same type of database.
@@ -302,11 +301,13 @@ public class CopyExecutor extends I18NBaseObject {
         }
         sendAnalysisStarted();
         try {
-            IDatabaseObjectInfo[] dbObjs = prov.getSourceSelectedDatabaseObjects();        
-            for (int tableIdx = 0; tableIdx < dbObjs.length; tableIdx++) {
-                ITableInfo ti = (ITableInfo)dbObjs[tableIdx];
-                sendAnalyzingTable(ti, tableIdx);
+            List<IDatabaseObjectInfo> dbObjs = prov.getSourceDatabaseObjects();
+            int sourceObjectCount = 0;
+            for (IDatabaseObjectInfo info : dbObjs) {
+                ITableInfo ti = (ITableInfo) info;
+                sendAnalyzingTable(ti, sourceObjectCount+1);
                 DBUtil.validateColumnNames(ti, prov);
+                sourceObjectCount++;
             }
         } catch (MappingException e) {
             sendErrorEvent(ErrorEvent.MAPPING_EXCEPTION_TYPE, e);
@@ -362,21 +363,22 @@ public class CopyExecutor extends I18NBaseObject {
     private int[] getTableCounts() {
         int[] result = null;
         
-        ISession sourceSession = prov.getCopySourceSession();
-        IDatabaseObjectInfo[] dbObjs = prov.getSourceSelectedDatabaseObjects();
+        ISession sourceSession = prov.getSourceSession();
+        List<IDatabaseObjectInfo> dbObjs = prov.getSourceDatabaseObjects();
         if (dbObjs != null) {
-            result = new int[dbObjs.length];
+            result = new int[dbObjs.size()];
             selectedTableInfos = new ArrayList<ITableInfo>();
-            for (int i = 0; i < dbObjs.length; i++) {
-                if (false == dbObjs[i] instanceof ITableInfo) {
+            int sourceObjectCount = 0;
+            for (IDatabaseObjectInfo info : dbObjs) {
+                if (! (info instanceof ITableInfo)) {
                     continue;
                 }          
                 try {
-                    ITableInfo ti = (ITableInfo) dbObjs[i];
+                    ITableInfo ti = (ITableInfo) info;
                     selectedTableInfos.add(ti);
                     // This doesn't appear to work for PROGRESS RDBMS
                     //result[i] = DBUtil.getTableCount(con, ti.getSimpleName());
-                    result[i] = 
+                    result[sourceObjectCount] = 
                         DBUtil.getTableCount(sourceSession,
                                              ti.getCatalogName(),
                                              ti.getSchemaName(),
@@ -384,8 +386,9 @@ public class CopyExecutor extends I18NBaseObject {
                                              DialectFactory.SOURCE_TYPE);
                 } catch (Exception e) {
                     log.error("",e);
-                    result[i] = 0;
+                    result[sourceObjectCount] = 0;
                 }
+                sourceObjectCount++;
             }           
         }
         return result;
@@ -402,7 +405,7 @@ public class CopyExecutor extends I18NBaseObject {
     
     private void sendAnalyzingTable(ITableInfo ti, int number) {
         TableEvent event = new TableEvent(prov);
-        event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
+        event.setTableCount(prov.getSourceDatabaseObjects().size());
         event.setTableNumber(number);
         Iterator<CopyTableListener> i = listeners.iterator();
         event.setTableName(ti.getSimpleName());
@@ -425,7 +428,7 @@ public class CopyExecutor extends I18NBaseObject {
     private void sendTableCopyStarted(ITableInfo ti, int number) {
         TableEvent event = new TableEvent(prov);
         event.setTableNumber(number);
-        event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
+        event.setTableCount(prov.getSourceDatabaseObjects().size());
         event.setTableName(ti.getSimpleName());
         Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
@@ -437,7 +440,7 @@ public class CopyExecutor extends I18NBaseObject {
     private void sendTableCopyFinished(ITableInfo ti, int number) {
         TableEvent event = new TableEvent(prov);
         event.setTableNumber(number);
-        event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
+        event.setTableCount(prov.getSourceDatabaseObjects().size());
         event.setTableName(ti.getSimpleName());
         Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
@@ -529,15 +532,15 @@ public class CopyExecutor extends I18NBaseObject {
         if (!PreferencesManager.getPreferences().isCopyData()) {
             return;
         }
-        ISQLConnection sourceConn = prov.getCopySourceSession().getSQLConnection();
-        ISQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
+        ISQLConnection sourceConn = prov.getSourceSession().getSQLConnection();
+        ISQLConnection destConn = prov.getDestSession().getSQLConnection();
         SQLDatabaseMetaData sourceMetaData = sourceConn.getSQLMetaData();
         SQLDatabaseMetaData destMetaData = destConn.getSQLMetaData();
         try {
             String destSchema = 
-                prov.getDestSelectedDatabaseObject().getSimpleName();            
+                prov.getDestDatabaseObject().getSimpleName();            
             ITableInfo destTableInfo = 
-                DBUtil.getTableInfo(prov.getCopyDestSession(),
+                DBUtil.getTableInfo(prov.getDestSession(),
                                     destSchema,
                                     sourceTableInfo.getSimpleName());
             
@@ -568,7 +571,7 @@ public class CopyExecutor extends I18NBaseObject {
             boolean foundLOBType = false;
             // Loop through source records...
             DBUtil.setLastStatement(selectSQL);
-            rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
+            rs = DBUtil.executeQuery(prov.getSourceSession(), selectSQL);
             DBUtil.setLastStatement(insertSQL);
             boolean isMysql = DialectFactory.isMySQL(destSession.getMetaData());
             boolean isSourceOracle = 
@@ -589,14 +592,14 @@ public class CopyExecutor extends I18NBaseObject {
                     int sourceColType = sourceInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
-                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i], prov.getCopySourceSession());
+                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i], prov.getSourceSession());
                     sourceColType = getDateReplacement(sourceColType, 
                                                        isSourceOracle);
                     
                     int destColType   = destInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
-                    destColType = DBUtil.replaceOtherDataType(destInfos[i], prov.getCopyDestSession());
+                    destColType = DBUtil.replaceOtherDataType(destInfos[i], prov.getDestSession());
                     destColType = getDateReplacement(destColType, isDestOracle);
                     
                     
@@ -696,7 +699,7 @@ public class CopyExecutor extends I18NBaseObject {
             //source database is {1}, but column count for table {2} in 
             //destination database is {3}
             String msg = 
-                s_stringMgr.getString("CopyExecutor.tablecolmismatch",
+                getMessage("CopyExecutor.tablecolmismatch",
                                       new Object[] {
                                               sourceTableName,
                                               Integer.valueOf(sourceInfos.length),
@@ -756,16 +759,16 @@ public class CopyExecutor extends I18NBaseObject {
      * @param ti
      * @throws SQLException
      */
-    private void copyConstraints(IDatabaseObjectInfo[] dbObjs) 
+    private void copyConstraints(List<IDatabaseObjectInfo> dbObjs) 
         throws SQLException, UserCancelledOperationException 
     {
         if (!prefs.isCopyForeignKeys() 
-        		|| DialectFactory.isAxion(prov.getCopySourceSession().getMetaData())) {
+        		|| DialectFactory.isAxion(prov.getSourceSession().getMetaData())) {
             return;
         }
-        ISQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
-        for (int i = 0; i < dbObjs.length; i++) {
-            ITableInfo ti = (ITableInfo) dbObjs[i];
+        ISQLConnection destConn = prov.getDestSession().getSQLConnection();
+        for (IDatabaseObjectInfo info : dbObjs) {
+            ITableInfo ti = (ITableInfo) info;
             Set<String> fkStmts = 
                 DBUtil.getForeignKeySQL(prov, ti, selectedTableInfos);
             Iterator<String> it = fkStmts.iterator();
@@ -788,7 +791,7 @@ public class CopyExecutor extends I18NBaseObject {
         if (cancelled) {
             return;
         }
-        ISQLConnection destCon = prov.getCopyDestSession().getSQLConnection();
+        ISQLConnection destCon = prov.getDestSession().getSQLConnection();
         String createTableSql = DBUtil.getCreateTableSql(prov, ti);
         DBUtil.executeUpdate(destCon, createTableSql, true);
         

@@ -22,6 +22,10 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.plugin.AbstractSessionPluginTest;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
@@ -54,31 +58,32 @@ public class DBCopyPluginTest extends AbstractSessionPluginTest
 	@Test
 	public void testSessionEnding() {
 		DBCopyPlugin plugin = (DBCopyPlugin) super.classUnderTest;
-		plugin.setCopySourceSession(mockSession);
+		plugin.setSourceSession(mockSession);
 		plugin.sessionEnding(mockSession);
-		assertNull(plugin.getCopySourceSession());
+		assertNull(plugin.getSourceSession());
 	}
 	
 	@Test
 	public void testSetSelectedDatabaseObjects() {
 		DBCopyPlugin plugin = (DBCopyPlugin) super.classUnderTest;
-		IDatabaseObjectInfo[] dbObjArr = new IDatabaseObjectInfo[] { mockDatabaseObjectInfo };
-		plugin.setSelectedDatabaseObjects(dbObjArr);
-		IDatabaseObjectInfo[] result = plugin.getSourceSelectedDatabaseObjects();
-		assertEquals(1, result.length);
+		List<IDatabaseObjectInfo> dbObjList = new ArrayList<IDatabaseObjectInfo>();
+		dbObjList.add(mockDatabaseObjectInfo);
+		plugin.setSourceDatabaseObjects(dbObjList);
+		List<IDatabaseObjectInfo> result = plugin.getSourceDatabaseObjects();
+		assertEquals(1, result.size());
 	}
 	
 	@Test
 	public void testSetDestSelectedDatabaseObject() {
 		DBCopyPlugin plugin = (DBCopyPlugin) super.classUnderTest;
-		plugin.setDestSelectedDatabaseObject(mockDatabaseObjectInfo);
-		assertEquals(mockDatabaseObjectInfo, plugin.getDestSelectedDatabaseObject());
+		plugin.setDestDatabaseObject(mockDatabaseObjectInfo);
+		assertEquals(mockDatabaseObjectInfo, plugin.getDestDatabaseObject());
 	}
 	
 	@Test
 	public void testSetDestCopySession() {
 		DBCopyPlugin plugin = (DBCopyPlugin) super.classUnderTest;
-		plugin.setDestCopySession(mockSession);
-		assertEquals(mockSession, plugin.getCopyDestSession());
+		plugin.setDestSession(mockSession);
+		assertEquals(mockSession, plugin.getDestSession());
 	}
 }

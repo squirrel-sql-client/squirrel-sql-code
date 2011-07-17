@@ -223,9 +223,9 @@ public class DBUtil extends I18NBaseObject
 				continue;
 			}
 
-			ISession destSession = prov.getCopyDestSession();
-			String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-			String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+			ISession destSession = prov.getDestSession();
+			String destSchema = prov.getDestDatabaseObject().getSimpleName();
+			String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 			if (tableHasForeignKey(destCatalog, destSchema, ti.getSimpleName(), fkInfo, prov))
 			{
 				if (log.isInfoEnabled())
@@ -261,7 +261,7 @@ public class DBUtil extends I18NBaseObject
 		boolean result = false;
 		try
 		{
-			SQLDatabaseMetaData md = prov.getCopyDestSession().getSQLConnection().getSQLMetaData();
+			SQLDatabaseMetaData md = prov.getDestSession().getSQLConnection().getSQLMetaData();
 
 			ITableInfo[] tables = md.getTables(destCatalog, destSchema, destTableName, new String[]
 				{ "TABLE" }, null);
@@ -1415,14 +1415,14 @@ public class DBUtil extends I18NBaseObject
 	      MappingException, UserCancelledOperationException
 	{
 
-		ISession sourceSession = prov.getCopySourceSession();
-		String sourceSchema = prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
-		String sourceCatalog = prov.getSourceSelectedDatabaseObjects()[0].getCatalogName();
+		ISession sourceSession = prov.getSourceSession();
+		String sourceSchema = prov.getSourceDatabaseObjects().get(0).getSchemaName();
+		String sourceCatalog = prov.getSourceDatabaseObjects().get(0).getCatalogName();
 		String sourceTableName = getQualifiedObjectName(
 		   sourceSession, sourceCatalog, sourceSchema, ti.getSimpleName(), DialectFactory.SOURCE_TYPE);
-		ISession destSession = prov.getCopyDestSession();
-		String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-		String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+		ISession destSession = prov.getDestSession();
+		String destSchema = prov.getDestDatabaseObject().getSimpleName();
+		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 		String destinationTableName = getQualifiedObjectName(
 		   destSession, destCatalog, destSchema, ti.getSimpleName(), DialectFactory.DEST_TYPE);
 		StringBuilder result = new StringBuilder("CREATE TABLE ");
@@ -1432,7 +1432,7 @@ public class DBUtil extends I18NBaseObject
 		TableColumnInfo colInfo = null;
 		try
 		{
-			ISQLConnection sourceCon = prov.getCopySourceSession().getSQLConnection();
+			ISQLConnection sourceCon = prov.getSourceSession().getSQLConnection();
 			TableColumnInfo[] colInfoArr = sourceCon.getSQLMetaData().getColumnInfo(ti);
 			if (colInfoArr.length == 0)
 			{
@@ -1526,12 +1526,12 @@ public class DBUtil extends I18NBaseObject
 		String columnName = colInfo.getColumnName();
 		if (_prefs.isCheckKeywords())
 		{
-			checkKeyword(prov.getCopyDestSession(), destTableName, columnName);
+			checkKeyword(prov.getDestSession(), destTableName, columnName);
 		}
 		StringBuilder result = new StringBuilder(columnName);
 		boolean notNullable = colInfo.isNullable().equalsIgnoreCase("NO");
 		String typeName = ColTypeMapper.mapColType(
-		   prov.getCopySourceSession(), prov.getCopyDestSession(), colInfo, sourceTableName, destTableName);
+		   prov.getSourceSession(), prov.getDestSession(), colInfo, sourceTableName, destTableName);
 		result.append(" ");
 		result.append(typeName);
 		if (notNullable)
@@ -1539,7 +1539,7 @@ public class DBUtil extends I18NBaseObject
 			result.append(" NOT NULL");
 		} else
 		{
-			ISession destSession = prov.getCopyDestSession();
+			ISession destSession = prov.getDestSession();
 			HibernateDialect d = DialectFactory.getDialect(
 			   DialectFactory.DEST_TYPE, destSession.getApplication().getMainFrame(), destSession.getMetaData());
 			String nullString = d.getNullColumnString().toUpperCase();
@@ -1619,7 +1619,7 @@ public class DBUtil extends I18NBaseObject
 		StringBuilder result = new StringBuilder("select ");
 		result.append(columnList);
 		result.append(" from ");
-		ISession sourceSession = prov.getCopySourceSession();
+		ISession sourceSession = prov.getSourceSession();
 
 		String tableName = getQualifiedObjectName(
 		   sourceSession, ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(),
@@ -1641,9 +1641,9 @@ public class DBUtil extends I18NBaseObject
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("insert into ");
-		String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-		String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
-		ISession destSession = prov.getCopyDestSession();
+		String destSchema = prov.getDestDatabaseObject().getSimpleName();
+		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+		ISession destSession = prov.getDestSession();
 		result.append(getQualifiedObjectName(
 		   destSession, destCatalog, destSchema, ti.getSimpleName(), DialectFactory.DEST_TYPE));
 		result.append(" ( ");
@@ -1873,8 +1873,8 @@ public class DBUtil extends I18NBaseObject
 		{
 			return;
 		}
-		ISession sourceSession = prov.getCopySourceSession();
-		ISession destSession = prov.getCopyDestSession();
+		ISession sourceSession = prov.getSourceSession();
+		ISession destSession = prov.getDestSession();
 		if (sourceSession == null || destSession == null)
 		{
 			return;
@@ -1894,7 +1894,7 @@ public class DBUtil extends I18NBaseObject
 		for (int colIdx = 0; colIdx < colInfoArr.length; colIdx++)
 		{
 			TableColumnInfo colInfo = colInfoArr[colIdx];
-			IDatabaseObjectInfo selectedDestObj = prov.getDestSelectedDatabaseObject();
+			IDatabaseObjectInfo selectedDestObj = prov.getDestDatabaseObject();
 			String schema = selectedDestObj.getSimpleName();
 			String catalog = selectedDestObj.getCatalogName();
 			String tableName = getQualifiedObjectName(
@@ -2032,4 +2032,33 @@ public class DBUtil extends I18NBaseObject
 	{
 		return lastStatementValues;
 	}
+	
+	public static List<ITableInfo> convertObjectToTableList(List<IDatabaseObjectInfo> objectInfoList) 
+	{
+		List<ITableInfo> result = new ArrayList<ITableInfo>();
+		for (IDatabaseObjectInfo info : objectInfoList) {
+			result.add((ITableInfo)info);
+		}
+		return result;
+	}
+
+	public static List<ITableInfo> convertObjectArrayToTableList(IDatabaseObjectInfo[] objectInfoArr) 
+	{
+		List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
+		for (int i = 0; i < objectInfoArr.length; i++)
+		{
+			selectedTables.add((ITableInfo) objectInfoArr[i]);
+		}
+		return selectedTables;		
+	}
+
+	public static List<IDatabaseObjectInfo> convertTableToObjectList(List<ITableInfo> tableInfoList) 
+	{
+		List<IDatabaseObjectInfo> result = new ArrayList<IDatabaseObjectInfo>();
+		for (IDatabaseObjectInfo info : tableInfoList) {
+			result.add(info);
+		}
+		return result;
+	}
+	
 }
