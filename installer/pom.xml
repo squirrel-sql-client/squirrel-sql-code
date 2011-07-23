@@ -102,6 +102,7 @@
 									<includedArtifact>commons-cli:commons-cli</includedArtifact>
 									<includedArtifact>commons-codec:commons-codec</includedArtifact>
 									<includedArtifact>commons-collections:commons-collections</includedArtifact>
+									<includedArtifact>commons-discovery:commons-discovery</includedArtifact>
 									<includedArtifact>commons-httpclient:commons-httpclient</includedArtifact>
 									<includedArtifact>commons-lang:commons-lang</includedArtifact>
 									<includedArtifact>commons-logging:commons-logging</includedArtifact>
