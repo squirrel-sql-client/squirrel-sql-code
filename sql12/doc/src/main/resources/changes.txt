@@ -75,7 +75,6 @@ Editing numeric values: Now, Squirrel has the same behavior for signed values fo
 Hibernate Plugin: Improved display of mapped objects in table cells:
                   Class name, primary key and toString() ist displayed instead of toString() only.
 
-
 DB-Diff-Plugin:
   Allowed to compare tables within one Session the same way as with different Sessions using select and
   compare of the Object tree's right mouse menu. It is still possible to compare tables inside the
@@ -97,40 +96,43 @@ Bug-fixes:
 When displaying the content of a table, the dialog "Please wait while the query is executed" may not dispose.
   This may occurs only for tables of a "In Memory Database" with only a few rows of data. 
 
-3309565: Not possible to translate SQL connection error messages, because they are hard coded.
-
-3303174: Installer hangs on linux.  Updated version of IzPack compiler to 4.3.4.
-
-3137852: DB2 Plugin - The source code is not visible, if a char column contains a default value.
-
-3293737: A exception occurs if the value of a SMALLINT column is edited in a result table.
-
 When editing table cells in a text area, the input field for the file name will be shown in an appropriate size 
   instead of being very small. If the user change the size of the dialog, the input field for the file name will use the extra space.
 
-3238037: It's impossible to create a foreign key in oracle 10g, if some tables contains a / in their name eg. recycle bins
-
 Now, "Press to open logs" shows  the current log file by default instead of a random one.
 
-3222350: Cannot enter negative values for numeric fields when editing the result table.
-
-3196153: When typing using shift, you must release shift to type space
-
-3088572: Squirrel fails when user tries to edit DB fields which have particular characters.
-
-3175871: On export to Excel, some numeric values are not exported correctly.  
-
 SQL Scripts Plugin: Increased multi table script configuration dialog's size.
-
-3171762: Wrong syntax for DROP KEY (When qualify table name preference is selected this produced two schema
-         or catalog prefixes on the table name)
-3148653: Missing App Icon on Mac OS X (Fix is available in the Mac OS X 3.2.1 installer file)
 
 Fixed NullPointerException in Hibernate Plugin when executing HQL with 'view objects' switched on.
 
 Hibernate Plugin: Made HQL code completion work more exact.
 
 Hibernate Plugin: Removed unused imports to regain compile independence from Hibernate API changes, see patch ID 3168381
+
+3309565: Not possible to translate SQL connection error messages, because they are hard coded.
+
+3303174: Installer hangs on linux.  Updated version of IzPack compiler to 4.3.4.
+
+3293737: A exception occurs if the value of a SMALLINT column is edited in a result table.
+
+3238037: It's impossible to create a foreign key in oracle 10g, if some tables contains a / in their name eg. recycle bins
+
+3222350: Cannot enter negative values for numeric fields when editing the result table.
+
+3196153: When typing using shift, you must release shift to type space
+
+3175871: On export to Excel, some numeric values are not exported correctly.  
+
+3172465: Error connecting to DB after 3.2.1 upgrade
+
+3171762: Wrong syntax for DROP KEY (When qualify table name preference is selected this produced two schema
+         or catalog prefixes on the table name)
+
+3148653: Missing App Icon on Mac OS X (Fix is available in the Mac OS X 3.2.1 installer file)
+
+3137852: DB2 Plugin - The source code is not visible, if a char column contains a default value.
+
+3088572: Squirrel fails when user tries to edit DB fields which have particular characters.
 
 3.2.1 (12/29/2010)
 ==================
