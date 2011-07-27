@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package net.sourceforge.squirrel_sql.plugins.dbcopy.cli;
 
 import java.util.ArrayList;
@@ -37,8 +56,6 @@ public class CommandLineArgumentProcessor
 	private Options options = new Options();
 
 	private CommandLine cmd = null;
-	
-	private boolean valid = true;
 
 	public CommandLineArgumentProcessor(String[] args) throws ParseException
 	{
@@ -46,11 +63,11 @@ public class CommandLineArgumentProcessor
 		CommandLineParser parser = new GnuParser();
 		try {
 			cmd = parser.parse(options, args);
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			HelpFormatter formatter = new HelpFormatter();
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			formatter.printHelp("DBCopyCLI", options, true);
-			valid = false;
+			throw e;
 		}
 	}
 
@@ -112,41 +129,6 @@ public class CommandLineArgumentProcessor
 		options.addOptionGroup(destSchemaGroup);
 		
 		
-	}
-
-	public boolean isValid() {
-		return valid;
-	}
-	
-	public void validate()
-	{
-		try
-		{
-			if (!cmd.hasOption(SOURCE_SESSION))
-			{
-				throw new ParseException("Missing " + SOURCE_SESSION);
-			}
-			if (!cmd.hasOption(DEST_SESSION))
-			{
-				throw new ParseException("Missing " + DEST_SESSION);
-			}
-			if (!cmd.hasOption(TABLE_LIST) && !cmd.hasOption(TABLE_PATTERN))
-			{
-				throw new ParseException("Must specify either " + TABLE_LIST + " or " + TABLE_PATTERN);
-			}
-			if (!cmd.hasOption(DEST_SCHEMA))
-			{
-				throw new ParseException("Missing " + DEST_SCHEMA);
-			}
-		}
-		catch (ParseException e)
-		{
-			HelpFormatter formatter = new HelpFormatter();
-			System.out.println(e.getMessage());
-			formatter.printHelp("DBCopyCLI", options, true);
-			System.exit(1);
-
-		}
 	}
 
 	public String getSourceAliasName() {

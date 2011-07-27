@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package net.sourceforge.squirrel_sql.plugins.dbcopy.cli;
 
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -12,16 +31,15 @@ public class CLCopyListener implements CopyTableListener
 {
 
 	private boolean copyFinished = false;
-	
-	public boolean isCopyFinished() {
+
+	public boolean isCopyFinished()
+	{
 		return copyFinished;
 	}
-	
+
 	@Override
 	public void analyzingTable(TableEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -33,14 +51,12 @@ public class CLCopyListener implements CopyTableListener
 	@Override
 	public void copyStarted(CopyEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void handleError(ErrorEvent e)
 	{
-		System.err.println("Encountered the following exception: "+e.getException().getMessage());
+		System.err.println("Encountered the following exception: " + e.getException().getMessage());
 		e.getException().printStackTrace();
 		copyFinished = true;
 	}
@@ -48,36 +64,26 @@ public class CLCopyListener implements CopyTableListener
 	@Override
 	public void recordCopied(RecordEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void statementExecuted(StatementEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void tableAnalysisStarted(AnalysisEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void tableCopyFinished(TableEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void tableCopyStarted(TableEvent e)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 }

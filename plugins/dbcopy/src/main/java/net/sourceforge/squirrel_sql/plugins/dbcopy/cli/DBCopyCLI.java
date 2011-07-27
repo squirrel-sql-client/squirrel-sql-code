@@ -1,12 +1,27 @@
+/*
+ * Copyright (C) 2011 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package net.sourceforge.squirrel_sql.plugins.dbcopy.cli;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang.StringUtils;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
@@ -24,15 +39,13 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 /*
  * Copyright (C) 2011 Rob Manning
@@ -66,15 +79,15 @@ public class DBCopyCLI
 
 	private static DataCache dataCache = null;
 
-	private static ISession sourceSession = null;
-
-	// private static ISession destSession = null;
-
 	private static SessionInfoProvider sessionInfoProvider = new SessionInfoProviderImpl();
 
 	private static ArrayList<ITableInfo> tables = new ArrayList<ITableInfo>();
 
 	private static CLCopyListener listener = new CLCopyListener();
+
+	private static ISession sourceSession = null;
+
+	private static ISession destSession = null;
 
 	/**
 	 * @param args
@@ -93,10 +106,11 @@ public class DBCopyCLI
 				applicationFiles.getDatabaseAliasesFile(), squirrelResources.getDefaultDriversUrl(),
 				applicationStub);
 
-		ISession destSession = getSessionForAlias(argProcessor.getDestAliasName());
+		setDestSession(getSessionForAlias(argProcessor.getDestAliasName()));
+		setSourceSession(getSessionForAlias(argProcessor.getSourceAliasName()));
 
-		sessionInfoProvider.setSourceSession(getSessionForAlias(argProcessor.getSourceAliasName()));
-		sessionInfoProvider.setDestSession(destSession);
+		sessionInfoProvider.setSourceSession(getSourceSession());
+		sessionInfoProvider.setDestSession(getDestSession());
 		for (String tableStr : argProcessor.getTableList())
 		{
 			tables.add(getTableInfo(sessionInfoProvider.getSourceSession(), sourceSchemaName, sourceCatalogName,
@@ -107,7 +121,7 @@ public class DBCopyCLI
 
 		DatabaseObjectInfo destObject =
 			new DatabaseObjectInfo(destCatalogName, destSchemaName, simpleName, DatabaseObjectType.SCHEMA,
-				destSession.getMetaData());
+				getDestSession().getMetaData());
 		sessionInfoProvider.setDestDatabaseObject(destObject);
 
 		PreferencesManager.initialize(new DBCopyPlugin());
@@ -118,8 +132,9 @@ public class DBCopyCLI
 		executor.addListener(listener);
 		executor.setPref(new CLCopyUICallback());
 		executor.execute();
-		
-		while (!listener.isCopyFinished()) {
+
+		while (!listener.isCopyFinished())
+		{
 			System.out.print(".");
 			Thread.sleep(2000);
 		}
@@ -131,6 +146,12 @@ public class DBCopyCLI
 	{
 		ISQLDatabaseMetaData md = session.getMetaData();
 		ITableInfo[] result = md.getTables(catalogName, schemaName, tableName, new String[] { "TABLE" }, null);
+		if (result.length == 0)
+		{
+			throw new IllegalStateException("Source table to be copied (" + tableName
+				+ ") could not be located in schema (" + schemaName + ") and/or catalog (" + catalogName + 
+				") for alias: " + session.getAlias().getName());
+		}
 		return result[0];
 	}
 
@@ -164,5 +185,25 @@ public class DBCopyCLI
 			}
 		}
 		throw new RuntimeException("Alias (" + alias + ") was not found");
+	}
+
+	public static void setSourceSession(ISession sourceSession)
+	{
+		DBCopyCLI.sourceSession = sourceSession;
+	}
+
+	public static ISession getSourceSession()
+	{
+		return sourceSession;
+	}
+
+	public static void setDestSession(ISession destSession)
+	{
+		DBCopyCLI.destSession = destSession;
+	}
+
+	public static ISession getDestSession()
+	{
+		return destSession;
 	}
 }
