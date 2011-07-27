@@ -20,11 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
  */
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.jboss.util.collection.CollectionsUtil;
 
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;

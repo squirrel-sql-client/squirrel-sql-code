@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.CopyTableCommand;
 public class CopyTableAction extends SquirrelAction
                                      implements ISessionAction {
 
+	private static final long serialVersionUID = 1L;
+
 	/** Current session. */
     private ISession _session;
 
