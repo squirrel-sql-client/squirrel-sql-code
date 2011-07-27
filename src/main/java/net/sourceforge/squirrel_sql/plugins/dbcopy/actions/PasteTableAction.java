@@ -45,6 +45,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.PasteTableCommand;
 public class PasteTableAction extends SquirrelAction
                                      implements ISessionAction {
 
+	private static final long serialVersionUID = 1L;
+
 	/** Current plugin. */
 	private final SessionInfoProvider sessionInfoProv;
 

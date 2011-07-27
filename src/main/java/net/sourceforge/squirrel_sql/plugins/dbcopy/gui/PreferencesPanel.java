@@ -36,14 +36,14 @@ import javax.swing.border.TitledBorder;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
 public class PreferencesPanel extends JPanel  {                              
 
-    DBCopyPreferenceBean _prefs = null;
+	private static final long serialVersionUID = 1L;
+
+	DBCopyPreferenceBean _prefs = null;
     
     JCheckBox truncateCheckBox = null;
     
@@ -94,11 +94,7 @@ public class PreferencesPanel extends JPanel  {
     JLabel delayRecordsLabel = null;
     
     JTextField delayRecordsTextField = null;
-    
-    /** Logger for this class. */
-    private final static ILogger log = 
-        LoggerController.createLogger(PreferencesPanel.class);    
-    
+        
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(PreferencesPanel.class);
@@ -694,14 +690,14 @@ public class PreferencesPanel extends JPanel  {
         PreferencesManager.savePrefs();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#applyChanges()
      */
     public void applyChanges() {
         save();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getPanelComponent()
      */
     public Component getPanelComponent() {
