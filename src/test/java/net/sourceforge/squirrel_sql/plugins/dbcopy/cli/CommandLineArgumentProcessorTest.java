@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy.cli;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.cli.ParseException;
 import org.junit.After;
@@ -57,12 +56,6 @@ public class CommandLineArgumentProcessorTest
 		classUnderTest = null;
 	}
 	
-	@Test
-	public void testValidate()
-	{
-		assertTrue(classUnderTest.isValid());
-	}
-
 	@Test
 	public void testGetSourceAliasName() throws ParseException
 	{
