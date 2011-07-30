@@ -64,11 +64,13 @@ public class CLCopyListener implements CopyTableListener
 	@Override
 	public void recordCopied(RecordEvent e)
 	{
+		System.out.println("Copied " + e.toString());
 	}
 
 	@Override
 	public void statementExecuted(StatementEvent e)
 	{
+		System.out.println("Executed " + e.toString());
 	}
 
 	@Override
