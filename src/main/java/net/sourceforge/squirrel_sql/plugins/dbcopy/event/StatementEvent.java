@@ -18,6 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.event;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+
 /**
  * Contains information about an SQL statement that was executed.
  */
@@ -37,7 +40,7 @@ public class StatementEvent {
     private String statement = null;
     
     /** any bind variable values.  only used when type = INSERT_RECORD_TYPE */
-    private String[] bindValues;
+    private String[] bindValues = null;
     
     /** the type of the statement */
     private int statementType = -1;
@@ -92,5 +95,29 @@ public class StatementEvent {
      */
     public String[] getBindValues() {
         return bindValues;
+    }
+    
+    @Override
+    public String toString() {
+   	 StringBuilder result = new StringBuilder();
+   	 result.append("Statement (");
+   	 result.append(statement);
+   	 result.append(")");
+   	 if (bindValues != null) {
+   		 result.append(", bind values = \n");
+   		 int count = 1;
+   		 for (String value : bindValues) {
+   			 result.append("(");
+   			 result.append("length=");
+   			 result.append(value.length());
+   			 result.append(") ");
+   			 result.append(":");
+   			 result.append(count++);
+   			 result.append("=");
+   			 result.append(value);
+   			 result.append("\n");
+   		 }
+   	 }
+   	 return result.toString();
     }
 }
