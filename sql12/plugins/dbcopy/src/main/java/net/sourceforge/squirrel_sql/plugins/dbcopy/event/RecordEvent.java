@@ -75,5 +75,16 @@ public class RecordEvent extends AbstractCopyEvent {
         return recordCount;
     }
     
-    
+    /**
+    * @see java.lang.Object#toString()
+    */
+   @Override
+    public String toString() {
+   	 StringBuilder result = new StringBuilder("Record ");
+   	 result.append(recordNumber);
+   	 result.append(" of "); 
+   	 result.append(recordCount);
+   	 result.append(" total records");
+   	 return result.toString();
+    }
 }
