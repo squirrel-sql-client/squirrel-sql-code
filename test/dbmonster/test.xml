@@ -24,7 +24,7 @@
     <column name="char_column">
         <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
             <property name="minLength" value="100"/>
-            <property name="maxLength" value="6000"/>
+            <property name="maxLength" value="4000"/>
             <property name="nulls" value="1"/>
         </generator>
     </column>
