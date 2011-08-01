@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE dbmonster-schema PUBLIC "-//kernelpanic.pl//DBMonster Database Schema DTD 1.1//EN" "http://dbmonster.kernelpanic.pl/dtd/dbmonster-schema-1.1.dtd">
 <dbmonster-schema>
-  <name>public</name>
+  <name>DBCOPYSRC</name>
   <table name="bigint_type_table" rows="2">
     <column name="bigint_column" databaseDefault="false">
         <generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
@@ -13,6 +13,23 @@
         </generator>
     </column>
   </table>
+  <table name="binary_type_table" rows="2">
+  	<column name="binary_column" databaseDefault="false">
+  		<generator type="pl.kernelpanic.dbmonster.generator.BinaryGenerator">
+  			<property name="file" value="src/test/resources/log4j.properties"/>
+  			<property name="nulls" value="1"/>	
+  		</generator>
+  	</column>
+  </table>
+  <table name="blob_type_table" rows="2">
+  	<column name="blob_column" databaseDefault="false">
+  		<generator type="pl.kernelpanic.dbmonster.generator.BinaryGenerator">
+  			<property name="file" value="src/test/resources/log4j.properties"/>
+  			<property name="nulls" value="1"/>	
+  		</generator>
+  	</column>
+  </table>
+ 
   <table name="boolean_type_table" rows="2">
     <column name="boolean_column">
         <generator type="pl.kernelpanic.dbmonster.generator.BooleanGenerator">
@@ -139,7 +156,7 @@
     <column name="time_column">
         <generator type="pl.kernelpanic.dbmonster.generator.DateTimeGenerator">
             <property name="nulls" value="1"/>
-            <property name="returnedType" value="time"/>
+            <property name="returnedType" value="timestamp"/>
             <property name="startDate" value="1970-02-01 03:30:59.0 GMT"/>
 			<property name="endDate" value="2005-02-01 03:30:59.0 GMT"/>
         </generator>
