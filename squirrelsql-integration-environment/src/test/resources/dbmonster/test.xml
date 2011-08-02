@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE dbmonster-schema PUBLIC "-//kernelpanic.pl//DBMonster Database Schema DTD 1.1//EN" "http://dbmonster.kernelpanic.pl/dtd/dbmonster-schema-1.1.dtd">
+<!DOCTYPE dbmonster-schema PUBLIC "-//kernelpanic.pl//DBMonster Database Schema DTD 1.1//EN" "http://dbmonster.svn.sourceforge.net/viewvc/dbmonster/dbmonster-core/trunk/src/dtd/dbmonster-schema-1.1.dtd">
 <dbmonster-schema>
   <name>DBCOPYSRC</name>
   <table name="bigint_type_table" rows="2">
@@ -109,7 +109,14 @@
 		</generator>
 	</column>
   </table>
-  
+  <table name="longvarbinary_type_table" rows="2">
+  	<column name="longvarbinary_column" databaseDefault="false">
+  		<generator type="pl.kernelpanic.dbmonster.generator.BinaryGenerator">
+  			<property name="file" value="src/test/resources/log4j.properties"/>
+  			<property name="nulls" value="1"/>	
+  		</generator>
+  	</column>
+  </table>  
   <table name="longvarchar_type_table" rows="2">
     <column name="longvarchar_column">
         <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
@@ -184,6 +191,14 @@
 		</generator>
 	</column>
   </table>
+  <table name="varbinary_type_table" rows="2">
+  	<column name="varbinary_column" databaseDefault="false">
+  		<generator type="pl.kernelpanic.dbmonster.generator.BinaryGenerator">
+  			<property name="file" value="src/test/resources/log4j.properties"/>
+  			<property name="nulls" value="1"/>	
+  		</generator>
+  	</column>
+  </table>  
   <table name="varchar_type_table" rows="2">
     <column name="varchar_column">
         <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
