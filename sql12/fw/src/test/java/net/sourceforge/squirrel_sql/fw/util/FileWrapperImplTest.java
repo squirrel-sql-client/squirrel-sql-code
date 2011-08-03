@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.fw.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
 
 import org.junit.After;
@@ -51,13 +53,11 @@ public class FileWrapperImplTest extends BaseSQuirreLJUnit4TestCase
 	
 	@Test
 	public void testGetAbsolutePath() {
-		// Don't fail if the only difference is a slash on the end of the path
-		if (!classUnderTest.getAbsolutePath().endsWith("\\") && tmpDir.endsWith("\\"))
-		{
-			assertEquals(tmpDir, classUnderTest.getAbsolutePath()+"\\");
-		} else {
-			assertEquals(tmpDir, classUnderTest.getAbsolutePath());
-		}
+		// Don't fail if the only difference is a name separator on the end of the path
+		assertEquals(
+			withoutTrailingSeparator(tmpDir),
+			withoutTrailingSeparator(classUnderTest.getAbsolutePath()));
+		
 	}
 	
 	@Test
@@ -71,4 +71,14 @@ public class FileWrapperImplTest extends BaseSQuirreLJUnit4TestCase
 		new EqualsTester(a, b, c, d);		
 	}
 
+	private String withoutTrailingSeparator(String path)
+	{
+		if(path.endsWith(File.separator))
+		{
+			return path.substring(0,path.length()-1);
+		} else {
+			return path;
+		}
+	}
+	
 }

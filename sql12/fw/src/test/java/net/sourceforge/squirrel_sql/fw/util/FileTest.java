@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.fw.util;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -435,13 +434,6 @@ public class FileTest extends BaseSQuirreLTestCase {
 
         // Test create an illegal file
         String sep = File.separator;
-        f1 = new FileWrapperImpl(sep + "..");
-        try {
-            f1.createNewFile();
-            fail("should throw IOE");
-        } catch (IOException e) {
-            // expected;
-        }
         f1 = new FileWrapperImpl(sep + "a" + sep + ".." + sep + ".." + sep);
         try {
             f1.createNewFile();
@@ -661,82 +653,6 @@ public class FileTest extends BaseSQuirreLTestCase {
         assertTrue("File Was Not Deleted", !f.exists());
         dir.delete();
         assertTrue("Directory Was Not Deleted", !dir.exists());
-    }
-
-    // GCH
-    // TODO : This test passes on Windows but fails on Linux with a
-    // java.lang.NoClassDefFoundError. Temporarily removing from the test
-    // suite while I investigate the cause.
-    // /**
-    // * @tests java.io.File#deleteOnExit()
-    // */
-    // public void test_deleteOnExit() {
-    // File f1 = new FileWrapperImpl(System.getProperty("java.io.tmpdir"), platformId
-    // + "deleteOnExit.tst");
-    // try {
-    // FileOutputStream fos = new FileOutputStream(f1);
-    // fos.close();
-    // } catch (IOException e) {
-    // fail("Unexpected IOException During Test : " + e.getMessage());
-    // }
-    // assertTrue("File Should Exist.", f1.exists());
-    //
-    // try {
-    // Support_Exec.execJava(new String[] {
-    // "tests.support.Support_DeleteOnExitTest", f1.getPath() },
-    // null, true);
-    // } catch (IOException e) {
-    // fail("Unexpected IOException During Test + " + e.getMessage());
-    // } catch (InterruptedException e) {
-    // fail("Unexpected InterruptedException During Test: " + e);
-    // }
-    //
-    // boolean gone = !f1.exists();
-    // f1.delete();
-    // assertTrue("File Should Already Be Deleted.", gone);
-    // }
-
-    /**
-     * @tests java.io.File#equals(java.lang.Object)
-     */
-    public void test_equalsLjava_lang_Object() throws IOException {
-        FileWrapper f1 = new FileWrapperImpl("filechk.tst");
-        FileWrapper f2 = new FileWrapperImpl("filechk.tst");
-        FileWrapper f3 = new FileWrapperImpl("xxxx");
-
-        assertTrue("Equality test failed", f1.equals(f2));
-        assertTrue("Files Should Not Return Equal.", !f1.equals(f3));
-
-        f3 = new FileWrapperImpl("FiLeChK.tst");
-        boolean onWindows = File.separatorChar == '\\';
-        boolean onUnix = File.separatorChar == '/';
-        if (onWindows) {
-            assertTrue("Files Should Return Equal.", f1.equals(f3));
-        } else if (onUnix) {
-            assertTrue("Files Should NOT Return Equal.", !f1.equals(f3));
-        }
-
-        f1 = new FileWrapperImpl(System.getProperty("java.io.tmpdir"), "casetest.tmp");
-        f2 = new FileWrapperImpl(System.getProperty("java.io.tmpdir"), "CaseTest.tmp");
-        new FileOutputStream(f1.getAbsolutePath()).close(); // create the file
-        if (f1.equals(f2)) {
-            try {
-                FileInputStream fis = new FileInputStream(f2.getAbsolutePath());
-                fis.close();
-            } catch (IOException e) {
-                fail("File system is case sensitive");
-            }
-        } else {
-            boolean exception = false;
-            try {
-                FileInputStream fis = new FileInputStream(f2.getAbsolutePath());
-                fis.close();
-            } catch (IOException e) {
-                exception = true;
-            }
-            assertTrue("File system is case insensitive", exception);
-        }
-        f1.delete();
     }
 
     /**
