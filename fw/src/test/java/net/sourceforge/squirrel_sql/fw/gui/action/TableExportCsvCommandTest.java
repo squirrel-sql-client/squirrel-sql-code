@@ -21,9 +21,13 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.swing.JTable;
+
+
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +44,7 @@ public class TableExportCsvCommandTest
 	// See http://en.wikipedia.org/wiki/Comma-separated_values#Basic_rules for proper quote handling definition
 	private final String TEST_DATA_PROPERLY_QUOTED = "\"Super \"\"Luxurious\"\" Truck\"";  
 	
-	private TableExportCsvCommand classUnderTest = null;
+	private AbstractExportCommand classUnderTest = null;
 	
 	@Mock
 	private JTable mockJTable;
@@ -54,11 +58,31 @@ public class TableExportCsvCommandTest
 	@Test
 	public void testGetDataCSVProperQuoteHandling() throws Exception
 	{
-		Method m = TableExportCsvCommand.class.getDeclaredMethod("getDataCSV", String.class, Object.class);
-		m.setAccessible(true);
 		String separatorChar = ",";
-		String result = (String) m.invoke(classUnderTest, separatorChar, TEST_DATA);
+		String result = invokeMethod(separatorChar,TEST_DATA);
 		assertEquals(TEST_DATA_PROPERLY_QUOTED, result);
+	}
+	
+	@Test
+	public void testGetDataCSVProperNewLineHandling() throws Exception
+	{
+		String separatorChar = ",";
+		String result = invokeMethod(separatorChar,"a \n n");
+		assertEquals("\"a \n n\"", result);
+	}
+	
+	@Test
+	public void testGetDataCSVProperCarrageReturnHandling() throws Exception
+	{
+		String separatorChar = ",";
+		String result = invokeMethod(separatorChar,"a \r n");
+		assertEquals("\"a \r n\"", result);
+	}
+
+
+	private String invokeMethod(String separatorChar, String value) throws NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
+		return DataExportCSVWriter.getDataCSV(separatorChar, value);
 	}
 
 }

@@ -1,10 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
- *
- * Modifications Copyright (C) 2001-2002 Johan Compagner
- * jcompagner@j-com.nl
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,21 +16,17 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-import javax.swing.JComponent;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+package net.sourceforge.squirrel_sql.fw.sql;
 
 /**
- * This is the interface that can store executors for SQL.
- *
+ * A monitor for long running operations.
+ * The scope of this monitor is to give feedback to the user and provide the oportunity to abort the operation.
+ * This interface is a conjunction of {@link ProgressCallBack} and {@link IAbortController}
+ * @author Stefan Willinger
+ * @see ProgressCallBack
+ * @see IAbortController
  */
-@Deprecated
-public interface ISQLExecuter
-{
-	/** Returns the title of this executor.*/
-	public String getTitle();
+public interface ProgressAbortCallback extends ProgressCallBack, IAbortController {
 
-	public JComponent getComponent();
 
-	public void execute(ISQLEntryPanel parent);
 }

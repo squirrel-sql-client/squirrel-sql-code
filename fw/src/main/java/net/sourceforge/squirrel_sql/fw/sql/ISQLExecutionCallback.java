@@ -1,10 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
- *
- * Modifications Copyright (C) 2001-2002 Johan Compagner
- * jcompagner@j-com.nl
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,21 +16,14 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.fw.sql;
 
-import javax.swing.JComponent;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import java.sql.ResultSet;
 
 /**
- * This is the interface that can store executors for SQL.
+ * @author Stefan Willinger
  *
  */
-@Deprecated
-public interface ISQLExecuter
-{
-	/** Returns the title of this executor.*/
-	public String getTitle();
-
-	public JComponent getComponent();
-
-	public void execute(ISQLEntryPanel parent);
+public interface ISQLExecutionCallback {
+	ResultSet execute(String sql);
 }

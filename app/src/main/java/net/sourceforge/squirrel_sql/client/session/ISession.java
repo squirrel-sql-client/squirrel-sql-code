@@ -20,6 +20,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ISessionWidget;
@@ -36,11 +41,9 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import javax.swing.*;
-import java.sql.SQLException;
 
 /**
  * The current session.
@@ -378,5 +381,13 @@ public interface ISession extends IHasIdentifier
    void showErrorMessage(String msg);
 
    void showWarningMessage(String msg);    
-   
+
+   /**
+    * Create a new connection, which is not associated with the current session.
+    * The new {@link SQLConnection} will is based on the same alias, user name and password of the current session. But it will be not associated with the session.
+    * Please note, that a commit and roll back on the current session will not affect the new created connection.
+    * The caller have to manage the connection by himself. Especially commit, roll back, close and so on. 
+    * @return A new connection for the alias of the current session.
+    */
+   public SQLConnection createUnmanagedConnection();
 }

@@ -7,6 +7,11 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+
+SQL Scripts Plugin: Added "Store result of SQL into file". This new function allows the user to store the result of the selected SQL directly into a file,
+  instead of showing a result table. This is avaiable in the tools pop-up (sql2file) and the menu (Session ==> Scripts ==> Store result of SQL in file).
+  
+  
 DBCopy Plugin: (Feature request #3291501) This plugin now has a command-line interface (via DBCopyCLI).  See
                DBCopy plugin documentation for usage details.
 
@@ -92,6 +97,8 @@ Display errors in result tab (Feature requests 2826179):
     to hide the Message panel at application start up.
 
 Bug-fixes:
+
+The column numbers of the header columns are now correct, when exporting the result table as XML.
 
 When displaying the content of a table, the dialog "Please wait while the query is executed" may not dispose.
   This may occurs only for tables of a "In Memory Database" with only a few rows of data. 

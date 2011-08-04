@@ -1,10 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
- *
- * Modifications Copyright (C) 2001-2002 Johan Compagner
- * jcompagner@j-com.nl
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,21 +16,30 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
-import javax.swing.JComponent;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import java.util.Iterator;
 
 /**
- * This is the interface that can store executors for SQL.
+ * Interface, which describes the structure of data to export into various formats.
+ * The data can have a header row, and data rows.
+ * This interface makes sure, that a tabulated data structure can be exported to various formats.
+ * @author Stefan Willinger
  *
  */
-@Deprecated
-public interface ISQLExecuter
-{
-	/** Returns the title of this executor.*/
-	public String getTitle();
+public interface IExportData {
 
-	public JComponent getComponent();
+	/**
+	 * The header row.
+	 * @return the header.
+	 */
+	Iterator<String> getHeaders();
 
-	public void execute(ISQLEntryPanel parent);
+	/**
+	 * The rows of data.
+	 * Its not sure, how many rows are exists. The underlying system may do a lazy load of the rows.
+	 * @return the rows to export.
+	 */
+	Iterator<IExportDataRow> getRows();
+
 }

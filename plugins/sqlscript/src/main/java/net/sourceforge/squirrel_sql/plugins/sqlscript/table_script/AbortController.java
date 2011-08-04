@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;

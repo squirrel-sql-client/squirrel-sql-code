@@ -1,10 +1,6 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
- *
- * Modifications Copyright (C) 2001-2002 Johan Compagner
- * jcompagner@j-com.nl
+ * Copyright (C) 2011 Stefan Willinger
+ * wis775@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,21 +16,24 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
-import javax.swing.JComponent;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import java.util.Iterator;
 
 /**
- * This is the interface that can store executors for SQL.
+ * A data row contains some cells and it knows the own row number.
+ * @author Stefan Willinger
  *
  */
-@Deprecated
-public interface ISQLExecuter
-{
-	/** Returns the title of this executor.*/
-	public String getTitle();
-
-	public JComponent getComponent();
-
-	public void execute(ISQLEntryPanel parent);
+public interface IExportDataRow {
+	/**
+	 * The cells of the row.
+	 * @return the cells of the row.
+	 */
+	Iterator<IExportDataCell> getCells();
+	/**
+	 * The number of the row.
+	 * @return number of the row.
+	 */
+	int getRowIndex();
 }
