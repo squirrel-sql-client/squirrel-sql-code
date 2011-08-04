@@ -343,6 +343,10 @@ public class TableExportCsvController
 
    private void onOK()
    {
+	  if(warnIfExcel() == false){
+		  return;
+	  }
+	   
       String csvFileName = _dlg.txtFile.getText();
       if(null == csvFileName || 0 == csvFileName.trim().length())
       {
@@ -388,14 +392,39 @@ public class TableExportCsvController
       }
 
       writePrefs();
-      closeDlg();
       _ok = true;
+      closeDlg();
    }
 
 
 
 
-   private void writePrefs()
+   /**
+    * Warn the user if we should export the data into a Excel file.
+    * Exporting a excel file may use a huge amount of memory and can cause some problems within MS Excel.
+    * @return true, if the user wishes to continue.
+    */
+   private boolean warnIfExcel() {
+	   if(this._dlg.radFormatXLS.isSelected() && shouldWarnIfExcel()){
+		   // i18n[TableExportCsvController.warnIfExcel=Exporting a huge data set for MS Excel maybe use huge memory.]
+		   String msg = s_stringMgr.getString("TableExportCsvController.warnIfExcel");
+		   int option = JOptionPane.showConfirmDialog(_dlg, msg, null, JOptionPane.OK_CANCEL_OPTION);
+		   if(option != JOptionPane.OK_OPTION){
+			   return false;
+		   }		
+	   }
+	   return true;
+   }
+   /**
+    * Decide, if we want warn the user, if the choose the Excel export.
+    * This default implementation returns always false.
+    * @return true, if we should warn.
+    */
+   protected boolean shouldWarnIfExcel(){
+	   return false;
+   }
+
+private void writePrefs()
    {
       Preferences.userRoot().put(PREF_KEY_CSV_FILE, _dlg.txtFile.getText());
       Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
@@ -521,7 +550,7 @@ public class TableExportCsvController
       return new File(_dlg.txtFile.getText());
    }
 
-   String getSeparatorChar()
+   public String getSeparatorChar()
    {
       if(_dlg.chkSeparatorTab.isSelected())
       {
@@ -533,7 +562,7 @@ public class TableExportCsvController
       }
    }
    
-   String getLineSeparator() {
+   public String getLineSeparator() {
    	LineSeparator lineSepChoice = (LineSeparator)_dlg._lineSeparators.getSelectedItem();
    	String result = null;
    	switch (lineSepChoice) {
@@ -550,7 +579,7 @@ public class TableExportCsvController
    	return result;
    }
    
-   Charset getCSVCharset() {
+   public Charset getCSVCharset() {
 	   try {
 		   return Charset.forName(_dlg.charsets.getSelectedItem().toString());
 	   } catch (IllegalCharsetNameException icne) {
@@ -568,7 +597,7 @@ public class TableExportCsvController
       return _dlg.radComplete.isSelected();
    }
 
-   boolean useGloablPrefsFormatting()
+   public boolean useGloablPrefsFormatting()
    {
       return _dlg.radUseGlobalPrefsFormating.isSelected();
    }

@@ -68,6 +68,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -1190,6 +1191,24 @@ class Session implements ISession
      */
     public void showWarningMessage(String msg) {
         _msgHandler.showWarningMessage(msg);
+    }
+    
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#createUnmanagedConnection()
+     */
+    public SQLConnection createUnmanagedConnection() {
+    	SQLConnectionState connState = new SQLConnectionState();
+     
+        OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
+                                   _user, _password, connState.getConnectionProperties());
+        try {
+			cmd.execute();
+		} catch (BaseException e) {
+			showErrorMessage(e);
+			return null;
+		}
+        
+        return cmd.getSQLConnection();
     }
     
 }

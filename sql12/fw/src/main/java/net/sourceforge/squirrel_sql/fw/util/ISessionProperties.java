@@ -26,4 +26,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 public interface ISessionProperties {
     boolean getAutoCommit();
+    
+    public int getSQLFetchSize();
+    public boolean getSQLUseFetchSize();
 }
