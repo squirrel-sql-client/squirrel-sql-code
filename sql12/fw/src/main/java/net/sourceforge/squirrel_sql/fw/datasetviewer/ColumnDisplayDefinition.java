@@ -191,11 +191,15 @@ public class ColumnDisplayDefinition
 	    String columnLabel = md.getColumnLabel(idx);
 	    String columnName = md.getColumnName(idx);
 	    int displayWidth = columnLabel.length();
+	    
+	    // Sometimes, the table name is null. eg if the select statement contains a union clause.
 	    String fullTableColumnName = 
-	        new StringBuilder(md.getTableName(idx))
+	        new StringBuilder()
+	    			.append(md.getTableName(idx))
 	                .append(":")
 	                .append(columnName)
 	                .toString();
+	    
 	    int sqlType = md.getColumnType(idx);
 	    String sqlTypeName = md.getColumnTypeName(idx);
 	    boolean isNullable = 
