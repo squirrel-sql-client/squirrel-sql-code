@@ -53,10 +53,8 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<dependencyManagement>
-		<!--
-			None of the dependencies below should use ${project.version} since this pom is inherited by the
-			plugin archetype projects prototype pom.
-		-->
+		<!-- None of the dependencies below should use ${project.version} since 
+			this pom is inherited by the plugin archetype projects prototype pom. -->
 		<dependencies>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
@@ -145,11 +143,10 @@
 						<outputDirectory>target</outputDirectory>
 						<finalName>${project.artifactId}</finalName>
 						<includePom>true</includePom>
-						<!--
-							We exclude docs from the source jar, because the assembly has to have them for the plugin
-							install to work; and we don't want the source jar to contain them as well as the assembly jar
-							as that just makes the assembly jar bigger.
-						-->
+						<!-- We exclude docs from the source jar, because the assembly has 
+							to have them for the plugin install to work; and we don't want the source 
+							jar to contain them as well as the assembly jar as that just makes the assembly 
+							jar bigger. -->
 						<excludes>
 							<exclude>**/doc/**</exclude>
 							<exclude>**/doc</exclude>
@@ -174,10 +171,7 @@
 							<addMavenDescriptor>false</addMavenDescriptor>
 						</archive>
 						<finalName>${project.artifactId}</finalName>
-						<!--
-							We exclude docs from the classes jar, for the same reason as
-							above
-						-->
+						<!-- We exclude docs from the classes jar, for the same reason as above -->
 						<excludes>
 							<exclude>**/doc/**</exclude>
 							<exclude>**/doc</exclude>
@@ -246,10 +240,8 @@
 								<descriptors>
 									<descriptor>${project.build.directory}/assemblies/squirrelsql-plugin-assembly.xml</descriptor>
 								</descriptors>
-								<!--
-									This must be true, or else it will cause this to become the main artifact for each plugin
-									project
-								-->
+								<!-- This must be true, or else it will cause this to become the 
+									main artifact for each plugin project -->
 								<appendAssemblyId>true</appendAssemblyId>
 								<finalName>${project.artifactId}</finalName>
 							</configuration>
