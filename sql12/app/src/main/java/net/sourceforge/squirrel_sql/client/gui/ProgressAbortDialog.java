@@ -39,6 +39,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
@@ -101,6 +103,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	 * The place to show the current task
 	 */
 	private JLabel statusLabel = null;
+	
+	/**
+	 * The place to show additional information about the current task
+	 */
+	private JLabel additionalStatusLabel = null;
 
 	private String _loadingPrefix = i18n.DEFAULT_LOADING_PREFIX;
 
@@ -131,6 +138,12 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	 * Flag, if the operation should be canceled
 	 */
 	private boolean canceled;
+
+	
+	/**
+	 * Someone told us, that all tasks are done.
+	 */
+	private boolean finished;
 
 	/**
 	 * Constructor which accepts a Dialog owner
@@ -216,6 +229,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 				public void run()
 				{
 					statusLabel.setText(statusText.toString());
+					setTaskStatus(null);
 					progressBar.setValue(progressBar.getValue() + 1);
 
 					if (finishedLoading())
@@ -224,6 +238,35 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 						return;
 					}
 				}
+			});
+		}
+		catch (Exception e)
+		{
+			s_log.error("Unexpected exception: " + e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback#setTaskStatus(java.lang.String)
+	 */
+	@Override
+	public void setTaskStatus(final String status)
+	{
+		final StringBuilder statusText = new StringBuilder();
+		
+		if(StringUtils.isNotBlank(status)){
+			statusText.append(status);
+		}
+		
+		try
+		{
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					additionalStatusLabel.setText(statusText.toString());
+				}
+
 			});
 		}
 		catch (Exception e)
@@ -256,6 +299,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	@Override
 	public boolean finishedLoading()
 	{
+		if(finished){
+			progressBar.setIndeterminate(false);
+			return true;
+		}
+		
 		if(this.indeterminate){
 			return false;
 		}
@@ -345,6 +393,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		dialogPanel.add(statusLabel, c);
 		
 		c.gridy++;
+		c.insets = new Insets(4, 10, 4, 10);
+		additionalStatusLabel = new JLabel();
+		dialogPanel.add(additionalStatusLabel, c);
+		
+		c.gridy++;
 		c.weightx = 1.0;
 		progressBar = new JProgressBar(0, itemCount);
 		progressBar.setIndeterminate(indeterminate);
@@ -426,5 +479,13 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	@Override
 	public boolean isVisble() {
 		return super.isVisible();
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback#setFinished()
+	 */
+	@Override
+	public void setFinished() {
+		this.finished = true;
 	}
 }

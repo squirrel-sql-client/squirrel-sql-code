@@ -49,7 +49,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * Independent, if the source of the data is a JTable, a result set or whatever. Its only important, that the data is tabulated. This is ensured by the
  * interface {@link IExportData}. There are existing some DataExportWriters for various target formats.
  * 
- * <b>Note:</b> This class is the result of a refactoring task. The code was taken from TableExportCsvCommand.
+ * <b>Note:</b> This class is the result of a re-factoring task. The code was taken from TableExportCsvCommand.
  * @see DataExportCSVWriter
  * @see DataExportXMLWriter
  * @see DataExportExcelWriter
@@ -60,8 +60,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public abstract class AbstractExportCommand {
 	static final StringManager s_stringMgr = StringManagerFactory
 			.getStringManager(AbstractExportCommand.class);
+	
+	
+	
+	
+	
 	static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
-	private boolean cancel;
 	private ProgressAbortCallback progressController = null;
 
 	/**
@@ -169,7 +173,7 @@ public abstract class AbstractExportCommand {
 	      }
 	      
 	      boolean writeFileSuccess = writeFile(ctrl, createExportData(ctrl));
-	      progress("Done");    
+	      
 	      if(writeFileSuccess)
 	      {
 	         String command = ctrl.getCommand();
@@ -210,11 +214,6 @@ public abstract class AbstractExportCommand {
 	 */
 	protected abstract IExportData createExportData(TableExportCsvController ctrl);
 	
-	
-	public void cancel(){
-		this.cancel=true;
-	}
-
 	/**
 	 * @return the progressController
 	 */
