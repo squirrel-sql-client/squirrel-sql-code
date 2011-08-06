@@ -19,11 +19,13 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import java.io.File;
-import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * Exports a data structure into a file.
@@ -38,10 +40,35 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
  */
 public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	
+	/** Internationalized strings for this class */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AbstractDataExportFileWriter.class);
+	
+	static interface i18n
+	{
+		// i18n[AbstractDataExportFileWriter.beginWriting=Begin writing]
+		String BEGIN_WRITING = s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting");
+
+		// i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=100 rows completed]
+		String KEY_NUMBER_OF_ROWS_COMPLETED = "AbstractDataExportFileWriter.numberOfRowsCompleted";
+		
+		
+		// i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=Finished with 100 rows]
+		String KEY_FINISHED_LOADING = "AbstractDataExportFileWriter.finishedLoading";
+				
+		// i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=Closing the file]
+		String CLOSING_THE_FILE = s_stringMgr.getString("AbstractDataExportFileWriter.closingTheFile");
+		
+		// i18n[AbstractDataExportFileWriter.DONE=Done]
+		String DONE = s_stringMgr.getString("AbstractDataExportFileWriter.done");
+	}
+	
+	
+	
 	/**
-	 * Constant, for updating the progress bar each x rows.
+	 * Constant, for updating the progress bar each x seconds.
 	 */
-	private static final int FEEDBACK_EVRY_N_LINE = 1000;
+	private static final int FEEDBACK_EVRY_N_SECONDS = 5;
 	/**
 	 * The target file.
 	 */
@@ -59,8 +86,14 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	 * Progress controller with the opportunity to abort the operation.
 	 */
 	private ProgressAbortCallback progressController;
-
+	
 	/**
+	 * Timestamp of the last update of the progress status. 
+	 */
+	private long timeOfLastStatusUpdate = 0;
+
+	/**"Begin writing");
+		beforeRows();
 	 * Construct this one.
 	 * @param file The target file.
 	 * @param ctrl The controller to use
@@ -96,13 +129,17 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 
 		Iterator<IExportDataRow> rows = data.getRows();
 		
-		progress("Begin writing");
+		progress(i18n.BEGIN_WRITING);
 		beforeRows();
 		long rowsCount = 1;
+		NumberFormat nfRowCount = NumberFormat.getInstance();
+		
+		
 		while (rows.hasNext() && isStop() == false) {
 			IExportDataRow aRow = rows.next();
-			if((rowsCount) % FEEDBACK_EVRY_N_LINE == 0){
-				progress(rowsCount + "Rows completed");
+			Thread.sleep(1000);
+			if(isStatusUpdateNecessary()){
+				taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED, nfRowCount.format(rowsCount)));
 			}
 			beforeRow(aRow.getRowIndex());
 
@@ -114,18 +151,37 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 			afterRow();
 			rowsCount++;
 		}
+		progress(s_stringMgr.getString(i18n.KEY_FINISHED_LOADING, nfRowCount.format(rowsCount)));
 		afterRows();
-		progress("Finished with " + rowsCount + "Rows");
-		progress("Closing the file");
+		progress(i18n.CLOSING_THE_FILE);
 		// All sheets and cells added. Now write out the workbook
 		afterWorking();
-
+		
+		progress(i18n.DONE);
+		
+		if(progressController != null){
+			progressController.setFinished();
+		}
+		
 		if (isStop()) {
 			return false;
 		} else {
 			return true;
 		}
 
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean isStatusUpdateNecessary() {
+		long time = System.currentTimeMillis();
+		if((timeOfLastStatusUpdate  + FEEDBACK_EVRY_N_SECONDS*1000) < time){
+			timeOfLastStatusUpdate = time;
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	/**
@@ -258,6 +314,17 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		}
 	}
 
+	/**
+	 * Tells the progress controller the status of the current task.
+	 * @param status Status of a task to be added to the progress controller.
+	 */
+	protected void taskStatus(String status){
+		if(progressController != null){
+			progressController.setTaskStatus(status);
+		}
+	}
+	
+	
 	/**
 	 * Checks, if the work should be stopped.
 	 * @return true, if the work should be stopped, otherwise false.

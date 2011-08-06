@@ -173,6 +173,9 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 		progressDialog = new ProgressAbortDialog((Frame)null, title, description, 0, true, new IAbortEventHandler() {
 			@Override
 			public void cancel() {
+				/* 
+				 * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
+				 */
 				if(stmt != null){
 					try {
 						stmt.cancel();
@@ -180,10 +183,6 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 						// nothing todo
 					}
 				}
-				
-				if(resultSetExportCommand != null){
-					resultSetExportCommand.cancel();
-				}				
 			}
 		});
 		
