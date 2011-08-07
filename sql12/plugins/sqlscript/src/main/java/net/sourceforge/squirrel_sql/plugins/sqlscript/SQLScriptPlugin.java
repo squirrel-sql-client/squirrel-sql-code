@@ -40,7 +40,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferences
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateFileOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateFileOfCurrentSQLCommand;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateSelectScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
@@ -225,7 +224,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 			{
 				ActionCollection coll = sess.getApplication().getActionCollection();
 				sqlInternalFrame.addSeparatorToToolbar();
-				sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+				sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class)); 
+				sqlInternalFrame.addToToolbar(coll.get(CreateFileOfCurrentSQLAction.class));
 
 				sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
 				sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
@@ -262,11 +262,10 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 
 		session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+		session.addToToolbar(coll.get(CreateFileOfCurrentSQLAction.class));
 
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp(
-		   "sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+		session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+		session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
 		session.getSessionInternalFrame().addToToolsPopUp("sql2file", coll.get(CreateFileOfCurrentSQLAction.class));
 	}
 
