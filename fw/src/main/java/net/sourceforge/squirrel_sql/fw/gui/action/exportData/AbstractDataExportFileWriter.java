@@ -137,7 +137,6 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		
 		while (rows.hasNext() && isStop() == false) {
 			IExportDataRow aRow = rows.next();
-			Thread.sleep(1000);
 			if(isStatusUpdateNecessary()){
 				taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED, nfRowCount.format(rowsCount)));
 			}
