@@ -23,11 +23,12 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvCommand.i18n;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportCSVWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportExcelWriter;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.DataExportXMLWriter;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -61,9 +62,15 @@ public abstract class AbstractExportCommand {
 	static final StringManager s_stringMgr = StringManagerFactory
 			.getStringManager(AbstractExportCommand.class);
 	
-	
-	
-	
+	 static interface i18n {
+	       //i18n[TableExportCsvCommand.missingClobDataMsg=Found Clob placeholder 
+	       //({0}) amongst data to be exported. Continue exporting cell data?]
+	       String missingClobDataMsg = 
+	           s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg",
+	                                 ClobDescriptor.i18n.CLOB_LABEL);
+	       
+	       String FAILED = s_stringMgr.getString("AbstractExportCommand.failed");
+	   }
 	
 	static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
 	private ProgressAbortCallback progressController = null;
@@ -134,7 +141,7 @@ public abstract class AbstractExportCommand {
 	      }
 	   }
 	   
-	   public void execute()
+	   public void execute() throws ExportDataException
 	   {
 	      TableExportCsvController ctrl = createTableExportController();
 
@@ -172,10 +179,18 @@ public abstract class AbstractExportCommand {
 	          }
 	      }
 	      
-	      boolean writeFileSuccess = writeFile(ctrl, createExportData(ctrl));
+	      boolean writeFileSuccess = false;
 	      
-	      if(writeFileSuccess)
-	      {
+	      try {
+	    	  writeFileSuccess = writeFile(ctrl, createExportData(ctrl));
+		} catch (ExportDataException e) {
+			// Show an error and re-throw the exception.
+			s_log.error(i18n.FAILED);
+	    	JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+	    	throw e;
+		}
+	      
+	      if(writeFileSuccess){
 	         String command = ctrl.getCommand();
 
 	         if(null != command)
@@ -192,6 +207,9 @@ public abstract class AbstractExportCommand {
 	             }
 	             JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
 	         }
+	      }else{
+	    	  s_log.info(i18n.FAILED);
+	    	  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
 	      }
 	   }
 
@@ -209,10 +227,12 @@ public abstract class AbstractExportCommand {
 	protected abstract boolean checkMissingData(String separatorChar);
 
 	/**
-	 * @param ctrl 
-	 * @return
+	 * Creates the export data from the original source.
+	 * @param ctrl the controller to use.
+	 * @return the data for the export.
+	 * @throws ExportDataException if any problem occurs while creating the data.
 	 */
-	protected abstract IExportData createExportData(TableExportCsvController ctrl);
+	protected abstract IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException;
 	
 	/**
 	 * @return the progressController

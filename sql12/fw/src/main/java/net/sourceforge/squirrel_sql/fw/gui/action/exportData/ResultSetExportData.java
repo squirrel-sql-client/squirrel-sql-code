@@ -28,6 +28,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * The implementation of {@link IExportData} for exporting data of a {@link ResultSet}
@@ -39,6 +43,22 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
  */
 public class ResultSetExportData implements IExportData {
 
+	 /** Logger for this class. */
+    private final static ILogger log = 
+                         LoggerController.createLogger(ResultSetExportData.class);
+	
+    /** Internationalized strings for this class */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ResultSetExportData.class);
+
+	static interface i18n
+	{
+		// i18n[ResultSetExportData.defaultLoadingPrefix="Error while reading the result set."]
+		String ERROR_READING_RESULTSET = s_stringMgr.getString("ResultSetExportData.errorReadingResultSet");
+
+	}
+    
+    
 	/**
 	 * The result set to work on.
 	 */
@@ -69,7 +89,7 @@ public class ResultSetExportData implements IExportData {
 
 		int columnCount = this.resultSet.getMetaData().getColumnCount();
 		for (int i = 1; i <= columnCount; i++) {
-			colDispDef.add(new ColumnDisplayDefinition(resultSet, i, dialect));
+			colDispDef.add(new ColumnDisplayDefinition(resultSet, i, this.dialect));
 		}
 
 	}
@@ -131,7 +151,8 @@ public class ResultSetExportData implements IExportData {
 					rowIndex++;
 					return data;
 				} catch (SQLException e) {
-					throw new RuntimeException("Error while reading the result set.");
+					log.error(i18n.ERROR_READING_RESULTSET, e);
+					throw new RuntimeException(i18n.ERROR_READING_RESULTSET, e);
 				}
 			}
 
@@ -145,7 +166,8 @@ public class ResultSetExportData implements IExportData {
 					boolean next = resultSet.next();
 					return next;
 				} catch (SQLException e) {
-					throw new RuntimeException("Error while reading the result set.");
+					log.error(i18n.ERROR_READING_RESULTSET, e);
+					throw new RuntimeException(i18n.ERROR_READING_RESULTSET, e);
 				}
 			}
 		};

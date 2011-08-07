@@ -27,6 +27,7 @@ import java.awt.print.PrinterJob;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ICopyWikiTableActionFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.ITableActionCallback;
@@ -434,7 +435,12 @@ public class TablePopupMenu extends BasePopupMenu
       {
          if (_table != null)
          {
-            new TableExportCsvCommand(_table).execute();
+            try {
+				new TableExportCsvCommand(_table).execute();
+			} catch (ExportDataException e) {
+				// should never happen. Just convert it to a Runtime Exception.
+				throw new RuntimeException(e);
+			}
          }
       }
    }

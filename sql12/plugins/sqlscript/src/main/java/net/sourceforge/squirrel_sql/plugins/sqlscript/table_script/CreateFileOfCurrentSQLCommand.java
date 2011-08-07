@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -127,9 +128,11 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 					unmanagedConnection.close();
 				}
 			}
-		} catch (Exception e) {
-			getSession().showErrorMessage(e);
-			e.printStackTrace();
+		}catch (Exception e) {
+			if(e.getCause() != null){
+				getSession().showErrorMessage(e.getCause());
+			}
+			getSession().showErrorMessage(e.getMessage());
 		} finally {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {

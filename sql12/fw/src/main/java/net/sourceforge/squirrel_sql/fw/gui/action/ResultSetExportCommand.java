@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
@@ -33,15 +34,22 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Command for exporting a result set to a file.
+ * 
  * @author Stefan Willinger
- *
+ * 
  */
 public class ResultSetExportCommand extends AbstractExportCommand {
-	static final StringManager s_stringMgr =
-	      StringManagerFactory.getStringManager(ResultSetExportCommand.class);
+	static final StringManager s_stringMgr = StringManagerFactory
+			.getStringManager(ResultSetExportCommand.class);
 
-	   static ILogger s_log = LoggerController.createLogger(ResultSetExportCommand.class);
+	static ILogger log = LoggerController.createLogger(ResultSetExportCommand.class);
 
+	static interface i18n {
+		// i18n[ResultSetExportCommand.errorExecuteStatement="Could not create the data for exporting."]
+		String ERROR_EXECUTE_STATEMENT = s_stringMgr
+				.getString("ResultSetExportCommand.errorExecuteStatement");
+
+	}
 
 	private ResultSet resultSet;
 
@@ -51,49 +59,37 @@ public class ResultSetExportCommand extends AbstractExportCommand {
 
 	private Statement stmt;
 
-	   static interface i18n {
-	     
-	   }
-	   
-	   public ResultSetExportCommand(Statement stmt, String sql, DialectType dialect, ProgressAbortCallback progressController)
-	   {
-		   super(progressController);
-		   this.sql = sql;
-		   this.stmt = stmt;
-		   this.dialect = dialect;
-	   }
-
-	   
-	  
-
-	   /**
-	    *
-	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
-	 */
-	   @Override
-	protected boolean checkMissingData(String sepChar) {
-	       return false;
+	public ResultSetExportCommand(Statement stmt, String sql, DialectType dialect,
+			ProgressAbortCallback progressController) {
+		super(progressController);
+		this.sql = sql;
+		this.stmt = stmt;
+		this.dialect = dialect;
 	}
 
+	/**
+	 * 
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#checkMissingData(java.lang.String)
+	 */
+	@Override
+	protected boolean checkMissingData(String sepChar) {
+		return false;
+	}
 
-
-
-	   /**
-	    * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
-	    */
-	   @Override
-	   protected IExportData createExportData(TableExportCsvController ctrl) {
-		   try {
-			   super.progress("Running the query");
-			   this.resultSet = stmt.executeQuery(sql);
-			   return  new ResultSetExportData(this.resultSet, dialect);
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createExportData()
+	 */
+	@Override
+	protected IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException{
+		try {
+			super.progress("Running the query");
+			this.resultSet = stmt.executeQuery(sql);
+			return new ResultSetExportData(this.resultSet, dialect);
 		} catch (SQLException e) {
-			throw new RuntimeException("Could not create the data for exporting.", e);
+			log.error(i18n.ERROR_EXECUTE_STATEMENT, e);
+			throw new ExportDataException(i18n.ERROR_EXECUTE_STATEMENT, e);
 		}
-	   }
-
-
-
+	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
@@ -102,7 +98,5 @@ public class ResultSetExportCommand extends AbstractExportCommand {
 	protected TableExportCsvController createTableExportController() {
 		return new ResultSetExportCsvController();
 	}
-	   
-	   
 
 }

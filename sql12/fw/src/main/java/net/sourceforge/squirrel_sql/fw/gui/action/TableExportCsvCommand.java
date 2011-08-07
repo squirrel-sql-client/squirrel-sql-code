@@ -23,30 +23,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class TableExportCsvCommand extends AbstractExportCommand
 {
-   static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(TableExportCsvCommand.class);
 
    static ILogger s_log = LoggerController.createLogger(TableExportCsvCommand.class);
-
    
    JTable _table;
-   
-   static interface i18n {
-       //i18n[TableExportCsvCommand.missingClobDataMsg=Found Clob placeholder 
-       //({0}) amongst data to be exported. Continue exporting cell data?]
-       String missingClobDataMsg = 
-           s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg",
-                                 ClobDescriptor.i18n.CLOB_LABEL);
-   }
-   
+
    public TableExportCsvCommand(JTable table)
    {
 	   super();
       _table = table;
    }
-
-   
-  
 
    /**
     *
@@ -78,8 +64,6 @@ protected boolean checkMissingData(String sepChar) {
        }
        return false;
    }
-
-
 
 
    /**
