@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+1.3
+===
+- Added "Store result of SQL into file"
+  This is available through the menu or the tools pop-up menu (sql2file). 
+  It allows you, to store the result of a SQL directly into a file, without
+  building a result table in memory. There are the same output formats 
+  available as in the traditional "Export as..." action of the result table.
+   
 1.2
 ===
 

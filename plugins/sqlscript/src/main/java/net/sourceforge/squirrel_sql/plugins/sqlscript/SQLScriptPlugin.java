@@ -97,7 +97,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "1.2";
+		return "1.3";
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin
 	 */
 	public String getContributors()
 	{
-		return "Gerd Wagner, John Murga, Rob Manning";
+		return "Gerd Wagner, John Murga, Rob Manning, Stefan Willinger";
 	}
 
 	/**
