@@ -34,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -62,25 +63,31 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  */
 public class ProgressAbortDialog extends JDialog implements ProgressAbortCallback{
+	
+	private final ProgressAbortDialog instance = this;
+	
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/** Logger for this class. */
-	public final static ILogger s_log = LoggerController.createLogger(ProgressCallBackDialog.class);
+	public final static ILogger s_log = LoggerController.createLogger(ProgressAbortDialog.class);
 
 	/** Internationalized strings for this class */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(ProgressCallBackDialog.class);
+		StringManagerFactory.getStringManager(ProgressAbortDialog.class);
 
 	static interface i18n
 	{
-		// i18n[ProgressCallBackDialog.defaultLoadingPrefix=Loading:]
-		String DEFAULT_LOADING_PREFIX = s_stringMgr.getString("ProgressCallBackDialog.defaultLoadingPrefix");
+		// i18n[ProgressAbortDialog.defaultLoadingPrefix=Loading:]
+		String DEFAULT_LOADING_PREFIX = s_stringMgr.getString("ProgressAbortDialog.defaultLoadingPrefix");
 
-		// i18n[ProgressCallBackDialog.initialLoadingPrefix=Loading...]
-		String INITIAL_LOADING_PREFIX = s_stringMgr.getString("ProgressCallBackDialog.initialLoadingPrefix");
+		// i18n[ProgressAbortDialog.initialLoadingPrefix=Loading...]
+		String INITIAL_LOADING_PREFIX = s_stringMgr.getString("ProgressAbortDialog.initialLoadingPrefix");
+		
+		// i18n[ProgressAbortDialog.confirmCancel=Should the export be canceled?]
+		String CONFIRM_CANCEL = s_stringMgr.getString("ProgressAbortDialog.confirmCancel");
 	}
 
 	/**
@@ -418,11 +425,13 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 			cancelButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					appendToHistory("Canceling the operation");
-					canceled = true;
-					cancelButton.setEnabled(false);
-					abortHandler.cancel();
-					
+					int ret = JOptionPane.showConfirmDialog(instance, i18n.CONFIRM_CANCEL);
+					if(JOptionPane.YES_OPTION == ret){
+						appendToHistory("Canceling the operation");
+						canceled = true;
+						cancelButton.setEnabled(false);
+						abortHandler.cancel();
+					}
 				}
 			});
 			
