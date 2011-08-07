@@ -24,15 +24,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JTable;
-
-import org.hibernate.dialect.Dialect;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBigDecimal;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 
 /**
  * The implementation of {@link IExportData} for exporting data of a {@link ResultSet}
@@ -88,8 +83,13 @@ public class ResultSetExportData implements IExportData {
 	public Iterator<String> getHeaders() {
 		List<String> headers = new ArrayList<String>();
 		for (ColumnDisplayDefinition col : this.colDispDef) {
-			// TODO Use the correct label for the column. (A alias is more important than the column name)
-			headers.add(col.getColumnName());
+			String headerValue;
+            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName()){
+               headerValue = col.getLabel();
+            } else {
+               headerValue = col.getColumnName();
+            }
+			headers.add(headerValue);
 		}
 		return headers.iterator();
 
