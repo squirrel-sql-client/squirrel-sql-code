@@ -13,13 +13,20 @@ public class DialogWidget implements IWidget
 
    public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, IApplication app)
    {
-      _delegate = DesktopContainerFactory.createDialogDelegate(app, title, resizeable, closeable, maximizeable, iconifiable, this);
+      this(title, resizeable, closeable, maximizeable, iconifiable, app, app.getMainFrame());
    }
+
+   public DialogWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, IApplication app, Window parent)
+   {
+      _delegate = DesktopContainerFactory.createDialogDelegate(app, parent, title, resizeable, closeable, maximizeable, iconifiable, this);
+   }
+
 
    public DialogWidget(String title, boolean resizeable, IApplication app)
    {
       this(title, resizeable, true, false, false, app);
    }
+
 
    public boolean isVisible()
    {

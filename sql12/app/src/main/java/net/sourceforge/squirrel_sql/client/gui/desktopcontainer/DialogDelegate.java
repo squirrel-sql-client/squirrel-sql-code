@@ -24,9 +24,10 @@ public class DialogDelegate extends JDialog implements IDialogDelegate
    private boolean _isToolWindow;
 
 
-   public DialogDelegate(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable, IWidget widget, MainFrame mainFrame)
+   public DialogDelegate(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable, IWidget widget, Window parent)
    {
-      super(mainFrame, title, false);
+      super(parent, title);
+
       setResizable(resizable);
       _widget = widget;
 

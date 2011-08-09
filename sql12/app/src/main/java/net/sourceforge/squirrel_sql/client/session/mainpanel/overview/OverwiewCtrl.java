@@ -92,7 +92,9 @@ public class OverwiewCtrl
 
    private void openWindowForTable(DataSetViewerTablePanel simpleTable)
    {
-      OverviewFrame overviewFrame = new OverviewFrame(simpleTable, _app);
+      Window parent = SwingUtilities.windowForComponent(_overwiewPanel.btnShowInTableWin);
+
+      OverviewFrame overviewFrame = new OverviewFrame(simpleTable, _app, parent);
       _app.getMainFrame().addWidget(overviewFrame);
       overviewFrame.setLayer(JLayeredPane.PALETTE_LAYER);
       overviewFrame.setVisible(true);
