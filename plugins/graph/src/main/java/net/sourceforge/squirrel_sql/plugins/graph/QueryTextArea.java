@@ -60,8 +60,15 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
          _lastColumnHeightBeforeSetColums = getColumnHeight();
       }
 
-      removeAll();
+      ///////////////////////////////////////////////////////
+      // Nicely prevents repaint problems when selecting
+      // the right mouse menu "Check all columns for SQL-SELECT clause",
+      // see also setVisble(true) below
+      setVisible(false);
+      //
+      /////////////////////////////////////////////////////
 
+      removeAll();
 
       GridBagConstraints gbc;
 
@@ -71,18 +78,21 @@ public class QueryTextArea extends JPanel implements IColumnTextArea
       {
          ColumnInfo columnInfo = _columnInfoModel.getOrderedColAt(i);
 
-         gbc = new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
+         gbc = new GridBagConstraints(0, i, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
          add(new QueryColumnPanel(_plugin, _tableName, columnInfo, _dndCallback, _session), gbc);
       }
 
-      gbc = new GridBagConstraints(0, _columnInfoModel.getColCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(0, _columnInfoModel.getColCount(), 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
 
 
       JPanel dist = new JPanel();
       dist.setBackground(GraphTextAreaFactory.TEXTAREA_BG);
       add(dist, gbc);
 
+      setVisible(true);
+
       addToAllKidComponents(_mouseListenerPx);
+
    }
 
    @Override
