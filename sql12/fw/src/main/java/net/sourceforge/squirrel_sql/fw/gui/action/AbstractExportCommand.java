@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 import javax.swing.JOptionPane;
 
@@ -74,23 +75,23 @@ public abstract class AbstractExportCommand {
 	
 	static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
 	private ProgressAbortCallback progressController = null;
+	private File targetFile;
 
+	private long writtenRows = -1;
 	/**
 	 * @param progressController
 	 */
 	public AbstractExportCommand() {
 
 	}
-	
+
 	/**
-	 * @param progressController
+	 * Exports the data structure.
+	 * @param ctrl the controller to use
+	 * @param data The data to export
+	 * @return the number of written data rows or a negative value, if not the whole data are exported.
 	 */
-	public AbstractExportCommand(ProgressAbortCallback progressController) {
-		this.progressController =progressController;
-	}
-
-
-	protected boolean writeFile(TableExportCsvController ctrl, IExportData data) {
+	protected long writeFile(TableExportCsvController ctrl, IExportData data) {
 		File file = null;
 		try {
 
@@ -119,7 +120,7 @@ public abstract class AbstractExportCommand {
 			String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteFile", params);
 			s_log.error(msg, e);
 			JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
-			return false;
+			return -1;
 		} 
 
 	}
@@ -179,10 +180,14 @@ public abstract class AbstractExportCommand {
 	          }
 	      }
 	      
-	      boolean writeFileSuccess = false;
+	      this.targetFile = ctrl.getFile();
+	      
+	      this.progressController = createProgressController();
+	      
+	      
 	      
 	      try {
-	    	  writeFileSuccess = writeFile(ctrl, createExportData(ctrl));
+	    	  writtenRows = writeFile(ctrl, createExportData(ctrl));
 		} catch (ExportDataException e) {
 			// Show an error and re-throw the exception.
 			s_log.error(i18n.FAILED);
@@ -190,7 +195,7 @@ public abstract class AbstractExportCommand {
 	    	throw e;
 		}
 	      
-	      if(writeFileSuccess){
+	      if(writtenRows >= 0){
 	         String command = ctrl.getCommand();
 
 	         if(null != command)
@@ -200,7 +205,7 @@ public abstract class AbstractExportCommand {
 	             // i18n[TableExportCsvCommand.writeFileSuccess=Export to file 
 	             // "{0}" is complete.] 
 	             String msg = 
-	                 s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", 
+	                 s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", NumberFormat.getIntegerInstance().format(writtenRows),
 	                                       ctrl.getFile().getAbsolutePath());
 	             if (s_log.isInfoEnabled()) {
 	                 s_log.info(msg);
@@ -212,6 +217,16 @@ public abstract class AbstractExportCommand {
 	    	  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
 	      }
 	   }
+
+	/**
+	 * Create a instance of {@link ProgressAbortCallback} if necessary.
+	 * Subclasse may override this.
+	 * @return returns null.
+	 */
+	protected ProgressAbortCallback createProgressController() {
+		// default null;
+		return null;
+	}
 
 	/**
 	 * @return
@@ -255,6 +270,20 @@ public abstract class AbstractExportCommand {
 		if(progressController != null){
 			progressController.currentlyLoading(task);
 		}
+	}
+
+	/**
+	 * @return the targetFile
+	 */
+	public File getTargetFile() {
+		return targetFile;
+	}
+
+	/**
+	 * @return the writtenRows
+	 */
+	public long getWrittenRows() {
+		return writtenRows;
 	}
 	
 	

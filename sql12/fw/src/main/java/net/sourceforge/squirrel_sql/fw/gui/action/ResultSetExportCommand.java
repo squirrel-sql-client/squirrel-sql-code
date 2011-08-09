@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author Stefan Willinger
  * 
  */
-public class ResultSetExportCommand extends AbstractExportCommand {
+public class ResultSetExportCommand extends AbstractExportCommand  {
 	static final StringManager s_stringMgr = StringManagerFactory
 			.getStringManager(ResultSetExportCommand.class);
 
@@ -59,12 +60,15 @@ public class ResultSetExportCommand extends AbstractExportCommand {
 
 	private Statement stmt;
 
+	private ProgressAbortFactoryCallback progressControllerFactory;
+
 	public ResultSetExportCommand(Statement stmt, String sql, DialectType dialect,
-			ProgressAbortCallback progressController) {
-		super(progressController);
+			ProgressAbortFactoryCallback progressControllerFactory) {
+		super();
 		this.sql = sql;
 		this.stmt = stmt;
 		this.dialect = dialect;
+		this.progressControllerFactory = progressControllerFactory;
 	}
 
 	/**
@@ -97,6 +101,23 @@ public class ResultSetExportCommand extends AbstractExportCommand {
 	@Override
 	protected TableExportCsvController createTableExportController() {
 		return new ResultSetExportCsvController();
+	}
+
+	/**
+	 * Create a new {@link ProgressAbortCallback}.
+	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createProgressController()
+	 * @see ProgressAbortFactoryCallback
+	 */
+	@Override
+	protected ProgressAbortCallback createProgressController() {
+		return this.progressControllerFactory.create();
+	}
+
+	/**
+	 * @return the sql
+	 */
+	public String getSql() {
+		return sql;
 	}
 
 }
