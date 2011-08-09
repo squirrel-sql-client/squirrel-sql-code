@@ -24,9 +24,9 @@ public class OverviewFrame extends DialogWidget
 
    private JCheckBox _chkOnTop;
 
-   public OverviewFrame(DataSetViewerTablePanel simpleTable, IApplication app)
+   public OverviewFrame(DataSetViewerTablePanel simpleTable, IApplication app, Window parent)
    {
-      super(s_stringMgr.getString("OverviewFrame.title"), true, true, true, true, app);
+      super(s_stringMgr.getString("OverviewFrame.title"), true, true, true, true, app, parent);
 
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

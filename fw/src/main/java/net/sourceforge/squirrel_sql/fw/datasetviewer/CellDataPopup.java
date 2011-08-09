@@ -68,7 +68,7 @@ public class CellDataPopup
       if (editor != null)
          editor.cancelCellEditing();
 
-      Component comp = SwingUtilities.getRoot(table);
+      Component parent = SwingUtilities.windowForComponent(table);
       Component newComp = null;
 
       TextAreaInternalFrame taif =
@@ -104,54 +104,15 @@ public class CellDataPopup
 		{
 			newComp.setSize(dim);
 		}
-		if (comp instanceof IMainFrame)
-		{
-			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-			pt.y -= dim.height;
-		}
-		else
-		{
-			// getRoot() doesn't appear to return the deepest Window, but the first one.
-			// If you have a dialog owned by a window you get the dialog, not the window.
-			Component parent = SwingUtilities.windowForComponent(comp);
-			while ((parent != null) &&
-				!(parent instanceof IMainFrame) &&
-				!(parent.equals(comp)))
-			{
-				comp = parent;
-				parent = SwingUtilities.windowForComponent(comp);
-			}
-			comp = (parent != null) ? parent : comp;
-			pt = SwingUtilities.convertPoint((Component) evt.getSource(), pt, comp);
-		}
 
-		if (pt.y < 0)
-		{
-			pt.y = 0;	// fudge for larger inset windows
-		}
+      Point parentBounds = parent.getLocation();
 
-		// Determine the position to place the new internal frame. Ensure that the right end
-		// of the internal frame doesn't exend past the right end the parent frame.	Use a
-		// fudge factor as the dim.width doesn't appear to get the final width of the internal
-		// frame (e.g. where pt.x + dim.width == parentBounds.width, the new internal frame
-		// still extends past the right end of the parent frame).
-		int fudgeFactor = 100;
-		Rectangle parentBounds = comp.getBounds();
-		if (parentBounds.width <= (dim.width + fudgeFactor))
-		{
-			dim.width = parentBounds.width - fudgeFactor;
-			pt.x = fudgeFactor / 2;
-			newComp.setSize(dim);
-		}
-		else
-		{
-			if ((pt.x + dim.width + fudgeFactor) > (parentBounds.width))
-			{
-				pt.x -= (pt.x + dim.width + fudgeFactor) - parentBounds.width;
-			}
-		}
+      parentBounds.x += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).x;
+      parentBounds.y += SwingUtilities.convertPoint((Component) evt.getSource(), pt, parent).y;
 
-		newComp.setLocation(pt);
+		newComp.setLocation(parentBounds);
+      newComp.setSize(dim);
+
 		newComp.setVisible(true);
 	}
 
