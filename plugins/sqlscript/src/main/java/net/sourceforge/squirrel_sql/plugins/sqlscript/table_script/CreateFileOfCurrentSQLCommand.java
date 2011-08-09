@@ -19,25 +19,32 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import java.awt.Frame;
+import java.io.File;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.time.StopWatch;
+
 import net.sourceforge.squirrel_sql.client.gui.IAbortEventHandler;
 import net.sourceforge.squirrel_sql.client.gui.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg;
-import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 /**
@@ -86,7 +93,6 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 		
 		this.currentSQL = getSelectedSelectStatement();
 		
-		showProgressMonitor();
 		getSession().getApplication().getThreadPool().addTask(new Runnable() {
 			public void run() {
 				doCreateFileOfCurrentSQL();
@@ -114,13 +120,39 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 					stmt = getSession().getSQLConnection().createStatement();
 				}
 				
+				
+				ProgressAbortFactoryCallback progressFactory = new ProgressAbortFactoryCallback() {
+					@Override
+					public ProgressAbortCallback create() {
+						createProgressAbortDialog();
+						return progressDialog;
+					}
+				};
+				
+				
+				StopWatch stopWatch = new StopWatch();
+				stopWatch.start();
+				
 				DialectType dialectType =
 			            DialectFactory.getDialectType(getSession().getMetaData());
-				resultSetExportCommand = new ResultSetExportCommand(stmt, currentSQL, dialectType, progressDialog);
+				resultSetExportCommand = new ResultSetExportCommand(stmt, currentSQL, dialectType, progressFactory);
 				resultSetExportCommand.execute();
+				
+				stopWatch.stop();
 				
 				if (isAborted()) {
 					return;
+				}else if(resultSetExportCommand.getWrittenRows() >= 0){
+					NumberFormat nf = NumberFormat.getIntegerInstance();
+					
+					String rows = nf.format(resultSetExportCommand.getWrittenRows());
+					File targetFile = resultSetExportCommand.getTargetFile();
+					String seconds = nf.format(stopWatch.getTime()/1000);
+					String msg = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.sucessMessage",
+							rows, 
+							targetFile, 
+							seconds);
+					getSession().showMessage(msg);
 				}
 			} finally {
 				SQLUtilities.closeStatement(stmt);
@@ -166,28 +198,55 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 	/**
 	 * Create and show a new  progress monitor with the ability to cancel the task.
 	 */
-	protected void showProgressMonitor() {
-		
-		// i18n[CreateFileOfCurrentSQLCommand.progress.description=Exporting the SQL {0} into a file.]
-		String description = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.description", currentSQL);
-		
-        // i18n[CreateFileOfCurrentSQLCommand.progress.title=Exporting to a file.]
-		String title = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.title");
-		progressDialog = new ProgressAbortDialog((Frame)null, title, description, 0, true, new IAbortEventHandler() {
-			@Override
-			public void cancel() {
-				/* 
-				 * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
-				 */
-				if(stmt != null){
-					try {
-						stmt.cancel();
-					} catch (SQLException e1) {
-						// nothing todo
+	protected void createProgressAbortDialog() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				
+				@Override
+				public void run() {
+					/*
+					 *  Copied from FormatSQLCommand.
+					 *  Is there a better way to get the CommentSpec[] ?
+					 */
+			
+			CommentSpec[] commentSpecs =
+			  new CommentSpec[]
+			  {
+				  new CommentSpec("/*", "*/"),
+				  new CommentSpec("--", StringUtilities.getEolStr())
+			  };
+
+			String statementSep = getSession().getQueryTokenizer().getSQLStatementSeparator();
+			
+			CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
+
+			String reformatedSQL = cr.reformat(resultSetExportCommand.getSql());
+			
+			String targetFile = resultSetExportCommand.getTargetFile().getAbsolutePath();
+			
+			// i18n[CreateFileOfCurrentSQLCommand.progress.title=Exporting to a file.]
+			String title = s_stringMgr.getString("CreateFileOfCurrentSQLCommand.progress.title", targetFile);
+			progressDialog = new SQL2FileProgressAbortDialog((Frame)null, title, targetFile, reformatedSQL , new IAbortEventHandler() {
+				@Override
+				public void cancel() {
+					/* 
+					 * We need to cancel the statement at this point for the case, that we are waiting for the first rows.
+					 */
+					if(stmt != null){
+						try {
+							stmt.cancel();
+						} catch (SQLException e1) {
+							// nothing todo
+						}
 					}
 				}
-			}
-		});
+			});
+				}
+			});
+		} catch (Exception e) {
+			throw new RuntimeException("Could not create the Progress Monitor.", e);
+		}
+		
 		
 	}
 

@@ -32,6 +32,7 @@ import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -88,6 +89,8 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		
 		// i18n[ProgressAbortDialog.confirmCancel=Should the export be canceled?]
 		String CONFIRM_CANCEL = s_stringMgr.getString("ProgressAbortDialog.confirmCancel");
+		
+		String TITEL_PROGRESS = s_stringMgr.getString("ProgressAbortDialog.titelProgress");
 	}
 
 	/**
@@ -139,7 +142,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	/**
 	 * Description of the long running operation.
 	 */
-	private JLabel taskDescriptionLabel;
+	private JComponent taskDescriptionComponent;
 
 	/**
 	 * Flag, if the operation should be canceled
@@ -151,6 +154,12 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	 * Someone told us, that all tasks are done.
 	 */
 	private boolean finished;
+	
+	
+	/**
+	 * A simple description for this task
+	 */
+	private String simpleTaskDescription = null;
 
 	/**
 	 * Constructor which accepts a Dialog owner
@@ -263,6 +272,8 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		
 		if(StringUtils.isNotBlank(status)){
 			statusText.append(status);
+		}else{
+			statusText.append(" ");
 		}
 		
 		try
@@ -372,14 +383,15 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		itemCount = totalItems;
 		this.indeterminate = intermediate;
 		this.abortHandler = abortHandler;
+		this.simpleTaskDescription = description;
 		final Window owner = super.getOwner();
 		final ProgressAbortDialog dialog = this;
-		createGUI(description);
+		createGUI();
 		setLocationRelativeTo(owner);
 		dialog.setVisible(true);
 	}
 
-	private void createGUI(String description)
+	private void createGUI()
 	{
 		JPanel dialogPanel = new JPanel(new GridBagLayout());
 		dialogPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -388,27 +400,41 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx=1.0;
+		c.weighty=0.5;
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(4, 0, 4, 0);
-		taskDescriptionLabel = new JLabel(description);
-		dialogPanel.add(taskDescriptionLabel, c);
+		taskDescriptionComponent = createTaskDescripion();
+		dialogPanel.add(taskDescriptionComponent, c);
+		
 		
 		c.gridy++;
+		JPanel progressPanel = new JPanel(new GridBagLayout());
+		progressPanel.setMinimumSize(new Dimension(400,200));
+		progressPanel.setPreferredSize(new Dimension(400,200));
+		progressPanel.setBorder(BorderFactory.createTitledBorder("Progress"));
+		dialogPanel.add(progressPanel, c);
+		
+		c.gridy = 0;
+		c.gridx = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx=0.0;
+		c.weighty=0.0;
 		c.insets = new Insets(4, 10, 4, 10);
 		statusLabel = new JLabel(i18n.INITIAL_LOADING_PREFIX);
-		dialogPanel.add(statusLabel, c);
+		progressPanel.add(statusLabel, c);
 		
 		c.gridy++;
 		c.insets = new Insets(4, 10, 4, 10);
-		additionalStatusLabel = new JLabel();
-		dialogPanel.add(additionalStatusLabel, c);
+		additionalStatusLabel = new JLabel(" "); // Must be a space :-)
+		progressPanel.add(additionalStatusLabel, c);
 		
 		c.gridy++;
 		c.weightx = 1.0;
 		progressBar = new JProgressBar(0, itemCount);
 		progressBar.setIndeterminate(indeterminate);
-		dialogPanel.add(progressBar, c);
+		progressPanel.add(progressBar, c);
 		
 		c.gridy++;
 		c.fill = GridBagConstraints.BOTH;
@@ -417,7 +443,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		historyArea = new JTextArea();
 		historyArea.setEditable(false);
 		JScrollPane jScrollPane = new JScrollPane(historyArea);
-		dialogPanel.add(jScrollPane, c);
+		progressPanel.add(jScrollPane, c);
 		
 		
 		if(abortHandler != null){
@@ -445,8 +471,19 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 		
 		super.getContentPane().add(dialogPanel);
 		super.pack();
-		super.setSize(new Dimension(400, 400));
+		super.setSize(new Dimension(450, 450));
 		super.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	}
+
+	/**
+	 * Creates the description of the task/operation.
+	 * Per default, this will be a simple {@link JLabel} with the {@link #simpleTaskDescription} of this dialog.. 
+	 * A subclass may override this for a solution, that is more sophisticated.
+	 * @see #simpleTaskDescription
+	 * @return a {@link JComponent} as task description
+	 */
+	protected JComponent createTaskDescripion() {
+		return new JLabel(this.simpleTaskDescription);
 	}
 	
 	/**

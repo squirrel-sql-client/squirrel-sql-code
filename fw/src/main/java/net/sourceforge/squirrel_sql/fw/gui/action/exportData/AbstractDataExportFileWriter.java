@@ -110,7 +110,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.IDataExportWriter#write(net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData)
 	 */
-	public boolean write(IExportData data) throws Exception {
+	public long write(IExportData data) throws Exception {
 
 		beforeWorking(file);
 
@@ -131,11 +131,14 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		
 		progress(i18n.BEGIN_WRITING);
 		beforeRows();
-		long rowsCount = 1;
+		long rowsCount = 0;
 		NumberFormat nfRowCount = NumberFormat.getInstance();
 		
 		
 		while (rows.hasNext() && isStop() == false) {
+			// FIXME - remove
+			Thread.sleep(500);
+			rowsCount++;
 			IExportDataRow aRow = rows.next();
 			if(isStatusUpdateNecessary()){
 				taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED, nfRowCount.format(rowsCount)));
@@ -148,7 +151,6 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 				addCell(cell);
 			}
 			afterRow();
-			rowsCount++;
 		}
 		progress(s_stringMgr.getString(i18n.KEY_FINISHED_LOADING, nfRowCount.format(rowsCount)));
 		afterRows();
@@ -163,9 +165,9 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		}
 		
 		if (isStop()) {
-			return false;
+			return -1;
 		} else {
-			return true;
+			return rowsCount;
 		}
 
 	}
