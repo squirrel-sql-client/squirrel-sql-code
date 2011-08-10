@@ -8,8 +8,10 @@ ${squirrelsql.changelog.header}
 Enhancements:
 
 
-SQL Scripts Plugin: Added "Store result of SQL into file". This new function allows the user to store the result of the selected SQL directly into a file,
-  instead of showing a result table. This is avaiable in the tools pop-up (sql2file) and the menu (Session ==> Scripts ==> Store result of SQL in file).
+SQL Scripts Plugin: Added the capability to "store the execution result of an SQL query into file". This 
+  allows the user to store the result of the selected SQL directly into a file, instead of displaying it in 
+  a result table. This is avaiable in the tools pop-up (sql2file) and the menu 
+  (Session ==> Scripts ==> Store result of SQL in file).
   
   
 DBCopy Plugin: (Feature request #3291501) This plugin now has a command-line interface (via DBCopyCLI).  See
@@ -31,7 +33,8 @@ New Plugin: Greenplum DB Plugin
 
 
 Feature Request 1744964: Copy text from the SQL editor panel as rich text. 
-	This functionality is available via the pop-up menu and the tools pop-up. Additional this mode can be activated for copy shortcuts. 
+	This functionality is available via the pop-up menu and the tools pop-up. Additionally this mode can be 
+	activated for copy shortcuts. 
 	See: Session Properties => Syntax => Copy shortcuts use the "Rich Text Format"
 	To use this, the RSyntax editor (Syntax Plugin) must be activated.
 
@@ -44,8 +47,10 @@ Query Builder / New features in Graph plugin:
    Besides the Query Builder itself several new features have been added to the Graph plugin:
    - A Graph can be viewed in separate window.
    - Tables can be dragged from the Object tree to a Graph window. For convenience there is a
-     new Session tool bar button that creates a new Graph window and places it right besides the Session's Object tree.
-   - Graphs have a Kick off/Start button on the lower left of a Graph panel to give more intuitive access to Graph functions.
+     new Session tool bar button that creates a new Graph window and places it right besides the Session's 
+     Object tree.
+   - Graphs have a Kick off/Start button on the lower left of a Graph panel to give more intuitive access to 
+     Graph functions.
 
 Feature Request 3307812: Select an entire row via the table's pop-up menu.
 
@@ -55,15 +60,18 @@ Oracle Plugin:
      generally index node, which displays all indexes of the schema.
    
 New plugin "WIKI table configurations":
-  This plugin provides some pre-defined configurations for various WIKI engines. With this configurations, Squirrel knows, how to transform the selection
-  of a result table into a WIKI table. At the moment, configurations for the following WIKI's are provided:
+  This plugin provides some predefined configurations for various WIKI engines. With these configurations, 
+  SQuirreL can transform the selection of a result table into a WIKI table. Currently, configurations for the 
+  following WIKI's are provided:
     - Mediawiki
     - TiddlyWiki
   This plugin is a enhancement for the functionality "Copy as WIKI table"
 
 Copy as WIKI table:
-  Squirrel is now able, to copy the selection of a result table as WIKI text into the clipboard. (Right click on the result table => Copy as WIKI table) 
-  At the new preferences panel "Global Preferences => Wiki Tables", the user can configure individual templates for the WIKI syntax.
+  Squirrel is now able, to copy the selection of a result table as WIKI text into the clipboard. 
+  (Right click on the result table => Copy as WIKI table) 
+  At the new preferences panel "Global Preferences => Wiki Tables", the user can configure individual 
+  templates for the WIKI syntax.
 
 Detached result windows now can be rerun.
 
@@ -73,26 +81,26 @@ Feature Request 3185630: SQL Panel layout:
    Session Properties and New Session Properties => Tab General => Combo Box: SQL Panel layout 
  - A double click on the divider restores the divider position to the default value.
   
-
-Editing numeric values: Now, Squirrel has the same behavior for signed values for all different numeric data types. 
-  A minus sign is allowed only at the first position and if the data type is signed.
+Editing numeric values: SQuirreL now has consistent behavior for signed values in all numeric data types. 
+  A minus sign is allowed only at the first position and if the data type allows signed values.
 
 Hibernate Plugin: Improved display of mapped objects in table cells:
-                  Class name, primary key and toString() ist displayed instead of toString() only.
+                  The class name, primary key and toString() are displayed instead of toString() only.
 
 DB-Diff-Plugin:
   Allowed to compare tables within one Session the same way as with different Sessions using select and
   compare of the Object tree's right mouse menu. It is still possible to compare tables inside the
   same Session without using select by marking two tables and just using the compare.
 
-Feature request 3129413: The number of decimal digits are now configurable (See Global Preferences --> 'Data Type Controls')
+Feature request 3129413: The number of decimal digits are now configurable 
+  (See Global Preferences --> 'Data Type Controls')
 
 Feature requests 3001253, 2896494: New icons in Object tree
 
-Display errors in result tab (Feature requests 2826179):
+Display errors in result tab (Feature request 2826179):
   SQL execution errors are now additionally displayed in a temporary result tab.
-  - This new feature is switched on by default and can be switched off in
-    Menu File --> New Session Properties --> Tab SQL --> Show SQL execution errors in result tab.
+  - This new feature is enabled by default and can be disabled by navigating 
+  	to File --> New Session Properties --> Tab SQL --> Show SQL execution errors in result tab.
   - Along with this feature comes a new Message Panel right mouse menu "Save size 0" that allows
     to hide the Message panel at application start up.
 
