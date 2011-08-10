@@ -71,11 +71,20 @@ public abstract class AbstractExportCommand {
 	                                 ClobDescriptor.i18n.CLOB_LABEL);
 	       
 	       String FAILED = s_stringMgr.getString("AbstractExportCommand.failed");
+	       
+	       String ANOTHER_EXPORT_IS_ACTIVE = s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive");
+	       String TITLE_ANOTHER_EXPORT_IS_ACTIVE = s_stringMgr.getString("AbstractExportCommand.anotherExportIsActive.title");
 	   }
 	
 	static ILogger s_log = LoggerController.createLogger(AbstractExportCommand.class);
 	private ProgressAbortCallback progressController = null;
 	private File targetFile;
+	
+	/**
+	 * Container to store all files, referenced by a currently running export process.
+	 */
+	private ExportFileContainer fileContainer = ExportFileContainer.getInstance();
+	
 
 	private long writtenRows = -1;
 	/**
@@ -144,77 +153,101 @@ public abstract class AbstractExportCommand {
 	   
 	   public void execute() throws ExportDataException
 	   {
-	      TableExportCsvController ctrl = createTableExportController();
+	      try{
+	    	  
+	    	  boolean fileIsInUse = false;
+	    	  
+	    	  TableExportCsvController ctrl;
+	    	  do{
+	    	  ctrl = createTableExportController();
 
-	      if(false == ctrl.isOK())
-	      {
-	         return;
-	      }
+	    	  if(false == ctrl.isOK())
+	    	  {
+	    		  return;
+	    	  }
 
-	      if (checkMissingData(ctrl.getSeparatorChar())) {
-	          int choice = JOptionPane.showConfirmDialog(GUIUtils.getMainFrame(), 
-	                                                     i18n.missingClobDataMsg);
-	          if (choice == JOptionPane.YES_OPTION) {
-	              // Need to somehow call 
-	              // SQLResultExecuterPanel.reRunSelectedResultTab(true);
-	              // 
-	              // Something like :
-	              // SQLResultExecuterPanel panel = getPanel(); 
-	              // panel.reRunSelectedResultTab(true);
-	              //
-	              // However, that doesn't apply when the user is exporting from the
-	              // table contents table.  There needs to be a more generic way to
-	              // do this for all tables containing data that is to be exported
-	              // where some of the fields contain placeholders.
-	              // For now, we just inform the user and let them either continue
-	              // or abort and change the configuration manually, 
-	              // re-run the query / reload the table data and re-export.  
-	          }
-	          if (choice == JOptionPane.NO_OPTION) {
-	              // abort the export
-	              return;
-	          }
-	          if (choice == JOptionPane.CANCEL_OPTION) {
-	              // abort the export
-	              return;
-	          }
-	      }
-	      
-	      this.targetFile = ctrl.getFile();
-	      
-	      this.progressController = createProgressController();
-	      
-	      
-	      
-	      try {
-	    	  writtenRows = writeFile(ctrl, createExportData(ctrl));
-		} catch (ExportDataException e) {
-			// Show an error and re-throw the exception.
-			s_log.error(i18n.FAILED);
-	    	JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
-	    	throw e;
-		}
-	      
-	      if(writtenRows >= 0){
-	         String command = ctrl.getCommand();
+	    	  if (checkMissingData(ctrl.getSeparatorChar())) {
+	    		  int choice = JOptionPane.showConfirmDialog(GUIUtils.getMainFrame(), 
+	    				  i18n.missingClobDataMsg);
+	    		  if (choice == JOptionPane.YES_OPTION) {
+	    			  // Need to somehow call 
+	    			  // SQLResultExecuterPanel.reRunSelectedResultTab(true);
+	    			  // 
+	    			  // Something like :
+	    			  // SQLResultExecuterPanel panel = getPanel(); 
+	    			  // panel.reRunSelectedResultTab(true);
+	    			  //
+	    			  // However, that doesn't apply when the user is exporting from the
+	    			  // table contents table.  There needs to be a more generic way to
+	    			  // do this for all tables containing data that is to be exported
+	    			  // where some of the fields contain placeholders.
+	    			  // For now, we just inform the user and let them either continue
+	    			  // or abort and change the configuration manually, 
+	    			  // re-run the query / reload the table data and re-export.  
+	    		  }
+	    		  if (choice == JOptionPane.NO_OPTION) {
+	    			  // abort the export
+	    			  return;
+	    		  }
+	    		  if (choice == JOptionPane.CANCEL_OPTION) {
+	    			  // abort the export
+	    			  return;
+	    		  }
+	    	  }
 
-	         if(null != command)
-	         {
-	            executeCommand(command);
-	         } else {
-	             // i18n[TableExportCsvCommand.writeFileSuccess=Export to file 
-	             // "{0}" is complete.] 
-	             String msg = 
-	                 s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", NumberFormat.getIntegerInstance().format(writtenRows),
-	                                       ctrl.getFile().getAbsolutePath());
-	             if (s_log.isInfoEnabled()) {
-	                 s_log.info(msg);
-	             }
-	             JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
-	         }
-	      }else{
-	    	  s_log.info(i18n.FAILED);
-	    	  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+	    	  this.targetFile = ctrl.getFile();
+	    	  
+	    	  /*
+	    	   * Allow only one export at a time.
+	    	   */
+	    	  if(fileContainer.add(this.targetFile) == false){
+	    		  fileIsInUse = true;
+	    		  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.ANOTHER_EXPORT_IS_ACTIVE, i18n.TITLE_ANOTHER_EXPORT_IS_ACTIVE, JOptionPane.WARNING_MESSAGE);
+	    	  }else {
+				fileIsInUse = false;
+			}
+	      
+	    	  }while(fileIsInUse);
+
+
+	    	  this.progressController = createProgressController();
+
+
+
+	    	  try {
+	    		  writtenRows = writeFile(ctrl, createExportData(ctrl));
+	    	  } catch (ExportDataException e) {
+	    		  // Show an error and re-throw the exception.
+	    		  s_log.error(i18n.FAILED);
+	    		  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+	    		  throw e;
+	    	  }
+
+	    	  if(writtenRows >= 0){
+	    		  String command = ctrl.getCommand();
+
+	    		  if(null != command)
+	    		  {
+	    			  executeCommand(command);
+	    		  } else {
+	    			  // i18n[TableExportCsvCommand.writeFileSuccess=Export to file 
+	    			  // "{0}" is complete.] 
+	    			  String msg = 
+	    					  s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", NumberFormat.getIntegerInstance().format(writtenRows),
+	    							  ctrl.getFile().getAbsolutePath());
+	    			  if (s_log.isInfoEnabled()) {
+	    				  s_log.info(msg);
+	    			  }
+	    			  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+	    		  }
+	    	  }else{
+	    		  s_log.info(i18n.FAILED);
+	    		  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+	    	  }
+	      }finally{
+	    	  if(this.targetFile != null){
+	    		  this.fileContainer.remove(this.targetFile);
+	    	  }
 	      }
 	   }
 
