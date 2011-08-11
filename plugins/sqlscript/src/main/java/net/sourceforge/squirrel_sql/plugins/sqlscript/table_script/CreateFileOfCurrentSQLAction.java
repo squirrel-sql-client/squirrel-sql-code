@@ -22,25 +22,38 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 /**
  * Action to store the result of the current SQL directly into a file.
+ * 
  * @author Stefan Willinger
- *
+ * 
  */
-public class CreateFileOfCurrentSQLAction extends SquirrelAction {
-	
+public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction {
+
 	private static final long serialVersionUID = 7015516163527109161L;
 
 	private SQLScriptPlugin plugin;
 
 	/**
+	 * Current session.
+	 */
+	private ISession session;
+
+	/**
 	 * Constructor
-	 * @param app the application
-	 * @param rsrc The resources of the {@link SQLScriptPlugin}
-	 * @param sqlScriptPlugin  the {@link SQLScriptPlugin}
+	 * 
+	 * @param app
+	 *            the application
+	 * @param rsrc
+	 *            The resources of the {@link SQLScriptPlugin}
+	 * @param sqlScriptPlugin
+	 *            the {@link SQLScriptPlugin}
 	 */
 	public CreateFileOfCurrentSQLAction(IApplication app, IResources rsrc, SQLScriptPlugin sqlScriptPlugin) {
 		super(app, rsrc);
@@ -49,12 +62,27 @@ public class CreateFileOfCurrentSQLAction extends SquirrelAction {
 
 	/**
 	 * Executes the Action on the current active session.
+	 * 
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 * @see CreateFileOfCurrentSQLCommand#execute()
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new CreateFileOfCurrentSQLCommand(getApplication().getSessionManager().getActiveSession(), plugin).execute();
+		new CreateFileOfCurrentSQLCommand(session, plugin)
+				.execute();
+	}
+
+	/**
+	 * If no SQLPanel is active, disable this one.
+	 * @see net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction#setSQLPanel(net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI)
+	 */
+	public void setSQLPanel(ISQLPanelAPI panel) {
+		if (null != panel) {
+			session = panel.getSession();
+		} else {
+			session = null;
+		}
+		setEnabled(null != session);
 	}
 
 }
