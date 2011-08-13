@@ -106,6 +106,8 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+If the global setting "General => Save preferences immediately" is enabled, the SQLHistory will be saved immediately after the execution of a statement.  
+
 The column numbers of the header columns are now correct, when exporting the result table as XML.
 
 When displaying the content of a table, the dialog "Please wait while the query is executed" may not dispose.
