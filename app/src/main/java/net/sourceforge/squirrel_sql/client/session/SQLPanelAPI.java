@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.*;
@@ -650,6 +651,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		if (session.getProperties().getSQLShareHistory())
 		{
 			session.getApplication().getSQLHistory().add(shi);
+			session.getApplication().savePreferences(PreferenceType.SQLHISTORY);
 		}
 		_panel.addSQLToHistory(shi);
 	}
