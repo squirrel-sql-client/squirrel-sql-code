@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
@@ -36,6 +37,8 @@ public class Main
    /** Logger for this class. */
    private static ILogger s_log;
 
+   private static Application application;
+   
 	/**
 	 * Default ctor. private as class should never be instantiated.
 	 */
@@ -86,12 +89,18 @@ public class Main
       EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
       q.push(new EventQueue()
       {
+    	 OutOfMemoryErrorHandler oumErrorHandler = new OutOfMemoryErrorHandler(); 
          protected void dispatchEvent(AWTEvent event)
          {
             try
             {
                super.dispatchEvent(event);
             }
+               catch (OutOfMemoryError e) {
+            	   // We have to set the application by a lazy way, because it is created in a runnable.
+            	   oumErrorHandler.setApplication(application);
+            	   oumErrorHandler.handleOutOfMemoryError();
+               }
             catch (Throwable t)
             {
                if (s_log.isDebugEnabled())
@@ -106,9 +115,12 @@ public class Main
 
       Runnable runnable = new Runnable()
       {
-         public void run()
+         
+
+		public void run()
          {
-            new Application().startup();
+            application = new Application();
+            application.startup();
          }
       };
 

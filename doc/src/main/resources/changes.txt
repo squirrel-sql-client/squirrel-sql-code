@@ -7,6 +7,8 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+In the case of running out of memory, we try to close all result tabs, hoping, to free some memory.
+	This may help the user to save his work and restart SQuirreL by a clean way.
 
 SQL Scripts Plugin: Added the capability to "store the execution result of an SQL query into file". This 
   allows the user to store the result of the selected SQL directly into a file, instead of displaying it in 
