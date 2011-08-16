@@ -37,8 +37,6 @@ import javax.swing.Timer;
 
 public class MemoryPanel extends JPanel
 {
-    private static final long serialVersionUID = 1L;
-
     /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MemoryPanel.class);
@@ -67,7 +65,7 @@ public class MemoryPanel extends JPanel
 		ImageIcon trashIcon = _app.getResources().getIcon(SquirrelResources.IImageNames.TRASH);
 		_btnGarbage.setIcon(trashIcon);
 
-		Dimension prefButtonSize = new Dimension(trashIcon.getIconWidth(), trashIcon.getIconHeight());
+		Dimension prefButtonSize = new Dimension(3 * trashIcon.getIconWidth() / 2, trashIcon.getIconHeight());
 
 		_btnGarbage.setPreferredSize(prefButtonSize);
 
@@ -81,9 +79,7 @@ public class MemoryPanel extends JPanel
 
 		_btnSessionGCStatus = new JButton()
 		{
-            private static final long serialVersionUID = 1L;
-
-            public void paint(Graphics g)
+         public void paint(Graphics g)
 			{
 				super.paint(g);
 //				paintNumWaitingGC(g);
