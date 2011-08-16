@@ -38,4 +38,5 @@ public interface ProgressAbortCallback extends ProgressCallBack, IAbortControlle
 	 * Unnoticed, how many tasks are realy done. 
 	 */
 	void setFinished();
+
 }

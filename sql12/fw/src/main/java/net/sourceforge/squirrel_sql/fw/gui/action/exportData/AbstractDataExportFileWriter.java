@@ -22,6 +22,8 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Iterator;
 
+import javax.swing.plaf.SliderUI;
+
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -49,9 +51,8 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		// i18n[AbstractDataExportFileWriter.beginWriting=Begin writing]
 		String BEGIN_WRITING = s_stringMgr.getString("AbstractDataExportFileWriter.beginWriting");
 
-		// i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=100 rows completed]
-		String KEY_NUMBER_OF_ROWS_COMPLETED = "AbstractDataExportFileWriter.numberOfRowsCompleted";
-		
+		String KEY_NUMBER_OF_ROWS_COMPLETED_IN_SECONDS = "AbstractDataExportFileWriter.numberOfRowsCompletedInSeconds";
+
 		
 		// i18n[AbstractDataExportFileWriter.NUMBER_OF_ROWS_COMPLETED=Finished with 100 rows]
 		String KEY_FINISHED_LOADING = "AbstractDataExportFileWriter.finishedLoading";
@@ -134,12 +135,15 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 		long rowsCount = 0;
 		NumberFormat nfRowCount = NumberFormat.getInstance();
 		
-		
+
+      long begin = System.currentTimeMillis();
 		while (rows.hasNext() && isStop() == false) {
 			rowsCount++;
 			IExportDataRow aRow = rows.next();
+			Thread.sleep(1000);
 			if(isStatusUpdateNecessary()){
-				taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED, nfRowCount.format(rowsCount)));
+				long secondsPassed = (System.currentTimeMillis() - begin) / 1000;
+				taskStatus(s_stringMgr.getString(i18n.KEY_NUMBER_OF_ROWS_COMPLETED_IN_SECONDS, nfRowCount.format(rowsCount), secondsPassed));
 			}
 			beforeRow(aRow.getRowIndex());
 
@@ -170,7 +174,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 
 	}
 
-	/**
+   /**
 	 * @return
 	 */
 	private boolean isStatusUpdateNecessary() {
@@ -322,7 +326,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 			progressController.setTaskStatus(status);
 		}
 	}
-	
+
 	
 	/**
 	 * Checks, if the work should be stopped.

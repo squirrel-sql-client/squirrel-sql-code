@@ -231,12 +231,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	@Override
 	public void currentlyLoading(final String simpleName)
 	{
-		final StringBuilder statusText = new StringBuilder();
-		statusText.append(_loadingPrefix);
-		statusText.append(" ");
-		statusText.append(simpleName);
-		
-		appendToHistory(statusText.toString());
+      final StringBuilder statusText = appendPrefixed(simpleName);
 		
 		try
 		{
@@ -261,8 +256,18 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 			s_log.error("Unexpected exception: " + e.getMessage(), e);
 		}
 	}
-	
-	/**
+
+   private StringBuilder appendPrefixed(String simpleName){
+      final StringBuilder statusText = new StringBuilder();
+      statusText.append(_loadingPrefix);
+      statusText.append(" ");
+      statusText.append(simpleName);
+
+      appendToHistory(statusText.toString());
+      return statusText;
+   }
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback#setTaskStatus(java.lang.String)
 	 */
 	@Override
@@ -282,7 +287,11 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 			{
 				public void run()
 				{
-					additionalStatusLabel.setText(statusText.toString());
+					String statusTextToAppend = statusText.toString();
+					additionalStatusLabel.setText(statusTextToAppend);
+					if(StringUtils.isNotBlank(statusTextToAppend)){
+						appendPrefixed(statusTextToAppend);
+					}
 				}
 
 			});
@@ -292,6 +301,7 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 			s_log.error("Unexpected exception: " + e.getMessage(), e);
 		}
 	}
+
 
 	/**
 	 * @param string
