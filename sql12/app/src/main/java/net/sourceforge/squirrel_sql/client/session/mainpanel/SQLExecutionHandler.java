@@ -394,26 +394,35 @@ class SQLExecutionHandler implements ISQLExecuterHandler
    public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException
    {
-      // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
-      String outputStatus = s_stringMgr.getString("SQLResultExecuterPanel.outputStatus");
+	   // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
+	   String outputStatus = s_stringMgr.getString("SQLResultExecuterPanel.outputStatus");
 
-      _cancelPanelCtrl.setStatusLabel(outputStatus);
-      rsds = new ResultSetDataSet();
+	   _cancelPanelCtrl.setStatusLabel(outputStatus);
+	   rsds = new ResultSetDataSet();
+	   try {
 
-      SessionProperties props = _session.getProperties();
+		   SessionProperties props = _session.getProperties();
 
-      ResultSetMetaDataDataSet rsmdds = null;
-      if (props.getShowResultsMetaData())
-      {
-         rsmdds = new ResultSetMetaDataDataSet(rs);
-      }
-      DialectType dialectType =
-            DialectFactory.getDialectType(_session.getMetaData());
-      
-      info.setNumberResultRowsRead(rsds.setContentsTabResultSet(rs, null, dialectType));
+		   ResultSetMetaDataDataSet rsmdds = null;
+		   if (props.getShowResultsMetaData())
+		   {
+			   rsmdds = new ResultSetMetaDataDataSet(rs);
+		   }
+		   DialectType dialectType =
+				   DialectFactory.getDialectType(_session.getMetaData());
 
-      _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
-      rsds = null;
+		   info.setNumberResultRowsRead(rsds.setContentsTabResultSet(rs, null, dialectType));
+
+		   _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
+
+      }finally{
+    	  /*
+    	   * Make sure, that in any case, even when a exception occurs, the rsds is set to null, so that
+    	   * the GC can clean them.
+    	   */
+    	  rsds = null;
+	}
+
    }
 
    public void sqlExecutionWarning(SQLWarning warn)
