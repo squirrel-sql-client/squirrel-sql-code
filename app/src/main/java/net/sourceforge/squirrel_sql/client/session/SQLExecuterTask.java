@@ -266,7 +266,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             }
          }
       }
-      catch (Throwable ex)
+      catch (final Throwable ex)
       {
          if(props.getAbortOnError() && 1 < statementCount)
          {
@@ -280,6 +280,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          if(false == ex instanceof SQLException)
          {
             s_log.error("Unexpected exception when executing SQL: " + ex, ex);
+            enableEventQueueOutOfMemoryHandling(ex);
          }
 
       }
@@ -320,6 +321,22 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
 
          fireExecutionListenersFinshed();
+      }
+   }
+
+   private void enableEventQueueOutOfMemoryHandling(final Throwable ex)
+   {
+      if(ex instanceof OutOfMemoryError)
+      {
+         Runnable runnable = new Runnable()
+         {
+            public void run()
+            {
+               throw new RuntimeException(ex);
+            }
+         };
+
+         SwingUtilities.invokeLater(runnable);
       }
    }
 

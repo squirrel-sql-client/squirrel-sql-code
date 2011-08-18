@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.log.SystemOutToLog;
@@ -87,29 +87,24 @@ public class Main
 
 
       EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+
       q.push(new EventQueue()
       {
-    	 OutOfMemoryErrorHandler oumErrorHandler = new OutOfMemoryErrorHandler(); 
+         OutOfMemoryErrorHandler oumErrorHandler = new OutOfMemoryErrorHandler();
+
          protected void dispatchEvent(AWTEvent event)
          {
             try
             {
                super.dispatchEvent(event);
             }
-               catch (OutOfMemoryError e) {
-            	   // We have to set the application by a lazy way, because it is created in a runnable.
-            	   oumErrorHandler.setApplication(application);
-            	   oumErrorHandler.handleOutOfMemoryError();
-               }
-            catch (Throwable t)
+            catch (Throwable e)
             {
-               if (s_log.isDebugEnabled())
-               {
-                  t.printStackTrace();
-               }
-               s_log.error("Exception occured dispatching Event " + event, t);
+               doLogging(event, e);
+               doOutOfMemory(event, e, oumErrorHandler);
             }
          }
+
       });
 
 
@@ -125,6 +120,32 @@ public class Main
       };
 
       SwingUtilities.invokeLater(runnable);
+   }
+
+   private static void doLogging(AWTEvent event, Throwable t)
+   {
+      if (s_log.isDebugEnabled())
+      {
+         t.printStackTrace();
+      }
+      s_log.error("Exception occured dispatching Event " + event, t);
+   }
+
+   private static void doOutOfMemory(AWTEvent event, Throwable e, OutOfMemoryErrorHandler oumErrorHandler)
+   {
+      if (Utilities.getDeepestThrowable(e) instanceof OutOfMemoryError)
+      {
+         try
+         {
+        	// We have to set the application by a lazy way, because it is created in a runnable. 
+            oumErrorHandler.setApplication(application);
+            oumErrorHandler.handleOutOfMemoryError();
+         }
+         catch (Throwable t)
+         {
+            doLogging(event, t);
+         }
+      }
    }
 
 }
