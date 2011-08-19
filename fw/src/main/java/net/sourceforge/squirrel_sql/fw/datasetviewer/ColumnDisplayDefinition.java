@@ -185,36 +185,77 @@ public class ColumnDisplayDefinition
     * @throws SQLException
     */
 	public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType) throws SQLException {
-	    super();
-	    ResultSetMetaData md = rs.getMetaData();
-	    
-	    String columnLabel = md.getColumnLabel(idx);
-	    String columnName = md.getColumnName(idx);
-	    int displayWidth = columnLabel.length();
-	    
-	    // Sometimes, the table name is null. eg if the select statement contains a union clause.
-	    String fullTableColumnName = 
-	        new StringBuilder()
-	    			.append(md.getTableName(idx))
-	                .append(":")
-	                .append(columnName)
-	                .toString();
-	    
-	    int sqlType = md.getColumnType(idx);
-	    String sqlTypeName = md.getColumnTypeName(idx);
-	    boolean isNullable = 
-	        md.isNullable(idx) == ResultSetMetaData.columnNullable;
-	    int columnSize = md.getColumnDisplaySize(idx);
-	    int precision = md.getPrecision(idx);
-	    int scale = md.getScale(idx);
-        boolean isSigned = md.isSigned(idx);
-        boolean isCurrency = md.isCurrency(idx);
-        boolean isAutoIncrement = md.isAutoIncrement(idx);
-        
-        init(displayWidth, fullTableColumnName, columnName, columnLabel, sqlType, 
-             sqlTypeName, isNullable, columnSize, precision, scale,
-             isSigned, isCurrency, isAutoIncrement, dialectType);	    
+	   this(rs, idx, dialectType, false);
 	}
+	
+	
+	/**
+	    * Constructs a new ColumnDisplayDefinition using ResultSetMetaData from the
+	    * specified ResultSet.
+	    * 
+	    * Some JDBC implementors doesn't allow to fetch some metadata, if the resultset is streamed
+	    * from the database and not buffered into the memory. MYSQL is such one.
+	    * 
+	    * A MYSQL connection does not allow to reuse the connection, if the stream is not closed.
+	    * To fetch some metadata informations ({@link ResultSetMetaData#getColumnDisplaySize(int) and ResultSetMetaData#getPrecision(int)}), 
+	    * the JDBC driver itself must query the database. In this case, the driver will throw an exception like 
+	    * <pre>
+	    * No statements may be issued when any streaming result sets are open and in use on a given connection. 
+	    * Ensure that you have called .close() on any active streaming result sets before attempting more queries.
+	    * </pre>
+	    * By setting <code>streaming = true</code> we will not read the affected metadata for the known JDBC-Driver'S 
+	    * 
+	    * @param rs
+	    *           the ResultSet to use
+	    * @param idx
+	    *           the index of the column to build a display definition for.
+	    * @param dialectType
+	    *           the type of dialect of the current session.
+	    * @param streaming flag, if the result-set is in streaming mode.
+	    * 
+	    * @throws SQLException
+	    */
+		public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType, boolean streaming) throws SQLException {
+		    super();
+		    ResultSetMetaData md = rs.getMetaData();
+		    
+		    String columnLabel = md.getColumnLabel(idx);
+		    String columnName = md.getColumnName(idx);
+		    int displayWidth = columnLabel.length();
+		    
+		    // Sometimes, the table name is null. eg if the select statement contains a union clause.
+		    String fullTableColumnName = 
+		        new StringBuilder()
+		    			.append(md.getTableName(idx))
+		                .append(":")
+		                .append(columnName)
+		                .toString();
+		    
+		    int sqlType = md.getColumnType(idx);
+		    String sqlTypeName = md.getColumnTypeName(idx);
+		    boolean isNullable = 
+		        md.isNullable(idx) == ResultSetMetaData.columnNullable;
+		    
+		    int columnSize = 0;
+		    int precision = 0;
+		    
+		    // only use columnSize and prescision for the MYSQL driver, if streaming is false
+		    if(DialectType.MYSQL5 == dialectType && streaming == false){
+		    	columnSize = md.getColumnDisplaySize(idx);
+		    	precision= md.getPrecision(idx);
+		    }
+		    
+		    int scale = md.getScale(idx);
+	        boolean isSigned = md.isSigned(idx);
+	        boolean isCurrency = md.isCurrency(idx);
+	        boolean isAutoIncrement = md.isAutoIncrement(idx);
+	        
+	        init(displayWidth, fullTableColumnName, columnName, columnLabel, sqlType, 
+	             sqlTypeName, isNullable, columnSize, precision, scale,
+	             isSigned, isCurrency, isAutoIncrement, dialectType);	    
+		}
+	
+	
 	
 	/**
 	 * Return the number of characters to display.

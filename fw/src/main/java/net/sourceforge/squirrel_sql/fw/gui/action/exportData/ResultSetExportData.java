@@ -89,7 +89,7 @@ public class ResultSetExportData implements IExportData {
 
 		int columnCount = this.resultSet.getMetaData().getColumnCount();
 		for (int i = 1; i <= columnCount; i++) {
-			colDispDef.add(new ColumnDisplayDefinition(resultSet, i, this.dialect));
+			colDispDef.add(new ColumnDisplayDefinition(resultSet, i, this.dialect, true));
 		}
 
 	}
