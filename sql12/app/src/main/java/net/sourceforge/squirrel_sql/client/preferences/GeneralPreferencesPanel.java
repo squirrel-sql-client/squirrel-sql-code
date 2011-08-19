@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -37,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -358,7 +356,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
          gbc.gridx = 0;
          gbc.gridy = 5;
-         pnl.add(_savePreferencesImmediately, gbc);
+         pnl.add(getSavePreferencesImmediatelyPanel(), gbc);
 
          gbc.gridx = 0;
          gbc.gridy = 6;
@@ -383,8 +381,19 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          return pnl;
 		}
 
+      private JPanel getSavePreferencesImmediatelyPanel()
+      {
+         JPanel ret = new JPanel(new GridLayout(2,1));
 
-		private JPanel createLoggingPanel()
+         ret.add(new MultilineLabel(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediatelyWarning")));
+         ret.add(_savePreferencesImmediately);
+
+         ret.setBorder(BorderFactory.createEtchedBorder());
+         return ret;
+      }
+
+
+      private JPanel createLoggingPanel()
 		{
 			final JPanel pnl = new JPanel();
 			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.logging")));

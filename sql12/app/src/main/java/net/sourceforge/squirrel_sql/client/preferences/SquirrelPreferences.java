@@ -223,7 +223,7 @@ public class SquirrelPreferences implements Serializable
     private boolean _showErrorLogMessages = true;
 
     /** Always save preferences immediately when they change, instead of at shutdown */
-    private boolean _savePreferencesImmediately = true;
+    private boolean _savePreferencesImmediately = false;
 
     /** Whether or not to change the selection while right-clicking on list or tree node */
     private boolean _selectOnRightMouseClick = true;
