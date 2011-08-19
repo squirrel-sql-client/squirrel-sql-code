@@ -1397,7 +1397,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				}
 
 				ForeignKeyColumnInfo fkiCol =
-					new ForeignKeyColumnInfo(rdr.getString(8), rdr.getString(8), rdr.getLong(9).intValue());
+					new ForeignKeyColumnInfo(rdr.getString(8), rdr.getString(4), rdr.getLong(9).intValue());
 				columns.get(key).add(fkiCol);
 			}
 		}
