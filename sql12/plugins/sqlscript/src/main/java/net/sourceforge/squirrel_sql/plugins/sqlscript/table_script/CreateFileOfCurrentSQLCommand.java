@@ -20,14 +20,13 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import java.awt.Frame;
 import java.io.File;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
-import org.apache.commons.lang.time.StopWatch;
 
 import net.sourceforge.squirrel_sql.client.gui.IAbortEventHandler;
 import net.sourceforge.squirrel_sql.client.gui.ProgressAbortDialog;
@@ -46,6 +45,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+
+import org.apache.commons.lang.time.StopWatch;
 
 /**
  * Command to export the result of the current SQL into a File.
@@ -115,9 +116,10 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 				
 				// TODO maybe, we should use a SQLExecutorTask for taking advantage of some ExecutionListeners like the parameter replacement. But how to get the right Listeners?
 				if(unmanagedConnection != null){
-					stmt = unmanagedConnection.createStatement();
+					
+					stmt = createStatementForStreamingResults(unmanagedConnection.getConnection());
 				}else{
-					stmt = getSession().getSQLConnection().createStatement();
+					stmt = createStatementForStreamingResults(getSession().getSQLConnection().getConnection());
 				}
 				
 				
@@ -173,6 +175,35 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 			});
 		}
 	}
+
+	/**
+	 * Create a {@link Statement} that will stream the result instead of loading into the memory.
+	 * @param connection the connection to use
+	 * @return A Statement, that will stream the result.
+	 * @throws SQLException 
+	 * @see http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
+	 */
+	private Statement createStatementForStreamingResults(Connection connection) throws SQLException {
+		Statement stmt;
+		DialectType dialectType =
+	            DialectFactory.getDialectType(getSession().getMetaData());
+		if(DialectType.MYSQL5 == dialectType){
+			/*
+			 * MYSQL will load the whole result into memory. To avoid this, we must use the streaming mode.
+			 * 
+			 * http://javaquirks.blogspot.com/2007/12/mysql-streaming-result-set.html
+			 * http://dev.mysql.com/doc/refman/5.0/en/connector-j-reference-implementation-notes.html
+			 */
+			stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			stmt.setFetchSize(Integer.MIN_VALUE);
+		}else{
+			stmt = connection.createStatement();
+		}
+		return stmt;
+
+	}
+
 
 	/**
 	 * Create a new unmanaged connection, , which is not associated with the current session.
