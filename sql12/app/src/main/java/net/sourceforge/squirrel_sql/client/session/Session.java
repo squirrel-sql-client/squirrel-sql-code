@@ -323,6 +323,20 @@ class Session implements ISession
                _sessionSheet.sessionHasClosed();
                _sessionSheet = null;
             }
+            
+            /*
+             *  If the session is closed, we can remove all SQLResultTabs.
+             *  This would be not be necessary, if all closed Sessions will be ready for garbage collecting.
+             *  Often, some code keeps a reference to this session and the Session is not ready for garbage collecting.
+             *  E.g. when dialogs are only set to visible = false and not disposed correctly. 
+             *  To reduced the used memory by such not reachable sessions, we remove all SQLResultTabs, when the session is closed.
+             *  This helps users, they often open and close sessions without restarting SQuirrel.
+             */
+            if(_sessionInternalFrame != null){
+            	_sessionInternalFrame.getSQLPanelAPI().closeAllSQLResultTabs();
+            }
+            
+            
          }
          if (s_log.isDebugEnabled()) {
          	s_log.debug("Successfully closed session: " + _id);
