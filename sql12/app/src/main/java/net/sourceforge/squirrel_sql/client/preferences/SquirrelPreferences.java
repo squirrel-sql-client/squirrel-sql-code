@@ -1077,7 +1077,7 @@ public class SquirrelPreferences implements Serializable
     * @param data the _savePreferencesImmediately to set
     */
    public void setSavePreferencesImmediately(boolean data) {
-       if (data != _showErrorLogMessages)
+       if (data != _savePreferencesImmediately)
        {
           final boolean oldValue = _savePreferencesImmediately;
           _savePreferencesImmediately = data;
