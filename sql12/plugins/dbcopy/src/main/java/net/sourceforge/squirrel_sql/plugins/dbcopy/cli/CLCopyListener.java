@@ -31,12 +31,20 @@ public class CLCopyListener implements CopyTableListener
 {
 
 	private boolean copyFinished = false;
+	
+	private ErrorEvent errorEvent = null;
 
 	public boolean isCopyFinished()
 	{
 		return copyFinished;
 	}
 
+	public void checkErrors() throws Exception {
+		if (errorEvent != null) {
+			throw errorEvent.getException();
+		}
+	}
+	
 	@Override
 	public void analyzingTable(TableEvent e)
 	{
@@ -58,6 +66,7 @@ public class CLCopyListener implements CopyTableListener
 	{
 		System.err.println("Encountered the following exception: " + e.getException().getMessage());
 		e.getException().printStackTrace();
+		errorEvent = e;
 		copyFinished = true;
 	}
 
@@ -81,11 +90,13 @@ public class CLCopyListener implements CopyTableListener
 	@Override
 	public void tableCopyFinished(TableEvent e)
 	{
+		System.out.println("Finished table copy for table: "+e.getTableName()+" (table #"+e.getTableNumber()+" of "+e.getTableCount()+")");
 	}
 
 	@Override
 	public void tableCopyStarted(TableEvent e)
 	{
+		System.out.println("Starting table copy for table: "+e.getTableName());
 	}
 
 }
