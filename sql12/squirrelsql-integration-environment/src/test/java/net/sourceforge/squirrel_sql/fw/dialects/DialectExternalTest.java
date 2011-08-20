@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -77,7 +78,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.IAbortController;
 
 import org.easymock.EasyMock;
 import org.junit.After;
