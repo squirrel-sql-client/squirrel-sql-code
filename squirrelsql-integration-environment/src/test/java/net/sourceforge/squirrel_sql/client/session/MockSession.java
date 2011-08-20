@@ -520,4 +520,11 @@ public class MockSession implements ISession
 	{
 		System.err.println("MockSession.setActiveSessionWindow: stub not yet implemented");
 	}
+
+	@Override
+	public SQLConnection createUnmanagedConnection()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
