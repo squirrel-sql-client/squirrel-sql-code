@@ -85,8 +85,8 @@
 							</goals>
 							<configuration>
 								<stripVersion>true</stripVersion>
-								<!-- This is a scaled down list of artifacts that we need at runtime, minus 
-								     any that are not needed -->
+								<!-- This is a scaled down list of artifacts that we need at runtime, 
+									minus any that are not needed -->
 								<excludeGroupIds>net.sf.squirrel-sql.plugins</excludeGroupIds>
 								<includedArtifacts>
 									<includedArtifact>antlr:antlr</includedArtifact>
@@ -115,14 +115,14 @@
 									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>log4j:log4j</includedArtifact>
 									<includedArtifact>be.cyberelf.nanoxml:nanoxml</includedArtifact>
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide-loaders</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-fold</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-lib</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-util</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-syntax</includedArtifact>-->
-									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-bte</includedArtifact>-->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:openide-loaders</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-fold</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-lib</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:org-netbeans-modules-editor-util</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-syntax</includedArtifact> -->
+									<!--<includedArtifact>net.sf.squirrel-sql.thirdparty-non-maven:ostermiller-bte</includedArtifact> -->
 									<includedArtifact>com.fifesoft:rsyntaxtextarea</includedArtifact>
 									<includedArtifact>com.fifesoft.rtext:rtext</includedArtifact>
 									<includedArtifact>org.springframework:spring-beans</includedArtifact>
@@ -178,10 +178,12 @@
 	</build>
 
 	<profiles>
-		<!-- The only difference here is that we want to include the squirrelsql-source project as a module 
-			when the uploadInstallers property is set. Since the squirrelsql-source project takes some time to export 
-			the source from subversion, and there is very little use for it except when uploading the installers 
-			(uploadInstallers property is set), we exclude it for now in the default build. -->
+		<!-- The only difference here is that we want to include the squirrelsql-source 
+			project as a module when the uploadInstallers property is set. Since the 
+			squirrelsql-source project takes some time to export the source from subversion, 
+			and there is very little use for it except when uploading the installers 
+			(uploadInstallers property is set), we exclude it for now in the default 
+			build. -->
 		<profile>
 			<id>export-source</id>
 			<activation>
@@ -198,6 +200,69 @@
 				<module>squirrelsql-installer-deps</module>
 				<module>squirrelsql-update-site</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>m2e</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!--This plugin's configuration is used to store Eclipse m2e settings 
+							only. It has no influence on the Maven build itself. -->
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.apache.maven.plugins</groupId>
+												<artifactId>maven-dependency-plugin</artifactId>
+												<versionRange>${dependency-plugin-version}</versionRange>
+												<goals>
+													<goal>unpack</goal>
+													<goal>copy-dependencies</goal>
+													<goal>unpack-dependencies</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>net.sf.squirrel-sql</groupId>
+												<artifactId>squirrelsql-version-plugin</artifactId>
+												<versionRange>${squirrelsql-version-plugin-version}</versionRange>
+												<goals>
+													<goal>set-version</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>net.sf.squirrel-sql</groupId>
+												<artifactId>squirrelsql-dependency-plugin</artifactId>
+												<versionRange>1.0.8</versionRange>
+												<goals>
+													<goal>copy-dependencies</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore />
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
 		</profile>
 	</profiles>
 </project>

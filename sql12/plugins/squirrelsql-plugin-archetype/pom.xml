@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -99,7 +100,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.1</version>
-				<executions>				
+				<executions>
 					<execution>
 						<id>copy-example-project-java</id>
 						<phase>generate-resources</phase>
@@ -128,7 +129,7 @@
 							<outputDirectory>src/main/resources/archetype-resources/src/test/java</outputDirectory>
 							<markersDirectory>target/dependency-maven-plugin-markers-test-java</markersDirectory>
 						</configuration>
-					</execution>					
+					</execution>
 					<execution>
 						<id>copy-example-project-properties</id>
 						<phase>generate-resources</phase>
@@ -157,17 +158,15 @@
 							<markersDirectory>target/dependency-maven-plugin-markers-docs</markersDirectory>
 						</configuration>
 					</execution>
-					
+
 				</executions>
 
 			</plugin>
-			<!--
-				This will test that the archetype can be used to create a new plugin project (in
-				target/it/projects) and that the plugin project will successfully build. This pattern was found
-				in a discussion about how to test archetypes here:
-				http://maven.40175.n5.nabble.com/unit-testing-archetypes-td75257.html#a75257 or
-				http://bit.ly/gABNDE if this url ever goes away.
-			-->
+			<!-- This will test that the archetype can be used to create a new plugin 
+				project (in target/it/projects) and that the plugin project will successfully 
+				build. This pattern was found in a discussion about how to test archetypes 
+				here: http://maven.40175.n5.nabble.com/unit-testing-archetypes-td75257.html#a75257 
+				or http://bit.ly/gABNDE if this url ever goes away. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-invoker-plugin</artifactId>
@@ -233,6 +232,53 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>m2e</id>
+
+			<!--This plugin's configuration is used to store Eclipse m2e settings 
+				only. It has no influence on the Maven build itself. -->
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>
+													org.apache.maven.plugins
+												</groupId>
+												<artifactId>
+													maven-dependency-plugin
+												</artifactId>
+												<versionRange>
+													[2.1,)
+												</versionRange>
+												<goals>
+													<goal>
+														unpack-dependencies
+													</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore></ignore>
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 
 
 </project>

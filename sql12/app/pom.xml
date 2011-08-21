@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>fw</artifactId>
-			<version>${project.version}</version>			
+			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -109,10 +109,8 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<!--
-			Filter in the version from the version-plugin below, into
-			Version.properties. Turn off filtering for all other files here
-		-->
+		<!-- Filter in the version from the version-plugin below, into Version.properties. 
+			Turn off filtering for all other files here -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -136,9 +134,7 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			<!--
-				Set the squirrelsql.version property if it has not already been set.
-			-->
+			<!-- Set the squirrelsql.version property if it has not already been set. -->
 			<plugin>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrelsql-version-plugin</artifactId>
@@ -205,4 +201,42 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>m2e</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!--This plugin's configuration is used to store Eclipse m2e settings 
+							only. It has no influence on the Maven build itself. -->
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>net.sf.squirrel-sql</groupId>
+												<artifactId>squirrelsql-version-plugin</artifactId>
+												<versionRange>${squirrelsql-version-plugin-version}</versionRange>
+												<goals>
+													<goal>set-version</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore />
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 </project>
