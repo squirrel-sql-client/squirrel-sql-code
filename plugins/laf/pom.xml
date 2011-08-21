@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!--
-		This pom is slightly different from other plugin poms because it requires special assembly
-		instructions since it includes LAF jars from other projects in the lafs/ folder of the assembly.
-		Since no other plugin has special needs like this, this plugin's pom doesn't inherit from the
-		plugin parent pom (the assembly that is inherited from plugin parent somehow cannot be overridden
-		by this pom's assembly plugin configuration). To add/remove/modify the LAFS that get included in
-		the assembly archive, you must add/remove/modify the dependency below on the maven project that
-		contains the LAF artifact *and* add the artifactId to the laf.artifactIds property.
-	-->
+	<!-- This pom is slightly different from other plugin poms because it requires 
+		special assembly instructions since it includes LAF jars from other projects 
+		in the lafs/ folder of the assembly. Since no other plugin has special needs 
+		like this, this plugin's pom doesn't inherit from the plugin parent pom (the 
+		assembly that is inherited from plugin parent somehow cannot be overridden 
+		by this pom's assembly plugin configuration). To add/remove/modify the LAFS 
+		that get included in the assembly archive, you must add/remove/modify the 
+		dependency below on the maven project that contains the LAF artifact *and* 
+		add the artifactId to the laf.artifactIds property. -->
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
@@ -76,7 +76,8 @@
 		<pluginClassName>net.sourceforge.squirrel_sql.plugins.db2.DB2Plugin</pluginClassName>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<laf.artifactIds>
-			ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf </laf.artifactIds>
+			ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf
+		</laf.artifactIds>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -149,11 +150,8 @@
 			<artifactId>looks</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-		<!--
-			Project napkinlaf uses maven, but curiously doesn't deploy to maven central. I filed an issue to
-			encourage them to:
-			https://sourceforge.net/tracker/?func=detail&atid=636986&aid=2842880&group_id=104116
-		-->
+		<!-- Project napkinlaf uses maven, but curiously doesn't deploy to maven 
+			central. I filed an issue to encourage them to: https://sourceforge.net/tracker/?func=detail&atid=636986&aid=2842880&group_id=104116 -->
 		<dependency>
 			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 			<artifactId>napkinlaf</artifactId>
@@ -164,12 +162,12 @@
 			<artifactId>nimrod-laf</artifactId>
 			<version>1.2</version>
 		</dependency>
-		<!--  This was removed as Oyoaha lnf isn't supported in Java 6 -->
-		<!--      <dependency>-->
-		<!--         <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>-->
-		<!--         <artifactId>oalnf</artifactId>-->
-		<!--         <version>3.0</version>-->
-		<!--      </dependency>-->
+		<!-- This was removed as Oyoaha lnf isn't supported in Java 6 -->
+		<!-- <dependency> -->
+		<!-- <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId> -->
+		<!-- <artifactId>oalnf</artifactId> -->
+		<!-- <version>3.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 			<artifactId>skinlf</artifactId>
@@ -180,9 +178,7 @@
 			<artifactId>skinlf-theme-packs</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!--
-			Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287
-		-->
+		<!-- Project owner not interested in maven: https://substance.dev.java.net/issues/show_bug.cgi?id=287 -->
 		<dependency>
 			<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 			<artifactId>substance</artifactId>
@@ -214,11 +210,10 @@
 					<outputDirectory>target</outputDirectory>
 					<finalName>${project.artifactId}</finalName>
 					<includePom>true</includePom>
-					<!--
-						We exclude docs from the source jar, because the assembly has to have them for the plugin
-						install to work; and we don't want the source jar to contain them as well as the assembly jar
-						as that just makes the assembly jar bigger.
-					-->
+					<!-- We exclude docs from the source jar, because the assembly has to 
+						have them for the plugin install to work; and we don't want the source jar 
+						to contain them as well as the assembly jar as that just makes the assembly 
+						jar bigger. -->
 					<excludes>
 						<exclude>**/doc/**</exclude>
 						<exclude>**/doc</exclude>
@@ -252,10 +247,7 @@
 						<addMavenDescriptor>false</addMavenDescriptor>
 					</archive>
 					<finalName>${project.artifactId}</finalName>
-					<!--
-							We exclude docs from the classes jar, for the same reason as
-							above
-						-->
+					<!-- We exclude docs from the classes jar, for the same reason as above -->
 					<excludes>
 						<exclude>**/doc/**</exclude>
 						<exclude>**/doc</exclude>
@@ -331,4 +323,42 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>m2e</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!--This plugin's configuration is used to store Eclipse m2e settings 
+							only. It has no influence on the Maven build itself. -->
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.apache.maven.plugins</groupId>
+												<artifactId>maven-dependency-plugin</artifactId>
+												<versionRange>${dependency-plugin-version}</versionRange>
+												<goals>
+													<goal>copy-dependencies</goal>
+													<goal>unpack</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore />
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 </project>
