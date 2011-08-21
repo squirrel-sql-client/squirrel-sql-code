@@ -234,6 +234,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		// status while doing so.
 		final List<ITableInfo> result = SQLUtilities.getDeletionOrder(tables, md, getOrderedTablesCallBack);
 		getOrderedTablesCallBack.setVisible(false);
+		getOrderedTablesCallBack.dispose();
 		getOrderedTablesCallBack = null;
 		return result;
 	}
@@ -323,7 +324,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 							public void run()
 							{
 								handler.hideProgressDialog();
-								customDialog.setVisible(false);
+								customDialog.dispose();
 							}
 						});
 

@@ -126,6 +126,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
 			public void run()
 			{
 				customDialog.setVisible(false);
+				customDialog.dispose();
 			}
 		});
 	}

@@ -147,6 +147,7 @@ public class DropColumnCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						_session.getSchemaInfo().reload(_info[0]);
 					}
 				});

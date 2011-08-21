@@ -166,7 +166,8 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
             public void run() {
                 GUIUtils.processOnSwingEventThread(new Runnable() {
                     public void run() {
-                        customDialog.setVisible(false);
+                    	customDialog.setVisible(false);
+                        customDialog.dispose();
                         _session.getSchemaInfo().reloadAll();
                     }
                 });
@@ -195,7 +196,7 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
                 System.err.println("dialog was null");
                 return;
             }
-            listDialog.setVisible(false);
+            listDialog.dispose();
 
             _dropIndexInfo = listDialog.getSelectedItems().toArray(new IndexInfo[]{});
             showCustomDialog();

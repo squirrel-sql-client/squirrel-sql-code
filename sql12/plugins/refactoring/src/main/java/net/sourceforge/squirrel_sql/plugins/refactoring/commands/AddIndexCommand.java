@@ -97,6 +97,7 @@ public class AddIndexCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						_session.getSchemaInfo().reloadAll();
 					}
 				});

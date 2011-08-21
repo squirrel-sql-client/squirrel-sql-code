@@ -156,6 +156,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						for (IDatabaseObjectInfo dbinfo : _info)
 						{
 							_session.getSchemaInfo().reload(dbinfo);
@@ -210,7 +211,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 			if (_listDialog == null)
 				return;
 
-			_listDialog.setVisible(false);
+			_listDialog.dispose();
 			_foreignKeyInfo = _listDialog.getSelectedItems().toArray(new ForeignKeyInfo[] {});
 
 			showCustomDialog();

@@ -347,6 +347,7 @@ public class ColumnListDialog extends JDialog implements IDisposableDialog {
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
+                dispose();
             }
         });
         result.add(cancelButton);
