@@ -185,6 +185,7 @@ public abstract class AbstractRefactoringTabbedDialog extends JDialog implements
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
+                dispose();
             }
         });
         result.add(cancelButton);

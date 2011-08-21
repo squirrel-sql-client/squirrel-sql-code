@@ -142,6 +142,7 @@ public class AddAutoIncrementCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						_session.getSchemaInfo().reloadAll();
 					}
 				});
@@ -189,6 +190,7 @@ public class AddAutoIncrementCommand extends AbstractRefactoringCommand
 				return;
 			}
 			listDialog.setVisible(false);
+			listDialog.dispose();
 
 			columnToModify = listDialog.getSelectedColumnList()[0];
 			showCustomDialog();

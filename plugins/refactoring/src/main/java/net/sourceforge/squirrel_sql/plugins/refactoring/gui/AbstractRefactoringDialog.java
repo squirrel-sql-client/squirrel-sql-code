@@ -231,6 +231,7 @@ public abstract class AbstractRefactoringDialog extends JDialog implements IDisp
 			public void actionPerformed(ActionEvent e)
 			{
 				setVisible(false);
+				dispose();
 			}
 		});
 		result.add(cancelButton);

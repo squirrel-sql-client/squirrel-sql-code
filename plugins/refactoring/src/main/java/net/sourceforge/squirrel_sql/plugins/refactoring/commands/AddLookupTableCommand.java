@@ -382,6 +382,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 						public void run()
 						{
 							_customDialog.setVisible(false);
+							_customDialog.dispose();
 							_session.getSchemaInfo().reloadAll();
 						}
 					});

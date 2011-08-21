@@ -115,6 +115,7 @@ final public class AddSequenceCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						_session.getSchemaInfo().reload(_info[0]);
 					}
 				});

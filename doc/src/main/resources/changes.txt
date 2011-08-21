@@ -108,6 +108,8 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+Fixed some memory issues with closed sessions. 
+
 Introduced performance warning for the global preference " Save Preferences Immediately" when
 multiple statements are executed and set the property's default value to false.
 

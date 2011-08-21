@@ -117,7 +117,8 @@ public class DropSequenceCommand extends AbstractRefactoringCommand {
             public void run() {
                 GUIUtils.processOnSwingEventThread(new Runnable() {
                     public void run() {
-                        customDialog.setVisible(false);
+                    	customDialog.setVisible(false);
+                        customDialog.dispose();
                         _session.getSchemaInfo().reloadAll();
                     }
                 });

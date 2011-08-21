@@ -191,6 +191,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog.setVisible(false);
+						customDialog.dispose();
 						_session.getSchemaInfo().reload(_info[0]);
 					}
 				});
@@ -234,7 +235,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 			if (listDialog == null)
 				return;
 
-			listDialog.setVisible(false);
+			listDialog.dispose();
 			TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
 			if (colInfos == null || colInfos.length != 1)
 			{

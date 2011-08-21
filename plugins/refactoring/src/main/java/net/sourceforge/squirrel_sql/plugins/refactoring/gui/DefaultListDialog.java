@@ -212,6 +212,7 @@ public class DefaultListDialog extends JDialog
 			public void actionPerformed(ActionEvent e)
 			{
 				setVisible(false);
+				dispose();
 			}
 		});
 		result.add(_executeButton);
