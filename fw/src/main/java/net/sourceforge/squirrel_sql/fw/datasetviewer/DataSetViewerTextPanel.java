@@ -73,15 +73,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < colDefs.length; ++i)
 			{
-            String headerValue;
-            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName())
-            {
-               headerValue = colDefs[i].getLabel();
-            }
-            else
-            {
-               headerValue = colDefs[i].getColumnName();
-            }
+            String headerValue = colDefs[i].getColumnHeading();
 
             buf.append(format(headerValue, colDefs[i].getDisplayWidth(), ' '));
 			}

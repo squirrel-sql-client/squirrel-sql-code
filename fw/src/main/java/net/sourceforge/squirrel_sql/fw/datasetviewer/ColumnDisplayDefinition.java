@@ -24,6 +24,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 /**
  * This defines the display information for a column.
@@ -486,6 +487,25 @@ public class ColumnDisplayDefinition
     */
    public void setDialectType(DialectType type) {
       _dialectType = type;
+   }
+   
+   /**
+    * Returns the column heading to display.
+    * The return value depends on the global preferences {@link DataTypeGeneral#isUseColumnLabelInsteadColumnName()}.
+    * If this is true, then the label of the column will be returned, otherwise the name of the column.
+    * <p><b>Note: </b> The label of the column represents an alias for the column.</p>
+    * @return the heading of a column. Either the label or the column name.
+    * @see #getColumnName()
+    * @see #getLabel()
+    * @see DataTypeGeneral#isUseColumnLabelInsteadColumnName()
+    */
+   public String getColumnHeading(){
+	   if (DataTypeGeneral.isUseColumnLabelInsteadColumnName()){
+		   return getLabel();
+	   }
+	   else {
+		   return getColumnName();
+	   }
    }
    
    
