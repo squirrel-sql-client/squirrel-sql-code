@@ -108,6 +108,11 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+3308469, 3209074, 2983094: SQL with aliases don't result always with aliases as column headings
+  Affected modules: 
+  - Export as CSV/XLS/XML
+   
+
 Fixed some memory issues with closed sessions. 
 
 Introduced performance warning for the global preference " Save Preferences Immediately" when

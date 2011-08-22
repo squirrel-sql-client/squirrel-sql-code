@@ -450,16 +450,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				ExtTableColumn col = new ExtTableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 
-            String headerValue;
-            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName())
-            {
-               headerValue = colDef.getLabel();
-            }
-            else
-            {
-               headerValue = colDef.getColumnName();
-            }
-            
+            String headerValue = colDef.getColumnHeading();
             col.setHeaderValue(headerValue);
 				col.setColumnDisplayDefinition(colDef);
 				cm.addColumn(col);

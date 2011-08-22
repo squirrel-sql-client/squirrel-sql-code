@@ -103,12 +103,7 @@ public class ResultSetExportData implements IExportData {
 	public Iterator<String> getHeaders() {
 		List<String> headers = new ArrayList<String>();
 		for (ColumnDisplayDefinition col : this.colDispDef) {
-			String headerValue;
-            if (DataTypeGeneral.isUseColumnLabelInsteadColumnName()){
-               headerValue = col.getLabel();
-            } else {
-               headerValue = col.getColumnName();
-            }
+			String headerValue = col.getColumnHeading();
 			headers.add(headerValue);
 		}
 		return headers.iterator();
