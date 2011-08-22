@@ -111,6 +111,8 @@ Bug-fixes:
 3308469, 3209074, 2983094: SQL with aliases don't result always with aliases as column headings
   Affected modules: 
   - Export as CSV/XLS/XML
+  - Copy with headers
+  - Copy as HTML
    
 
 Fixed some memory issues with closed sessions. 
