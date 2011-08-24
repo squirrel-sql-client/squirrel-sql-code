@@ -383,10 +383,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       private JPanel getSavePreferencesImmediatelyPanel()
       {
-         JPanel ret = new JPanel(new GridLayout(2,1));
+         JPanel ret = new JPanel(new BorderLayout(3,3));
 
-         ret.add(new MultilineLabel(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediatelyWarning")));
-         ret.add(_savePreferencesImmediately);
+         ret.add(new MultilineLabel(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediatelyWarning")), BorderLayout.CENTER);
+         ret.add(_savePreferencesImmediately, BorderLayout.SOUTH);
 
          ret.setBorder(BorderFactory.createEtchedBorder());
          return ret;
