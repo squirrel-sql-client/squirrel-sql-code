@@ -113,11 +113,10 @@ Bug-fixes:
   - Export as CSV/XLS/XML
   - Copy with headers
   - Copy as HTML
-   
 
 Fixed some memory issues with closed sessions. 
 
-Introduced performance warning for the global preference " Save Preferences Immediately" when
+3393589: Introduced performance warning for the global preference " Save Preferences Immediately" when
 multiple statements are executed and set the property's default value to false.
 
 2985845: Create table script generates incorrect foreign key stmt: Foreign key columns were used as primary key columns.
