@@ -58,7 +58,7 @@
 	<properties>
 		<squirrel-sql-version>3.3.0-SNAPSHOT</squirrel-sql-version>
 	</properties>
-
+		
 	<!-- This is blatant copy/paste from squirrelsql-launcher pom.xml -->
 	<build>
 		<resources>
@@ -125,7 +125,40 @@
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dbcopy</artifactId>
 			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>oracle</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>derby</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>firebird</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
 		</dependency>		
+				
+		<dependency>
+			<groupId>net.sf.dbmonster</groupId>
+			<artifactId>dbmonster-core</artifactId>
+			<version>1.0.5-SNAPSHOT</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.sql</groupId>
+					<artifactId>jdbc-stdext</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>gsbase</groupId>
 			<artifactId>gsbase</artifactId>
@@ -154,6 +187,12 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>10.8.1.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -193,11 +232,13 @@
 			</build>
 		</profile>
 		<!--
-			Some of the following jdbc driver profiles contain dependencies that aren't hosted in Maven
-			Central because they are proprietary. That is one reason they appear in profiles. They each get
-			their own profile to support running with different versions of the same driver, which would not
-			be possible if all versions of a given driver were included in a single profile. These
-			dependencies are hosted on https://www.squirrel-sql.org/nexus/content/groups/public.
+			Some of the following jdbc driver profiles contain dependencies that
+			aren't hosted in Maven Central because they are proprietary. That is
+			one reason they appear in profiles. They each get their own profile
+			to support running with different versions of the same driver, which
+			would not be possible if all versions of a given driver were included
+			in a single profile. These dependencies are hosted on
+			https://www.squirrel-sql.org/nexus/content/groups/public.
 		-->
 		<profile>
 			<id>db2-8.1</id>
@@ -473,7 +514,7 @@
 					<groupId>com.progress</groupId>
 					<artifactId>openedge-util</artifactId>
 					<version>3.0</version>
-				</dependency>				
+				</dependency>
 			</dependencies>
 		</profile>
 		<profile>
