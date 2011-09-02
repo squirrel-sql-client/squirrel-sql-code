@@ -108,6 +108,11 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+
+Patch #3401315 (Derby Object tree trigger).  Trigger source was not being displayed because the  
+SYS.SYSTRIGGERS.REFERENCINGOLD and SYS.SYSTRIGGERS.REFERENCINGNEW columns no longer accept 1 and 0 as values 
+for comparison.  Now an actual boolean data type is used. (Thanks to Jesus Marin for the patch)
+
 3139446 fixed squirrelsql.bat: % was missing at the end of line set IZPACK_JAVA=%JAVA_HOME
 
 3308469, 3209074, 2983094: SQL with aliases don't result always with aliases as column headings
