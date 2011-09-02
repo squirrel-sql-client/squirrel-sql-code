@@ -1,6 +1,13 @@
 Derby Plugin Change Log
 ==========================
 
+0.13
+====
+
+Patch #3401315 (Derby Object tree trigger).  The problem is that the type of the 
+SYS.SYSTRIGGERS.REFERENCINGOLD and SYS.SYSTRIGGERS.REFERENCINGNEW no longer accept 1 and 0 as values 
+for comparison.  Now an actual boolean data type is used. (Thanks to Jesus Marin for the patch)
+
 0.12
 ====
 1810486: CLOB not displayed using JavaDB/Derby 10.3.1.4.
