@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
-
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>LucidDB</name>
+		<driverClassName>org.luciddb.jdbc.LucidDbClientDriver</driverClassName>
+		<url>jdbc:luciddb:http://&lt;server&gt;[:&lt;8034&gt;]</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-52</string>
+		</identifier>
+		<websiteUrl>http://www.luciddb.org</websiteUrl>
+	</Bean>
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <name>CUBRID JDBC Driver</name>
         <driverClassName>cubrid.jdbc.driver.CUBRIDDriver</driverClassName>
