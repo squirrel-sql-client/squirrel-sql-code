@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -30,13 +31,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public abstract class AbstractBaseSourceTabExternalTest
+public abstract class AbstractFormattedSourceTabExternalTest
 {
 	
 	protected BaseSourceTab classUnderTest = null;
 	protected SessionUtil sessionUtil = new SessionUtil();
 	protected IDatabaseObjectInfo dboi = null;
-
+	protected Connection con = null;
+	
 	protected abstract String getSimpleName();
 	
 	protected abstract BaseSourceTab getTabToTest();
@@ -44,7 +46,7 @@ public abstract class AbstractBaseSourceTabExternalTest
 	protected abstract String getAlias();
 	
 	protected String getSchemaName() {
-		return null;
+		return "testSchema";
 	}
 
 	@Before
@@ -57,17 +59,20 @@ public abstract class AbstractBaseSourceTabExternalTest
 			Mockito.when(dboi.getSchemaName()).thenReturn(getSchemaName());
 			Mockito.when(dboi.getSimpleName()).thenReturn(getSimpleName());
 		}
+		con = session.getSQLConnection().getConnection();
 		classUnderTest.setSession(session);
 		classUnderTest.setDatabaseObjectInfo(dboi);
 	}
 
 	@Test
-	public void testCreateStatement() throws Exception
+	public void testGetSqlStatement() throws Exception
 	{
-		Method m = classUnderTest.getClass().getDeclaredMethod("createStatement", (Class<?>[])null);
+		Method m = classUnderTest.getClass().getDeclaredMethod("getSqlStatement", (Class<?>[])null);
 		m.setAccessible(true);
 		Object result = m.invoke(classUnderTest, (Object[])null);
-	   PreparedStatement stmt = (PreparedStatement)result;
+	   PreparedStatement stmt = con.prepareStatement((String)result);
+	   stmt.setString(1, getSchemaName());
+	   stmt.setString(2, getSimpleName());
 		stmt.executeQuery();
 	}
 	

@@ -22,35 +22,19 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Abs
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 
-public class ViewSourceTabTest extends AbstractBaseSourceTabExternalTest
+public class ViewSourceTabExternalTest extends AbstractBaseSourceTabExternalTest
 {
-
-	@Override
-	protected String getSimpleName()
-	{
-		return "TestView";
+	
+	protected String getSimpleName() {
+		return "testView";
 	}
-
-	@Override
-	protected BaseSourceTab getTabToTest()
-	{
-		return new ViewSourceTab("");
+	
+	protected BaseSourceTab getTabToTest() {
+		return new ViewSourceTab("a hint");
 	}
-
-	@Override
-	protected String getAlias()
-	{
+	
+	protected String getAlias() {
 		return AliasNames.FIREBIRD_DEST_ALIAS_NAME;
 	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest#getSchemaName()
-	 */
-	@Override
-	protected String getSchemaName()
-	{
-		return "";
-	}
-
 
 }

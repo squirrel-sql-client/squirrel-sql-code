@@ -163,6 +163,34 @@
 			<version>${squirrel-sql-version}</version>
 			<scope>test</scope>
 		</dependency>		
+
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>h2</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>		
+
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>mysql</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>		
+
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>mssql</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>		
+				
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>oracle</artifactId>
+			<version>${squirrel-sql-version}</version>
+			<scope>test</scope>
+		</dependency>		
 				
 		<dependency>
 			<groupId>net.sf.dbmonster</groupId>

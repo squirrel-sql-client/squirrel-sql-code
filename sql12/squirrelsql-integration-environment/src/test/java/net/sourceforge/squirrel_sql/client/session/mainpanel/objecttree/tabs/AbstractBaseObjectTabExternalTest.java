@@ -19,10 +19,9 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.cli.SessionUtil;
 
@@ -30,21 +29,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public abstract class AbstractBaseSourceTabExternalTest
+public abstract class AbstractBaseObjectTabExternalTest
 {
 	
-	protected BaseSourceTab classUnderTest = null;
+	protected BaseObjectTab classUnderTest = null;
 	protected SessionUtil sessionUtil = new SessionUtil();
 	protected IDatabaseObjectInfo dboi = null;
-
+	protected Connection con = null;
+	
 	protected abstract String getSimpleName();
 	
-	protected abstract BaseSourceTab getTabToTest();
+	protected abstract BaseObjectTab getTabToTest();
 	
 	protected abstract String getAlias();
 	
 	protected String getSchemaName() {
-		return null;
+		return "testSchema";
 	}
 
 	@Before
@@ -56,19 +56,20 @@ public abstract class AbstractBaseSourceTabExternalTest
 			dboi = Mockito.mock(IDatabaseObjectInfo.class);
 			Mockito.when(dboi.getSchemaName()).thenReturn(getSchemaName());
 			Mockito.when(dboi.getSimpleName()).thenReturn(getSimpleName());
+			Mockito.when(dboi.getQualifiedName()).thenReturn(getSchemaName() + "." + getSimpleName());
 		}
+		con = session.getSQLConnection().getConnection();
 		classUnderTest.setSession(session);
 		classUnderTest.setDatabaseObjectInfo(dboi);
 	}
 
 	@Test
-	public void testCreateStatement() throws Exception
+	public void testGetSqlStatement() throws Exception
 	{
-		Method m = classUnderTest.getClass().getDeclaredMethod("createStatement", (Class<?>[])null);
+		Method m = classUnderTest.getClass().getDeclaredMethod("getSQL", (Class<?>[])null);
 		m.setAccessible(true);
 		Object result = m.invoke(classUnderTest, (Object[])null);
-	   PreparedStatement stmt = (PreparedStatement)result;
-		stmt.executeQuery();
+		con.createStatement().executeQuery((String)result);
 	}
 	
 	
