@@ -1,26 +1,3 @@
-drop table dbcopysrc.bigint_type_table;
-drop table dbcopysrc.binary_type_table;
-drop table dbcopysrc.bit_type_table;
-drop table dbcopysrc.blob_type_table;
-drop table dbcopysrc.boolean_type_table;
-drop table dbcopysrc.char_type_table;
-drop table dbcopysrc.clob_type_table;
-drop table dbcopysrc.date_type_table;
-drop table dbcopysrc.decimal_type_table;
-drop table dbcopysrc.double_type_table;
-drop table dbcopysrc.float_type_table;
-drop table dbcopysrc.integer_type_table;
-drop table dbcopysrc.longvarbinary_type_table;
-drop table dbcopysrc.longvarchar_type_table;
-drop table dbcopysrc.numeric_type_table;
-drop table dbcopysrc.real_type_table;
-drop table dbcopysrc.smallint_type_table;
-drop table dbcopysrc.time_type_table;
-drop table dbcopysrc.timestamp_type_table;
-drop table dbcopysrc.tinyint_type_table;
-drop table dbcopysrc.varbinary_type_table;
-drop table dbcopysrc.varchar_type_table;
-
 
 CREATE TABLE dbcopysrc.bigint_type_table
 (
