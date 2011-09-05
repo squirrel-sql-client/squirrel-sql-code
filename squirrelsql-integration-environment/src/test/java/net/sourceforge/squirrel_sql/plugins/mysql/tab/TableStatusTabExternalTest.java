@@ -16,41 +16,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.firebirdsql.squirrel.tab;
+package net.sourceforge.squirrel_sql.plugins.mysql.tab;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseObjectTabExternalTest;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
 
-public class ViewSourceTabTest extends AbstractBaseSourceTabExternalTest
+public class TableStatusTabExternalTest extends AbstractBaseObjectTabExternalTest
 {
-
-	@Override
-	protected String getSimpleName()
-	{
-		return "TestView";
+	
+	protected String getSimpleName() {
+		return "dbcopydest";
 	}
-
-	@Override
-	protected BaseSourceTab getTabToTest()
-	{
-		return new ViewSourceTab("");
+	
+	protected BaseObjectTab getTabToTest() {
+		return new UserGrantsTab();
 	}
-
-	@Override
-	protected String getAlias()
-	{
-		return AliasNames.FIREBIRD_DEST_ALIAS_NAME;
+	
+	protected String getAlias() {
+		return AliasNames.MYSQL5_DEST_ALIAS_NAME;
 	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest#getSchemaName()
-	 */
-	@Override
-	protected String getSchemaName()
-	{
-		return "";
-	}
-
 
 }

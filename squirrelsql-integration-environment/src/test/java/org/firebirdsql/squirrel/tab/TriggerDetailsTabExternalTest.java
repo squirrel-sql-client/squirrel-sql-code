@@ -18,39 +18,23 @@
  */
 package org.firebirdsql.squirrel.tab;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBasePreparedStatementTabExternalTest;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
 
-public class ViewSourceTabTest extends AbstractBaseSourceTabExternalTest
+public class TriggerDetailsTabExternalTest extends AbstractBasePreparedStatementTabExternalTest
 {
-
-	@Override
-	protected String getSimpleName()
-	{
-		return "TestView";
+	
+	protected String getSimpleName() {
+		return "testTrigger";
 	}
-
-	@Override
-	protected BaseSourceTab getTabToTest()
-	{
-		return new ViewSourceTab("");
+	
+	protected BasePreparedStatementTab getTabToTest() {
+		return new TriggerDetailsTab();
 	}
-
-	@Override
-	protected String getAlias()
-	{
+	
+	protected String getAlias() {
 		return AliasNames.FIREBIRD_DEST_ALIAS_NAME;
 	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest#getSchemaName()
-	 */
-	@Override
-	protected String getSchemaName()
-	{
-		return "";
-	}
-
 
 }
