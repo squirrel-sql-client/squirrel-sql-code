@@ -549,10 +549,9 @@ public class DbCopyCliExternalIntegrationTest
 	
 	private void testCopy(ISession sourceSession, String sourceCatalog, String sourceSchema, ISession destSession, String destCatalog, String destSchema, String tableListStr) throws Exception {
 		String sourceTestDataFolder = 
-			DialectFactory.getDialect(sourceSession.getMetaData()).getDisplayName().toLowerCase();
+			DialectFactory.getDialect(sourceSession.getMetaData()).getDisplayName().toLowerCase().replace(" ", "");
 		String destTestDataFolder = 
-			DialectFactory.getDialect(destSession.getMetaData()).getDisplayName().toLowerCase();
-
+			DialectFactory.getDialect(destSession.getMetaData()).getDisplayName().toLowerCase().replace(" ", "");
 		
 		// run drop script on both the source and destination databases.  If the testDataFolder associated with
 		// the session has a drop.sql script, use that one instead of the generic one.
