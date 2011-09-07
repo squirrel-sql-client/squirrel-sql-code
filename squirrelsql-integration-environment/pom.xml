@@ -184,14 +184,7 @@
 			<version>${squirrel-sql-version}</version>
 			<scope>test</scope>
 		</dependency>		
-				
-		<dependency>
-			<groupId>net.sf.squirrel-sql.plugins</groupId>
-			<artifactId>oracle</artifactId>
-			<version>${squirrel-sql-version}</version>
-			<scope>test</scope>
-		</dependency>		
-				
+								
 		<dependency>
 			<groupId>net.sf.dbmonster</groupId>
 			<artifactId>dbmonster-core</artifactId>
