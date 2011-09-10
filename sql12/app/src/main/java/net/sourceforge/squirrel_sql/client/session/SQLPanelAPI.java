@@ -20,21 +20,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -49,6 +39,12 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * This class is the API through which plugins can work with the SQL Panel.

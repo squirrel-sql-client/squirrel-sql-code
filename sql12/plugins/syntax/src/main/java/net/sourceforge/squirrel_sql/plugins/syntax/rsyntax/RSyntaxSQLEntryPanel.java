@@ -81,7 +81,6 @@ public class RSyntaxSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textArea = new SquirrelRSyntaxTextArea(session, prefs, _propertiesWrapper, getIdentifier());
 
-		super.addToSQLEntryAreaMenu(session.getApplication().getActionCollection().get(SquirrelCopyAsRtfAction.class));
 
 		_textScrollPane = new RTextScrollPane(_textArea);
 

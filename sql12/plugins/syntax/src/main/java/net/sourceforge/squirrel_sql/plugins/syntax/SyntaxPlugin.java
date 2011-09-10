@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -41,7 +42,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.RSyntaxSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirreLRSyntaxTextAreaUI;
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.action.SquirrelCopyAsRtfAction;
+import org.fife.ui.rtextarea.RTextAreaEditorKit;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -380,13 +384,11 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
 		new ToolsPopupHandler(this).initToolsPopup(sif, coll);
 
-		JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
-		_resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
-		JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
-		_resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
+      completeSqlPanelEntryAreaMenu(coll, sqlPanelAPI);
+
 	}
 
-	private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame)
+   private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
 		FindAction findAction = ((FindAction) coll.get(FindAction.class));
@@ -401,14 +403,54 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
 		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
 
-		JMenuItem mnuUnmark = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UnmarkAction.class));
-		_resources.configureMenuItem(coll.get(UnmarkAction.class), mnuUnmark);
-		JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
-		_resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
-		JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
-		_resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
-
+      completeSqlPanelEntryAreaMenu(coll, sqlPanelAPI);
 	}
+
+   private void completeSqlPanelEntryAreaMenu(ActionCollection coll, ISQLPanelAPI sqlPanelAPI)
+   {
+      JMenuItem mnuUnmark = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UnmarkAction.class));
+      _resources.configureMenuItem(coll.get(UnmarkAction.class), mnuUnmark);
+
+      JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
+      _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
+      JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
+      _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
+
+
+      if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof SquirrelRSyntaxTextArea)
+      {
+
+         JMenuItem mnuCopyToRtf = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(SquirrelCopyAsRtfAction.class));
+         _resources.configureMenuItem(coll.get(SquirrelCopyAsRtfAction.class), mnuCopyToRtf);
+
+         SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
+
+         Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
+         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
+
+         toUpperAction.putValue(Action.SHORT_DESCRIPTION, s_stringMgr.getString("SyntaxPlugin.ToUpperShortDescription"));
+         toUpperAction.putValue(Action.MNEMONIC_KEY, 0);
+         toUpperAction.putValue(Action.ACCELERATOR_KEY, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE);
+
+         JMenuItem mnuToUpper = sqlPanelAPI.addToSQLEntryAreaMenu(toUpperAction);
+         mnuToUpper.setText((String) toUpperAction.getValue(Action.SHORT_DESCRIPTION));
+         _resources.configureMenuItem(toUpperAction, mnuToUpper);
+
+
+
+         Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
+
+         toLowerAction.putValue(Action.SHORT_DESCRIPTION, s_stringMgr.getString("SyntaxPlugin.ToLowerShortDescription"));
+         toLowerAction.putValue(Action.MNEMONIC_KEY, 0);
+         toLowerAction.putValue(Action.ACCELERATOR_KEY, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE);
+
+         JMenuItem mnuToLower = sqlPanelAPI.addToSQLEntryAreaMenu(toLowerAction);
+         mnuToLower.setText((String) toLowerAction.getValue(Action.SHORT_DESCRIPTION));
+         _resources.configureMenuItem(toLowerAction, mnuToLower);
+      }
+   }
+
 
 	/**
 	 * Called when a session shutdown.

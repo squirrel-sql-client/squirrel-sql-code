@@ -21,6 +21,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 {
    public static final String RS_ACCELERATOR_STRING_TO_UPPER_CASE = "ctrl shift u";
    public static final String RS_ACCELERATOR_STRING_TO_LOWER_CASE = "ctrl shift l";
+   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
 
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
@@ -74,8 +76,8 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
        */
       shared.remove(KeyStroke.getKeyStroke(' '));
 
-      shared.put(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-      shared.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), RTextAreaEditorKit.rtaLowerSelectionCaseAction);
+      shared.put(RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
+      shared.put(RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
       
       
 
