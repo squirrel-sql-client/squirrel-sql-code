@@ -203,6 +203,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
                sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
                sqlPanelAPI.addToToolsPopUp("sqlcut", actions.get(CutSqlAction.class));
                sqlPanelAPI.addToToolsPopUp("sqlcopy", actions.get(CopySqlAction.class));
+               sqlPanelAPI.addToToolsPopUp("remnewlines", actions.get(RemoveNewLinesAction.class));
            }
        });
    }
@@ -284,6 +285,10 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
+		act = new RemoveNewLinesAction(getApplication(), this);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
 	}
 
 	private void createSQLEntryAreaPopMenuItems(ISQLPanelAPI api)
@@ -297,12 +302,12 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
 		// To make the shortcut visible in the popup
 		mnu = api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
-		_resources.configureMenuItem(actions.get(FormatSQLAction.class), mnu);        
-        
-        mnu = api.addToSQLEntryAreaMenu(actions.get(RemoveNewLinesAction.class));
-        _resources.configureMenuItem(actions.get(RemoveNewLinesAction.class), mnu);                
-        
-		api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
+		_resources.configureMenuItem(actions.get(FormatSQLAction.class), mnu);
+
+      mnu = api.addToSQLEntryAreaMenu(actions.get(RemoveNewLinesAction.class));
+      _resources.configureMenuItem(actions.get(RemoveNewLinesAction.class), mnu);
+
+      api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
 
 		mnu = api.addToSQLEntryAreaMenu(actions.get(CutSqlAction.class));
 		_resources.configureMenuItem(actions.get(CutSqlAction.class), mnu);

@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * This action will remove &quot;newline&quot; characters from an SQL string.
  * 
  */
-class RemoveNewLinesAction extends SquirrelAction implements ISQLPanelAction {
+public class RemoveNewLinesAction extends SquirrelAction implements ISQLPanelAction {
     private static final StringManager s_stringMgr = StringManagerFactory
             .getStringManager(RemoveQuotesAction.class);
 
