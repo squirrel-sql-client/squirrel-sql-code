@@ -16,6 +16,8 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
    {
       super(mainFrame, null /* This ActionListener is not used, propably a bug in RText*/);
 
+      super.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+      
       cancelButton.addActionListener(new ActionListener()
       {
          @Override
@@ -33,12 +35,13 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
             fireClosing();      
          }
       });
+      
    }
 
    @Override
    protected void escapePressed()
    {
-      fireClosing();
+      close();
       super.escapePressed();
    }
 
