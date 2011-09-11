@@ -122,7 +122,7 @@ public class CopyExecutor extends I18NBaseObject {
     /**
      * Starts the thread that executes the copy operation.
      */
-    public void execute() {
+    public void execute() {   	    	 
         Runnable runnable = new Runnable() {
             public void run() {
                 _execute();
@@ -793,6 +793,11 @@ public class CopyExecutor extends I18NBaseObject {
         }
         ISQLConnection destCon = prov.getDestSession().getSQLConnection();
         String createTableSql = DBUtil.getCreateTableSql(prov, ti);
+
+        if (log.isDebugEnabled()) {
+      	  log.debug("Creating table in dest db with SQL: "+createTableSql);
+        }
+        
         DBUtil.executeUpdate(destCon, createTableSql, true);
         
         if (prefs.isCommitAfterTableDefs() && !currentAutoCommitValue) {
