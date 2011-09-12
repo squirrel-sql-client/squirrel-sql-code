@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0-rc1</version>
 		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
 	<artifactId>firebird</artifactId>
@@ -36,9 +36,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/firebird</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/firebird</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/firebird</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
