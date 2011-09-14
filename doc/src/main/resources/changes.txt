@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+New (prettier acorn) icons bundle for MacOS X (Thanks to Travis Hein for arranging the icon bundle and to the 
+original photograher - George Georgiades - for releasing the photo under the creative commons license.)
+
 New default SQL driver for LucidDB (Thanks to Brandon Jackson)
 	To use the new default driver, it must be imported (Menu Drivers => Install default driver definitions)  
 
