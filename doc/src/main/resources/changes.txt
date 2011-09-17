@@ -7,6 +7,8 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+The make editable function for SQL result tables now preserves the table's layout (ordering, scrolling position, ... ).
+
 New (prettier acorn) icons bundle for MacOS X (Thanks to Travis Hein for arranging the icon bundle and to the 
 original photograher - George Georgiades - for releasing the photo under the creative commons license.)
 

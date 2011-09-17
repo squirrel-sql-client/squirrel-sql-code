@@ -32,8 +32,6 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -377,11 +375,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          {
             if (_allowEditing)
             {
+               TableState resultSortableTableState = getTableState(_resultSetOutput);
+
                _resultSetOutput = BaseDataSetViewerDestination.getInstance(SessionProperties.IDataSetDestinations.EDITABLE_TABLE, _creator);
                _resultSetSp.setViewportView(_resultSetOutput.getComponent());
                _resultSetSp.setRowHeader(null);
                _rsds.resetCursor();
                _resultSetOutput.show(_rsds, null);
+
+               restoreTableState(resultSortableTableState, _resultSetOutput);
             }
             else
             {
@@ -396,11 +398,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
             String readOnlyOutput = props.getReadOnlySQLResultsOutputClassName();
 
+            TableState resultSortableTableState = getTableState(_resultSetOutput);
+
             _resultSetOutput = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator);
             _resultSetSp.setViewportView(_resultSetOutput.getComponent());
             _resultSetSp.setRowHeader(null);
             _rsds.resetCursor();
             _resultSetOutput.show(_rsds, null);
+
+            restoreTableState(resultSortableTableState, _resultSetOutput);
          }
       }
       catch (DataSetException e)
@@ -409,8 +415,26 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       }
    }
 
+   private void restoreTableState(TableState resultSortableTableState, IDataSetViewer resultSetOutput)
+   {
+      if (null != resultSortableTableState)
+      {
+         resultSetOutput.applyResultSortableTableState(resultSortableTableState);
+      }
+   }
 
-	private void createGUI()
+   private TableState getTableState(IDataSetViewer resultSetOutput)
+   {
+      TableState resultSortableTableState = null;
+      if (null != resultSetOutput)
+      {
+         resultSortableTableState = resultSetOutput.getResultSortableTableState();
+      }
+      return resultSortableTableState;
+   }
+
+
+   private void createGUI()
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
