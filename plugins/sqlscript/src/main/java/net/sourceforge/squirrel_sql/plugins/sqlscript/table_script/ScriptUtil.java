@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import java.util.Hashtable;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+
+import java.util.Hashtable;
 
 
 public class ScriptUtil
@@ -119,7 +119,12 @@ public class ScriptUtil
     */
    public static String getTableName(ITableInfo ti) 
    {
-      return DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
+      return getTableName(ti, prefs.isQualifyTableNames(), prefs.isUseDoubleQuotes());
+   }
+
+   public static String getTableName(ITableInfo ti, boolean qualifyTableNames, boolean useDoubleQuotes)
+   {
+      return DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), qualifyTableNames, useDoubleQuotes);
    }
 
 }
