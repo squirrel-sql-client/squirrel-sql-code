@@ -116,6 +116,10 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+SQLScripts plugin:
+  Generating data/insert scripts from inside the Object tree failed for tables that didn't belong to the
+  default schema when the Plugins preferences where chosen not to qualify table names.
+
 
 Patch #3401315 (Derby Object tree trigger).  Trigger source was not being displayed because the  
 SYS.SYSTRIGGERS.REFERENCINGOLD and SYS.SYSTRIGGERS.REFERENCINGNEW columns no longer accept 1 and 0 as values 

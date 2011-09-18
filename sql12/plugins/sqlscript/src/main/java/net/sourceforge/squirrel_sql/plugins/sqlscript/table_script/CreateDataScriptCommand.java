@@ -19,37 +19,22 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.WindowAdapter;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.Calendar;
-
-import javax.swing.SwingUtilities;
-
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.sql.*;
+import java.util.Calendar;
 
 public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 {
@@ -129,8 +114,6 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
 
                   IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
-                  boolean qualifyTableNames = SQLScriptPreferencesManager.getPreferences().isQualifyTableNames();
-                  boolean useDoubleQuotes = SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes();
 
                   for (int k = 0; k < dbObjs.length; k++)
                   {
@@ -139,22 +122,8 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
                         if (isAborted()) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ScriptUtil.getTableName(ti);
-                        StringBuilder sql = new StringBuilder();
-                        sql.append("select * from ");
-                        sql.append(DialectUtils.formatQualified(ti.getSimpleName(), ti.getSchemaName(), qualifyTableNames, useDoubleQuotes));
-                        
-                        // Some databases cannot order by LONG/LOB columns.
-                        if (!JDBCTypeMapper.isLongType(getFirstColumnType(ti))) 
-                        {
-                            sql.append(" order by ");
-                            sql.append(getFirstColumnName(ti));
-                            sql.append(" asc ");
-                        } 
-                        if (s_log.isDebugEnabled()) {
-                        	s_log.debug("execute: generating insert statements from data retrieved with SQL = "
-										+ sql.toString());
-                        }
-                        ResultSet srcResult = stmt.executeQuery(sql.toString());
+
+                        ResultSet srcResult = executeDataSelectSQL(stmt, ti);
                         genInserts(srcResult, sTable, sbRows, false);
                      }
                   }
@@ -187,7 +156,69 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       });
       showAbortFrame();
    }
-   
+
+   private ResultSet executeDataSelectSQL(Statement stmt, ITableInfo ti) throws SQLException
+   {
+      StringBuilder sql = genDataSelectSQL(ti, ScriptUtil.getTableName(ti));
+
+      ResultSet srcResult;
+
+      try
+      {
+         srcResult = stmt.executeQuery(sql.toString());
+      }
+      catch (SQLException e)
+      {
+         boolean qualifyTableNames = SQLScriptPreferencesManager.getPreferences().isQualifyTableNames();
+         if(false == qualifyTableNames)
+         {
+            try
+            {
+               sql = genDataSelectSQL(ti, ScriptUtil.getTableName(ti, true, false));
+               srcResult = stmt.executeQuery(sql.toString());
+            }
+            catch (SQLException e1)
+            {
+               boolean useDoubleQuotes = SQLScriptPreferencesManager.getPreferences().isUseDoubleQuotes();
+               if(false == useDoubleQuotes)
+               {
+                  sql = genDataSelectSQL(ti, ScriptUtil.getTableName(ti, true, false));
+                  srcResult = stmt.executeQuery(sql.toString());
+               }
+               else
+               {
+                  throw e;
+               }
+            }
+         }
+         else
+         {
+            throw e;
+         }
+      }
+      return srcResult;
+   }
+
+   private StringBuilder genDataSelectSQL(ITableInfo ti, String tableName) throws SQLException
+   {
+      StringBuilder sql = new StringBuilder();
+      sql.append("select * from ");
+      sql.append(tableName);
+
+      // Some databases cannot order by LONG/LOB columns.
+      if (!JDBCTypeMapper.isLongType(getFirstColumnType(ti)))
+      {
+          sql.append(" order by ");
+          sql.append(getFirstColumnName(ti));
+          sql.append(" asc ");
+      }
+      if (s_log.isDebugEnabled()) {
+         s_log.debug("execute: generating insert statements from data retrieved with SQL = "
+            + sql.toString());
+      }
+      return sql;
+   }
+
    protected String getFirstColumnName(ITableInfo ti) throws SQLException {
        TableColumnInfo[] infos = 
            _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
