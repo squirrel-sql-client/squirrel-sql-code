@@ -73,7 +73,13 @@ public class Scanner
 	private static final char CR  = '\r';
 	private static final char LF  = '\n';
 	private static final int noSym = 103;
-   private static final int[] start = {
+   
+	/**
+	 * The constants in this array are very confusing.
+	 * I don't think, that the constants don't mean, what their name said. e.g. for the '*' character, the constant ParsingConstants.KW_UNION is used.
+	 * Seems, that this is the result of a refactoring task.  
+	 */
+	private static final int[] start = {
     ParsingConstants.KW_AS,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
      0,  1,  4,  1,  1,  0,  0,  ParsingConstants.KIND_OPENING_BRAKET,  ParsingConstants.KW_UNION, 22, ParsingConstants.KW_ALL, ParsingConstants.KW_INSERT, ParsingConstants.KW_DISTINCT, ParsingConstants.KW_UPDATE,  2, ParsingConstants.KIND_EQUALS,
@@ -334,8 +340,14 @@ public class Scanner
 		t = new Token();
 		t.pos = pos; t.col = pos - lineStart + 1; t.line = line;
 		StringBuffer buf = new StringBuffer();
-		int state = start[ch];
-		int apx = 0;
+		int state;
+		if(ch < start.length){
+			// the start state is only defined for the first 128 characters.
+			state = start[ch];
+		}else{
+			// for the rest, assume the value 1;
+			state = 1;
+		}
 		loop: for (;;) {
 			buf.append(strCh);
 			NextCh();
