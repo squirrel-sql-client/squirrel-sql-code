@@ -137,9 +137,6 @@ public class Scanner
 		else if (ch == LF) {
 			if (lastCh != CR) line++;
 			lineStart = pos + 1;
-		} else if (ch > '\u007f') {
-			err.StoreError(0, line, pos - lineStart + 1, "invalid character in source file");
-			err.count++; ch = ' ';
 		}
 	}
 

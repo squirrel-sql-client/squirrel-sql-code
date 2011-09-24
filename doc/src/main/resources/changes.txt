@@ -116,6 +116,9 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+
+3408086: Non ASCII characters are highlighted as as invalid characters at the SQL-Editor pane. 
+
 SQLScripts plugin:
   Generating data/insert scripts from inside the Object tree failed for tables that didn't belong to the
   default schema when the Plugins preferences where chosen not to qualify table names.
