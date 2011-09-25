@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Updated Translations:
+ * French (Erwan Duroselle)
+ 
 The make editable function for SQL result tables now preserves the table's layout (ordering, scrolling position, ... ).
 
 New (prettier acorn) icons bundle for MacOS X (Thanks to Travis Hein for arranging the icon bundle and to the 
@@ -15,8 +18,8 @@ original photograher - George Georgiades - for releasing the photo under the cre
 New default SQL driver for LucidDB (Thanks to Brandon Jackson)
 	To use the new default driver, it must be imported (Menu Drivers => Install default driver definitions)  
 
-In the case of running out of memory, we try to close all result tabs, hoping, to free some memory.
-	This may help the user to save his work and restart SQuirreL by a clean way.
+Improved memory management: Now when SQuirreL runs out of memory, it will attempt to close all result tabs, 
+in order to free some memory.  This may allow the user to save their preferences/scripts and restart SQuirreL.
 
 SQL Scripts Plugin: Added the capability to "store the execution result of an SQL query into file". This 
   allows the user to store the result of the selected SQL directly into a file, instead of displaying it in 
