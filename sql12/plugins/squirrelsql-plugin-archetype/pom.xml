@@ -11,7 +11,6 @@
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
-	<version>3.3.0-SNAPSHOT</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>SQuirreL Plugin Archetype</name>
@@ -94,72 +93,6 @@
 		</pluginManagement>
 
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.1</version>
-				<executions>
-					<execution>
-						<id>copy-example-project-java</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>example</includeArtifactIds>
-							<includeClassifiers>sources</includeClassifiers>
-							<includes>**\/*.java</includes>
-							<excludes>**\/*Test.java</excludes>
-							<outputDirectory>src/main/resources/archetype-resources/src/main/java</outputDirectory>
-							<markersDirectory>target/dependency-maven-plugin-markers-java</markersDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-example-project-java-tests</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>example</includeArtifactIds>
-							<includeClassifiers>test-sources</includeClassifiers>
-							<includes>**\/*Test.java</includes>
-							<outputDirectory>src/main/resources/archetype-resources/src/test/java</outputDirectory>
-							<markersDirectory>target/dependency-maven-plugin-markers-test-java</markersDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-example-project-properties</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>example</includeArtifactIds>
-							<includeClassifiers>sources</includeClassifiers>
-							<includes>**\/*.properties</includes>
-							<outputDirectory>src/main/resources/archetype-resources/src/main/resources</outputDirectory>
-							<markersDirectory>target/dependency-maven-plugin-markers-properties</markersDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-example-project-docs</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>example</includeArtifactIds>
-							<includeClassifiers>sources</includeClassifiers>
-							<includes>**\/*.txt</includes>
-							<outputDirectory>src/main/resources/archetype-resources/src/main/resources</outputDirectory>
-							<markersDirectory>target/dependency-maven-plugin-markers-docs</markersDirectory>
-						</configuration>
-					</execution>
-
-				</executions>
-
-			</plugin>
 			<!-- This will test that the archetype can be used to create a new plugin 
 				project (in target/it/projects) and that the plugin project will successfully 
 				build. This pattern was found in a discussion about how to test archetypes 
@@ -190,6 +123,7 @@
 								<archetypeGroupId>${project.groupId}</archetypeGroupId>
 								<archetypeVersion>${project.version}</archetypeVersion>
 								<interactiveMode>false</interactiveMode>
+								<pluginName>Example</pluginName>
 							</properties>
 						</configuration>
 					</execution>
