@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.example;
+package ${package};
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -32,12 +32,12 @@ import org.junit.Test;
  * ISessionPlugin interface that are implemented by such a plugin. Run this test through a code coverage tool
  * such as Emma and you will find that many of the simpler methods in the interface are covered.
  */
-public class ExamplePluginTest extends AbstractSessionPluginTest
+public class ${pluginName}PluginTest extends AbstractSessionPluginTest
 {
 	@Override
 	protected IPlugin getPluginToTest() throws Exception
 	{
-		return new ExamplePlugin();
+		return new ${pluginName}Plugin();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class ExamplePluginTest extends AbstractSessionPluginTest
 	public void testSessionStarted() throws Exception
 	{
 		classUnderTest.initialize();
-		((ExamplePlugin) classUnderTest).sessionStarted(mockSession);
+		((${pluginName}Plugin) classUnderTest).sessionStarted(mockSession);
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class ExamplePluginTest extends AbstractSessionPluginTest
 		{
 			when(mockSession.getApplication()).thenReturn(null);
 			classUnderTest.initialize();
-			((ExamplePlugin) classUnderTest).sessionStarted(mockSession);
+			((${pluginName}Plugin) classUnderTest).sessionStarted(mockSession);
 			fail("Exception to get an exception for null IApplication returned from Session.getApplication");
 		}
 		catch (Exception e)
