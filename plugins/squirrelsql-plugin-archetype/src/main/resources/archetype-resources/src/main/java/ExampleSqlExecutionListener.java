@@ -1,6 +1,5 @@
 package ${package};
 
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
