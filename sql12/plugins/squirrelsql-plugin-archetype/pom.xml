@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0-rc1</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
+	<version>3.3.0-SNAPSHOT</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>SQuirreL Plugin Archetype</name>
@@ -60,20 +61,6 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.plugins</groupId>
-			<artifactId>example</artifactId>
-			<version>${project.version}</version>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.squirrel-sql.plugins</groupId>
-			<artifactId>example</artifactId>
-			<version>${project.version}</version>
-			<classifier>test-sources</classifier>
-		</dependency>
-	</dependencies>
 	<build>
 		<extensions>
 			<extension>
