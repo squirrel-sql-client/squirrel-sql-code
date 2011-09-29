@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.example;
+package ${package};
 
 import static org.junit.Assert.*;
 

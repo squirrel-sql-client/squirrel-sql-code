@@ -122,7 +122,7 @@ public class ${pluginName}Plugin extends DefaultSessionPlugin
 	 */
 	public synchronized void initialize() throws PluginException
 	{
-		_resources = new PluginResources("${package}.${artifactId}", this);
+		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.${artifactId}.${artifactId}", this);
 	}
 
 	/**
