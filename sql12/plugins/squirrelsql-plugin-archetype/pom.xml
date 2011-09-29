@@ -11,7 +11,7 @@
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
-	<version>3.3.0-SNAPSHOT</version>
+	<version>3.3.0-rc2</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>SQuirreL Plugin Archetype</name>
@@ -47,9 +47,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2-2</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2-2</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2-2
 		</url>
 	</scm>
 	<issueManagement>
