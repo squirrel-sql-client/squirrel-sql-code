@@ -49,8 +49,7 @@
 	<scm>
 		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2</connection>
 		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2
-		</url>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-plugin-archetype-3.3.0-rc2</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
