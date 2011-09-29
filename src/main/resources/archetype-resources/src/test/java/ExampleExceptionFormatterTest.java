@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.example;
+package ${package};
 
 import net.sourceforge.squirrel_sql.fw.util.AbstractExceptionFormatterTest;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
