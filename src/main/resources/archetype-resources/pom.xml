@@ -99,7 +99,7 @@
 		</dependency>
 	</dependencies>
 	<properties>
-		<pluginClassName>net.sourceforge.squirrel_sql.plugins.example.ExamplePlugin</pluginClassName>
+		<pluginClassName>${package}.${pluginName}Plugin</pluginClassName>
 	</properties>
 	<build>
 		<plugins>
