@@ -50,6 +50,11 @@ public class ShowLogsTab extends BaseSQLTab
 
 	protected String getSQL()
 	{
+		// This does not work on MySQL 5 (it's deprecated).  Need an appropriate substitute.
+		// if (super.getDialectType() == DialectType.MYSQL) {
 		return "show logs";
+	   // } else if (super.getDialectType() == DialectType.MYSQL5) {
+		    // ????
+		// }
 	}
 }
