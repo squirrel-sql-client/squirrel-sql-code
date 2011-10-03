@@ -1113,5 +1113,14 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		return "0x" + DialectUtils.toHexString(binaryData);
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getNullColumnString()
+	 */
+	@Override
+	public String getNullColumnString()
+	{
+		return " NULL";
+	}
 	
 }
