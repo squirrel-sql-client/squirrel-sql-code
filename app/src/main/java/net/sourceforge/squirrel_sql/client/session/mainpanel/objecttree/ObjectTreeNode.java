@@ -56,6 +56,8 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
 	private final List<INodeExpander> _expanders = new ArrayList<INodeExpander>();
+	
+	private boolean noChildrenFoundWithExpander = false;
 
    /**
 	 * Ctor that assumes node cannot have children.
@@ -189,4 +191,18 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
    {
       return _dboInfo.getDatabaseObjectType().getIcon();
    }
+
+/**
+ * @return the noChildrenFoundWithExpander
+ */
+public boolean hasNoChildrenFoundWithExpander() {
+	return noChildrenFoundWithExpander;
+}
+
+/**
+ * @param noChildrenFoundWithExpander the noChildrenFoundWithExpander to set
+ */
+public void setNoChildrenFoundWithExpander(boolean noChildrenFoundWithExpander) {
+	this.noChildrenFoundWithExpander = noChildrenFoundWithExpander;
+}
 }

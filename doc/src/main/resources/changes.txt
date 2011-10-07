@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Some performance improvements, when searching in the object tree. 
+	Now, Squirrel will not try to expand a node twice, if no children were found for a node at a previous search. 
+
 Updated Translations:
  * French (Erwan Duroselle)
  
