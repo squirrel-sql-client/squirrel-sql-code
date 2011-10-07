@@ -394,7 +394,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
          */
 		@Override
         public void mouseClicked(MouseEvent e) {
-            if (e.isControlDown()) {
+            if (e.isControlDown() && e.getClickCount() == 1) {
                 
                 final Action a = 
                     _app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
