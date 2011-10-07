@@ -279,10 +279,9 @@ public class ObjectTreeModel extends DefaultTreeModel
       }
       else
       {
-         if(useExpanders && 0 == startNode.getChildCount())
+         if(useExpanders &&  startNode.getAllowsChildren() && 0 == startNode.getChildCount() && startNode.hasNoChildrenFoundWithExpander() == false)
          {
             INodeExpander[] expanders = getExpanders(startNode.getDatabaseObjectType());
-
 
             for (int i = 0; i < expanders.length; i++)
             {
@@ -291,19 +290,23 @@ public class ObjectTreeModel extends DefaultTreeModel
                   List<ObjectTreeNode> children = 
                       expanders[i].createChildren(startNode.getSession(), startNode);
 
-                  for (int j = 0; j < children.size(); j++)
-                  {
-                     ObjectTreeNode newChild = children.get(j);
-                     if(0 == getExpanders(newChild.getDatabaseObjectType()).length)
-                     {
-                        newChild.setAllowsChildren(false);
-                     }
-                     else
-                     {
-                        newChild.setAllowsChildren(true);
-                     }
+                  if(children.isEmpty()){
+                	  startNode.setNoChildrenFoundWithExpander(true);
+                  }else{
+                	  for (int j = 0; j < children.size(); j++)
+                	  {
+                		  ObjectTreeNode newChild = children.get(j);
+                		  if(0 == getExpanders(newChild.getDatabaseObjectType()).length)
+                		  {
+                			  newChild.setAllowsChildren(false);
+                		  }
+                		  else
+                		  {
+                			  newChild.setAllowsChildren(true);
+                		  }
 
-                     startNode.add(newChild);
+                		  startNode.add(newChild);
+                	  }
                   }
                }
                catch (Exception e)

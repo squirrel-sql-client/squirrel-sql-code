@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -61,7 +60,6 @@ import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogActio
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -544,7 +542,7 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("ObjectTreeNode == null");
 		}
 		// If node hasn't already been expanded.
-		if (node.getChildCount() == 0)
+		if (node.getChildCount() == 0 && node.hasNoChildrenFoundWithExpander() == false)
 		{
 			// Add together the standard expanders for this node type and any
 			// individual expanders that there are for the node and process them.
@@ -569,7 +567,7 @@ class ObjectTree extends JTree
 					System.arraycopy(extraExpanders, 0, expanders, stdExpanders.length,
 										extraExpanders.length);
 				}
-				new TreeLoader(node, expanders, selectNode).execute();
+				new TreeLoader(this._session, this, this._model, node, expanders, selectNode).execute();
 			}
 		}
 	}
@@ -955,135 +953,6 @@ class ObjectTree extends JTree
 					cursorChg.restore();
 				}
 			}
-		}
-	}
-
-	/**
-	 * This class actually loads the tree.
-	 */
-	private final class TreeLoader
-	{
-		private ObjectTreeNode _parentNode;
-		private INodeExpander[] _expanders;
-		private boolean _selectParentNode;
-
-		TreeLoader(ObjectTreeNode parentNode, INodeExpander[] expanders,
-					boolean selectParentNode)
-		{
-			super();
-			_parentNode = parentNode;
-			_expanders = expanders;
-			_selectParentNode= selectParentNode;
-		}
-
-		void execute()
-		{
-			try
-			{
-				try
-				{
-					ObjectTreeNode loadingNode = showLoadingNode();
-					try
-					{
-						loadChildren();
-					}
-					finally
-					{
-                        if (_parentNode.isNodeChild(loadingNode)){
-                            _parentNode.remove(loadingNode);
-                        }
-					}
-				}
-				finally
-				{
-					fireStructureChanged(_parentNode);
-					if (_selectParentNode)
-					{
-						clearSelection();
-						setSelectionPath(new TreePath(_parentNode.getPath()));
-					}
-				}
-			}
-			catch (Throwable ex)
-			{
-				final String msg = "Error: " + _parentNode.toString();
-				s_log.error(msg, ex);
-				_session.showErrorMessage(msg + ": " + ex.toString());
-			}
-		}
-
-		/**
-		 * This adds a node to the tree that says "Loading..." in order to give
-		 * feedback to the user.
-		 */
-		private ObjectTreeNode showLoadingNode()
-		{
-			IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-								"Loading...", DatabaseObjectType.OTHER,
-								_session.getSQLConnection().getSQLMetaData());
-			ObjectTreeNode loadingNode = new ObjectTreeNode(_session, doi);
-			_parentNode.add(loadingNode);
-			fireStructureChanged(_parentNode);
-			return loadingNode;
-		}
-
-		/**
-		 * This expands the parent node and shows all its children.
-		 */
-		private void loadChildren() throws SQLException
-		{
-			for (int i = 0; i < _expanders.length; ++i)
-			{
-				boolean nodeTypeAllowsChildren = false;
-				DatabaseObjectType lastDboType = null;
-				List<ObjectTreeNode> list = _expanders[i].createChildren(_session, _parentNode);
-				Iterator<ObjectTreeNode> it = list.iterator();
-				while (it.hasNext())
-				{
-					Object nextObj = it.next();
-					if (nextObj instanceof ObjectTreeNode)
-					{
-						ObjectTreeNode childNode = (ObjectTreeNode)nextObj;
-						if (childNode.getExpanders().length >0)
-						{
-							childNode.setAllowsChildren(true);
-						}
-						else
-						{
-							DatabaseObjectType childNodeDboType = childNode.getDatabaseObjectType();
-							if (childNodeDboType != lastDboType)
-							{
-								getTypedModel().addKnownDatabaseObjectType(childNodeDboType);
-								lastDboType = childNodeDboType;
-								if (_model.getExpanders(childNodeDboType).length > 0)
-								{
-									nodeTypeAllowsChildren = true;
-								}
-								else
-								{
-									nodeTypeAllowsChildren = false;
-								}
-							}
-							childNode.setAllowsChildren(nodeTypeAllowsChildren);
-						}
-						_parentNode.add(childNode);
-					}
-				}
-			}
-		}
-
-		/**
-		 * Let the object tree model know that its structure has changed.
-		 */
-		private void fireStructureChanged(final ObjectTreeNode node)
-		{
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					ObjectTree.this._model.nodeStructureChanged(node);
-				}
-			});
 		}
 	}
 }
