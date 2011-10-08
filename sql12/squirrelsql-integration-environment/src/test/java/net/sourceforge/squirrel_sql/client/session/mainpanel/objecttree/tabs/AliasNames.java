@@ -64,4 +64,8 @@ public interface AliasNames
 	
 	String POSTGRES_DEST_ALIAS_NAME = "PostgreSQL";
 
+	String SYBASE_SOURCE_ALIAS_NAME = "Sybase (dbcopysrc)";
+	
+	String SYBASE_DEST_ALIAS_NAME = "Sybase (dbcopydest)";
+	
 }

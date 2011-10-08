@@ -163,6 +163,24 @@ public class DbCopyCliExternalIntegrationTest
 	}
 		
 	@Test
+	public void testDerbyToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.DERBY_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, null, null, destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testMysql4ToDerby() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.DERBY_DEST_ALIAS_NAME);
+
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "APP", TABLE_LIST_UPPER);		
+	}	
+	
+	@Test
 	public void testMysql4ToDb2() throws Exception
 	{
 		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
@@ -170,6 +188,97 @@ public class DbCopyCliExternalIntegrationTest
 
 		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "DBCPDST", TABLE_LIST_LOWER);		
 	}
+
+	@Test
+	public void testMysql4ToFirebird() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.FIREBIRD_DEST_ALIAS_NAME);
+
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "APP", TABLE_LIST_UPPER);		
+	}
+	
+	@Test
+	public void testMysql4ToFrontbase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.FRONTBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "DBCOPY", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testMysql4ToH2() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.H2_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "PUBLIC", TABLE_LIST_UPPER);
+	}
+	
+	@Test
+	public void testMysql4ToInformix() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.INFORMIX_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, "ansidb", "informix", TABLE_LIST_UPPER);
+	}
+	
+	@Test
+	public void testMysql4ToMysql4() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "dbcopydest", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testMysql4ToMysql5() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL5_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "dbcopydest", TABLE_LIST_UPPER);
+	}	
+
+	@Test
+	public void testMysql4ToOracle() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.ORACLE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "DBCOPYDEST", TABLE_LIST_UPPER);
+	}
+	
+	@Test
+	public void testMysql4ToPointbase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.POINTBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "DBCOPY", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testMysql4ToPostgreSQL() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.POSTGRES_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, null, "public", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testMysql4ToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.MYSQL4_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "dbcopysrc", null, destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}	
+	
 
 	
 	// This test is currently broken because DB2 doesn't allow null clob column values for 
@@ -182,6 +291,24 @@ public class DbCopyCliExternalIntegrationTest
 
 		testCopy(sourceSession, "PUBLIC", "PUBLIC", destSession, null, "DBCPDST", TABLE_LIST_UPPER);		
 	}
+	
+	@Test
+	public void testHsqldbToPostgreSQL() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.HSQLDB_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.POSTGRES_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "PUBLIC", "PUBLIC", destSession, null, "public", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
+	public void testHsqldbToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.HSQLDB_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, "PUBLIC", "PUBLIC", destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}	
 	
 	
 	@Test
@@ -283,6 +410,15 @@ public class DbCopyCliExternalIntegrationTest
 		testCopy(sourceSession, null, "PUBLIC", destSession, null, "public", TABLE_LIST_UPPER);
 	}
 		
+	@Test
+	public void testH2ToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.H2_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, null, "PUBLIC", destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}	
+
 	@Test
 	public void testOracleToDb2() throws Exception
 	{
@@ -392,6 +528,15 @@ public class DbCopyCliExternalIntegrationTest
 	}
 
 	@Test
+	public void testOracleToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.ORACLE_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, null, "DBCOPYSRC", destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}	
+	
+	@Test
 	public void testPointbaseToDerby() throws Exception
 	{
 		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.POINTBASE_DEST_ALIAS_NAME);
@@ -499,6 +644,14 @@ public class DbCopyCliExternalIntegrationTest
 		testCopy(sourceSession, null, "DBCOPY", destSession, null, "public", TABLE_LIST_UPPER);
 	}
 	
+	@Test
+	public void testPointbaseToSybase() throws Exception
+	{
+		ISession sourceSession = sessionUtil.getSessionForAlias(AliasNames.POINTBASE_SOURCE_ALIAS_NAME);
+		ISession destSession = sessionUtil.getSessionForAlias(AliasNames.SYBASE_DEST_ALIAS_NAME);
+		
+		testCopy(sourceSession, null, "DBCOPY", destSession, "dbcopydest", "dbo", TABLE_LIST_UPPER);
+	}
 	
 	
 	private String concat(List<String> lines) {
@@ -583,7 +736,9 @@ public class DbCopyCliExternalIntegrationTest
 		try {
 			runner.run();
 		} catch (Exception e) {
-			System.err.println((new DB2JCCExceptionFormatter()).format(e));
+			if (DialectFactory.isDB2(sourceSession.getMetaData()) || DialectFactory.isDB2(destSession.getMetaData())) {
+				System.err.println((new DB2JCCExceptionFormatter()).format(e));
+			} 
 			throw e;
 		}
 	}
