@@ -227,7 +227,10 @@ public class TableExportCsvDlg extends JDialog
    }
 
 
-   private Component getSelelectionPanel()
+   /**
+    * Create a panel for the selection options.
+    */
+   protected Component getSelelectionPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
