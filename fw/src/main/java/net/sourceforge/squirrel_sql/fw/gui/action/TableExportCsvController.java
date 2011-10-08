@@ -51,7 +51,7 @@ public class TableExportCsvController
 
    TableExportCsvController()
    {
-      _dlg = new TableExportCsvDlg();
+      _dlg = createDialog();
 
       initDlg();
 
@@ -74,6 +74,10 @@ public class TableExportCsvController
 
       _dlg.setVisible(true);
 
+   }
+
+   protected TableExportCsvDlg createDialog() {
+	   return new TableExportCsvDlg();
    }
 
    private void onSeparatorCharChanged(KeyEvent e)
@@ -424,7 +428,7 @@ public class TableExportCsvController
 	   return false;
    }
 
-private void writePrefs()
+protected void writePrefs()
    {
       Preferences.userRoot().put(PREF_KEY_CSV_FILE, _dlg.txtFile.getText());
       Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
@@ -441,7 +445,7 @@ private void writePrefs()
       Preferences.userRoot().put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
    }
 
-
+	
    private void initDlg()
    {
       Preferences userRoot = Preferences.userRoot();
@@ -479,14 +483,7 @@ private void writePrefs()
 
 
 
-      if(userRoot.getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
-      {
-         _dlg.radComplete.setSelected(true);
-      }
-      else
-      {
-         _dlg.radSelection.setSelected(true);
-      }
+      initSelectionPanel(userRoot);
 
       if(userRoot.getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, true))
       {
@@ -507,6 +504,21 @@ private void writePrefs()
       	LineSeparator.valueOf(userRoot.get(PREF_KEY_LINE_SEPERATOR, LineSeparator.DEFAULT.name()));
       
       _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
+   }
+
+   /**
+    * Initialize the values for the selection panel from the saved properties.
+    * @param userRoot the saved properties.
+    */
+   protected void initSelectionPanel(Preferences userRoot) {
+	   if(userRoot.getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
+	   {
+		   _dlg.radComplete.setSelected(true);
+	   }
+	   else
+	   {
+		   _dlg.radSelection.setSelected(true);
+	   }
    }
 
    private void onChkExecCommand()
@@ -641,5 +653,9 @@ private void writePrefs()
          throw new IllegalStateException("No valid output format");
       }
 
+   }
+   
+   protected TableExportCsvDlg getDialog() {
+	   return this._dlg;
    }
 }

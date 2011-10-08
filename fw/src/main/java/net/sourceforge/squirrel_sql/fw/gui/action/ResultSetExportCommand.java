@@ -49,6 +49,8 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
 		// i18n[ResultSetExportCommand.errorExecuteStatement="Could not create the data for exporting."]
 		String ERROR_EXECUTE_STATEMENT = s_stringMgr
 				.getString("ResultSetExportCommand.errorExecuteStatement");
+		
+		String EXECUTING_QUERY = s_stringMgr.getString("ResultSetExportCommand.executingQuery");
 
 	}
 
@@ -86,7 +88,11 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
 	@Override
 	protected IExportData createExportData(TableExportCsvController ctrl) throws ExportDataException{
 		try {
-			super.progress("Running the query");
+			super.progress(i18n.EXECUTING_QUERY);
+			ResultSetExportCsvController controller = (ResultSetExportCsvController)ctrl;
+			if(controller.exportComplete() == false){
+				stmt.setMaxRows(controller.getMaxRows());
+			}
 			this.resultSet = stmt.executeQuery(sql);
 			return new ResultSetExportData(this.resultSet, dialect);
 		} catch (SQLException e) {
