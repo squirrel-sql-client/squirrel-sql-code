@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +17,7 @@ import java.util.ArrayList;
 
 public class HQLPanelController
 {
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HQLPanelController.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(HQLPanelController.class);
 
    private static ILogger s_log = LoggerController.createLogger(HQLPanelController.class);
 
@@ -71,51 +69,39 @@ public class HQLPanelController
 
    private void onRunHQL()
    {
-      try
+      if (false == _runHQL.isEnabled())
       {
-         if (false == _runHQL.isEnabled())
-         {
-            return;
-         }
-
-         String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
-
-         if (null == hql || 0 == hql.trim().length())
-         {
-            return;
-         }
-
-         final IQueryTokenizer queryTokenizer = _sess.getQueryTokenizer();
-         final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
-         final String startOfLineComment = queryTokenizer.getLineCommentBegin();
-         QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
-         qt.setScriptToTokenize(hql);
-
-
-         while(qt.hasQuery())
-         {
-            String hqlQuery = qt.nextQuery();
-            if(false == doSQL(hqlQuery))
-            {
-               continue;
-            }
-
-            if (_hibernateTabController.isDisplayObjects())
-            {
-               doObjects(hqlQuery);
-            }
-         }
-
+         return;
       }
-      catch (Exception e)
+
+      String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
+
+      if (null == hql || 0 == hql.trim().length())
       {
-         throw new RuntimeException(e);
+         return;
+      }
+
+      final IQueryTokenizer queryTokenizer = _sess.getQueryTokenizer();
+      final String statementSeparator = queryTokenizer.getSQLStatementSeparator();
+      final String startOfLineComment = queryTokenizer.getLineCommentBegin();
+      QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
+      qt.setScriptToTokenize(hql);
+
+
+      while (qt.hasQuery())
+      {
+         String hqlQuery = qt.nextQuery();
+         doSQL(hqlQuery);
+
+         if (_hibernateTabController.isDisplayObjects())
+         {
+            doObjects(hqlQuery);
+         }
       }
    }
 
 
    private boolean doSQL(String hqlQuery)
-      throws Exception
    {
       ArrayList<String> sqls;
 
@@ -132,26 +118,14 @@ public class HQLPanelController
          _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess", sqls.size(), duration));
          return true;
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
-         Throwable t = Utilities.getDeepestThrowable(e);
-         ExceptionFormatter formatter = _sess.getExceptionFormatter();
-         String message = formatter.format(t);
-         _sess.showErrorMessage(message);
-
-         if (_sess.getProperties().getWriteSQLErrorsToLog() ||
-            (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
-         {
-            // If this is not a hibernate error we write a log entry
-            s_log.error(t);
-         }
-
+         HqlQueryErrorUtil.handleHqlQueryError(e, _sess, true);
          return false;
       }
    }
 
-   private void doObjects(String hqlQuery) 
-      throws Exception
+   private void doObjects(String hqlQuery)
    {
       _hibernateTabController.displayObjects(_con, hqlQuery);
    }

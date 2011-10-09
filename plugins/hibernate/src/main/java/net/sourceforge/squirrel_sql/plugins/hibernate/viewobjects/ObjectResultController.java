@@ -49,34 +49,49 @@ public class ObjectResultController
       QueryListCreatorListener queryListCreatorListener = new QueryListCreatorListener()
       {
          @Override
-         public void listRead(QueryListCreator queryListCreator)
+         public void queryExecuted(QueryListCreator queryListCreator)
          {
-            onListRead(queryListCreator);
+            onQueryExecuted(queryListCreator);
          }
       };
 
-      WaitPanel waitPanel = new WaitPanel(hqlQuery);
+      WaitPanelListener waitPanelListener = new WaitPanelListener()
+      {
+         @Override
+         public void removeWaitPanel(WaitPanel waitPanel)
+         {
+            onCloseTab(waitPanel);
+         }
+      };
+
+      WaitPanel waitPanel = new WaitPanel(hqlQuery, _resource, waitPanelListener);
       _objectResultTabbedPane.addTab(waitPanel.getTitle(), waitPanel);
       _objectResultTabbedPane.setSelectedComponent(waitPanel);
       new QueryListCreator(queryListCreatorListener, hqlQuery, maxNumResults, con, _session, waitPanel).execute();
 
    }
 
-   private void onListRead(QueryListCreator queryListCreator)
+   private void onQueryExecuted(QueryListCreator queryListCreator)
    {
+      removeOldErrorPanel(queryListCreator.getWaitPanel());
+
+      if (queryListCreator.getWaitPanel().isDisplayingError())
+      {
+         return;
+      }
 
       for (int i = 0; i < _objectResultTabbedPane.getTabCount(); i++)
       {
-         if(_objectResultTabbedPane.getComponentAt(i) == queryListCreator.getWaitPanel())
+         if (_objectResultTabbedPane.getComponentAt(i) == queryListCreator.getWaitPanel())
          {
             _objectResultTabbedPane.removeTabAt(i);
             break;
          }
       }
-         
+
       List list = queryListCreator.getList();
 
-      if(null == list)
+      if (null == list)
       {
          return;
       }
@@ -86,7 +101,7 @@ public class ObjectResultController
          @Override
          public void closeTab(ObjectResultTabController toClose)
          {
-            onCloseTab(toClose);
+            onCloseTab(toClose.getPanel());
          }
       };
 
@@ -102,12 +117,26 @@ public class ObjectResultController
       _objectResultTabbedPane.setSelectedComponent(ortc.getPanel());
    }
 
-
-   private void onCloseTab(ObjectResultTabController toClose)
+   private void removeOldErrorPanel(WaitPanel currentWaitPanel)
    {
       for (int i = 0; i < _objectResultTabbedPane.getTabCount(); i++)
       {
-         if(_objectResultTabbedPane.getComponentAt(i) == toClose.getPanel())
+         if (currentWaitPanel != _objectResultTabbedPane.getComponentAt(i)
+               && _objectResultTabbedPane.getComponentAt(i) instanceof WaitPanel
+               && ((WaitPanel) _objectResultTabbedPane.getComponentAt(i)).isDisplayingError())
+         {
+            _objectResultTabbedPane.removeTabAt(i);
+            break;
+         }
+      }
+   }
+
+
+   private void onCloseTab(JPanel panel)
+   {
+      for (int i = 0; i < _objectResultTabbedPane.getTabCount(); i++)
+      {
+         if(_objectResultTabbedPane.getComponentAt(i) == panel)
          {
             _objectResultTabbedPane.removeTabAt(i);
             break;

@@ -8,14 +8,15 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 import java.util.ArrayList;
 
 public class ResultDataSet implements IDataSet
 {
-   private static final int DISPLAY_WIDTH = 20;
+    private static final int DISPLAY_WIDTH = 20;
 
-   private int _curIx = -1;
+    private int _curIx = -1;
    private ColumnDisplayDefinition[] _columnDisplayDefinitions;
    private SingleType _singleType;
 
@@ -55,7 +56,7 @@ public class ResultDataSet implements IDataSet
 
       if(null == obj)
       {
-         return "<object is null>";
+         return HibernateUtil.OBJECT_IS_NULL;
       }
 
       HibernatePropertyReader hpr = new HibernatePropertyReader(_columnDisplayDefinitions[columnIndex].getColumnName(), obj);
@@ -70,9 +71,9 @@ public class ResultDataSet implements IDataSet
       {
          boolean wasInitialized = (Boolean) new ReflectionCaller(value).callMethod("wasInitialized").getCallee();
 
-         if(false == wasInitialized)
+         if (false == wasInitialized)
          {
-            return "<unitialized persistent collection>";
+            return HibernateUtil.UNITIALIZED_PERSISTENT_COLLECTION;
          }
       }
 

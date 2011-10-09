@@ -3,10 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateServerConnection;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateSqlConnectionData;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ServerMain;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.*;
 
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
@@ -179,7 +176,7 @@ public class HibernateConnection
       }
    }
 
-   public List createQueryList(String hqlQuery, int sqlNbrRowsToShow)
+   public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow)
    {
       try
       {

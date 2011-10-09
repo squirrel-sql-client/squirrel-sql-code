@@ -205,4 +205,20 @@ public class ReflectionCaller
 
    }
 
+   public ReflectionCaller callStaticMethod(ClassLoader cl, String className, String methName, Class[] paramTypes, Object[] args)
+   {
+      try
+      {
+         Class<?> clazz = cl.loadClass(className);
+         Method method = clazz.getDeclaredMethod(methName, paramTypes);
+         method.setAccessible(true);
+         return new ReflectionCaller(method.invoke(clazz, args));
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
 }
