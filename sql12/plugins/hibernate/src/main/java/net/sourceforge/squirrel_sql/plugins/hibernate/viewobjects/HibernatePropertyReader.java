@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 import net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects.PropertyAccessor;
 
 import java.lang.reflect.Field;
@@ -15,7 +16,10 @@ public class HibernatePropertyReader
    {
       _propertyName = propertyName;
       _obj = obj;
-      _propertyAccessor = getAccessor(_obj.getClass());
+      if (null != obj)
+      {
+         _propertyAccessor = getAccessor(_obj.getClass());
+      }
    }
 
    public String getName()
@@ -28,7 +32,14 @@ public class HibernatePropertyReader
    {
       try
       {
-         return _propertyAccessor.get(_obj);
+         if (null == _propertyAccessor)
+         {
+            return HibernateUtil.OBJECT_IS_NULL;
+         }
+         else
+         {
+            return _propertyAccessor.get(_obj);
+         }
       }
       catch (Exception e)
       {
@@ -86,12 +97,14 @@ public class HibernatePropertyReader
 
    public String getTypeName()
    {
-      return _propertyAccessor.getType().getName();
-   }
-
-   public Class getType()
-   {
-      return _propertyAccessor.getType();
+      if (null == _propertyAccessor)
+      {
+         return HibernateUtil.OBJECT_IS_NULL;
+      }
+      else
+      {
+         return _propertyAccessor.getType().getName();
+      }
    }
 
 

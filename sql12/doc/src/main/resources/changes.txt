@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+Hibernate Plugin:
+  HQL errors during results reading are now displayed as a result tab. (Similar to the new SQL error display.)
+
 Some performance improvements, when searching in the object tree. 
 	Now, Squirrel will not try to expand a node twice, if no children were found for a node at a previous search. 
 
@@ -122,6 +125,9 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+
+Hibernate Plugin:
+ Fixed several bugs in the HQL results reading function concerning lazy loaded non collection attributes.
 
 3408086: Non ASCII characters are highlighted as as invalid characters at the SQL-Editor pane. 
 

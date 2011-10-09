@@ -49,10 +49,12 @@ public class HibernateUtil
 
 	/** factory for creating FileWrappers which insulate the application from direct reference to File */
 	private static FileWrapperFactory fileWrapperFactory = new FileWrapperFactoryImpl();
-   
-	
-	private static IOUtilities ioutils = new IOUtilitiesImpl();
-   
+
+
+   private static IOUtilities ioutils = new IOUtilitiesImpl();
+   public static final String OBJECT_IS_NULL = "<object is null>";
+   public static final String UNITIALIZED_PERSISTENT_COLLECTION = "<unitialized persistent collection>";
+
    public static XMLBeanReader createHibernateConfigsReader(HibernatePlugin plugin)
          throws IOException, XMLException
    {

@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
-import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -13,6 +12,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    private ClassLoader _cl;
    private ArrayList<MappedClassInfoData> _mappedClassInfoData;
    private ReflectionCaller m_rcHibernateSession;
+   private HashSet<String> _mappedClassNames;
 
 
    HibernateServerConnectionImpl(Object sessionFactoryImpl, ClassLoader cl) throws RemoteException
@@ -114,6 +114,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
 
       _mappedClassInfoData = new ArrayList<MappedClassInfoData>();
+      _mappedClassNames =  new HashSet<String>();
 
       ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
       Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
@@ -175,6 +176,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
             }
          }
          _mappedClassInfoData.add(new MappedClassInfoData(mappedClass.getName(), tableName, identifierPropInfo, infos));
+         _mappedClassNames.add(mappedClass.getName());
       }
    }
 
@@ -195,17 +197,61 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    }
 
    @Override
-   public List createQueryList(String hqlQuery, int sqlNbrRowsToShow)
+   public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow)
    {
-      ReflectionCaller  rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+      HqlQueryResult ret = new HqlQueryResult();
 
-      if (0 <= sqlNbrRowsToShow)
+      try
       {
-         rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+         getRcHibernateSession().callMethod("getTransaction").callMethod("begin");
+      }
+      catch (Throwable t)
+      {
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().begin()", t);
       }
 
-      return (List) rc.callMethod("list").getCallee();
+      try
+      {
+         ReflectionCaller rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+
+         if (0 <= sqlNbrRowsToShow)
+         {
+            rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+         }
+
+         ret.setQueryResultList((List) rc.callMethod("list").getCallee());
+      }
+      catch (Throwable t)
+      {
+         ret.setExceptionOccuredWhenExecutingQuery(t);
+      }
+
+      try
+      {
+         getRcHibernateSession().callMethod("getTransaction").callMethod("rollback");
+      }
+      catch (Throwable t)
+      {
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", t);
+      }
+
+      try
+      {
+         getRcHibernateSession().callMethod("clear");
+      }
+      catch (Throwable t)
+      {
+         ret.putSessionAdminException("Exception occurced during call of Session.clear()", t);
+      }
+
+       if (null != ret.getQueryResultList())
+       {
+           new HibernateProxyHandler(_cl).prepareHibernateProxies(ret.getQueryResultList(), _mappedClassNames);
+       }
+
+       return ret;
    }
+
 
    private ReflectionCaller getRcHibernateSession()
    {

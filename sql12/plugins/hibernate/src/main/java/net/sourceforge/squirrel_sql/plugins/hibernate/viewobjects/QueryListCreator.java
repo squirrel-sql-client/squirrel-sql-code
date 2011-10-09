@@ -8,14 +8,16 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HqlQueryResult;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
 import javax.swing.*;
 import java.util.List;
 
-public class QueryListCreator extends SwingWorker
+public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
 {
 
-   private static ILogger s_log = LoggerController.createLogger(ObjectResultController.class);
+   private static ILogger s_log = LoggerController.createLogger(QueryListCreator.class);
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(QueryListCreator.class);
 
 
@@ -26,7 +28,7 @@ public class QueryListCreator extends SwingWorker
    private ISession _session;
    private WaitPanel _waitPanel;
    private volatile long _duration;
-   private List _list;
+   private HqlQueryResult _hqlQueryResult;
 
    public QueryListCreator(QueryListCreatorListener queryListCreatorListener,
                            String hqlQuery,
@@ -44,12 +46,13 @@ public class QueryListCreator extends SwingWorker
    }
 
    @Override
-   protected Object doInBackground() throws Exception
+   protected HqlQueryResult doInBackground()
    {
+      // Note: if an exception occurs here it will be thrown from the call to get() in method done() below.
       long begin = System.currentTimeMillis();
-      List ret = _con.createQueryList(_hqlQuery, _maxNumResults);
+      HqlQueryResult queryRes = _con.createQueryList(_hqlQuery, _maxNumResults);
       _duration = System.currentTimeMillis() - begin;
-      return ret;
+      return queryRes;
    }
 
 
@@ -58,39 +61,43 @@ public class QueryListCreator extends SwingWorker
    {
       try
       {
-         _list = (List) get();
-         _session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ObjectResultController.hqlReadObjectsSuccess", _list.size(), _duration));
+         _hqlQueryResult = get();
+
+         for (String msgKey : _hqlQueryResult.getSessionAdminExceptions().keySet())
+         {
+            s_log.error(msgKey, _hqlQueryResult.getSessionAdminExceptions().get(msgKey));
+         }
+
+         if (null != _hqlQueryResult.getExceptionOccuredWhenExecutingQuery())
+         {
+            // Maybe this error should be displayed as an error result tab like it is done for SQL errors.
+            _waitPanel.displayHqlQueryError(HqlQueryErrorUtil.handleHqlQueryError(_hqlQueryResult.getExceptionOccuredWhenExecutingQuery(), _session, false));
+            return;
+         }
+
+         if (null == _hqlQueryResult.getQueryResultList())
+         {
+            s_log.error(new NullPointerException("HqlQueryResult didn't contain a resultlist although it should according to its error state."));
+         }
+         else
+         {
+            _session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ObjectResultController.hqlReadObjectsSuccess", _hqlQueryResult.getQueryResultList().size(), _duration));
+         }
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         Throwable t = Utilities.getDeepestThrowable(e);
-         ExceptionFormatter formatter = _session.getExceptionFormatter();
-         try
-         {
-            String message = formatter.format(t);
-            _session.showErrorMessage(message);
-         }
-         catch (Exception e1)
-         {
-            _session.showErrorMessage(e1);
-            _session.showErrorMessage(t);
-         }
-
-         if (_session.getProperties().getWriteSQLErrorsToLog() ||
-            (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
-         {
-            // If this is not a hibernate error we write a log entry
-            s_log.error(t);
-         }
+         s_log.error(t);
+         _waitPanel.displayError(t);
       }
-
-      _queryListCreatorListener.listRead(this);
-
+      finally
+      {
+         _queryListCreatorListener.queryExecuted(this);
+      }
    }
 
    public List getList()
    {
-      return _list;
+      return _hqlQueryResult.getQueryResultList();
    }
 
    public int getMaxNumResults()
@@ -112,50 +119,4 @@ public class QueryListCreator extends SwingWorker
    {
       return _waitPanel;
    }
-
-
-
-//   private List readObjects(HibernateServerConnectionImpl con, String hqlQuery, int sqlLimitRows)
-//   {
-//      long begin = System.currentTimeMillis();
-//      long duration;
-//      try
-//      {
-//         List objects;
-//
-//         objects = con.createQueryList(hqlQuery, sqlLimitRows);
-//
-//         duration = System.currentTimeMillis() - begin;
-//
-//
-//         _session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ObjectResultController.hqlReadObjectsSuccess", objects.size(), duration));
-//
-//         return objects;
-//      }
-//      catch (Exception e)
-//      {
-//         Throwable t = Utilities.getDeepestThrowable(e);
-//         ExceptionFormatter formatter = _session.getExceptionFormatter();
-//         try
-//         {
-//            String message = formatter.format(t);
-//            _session.showErrorMessage(message);
-//         }
-//         catch (Exception e1)
-//         {
-//            _session.showErrorMessage(e1);
-//            _session.showErrorMessage(t);
-//         }
-//
-//         if (_session.getProperties().getWriteSQLErrorsToLog() ||
-//            (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
-//         {
-//            // If this is not a hibernate error we write a log entry
-//            s_log.error(t);
-//         }
-//
-//         return null;
-//      }
-//   }
-
 }
