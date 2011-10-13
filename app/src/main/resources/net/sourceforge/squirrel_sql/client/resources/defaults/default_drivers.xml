@@ -2,6 +2,17 @@
 
 <Beans>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<name>NuoDB</name>
+		<driverClassName>com.nuodb.jdbc.Driver</driverClassName>
+		<url>jdbc:com.nuodb://&lt;server&gt;/test</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-53</string>
+		</identifier>
+		<websiteUrl>http://www.nuodb.com</websiteUrl>
+	</Bean>
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>LucidDB</name>
 		<driverClassName>org.luciddb.jdbc.LucidDbClientDriver</driverClassName>
 		<url>jdbc:luciddb:http://&lt;server&gt;[:&lt;8034&gt;]</url>
