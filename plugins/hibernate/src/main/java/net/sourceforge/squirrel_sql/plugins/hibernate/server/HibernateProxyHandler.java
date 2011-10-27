@@ -43,7 +43,18 @@ public class HibernateProxyHandler
          {
             for (Object o : col)
             {
-               _prepareHibernateProxies(o, mappedClassNames, doneObjs);
+                if(o instanceof Object[])
+                {
+                    Object[] arr = (Object[]) o;
+                    for (Object entry : arr)
+                    {
+                        _prepareHibernateProxies(entry, mappedClassNames, doneObjs);
+                    }
+                }
+                else
+                {
+                    _prepareHibernateProxies(o, mappedClassNames, doneObjs);
+                }
             }
          }
       }

@@ -58,7 +58,7 @@ public class IntraVmConnectionFactory
    private static URLClassLoader getClassLoader(HibernateConfiguration cfg)
          throws Exception
    {
-      String[] classpath = cfg.getClassPathEntries();
+      String[] classpath = ClassPathUtil.classPathAsStringArray(cfg.getClassPathItems());
 
       URL[] classpathUrls = new URL[classpath.length];
 

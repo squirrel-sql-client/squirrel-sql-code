@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePrefsListener;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathItem;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
@@ -55,11 +56,10 @@ public class HibernateConfigController
 		_plugin = plugin;
 		_processDetails = new ProcessDetails(_plugin);
 
-		_panel = new HibernateConfigPanel();
+		_panel = new HibernateConfigPanel(_plugin.getResources());
 
 		_hibernatePrefsListener = _plugin.removeHibernatePrefsListener();
 
-		_panel.lstClassPath.setModel(new DefaultListModel());
 
 		_panel.btnNewConfig.addActionListener(new ActionListener()
 		{
@@ -82,6 +82,14 @@ public class HibernateConfigController
 			public void actionPerformed(ActionEvent e)
 			{
 				onAddClasspathEntry();
+			}
+		});
+
+		_panel.btnClassPathDirAdd.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				onAddClassPathDir();
 			}
 		});
 
@@ -168,15 +176,15 @@ public class HibernateConfigController
 
 	private void onProcessDetails()
 	{
-		String[] cp = new String[_panel.lstClassPath.getModel().getSize()];
-		for (int i = 0; i < _panel.lstClassPath.getModel().getSize(); ++i)
-		{
-			cp[i] = (String) _panel.lstClassPath.getModel().getElementAt(i);
-		}
-		new ProcessDetailsController(_plugin, _processDetails, cp);
+      new ProcessDetailsController(_plugin, _processDetails, getClassPathListModel().getClassPathArray());
 	}
 
-	private void onProcessChanged()
+   private ClassPathItemListModel getClassPathListModel()
+   {
+      return (ClassPathItemListModel) _panel.lstClassPath.getModel();
+   }
+
+   private void onProcessChanged()
 	{
 		_panel.btnProcessDetails.setEnabled(_panel.radCreateProcess.isSelected());
 	}
@@ -226,16 +234,16 @@ public class HibernateConfigController
 	{
 		int[] selIces = _panel.lstClassPath.getSelectedIndices();
 
-		List<String> toRemove = new ArrayList<String>();
+		List<ClassPathItem> toRemove = new ArrayList<ClassPathItem>();
 		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 		for (int i = 0; i < selIces.length; i++)
 		{
-			toRemove.add((String) listModel.getElementAt(selIces[i]));
+			toRemove.add((ClassPathItem) listModel.getElementAt(selIces[i]));
 		}
 
-		for (String s : toRemove)
+		for (ClassPathItem ci : toRemove)
 		{
-			listModel.removeElement(s);
+			listModel.removeElement(ci);
 		}
 	}
 
@@ -308,13 +316,14 @@ public class HibernateConfigController
 		cfg.setPersistenceUnitName(persistenceUnitName);
 		cfg.setName(cfgName);
 
-		String[] classPathEntries = new String[_panel.lstClassPath.getModel().getSize()];
+		ClassPathItem[] classPathEntries = new ClassPathItem[getClassPathListModel().getSize()];
 
-		for (int i = 0; i < _panel.lstClassPath.getModel().getSize(); ++i)
+		for (int i = 0; i < getClassPathListModel().getSize(); ++i)
 		{
-			classPathEntries[i] = (String) _panel.lstClassPath.getModel().getElementAt(i);
+			classPathEntries[i] = getClassPathListModel().getClassPathItemAt(i);
 		}
-		cfg.setClassPathEntries(classPathEntries);
+
+      cfg.setClassPathItems(classPathEntries);
 
 		if (_panel.radUserDefProvider.isSelected())
 		{
@@ -354,6 +363,52 @@ public class HibernateConfigController
 
 	}
 
+
+   private void onAddClassPathDir()
+   {
+      String dirPath = Preferences.userRoot().get(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+
+      JFileChooser fc = new JFileChooser(dirPath);
+
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      fc.setMultiSelectionEnabled(true);
+
+      fc.setFileFilter(new FileFilter()
+      {
+         public boolean accept(File f)
+         {
+            if (f.isDirectory())
+            {
+               return true;
+            }
+            return false;
+         }
+
+         public String getDescription()
+         {
+            // i18n[HibernateConfigController.classpathEntryDesc=Jars, Zips or directories]
+            return s_stringMgr.getString("HibernateController.classpathDirEntryDesc");
+         }
+      });
+
+      if (JFileChooser.APPROVE_OPTION != fc.showOpenDialog(_plugin.getApplication().getMainFrame()))
+      {
+         return;
+      }
+
+      File[] files = fc.getSelectedFiles();
+
+      for (int i = 0; i < files.length; i++)
+      {
+         getClassPathListModel().addJarDir(files[i].getPath());
+      }
+
+      if (0 < files.length)
+      {
+         Preferences.userRoot().put(PERF_KEY_LAST_DIR, files[0].getPath());
+      }
+   }
+
 	private void onAddClasspathEntry()
 	{
 		String dirPath = Preferences.userRoot().get(PERF_KEY_LAST_DIR, System.getProperty("user.home"));
@@ -389,10 +444,9 @@ public class HibernateConfigController
 
 		File[] files = fc.getSelectedFiles();
 
-		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 		for (int i = 0; i < files.length; i++)
 		{
-			listModel.addElement(files[i].getPath());
+			getClassPathListModel().addJar(files[i].getPath());
 		}
 
 		if (0 < files.length)
@@ -417,7 +471,6 @@ public class HibernateConfigController
 			return;
 		}
 
-		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 
 		for (int i : selIx)
 		{
@@ -430,9 +483,9 @@ public class HibernateConfigController
 		int[] newSelIx = new int[selIx.length];
 		for (int i = 0; i < selIx.length; ++i)
 		{
-			String file = (String) listModel.remove(selIx[i]);
+			ClassPathItem item = (ClassPathItem) getClassPathListModel().remove(selIx[i]);
 			newSelIx[i] = selIx[i] - 1;
-			listModel.insertElementAt(file, newSelIx[i]);
+			getClassPathListModel().insertElementAt(item, newSelIx[i]);
 		}
 
 		_panel.lstClassPath.setSelectedIndices(newSelIx);
@@ -450,11 +503,10 @@ public class HibernateConfigController
 			return;
 		}
 
-		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 
 		for (int i : selIx)
 		{
-			if (listModel.getSize() - 1 == i)
+			if (getClassPathListModel().getSize() - 1 == i)
 			{
 				return;
 			}
@@ -463,9 +515,9 @@ public class HibernateConfigController
 		int[] newSelIx = new int[selIx.length];
 		for (int i = selIx.length - 1; i >= 0; --i)
 		{
-			String file = (String) listModel.remove(selIx[i]);
+			ClassPathItem item = (ClassPathItem) getClassPathListModel().remove(selIx[i]);
 			newSelIx[i] = selIx[i] + 1;
-			listModel.insertElementAt(file, newSelIx[i]);
+			getClassPathListModel().insertElementAt(item, newSelIx[i]);
 		}
 
 		_panel.lstClassPath.setSelectedIndices(newSelIx);
@@ -487,9 +539,8 @@ public class HibernateConfigController
 		{
 			_panel.txtConfigName.setText(null);
 
-			DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 
-			listModel.clear();
+			getClassPathListModel().clear();
 
 			_panel.txtFactoryProvider.setText(null);
 
@@ -506,13 +557,12 @@ public class HibernateConfigController
 
 		_panel.txtConfigName.setText(cfg.getName());
 
-		DefaultListModel listModel = (DefaultListModel) _panel.lstClassPath.getModel();
 
-		listModel.clear();
+		getClassPathListModel().clear();
 
-		for (String path : cfg.getClassPathEntries())
+		for (ClassPathItem path : cfg.getClassPathItems())
 		{
-			listModel.addElement(path);
+			getClassPathListModel().addItem(path);
 		}
 
 		if (cfg.isUserDefinedProvider())

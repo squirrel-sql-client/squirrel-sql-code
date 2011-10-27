@@ -8,6 +8,10 @@ ${squirrelsql.changelog.header}
 Enhancements:
 
 Hibernate Plugin:
+  Directories containing archive files (Jars, Zips) can now be added to a Hibernate configuration's classpath.
+  All files in the directory will be added as classpath entries.
+
+Hibernate Plugin:
   HQL errors during results reading are now displayed as a result tab. (Similar to the new SQL error display.)
 
 Some performance improvements, when searching in the object tree. 
