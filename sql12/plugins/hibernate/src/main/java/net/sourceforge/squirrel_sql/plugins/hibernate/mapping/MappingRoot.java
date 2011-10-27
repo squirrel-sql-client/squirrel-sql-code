@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ClassPathUtil;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -9,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateSqlConnectionData;
 
 import java.util.Hashtable;
-import java.sql.DatabaseMetaData;
 
 public class MappingRoot extends Object
 {
@@ -49,7 +49,7 @@ public class MappingRoot extends Object
       _properties.put(s_stringMgr.getString("MappingRoot.cfgName"), cfg.getName());
 
       //i18n[MappingRoot.classpath=Classpath]
-      _properties.put(s_stringMgr.getString("MappingRoot.classpath"), cfg.classpathAsString());
+      _properties.put(s_stringMgr.getString("MappingRoot.classpath"), ClassPathUtil.classPathToString(cfg.getClassPathItems()));
 
 
       try

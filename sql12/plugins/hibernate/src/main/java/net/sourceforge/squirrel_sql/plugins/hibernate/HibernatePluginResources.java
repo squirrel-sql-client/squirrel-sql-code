@@ -21,6 +21,9 @@ public final class HibernatePluginResources extends PluginResources
 		String PROPERTY_IMAGE = "property";
 		String CLOSE_IMAGE = "close";
 		String RUN_IMAGE = "run";
+
+		String JAR_IMAGE = "jar";
+		String JAR_DIRECTORY_IMAGE = "jardirectory";
 	}
 
 }

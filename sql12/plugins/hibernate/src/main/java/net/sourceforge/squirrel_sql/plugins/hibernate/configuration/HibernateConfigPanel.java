@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -17,8 +18,10 @@ public class HibernateConfigPanel extends JPanel
    JButton btnRemoveConfig;
    JTextField txtFactoryProvider;
    JButton btnEditFactoryProviderInfo;
+
    JList lstClassPath;
    JButton btnClassPathAdd;
+   JButton btnClassPathDirAdd;
    JButton btnClassPathRemove;
    JButton btnClassPathMoveUp;
    JButton btnClassPathMoveDown;
@@ -33,7 +36,7 @@ public class HibernateConfigPanel extends JPanel
    JRadioButton radInVM;
 
 
-   public HibernateConfigPanel()
+   public HibernateConfigPanel(HibernatePluginResources resources)
    {
       setLayout(new GridBagLayout());
 
@@ -59,10 +62,10 @@ public class HibernateConfigPanel extends JPanel
       add(btnRemoveConfig, gbc);
 
       gbc = new GridBagConstraints(0,1,4,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(15,10,10,10),0,0);
-      add(createConfigDefPanel(), gbc);
+      add(createConfigDefPanel(resources), gbc);
    }
 
-   private JPanel createConfigDefPanel()
+   private JPanel createConfigDefPanel(HibernatePluginResources resources)
    {
       JPanel ret = new JPanel(new GridBagLayout());
       // i18n[HibernateConfigPanel.ConfiguirationDef=Configuration definition]
@@ -75,7 +78,7 @@ public class HibernateConfigPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
-      ret.add(createClasspathPanel(), gbc);
+      ret.add(createClasspathPanel(resources), gbc);
 
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5),0,0);
@@ -155,7 +158,7 @@ public class HibernateConfigPanel extends JPanel
    }
 
 
-   private JPanel createClasspathPanel()
+   private JPanel createClasspathPanel(final HibernatePluginResources resources)
    {
       // i18n[HibernateConfigPanel.newFactoryClasspathBorder=Additional classpath entries to create a SessionFactoryImpl]
       TitledBorder brd = BorderFactory.createTitledBorder(s_stringMgr.getString("HibernatePanel.newFactoryClasspathBorder"));
@@ -166,17 +169,22 @@ public class HibernateConfigPanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
-      lstClassPath = new JList();
+
+      lstClassPath = new JList(new ClassPathItemListModel());
+      lstClassPath.setCellRenderer(new ClassPathListCellRenderer(resources));
+
+
+
       ret.add(new JScrollPane(lstClassPath), gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.SOUTHEAST,GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
-      ret.add(createButtonClasspathPanel(), gbc);
+      ret.add(createButtonClasspathPanel(resources), gbc);
 
       return ret;
 
    }
 
-   private JPanel createButtonClasspathPanel()
+   private JPanel createButtonClasspathPanel(HibernatePluginResources resources)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -186,18 +194,24 @@ public class HibernateConfigPanel extends JPanel
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       // i18n[HibernateConfigPanel.classPathAdd=Add classpath entry]
       btnClassPathAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathAdd"));
+      btnClassPathAdd.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_IMAGE));
       ret.add(btnClassPathAdd, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      btnClassPathDirAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathDirAdd"));
+      btnClassPathDirAdd.setIcon(resources.getIcon(HibernatePluginResources.IKeys.JAR_DIRECTORY_IMAGE));
+      ret.add(btnClassPathDirAdd, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       // i18n[HibernateConfigPanel.classPathRemove=Remove selected entries]
       btnClassPathRemove = new JButton(s_stringMgr.getString("HibernatePanel.classPathRemove"));
       ret.add(btnClassPathRemove, gbc);
 
-      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathMoveUp = new JButton(s_stringMgr.getString("HibernatePanel.moveUp"));
       ret.add(btnClassPathMoveUp, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClassPathMoveDown = new JButton(s_stringMgr.getString("HibernatePanel.moveDown"));
       ret.add(btnClassPathMoveDown, gbc);
 
@@ -293,4 +307,5 @@ public class HibernateConfigPanel extends JPanel
 
       return ret;
    }
+
 }
