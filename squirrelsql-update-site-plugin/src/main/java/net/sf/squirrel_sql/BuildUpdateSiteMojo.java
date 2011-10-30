@@ -20,7 +20,9 @@ package net.sf.squirrel_sql;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
@@ -94,6 +96,19 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	{
 		this.releaseVersion = releaseVersion;
 	}
+	
+	/**
+	 * The path to the root of the update site on the server
+	 * 
+	 * @parameter expression="${updateSitePath}"
+	 * @required
+	 */
+	private String updateSitePath;
+	
+	public void setUpdateSitePath(String updateSitePath) 
+	{
+		this.updateSitePath = updateSitePath;
+	}
 
 	/**
 	 * Does the main work provided by this plugin.
@@ -159,6 +174,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	private ChannelXmlBean buildChannelRelease(String channelName,
 			String releaseName, String version, String directory)
 			throws IOException {
+		final PrintWriter batchFileWriter = getBatchFileWriter(releaseName);
 		ChannelXmlBean result = new ChannelXmlBean();
 		result.setName(channelName);
 		ReleaseXmlBean releaseBean = new ReleaseXmlBean(releaseName, version);
@@ -172,6 +188,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 				// f is a module
 				ModuleXmlBean module = new ModuleXmlBean();
 				module.setName(f.getName());
+				batchFileWriter.println(getCdModulePathOnServer(releaseName, module.getName()));
 				for (File a : f.listFiles()) {
 					String filename = a.getName();
 					if (isExcluded(filename)) {
@@ -181,6 +198,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 					if (log.isDebugEnabled()) {
 						log.debug("Processing artifact file: " + filename);
 					}
+					batchFileWriter.println("put target/release/"+module.getName()+"/"+filename);
 					String type = filename.substring(filename.indexOf(".") + 1);
 					ArtifactXmlBean artifact = new ArtifactXmlBean();
 					artifact.setName(a.getName());
@@ -193,6 +211,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 				releaseBean.addmodule(module);
 			}
 		}
+		batchFileWriter.close();
 		result.setCurrentRelease(releaseBean);
 		return result;
 	}
@@ -249,5 +268,24 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 			}
 		}
 		return result;
+	}
+	
+	private PrintWriter getBatchFileWriter(String releaseName) throws FileNotFoundException {
+		PrintWriter result = new PrintWriter("target/batch.txt");
+		result.println(getCdModulePathOnServer(releaseName, null));
+		result.println("put target/release/release.xml");
+		return result;
+	}
+	
+	private String getCdModulePathOnServer(String releaseName, String moduleName) {
+		StringBuilder result = new StringBuilder("cd ");
+		result.append(updateSitePath);
+		result.append("/");
+		result.append(releaseName);
+		if (moduleName != null) {
+			result.append("/");
+			result.append(moduleName);
+		}
+		return result.toString();
 	}
 }
