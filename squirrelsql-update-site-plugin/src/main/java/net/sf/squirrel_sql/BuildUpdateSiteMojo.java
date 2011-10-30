@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Goal which builds the update site from a directory which is specified as an argument.
@@ -109,6 +110,13 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	{
 		this.updateSitePath = updateSitePath;
 	}
+	
+	/**
+	 * @parameter default-value="${project}"
+	 * @required
+	 * @readonly
+	 */
+	private MavenProject project; 	
 
 	/**
 	 * Does the main work provided by this plugin.
@@ -271,7 +279,7 @@ public class BuildUpdateSiteMojo extends AbstractMojo
 	}
 	
 	private PrintWriter getBatchFileWriter(String releaseName) throws FileNotFoundException {
-		PrintWriter result = new PrintWriter("target/batch.txt");
+		PrintWriter result = new PrintWriter(project.getBasedir()+"/target/batch.txt");
 		result.println(getCdModulePathOnServer(releaseName, null));
 		result.println("put target/release/release.xml");
 		return result;
