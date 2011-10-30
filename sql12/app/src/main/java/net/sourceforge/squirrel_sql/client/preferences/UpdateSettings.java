@@ -30,13 +30,13 @@ public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 	private static final long serialVersionUID = -1305655179503568153L;
 
 	/** Name of software update server. */
-	private String updateServer = "www.squirrel-sql.net";
+	private String updateServer = "sourceforge.net";
 
 	/** Port for software update server. */
 	private String updateServerPort = "80";
 
 	/** Path to channel directories on software update server. */
-	private String updateServerPath = "updates";
+	private String updateServerPath = "projects/squirrel-sql/files/updates";
 
 	/** Update channel on the software update server. */
 	private String updateServerChannel = "stable";
