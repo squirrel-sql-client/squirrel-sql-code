@@ -501,13 +501,12 @@ public class SQLResultExecuterPanel extends JPanel
 
    private void closeTab(Component tab)
    {
-      if(tab instanceof ErrorPanel)
-      {
-         _tabbedExecutionsPanel.remove(tab);
-      }
-      else if(tab instanceof ResultTab)
+      if(tab instanceof ResultTab)
       {
          closeResultTab((ResultTab) tab);
+      }else{
+    	  // Closing Tabs, where we not have any special things to do. e.g. ErrorPanle, CancelPanel.
+    	  _tabbedExecutionsPanel.remove(tab);
       }
    }
 
@@ -787,7 +786,7 @@ public class SQLResultExecuterPanel extends JPanel
             return;
          }
 
-         closeResultTabAt(indexToReplace);
+         closeTabAt(indexToReplace);
          _tabbedExecutionsPanel.insertTab(tab.getTitle(), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
       }
 	}
@@ -798,15 +797,15 @@ public class SQLResultExecuterPanel extends JPanel
 
       while(props.getLimitSQLResultTabs() && props.getSqlResultTabLimit() < _tabbedExecutionsPanel.getTabCount())
       {
-         closeResultTabAt(0);
+         closeTabAt(0);
       }
    }
 
 
-   private void closeResultTabAt(int index)
+   private void closeTabAt(int index)
    {
       Component selectedTab = _tabbedExecutionsPanel.getComponentAt(index);
-      closeResultTab((ResultTab) selectedTab);
+      closeTab(selectedTab);
    }
 
 
