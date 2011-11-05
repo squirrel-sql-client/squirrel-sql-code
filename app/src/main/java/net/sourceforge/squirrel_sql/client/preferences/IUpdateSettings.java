@@ -25,6 +25,10 @@ package net.sourceforge.squirrel_sql.client.preferences;
 public interface IUpdateSettings
 {
 
+	public static final String DEFAULT_UPDATE_SERVER = "sourceforge.net";
+	public static final String DEFAULT_UPDATE_PORT = "80";
+	public static final String DEFAULT_UPDATE_PATH = "projects/squirrel-sql/files/updates";
+	
 	/**
 	 * @return the updateServer
 	 */
