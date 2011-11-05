@@ -129,6 +129,8 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+3433001: Elapsed time for building output is incorrect.
+
 3183001: ClassCastException occurs, when the first tab should be closed after running a query.
 
 Hibernate Plugin:
