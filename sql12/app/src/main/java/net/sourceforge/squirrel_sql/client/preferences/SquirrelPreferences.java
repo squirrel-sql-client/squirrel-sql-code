@@ -857,14 +857,14 @@ public class SquirrelPreferences implements Serializable
 		setJdbcDebugType(IJdbcDebugTypes.NONE);
 	}
 
-    @SuppressWarnings("unchecked")
-	public static SquirrelPreferences load()
+    public static SquirrelPreferences load()
 	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
 		try
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(prefsFile);
+			@SuppressWarnings("rawtypes")
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{

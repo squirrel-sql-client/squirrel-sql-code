@@ -30,13 +30,13 @@ public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 	private static final long serialVersionUID = -1305655179503568153L;
 
 	/** Name of software update server. */
-	private String updateServer = "sourceforge.net";
+	private String updateServer = IUpdateSettings.DEFAULT_UPDATE_SERVER;
 
 	/** Port for software update server. */
-	private String updateServerPort = "80";
+	private String updateServerPort = IUpdateSettings.DEFAULT_UPDATE_PORT;
 
 	/** Path to channel directories on software update server. */
-	private String updateServerPath = "projects/squirrel-sql/files/updates";
+	private String updateServerPath = IUpdateSettings.DEFAULT_UPDATE_PATH;
 
 	/** Update channel on the software update server. */
 	private String updateServerChannel = "stable";
@@ -49,18 +49,20 @@ public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 
 	/** The last time an update check was made in milliseconds */
 	private String lastUpdateCheckTimeMillis = "0";
-	
+
 	/** Whether or not the update site is on a remote server */
 	private boolean isRemoteUpdateSite = true;
-	
+
 	private String fileSystemUpdatePath = "";
-	
-	public UpdateSettings() {
-		if (Version.isSnapshotVersion()) {
+
+	public UpdateSettings()
+	{
+		if (Version.isSnapshotVersion())
+		{
 			updateServerChannel = "snapshot";
 		}
 	}
-	
+
 	/**
 	 * @see java.lang.Object#clone()
 	 */
@@ -71,156 +73,190 @@ public class UpdateSettings implements Cloneable, IUpdateSettings, Serializable
 	}
 
 	/**
-	  * Copy Constructor
-	  *
-	  * @param updateSettings a <code>UpdateSettings</code> object
-	  */
-	 public UpdateSettings(IUpdateSettings updateSettings) 
-	 {
-	     this.updateServer = updateSettings.getUpdateServer();
-	     this.updateServerPort = updateSettings.getUpdateServerPort();
-	     this.updateServerPath = updateSettings.getUpdateServerPath();
-	     this.updateServerChannel = updateSettings.getUpdateServerChannel();
-	     this.enableAutomaticUpdates = updateSettings.isEnableAutomaticUpdates();
-	     this.updateCheckFrequency = updateSettings.getUpdateCheckFrequency();
-	     this.lastUpdateCheckTimeMillis = updateSettings.getLastUpdateCheckTimeMillis();
-	     this.isRemoteUpdateSite = updateSettings.isRemoteUpdateSite();
-	     this.fileSystemUpdatePath = updateSettings.getFileSystemUpdatePath();
-	 }
+	 * Copy Constructor
+	 * 
+	 * @param updateSettings
+	 *           a <code>UpdateSettings</code> object
+	 */
+	public UpdateSettings(IUpdateSettings updateSettings)
+	{
+		String server = updateSettings.getUpdateServer();
+		String port = updateSettings.getUpdateServerPort();
+		String path = updateSettings.getUpdateServerPath();
+		if (server != null && server.equalsIgnoreCase("www.squirrel-sql.net")) {
+			server = "sourceforge.net";
+			port = "80";
+			path = "projects/squirrel-sql/files/updates";
+		}
+		
+		
+		this.updateServer = server;
+		this.updateServerPort = port;
+		this.updateServerPath = path;
+		this.updateServerChannel = updateSettings.getUpdateServerChannel();
+		this.enableAutomaticUpdates = updateSettings.isEnableAutomaticUpdates();
+		this.updateCheckFrequency = updateSettings.getUpdateCheckFrequency();
+		this.lastUpdateCheckTimeMillis = updateSettings.getLastUpdateCheckTimeMillis();
+		this.isRemoteUpdateSite = updateSettings.isRemoteUpdateSite();
+		this.fileSystemUpdatePath = updateSettings.getFileSystemUpdatePath();
+	}
 
-   /**
-    * @return the updateServer
-    */
-   public String getUpdateServer() {
-      return updateServer;
-   }
+	/**
+	 * @return the updateServer
+	 */
+	public String getUpdateServer()
+	{
+		return updateServer;
+	}
 
-   /**
-    * @param updateServer the updateServer to set
-    */
-   public void setUpdateServer(String updateServer) {
-      this.updateServer = updateServer;
-   }
+	/**
+	 * @param updateServer
+	 *           the updateServer to set
+	 */
+	public void setUpdateServer(String updateServer)
+	{
+		this.updateServer = updateServer;
+	}
 
-   /**
-    * @return the updateServerPort
-    */
-   public String getUpdateServerPort() {
-      return updateServerPort;
-   }
+	/**
+	 * @return the updateServerPort
+	 */
+	public String getUpdateServerPort()
+	{
+		return updateServerPort;
+	}
 
-   /**
-    * @param updateServerPort the updateServerPort to set
-    */
-   public void setUpdateServerPort(String updateServerPort) {
-      this.updateServerPort = updateServerPort;
-   }
+	/**
+	 * @param updateServerPort
+	 *           the updateServerPort to set
+	 */
+	public void setUpdateServerPort(String updateServerPort)
+	{
+		this.updateServerPort = updateServerPort;
+	}
 
-   /**
-    * @return the updateServerPath
-    */
-   public String getUpdateServerPath() {
-      return updateServerPath;
-   }
+	/**
+	 * @return the updateServerPath
+	 */
+	public String getUpdateServerPath()
+	{
+		return updateServerPath;
+	}
 
-   /**
-    * @param updateServerPath the updateServerPath to set
-    */
-   public void setUpdateServerPath(String updateServerPath) {
-      this.updateServerPath = updateServerPath;
-   }
+	/**
+	 * @param updateServerPath
+	 *           the updateServerPath to set
+	 */
+	public void setUpdateServerPath(String updateServerPath)
+	{
+		this.updateServerPath = updateServerPath;
+	}
 
-   /**
-    * @return the updateServerChannel
-    */
-   public String getUpdateServerChannel() {
-      return updateServerChannel;
-   }
+	/**
+	 * @return the updateServerChannel
+	 */
+	public String getUpdateServerChannel()
+	{
+		return updateServerChannel;
+	}
 
-   /**
-    * @param updateServerChannel the updateServerChannel to set
-    */
-   public void setUpdateServerChannel(String updateServerChannel) {
-      this.updateServerChannel = updateServerChannel;
-   }
+	/**
+	 * @param updateServerChannel
+	 *           the updateServerChannel to set
+	 */
+	public void setUpdateServerChannel(String updateServerChannel)
+	{
+		this.updateServerChannel = updateServerChannel;
+	}
 
-   /**
-    * @return the enableAutomaticUpdates
-    */
-   public boolean isEnableAutomaticUpdates() {
-      return enableAutomaticUpdates;
-   }
+	/**
+	 * @return the enableAutomaticUpdates
+	 */
+	public boolean isEnableAutomaticUpdates()
+	{
+		return enableAutomaticUpdates;
+	}
 
-   /**
-    * @param enableAutomaticUpdates the enableAutomaticUpdates to set
-    */
-   public void setEnableAutomaticUpdates(boolean enableAutomaticUpdates) {
-      this.enableAutomaticUpdates = enableAutomaticUpdates;
-   }
+	/**
+	 * @param enableAutomaticUpdates
+	 *           the enableAutomaticUpdates to set
+	 */
+	public void setEnableAutomaticUpdates(boolean enableAutomaticUpdates)
+	{
+		this.enableAutomaticUpdates = enableAutomaticUpdates;
+	}
 
-   /**
-    * @return the updateCheckFrequency
-    */
-   public String getUpdateCheckFrequency() {
-      return updateCheckFrequency;
-   }
-   
-   /**
-    * @param updateCheckFrequency the updateCheckFrequency to set
-    */
-   public void setUpdateCheckFrequency(String updateCheckFrequency) {
-      this.updateCheckFrequency = updateCheckFrequency;
-   }
+	/**
+	 * @return the updateCheckFrequency
+	 */
+	public String getUpdateCheckFrequency()
+	{
+		return updateCheckFrequency;
+	}
 
-   /**
-    * @return the lastUpdateCheckTimeMillis
-    */
-   public String getLastUpdateCheckTimeMillis() {
-      return lastUpdateCheckTimeMillis;
-   }
+	/**
+	 * @param updateCheckFrequency
+	 *           the updateCheckFrequency to set
+	 */
+	public void setUpdateCheckFrequency(String updateCheckFrequency)
+	{
+		this.updateCheckFrequency = updateCheckFrequency;
+	}
 
-   /**
-    * @param lastUpdateCheckTimeMillis the lastUpdateCheckTimeMillis to set
-    */
-   public void setLastUpdateCheckTimeMillis(String lastUpdateCheckTimeMillis) {
-      this.lastUpdateCheckTimeMillis = lastUpdateCheckTimeMillis;
-   }
+	/**
+	 * @return the lastUpdateCheckTimeMillis
+	 */
+	public String getLastUpdateCheckTimeMillis()
+	{
+		return lastUpdateCheckTimeMillis;
+	}
 
-   /**
-    * Returns a boolean value to indicate whether or not the user wants to use 
-    * a remote site.  If this is false, it is assumed to mean that the user 
-    * wants to specify a local directory on the filesystem
-    * 
-    * @return true if remote site; false otherwise.
-    */
-   public boolean isRemoteUpdateSite() {
-      return this.isRemoteUpdateSite;
-   }
+	/**
+	 * @param lastUpdateCheckTimeMillis
+	 *           the lastUpdateCheckTimeMillis to set
+	 */
+	public void setLastUpdateCheckTimeMillis(String lastUpdateCheckTimeMillis)
+	{
+		this.lastUpdateCheckTimeMillis = lastUpdateCheckTimeMillis;
+	}
 
-   /**
-    * Sets a boolean value to indicate whether or not the user wants to use 
-    * a remote site.  If this is false, it is assumed to mean that the user 
-    * wants to specify a local directory on the filesystem
-    * 
-    * @param true for remote site; false for local directory.
-    */
-   public void setRemoteUpdateSite(boolean isRemoteUpdateSite) {
-      this.isRemoteUpdateSite = isRemoteUpdateSite;
-   }
+	/**
+	 * Returns a boolean value to indicate whether or not the user wants to use a remote site. If this is
+	 * false, it is assumed to mean that the user wants to specify a local directory on the filesystem
+	 * 
+	 * @return true if remote site; false otherwise.
+	 */
+	public boolean isRemoteUpdateSite()
+	{
+		return this.isRemoteUpdateSite;
+	}
 
-   /**
-    * @return the fileSystemUpdatePath
-    */
-   public String getFileSystemUpdatePath() {
-      return fileSystemUpdatePath;
-   }
+	/**
+	 * Sets a boolean value to indicate whether or not the user wants to use a remote site. If this is false,
+	 * it is assumed to mean that the user wants to specify a local directory on the filesystem
+	 * 
+	 * @param true for remote site; false for local directory.
+	 */
+	public void setRemoteUpdateSite(boolean isRemoteUpdateSite)
+	{
+		this.isRemoteUpdateSite = isRemoteUpdateSite;
+	}
 
-   /**
-    * @param fileSystemUpdatePath the fileSystemUpdatePath to set
-    */
-   public void setFileSystemUpdatePath(String fileSystemUpdatePath) {
-      this.fileSystemUpdatePath = fileSystemUpdatePath;
-   }
-   
-   
+	/**
+	 * @return the fileSystemUpdatePath
+	 */
+	public String getFileSystemUpdatePath()
+	{
+		return fileSystemUpdatePath;
+	}
+
+	/**
+	 * @param fileSystemUpdatePath
+	 *           the fileSystemUpdatePath to set
+	 */
+	public void setFileSystemUpdatePath(String fileSystemUpdatePath)
+	{
+		this.fileSystemUpdatePath = fileSystemUpdatePath;
+	}
+
 }
