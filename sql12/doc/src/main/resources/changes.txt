@@ -129,6 +129,7 @@ Display errors in result tab (Feature request 2826179):
 
 Bug-fixes:
 
+3183001: ClassCastException occurs, when the first tab should be closed after running a query.
 
 Hibernate Plugin:
  Fixed several bugs in the HQL results reading function concerning lazy loaded non collection attributes.
