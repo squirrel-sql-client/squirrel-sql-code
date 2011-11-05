@@ -56,16 +56,17 @@
 				entry Session => Scripts => Store result of SQL in file</P> <IMG
 			SRC="sql2file.jpg" NAME="sql2file" ALIGN=LEFT BORDER=0><BR
 			CLEAR=LEFT> <BR> <BR> After this, the control dialog
-			appears. This dialog give you the control about target, type and data
-			format. Be careful, if you decide to export the data into the MS
-			Excel format. In this case, the result is build in memory and
-			SQuirreL SQL may run out of memory.<BR> <BR> <IMG
+			appears. This dialog allows you to specify various options including the 
+			target file and options such as the data format. Be careful when choosing 
+			the MS Excel format as it requires the entire result set to be stored in 
+			memory. In this case, if the result set is large, SQuirreL SQL may run 
+			out of memory.<BR> <BR> <IMG
 			SRC="sql2file_exportController.jpg" NAME="sql2file" ALIGN=LEFT
 			BORDER=0><BR CLEAR=LEFT> <BR> <BR> The export is
 			done on a new database connection, so the user can continue
-			using SQuirreL SQL while exporting the data. A progress monitor show
-			the progress of the export and you can cancel it any time. If the
-			export if done, the progress dialog disappears. <BR> <BR> <IMG
+			using SQuirreL SQL while exporting the data. A progress monitor shows
+			the progress of the export and you can cancel it any time. When the
+			export is complete, the progress dialog will be hidden. <BR> <BR> <IMG
 			SRC="sql2file_progress.jpg" NAME="sql2file" ALIGN=LEFT BORDER=0>
 			<BR CLEAR=LEFT> <BR> <BR></LI>
 	</ul>
