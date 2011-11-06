@@ -19,6 +19,8 @@
 
 package net.sourceforge.squirrel_sql.plugins.dbcopy.cli;
 
+import org.apache.commons.cli.MissingOptionException;
+
 
 public class DBCopyCLI
 {
@@ -31,15 +33,22 @@ public class DBCopyCLI
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception
-	{		
-		CommandLineArgumentProcessor argProcessor = new CommandLineArgumentProcessor(args);
-		runner.setSourceSchemaName(argProcessor.getSourceSchemaName());
-		runner.setSourceCatalogName(argProcessor.getSourceCatalogName());
-		runner.setDestSchemaName(argProcessor.getDestSchemaName());
-		runner.setDestCatalogName(argProcessor.getDestCatalogName());
-		runner.setSourceSession(sessionUtil.getSessionForAlias(argProcessor.getSourceAliasName()));
-		runner.setDestSession(sessionUtil.getSessionForAlias(argProcessor.getDestAliasName()));
-		runner.run();		
+	{
+		try
+		{
+			CommandLineArgumentProcessor argProcessor = new CommandLineArgumentProcessor(args);
+			runner.setSourceSchemaName(argProcessor.getSourceSchemaName());
+			runner.setSourceCatalogName(argProcessor.getSourceCatalogName());
+			runner.setDestSchemaName(argProcessor.getDestSchemaName());
+			runner.setDestCatalogName(argProcessor.getDestCatalogName());
+			runner.setSourceSession(sessionUtil.getSessionForAlias(argProcessor.getSourceAliasName()));
+			runner.setDestSession(sessionUtil.getSessionForAlias(argProcessor.getDestAliasName()));
+			runner.run();
+		}
+		catch (MissingOptionException e)
+		{
+			// We handle printing the usage in the argProcessor, so no need to log it here.
+		}
 	}
 
 }
