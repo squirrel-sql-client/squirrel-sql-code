@@ -65,7 +65,8 @@ public class CommandLineArgumentProcessor
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
 			HelpFormatter formatter = new HelpFormatter();
-			System.err.println(e.getMessage());
+			System.out.println(e.getMessage());
+			System.out.println();
 			formatter.printHelp("DBCopyCLI", options, true);
 			throw e;
 		}
