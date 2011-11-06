@@ -177,7 +177,8 @@ public class QueryFilterController
    private void onOK()
    {
 
-      _columnInfo.getQueryData().setOperator((QueryFilterOperators) _queryFilterDlg._cboOperator.getSelectedItem());
+      QueryFilterOperators operator = (QueryFilterOperators)_queryFilterDlg._cboOperator.getSelectedItem();
+      _columnInfo.getQueryData().setOperator(operator);
 
       _columnInfo.getQueryData().setFilterValue(null);
       String text = _queryFilterDlg._txtFilter.getText();
@@ -185,7 +186,10 @@ public class QueryFilterController
       {
          ExtendedColumnInfo ec = getExtendedColumnInfo();
 
-         if (_queryFilterDlg._chkApplyQuotes.isSelected() && null != ec && ec.isCharacterType())
+         if (_queryFilterDlg._chkApplyQuotes.isSelected()
+             && null != ec
+             && ec.isCharacterType()
+             && operator.isSingleValued())
          {
             _columnInfo.getQueryData().setFilterValue(getQuotedText(text));
          }

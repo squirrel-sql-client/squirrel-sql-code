@@ -62,4 +62,9 @@ public enum QueryFilterOperators
    {
       return _toString;
    }
+
+   public boolean isSingleValued()
+   {
+      return  IN != this && NOT_IN != this;
+   }
 }
