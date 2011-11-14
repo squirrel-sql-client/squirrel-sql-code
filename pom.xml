@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrel-root-pom</artifactId>
-	<version>3.2.2</version>
+	<version>3.2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -43,9 +43,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.2.2</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.2.2</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrel-root-pom-3.2.2</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/branches/squirrel-3_2_1-branch</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/branches/squirrel-3_2_1-branch</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/branches/squirrel-3_2_1-branch</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
