@@ -185,4 +185,15 @@ public class UpdateSettingsTest extends BaseSQuirreLJUnit4TestCase
 		assertFalse(clone.isEnableAutomaticUpdates());
 	}
 
+	@Test
+	public void testCopyConstuctorMigrateOldHostSettings() {
+		expect(mockUpdateSettings.getUpdateServer()).andReturn("www.squirrel-sql.net");
+		mockHelper.replayAll();
+		UpdateSettings copiedSettings = new UpdateSettings(mockUpdateSettings);
+		mockHelper.verifyAll();
+		
+		assertEquals(IUpdateSettings.DEFAULT_UPDATE_SERVER, copiedSettings.getUpdateServer());
+		assertEquals(IUpdateSettings.DEFAULT_UPDATE_PORT, copiedSettings.getUpdateServerPort());
+		assertEquals(IUpdateSettings.DEFAULT_UPDATE_PATH, copiedSettings.getUpdateServerPath());
+	}
 }

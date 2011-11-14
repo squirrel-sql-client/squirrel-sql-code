@@ -223,7 +223,7 @@ public class SquirrelPreferences implements Serializable
     private boolean _showErrorLogMessages = true;
 
     /** Always save preferences immediately when they change, instead of at shutdown */
-    private boolean _savePreferencesImmediately = true;
+    private boolean _savePreferencesImmediately = false;
 
     /** Whether or not to change the selection while right-clicking on list or tree node */
     private boolean _selectOnRightMouseClick = true;
@@ -857,14 +857,14 @@ public class SquirrelPreferences implements Serializable
 		setJdbcDebugType(IJdbcDebugTypes.NONE);
 	}
 
-    @SuppressWarnings("unchecked")
-	public static SquirrelPreferences load()
+    public static SquirrelPreferences load()
 	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
 		try
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(prefsFile);
+			@SuppressWarnings("rawtypes")
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{
@@ -1077,7 +1077,7 @@ public class SquirrelPreferences implements Serializable
     * @param data the _savePreferencesImmediately to set
     */
    public void setSavePreferencesImmediately(boolean data) {
-       if (data != _showErrorLogMessages)
+       if (data != _savePreferencesImmediately)
        {
           final boolean oldValue = _savePreferencesImmediately;
           _savePreferencesImmediately = data;
