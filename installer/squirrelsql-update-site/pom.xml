@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.2-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -162,6 +162,7 @@
 						<configuration>
 							<releaseDirectory>${project.build.directory}/release</releaseDirectory>
 							<releaseVersion>${squirrelsql.version}</releaseVersion>
+							<updateSitePath>${update.site.path}</updateSitePath>
 						</configuration>
 					</execution>
 				</executions>
@@ -183,13 +184,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
-			</extension>
-		</extensions>
 	</build>
 	<profiles>
 		<profile>
@@ -203,30 +197,28 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
-						<version>${wagon-plugin-version}</version>
-						<configuration>
-							<serverId>update-site-ftp-server</serverId>
-							<!-- property update.site.ftp.server defined in settings.xml installer profile -->
-							<url>ftp://${update.site.ftp.server}</url>
-						</configuration>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
 						<executions>
 							<execution>
-								<id>ftp-upload-release</id>
+								<configuration>
+									<executable>sftp</executable>
+									<arguments>
+										<argument>-b</argument>
+										<argument>target/batch.txt</argument>
+										<argument>${update.site.server}</argument>
+									</arguments>
+								</configuration>
 								<phase>install</phase>
 								<goals>
-									<goal>upload</goal>
+									<goal>exec</goal>
 								</goals>
-								<configuration>
-									<fromDir>target/release</fromDir>
-									<!-- property update.site.path defined in settings.xml installer profile -->
-									<toDir>${update.site.path}</toDir>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
+
 	</profiles>
 </project>

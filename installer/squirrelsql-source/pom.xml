@@ -10,7 +10,7 @@
 
 	<artifactId>squirrelsql-source</artifactId>
 	<packaging>jar</packaging>
-	<version>3.2.1</version>
+	<version>3.2.2-SNAPSHOT</version>
 
 	<name>SQuirreL SQL Client Source Archive (Aggregate)</name>
 	<description>

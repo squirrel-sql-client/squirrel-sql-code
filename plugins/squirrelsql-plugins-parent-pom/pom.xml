@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.2-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -56,17 +56,17 @@
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>fw</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrel-sql</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>fw</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2-SNAPSHOT</version>
 				<type>test-jar</type>
 			</dependency>
 			<dependency>
@@ -210,7 +210,7 @@
 						<dependency>
 							<groupId>net.sf.squirrel-sql.plugins</groupId>
 							<artifactId>squirrelsql-plugins-assembly-descriptor</artifactId>
-							<version>3.2.1</version>
+							<version>3.2.2-SNAPSHOT</version>
 						</dependency>
 					</dependencies>
 					<executions>
