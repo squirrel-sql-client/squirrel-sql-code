@@ -147,7 +147,7 @@
 			<plugin>
 				<groupId>net.sf.squirrel-sql</groupId>
 				<artifactId>squirrelsql-update-site-plugin</artifactId>
-				<version>1.0.9-SNAPSHOT</version>
+				<version>1.0.9</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
