@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0-rc1</version>
 	</parent>
 	<groupId>net.sf.squirrel-sql.cli</groupId>
 	<artifactId>dbcopy-cli</artifactId>
@@ -13,7 +13,7 @@
 	<name>DBCopy Command-Line Interface</name>
 	<description>
   	    Project that builds a super-jar whose main class is the DBCopy command-line interface.
-    </description>
+	</description>
 	<inceptionYear>2001</inceptionYear>
 	<developers>
 		<developer>
