@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>net.sf.squirrel-sql.cli</groupId>
 	<artifactId>dbcopy-cli</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>DBCopy Command-Line Interface</name>
 	<description>
@@ -39,9 +39,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/cli/dbcopy</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/cli/dbcopy</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/cli/dbcopy</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/dbcopy-cli-1.0.0</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/dbcopy-cli-1.0.0</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/dbcopy-cli-1.0.0</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
