@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.sf.squirrel-sql</groupId>
+		<artifactId>squirrel-root-pom</artifactId>
+		<version>3.3.0-rc1</version>
+	</parent>
+	<groupId>net.sf.squirrel-sql.cli</groupId>
+	<artifactId>dbcopy-cli</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	<name>DBCopy Command-Line Interface</name>
+	<description>
+  	    Project that builds a super-jar whose main class is the DBCopy command-line interface.
+	</description>
+	<inceptionYear>2001</inceptionYear>
+	<developers>
+		<developer>
+			<name>Gerd Wagner</name>
+			<roles>
+				<role>Administrator</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Rob Manning</name>
+			<roles>
+				<role>Developer</role>
+				<role>Release Manager</role>
+			</roles>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<url>http://www.squirrelsql.org/</url>
+	<scm>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/dbcopy-cli-1.0.0</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/dbcopy-cli-1.0.0</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/dbcopy-cli-1.0.0</url>
+	</scm>
+	<issueManagement>
+		<system>SourceForge Tracker</system>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://www.squirrel-sql.org/hudson/</url>
+	</ciManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+					    <id>uber-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>net.sourceforge.squirrel_sql.plugins.dbcopy.cli.DBCopyCLI</mainClass>
+								</transformer>
+							</transformers>
+							<artifactSet>
+								<excludes>
+									<exclude>antlr:antlr</exclude>
+									<exclude>asm:*</exclude>
+									<exclude>cgilib:cgilib</exclude>
+									<exclude>com.jidesoft:jide-oss</exclude>
+									<exclude>commons-codec:commons-codec</exclude>
+									<exclude>commons-httpclient:commons-httpclient</exclude>
+									<exlcude>jgoodies:forms</exlcude>
+									<exclude>net.sourceforge.jexcelapi:jxl</exclude>
+									<exclude>net.sf.ehcache:ehcache</exclude>
+									<exclude>org.hibernate:hibernate-annotations</exclude>
+									<exclude>org.hibernate:hibernate-commons-annotations</exclude>
+									<exclude>org.hibernate:hibernate-entitymanager</exclude>
+									<exclude>org.springframework:spring-beans</exclude>
+									<exclude>org.springframework:spring-context</exclude>
+									<exclude>org.springframework:spring-context-support</exclude>
+									<exclude>org.springframework:spring-core</exclude>
+								</excludes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.squirrel-sql.plugins</groupId>
+			<artifactId>dbcopy</artifactId>
+			<version>3.3.0-rc2</version>
+		</dependency>
+	</dependencies>
+</project>
