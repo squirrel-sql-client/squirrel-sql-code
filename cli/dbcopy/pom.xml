@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
@@ -55,41 +56,45 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
 				<executions>
 					<execution>
-						<id>unpack-deps</id>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-jar</id>
+					    <id>uber-jar</id>
 						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<archive>
-								<manifest>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>net.sourceforge.squirrel_sql.plugins.dbcopy.cli.DBCopyCLI</mainClass>
-								</manifest>
-							</archive>
-							<classesDirectory>${project.build.directory}/dependency</classesDirectory>
+								</transformer>
+							</transformers>
+							<artifactSet>
+								<excludes>
+									<exclude>antlr:antlr</exclude>
+									<exclude>asm:*</exclude>
+									<exclude>cgilib:cgilib</exclude>
+									<exclude>com.jidesoft:jide-oss</exclude>
+									<exclude>commons-codec:commons-codec</exclude>
+									<exclude>commons-httpclient:commons-httpclient</exclude>
+									<exlcude>jgoodies:forms</exlcude>
+									<exclude>net.sourceforge.jexcelapi:jxl</exclude>
+									<exclude>net.sf.ehcache:ehcache</exclude>
+									<exclude>org.hibernate:hibernate-annotations</exclude>
+									<exclude>org.hibernate:hibernate-commons-annotations</exclude>
+									<exclude>org.hibernate:hibernate-entitymanager</exclude>
+									<exclude>org.springframework:spring-beans</exclude>
+									<exclude>org.springframework:spring-context</exclude>
+									<exclude>org.springframework:spring-context-support</exclude>
+									<exclude>org.springframework:spring-core</exclude>
+								</excludes>
+							</artifactSet>
 						</configuration>
 					</execution>
 				</executions>
-
 			</plugin>
 		</plugins>
 	</build>
@@ -98,77 +103,6 @@
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dbcopy</artifactId>
 			<version>3.3.0-rc2</version>
-			<exclusions>
-				<exclusion>
-          			<groupId>antlr</groupId>
-          			<artifactId>antlr</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>asm</groupId>
-          			<artifactId>asm</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>asm</groupId>
-          			<artifactId>asm-attrs</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>cglib</groupId>
-          			<artifactId>cglib</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>com.jidesoft</groupId>
-          			<artifactId>jide-oss</artifactId>
-        		</exclusion>        		
-				<exclusion>
-          			<groupId>commons-codec</groupId>
-          			<artifactId>commons-codec</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>commons-httpclient</groupId>
-          			<artifactId>commons-httpclient</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>jgoodies</groupId>
-          			<artifactId>forms</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>net.sourceforge.jexcelapi</groupId>
-          			<artifactId>jxl</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>net.sf.ehcache</groupId>
-          			<artifactId>ehcache</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.hibernate</groupId>
-          			<artifactId>hibernate-annotations</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.hibernate</groupId>
-          			<artifactId>hibernate-commons-annotations</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.hibernate</groupId>
-          			<artifactId>hibernate-entitymanager</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.springframework</groupId>
-          			<artifactId>spring-beans</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.springframework</groupId>
-          			<artifactId>spring-context</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.springframework</groupId>
-          			<artifactId>spring-context-support</artifactId>
-        		</exclusion>
-				<exclusion>
-          			<groupId>org.springframework</groupId>
-          			<artifactId>spring-core</artifactId>
-        		</exclusion>
-        		
-			</exclusions>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>
