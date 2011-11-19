@@ -6,9 +6,30 @@
 <body>
 As of version 1.15 of the DBCopy Plugin, a new command-line interface is available for 
 copying tables.  This can be useful for scripts in cases where copying is to be done 
-in an automated way without a user present.
+in an automated way without a user present.  There is a super-jar available for 
+download here: repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy/&lt;version&gt;
 
+It can be run with this command:
 
+java -jar dbcopy-cli-&lt;version&gt;.jar
+
+and has the following usage:
+
+<pre>
+usage: DBCopyCLI --dest-alias <arg> --dest-catalog <arg> | --dest-schema
+       <arg>  --source-alias <arg> --source-catalog <arg> |
+       --source-schema <arg>  --table-list <arg> | --table-pattern <arg>
+    --dest-alias <arg>       The name of the destination alias to copy
+                             tables to
+    --dest-catalog <arg>     The destination catalog to copy tables into
+    --dest-schema <arg>      The destination schema to copy tables into
+    --source-alias <arg>     The name of the source alias to copy tables
+                             from
+    --source-catalog <arg>   The source catalog to copy tables from
+    --source-schema <arg>    The source schema to copy tables from
+    --table-list <arg>       A comma-delimited list of tables to copy
+    --table-pattern <arg>    A regexp pattern to match source table names
+</pre>
 
 </body>
 

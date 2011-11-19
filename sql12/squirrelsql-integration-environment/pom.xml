@@ -145,6 +145,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.sf.squirrel-sql.cli</groupId>
+			<artifactId>dbcopy-cli</artifactId>
+			<version>1.0.3-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>oracle</artifactId>
 			<version>${squirrel-sql-version}</version>
