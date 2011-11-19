@@ -43,7 +43,13 @@ public class DBCopyCLI
 			runner.setDestCatalogName(argProcessor.getDestCatalogName());
 			runner.setSourceSession(sessionUtil.getSessionForAlias(argProcessor.getSourceAliasName()));
 			runner.setDestSession(sessionUtil.getSessionForAlias(argProcessor.getDestAliasName()));
+			if (argProcessor.hasTableList()) {
+				runner.setTableList(argProcessor.getTableList());
+			} else {
+				runner.setTablePattern(argProcessor.getTablePattern());
+			}
 			runner.run();
+			
 		}
 		catch (MissingOptionException e)
 		{
