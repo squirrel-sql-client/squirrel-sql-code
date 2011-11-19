@@ -98,9 +98,23 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>fw</artifactId>
+			<version>3.3.0-rc1</version>
+		</dependency>			
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>squirrel-sql</artifactId>
+			<version>3.3.0-rc1</version>
+		</dependency>				
+		<dependency>
 			<groupId>net.sf.squirrel-sql.plugins</groupId>
 			<artifactId>dbcopy</artifactId>
 			<version>3.3.0-rc2</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>		
 	</dependencies>
 </project>
