@@ -23,8 +23,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
@@ -36,6 +34,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 public class DBCopyRunner
 {
@@ -115,6 +115,25 @@ public class DBCopyRunner
 		this.sourceCatalogName = sourceCatalogName;
 	}
 
+	public void setTablePattern(String pattern) throws SQLException
+	{
+		ISession sourceSession = sessionInfoProvider.getSourceSession();
+		String catalog = (sourceCatalogName==null || sourceCatalogName.equals("")) ? null : sourceCatalogName;
+		String schema = (sourceSchemaName==null || sourceSchemaName.equals("")) ? null : sourceSchemaName;
+		ISQLDatabaseMetaData md = sourceSession.getMetaData();
+		
+		ITableInfo[] infos = md.getTables(catalog, schema, pattern, new String[] { "TABLE" }, null);
+		if (infos == null || infos.length == 0) {
+			System.err.println("No tables were found that match the specified :");
+			System.err.println(" catalog: "+catalog);
+			System.err.println(" schema: "+schema);
+			System.err.println(" pattern: "+pattern);
+		}
+		for (ITableInfo info : infos) {
+			tables.add(info);
+		}
+	}
+	
 	public void setTableList(List<String> tableList) throws SQLException
 	{
 		for (String tableStr : tableList)

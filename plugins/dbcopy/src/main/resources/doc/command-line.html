@@ -4,16 +4,32 @@
 </head>
 
 <body>
+
+<p>
+
 As of version 1.15 of the DBCopy Plugin, a new command-line interface is available for 
 copying tables.  This can be useful for scripts in cases where copying is to be done 
-in an automated way without a user present.  There is a super-jar available for 
-download here: repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy/&lt;version&gt;
+in an automated way without a user present.  Aliases that are configured in the SQuirreL SQL Client
+can be referenced using command-line parameters.  This alias re-use keeps the amount of configuration to 
+a minimum.  
 
-It can be run with this command:
+</p><p>
 
-java -jar dbcopy-cli-&lt;version&gt;.jar
+There is a super-jar available for 
+download here: 
 
-and has the following usage:
+<br>
+
+<a href="http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.3/dbcopy-cli-1.0.3.jar">
+http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.3/dbcopy-cli-1.0.3.jar</a>
+
+</p><p>
+
+Once the jar file is downloaded, it can be run with this command:
+
+java -jar dbcopy-cli-1.0.3.jar
+
+This will display the following usage:
 
 <pre>
 usage: DBCopyCLI --dest-alias <arg> --dest-catalog <arg> | --dest-schema
@@ -31,7 +47,31 @@ usage: DBCopyCLI --dest-alias <arg> --dest-catalog <arg> | --dest-schema
     --table-pattern <arg>    A regexp pattern to match source table names
 </pre>
 
+Examples:
+<p>
+To copy the tables employee, customer and address from an alias called "Derby (dbcopysrc)" to 
+a database with alias "DB2 (DBCPDST)", issue the following command with a comma-delimited list 
+of tables:
+<pre>
+java -jar dbcopy-cli-1.0.3-SNAPSHOT.jar --source-alias "Derby (dbcopysrc)"  
+					--dest-alias "DB2 (DBCPDST)" 
+					--source-catalog "" 
+					--source-schema "DBCOPY" 
+					--dest-catalog "" 
+					--dest-schema "DBCPDST" 
+					--table-list employee,employer,customer,address
+</pre>
+</p>
+To copy all tables matching the pattern "emp*", use the --table-pattern argument instead of the 
+--table-list :
+<pre>
+java -jar dbcopy-cli-1.0.3-SNAPSHOT.jar --source-alias "Derby (dbcopysrc)"  
+					--dest-alias "DB2 (DBCPDST)" 
+					--source-catalog "" 
+					--source-schema "DBCOPY" 
+					--dest-catalog "" 
+					--dest-schema "DBCPDST" 
+					--table-pattern "emp%"
+</pre>
 </body>
-
-
 </html>
