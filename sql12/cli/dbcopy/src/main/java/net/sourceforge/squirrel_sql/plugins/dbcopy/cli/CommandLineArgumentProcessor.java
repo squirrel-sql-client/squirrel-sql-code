@@ -156,9 +156,13 @@ public class CommandLineArgumentProcessor
 		return cmd.getOptionValue(SOURCE_SCHEMA);
 	}
 	
+	public String getTablePattern() {
+		return cmd.getOptionValue(TABLE_PATTERN);
+	}
+	
 	public List<String> getTableList() {
 		List<String> result = new ArrayList<String>();
-		if (cmd.hasOption(TABLE_LIST)) {
+		if (hasTableList()) {
 			String tableListStr = cmd.getOptionValue(TABLE_LIST);
 			if (tableListStr.contains(",")) {
 				String[] parts = tableListStr.split(",");
@@ -169,7 +173,11 @@ public class CommandLineArgumentProcessor
 				result.add(tableListStr);
 			}
 		}
-		// TODO: add support for regular expression.
 		return result;
 	}
+	
+	public boolean hasTableList() {
+		return cmd.hasOption(TABLE_LIST);
+	}
+	
 }
