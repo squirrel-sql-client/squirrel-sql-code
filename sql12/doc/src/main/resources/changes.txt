@@ -54,6 +54,8 @@ MSSQL Plugin:
 New Plugin: Greenplum DB Plugin
   New Plugin for the Greenplum DB. Thanks to Adam Winn for the patch (Patch ID 3217167)
 
+Feature Request 3438689: (Process SQL Server's NVARCHAR fields).  
+	Added dialect mapping support for N* fields in SQL create scripts.
 
 Feature Request 1744964: Copy text from the SQL editor panel as rich text. 
 	This functionality is available via the pop-up menu and the tools pop-up. Additionally this mode can be 
