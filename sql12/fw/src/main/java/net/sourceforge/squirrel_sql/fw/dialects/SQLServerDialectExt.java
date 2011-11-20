@@ -57,7 +57,9 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 			registerColumnType(Types.INTEGER, "int");
 			registerColumnType(Types.LONGVARBINARY, "image");
 			registerColumnType(Types.LONGVARCHAR, "text");
+			registerColumnType(Types.NCHAR, "nchar($l)");
 			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			registerColumnType(Types.NVARCHAR, "nvarchar($l)");
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "datetime");
