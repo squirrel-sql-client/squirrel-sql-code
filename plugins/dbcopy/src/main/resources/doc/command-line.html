@@ -20,14 +20,14 @@ download here:
 
 <br>
 
-<a href="http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.3/dbcopy-cli-1.0.3.jar">
-http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.3/dbcopy-cli-1.0.3.jar</a>
+<a href="http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.2/dbcopy-cli-1.0.2.jar">
+http://repo1.maven.org/maven2/net/sf/squirrel-sql/cli/dbcopy-cli/1.0.2/dbcopy-cli-1.0.2.jar</a>
 
 </p><p>
 
 Once the jar file is downloaded, it can be run with this command:
 
-java -jar dbcopy-cli-1.0.3.jar
+java -jar dbcopy-cli-1.0.2.jar
 
 This will display the following usage:
 
@@ -53,7 +53,7 @@ To copy the tables employee, customer and address from an alias called "Derby (d
 a database with alias "DB2 (DBCPDST)", issue the following command with a comma-delimited list 
 of tables:
 <pre>
-java -jar dbcopy-cli-1.0.3-SNAPSHOT.jar --source-alias "Derby (dbcopysrc)"  
+java -jar dbcopy-cli-1.0.2.jar --source-alias "Derby (dbcopysrc)"  
 					--dest-alias "DB2 (DBCPDST)" 
 					--source-catalog "" 
 					--source-schema "DBCOPY" 
@@ -63,9 +63,9 @@ java -jar dbcopy-cli-1.0.3-SNAPSHOT.jar --source-alias "Derby (dbcopysrc)"
 </pre>
 </p>
 To copy all tables matching the pattern "emp*", use the --table-pattern argument instead of the 
---table-list :
+--table-list (wildcard is specified as "%", as it is in standard SQL) :
 <pre>
-java -jar dbcopy-cli-1.0.3-SNAPSHOT.jar --source-alias "Derby (dbcopysrc)"  
+java -jar dbcopy-cli-1.0.2.jar --source-alias "Derby (dbcopysrc)"  
 					--dest-alias "DB2 (DBCPDST)" 
 					--source-catalog "" 
 					--source-schema "DBCOPY" 
