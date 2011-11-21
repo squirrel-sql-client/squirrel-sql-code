@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0-rc1</version>
+		<version>3.3.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
-	<version>3.3.0-SNAPSHOT</version>
+	<version>3.3.0</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>SQuirreL Plugin Archetype</name>
@@ -47,9 +47,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/squirrelsql-plugin-archetype</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
