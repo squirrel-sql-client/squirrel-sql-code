@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -40,9 +40,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-launcher</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/installer/squirrelsql-launcher</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/installer/squirrelsql-launcher</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
