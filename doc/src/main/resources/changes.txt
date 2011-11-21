@@ -5,6 +5,9 @@ SQuirreL SQL Client Change Log
 ${squirrelsql.changelog.header}
 
 
+3.3.0 (11/20/2011)
+==================
+
 Enhancements:
 
 Hibernate Plugin:
