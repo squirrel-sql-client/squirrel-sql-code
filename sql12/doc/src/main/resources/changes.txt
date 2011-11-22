@@ -10,6 +10,9 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+3438689: (Process SQL Server's NVARCHAR fields) Added support to the Microsoft SQL Server dialect 
+         for NCHAR, NVARCHAR fields (nationalization data types).
+
 Hibernate Plugin:
   Directories containing archive files (Jars, Zips) can now be added to a Hibernate configuration's classpath.
   All files in the directory will be added as classpath entries.
