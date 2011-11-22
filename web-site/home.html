@@ -61,14 +61,15 @@
          <ul>
             <li class="hl">Enhancements </li>
             <UL>
-                <li class="hl">Additional way to display SQL results: Overview tab</li>
-                <li class="hl">Splash Screen now uses JVM splash screen support</li>
-                <li class="hl">Netezza Plugin: Added support for displaying external tables in the object tree</li>
-                <li class="hl">Hibernate Plugin: New way of limiting object count for HQL queries: Can prevent severe performance problems.</li>
-                <li class="hl">Hibernate Plugin: Hibernate session can be started in external process: Can prevent memory problems.</li>
-                <li class="hl">New global preference to choose if column labels or column names are used in SQL results. (Useful e.g. for MySQL)</li>
+                <li class="hl">Graph plugin now features a graphical query builder</li>
+                <li class="hl">New plugin "WIKI table configurations": save query results in WIKI formats</li>
+                <li class="hl">Syntax highlighting for database object source code</li>
+                <li class="hl">New plugin for Greenplum database</li>
+                <li class="hl">Improved memory management for large result sets</li>
+                <li class="hl">SQL Scripts Plugin now allows storing results of queries directly to file</li>
+                <li class="hl">DB-Diff-Plugin has side-by-side comparison and now supports external diff tools</li>
                 <li class="hl">Updated Chinese/French translations</li>
-                <li class="hl">SQuirreL SQL Client is now built, tested and released with Maven</li>
+                <li class="hl">Errors are now displayed in a temporary result tab for better visibility</li>
                 <li class="hl">Many other improvements were made for performance and ease-of-use</li>                
             </UL>
             <li class="hl">A number of bug fixes</li>
@@ -115,7 +116,7 @@
             <center>
                 <iframe src="http://sourceforge.net/export/projnews.php?group_id=28383&limit=3&flat=0&show_summaries=0" width="800" height="300">
                 <a href="http://sourceforge.net/export/projnews.php?group_id=28383&limit=3&flat=0&show_summaries=0">
-                    Hmm, you are using a very old browser. Click here to go directly to included content.</a>
+                    Your browser is not supported. Click here to proceed to project news summary.</a>
                 </iframe>
             </center>
             <br>
@@ -237,12 +238,12 @@
          <UL>
 
             <!-- SF messed downloads up a bit. We do our best to keep at least the most important links simple-->
-            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.2.1/squirrel-sql-3.2.1-install.jar/download">Install jars (and source) of SQuirreL 3.2.1 for Windows/Linux/others</a></B></LI>
-            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.2.1/squirrel-sql-3.2.1-MacOSX-install.jar/download">Install jars (and source) of SQuirreL 3.2.1 for MacOS X</a></B></LI>
-            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.2.1/squirrel-sql-3.2.1-1.noarch.rpm/download">RPM of SQuirreL 3.2.1 for RPM-based machines</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.3.0/squirrel-sql-3.3.0-install.jar/download">Install jars (and source) of SQuirreL 3.3.0 for Windows/Linux/others</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.3.0/squirrel-sql-3.3.0-MacOSX-install.jar/download">Install jars (and source) of SQuirreL 3.3.0 for MacOS X</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/1-stable/3.3.0/squirrel-sql-3.3.0-1.noarch.rpm/download">RPM of SQuirreL 3.3.0 for RPM-based machines</a></B></LI>
 
-            <LI><B><a href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/3.2.1-plainzip">Plain zip format of SQuirreL 3.2.1</a></B></LI>
-            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jars of weekly snapshots for Windows/Linux/MacOS X/others</a></B></LI>
+            <LI><B><a href="https://sourceforge.net/projects/squirrel-sql/files/1-stable/3.3.0-plainzip">Plain zip format of SQuirreL 3.3.0</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/projects/squirrel-sql/files/3-snapshots/">Install jar/rpm/zips of weekly snapshots for Windows/Linux/MacOS X/others</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Overview of all available downloads</a></B></LI>
          </UL>
 
@@ -250,7 +251,7 @@
 			<p>See the <A HREF="index.php?page=plugins">plugins</A>
 			page for instructions on installing plugins.</P>
 
-			<p>To checkout SQuirreL from SVN use the command:
+			<p>To checkout SQuirreL from the subversion repository use the command:
 			<BR><code>
 			&nbsp;&nbsp;&nbsp;svn co https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12
 			</code>
@@ -258,7 +259,7 @@
 
          <p><a  href="index.php?page=programing">Click here for detailed information on how to program SQuirreL.</a></p>
 
-			<p><a href="buildandrelease.html">Click here for detailed information on the build and release system.</a></p>
+			<p><a href="https://sourceforge.net/apps/trac/squirrel-sql/wiki/SQuirreLReleases">Click here for detailed information on the build and release system.</a></p>
 
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -297,8 +298,8 @@
 			mailing list will also be sent to this one so you don't need to
 			subscribe to both.</P>
 
-			<p>For developers there is a <A
-				HREF="http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop">developers</A>
+			<p>For developers there is a 
+			<A HREF="http://lists.sourceforge.net/lists/listinfo/squirrel-sql-develop">developers</A>
 			mailing list. If you are interested in helping to develop SQuirreL
 			or in writing your own plugins then this list is the one you
 			want.</P>
