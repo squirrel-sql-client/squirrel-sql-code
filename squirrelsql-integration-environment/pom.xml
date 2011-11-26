@@ -252,6 +252,9 @@
 								</goals>
 								<phase>integration-test</phase>
 								<configuration>
+									<includes>
+										<include>**/*ExternalTest.java</include>
+									</includes>
 									<excludes>
 										<exclude>**/DialectExternalTest.java</exclude>
 									</excludes>
