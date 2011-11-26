@@ -30,7 +30,7 @@ public class TableStatusTabExternalTest extends AbstractBaseObjectTabExternalTes
 	}
 	
 	protected BaseObjectTab getTabToTest() {
-		return new UserGrantsTab();
+		return new TableStatusTab();
 	}
 	
 	protected String getAlias() {
