@@ -258,6 +258,7 @@
 									<excludes>
 										<exclude>**/DialectExternalTest.java</exclude>
 									</excludes>
+									<forkMode>always</forkMode>
 								</configuration>
 							</execution>
 						</executions>
