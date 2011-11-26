@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>squirrelsql-integration-environment</artifactId>
@@ -56,7 +56,7 @@
 	</ciManagement>
 
 	<properties>
-		<squirrel-sql-version>3.3.0-SNAPSHOT</squirrel-sql-version>
+		<squirrel-sql-version>3.3.0</squirrel-sql-version>
 	</properties>
 		
 	<!-- This is blatant copy/paste from squirrelsql-launcher pom.xml -->
