@@ -75,24 +75,6 @@
 					<target>${javac-target-version}</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-test</id>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<phase>integration-test</phase>
-						<configuration>
-							<excludes>
-								<exclude>**/DialectExternalTest.java</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -250,6 +232,36 @@
 		</dependency>
 	</dependencies>
 	<profiles>
+	    <profile>
+	    	<id>pluginExternalTests</id>
+	    	<activation>
+	    		<property>
+	    			<name>pluginExternalTests</name>
+	    		</property>	    	
+	    	</activation>
+	    	<build>
+	    		<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-test</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<phase>integration-test</phase>
+								<configuration>
+									<excludes>
+										<exclude>**/DialectExternalTest.java</exclude>
+									</excludes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+	    		</plugins>	    	
+	    	</build>
+	    </profile>
 		<!--
 			This profile must be used in conjunction with one of the driver
 			profiles below
@@ -267,19 +279,28 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.5</version>
-						<configuration>
-							<includes>
-								<include>**/DialectExternalTest.java</include>
-							</includes>
-							<systemPropertyVariables>
-								<jdbcUrl>${jdbcUrl}</jdbcUrl>
-								<jdbcUser>${jdbcUser}</jdbcUser>
-								<jdbcPass>${jdbcPass}</jdbcPass>
-								<jdbcDriver>${jdbcDriver}</jdbcDriver>
-								<catalog>${catalog}</catalog>
-								<schema>${schema}</schema>
-							</systemPropertyVariables>
-						</configuration>
+						<executions>
+							<execution>
+								<id>default-test</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<phase>integration-test</phase>							
+								<configuration>
+									<includes>
+										<include>**/DialectExternalTest.java</include>
+									</includes>
+									<systemPropertyVariables>
+										<jdbcUrl>${jdbcUrl}</jdbcUrl>
+										<jdbcUser>${jdbcUser}</jdbcUser>
+										<jdbcPass>${jdbcPass}</jdbcPass>
+										<jdbcDriver>${jdbcDriver}</jdbcDriver>
+										<catalog>${catalog}</catalog>
+										<schema>${schema}</schema>
+									</systemPropertyVariables>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
