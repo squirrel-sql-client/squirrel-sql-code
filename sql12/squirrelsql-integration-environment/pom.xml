@@ -56,7 +56,7 @@
 	</ciManagement>
 
 	<properties>
-		<squirrel-sql-version>3.3.0</squirrel-sql-version>
+		<squirrel-sql-version>3.4.0-SNAPSHOT</squirrel-sql-version>
 	</properties>
 		
 	<!-- This is blatant copy/paste from squirrelsql-launcher pom.xml -->
@@ -147,7 +147,7 @@
 		<dependency>
 			<groupId>net.sf.squirrel-sql.cli</groupId>
 			<artifactId>dbcopy-cli</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>		
 		<dependency>
