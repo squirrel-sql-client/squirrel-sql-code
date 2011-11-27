@@ -75,6 +75,34 @@
 					<target>${javac-target-version}</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*Test.java</exclude>
+							</excludes>
+						</configuration>					
+					</execution>
+					<execution>
+						<id>default-integration-test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*Test.java</exclude>
+							</excludes>
+						</configuration>					
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -243,22 +271,24 @@
 	    		<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.10</version>
 						<executions>
 							<execution>
-								<id>default-test</id>
+								<id>execPluginExternalTests</id>
 								<goals>
-									<goal>test</goal>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
 								</goals>
-								<phase>integration-test</phase>
 								<configuration>
 									<includes>
-										<include>**/*ExternalTest.java</include>
+										<include>**/*TabExternalTest.java</include>
 									</includes>
 									<excludes>
 										<exclude>**/DialectExternalTest.java</exclude>
 									</excludes>
 									<forkMode>always</forkMode>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
 								</configuration>
 							</execution>
 						</executions>
@@ -281,19 +311,22 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.5</version>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.10</version>
 						<executions>
 							<execution>
-								<id>default-test</id>
+								<id>execDialectExternalTest</id>
 								<goals>
-									<goal>test</goal>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
 								</goals>
-								<phase>integration-test</phase>							
 								<configuration>
 									<includes>
 										<include>**/DialectExternalTest.java</include>
 									</includes>
+									<excludes>
+										<exclude>**/*TabExternalTest.java</exclude>
+									</excludes>
 									<systemPropertyVariables>
 										<jdbcUrl>${jdbcUrl}</jdbcUrl>
 										<jdbcUser>${jdbcUser}</jdbcUser>
@@ -302,6 +335,7 @@
 										<catalog>${catalog}</catalog>
 										<schema>${schema}</schema>
 									</systemPropertyVariables>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
 								</configuration>
 							</execution>
 						</executions>
