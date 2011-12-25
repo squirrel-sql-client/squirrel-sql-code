@@ -23,46 +23,59 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import net.sourceforge.squirrel_sql.fw.util.EmptyIterator;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class JavabeanArrayDataSet implements IDataSet
 {
-    @SuppressWarnings("unused")
-	private final ILogger s_log =
-		LoggerController.createLogger(JavabeanArrayDataSet.class);
-
 	private Object[] _currentRow;
 
 	private List<Object[]> _data;
-	private Iterator<Object[]> _dataIter;
+	private Iterator<Object[]> _dataIter = new EmptyIterator<Object[]>();
 
-	private int _columnCount;
-	private DataSetDefinition _dataSetDefinition;
+   private DataSetDefinition _dataSetDefinition;
+   private BeanInfo _info;
+   private Class _beanClass;
+   private BeanPorpertyColumnDisplayDefinition[] _beanPorpertyColumnDisplayDefinitions;
 
-	/**
+   private HashMap<String, String> _headers = new HashMap<String, String>();
+   private HashMap<String, Integer> _positions = new HashMap<String, Integer>();
+   private HashMap<String, Integer> _absoluteWidths = new HashMap<String, Integer>();
+   private HashSet<String> _ignoreProperties = new HashSet<String>();
+
+
+   /**
 	 * @throws	IllegalArgumentException
 	 * 			Thrrown if all objects in <TT>beans</TT> are not the same class.
 	 */
 	public JavabeanArrayDataSet(Object[] beans) throws DataSetException
 	{
-		super();
-		setJavabeanArray(beans);
+      if (null == beans || 0 == beans.length)
+      {
+         _beanClass = Object.class;
+      }
+      else
+      {
+         _beanClass = beans[0].getClass();
+      }
+      setJavaBeanArray(beans);
 	}
 
-	/**
+   public JavabeanArrayDataSet(Class beanClass) throws DataSetException
+   {
+      _beanClass = beanClass;
+   }
+
+   /**
 	 * Retrieve the number of columns in this <TT>DataSet</TT>.
 	 * 
 	 * @return	Number of columns.
 	 */
 	public final int getColumnCount()
 	{
-		return _columnCount;
+		return _beanPorpertyColumnDisplayDefinitions.length;
 	}
 
 	public DataSetDefinition getDataSetDefinition()
@@ -92,36 +105,22 @@ public class JavabeanArrayDataSet implements IDataSet
 		return getter.invoke(bean, (Object[])null);
 	}
 
-	/**
-	 * @throws	IllegalArgumentException
-	 * 			Thrrown if all objects in <TT>beans</TT> are not the same class.
-	 */
-	private void setJavabeanArray(Object[] beans) throws DataSetException
+   public void setJavaBeanList(List list) throws DataSetException
+   {
+      setJavaBeanArray(list.toArray(new Object[list.size()]));
+   }
+
+	public void setJavaBeanArray(Object[] beans) throws DataSetException
 	{
-		if (beans == null)
-		{
-			beans = new Object[0];
-		}
+      initColsAndBeanInfo(_beanClass);
 
 		if (beans.length > 0)
 		{
-			BeanInfo info = null;
-			try
-			{
-				info = Introspector.getBeanInfo(beans[0].getClass(), Introspector.USE_ALL_BEANINFO);
-				validateBeans(beans);
-				initialize(info);
-			}
-			catch (IntrospectionException ex)
-			{
-				throw new DataSetException(ex);
-			}
-
 			try
 			{
 				for (int i = 0; i < beans.length; ++i)
 				{
-					processBeanInfo(beans[i], info);
+					processBeanInfo(beans[i], _info);
 				}
 			}
 			catch (Exception ex)
@@ -132,70 +131,135 @@ public class JavabeanArrayDataSet implements IDataSet
 		}
 	}
 
-	private void processBeanInfo(Object bean, BeanInfo info)
+   void initColsAndBeanInfo(Class beanClass) throws DataSetException
+   {
+      try
+      {
+         _info = Introspector.getBeanInfo(beanClass, Introspector.USE_ALL_BEANINFO);
+         initializeCols(_info);
+      }
+      catch (IntrospectionException ex)
+      {
+         throw new DataSetException(ex);
+      }
+   }
+
+   private void processBeanInfo(Object bean, BeanInfo info)
 		throws InvocationTargetException, IllegalAccessException
 	{
-//		BeanInfo[] extra = info.getAdditionalBeanInfo();
-//		if (extra != null)
-//		{
-//			for (int i = 0; i < extra.length; ++i)
-//			{
-//				processBeanInfo(bean, extra[i]);
-//			}
-//		}
-
-		PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
-		Object[] line = new Object[propDesc.length];
-		for (int i = 0; i < propDesc.length; ++i)
+		ArrayList line = new ArrayList();
+		for (int i = 0; i < _beanPorpertyColumnDisplayDefinitions.length; ++i)
 		{
-			final Method getter = propDesc[i].getReadMethod();
+			final Method getter = _beanPorpertyColumnDisplayDefinitions[i].getPropDesc().getReadMethod();
 			if (getter != null)
 			{
-				line[i] = executeGetter(bean, getter);
+				line.add(executeGetter(bean, getter));
 			}
 		}
 
-		if (line != null)
-		{
-			_data.add(line);
-		}
+   	_data.add(line.toArray(new Object[line.size()]));
 	}
 
-	private void validateBeans(Object[] beans)
-		throws IllegalArgumentException
-	{
-		if (beans.length > 0)
-		{
-			final String className = beans[0].getClass().getName();
-			for (int i = 1; i < beans.length; ++i)
-			{
-				if (!beans[i].getClass().getName().equals(className))
-				{
-					throw new IllegalArgumentException("All beans must be the same Class");
-				}
-			}
-		}
-		
-	}
-
-	private void initialize(BeanInfo info)
+   private void initializeCols(BeanInfo info)
 	{
 		_data = new ArrayList<Object[]>();
-		ColumnDisplayDefinition[] colDefs = createColumnDefinitions(info, null);
-		_dataSetDefinition = new DataSetDefinition(colDefs);
-		_columnCount = _dataSetDefinition.getColumnDefinitions().length;
+      _beanPorpertyColumnDisplayDefinitions = createColumnDefinitions(info);
+		_dataSetDefinition = new DataSetDefinition(BeanPorpertyColumnDisplayDefinition.getColDefs(_beanPorpertyColumnDisplayDefinitions));
 	}
 
-	private ColumnDisplayDefinition[] createColumnDefinitions(BeanInfo info,
- 																int[] columnWidths)
+	private BeanPorpertyColumnDisplayDefinition[] createColumnDefinitions(BeanInfo info)
 	{
-		PropertyDescriptor[] propDesc = info.getPropertyDescriptors(); 
-		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[propDesc.length];
+		PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
+		ArrayList<BeanPorpertyColumnDisplayDefinition> columnDefs = new ArrayList<BeanPorpertyColumnDisplayDefinition>();
 		for (int i = 0; i < propDesc.length; ++i)
 		{
-			int colWidth = columnWidths != null && columnWidths.length >= i ? columnWidths[i] : 200;
-			columnDefs[i] = new ColumnDisplayDefinition(colWidth, propDesc[i].getDisplayName());
+         if(false  == isValidProperty(propDesc[i]))
+         {
+            continue;
+         }
+
+         ColumnDisplayDefinition colDef;
+
+
+
+         if (null == _headers.get(propDesc[i].getName()))
+         {
+            colDef = new ColumnDisplayDefinition(200, propDesc[i].getDisplayName());
+         }
+         else
+         {
+            colDef = new ColumnDisplayDefinition(200, _headers.get(propDesc[i].getName()));
+         }
+         colDef.setUserProperty(propDesc[i].getName());
+
+         if(null != _absoluteWidths.get(propDesc[i].getName()))
+         {
+            colDef.setAsoluteWidth(_absoluteWidths.get(propDesc[i].getName()));
+         }
+
+
+         columnDefs.add(new BeanPorpertyColumnDisplayDefinition(colDef, propDesc[i]));
 		}
-		return columnDefs;
+
+      if (0 < _positions.size())
+      {
+         Collections.sort(columnDefs, new Comparator<BeanPorpertyColumnDisplayDefinition>()
+         {
+            @Override
+            public int compare(BeanPorpertyColumnDisplayDefinition o1, BeanPorpertyColumnDisplayDefinition o2)
+            {
+               return comparePosition(o1, o2);
+            }
+         });
+      }
+
+
+      return columnDefs.toArray(new BeanPorpertyColumnDisplayDefinition[columnDefs.size()]);
 	}
+
+   private int comparePosition(BeanPorpertyColumnDisplayDefinition o1, BeanPorpertyColumnDisplayDefinition o2)
+   {
+      if(null == _positions.get(o1.getColDef().getUserProperty()) && null == _positions.get(o2.getColDef().getUserProperty()))
+      {
+         return 0;
+      }
+      else if(null == _positions.get(o1.getColDef().getUserProperty()) && null != _positions.get(o2.getColDef().getUserProperty()))
+      {
+         return 1;
+      }
+      else if(null != _positions.get(o1.getColDef().getUserProperty()) && null == _positions.get(o2.getColDef().getUserProperty()))
+      {
+         return -1;
+      }
+      else
+      {
+         return _positions.get(o1.getColDef().getUserProperty()).compareTo(_positions.get(o2.getColDef().getUserProperty()));
+      }
+   }
+
+   private boolean isValidProperty(PropertyDescriptor propertyDescriptor)
+   {
+      return   false == propertyDescriptor.getReadMethod().getDeclaringClass().equals(Object.class)
+            && false == _ignoreProperties.contains(propertyDescriptor.getName());
+   }
+
+   public void setColHeader(String prop, String header)
+   {
+      _headers.put(prop, header);
+   }
+
+   public void setColPos(String prop, int pos)
+   {
+      _positions.put(prop, pos);
+   }
+
+   public void setAbsoluteWidht(String prop, int width)
+   {
+      _absoluteWidths.put(prop, width);
+   }
+
+   public void setIgnoreProperty(String ignoreProperty)
+   {
+      _ignoreProperties.add(ignoreProperty);
+   }
 }

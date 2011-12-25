@@ -18,10 +18,10 @@ public class TabToWindowHandler
    private GraphWindowController _graphWindowController;
    private LazyLoadListener _lazyLoadListener;
 
-   public TabToWindowHandler(GraphPanelController panelController, ISession session, GraphPlugin plugin)
+   public TabToWindowHandler(GraphPanelController panelController, ISession session, GraphPlugin plugin, boolean isLink)
    {
       _session = session;
-      _graphMainPanelTab = new GraphMainPanelTab(panelController, plugin);
+      _graphMainPanelTab = new GraphMainPanelTab(panelController, plugin, isLink);
       _graphMainPanelTab.getToWindowButton().addActionListener(new ActionListener()
       {
          @Override
@@ -147,6 +147,23 @@ public class TabToWindowHandler
       else
       {
          _graphWindowController.returnToTab();
+      }
+   }
+
+   public void changedFromLinkToLocalCopy()
+   {
+      _graphMainPanelTab.changedFromLinkToLocalCopy();
+   }
+
+   public Component getComponent()
+   {
+      if(null == _graphWindowController)
+      {
+         return _graphMainPanelTab.getComponent();
+      }
+      else
+      {
+         return _graphWindowController.getComponent();
       }
    }
 }

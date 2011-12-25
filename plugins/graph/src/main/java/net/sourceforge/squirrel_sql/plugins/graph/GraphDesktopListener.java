@@ -26,4 +26,16 @@ public interface GraphDesktopListener
    void tablesDropped(List<ITableInfo> tis, Point dropPoint);
 
    void toggleWindowTab();
+
+
+
+   boolean isLink();
+
+   void saveLinkAsLocalCopy();
+
+   void saveLinkedGraph();
+
+   void removeLink();
+
+   void showLinkDetails();
 }

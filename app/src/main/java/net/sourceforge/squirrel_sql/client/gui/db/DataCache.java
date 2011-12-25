@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -280,6 +281,30 @@ public class DataCache
    {
       return _cache.getAllForClass(SQL_ALIAS_IMPL);
    }
+
+   public HashMap<String, ArrayList<ISQLAlias>> aliasesByUrl()
+   {
+      Iterator<ISQLAlias> aliases = aliases();
+
+      HashMap<String, ArrayList<ISQLAlias>> ret = new HashMap<String, ArrayList<ISQLAlias>>();
+
+      while(aliases.hasNext())
+      {
+         ISQLAlias alias = aliases.next();
+
+         ArrayList<ISQLAlias> buf = ret.get(alias.getUrl());
+         if(null == buf)
+         {
+            buf = new ArrayList<ISQLAlias>();
+            buf.add(alias);
+            ret.put(alias.getUrl(), buf);
+         }
+      }
+
+      return ret;
+
+   }
+
 
    public void addAlias(ISQLAlias alias) throws DuplicateObjectException
    {

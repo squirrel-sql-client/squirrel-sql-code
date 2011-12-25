@@ -4,6 +4,13 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
+Enhancements:
+
+Graph Plugin:
+  New Session toolbar button to create links to Graphs of other JDBC-URLs or to Graphs that are placed arbitrary directories.
+  With this feature it is possible to work with shared repositories of Graphs.
+
+
 
 3.3.0 (11/20/2011)
 ==================

@@ -27,11 +27,11 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.graph.link.LinkGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  * The SQL Script plugin class.
@@ -39,7 +39,7 @@ import java.util.Vector;
 public class GraphPlugin extends DefaultSessionPlugin
 {
 
-   private Hashtable<IIdentifier, GraphController[]> _grapControllersBySessionID = new Hashtable<IIdentifier, GraphController[]>();
+   private Hashtable<IIdentifier, ArrayList<GraphController>> _grapControllersBySessionID = new Hashtable<IIdentifier, ArrayList<GraphController>>();
 
    /**
     * Logger for this class.
@@ -147,6 +147,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       ActionCollection coll = app.getActionCollection();
       coll.add(new AddToGraphAction(app, _resources, this));
       coll.add(new NewQueryBuilderWindowAction(app, _resources, this));
+      coll.add(new LinkGraphAction(app, _resources, this));
    }
 
    /**
@@ -168,11 +169,18 @@ public class GraphPlugin extends DefaultSessionPlugin
    public PluginSessionCallback sessionStarted(final ISession session)
    {
       GraphXmlSerializer[] serializers  = GraphXmlSerializer.getGraphXmSerializers(this, session);
-      GraphController[] controllers = new GraphController[serializers.length];
+      ArrayList<GraphController> controllers = new ArrayList<GraphController>();
 
-      for (int i = 0; i < controllers.length; i++)
+      for (int i = 0; i < serializers.length; i++)
       {
-         controllers[i] = new GraphController(session, this, serializers[i], false);
+         controllers.add(new GraphController(session, this, serializers[i], false));
+      }
+
+      GraphXmlSerializer[] linkedSerializers  = GraphXmlSerializer.getLinkedGraphXmSerializers(this, session);
+
+      for (int i = 0; i < linkedSerializers.length; i++)
+      {
+         controllers.add(new GraphController(session, this, linkedSerializers[i], false));
       }
 
 
@@ -186,6 +194,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       session.addSeparatorToToolbar();
       session.addToToolbar(coll.get(NewQueryBuilderWindowAction.class));
+      session.addToToolbar(coll.get(LinkGraphAction.class));
 
 
       return new PluginSessionCallbackAdaptor(this);
@@ -194,18 +203,17 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public void sessionEnding(ISession session)
    {
-      GraphController[] controllers = _grapControllersBySessionID.remove(session.getIdentifier());
+      ArrayList<GraphController> controllers = _grapControllersBySessionID.remove(session.getIdentifier());
 
-      for (int i = 0; i < controllers.length; i++)
+      for (GraphController controller : controllers)
       {
-         controllers[i].sessionEnding();
+         controller.sessionEnding();
       }
-
    }
 
    public GraphController[] getGraphControllers(ISession session)
    {
-      return _grapControllersBySessionID.get(session.getIdentifier());
+      return _grapControllersBySessionID.get(session.getIdentifier()).toArray(new GraphController[0]);
    }
 
    public String patchName(String name, ISession session)
@@ -222,16 +230,16 @@ public class GraphPlugin extends DefaultSessionPlugin
          ++postfix;
       }
 
-      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
+      ArrayList<GraphController> controllers = _grapControllersBySessionID.get(session.getIdentifier());
 
       while(true)
       {
          boolean incremented = false;
-         for (int i = 0; i < controllers.length; i++)
+         for (int i = 0; i < controllers.size(); i++)
          {
             if(0 == postfix)
             {
-               if(controllers[i].getTitle().equals(name))
+               if(controllers.get(i).getTitle().equals(name))
                {
                   ++postfix;
                   incremented = true;
@@ -239,7 +247,7 @@ public class GraphPlugin extends DefaultSessionPlugin
             }
             else
             {
-               if(controllers[i].getTitle().equals(name + "_" + postfix))
+               if(controllers.get(i).getTitle().equals(name + "_" + postfix))
                {
                   ++postfix;
                   incremented = true;
@@ -265,36 +273,50 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public GraphController createNewGraphControllerForSession(ISession session, boolean showDndDesktopImageAtStartup)
    {
-      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
+      return _createNewGraphControllerForSession(session, null, showDndDesktopImageAtStartup);
+   }
 
-      Vector<GraphController> v = new Vector<GraphController>();
-      if(null != controllers)
+   public void createNewGraphControllerForSession(ISession session, GraphXmlSerializer graphXmlSerializer)
+   {
+      _createNewGraphControllerForSession(session, graphXmlSerializer, false);
+   }
+
+   private GraphController _createNewGraphControllerForSession(ISession session, GraphXmlSerializer graphXmlSerializer, boolean showDndDesktopImageAtStartup)
+   {
+      ArrayList<GraphController> controllers = _grapControllersBySessionID.get(session.getIdentifier());
+
+      if(null == controllers)
       {
-         v.addAll(Arrays.asList(controllers));
+         controllers = new ArrayList<GraphController>();
+         _grapControllersBySessionID.put(session.getIdentifier(), controllers);
       }
-      GraphController ret = new GraphController(session, this, null, showDndDesktopImageAtStartup);
-      v.add(ret);
-
-      controllers = v.toArray(new GraphController[v.size()]);
+      GraphController ret = new GraphController(session, this, graphXmlSerializer, showDndDesktopImageAtStartup);
+      controllers.add(ret);
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
       return ret;
    }
 
+
+
    public void removeGraphController(GraphController toRemove, ISession session)
    {
-      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
-      Vector<GraphController> v = new Vector<GraphController>();
-      for (int i = 0; i < controllers.length; i++)
+      ArrayList<GraphController> controllers = _grapControllersBySessionID.get(session.getIdentifier());
+
+      if(null == controllers)
       {
-         if(false == controllers[i].equals(toRemove))
-         {
-            v.add(controllers[i]);
-         }
+         return;
       }
 
-      controllers = v.toArray(new GraphController[v.size()]);
-      _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
+      for (int i = 0; i < controllers.size(); i++)
+      {
+         if(controllers.get(i).equals(toRemove))
+         {
+            controllers.remove(i);
+            break;
+         }
+      }
    }
+
 }

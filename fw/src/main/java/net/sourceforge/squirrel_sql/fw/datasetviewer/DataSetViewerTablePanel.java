@@ -43,7 +43,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -72,9 +71,15 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		super();
 	}
 
-	public void init(IDataSetUpdateableModel updateableModel)
+   public void init(IDataSetUpdateableModel updateableModel)
+   {
+      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+   }
+
+
+	public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode)
 	{
-		_table = new MyJTable(this, updateableModel);
+		_table = new MyJTable(this, updateableModel, listSelectionMode);
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
 		_updateableModel = updateableModel;
 	}
@@ -171,6 +176,36 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       return _table.getSelectedRows();
    }
 
+   public int[] getSeletedModelRows()
+   {
+      int[] selectedViewRows = _table.getSelectedRows();
+
+      int[] ret = new int[selectedViewRows.length];
+
+      for (int i = 0; i < selectedViewRows.length; i++)
+      {
+         ret[i] = (((SortableTableModel)_table.getModel()).transfromToModelRow(selectedViewRows[i]));
+      }
+
+      return ret;
+   }
+
+   
+   public int getColumnWidthForHeader(String header)
+   {
+      TableColumnModel columnModel = _table.getColumnModel();
+
+      for (int i = 0; i < columnModel.getColumnCount(); i++)
+      {
+         if(columnModel.getColumn(i).getHeaderValue().equals(header))
+         {
+            return columnModel.getColumn(i).getWidth();
+         }
+      }
+
+      throw new IllegalStateException("No col with header: " + header);
+   }
+
 
    /*
      * The JTable used for displaying all DB ResultSet info.
@@ -189,7 +224,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
 		MyJTable(IDataSetTableControls creator,
-					IDataSetUpdateableModel updateableObject)
+               IDataSetUpdateableModel updateableObject, int listSelectionMode)
 		{
 			super(new SortableTableModel(new MyTableModel(creator)));
 			_creator = creator;
@@ -204,7 +239,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			// the background model is updateable AND we are not already editing
 			if (updateableObject != null && ! creator.isTableEditable())
 				allowUpdate = true;
-			createGUI(allowUpdate, updateableObject);
+			createGUI(allowUpdate, updateableObject, listSelectionMode);
 
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
@@ -437,17 +472,27 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			for (int i = 0; i < colDefs.length; ++i)
 			{
 				ColumnDisplayDefinition colDef = colDefs[i];
-				int colWidth = colDef.getDisplayWidth() * _multiplier;
-				if (colWidth > MAX_COLUMN_WIDTH * _multiplier)
-				{
-					colWidth = MAX_COLUMN_WIDTH * _multiplier;
-				}
-				else if (colWidth < MIN_COLUMN_WIDTH * _multiplier)
-				{
-					  colWidth = MIN_COLUMN_WIDTH * _multiplier;
-				}
 
-				ExtTableColumn col = new ExtTableColumn(i, colWidth,
+				int colWidth;
+
+            if (null == colDef.getAbsoluteWidth())
+            {
+               colWidth = colDef.getDisplayWidth() * _multiplier;
+               if (colWidth > MAX_COLUMN_WIDTH * _multiplier)
+               {
+                  colWidth = MAX_COLUMN_WIDTH * _multiplier;
+               }
+               else if (colWidth < MIN_COLUMN_WIDTH * _multiplier)
+               {
+                    colWidth = MIN_COLUMN_WIDTH * _multiplier;
+               }
+            }
+            else
+            {
+               colWidth = colDef.getAbsoluteWidth();
+            }
+
+            ExtTableColumn col = new ExtTableColumn(i, colWidth,
 					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 
             String headerValue = colDef.getColumnHeading();
@@ -481,9 +526,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		}
 
 		private void createGUI(boolean allowUpdate,
-									  IDataSetUpdateableModel updateableObject)
+                             IDataSetUpdateableModel updateableObject, int selectionMode)
 		{
-			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+			setSelectionMode(selectionMode);
 			setRowSelectionAllowed(false);
 			setColumnSelectionAllowed(false);
 			setCellSelectionEnabled(true);

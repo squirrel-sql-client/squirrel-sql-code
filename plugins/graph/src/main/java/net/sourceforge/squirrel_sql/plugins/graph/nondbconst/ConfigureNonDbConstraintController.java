@@ -162,7 +162,7 @@ public class ConfigureNonDbConstraintController
    {
       try
       {
-         ArrayList<ContraintDisplayData> displayDatas = _constraintDataSet.removeRows(_dlg._table.getSeletedRows());
+         ArrayList<ContraintDisplayData> displayDatas = _constraintDataSet.removeRows(_dlg._table.getSeletedModelRows());
          if (0 < displayDatas.size())
          {
             _dlg._table.show(_constraintDataSet);

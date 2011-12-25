@@ -111,8 +111,10 @@ public class ColumnDisplayDefinition
     * registered. 
     */
    private DialectType _dialectType;
-    
-	/**
+   private String _userProperty;
+   private Integer _absoluteWidth;
+
+   /**
     * Ctor.  The dialect type is set to GENERIC, so no plugin-overriding is 
     * possible when using this constructor.
     * 
@@ -507,6 +509,25 @@ public class ColumnDisplayDefinition
 		   return getColumnName();
 	   }
    }
-   
-   
+
+
+   public void setUserProperty(String userProperty)
+   {
+      _userProperty = userProperty;
+   }
+
+   public String getUserProperty()
+   {
+      return _userProperty;
+   }
+
+   public void setAsoluteWidth(Integer absoluteWidth)
+   {
+      _absoluteWidth = absoluteWidth;
+   }
+
+   public Integer getAbsoluteWidth()
+   {
+      return _absoluteWidth;
+   }
 }

@@ -27,9 +27,25 @@ public class GraphDesktopController
    private ConstraintView _lastPressedConstraintView;
 
    private JPopupMenu _popUp;
+
+   ////////////////////////////////////
+   // Saving Graph
    private JMenuItem _mnuSaveGraph;
    private JMenuItem _mnuRenameGraph;
    private JMenuItem _mnuRemoveGraph;
+   //
+   ////////////////////////////////////
+
+   ////////////////////////////////////
+   // Saving link
+   private JMenuItem _mnuSaveLinkAsLocalCopy;
+   private JMenuItem _mnuSaveLinkedGraph;
+   private JMenuItem _mnuRemoveLink;
+   private JMenuItem _mnuShowLinkDetails;
+   //
+   ////////////////////////////////////
+
+
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
    private JMenuItem _mnuSelectAllTables;
@@ -177,39 +193,17 @@ public class GraphDesktopController
    {
       _popUp = new JPopupMenu();
 
-		// i18n[graph.saveGraph=Save graph]
-		_mnuSaveGraph = new JMenuItem(s_stringMgr.getString("graph.saveGraph"));
-      _mnuSaveGraph.addActionListener(new ActionListener()
+      if (_listener.isLink())
       {
-         public void actionPerformed(ActionEvent e)
-         {
-            onSaveGraph();
-         }
-      });
-
-
-		// i18n[graph.renameGraph=Rename graph]
-		_mnuRenameGraph= new JMenuItem(s_stringMgr.getString("graph.renameGraph"));
-      _mnuRenameGraph.addActionListener(new ActionListener()
+         createLinkSavingMenus();
+      }
+      else
       {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRenameGraph();
-         }
-      });
-
-		// i18n[graph.removeGraph=Remove graph]
-		_mnuRemoveGraph= new JMenuItem(s_stringMgr.getString("graph.removeGraph"));
-      _mnuRemoveGraph.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onRemoveGraph();
-         }
-      });
+         createGraphSavingMenus();
+      }
 
 
-		// i18n[graph.refreshAllTables=Refresh all tables]
+      // i18n[graph.refreshAllTables=Refresh all tables]
 		_mnuRefreshAllTables = new JMenuItem(s_stringMgr.getString("graph.refreshAllTables"));
       _mnuRefreshAllTables.addActionListener(new ActionListener()
       {
@@ -320,9 +314,19 @@ public class GraphDesktopController
          }
       });
 
-      _popUp.add(_mnuSaveGraph);
-      _popUp.add(_mnuRenameGraph);
-      _popUp.add(_mnuRemoveGraph);
+      if (_listener.isLink())
+      {
+         _popUp.add(_mnuSaveLinkAsLocalCopy);
+         _popUp.add(_mnuSaveLinkedGraph);
+         _popUp.add(_mnuRemoveLink);
+         _popUp.add(_mnuShowLinkDetails);
+      }
+      else
+      {
+         _popUp.add(_mnuSaveGraph);
+         _popUp.add(_mnuRenameGraph);
+         _popUp.add(_mnuRemoveGraph);
+      }
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
@@ -366,6 +370,81 @@ public class GraphDesktopController
          @Override public void popupMenuCanceled(PopupMenuEvent e) {}
       });
 
+   }
+
+   private void createLinkSavingMenus()
+   {
+      _mnuSaveLinkAsLocalCopy = new JMenuItem(s_stringMgr.getString("graph.saveLinkAsLocalCopy"));
+      _mnuSaveLinkAsLocalCopy.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSaveLinkAsLocalCopy();
+         }
+      });
+
+      _mnuSaveLinkedGraph = new JMenuItem(s_stringMgr.getString("graph.saveLinkedGraph"));
+      _mnuSaveLinkedGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSaveLinkedGraph();
+         }
+      });
+
+      _mnuRemoveLink = new JMenuItem(s_stringMgr.getString("graph.removeLink"));
+      _mnuRemoveLink.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRemoveLink();
+         }
+      });
+
+      _mnuShowLinkDetails = new JMenuItem(s_stringMgr.getString("graph.showLinkDetails"));
+      _mnuShowLinkDetails.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.LINK));
+
+      _mnuShowLinkDetails.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onShowLinkDetails();
+         }
+      });
+   }
+
+   private void createGraphSavingMenus()
+   {
+      // i18n[graph.saveGraph=Save graph]
+      _mnuSaveGraph = new JMenuItem(s_stringMgr.getString("graph.saveGraph"));
+      _mnuSaveGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSaveGraph();
+         }
+      });
+
+
+      // i18n[graph.renameGraph=Rename graph]
+      _mnuRenameGraph= new JMenuItem(s_stringMgr.getString("graph.renameGraph"));
+      _mnuRenameGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRenameGraph();
+         }
+      });
+
+      // i18n[graph.removeGraph=Remove graph]
+      _mnuRemoveGraph= new JMenuItem(s_stringMgr.getString("graph.removeGraph"));
+      _mnuRemoveGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRemoveGraph();
+         }
+      });
    }
 
    private void onPopupMenuWillBecomeInvisible()
@@ -456,13 +535,16 @@ public class GraphDesktopController
 
    private void onRemoveGraph()
    {
-		// i18n[graph.delGraph=Do you really wish to delete this graph?]
-      Window parent = SwingUtilities.windowForComponent(_desktopPane);
-      int res = JOptionPane.showConfirmDialog(parent, s_stringMgr.getString("graph.delGraph"));
-      if(res == JOptionPane.YES_OPTION)
+      if(showRemoveOptionPane("graph.delGraph") == JOptionPane.YES_OPTION)
       {
          _listener.removeRequest();
       }
+   }
+
+   private int showRemoveOptionPane(String msgKey)
+   {
+      Window parent = SwingUtilities.windowForComponent(_desktopPane);
+      return JOptionPane.showConfirmDialog(parent, s_stringMgr.getString(msgKey));
    }
 
    private void onRenameGraph()
@@ -481,6 +563,31 @@ public class GraphDesktopController
    {
       _listener.saveGraphRequested();
    }
+
+   private void onSaveLinkAsLocalCopy()
+   {
+      _listener.saveLinkAsLocalCopy();
+   }
+
+   private void onSaveLinkedGraph()
+   {
+      _listener.saveLinkedGraph();
+   }
+
+   private void onRemoveLink()
+   {
+      if(showRemoveOptionPane("graph.delLink") == JOptionPane.YES_OPTION)
+      {
+         _listener.removeLink();
+      }
+   }
+
+   private void onShowLinkDetails()
+   {
+      _listener.showLinkDetails();
+   }
+
+
 
    private void maybeShowPopup(MouseEvent e)
    {
@@ -725,5 +832,10 @@ public class GraphDesktopController
    public TableFramesModel getTableFramesModel()
    {
       return _modeManager.getTableFramesModel();
+   }
+
+   public void changedFromLinkToLocalCopy()
+   {
+      createPopUp();
    }
 }
