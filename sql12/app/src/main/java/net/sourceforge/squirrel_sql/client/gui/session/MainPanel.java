@@ -268,7 +268,7 @@ public class MainPanel extends JPanel
       }
    }
 
-   private int getTabIndex(IMainPanelTab tab)
+   public int getTabIndex(IMainPanelTab tab)
    {
       int checkIdx;
       if(null == tab.getTabComponent())

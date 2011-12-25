@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.ObjFilterMatcher;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -98,6 +99,7 @@ public class TableFrameController
    private TableFramesModelListener _tableFramesModelListener;
    private ComponentAdapter _componentListener;
    private InternalFrameAdapter _internalFrameListener;
+   private NonExistentingTableInfoPlaceHolder _nonExistentingTableInfoPlaceHolder;
 
 
    public TableFrameController(GraphPlugin plugin,
@@ -373,21 +375,7 @@ public class TableFrameController
 
    private String getQualifiedName()
    {
-      String ret = "";
-
-      if(null !=_catalog)
-      {
-         ret += _catalog + ".";
-      }
-
-      if(null !=_schema)
-      {
-         ret += _schema + ".";
-      }
-
-      ret += _tableName;
-
-      return ret;
+      return SQLUtilities.getQualifiedTableName(_catalog, _schema, _tableName);
    }
 
    /**
@@ -846,11 +834,19 @@ public class TableFrameController
 
       /////////////////////////////////////////////////////////////////////////////////////
       // This used to cause a ArrayIndexOutOfBoundsException
+      // The place holder treatment has been introduced with the Graph links.
+      // For links it is rather likely to happen, that non exisiting tables are in a Graph
       if(0 == tableInfos.length)
       {
-         String errMsg = s_stringMgr.getString("TableFrameController.tableDoesNotExist", _tableName);
-         _session.getApplication().getMessageHandler().showErrorMessage(errMsg);
-         throw new IllegalStateException(errMsg);
+         if (null == _nonExistentingTableInfoPlaceHolder)
+         {
+            _nonExistentingTableInfoPlaceHolder = new NonExistentingTableInfoPlaceHolder(_catalog, _schema, _tableName);
+            String errMsg = s_stringMgr.getString("TableFrameController.tableDoesNotExist", _tableName);
+            _session.getApplication().getMessageHandler().showErrorMessage(errMsg);
+            s_log.error("Table does not exits: " + _tableName, new IllegalStateException(errMsg));
+         }
+
+         return _nonExistentingTableInfoPlaceHolder;
       }
       //
       //////////////////////////////////////////////////////////////////////////////////////

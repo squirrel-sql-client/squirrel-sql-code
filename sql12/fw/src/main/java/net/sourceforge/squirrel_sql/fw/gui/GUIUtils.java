@@ -24,6 +24,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
@@ -480,5 +482,23 @@ public class GUIUtils
          }
 
       }
+   }
+
+   public static void enableCloseByEscape(final JDialog dialog)
+   {
+      AbstractAction closeAction = new AbstractAction()
+      {
+
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            dialog.setVisible(false);
+            dialog.dispose();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      dialog.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      dialog.getRootPane().getActionMap().put("CloseAction", closeAction);
    }
 }

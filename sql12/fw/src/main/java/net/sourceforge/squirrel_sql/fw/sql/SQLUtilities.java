@@ -386,7 +386,26 @@ public class SQLUtilities
 		}
 	}
 
-	/**
+   public static String getQualifiedTableName(String catalog, String schema, String tableName)
+   {
+      String ret = "";
+
+      if(null != catalog)
+      {
+         ret += catalog + ".";
+      }
+
+      if(null != schema)
+      {
+         ret += schema + ".";
+      }
+
+      ret += tableName;
+
+      return ret;
+   }
+
+   /**
 	 * @author manningr
 	 */
 	private static class TableComparator implements Comparator<ITableInfo>, Serializable

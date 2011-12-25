@@ -22,7 +22,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    private JButton _btnToWindow;
    private LazyLoadListener _lazyLoadListener;
 
-   public GraphMainPanelTab(GraphPanelController panelController, GraphPlugin plugin)
+   public GraphMainPanelTab(GraphPanelController panelController, GraphPlugin plugin, boolean isLink)
    {
       _panelController = panelController;
       _tabComponent = new JPanel(new BorderLayout(3,0));
@@ -30,6 +30,12 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 
       _lblTitle = new JLabel(s_stringMgr.getString("graph.newGraph"));
       _lblTitle.setOpaque(false);
+      if(isLink)
+      {
+         ImageIcon linkIcon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.LINK);
+         _lblTitle.setIcon(linkIcon);
+      }
+
 
       _tabComponent.add(_lblTitle, BorderLayout.CENTER);
       ImageIcon icon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.TO_WINDOW);
@@ -88,5 +94,10 @@ public class GraphMainPanelTab extends BaseMainPanelTab
    public void setLazyLoadListener(LazyLoadListener lazyLoadListener)
    {
       _lazyLoadListener = lazyLoadListener;
+   }
+
+   public void changedFromLinkToLocalCopy()
+   {
+      _lblTitle.setIcon(null);
    }
 }

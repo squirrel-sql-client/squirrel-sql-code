@@ -19,23 +19,6 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.Vector;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -44,20 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileAppendAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileCloseAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileNewAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.FilePrintAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
-import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
@@ -73,6 +43,18 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.Vector;
 
 public class SessionPanel extends JPanel
 {
@@ -512,6 +494,11 @@ public class SessionPanel extends JPanel
    public int getTabCount()
    {
       return _mainTabPane.getTabbedPane().getTabCount();
+   }
+
+   public int getMainTabIndex(IMainPanelTab mainPanelTab)
+   {
+      return _mainTabPane.getTabIndex(mainPanelTab);
    }
 
 

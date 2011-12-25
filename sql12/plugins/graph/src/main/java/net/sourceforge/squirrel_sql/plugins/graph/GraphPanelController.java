@@ -148,4 +148,10 @@ public class GraphPanelController
    {
       _graphDesktopController.removeGraph();
    }
+
+
+   public void changedFromLinkToLocalCopy()
+   {
+      _graphDesktopController.changedFromLinkToLocalCopy();
+   }
 }

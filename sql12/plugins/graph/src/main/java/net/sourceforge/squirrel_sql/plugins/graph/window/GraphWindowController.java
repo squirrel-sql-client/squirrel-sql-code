@@ -250,4 +250,21 @@ public class GraphWindowController
    {
       onReturn();
    }
+
+   public Component getComponent()
+   {
+      if (null != _dlgWindow)
+      {
+         return _dlgWindow;
+      }
+      else if (null != _frameWindow)
+      {
+         return _frameWindow;
+      }
+      else
+      {
+         throw new IllegalStateException("Neiterh window nor dialog");
+      }
+
+   }
 }
