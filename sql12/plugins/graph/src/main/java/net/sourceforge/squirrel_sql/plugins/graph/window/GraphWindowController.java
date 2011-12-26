@@ -26,6 +26,7 @@ public class GraphWindowController
    private GraphMainPanelTab _graphMainPanelTab;
    private int _tabIdx;
    private GraphWindowControllerListener _listener;
+   private boolean _link;
    private JCheckBox _chkStayOnTop;
    private JButton _btnReturn;
    private JButton _btnRemove;
@@ -37,12 +38,18 @@ public class GraphWindowController
    private WindowAdapter _windowAdapter;
 
 
-   public GraphWindowController(ISession session, GraphMainPanelTab graphMainPanelTab, int tabIdx, Rectangle tabBoundsOnScreen, GraphWindowControllerListener listener)
+   public GraphWindowController(ISession session, 
+                                GraphMainPanelTab graphMainPanelTab, 
+                                int tabIdx, 
+                                Rectangle tabBoundsOnScreen, 
+                                GraphWindowControllerListener listener, 
+                                boolean link)
    {
       _session = session;
       _graphMainPanelTab = graphMainPanelTab;
       _tabIdx = tabIdx;
       _listener = listener;
+      _link = link;
 
       _contentPanel = new JPanel(new BorderLayout());
       _contentPanel.add(createTopPanel(), BorderLayout.NORTH);
@@ -69,7 +76,7 @@ public class GraphWindowController
          }
       };
 
-      showDialogWindow(tabBoundsOnScreen, graphMainPanelTab.getTitle());
+      showDialogWindow(tabBoundsOnScreen, createTitle(graphMainPanelTab));
 
 
       _chkStayOnTop.setSelected(true);
@@ -100,6 +107,18 @@ public class GraphWindowController
             onRemove();
          }
       });
+   }
+
+   private String createTitle(GraphMainPanelTab graphMainPanelTab)
+   {
+      String ret = graphMainPanelTab.getTitle();
+      
+      if(_link)
+      {
+         ret += " " + s_stringMgr.getString("graph.link.linkTitlePostfix");
+      }
+      
+      return ret;
    }
 
    private void onSessionClosing(SessionEvent evt)
@@ -266,5 +285,19 @@ public class GraphWindowController
          throw new IllegalStateException("Neiterh window nor dialog");
       }
 
+   }
+
+   public void changedFromLinkToLocalCopy()
+   {
+      _link = false;
+      _graphMainPanelTab.changedFromLinkToLocalCopy();
+      if(null != _dlgWindow)
+      {
+         _dlgWindow.setTitle(createTitle(_graphMainPanelTab));
+      }
+      else
+      {
+         _frameWindow.setTitle(createTitle(_graphMainPanelTab));
+      }
    }
 }
