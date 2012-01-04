@@ -15,6 +15,7 @@ public class TabToWindowHandler
 {
    private GraphMainPanelTab _graphMainPanelTab;
    private ISession _session;
+   private GraphPlugin _plugin;
    private boolean _link;
    private GraphWindowController _graphWindowController;
    private LazyLoadListener _lazyLoadListener;
@@ -22,6 +23,7 @@ public class TabToWindowHandler
    public TabToWindowHandler(GraphPanelController panelController, ISession session, GraphPlugin plugin, boolean isLink)
    {
       _session = session;
+      _plugin = plugin;
       _link = isLink;
       _graphMainPanelTab = new GraphMainPanelTab(panelController, plugin, _link);
       _graphMainPanelTab.getToWindowButton().addActionListener(new ActionListener()
@@ -64,7 +66,14 @@ public class TabToWindowHandler
          }
       };
 
-      _graphWindowController = new GraphWindowController(_session, _graphMainPanelTab, tabIdx, tabBoundsOnScreen, listener, _link);
+      _graphWindowController =
+            new GraphWindowController(_session,
+                                      _plugin,
+                                      _graphMainPanelTab,
+                                      tabIdx,
+                                      tabBoundsOnScreen,
+                                      listener,
+                                      _link);
    }
 
    private void onWindowClosing(int tabIdx)
@@ -83,11 +92,16 @@ public class TabToWindowHandler
 
    }
 
-   public void showGraph(LazyLoadListener lazyLoadListener)
+   public void showGraph(LazyLoadListener lazyLoadListener, boolean selectTab)
    {
       _lazyLoadListener = lazyLoadListener;
       _graphMainPanelTab.setLazyLoadListener(_lazyLoadListener);
-      _session.getSessionSheet().addMainTab(_graphMainPanelTab);
+      int tabIdx = _session.getSessionSheet().addMainTab(_graphMainPanelTab);
+
+      if (selectTab)
+      {
+         _session.getSessionSheet().selectMainTab(tabIdx);
+      }
    }
 
    public void removeGraph()
@@ -175,5 +189,10 @@ public class TabToWindowHandler
       {
          return _graphWindowController.getComponent();
       }
+   }
+
+   public boolean isMyGraphMainPanelTab(GraphMainPanelTab graphMainPanelTab)
+   {
+      return _graphMainPanelTab == graphMainPanelTab;
    }
 }

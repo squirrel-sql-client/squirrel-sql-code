@@ -244,8 +244,6 @@ public class ActionCollection
 	 * This function should be called whenever an internal frame is
 	 * activated.
 	 *
-	 * JASON: Should this be in Sessionmanager or SessionWindowmanager?
-	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
 	public synchronized void activationChanged(IWidget frame)
@@ -275,6 +273,12 @@ public class ActionCollection
 			{
 				((IObjectTreeAction)act).setObjectTree(((ObjectTreeInternalFrame)frame).getObjectTreePanel());
 			}
+         
+         if(isSessionInternalFrame && act instanceof IMainPanelTabAction)
+         {
+            ((IMainPanelTabAction)act).setSelectedMainPanelTab(session.getSelectedMainTab());
+         }
+         
 
 			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
 			{

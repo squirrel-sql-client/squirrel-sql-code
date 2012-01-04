@@ -38,4 +38,6 @@ public interface GraphDesktopListener
    void removeLink();
 
    void showLinkDetails();
+
+   void copyGraph();
 }

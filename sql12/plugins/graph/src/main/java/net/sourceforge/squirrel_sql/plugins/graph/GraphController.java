@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkManager;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.window.TabToWindowHandler;
@@ -36,7 +37,7 @@ public class GraphController
    private GraphXmlSerializer _xmlSerializer;
    private boolean _lazyLoadDone;
 
-   public GraphController(ISession session, GraphPlugin plugin, final GraphXmlSerializer xmlSerializer, boolean showDndDesktopImageAtStartup)
+   public GraphController(ISession session, GraphPlugin plugin, final GraphXmlSerializer xmlSerializer, boolean showDndDesktopImageAtStartup, boolean selectTab)
    {
       _session = session;
       _plugin = plugin;
@@ -135,12 +136,18 @@ public class GraphController
          {
             onShowLinkDetails();
          }
+
+         @Override
+         public void copyGraph()
+         {
+            onCopyGraph();
+         }
       };
 
 
       if(null == xmlSerializer)
       {
-         _xmlSerializer = new GraphXmlSerializer(_plugin, _session, _tabToWindowHandler.getTitle(), null);
+         _xmlSerializer = new GraphXmlSerializer(_plugin, _session, null);
       }
       else
       {
@@ -161,7 +168,7 @@ public class GraphController
       };
 
       GraphControllerXmlBean graphControllerXmlBean = null;
-      if(null != xmlSerializer)
+      if(_xmlSerializer.isLoadable())
       {
          graphControllerXmlBean = _xmlSerializer.read();
          _tabToWindowHandler.setTitle(graphControllerXmlBean.getTitle());
@@ -181,7 +188,7 @@ public class GraphController
       }
       else
       {
-         _tabToWindowHandler.setTitle(_plugin.patchName(_tabToWindowHandler.getTitle(), _session));
+         _tabToWindowHandler.setTitle(_xmlSerializer.getTitle());
          _panelController.initMode(Mode.DEFAULT, null, null, false, null, null, null);
       }
 
@@ -196,7 +203,12 @@ public class GraphController
             onLazyLoadTables(finalGraphControllerXmlBean);
          }
       };
-      _tabToWindowHandler.showGraph(lazyLoadListener);
+      _tabToWindowHandler.showGraph(lazyLoadListener, selectTab);
+   }
+
+   private void onCopyGraph()
+   {
+      CopyGraphAction.copyGraph(this);
    }
 
    private void onShowLinkDetails()
@@ -213,10 +225,23 @@ public class GraphController
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
       pnl.add(new JLabel(msg), gbc);
 
-      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0);
       JTextField textField = new JTextField(_xmlSerializer.getLinkXmlBean().getFilePathOfLinkedGraph());
       textField.setEditable(false);
       pnl.add(textField, gbc);
+
+
+      String msg2 = s_stringMgr.getString("graph.link.linkDetailsMsg2");
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15,0,0,0),0,0);
+      pnl.add(new JLabel(msg2), gbc);
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0);
+      JTextField textField2 = new JTextField(_xmlSerializer.getLinkFile());
+      textField2.setEditable(false);
+      pnl.add(textField2, gbc);
+
+
+
       JOptionPane.showMessageDialog(GUIUtils.getOwningFrame(_tabToWindowHandler.getComponent()), pnl);
    }
 
@@ -318,7 +343,7 @@ public class GraphController
       _xmlSerializer.write(xmlBean);
    }
 
-   private GraphControllerXmlBean createXmlBean()
+   public GraphControllerXmlBean createXmlBean()
    {
       GraphControllerXmlBean xmlBean = new GraphControllerXmlBean();
       xmlBean.setTitle(_tabToWindowHandler.getTitle());
@@ -540,6 +565,11 @@ public class GraphController
    {
       _panelController.getModeManager().setMode(Mode.QUERY_BUILDER);
       _tabToWindowHandler.showInWindowBesidesObjectTree();
+   }
+
+   public boolean isMyGraphMainPanelTab(GraphMainPanelTab graphMainPanelTab)
+   {
+      return _tabToWindowHandler.isMyGraphMainPanelTab(graphMainPanelTab);
    }
 }
 

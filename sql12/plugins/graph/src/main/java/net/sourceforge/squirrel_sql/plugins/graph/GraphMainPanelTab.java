@@ -28,7 +28,7 @@ public class GraphMainPanelTab extends BaseMainPanelTab
       _tabComponent = new JPanel(new BorderLayout(3,0));
       _tabComponent.setOpaque(false);
 
-      _lblTitle = new JLabel(s_stringMgr.getString("graph.newGraph"));
+      _lblTitle = new JLabel();
       _lblTitle.setOpaque(false);
       if(isLink)
       {

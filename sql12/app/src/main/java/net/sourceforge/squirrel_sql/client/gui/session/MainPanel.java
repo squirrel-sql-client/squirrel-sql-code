@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -51,9 +51,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class MainPanel extends JPanel
 {
-    private static final long serialVersionUID = 1L;
-
-    /**
+   /**
 	 * IDs of tabs.
 	 */
 	public interface ITabIndexes
@@ -305,8 +303,25 @@ public class MainPanel extends JPanel
 
 	private void updateState()
 	{
+      int idx = _tabPnl.getSelectedIndex();
+      if (idx != -1)
+      {
+         (_tabs.get(idx)).select();
+      }
 		_session.getApplication().getActionCollection().activationChanged(_session.getSessionInternalFrame());
 	}
+
+   public IMainPanelTab getSelectedMainTab()
+   {
+      int idx = _tabPnl.getSelectedIndex();
+      if (idx == -1)
+      {
+         return null;
+      }
+
+      return _tabs.get(idx);
+   }
+
 
 	/**
 	 * The passed session is closing so tell each tab.
@@ -367,11 +382,6 @@ public class MainPanel extends JPanel
 		_tabPnl.requestFocusInWindow();
 
 		updateState();
-		int idx = _tabPnl.getSelectedIndex();
-		if (idx != -1)
-		{
-			(_tabs.get(idx)).select();
-		}
 	}
 
 	ObjectTreePanel getObjectTreePanel()

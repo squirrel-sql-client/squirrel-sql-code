@@ -45,6 +45,8 @@ public class GraphDesktopController
    //
    ////////////////////////////////////
 
+   private JMenuItem _mnuCopyGraph;
+
 
    private JMenuItem _mnuRefreshAllTables;
    private JMenuItem _mnuScriptAllTables;
@@ -202,6 +204,16 @@ public class GraphDesktopController
          createGraphSavingMenus();
       }
 
+      _mnuCopyGraph= new JMenuItem(s_stringMgr.getString("graph.copyGraph"));
+      _mnuCopyGraph.setIcon(_graphPluginResources.getIcon(GraphPluginResources.IKeys.COPY_GRAPH));
+      _mnuCopyGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopyGraph();
+         }
+      });
+
 
       // i18n[graph.refreshAllTables=Refresh all tables]
 		_mnuRefreshAllTables = new JMenuItem(s_stringMgr.getString("graph.refreshAllTables"));
@@ -327,6 +339,8 @@ public class GraphDesktopController
          _popUp.add(_mnuRenameGraph);
          _popUp.add(_mnuRemoveGraph);
       }
+      _popUp.add(new JSeparator());
+      _popUp.add(_mnuCopyGraph);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshAllTables);
       _popUp.add(_mnuScriptAllTables);
@@ -586,6 +600,12 @@ public class GraphDesktopController
    {
       _listener.showLinkDetails();
    }
+
+   private void onCopyGraph()
+   {
+      _listener.copyGraph();
+   }
+
 
 
 

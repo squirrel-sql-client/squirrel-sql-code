@@ -651,6 +651,13 @@ class Session implements ISession
       return _sessionSheet.getSelectedMainTabIndex();
    }
 
+   @Override
+   public IMainPanelTab getSelectedMainTab()
+   {
+      return _sessionSheet.getSelectedMainTab();
+   }
+
+
 
    /**
     * Add a tab to the main tabbed panel.
@@ -865,7 +872,7 @@ class Session implements ISession
    public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow()
    {
       ISQLPanelAPI sqlPanelAPI;
-      if(_activeActiveSessionWindow instanceof SessionInternalFrame)
+      if(isSessionWidgetActive())
       {
          sqlPanelAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getSQLPanelAPI();
       }
@@ -881,6 +888,11 @@ class Session implements ISession
       return sqlPanelAPI;
    }
 
+   public boolean isSessionWidgetActive()
+   {
+      return _activeActiveSessionWindow instanceof SessionInternalFrame;
+   }
+
    /**
     *
     * @throws IllegalStateException if ActiveSessionWindow doesn't provide an IObjectTreeAPI
@@ -889,7 +901,7 @@ class Session implements ISession
    public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow()
    {
       IObjectTreeAPI objectTreeAPI;
-      if(_activeActiveSessionWindow instanceof SessionInternalFrame)
+      if(isSessionWidgetActive())
       {
          objectTreeAPI = ((SessionInternalFrame)_activeActiveSessionWindow).getObjectTreeAPI();
       }

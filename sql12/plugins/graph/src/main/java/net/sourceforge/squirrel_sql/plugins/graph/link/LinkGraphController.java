@@ -5,12 +5,12 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphUtil;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.DefaultGraphXmlSerializerConfig;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
 import javax.swing.*;
@@ -23,17 +23,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.prefs.Preferences;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gerd
- * Date: 27.11.11
- * Time: 11:55
- */
 public class LinkGraphController
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(LinkGraphDialog.class);
@@ -146,7 +139,7 @@ public class LinkGraphController
             @Override
             public boolean accept(File dir, String name)
             {
-               if (name.startsWith(GraphXmlSerializer.LINK_PREFIX))
+               if (name.startsWith(DefaultGraphXmlSerializerConfig.LINK_PREFIX))
                {
                   return true;
                }
@@ -193,7 +186,10 @@ public class LinkGraphController
 
             bw.save(pathOfLinkXmlFile.getAbsolutePath());
 
-            _plugin.createNewGraphControllerForSession(_session, new GraphXmlSerializer(_plugin, _session, linkXmlBean, pathOfLinkXmlFile.getAbsolutePath()));
+            GraphXmlSerializer graphXmlSerializer =
+                  new GraphXmlSerializer(_plugin, _session, linkXmlBean, pathOfLinkXmlFile.getAbsolutePath());
+
+            _plugin.createNewGraphControllerForSession(_session, graphXmlSerializer, false);
 
          }
 
@@ -210,8 +206,9 @@ public class LinkGraphController
    private String createLinkFileName(GraphFileDisplayBean gdb)
    {
       return
-            GraphXmlSerializer.LINK_PREFIX +
-            GraphUtil.createGraphFileName(_session.getAlias().getUrl(), _plugin.patchName(gdb.getLoadedName(), _session));
+            DefaultGraphXmlSerializerConfig.LINK_PREFIX +
+            GraphUtil.createGraphFileName(_session.getAlias().getUrl(), _plugin.patchName(gdb.getLoadedName(), _session)) +
+            DefaultGraphXmlSerializerConfig.XML_BEAN_POSTFIX;
    }
 
    private void onHomeDir()

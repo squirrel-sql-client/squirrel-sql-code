@@ -48,5 +48,7 @@ public final class GraphPluginResources extends PluginResources
       String DND = "dnd";
       String ESCAPE_DATE = "escapedate";
       String LINK = "link";
+      String COPY_GRAPH = "copyGraph";
+      String PASTE_GRAPH = "pasteGraph";
    }
 }
