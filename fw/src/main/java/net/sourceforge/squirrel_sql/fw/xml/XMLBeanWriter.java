@@ -18,23 +18,20 @@ package net.sourceforge.squirrel_sql.fw.xml;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.XMLElement;
 import net.n3.nanoxml.XMLWriter;
-
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 public final class XMLBeanWriter
 {
@@ -110,6 +107,24 @@ public final class XMLBeanWriter
 			os.close();
 		}
 	}
+
+   public String getAsString() throws IOException
+   {
+      StringWriter sw = new StringWriter();
+      BufferedWriter bw = new BufferedWriter(sw);
+
+      new XMLWriter(bw).write(_rootElement, true);
+
+      bw.flush();
+      sw.flush();
+
+      bw.close();
+
+      sw.close();
+
+      return sw.toString();
+   }
+
 
 	private IXMLElement createElement(Object bean, String name) throws XMLException
 	{

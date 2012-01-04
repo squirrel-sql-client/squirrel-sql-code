@@ -116,18 +116,18 @@ public class LinkGraphDialog extends JDialog
 
       GridBagConstraints gbc;
 
-      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
-      btnExplore = new JButton(s_stringMgr.getString("linkGraph.dialog.openFolderInExplorer"));
-      pnl.add(btnExplore, gbc);
 
-      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
       btnChangeDir = new JButton(s_stringMgr.getString("linkGraph.dialog.changeFolder"));
       pnl.add(btnChangeDir, gbc);
 
-      gbc = new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
       btnHomeDir = new JButton(s_stringMgr.getString("linkGraph.dialog.toHomeDir"));
       pnl.add(btnHomeDir, gbc);
 
+      gbc = new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
+      btnExplore = new JButton(s_stringMgr.getString("linkGraph.dialog.openFolderInExplorer"));
+      pnl.add(btnExplore, gbc);
 
       return pnl;
 

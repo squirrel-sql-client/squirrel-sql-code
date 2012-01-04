@@ -390,4 +390,8 @@ public interface ISession extends IHasIdentifier
     * @return A new connection for the alias of the current session.
     */
    public SQLConnection createUnmanagedConnection();
+
+   boolean isSessionWidgetActive();
+
+   IMainPanelTab getSelectedMainTab();
 }

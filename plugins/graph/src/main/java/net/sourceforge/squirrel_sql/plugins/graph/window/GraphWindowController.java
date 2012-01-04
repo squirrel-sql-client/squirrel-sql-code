@@ -4,10 +4,12 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
+import net.sourceforge.squirrel_sql.plugins.graph.GraphPluginResources;
+import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +25,7 @@ public class GraphWindowController
 
 
    private ISession _session;
+   private GraphPlugin _plugin;
    private GraphMainPanelTab _graphMainPanelTab;
    private int _tabIdx;
    private GraphWindowControllerListener _listener;
@@ -30,6 +33,7 @@ public class GraphWindowController
    private JCheckBox _chkStayOnTop;
    private JButton _btnReturn;
    private JButton _btnRemove;
+   private JButton _btnCopyGraph;
    private JPanel _contentPanel;
 
    private JDialog _dlgWindow;
@@ -38,14 +42,16 @@ public class GraphWindowController
    private WindowAdapter _windowAdapter;
 
 
-   public GraphWindowController(ISession session, 
-                                GraphMainPanelTab graphMainPanelTab, 
-                                int tabIdx, 
-                                Rectangle tabBoundsOnScreen, 
-                                GraphWindowControllerListener listener, 
+   public GraphWindowController(ISession session,
+                                GraphPlugin plugin,
+                                GraphMainPanelTab graphMainPanelTab,
+                                int tabIdx,
+                                Rectangle tabBoundsOnScreen,
+                                GraphWindowControllerListener listener,
                                 boolean link)
    {
       _session = session;
+      _plugin = plugin;
       _graphMainPanelTab = graphMainPanelTab;
       _tabIdx = tabIdx;
       _listener = listener;
@@ -107,6 +113,20 @@ public class GraphWindowController
             onRemove();
          }
       });
+
+      _btnCopyGraph.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopyGraph();
+         }
+      });
+   }
+
+   private void onCopyGraph()
+   {
+      CopyGraphAction.copyGraph(_plugin.getGraphControllerForMainTab(_graphMainPanelTab, _session));
    }
 
    private String createTitle(GraphMainPanelTab graphMainPanelTab)
@@ -242,7 +262,14 @@ public class GraphWindowController
       _btnRemove = new JButton(s_stringMgr.getString("graph.window.removeGraph"));
       ret.add(_btnRemove, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      _btnCopyGraph = new JButton(s_stringMgr.getString("graph.window.copyGraph"));
+      _btnCopyGraph.setToolTipText(s_stringMgr.getString("graph.window.copyGraphToolTip"));
+      _btnCopyGraph.setIcon(new GraphPluginResources(_plugin).getIcon(GraphPluginResources.IKeys.COPY_GRAPH));
+
+      ret.add(_btnCopyGraph, gbc);
+
+      gbc = new GridBagConstraints(4,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
       return ret;

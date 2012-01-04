@@ -24,71 +24,33 @@ public class GraphXmlSerializer
 
    private final static ILogger s_log = LoggerController.createLogger(GraphXmlSerializer.class);
 
-
-   private static final String XML_BEAN_POSTFIX = ".graph.xml";
-   public static final String LINK_PREFIX = "lnk_";
-
-   private GraphPlugin _plugin;
+   private DefaultGraphXmlSerializerConfig _cfg;
    private ISession _session;
-   private String _graphFile;
-   private LinkXmlBean _linkXmlBean;
-   private String _pathOfLinkXmlFile;
 
-   public GraphXmlSerializer(GraphPlugin plugin, ISession session, String title, String graphFileName)
+   public GraphXmlSerializer(GraphPlugin plugin, ISession session, String graphFileName)
    {
-      _init(plugin, session, title, graphFileName);
+      _session = session;
+      _cfg = new DefaultGraphXmlSerializerConfig(plugin, session, graphFileName);
    }
 
    public GraphXmlSerializer(GraphPlugin plugin, ISession session, LinkXmlBean linkXmlBean, String pathOfLinkXmlFile)
    {
-      _linkXmlBean = linkXmlBean;
-      _pathOfLinkXmlFile = pathOfLinkXmlFile;
-      _init(plugin, session, _linkXmlBean.getLinkName(), _linkXmlBean.getFilePathOfLinkedGraph());
-   }
-
-   private void _init(GraphPlugin plugin, ISession session, String title, String graphFileName)
-   {
-      try
-      {
-         _plugin = plugin;
-         _session = session;
-         String url = _session.getAlias().getUrl();
-
-         if(null == graphFileName)
-         {
-            _graphFile = getFileName(plugin.getPluginUserSettingsFolder().getPath(), url, title);
-         }
-         else
-         {
-            _graphFile = graphFileName;
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      _session = session;
+      _cfg = new DefaultGraphXmlSerializerConfig(plugin, session, linkXmlBean, pathOfLinkXmlFile);
    }
 
    public void write(GraphControllerXmlBean xmlBean)
    {
       try
       {
-         if(null != _linkXmlBean)
-         {
-            if(false == new File(_graphFile).canWrite())
-            {
-               String msg = s_stringMgr.getString("graph.link.cannotWrite", _linkXmlBean.getNameOfLinkedGraph(), _graphFile);
-               _session.getApplication().getMessageHandler().showErrorMessage(msg);
-               throw new IllegalStateException(msg);
-            }
-         }
+         _cfg.checkTargetWritable();
 
          Version32Converter.markConverted(xmlBean);
 
          XMLBeanWriter bw = new XMLBeanWriter(xmlBean);
-         bw.save(_graphFile);
+         bw.save(_cfg.getGraphFilePath());
 
-			String[] params = {xmlBean.getTitle(), _graphFile};
+			String[] params = {xmlBean.getTitle(), _cfg.getGraphFilePath()};
 			// i18n[graph.graphSaved=Graph "{0}" saved to "{1}"]
 			String msg = s_stringMgr.getString("graph.graphSaved", params);
 
@@ -100,6 +62,7 @@ public class GraphXmlSerializer
       }
    }
 
+
    public void saveLinkAsLocalCopy(GraphControllerXmlBean xmlBean)
    {
       if(false == isLink())
@@ -107,25 +70,8 @@ public class GraphXmlSerializer
          throw new IllegalStateException("Not a link");
       }
 
-      transformMeFromLinkToLocalCopy();
+      _cfg.transformToLocalCopy();
       write(xmlBean);
-   }
-
-   private void transformMeFromLinkToLocalCopy()
-   {
-      try
-      {
-         String linkName = new File(_pathOfLinkXmlFile).getName();
-         String newGraphsName = linkName.substring(LINK_PREFIX.length(), linkName.length());
-         _graphFile = new File(_plugin.getPluginUserSettingsFolder().getPath(), newGraphsName).getAbsolutePath();
-         _linkXmlBean = null;
-         new File(_pathOfLinkXmlFile).delete();
-         _pathOfLinkXmlFile = null;
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
    }
 
 
@@ -134,13 +80,17 @@ public class GraphXmlSerializer
       try
       {
          XMLBeanReader br = new XMLBeanReader();
-         br.load(_graphFile, this.getClass().getClassLoader());
+         br.load(_cfg.getGraphFilePath(), this.getClass().getClassLoader());
          GraphControllerXmlBean ret = (GraphControllerXmlBean) br.iterator().next();
          Version32Converter.convert(ret);
          
-         if(null != _linkXmlBean)
+         if(_cfg.isLink())
          {
-            ret.setTitle(_linkXmlBean.getLinkName());
+            ret.setTitle(_cfg.getTitle());
+         }
+         else
+         {
+            _cfg.setTitle(ret.getTitle());
          }
 
          return ret;
@@ -152,35 +102,6 @@ public class GraphXmlSerializer
    }
 
 
-   private String getFileName(String path, String url, String title)
-   {
-      final String filePrefix = GraphUtil.createGraphFileName(url, title);
-      File p = new File(path);
-
-      String buf = filePrefix;
-      for(int i=1; prefixExists(p, buf); ++i)
-      {
-         buf = filePrefix + "_" + i ;
-      }
-
-      return path + File.separator +  buf + XML_BEAN_POSTFIX;
-   }
-
-   private boolean prefixExists(File path, final String filePrefix)
-   {
-      File[] files = path.listFiles(new FilenameFilter()
-               {
-                  public boolean accept(File dir, String name)
-                  {
-                     if(name.toLowerCase().equals(filePrefix.toLowerCase() + XML_BEAN_POSTFIX))
-                     {
-                        return true;
-                     }
-                     return false;
-                  }
-               });
-      return 0 < files.length;
-   }
 
    public static GraphXmlSerializer[] getGraphXmSerializers(GraphPlugin plugin, ISession session)
    {
@@ -212,7 +133,7 @@ public class GraphXmlSerializer
    {
       try
       {
-         final String linkPrefix = LINK_PREFIX + GraphUtil.javaNormalize(session.getAlias().getUrl()) + ".";
+         final String linkPrefix = DefaultGraphXmlSerializerConfig.getLinkPrefix(session);
 
          FileWrapper[] linkXmlFiles = plugin.getPluginUserSettingsFolder().listFiles(new FilenameFilter()
          {
@@ -239,7 +160,12 @@ public class GraphXmlSerializer
             }
             else
             {
-               String msg = s_stringMgr.getString("graph.link.cannotRead", linkXmlBean.getNameOfLinkedGraph(), linkXmlBean.getFilePathOfLinkedGraph());
+               String msg =
+                     s_stringMgr.getString("graph.link.cannotRead",
+                                           linkXmlBean.getNameOfLinkedGraph(),
+                                           linkXmlBean.getFilePathOfLinkedGraph(),
+                                           linkXmlFile.getAbsolutePath());
+
                session.getApplication().getMessageHandler().showErrorMessage(msg);
                s_log.error(msg, new IllegalStateException(msg));
             }
@@ -260,7 +186,7 @@ public class GraphXmlSerializer
       GraphXmlSerializer[] ret = new GraphXmlSerializer[graphXmlFiles.length];
       for (int i = 0; i < graphXmlFiles.length; i++)
       {
-         ret[i] = new GraphXmlSerializer(plugin, session, (String)null, graphXmlFiles[i].getPath());
+         ret[i] = new GraphXmlSerializer(plugin, session, graphXmlFiles[i].getPath());
       }
 
       return ret;
@@ -314,15 +240,7 @@ public class GraphXmlSerializer
    {
       try
       {
-         String url = _session.getAlias().getUrl();
-         String newGraphFile = getFileName(_plugin.getPluginUserSettingsFolder().getPath(), url, newName);
-         (new File(_graphFile)).renameTo(new File(newGraphFile));
-
-			String[] params = {_graphFile, newGraphFile};
-			// i18n[graph.graphRenamed=Renamed "{0}" to "{1}"]
-			_session.showMessage(s_stringMgr.getString("graph.graphRenamed", params));
-
-         _graphFile = newGraphFile;
+         _cfg.renameGraph(newName);
       }
       catch (Exception e)
       {
@@ -334,37 +252,42 @@ public class GraphXmlSerializer
 
    public void remove()
    {
-      (new File(_graphFile)).delete();
-
-		String[] params = {_graphFile};
-		// i18n[graph.graphRemoved=Removed graph file "{0}"]
-      _session.showMessage(s_stringMgr.getString("graph.graphRemoved", params));
+      _cfg.removeGraphFile();
 
    }
 
    public String getGraphFile()
    {
-      return _graphFile;
+      return _cfg.getGraphFilePath();
    }
 
    public boolean isLink()
    {
-      return null != _linkXmlBean;
+      return _cfg.isLink();
    }
 
    public void removeLink()
    {
-      if(false == isLink())
-      {
-         throw new IllegalStateException("Not a link");
-      }
-
-      new File(_pathOfLinkXmlFile).delete();
-      _session.showMessage(s_stringMgr.getString("graph.graphLinkRemoved", _pathOfLinkXmlFile));
+      _cfg.removeLink();
    }
 
    public LinkXmlBean getLinkXmlBean()
    {
-      return _linkXmlBean;
+      return _cfg.getLinkXmlBean();
+   }
+
+   public String getTitle()
+   {
+      return _cfg.getTitle();
+   }
+
+   public boolean isLoadable()
+   {
+      return _cfg.isLoadable();
+   }
+
+   public String getLinkFile()
+   {
+      return _cfg.getPathOfLinkXmlFile();
    }
 }

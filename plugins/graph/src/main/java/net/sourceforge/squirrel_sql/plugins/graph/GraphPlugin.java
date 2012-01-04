@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.graph.link.LinkGraphAction;
+import net.sourceforge.squirrel_sql.plugins.graph.link.*;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
 import java.util.ArrayList;
@@ -148,6 +148,8 @@ public class GraphPlugin extends DefaultSessionPlugin
       coll.add(new AddToGraphAction(app, _resources, this));
       coll.add(new NewQueryBuilderWindowAction(app, _resources, this));
       coll.add(new LinkGraphAction(app, _resources, this));
+      coll.add(new CopyGraphAction(app, _resources, this));
+      coll.add(new PasteGraphAction(app, _resources, this));
    }
 
    /**
@@ -173,14 +175,14 @@ public class GraphPlugin extends DefaultSessionPlugin
 
       for (int i = 0; i < serializers.length; i++)
       {
-         controllers.add(new GraphController(session, this, serializers[i], false));
+         controllers.add(new GraphController(session, this, serializers[i], false, false));
       }
 
       GraphXmlSerializer[] linkedSerializers  = GraphXmlSerializer.getLinkedGraphXmSerializers(this, session);
 
       for (int i = 0; i < linkedSerializers.length; i++)
       {
-         controllers.add(new GraphController(session, this, linkedSerializers[i], false));
+         controllers.add(new GraphController(session, this, linkedSerializers[i], false, false));
       }
 
 
@@ -195,6 +197,8 @@ public class GraphPlugin extends DefaultSessionPlugin
       session.addSeparatorToToolbar();
       session.addToToolbar(coll.get(NewQueryBuilderWindowAction.class));
       session.addToToolbar(coll.get(LinkGraphAction.class));
+      session.addToToolbar(coll.get(CopyGraphAction.class));
+      session.addToToolbar(coll.get(PasteGraphAction.class));
 
 
       return new PluginSessionCallbackAdaptor(this);
@@ -216,6 +220,24 @@ public class GraphPlugin extends DefaultSessionPlugin
       return _grapControllersBySessionID.get(session.getIdentifier()).toArray(new GraphController[0]);
    }
 
+   public GraphController getGraphControllerForMainTab(GraphMainPanelTab mainTab, ISession session)
+   {
+      GraphController[] graphControllers = getGraphControllers(session);
+
+
+      GraphController graphController = null;
+      for (GraphController g : graphControllers)
+      {
+         if(g.isMyGraphMainPanelTab(mainTab))
+         {
+            graphController = g;
+            break;
+         }
+      }
+      return graphController;
+   }
+
+
    public String patchName(String name, ISession session)
    {
 
@@ -235,7 +257,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       while(true)
       {
          boolean incremented = false;
-         for (int i = 0; i < controllers.size(); i++)
+         for (int i = 0; null != controllers && i < controllers.size(); i++)
          {
             if(0 == postfix)
             {
@@ -273,15 +295,18 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public GraphController createNewGraphControllerForSession(ISession session, boolean showDndDesktopImageAtStartup)
    {
-      return _createNewGraphControllerForSession(session, null, showDndDesktopImageAtStartup);
+      return _createNewGraphControllerForSession(session, null, showDndDesktopImageAtStartup, false);
    }
 
-   public void createNewGraphControllerForSession(ISession session, GraphXmlSerializer graphXmlSerializer)
+   public void createNewGraphControllerForSession(ISession session, GraphXmlSerializer graphXmlSerializer, boolean selectTab)
    {
-      _createNewGraphControllerForSession(session, graphXmlSerializer, false);
+      _createNewGraphControllerForSession(session, graphXmlSerializer, false, selectTab);
    }
 
-   private GraphController _createNewGraphControllerForSession(ISession session, GraphXmlSerializer graphXmlSerializer, boolean showDndDesktopImageAtStartup)
+   private GraphController _createNewGraphControllerForSession(ISession session,
+                                                               GraphXmlSerializer graphXmlSerializer,
+                                                               boolean showDndDesktopImageAtStartup,
+                                                               boolean selectTab)
    {
       ArrayList<GraphController> controllers = _grapControllersBySessionID.get(session.getIdentifier());
 
@@ -290,7 +315,7 @@ public class GraphPlugin extends DefaultSessionPlugin
          controllers = new ArrayList<GraphController>();
          _grapControllersBySessionID.put(session.getIdentifier(), controllers);
       }
-      GraphController ret = new GraphController(session, this, graphXmlSerializer, showDndDesktopImageAtStartup);
+      GraphController ret = new GraphController(session, this, graphXmlSerializer, showDndDesktopImageAtStartup, selectTab);
       controllers.add(ret);
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
