@@ -14,6 +14,11 @@ Graph Plugin:
   With this feature it is possible to work with shared repositories of Graphs.
 
 
+Bug fixes:
+
+3026995 Fixed problem in squirrel-sql.bat for 64-bit windows.
+
+
 
 3.3.0 (11/20/2011)
 ==================
