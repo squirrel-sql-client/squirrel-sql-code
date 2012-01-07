@@ -383,11 +383,11 @@ public class GraphController
 
 
 
-   public void addTable(ObjectTreeNode selectedNode, final Positioner positioner)
+   public void addTable(TableToAddWrapper toAddWrapper, final Positioner positioner)
    {
-      String catalog = selectedNode.getDatabaseObjectInfo().getCatalogName();
-      String schema = selectedNode.getDatabaseObjectInfo().getSchemaName();
-      String table = selectedNode.getDatabaseObjectInfo().getSimpleName();
+      String catalog = toAddWrapper.getCatalogName();
+      String schema = toAddWrapper.getSchemaName();
+      String table = toAddWrapper.getSimpleName();
 
       addTableIntern(positioner, table, schema, catalog,  null);
    }

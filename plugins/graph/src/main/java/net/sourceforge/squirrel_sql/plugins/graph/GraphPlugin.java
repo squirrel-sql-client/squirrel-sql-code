@@ -22,12 +22,15 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.graph.link.*;
+import net.sourceforge.squirrel_sql.plugins.graph.link.CopyGraphAction;
+import net.sourceforge.squirrel_sql.plugins.graph.link.LinkGraphAction;
+import net.sourceforge.squirrel_sql.plugins.graph.link.PasteGraphAction;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
 
 import java.util.ArrayList;
@@ -150,6 +153,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       coll.add(new LinkGraphAction(app, _resources, this));
       coll.add(new CopyGraphAction(app, _resources, this));
       coll.add(new PasteGraphAction(app, _resources, this));
+      coll.add(new AddTableAtQursorToGraph(app, _resources, this));
    }
 
    /**
@@ -189,10 +193,10 @@ public class GraphPlugin extends DefaultSessionPlugin
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
 
-      IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
+      IObjectTreeAPI objectTreeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 
       ActionCollection coll = getApplication().getActionCollection();
-      api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
+      objectTreeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
 
       session.addSeparatorToToolbar();
       session.addToToolbar(coll.get(NewQueryBuilderWindowAction.class));
@@ -200,6 +204,9 @@ public class GraphPlugin extends DefaultSessionPlugin
       session.addToToolbar(coll.get(CopyGraphAction.class));
       session.addToToolbar(coll.get(PasteGraphAction.class));
 
+      ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getSQLPanelAPI();
+      sqlPanelAPI.addToToolsPopUp("addtograph", coll.get(AddTableAtQursorToGraph.class));
+      sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(AddTableAtQursorToGraph.class));
 
       return new PluginSessionCallbackAdaptor(this);
    }

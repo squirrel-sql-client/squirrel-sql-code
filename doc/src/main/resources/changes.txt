@@ -7,6 +7,9 @@ ${squirrelsql.changelog.header}
 Enhancements:
 
 Graph Plugin:
+  Tables can be added to a Graph from within the SQL-Editor (accessible from right mouse menu and tools popup).
+
+Graph Plugin:
   Graphs can be copied and pasted.
 
 Graph Plugin:
