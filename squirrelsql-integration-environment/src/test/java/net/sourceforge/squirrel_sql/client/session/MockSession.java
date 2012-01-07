@@ -524,7 +524,21 @@ public class MockSession implements ISession
 	@Override
 	public SQLConnection createUnmanagedConnection()
 	{
-		// TODO Auto-generated method stub
+		System.err.println("MockSession.createUnmanagedConnection: stub not yet implemented");
 		return null;
+	}
+
+	@Override
+	public IMainPanelTab getSelectedMainTab() 
+	{	
+		System.err.println("MockSession.getSelectedMainTab: stub not yet implemented");
+		return null;
+	}
+
+	@Override
+	public boolean isSessionWidgetActive() 
+	{
+		System.err.println("MockSession.isSessionWidgetActive: stub not yet implemented");
+		return false;
 	}
 }
