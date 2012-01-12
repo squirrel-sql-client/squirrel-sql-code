@@ -142,9 +142,9 @@ public class QueryBuilderController
       return new SyncListener()
       {
          @Override
-         public void synRequested()
+         public void synRequested(boolean force)
          {
-            syncResult();
+            syncResult(force);
          }
       };
    }
@@ -156,7 +156,7 @@ public class QueryBuilderController
       return new SyncListener()
       {
          @Override
-         public void synRequested()
+         public void synRequested(boolean force)
          {
             syncSql();
          }
@@ -172,7 +172,7 @@ public class QueryBuilderController
       }
       else if(_resultDockHandle.isShowing()  && _graphQueryResultPanelCtrl.isAutoSync())
       {
-         syncResult();
+         syncResult(false);
       }
       else if(_selectDockHandle.isShowing())
       {
@@ -198,12 +198,12 @@ public class QueryBuilderController
       }
    }
 
-   private void syncResult()
+   private void syncResult(boolean force)
    {
       SelectStructure selS = _graphQuerySelectPanelCtrl.syncSelectCols(_tableFramesModel);
       WhereTreeNodeStructure wts = _graphQueryWherePanelCtrl.syncWhereCols(_tableFramesModel);
       OrderStructure os = _graphQueryOrderPanelCtrl.syncOrderCols(_tableFramesModel);
-      _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, os, selS));
+      _graphQueryResultPanelCtrl.execSQL(new QueryBuilderSQLGenerator(_session).generateSQL(_tableFramesModel, wts, os, selS), force);
    }
 
    private void syncSql()

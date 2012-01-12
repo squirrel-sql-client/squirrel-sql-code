@@ -18,12 +18,12 @@ public class GraphQueryResultPanelCtrl
    {
       _graphQueryResultPanel = new GraphQueryResultPanel(session, hideDockButtonHandler);
 
-      _graphQueryResultPanel.btnSyncSQLNow.addActionListener(new ActionListener()
+      _graphQueryResultPanel.btnSyncSQLResultNow.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            syncListener.synRequested();
+            syncListener.synRequested(true);
          }
       });
 
@@ -52,7 +52,7 @@ public class GraphQueryResultPanelCtrl
       {
          String nextSQL = _nextSQL;
          _nextSQL = null;
-         execSQL(nextSQL);
+         execSQL(nextSQL, false);
       }
    }
 
@@ -60,14 +60,14 @@ public class GraphQueryResultPanelCtrl
    {
       if(_graphQueryResultPanel.chkAutoSyncSQL.isSelected())
       {
-         syncListener.synRequested();
+         syncListener.synRequested(false);
       }
    }
 
 
-   public void execSQL(String sql)
+   public void execSQL(String sql, boolean force)
    {
-      if (null != _lastSQL && _lastSQL.trim().equals(sql))
+      if (false == force && null != _lastSQL && _lastSQL.trim().equals(sql))
       {
          return;
       }

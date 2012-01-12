@@ -38,7 +38,7 @@ public class GraphQuerySQLPanelCtrl
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            syncListener.synRequested();
+            syncListener.synRequested(false);
          }
       });
 
@@ -53,7 +53,7 @@ public class GraphQuerySQLPanelCtrl
 
       if(_graphQuerySQLPanel.chkAutoSyncSQL.isSelected())
       {
-         syncListener.synRequested();
+         syncListener.synRequested(false);
       }
    }
 
