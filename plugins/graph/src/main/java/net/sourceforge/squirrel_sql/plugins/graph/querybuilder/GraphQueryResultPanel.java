@@ -15,7 +15,7 @@ public class GraphQueryResultPanel extends JPanel
 
    SQLResultExecuterPanel resultExecuterPanel;
    JCheckBox chkAutoSyncSQL;
-   JButton btnSyncSQLNow;
+   JButton btnSyncSQLResultNow;
 
 
    public GraphQueryResultPanel(ISession session, HideDockButtonHandler hideDockButtonHandler)
@@ -41,8 +41,8 @@ public class GraphQueryResultPanel extends JPanel
       ret.add(chkAutoSyncSQL, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,0,5,5),0,0);
-      btnSyncSQLNow = new JButton(s_stringMgr.getString("graph.GraphQueryResultPanel.syncResultNow"));
-      ret.add(btnSyncSQLNow, gbc);
+      btnSyncSQLResultNow = new JButton(s_stringMgr.getString("graph.GraphQueryResultPanel.syncResultNow"));
+      ret.add(btnSyncSQLResultNow, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,1,1,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,0,5,5),0,0);
       ret.add(new JPanel(), gbc);
