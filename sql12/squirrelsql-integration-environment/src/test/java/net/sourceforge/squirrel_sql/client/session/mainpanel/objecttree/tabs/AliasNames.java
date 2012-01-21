@@ -62,7 +62,9 @@ public interface AliasNames
 	
 	String POINTBASE_DEST_ALIAS_NAME = "Pointbase (dbcopydest)";
 	
-	String POSTGRES_DEST_ALIAS_NAME = "PostgreSQL";
+	String POSTGRES_SOURCE_ALIAS_NAME = "PostgreSQL (dbcopysrc)";
+	
+	String POSTGRES_DEST_ALIAS_NAME = "PostgreSQL (dbcopydest)";
 
 	String SYBASE_SOURCE_ALIAS_NAME = "Sybase (dbcopysrc)";
 	
