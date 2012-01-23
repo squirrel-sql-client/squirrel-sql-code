@@ -146,7 +146,6 @@ public class ConnectToAliasCommand implements ICommand
         _app.getMainFrame().addWidget(sheet);
         DialogWidget.centerWithinDesktop(sheet);
         sheet.moveToFront();
-        sheet.setVisible(true);                        
     }
     
 

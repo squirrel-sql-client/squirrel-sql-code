@@ -19,6 +19,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Error dialog showed up twice when an error occurred during Alias connect.
+
 3026995 Fixed problem in squirrel-sql.bat for 64-bit windows.
 
 Graph Plugin --> Query Builder:
