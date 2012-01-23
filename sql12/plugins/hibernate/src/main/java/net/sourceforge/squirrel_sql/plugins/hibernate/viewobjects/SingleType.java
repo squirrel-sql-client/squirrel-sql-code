@@ -1,35 +1,31 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 public class SingleType implements IType
 {
    private MappedClassInfo _mappedClassInfo;
    private ArrayList<MappedClassInfo> _allMappedClassInfos;
-   private Class _persistenCollectionClass;
    private ArrayList<SingleResult> _results = new ArrayList<SingleResult>();
    private ArrayList<IType> _kidTypes;
    private String _toString;
 
-   public SingleType(MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   public SingleType(MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstitute> objects)
    {
-      this(null, mappedClassInfo, allMappedClassInfos, persistenCollectionClass, objects);
+      this(null, mappedClassInfo, allMappedClassInfos, objects);
    }
 
-   public SingleType(String propertyName, MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   public SingleType(String propertyName, MappedClassInfo mappedClassInfo, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstitute> objects)
    {
       _mappedClassInfo = mappedClassInfo;
       _allMappedClassInfos = allMappedClassInfos;
-      _persistenCollectionClass = persistenCollectionClass;
 
-      for (Object object : objects)
+      for (ObjectSubstitute object : objects)
       {
          _results.add(new SingleResult(propertyName, object, mappedClassInfo));
       }
@@ -70,7 +66,7 @@ public class SingleType implements IType
          String propertyName = propertyInfo.getHibernatePropertyInfo().getPropertyName();
 
          MappedClassInfo mci = null;
-         ArrayList objects = new ArrayList();
+         ArrayList<ObjectSubstitute> objects = new ArrayList<ObjectSubstitute>();
 
          boolean persistentCollection = false;
          boolean persistentCollectionInitialized = false;
@@ -79,12 +75,12 @@ public class SingleType implements IType
          {
             HibernatePropertyReader hpr = new HibernatePropertyReader(propertyName, singleResult.getObject());
 
-            Object value = hpr.getValue();
-            if (null != value && _persistenCollectionClass.isAssignableFrom(value.getClass()))
+            //if (null != value && _persistenCollectionClass.isAssignableFrom(value.getClass()))
+            if (false == hpr.isNull() && hpr.isPersistenCollection())
             {
                persistentCollection = true;
 
-               persistentCollectionInitialized = isPersistentCollectionIsInitialize(value);
+               persistentCollectionInitialized = hpr.wasInitialized();
 
                if(null == mci)
                {
@@ -93,7 +89,7 @@ public class SingleType implements IType
 
                if (persistentCollectionInitialized)
                {
-                  objects.addAll(getObjectsFromPersistentCollection(value));
+                  objects.addAll(hpr.getPersistentCollection());
                }
             }
             else if (null != ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), _allMappedClassInfos, true))
@@ -103,13 +99,13 @@ public class SingleType implements IType
                   mci = ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), _allMappedClassInfos, false);
                }
 
-               objects.add(value);
+               objects.add((ObjectSubstitute) hpr.getValue());
             }
          }
 
          if(null != mci)
          {
-            SingleType singleType = new SingleType(propertyName, mci, _allMappedClassInfos, _persistenCollectionClass, objects);
+            SingleType singleType = new SingleType(propertyName, mci, _allMappedClassInfos, objects);
             if(persistentCollection)
             {
                _kidTypes.add(new PersistentCollectionType(propertyName, singleType, persistentCollectionInitialized));
@@ -120,25 +116,6 @@ public class SingleType implements IType
             }
          }
       }
-   }
-
-   private ArrayList getObjectsFromPersistentCollection(Object persistentCollection)
-   {
-      Iterator iterator = ((Collection) new ReflectionCaller(persistentCollection).getCallee()).iterator();
-
-      ArrayList ret = new ArrayList();
-      while(iterator.hasNext())
-      {
-         ret.add(iterator.next());
-      }
-
-      return ret;
-   }
-
-   private boolean isPersistentCollectionIsInitialize(Object persistentCollection)
-   {
-      ReflectionCaller rc = new ReflectionCaller(persistentCollection);
-      return (Boolean)rc.callMethod("wasInitialized").getCallee();
    }
 
    @Override
@@ -159,11 +136,6 @@ public class SingleType implements IType
       return _toString;
    }
 
-
-   public Class getPersistenCollectionClass()
-   {
-      return _persistenCollectionClass;
-   }
 
    public ArrayList<MappedClassInfo> getAllMappedClassInfos()
    {

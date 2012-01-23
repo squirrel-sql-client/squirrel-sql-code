@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 
 import javax.swing.*;
 import java.util.List;
@@ -89,7 +91,7 @@ public class ObjectResultController
          }
       }
 
-      List list = queryListCreator.getList();
+      List<ObjectSubstituteRoot> list = queryListCreator.getList();
 
       if (null == list)
       {

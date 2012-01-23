@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.HqlQueryResult;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
 import javax.swing.*;
@@ -95,7 +97,7 @@ public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
       }
    }
 
-   public List getList()
+   public List<ObjectSubstituteRoot> getList()
    {
       return _hqlQueryResult.getQueryResultList();
    }

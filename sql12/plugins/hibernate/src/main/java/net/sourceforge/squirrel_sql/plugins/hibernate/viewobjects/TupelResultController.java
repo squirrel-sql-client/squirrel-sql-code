@@ -12,12 +12,10 @@ import java.util.ArrayList;
 public class TupelResultController
 {
    private JTree _resultTree;
-   private Class _persistenCollectionClass;
    private ArrayList<MappedClassInfo> _allMappedClassInfos;
 
-   public TupelResultController(TupelType tupelType, JPanel pnlResults, Class persistenCollectionClass, ArrayList<MappedClassInfo> allMappedClassInfos)
+   public TupelResultController(TupelType tupelType, JPanel pnlResults, ArrayList<MappedClassInfo> allMappedClassInfos)
    {
-      _persistenCollectionClass = persistenCollectionClass;
       _allMappedClassInfos = allMappedClassInfos;
       _resultTree = new JTree();
 
@@ -66,7 +64,7 @@ public class TupelResultController
          }
          else if(kidNode.getUserObject() instanceof SingleResult)
          {
-            ViewObjectsUtil.addSingleResultKids(kidNode, (SingleResult) kidNode.getUserObject(), _persistenCollectionClass, _allMappedClassInfos);
+            ViewObjectsUtil.addSingleResultKids(kidNode, (SingleResult) kidNode.getUserObject(), _allMappedClassInfos);
          }
       }
       ViewObjectsUtil.nodeStructurChanged(node, _resultTree);

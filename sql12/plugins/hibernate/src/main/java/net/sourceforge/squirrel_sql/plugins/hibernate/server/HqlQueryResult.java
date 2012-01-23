@@ -6,7 +6,7 @@ import java.util.List;
 
 public class HqlQueryResult implements Serializable
 {
-   private List _queryResultList;
+   private List<ObjectSubstituteRoot> _queryResultList;
    private Throwable _exceptionOccuredWhenExecutingQuery;
 
    private HashMap<String, Throwable> _sessionAdminExceptions = new HashMap<String, Throwable>();
@@ -16,12 +16,12 @@ public class HqlQueryResult implements Serializable
       _sessionAdminExceptions.put(msgKey, t);
    }
 
-   public void setQueryResultList(List list)
+   public void setQueryResultList(List<ObjectSubstituteRoot> list)
    {
       _queryResultList = list;
    }
 
-   public List getQueryResultList()
+   public List<ObjectSubstituteRoot> getQueryResultList()
    {
       return _queryResultList;
    }

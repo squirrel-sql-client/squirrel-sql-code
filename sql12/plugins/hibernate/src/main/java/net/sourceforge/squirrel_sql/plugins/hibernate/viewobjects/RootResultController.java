@@ -17,14 +17,12 @@ public class RootResultController
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RootResultController.class);
 
 
-   private Class _persistenCollectionClass;
    private ArrayList<MappedClassInfo> _mappedClassInfos;
    private JTree _resultTree;
 
-   public RootResultController(RootType rootType, JPanel pnlResults, Class persistenCollectionClass, ArrayList<MappedClassInfo> mappedClassInfos)
+   public RootResultController(RootType rootType, JPanel pnlResults, ArrayList<MappedClassInfo> mappedClassInfos)
    {
       RootType rootType1 = rootType;
-      _persistenCollectionClass = persistenCollectionClass;
       _mappedClassInfos = mappedClassInfos;
 
 
@@ -82,7 +80,7 @@ public class RootResultController
          }
          else if(kidNode.getUserObject() instanceof SingleResult)
          {
-            ViewObjectsUtil.addSingleResultKids(kidNode, (SingleResult) kidNode.getUserObject(), _persistenCollectionClass, _mappedClassInfos);
+            ViewObjectsUtil.addSingleResultKids(kidNode, (SingleResult) kidNode.getUserObject(), _mappedClassInfos);
          }
       }
       ViewObjectsUtil.nodeStructurChanged(node, _resultTree);
@@ -94,7 +92,7 @@ public class RootResultController
       {
          DefaultMutableTreeNode singleResultNode = new DefaultMutableTreeNode(singleResult);
          root.add(singleResultNode);
-         ViewObjectsUtil.addSingleResultKids(singleResultNode, singleResult, _persistenCollectionClass, _mappedClassInfos);
+         ViewObjectsUtil.addSingleResultKids(singleResultNode, singleResult, _mappedClassInfos);
       }
 
       ViewObjectsUtil.nodeStructurChanged(root, _resultTree);

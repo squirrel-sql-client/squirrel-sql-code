@@ -1,8 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +16,11 @@ public class TupelType implements IType
    private String _toString = "";
 
 
-   public TupelType(ArrayList<MappedClassInfo> myMappedClassInfos, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List arrays)
+   public TupelType(ArrayList<MappedClassInfo> myMappedClassInfos, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> arrays)
    {
       for (int i = 0; i < myMappedClassInfos.size(); i++)
       {
-         _singleTypes.add(new SingleType(myMappedClassInfos.get(i), allMappedClassInfos, persistenCollectionClass, getAllArrayElementsWithIndex(i, arrays)));
+         _singleTypes.add(new SingleType(myMappedClassInfos.get(i), allMappedClassInfos, getAllArrayElementsWithIndex(i, arrays)));
 
          _toString += myMappedClassInfos.get(i).getClassName();
 
@@ -29,19 +30,19 @@ public class TupelType implements IType
          }
       }
 
-      for (Object array : arrays)
+      for (ObjectSubstituteRoot array : arrays)
       {
          _tupleResults.add(new TupelResult(myMappedClassInfos, array));
       }
    }
 
-   private ArrayList getAllArrayElementsWithIndex(int index, List arrays)
+   private ArrayList<ObjectSubstitute> getAllArrayElementsWithIndex(int index, List<ObjectSubstituteRoot> arrays)
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<ObjectSubstitute> ret = new ArrayList<ObjectSubstitute>();
 
-      for (Object array : arrays)
+      for (ObjectSubstituteRoot array : arrays)
       {
-         ret.add(Array.get(array, index));
+         ret.add(array.getArrayItemAt(index));
       }
 
       return ret;

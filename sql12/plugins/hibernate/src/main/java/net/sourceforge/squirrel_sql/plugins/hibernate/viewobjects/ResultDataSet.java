@@ -6,8 +6,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class ResultDataSet implements IDataSet
 
    public Object get(int columnIndex) throws DataSetException
    {
-      Object obj = _singleType.getResults().get(_curIx).getObject();
+      ObjectSubstitute obj = _singleType.getResults().get(_curIx).getObject();
 
       if(null == obj)
       {
@@ -61,26 +61,32 @@ public class ResultDataSet implements IDataSet
 
       HibernatePropertyReader hpr = new HibernatePropertyReader(_columnDisplayDefinitions[columnIndex].getColumnName(), obj);
 
-      Object value = hpr.getValue();
-      if(null == value)
+      if(hpr.isNull())
       {
          return "<null>";
       }
 
-      if (_singleType.getPersistenCollectionClass().isAssignableFrom(value.getClass()))
-      {
-         boolean wasInitialized = (Boolean) new ReflectionCaller(value).callMethod("wasInitialized").getCallee();
 
-         if (false == wasInitialized)
+      MappedClassInfo mappedClassInfo = ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), _singleType.getAllMappedClassInfos(), true);
+
+      if (hpr.isPersistenCollection())
+      {
+         if (false == hpr.wasInitialized())
          {
             return HibernateUtil.UNITIALIZED_PERSISTENT_COLLECTION;
          }
+         else
+         {
+            PropertyInfo propertyInfo = new PropertyInfo(hpr.getHibernatePropertyInfo(), hpr.getHibernatePropertyInfo().getClassName());
+            propertyInfo.setMappedClassInfo(mappedClassInfo);
+            return new PersistentCollectionResult(hpr, propertyInfo, _singleType.getAllMappedClassInfos());
+         }
+         
       }
 
-      MappedClassInfo mappedClassInfo = ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), _singleType.getAllMappedClassInfos(), true);
       if (null != mappedClassInfo)
       {
-         return new SingleResult(hpr.getValue(), mappedClassInfo);
+         return new SingleResult((ObjectSubstitute)hpr.getValue(), mappedClassInfo);
       }
 
       return hpr.getValue();

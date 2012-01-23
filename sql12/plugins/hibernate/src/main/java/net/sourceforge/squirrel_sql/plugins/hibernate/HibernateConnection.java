@@ -151,19 +151,6 @@ public class HibernateConnection
 
    }
 
-   public Class getPersistenCollectionClass()
-   {
-      try
-      {
-         return _hibernateServerConnection.getPersistenCollectionClass();
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-
-      }
-   }
-
    public HibernateSqlConnectionData getHibernateSqlConnectionData()
    {
       try

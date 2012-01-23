@@ -6,23 +6,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ReflectionCaller
+class ReflectionCaller
 {
    private Object _callee;
 
 
-   public ReflectionCaller(Object callee)
+   ReflectionCaller(Object callee)
    {
       _callee = callee;
    }
 
-   public ReflectionCaller()
+   ReflectionCaller()
    {
       this(null);
    }
 
 
-   public ReflectionCaller getClass(String className, ClassLoader cl)
+   ReflectionCaller getClass(String className, ClassLoader cl)
    {
       try
       {
@@ -34,7 +34,7 @@ public class ReflectionCaller
       }
    }
 
-   public ReflectionCaller callConstructor(Class[] paramTypes, Object[] params)
+   ReflectionCaller callConstructor(Class[] paramTypes, Object[] params)
    {
       try
       {
@@ -48,7 +48,7 @@ public class ReflectionCaller
 
    }
 
-   public List<ReflectionCaller> callArrayMethod(String methodName)
+   List<ReflectionCaller> callArrayMethod(String methodName)
    {
       try
       {
@@ -73,12 +73,12 @@ public class ReflectionCaller
    }
 
 
-   public Object getCallee()
+   Object getCallee()
    {
       return _callee;
    }
 
-   public Collection<ReflectionCaller> callCollectionMethod(String methodName)
+   Collection<ReflectionCaller> callCollectionMethod(String methodName)
    {
       try
       {
@@ -103,7 +103,7 @@ public class ReflectionCaller
       }
    }
 
-   public ReflectionCaller getField(String fieldName)
+   ReflectionCaller getField(String fieldName)
    {
       try
       {
@@ -115,7 +115,7 @@ public class ReflectionCaller
       }
    }
 
-   public Class getCalleeClass()
+   Class getCalleeClass()
    {
       if(_callee instanceof Class)
       {
@@ -133,18 +133,18 @@ public class ReflectionCaller
     * callMethod(String methodName, Object... params)
     * NoSuchMethodErrors occur if it isn't there. 
     */
-   public ReflectionCaller callMethod(String methodName)
+   ReflectionCaller callMethod(String methodName)
    {
       return callMethod(methodName, new RCParam(new Object[0]));
    }
 
-   public ReflectionCaller callMethod(String methodName, Object... params)
+   ReflectionCaller callMethod(String methodName, Object... params)
    {
       return callMethod(methodName, new RCParam(params));
    }
 
 
-   public ReflectionCaller callMethod(String methodName, RCParam param)
+   ReflectionCaller callMethod(String methodName, RCParam param)
    {
       try
       {
@@ -205,7 +205,7 @@ public class ReflectionCaller
 
    }
 
-   public ReflectionCaller callStaticMethod(ClassLoader cl, String className, String methName, Class[] paramTypes, Object[] args)
+   ReflectionCaller callStaticMethod(ClassLoader cl, String className, String methName, Class[] paramTypes, Object[] args)
    {
       try
       {

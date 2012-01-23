@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -26,7 +28,7 @@ public class ObjectResultTabController
    private ObjectResultTab _tab;
    private ResultsController _resultsController;
 
-   public ObjectResultTabController(List objects, int maxNumResults, HibernateConnection con, String hqlQuery, HibernatePluginResources resource, final ObjectResultTabControllerListener l, ISession session)
+   public ObjectResultTabController(List<ObjectSubstituteRoot> objects, int maxNumResults, HibernateConnection con, String hqlQuery, HibernatePluginResources resource, final ObjectResultTabControllerListener l, ISession session)
    {
       _tab = new ObjectResultTab(resource);
 
@@ -56,14 +58,12 @@ public class ObjectResultTabController
       //String hql = "select be from Best be inner join fetch be.bestPosses bep";
 
 
-      Class persistenCollectionClass = con.getPersistenCollectionClass();
-
       ArrayList<MappedClassInfo> mappedClassInfos = con.getMappedClassInfos();
-      _resultsController = new ResultsController(_tab.pnlResults, hqlQuery, persistenCollectionClass, mappedClassInfos, session);
+      _resultsController = new ResultsController(_tab.pnlResults, hqlQuery, mappedClassInfos, session);
 
 
 
-      RootType qrmr = new RootType(objects, con.getMappedClassInfos(), persistenCollectionClass);
+      RootType qrmr = new RootType(objects, con.getMappedClassInfos());
 
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(qrmr);
       _tab.treeTypes.setModel(new DefaultTreeModel(rootNode));

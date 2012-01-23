@@ -17,10 +17,6 @@ public interface HibernateServerConnection extends Remote
          throws RemoteException;
 
 
-   Class getPersistenCollectionClass()
-         throws RemoteException;
-
-
    HibernateSqlConnectionData getHibernateSqlConnectionData()
          throws RemoteException;
 
