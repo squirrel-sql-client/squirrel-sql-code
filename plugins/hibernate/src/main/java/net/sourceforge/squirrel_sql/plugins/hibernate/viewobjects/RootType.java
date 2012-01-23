@@ -3,8 +3,9 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class RootType
@@ -13,41 +14,41 @@ public class RootType
 
    private IType _type;
 
-   public RootType(List objects, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass)
+   public RootType(List<ObjectSubstituteRoot> objects, ArrayList<MappedClassInfo> allMappedClassInfos)
    {
-      _type = createResultType(objects.get(0), allMappedClassInfos, persistenCollectionClass, objects);
+      _type = createResultType(objects.get(0), allMappedClassInfos, objects);
    }
 
-   private IType createResultType(Object object, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   private IType createResultType(ObjectSubstituteRoot object, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
    {
-      if(object.getClass().isArray())
+      if(object.isArray())
       {
          ArrayList<String> mappedClassNames = new ArrayList<String>();
-         for(int i=0; i < Array.getLength(object); ++i)
+         for(int i=0; i < object.getArraySize(); ++i)
          {
-            Object buf = Array.get(object, i);
-            String mappedClassName = buf.getClass().getName();
+            ObjectSubstitute buf = object.getArrayItemAt(i);
+            String mappedClassName = buf.getClassName();
             mappedClassNames.add(mappedClassName);
          }
 
-         return createResultTupelType(mappedClassNames, allMappedClassInfos, persistenCollectionClass, objects);
+         return createResultTupelType(mappedClassNames, allMappedClassInfos, objects);
       }
       else
       {
-         String mappedClassName = object.getClass().getName();
-         return createSingleTypeResultType(mappedClassName, allMappedClassInfos, persistenCollectionClass, objects);
+         String mappedClassName = object.getObjectSubstitute().getClassName();
+         return createSingleTypeResultType(mappedClassName, allMappedClassInfos, objects);
 
       }
    }
 
-   private SingleType createSingleTypeResultType(String mappedClassName, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   private SingleType createSingleTypeResultType(String mappedClassName, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
    {
       MappedClassInfo mappedClassInfo = ViewObjectsUtil.findMappedClassInfo(mappedClassName, allMappedClassInfos, false);
 
-      return new SingleType(mappedClassInfo, allMappedClassInfos, persistenCollectionClass, objects);
+      return new SingleType(mappedClassInfo, allMappedClassInfos, ObjectSubstituteRoot.toObjectSubstitutes(objects));
    }
 
-   private TupelType createResultTupelType(ArrayList<String> mappedClassNames, ArrayList<MappedClassInfo> allMappedClassInfos, Class persistenCollectionClass, List objects)
+   private TupelType createResultTupelType(ArrayList<String> mappedClassNames, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
    {
 
       ArrayList<MappedClassInfo> mappedClassInfos = new ArrayList<MappedClassInfo>();
@@ -56,7 +57,7 @@ public class RootType
          mappedClassInfos.add(ViewObjectsUtil.findMappedClassInfo(mappedClassName, allMappedClassInfos, false));
       }
 
-      return new TupelType(mappedClassInfos, allMappedClassInfos, persistenCollectionClass, objects);
+      return new TupelType(mappedClassInfos, allMappedClassInfos, objects);
    }
 
 

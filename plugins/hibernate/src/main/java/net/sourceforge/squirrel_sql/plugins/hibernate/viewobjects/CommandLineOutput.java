@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ReflectionCaller;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ public class CommandLineOutput
 
          for (SingleResult result : type.getResults())
          {
-            Object firstObject = result.getObject();
+            ObjectSubstitute firstObject = result.getObject();
             displayMappedObject(mappedClassInfos, mci, firstObject, persistenCollectionClass);
          }
       }
@@ -38,7 +38,7 @@ public class CommandLineOutput
             for (SingleResult queryResult : type.getResults())
             {
                MappedClassInfo mci = queryResult.getMappedClassInfo();
-               Object obj = queryResult.getObject();
+               ObjectSubstitute obj = queryResult.getObject();
 
                displayMappedObject(mappedClassInfos, mci, obj, persistenCollectionClass);
             }
@@ -56,7 +56,7 @@ public class CommandLineOutput
             for (SingleResult singleResult : singleResults)
             {
                MappedClassInfo mci = singleResult.getMappedClassInfo();
-               Object obj = singleResult.getObject();
+               ObjectSubstitute obj = singleResult.getObject();
 
                displayMappedObject(mappedClassInfos, mci, obj, persistenCollectionClass);
             }
@@ -64,7 +64,7 @@ public class CommandLineOutput
       }
    }
 
-   static void displayMappedObject(ArrayList<MappedClassInfo> mappedClassInfos, MappedClassInfo mci, Object obj, Class persistenCollectionClass)
+   static void displayMappedObject(ArrayList<MappedClassInfo> mappedClassInfos, MappedClassInfo mci, ObjectSubstitute obj, Class persistenCollectionClass)
    {
       PropertyInfo[] propertyInfos = mci.getAttributes();
 
@@ -78,9 +78,7 @@ public class CommandLineOutput
          Object value = hpr.getValue();
          if (null != value && persistenCollectionClass.isAssignableFrom(value.getClass()))
          {
-            ReflectionCaller rc = new ReflectionCaller(value);
-
-            System.out.println("      PersistentCollection: " + hpr.getName() + "; wasInitialized=" + rc.callMethod("wasInitialized").getCallee());
+            System.out.println("      PersistentCollection: " + hpr.getName() + "; wasInitialized=" + hpr.wasInitialized());
          }
          else if (null != ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), mappedClassInfos, true))
          {

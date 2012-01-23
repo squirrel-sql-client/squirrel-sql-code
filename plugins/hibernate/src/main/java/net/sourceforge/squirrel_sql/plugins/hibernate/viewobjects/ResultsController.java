@@ -16,16 +16,14 @@ public class ResultsController
 
 
    private JPanel _pnlResults;
-   private Class _persistenCollectionClass;
    private ArrayList<MappedClassInfo> _allMappedClassInfos;
    private ISession _session;
 
    private MultipleLineLabel _lblClear;
 
-   public ResultsController(JPanel pnlResults, String hqlQuery, Class persistenCollectionClass, ArrayList<MappedClassInfo> allMappedClassInfos, ISession session)
+   public ResultsController(JPanel pnlResults, String hqlQuery, ArrayList<MappedClassInfo> allMappedClassInfos, ISession session)
    {
       _pnlResults = pnlResults;
-      _persistenCollectionClass = persistenCollectionClass;
       _allMappedClassInfos = allMappedClassInfos;
       _session = session;
 
@@ -44,11 +42,11 @@ public class ResultsController
    {
       if(type instanceof RootType)
       {
-         new RootResultController((RootType)type, _pnlResults, _persistenCollectionClass, _allMappedClassInfos);
+         new RootResultController((RootType)type, _pnlResults, _allMappedClassInfos);
       }
       else if(type instanceof TupelType)
       {
-         new TupelResultController((TupelType) type, _pnlResults, _persistenCollectionClass, _allMappedClassInfos);
+         new TupelResultController((TupelType) type, _pnlResults, _allMappedClassInfos);
       }
       else if(type instanceof SingleType)
       {

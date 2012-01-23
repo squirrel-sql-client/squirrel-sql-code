@@ -45,7 +45,7 @@ public class ServerMainImpl implements ServerMain
       try
       {
          IntraVmConnectionFactory intraVmConnectionFactory = new IntraVmConnectionFactory();
-         HibernateServerConnection ret = intraVmConnectionFactory.createHibernateConnection(cfg);
+         HibernateServerConnection ret = intraVmConnectionFactory.createHibernateConnection(cfg, true);
          
          return (HibernateServerConnection) UnicastRemoteObject.exportObject(ret, 0);
       }

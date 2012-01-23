@@ -1,25 +1,20 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernatePropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
-import net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects.PropertyAccessor;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.util.Collection;
 
 public class HibernatePropertyReader
 {
    private String _propertyName;
-   private Object _obj;
-   private PropertyAccessor _propertyAccessor;
+   private ObjectSubstitute _obj;
 
-   public HibernatePropertyReader(String propertyName, Object obj)
+   public HibernatePropertyReader(String propertyName, ObjectSubstitute obj)
    {
       _propertyName = propertyName;
       _obj = obj;
-      if (null != obj)
-      {
-         _propertyAccessor = getAccessor(_obj.getClass());
-      }
    }
 
    public String getName()
@@ -30,82 +25,79 @@ public class HibernatePropertyReader
 
    public Object getValue()
    {
-      try
-      {
-         if (null == _propertyAccessor)
-         {
-            return HibernateUtil.OBJECT_IS_NULL;
-         }
-         else
-         {
-            return _propertyAccessor.get(_obj);
-         }
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Cannot access property: " + _obj.getClass().getName() + "." + _propertyName, e);
-      }
-   }
-
-   private PropertyAccessor getAccessor(Class<? extends Object> clazz)
-   {
-      if(null == clazz || clazz.equals(Object.class))
-      {
-         return null;
-      }
-
-      try
-      {
-         Field f = clazz.getDeclaredField(_propertyName);
-         return new PropertyAccessor(f);
-      }
-      catch (NoSuchFieldException nsfe)
-      {
-         try
-         {
-            Method m = clazz.getDeclaredMethod(toGetter(_propertyName, false));
-            return new PropertyAccessor(m);
-         }
-         catch (NoSuchMethodException nsme)
-         {
-            try
-            {
-               Method m = clazz.getDeclaredMethod(toGetter(_propertyName, true));
-               return new PropertyAccessor(m);
-            }
-            catch (NoSuchMethodException e)
-            {
-               return getAccessor(clazz.getSuperclass());
-            }
-         }
-      }
-   }
-
-   private String toGetter(String propertyName, boolean isBoolean)
-   {
-      String ret = Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
-
-      if(isBoolean)
-      {
-         return "is" + ret;
-      }
-      else
-      {
-         return "get" + ret;
-      }
-   }
-
-   public String getTypeName()
-   {
-      if (null == _propertyAccessor)
+      if (null == _obj)
       {
          return HibernateUtil.OBJECT_IS_NULL;
       }
       else
       {
-         return _propertyAccessor.getType().getName();
+         return _obj.getValue(_propertyName);
       }
    }
 
+   public String getTypeName()
+   {
 
+      if (null == _obj)
+      {
+         return HibernateUtil.OBJECT_IS_NULL;
+      }
+      else
+      {
+         return _obj.getTypeName(_propertyName);
+      }
+   }
+
+   public boolean wasInitialized()
+   {
+      if (null == _obj)
+      {
+          return true;
+      }
+      else
+      {
+         return _obj.wasInitialized(_propertyName);
+      }
+   }
+
+   public boolean isPersistenCollection()
+   {
+      if (null == _obj)
+      {
+         return false;
+      }
+      else
+      {
+         return _obj.isPersistenCollection(_propertyName);
+      }
+   }
+
+   public Collection<? extends ObjectSubstitute> getPersistentCollection()
+   {
+      if (null == _obj)
+      {
+         return null;
+      }
+      else
+      {
+         return _obj.getPersistentCollection(_propertyName);
+      }
+   }
+
+   public boolean isNull()
+   {
+      if (null == _obj)
+      {
+         return false;
+      }
+      else
+      {
+         return _obj.isNull(_propertyName);
+      }
+   }
+
+   public HibernatePropertyInfo getHibernatePropertyInfo()
+   {
+      return _obj.getHibernatePropertyInfo(_propertyName);
+   }
 }

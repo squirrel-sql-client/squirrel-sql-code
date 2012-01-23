@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.server;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -10,15 +12,22 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
 {
    private Object _sessionFactoryImpl;
    private ClassLoader _cl;
-   private ArrayList<MappedClassInfoData> _mappedClassInfoData;
+   private boolean _server;
+
+//   private ArrayList<MappedClassInfoData> _mappedClassInfoData;
+//   private HashSet<String> _mappedClassNames;
+
+   private HashMap<String, MappedClassInfoData> _infoDataByClassName;
+
+
    private ReflectionCaller m_rcHibernateSession;
-   private HashSet<String> _mappedClassNames;
 
 
-   HibernateServerConnectionImpl(Object sessionFactoryImpl, ClassLoader cl) throws RemoteException
+   HibernateServerConnectionImpl(Object sessionFactoryImpl, ClassLoader cl, boolean isServer) throws RemoteException
    {
       _sessionFactoryImpl = sessionFactoryImpl;
       _cl = cl;
+      _server = isServer;
    }
 
 
@@ -76,7 +85,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       {
          _sessionFactoryImpl = null;
          _cl = null;
-         _mappedClassInfoData = null;
+         _infoDataByClassName = null;
          System.gc();
 
          if(null != reThrow)
@@ -90,31 +99,17 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    public ArrayList<MappedClassInfoData> getMappedClassInfoData()
    {
       initMappedClassInfos();
-      return _mappedClassInfoData;
-   }
-
-   @Override
-   public Class getPersistenCollectionClass()
-   {
-      try
-      {
-         return _cl.loadClass("org.hibernate.collection.PersistentCollection");
-      }
-      catch (ClassNotFoundException e)
-      {
-         throw new RuntimeException(e);
-      }
+      return new ArrayList<MappedClassInfoData>(_infoDataByClassName.values());
    }
 
    private void initMappedClassInfos()
    {
-      if(null != _mappedClassInfoData)
+      if(null != _infoDataByClassName)
       {
          return;
       }
 
-      _mappedClassInfoData = new ArrayList<MappedClassInfoData>();
-      _mappedClassNames =  new HashSet<String>();
+      _infoDataByClassName = new HashMap<String, MappedClassInfoData>();
 
       ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
       Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
@@ -171,12 +166,11 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
                }
                else
                {
-                  throw e;
+                  throw (RuntimeException)prepareTransport(e);
                }
             }
          }
-         _mappedClassInfoData.add(new MappedClassInfoData(mappedClass.getName(), tableName, identifierPropInfo, infos));
-         _mappedClassNames.add(mappedClass.getName());
+         _infoDataByClassName.put(mappedClass.getName(), new MappedClassInfoData(mappedClass.getName(), tableName, identifierPropInfo, infos));
       }
    }
 
@@ -201,13 +195,15 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    {
       HqlQueryResult ret = new HqlQueryResult();
 
+      List queryResList = null;
+
       try
       {
          getRcHibernateSession().callMethod("getTransaction").callMethod("begin");
       }
       catch (Throwable t)
       {
-         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().begin()", t);
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().begin()", prepareTransport(t));
       }
 
       try
@@ -219,11 +215,11 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
             rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
          }
 
-         ret.setQueryResultList((List) rc.callMethod("list").getCallee());
+         queryResList = (List) rc.callMethod("list").getCallee();
       }
       catch (Throwable t)
       {
-         ret.setExceptionOccuredWhenExecutingQuery(t);
+         ret.setExceptionOccuredWhenExecutingQuery(prepareTransport(t));
       }
 
       try
@@ -232,7 +228,7 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
       catch (Throwable t)
       {
-         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", t);
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", prepareTransport(t));
       }
 
       try
@@ -241,15 +237,37 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
       catch (Throwable t)
       {
-         ret.putSessionAdminException("Exception occurced during call of Session.clear()", t);
+         ret.putSessionAdminException("Exception occurced during call of Session.clear()", prepareTransport(t));
       }
 
-       if (null != ret.getQueryResultList())
+       if (null != queryResList)
        {
-           new HibernateProxyHandler(_cl).prepareHibernateProxies(ret.getQueryResultList(), _mappedClassNames);
+          ret.setQueryResultList(
+                new ObjectSubstituteFactory(_cl).replaceObjectsWithSubstitutes(queryResList, _infoDataByClassName));
        }
 
        return ret;
+   }
+
+   private Throwable prepareTransport(Throwable t)
+   {
+      if(false == _server)
+      {
+         return t;
+      }
+
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+
+      Throwable deepestThrowable = getDeepestThrowable(t);
+      deepestThrowable.printStackTrace(pw);
+      
+      pw.flush();
+      sw.flush();
+
+      String messageIncludingOriginalStackTrace = "Exception occured on Hibernate Server Process: " + t.getMessage() + "\n" + sw.toString();
+
+      return new SquirrelHibernateServerException(messageIncludingOriginalStackTrace, deepestThrowable.getMessage(), deepestThrowable.getClass().getName());
    }
 
 
@@ -277,6 +295,4 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       return parent;
 
    }
-
-
 }

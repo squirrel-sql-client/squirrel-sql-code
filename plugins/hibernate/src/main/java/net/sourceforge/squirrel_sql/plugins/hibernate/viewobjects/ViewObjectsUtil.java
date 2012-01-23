@@ -2,19 +2,14 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
+import java.util.Collection;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gerd
- * Date: 22.02.2010
- * Time: 23:02:54
- * To change this template use File | Settings | File Templates.
- */
 public class ViewObjectsUtil
 {
    public static MappedClassInfo findMappedClassInfo(String className, ArrayList<MappedClassInfo> mappedClassInfos, boolean allowNotFound)
@@ -36,7 +31,7 @@ public class ViewObjectsUtil
       throw new IllegalArgumentException("No mapping information found for class: " + className);
    }
 
-   static void addSingleResultKids(DefaultMutableTreeNode parent, SingleResult singleResult, Class persistenCollectionClass, ArrayList<MappedClassInfo> allMappedClassInfos)
+   static void addSingleResultKids(DefaultMutableTreeNode parent, SingleResult singleResult, ArrayList<MappedClassInfo> allMappedClassInfos)
    {
       PropertyInfo[] propertyInfos = singleResult.getMappedClassInfo().getAttributes();
 
@@ -45,19 +40,18 @@ public class ViewObjectsUtil
          String propertyName = propertyInfo.getHibernatePropertyInfo().getPropertyName();
          HibernatePropertyReader hpr = new HibernatePropertyReader(propertyName, singleResult.getObject());
 
-         Object value = hpr.getValue();
-         if (null != value && persistenCollectionClass.isAssignableFrom(value.getClass()))
+         if (hpr.isPersistenCollection())
          {
-            parent.add(new DefaultMutableTreeNode(new PersistentCollectionResult(value, propertyInfo, allMappedClassInfos)));
+            parent.add(new DefaultMutableTreeNode(new PersistentCollectionResult(hpr, propertyInfo, allMappedClassInfos)));
          }
          else if (null != findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, true))
          {
-            SingleResult buf = new SingleResult(propertyName, hpr.getValue(), findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, false));
+            SingleResult buf = new SingleResult(propertyName, (ObjectSubstitute) hpr.getValue(), findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, false));
             parent.add(new DefaultMutableTreeNode(buf));
          }
          else
          {
-            parent.add(new DefaultMutableTreeNode(new PrimitiveValue(hpr, value)));
+            parent.add(new DefaultMutableTreeNode(new PrimitiveValue(hpr)));
          }
       }
    }

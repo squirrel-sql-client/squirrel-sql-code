@@ -7,10 +7,10 @@ public class PrimitiveValue
 
    private String _toString = "";
 
-   public PrimitiveValue(HibernatePropertyReader hpr, Object value)
+   public PrimitiveValue(HibernatePropertyReader hpr)
    {
       _hpr = hpr;
-      _value = value;
+      _value = hpr.getValue();
       _toString += _hpr.getName() + "=" + getValue(_value) + "; Type:" + _hpr.getTypeName();
    }
 

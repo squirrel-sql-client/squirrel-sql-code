@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HQLPanelController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.SquirrelHibernateServerException;
 
 public class HqlQueryErrorUtil
 {
@@ -20,7 +21,15 @@ public class HqlQueryErrorUtil
       ExceptionFormatter formatter = sess.getExceptionFormatter();
       try
       {
-         ret = formatter.format(t);
+         if (t instanceof SquirrelHibernateServerException)
+         {
+            ret = t.getMessage();
+         }
+         else
+         {
+            ret = formatter.format(t);
+         }
+
          if (showInMessagePanel)
          {
             sess.showErrorMessage(ret);
@@ -33,12 +42,27 @@ public class HqlQueryErrorUtil
       }
 
       if (sess.getProperties().getWriteSQLErrorsToLog() ||
-            (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
+            isHibernateException(t))
       {
          // If this is not a hibernate error we write a log entry
          s_log.error(t);
       }
 
       return ret;
+   }
+
+   private static boolean isHibernateException(Throwable t)
+   {
+      String className;
+      if (t instanceof SquirrelHibernateServerException)
+      {
+         className = ((SquirrelHibernateServerException)t).getOriginalExceptionClassName();
+      }
+      else
+      {
+         className = t.getClass().getName();
+      }
+
+      return (-1 == className.toLowerCase().indexOf("hibernate") && -1 == className.toLowerCase().indexOf("antlr"));
    }
 }

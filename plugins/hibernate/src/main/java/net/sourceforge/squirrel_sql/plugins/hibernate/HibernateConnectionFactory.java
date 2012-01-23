@@ -26,7 +26,7 @@ public class HibernateConnectionFactory
       else
       {
          final IntraVmConnectionFactory intraVmConnectionFactory = new IntraVmConnectionFactory();
-         return new HibernateConnection(intraVmConnectionFactory.createHibernateConnection(cfg), false, null, cfg.isEndProcessOnDisconnect());
+         return new HibernateConnection(intraVmConnectionFactory.createHibernateConnection(cfg, false), false, null, cfg.isEndProcessOnDisconnect());
       }
    }
 

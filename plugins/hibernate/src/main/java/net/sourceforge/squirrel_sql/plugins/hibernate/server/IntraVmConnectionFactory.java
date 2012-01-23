@@ -7,7 +7,7 @@ import java.net.URLClassLoader;
 
 public class IntraVmConnectionFactory
 {                                              
-   public HibernateServerConnection createHibernateConnection(HibernateConfiguration cfg)
+   public HibernateServerConnection createHibernateConnection(HibernateConfiguration cfg, boolean isServer)
    {
       try
       {
@@ -47,7 +47,7 @@ public class IntraVmConnectionFactory
 
          Thread.currentThread().setContextClassLoader(null);
 
-         return new HibernateServerConnectionImpl(sessionFactoryImpl, cl);
+         return new HibernateServerConnectionImpl(sessionFactoryImpl, cl, isServer);
       }
       catch (Exception e)
       {
