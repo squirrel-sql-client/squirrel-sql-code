@@ -105,16 +105,13 @@ public class ConnectToAliasCallBack implements ICompletionCallback
 
    protected void showErrorDialog(final String msg, final Throwable th)
    {
-      synchronized (this)
+      SwingUtilities.invokeLater(new Runnable()
       {
-         SwingUtilities.invokeLater(new Runnable()
+         public void run()
          {
-            public void run()
-            {
-               new ErrorDialog(_app.getMainFrame(), msg, th).setVisible(true);
-            }
-         });
-      }
+            new ErrorDialog(_app.getMainFrame(), msg, th).setVisible(true);
+         }
+      });
    }
 
 
