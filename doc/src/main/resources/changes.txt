@@ -6,10 +6,14 @@ ${squirrelsql.changelog.header}
 
 Enhancements:
 
+
+Syntax Plugin:
+ Duplicate line (ctrl+d) now duplicates the line at cursor if no text is selected
+ and duplicates the selection if a selection exists.
+
 Hibernate Plugin:
   On Windows the class path's files defined in the Hibernate configuration would remain locked even
   after disconnecting Hibernate. This doesn't happen anymore when Hibernate is run in its own process.
-
 
 Graph Plugin:
   Tables can be added to a Graph from within the SQL-Editor (accessible from right mouse menu and tools popup).

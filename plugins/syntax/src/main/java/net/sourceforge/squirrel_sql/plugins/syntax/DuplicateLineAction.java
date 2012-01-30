@@ -48,48 +48,67 @@ public class DuplicateLineAction extends SquirrelAction implements ISQLPanelActi
    {
       try
       {
-         JTextComponent txtComp = sqlEntryPanel.getTextComponent();
+         String selectedText = sqlEntryPanel.getSelectedText();
 
-         int docLen = txtComp.getDocument().getLength();
-         String text = txtComp.getDocument().getText(0, txtComp.getDocument().getLength());
-
-         int caretPosition = txtComp.getCaretPosition();
-
-         int lineBeg = 0;
-         for (int i = caretPosition - 1; i > 0; --i)
+         if(null != selectedText && 0 < selectedText.length())
          {
-            if (text.charAt(i) == '\n')
-            {
-               lineBeg = i;
-               break;
-            }
-         }
+            JTextComponent txtComp = sqlEntryPanel.getTextComponent();
+            int selectionEnd = sqlEntryPanel.getSelectionEnd();
 
-         int lineEnd = txtComp.getDocument().getLength();
-         for (int i = caretPosition; i < docLen; ++i)
+            txtComp.getDocument().insertString(selectionEnd, selectedText, null);
+            sqlEntryPanel.setSelectionStart(selectionEnd);
+            sqlEntryPanel.setSelectionEnd(selectionEnd + selectedText.length());
+         }
+         else
          {
-            if (text.charAt(i) == '\n')
-            {
-               lineEnd = i;
-               break;
-            }
+            duplicateCurrentLine(sqlEntryPanel);
          }
-
-         String line = text.substring(lineBeg, lineEnd);
-
-         if (0 == lineBeg)
-         {
-            line += "\n";
-         }
-
-
-         txtComp.getDocument().insertString(lineBeg, line, null);
 
       }
       catch (BadLocationException e)
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private void duplicateCurrentLine(ISQLEntryPanel sqlEntryPanel) throws BadLocationException
+   {
+      JTextComponent txtComp = sqlEntryPanel.getTextComponent();
+
+      int docLen = txtComp.getDocument().getLength();
+      String text = txtComp.getDocument().getText(0, txtComp.getDocument().getLength());
+
+      int caretPosition = txtComp.getCaretPosition();
+
+      int lineBeg = 0;
+      for (int i = caretPosition - 1; i > 0; --i)
+      {
+         if (text.charAt(i) == '\n')
+         {
+            lineBeg = i;
+            break;
+         }
+      }
+
+      int lineEnd = txtComp.getDocument().getLength();
+      for (int i = caretPosition; i < docLen; ++i)
+      {
+         if (text.charAt(i) == '\n')
+         {
+            lineEnd = i;
+            break;
+         }
+      }
+
+      String line = text.substring(lineBeg, lineEnd);
+
+      if (0 == lineBeg)
+      {
+         line += "\n";
+      }
+
+
+      txtComp.getDocument().insertString(lineBeg, line, null);
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)
