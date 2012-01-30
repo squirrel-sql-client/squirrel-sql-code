@@ -9,6 +9,7 @@ public class Parser
 	private static final int maxT = 103;
 
 	private static final boolean T = true;
+	private static final boolean G = true; // to see Gerds changes
 	private static final boolean x = false;
 	private static final int minErrDist = 2;
 
@@ -726,7 +727,7 @@ public class Parser
 			SelectStmt();
 		}
 		else
-			Error(115);
+			Error(ParsingConstants.KW_INSET);
 		CloseParens();
 	}
 
@@ -788,7 +789,7 @@ public class Parser
 		{
 			Get();
 		}
-		else if (t.kind == 52)
+		else if (t.kind == ParsingConstants.KW_MINUS_SIGN)
 		{
 			Get();
 		}
@@ -843,7 +844,7 @@ public class Parser
 
 	private final void Term()
 	{
-		if (t.kind == 52)
+		if (t.kind == ParsingConstants.KW_MINUS_SIGN)
 		{
 			Get();
 		}
@@ -1005,6 +1006,12 @@ public class Parser
 				}
 			case 4:
 				{
+					Get();
+					break;
+				}
+			case ParsingConstants.KW_MINUS_SIGN:
+				{
+					Get();
 					Get();
 					break;
 				}
@@ -1879,7 +1886,7 @@ public class Parser
 
 	private static boolean[][] set = {
 		{T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, G, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
 		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
 		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
 		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T, x, T, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
