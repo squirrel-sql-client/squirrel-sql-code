@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ErrorStream {
 
-	int count;  // number of errors detected
+   int count;  // number of errors detected
 	public String fileName;
 
     /** Internationalized strings for this class */
@@ -92,7 +92,7 @@ public class ErrorStream {
 			case ParsingConstants.KW_NULL: {s = "\"NULL\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_DESC: {s = "\"DESC\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_ASC: {s = "\"ASC\" "+EXPECTED_STR; break;}
-			case 52: {s = "\"-\" "+EXPECTED_STR; break;}
+			case ParsingConstants.KW_MINUS_SIGN: {s = "\"-\" "+EXPECTED_STR; break;}
 			case 53: {s = "\":\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_NOT: {s = "\"NOT\" "+EXPECTED_STR; break;}
 			case 55: {s = "\"/\" "+EXPECTED_STR; break;}
@@ -161,7 +161,7 @@ public class ErrorStream {
 			case 112: {s = INVALID_STR +" ForeignKey"; break;}
 			case 113: {s = INVALID_STR +" ColumnDefault"; break;}
 			case 114: {s = INVALID_STR +" DataType"; break;}
-			case 115: {s = INVALID_STR +" InSetExpr"; break;}
+			case ParsingConstants.KW_INSET: {s = INVALID_STR +" InSetExpr"; break;}
 			case 116: {s = INVALID_STR +" LikeTest"; break;}
 			case 117: {s = INVALID_STR +" WordOperator"; break;}
 			case 118: {s = INVALID_STR +" MathOperator"; break;}
