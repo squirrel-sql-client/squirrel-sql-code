@@ -111,4 +111,6 @@ public interface ParsingConstants
    static final int KIND_ASTERISK = 39;
    static final int KIND_EQUALS = 14;
 
+   static final int KW_INSET = 115;
+   static final int KW_MINUS_SIGN = 52;
 }

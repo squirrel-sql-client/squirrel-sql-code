@@ -392,7 +392,7 @@ public class Scanner
 				case ParsingConstants.KW_ALL:
 					{t.kind = ParsingConstants.KIND_ASTERISK; break loop;}
 				case ParsingConstants.KW_UPDATE:
-					{t.kind = 52; break loop;}
+					{t.kind = ParsingConstants.KW_MINUS_SIGN; break loop;}
 				case ParsingConstants.KW_SET:
 					{t.kind = 53; break loop;}
 				case ParsingConstants.KIND_EQUALS:
