@@ -39,9 +39,8 @@ public class ObjectResultController
       return _objectResultTabbedPane;
    }
 
-   public void displayObjects(HibernateConnection con, String hqlQuery, boolean limitObjectCount, int limitObjectCountVal)
+   public void displayObjects(HibernateConnection con, String hqlQuery, boolean limitObjectCount, int limitObjectCountVal, boolean useSessionConnection)
    {
-
       int maxNumResults = -1;
       if (limitObjectCount)
       {
@@ -69,7 +68,7 @@ public class ObjectResultController
       WaitPanel waitPanel = new WaitPanel(hqlQuery, _resource, waitPanelListener);
       _objectResultTabbedPane.addTab(waitPanel.getTitle(), waitPanel);
       _objectResultTabbedPane.setSelectedComponent(waitPanel);
-      new QueryListCreator(queryListCreatorListener, hqlQuery, maxNumResults, con, _session, waitPanel).execute();
+      new QueryListCreator(queryListCreatorListener, hqlQuery, maxNumResults, useSessionConnection, con, _session, waitPanel).execute();
 
    }
 

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 
 import javax.swing.*;
@@ -9,10 +11,15 @@ import java.awt.*;
 
 public class ObjectResultTab extends JPanel
 {
+   private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(ObjectResultTab.class);
+
+
    JLabel lblHqlQuery;
    JButton btnClose;
    JTree treeTypes;
    JPanel pnlResults;
+   JButton btnCopySql;
 
    public ObjectResultTab(HibernatePluginResources resource)
    {
@@ -52,12 +59,23 @@ public class ObjectResultTab extends JPanel
       lblHqlQuery = new JLabel();
       ret.add(lblHqlQuery, BorderLayout.CENTER);
 
-      btnClose = new JButton(resource.getIcon(HibernatePluginResources.IKeys.CLOSE_IMAGE));
+      ret.add(createButtonPanel(resource), BorderLayout.EAST);
 
-      btnClose.setMargin(new Insets(0, 0, 0, 0));
-      btnClose.setBorderPainted(false);
-      
-      ret.add(btnClose, BorderLayout.EAST);
+      return ret;
+   }
+
+   private JPanel createButtonPanel(HibernatePluginResources resource)
+   {
+      JPanel ret = new JPanel(new GridLayout(1,2,3,2));
+
+      btnCopySql = new JButton(resource.getIcon(HibernatePluginResources.IKeys.SQL_COPY_IMAGE));
+      btnCopySql.setToolTipText(s_stringMgr.getString("ObjectResultTab.CopySqlToClip"));
+      btnCopySql.setBorder(BorderFactory.createRaisedBevelBorder());
+      ret.add(btnCopySql);
+
+      btnClose = new JButton(resource.getIcon(HibernatePluginResources.IKeys.CLOSE_IMAGE));
+      btnClose.setBorder(BorderFactory.createRaisedBevelBorder());
+      ret.add(btnClose);
 
       return ret;
    }

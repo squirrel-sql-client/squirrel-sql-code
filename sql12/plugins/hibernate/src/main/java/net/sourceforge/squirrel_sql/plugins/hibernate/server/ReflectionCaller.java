@@ -48,6 +48,20 @@ class ReflectionCaller
 
    }
 
+   public ReflectionCaller newInstance()
+   {
+      try
+      {
+         return new ReflectionCaller(getCalleeClass().newInstance());
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+
    List<ReflectionCaller> callArrayMethod(String methodName)
    {
       try

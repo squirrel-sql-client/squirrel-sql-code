@@ -3,25 +3,25 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
-import net.sourceforge.squirrel_sql.fw.util.*;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigPanel;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 public class HibernateTabController implements IMainPanelTab, IHibernateTabController, IHibernateConnectionProvider
@@ -42,7 +42,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private HibernatePluginResources _resource;
    private HQLPanelController _hqlPanelController;
    private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
-   private SQLPanelManager _sqlPanelManager;
+   private HqlResultPanelManager _hqlResultPanelManager;
    private MappedObjectPanelManager _mappedObjectsPanelManager;
 
    public HibernateTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
@@ -54,10 +54,10 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
          _plugin = plugin;
 
          _hqlPanelController = new HQLPanelController(this, _session, resource);
-         _sqlPanelManager = new SQLPanelManager(_session, resource);
+         _hqlResultPanelManager = new HqlResultPanelManager(_session, resource);
          _mappedObjectsPanelManager = new MappedObjectPanelManager(this, _session, resource);
 
-         _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent(), _resource);
+         _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _hqlResultPanelManager.getComponent(), _resource);
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
 
@@ -316,23 +316,13 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       _panel.addToToolbar(btn);
    }
 
-   @Override
-   public void displaySqls(ArrayList<String> sqls)
-   {
-      _sqlPanelManager.displaySqls(sqls);
-   }
 
    @Override
    public void displayObjects(HibernateConnection con, String hqlQuery)
    {
-      _sqlPanelManager.displayObjects(con, hqlQuery);
+      _hqlResultPanelManager.displayObjects(con, hqlQuery);
    }
 
-   @Override
-   public boolean isDisplayObjects()
-   {
-      return _sqlPanelManager.isDisplayObjects();
-   }
 
    public IHibernateConnectionProvider getHibernateConnectionProvider()
    {
