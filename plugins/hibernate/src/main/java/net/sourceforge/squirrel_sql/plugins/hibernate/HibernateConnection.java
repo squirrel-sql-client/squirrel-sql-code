@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.client.session.JdbcConnectionData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
@@ -163,30 +164,42 @@ public class HibernateConnection
       }
    }
 
-   public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow)
+   public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow, JdbcConnectionData jdbcData)
+   {
+      if (_process)
+      {
+         SecurityManager old = System.getSecurityManager();
+
+         try
+         {
+            System.setSecurityManager(_rmiSecurityManager);
+            return callCreateQueryList(hqlQuery, sqlNbrRowsToShow, jdbcData);
+         }
+         finally
+         {
+            System.setSecurityManager(old);
+         }
+      }
+      else
+      {
+         return callCreateQueryList(hqlQuery, sqlNbrRowsToShow, jdbcData);
+      }
+   }
+
+   private HqlQueryResult callCreateQueryList(String hqlQuery, int sqlNbrRowsToShow, JdbcConnectionData jdbcData)
    {
       try
       {
-         if (_process)
-         {
-            SecurityManager old =System.getSecurityManager();
-
-            try
-            {
-               System.setSecurityManager(_rmiSecurityManager);
-               return _hibernateServerConnection.createQueryList(hqlQuery, sqlNbrRowsToShow);
-            }
-            finally
-            {
-               System.setSecurityManager(old);
-            }
-         }
-         else
+         if (null == jdbcData)
          {
             return _hibernateServerConnection.createQueryList(hqlQuery, sqlNbrRowsToShow);
          }
+         else
+         {
+            return _hibernateServerConnection.createQueryList(hqlQuery, sqlNbrRowsToShow, jdbcData.getDriverClassName(), jdbcData.getUrl(), jdbcData.getUser(), jdbcData.getPassword());
+         }
       }
-      catch (Exception e)
+      catch (RemoteException e)
       {
          throw new RuntimeException(e);
       }

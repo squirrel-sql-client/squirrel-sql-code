@@ -11,23 +11,29 @@ import java.io.Serializable;
 public class SquirrelHibernateServerException extends RuntimeException implements Serializable
 {
    private String _originalMessage;
+   private String _exceptionToString;
    private String _originalExceptionClassName;
 
-   public SquirrelHibernateServerException(String messageIncludingOriginalStackTrace, String originalMessage, String originalExceptionClassName)
+   public SquirrelHibernateServerException(String messageIncludingOriginalStackTrace, String originalMessage, String exceptionToString, String originalExceptionClassName)
    {
       super(messageIncludingOriginalStackTrace);
       _originalMessage = originalMessage;
+      _exceptionToString = exceptionToString;
       _originalExceptionClassName = originalExceptionClassName;
-   }
-
-   @Override
-   public String getMessage()
-   {
-      return _originalMessage;
    }
 
    public String getOriginalExceptionClassName()
    {
       return _originalExceptionClassName;
+   }
+
+   public String getExceptionToString()
+   {
+      return _exceptionToString;
+   }
+
+   public String getOriginalMessage()
+   {
+      return _originalMessage;
    }
 }

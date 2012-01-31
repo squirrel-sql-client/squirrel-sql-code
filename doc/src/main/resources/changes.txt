@@ -4,12 +4,18 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
+Not yet released, available in our Subversion repository and in future snapshots and releases.
+===============================================================================================
+
 Enhancements:
 
+Hibernate Plugin:
+  - Redesign of HQL result display. Focus is now on displaying result objects instead of Hibernate generated SQL.
+  - User can choose if he wants to use the Session's JDBC connection or the one configured with Hibernate.
 
 Syntax Plugin:
- Duplicate line (ctrl+d) now duplicates the line at cursor if no text is selected
- and duplicates the selection if a selection exists.
+  Duplicate line (ctrl+d) now duplicates the line at cursor if no text is selected
+  and duplicates the selection if a selection exists.
 
 Hibernate Plugin:
   On Windows the class path's files defined in the Hibernate configuration would remain locked even

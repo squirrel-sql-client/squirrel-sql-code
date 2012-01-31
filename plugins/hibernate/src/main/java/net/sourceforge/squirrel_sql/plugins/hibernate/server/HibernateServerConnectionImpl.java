@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -14,13 +15,14 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    private ClassLoader _cl;
    private boolean _server;
 
-//   private ArrayList<MappedClassInfoData> _mappedClassInfoData;
-//   private HashSet<String> _mappedClassNames;
-
    private HashMap<String, MappedClassInfoData> _infoDataByClassName;
 
 
-   private ReflectionCaller m_rcHibernateSession;
+   private ReflectionCaller _rcHibernateSession;
+   private String _driverClassName;
+   private String _url;
+   private String _user;
+   private String _password;
 
 
    HibernateServerConnectionImpl(Object sessionFactoryImpl, ClassLoader cl, boolean isServer) throws RemoteException
@@ -193,6 +195,39 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    @Override
    public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow)
    {
+      if (null != _driverClassName)
+      {
+         _driverClassName = null;
+         _url = null;
+         _user = null;
+         _password = null;
+         _rcHibernateSession = null;
+      }
+
+      return _createResultList(hqlQuery, sqlNbrRowsToShow);
+   }
+
+
+   @Override
+   public HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow, String driverClassName, String url, String user, String password) throws RemoteException
+   {
+      if(null == _driverClassName)
+      {
+         _driverClassName = driverClassName;
+         _url = url;
+         _user = user;
+         _password = password;
+
+         _rcHibernateSession = null;
+      }
+
+
+      return _createResultList(hqlQuery, sqlNbrRowsToShow);
+   }
+
+
+   private HqlQueryResult _createResultList(String hqlQuery, int sqlNbrRowsToShow)
+   {
       HqlQueryResult ret = new HqlQueryResult();
 
       List queryResList = null;
@@ -240,13 +275,13 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
          ret.putSessionAdminException("Exception occurced during call of Session.clear()", prepareTransport(t));
       }
 
-       if (null != queryResList)
-       {
-          ret.setQueryResultList(
-                new ObjectSubstituteFactory(_cl).replaceObjectsWithSubstitutes(queryResList, _infoDataByClassName));
-       }
+      if (null != queryResList)
+      {
+         ret.setQueryResultList(
+               new ObjectSubstituteFactory(_cl).replaceObjectsWithSubstitutes(queryResList, _infoDataByClassName));
+      }
 
-       return ret;
+      return ret;
    }
 
    private Throwable prepareTransport(Throwable t)
@@ -265,20 +300,57 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       pw.flush();
       sw.flush();
 
-      String messageIncludingOriginalStackTrace = "Exception occured on Hibernate Server Process: " + t.getMessage() + "\n" + sw.toString();
+      String messageIncludingOriginalStackTrace = "Exception occured on Hibernate Server Process: " + deepestThrowable.getMessage() + "\n";
 
-      return new SquirrelHibernateServerException(messageIncludingOriginalStackTrace, deepestThrowable.getMessage(), deepestThrowable.getClass().getName());
+      String stackTraceString = sw.toString();
+      String deepestToString = deepestThrowable.toString();
+      if(("" + deepestThrowable.getMessage()).equals(deepestToString) || stackTraceString.startsWith(deepestToString))
+      {
+         messageIncludingOriginalStackTrace += stackTraceString;
+      }
+      else
+      {
+         messageIncludingOriginalStackTrace +=  ( deepestToString + "\n" + stackTraceString);
+      }
+      
+
+      return new SquirrelHibernateServerException(messageIncludingOriginalStackTrace, deepestThrowable.getMessage(), deepestToString, deepestThrowable.getClass().getName());
    }
 
 
    private ReflectionCaller getRcHibernateSession()
    {
-      if(null == m_rcHibernateSession)
+      try
       {
-         m_rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession");
-      }
+         if(null == _rcHibernateSession)
+         {
+            if (null == _driverClassName)
+            {
+               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession");
+            }
+            else
+            {
+               ReflectionCaller driver = new ReflectionCaller().getClass(_driverClassName, _cl).newInstance();
 
-      return m_rcHibernateSession;
+               Properties props = new Properties();
+               props.put("user", _user);
+               props.put("password", _password);
+
+               ReflectionCaller con = driver.callMethod("connect", _url, props);
+
+               RCParam rcParam = new RCParam();
+               rcParam.add(con.getCallee(), Connection.class);
+
+               _rcHibernateSession = new ReflectionCaller(_sessionFactoryImpl).callMethod("openSession", rcParam);
+            }
+         }
+
+         return _rcHibernateSession;
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
 

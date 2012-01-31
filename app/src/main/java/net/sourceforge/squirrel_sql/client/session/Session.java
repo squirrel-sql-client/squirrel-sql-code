@@ -59,15 +59,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TokenizerSessPropsInteractions;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
@@ -533,6 +525,16 @@ class Session implements ISession
          }
       }
    }
+
+   @Override
+   public JdbcConnectionData getJdbcData()
+   {
+      IIdentifier driverID = _alias.getDriverIdentifier();
+      ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
+
+      return new JdbcConnectionData(sqlDriver.getDriverClassName(), _alias.getUrl(), _user, _password);
+   }
+
 
    /**
     * Reconnect to the database.

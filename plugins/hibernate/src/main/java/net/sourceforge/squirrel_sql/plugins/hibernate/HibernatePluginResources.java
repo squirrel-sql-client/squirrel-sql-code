@@ -24,6 +24,7 @@ public final class HibernatePluginResources extends PluginResources
 
 		String JAR_IMAGE = "jar";
 		String JAR_DIRECTORY_IMAGE = "jardirectory";
-	}
+      String SQL_COPY_IMAGE = "sqlcopy";
+   }
 
 }

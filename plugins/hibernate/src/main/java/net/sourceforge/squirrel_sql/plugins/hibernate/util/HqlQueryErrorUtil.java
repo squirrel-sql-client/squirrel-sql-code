@@ -23,7 +23,15 @@ public class HqlQueryErrorUtil
       {
          if (t instanceof SquirrelHibernateServerException)
          {
-            ret = t.getMessage();
+            SquirrelHibernateServerException serverException = (SquirrelHibernateServerException) t;
+
+            ret = serverException.getOriginalMessage();
+
+            if(false == serverException.getOriginalMessage().equals(serverException.getExceptionToString()))
+            {
+               ret += "\n" + serverException.getExceptionToString();
+            }
+            
          }
          else
          {

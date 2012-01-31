@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
 
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -16,6 +17,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ public class ObjectResultTabController
    private ObjectResultTab _tab;
    private ResultsController _resultsController;
 
-   public ObjectResultTabController(List<ObjectSubstituteRoot> objects, int maxNumResults, HibernateConnection con, String hqlQuery, HibernatePluginResources resource, final ObjectResultTabControllerListener l, ISession session)
+   public ObjectResultTabController(List<ObjectSubstituteRoot> objects, int maxNumResults, final HibernateConnection con, final String hqlQuery, HibernatePluginResources resource, final ObjectResultTabControllerListener l, final ISession session)
    {
       _tab = new ObjectResultTab(resource);
 
@@ -40,6 +43,15 @@ public class ObjectResultTabController
          public void actionPerformed(ActionEvent e)
          {
             l.closeTab(ObjectResultTabController.this);
+         }
+      });
+
+      _tab.btnCopySql.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopySqlToClip(con, hqlQuery, session);
          }
       });
 
@@ -92,6 +104,16 @@ public class ObjectResultTabController
       initRoot(rootNode);
 
       //CommandLineOutput.displayObjects(mappedClassInfos, qrmr,  con.getPersistenCollectionClass());
+   }
+
+   private void onCopySqlToClip(HibernateConnection con, String hqlQuery, ISession session)
+   {
+      ArrayList<String> sqls = con.generateSQL(hqlQuery);
+
+      String allSqlsString = HibernateSQLUtil.createAllSqlsString(sqls, session);
+
+      StringSelection ss = new StringSelection(allSqlsString);
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
    }
 
    private void initHqlQueryLabel(List objects, String hqlQuery, int numResults, int maxNumResults)

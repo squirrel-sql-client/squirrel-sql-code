@@ -27,7 +27,7 @@ public class HibernateTabPanel extends JPanel
    private HibernatePluginResources _resource;
 
 
-   public HibernateTabPanel(JComponent mappedObjectComp, JComponent hqlTextComp, JComponent sqlTextComp, HibernatePluginResources resource)
+   public HibernateTabPanel(JComponent mappedObjectComp, JComponent hqlTextComp, JComponent hqlResultComp, HibernatePluginResources resource)
    {
       _resource = resource;
       setLayout(new GridBagLayout());
@@ -38,7 +38,7 @@ public class HibernateTabPanel extends JPanel
       _toolbar = createToolbar();
       add(_toolbar, gbc);
 
-      _splitHqlSql = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, sqlTextComp);
+      _splitHqlSql = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, hqlResultComp);
 
       _tabObjectsHql = new JTabbedPane();
 

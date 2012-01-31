@@ -24,4 +24,6 @@ public interface HibernateServerConnection extends Remote
    HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow)
          throws RemoteException;
 
+   HqlQueryResult createQueryList(String hqlQuery, int sqlNbrRowsToShow, String driverClassName, String url, String user, String password)
+         throws RemoteException;
 }

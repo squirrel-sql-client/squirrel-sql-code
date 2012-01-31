@@ -394,4 +394,7 @@ public interface ISession extends IHasIdentifier
    boolean isSessionWidgetActive();
 
    IMainPanelTab getSelectedMainTab();
+
+   JdbcConnectionData getJdbcData();
+
 }
