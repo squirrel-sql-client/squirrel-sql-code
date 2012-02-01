@@ -152,7 +152,7 @@ public class LinkGraphController
          XMLBeanReader br = new XMLBeanReader();
          for (String linkFileName : linkFileNames)
          {
-            br.load(new File(plugin.getPluginUserSettingsFolder().getPath(), linkFileName));
+            br.load(new File(plugin.getPluginUserSettingsFolder().getPath(), linkFileName), LinkGraphController.class.getClassLoader());
             ret.add((LinkXmlBean) br.iterator().next());
          }
 
