@@ -34,6 +34,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Graph Plugin: Opening Link dialog failed on Windows when one or more links already existed.
+
 SQL Editor: Parser mistook minus signs in SQL IN lists as errors.
 
 Error dialog showed up twice when an error occurred during Alias connect.
