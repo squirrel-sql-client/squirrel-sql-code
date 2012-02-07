@@ -108,7 +108,7 @@ public class CodeCompletionInfoCollection
                                                                             tables[i].getCatalogName(),
                                                                             tables[i].getSchemaName(),
                                                                             _useCompletionPrefs,
-                                                                            _prefs.isShowRemarksInColumnCompletion());
+                                                                            _prefs);
 
             if(null != dupl)
             {
@@ -222,9 +222,9 @@ public class CodeCompletionInfoCollection
          return new CodeCompletionInfo[0];
       }
 
-      String upperCasePrefix = prefix.trim().toUpperCase();
+      String trimmedPrefix = prefix.trim();
 
-      if("".equals(upperCasePrefix))
+      if("".equals(trimmedPrefix))
       {
 			Vector<CodeCompletionInfo> buf = new Vector<CodeCompletionInfo>();
 			buf.addAll(_aliasCompletionInfos);
@@ -248,7 +248,7 @@ public class CodeCompletionInfoCollection
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
 			CodeCompletionInfo buf = _aliasCompletionInfos.get(i);
-			if(buf.upperCaseCompletionStringStartsWith(upperCasePrefix))
+			if(buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
 			{
 				ret.add(buf);
 			}
@@ -258,7 +258,7 @@ public class CodeCompletionInfoCollection
       for(int i=0; i < completionInfos.size(); ++i)
       {
          CodeCompletionInfo buf = completionInfos.get(i);
-         if(buf.upperCaseCompletionStringStartsWith(upperCasePrefix))
+         if(buf.matchesCompletionStringStart(trimmedPrefix, _useCompletionPrefs && _prefs.isMatchCamelCase()))
          {
             ret.add(buf);
 
@@ -295,7 +295,7 @@ public class CodeCompletionInfoCollection
 		{
          if(false == aliasInfos[i].aliasName.startsWith("#"))
          {
-			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i], _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion()));
+			   _aliasCompletionInfos.add(new CodeCompletionTableAliasInfo(aliasInfos[i], _useCompletionPrefs, _prefs));
          }
 		}
 	}

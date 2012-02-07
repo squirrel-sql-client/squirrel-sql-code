@@ -148,8 +148,7 @@ public class StandardCompletorModel
    private ArrayList<CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
-		String upperCaseTableNamePat = name.toUpperCase();
-		CodeCompletionInfo toReturn = null;
+      CodeCompletionInfo toReturn = null;
 		if (colPos != -1)
 		{
 			// First check aliases
@@ -158,7 +157,7 @@ public class StandardCompletorModel
 				CodeCompletionInfo info = infos[j];
 				if (info instanceof CodeCompletionTableAliasInfo)
 				{
-					if (info.upperCaseCompletionStringEquals(upperCaseTableNamePat))
+					if (info.matchesCompletionString(name))
 					{
 						// See if this is the same statement
 						CodeCompletionTableAliasInfo a = (CodeCompletionTableAliasInfo) info;
@@ -174,7 +173,7 @@ public class StandardCompletorModel
 		{
 			for (int i = 0; i < infos.length; ++i)
 			{
-				if (infos[i].upperCaseCompletionStringEquals(upperCaseTableNamePat))
+				if (infos[i].matchesCompletionString(name))
 				{
 					toReturn = infos[i];
 					break;

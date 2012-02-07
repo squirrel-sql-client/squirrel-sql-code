@@ -9,6 +9,11 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Code Completion Plugin:
+  The Code Completion Plugin's preferences allows to switch on CamelCase completion
+  which is a common feature in many modern IDEs.
+  CamelCase completion may be useful if a RDBMS supports capital and small letters in database object names.
+
 Hibernate Plugin:
   - Redesign of HQL result display. Focus is now on displaying result objects instead of Hibernate generated SQL.
   - User can choose if he wants to use the Session's JDBC connection or the one configured with Hibernate.

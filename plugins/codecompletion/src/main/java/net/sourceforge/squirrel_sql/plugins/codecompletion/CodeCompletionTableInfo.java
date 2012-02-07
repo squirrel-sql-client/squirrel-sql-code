@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
 {
@@ -32,17 +33,17 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    private String _catalog;
    private String _schema;
    private boolean _useCompletionPrefs;
-   private boolean _showRemarksInColumnCompletion;
+   private CodeCompletionPreferences _prefs;
 
 
-   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
+   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
    {
       _tableName = tableName;
       _tableType = tableType;
       _catalog = catalog;
       _schema = schema;
       _useCompletionPrefs = useCompletionPrefs;
-      _showRemarksInColumnCompletion = showRemarksInColumnCompletion;
+      _prefs = prefs;
 
 
       if(null != _tableType && !"TABLE".equals(_tableType))
@@ -100,7 +101,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
                boolean nullable = schemColInfos[i].isNullable();
 
                CodeCompletionColumnInfo buf =
-                  new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _showRemarksInColumnCompletion);
+                  new CodeCompletionColumnInfo(columnName, remarks, columnType, columnSize, decimalDigits, nullable, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
 
                String bufStr = buf.toString();
                if (!uniqCols.contains(bufStr))
@@ -114,9 +115,9 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          _colInfos = colInfosBuf;
       }
 
-      String upperCaseColNamePattern = colNamePattern.toUpperCase().trim();
+      String trimmedColNamePattern = colNamePattern.trim();
 
-      if("".equals(upperCaseColNamePattern))
+      if("".equals(trimmedColNamePattern))
       {
          return _colInfos;
       }
@@ -125,7 +126,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
 
       for (CodeCompletionInfo colInfo : _colInfos)
       {
-         if(colInfo.upperCaseCompletionStringStartsWith(upperCaseColNamePattern))
+         if(colInfo.matchesCompletionStringStart(trimmedColNamePattern, _useCompletionPrefs && _prefs.isMatchCamelCase()))
          {
             ret.add(colInfo);
          }

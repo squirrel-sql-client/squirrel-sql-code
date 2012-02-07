@@ -15,6 +15,7 @@ public class CodeCompletionPreferences implements Serializable
 	private PrefixedConfig[] prefixedConfigs = new PrefixedConfig[0];
    private int maxLastSelectedCompletionNames = 1;
    private boolean _showRemarksInColumnCompletion;
+   private boolean _matchCamelCase;
 
    public int getGeneralCompletionConfig()
 	{
@@ -54,5 +55,15 @@ public class CodeCompletionPreferences implements Serializable
    public void setShowRemarksInColumnCompletion(boolean b)
    {
       _showRemarksInColumnCompletion = b;
+   }
+
+   public boolean isMatchCamelCase()
+   {
+      return _matchCamelCase;
+   }
+
+   public void setMatchCamelCase(boolean matchCamelCase)
+   {
+      _matchCamelCase = matchCamelCase;
    }
 }

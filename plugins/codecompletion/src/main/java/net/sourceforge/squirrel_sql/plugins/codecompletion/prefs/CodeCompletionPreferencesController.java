@@ -70,6 +70,7 @@ public class CodeCompletionPreferencesController
       _panel.txtMaxLastSelectedCompletionNames.setText("" + _prefs.getMaxLastSelectedCompletionNames());
 
       _panel.chkShowRemarksInColumnCompletion.setSelected(_prefs.isShowRemarksInColumnCompletion());
+      _panel.chkMatchCamelCase.setSelected(_prefs.isMatchCamelCase());
 
 
       _panel.btnNewRow.addActionListener(new ActionListener()
@@ -170,6 +171,7 @@ public class CodeCompletionPreferencesController
       }
 
       _prefs.setShowRemarksInColumnCompletion(_panel.chkShowRemarksInColumnCompletion.isSelected());
+      _prefs.setMatchCamelCase(_panel.chkMatchCamelCase.isSelected());
 
    }
 
