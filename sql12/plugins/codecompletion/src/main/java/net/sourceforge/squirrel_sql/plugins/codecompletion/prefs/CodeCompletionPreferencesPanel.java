@@ -25,6 +25,7 @@ public class CodeCompletionPreferencesPanel extends JPanel
 	JButton btnDeleteRows;
    JTextField txtMaxLastSelectedCompletionNames;
    JCheckBox chkShowRemarksInColumnCompletion;
+   JCheckBox chkMatchCamelCase;
 
 
    public CodeCompletionPreferencesPanel()
@@ -90,6 +91,13 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
       gbc = new GridBagConstraints(0,10,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
       add(createShowRemarksInColumnCompletionPanel(),gbc);
+
+      gbc = new GridBagConstraints(0,11,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      chkMatchCamelCase = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchCamelCase"));
+      add(chkMatchCamelCase,gbc);
+
+      gbc = new GridBagConstraints(0,12,1,1,2,2,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      add(new JPanel(),gbc);
    }
 
 

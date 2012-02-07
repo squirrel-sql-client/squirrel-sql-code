@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.fw.completion;
 public abstract class CompletionInfo implements Comparable<CompletionInfo>
 {
    private String _upperCaseCompletionString;
+   private String _completionString;
 
    public abstract String getCompareString();
 
@@ -32,44 +33,39 @@ public abstract class CompletionInfo implements Comparable<CompletionInfo>
 
    public int compareTo(CompletionInfo other)
    {
-      if(null == _upperCaseCompletionString)
-      {
-         _upperCaseCompletionString = getCompareString().toUpperCase();
-      }
-
-      if(null == other._upperCaseCompletionString)
-      {
-         other._upperCaseCompletionString = other.getCompareString().toUpperCase();
-      }
+      initCache();
+      other.initCache();
 
       return _upperCaseCompletionString.compareTo(other._upperCaseCompletionString);
    }
 
-   /**
-    * Param must be an upper case string if not the result will always be false
-    */
-   public boolean upperCaseCompletionStringStartsWith(String testString)
+   public boolean matchesCompletionStringStart(String testString, boolean matchCamelCase)
+   {
+      initCache();
+      return _upperCaseCompletionString.startsWith(testString.toUpperCase()) || (matchCamelCase && matchesCamelCase(testString));
+   }
+
+   private boolean matchesCamelCase(String testString)
+   {
+      return CamelCaseMatcher.matchesCamelCase(testString, _completionString);
+   }
+
+
+   public boolean matchesCompletionString(String testString)
+   {
+      initCache();
+      return _upperCaseCompletionString.equals(testString.toUpperCase());
+   }
+
+   private void initCache()
    {
       if(null == _upperCaseCompletionString)
       {
-         _upperCaseCompletionString = getCompareString().toUpperCase();
+         _completionString = getCompareString();
+         _upperCaseCompletionString = _completionString.toUpperCase();
       }
-
-      return _upperCaseCompletionString.startsWith(testString);
    }
 
-   /**
-    * Param must be an upper case string if not the result will always be false
-    */
-   public boolean upperCaseCompletionStringEquals(String testString)
-   {
-      if(null == _upperCaseCompletionString)
-      {
-         _upperCaseCompletionString = getCompareString().toUpperCase();
-      }
-
-      return _upperCaseCompletionString.equals(testString);
-   }
 
    /**
     * Default implementation

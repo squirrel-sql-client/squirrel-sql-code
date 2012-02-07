@@ -18,6 +18,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 {
@@ -25,9 +26,9 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 
    private String _toString;
 
-   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo, boolean useCompletionPrefs, boolean showRemarksInColumnCompletion)
+   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
 	{
-		super(aliasInfo.tableName, "TABLE", null, null, useCompletionPrefs, showRemarksInColumnCompletion);
+		super(aliasInfo.tableName, "TABLE", null, null, useCompletionPrefs, prefs);
 		_aliasInfo = aliasInfo;
       _toString = _aliasInfo.aliasName + " (Alias for " + _aliasInfo.tableName + ")";
 	}
