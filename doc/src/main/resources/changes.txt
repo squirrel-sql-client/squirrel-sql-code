@@ -9,6 +9,10 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Swing Violation Detector Pluging:
+  This new plugin will help to detect rule violations of the Swing programming model. The usage of this plugin is only recommonend for
+  testers and developers.
+
 Code Completion Plugin:
   The Code Completion Plugin's preferences allows to switch on CamelCase completion
   which is a common feature in many modern IDEs.
