@@ -267,10 +267,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			_metaDataOutput.show(mdds, null); // Why null??
 		}
 
-		exInfo.resultsProcessingComplete();
+		_exInfo.resultsProcessingComplete();
 
-		// And the query info.
-		_queryInfoPanel.load(rsds, rowCount, exInfo);
+		_queryInfoPanel.load(rowCount, _exInfo);				
 	}
 
    /**
@@ -585,7 +584,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			createGUI();
 		}
 
-		void load(ResultSetDataSet rsds, int rowCount,
+		void load(int rowCount,
 					SQLExecutionInfo exInfo)
 		{
 			_queryLbl.setText(StringUtilities.cleanString(exInfo.getSQL()));
