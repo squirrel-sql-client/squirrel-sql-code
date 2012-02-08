@@ -167,6 +167,15 @@
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/wikiTableConfigurations.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/wikiTableConfigurations" />
 		</pack>
+		
+		<pack required="no" preselected="no" installGroups="OptionalPlugins"
+			name="Optional Plugin - Swing Violation Dedector">
+			<description>
+				This plugin is useful to detect violated rules of the Swing programming model.
+         </description>
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/swingViolations.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/swingViolations" />
+		</pack>
 
 		<pack
 			required="no"

@@ -101,6 +101,7 @@
 		<module>userscript</module>
 		<module>wikiTableConfigurations</module>
         <module>greenplum</module>
-	</modules>
+  		<module>swingViolations</module>
+  </modules>
 
 </project>
