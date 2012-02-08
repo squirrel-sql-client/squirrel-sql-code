@@ -43,6 +43,8 @@ Graph Plugin:
 
 Bug fixes:
 
+2947296 Table script creation for multiple tables fails (on OpenJDK)
+
 Graph Plugin: Opening Link dialog failed on Windows when one or more links already existed.
 
 SQL Editor: Parser mistook minus signs in SQL IN lists as errors.

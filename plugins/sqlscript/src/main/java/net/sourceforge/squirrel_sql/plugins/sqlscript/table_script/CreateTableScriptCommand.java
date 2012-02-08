@@ -129,10 +129,19 @@ public class CreateTableScriptCommand implements ICommand
                 s_log.error(i18n.JDBCODBC_MESSAGE);
             }
 
-            TableScriptConfigCtrl tscc = new TableScriptConfigCtrl(_session
+            final TableScriptConfigCtrl tscc = new TableScriptConfigCtrl(_session
                     .getApplication().getMainFrame());
             if (1 < dbObjs.length) {
-                tscc.doModal();
+            	
+            	Runnable task = new Runnable() {
+					@Override
+					public void run() {
+						tscc.doModal();
+					}
+				};
+            	
+            	GUIUtils.processOnSwingEventThread(task, true);
+            	
                 if (false == tscc.isOk()) {
                     return null;
                 }
