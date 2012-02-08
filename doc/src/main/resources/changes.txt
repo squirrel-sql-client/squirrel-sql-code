@@ -9,7 +9,7 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
-Swing Violation Detector Pluging:
+Swing Violation Detector Plugin:
   This new plugin will help to detect rule violations of the Swing programming model. The usage of this plugin is only recommonend for
   testers and developers.
 
