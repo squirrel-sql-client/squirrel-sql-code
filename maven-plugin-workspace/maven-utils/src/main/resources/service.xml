@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="net.sf.squirrel_sql.persistence.PomFileFactory" class="net.sf.squirrel_sql.persistence.PomFileFactoryImpl" />
+
+	<bean id="net.sf.squirrel_sql.persistence.PomDependencyFactory" class="net.sf.squirrel_sql.persistence.PomDependencyFactoryImpl" />
+
+	<bean id="net.sf.squirrel_sql.util.PomFileUtilsFactory"
+		  class="net.sf.squirrel_sql.util.PomFileUtilsFactoryImpl" />
+
+	<bean id="net.sf.squirrel_sql.MavenMultiTreeDependencyAnalyzer"
+		class="net.sf.squirrel_sql.MavenMultiTreeDependencyAnalyzerImpl">
+		<property name="pomFileDao" ref="net.sf.squirrel_sql.persistence.PomFileDao" />
+		<property name="dependencyDao" ref="net.sf.squirrel_sql.persistence.PomDependencyDao" />
+		<property name="dependencyFactory" ref="net.sf.squirrel_sql.persistence.PomDependencyFactory" />
+		<property name="pomFileFactory" ref="net.sf.squirrel_sql.persistence.PomFileFactory" />
+		<property name="pomFileUtilsFactory" ref="net.sf.squirrel_sql.util.PomFileUtilsFactory" />
+	</bean>
+</beans>

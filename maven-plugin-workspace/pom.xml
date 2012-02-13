@@ -54,6 +54,7 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<modules>
+		<module>maven-utils</module>
 		<module>squirrelsql-dependency-plugin</module>
 		<module>squirrelsql-update-site-plugin</module>
 		<module>squirrelsql-version-plugin</module>
