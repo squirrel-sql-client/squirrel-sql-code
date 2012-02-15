@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
@@ -103,7 +104,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 			String destClassName = props.getMetaDataOutputClassName();
 			try
 			{
-				_comp = new DataSetScrollingPanel(destClassName, null);
+				_comp = new DataSetScrollingPanel(destClassName, null, new DefaultDataModelImplementationDetails(session));
 			} catch (Exception e)
 			{
 				s_log.error("Unexpected exception from call to getComponent: " + e.getMessage(), e);
@@ -122,20 +123,23 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		}
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		try
-		{
-			pstmt = createStatement();
-			rs = pstmt.executeQuery();
-			final IDataSet ds = createDataSetFromResultSet(rs);
-			_comp.load(ds);
-		} catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		} finally
-		{
-			SQLUtilities.closeResultSet(rs, true);
-		}
-	}
+
+      try
+      {
+         pstmt = createStatement();
+         rs = pstmt.executeQuery();
+         final IDataSet ds = createDataSetFromResultSet(rs);
+         _comp.load(ds, new DefaultDataModelImplementationDetails(session));
+      }
+      catch (SQLException ex)
+      {
+         throw new DataSetException(ex);
+      }
+      finally
+      {
+         SQLUtilities.closeResultSet(rs, true);
+      }
+   }
 
 	/**
 	 * Subclasses must implement this to provide a PreparedStatement that has it's parameter values bound and

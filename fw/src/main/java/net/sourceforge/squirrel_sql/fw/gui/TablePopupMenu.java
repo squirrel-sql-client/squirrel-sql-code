@@ -26,6 +26,7 @@ import java.awt.print.PrinterJob;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.CopyWikiTableActionFactory;
@@ -105,7 +106,8 @@ public class TablePopupMenu extends BasePopupMenu
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
 
-	// pointer to the viewer
+   private IDataModelImplementationDetails _dataModelImplementationDetails;
+   // pointer to the viewer
 	// This is needed for insert and delete operations
 	private DataSetViewerTablePanel _viewer = null;
 	
@@ -120,11 +122,14 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public TablePopupMenu(boolean allowEditing,
 								 IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel viewer)
+								 DataSetViewerTablePanel viewer,
+                         IDataModelImplementationDetails dataModelImplementationDetails)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
+
+      _dataModelImplementationDetails = dataModelImplementationDetails;
 
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
@@ -144,9 +149,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
-		if (_updateableModel != null) {
-			_menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
-		}
+      _menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
       addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
@@ -197,13 +200,14 @@ public class TablePopupMenu extends BasePopupMenu
 	 * Constructor used when creating menu for use in cell editor.
 	 */
 	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
-								 DataSetViewerTablePanel viewer, JTable table)
+								 DataSetViewerTablePanel viewer, JTable table, IDataModelImplementationDetails dataModelImplementationDetails)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
+      _dataModelImplementationDetails = dataModelImplementationDetails;
 
-		// save the pointer needed for insert and delete operations
+      // save the pointer needed for insert and delete operations
 		_viewer = viewer;
 
 		_table = table;
@@ -262,7 +266,7 @@ public class TablePopupMenu extends BasePopupMenu
 
    private String getStatementSeparatorFromModel()
    {
-      return _updateableModel.getDataModelImplementationDetails().getStatementSeparator();
+      return _dataModelImplementationDetails.getStatementSeparator();
    }
 
 

@@ -48,25 +48,29 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	protected DefaultCellEditor currentCellEditor = null;
 	
 	
-	/**
-	 * Some types of DataSetViewers require extra initialization to set up
-	 * a return reference to the originating data object (e.g. to allow
-	 * editing of that object later).  The reference is needed to distinguish
-	 * which tables/text may be edited and which may not.  This cannot be included
-	 * in the object creation because the Class.newInstance() method used in the 
-	 * getInstance() method of this class does not allow for arguments.  Since this
-	 * info is needed for the DataSetViewerTablePanel and DataSetViewerTextPanel classes
-	 * to be able to set up the
-	 * popup menu correctly, those classes cannot complete their initialization without
-	 * this added info.  Therefore we need to initialize that class in two stages.
-	 */
 	public void init(IDataSetUpdateableModel updateableObject)
 	{
-		// default is to do nothing.  Derived classes must override this
-		// to accomplish anything.
+      init(updateableObject, null);
 	}
 
-	/**
+   /**
+    * Some types of DataSetViewers require extra initialization to set up
+    * a return reference to the originating data object (e.g. to allow
+    * editing of that object later).  The reference is needed to distinguish
+    * which tables/text may be edited and which may not.  This cannot be included
+    * in the object creation because the Class.newInstance() method used in the
+    * getInstance() method of this class does not allow for arguments.  Since this
+    * info is needed for the DataSetViewerTablePanel and DataSetViewerTextPanel classes
+    * to be able to set up the
+    * popup menu correctly, those classes cannot complete their initialization without
+    * this added info.  Therefore we need to initialize that class in two stages.
+    */
+   @Override
+   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+   {
+   }
+
+   /**
 	 * Specify the column definitions to use.
 	 *
 	 * @param	hdgs	Column definitions to use.
@@ -173,20 +177,25 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 	protected abstract void allRowsAdded() throws DataSetException;
 	protected abstract void addRow(Object[] row) throws DataSetException;
 
+
+   public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel)
+   {
+      return getInstance(sName, updateableModel, null);
+   }
+
 	/**
 	 * factory method for getting IDataSetViewer instances
 	 * If no instance can be made then the default
 	 * will be returned.
 	 */
-	public static IDataSetViewer getInstance(String sName, 
-		IDataSetUpdateableModel updateableModel)
+	public static IDataSetViewer getInstance(String sName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
 	{
 		IDataSetViewer dsv = null;
 		try
 		{
 			Class<?> cls = Class.forName(sName);
 			dsv = (IDataSetViewer) cls.newInstance();
-			dsv.init(updateableModel);
+			dsv.init(updateableModel, dataModelImplementationDetails);
 		}
 		catch (Exception e)
 		{
@@ -195,7 +204,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		if (dsv == null)
 		{
 			dsv = new DataSetViewerTablePanel();
-			((DataSetViewerTablePanel)dsv).init(updateableModel);
+			dsv.init(updateableModel, dataModelImplementationDetails);
 		}
 		return dsv;
 	}

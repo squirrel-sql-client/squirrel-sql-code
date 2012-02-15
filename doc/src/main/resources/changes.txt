@@ -9,6 +9,10 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Copy as INSERT-VALUES statement now works on almost any table not just on editable tables. If a table isn't in
+  a Session scope ";" is used as statement separator instead of the separator defined in Session properties.
+
+
 Swing Violation Detector Plugin:
   This new plugin will help to detect rule violations of the Swing programming model. The usage of this plugin is only recommonend for
   testers and developers.

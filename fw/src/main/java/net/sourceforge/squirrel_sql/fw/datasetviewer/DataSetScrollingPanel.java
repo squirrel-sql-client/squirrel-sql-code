@@ -41,12 +41,16 @@ public class DataSetScrollingPanel extends JScrollPane
 		super();
 	}
 
-	public DataSetScrollingPanel(String destClassName,
-									IDataSetUpdateableModel updateableModel)
+	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel)
 		throws DataSetException
 	{
-		super();
-		createUserInterface(destClassName, updateableModel);
+      this(destClassName, updateableModel, null);
+	}
+
+	public DataSetScrollingPanel(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+		throws DataSetException
+	{
+		createUserInterface(destClassName, updateableModel, dataModelImplementationDetails);
 		_fullyCreated = true;
 	}
 
@@ -55,16 +59,18 @@ public class DataSetScrollingPanel extends JScrollPane
 		load(ds, null);
 	}
 
-	/**
-	 * @deprecated
-	 */
-	public void load(IDataSet ds, String destClassName)
+	public void load(IDataSet ds, IDataModelImplementationDetails dataModelImplementationDetails)
+	{
+		load(ds, null, dataModelImplementationDetails);
+	}
+
+	private void load(IDataSet ds, String destClassName, IDataModelImplementationDetails dataModelImplementationDetails)
 	{
 		try
 		{
 			if (!_fullyCreated)
 			{
-				createUserInterface(destClassName, null);
+				createUserInterface(destClassName, null, dataModelImplementationDetails);
 				_fullyCreated = true;
 			}
 			Runnable run = new UIUpdater(_viewer, ds);
@@ -84,11 +90,11 @@ public class DataSetScrollingPanel extends JScrollPane
 		}
 	}
 
-	private void createUserInterface(String destClassName, IDataSetUpdateableModel updateableModel)
+	private void createUserInterface(String destClassName, IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
 		throws DataSetException
 	{
 		setBorder(BorderFactory.createEmptyBorder());
-		_viewer = BaseDataSetViewerDestination.getInstance(destClassName, updateableModel);
+		_viewer = BaseDataSetViewerDestination.getInstance(destClassName, updateableModel, dataModelImplementationDetails);
 		Runnable run = new Runnable()
 		{
 			public void run()

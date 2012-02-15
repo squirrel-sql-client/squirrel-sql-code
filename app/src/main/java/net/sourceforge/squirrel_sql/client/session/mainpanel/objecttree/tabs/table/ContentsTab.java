@@ -556,16 +556,6 @@ public class ContentsTab extends BaseTableTab
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
-   public IDataModelImplementationDetails getDataModelImplementationDetails()
-   {
-      return new IDataModelImplementationDetails()
-      {
-         public String getStatementSeparator()
-         {
-            return getSession().getQueryTokenizer().getSQLStatementSeparator();
-         }
-      };
-   }
 
    protected String getDestinationClassName()
    {

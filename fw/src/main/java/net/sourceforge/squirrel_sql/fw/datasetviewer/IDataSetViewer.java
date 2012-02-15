@@ -32,7 +32,10 @@ public interface IDataSetViewer
 	/**
 	 * Allow some DataSetViewers to complete their initialization.
 	 */
-	public void init(IDataSetUpdateableModel updateableObject);
+	void init(IDataSetUpdateableModel updateableObject);
+
+   void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails);
+
 
 	/**
 	 * Get the rowcount of the DataSet

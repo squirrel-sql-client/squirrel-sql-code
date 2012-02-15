@@ -66,7 +66,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	private IDataSetUpdateableModel _updateableModel;
    private DataSetViewerTableListSelectionHandler _selectionHandler;
 
-	public DataSetViewerTablePanel()
+   private IDataModelImplementationDetails _dataModelImplementationDetails =
+         new IDataModelImplementationDetails()
+         {
+            @Override
+            public String getStatementSeparator()
+            {
+               return ";";
+            }
+         };
+
+   public DataSetViewerTablePanel()
 	{
 		super();
 	}
@@ -79,17 +89,40 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 	public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode)
 	{
-		_table = new MyJTable(this, updateableModel, listSelectionMode);
-      _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
-		_updateableModel = updateableModel;
+      init(updateableModel, listSelectionMode, null);
 	}
+
+   public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
+   {
+      init(updateableModel, ListSelectionModel.SINGLE_INTERVAL_SELECTION, dataModelImplementationDetails);
+   }
+
+   public void init(IDataSetUpdateableModel updateableModel, int listSelectionMode, IDataModelImplementationDetails dataModelImplementationDetails)
+   {
+      if (null != dataModelImplementationDetails)
+      {
+         _dataModelImplementationDetails = dataModelImplementationDetails;
+      }
+
+      _table = new MyJTable(this, updateableModel, listSelectionMode);
+      _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
+      _updateableModel = updateableModel;
+
+
+   }
+
 	
 	public IDataSetUpdateableModel getUpdateableModel()
 	{
 		return _updateableModel;
 	}
 
-	public void clear()
+   public IDataModelImplementationDetails getDataModelImplementationDetails()
+   {
+      return _dataModelImplementationDetails;
+   }
+
+   public void clear()
 	{
 		_typedModel.clear();
 		_typedModel.fireTableDataChanged();
@@ -539,8 +572,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			setTableHeader(_tableHeader);
 			_tableHeader.setTable(this);
 
-			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject,
-				DataSetViewerTablePanel.this);
+			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject, DataSetViewerTablePanel.this, getDataModelImplementationDetails());
 			_tablePopupMenu.setTable(this);
 
          addMouseListener(new MouseAdapter()

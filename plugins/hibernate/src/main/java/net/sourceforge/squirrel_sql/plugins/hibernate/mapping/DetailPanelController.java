@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.EmptyDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
@@ -11,9 +12,9 @@ public class DetailPanelController
    private DetailPanel _detailPanel;
 
 
-   public DetailPanelController()
+   public DetailPanelController(ISession session)
    {
-      _detailPanel = new DetailPanel();
+      _detailPanel = new DetailPanel(session);
    }
 
    public JComponent getDetailComponent()
