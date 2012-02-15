@@ -46,6 +46,7 @@ public class SQLExecutionInfo
 	/** Number of rows query limited to. */
 	private final int _maxRows;
    private Integer _numberResultRowsRead;
+   private SQLExecutionInfoFinishedListener _sqlExecutionInfoFinishedListener;
 
    /**
 	 * Default ctor. Defaults SQL execution start time to the current time.
@@ -124,6 +125,11 @@ public class SQLExecutionInfo
 	public void resultsProcessingComplete()
 	{
 		_resultsProcessingEnd = Calendar.getInstance().getTime();
+
+      if(null != _sqlExecutionInfoFinishedListener)
+      {
+         _sqlExecutionInfoFinishedListener.allProcessingComplete(this);
+      }
 	}
 
 	/**
@@ -231,5 +237,10 @@ public class SQLExecutionInfo
    public Integer getNumberResultRowsRead()
    {
       return _numberResultRowsRead;
+   }
+
+   public void setFinishedListener(SQLExecutionInfoFinishedListener sqlExecutionInfoFinishedListener)
+   {
+      _sqlExecutionInfoFinishedListener = sqlExecutionInfoFinishedListener;
    }
 }

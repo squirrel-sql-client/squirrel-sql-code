@@ -673,25 +673,22 @@ public class SQLResultExecuterPanel extends JPanel
     		final IDataSetUpdateableTableModel creator,
     		final IResultTab resultTabToReplace)
     {
-    	try
-    	{
-
-    		// Creating the resultTab must not be asynchronous. Otherwise, the Execution Info would be wrong
-    		final ResultTab tab = _resultTabFactory.createResultTab(exInfo, creator, rsds, mdds);
-
     		SwingUtilities.invokeLater(new Runnable()
     		{
-    			public void run()
-    			{
-    				addResultsTab(tab, resultTabToReplace);
-    				_tabbedExecutionsPanel.setSelectedComponent(tab);
-    			}
-    		});
-    	}catch (Throwable t)
-    	{
-    		_session.showErrorMessage(t);
-    	}
-
+             public void run()
+             {
+                try
+                {
+                   ResultTab tab = _resultTabFactory.createResultTab(exInfo, creator, rsds, mdds);
+                   addResultsTab(tab, resultTabToReplace);
+                   _tabbedExecutionsPanel.setSelectedComponent(tab);
+                }
+                catch (Throwable t)
+                {
+                   _session.showErrorMessage(t);
+                }
+             }
+          });
     }
 
    private void onRemoveCancelPanel(final CancelPanelCtrl cancelPanelCtrl, final IResultTab resultTabToReplace)
