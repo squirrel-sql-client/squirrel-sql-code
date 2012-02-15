@@ -1,10 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -220,17 +217,18 @@ class SQLExecutionHandler implements ISQLExecuterHandler
     * this method will track the total time when executing a large script,
     * otherwise for small scripts it puts out a message for every statemselect * from employeeent.
     */
-   public void sqlExecutionComplete(SQLExecutionInfo exInfo,
-                                    int processedStatementCount,
-                                    int statementCount)
+   public void sqlExecutionComplete(final SQLExecutionInfo exInfo,
+                                    final int processedStatementCount,
+                                    final int statementCount)
    {
-      double executionLength = ((double) exInfo.getSQLExecutionElapsedMillis()) / 1000;
-      double outputLength = ((double) exInfo.getResultsProcessingElapsedMillis()) / 1000;
-      double totalLength = executionLength + outputLength;
-      Integer numberResultRowsRead = exInfo.getNumberResultRowsRead();
+      final Integer numberResultRowsRead = exInfo.getNumberResultRowsRead();
 
       if (_largeScript)
       {
+         double executionLength = ((double) exInfo.getSQLExecutionElapsedMillis()) / 1000;
+         double outputLength = ((double) exInfo.getResultsProcessingElapsedMillis()) / 1000;
+         double totalLength = executionLength + outputLength;
+
          // Track the time in aggregate for the script.
          _scriptQueryTime += executionLength;
          _scriptOutptutTime += outputLength;
@@ -248,14 +246,40 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       }
       else
       {
-         printStatementExecTime(
-               processedStatementCount,
-               statementCount,
-               numberResultRowsRead,
-               executionLength,
-               outputLength,
-               totalLength);
+         exInfo.setFinishedListener(new SQLExecutionInfoFinishedListener()
+         {
+            @Override
+            public void allProcessingComplete(SQLExecutionInfo exInfo)
+            {
+               onAllProcessingComplete(exInfo, processedStatementCount, statementCount, numberResultRowsRead);
+            }
+         });
       }
+   }
+
+   private void onAllProcessingComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount, Integer numberResultRowsRead)
+   {
+      double executionLength = ((double) exInfo.getSQLExecutionElapsedMillis()) / 1000;
+      double outputLength = ((double) exInfo.getResultsProcessingElapsedMillis()) / 1000;
+      double totalLength = executionLength + outputLength;
+
+      final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
+
+      Object[] args = new Object[]{
+            Integer.valueOf(processedStatementCount),
+            Integer.valueOf(statementCount),
+            numberResultRowsRead == null ? 0 : numberResultRowsRead,
+            nbrFmt.format(totalLength),
+            nbrFmt.format(executionLength),
+            nbrFmt.format(outputLength)
+      };
+
+      //i18n[SQLResultExecuterPanel.queryStatistics=Query {0} of {1}
+      //elapsed time (seconds) - Total: {2}, SQL query: {3},
+      //Building output: {4}]
+      String stats = s_stringMgr.getString("SQLResultExecuterPanel.queryStatistics", args);
+
+      _session.showMessage(stats);
    }
 
    private void printScriptExecDetails(int statementCount,
@@ -289,33 +313,6 @@ class SQLExecutionHandler implements ISQLExecuterHandler
             s_stringMgr.getString("SQLResultExecuterPanel.scriptStmtCounts", counts);
 
       _session.showMessage(msg);
-      _session.showMessage(stats);
-   }
-
-   private void printStatementExecTime(
-         int processedStatementCount,
-         int statementCount,
-         Integer numberResultRowsRead,
-         double executionLength,
-         double outputLength,
-         double totalLength)
-   {
-      final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-
-      Object[] args = new Object[]{
-            Integer.valueOf(processedStatementCount),
-            Integer.valueOf(statementCount),
-            numberResultRowsRead == null ? 0 : numberResultRowsRead,
-            nbrFmt.format(totalLength),
-            nbrFmt.format(executionLength),
-            nbrFmt.format(outputLength)
-      };
-
-      //i18n[SQLResultExecuterPanel.queryStatistics=Query {0} of {1}
-      //elapsed time (seconds) - Total: {2}, SQL query: {3},
-      //Building output: {4}]
-      String stats = s_stringMgr.getString("SQLResultExecuterPanel.queryStatistics", args);
-
       _session.showMessage(stats);
    }
 

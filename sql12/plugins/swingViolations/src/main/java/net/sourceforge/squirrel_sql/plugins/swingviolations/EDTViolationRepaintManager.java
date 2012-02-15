@@ -279,12 +279,9 @@ public class EDTViolationRepaintManager extends RepaintManager{
 	    }
 
 	    protected void violationFound(JComponent c, StackTraceElement[] stackTrace) {
-	       log.error("EDT violation detected!");
-	       log.error(c);
-	        for (StackTraceElement st : stackTrace) {
-	            log.error("\tat " + st);
-	        }
-	        app.getMessageHandler().showErrorMessage("EDT violation detected!");
+          String message = "EDT violation detected in " + c;
+          log.error(message, new RuntimeException(message));
+	       app.getMessageHandler().showErrorMessage("EDT violation detected!");
 	    }
 	
 }
