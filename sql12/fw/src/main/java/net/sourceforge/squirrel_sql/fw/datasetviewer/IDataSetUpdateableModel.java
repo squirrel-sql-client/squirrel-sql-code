@@ -63,7 +63,4 @@ public interface IDataSetUpdateableModel
 	 * or not.
 	 */
 	public boolean editModeIsForced();
-
-   public IDataModelImplementationDetails getDataModelImplementationDetails();
-
 }

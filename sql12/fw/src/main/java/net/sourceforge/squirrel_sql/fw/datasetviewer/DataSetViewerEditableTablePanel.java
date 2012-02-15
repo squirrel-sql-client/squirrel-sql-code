@@ -50,9 +50,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	/**
 	 * Internal definitions
 	 */
-	public void init(IDataSetUpdateableModel updateableModel)
+	public void init(IDataSetUpdateableModel updateableModel, IDataModelImplementationDetails dataModelImplementationDetails)
 	{
-		super.init(updateableModel);
+		super.init(updateableModel, dataModelImplementationDetails);
 		setUpdateableModelReference(updateableModel);
 	}
 	
@@ -102,7 +102,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	{
 		// we need to table column model to be able to add CellEditors to the
 		// individual columns
-		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table);
+		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table, getDataModelImplementationDetails());
 		
 		for (int i=0; i < _colDefs.length; i++) {
 			// use factory to get the appropriate editor

@@ -41,7 +41,7 @@ public class MappedObjectPanelManager
       _session = session;
 
 
-      _detailPanelController = new DetailPanelController(); 
+      _detailPanelController = new DetailPanelController(_session);
       _panel = new MappedObjectPanel(_detailPanelController.getDetailComponent());
 
 

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  */
 import java.awt.Component;
 
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -79,7 +80,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 					// should be no problem
 				}
 									
-				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference);
+				_comp = new DataSetScrollingPanel(getDestinationClassName(), modelReference, new DefaultDataModelImplementationDetails(getSession()));
 			}
 			catch (Exception ex)
 			{
@@ -112,22 +113,28 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	 */
 	public synchronized void refreshComponent() throws DataSetException
 	{
-		ISession session = getSession();
+		final ISession session = getSession();
 		if (session == null)
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-		super._app.getThreadPool().addTask(new Runnable() {
-		    public void run() {
-                try {
-                ((DataSetScrollingPanel)getComponent()).load(createDataSet());
-                } catch (DataSetException e) {
-                    s_log.error("", e);
-                }
+
+      super._app.getThreadPool().addTask(new Runnable()
+      {
+         public void run()
+         {
+            try
+            {
+               ((DataSetScrollingPanel) getComponent()).load(createDataSet(), new DefaultDataModelImplementationDetails(session));
             }
-        });
-		
-	}
+            catch (DataSetException e)
+            {
+               s_log.error("", e);
+            }
+         }
+      });
+
+   }
 
 	protected abstract IDataSet createDataSet() throws DataSetException;
 

@@ -166,16 +166,6 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    }
 
 
-   public IDataModelImplementationDetails getDataModelImplementationDetails()
-   {
-      return new IDataModelImplementationDetails()
-      {
-         public String getStatementSeparator()
-         {
-            return _session.getQueryTokenizer().getSQLStatementSeparator();
-         }
-      };
-   }
 
    /**
     * If the user has forced us into editing mode, use the EDITABLE_TABLE form, but

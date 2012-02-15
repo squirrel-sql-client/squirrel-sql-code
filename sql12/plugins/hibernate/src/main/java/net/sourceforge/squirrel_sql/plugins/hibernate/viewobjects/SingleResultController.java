@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.viewobjects;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -33,10 +34,10 @@ public class SingleResultController
 
          DetailAttribute[] attributes = DetailAttribute.createDetailtAttributes(singleType.getMappedClassInfo().getAttributes());
 
-         _tblDetailsData.init(null);
+         _tblDetailsData.init(null, new DefaultDataModelImplementationDetails(session));
          _tblDetailsData.show(new ResultDataSet(singleType));
 
-         _tblDetailsMetaData.init(null);
+         _tblDetailsMetaData.init(null, new DefaultDataModelImplementationDetails(session));
          _tblDetailsMetaData.show(new DetailAttributeDataSet(attributes));
 
          pnlResults.removeAll();

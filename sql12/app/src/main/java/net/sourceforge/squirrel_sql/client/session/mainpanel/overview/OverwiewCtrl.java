@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
@@ -24,9 +25,11 @@ public class OverwiewCtrl
    private OverviewHolder _overviewHolder = new OverviewHolder();
    private OverwiewPanel _overwiewPanel;
    private IApplication _app;
+   private ISession _session;
 
    public OverwiewCtrl(final ISession session)
    {
+      _session = session;
       _app = session.getApplication();
       _overwiewPanel = new OverwiewPanel(_app.getResources());
 
@@ -141,7 +144,7 @@ public class OverwiewCtrl
          OverviewDataSet ods = new OverviewDataSet(allRows, columnDisplayDefinitions);
 
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
-         dsv.init(null);
+         dsv.init(null, new DefaultDataModelImplementationDetails(_session));
          dsv.show(ods);
          return dsv;
       }

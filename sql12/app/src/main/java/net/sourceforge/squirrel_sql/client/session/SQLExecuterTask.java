@@ -847,17 +847,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
-   public IDataModelImplementationDetails getDataModelImplementationDetails()
-   {
-      return new IDataModelImplementationDetails()
-      {
-         public String getStatementSeparator()
-         {
-            return _session.getQueryTokenizer().getSQLStatementSeparator();
-         }
-      };
-   }
-
    //
    //////////////////////////////////////////////////////////////////////////////////
 

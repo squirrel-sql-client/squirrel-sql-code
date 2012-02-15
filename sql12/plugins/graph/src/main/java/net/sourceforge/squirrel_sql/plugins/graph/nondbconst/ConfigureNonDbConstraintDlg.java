@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.graph.nondbconst;
 
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
