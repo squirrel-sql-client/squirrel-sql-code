@@ -6,8 +6,9 @@ import java.util.List;
 public interface MavenMultiTreeDependencyAnalyzer
 {
 
-	public abstract void analyzePaths() throws IOException;
+	void analyzePaths() throws IOException;
 
-	public abstract void setSourceTreePaths(List<String> sourceTreePaths);
+	void setSourceTreePaths(List<String> sourceTreePaths);
 
+	void detectCycles() throws Exception;
 }

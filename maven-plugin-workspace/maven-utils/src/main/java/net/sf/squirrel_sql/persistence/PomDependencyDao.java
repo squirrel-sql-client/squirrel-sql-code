@@ -1,8 +1,14 @@
 package net.sf.squirrel_sql.persistence;
 
+import java.util.List;
+
 public interface PomDependencyDao
 {
 
-	public abstract void insertDependency(PomDependency d);
+	void insertDependency(PomDependency d);
 
+	List<CrossSourceTreeDependency> findCrossTreeDependencies();
+
+	public abstract List<PomDependency> findDependenciesBySourceTreePath(String treeRootDir);
+	
 }

@@ -17,7 +17,9 @@
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		
 		<property name="persistenceUnitName" value="analyzer" />
+		
 	</bean>
 
 	<!-- post-processors for all standard config annotations -->
@@ -27,9 +29,17 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
-	<bean id="net.sf.squirrel_sql.persistence.PomFileDao" class="net.sf.squirrel_sql.persistence.PomFileDaoImpl">
-	</bean>
+	<bean id="net.sf.squirrel_sql.persistence.CrossSourceTreeDependency" 
+		class="net.sf.squirrel_sql.persistence.CrossSourceTreeDependencyFactoryImpl" />
 
-	<bean id="net.sf.squirrel_sql.persistence.PomDependencyDao" class="net.sf.squirrel_sql.persistence.PomDependencyDaoImpl">
+	<bean id="net.sf.squirrel_sql.persistence.PomFileDao" 
+		class="net.sf.squirrel_sql.persistence.PomFileDaoImpl" />
+
+	<bean id="net.sf.squirrel_sql.persistence.PomDependencyDao" 
+		class="net.sf.squirrel_sql.persistence.PomDependencyDaoImpl">
+		
+		<property name="crossTreeDependencyFactory" 
+				   ref="net.sf.squirrel_sql.persistence.CrossSourceTreeDependency" />
+				   
 	</bean>
 </beans>
