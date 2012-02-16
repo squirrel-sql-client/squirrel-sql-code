@@ -9,10 +9,10 @@
     </encoder>
   </appender>
 
-  <logger name="org.hibernate" level="INFO" />
-  <logger name="org.springframework" level="INFO" />
+  <logger name="org.hibernate" level="WARN" />
+  <logger name="org.springframework" level="WARN" />
 
-  <root level="DEBUG">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
 

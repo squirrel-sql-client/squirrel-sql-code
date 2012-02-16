@@ -1,10 +1,8 @@
 package net.sf.squirrel_sql;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,8 +32,9 @@ public class Main
 		try
 		{
 			analyzer.analyzePaths();
+			analyzer.detectCycles();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

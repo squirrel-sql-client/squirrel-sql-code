@@ -157,6 +157,11 @@
 			<version>1.0.0</version>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-jdk1.5</artifactId>
+			<version>0.7.3</version>
+		</dependency>
 	</dependencies>
 
 </project>
