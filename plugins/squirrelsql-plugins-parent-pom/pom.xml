@@ -3,13 +3,12 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.3.0</version>
+		<version>3.4.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-	<version>3.4.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 	<name>SQuirreL-SQL Plugins Parent POM</name>
