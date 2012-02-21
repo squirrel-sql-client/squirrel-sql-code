@@ -541,4 +541,11 @@ public class MockSession implements ISession
 		System.err.println("MockSession.isSessionWidgetActive: stub not yet implemented");
 		return false;
 	}
+
+	@Override
+	public JdbcConnectionData getJdbcData()
+	{
+		System.err.println("MockSession.getJdbcData: stub not yet implemented");
+		return null;
+	}
 }
