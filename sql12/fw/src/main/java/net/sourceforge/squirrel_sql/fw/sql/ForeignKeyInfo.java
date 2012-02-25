@@ -48,30 +48,6 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 	private final int _deferability;
 	private ForeignKeyColumnInfo[] _columnInfo;
 
-    /**
-     * @deprecated use the version of the constructor accepts fk and pk column
-     * names. 
-     */
-    ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,
-                   String fkCatalog, String fkSchema, String fkTableName,
-                   int updateRule, int deleteRule, String fkName,
-                   String pkName, int deferability,
-                   ForeignKeyColumnInfo[] columnInfo, SQLDatabaseMetaData md)
-    {
-        super(fkCatalog, fkSchema, fkName, DatabaseObjectType.FOREIGN_KEY, md);
-        _pkCatalog = pkCatalog;
-        _pkSchema = pkSchema;
-        _pkTableName = pkTableName;
-        _fkTableName = fkTableName;
-        _updateRule = updateRule;
-        _deleteRule = deleteRule;
-        _pkName = pkName;
-        _deferability = deferability;
-        setForeignKeyColumnInfo(columnInfo);    
-        _pkColumnName = null;
-        _fkColumnName = null;
-    }
-    
 	ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,
                    String pkColumnName, String fkCatalog, String fkSchema, 
                    String fkTableName, String fkColumnName,
