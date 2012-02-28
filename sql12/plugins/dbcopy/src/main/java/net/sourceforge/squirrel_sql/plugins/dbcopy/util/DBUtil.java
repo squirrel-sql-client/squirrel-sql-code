@@ -49,15 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -1411,7 +1403,7 @@ public class DBUtil extends I18NBaseObject
 		}
 	}
 
-	public static String getCreateTableSql(SessionInfoProvider prov, ITableInfo ti) throws SQLException,
+	public static String getCreateTableSql(SessionInfoProvider prov, ITableInfo ti, String destTableName, String destSchema, String destCatalog) throws SQLException,
 	      MappingException, UserCancelledOperationException
 	{
 
@@ -1421,10 +1413,10 @@ public class DBUtil extends I18NBaseObject
 		String sourceTableName = getQualifiedObjectName(
 		   sourceSession, sourceCatalog, sourceSchema, ti.getSimpleName(), DialectFactory.SOURCE_TYPE);
 		ISession destSession = prov.getDestSession();
-		String destSchema = prov.getDestDatabaseObject().getSimpleName();
-		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+//		String destSchema = getSchemaNameFromDbObject(prov.getDestDatabaseObject());
+//		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 		String destinationTableName = getQualifiedObjectName(
-		   destSession, destCatalog, destSchema, ti.getSimpleName(), DialectFactory.DEST_TYPE);
+		   destSession, destCatalog, destSchema, destTableName, DialectFactory.DEST_TYPE);
 		StringBuilder result = new StringBuilder("CREATE TABLE ");
 		result.append(destinationTableName);
 		result.append(" ( ");
@@ -1514,13 +1506,13 @@ public class DBUtil extends I18NBaseObject
 	 * Uses the column type mapper to get the column type and appends that to the name with an optional not
 	 * null modifier.
 	 * 
-	 * @param colInfo
-	 * @return
-	 * @throws UserCancelledOperationException
+	 *
+    * @param colInfo
+    * @throws UserCancelledOperationException
 	 * @throws MappingException
 	 */
 	public static String getColumnSql(SessionInfoProvider prov, TableColumnInfo colInfo,
-	      String sourceTableName, String destTableName) throws UserCancelledOperationException,
+                                     String sourceTableName, String destTableName) throws UserCancelledOperationException,
 	      MappingException
 	{
 		String columnName = colInfo.getColumnName();
@@ -1641,7 +1633,7 @@ public class DBUtil extends I18NBaseObject
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("insert into ");
-		String destSchema = prov.getDestDatabaseObject().getSimpleName();
+		String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
 		String destCatalog = prov.getDestDatabaseObject().getCatalogName();
 		ISession destSession = prov.getDestSession();
 		result.append(getQualifiedObjectName(
@@ -2060,5 +2052,36 @@ public class DBUtil extends I18NBaseObject
 		}
 		return result;
 	}
-	
+
+   public static String getSchemaNameFromDbObject(IDatabaseObjectInfo dbObject)
+   {
+      String destSchema;
+
+      if (dbObject.getDatabaseObjectType().equals(DatabaseObjectType.SCHEMA))
+      {
+         destSchema = dbObject.getSimpleName();
+      }
+      else
+      {
+         destSchema = dbObject.getSchemaName();
+      }
+      return destSchema;
+   }
+
+   public static IDatabaseObjectInfo getSchemaFromDbObject(IDatabaseObjectInfo dbObject, SchemaInfo schemaInfo)
+   {
+      if (dbObject.getDatabaseObjectType().equals(DatabaseObjectType.SCHEMA))
+      {
+         return dbObject;
+      }
+      else
+      {
+         return new DatabaseObjectInfo(dbObject.getCatalogName(),
+               dbObject.getSchemaName(),
+               dbObject.getSimpleName(),
+               DatabaseObjectType.SCHEMA,
+               schemaInfo.getSQLDatabaseMetaData());
+
+      }
+   }
 }

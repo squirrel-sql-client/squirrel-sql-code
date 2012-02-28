@@ -1875,7 +1875,7 @@ public class DialectUtils implements StringTemplateConstants
 			final List<String> constraints = createConstraints(ti, tables, prefs, md);
 			addConstraintsSQLs(sqls, allconstraints, constraints, prefs);
 
-			final List<String> indexes = createIndexes(ti, md, pkInfos, prefs);
+			final List<String> indexes = createIndexes(ti, ti.getSimpleName(), ti.getSchemaName(), md, pkInfos, prefs);
 			addConstraintsSQLs(sqls, allconstraints, indexes, prefs);
 		}
 
@@ -2441,8 +2441,8 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param prefs
 	 * @return
 	 */
-	public static List<String> createIndexes(ITableInfo ti, ISQLDatabaseMetaData md,
-		List<PrimaryKeyInfo> primaryKeys, CreateScriptPreferences prefs)
+	public static List<String> createIndexes(ITableInfo ti, String destSimpleTableName, String destSchema, ISQLDatabaseMetaData md,
+                                            List<PrimaryKeyInfo> primaryKeys, CreateScriptPreferences prefs)
 	{
 		if (ti == null) { throw new IllegalArgumentException("ti cannot be null"); }
 		if (md == null) { throw new IllegalArgumentException("md cannot be null"); }
@@ -2527,7 +2527,7 @@ public class DialectUtils implements StringTemplateConstants
 			indexSQL.append(ix.ixName);
 			indexSQL.append(" ON ");
 
-			indexSQL.append(formatQualifIntern(ix.table, ix.tableSchema, prefs));
+			indexSQL.append(formatQualifIntern(destSimpleTableName, destSchema, prefs));
 
 			if (ix.cols.size() == 1)
 			{

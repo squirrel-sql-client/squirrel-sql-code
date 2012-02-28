@@ -34,14 +34,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -142,7 +135,7 @@ public class CopyExecutor extends I18NBaseObject {
     }
     
     /**
-     * Performs the table copy operation. 
+     * Performs the table copy operation.
      */
     private void _execute() {
         start = System.currentTimeMillis();
@@ -155,36 +148,41 @@ public class CopyExecutor extends I18NBaseObject {
         List<IDatabaseObjectInfo> sourceObjs = prov.getSourceDatabaseObjects();
         int[] counts = getTableCounts();
         sendCopyStarted(counts);
-        String destSchema = prov.getDestDatabaseObject().getSimpleName();
-        String destCatalog = prov.getDestDatabaseObject().getCatalogName();
-        
-        int sourceObjectCount = 0;
+
+        //String destSchema = prov.getDestDatabaseObject().getSimpleName();  used to break, when a table was selected
+
+       String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
+
+       String destCatalog = prov.getDestDatabaseObject().getCatalogName();
+
+       TableInfo pasteToTableInfo = prov.getPasteToTableInfo(destConn, destSchema, destCatalog);
+
+       int sourceObjectCount = 0;
         for (IDatabaseObjectInfo info : sourceObjs) {
             if (! (info instanceof ITableInfo)) {
                 continue;
             }
             ITableInfo sourceTI = (ITableInfo)info;
-            sendTableCopyStarted(sourceTI, sourceObjectCount+1);
+            sendTableCopyStarted(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount+1);
             try {
                 int destTableCount = DBUtil.getTableCount(destSession,
                                                           destCatalog,
-                                                          destSchema, 
-                                                          sourceTI.getSimpleName(),
+                                                          destSchema,
+                                                          chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(),
                                                           DialectFactory.DEST_TYPE);
                 if (destTableCount == -1) {
-                    createTable(sourceTI);
+                    createTable(sourceTI, chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName(), destSchema, destCatalog);
                 } 
                 if (destTableCount > 0) {
                     try {
-                        String t = sourceTI.getSimpleName();
-                        if (pref.appendRecordsToExisting(t)) {
+                        if (pref.appendRecordsToExisting()) {
                             /* Do nothing */
-                        } else if (pref.deleteTableData(sourceTI.getSimpleName())) {
+                        } else if (pref.deleteTableData(chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName())) {
                             // Yes || Yes to all
                             DBUtil.deleteDataInExistingTable(destSession,
                                                              destCatalog,
                                                              destSchema,
-                                                             sourceTI.getSimpleName());
+                                                             chooseDestTableInfo(sourceTI, pasteToTableInfo).getSimpleName());
                         } else {
                             continue; // skip this table, try the next.
                         }
@@ -195,7 +193,7 @@ public class CopyExecutor extends I18NBaseObject {
                     }
                 } 
                 
-                copyTable(sourceTI, counts[sourceObjectCount]);
+                copyTable(sourceTI, pasteToTableInfo, counts[sourceObjectCount]);
                 
                 if (sourceObjectCount == sourceObjs.size() - 1 && !cancelled) {
                     // We just copied the last table.  Now it is safe to copy the
@@ -207,7 +205,7 @@ public class CopyExecutor extends I18NBaseObject {
                     copyConstraints(sourceObjs);
                 }
                 if (!cancelled) {
-                    sendTableCopyFinished(sourceTI, sourceObjectCount+1);
+                    sendTableCopyFinished(chooseDestTableInfo(sourceTI, pasteToTableInfo), sourceObjectCount+1);
                     sleep(prefs.getTableDelayMillis());
                 }
             } catch (SQLException e) {
@@ -240,14 +238,26 @@ public class CopyExecutor extends I18NBaseObject {
         
         ISession session = prov.getDestSession();
         if (session.getSessionSheet() != null) {
-      	  session.getSchemaInfo().reload(prov.getDestDatabaseObject());
+      	  session.getSchemaInfo().reload(DBUtil.getSchemaFromDbObject(prov.getDestDatabaseObject(), session.getSchemaInfo()));
       	  session.getSchemaInfo().fireSchemaInfoUpdate();
         }
 
         notifyCopyFinished();
     }
-    
-    /**
+
+   private ITableInfo chooseDestTableInfo(ITableInfo sourceTI, TableInfo pasteToTableInfo)
+   {
+      if (null == pasteToTableInfo)
+      {
+         return sourceTI;
+      }
+      else
+      {
+         return pasteToTableInfo;
+      }
+   }
+
+   /**
      * Registers the specified listener to receive copy events from this class.
      * 
      * @param listener
@@ -287,7 +297,7 @@ public class CopyExecutor extends I18NBaseObject {
      * @return true if the tables can be created in the destination database; 
      *         false is returned otherwise.
      */
-    private boolean analyzeTables() {        
+    private boolean analyzeTables() {
         boolean result = true;
         if (!prefs.isTestColumnNames()) {
             return true;
@@ -516,12 +526,13 @@ public class CopyExecutor extends I18NBaseObject {
     
     /**
      * 
+     *
      * @param sourceTableInfo
-     * @param sourceTableCount
-     * @throws MappingException
+     * @param pasteToTableInfo
+     *@param sourceTableCount  @throws MappingException
      * @throws SQLException
      */
-    private void copyTable(ITableInfo sourceTableInfo, int sourceTableCount) 
+    private void copyTable(ITableInfo sourceTableInfo, TableInfo pasteToTableInfo, int sourceTableCount)
         throws MappingException, SQLException, UserCancelledOperationException
     {
         PreparedStatement insertStmt = null;
@@ -537,12 +548,12 @@ public class CopyExecutor extends I18NBaseObject {
         SQLDatabaseMetaData sourceMetaData = sourceConn.getSQLMetaData();
         SQLDatabaseMetaData destMetaData = destConn.getSQLMetaData();
         try {
-            String destSchema = 
-                prov.getDestDatabaseObject().getSimpleName();            
-            ITableInfo destTableInfo = 
+            String destSchema = DBUtil.getSchemaNameFromDbObject(prov.getDestDatabaseObject());
+
+            ITableInfo destTableInfo =
                 DBUtil.getTableInfo(prov.getDestSession(),
                                     destSchema,
-                                    sourceTableInfo.getSimpleName());
+                                    chooseDestTableInfo(sourceTableInfo, pasteToTableInfo).getSimpleName());
             
             TableColumnInfo[] sourceInfos = sourceMetaData.getColumnInfo(sourceTableInfo);
             TableColumnInfo[] destInfos = destMetaData.getColumnInfo(destTableInfo);
@@ -558,8 +569,8 @@ public class CopyExecutor extends I18NBaseObject {
             String selectSQL = DBUtil.getSelectQuery(prov,
                                                      sourceColList, 
                                                      sourceTableInfo);
-            String insertSQL = DBUtil.getInsertSQL(prov, destColList, 
-                                                   sourceTableInfo, 
+            String insertSQL = DBUtil.getInsertSQL(prov, destColList,
+                                                   destTableInfo,
                                                    destInfos.length);
             insertStmt = destConn.prepareStatement(insertSQL);
             
@@ -785,14 +796,14 @@ public class CopyExecutor extends I18NBaseObject {
         }
     }    
     
-    private void createTable(ITableInfo ti) 
+    private void createTable(ITableInfo ti, String destTableName, String destSchema, String destCatalog)
         throws SQLException, UserCancelledOperationException, MappingException
     {
         if (cancelled) {
             return;
         }
         ISQLConnection destCon = prov.getDestSession().getSQLConnection();
-        String createTableSql = DBUtil.getCreateTableSql(prov, ti);
+        String createTableSql = DBUtil.getCreateTableSql(prov, ti, destTableName, destSchema, destCatalog);
 
         if (log.isDebugEnabled()) {
       	  log.debug("Creating table in dest db with SQL: "+createTableSql);
@@ -804,15 +815,18 @@ public class CopyExecutor extends I18NBaseObject {
             commitConnection(destCon);
         }
         
-        if (prefs.isCopyIndexDefs()) {
+        if (prefs.isCopyIndexDefs() && (null == prov.getPasteToTableName() || false == prov.isCopiedFormDestinationSession() ) ) {
             Collection<String> indices = null;
             ISQLDatabaseMetaData sqlmd = sourceSession.getMetaData();
-            if (prefs.isCopyPrimaryKeys()) {
+            CreateScriptPreferences prefs = new CreateScriptPreferences();
+            prefs.setQualifyTableNames(null != destSchema);
+
+           if (this.prefs.isCopyPrimaryKeys()) {
                 PrimaryKeyInfo[] pkList = sqlmd.getPrimaryKey(ti);
                 List<PrimaryKeyInfo> pkList2 = Arrays.asList(pkList);
-                indices = DialectUtils.createIndexes(ti, sqlmd, pkList2, new CreateScriptPreferences());
+                indices = DialectUtils.createIndexes(ti, destTableName, destSchema, sqlmd, pkList2, prefs);
             } else {
-                indices = DialectUtils.createIndexes(ti, sqlmd, null, new CreateScriptPreferences());
+                indices = DialectUtils.createIndexes(ti, destTableName, destSchema, sqlmd, null, prefs);
             }
             Iterator<String> i = indices.iterator();
             while (i.hasNext()) {
