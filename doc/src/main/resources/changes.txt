@@ -13,7 +13,7 @@ DBCopy Plugin:
   - Offers a new menu item "Paste table as ..." that allows to change the pasted table's name.
     This function works if only a single table was copied.
   - Tables can now be pasted to arbitrary Schemas.
-  - In the Plugin preferences the user may choose to append copied data to exisitng tables
+  - In the Plugin preferences the user may choose to append copied data to existing tables
 
 Copy as INSERT-VALUES statement now works on almost any table not just on editable tables. If a table isn't in
   a Session scope ";" is used as statement separator instead of the separator defined in Session properties.
