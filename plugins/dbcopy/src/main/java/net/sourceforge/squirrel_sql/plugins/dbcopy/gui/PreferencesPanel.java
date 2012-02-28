@@ -74,7 +74,9 @@ public class PreferencesPanel extends JPanel  {
     JCheckBox pruneDuplicateIndexDefs = null;
     
     JCheckBox writeScriptCheckBox = null;
-    
+
+    JCheckBox appendRecordsToExistingCheckBox = null;
+
     JCheckBox promptForHibernateCheckBox = null;
     
     JCheckBox checkKeywordsCheckBox = null;
@@ -167,7 +169,8 @@ public class PreferencesPanel extends JPanel  {
         addDelayRecordsTextField(result, 1, 14);        
         
         addWriteScriptCheckBox(result, 0, 15);
-        
+        addAppendRecordsToExistingCheckBox(result, 0, 16);
+
         return result;
     }    
         
@@ -203,13 +206,31 @@ public class PreferencesPanel extends JPanel  {
         writeScriptCheckBox.setToolTipText(toolTipText);
         panel.add(writeScriptCheckBox, c);                
     }
-        
+
+    private void addAppendRecordsToExistingCheckBox(JPanel panel, int col, int row) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = col;
+        c.gridy = row;
+        c.gridwidth = 2;  // Span across two columns
+        c.insets = new Insets(10,0,0,0);
+        c.anchor = GridBagConstraints.WEST;
+        String cbLabelStr =
+            s_stringMgr.getString("PreferencesPanel.appendRecordsToExistingCheckBox");
+        String toolTipText =
+            s_stringMgr.getString("PreferencesPanel.appendRecordsToExistingCheckBoxToolTip");
+        appendRecordsToExistingCheckBox = new JCheckBox(cbLabelStr);
+        appendRecordsToExistingCheckBox.setToolTipText(toolTipText);
+        panel.add(appendRecordsToExistingCheckBox, c);
+    }
+
     private void addUseTruncateCheckBox(JPanel panel, int col, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = col;
         c.gridy = row;
         c.gridwidth = 2;  // Span across two columns
-        String cbToolTipText = 
+        c.insets = new Insets(10,0,0,0);
+        c.anchor = GridBagConstraints.WEST;
+        String cbToolTipText =
             s_stringMgr.getString("PreferencesPanel.truncateLabelTipText");
         truncateCheckBox.setToolTipText(cbToolTipText);
         panel.add(truncateCheckBox, c);        
@@ -628,6 +649,7 @@ public class PreferencesPanel extends JPanel  {
         copyForeignKeys.setSelected(_prefs.isCopyForeignKeys());
         copyPrimaryKeys.setSelected(_prefs.isCopyPrimaryKeys());
         writeScriptCheckBox.setSelected(_prefs.isWriteScript());
+        appendRecordsToExistingCheckBox.setSelected(_prefs.isAppendRecordsToExisting());
         pruneDuplicateIndexDefs.setSelected(_prefs.isPruneDuplicateIndexDefs());
         commitAfterCreateTableCheckBox.setSelected(_prefs.isCommitAfterTableDefs());
         promptForHibernateCheckBox.setSelected(_prefs.isPromptForDialect());
@@ -651,6 +673,7 @@ public class PreferencesPanel extends JPanel  {
         _prefs.setCopyForeignKeys(copyForeignKeys.isSelected());
         _prefs.setCopyPrimaryKeys(copyPrimaryKeys.isSelected());
         _prefs.setWriteScript(writeScriptCheckBox.isSelected());
+        _prefs.setAppendRecordsToExisting(appendRecordsToExistingCheckBox.isSelected());
         _prefs.setPruneDuplicateIndexDefs(pruneDuplicateIndexDefs.isSelected());
         _prefs.setCommitAfterTableDefs(commitAfterCreateTableCheckBox.isSelected());
         _prefs.setPromptForDialect(promptForHibernateCheckBox.isSelected());

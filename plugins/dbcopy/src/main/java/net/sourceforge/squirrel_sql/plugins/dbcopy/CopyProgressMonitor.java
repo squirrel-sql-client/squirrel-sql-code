@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.event.RecordEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.StatementEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DualProgressBarDialog;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 /**
@@ -147,16 +148,21 @@ public class CopyProgressMonitor extends I18NBaseObject
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#copyFinished(int)
      */
     public void copyFinished(int seconds) {
-        DualProgressBarDialog.stopTimer();
-        DualProgressBarDialog.setVisible(false);
-        DualProgressBarDialog.dispose();
+        closeProgress();
         String title = getMessage("CopyProgressMonitor.successTitle");
         String message = getMessage("CopyProgressMonitor.successMessage",
                                     seconds);
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private String wordWrap(String data, int length) {
+   private void closeProgress()
+   {
+      DualProgressBarDialog.stopTimer();
+      DualProgressBarDialog.setVisible(false);
+      DualProgressBarDialog.dispose();
+   }
+
+   private String wordWrap(String data, int length) {
         String result = "";
         if (data.length() > length) {
             String[] parts = data.split("\\s");
@@ -262,6 +268,7 @@ public class CopyProgressMonitor extends I18NBaseObject
         // let them fix it.  Then allow them to retry the operation, starting
         // from the point at which the previous operation failed.
 
+        closeProgress();
     }
 
     private String getMappingExceptionMessage(Exception e) {
@@ -437,10 +444,9 @@ public class CopyProgressMonitor extends I18NBaseObject
         return false;
     }
     
-    public boolean appendRecordsToExisting(String tableName) {
-        // TODO: Maybe prompt the user to ask to append the records, 
-        // ignoring errors for constraint violations?
-        return false;
+    public boolean appendRecordsToExisting() {
+
+        return PreferencesManager.getPreferences().isAppendRecordsToExisting();
     }
 
     class ConfirmMessageResult {

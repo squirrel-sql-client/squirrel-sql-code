@@ -1649,4 +1649,9 @@ public class SchemaInfo
          throw new RuntimeException(e);
       }
    }
+
+   public SQLDatabaseMetaData getSQLDatabaseMetaData()
+   {
+      return _dmd;
+   }
 }

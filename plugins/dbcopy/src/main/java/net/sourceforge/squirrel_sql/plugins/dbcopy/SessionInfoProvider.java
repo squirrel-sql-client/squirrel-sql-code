@@ -22,6 +22,8 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 
 /**
  * This is implemented in order to pass needed info along to copy executor. 
@@ -44,4 +46,12 @@ public interface SessionInfoProvider {
     public void setDestSession(ISession session);
     
     public ISession getDestSession();
+
+    void setPasteToTableName(String pasteToTableName);
+
+    String getPasteToTableName();
+
+    TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog);
+
+    boolean isCopiedFormDestinationSession();
 }

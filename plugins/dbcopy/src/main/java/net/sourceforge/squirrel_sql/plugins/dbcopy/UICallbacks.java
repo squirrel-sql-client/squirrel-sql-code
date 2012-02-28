@@ -40,10 +40,9 @@ public interface UICallbacks {
      * Ask the user whether or not to append the new records to existing records
      * in the specified table.
      * 
-     * @param tableName
      * @return
      * @throws UserCancelledOperationException
      */
-    public boolean appendRecordsToExisting(String tableName)
+    public boolean appendRecordsToExisting()
         throws UserCancelledOperationException;
 }

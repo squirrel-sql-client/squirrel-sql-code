@@ -35,10 +35,13 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAction;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAsAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DBCopyGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
@@ -63,8 +66,9 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	private List<IDatabaseObjectInfo> selectedDatabaseObjects = null;
 
 	private IDatabaseObjectInfo selectedDestDatabaseObject = null;
+   private String _pasteToTableName;
 
-	/**
+   /**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
@@ -175,10 +179,9 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();
 
-		PasteTableAction pasteTableAction = new PasteTableAction(app, _resources, this);
-
-		coll.add(new CopyTableAction(app, _resources, this));
-		coll.add(pasteTableAction);
+      coll.add(new CopyTableAction(app, _resources, this));
+		coll.add(new PasteTableAction(app, _resources, this));
+		coll.add(new PasteTableAsAction(app, _resources, this));
 
 		setPasteMenuEnabled(false);
 	}
@@ -291,19 +294,23 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(CopyTableAction.class));
 
 		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(PasteTableAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, coll.get(PasteTableAsAction.class));
 
 		// Copy action object tree types
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CopyTableAction.class));
 
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(PasteTableAction.class));
+		api.addToPopup(DatabaseObjectType.TABLE, coll.get(PasteTableAsAction.class));
 
 		// Paste action object tree types
 		api.addToPopup(DatabaseObjectType.SCHEMA, coll.get(PasteTableAction.class));
+		api.addToPopup(DatabaseObjectType.SCHEMA, coll.get(PasteTableAsAction.class));
 
 		// MySQL shows databases as "CATALOGS" not "SCHEMAS"
 		api.addToPopup(DatabaseObjectType.CATALOG, coll.get(PasteTableAction.class));
+		api.addToPopup(DatabaseObjectType.CATALOG, coll.get(PasteTableAsAction.class));
 
-		api.addToPopup(DatabaseObjectType.SESSION, coll.get(PasteTableAction.class));
+		api.addToPopup(DatabaseObjectType.SESSION, coll.get(PasteTableAsAction.class));
 
 	}
 
@@ -342,7 +349,42 @@ public class DBCopyPlugin extends DefaultSessionPlugin implements SessionInfoPro
 		return copyDestSession;
 	}
 
-	/**
+   @Override
+   public void setPasteToTableName(String pasteToTableName)
+   {
+      _pasteToTableName = pasteToTableName;
+   }
+
+   @Override
+   public String getPasteToTableName()
+   {
+      return _pasteToTableName;
+   }
+
+   @Override
+   public TableInfo getPasteToTableInfo(ISQLConnection destConn, String destSchema, String destCatalog)
+   {
+      if(null == _pasteToTableName)
+      {
+         return null;
+      }
+
+      if(1 != selectedDatabaseObjects.size() || false == selectedDatabaseObjects.get(0) instanceof TableInfo)
+      {
+         throw new IllegalStateException("Invalid paste table as state");
+      }
+
+      TableInfo ret = new TableInfo(destCatalog, destSchema, _pasteToTableName, "TABLE", null, destConn.getSQLMetaData());
+      return ret;
+   }
+
+   @Override
+   public boolean isCopiedFormDestinationSession()
+   {
+      return copyDestSession.equals(copySourceSession);
+   }
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider#setDestSession(net.sourceforge.squirrel_sql.client.session.ISession)
 	 */
 	public void setDestSession(ISession session)

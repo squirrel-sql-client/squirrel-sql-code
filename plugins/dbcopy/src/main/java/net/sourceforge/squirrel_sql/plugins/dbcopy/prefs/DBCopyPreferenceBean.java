@@ -60,7 +60,7 @@ public class DBCopyPreferenceBean implements Cloneable,
     private boolean copyForeignKeys = true;
     
     /** whether or not to copy the primary keys */
-    private boolean copyPrimaryKeys = true;
+    private boolean copyPrimaryKeys = false;
     
     /** whether or not to discard logically identical index defs */
     private boolean pruneDuplicateIndexDefs = true;
@@ -88,8 +88,10 @@ public class DBCopyPreferenceBean implements Cloneable,
     
     /** default number of milliseconds to wait between copying records */
     private long recordDelayMillis = 0;
-    
-	public DBCopyPreferenceBean() {
+
+    private boolean _appendRecordsToExisting;
+
+   public DBCopyPreferenceBean() {
 		super();
 	}
 
@@ -411,6 +413,15 @@ public class DBCopyPreferenceBean implements Cloneable,
     public boolean isDelayBetweenObjects() {
         return delayBetweenObjects;
     }
- 
+
+   public boolean isAppendRecordsToExisting()
+   {
+      return _appendRecordsToExisting;
+   }
+
+   public void setAppendRecordsToExisting(boolean appendRecordsToExisting)
+   {
+      _appendRecordsToExisting = appendRecordsToExisting;
+   }
 }
 
