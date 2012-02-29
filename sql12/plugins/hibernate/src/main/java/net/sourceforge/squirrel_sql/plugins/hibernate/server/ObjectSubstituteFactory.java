@@ -44,13 +44,13 @@ public class ObjectSubstituteFactory
                Object[] arr = (Object[]) o;
                for (Object entry : arr)
                {
-                  arrBuf.add(_prepareObjectSubstitute(entry, infoDataByClassName, doneObjs));
+                  arrBuf.add(_prepareObjectSubstitute(entry, infoDataByClassName, null ,doneObjs));
                }
                buf = new ObjectSubstituteRoot(arrBuf);
             }
             else
             {
-               buf = new ObjectSubstituteRoot(_prepareObjectSubstitute(o, infoDataByClassName, doneObjs));
+               buf = new ObjectSubstituteRoot(_prepareObjectSubstitute(o, infoDataByClassName, null,doneObjs));
             }
 
             ret.add(buf);
@@ -74,7 +74,7 @@ public class ObjectSubstituteFactory
          {
             for (Object o : col)
             {
-               ret.add(_prepareObjectSubstitute(o, infoDataByClassName, doneObjs));
+               ret.add(_prepareObjectSubstitute(o, infoDataByClassName, null, doneObjs));
             }
          }
          return ret;
@@ -86,7 +86,7 @@ public class ObjectSubstituteFactory
       }
    }
 
-   private ObjectSubstitute _prepareObjectSubstitute(Object o, HashMap<String, MappedClassInfoData> infoDataByClassName, HashMap<Object, ObjectSubstitute> doneObjs) throws IllegalAccessException
+   private ObjectSubstitute _prepareObjectSubstitute(Object o, HashMap<String, MappedClassInfoData> infoDataByClassName, MappedClassInfoData infoDataFromProperty, HashMap<Object, ObjectSubstitute> doneObjs) throws IllegalAccessException
    {
       if (null == o)
       {
@@ -99,7 +99,7 @@ public class ObjectSubstituteFactory
          return ret;
       }
 
-      MappedClassInfoData mappedClassInfoData = infoDataByClassName.get(o.getClass().getName());
+      MappedClassInfoData mappedClassInfoData = findMappedClassInfoData(o, infoDataByClassName, infoDataFromProperty);
 
       ret = new ObjectSubstitute(mappedClassInfoData, o.toString());
       doneObjs.put(o, ret);
@@ -127,7 +127,7 @@ public class ObjectSubstituteFactory
             {
                if(isInitialized(accessor.get(o)))
                {
-                  ObjectSubstitute objectSubstitute = _prepareObjectSubstitute(accessor.get(o), infoDataByClassName, doneObjs);
+                  ObjectSubstitute objectSubstitute = _prepareObjectSubstitute(accessor.get(o), infoDataByClassName, propMappedClassInfoData,doneObjs);
                   PropertySubstitute propertySubstitute = new PropertySubstitute(hibernatePropertyInfo, objectSubstitute, true);
                   ret.putSubstituteValueByPropertyName(hibernatePropertyInfo.getPropertyName(), propertySubstitute);
                }
@@ -153,35 +153,37 @@ public class ObjectSubstituteFactory
          }
       }
 
-//      Field[] declaredFields = o.getClass().getDeclaredFields();
-//      for (Field declaredField : declaredFields)
-//      {
-//         if (infoDataByClassName.containsKey(declaredField.getType().getName()))
-//         {
-//            declaredField.setAccessible(true);
-//            Object fielddObj = declaredField.get(o);
-//            if (null != fielddObj)
-//            {
-//               if (-1 < fielddObj.getClass().getName().indexOf('$'))
-//               {
-//                  ret.set(declaredField, null);
-//                  //declaredField.set(o, null);
-//               }
-//               else
-//               {
-//                  ret.set(declaredField, _prepareObjectSubstitutes(fielddObj, infoDataByClassName, doneObjs));
-//               }
-//            }
-//         }
-//         else if (Collection.class.isAssignableFrom(declaredField.getType()))
-//         {
-//            declaredField.setAccessible(true);
-//            Object fielddObj = declaredField.get(o);
-//            ret.setList(declaredField, _prepareObjectSubstitutesForCollection((Collection) fielddObj, infoDataByClassName, doneObjs, false));
-//         }
-//      }
-      
       return ret;
+   }
+
+   private MappedClassInfoData findMappedClassInfoData(Object o, HashMap<String, MappedClassInfoData> infoDataByClassName, MappedClassInfoData infoDataFromProperty)
+   {
+      MappedClassInfoData mappedClassInfoData;
+      if (null != infoDataFromProperty)
+      {
+         mappedClassInfoData = infoDataFromProperty;
+      }
+      else
+      {
+         mappedClassInfoData = infoDataByClassName.get(o.getClass().getName());
+
+         if(null == mappedClassInfoData)
+         {
+            int javaAssisNamePartBegin = o.getClass().getName().indexOf("_$$_");
+            if (0 < javaAssisNamePartBegin)
+            {
+               String className = o.getClass().getName().substring(0, javaAssisNamePartBegin);
+               mappedClassInfoData = infoDataByClassName.get(className);
+            }
+         }
+      }
+
+      if(null == mappedClassInfoData)
+      {
+         throw new IllegalStateException("Could not find mapping infos for class: " + o.getClass().getName());
+      }
+
+      return mappedClassInfoData;
    }
 
    private Boolean isInitialized(Object obj)
