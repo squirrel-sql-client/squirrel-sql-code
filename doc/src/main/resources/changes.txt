@@ -53,6 +53,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Hibernate Plugin: Fixed NullPointer that occurred in HQL execution concerning assisted but nonetheless initialized objects.
+
 2947296 Table script creation for multiple tables fails (on OpenJDK)
 
 Graph Plugin: Opening Link dialog failed on Windows when one or more links already existed.
