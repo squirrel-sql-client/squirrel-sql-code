@@ -27,7 +27,7 @@ public class QueryOrderTableModel extends SortedColumnsTableModel<OrderCol>
       _colModel.addColumn(col);
 
       col = new TableColumn(1);
-      col.setHeaderValue(s_stringMgr.getString("graph.QueryOrderTableModel.Ascending"));
+      col.setHeaderValue(s_stringMgr.getString("graph.QueryOrderTableModel.Descending"));
 
       final JCheckBox rendererCheckBox = new JCheckBox();
       DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer()
@@ -63,7 +63,7 @@ public class QueryOrderTableModel extends SortedColumnsTableModel<OrderCol>
       }
       else
       {
-         return getSortedCol(row).isAscending();
+         return getSortedCol(row).isDescending();
       }
    }
 
@@ -83,7 +83,7 @@ public class QueryOrderTableModel extends SortedColumnsTableModel<OrderCol>
 
    protected void updateCol(OrderCol toBeUpdated, OrderCol update)
    {
-      toBeUpdated.setAscending(update.isAscending());
+      toBeUpdated.setDescending(update.isDescending());
       toBeUpdated.setAggregated(update.isAggregated());
    }
 

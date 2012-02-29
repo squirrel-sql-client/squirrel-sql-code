@@ -33,7 +33,7 @@ public class OrderStructure
 
    private String getOrderExpression(OrderCol orderCol, SelectClauseRes selectClause)
    {
-      String direction = orderCol.isAscending() ? " ASC" : "";
+      String direction = orderCol.isDescending() ? " DESC" : "";
 
       if (orderCol.isAggregated())
       {

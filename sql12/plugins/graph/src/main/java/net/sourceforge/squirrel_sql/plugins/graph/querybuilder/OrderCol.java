@@ -6,7 +6,7 @@ import net.sourceforge.squirrel_sql.plugins.graph.ColumnInfo;
 public class OrderCol implements SortedColumn
 {
    private String _qualifiedCol;
-   private boolean _ascending;
+   private boolean _descending;
    private boolean _aggregated;
 
 
@@ -20,7 +20,7 @@ public class OrderCol implements SortedColumn
    public OrderCol(String simpleTableName, ColumnInfo columnInfo)
    {
       _qualifiedCol = simpleTableName + "." + columnInfo.getColumnName();
-      _ascending = columnInfo.getQueryData().isSortedAsc();
+      _descending = false == columnInfo.getQueryData().isSortedAsc();
       _aggregated = (AggregateFunctions.NONE != columnInfo.getQueryData().getAggregateFunction());
 
    }
@@ -39,14 +39,14 @@ public class OrderCol implements SortedColumn
       _qualifiedCol = qualifiedCol;
    }
 
-   public boolean isAscending()
+   public boolean isDescending()
    {
-      return _ascending;
+      return _descending;
    }
 
-   public void setAscending(boolean b)
+   public void setDescending(boolean b)
    {
-      _ascending = b;
+      _descending = b;
    }
 
    public boolean isAggregated()

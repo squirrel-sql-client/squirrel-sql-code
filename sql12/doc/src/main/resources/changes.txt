@@ -53,6 +53,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Graph Plugin: Query Builder: Mixed up ASC and DESC in SQL generation and "order by" panel
+
 Hibernate Plugin: Fixed NullPointer that occurred in HQL execution concerning assisted but nonetheless initialized objects.
 
 2947296 Table script creation for multiple tables fails (on OpenJDK)

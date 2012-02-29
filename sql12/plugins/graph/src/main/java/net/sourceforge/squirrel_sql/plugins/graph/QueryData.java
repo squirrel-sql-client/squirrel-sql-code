@@ -112,6 +112,6 @@ public class QueryData
 
    public boolean isSortedAsc()
    {
-      return _sorting != Sorting.ASC;
+      return _sorting == Sorting.ASC;
    }
 }
