@@ -265,8 +265,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 			_metaDataOutput.show(mdds, null); // Why null??
 		}
 
-		_exInfo.resultsProcessingComplete();
-
 		_queryInfoPanel.load(rowCount, _exInfo);				
 	}
 

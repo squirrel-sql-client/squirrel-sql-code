@@ -246,18 +246,11 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       }
       else
       {
-         exInfo.setFinishedListener(new SQLExecutionInfoFinishedListener()
-         {
-            @Override
-            public void allProcessingComplete(SQLExecutionInfo exInfo)
-            {
-               onAllProcessingComplete(exInfo, processedStatementCount, statementCount, numberResultRowsRead);
-            }
-         });
+         allProcessingComplete(exInfo, processedStatementCount, statementCount, numberResultRowsRead);
       }
    }
 
-   private void onAllProcessingComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount, Integer numberResultRowsRead)
+   private void allProcessingComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount, Integer numberResultRowsRead)
    {
       double executionLength = ((double) exInfo.getSQLExecutionElapsedMillis()) / 1000;
       double outputLength = ((double) exInfo.getResultsProcessingElapsedMillis()) / 1000;
@@ -408,7 +401,9 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 		   DialectType dialectType =
 				   DialectFactory.getDialectType(_session.getMetaData());
 
-		   info.setNumberResultRowsRead(rsds.setContentsTabResultSet(rs, null, dialectType));
+         // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
+         // and this time is measured. None is interested in the time that it takes us to render Swing tables ...
+		   info.resultsProcessingComplete(rsds.setContentsTabResultSet(rs, null, dialectType));
 
 		   _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
 
