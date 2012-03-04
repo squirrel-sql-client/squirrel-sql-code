@@ -46,48 +46,9 @@ public class SQLExecutionInfo
 	/** Number of rows query limited to. */
 	private final int _maxRows;
    private Integer _numberResultRowsRead;
-   private SQLExecutionInfoFinishedListener _sqlExecutionInfoFinishedListener;
+
 
    /**
-	 * Default ctor. Defaults SQL execution start time to the current time.
-	 */
-//	public SQLExecutionInfo()
-//	{
-//		this(1, "");
-//	}
-
-	/**
-	 * ctor specifying the query index. Defaults SQL execution start time to
-	 * the current time.
-	 *
-	 * @param	idx		Query index.
-	 */
-//	public SQLExecutionInfo(int idx)
-//	{
-//		this(idx, "");
-//	}
-
-	/**
-	 * ctor specifying the SQL being executed. Defaults SQL execution start time
-	 * to the current time.
-	 *
-	 * @param	sql		SQL being executed.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> sql passed.
-	 */
-//	public SQLExecutionInfo(String sql)
-//	{
-//		super();
-//		if (sql == null)
-//		{
-//			throw new IllegalArgumentException("SQL script == null");
-//		}
-//		_sql = sql;
-//		_sqlExecutionStart = Calendar.getInstance().getTime();
-//	}
-
-	/**
 	 * ctor specifying the SQL being executed and the query index. Defaults SQL
 	 * execution start time to the current time.
 	 *
@@ -119,30 +80,8 @@ public class SQLExecutionInfo
 		_resultsProcessingStart = Calendar.getInstance().getTime();
 	}
 
-	/**
-	 * Flag that the results processing is complete.
-	 */
-	public void resultsProcessingComplete()
-	{
-		_resultsProcessingEnd = Calendar.getInstance().getTime();
 
-      if(null != _sqlExecutionInfoFinishedListener)
-      {
-         _sqlExecutionInfoFinishedListener.allProcessingComplete(this);
-      }
-	}
-
-	/**
-	 * Retrieve the query index.
-	 *
-	 * @return	Query index.
-	 */
-	public int getQueryIndex()
-	{
-		return _idx;
-	}
-
-	/**
+   /**
 	 * Retrieve the SQL script executed.
 	 *
 	 * @return	SQL script executed.
@@ -162,24 +101,7 @@ public class SQLExecutionInfo
 		return _sqlExecutionStart;
 	}
 
-	/**
-	 * Set the SQL Execution start time.
-	 *
-	 * @param	value	SQL execution start time.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Date</TT> passed.
-	 */
-	public void setSQLExecutionStartTime(Date value)
-	{
-		if (value == null)
-		{
-			throw new IllegalArgumentException("SQL Execution start time == null");
-		}
-		_sqlExecutionStart = value;
-	}
-
-	/**
+   /**
 	 * Retrieve the elapsed time time in milliseconds for the SQL execution.
 	 *
 	 * @return		SQL execution elapsed time in millis.
@@ -229,18 +151,14 @@ public class SQLExecutionInfo
 		return _maxRows;
 	}
 
-   public void setNumberResultRowsRead(int numberResultRowsRead)
+   public void resultsProcessingComplete(int numberResultRowsRead)
    {
+      _resultsProcessingEnd = Calendar.getInstance().getTime();
       _numberResultRowsRead = numberResultRowsRead;
    }
 
    public Integer getNumberResultRowsRead()
    {
       return _numberResultRowsRead;
-   }
-
-   public void setFinishedListener(SQLExecutionInfoFinishedListener sqlExecutionInfoFinishedListener)
-   {
-      _sqlExecutionInfoFinishedListener = sqlExecutionInfoFinishedListener;
    }
 }
