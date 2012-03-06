@@ -245,12 +245,21 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       {
          ReflectionCaller rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
 
-         if (0 <= sqlNbrRowsToShow)
+         if (isDataUpdate(hqlQuery))
          {
-            rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+            int updateCount = (Integer)rc.callMethod("executeUpdate").getCallee();
+            ret.setUpdateCount(updateCount);
+            getRcHibernateSession().callMethod("getTransaction").callMethod("commit");
          }
+         else
+         {
+            if (0 <= sqlNbrRowsToShow)
+            {
+               rc = rc.callMethod("setMaxResults", new RCParam().add(sqlNbrRowsToShow, Integer.TYPE));
+            }
 
-         queryResList = (List) rc.callMethod("list").getCallee();
+            queryResList = (List) rc.callMethod("list").getCallee();
+         }
       }
       catch (Throwable t)
       {
@@ -282,6 +291,16 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
 
       return ret;
+   }
+
+   private boolean isDataUpdate(String hqlQuery)
+   {
+      return null != hqlQuery
+               && (
+                           hqlQuery.trim().toLowerCase().startsWith("insert")
+                        || hqlQuery.trim().toLowerCase().startsWith("update")
+                        || hqlQuery.trim().toLowerCase().startsWith("delete")
+                  );
    }
 
    private Throwable prepareTransport(Throwable t)

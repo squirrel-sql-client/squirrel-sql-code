@@ -44,7 +44,7 @@ public class ViewObjectsUtil
          {
             parent.add(new DefaultMutableTreeNode(new PersistentCollectionResult(hpr, propertyInfo, allMappedClassInfos)));
          }
-         else if (null != findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, true))
+         else if (isMappedType(allMappedClassInfos, hpr))
          {
             SingleResult buf = new SingleResult(propertyName, (ObjectSubstitute) hpr.getValue(), findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, false));
             parent.add(new DefaultMutableTreeNode(buf));
@@ -54,6 +54,12 @@ public class ViewObjectsUtil
             parent.add(new DefaultMutableTreeNode(new PrimitiveValue(hpr)));
          }
       }
+   }
+
+   private static boolean isMappedType(ArrayList<MappedClassInfo> allMappedClassInfos, HibernatePropertyReader hpr)
+   {
+      MappedClassInfo mappedClassInfo = findMappedClassInfo(hpr.getTypeName(), allMappedClassInfos, true);
+      return null != mappedClassInfo && false == mappedClassInfo.isPlainValueArray();
    }
 
    static void nodeStructurChanged(DefaultMutableTreeNode node, JTree tree)

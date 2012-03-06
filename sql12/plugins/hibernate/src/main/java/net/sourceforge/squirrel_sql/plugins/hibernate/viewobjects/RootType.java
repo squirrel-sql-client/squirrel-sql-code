@@ -23,15 +23,7 @@ public class RootType
    {
       if(object.isArray())
       {
-         ArrayList<String> mappedClassNames = new ArrayList<String>();
-         for(int i=0; i < object.getArraySize(); ++i)
-         {
-            ObjectSubstitute buf = object.getArrayItemAt(i);
-            String mappedClassName = buf.getClassName();
-            mappedClassNames.add(mappedClassName);
-         }
-
-         return createResultTupelType(mappedClassNames, allMappedClassInfos, objects);
+         return createResultTupleType(object, allMappedClassInfos, objects);
       }
       else
       {
@@ -41,23 +33,25 @@ public class RootType
       }
    }
 
+   private IType createResultTupleType(ObjectSubstituteRoot object, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
+   {
+      ArrayList<MappedClassInfo> mappedClassInfos = new ArrayList<MappedClassInfo>();
+
+      for(int i=0; i < object.getArraySize(); ++i)
+      {
+         ObjectSubstitute buf = object.getArrayItemAt(i);
+         String mappedClassName = buf.getClassName();
+         mappedClassInfos.add(ViewObjectsUtil.findMappedClassInfo(mappedClassName, allMappedClassInfos, false));
+      }
+
+      return new TupelType(mappedClassInfos, allMappedClassInfos, objects);
+   }
+
    private SingleType createSingleTypeResultType(String mappedClassName, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
    {
       MappedClassInfo mappedClassInfo = ViewObjectsUtil.findMappedClassInfo(mappedClassName, allMappedClassInfos, false);
 
       return new SingleType(mappedClassInfo, allMappedClassInfos, ObjectSubstituteRoot.toObjectSubstitutes(objects));
-   }
-
-   private TupelType createResultTupelType(ArrayList<String> mappedClassNames, ArrayList<MappedClassInfo> allMappedClassInfos, List<ObjectSubstituteRoot> objects)
-   {
-
-      ArrayList<MappedClassInfo> mappedClassInfos = new ArrayList<MappedClassInfo>();
-      for (String mappedClassName : mappedClassNames)
-      {
-         mappedClassInfos.add(ViewObjectsUtil.findMappedClassInfo(mappedClassName, allMappedClassInfos, false));
-      }
-
-      return new TupelType(mappedClassInfos, allMappedClassInfos, objects);
    }
 
 

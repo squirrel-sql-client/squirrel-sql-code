@@ -87,7 +87,14 @@ public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
 
          if (null == _hqlQueryResult.getQueryResultList())
          {
-            s_log.error(new NullPointerException("HqlQueryResult didn't contain a resultlist although it should according to its error state."));
+            if (null != _hqlQueryResult.getUpdateCount())
+            {
+               _session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("ObjectResultController.hqlDataUpdateSuccess", _hqlQueryResult.getUpdateCount(), _duration));
+            }
+            else
+            {
+               s_log.error(new NullPointerException("HqlQueryResult didn't contain a resultlist although it should according to its error state."));
+            }
          }
          else
          {

@@ -10,6 +10,7 @@ public class HqlQueryResult implements Serializable
    private Throwable _exceptionOccuredWhenExecutingQuery;
 
    private HashMap<String, Throwable> _sessionAdminExceptions = new HashMap<String, Throwable>();
+   private Integer _updateCount;
 
    public void putSessionAdminException(String msgKey, Throwable t)
    {
@@ -39,5 +40,15 @@ public class HqlQueryResult implements Serializable
    public HashMap<String, Throwable> getSessionAdminExceptions()
    {
       return _sessionAdminExceptions;
+   }
+
+   public void setUpdateCount(int updateCount)
+   {
+      _updateCount = updateCount;
+   }
+
+   public Integer getUpdateCount()
+   {
+      return _updateCount;
    }
 }

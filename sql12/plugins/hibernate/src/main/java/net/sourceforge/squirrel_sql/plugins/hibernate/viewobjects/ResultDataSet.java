@@ -84,7 +84,7 @@ public class ResultDataSet implements IDataSet
          
       }
 
-      if (null != mappedClassInfo)
+      if (null != mappedClassInfo && false == mappedClassInfo.isPlainValueArray())
       {
          return new SingleResult((ObjectSubstitute)hpr.getValue(), mappedClassInfo);
       }

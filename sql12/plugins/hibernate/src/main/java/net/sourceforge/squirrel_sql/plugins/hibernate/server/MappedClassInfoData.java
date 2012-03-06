@@ -9,6 +9,7 @@ public class MappedClassInfoData  implements Serializable
    private String _simpleMappedClassName;
    private HibernatePropertyInfo _indentifierHibernatePropertyInfo;
    private HibernatePropertyInfo[] _hibernatePropertyInfos;
+   private boolean _plainValueArray;
 
    public MappedClassInfoData(String mappedClassName, String tableName, HibernatePropertyInfo indentifierHibernatePropertyInfo, HibernatePropertyInfo[] hibernatePropertyInfos)
    {
@@ -70,4 +71,13 @@ public class MappedClassInfoData  implements Serializable
       return cpTokens[cpTokens.length - 1];
    }
 
+   public boolean isPlainValueArray()
+   {
+      return _plainValueArray;
+   }
+
+   public void setPlainValueArray(boolean plainValueArray)
+   {
+      _plainValueArray = plainValueArray;
+   }
 }

@@ -211,4 +211,8 @@ public class MappedClassInfo extends CompletionInfo
    }
 
 
+   public boolean isPlainValueArray()
+   {
+      return _mappedClassInfoData.isPlainValueArray();
+   }
 }

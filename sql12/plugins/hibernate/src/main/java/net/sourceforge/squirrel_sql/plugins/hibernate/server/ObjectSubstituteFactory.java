@@ -41,16 +41,52 @@ public class ObjectSubstituteFactory
             if(o instanceof Object[])
             {
                ArrayList<ObjectSubstitute> arrBuf = new ArrayList<ObjectSubstitute>();
+               ArrayList<Object> plainValueArrBuf = new ArrayList<Object>();
                Object[] arr = (Object[]) o;
                for (Object entry : arr)
                {
-                  arrBuf.add(_prepareObjectSubstitute(entry, infoDataByClassName, null ,doneObjs));
+                  if(isMappedObject(entry, infoDataByClassName))
+                  {
+                     arrBuf.add(_prepareObjectSubstitute(entry, infoDataByClassName, null ,doneObjs));
+                  }
+                  else
+                  {
+                     plainValueArrBuf.add(entry);
+                  }
                }
-               buf = new ObjectSubstituteRoot(arrBuf);
+               
+               if(0 < plainValueArrBuf.size())
+               {
+                  if (0 < arrBuf.size())
+                  {
+                     // result row is a mixture of plain values and mapped objects
+                     arrBuf.add(new ObjectSubstitute(plainValueArrBuf));
+                     buf = new ObjectSubstituteRoot(arrBuf);
+                  }
+                  else
+                  {
+                     // result row consists only of  plain values
+                     buf = new ObjectSubstituteRoot(new ObjectSubstitute(plainValueArrBuf));
+                  }
+               }
+               else
+               {
+                  // result row consists only of mapped objects
+                  buf = new ObjectSubstituteRoot(arrBuf);
+               }
             }
             else
             {
-               buf = new ObjectSubstituteRoot(_prepareObjectSubstitute(o, infoDataByClassName, null,doneObjs));
+               if(isMappedObject(o, infoDataByClassName))
+               {
+                  buf = new ObjectSubstituteRoot(_prepareObjectSubstitute(o, infoDataByClassName, null,doneObjs));
+               }
+               else
+               {
+                  ArrayList<Object> plainValueArrBuf = new ArrayList<Object>();
+                  plainValueArrBuf.add(o);
+                  buf = new ObjectSubstituteRoot(new ObjectSubstitute(plainValueArrBuf));
+               }
             }
 
             ret.add(buf);
@@ -62,6 +98,11 @@ public class ObjectSubstituteFactory
          throw new RuntimeException(e);
       }
 
+   }
+
+   private boolean isMappedObject(Object entry, HashMap<String, MappedClassInfoData> infoDataByClassName)
+   {
+      return null != findMappedClassInfoData(entry, infoDataByClassName, null);
    }
 
    private ArrayList<ObjectSubstitute> _prepareObjectSubstitutesForCollection(Collection col, HashMap<String, MappedClassInfoData> infoDataByClassName, HashMap<Object, ObjectSubstitute> doneObjs)
@@ -158,12 +199,13 @@ public class ObjectSubstituteFactory
 
    private MappedClassInfoData findMappedClassInfoData(Object o, HashMap<String, MappedClassInfoData> infoDataByClassName, MappedClassInfoData infoDataFromProperty)
    {
-      MappedClassInfoData mappedClassInfoData;
+      MappedClassInfoData mappedClassInfoData = null;
+
       if (null != infoDataFromProperty)
       {
          mappedClassInfoData = infoDataFromProperty;
       }
-      else
+      else if(null != o)
       {
          mappedClassInfoData = infoDataByClassName.get(o.getClass().getName());
 
@@ -178,10 +220,10 @@ public class ObjectSubstituteFactory
          }
       }
 
-      if(null == mappedClassInfoData)
-      {
-         throw new IllegalStateException("Could not find mapping infos for class: " + o.getClass().getName());
-      }
+//      if(null == mappedClassInfoData)
+//      {
+//         throw new IllegalStateException("Could not find mapping infos for class: " + o.getClass().getName());
+//      }
 
       return mappedClassInfoData;
    }
