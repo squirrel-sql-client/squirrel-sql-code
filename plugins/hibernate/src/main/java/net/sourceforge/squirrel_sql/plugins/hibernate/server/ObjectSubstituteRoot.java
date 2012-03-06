@@ -55,4 +55,26 @@ public class ObjectSubstituteRoot implements Serializable
 
       return ret;
    }
+
+   public MappedClassInfoData getPlainValueArrayMappedClassInfo()
+   {
+      if(isArray())
+      {
+         for (ObjectSubstitute objectSubstitute : _objectSubstituteArray)
+         {
+            if(null != objectSubstitute.getPlainValueArrayMappedClassInfo())
+            {
+               // There can be just one PlainValueArray in a tuple
+               return objectSubstitute.getPlainValueArrayMappedClassInfo();
+            }
+         }
+
+         return null;
+
+      }
+      else
+      {
+         return _objectSubstitute.getPlainValueArrayMappedClassInfo();
+      }
+   }
 }

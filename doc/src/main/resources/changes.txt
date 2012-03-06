@@ -9,6 +9,11 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Hibernate Plugin:
+ - Support of hql results that return plain values instead of mapped objects. Mixes of plain values mapped objects are supported, too.
+ - Support of data changing hql statements.
+
+
 DBCopy Plugin:
   - Offers a new menu item "Paste table as ..." that allows to change the pasted table's name.
     This function works if only a single table was copied.

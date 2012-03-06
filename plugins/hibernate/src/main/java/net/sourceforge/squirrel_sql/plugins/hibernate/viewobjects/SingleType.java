@@ -99,7 +99,10 @@ public class SingleType implements IType
                   mci = ViewObjectsUtil.findMappedClassInfo(hpr.getTypeName(), _allMappedClassInfos, false);
                }
 
-               objects.add((ObjectSubstitute) hpr.getValue());
+               if (null != mci && false == mci.isPlainValueArray())
+               {
+                  objects.add((ObjectSubstitute) hpr.getValue());
+               }
             }
          }
 

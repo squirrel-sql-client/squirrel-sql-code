@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
@@ -71,11 +72,19 @@ public class ObjectResultTabController
 
 
       ArrayList<MappedClassInfo> mappedClassInfos = con.getMappedClassInfos();
+
+      MappedClassInfo plainValueArrayMappedClassInfo = getBestPlainValueArrayMappedClassInfo(objects);
+      if(null != plainValueArrayMappedClassInfo)
+      {
+         mappedClassInfos = (ArrayList<MappedClassInfo>) mappedClassInfos.clone();
+         mappedClassInfos.add(plainValueArrayMappedClassInfo);
+      }
+      
       _resultsController = new ResultsController(_tab.pnlResults, hqlQuery, mappedClassInfos, session);
 
 
 
-      RootType qrmr = new RootType(objects, con.getMappedClassInfos());
+      RootType qrmr = new RootType(objects, mappedClassInfos);
 
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(qrmr);
       _tab.treeTypes.setModel(new DefaultTreeModel(rootNode));
@@ -104,6 +113,19 @@ public class ObjectResultTabController
       initRoot(rootNode);
 
       //CommandLineOutput.displayObjects(mappedClassInfos, qrmr,  con.getPersistenCollectionClass());
+   }
+
+   private MappedClassInfo getBestPlainValueArrayMappedClassInfo(List<ObjectSubstituteRoot> objects)
+   {
+      // Can be improved: If first array element contains nulls the type of these values will be unknown
+      // though it might be available in other array elements.
+      MappedClassInfoData plainValueArrayMappedClassInfo = objects.get(0).getPlainValueArrayMappedClassInfo();
+
+      if(null == plainValueArrayMappedClassInfo)
+      {
+         return null;
+      }
+      return new MappedClassInfo(plainValueArrayMappedClassInfo);
    }
 
    private void onCopySqlToClip(HibernateConnection con, String hqlQuery, ISession session)
