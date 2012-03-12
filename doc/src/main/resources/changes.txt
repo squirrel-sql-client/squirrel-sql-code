@@ -12,6 +12,7 @@ Enhancements:
 Hibernate Plugin:
  - Support of hql results that return plain values instead of mapped objects. Mixes of plain values mapped objects are supported, too.
  - Support of data changing hql statements.
+ - Support for JDBC standard date/time/timestamp escape strings in hql queries. (String are parsed and converted to hql parameters).
 
 
 DBCopy Plugin:

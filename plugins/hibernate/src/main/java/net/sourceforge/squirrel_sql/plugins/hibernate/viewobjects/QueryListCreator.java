@@ -85,6 +85,12 @@ public class QueryListCreator extends SwingWorker<HqlQueryResult, Object>
             return;
          }
 
+         if(null != _hqlQueryResult.getMessagePanelInfoText())
+         {
+            _session.getApplication().getMessageHandler().showMessage(_hqlQueryResult.getMessagePanelInfoText());
+         }
+
+
          if (null == _hqlQueryResult.getQueryResultList())
          {
             if (null != _hqlQueryResult.getUpdateCount())

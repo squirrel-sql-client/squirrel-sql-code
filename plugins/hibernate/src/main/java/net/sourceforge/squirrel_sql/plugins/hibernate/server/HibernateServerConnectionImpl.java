@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -38,7 +37,12 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
    {
       try
       {
+         JDBCTemporalEscapeParse jdbcTemporalEscapeParse = new JDBCTemporalEscapeParse(hqlQuery);
 
+         if(jdbcTemporalEscapeParse.hasEscapes())
+         {
+            hqlQuery = jdbcTemporalEscapeParse.getHql();
+         }
 
          Class sessionFactoryImplementorClass = (Class) new ReflectionCaller().getClass("org.hibernate.engine.SessionFactoryImplementor", _cl).getCallee();
 
@@ -243,7 +247,29 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
 
       try
       {
-         ReflectionCaller rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+         JDBCTemporalEscapeParse jdbcTemporalEscapeParse = new JDBCTemporalEscapeParse(hqlQuery);
+
+         ReflectionCaller rc;
+         if(jdbcTemporalEscapeParse.hasEscapes())
+         {
+            rc = getRcHibernateSession().callMethod("createQuery", jdbcTemporalEscapeParse.getHql());
+
+            TreeMap<String, Date> datesByParamName = jdbcTemporalEscapeParse.getDatesByParamName();
+            for (String paramName : datesByParamName.keySet())
+            {
+               RCParam param = new RCParam();
+               param.add(paramName, String.class);
+               param.add(datesByParamName.get(paramName), Object.class);
+               rc.callMethod("setParameter", param);
+            }
+            
+            ret.setMessagePanelInfoText("Temporal values were parameterized:\n" + jdbcTemporalEscapeParse.getMessagePanelInfoText());
+         }
+         else
+         {
+            rc = getRcHibernateSession().callMethod("createQuery", hqlQuery);
+         }
+
 
          if (isDataUpdate(hqlQuery))
          {

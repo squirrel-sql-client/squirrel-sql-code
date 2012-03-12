@@ -11,6 +11,7 @@ public class HqlQueryResult implements Serializable
 
    private HashMap<String, Throwable> _sessionAdminExceptions = new HashMap<String, Throwable>();
    private Integer _updateCount;
+   private String _messagePanelInfoText;
 
    public void putSessionAdminException(String msgKey, Throwable t)
    {
@@ -50,5 +51,15 @@ public class HqlQueryResult implements Serializable
    public Integer getUpdateCount()
    {
       return _updateCount;
+   }
+
+   public void setMessagePanelInfoText(String messagePanelInfoText)
+   {
+      _messagePanelInfoText = messagePanelInfoText;
+   }
+
+   public String getMessagePanelInfoText()
+   {
+      return _messagePanelInfoText;
    }
 }
