@@ -77,6 +77,28 @@ public class HQLEntryPanelManager extends EntryPanelManager
       };
       unquoteHql.putValue(Action.SHORT_DESCRIPTION, strUnquote);
       addToSQLEntryAreaMenu(unquoteHql, "unquote");
+
+      // i18n[HQLEntryPanelManager.escapeDate=Escape date]
+      String strEscapeDate = s_stringMgr.getString("HQLEntryPanelManager.escapeDate");
+      AbstractAction escapeDate = new AbstractAction(strUnquote)
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onEscapeDate();
+         }
+      };
+      unquoteHql.putValue(Action.SHORT_DESCRIPTION, strEscapeDate);
+      addToSQLEntryAreaMenu(escapeDate, "date");
+   }
+
+   private void onEscapeDate()
+   {
+      String str = EditExtrasAccessor.escapeDate(getEntryPanel(), getSession());
+
+      if(null != str)
+      {
+         getEntryPanel().replaceSelection(str);
+      }
    }
 
 
