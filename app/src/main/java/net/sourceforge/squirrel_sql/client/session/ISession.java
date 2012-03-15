@@ -227,6 +227,12 @@ public interface ISession extends IHasIdentifier
 
 
    /**
+    * Changes the title of this session to the new one.
+    * @param 	New title of this session.
+    */
+   public void setTitle(String newTitle);
+   
+   /**
     * Add the passed action to the toolbar of the sessions main window.
     *
     * @param	action	Action to be added.

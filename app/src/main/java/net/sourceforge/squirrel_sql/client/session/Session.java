@@ -725,7 +725,11 @@ class Session implements ISession
       return _title;
    }
 
-
+   public void setTitle(String newTitle)
+   {
+      _title = newTitle;
+   }
+   
    public String toString()
    {
       return getTitle();

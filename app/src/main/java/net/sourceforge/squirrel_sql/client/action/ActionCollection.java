@@ -484,6 +484,8 @@ public class ActionCollection
 		add(new NextSqlAction(_app));
 		add(new SelectSqlAction(_app));
 		add(new OpenSqlHistoryAction(_app));
+		
+		add(new RenameSessionAction(_app));
 	}
 
 }
