@@ -1,15 +1,9 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameAdapter;
-import java.awt.*;
 import java.io.File;
 
 public abstract class SessionTabWidget extends TabWidget implements ISessionWidget
@@ -133,7 +127,7 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       public void widgetActivated(WidgetEvent e)
       {
          _session.setActiveSessionWindow((ISessionWidget) e.getWidget());
-         _session.getApplication().getSessionManager().setActiveSession(_session);
+         _session.getApplication().getSessionManager().setActiveSession(_session, false);
       }
    }
 

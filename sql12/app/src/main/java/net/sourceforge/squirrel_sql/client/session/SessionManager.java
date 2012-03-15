@@ -26,14 +26,10 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllButCurrentSessionsAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.action.CloseSessionWindowAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
@@ -140,14 +136,14 @@ public class SessionManager
       _sessionsById.put(sess.getIdentifier(), sess);
 
       fireSessionAdded(sess);
-      setActiveSession(sess);
+      setActiveSession(sess, false);
 
       return sess;
    }
 
-   public void setActiveSession(ISession session)
+   public void setActiveSession(ISession session, boolean force)
    {
-      if (session != _activeSession)
+      if (session != _activeSession || force)
       {
          _activeSession = session;
          fireSessionActivated(session);
@@ -313,12 +309,16 @@ public class SessionManager
             {
                if (!_sessionsList.isEmpty())
                {
-                  setActiveSession(_sessionsList.getLast());
+                  setActiveSession(_sessionsList.getLast(), false);
                }
                else
                {
                   _activeSession = null;
                }
+            }
+            else
+            {
+               setActiveSession(_activeSession, true);
             }
 
             _allowedSchemasBySessionID.remove(session.getIdentifier());

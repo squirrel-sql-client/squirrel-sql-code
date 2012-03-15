@@ -61,6 +61,9 @@ Graph Plugin:
 
 Bug fixes:
 
+When a Session tab is closed that is not the active tab
+ the Session menu used to be disabled and keyboard shortcuts didn't work anymore for the active Session.
+
 Graph Plugin: Query Builder: Mixed up ASC and DESC in SQL generation and "order by" panel
 
 Hibernate Plugin: Fixed NullPointer that occurred in HQL execution concerning assisted but nonetheless initialized objects.

@@ -369,7 +369,7 @@ class MainFrameToolBar extends ToolBar
 				final Object obj = getSelectedItem();
 				if (obj instanceof ISession)
 				{
-					_app.getSessionManager().setActiveSession((ISession)obj);
+					_app.getSessionManager().setActiveSession((ISession)obj, false);
 				}
 			}
 		}
