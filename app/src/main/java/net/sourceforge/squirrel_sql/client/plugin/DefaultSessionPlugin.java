@@ -141,36 +141,8 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin implements ISes
 	{
 		public void sessionActivated(SessionEvent evt)
 		{
-			final ISession session = evt.getSession();
-			EnableMenuTask task = new EnableMenuTask(session);
-			session.getApplication().getThreadPool().addTask(task);
-		}
-	}
-
-	/**
-	 * A runnable that implements changing the enabled state of sessionMenu. This class ensures that UI state
-	 * change occurs in the Swing EDT.
-	 */
-	private class EnableMenuTask implements Runnable
-	{
-
-		private ISession _session = null;
-
-		public EnableMenuTask(ISession session)
-		{
-			_session = session;
-		}
-
-		public void run()
-		{
-			final boolean enable = isPluginSession(_session);
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					sessionMenu.setEnabled(enable);
-				}
-			});
+         final boolean enable = isPluginSession(evt.getSession());
+         sessionMenu.setEnabled(enable);
 		}
 	}
 }
