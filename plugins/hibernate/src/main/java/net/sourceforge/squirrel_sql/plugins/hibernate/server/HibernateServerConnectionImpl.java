@@ -276,6 +276,11 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
             int updateCount = (Integer)rc.callMethod("executeUpdate").getCallee();
             ret.setUpdateCount(updateCount);
             getRcHibernateSession().callMethod("getTransaction").callMethod("commit");
+
+            // No rollback TX after commit because it leads to
+            // org.hibernate.TransactionException: Transaction not successfully started
+            // tryRollbackTx(ret);
+
          }
          else
          {
@@ -285,21 +290,16 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
             }
 
             queryResList = (List) rc.callMethod("list").getCallee();
+            tryRollbackTx(ret);
+
          }
       }
       catch (Throwable t)
       {
          ret.setExceptionOccuredWhenExecutingQuery(prepareTransport(t));
+         tryRollbackTx(ret);
       }
 
-      try
-      {
-         getRcHibernateSession().callMethod("getTransaction").callMethod("rollback");
-      }
-      catch (Throwable t)
-      {
-         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", prepareTransport(t));
-      }
 
       try
       {
@@ -317,6 +317,18 @@ public class HibernateServerConnectionImpl implements HibernateServerConnection
       }
 
       return ret;
+   }
+
+   private void tryRollbackTx(HqlQueryResult ret)
+   {
+      try
+      {
+         getRcHibernateSession().callMethod("getTransaction").callMethod("rollback");
+      }
+      catch (Throwable t)
+      {
+         ret.putSessionAdminException("Exception occurced during call of Session.getTransaction().rollback()", prepareTransport(t));
+      }
    }
 
    private boolean isDataUpdate(String hqlQuery)
