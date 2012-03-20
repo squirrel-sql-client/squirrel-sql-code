@@ -548,4 +548,10 @@ public class MockSession implements ISession
 		System.err.println("MockSession.getJdbcData: stub not yet implemented");
 		return null;
 	}
+
+	@Override
+	public void setTitle(String newTitle)
+	{
+		System.err.println("MockSession.setTitle: stub not yet implemented");		
+	}
 }
