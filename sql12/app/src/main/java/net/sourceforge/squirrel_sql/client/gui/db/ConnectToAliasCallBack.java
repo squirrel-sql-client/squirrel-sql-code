@@ -1,9 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
@@ -61,7 +59,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
    /**
     * @see CompletionCallback#errorOccured(Throwable)
     */
-   public void errorOccured(Throwable th)
+   public void errorOccured(Throwable th, boolean connectingHasBeenCanceledByUser)
    {
       if (th instanceof WrappedSQLException)
       {
@@ -76,25 +74,41 @@ public class ConnectToAliasCallBack implements ICompletionCallback
             msg = s_stringMgr.getString("ConnectToAliasCommand.error.cantopen");
          }
          msg = _sqlAlias.getName() + ": " + msg;
-         showErrorDialog(msg, th);
+         if (false == connectingHasBeenCanceledByUser)
+         {
+            showErrorDialog(msg, th);
+         }
+         else
+         {
+            s_log.error(msg, th);
+         }
       }
       else if (th instanceof ClassNotFoundException)
       {
          String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
-         showErrorDialog(msg, th);
+         if (false == connectingHasBeenCanceledByUser)
+         {
+            showErrorDialog(msg, th);
+         }
       }
       else if (th instanceof NoClassDefFoundError)
       {
          String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
          s_log.error(msg, th);
-         showErrorDialog(msg, th);
+         if (false == connectingHasBeenCanceledByUser)
+         {
+            showErrorDialog(msg, th);
+         }
       }
       else
       {
          String msg = s_stringMgr.getString("ConnectToAliasCommand.error.unexpected", _sqlAlias.getName());
          s_log.debug(th.getClass().getName());
          s_log.error(msg, th);
-         showErrorDialog(msg, th);
+         if (false == connectingHasBeenCanceledByUser)
+         {
+            showErrorDialog(msg, th);
+         }
       }
    }
 

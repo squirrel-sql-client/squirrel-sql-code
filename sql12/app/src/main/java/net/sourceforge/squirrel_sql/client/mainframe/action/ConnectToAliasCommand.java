@@ -152,7 +152,7 @@ public class ConnectToAliasCommand implements ICommand
 	/**
 	 * Handler used for connection internal frame actions.
 	 */
-	private static class SheetHandler implements ConnectionInternalFrame.IHandler, Runnable
+	private static class SheetHandler implements ConnectionInternalFrame.IHandler
 	{
 		/** The connection internal frame. */
 		private ConnectionInternalFrame _connSheet;
@@ -232,8 +232,7 @@ public class ConnectToAliasCommand implements ICommand
 			_user = user;
 			_password = password;
 			_props = props;
-			//_app.getThreadPool().addTask(this);
-         run();
+         doConnect();
 		}
 
 		/**
@@ -266,19 +265,43 @@ public class ConnectToAliasCommand implements ICommand
 		 * Execute task. Connect to the alias with the information entered
 		 * in the connection internal frame.
 		 */
-		public void run()
-		{
-			SQLConnection conn = null;
-			final IIdentifier driverID = _alias.getDriverIdentifier();
-			final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
+      public void doConnect()
+      {
+         final IIdentifier driverID = _alias.getDriverIdentifier();
+         final ISQLDriver sqlDriver = _app.getDataCache().getDriver(driverID);
 
-			try
-			{
-				OpenConnectionCommand cmd = new OpenConnectionCommand(_app,
-								_alias, _user, _password, _props);
-				cmd.execute();
+         try
+         {
+            final OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias, _user, _password, _props);
 
-            if(_alias.isAutoLogon())
+            cmd.execute(new OpenConnectionCommandListener(){
+               @Override
+               public void openConnectionFinished(Throwable t)
+               {
+                  afterExecuteFinished(sqlDriver, cmd, t);
+               }
+            });
+
+         }
+         catch (Throwable ex)
+         {
+            _connSheet.executed(false);
+            _callback.errorOccured(ex, _stopConnection);
+         }
+      }
+
+      private void afterExecuteFinished(ISQLDriver sqlDriver, OpenConnectionCommand cmd, Throwable t)
+      {
+         try
+         {
+            if(null != t)
+            {
+               throw t;
+            }
+
+
+            SQLConnection conn;
+            if (_alias.isAutoLogon())
             {
                // If the user checked Auto Logon but gave wrong username/password
                // in the Alias definition. He will be asked to enter username/password again in an extra dialog.
@@ -290,39 +313,36 @@ public class ConnectToAliasCommand implements ICommand
 
 
             conn = cmd.getSQLConnection();
-				synchronized (this)
-				{
-					if (_stopConnection)
-					{
-						if (conn != null)
-						{
-							closeConnection(conn);
-							conn = null;
-						}
-					}
-					else
-					{
-						// After this it can't be stopped anymore!
-						_callback.connected(conn);
-						if (_createSession)
-						{
-							createSession(sqlDriver, conn);
-						}
-						else
-						{
-							_connSheet.executed(true);
-						}
-					}
-				}
-			}
-			catch (Throwable ex)
-			{
-				_connSheet.executed(false);
-				_callback.errorOccured(ex);
-			}
-		}
+            if (_stopConnection)
+            {
+               if (conn != null)
+               {
+                  closeConnection(conn);
+                  conn = null;
+               }
+            }
+            else
+            {
+               // After this it can't be stopped anymore!
+               _callback.connected(conn);
+               if (_createSession)
+               {
+                  createSession(sqlDriver, conn);
+               }
+               else
+               {
+                  _connSheet.executed(true);
+               }
+            }
+         }
+         catch (Throwable th)
+         {
+            _connSheet.executed(false);
+            _callback.errorOccured(th, _stopConnection);
+         }
+      }
 
-		private void closeConnection(ISQLConnection conn)
+      private void closeConnection(ISQLConnection conn)
 		{
 			if (conn != null)
 			{

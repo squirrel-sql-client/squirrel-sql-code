@@ -61,6 +61,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Connection/Login timeouts (menu File --> Global Preferences --> Tab SQL) as well as canceling the "Connect to" dialog now works cleanly.
+
 When a Session tab is closed that is not the active tab
  the Session menu used to be disabled and keyboard shortcuts didn't work anymore for the active Session.
 

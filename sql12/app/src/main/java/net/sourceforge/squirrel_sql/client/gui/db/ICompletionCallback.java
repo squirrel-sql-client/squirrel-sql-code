@@ -7,5 +7,5 @@ public interface ICompletionCallback
 {
    void connected(ISQLConnection conn);
    void sessionCreated(ISession session);
-   void errorOccured(Throwable th);
+   void errorOccured(Throwable th, boolean stopConnection);
 }

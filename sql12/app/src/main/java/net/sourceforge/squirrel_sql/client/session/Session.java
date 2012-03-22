@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommandListener;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
@@ -272,7 +273,11 @@ class Session implements ISession
       		s_log.debug("Closing session: " + _id);
       	}
       	stopKeepAliveTaskIfNecessary();
-         _conn.removePropertyChangeListener(_connLis);
+         if (null != _conn)
+         {
+            // _conn is null when session is closed after reconnect (ctrl t) failure.
+            _conn.removePropertyChangeListener(_connLis);
+         }
          _connLis = null;
 
 
@@ -541,7 +546,7 @@ class Session implements ISession
     */
    public void reconnect()
    {
-      SQLConnectionState connState = new SQLConnectionState();
+      final SQLConnectionState connState = new SQLConnectionState();
       if (_conn != null)
       {
          try
@@ -553,7 +558,7 @@ class Session implements ISession
             s_log.error("Unexpected SQLException", ex);
          }
       }
-      OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
+      final OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
                                  _user, _password, connState.getConnectionProperties());
       try
       {
@@ -569,7 +574,33 @@ class Session implements ISession
       }
       try
       {
-         cmd.execute();
+         cmd.execute(new OpenConnectionCommandListener()
+         {
+            @Override
+            public void openConnectionFinished(Throwable t)
+            {
+               reconnectDone(connState, cmd, t);
+            }
+         });
+      }
+      catch (Throwable t)
+      {
+         final String msg = s_stringMgr.getString("Session.reconnError", _alias.getName());
+         _msgHandler.showErrorMessage(msg +"\n" + t.toString());
+         s_log.error(msg, t);
+         _app.getSessionManager().fireReconnectFailed(this);
+      }
+   }
+
+   private void reconnectDone(SQLConnectionState connState, OpenConnectionCommand cmd, Throwable t)
+   {
+      try
+      {
+         if(null != t)
+         {
+            throw t;
+         }
+         
          _conn = cmd.getSQLConnection();
          if (connState != null)
          {
@@ -581,11 +612,11 @@ class Session implements ISession
          _app.getSessionManager().fireReconnected(this);
          startKeepAliveTaskIfNecessary();
       }
-      catch (Throwable t)
+      catch (Throwable th)
       {
          final String msg = s_stringMgr.getString("Session.reconnError", _alias.getName());
-         _msgHandler.showErrorMessage(msg +"\n" + t.toString());
-         s_log.error(msg, t);
+         _msgHandler.showErrorMessage(msg +"\n" + th.toString());
+         s_log.error(msg, th);
          _app.getSessionManager().fireReconnectFailed(this);
       }
    }
@@ -1228,19 +1259,23 @@ class Session implements ISession
     /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#createUnmanagedConnection()
      */
-    public SQLConnection createUnmanagedConnection() {
-    	SQLConnectionState connState = new SQLConnectionState();
-     
-        OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
-                                   _user, _password, connState.getConnectionProperties());
-        try {
-			cmd.execute();
-		} catch (BaseException e) {
-			showErrorMessage(e);
-			return null;
-		}
-        
-        return cmd.getSQLConnection();
+    public SQLConnection createUnmanagedConnection()
+    {
+       SQLConnectionState connState = new SQLConnectionState();
+
+       OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
+             _user, _password, connState.getConnectionProperties());
+       try
+       {
+          cmd.executeAndWait();
+       }
+       catch (Exception e)
+       {
+          showErrorMessage(e);
+          return null;
+       }
+
+       return cmd.getSQLConnection();
     }
-    
+
 }
