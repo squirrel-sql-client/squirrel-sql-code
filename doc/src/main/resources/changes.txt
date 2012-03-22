@@ -9,7 +9,7 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
-3463374: Ability to rename SQL Worksheet Tabs through Session menu or shortcut shift F6. (Thanks to Vladislav Vavra for the patch.)
+3463374: Ability to rename SQL Worksheet tabs through Session menu, tab's right mouse menu or shortcut shift F6. (Thanks to Vladislav Vavra for the patch.)
 
 Hibernate Plugin:
  - Support of hql results that return plain values instead of mapped objects. Mixes of plain values mapped objects are supported, too.
