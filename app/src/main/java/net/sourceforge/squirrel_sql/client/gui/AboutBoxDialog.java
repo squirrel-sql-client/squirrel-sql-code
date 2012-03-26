@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  */
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,9 +28,15 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.management.MXBean;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -39,6 +46,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -54,6 +62,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -84,6 +93,8 @@ public class AboutBoxDialog extends JDialog
 
 	/** System panel. */
 	private SystemPanel _systemPnl;
+	
+	private ThreadPanel _threadPnl;
 
 	/** Close button for dialog. */
 	private final JButton _closeBtn = new JButton(s_stringMgr.getString("AboutBoxDialog.close"));
@@ -168,6 +179,9 @@ public class AboutBoxDialog extends JDialog
 					+ (System.currentTimeMillis() - start)
 					+ "ms");
 		}
+		
+		_threadPnl = new ThreadPanel();
+		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.threads"), _threadPnl);
 
 		_tabPnl.addChangeListener(new ChangeListener()
 		{
@@ -396,6 +410,8 @@ public class AboutBoxDialog extends JDialog
 		}
 	}
 
+	
+	
 	private static class MemoryPanel
 		extends PropertyPanel
 		implements ActionListener
@@ -474,6 +490,57 @@ public class AboutBoxDialog extends JDialog
 			_totalMemoryLbl.setText(Utilities.formatSize(totalMemory, 1));
 			_usedMemoryLbl.setText(Utilities.formatSize(usedMemory, 1));
 			_freeMemoryLbl.setText(Utilities.formatSize(freeMemory, 1));
+		}
+	}
+	
+	private static final class ThreadPanel extends JPanel
+	{
+        private static final long serialVersionUID = 1L;
+        
+        private JTextArea content;
+
+        ThreadPanel()
+		{
+			super();
+			setLayout(new BorderLayout());
+			
+			content = new JTextArea(5,20);
+			content.setEditable(false);
+			content.setLineWrap(false);
+			doThreadDump();
+			add(new JScrollPane(content), BorderLayout.CENTER);
+			add(createButtons(), BorderLayout.SOUTH);
+		}
+
+		/**
+		 * @return
+		 */
+		private JPanel createButtons() {
+			JPanel buttonPanel = new JPanel(new BorderLayout());
+			JButton refreshButton = new JButton(s_stringMgr.getString("ThreadPanel.refresh"));
+			buttonPanel.add(refreshButton, BorderLayout.WEST);
+			
+			refreshButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					doThreadDump();
+				}
+			});
+			
+			return buttonPanel;
+		}
+
+		private void doThreadDump() {
+			StringBuilder sb = new StringBuilder(1000);
+
+			ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true);
+			for (ThreadInfo threadInfo : threadInfos) {
+				sb.append(threadInfo.toString());
+				sb.append(StringUtilities.getEolStr());
+			}
+
+			content.setText(sb.toString());
 		}
 	}
 }
