@@ -290,4 +290,9 @@ public class ConstraintData
          _fkCols.set(i, tableFramesModel.findColumn(_fkTableName, _fkCols.get(i).getColumnName()));
       }
    }
+
+   public void setConstraintQueryData(ConstraintQueryData constraintQueryData)
+   {
+      _constraintQueryData = constraintQueryData;
+   }
 }
