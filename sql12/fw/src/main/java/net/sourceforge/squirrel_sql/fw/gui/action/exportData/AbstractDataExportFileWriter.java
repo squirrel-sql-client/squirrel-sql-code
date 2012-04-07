@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.plaf.SliderUI;
 
@@ -69,7 +70,7 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	/**
 	 * Constant, for updating the progress bar each x seconds.
 	 */
-	private static final int FEEDBACK_EVRY_N_SECONDS = 5;
+	private static final int FEEDBACK_EVRY_N_SECONDS = 2;
 	/**
 	 * The target file.
 	 */
@@ -178,7 +179,8 @@ public abstract class AbstractDataExportFileWriter implements IDataExportWriter{
 	 */
 	private boolean isStatusUpdateNecessary() {
 		long time = System.currentTimeMillis();
-		if((timeOfLastStatusUpdate  + FEEDBACK_EVRY_N_SECONDS*1000) < time){
+
+		if((timeOfLastStatusUpdate  + TimeUnit.SECONDS.toMillis(FEEDBACK_EVRY_N_SECONDS)) < time){
 			timeOfLastStatusUpdate = time;
 			return true;
 		}else{

@@ -315,14 +315,23 @@ public class ProgressAbortDialog extends JDialog implements ProgressAbortCallbac
 	 */
 	private void appendToHistory(String string) {
 		if (this.historyArea != null) {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			sb.append(dateFormat.format(new Date()));
 			sb.append(": ");
 			sb.append(string);
 			sb.append(StringUtilities.getEolStr());
-			this.historyArea.append(sb.toString());
-			this.historyArea.setCaretPosition(historyArea.getDocument().getLength());
-		}
+
+         Runnable runnable = new Runnable()
+         {
+            public void run()
+            {
+               historyArea.append(sb.toString());
+               historyArea.setCaretPosition(historyArea.getDocument().getLength());
+            }
+         };
+
+         GUIUtils.processOnSwingEventThread(runnable);
+      }
 	}
 
 	/**
