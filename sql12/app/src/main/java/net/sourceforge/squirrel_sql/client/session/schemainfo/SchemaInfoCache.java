@@ -408,18 +408,12 @@ public class SchemaInfoCache implements Serializable
 
    }
 
-   void clearAll()
-   {
-      clearSchemaIndependentData();
-
-
-      clearAllSchemaDependentData();
-
-   }
-
    private void clearAllSchemaDependentData()
    {
       _tableNames.clear();
+
+      _internalTableNameTreeMap.clear();
+
       synchronized(_iTableInfos) {
           _iTableInfos.clear();
       }

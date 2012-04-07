@@ -157,32 +157,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    private void onDeleteCache()
    {
-      File schemaCacheFile = SchemaInfoCacheSerializer.getSchemaCacheFile(_alias);
-
-      String aliasName = null == _alias.getName() || 0 == _alias.getName().trim().length() ? "<unnamed>" : _alias.getName();
-
-      if(schemaCacheFile.exists())
-      {
-         if(schemaCacheFile.delete())
-         {
-            // i18n[SchemaPropertiesController.cacheDeleted=Deleted {0}]
-            _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheDeleted", schemaCacheFile.getPath()));
-         }
-         else
-         {
-            // i18n[SchemaPropertiesController.cacheDeleteFailed=Could not delete {0}]
-            _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaPropertiesController.cacheDeleteFailed", schemaCacheFile.getPath()));
-         }
-
-      }
-      else
-      {
-         // i18n[SchemaPropertiesController.cacheToDelNotExists=Cache file for Alias "{0}" does not exist. No file was deleted]
-         _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaPropertiesController.cacheToDelNotExists", aliasName));
-      }
-
+      SchemaInfoCacheSerializer.deleteCacheFile(_app, _alias, true);
    }
-
 
    private void onPrintCacheFileLocation()
    {
