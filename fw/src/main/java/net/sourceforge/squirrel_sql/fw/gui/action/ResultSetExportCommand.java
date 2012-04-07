@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ExportDataException;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.IExportData;
 import net.sourceforge.squirrel_sql.fw.gui.action.exportData.ResultSetExportData;
@@ -32,6 +33,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
 
 /**
  * Command for exporting a result set to a file.
@@ -105,9 +108,29 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
 	 */
 	@Override
-	protected TableExportCsvController createTableExportController() {
-		return new ResultSetExportCsvController();
-	}
+	protected TableExportCsvController createTableExportController()
+   {
+      try
+      {
+         final ResultSetExportCsvController[] buf = new ResultSetExportCsvController[1];
+
+         Runnable runnable = new Runnable()
+         {
+            public void run()
+            {
+               buf[0] = new ResultSetExportCsvController();
+            }
+         };
+
+         GUIUtils.processOnSwingEventThread(runnable, true);
+
+         return buf[0];
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 	/**
 	 * Create a new {@link ProgressAbortCallback}.
