@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommandListener;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
@@ -155,7 +156,8 @@ class Session implements ISession
    private DefaultExceptionFormatter formatter = new DefaultExceptionFormatter();
    
    private SessionConnectionKeepAlive _sessionConnectionKeepAlive = null;
-   
+   private SimpleSessionListenerManager _simpleSessionListenerManager;
+
    /**
     * Create a new session.
     *
@@ -173,9 +175,6 @@ class Session implements ISession
                   SQLConnection conn, String user, String password,
                   IIdentifier sessionId)
    {
-      super();
-      _schemaInfo = new SchemaInfo(app);
-
       if (app == null)
       {
          throw new IllegalArgumentException("null IApplication passed");
@@ -196,6 +195,8 @@ class Session implements ISession
       {
          throw new IllegalArgumentException("sessionId == null");
       }
+
+      _schemaInfo = new SchemaInfo(app);
 
       _app = app;
       _driver = driver;
@@ -236,6 +237,7 @@ class Session implements ISession
          }
       });
       startKeepAliveTaskIfNecessary();
+      _simpleSessionListenerManager = new SimpleSessionListenerManager(app, this);
    }
 
    private void startKeepAliveTaskIfNecessary() {
@@ -1278,4 +1280,15 @@ class Session implements ISession
        return cmd.getSQLConnection();
     }
 
+   @Override
+   public void addSimpleSessionListener(SimpleSessionListener simpleSessionListener)
+   {
+      _simpleSessionListenerManager.addListener(simpleSessionListener);
+   }
+
+   @Override
+   public void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener)
+   {
+      _simpleSessionListenerManager.removeListener(simpleSessionListener);
+   }
 }

@@ -18,23 +18,20 @@
 package net.sourceforge.squirrel_sql.fw.completion;
 
 
-
-
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 
 public class Completor
 {
    public static final Color DEFAULT_POP_UP_BACK_GROUND = new Color(255,255,204);
 
 
-	private Vector<CompletorListener> _listeners = new Vector<CompletorListener>();
-	private ICompletorModel _model;
+   private CompletorListener _completorListener;
+   private ICompletorModel _model;
 	private JPanel _completionPanel;
 	private JList _completionList;
 
@@ -67,33 +64,34 @@ public class Completor
 
    private Action[] _originalActions = null;
 
-   public Completor(JTextComponent txtComp, ICompletorModel model)
+   public Completor(JTextComponent txtComp, ICompletorModel model, CompletorListener completorListener)
 	{
-		this(txtComp, model, DEFAULT_POP_UP_BACK_GROUND, false, txtComp); // light yellow
+		this(txtComp, model, completorListener, DEFAULT_POP_UP_BACK_GROUND, false, txtComp); // light yellow
 	}
 
-   public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField)
+   public Completor(JTextComponent txtComp, ICompletorModel model, CompletorListener completorListener, Color popUpBackGround, boolean useOwnFilterTextField)
 	{
-      this(txtComp, model, popUpBackGround, useOwnFilterTextField, txtComp);
+      this(txtComp, model, completorListener, popUpBackGround, useOwnFilterTextField, txtComp);
    }
 
-   public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField, JComponent popupParent)
+   public Completor(JTextComponent txtComp, ICompletorModel model, CompletorListener completorListener, Color popUpBackGround, boolean useOwnFilterTextField, JComponent popupParent)
 	{
       _txtComp = new TextComponentProvider(txtComp, useOwnFilterTextField);
 
 		_model = model;
 
+      _completorListener = completorListener;
+
+
 		_completionPanel =
 			new JPanel(new BorderLayout())
 			{
-                private static final long serialVersionUID = 1L;
-
-                public void setSize(int width, int height)
-				{
-					// without this the completion panel's size will be weird
-					super.setSize(_curCompletionPanelSize.width, _curCompletionPanelSize.height);
-				}
-			};
+            public void setSize(int width, int height)
+            {
+               // without this the completion panel's size will be weird
+               super.setSize(_curCompletionPanelSize.width, _curCompletionPanelSize.height);
+            }
+         };
 
 		_completionList = new JList(new DefaultListModel());
 		_completionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -485,30 +483,23 @@ public class Completor
 
 	private void fireEvent(CompletionInfo completion, int keyCode, int modifiers)
 	{
-		Vector<CompletorListener> clone = new Vector<CompletorListener>(_listeners);
-
-		for (int i = 0; i < clone.size(); i++)
-		{
-         CompletorListener completorListener = clone.elementAt(i);
-         if(_txtComp.editorEqualsFilter())
-         {
-            completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode, modifiers);
-         }
-         else
-         {
-            completorListener.completionSelected(completion, -1, keyCode, modifiers);
-         }
-		}
+      if(_txtComp.editorEqualsFilter())
+      {
+         _completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode, modifiers);
+      }
+      else
+      {
+         _completorListener.completionSelected(completion, -1, keyCode, modifiers);
+      }
 	}
 
-	public void addCodeCompletorListener(CompletorListener l)
-	{
-		_listeners.add(l);
-	}
-
-	public void removeCodeCompletorListener(CompletorListener l)
-	{
-		_listeners.remove(l);
-	}
-
+   public void disposePopup()
+   {
+      //////////////////////////////////////////////////
+      // Both are needed to prevent memory leaks.
+      _popupMan.removeFromRootPane(_completionPanel);
+      _completionPanel.removeAll();
+      //
+      /////////////////////////////////////////////////
+   }
 }

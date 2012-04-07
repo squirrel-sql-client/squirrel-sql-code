@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -28,26 +30,33 @@ public class HQLCompleteCodeAction extends SquirrelAction
                                 HibernatePluginResources resources,
                                 HQLEntryPanelManager hqlEntryPanelManager,
                                 IHibernateConnectionProvider hibernateConnectionProvider,
-                                HqlSyntaxHighlightTokenMatcherProxy hqlSyntaxHighlightTokenMatcherProxy)
+                                HqlSyntaxHighlightTokenMatcherProxy hqlSyntaxHighlightTokenMatcherProxy,
+                                ISession session)
 	{
 		super(app, resources);
 		_hqlEntryPanel = hqlEntryPanelManager.getEntryPanel();
       _hibernateConnectionProvider = hibernateConnectionProvider;
 
       _model = new HQLCodeCompletorModel(hibernateConnectionProvider, new HQLAliasFinder(_hqlEntryPanel), hqlSyntaxHighlightTokenMatcherProxy);
-      _cc = new Completor(_hqlEntryPanel.getTextComponent(), _model);
 
-		_cc.addCodeCompletorListener
-		(
-			new CompletorListener()
-			{
-				public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
-				{
-               performCompletionSelected(completion, replaceBegin, keyCode, modifiers);
-            }
-			}
-		);
 
+      CompletorListener completorListener = new CompletorListener()
+      {
+         public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
+         {
+            performCompletionSelected(completion, replaceBegin, keyCode, modifiers);
+         }
+      };
+
+      _cc = new Completor(_hqlEntryPanel.getTextComponent(), _model, completorListener);
+
+      session.addSimpleSessionListener(new SimpleSessionListener()
+      {
+         public void sessionClosed()
+         {
+            _cc.disposePopup();
+         }
+      });
 
 
    }

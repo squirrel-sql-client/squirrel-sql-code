@@ -83,7 +83,7 @@ class ObjectTree extends JTree
 	private final ObjectTreeModel _model;
 
 	/** Current session. */
-	transient private final ISession _session;
+	private final ISession _session;
 
 	/**
 	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
