@@ -64,6 +64,8 @@ Graph Plugin:
 
 Bug fixes:
 
+When a table was removed from a query builder graph join types of remaining joins were reset to the default inner join type.
+
 Referesh (F5) didn't work right and didn't delete schema cache files when schema caching was used.
 
 Fixed memory leak: Sessions didn't get garbage collected as soon as a popup (code completion, bookmarks, tools popup) was used.

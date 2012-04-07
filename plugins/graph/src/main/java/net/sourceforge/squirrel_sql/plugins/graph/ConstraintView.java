@@ -829,6 +829,7 @@ public class ConstraintView implements GraphComponent
 
    public void setData(ConstraintData constraintData)
    {
+      constraintData.setConstraintQueryData(_constraintData.getConstraintQueryData());
       _constraintData = constraintData;
    }
 
