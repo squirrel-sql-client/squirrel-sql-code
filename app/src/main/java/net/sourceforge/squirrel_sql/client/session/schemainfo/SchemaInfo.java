@@ -203,7 +203,8 @@ public class SchemaInfo
     */
    void reloadAll(boolean fireSchemaInfoUpdate)
    {
-      _schemaInfoCache.clearAll();
+      SchemaInfoCacheSerializer.deleteCacheFile(_session.getApplication(), _session.getAlias(), false);
+      _schemaInfoCache = SchemaInfoCacheSerializer.load(_session);
       privateLoadAll();
 
       if(fireSchemaInfoUpdate)

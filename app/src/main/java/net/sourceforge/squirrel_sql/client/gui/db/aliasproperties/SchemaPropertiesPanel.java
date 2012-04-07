@@ -107,14 +107,20 @@ public class SchemaPropertiesPanel extends JPanel
       ret.setLayout(new GridBagLayout());
       GridBagConstraints gbc;
 
+      gbc = new GridBagConstraints(0,0,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      JLabel label = new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.deleteCacheNote"));
+      label.setForeground(Color.red);
+      ret.add(label, gbc);
+
+
       // i18n[SchemaPropertiesPanel.printCacheFileLocation=Print cache file path to message panel]
       btnPrintCacheFileLocation = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.printCacheFileLocation"));
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
       ret.add(btnPrintCacheFileLocation, gbc);
 
       // i18n[SchemaPropertiesPanel.deleteCache=Delete cache file]
       btnDeleteCache = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.deleteCache"));
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       ret.add(btnDeleteCache, gbc);
 
       return ret;

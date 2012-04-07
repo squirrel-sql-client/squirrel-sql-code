@@ -9,11 +9,13 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.util.Hashtable;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -199,4 +201,32 @@ public class SchemaInfoCacheSerializer
          schemaCacheFile.delete();
       }
    }
+
+   public static void deleteCacheFile(IApplication app, ISQLAliasExt alias, boolean verbose)
+   {
+      File schemaCacheFile = SchemaInfoCacheSerializer.getSchemaCacheFile(alias);
+
+      String aliasName = null == alias.getName() || 0 == alias.getName().trim().length() ? "<unnamed>" : alias.getName();
+
+      if (schemaCacheFile.exists())
+      {
+         if (schemaCacheFile.delete())
+         {
+            // i18n[SchemaPropertiesController.cacheDeleted=Deleted {0}]
+            app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.cacheDeleted", schemaCacheFile.getPath()));
+         }
+         else
+         {
+            // i18n[SchemaPropertiesController.cacheDeleteFailed=Could not delete {0}]
+            app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.cacheDeleteFailed", schemaCacheFile.getPath()));
+         }
+
+      }
+      else if(verbose)
+      {
+         // i18n[SchemaPropertiesController.cacheToDelNotExists=Cache file for Alias "{0}" does not exist. No file was deleted]
+         app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.cacheToDelNotExists", aliasName));
+      }
+   }
+
 }
