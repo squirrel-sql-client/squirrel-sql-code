@@ -17,23 +17,22 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-
-import javax.swing.*;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 public class CompleteCodeAction extends SquirrelAction
 {
-    private static final long serialVersionUID = 1L;
     private ISQLEntryPanel _sqlEntryPanel;
 	 private Completor _cc;
     private CodeCompletorModel _model;
@@ -51,25 +50,35 @@ public class CompleteCodeAction extends SquirrelAction
 
       _model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
 
+
+      CompletorListener completorListener = new CompletorListener()
+      {
+         public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
+         {
+            performCompletionSelected((CodeCompletionInfo) completion, replaceBegin, keyCode, modifiers);
+         }
+      };
+
       if(null != popupParent)
       {
-         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, Completor.DEFAULT_POP_UP_BACK_GROUND, false, popupParent);
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.DEFAULT_POP_UP_BACK_GROUND, false, popupParent);
       }
       else
       {
-         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, Completor.DEFAULT_POP_UP_BACK_GROUND, false);
+         _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model, completorListener, Completor.DEFAULT_POP_UP_BACK_GROUND, false);
       }
+
+      session.addSimpleSessionListener(new SimpleSessionListener()
+      {
+         public void sessionClosed()
+         {
+            _cc.disposePopup();
+         }
+      });
+
 
       _sqlEntryPanel.addSQLTokenListener(_model.getSQLTokenListener());
 
-		_cc.addCodeCompletorListener
-		(
-			new CompletorListener()
-			{
-				public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
-				{performCompletionSelected((CodeCompletionInfo) completion, replaceBegin, keyCode, modifiers);}
-			}
-		);
 	}
 
 

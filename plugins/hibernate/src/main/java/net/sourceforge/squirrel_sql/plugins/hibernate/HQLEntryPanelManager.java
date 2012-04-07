@@ -122,7 +122,7 @@ public class HQLEntryPanelManager extends EntryPanelManager
 
    private void initCodeCompletion()
    {
-      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _connectionProvider, _hqlSyntaxHighlightTokenMatcherProxy);
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _connectionProvider, _hqlSyntaxHighlightTokenMatcherProxy, getSession());
       JMenuItem item = addToSQLEntryAreaMenu(hcca, "complete");
       _resources.configureMenuItem(hcca, item);
       registerKeyboardAction(hcca, _resources.getKeyStroke(hcca));

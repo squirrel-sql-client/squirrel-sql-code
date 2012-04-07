@@ -10,6 +10,7 @@ import javax.swing.text.JTextComponent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -37,16 +38,25 @@ public class ToolsPopupController
       _session = session;
       
       _toolsPopupCompletorModel = new ToolsPopupCompletorModel();
-      _toolsCompletor = new Completor(_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, new Color(255,204,204), true);
 
-      _toolsCompletor.addCodeCompletorListener
-      (
-         new CompletorListener()
+      CompletorListener completorListener = new CompletorListener()
+      {
+         public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
          {
-            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
-            {onToolsPopupActionSelected(completion);}
+            onToolsPopupActionSelected(completion);
          }
-      );
+      };
+
+
+      _toolsCompletor = new Completor(_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, completorListener, new Color(255,204,204), true);
+
+      sqlEntryPanel.getSession().addSimpleSessionListener(new SimpleSessionListener()
+      {
+         public void sessionClosed()
+         {
+            _toolsCompletor.disposePopup();
+         }
+      });
 
 
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);

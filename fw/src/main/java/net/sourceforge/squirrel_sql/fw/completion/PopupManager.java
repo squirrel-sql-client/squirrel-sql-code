@@ -113,7 +113,7 @@ public class PopupManager
 	}
 
 	/** Remove popup panel from previous textComponent root pane */
-	private void removeFromRootPane(JComponent c)
+   public void removeFromRootPane(JComponent c)
 	{
 		JRootPane rp = c.getRootPane();
 		if (rp != null)

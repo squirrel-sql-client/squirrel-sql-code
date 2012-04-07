@@ -64,6 +64,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Fixed memory leak: Sessions didn't get garbage collected as soon as a popup (code completion, bookmarks, tools popup) was used.
+
 Connection/Login timeouts (menu File --> Global Preferences --> Tab SQL) as well as canceling the "Connect to" dialog now works cleanly.
 
 When a Session tab is closed that is not the active tab

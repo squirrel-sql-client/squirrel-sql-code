@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
@@ -41,16 +42,23 @@ public class CompleteBookmarkAction extends SquirrelAction
       _sqlEntryPanel = sqlEntryPanel;
       _plugin = plugin;
 
-      _cc = new Completor(_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), new Color(204,255,255), true);
-
-      _cc.addCodeCompletorListener
-      (
-         new CompletorListener()
+      CompletorListener completorListener = new CompletorListener()
+      {
+         public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
          {
-            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
-            {performCompletionSelected(completion);}
+            performCompletionSelected(completion);
          }
-      );
+      };
+
+      _cc = new Completor(_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), completorListener, new Color(204,255,255), true);
+
+      sqlEntryPanel.getSession().addSimpleSessionListener(new SimpleSessionListener()
+      {
+         public void sessionClosed()
+         {
+            _cc.disposePopup();
+         }
+      });
    }
 
 

@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -402,5 +403,15 @@ public interface ISession extends IHasIdentifier
    IMainPanelTab getSelectedMainTab();
 
    JdbcConnectionData getJdbcData();
+
+
+   /**
+    * Simple because it is directly attached to the Session itself
+    * in contrast to SessionListener that is attached to SessionManager.
+    */
+   void addSimpleSessionListener(SimpleSessionListener simpleSessionListener);
+
+   void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener);
+
 
 }
