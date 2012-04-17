@@ -10,7 +10,7 @@ public class HQLKeywordInfo extends SimpleHQLCompletionInfo
       "inner", "insert", "into", "is", "join", "left", "like", "new",
       "not", "null", "or", "order", "outer", "properties", "right",
       "select", "set", "some", "true", "union", "update", "versioned",
-      "where", "and", "or", "as", "on", "with",
+      "where", "and", "or", "as", "on", "with", "by",
 
       // -- EJBQL tokens --
       "both", "empty", "leading", "member", "object", "of", "trailing",
