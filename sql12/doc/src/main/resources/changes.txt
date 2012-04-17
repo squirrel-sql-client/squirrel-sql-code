@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Add new default driver definitions for HXTT Cobol and XML drivers.
+
 About Dialog:
   Added a tab for displaying the status off all threads.
 

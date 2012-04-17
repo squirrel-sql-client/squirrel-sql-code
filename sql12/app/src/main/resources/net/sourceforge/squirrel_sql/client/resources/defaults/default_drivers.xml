@@ -1,7 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Beans>
-	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.hxtt.sql.cobol.CobolDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-57</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>HXTT Cobol Embedded</name>
+        <url>jdbc:cobol:///&lt;databaseName&gt;</url>
+        <websiteUrl>http://www.hxtt.com/cobol.html</websiteUrl>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.hxtt.sql.cobol.CobolDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-56</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>HXTT Cobol Client</name>
+        <url>jdbc:cobol://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+        <websiteUrl>http://www.hxtt.com/cobol.html</websiteUrl>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.hxtt.sql.xml.XMLDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-55</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>HXTT XML Embedded</name>
+        <url>jdbc:xml:///&lt;databaseName&gt;</url>
+        <websiteUrl>http://www.hxtt.com/xml.html</websiteUrl>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>com.hxtt.sql.xml.XMLDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-54</string>
+        </identifier>
+        <jarFileName/>
+        <jarFileNames Indexed="true"/>
+        <name>HXTT XML Client</name>
+        <url>jdbc:xml://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+        <websiteUrl>http://www.hxtt.com/xml.html</websiteUrl>
+    </Bean>
+
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<name>NuoDB</name>
 		<driverClassName>com.nuodb.jdbc.Driver</driverClassName>
 		<url>jdbc:com.nuodb://&lt;server&gt;/test</url>
