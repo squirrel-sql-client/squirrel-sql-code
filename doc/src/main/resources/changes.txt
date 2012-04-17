@@ -66,6 +66,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Hibernate Plugin: Added missing HQL keyword 'by'. Will now be highlighted and available in HQL code completion.
+
 Graph Plugin --> Query Builder:
   When a table was removed from a query builder graph join types of remaining joins were reset to the default inner join type.
 
