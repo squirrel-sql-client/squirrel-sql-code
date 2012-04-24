@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Syntax Plugin: Upgraded to RSyntax text area version 1.5.2
+
 Add new default driver definitions for HXTT Cobol and XML drivers.
 
 About Dialog:
