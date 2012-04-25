@@ -1124,6 +1124,12 @@ public class TableFrameController
          tfc._frame.scrollPane.getVerticalScrollBar().removeAdjustmentListener(listenerToRemove);
       }
 
+      for(TableFrameController tfc : _columnSortListenersToOtherFramesByFrameCtrlr.keySet())
+      {
+         ColumnSortListener listenerToRemove = _columnSortListenersToOtherFramesByFrameCtrlr.get(tfc);
+         tfc.removeSortListener(listenerToRemove);
+      }
+
       for (int i = 0; i < _listeners.size(); i++)
       {
          TableFrameControllerListener tableFrameControllerListener = _listeners.elementAt(i);
