@@ -46,6 +46,7 @@
 <pack index="37" name="Optional Plugin - WIKI table configurations" selected="true"/>
 <pack index="38" name="Optional Plugin - Greenplum" selected="true"/>
 <pack index="39" name="Optional Plugin - Swing Violation Detector" selected="true"/>
+<pack index="40" name="Optional Plugin - Multi Source" selected="true"/>
 </com.izforge.izpack.panels.PacksPanel>
 <com.izforge.izpack.panels.InstallPanel id="UNKNOWN (com.izforge.izpack.panels.InstallPanel)"/>
 <com.izforge.izpack.panels.FinishPanel id="UNKNOWN (com.izforge.izpack.panels.FinishPanel)"/>

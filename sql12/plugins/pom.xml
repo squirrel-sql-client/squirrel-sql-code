@@ -102,6 +102,7 @@
 		<module>wikiTableConfigurations</module>
         <module>greenplum</module>
   		<module>swingViolations</module>
+  		<module>multisource</module>
   </modules>
 
 </project>
