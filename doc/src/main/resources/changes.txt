@@ -70,6 +70,8 @@ Graph Plugin:
 
 Bug fixes:
 
+Applied patch 3100757: squirrel-sql.bat broke if %TEMP% had white space. Thanks to Taneli Waltari for the patch.
+
 Hibernate Plugin: Added missing HQL keyword 'by'. Will now be highlighted and available in HQL code completion.
 
 Graph Plugin --> Query Builder:

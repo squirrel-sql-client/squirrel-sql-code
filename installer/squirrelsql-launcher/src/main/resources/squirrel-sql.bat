@@ -37,8 +37,8 @@ if ErrorLevel 1 goto ExitForWrongJavaVersion
 if not exist "%SQUIRREL_SQL_HOME%\update\changeList.xml" goto launchsquirrel
 SET TMP_CP="%SQUIRREL_SQL_HOME%\update\downloads\core\squirrel-sql.jar"
 if not exist %TMP_CP% goto launchsquirrel
-dir /b "%SQUIRREL_SQL_HOME%\update\downloads\core\*.*" > %TEMP%\update-lib.tmp
-FOR /F %%I IN (%TEMP%\update-lib.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\update\downloads\core\%%I"
+dir /b "%SQUIRREL_SQL_HOME%\update\downloads\core\*.*" >"%TEMP%\update-lib.tmp"
+FOR /F "usebackq" %%I IN ("%TEMP%\update-lib.tmp") DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\update\downloads\core\%%I"
 SET UPDATE_CP=%TMP_CP%
 SET UPDATE_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\update-log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 "%LOCAL_JAVA%" -cp %UPDATE_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication %UPDATE_PARAMS%
@@ -46,8 +46,8 @@ SET UPDATE_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\update-log4j.properties"
 :launchsquirrel
 @rem build SQuirreL's classpath
 set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
-dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" > %TEMP%\squirrel-lib.tmp
-FOR /F %%I IN (%TEMP%\squirrel-lib.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
+dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" >"%TEMP%\squirrel-lib.tmp"
+FOR /F "usebackq" %%I IN ("%TEMP%\squirrel-lib.tmp") DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
 SET SQUIRREL_CP=%TMP_CP%
 echo "SQUIRREL_CP=%SQUIRREL_CP%"
 
