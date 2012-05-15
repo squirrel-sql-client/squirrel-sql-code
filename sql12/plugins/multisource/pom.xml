@@ -30,9 +30,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/oracle</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/oracle</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/oracle</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/multisource</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/multisource</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/multisource</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
