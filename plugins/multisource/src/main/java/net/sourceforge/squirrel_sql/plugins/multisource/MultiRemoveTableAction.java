@@ -15,7 +15,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to remove a table from the integrated view. 
+ * Menu item that allows user to remove a table from the virtual view. 
  */
 public class MultiRemoveTableAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
@@ -34,8 +34,7 @@ public class MultiRemoveTableAction extends SquirrelAction {
 			List<ITableInfo> tables =  otree.getSelectedTables();
 
 			// Only allow delete of one table regardless of how many are selected
-			if (tables.size() > 0)
-	        {
+			if (tables.size() > 0) {
 				ITableInfo ti = (ITableInfo) tables.get(0);
 				String sourceName = ti.getSchemaName();
 				String tableName = ti.getSimpleName();				
@@ -44,8 +43,7 @@ public class MultiRemoveTableAction extends SquirrelAction {
 	            Object gs = MultiSourcePlugin.getSchema(con);						// Invoke Get Global Schema Method using Reflection	            
 	            removeTable(sourceName, tableName, gs);
 	            otree.removeNodes(otree.getSelectedNodes());
-	            MultiSourcePlugin.updateSession(_session);
-	            
+	            MultiSourcePlugin.updateSession(_session);	           
 	        }						
 		} catch (Exception e) {
 			throw new RuntimeException(e);

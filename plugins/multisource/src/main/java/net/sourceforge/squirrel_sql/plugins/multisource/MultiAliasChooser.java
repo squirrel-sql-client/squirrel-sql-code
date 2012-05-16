@@ -17,10 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeCommand;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -33,10 +30,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * A dialog that allows a user to select an existing alias to add to the virtualization.
+ * A dialog that allows a user to select an existing alias to add to the
+ * virtualization.
  */
-public class MultiAliasChooser extends JDialog
-{
+public class MultiAliasChooser extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	/** Internationalized strings for this class. */
@@ -51,8 +48,7 @@ public class MultiAliasChooser extends JDialog
 	private IApplication _app;
 	private ISession _session;
 
-	public MultiAliasChooser(IApplication app, ISession session, ArrayList<ISQLAlias> aliasList)
-	{
+	public MultiAliasChooser(IApplication app, ISession session, ArrayList<ISQLAlias> aliasList) {
 		super((Frame) null, s_stringMgr.getString("MultiAliasChooser.title"), true);
 		setSize(300, 200);
 		_aliasList = aliasList;
@@ -64,8 +60,7 @@ public class MultiAliasChooser extends JDialog
 	/**
 	 * Show dialog.
 	 */
-	public ISQLAlias showDialog()
-	{
+	public ISQLAlias showDialog() {
 		setVisible(true);
 		return _selectedAlias;
 	}
@@ -73,18 +68,18 @@ public class MultiAliasChooser extends JDialog
 	/**
 	 * Builds the components of the dialog.
 	 */
-	private void createUserInterface()
-	{
+	private void createUserInterface() {
 		Container contentPane = getContentPane();
 
-		JPanel content = new JPanel(new GridLayout(4,1));
+		JPanel content = new JPanel(new GridLayout(4, 1));
 
+		// Alias combobox and label
 		content.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.prompt"), JLabel.LEFT));
-
 		_aliasCbx = new JComboBox(_aliasList.toArray());
-		_aliasCbx.setMaximumRowCount(5);			// Display up to 5 rows without a scrollbar
-
+		_aliasCbx.setMaximumRowCount(5); // Display up to 5 rows without a scrollbar
 		content.add(_aliasCbx);
+		
+		// Name textbox and label
 		JPanel namePanel = new JPanel();
 		namePanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.name"), JLabel.LEFT));
 		_nameTxt = new JTextField(15);
@@ -92,19 +87,19 @@ public class MultiAliasChooser extends JDialog
 		namePanel.add(_nameTxt);
 		content.add(namePanel);
 
+		// Schema textbox and label
 		JPanel schemaPanel = new JPanel();
 		schemaPanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.schema"), JLabel.LEFT));
 		_schemaTxt = new JTextField(15);
 		schemaPanel.add(_schemaTxt);
 		content.add(schemaPanel);
-
 		contentPane.add(content, "Center");
 
+		// Buttons
 		contentPane.add(createButtonsPanel(), "South");
 
-		_aliasCbx.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent evt)
-			{
+		_aliasCbx.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
 				_sourceName = ((ISQLAlias) _aliasCbx.getSelectedItem()).getName();
 				_nameTxt.setText(_sourceName);
 			}
@@ -114,77 +109,27 @@ public class MultiAliasChooser extends JDialog
 		setResizable(false);
 	}
 
-	private JPanel createButtonsPanel()
-	{
+	/**
+	 * Creates OK and Cancel buttons with action events.
+	 * @return
+	 */
+	private JPanel createButtonsPanel() {
 		JPanel pnl = new JPanel();
 
+		// OK button
 		JButton okBtn = new JButton(s_stringMgr.getString("MultiAliasChooser.ok"));
-		okBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				// Do positive action
-				ISQLAlias alias = (ISQLAlias) _aliasCbx.getSelectedItem();
-				MultiAliasChooser.this._selectedAlias = alias;
-				_sourceName = _nameTxt.getText();
-				if (_sourceName.contains(" "))
-				{	Dialogs.showOk(_nameTxt.getParent().getParent(), "Source name cannot contain spaces.");
+		okBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				if (!executeAddSource())
 					return;
-				}
-				String schemaName = _schemaTxt.getText();
-				if (schemaName.trim().equals(""))
-					schemaName = null;
-
-				try
-				{
-					// Verify that source name is not a duplicate
-					Object schema = MultiSourcePlugin.getSchema(_session.getSQLConnection().getConnection());
-					Method getDBMethod = schema.getClass().getMethod("getDB", new Class[]{java.lang.String.class});
-					Object result = getDBMethod.invoke(schema,  new Object[]{_sourceName});
-
-					if (result != null)
-					{	Dialogs.showOk(_nameTxt.getParent().getParent(), "Source name already exists in virtualization.  Select a different name.");
-						return;
-					}
-
-					// Now actually do extract with this information
-					ClassLoader loader = _session.getSQLConnection().getConnection().getClass().getClassLoader();
-					Object extractor = Class.forName("com.unityjdbc.sourcebuilder.AnnotatedExtractor", true, loader).newInstance();
-
-					// Create connection
-					SQLDriverManager dm = _app.getSQLDriverManager();
-					IIdentifier driverID = alias.getDriverIdentifier();
-				    ISQLDriver driver = _app.getDataCache().getDriver(driverID);
-					ISQLConnection con = dm.getConnection(driver, alias, alias.getUserName(), alias.getPassword(), alias.getDriverPropertiesClone());
-
-					ClassLoader newSourceLoader = new SQLDriverClassLoader(driver);
-
-					Method meth = extractor.getClass().getMethod("extract", new Class[]{java.lang.String.class, java.lang.String.class, java.lang.String.class,
-							java.lang.String.class, java.util.Properties.class, java.lang.String.class, java.lang.String.class, java.sql.Connection.class, java.lang.ClassLoader.class});
-
-					Connection c = con.getConnection();
-					Object asd = meth.invoke(extractor, new Object[]{driver.getDriverClassName(), alias.getUrl(), alias.getUserName(), alias.getPassword(), null,
-								_sourceName, schemaName, c, newSourceLoader});
-					
-					// Add new database to schema
-					Method addSourceMethod = schema.getClass().getMethod("addDatabase", new Class[]{asd.getClass()});					
-					addSourceMethod.invoke(schema,  new Object[]{asd});					
-					
-					MultiSourcePlugin.refreshTree(_session);					
-				}
-				catch (Exception e)
-				{
-					Dialogs.showOk(_nameTxt.getParent().getParent(), "Error during extraction: "+e);
-					return;
-				}
 				dispose();
 			}
 		});
+		
+		// Cancel button
 		JButton cancelBtn = new JButton(s_stringMgr.getString("MultiAliasChooser.cancel"));
-		cancelBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
+		cancelBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
 				MultiAliasChooser.this._selectedAlias = null;
 				dispose();
 			}
@@ -197,5 +142,70 @@ public class MultiAliasChooser extends JDialog
 		getRootPane().setDefaultButton(okBtn);
 
 		return pnl;
+	}
+	
+	/**
+	 * Adds the selected source to the virtualization.
+	 * Uses reflection to call methods of the UnityJDBC driver.
+	 */
+	private boolean executeAddSource() {
+		ISQLAlias alias = (ISQLAlias) _aliasCbx.getSelectedItem();
+		MultiAliasChooser.this._selectedAlias = alias;
+		
+		// Verify correct format of source name (no spaces, etc.)
+		_sourceName = _nameTxt.getText();
+		if (_sourceName.contains(" ")) {
+			Dialogs.showOk(_nameTxt.getParent().getParent(), "Source name cannot contain spaces.");
+			return false;
+		}
+		
+		// Retrieve schema name if it exists
+		String schemaName = _schemaTxt.getText();
+		if (schemaName.trim().equals(""))
+			schemaName = null;
+
+		try {
+			// Verify that source name is not a duplicate
+			Object schema = MultiSourcePlugin.getSchema(_session.getSQLConnection().getConnection());
+			Method getDBMethod = schema.getClass().getMethod("getDB", new Class[] { java.lang.String.class });
+			Object result = getDBMethod.invoke(schema, new Object[] { _sourceName });
+
+			if (result != null) {
+				Dialogs.showOk(_nameTxt.getParent().getParent(), "Source name already exists in virtualization.  Select a different name.");
+				return false;
+			}
+
+			// Now actually do extract with this information
+			ClassLoader loader = _session.getSQLConnection().getConnection().getClass().getClassLoader();
+			Object extractor = Class.forName("com.unityjdbc.sourcebuilder.AnnotatedExtractor", true, loader).newInstance();
+
+			// Create connection
+			SQLDriverManager dm = _app.getSQLDriverManager();
+			IIdentifier driverID = alias.getDriverIdentifier();
+			ISQLDriver driver = _app.getDataCache().getDriver(driverID);
+			ISQLConnection con = dm.getConnection(driver, alias, alias.getUserName(), alias.getPassword(), alias.getDriverPropertiesClone());
+
+			ClassLoader newSourceLoader = new SQLDriverClassLoader(driver);
+
+			Method meth = extractor.getClass().getMethod("extract", new Class[] { java.lang.String.class, java.lang.String.class,
+							java.lang.String.class, java.lang.String.class,
+							java.util.Properties.class, java.lang.String.class,
+							java.lang.String.class, java.sql.Connection.class,
+							java.lang.ClassLoader.class });
+
+			Connection c = con.getConnection();
+			Object asd = meth.invoke(extractor, new Object[] { driver.getDriverClassName(), alias.getUrl(), alias.getUserName(), alias.getPassword(), null, 
+																_sourceName, schemaName, c, newSourceLoader });
+
+			// Add new database to schema
+			Method addSourceMethod = schema.getClass().getMethod("addDatabase", new Class[] { asd.getClass() });
+			addSourceMethod.invoke(schema, new Object[] { asd });
+
+			MultiSourcePlugin.refreshTree(_session);
+		} catch (Exception e) {
+			Dialogs.showOk(_nameTxt.getParent().getParent(), "Error during extraction: "+ e);
+			return false;
+		}
+		return true;
 	}
 }

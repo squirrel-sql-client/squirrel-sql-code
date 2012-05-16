@@ -11,7 +11,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to rename a table in the integrated view. 
+ * Menu item that allows user to rename a table in the virtual view. 
  */
 public class MultiRenameTableAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
