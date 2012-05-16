@@ -32,7 +32,7 @@ public class MultiExportAction extends SquirrelAction {
 		    chooser.setDialogTitle("Select location to save virtualization configuration file");
 		    int returnVal = chooser.showSaveDialog(_session.getApplication().getMainFrame());
 		    if (returnVal == JFileChooser.APPROVE_OPTION) {		       		      
-		       String sourcesFileName = chooser.getSelectedFile().getName();
+		       String sourcesFileName = chooser.getSelectedFile().getPath();		       
 		       MultiSourcePlugin.export(sourcesFileName, _session);		
 		    }
 		} catch (Exception e) {

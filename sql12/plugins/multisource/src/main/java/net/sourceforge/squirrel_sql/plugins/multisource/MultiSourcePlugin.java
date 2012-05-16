@@ -156,7 +156,8 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 		// Determine if this is a Unity session.
 		try
 		{
-			dbName = session.getMetaData().getDatabaseProductName().toLowerCase();
+			if (session != null)
+				dbName = session.getMetaData().getDatabaseProductName().toLowerCase();
 		}
 		catch (SQLException e) {}
 
@@ -335,18 +336,23 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Saves the virtualization configuration file to disk in the plugin's user directory.
+	 * Saves the virtualization configuration file to disk in a given file location.
 	 * @param sourcesFileName
 	 * @param session
 	 */
 	public static void export(String sourcesFileName, ISession session) {
 		File f = new File(sourcesFileName);
-		String path = f.getParent() + File.separator;
-		// Make sure directory exists
-		if (!f.getParentFile().exists()) {
-			f.getParentFile().mkdir();
+				
+		String path="";
+		if (f.getParent() != null)
+		{	path = f.getParent() + File.separator;
+						
+			// Make sure directory exists
+			if (!f.getParentFile().exists()) {
+				f.getParentFile().mkdir();
+			}
 		}
-
+		
 		sourcesFileName = f.getName();
 		String sourcesNoExt = sourcesFileName;
 		int idx = sourcesFileName.indexOf(".xml");
@@ -354,7 +360,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 			sourcesNoExt = sourcesFileName.substring(0, sourcesFileName.length() - 4);
 
 		Object schema = MultiSourcePlugin.getSchema(session.getSQLConnection().getConnection()); // Retrieve schema
-
+		
 		try {
 			// Each source schema file is prefixed with sources file name (no extension) plus source name.
 			// Export schema files of each source first as each file location is needed in the sources file listing all sources.
