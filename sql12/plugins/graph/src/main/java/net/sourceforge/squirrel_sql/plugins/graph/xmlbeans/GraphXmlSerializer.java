@@ -13,7 +13,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
-import net.sourceforge.squirrel_sql.plugins.graph.GraphUtil;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkXmlBean;
 
 
@@ -107,7 +106,7 @@ public class GraphXmlSerializer
    {
       try
       {
-         final String urlPrefix = GraphUtil.javaNormalize(session.getAlias().getUrl()) + ".";
+         final String urlPrefix = StringUtilities.javaNormalize(session.getAlias().getUrl()) + ".";
 
          FileWrapper[] graphXmlFiles = plugin.getPluginUserSettingsFolder().listFiles(new FilenameFilter()
          {
