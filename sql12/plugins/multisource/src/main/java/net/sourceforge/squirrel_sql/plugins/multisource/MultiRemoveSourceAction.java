@@ -15,7 +15,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to remove a source from the integrated view. 
+ * Menu item that allows user to remove a source from the virtual view. 
  */
 public class MultiRemoveSourceAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
@@ -27,6 +27,9 @@ public class MultiRemoveSourceAction extends SquirrelAction {
 		_session = session;
 	}
 
+	/**
+	 * Removes a source from the virtual view.
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		try {
 			SessionInternalFrame sessMainFrm = _session.getSessionInternalFrame();

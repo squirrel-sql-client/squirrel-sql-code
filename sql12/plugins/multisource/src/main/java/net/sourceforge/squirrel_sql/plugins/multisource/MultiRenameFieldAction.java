@@ -9,9 +9,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to add source to integrated, global view.
- * @author rlawrenc
- *
+ * Menu item that allows user to rename a field in the virtual view. 
  */
 public class MultiRenameFieldAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
@@ -27,10 +25,7 @@ public class MultiRenameFieldAction extends SquirrelAction {
 		try {
 			// TODO: Not implemented yet.
 
-			SessionInternalFrame sessMainFrm = _session.getSessionInternalFrame();
-			
-			sessMainFrm.getSQLPanelAPI().appendSQLScript("RENAME FIELD!");
-			sessMainFrm.getSessionPanel().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+			SessionInternalFrame sessMainFrm = _session.getSessionInternalFrame();						
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

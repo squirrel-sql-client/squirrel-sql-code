@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeComma
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+
 
 /**
  * MultiSourcePlugin allows a user to query multiple databases with one query.
@@ -33,7 +35,8 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 {
 	private PluginResources _resources;
 	private static FileWrapper _userSettingsFolder;
-
+	private static boolean isTrial;
+	
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -51,7 +54,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	 */
 	public String getDescriptiveName()
 	{
-		return "MultiSource Plugin";
+		return "MultiSource Virtualization Plugin";
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	 */
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	/**
@@ -131,8 +134,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	public synchronized void initialize() throws PluginException
 	{
 		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.multisource.multisource", this);
-		try
-		{
+		try {
 			_userSettingsFolder = getPluginUserSettingsFolder();	// Retrieve the folder for user settings for storing connection info.
 		}
 		catch (Exception e)
@@ -160,32 +162,33 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
 		if (dbName != null && dbName.contains("unity"))
 		{	// Add new popup menu options for a Unity session
-			addTreeNodeMenuActions(session);
-
+			addTreeNodeMenuActions(session);		
+					
+			IMessageHandler messageHandler = session.getApplication().getMessageHandler();
+			MultiSqlExecutionListener sqlExecutionListener = new MultiSqlExecutionListener(messageHandler);
+			
+			session.getSessionSheet().getSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
+			
 			// Load session configuration information if URL says virtual
-			if (session.getAlias() != null)
-			{
+			if (session.getAlias() != null) {
+				isTrial = MultiSourcePlugin.isTrial(session.getSQLConnection().getConnection());
 				String url = session.getAlias().getUrl();
-				if (url.toLowerCase().indexOf("/virtual") > 0)
-				{	// Try to load based on session name
+				if (url.toLowerCase().indexOf("/virtual") > 0) {	
+					// Try to load based on session name
+					
 					Object schema = MultiSourcePlugin.getSchema(session.getSQLConnection().getConnection());		// Retrieve schema
-					if (schema != null)
-					{
-						try
-						{
-						Method parseSourcesMethod = schema.getClass().getMethod("parseSourcesFile", new Class[]{java.io.BufferedReader.class, java.lang.String.class});
-						String filePath = getSourceFilePath(session);
-						System.out.println("LOad file: "+filePath);
-						System.out.println("ID: "+session.getAlias().getIdentifier());
-						BufferedReader reader = new BufferedReader(new FileReader(filePath));
-						parseSourcesMethod.invoke(schema, new Object[]{reader, "jdbc:unity://"+filePath});
-						// TODO: Not sure why these two lines below do not work.
-						// IObjectTreeAPI otree = session.getSessionInternalFrame().getObjectTreeAPI();
-						// otree.refreshTree();
-						new UpdateThread(session).run();	// A poor solution to force the object tree to update after a slight delay
+					if (schema != null) {
+						try {
+							Method parseSourcesMethod = schema.getClass().getMethod("parseSourcesFile", new Class[]{java.io.BufferedReader.class, java.lang.String.class});
+							String filePath = getSourceFilePath(session);
+							BufferedReader reader = new BufferedReader(new FileReader(filePath));
+							parseSourcesMethod.invoke(schema, new Object[]{reader, "jdbc:unity://"+filePath});
+							// TODO: Not sure why these two lines below do not work.
+							// IObjectTreeAPI otree = session.getSessionInternalFrame().getObjectTreeAPI();
+							// otree.refreshTree();
+							new UpdateThread(session).run();	// A poor solution to force the object tree to update after a slight delay
 						}
-						catch (Exception e)
-						{
+						catch (Exception e) {
 							System.out.println(e);
 						}
 					}
@@ -281,6 +284,36 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	}
 
 	/**
+	 * Returns true if virtualization driver is run in trial mode.
+	 * @param con
+	 * @return
+	 */
+	public static boolean isTrial(Connection con)
+	{
+		Class<? extends Connection> cls = con.getClass();
+
+        Object retobj;
+		try {
+			Method meth = cls.getMethod("isTrial", (Class[])  null);
+			retobj = meth.invoke(con, (Object[]) null);
+			return ((Boolean) retobj).booleanValue();
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}		
+	}
+	
+	public static boolean isTrial()
+	{	return isTrial; }
+	
+	/**
 	 * Updates any session information including virtualization configuration files.
 	 * @param session
 	 */
@@ -306,47 +339,45 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	 * @param sourcesFileName
 	 * @param session
 	 */
-	public static void export(String sourcesFileName, ISession session)
-	{
+	public static void export(String sourcesFileName, ISession session) {
 		File f = new File(sourcesFileName);
-	       String path = f.getParent()+File.separator;
-	       // Make sure directory exists
-	       if (!f.getParentFile().exists())
-	       {
-	    	   f.getParentFile().mkdir();
-	       }
+		String path = f.getParent() + File.separator;
+		// Make sure directory exists
+		if (!f.getParentFile().exists()) {
+			f.getParentFile().mkdir();
+		}
 
-	       sourcesFileName = f.getName();
-	       String sourcesNoExt=sourcesFileName;
-	       int idx = sourcesFileName.indexOf(".xml");
-	       if (idx > 0)
-	    	   sourcesNoExt = sourcesFileName.substring(0, sourcesFileName.length()-4);	
-	       
-	       Object schema = MultiSourcePlugin.getSchema(session.getSQLConnection().getConnection());		// Retrieve schema
+		sourcesFileName = f.getName();
+		String sourcesNoExt = sourcesFileName;
+		int idx = sourcesFileName.indexOf(".xml");
+		if (idx > 0)
+			sourcesNoExt = sourcesFileName.substring(0, sourcesFileName.length() - 4);
 
-	       try {
-		       // Each source schema file is prefixed with sources file name (no extension) plus source name.
-		       // Export schema files of each source first as each file location is needed in the sources file listing all sources.
-				Method exportSourceMethod = schema.getClass().getMethod("exportSchema", new Class[]{java.lang.String.class});
-				Method getDBsMethod = schema.getClass().getMethod("getAnnotatedDatabases", (Class[]) null);
-				@SuppressWarnings("unchecked")
-				ArrayList<Object> dbs = (ArrayList<Object>) getDBsMethod.invoke(schema,  (Object[]) null);
-			    for (int i=0; i < dbs.size(); i++)
-			    {	Object db = dbs.get(i);				
-			    	Method getDBNameMethod = db.getClass().getMethod("getDatabaseName", (Class[]) null);
-			    	Method setDBSchemaMethod = db.getClass().getMethod("setSchemaFile", new Class[]{java.lang.String.class});
-			    	String dbName = (String) getDBNameMethod.invoke(db, (Object[]) null);
-			    	String fileName = sourcesNoExt+"_"+dbName+".xml";
-			    	setDBSchemaMethod.invoke(db, new Object[]{fileName});
-			    	String source = (String) exportSourceMethod.invoke(schema,  new Object[]{dbName});
-			    	writeToFile(path+fileName, source);
-			    }
+		Object schema = MultiSourcePlugin.getSchema(session.getSQLConnection().getConnection()); // Retrieve schema
 
-				// Write out sources file
-				Method exportSourcesMethod = schema.getClass().getMethod("exportSources", (Class[]) null);
-				String sources = (String) exportSourcesMethod.invoke(schema,  (Object[]) null);
-				writeToFile(path+sourcesFileName, sources);
-		} catch (Exception e) {			
+		try {
+			// Each source schema file is prefixed with sources file name (no extension) plus source name.
+			// Export schema files of each source first as each file location is needed in the sources file listing all sources.
+			Method exportSourceMethod = schema.getClass().getMethod("exportSchema", new Class[] { java.lang.String.class });
+			Method getDBsMethod = schema.getClass().getMethod("getAnnotatedDatabases", (Class[]) null);
+			@SuppressWarnings("unchecked")
+			ArrayList<Object> dbs = (ArrayList<Object>) getDBsMethod.invoke(schema, (Object[]) null);
+			for (int i = 0; i < dbs.size(); i++) {
+				Object db = dbs.get(i);
+				Method getDBNameMethod = db.getClass().getMethod("getDatabaseName", (Class[]) null);
+				Method setDBSchemaMethod = db.getClass().getMethod("setSchemaFile", new Class[] { java.lang.String.class });
+				String dbName = (String) getDBNameMethod.invoke(db, (Object[]) null);
+				String fileName = sourcesNoExt + "_" + dbName + ".xml";
+				setDBSchemaMethod.invoke(db, new Object[] { fileName });
+				String source = (String) exportSourceMethod.invoke(schema, new Object[] { dbName });
+				writeToFile(path + fileName, source);
+			}
+
+			// Write out sources file
+			Method exportSourcesMethod = schema.getClass().getMethod("exportSources", (Class[]) null);
+			String sources = (String) exportSourcesMethod.invoke(schema, (Object[]) null);
+			writeToFile(path + sourcesFileName, sources);
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

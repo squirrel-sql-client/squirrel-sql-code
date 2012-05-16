@@ -13,9 +13,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to rename a source in the integrated view.
- * @author rlawrenc
- *
+ * Menu item that allows user to rename a source in the virtual view. 
  */
 public class MultiRenameSourceAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
@@ -34,8 +32,7 @@ public class MultiRenameSourceAction extends SquirrelAction {
 			IDatabaseObjectInfo[] dbObjs = otree.getSelectedDatabaseObjects();
 
 			// Only allow renaming of one source regardless how many are selected
-			if (dbObjs.length > 0)
-	        {
+			if (dbObjs.length > 0) {
 				DatabaseObjectInfo di = (DatabaseObjectInfo) dbObjs[0];
 				String sourceName = di.getSimpleName();				
 
@@ -56,6 +53,5 @@ public class MultiRenameSourceAction extends SquirrelAction {
 	public void renameSource(String sourceName, Object gs)
 	{
 		// TODO: Not implemented yet.		
-	}
-	
+	}	
 }

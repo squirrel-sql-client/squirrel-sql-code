@@ -8,9 +8,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
- * Menu item that allows user to add source to integrated, global view.
- * @author rlawrenc
- *
+ * Menu item that allows user to add source to integrated, virtual view. 
  */
 public class MultiRemoveFieldAction extends SquirrelAction {
 	private static final long serialVersionUID = 1L;
@@ -28,6 +26,5 @@ public class MultiRemoveFieldAction extends SquirrelAction {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
+	}	
 }
