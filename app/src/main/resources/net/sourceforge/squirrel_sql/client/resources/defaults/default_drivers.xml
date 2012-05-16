@@ -678,4 +678,16 @@
 		</identifier>
 		<websiteUrl>http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/bridge.doc.html</websiteUrl>
 	</Bean>
+	
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>UnityJDBC MultiSource Virtualization</name>
+        	<driverClassName>unity.jdbc.UnityDriver</driverClassName>
+        	<url>jdbc:unity://virtual</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-59</string>
+		</identifier>
+		<websiteUrl>http://www.unityjdbc.com</websiteUrl>
+ 	</Bean>
 </Beans>
