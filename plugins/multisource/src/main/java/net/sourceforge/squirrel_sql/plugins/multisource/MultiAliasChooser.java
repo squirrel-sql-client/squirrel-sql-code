@@ -1,8 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.multisource;
 
-import java.awt.Container;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
@@ -28,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverClassLoader;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * A dialog that allows a user to select an existing alias to add to the
@@ -50,11 +49,11 @@ public class MultiAliasChooser extends JDialog {
 
 	public MultiAliasChooser(IApplication app, ISession session, ArrayList<ISQLAlias> aliasList) {
 		super((Frame) null, s_stringMgr.getString("MultiAliasChooser.title"), true);
-		setSize(300, 200);
 		_aliasList = aliasList;
 		_app = app;
 		_session = session;
 		createUserInterface();
+      pack();
 	}
 
 	/**
@@ -70,37 +69,46 @@ public class MultiAliasChooser extends JDialog {
 	 */
 	private void createUserInterface() {
 		Container contentPane = getContentPane();
+      contentPane.setLayout(new BorderLayout());
 
-		JPanel content = new JPanel(new GridLayout(4, 1));
+		JPanel content = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
 
 		// Alias combobox and label
-		content.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.prompt"), JLabel.LEFT));
-		_aliasCbx = new JComboBox(_aliasList.toArray());
+      gbc = new GridBagConstraints(0, 0, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+		content.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.prompt"), JLabel.LEFT), gbc);
+
+      gbc = new GridBagConstraints(0, 1, 2, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,10,5), 0,0);
+      _aliasCbx = new JComboBox(_aliasList.toArray());
 		_aliasCbx.setMaximumRowCount(5); // Display up to 5 rows without a scrollbar
-		content.add(_aliasCbx);
+		content.add(_aliasCbx, gbc);
 		
 		// Name textbox and label
-		JPanel namePanel = new JPanel();
-		namePanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.name"), JLabel.LEFT));
+      gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      content.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.name"), JLabel.LEFT), gbc);
 		_nameTxt = new JTextField(15);
 		_nameTxt.setText(_aliasList.get(0).toString());
-		namePanel.add(_nameTxt);
-		content.add(namePanel);
+
+      gbc = new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      content.add(_nameTxt, gbc);
 
 		// Schema textbox and label
-		JPanel schemaPanel = new JPanel();
-		schemaPanel.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.schema"), JLabel.LEFT));
+      gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      content.add(new JLabel(s_stringMgr.getString("MultiAliasChooser.schema"), JLabel.LEFT), gbc);
 		_schemaTxt = new JTextField(15);
-		schemaPanel.add(_schemaTxt);
-		content.add(schemaPanel);
-		contentPane.add(content, "Center");
+
+      gbc = new GridBagConstraints(1, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
+      content.add(_schemaTxt, gbc);
+
+      contentPane.add(content, BorderLayout.CENTER);
 
 		// Buttons
-		contentPane.add(createButtonsPanel(), "South");
+		contentPane.add(createButtonsPanel(), BorderLayout.SOUTH);
 
 		_aliasCbx.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				_sourceName = ((ISQLAlias) _aliasCbx.getSelectedItem()).getName();
+				_sourceName = StringUtilities.javaNormalize(((ISQLAlias) _aliasCbx.getSelectedItem()).getName());
 				_nameTxt.setText(_sourceName);
 			}
 		});

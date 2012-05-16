@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.xmlbeans;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphUtil;
 import net.sourceforge.squirrel_sql.plugins.graph.link.LinkXmlBean;
@@ -120,7 +121,7 @@ public class DefaultGraphXmlSerializerConfig
 
    public static String getLinkPrefix(ISession session)
    {
-      return LINK_PREFIX + GraphUtil.javaNormalize(session.getAlias().getUrl()) + ".";
+      return LINK_PREFIX + StringUtilities.javaNormalize(session.getAlias().getUrl()) + ".";
    }
 
    private String getFileName(String path, String url, String title)
