@@ -9,6 +9,12 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Created new Multisource Plugin:
+  - Allows SQuirreL to support native multiple source queries where one SQL query spans multiple sources.
+  - The plugin supports standard SQL including joins, group by, aggregation, LIMIT, and ordering where tables may come from one or more sources.
+  - The plugin will perform function translation where a user requests a function that is not supported on a certain source. 
+  - Added a new UnityJDBC default driver definition that supports this virtualization.
+  
 Graph Plugin: When a child table was removed from a Graph and the the parent tables columns were reordered constraint lines reappeared pointing nowhere.
 
 Syntax Plugin: Upgraded to RSyntax text area version 1.5.2
