@@ -9,6 +9,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+SQL Execution: The execution panel that is displayed while an SQL statement is being processed is now closeable.
+   Before the panel is closed the cancel action gets executed.
+
 Created new Multisource Plugin:
   - Allows SQuirreL to support native multiple source queries where one SQL query spans multiple sources.
   - The plugin supports standard SQL including joins, group by, aggregation, LIMIT, and ordering where tables may come from one or more sources.
