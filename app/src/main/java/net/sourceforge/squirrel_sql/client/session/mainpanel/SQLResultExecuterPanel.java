@@ -501,17 +501,22 @@ public class SQLResultExecuterPanel extends JPanel
 
    private void closeTab(Component tab)
    {
-      if(tab instanceof ResultTab)
+      if (tab instanceof ErrorPanel)
+      {
+         _tabbedExecutionsPanel.remove(tab);
+      }
+      else if (tab instanceof ResultTab)
       {
          closeResultTab((ResultTab) tab);
-      }else{
-    	  // Closing Tabs, where we not have any special things to do. e.g. ErrorPanle, CancelPanel.
-    	  _tabbedExecutionsPanel.remove(tab);
+      }
+      else if (tab instanceof CancelPanel)
+      {
+         ((CancelPanel)tab).closeBtn.doClick();
       }
    }
 
 
-	/**
+   /**
 	 * Close the passed <TT>ResultTab</TT>. This is done by clearing
 	 * all data from the tab, removing it from the tabbed panel
 	 * and adding it to the list of available tabs.

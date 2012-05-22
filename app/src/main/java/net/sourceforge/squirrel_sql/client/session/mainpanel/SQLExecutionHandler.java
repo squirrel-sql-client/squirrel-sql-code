@@ -87,14 +87,22 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 
 
       _resultTabToReplace = resultTabToReplace;
-      _cancelPanelCtrl = new CancelPanelCtrl(new CancelPanelListener()
+      CancelPanelListener listener = new CancelPanelListener()
       {
          @Override
          public void cancelRequested()
          {
             onCancelRequested();
          }
-      });
+
+         @Override
+         public void closeRquested()
+         {
+            _executionHandlerListener.removeCancelPanel(_cancelPanelCtrl, null);
+         }
+      };
+
+      _cancelPanelCtrl = new CancelPanelCtrl(listener, session);
       _executionHandlerListener.setCancelPanel(_cancelPanelCtrl);
 
 

@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,10 +26,10 @@ class CancelPanelCtrl
    private int _currentQueryIndex = 0;
    private CancelPanelListener _listener;
 
-   CancelPanelCtrl(CancelPanelListener listener)
+   CancelPanelCtrl(CancelPanelListener listener, ISession session)
    {
       _listener = listener;
-      _panel = new CancelPanel();
+      _panel = new CancelPanel(session);
 
       _panel.cancelBtn.addActionListener(new ActionListener()
       {
@@ -37,6 +37,15 @@ class CancelPanelCtrl
          public void actionPerformed(ActionEvent e)
          {
             onCancel();
+         }
+      });
+
+      _panel.closeBtn.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onClose();
          }
       });
 
@@ -103,6 +112,13 @@ class CancelPanelCtrl
    {
       _listener.cancelRequested();
    }
+
+   private void onClose()
+   {
+      _panel.cancelBtn.doClick();
+      _listener.closeRquested();
+   }
+
 
 
    CancelPanel getPanel()
