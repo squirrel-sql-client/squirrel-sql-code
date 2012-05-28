@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <TITLE>Develop and debug SQuirreL and SQuirreL-Plugins</TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><B>Develop and debug SQuirreL and
+SQuirreL-Plugins</B></P>
+<P><B>Scope</B></P>
+<P>This article explains how to set up
+Java-IDEs to develop and debug SQuirreL and SQuirreL-Plugins. The set
+up presented here is different from the standard Maven
+based set up explained at
+<A HREF="http://sourceforge.net/apps/trac/squirrel-sql/wiki/DeveloperGuide">http://sourceforge.net/apps/trac/squirrel-sql/wiki/DeveloperGuide</A>.
+While the Maven based set up provides all the necessary steps to
+create full builds and installers for SQuirreL this set up is focused on a
+programmer's needs who wants to quickly compile, test and
+debug code changes.</P>
+<P><BR>
+</P>
+<P><BR>
+</P>
+<P><B>Content</B></P>
+<OL>
+	<LI><P><B>Basic idea</B><BR>First we
+	describe the basic idea of the set up which should be
+	IDE-independent. That means with any Java-IDE one should be able to
+	create a project according to the basic idea.</P>
+	<LI><P><B>Example project set ups for
+	Eclipse, Netbeans and IntelliJ-Idea</B></P>
+</OL>
+<P><BR>
+</P>
+<P><BR>
+</P>
+<P><B>Basic idea</B></P>
+<OL>
+	<LI><P>Install SQuirreL in some
+	directory. Alternatively after you have done the Maven builds you
+	might use <SPAN STYLE="font-style: normal">sql12/installer/squirrelsql-other-installer/target/
+	</SPAN>as your quasi installation directory.</P>
+	<LI><P>Create a project in your IDE and
+	include the necessary libraries from the installation directory.
+	That is usually the jars from the lib dir, squirrel-sql.jar and the
+	jars from the plugins/ directory. <BR>
+	Some Plugins bring their own
+	libraries with them. You might need to include those libs in your
+	project too.</P>
+	<LI><P>At this point you should be able
+	to start SQuirrel from within the IDE using 
+	</P>
+	<UL>
+		<LI><P>net.sourceforge.squirrel_sql.client.Main
+		as main class. 
+		</P>
+		<LI><P>splash:&lt;install-dir&gt;/icons/splash.jpg
+		as VM parameter. (Note: You wont find splash.jpg in the quasi
+		installation dir mentioned above.)</P>
+		<LI><P>-home &lt;installation-directory&gt;
+		as program parameter.</P>
+	</UL>
+	<LI><P>Include the sources of your SVN
+	checkout you want to work with in your project. For example<BR>
+	sql12/fw/src/main/java/ <BR>
+	sql12/fw/src/main/resource/<BR>
+	sql12/app/src/main/java/<BR>
+	sql12/app/src/main/resource/ <BR>
+	sql12/plugins/graph/src/main/java/<BR>
+	sql12/plugins/graph/src/main/resource/ 
+	</P>
+</OL>
+
+Now you should be able to compile,
+test and debug code changes to these sources. This works because
+your IDE usually has a compile output directory. When you launch
+SQuirreL from within your IDE this directory should automatically be
+put first in your classpath.<BR><BR>
+
+
+<BR><BR>
+<P><B>Example project set ups Eclipse, Netbeans and IntelliJ-Idea</B></P>
+
+</P>
+<P><B>Eclipse</B></P>
+<P><IMG SRC="Eclipse.jpg" NAME="Eclipse" ALIGN=LEFT BORDER=0 height="80%"><BR CLEAR=LEFT><BR><BR>
+</P>
+</P>
+</P>
+<P><B>Netbeans</B></P>
+<P><IMG SRC="Netbeans.jpg" NAME="Netbeans" ALIGN=LEFT BORDER=0 height="80%"><BR CLEAR=LEFT><BR><BR>
+</P>
+</P>
+</P>
+<P><B>IntelliJ Idea</B></P>
+<P><IMG SRC="IntelliJ.jpg" NAME="IntelliJ" ALIGN=LEFT BORDER=0 height="80%"><BR CLEAR=LEFT>
+</BODY>
+</HTML>
