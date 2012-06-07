@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeDndTransfer;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionListener;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -66,6 +68,7 @@ public class GraphDesktopController
    private JMenuItem _mnuAllFilteredSelectedOrder;
    private GraphPluginResources _graphPluginResources;
    private GraphControllerPopupListener _currentGraphControllerPopupListener;
+   private final RectangleSelectionHandler _rectangleSelectionHandler = new RectangleSelectionHandler();
 
 
    public GraphDesktopController(GraphDesktopListener listener, ISession session, GraphPlugin plugin, ModeManager modeManager, boolean showDndDesktopImageAtStartup)
@@ -82,7 +85,17 @@ public class GraphDesktopController
          startUpImage = _graphPluginResources.getIcon(GraphPluginResources.IKeys.DND);
       }
 
-      _desktopPane = new GraphDesktopPane(_session.getApplication(), startUpImage);
+      _desktopPane = new GraphDesktopPane(_session.getApplication(), startUpImage, _rectangleSelectionHandler);
+      _rectangleSelectionHandler.setComponent(_desktopPane);
+
+      _rectangleSelectionHandler.setRectangleSelectionListener(new RectangleSelectionListener(){
+         @Override
+         public void rectSelected(Point dragBeginPoint, Point dragEndPoint)
+         {
+            onRectSelected(dragBeginPoint, dragEndPoint);
+         }
+      });
+
       _desktopPane.setBackground(Color.white);
 
       _modeManager = modeManager;
@@ -517,6 +530,18 @@ public class GraphDesktopController
     	  }
       }
    }
+
+   private void onRectSelected(Point dragBeginPoint, Point dragEndPoint)
+   {
+      for (JInternalFrame f : _desktopPane.getAllFrames())
+      {
+         if (f instanceof TableFrame && RectangleSelectionHandler.rectHit(f.getBounds(), dragBeginPoint, dragEndPoint))
+         {
+            _desktopPane.addGroupFrame((TableFrame) f);
+         }
+      }
+   }
+
 
    private void onSelectTablesByName()
    {

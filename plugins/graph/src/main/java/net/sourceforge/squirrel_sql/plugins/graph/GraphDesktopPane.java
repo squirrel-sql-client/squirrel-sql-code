@@ -21,6 +21,7 @@ import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 
 
 public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrintable
@@ -33,6 +34,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    private transient Set<TableFrame> _groupFrames = new HashSet<TableFrame>();
    /////////////////////////////////////////////////////////
 
+   private RectangleSelectionHandler _rectangleSelectionHandler;
    /////////////////////////////////////////////////////////
    // Printing
    private double _formatWidthInPixel;
@@ -44,7 +46,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    //
    /////////////////////////////////////////////////////////
 
-   public GraphDesktopPane(IApplication app, ImageIcon desktopImage)
+   public GraphDesktopPane(IApplication app, ImageIcon desktopImage, RectangleSelectionHandler rectangleSelectionHandler)
    {
       super(app);
 
@@ -77,6 +79,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
       });
       /////////////////////////////////////////////////////////
+      _rectangleSelectionHandler = rectangleSelectionHandler;
    }
 
 
@@ -140,6 +143,9 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
       paintGraphComponents(g);
 
       super.paintChildren(g);
+
+      _rectangleSelectionHandler.paintRectWhenNeeded(g);
+
    }
 
    private void paintStartupImage(Graphics g)
