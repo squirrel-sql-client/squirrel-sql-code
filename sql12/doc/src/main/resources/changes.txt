@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Graph Plugin: Tables can be selected by rectangle selection like icons on a desktop of modern operating systems.
+
 SQL Execution: The execution panel that is displayed while an SQL statement is being processed is now closeable.
    Before the panel is closed the cancel action gets executed.
 

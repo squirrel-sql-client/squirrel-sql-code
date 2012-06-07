@@ -28,7 +28,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -45,6 +44,7 @@ import javax.swing.table.TableColumnModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
+import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -251,8 +251,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 		private TablePopupMenu _tablePopupMenu;
 		private IDataSetTableControls _creator;
-		private Point _dragBeginPoint = null;
-		private Point _dragEndPoint = null;
+
+      private RectangleSelectionHandler _rectangleSelectionHandler = new RectangleSelectionHandler(this);
 		private RowNumberTableColumn _rntc;
 		private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
@@ -284,58 +284,14 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			* to move through cells.
 			*/
 
-			addMouseListener(new MouseAdapter()
-			{
-				public void mousePressed(MouseEvent e)
-				{
-					_dragBeginPoint = e.getPoint();
-				}
-
-				public void mouseReleased(MouseEvent e)
-				{
-					_dragBeginPoint = null;
-					_dragEndPoint = null;
-					repaint();
-				}
-			});
-
-			addMouseMotionListener(new MouseMotionAdapter()
-			{
-				public void mouseDragged(MouseEvent e)
-				{
-					onMouseDragged(e);
-					repaint();
-				}
-			});
 
 		}
 
-		private void onMouseDragged(MouseEvent e)
-		{
-			if(null == _dragBeginPoint)
-			{
-				_dragBeginPoint = e.getPoint();
-			}
-
-			_dragEndPoint = e.getPoint();
-		}
 
 		public void paint(Graphics g)
 		{
 			super.paint(g);
-
-			if(null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
-			{
-				int x = Math.min(_dragBeginPoint.x,  _dragEndPoint.x);
-				int y = Math.min(_dragBeginPoint.y,  _dragEndPoint.y);
-				int width = Math.abs(_dragBeginPoint.x - _dragEndPoint.x);
-				int heigh = Math.abs(_dragBeginPoint.y - _dragEndPoint.y);
-
-				Color colBuf = g.getColor();
-				g.setColor(getForeground());
-				g.drawRect(x,y,width,heigh);
-				g.setColor(colBuf);
-			}
+         _rectangleSelectionHandler.paintRectWhenNeeded(g);
 		}
 
 		public IDataSetTableControls getCreator() {
