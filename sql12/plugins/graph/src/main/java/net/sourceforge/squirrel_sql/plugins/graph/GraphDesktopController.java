@@ -761,7 +761,10 @@ public class GraphDesktopController
    {
       if(null != _lastPressedConstraintView)
       {
-         _lastPressedConstraintView.mouseDragged(e);
+         if(_lastPressedConstraintView.mouseDragged(e))
+         {
+            _rectangleSelectionHandler.cancelCurrentSelection();
+         }
       }
    }
 
