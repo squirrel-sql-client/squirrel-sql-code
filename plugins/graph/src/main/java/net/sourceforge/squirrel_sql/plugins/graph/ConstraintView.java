@@ -782,8 +782,10 @@ public class ConstraintView implements GraphComponent
       maybeShowPopup(e);
    }
 
-   public void mouseDragged(MouseEvent e)
+   public boolean mouseDragged(MouseEvent e)
    {
+      boolean foldingPointMoved = false;
+
       if (false == _constraintGraph.isHitOnConnectLine())
       {
          double zoom = _desktopController.getZoomer().getZoom();
@@ -795,6 +797,7 @@ public class ConstraintView implements GraphComponent
          //_constraintGraph.moveLastHitFoldingPointTo(point);
 
          _constraintGraph.moveLastHitFoldingPointTo(new FoldingPoint(backTransformedPoint, _desktopController.getZoomer()));
+         foldingPointMoved = true;
 
 
          ConstraintViewListener[] listeners = 
@@ -804,6 +807,8 @@ public class ConstraintView implements GraphComponent
             listeners[i].foldingPointMoved(this);
          }
       }
+
+      return foldingPointMoved;
    }
 
    public FoldingPoint getFirstFoldingPoint()

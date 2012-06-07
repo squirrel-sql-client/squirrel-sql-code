@@ -13,6 +13,7 @@ public class RectangleSelectionHandler
    private Point _dragBeginPoint = null;
    private Point _dragEndPoint = null;
    private RectangleSelectionListener _rectangleSelectionListener;
+   private boolean _cancelCurrentSelection;
 
 
    public RectangleSelectionHandler(JComponent comp)
@@ -42,7 +43,7 @@ public class RectangleSelectionHandler
     */
    public void paintRectWhenNeeded(Graphics g)
    {
-      if(null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
+      if(false == _cancelCurrentSelection && null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
       {
          int x = Math.min(_dragBeginPoint.x,  _dragEndPoint.x);
          int y = Math.min(_dragBeginPoint.y,  _dragEndPoint.y);
@@ -84,12 +85,13 @@ public class RectangleSelectionHandler
 
    private void onMouseReleased()
    {
-      if (null != _rectangleSelectionListener && null != _dragBeginPoint && null != _dragEndPoint)
+      if (false == _cancelCurrentSelection && null != _rectangleSelectionListener && null != _dragBeginPoint && null != _dragEndPoint)
       {
          _rectangleSelectionListener.rectSelected(_dragBeginPoint, _dragEndPoint);
       }
       _dragBeginPoint = null;
       _dragEndPoint = null;
+      _cancelCurrentSelection = false;
       _comp.repaint();
    }
 
@@ -110,5 +112,10 @@ public class RectangleSelectionHandler
    {
       Rectangle selRect = new Rectangle(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y), Math.abs(p1.x - p2.x), Math.abs(p1.y - p2.y));
       return bounds.intersects(selRect);
+   }
+
+   public void cancelCurrentSelection()
+   {
+      _cancelCurrentSelection = true;
    }
 }
