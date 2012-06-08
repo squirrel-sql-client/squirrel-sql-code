@@ -97,7 +97,7 @@ public class RectangleSelectionHandler
 
    private void initBeginPoint(MouseEvent e)
    {
-      if (InputEvent.BUTTON1_MASK == e.getModifiers() && 0 == (e.getModifiers() & MouseEvent.CTRL_MASK))
+      if (SwingUtilities.isLeftMouseButton(e) && 0 == (e.getModifiers() & MouseEvent.CTRL_MASK))
       {
          _dragBeginPoint = e.getPoint();
       }
