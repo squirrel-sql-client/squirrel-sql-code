@@ -124,7 +124,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin implements SessionInfoPro
 	@Override
 	public String getVersion()
 	{
-		return "0.02";
+		return "1.0";
 	}
 
 	/**

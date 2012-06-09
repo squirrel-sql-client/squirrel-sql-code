@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Installer: The DB Copy, DB Diff and Refactoring Plugin have been made standard Plugins.
+
 Graph Plugin: Tables can be selected by rectangle selection like icons on a desktop of modern operating systems.
 
 SQL Execution: The execution panel that is displayed while an SQL statement is being processed is now closeable.

@@ -85,7 +85,7 @@
 		</pack>
 
 		<pack name="Standard" required="no" depends="Base" installGroups="StandardPlugins">
-			<description>Standard Plugins - these are not Database-Specific </description>
+			<description>Standard Plugins: Code completion, Edit extras, Graph, Look &amp; Feel, SQL Script, Syntax, DB Copy, DB Diff, Refactoring</description>
 
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/codecompletion.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/codecompletion" />
@@ -107,6 +107,15 @@
 
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/syntax.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/syntax" />
+
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy" />
+
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff" />
+
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring.jar" />
+			<file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring" />
 
 		</pack>
 
@@ -152,23 +161,6 @@
          </description>
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dataimport.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dataimport" />
-		</pack>
-
-		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DBCopy">
-			<description>
-				This optional plugin allows database objects to be copied from one database session to
-				another
-        </description>
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbcopy" />
-		</pack>
-
-		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DBDiff">
-			<description>
-				This optional plugin lets you compare table structure from one database session to another
-			</description>
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/dbdiff" />
 		</pack>
 
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - DB2">
@@ -265,15 +257,6 @@
          </description>
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/postgres.jar" />
 			<file targetdir="$INSTALL_PATH/plugins" src="plugins/postgres" />
-		</pack>
-
-		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Refactoring">
-			<description>
-				This optional plugin allows you to refactor your database using database refactoring
-				patterns
-         </description>
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring.jar" />
-			<file targetdir="$INSTALL_PATH/plugins" src="plugins/refactoring" />
 		</pack>
 
 		<pack required="no" preselected="no" installGroups="OptionalPlugins" name="Optional Plugin - Session Scripts">
