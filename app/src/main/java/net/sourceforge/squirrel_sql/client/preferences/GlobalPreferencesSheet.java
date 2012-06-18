@@ -23,6 +23,9 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
+
+import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlConfigPrefsTab;
+import net.sourceforge.squirrel_sql.client.preferences.codereformat.FormatSqlController;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -309,6 +312,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 		_panels.add(new DataTypePreferencesPanel());
 		_panels.add(new UpdatePreferencesTab());
 		_panels.add(new WikiTablePreferencesTab());
+		_panels.add(new FormatSqlConfigPrefsTab(_app));
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();

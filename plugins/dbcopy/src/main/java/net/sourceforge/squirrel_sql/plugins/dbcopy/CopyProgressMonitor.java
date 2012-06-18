@@ -28,8 +28,9 @@ import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -78,7 +79,7 @@ public class CopyProgressMonitor extends I18NBaseObject
         };
   
   private static CodeReformator formatter = 
-      new CodeReformator(";", commentSpecs);
+      new CodeReformator(CodeReformatorConfigFactory.createConfig(";", commentSpecs));
   
     
     public CopyProgressMonitor(SessionInfoProvider provider) {

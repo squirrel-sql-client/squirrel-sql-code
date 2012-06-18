@@ -23,9 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
-import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.*;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -95,7 +93,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab
 			this.commentSpecs = commentSpecs;
 		}
 		statementSeparator = stmtSep;
-		formatter = new CodeReformator(stmtSep, this.commentSpecs);
+		formatter = new CodeReformator(CodeReformatorConfigFactory.createConfig(stmtSep, this.commentSpecs));
 	}
 
 	/**

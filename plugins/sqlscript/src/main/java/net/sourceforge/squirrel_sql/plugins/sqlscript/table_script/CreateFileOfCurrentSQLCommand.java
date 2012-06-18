@@ -31,8 +31,8 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.gui.IAbortEventHandler;
 import net.sourceforge.squirrel_sql.client.gui.ProgressAbortDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
@@ -43,7 +43,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortFactoryCallback;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -240,16 +239,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 					 *  Is there a better way to get the CommentSpec[] ?
 					 */
 			
-			CommentSpec[] commentSpecs =
-			  new CommentSpec[]
-			  {
-				  new CommentSpec("/*", "*/"),
-				  new CommentSpec("--", StringUtilities.getEolStr())
-			  };
-
-			String statementSep = getSession().getQueryTokenizer().getSQLStatementSeparator();
-			
-			CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
+			CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(getSession()));
 
 			String reformatedSQL = cr.reformat(resultSetExportCommand.getSql());
 			

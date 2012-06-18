@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.codereformat;
+package net.sourceforge.squirrel_sql.client.util.codereformat;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -22,8 +22,8 @@ public class PieceMarkerSpec
 	public static final int TYPE_PIECE_MARKER_AT_END = 1;
 	public static final int TYPE_PIECE_MARKER_IN_OWN_PIECE = 2;
 
-	public String _pieceMarker;
-	public int _type;
+	private String _pieceMarker;
+   private int _type;
 
 	PieceMarkerSpec(String pieceMarker, int type)
 	{

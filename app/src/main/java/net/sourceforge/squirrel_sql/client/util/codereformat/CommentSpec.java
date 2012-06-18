@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.codereformat;
+package net.sourceforge.squirrel_sql.client.util.codereformat;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -16,22 +16,14 @@ package net.sourceforge.squirrel_sql.fw.codereformat;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-public class StateOfPosition
+public class CommentSpec
 {
-	boolean isTopLevel;
+	public String commentBegin;
+	public String commentEnd;
 
-	int commentIndex = -1;
-	int literalSepCount = 0;
-	int braketDepth = 0;
-
-	public Object clone()
+	public CommentSpec(String commentBegin, String commentEnd)
 	{
-		StateOfPosition ret = new StateOfPosition();
-		ret.commentIndex = commentIndex;
-		ret.literalSepCount = commentIndex;
-		ret.braketDepth = braketDepth;
-		ret.isTopLevel = isTopLevel;
-
-		return ret;
+		this.commentBegin = commentBegin;
+		this.commentEnd = commentEnd;
 	}
 }

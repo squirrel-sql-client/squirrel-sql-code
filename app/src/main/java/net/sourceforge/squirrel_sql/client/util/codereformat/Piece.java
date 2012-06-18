@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.codereformat;
+package net.sourceforge.squirrel_sql.client.util.codereformat;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
