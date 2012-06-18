@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
+package net.sourceforge.squirrel_sql.plugins.postgres.tab;
 
 /*
  * Copyright (C) 2007 Rob Manning
@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 
 /**
  * This class will display the source for a view.  This will work for databases that support the SQL standard

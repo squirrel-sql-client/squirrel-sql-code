@@ -190,6 +190,8 @@ public class SQLInternalFrame extends SessionTabWidget
 			add(actions.get(NextSqlAction.class));
 			add(actions.get(SelectSqlAction.class));
 			addSeparator();
+         add(actions.get(FormatSQLAction.class));
+         addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(true);
 		}

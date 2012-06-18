@@ -26,8 +26,9 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -64,7 +65,7 @@ public abstract class OracleSourceTab extends BaseSourceTab {
           };
     
     private static CodeReformator formatter = 
-        new CodeReformator(";", commentSpecs);
+        new CodeReformator(CodeReformatorConfigFactory.createConfig(";", commentSpecs));
     
     public OracleSourceTab(String hint)
     {

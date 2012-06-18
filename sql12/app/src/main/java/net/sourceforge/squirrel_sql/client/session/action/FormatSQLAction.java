@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -27,15 +27,13 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+
 /**
  * This action will format the SQL.
  *
  * @author  Gerd Wagner
  */
-class FormatSQLAction extends SquirrelAction
-					implements ISQLPanelAction
+public class FormatSQLAction extends SquirrelAction implements ISQLPanelAction
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(FormatSQLAction.class);
@@ -46,17 +44,17 @@ class FormatSQLAction extends SquirrelAction
 
 	/** Current session. */
 	private ISession _session;
+   private ISQLPanelAPI _panel;
 
-	private EditExtrasPlugin _plugin;
 
-	FormatSQLAction(IApplication app, EditExtrasPlugin plugin)
+   public FormatSQLAction(IApplication app)
 	{
-		super(app, plugin.getResources());
-		_plugin = plugin;
+		super(app);
 	}
    
    public void setSQLPanel(ISQLPanelAPI panel)
    {
+      _panel = panel;
       if(null != panel)
       {
          _session = panel.getSession();
@@ -75,7 +73,7 @@ class FormatSQLAction extends SquirrelAction
 		{
 			try
 			{
-				new FormatSQLCommand(_session, _plugin).execute();
+				new FormatSQLCommand(_session, _panel).execute();
 			}
 			catch (Throwable ex)
 			{

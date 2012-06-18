@@ -1,10 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.graph.querybuilder.sqlgen;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.plugins.graph.TableFramesModel;
-import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderCol;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.OrderStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.SelectStructure;
 import net.sourceforge.squirrel_sql.plugins.graph.querybuilder.WhereTreeNodeStructure;
@@ -56,9 +56,8 @@ public class QueryBuilderSQLGenerator
                new CommentSpec("--", "\n")
             };
 
-      String statementSep = session.getQueryTokenizer().getSQLStatementSeparator();
 
-      CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
+      CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(session));
 
       sqls = cr.reformat(sqls) + "\n";
       return sqls;

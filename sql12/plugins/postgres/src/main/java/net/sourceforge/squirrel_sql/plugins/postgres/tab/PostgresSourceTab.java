@@ -22,13 +22,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.JTextArea;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -55,7 +54,7 @@ public abstract class PostgresSourceTab extends BaseSourceTab
 	private static CommentSpec[] commentSpecs = new CommentSpec[]
 		{ new CommentSpec("/*", "*/"), new CommentSpec("--", "\n") };
 
-	private static CodeReformator formatter = new CodeReformator(";", commentSpecs);
+	private static CodeReformator formatter = new CodeReformator(CodeReformatorConfigFactory.createConfig(";", commentSpecs));
 
 	public PostgresSourceTab(String hint) {
 		super(hint);

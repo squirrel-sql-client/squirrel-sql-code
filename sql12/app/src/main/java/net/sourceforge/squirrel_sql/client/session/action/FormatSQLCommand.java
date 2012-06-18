@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.editextras;
+package net.sourceforge.squirrel_sql.client.session.action;
 /*
  * Copyright (C) 2003 Gerd Wagner
  *
@@ -18,8 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  */
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
@@ -31,27 +32,26 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 class FormatSQLCommand implements ICommand
 {
 	private final ISession _session;
-	private final EditExtrasPlugin _plugin;
+   private ISQLPanelAPI _panel;
 
-	FormatSQLCommand(ISession session, EditExtrasPlugin plugin)
+   FormatSQLCommand(ISession session, ISQLPanelAPI panel)
 	{
 		super();
 		_session = session;
-		_plugin = plugin;
-	}
+      _panel = panel;
+   }
 
 	public void execute() throws BaseException
 	{
-		ISQLPanelAPI api = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
-      
-      int[] bounds = api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+
+      int[] bounds = _panel.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
 
       if(bounds[0] == bounds[1])
       {
          return;
       }
 
-      String textToReformat = api.getSQLEntryPanel().getSQLToBeExecuted();
+      String textToReformat = _panel.getSQLEntryPanel().getSQLToBeExecuted();
 
 		if (null == textToReformat)
 		{
@@ -67,13 +67,13 @@ class FormatSQLCommand implements ICommand
 
 		String statementSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 		
-		CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
+		CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
 
 		String reformatedText = cr.reformat(textToReformat);
 
-      api.getSQLEntryPanel().setSelectionStart(bounds[0]);
-      api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
-      api.getSQLEntryPanel().replaceSelection(reformatedText);
+      _panel.getSQLEntryPanel().setSelectionStart(bounds[0]);
+      _panel.getSQLEntryPanel().setSelectionEnd(bounds[1]);
+      _panel.getSQLEntryPanel().replaceSelection(reformatedText);
 
 	}
 }

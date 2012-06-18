@@ -199,7 +199,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
                sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
                sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
                sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
-               sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
                sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
                sqlPanelAPI.addToToolsPopUp("sqlcut", actions.get(CutSqlAction.class));
                sqlPanelAPI.addToToolsPopUp("sqlcopy", actions.get(CopySqlAction.class));
@@ -268,11 +267,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		coll.add(act);
 		_resources.addToMenu(act, menu);
 
-		act = new FormatSQLAction(app, this);
-		coll.add(act);
-		_resources.addToMenu(act, menu);
-
-
       act = new EscapeDateAction(getApplication(), _resources);
       coll.add(act);
       _resources.addToMenu(act, menu);
@@ -299,10 +293,6 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
-
-		// To make the shortcut visible in the popup
-		mnu = api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
-		_resources.configureMenuItem(actions.get(FormatSQLAction.class), mnu);
 
       mnu = api.addToSQLEntryAreaMenu(actions.get(RemoveNewLinesAction.class));
       _resources.configureMenuItem(actions.get(RemoveNewLinesAction.class), mnu);

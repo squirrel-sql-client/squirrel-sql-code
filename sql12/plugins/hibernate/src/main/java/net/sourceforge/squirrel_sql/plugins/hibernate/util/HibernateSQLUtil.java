@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.util;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 
 import java.util.ArrayList;
 
@@ -29,16 +29,7 @@ public class HibernateSQLUtil
 
    private static String format(String sqls, ISession session)
    {
-      CommentSpec[] commentSpecs =
-         new CommentSpec[]
-            {
-               new CommentSpec("/*", "*/"),
-               new CommentSpec("--", "\n")
-            };
-
-      String statementSep = session.getQueryTokenizer().getSQLStatementSeparator();
-
-      CodeReformator cr = new CodeReformator(statementSep, commentSpecs);
+      CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(session));
 
       sqls = cr.reformat(sqls) + "\n";
       return sqls;

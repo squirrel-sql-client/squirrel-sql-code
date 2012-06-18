@@ -118,6 +118,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
       _toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
 
+      _toolsPopupController.addAction("format", ac.get(FormatSQLAction.class));
+
       _toolsPopupController.addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
 
       if (_panel.isInMainSessionWindow())
@@ -145,6 +147,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
          resources.configureMenuItem(vioAction, item);
       }
 
+      Action formatSqlAction = _panel.getSession().getApplication().getActionCollection().get(FormatSQLAction.class);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(formatSqlAction);
+      resources.configureMenuItem(formatSqlAction, item);
    }
 
 
