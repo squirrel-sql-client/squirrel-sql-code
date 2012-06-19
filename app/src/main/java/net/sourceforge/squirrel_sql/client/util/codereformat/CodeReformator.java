@@ -59,7 +59,10 @@ public class CodeReformator implements ICodeReformator
       String[] pieces =
             getReformatedPieces(in, markerExcludeComma).toArray(new String[0]);
 
-      pieces = doInsertSpecial(pieces);
+      if (_codeReformatorConfig.isDoInsertValuesAlign())
+      {
+         pieces = doInsertSpecial(pieces);
+      }
 
       StringBuffer ret = new StringBuffer();
       int braketCount = 0;
@@ -105,7 +108,7 @@ public class CodeReformator implements ICodeReformator
 
          // i18n[editextras.reformatFailed=Reformat failed, normalized
          // Strings differ]
-         StringBuilder msg = new StringBuilder(s_stringMgr.getString("editextras.reformatFailed"));
+         StringBuilder msg = new StringBuilder(s_stringMgr.getString("codereformat.reformatFailed"));
          msg.append(_lineSep);
          msg.append(normalizedBefore);
          msg.append(_lineSep);

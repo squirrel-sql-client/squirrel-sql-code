@@ -36,4 +36,14 @@ public class KeywordBehaviourPrefCtrl
    {
       _cbo.addActionListener(l);
    }
+
+   public void setBehaviour(FormatSqlPanel.KeywordBehaviour keywordBehaviour)
+   {
+      _cbo.setSelectedItem(keywordBehaviour);
+   }
+
+   public void setEnabled(boolean b)
+   {
+      _cbo.setEnabled(b);
+   }
 }

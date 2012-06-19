@@ -70,6 +70,50 @@ public class FormatSqlController
          keywordBehaviourPrefCtrl.addKeyWordBehaviourChangedListener(actionListener);
       }
 
+      _formatSqlPanel.chkDoInsertValuesAlign.setSelected(_formatSqlPref.isDoInsertValuesAlign());
+      _formatSqlPanel.chkDoInsertValuesAlign.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            adjustInsertValuesState();
+         }
+      });
+      adjustInsertValuesState();
+
+   }
+
+   private void adjustInsertValuesState()
+   {
+      for (KeywordBehaviourPrefCtrl keywordBehaviourPrefCtrl : _formatSqlPanel.keywordBehaviourPrefCtrls)
+      {
+         String keyWord = keywordBehaviourPrefCtrl.getKeywordBehaviourPref().getKeyWord();
+         if (FormatSqlPref.INSERT.equals(keyWord))
+         {
+            if(_formatSqlPanel.chkDoInsertValuesAlign.isSelected())
+            {
+               keywordBehaviourPrefCtrl.setBehaviour(FormatSqlPanel.KeywordBehaviour.START_NEW_LINE);
+               keywordBehaviourPrefCtrl.setEnabled(false);
+            }
+            else
+            {
+               keywordBehaviourPrefCtrl.setEnabled(true);
+            }
+         }
+         else if (FormatSqlPref.VALUES.equals(keyWord))
+         {
+            if(_formatSqlPanel.chkDoInsertValuesAlign.isSelected())
+            {
+               keywordBehaviourPrefCtrl.setBehaviour(FormatSqlPanel.KeywordBehaviour.NO_INFLUENCE_ON_NEW_LINE);
+               keywordBehaviourPrefCtrl.setEnabled(false);
+            }
+            else
+            {
+               keywordBehaviourPrefCtrl.setEnabled(true);
+            }
+         }
+      }
+      refreshExampleSql(createFormatSqlPrefFromGui());
    }
 
    private void refreshExampleSql(FormatSqlPref formatSqlPref)
@@ -148,6 +192,8 @@ public class FormatSqlController
          buf.add(keywordBehaviourPrefCtrl.getKeywordBehaviourPref());
       }
       ret.setKeywordBehaviourPrefs(buf.toArray(new KeywordBehaviourPref[buf.size()]));
+
+      ret.setDoInsertValuesAlign(_formatSqlPanel.chkDoInsertValuesAlign.isSelected());
 
       return ret;
    }

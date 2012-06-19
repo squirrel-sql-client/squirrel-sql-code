@@ -60,7 +60,7 @@ public class CodeReformatorConfigFactory
          specs.addAll(createPieceMarkerSpecs(keywordBehaviourPref));
       }
 
-      return new CodeReformatorConfig(statementSeparator, commentSpecs, indent, trySplitLineLen, specs);
+      return new CodeReformatorConfig(statementSeparator, commentSpecs, indent, trySplitLineLen, formatSqlPref.isDoInsertValuesAlign(), specs);
    }
 
    private static ArrayList<PieceMarkerSpec> createPieceMarkerSpecs(KeywordBehaviourPref keywordBehaviourPref)

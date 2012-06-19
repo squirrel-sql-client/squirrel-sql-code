@@ -1,7 +1,6 @@
 This plugin provides
 - Search and replace
 - Adding and removing Java quotes
-- Formating SQL
 
 The functions are accessable through Menu Session --> SQL Entry Editing --> ...
 or through the shortcuts named in the menus.

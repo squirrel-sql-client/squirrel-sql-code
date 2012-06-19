@@ -16,18 +16,20 @@ public class CodeReformatorConfig
    private CommentSpec[] _commentSpecs;
    private String _indent;
    private int _trySplitLineLen;
+   private boolean _doInsertValuesAlign;
 
    private PieceMarkerSpec[] keywordPieceMarkerSpec = new PieceMarkerSpec[0];
 
    /**
     * Use CodeReformatorConfigFactory to create instances of this class
     */
-   CodeReformatorConfig(String statementSeparator, CommentSpec[] commentSpecs, String indent, int trySplitLineLen, ArrayList<PieceMarkerSpec> specs)
+   CodeReformatorConfig(String statementSeparator, CommentSpec[] commentSpecs, String indent, int trySplitLineLen, boolean doInsertValuesAlign, ArrayList<PieceMarkerSpec> specs)
    {
       _statementSeparator = statementSeparator;
       _commentSpecs = commentSpecs;
       _indent = indent;
       _trySplitLineLen = trySplitLineLen;
+      _doInsertValuesAlign = doInsertValuesAlign;
       keywordPieceMarkerSpec = specs.toArray(new PieceMarkerSpec[specs.size()]);
    }
 
@@ -54,5 +56,10 @@ public class CodeReformatorConfig
    public PieceMarkerSpec[] getKeywordPieceMarkerSpecs()
    {
       return keywordPieceMarkerSpec;
+   }
+
+   public boolean isDoInsertValuesAlign()
+   {
+      return _doInsertValuesAlign;
    }
 }
