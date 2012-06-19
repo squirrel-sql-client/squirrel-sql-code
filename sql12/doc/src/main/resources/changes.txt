@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+3488629: SQL formatting can be configured. See menu File--> Global Preferences --> Tab SQL formatting
+
 Installer: The DB Copy, DB Diff and Refactoring Plugin have been made standard Plugins.
 
 Graph Plugin: Tables can be selected by rectangle selection like icons on a desktop of modern operating systems.

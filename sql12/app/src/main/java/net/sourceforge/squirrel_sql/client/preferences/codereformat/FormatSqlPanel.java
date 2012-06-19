@@ -66,6 +66,7 @@ public class FormatSqlPanel extends JPanel
    JFormattedTextField txtIndentCount;
    JFormattedTextField txtPreferedLineLength;
    ArrayList<KeywordBehaviourPrefCtrl> keywordBehaviourPrefCtrls = new ArrayList<KeywordBehaviourPrefCtrl>();
+   JCheckBox chkDoInsertValuesAlign;
 
    JTextArea txtExampleSqls = new JTextArea();
 
@@ -111,6 +112,10 @@ public class FormatSqlPanel extends JPanel
       {
          keywordBehaviourPrefCtrls.add(createKeywordBehaviourPrefCtrl(ret, keywordBehaviourPref, ++gridy));
       }
+
+      gbc = new GridBagConstraints(1,++gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      chkDoInsertValuesAlign = new JCheckBox(s_stringMgr.getString("codereformat.FormatSqlPanel.tryAlignInsertValueStatements"));
+      ret.add(chkDoInsertValuesAlign, gbc);
 
       return ret;
    }

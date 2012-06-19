@@ -4,6 +4,9 @@ public class FormatSqlPref
 {
    public static final String JOIN_DISPLAY_STRING = "INNER/LEFT/RIGHT JOIN";
 
+   public static final String INSERT = "INSERT";
+   public static final String VALUES = "VALUES";
+
 
    private KeywordBehaviourPref[] _keywordBehaviourPrefs = new KeywordBehaviourPref[]
    {
@@ -19,15 +22,17 @@ public class FormatSqlPref
       new KeywordBehaviourPref("GROUP", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
       new KeywordBehaviourPref("ORDER", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
 
-      new KeywordBehaviourPref("INSERT", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
-      new KeywordBehaviourPref("VALUES", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
       new KeywordBehaviourPref("UPDATE", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
       new KeywordBehaviourPref("DELETE", FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+
+      new KeywordBehaviourPref(INSERT, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID()),
+      new KeywordBehaviourPref(VALUES, FormatSqlPanel.KeywordBehaviour.START_NEW_LINE.getID())
    };
 
 
    private int _indent = 3;
    private int _preferedLineLength = 80;
+   private boolean _doInsertValuesAlign = true;
 
    public KeywordBehaviourPref[] getKeywordBehaviourPrefs()
    {
@@ -58,5 +63,15 @@ public class FormatSqlPref
    public int getPreferedLineLength()
    {
       return _preferedLineLength;
+   }
+
+   public boolean isDoInsertValuesAlign()
+   {
+      return _doInsertValuesAlign;
+   }
+
+   public void setDoInsertValuesAlign(boolean doInsertValuesAlign)
+   {
+      _doInsertValuesAlign = doInsertValuesAlign;
    }
 }
