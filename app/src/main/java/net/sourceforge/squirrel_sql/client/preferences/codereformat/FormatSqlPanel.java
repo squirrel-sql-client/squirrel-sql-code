@@ -17,9 +17,9 @@ public class FormatSqlPanel extends JPanel
 
    public static enum KeywordBehaviour
    {
-      ALONE_IN_LINE(1, s_stringMgr.getString("editextras.FormatSqlPanel.aloneInLine"), PieceMarkerSpec.TYPE_PIECE_MARKER_IN_OWN_PIECE),
-      START_NEW_LINE(2, s_stringMgr.getString("editextras.FormatSqlPanel.startNewLine"), PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN),
-      NO_INFLUENCE_ON_NEW_LINE(3, s_stringMgr.getString("editextras.FormatSqlPanel.noInfluenceOnNewLine"), null);
+      ALONE_IN_LINE(1, s_stringMgr.getString("codereformat.aloneInLine"), PieceMarkerSpec.TYPE_PIECE_MARKER_IN_OWN_PIECE),
+      START_NEW_LINE(2, s_stringMgr.getString("codereformat.startNewLine"), PieceMarkerSpec.TYPE_PIECE_MARKER_AT_BEGIN),
+      NO_INFLUENCE_ON_NEW_LINE(3, s_stringMgr.getString("codereformat.noInfluenceOnNewLine"), null);
 
       private String _title;
       private Integer _pieceMarkerSpecType;
@@ -65,53 +65,65 @@ public class FormatSqlPanel extends JPanel
 
    JFormattedTextField txtIndentCount;
    JFormattedTextField txtPreferedLineLength;
-   ArrayList<KeywordBehaviourPrefCtrl> _keywordBehaviourPrefCtrls = new ArrayList<KeywordBehaviourPrefCtrl>();
+   ArrayList<KeywordBehaviourPrefCtrl> keywordBehaviourPrefCtrls = new ArrayList<KeywordBehaviourPrefCtrl>();
+
+   JTextArea txtExampleSqls = new JTextArea();
 
 
    public FormatSqlPanel(KeywordBehaviourPref[] keywordBehaviourPrefs)
    {
-      setLayout(new GridBagLayout());
+      setLayout(new BorderLayout());
+      add(createControlsPanel(keywordBehaviourPrefs), BorderLayout.WEST);
+      add(new JScrollPane(txtExampleSqls), BorderLayout.CENTER);
+   }
+
+
+   private JPanel createControlsPanel(KeywordBehaviourPref[] keywordBehaviourPrefs)
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("editextras.FormatSqlPanel.indent")), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.indent")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       txtIndentCount = new JFormattedTextField(NumberFormat.getInstance());
       txtIndentCount.setColumns(7);
-      add(txtIndentCount, gbc);
+      ret.add(txtIndentCount, gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("editextras.FormatSqlPanel.preferedLineLen")), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.preferedLineLen")), gbc);
 
       gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       txtPreferedLineLength = new JFormattedTextField(NumberFormat.getInstance());
       txtPreferedLineLength.setColumns(7);
-      add(txtPreferedLineLength, gbc);
+      ret.add(txtPreferedLineLength, gbc);
 
       gbc = new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(30,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("editextras.FormatSqlPanel.keywordBehavior")), gbc);
+      ret.add(new JLabel(s_stringMgr.getString("codereformat.FormatSqlPanel.keywordBehavior")), gbc);
 
 
       int gridy = 2;
 
       for (KeywordBehaviourPref keywordBehaviourPref : keywordBehaviourPrefs)
       {
-         _keywordBehaviourPrefCtrls.add(createKeywordBehaviourPrefCtrl(keywordBehaviourPref, ++gridy));
+         keywordBehaviourPrefCtrls.add(createKeywordBehaviourPrefCtrl(ret, keywordBehaviourPref, ++gridy));
       }
+
+      return ret;
    }
 
-   private KeywordBehaviourPrefCtrl createKeywordBehaviourPrefCtrl(KeywordBehaviourPref keywordBehaviourPref, int gridy)
+   private KeywordBehaviourPrefCtrl createKeywordBehaviourPrefCtrl(JPanel toAddTo, KeywordBehaviourPref keywordBehaviourPref, int gridy)
    {
       GridBagConstraints gbc;
       gbc = new GridBagConstraints(0, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(keywordBehaviourPref.getKeyWord()), gbc);
+      toAddTo.add(new JLabel(keywordBehaviourPref.getKeyWord()), gbc);
 
       gbc = new GridBagConstraints(1, gridy,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       JComboBox cbo = new JComboBox();
-      add(cbo, gbc);
+      toAddTo.add(cbo, gbc);
       return new KeywordBehaviourPrefCtrl(cbo, keywordBehaviourPref);
    }
 
