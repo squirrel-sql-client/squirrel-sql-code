@@ -39,13 +39,13 @@ public class FormatSqlConfigPrefsTab implements IGlobalPreferencesPanel
    @Override
    public String getTitle()
    {
-      return s_stringMgr.getString("editextras.FormatSqlConfigPrefsTab.title");
+      return s_stringMgr.getString("codereformat.FormatSqlConfigPrefsTab.title");
    }
 
    @Override
    public String getHint()
    {
-      return s_stringMgr.getString("editextras.FormatSqlConfigPrefsTab.hint");
+      return s_stringMgr.getString("codereformat.FormatSqlConfigPrefsTab.hint");
    }
 
    @Override

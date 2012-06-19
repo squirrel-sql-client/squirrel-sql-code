@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.preferences.codereformat;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 
 public class KeywordBehaviourPrefCtrl
 {
@@ -29,5 +30,10 @@ public class KeywordBehaviourPrefCtrl
    public KeywordBehaviourPref getKeywordBehaviourPref()
    {
       return _keywordBehaviourPref;
+   }
+
+   public void addKeyWordBehaviourChangedListener(ActionListener l)
+   {
+      _cbo.addActionListener(l);
    }
 }

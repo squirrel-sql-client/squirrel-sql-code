@@ -11,6 +11,15 @@ import java.util.ArrayList;
 
 public class CodeReformatorConfigFactory
 {
+
+   public static final CommentSpec[] DEFAULT_COMMENT_SPECS = new CommentSpec[]
+         {
+               new CommentSpec("/*", "*/"),
+               new CommentSpec("--", StringUtilities.getEolStr())
+         };
+
+   public static final String DEFAULT_STATEMENT_SEPARATOR = ";";
+
    public static CodeReformatorConfig createConfig(ISession sess)
    {
       String statementSep = sess.getQueryTokenizer().getSQLStatementSeparator();
@@ -19,22 +28,22 @@ public class CodeReformatorConfigFactory
 
    public static CodeReformatorConfig createConfig(String statementSep)
    {
-      CommentSpec[] commentSpecs =
-            new CommentSpec[]
-                  {
-                        new CommentSpec("/*", "*/"),
-                        new CommentSpec("--", StringUtilities.getEolStr())
-                  };
-
-      return createConfig(statementSep, commentSpecs);
+      return createConfig(statementSep, DEFAULT_COMMENT_SPECS);
    }
 
    public static CodeReformatorConfig createConfig(String statementSeparator, CommentSpec[] commentSpecs)
    {
-
       FormatSqlPref formatSqlPref = FormatSqlPrefReader.loadPref();
+      return createConfig(statementSeparator, commentSpecs, formatSqlPref);
+   }
 
+   public static CodeReformatorConfig createConfig(FormatSqlPref formatSqlPref)
+   {
+      return createConfig(DEFAULT_STATEMENT_SEPARATOR, DEFAULT_COMMENT_SPECS, formatSqlPref);
+   }
 
+   public static CodeReformatorConfig createConfig(String statementSeparator, CommentSpec[] commentSpecs, FormatSqlPref formatSqlPref)
+   {
       String indent = "";
       for (int i = 0; i < formatSqlPref.getIndent(); i++)
       {
