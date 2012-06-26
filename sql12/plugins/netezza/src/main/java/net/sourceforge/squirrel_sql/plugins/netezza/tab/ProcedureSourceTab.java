@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.netezza.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
-import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;

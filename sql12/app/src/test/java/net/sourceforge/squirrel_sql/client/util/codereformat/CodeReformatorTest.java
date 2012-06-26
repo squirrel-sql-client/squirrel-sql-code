@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.codereformat;
+package net.sourceforge.squirrel_sql.client.util.codereformat;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -51,7 +51,7 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
-        c = new CodeReformator(";", COMMENT_SPECS);
+        c = new CodeReformator(CodeReformatorConfigFactory.createConfig(";", COMMENT_SPECS));
     }
 
     protected void tearDown() throws Exception {
@@ -66,7 +66,7 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
      * code reformator failed to produce equivalent SQL.
      */
     public void testReformat() {
-        CodeReformator c = new CodeReformator(";", COMMENT_SPECS);
+        CodeReformator c = new CodeReformator(CodeReformatorConfigFactory.createConfig(";", COMMENT_SPECS));
         // We know this fails - Bug# 1700093
         c.reformat(DB2SQL.insertSubSelectSQL);
 
@@ -95,7 +95,7 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
     }
 
     public void testReformatSemiColonStatementSeparator() {
-        c = new CodeReformator(";", COMMENT_SPECS);
+        c = new CodeReformator(CodeReformatorConfigFactory.createConfig(";", COMMENT_SPECS));
         
         String pipeSql = "CREATE TABLE BIGINT_VIEW ( BIGINT_COLUMN bigint ); ";
 
@@ -103,7 +103,7 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
     }
         
     public void testReformatPipeStatementSeparator() {
-        c = new CodeReformator("|", COMMENT_SPECS);
+        c = new CodeReformator(CodeReformatorConfigFactory.createConfig("|", COMMENT_SPECS));
         
         String pipeSql = "CREATE TABLE BIGINT_VIEW ( BIGINT_COLUMN bigint )| ";
 

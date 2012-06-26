@@ -22,7 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.netezza.tab;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator;
 
 /**
  * The goal of this class is to format the stored procedure source code which comes from Netezza. For example,
@@ -65,7 +65,7 @@ public class NetezzaProcedureFormator implements ICodeReformator
 	}
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.codereformat.ICodeReformator#reformat(java.lang.String)
+	 * @see net.sourceforge.squirrel_sql.client.util.codereformat.ICodeReformator#reformat(java.lang.String)
 	 */
 	@Override
 	public String reformat(String in)
