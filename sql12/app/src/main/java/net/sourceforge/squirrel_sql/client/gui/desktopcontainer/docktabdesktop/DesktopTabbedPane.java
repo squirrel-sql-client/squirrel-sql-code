@@ -45,6 +45,18 @@ public class DesktopTabbedPane extends JTabbedPane
    {
       super.processMouseEvent(e);
    }
+
+   public void addSmallTabButtonAt(int index, SmallTabButton smallTabButton)
+   {
+      ButtonTabComponent btc = (ButtonTabComponent) getTabComponentAt(index);
+      btc.addSmallTabButton(smallTabButton);
+   }
+
+   public void removeSmallTabButtonAt(int index, SmallTabButton smallTabButton)
+   {
+      ButtonTabComponent btc = (ButtonTabComponent) getTabComponentAt(index);
+      btc.removeSmallTabButton(smallTabButton);
+   }
 }
 
 

@@ -1,16 +1,22 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
-import java.awt.event.*;
 
 
 public class ButtonTabComponent extends JPanel
 {
+   private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(ButtonTabComponent.class);
+
+
    private final JTabbedPane _tabbedPane;
    private JLabel _label = new JLabel();
-   private TabButton _closeButton = new TabButton();
+   private CloseTabButton _closeButton = new CloseTabButton();
+   private JPanel _pnlSmallTabButtons;
 
    public ButtonTabComponent(final JTabbedPane tabbedPane, String title, Icon icon)
    {
@@ -27,17 +33,13 @@ public class ButtonTabComponent extends JPanel
       //add more space between the label and the button
       _label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
       //add more space to the top of the component
+
+      _pnlSmallTabButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 0));
+      _pnlSmallTabButtons.setOpaque(false);
+
+      add(_pnlSmallTabButtons);
+
       setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
-   }
-
-   JLabel getLabel()
-   {
-      return _label;
-   }
-
-   public JButton getButton()
-   {
-      return _closeButton;
    }
 
    public JButton getClosebutton()
@@ -55,33 +57,29 @@ public class ButtonTabComponent extends JPanel
       _label.setText(title);
    }
 
-   private class TabButton extends JButton //implements ActionListener
+   public void addSmallTabButton(SmallTabButton smallTabButton)
    {
-      public TabButton()
+      for (Component component : _pnlSmallTabButtons.getComponents())
       {
-         int size = 17;
-         setPreferredSize(new Dimension(size, size));
-         setToolTipText("close this tab");
-         //Make the button looks the same for all Laf's
-         setUI(new BasicButtonUI());
-         //Make it transparent
-         setContentAreaFilled(false);
-         //No need to be focusable
-         setFocusable(false);
-         setBorder(BorderFactory.createEtchedBorder());
-         setBorderPainted(false);
-         //Making nice rollover effect
-         //we use the same listener for all buttons
-         addMouseListener(s_buttonMouseListener);
-         setRolloverEnabled(true);
-         //Close the proper tab by clicking the button
-         //addActionListener(this);
+         if(component == smallTabButton)
+         {
+            return;
+         }
       }
 
+      _pnlSmallTabButtons.add(smallTabButton);
+   }
 
-      //we don't want to update UI for this button
-      public void updateUI()
+   public void removeSmallTabButton(SmallTabButton smallTabButton)
+   {
+      _pnlSmallTabButtons.remove(smallTabButton);
+   }
+
+   private static class CloseTabButton extends SmallTabButton
+   {
+      private CloseTabButton()
       {
+         super(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.toolTip"), null);
       }
 
       //paint the cross
@@ -106,28 +104,5 @@ public class ButtonTabComponent extends JPanel
          g2.dispose();
       }
    }
-
-   private final static MouseListener s_buttonMouseListener = new MouseAdapter()
-   {
-      public void mouseEntered(MouseEvent e)
-      {
-         Component component = e.getComponent();
-         if (component instanceof AbstractButton)
-         {
-            AbstractButton button = (AbstractButton) component;
-            button.setBorderPainted(true);
-         }
-      }
-
-      public void mouseExited(MouseEvent e)
-      {
-         Component component = e.getComponent();
-         if (component instanceof AbstractButton)
-         {
-            AbstractButton button = (AbstractButton) component;
-            button.setBorderPainted(false);
-         }
-      }
-   };
 }
 

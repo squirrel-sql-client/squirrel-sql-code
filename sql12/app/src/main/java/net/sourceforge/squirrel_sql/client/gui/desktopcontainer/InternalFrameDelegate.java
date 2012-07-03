@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 
@@ -197,6 +198,17 @@ public class InternalFrameDelegate extends JInternalFrame implements IDialogDele
       _eventCaster.removeDialogWidgetListener(widgetListener);
    }
 
+   @Override
+   public void addSmallTabButton(SmallTabButton fileMenuSmallButton)
+   {
+      // Not implemented
+   }
+
+   @Override
+   public void removeSmallTabButton(SmallTabButton smallTabButton)
+   {
+      // Not implemented
+   }
 
    public void fireWidgetClosing()
    {
