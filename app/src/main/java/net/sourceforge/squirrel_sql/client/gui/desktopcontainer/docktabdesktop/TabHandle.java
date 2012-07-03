@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class TabHandle
 {
-   private JButton _closeButton;
+   //private JButton _closeButton;
    private TabWidget _tabWidget;
    private DockTabDesktopPane _dockTabDesktopPane;
    private boolean _isSelected;
@@ -127,6 +127,17 @@ public class TabHandle
    {
       _dockTabDesktopPane.setTabTitle(this, title);
    }
+
+   public void addSmallTabButton(SmallTabButton smallTabButton)
+   {
+      _dockTabDesktopPane.addSmallTabButton(this, smallTabButton);
+   }
+
+   public void removeSmallTabButton(SmallTabButton smallTabButton)
+   {
+      _dockTabDesktopPane.removeSmallTabButton(this, smallTabButton);
+   }
+
 
    public String getTitle()
    {

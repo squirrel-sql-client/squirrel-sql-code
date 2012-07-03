@@ -556,6 +556,18 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _tabbedPane.setTitleAt(getTabIndex(tabHandle), title);
    }
 
+   public void addSmallTabButton(TabHandle tabHandle, SmallTabButton smallTabButton)
+   {
+      _tabbedPane.addSmallTabButtonAt(getTabIndex(tabHandle), smallTabButton);
+   }
+
+   public void removeSmallTabButton(TabHandle tabHandle, SmallTabButton smallTabButton)
+   {
+      _tabbedPane.removeSmallTabButtonAt(getTabIndex(tabHandle), smallTabButton);
+   }
+
+
+
    public String getTabTitle(TabHandle tabHandle)
    {
       int index = getTabIndex(tabHandle);

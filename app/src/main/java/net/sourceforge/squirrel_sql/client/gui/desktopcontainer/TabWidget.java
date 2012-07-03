@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,6 +88,17 @@ public class TabWidget implements IWidget
    {
       _delegate._setTitle(title);
    }
+
+   public void addSmallTabButton(SmallTabButton fileMenuSmallButton)
+   {
+      _delegate.addSmallTabButton(fileMenuSmallButton);
+   }
+
+   public void removeSmallTabButton(SmallTabButton fileMenuSmallButton)
+   {
+      _delegate.removeSmallTabButton(fileMenuSmallButton);
+   }
+
 
    public void updateUI()
    {

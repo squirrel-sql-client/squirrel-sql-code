@@ -8,17 +8,13 @@ import java.io.File;
 
 public abstract class SessionTabWidget extends TabWidget implements ISessionWidget
 {
-
-   /**
-    * Internationalized strings for this class.
-    */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SessionTabWidget.class);
 
 
    private ISession _session;
-   private String _sqlFilePath;
    private String _titleWithoutFile = "";
+   private TitleFilePathHandler _titleFileHandler;
 
    public SessionTabWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, ISession session)
    {
@@ -26,6 +22,17 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       _session = session;
       _titleWithoutFile = title;
       setupSheet();
+
+      TitleFilePathHandlerListener titleFilePathHandlerListener = new TitleFilePathHandlerListener()
+      {
+         @Override
+         public void refreshFileDisplay()
+         {
+            setTitle(_titleWithoutFile);
+         }
+      };
+
+      _titleFileHandler = new TitleFilePathHandler(_session.getApplication().getResources(), titleFilePathHandlerListener);
    }
 
    public SessionTabWidget(String title, boolean resizeable, ISession session)
@@ -70,30 +77,23 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
       _titleWithoutFile = title;
 
 
-      if (null == _sqlFilePath)
+      if (_titleFileHandler.hasFile())
       {
-         super.setTitle(_titleWithoutFile);
+         String compositetitle = _titleWithoutFile + _titleFileHandler.getSqlFile();
+
+         super.setTitle(compositetitle);
+         super.addSmallTabButton(_titleFileHandler.getFileMenuSmallButton());
       }
       else
       {
-         String compositetitle =
-            s_stringMgr.getString("SessionTabWidget.title",
-               new String[]{_titleWithoutFile,
-                  _sqlFilePath});
-         super.setTitle(compositetitle);
+         super.setTitle(_titleWithoutFile);
+         super.removeSmallTabButton(_titleFileHandler.getFileMenuSmallButton());
       }
    }
 
    public void setSqlFile(File sqlFile)
    {
-      if (sqlFile == null)
-      {
-         _sqlFilePath = null;
-      }
-      else
-      {
-         _sqlFilePath = sqlFile.getAbsolutePath();
-      }
+      _titleFileHandler.setSqlFile(sqlFile);
       setTitle(_titleWithoutFile);
    }
 
@@ -106,16 +106,17 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
     */
    public void setUnsavedEdits(boolean unsavedEdits)
    {
-      String title = super.getTitle();
-
-      if (unsavedEdits && !title.endsWith("*"))
-      {
-         super.setTitle(title + "*");
-      }
-      if (!unsavedEdits && title.endsWith("*"))
-      {
-         super.setTitle(title.substring(0, title.length() - 1));
-      }
+//      String title = super.getTitle();
+//
+//      if (unsavedEdits && !title.endsWith("*"))
+//      {
+//         super.setTitle(title + "*");
+//      }
+//      if (!unsavedEdits && title.endsWith("*"))
+//      {
+//         super.setTitle(title.substring(0, title.length() - 1));
+//      }
+      _titleFileHandler.setUnsavedEdits(unsavedEdits);
    }
 
    /**

@@ -81,6 +81,9 @@ public class SquirrelResources extends Resources
       String NEXT_SCALE = "nextScale";
       String RERUN = "rerun";
       String CLOSE = "close";
+
+      String SMALL_FILE = "smallFile";
+      String SMALL_FILE_CHANGED = "smallFileChanged";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

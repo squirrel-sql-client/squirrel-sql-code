@@ -9,6 +9,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Instead of displaying the file paths in Session tabs a small button is displayed when an open file exists.
+  Clicking the button will open a popup menu that gives access to several information and functions concerning the file.
+
 3488629: SQL formatting can be configured. See menu File--> Global Preferences --> Tab SQL formatting
 
 Installer: The DB Copy, DB Diff and Refactoring Plugin have been made standard Plugins.

@@ -1,9 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleListener;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandleEvent;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -160,6 +157,19 @@ public class TabDelegate implements ITabDelegate
          _tabHandle.setTitle(title);
       }
    }
+
+   @Override
+   public void addSmallTabButton(SmallTabButton smallTabButton)
+   {
+      _tabHandle.addSmallTabButton(smallTabButton);
+   }
+
+   @Override
+   public void removeSmallTabButton(SmallTabButton smallTabButton)
+   {
+      _tabHandle.removeSmallTabButton(smallTabButton);
+   }
+
 
    public void _updateUI()
    {
