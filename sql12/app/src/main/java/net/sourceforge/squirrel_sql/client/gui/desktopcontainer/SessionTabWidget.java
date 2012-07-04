@@ -76,6 +76,12 @@ public abstract class SessionTabWidget extends TabWidget implements ISessionWidg
    {
       _titleWithoutFile = title;
 
+      if(null == _titleFileHandler) // happens when method is called in boostrap
+      {
+         super.setTitle(_titleWithoutFile);
+         return;
+      }
+
 
       if (_titleFileHandler.hasFile())
       {
