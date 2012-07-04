@@ -150,7 +150,7 @@ public class TitleFilePathHandler
          if(hasFile())
          {
             Desktop desktop = Desktop.getDesktop();
-            desktop.open(_sqlFile);
+            desktop.open(_sqlFile.getParentFile());
          }
       }
       catch (IOException e)
