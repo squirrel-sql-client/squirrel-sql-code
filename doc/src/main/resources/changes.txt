@@ -9,6 +9,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Removed misleading button "Remember widths" from Overview Tab
+
 Instead of displaying the file paths in Session tabs a small button is displayed when an open file exists.
   Clicking the button will open a popup menu that gives access to several information and functions concerning the file.
 

@@ -20,7 +20,6 @@ public class OverwiewPanel extends JPanel
 
    JButton btnShowInTableWin;
    JButton btnShowInTable;
-   JButton btnSaveColumnWidth;
 
    public OverwiewPanel(SquirrelResources rsrc)
    {
@@ -65,13 +64,7 @@ public class OverwiewPanel extends JPanel
       btnShowInTableWin.setToolTipText(s_stringMgr.getString("OverwiewPanel.showTableInWinToolTip"));
       ret.add(btnShowInTableWin, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,20,0,0),0,0);
-      btnSaveColumnWidth = new JButton(s_stringMgr.getString("OverwiewPanel.saveColumnWidth"));
-      btnSaveColumnWidth.setToolTipText(s_stringMgr.getString("OverwiewPanel.saveColumnWidthToolTip"));
-      ret.add(btnSaveColumnWidth, gbc);
-
-
-      gbc = new GridBagConstraints(5,0,1,1,1,1,GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(4,0,1,1,1,1,GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
       return ret;

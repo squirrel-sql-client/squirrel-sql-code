@@ -69,22 +69,8 @@ public class OverwiewCtrl
             onShowInTableWin();
          }
       });
-
-      _overwiewPanel.btnSaveColumnWidth.addActionListener(new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onSaveColumnWidths();
-         }
-      });
-
    }
 
-   private void onSaveColumnWidths()
-   {
-      _overviewHolder.getDataScaleTable().saveColumnWidths();
-   }
 
 
    private void onShowInTableWin()
@@ -258,11 +244,11 @@ public class OverwiewCtrl
          col.setHeaderValue(DataScaleTableModel.getColumnNames()[i]);
          if (DataScaleTableModel.COL_NAME_COLUMN.equals(DataScaleTableModel.getColumnNames()[i]))
          {
-            col.setPreferredWidth(dataScaleTableModel.getColumnWidthForColName(DataScaleTableModel.COL_NAME_COLUMN));
+            col.setPreferredWidth(DataScaleTableColumnWidthsPersister.getColumnWidthForColName(DataScaleTableModel.COL_NAME_COLUMN));
          }
          else if (DataScaleTableModel.COL_NAME_DATA.equals(DataScaleTableModel.getColumnNames()[i]))
          {
-            col.setPreferredWidth(dataScaleTableModel.getColumnWidthForColName(DataScaleTableModel.COL_NAME_DATA));
+            col.setPreferredWidth(DataScaleTableColumnWidthsPersister.getColumnWidthForColName(DataScaleTableModel.COL_NAME_DATA));
          }
          tcm.addColumn(col);
       }
@@ -279,8 +265,6 @@ public class OverwiewCtrl
 
       _overwiewPanel.btnShowInTable.setEnabled(_overviewHolder.canShowInSimpleTable());
       _overwiewPanel.btnShowInTableWin.setEnabled(_overviewHolder.canShowInSimpleTable());
-
-      _overwiewPanel.btnSaveColumnWidth.setEnabled(_overviewHolder.isScaleTable());
 
       _overwiewPanel.scrollPane.setViewportView(_overviewHolder.getComponent());
    }
