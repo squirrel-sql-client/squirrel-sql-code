@@ -15,8 +15,6 @@ import java.util.List;
 
 public class DataScaleTable extends SortableTable
 {
-
-
    private List<Object[]> _allRows;
    private ColumnDisplayDefinition[] _columnDefinitions;
 
@@ -35,6 +33,8 @@ public class DataScaleTable extends SortableTable
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       new DataScaleTablePopupHandler(this);
+
+      new DataScaleTableColumnWidthsPersister(getTableHeader());
    }
 
 
@@ -141,24 +141,5 @@ public class DataScaleTable extends SortableTable
    public DataSetViewerTablePanel getKidSimpleTable()
    {
       return _kidSimpleTable;
-   }
-
-   public void saveColumnWidths()
-   {
-      int wColumn = DataScaleTableModel.DEFAULT_COL_WIDTH_COLUMN;
-      int wData = DataScaleTableModel.DEFAULT_COL_WIDTH_DATA;
-      for (int i = 0; i < getColumnModel().getColumnCount(); i++)
-      {
-         if(DataScaleTableModel.COL_NAME_COLUMN.equals(getColumnModel().getColumn(i).getHeaderValue()))
-         {
-            wColumn = getColumnModel().getColumn(i).getWidth();
-         }
-         else if(DataScaleTableModel.COL_NAME_DATA.equals(getColumnModel().getColumn(i).getHeaderValue()))
-         {
-            wData = getColumnModel().getColumn(i).getWidth();
-         }
-
-         DataScaleTableModel.saveColumWidhts(wColumn, wData);
-      }
    }
 }

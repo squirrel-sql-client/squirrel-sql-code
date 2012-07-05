@@ -10,16 +10,10 @@ public class DataScaleTableModel extends AbstractTableModel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataScaleTableModel.class);
 
-   private static final String PREF_KEY_COL_WIDTH_COLUMN = "Squirrel.overview.colWidthColumn";
-   private static final String PREF_KEY_COL_WIDTH_DATA = "Squirrel.overview.colWidthData";
-
 
    public static final String COL_NAME_COLUMN = s_stringMgr.getString("DataScaleTableModel.colNameColumn");
    public static final String COL_NAME_DATA = s_stringMgr.getString("DataScaleTableModel.colNameData");
 
-   public static final int DEFAULT_COL_WIDTH_COLUMN = 100;
-   public static final int DEFAULT_COL_WIDTH_DATA = 1000;
-   
 
    private DataScale[] _dataScales;
 
@@ -27,23 +21,6 @@ public class DataScaleTableModel extends AbstractTableModel
    public DataScaleTableModel(DataScale[] dataScales)
    {
       _dataScales = dataScales;
-   }
-
-   public int getColumnWidthForColName(String colName)
-   {
-      if(COL_NAME_COLUMN.equals(colName))
-      {
-         return Preferences.userRoot().getInt(PREF_KEY_COL_WIDTH_COLUMN, DEFAULT_COL_WIDTH_COLUMN);
-      }
-      else if(COL_NAME_DATA.equals(colName))
-      {
-         return Preferences.userRoot().getInt(PREF_KEY_COL_WIDTH_DATA, DEFAULT_COL_WIDTH_DATA);
-      }
-      else
-      {
-         throw new IllegalArgumentException("Unknown column name " + colName);
-      }
-
    }
 
 
@@ -88,9 +65,4 @@ public class DataScaleTableModel extends AbstractTableModel
       return _dataScales[row];
    }
 
-   public static void saveColumWidhts(int wColumn, int wData)
-   {
-      Preferences.userRoot().putInt(PREF_KEY_COL_WIDTH_COLUMN, wColumn);
-      Preferences.userRoot().putInt(PREF_KEY_COL_WIDTH_DATA, wData);
-   }
 }
