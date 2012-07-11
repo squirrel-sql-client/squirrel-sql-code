@@ -9,6 +9,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Hibernate Plugin:
+   Improved connection error messaging when creation of a Hibernate SessionFactoryImpl in an external process fails.
+
 Removed misleading button "Remember widths" from Overview Tab
 
 Instead of displaying the file paths in Session tabs a small button is displayed when an open file exists.
