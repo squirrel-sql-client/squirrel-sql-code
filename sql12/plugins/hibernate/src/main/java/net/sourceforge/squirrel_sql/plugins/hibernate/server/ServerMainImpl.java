@@ -51,7 +51,7 @@ public class ServerMainImpl implements ServerMain
       }
       catch (Throwable t)
       {
-         throw new RemoteException("" + t, t);
+         throw new RemoteException(t.getMessage(), HibernateServerExceptionUtil.prepareTransport(t));
       }
    }
 
