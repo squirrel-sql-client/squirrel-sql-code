@@ -96,8 +96,6 @@ public class CodeCompletionPreferencesPanel extends JPanel
       chkMatchCamelCase = new JCheckBox(s_stringMgr.getString("CodeCompletionPreferencesPanel.matchCamelCase"));
       add(chkMatchCamelCase,gbc);
 
-      gbc = new GridBagConstraints(0,12,1,1,2,2,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
-      add(new JPanel(),gbc);
    }
 
 
