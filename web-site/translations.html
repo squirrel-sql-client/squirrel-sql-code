@@ -26,7 +26,7 @@
 				All currently available translations are included in the install jar of the latest weekly snapshot
 				or can be checked out from CVS using the command line
 				<BR><code>
-				&nbsp;&nbsp;&nbsp;cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/squirrel-sql co -P sql12/translations
+				&nbsp;&nbsp;&nbsp;svn co https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/
 				</code>
 			</p>
 
@@ -36,7 +36,7 @@
 				The plugin provides an overview of which translations need to be done and helps you to store your translated property
 				files in the necessary directory structure. Here is what you need to do.
 				<ul>
-					<li><a href="#installation">Download the latest weekly snapshot</a></li>
+					<li><a href="http://www.squirrelsql.org/#installation">Download the latest weekly snapshot</a></li>
 					<li>In the install wizard check the 'Optional Plugin - Internationalization'
 					<li>Start SQuirreL, open the Global Preferences dialog and choose the tab named 'I18n administration'.
 						This tab itself contains two tabs: Translators and Developers. As a translator all the information and functionality you need
@@ -65,53 +65,68 @@
 			<h1 class="body">Available translations</h1>
 			<table border="1">
 
-				<tr>
-					<th>Language (code)</th><th>Translator</th><th>Download</th><th>Included in Install Jar of (version may not be released yet)</th>
-				</tr>
-
-				<tr>
-					<td>Spanish (es)</td><td>Diego Schulz</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_es.jar">squirrel-sql_es.jar</a> </td>
-					<td>latest weekly snapshot and version 2.2 or higher </td>
-				</tr>
-
             <tr>
-               <td>Brazilian (pt_BR)</td><td>Francis Martins</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_pt_BR.jar">squirrel-sql_pt_BR.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+                <th>Language (code)</th><th>Translator</th><th>Download</th><th>Included in Install Jar of (version may not be released yet)</th>
             </tr>
 
             <tr>
-               <td>Czech (cs_CZ)</td><td>Jan Kostrhun</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_cs_CZ.jar">squirrel-sql_cs_CZ.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+                <td>Spanish (es)</td><td>Diego Schulz</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_es.jar">squirrel-sql_es.jar</a> </td>
+                <td>Version 2.2 or higher </td>
             </tr>
 
             <tr>
-               <td>Bulgarian (bg_BG)</td><td>Ivan Dimov</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_bg_BG.jar">squirrel-sql_bg_BG.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+               <td>Brazilian (pt_BR)</td><td>Francis Martins</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_pt_BR.jar">squirrel-sql_pt_BR.jar</a> </td>
+               <td>Version 2.3 or higher </td>
             </tr>
 
             <tr>
-               <td>Chinese (zh_CN)</td><td>xpdz</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_zh_CN.jar">squirrel-sql_zh_CN.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+               <td>Czech (cs_CZ)</td><td>Jan Kostrhun</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_cs_CZ.jar">squirrel-sql_cs_CZ.jar</a> </td>
+               <td>Version 2.3 or higher </td>
             </tr>
 
             <tr>
-               <td>French (fr)</td><td>Erwan Duroselle</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_fr.jar">squirrel-sql_fr.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+               <td>Bulgarian (bg_BG)</td><td>Ivan Dimov</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_bg_BG.jar">squirrel-sql_bg_BG.jar</a> </td>
+               <td>Version 2.3 or higher </td>
             </tr>
 
             <tr>
-               <td>Italian (it_IT)</td><td>Ivo Neri</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_it_IT.jar">squirrel-sql_it_IT.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+               <td>Chinese (zh_CN)</td><td>xpdz</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_zh_CN.jar">squirrel-sql_zh_CN.jar</a> </td>
+               <td>Version 2.3 or higher </td>
             </tr>
 
             <tr>
-               <td>German (de_DE)</td><td>Thorsten Mürell, Andreas Oswald</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_de_DE.jar">squirrel-sql_de_DE.jar</a> </td>
-               <td>latest weekly snapshot and version 2.3 or higher </td>
+               <td>French (fr)</td><td>Erwan Duroselle</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_fr.jar">squirrel-sql_fr.jar</a> </td>
+               <td>Version 2.3 or higher </td>
             </tr>
 
             <tr>
-               <td>Russian (ru)</td><td>Dmitry Matyukhin</td><td> <a href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/translations/squirrel-sql_ru.jar">squirrel-sql_ru.jar</a> </td>
-               <td>latest weekly snapshot and version 2.6 or higher </td>
+               <td>Italian (it_IT)</td><td>Ivo Neri</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_it_IT.jar">squirrel-sql_it_IT.jar</a> </td>
+               <td>Version 2.3 or higher </td>
+            </tr>
+
+            <tr>
+               <td>German (de_DE)</td><td>Thorsten M&uuml;rell, Andreas Oswald</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_de_DE.jar">squirrel-sql_de_DE.jar</a> </td>
+               <td>Version 2.3 or higher </td>
+            </tr>
+
+            <tr>
+               <td>Russian (ru)</td><td>Dmitry Matyukhin</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_ru.jar">squirrel-sql_ru.jar</a> </td>
+               <td>Version 2.6 or higher </td>
+            </tr>
+
+            <tr>
+               <td>Japanese (ja_JP)</td><td>Toshiki IGA</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_ja_JP.jar">squirrel-sql_ja_JP.jar</a> </td>
+               <td>Version 3.2.1 or higher </td>
+            </tr>
+
+            <tr>
+               <td>Korean (ko_KR)</td><td>Youngwoo Kim</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_ko_KR.jar">squirrel-sql_ko_KR.jar</a> </td>
+               <td>Version 3.0.1 or higher </td>
+            </tr>
+
+            <tr>
+               <td>Korean (pl)</td><td>Miron Sadziak</td><td> <a href="http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/squirrelsql-translations/src/main/resources/squirrel-sql_pl.jar">squirrel-sql_pl.jar</a> </td>
+               <td>Version 3.1 or higher </td>
             </tr>
 
 
