@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-		<version>3.4.0</version>
+		<version>3.5.0-SNAPSHOT</version>
 		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
 	<artifactId>favs</artifactId>
@@ -36,9 +36,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-3.4.0/plugins/favs</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/tags/squirrelsql-3.4.0/plugins/favs</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/tags/squirrelsql-3.4.0/plugins/favs</url>
+		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/favs</connection>
+		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/favs</developerConnection>
+		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/favs</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
