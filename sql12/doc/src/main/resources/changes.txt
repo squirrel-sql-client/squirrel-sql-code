@@ -4,8 +4,8 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
-Not yet released, available in our Subversion repository and in future snapshots and releases.
-===============================================================================================
+3.4.0 (8/6/2012)
+==================
 
 Enhancements:
 
