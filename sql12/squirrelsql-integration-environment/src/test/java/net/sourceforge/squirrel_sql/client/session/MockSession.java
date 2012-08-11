@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -553,6 +554,19 @@ public class MockSession implements ISession
 	public void setTitle(String newTitle)
 	{
 		System.err.println("MockSession.setTitle: stub not yet implemented");		
+	}
+
+	@Override
+	public void addSimpleSessionListener(SimpleSessionListener simpleSessionListener)
+	{
+		System.err.println("MockSession.addSimpleSessionListener: stub not yet implemented");
+		
+	}
+
+	@Override
+	public void removeSimpleSessionListener(SimpleSessionListener simpleSessionListener)
+	{
+		System.err.println("MockSession.removeSimpleSessionListener: stub not yet implemented");
 	}
 
 
