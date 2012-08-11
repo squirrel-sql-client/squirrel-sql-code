@@ -41,7 +41,7 @@ dir /b "%SQUIRREL_SQL_HOME%\update\downloads\core\*.*" >"%TEMP%\update-lib.tmp"
 FOR /F "usebackq" %%I IN ("%TEMP%\update-lib.tmp") DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\update\downloads\core\%%I"
 SET UPDATE_CP=%TMP_CP%
 SET UPDATE_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\update-log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
-"%LOCAL_JAVA%" -cp %UPDATE_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication %UPDATE_PARAMS%
+"%LOCAL_JAVA%" -cp %UPDATE_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication %UPDATE_PARMS%
 
 :launchsquirrel
 @rem build SQuirreL's classpath
