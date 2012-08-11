@@ -4,7 +4,8 @@ SQuirreL SQL Client Change Log
 ${squirrelsql.changelog.header}
 
 2759952 (Update fails unless run as admin on Vista): Fixed mis-spelled variable in squirrel-sql.bat which 
-caused the application updater to fail to work properly with Windows when UAC is enabled. 
+caused the application updater to fail to work properly with Windows when UAC is enabled.  Thanks to user
+dandar3 for the tip. 
 
 
 3.4.0 (8/6/2012)
