@@ -25,11 +25,8 @@ public class LoggerController
 {
 	private static Vector<ILoggerFactory> s_oldfactories = new Vector<ILoggerFactory>();
 	private static ILoggerFactory s_factory = new Log4jLoggerFactory();
-	
-	/** Whether or not to override the level configured in the properties file */ 
-	private static boolean forceDebug = false;
 
-	public static void registerLoggerFactory(ILoggerFactory factory)
+   public static void registerLoggerFactory(ILoggerFactory factory)
 	{
 		s_oldfactories.add(s_factory);
 		s_factory = factory != null ? factory : new Log4jLoggerFactory();
@@ -37,11 +34,7 @@ public class LoggerController
 
 	public static ILogger createLogger(Class<?> clazz)
 	{
-		ILogger result = s_factory.createLogger(clazz);
-		if (forceDebug) {
-			result.setLevel(Level.DEBUG);
-		}
-		return result;
+      return s_factory.createLogger(clazz);
 	}
 
 	public static void shutdown()
@@ -70,22 +63,6 @@ public class LoggerController
 			iLoggerFactory.removeLoggerListener(l);
 		}
 
-	}
-
-	/**
-	 * @param forceDebug the forceDebug to set
-	 */
-	public static void setForceDebug(boolean forceDebug)
-	{
-		LoggerController.forceDebug = forceDebug;
-	}
-
-	/**
-	 * @return the forceDebug
-	 */
-	public static boolean isForceDebug()
-	{
-		return forceDebug;
 	}
 
 }
