@@ -1,11 +1,19 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
+import net.sourceforge.squirrel_sql.client.gui.builders.DnDTabbedPane;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class DesktopTabbedPane extends JTabbedPane
+public class DesktopTabbedPane extends DnDTabbedPane
 {
+   public DesktopTabbedPane()
+   {
+      setPaintScrollArea(false);
+      setPaintGhost(true);
+   }
+
    @Override
    public Dimension getMinimumSize()
    {

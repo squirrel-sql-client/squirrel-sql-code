@@ -24,11 +24,13 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
 import javax.swing.*;
 
-class SquirrelTabbedPane extends JTabbedPane
+class DnDSquirrelTabbedPane extends DnDTabbedPane
 {
-	SquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
+	DnDSquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
 	{
       new SquirrelTabbedPaneDelegate(prefs, app, this);
+      setPaintScrollArea(false);
+      setPaintGhost(true);
 	}
 
 }

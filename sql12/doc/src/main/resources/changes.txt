@@ -6,6 +6,8 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our Subversion repository and in future snapshots and releases.
 ===============================================================================================
 
+Positions of SQL result tabs and of Session tabs can now be changed using drag and drop.
+
 Fixed bug in logging: Log level could not be set in log4j.properties file.
 
 2759952 (Update fails unless run as admin on Vista): Fixed mis-spelled variable in squirrel-sql.bat which 

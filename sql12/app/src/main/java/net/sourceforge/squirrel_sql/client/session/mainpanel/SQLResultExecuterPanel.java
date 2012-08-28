@@ -869,7 +869,7 @@ public class SQLResultExecuterPanel extends JPanel
 	private void createGUI()
 	{
       final SessionProperties props = _session.getProperties();
-		_tabbedExecutionsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLExecutionTabPlacement());
+		_tabbedExecutionsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLExecutionTabPlacement(), true);
 
 
       createTabPopup();

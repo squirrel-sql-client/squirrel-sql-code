@@ -111,8 +111,23 @@ public class UIFactory
 	 */
 	public JTabbedPane createTabbedPane(int tabPlacement)
 	{
-		final JTabbedPane pnl = new SquirrelTabbedPane(_prefs, _app);
-		pnl.setTabPlacement(tabPlacement);
+      return createTabbedPane(tabPlacement, false);
+	}
+
+	public JTabbedPane createTabbedPane(int tabPlacement, boolean dndTabbedPane)
+	{
+		JTabbedPane pnl;
+
+      if (dndTabbedPane)
+      {
+         pnl = new DnDSquirrelTabbedPane(_prefs, _app);
+      }
+      else
+      {
+         pnl = new SquirrelTabbedPane(_prefs, _app);
+      }
+
+      pnl.setTabPlacement(tabPlacement);
 		fireTabbedPaneCreated(pnl);
 
 		return pnl;
