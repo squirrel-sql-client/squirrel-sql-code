@@ -6,6 +6,8 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our Subversion repository and in future snapshots and releases.
 ===============================================================================================
 
+Added new default driver definition for Starschema BigQuery JDBC Driver.
+
 Updated French translations. Thanks to Erwan Duroselle.
 
 Positions of SQL result tabs and of Session tabs can now be changed using drag and drop.

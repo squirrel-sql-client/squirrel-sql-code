@@ -3,6 +3,18 @@
 <Beans>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <name>Starschema BigQuery JDBC</name>
+        <driverClassName>net.starschema.clouddb.jdbc.BQDriver</driverClassName>
+        <url>jdbc:BQDriver:projectid(&lt;urlencoded&gt;)?withServiceAccount=false</url>
+        <jarFileNames Indexed="true"/>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-60</string>
+        </identifier>
+        <websiteUrl>http://code.google.com/p/starschema-bigquery-jdbc/</websiteUrl>
+    </Bean>
+
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>com.hxtt.sql.cobol.CobolDriver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
             <string>-57</string>
