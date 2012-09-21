@@ -61,7 +61,7 @@ public class AutoCorrector
 
          if (' ' == insertChar.charAt(0))
          {
-            String autoCorrCandidate = getStringBeforeWhiteSpace(e.getOffset()).toUpperCase();
+            String autoCorrCandidate = getStringBeforeWhiteSpaceOrOpeningBraket(e.getOffset()).toUpperCase();
             final String corr = _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
             if(null != corr)
             {
@@ -93,7 +93,7 @@ public class AutoCorrector
       }
    }
 
-   private String getStringBeforeWhiteSpace(int offset)
+   private String getStringBeforeWhiteSpaceOrOpeningBraket(int offset)
    {
       try
       {
@@ -104,7 +104,7 @@ public class AutoCorrector
          int begPos = text.length();
          for(int i=text.length()-1; 0 <= i; --i)
          {
-            if(Character.isWhitespace(text.charAt(i)))
+            if(Character.isWhitespace(text.charAt(i)) || '(' == text.charAt(i))
             {
                break;
             }
