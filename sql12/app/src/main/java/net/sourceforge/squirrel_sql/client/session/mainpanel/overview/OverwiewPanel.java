@@ -21,6 +21,9 @@ public class OverwiewPanel extends JPanel
    JButton btnShowInTableWin;
    JButton btnShowInTable;
 
+   JButton btnReport;
+
+
    public OverwiewPanel(SquirrelResources rsrc)
    {
       setLayout(new GridBagLayout());
@@ -59,12 +62,17 @@ public class OverwiewPanel extends JPanel
       btnShowInTable.setToolTipText(s_stringMgr.getString("OverwiewPanel.showInTableToolTip"));
       ret.add(btnShowInTable, gbc);
 
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
       btnShowInTableWin = new JButton(s_stringMgr.getString("OverwiewPanel.showTableInWin"));
       btnShowInTableWin.setToolTipText(s_stringMgr.getString("OverwiewPanel.showTableInWinToolTip"));
       ret.add(btnShowInTableWin, gbc);
 
-      gbc = new GridBagConstraints(4,0,1,1,1,1,GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,10,0,0),0,0);
+      btnReport = new JButton(s_stringMgr.getString("OverwiewPanel.report"));
+      btnReport.setToolTipText(s_stringMgr.getString("OverwiewPanel.reportToolTip"));
+      ret.add(btnReport, gbc);
+
+      gbc = new GridBagConstraints(5,0,1,1,1,1,GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
       return ret;

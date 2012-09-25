@@ -14,8 +14,14 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OverwiewCtrl
@@ -69,8 +75,68 @@ public class OverwiewCtrl
             onShowInTableWin();
          }
       });
+
+
+      _overwiewPanel.btnReport.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onReport();
+         }
+      });
    }
 
+   private void onReport()
+   {
+      try
+      {
+         DataScaleTableModel dstm = _overviewHolder.getDataScaleTable().getDataScaleTableModel();
+
+         StringWriter sw = new StringWriter();
+         PrintWriter pw = new PrintWriter(sw);
+
+
+         pw.println("<html>");
+         pw.println("<body>");
+
+         for( int i = 0; i < dstm.getRowCount(); i++ )
+         {
+
+            DataScale dataScale = dstm.getDataScaleAt(i);
+
+            pw.println("<h1>Column name " + dataScale.getColumn() +":</h1>");
+            pw.println("<table border=\"1\">");
+            pw.println("<tr>");
+
+            ArrayList<String> intervalReports = dataScale.getIntervalReports();
+
+            for( String toolTip : intervalReports )
+            {
+               pw.println("<td>" + toolTip + "</td>");
+            }
+            pw.println("<tr>");
+            pw.println("</table>");
+
+            pw.println();
+         }
+
+         pw.println("</body>");
+         pw.println("</html>");
+         pw.flush();
+         sw.flush();
+         pw.close();
+         sw.close();
+
+         Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+         StringSelection data = new StringSelection(sw.getBuffer().toString());
+         clip.setContents(data, data);
+      }
+      catch(IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 
    private void onShowInTableWin()

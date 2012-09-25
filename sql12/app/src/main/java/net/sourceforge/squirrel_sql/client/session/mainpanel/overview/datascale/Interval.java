@@ -15,6 +15,7 @@ public class Interval
    private Object _endData;
    private String _label;
    private String _tooltip;
+   private String _report;
 
    public Interval(IndexedColumn indexedColumn, int firstIx, int lastIx, Object beginData, Object endData)
    {
@@ -40,15 +41,38 @@ public class Interval
 
 
       _tooltip = "<html>" +
-                      escapeHtmlChars(_label) + "<br><br>" +
-                      "row count = " + getLen() + "; percentage = " + 100d * getWight() + "%<br>" +
-                      "first value = " + escapeHtmlChars(firstValRendered) + "<br>" +
-                      "last value = " + escapeHtmlChars(lastValRendered) + "<br>" +
-                      "first index = " + _firstIx + "; last index = " + _lastIx + "<br>" +
-                      "data interval = "    + getIntervalOpeningBracket() + escapeHtmlChars(_indexedColumn.renderObject(beginData)) +
-                                       ", " + escapeHtmlChars(_indexedColumn.renderObject(endData)) + getIntervalClosingBracket() + "<br>" +
-                      "complete row count = " + _indexedColumn.size() +
-                 "</html>";
+            escapeHtmlChars(_label) + "<br><br>" +
+            "row count = " + getLen() + "; percentage = " + String.format("%.3f",100d * getWight()) + "%<br>" +
+            "first value = " + escapeHtmlChars(firstValRendered) + "<br>" +
+            "last value = " + escapeHtmlChars(lastValRendered) + "<br>" +
+            "first index = " + _firstIx + "; last index = " + _lastIx + "<br>" +
+            "data interval = "    + getIntervalOpeningBracket() + escapeHtmlChars(_indexedColumn.renderObject(beginData)) +
+            ", " + escapeHtmlChars(_indexedColumn.renderObject(endData)) + getIntervalClosingBracket() + "<br>" +
+            "complete row count = " + _indexedColumn.size() +
+            "</html>";
+
+      _report = "<html>" +
+            //"<table border=\"1\">" +
+            "<table>" +
+            "<tr><th>" +
+            escapeHtmlChars(_label) +
+            "</th></tr>" +
+            "<tr><td>" +
+            //"<table border=\"1\">" +
+            "<table>" +
+            "<tr>" +
+            "<td>row count</td><td>" + getLen() + "</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>percentage</td><td>" + String.format("%.3f",100d * getWight()) + "%</td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td>from-to index</td><td>" + _firstIx + " - " + _lastIx + "</td>" +
+            "</tr>" +
+            "</table>" +
+            "</tr></td>" +
+            "</table>" +
+            "</html>";
 
 
 
@@ -114,6 +138,11 @@ public class Interval
    public String getToolTip()
    {
       return _tooltip;
+   }
+
+   public String getReport()
+   {
+      return _report;
    }
 
    public List<Object[]> getResultRows()

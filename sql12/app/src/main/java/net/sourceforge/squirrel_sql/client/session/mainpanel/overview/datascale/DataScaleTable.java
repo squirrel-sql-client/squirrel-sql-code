@@ -70,7 +70,7 @@ public class DataScaleTable extends SortableTable
       }
    }
 
-   DataScaleTableModel getDataScaleTableModel()
+   public DataScaleTableModel getDataScaleTableModel()
    {
       TableModel ret = ((SortableTableModel) getModel()).getActualModel();
 
@@ -78,7 +78,7 @@ public class DataScaleTable extends SortableTable
       {
          ret = ((SortableTableModel)ret).getActualModel();
       }
-      
+
       return (DataScaleTableModel) ret;
    }
 

@@ -132,4 +132,16 @@ public class DataScale implements Comparable<DataScale>
    {
       return _intervalByButton.keySet().toArray(new JButton[_intervalByButton.keySet().size()]);
    }
+
+   public ArrayList<String> getIntervalReports()
+   {
+      ArrayList<String> ret = new ArrayList<String>();
+
+      for( int i = 0; i < _intervals.size(); i++ )
+      {
+         ret.add(_intervals.get(i).getReport());
+      }
+
+      return ret;
+   }
 }
