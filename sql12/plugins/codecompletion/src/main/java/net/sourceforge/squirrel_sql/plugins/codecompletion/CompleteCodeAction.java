@@ -114,7 +114,7 @@ public class CompleteCodeAction extends SquirrelAction
       else if(KeyEvent.VK_TAB == keyCode)
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
-			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
+			_sqlEntryPanel.setSelectionEnd(getNextStopCharPos(_sqlEntryPanel.getCaretPosition()));
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
          adjustCaret(completion);
 		}
@@ -136,7 +136,7 @@ public class CompleteCodeAction extends SquirrelAction
       }
    }
 
-   private int getNextWhiteSpacePos(int startPos)
+   private int getNextStopCharPos(int startPos)
 	{
 		String text = _sqlEntryPanel.getText();
 
@@ -144,7 +144,8 @@ public class CompleteCodeAction extends SquirrelAction
 
 		for(;retPos < text.length(); ++retPos)
 		{
-			if(Character.isWhitespace(text.charAt(retPos)))
+         char c = text.charAt(retPos);
+         if(Character.isWhitespace(c) || '.' == c || ',' == c || ';' == c || '"' == c || '\'' == c || '(' == c || ')' == c)
 			{
 				return retPos;
 			}

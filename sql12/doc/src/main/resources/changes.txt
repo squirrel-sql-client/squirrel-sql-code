@@ -6,6 +6,8 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our Subversion repository and in future snapshots and releases.
 ===============================================================================================
 
+Enhancements:
+
 Overview tab: Now has a button to copy a HTML-report of an overview to clipboard
 
 Abbreviation/Auto-correction now works also if it is placed right after an opening bracket.
@@ -21,6 +23,12 @@ Fixed bug in logging: Log level could not be set in log4j.properties file.
 2759952 (Update fails unless run as admin on Vista): Fixed mis-spelled variable in squirrel-sql.bat which 
 caused the application updater to fail to work properly with Windows when UAC is enabled.  Thanks to user
 dandar3 for the tip. 
+
+
+Bug fixes:
+
+Code completion: When selecting a completion by tab, overwriting of subsequent characters does not stop
+  only at the next white space but also at .,'();" characters.
 
 
 3.4.0 (8/6/2012)
