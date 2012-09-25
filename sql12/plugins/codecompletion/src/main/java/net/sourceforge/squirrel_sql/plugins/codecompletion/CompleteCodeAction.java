@@ -145,7 +145,7 @@ public class CompleteCodeAction extends SquirrelAction
 		for(;retPos < text.length(); ++retPos)
 		{
          char c = text.charAt(retPos);
-         if(Character.isWhitespace(c) || '.' == c || ',' == c || ';' == c || '"' == c || '\'' == c || '(' == c || ')' == c)
+         if(Character.isWhitespace(c) || '.' == c || ',' == c || ';' == c || '"' == c || '\'' == c || '(' == c || ')' == c || '=' == c)
 			{
 				return retPos;
 			}

@@ -28,7 +28,7 @@ dandar3 for the tip.
 Bug fixes:
 
 Code completion: When selecting a completion by tab, overwriting of subsequent characters does not stop
-  only at the next white space but also at .,'();" characters.
+  only at the next white space but also at .,'();"= characters.
 
 
 3.4.0 (8/6/2012)
