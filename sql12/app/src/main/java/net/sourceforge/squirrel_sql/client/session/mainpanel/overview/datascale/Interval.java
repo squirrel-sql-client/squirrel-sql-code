@@ -154,4 +154,9 @@ public class Interval
    {
       return getLen() == _indexedColumn.size();
    }
+
+   public String getWidth()
+   {
+      return _indexedColumn.calculateDist(_beginData, _endData);
+   }
 }

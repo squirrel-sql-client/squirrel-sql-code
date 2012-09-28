@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,15 +17,17 @@ public class DataScale implements Comparable<DataScale>
    private String _column;
    private DataScaleListener _dataScaleListener;
    private int _columnIndex;
+   private ColumnDisplayDefinition _columnDisplayDefinition;
    private HashMap<JButton, Interval> _intervalByButton = new HashMap<JButton, Interval>();
 
-   public DataScale(String column, DataScaleListener dataScaleListener, int columnIndex)
+   public DataScale(String column, DataScaleListener dataScaleListener, int columnIndex, ColumnDisplayDefinition columnDisplayDefinition)
    {
       _column = column;
       _dataScaleListener = dataScaleListener;
 
       // Needed just to define reasonable sorting of data column in overview table
       _columnIndex = columnIndex;
+      _columnDisplayDefinition = columnDisplayDefinition;
    }
 
    public String getColumn()
@@ -143,5 +147,30 @@ public class DataScale implements Comparable<DataScale>
       }
 
       return ret;
+   }
+
+   public ArrayList<Interval> getIntervals()
+   {
+      return _intervals;
+   }
+
+   public int getColumnIx()
+   {
+      return _columnIndex;
+   }
+
+   public ColumnDisplayDefinition getColumnDisplayDefinition()
+   {
+      return _columnDisplayDefinition;
+   }
+
+   public String getIntervalWidth()
+   {
+      if(0 == _intervals.size())
+      {
+         return null;
+      }
+
+      return _intervals.get(_intervals.size()-1).getWidth(); // Take the last because the first may start with NULL and no width can be calculated from that.
    }
 }

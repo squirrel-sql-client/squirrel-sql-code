@@ -9,14 +9,21 @@ import java.util.List;
 public class ScaleFactory
 {
    /**
-    * 2^(CALL_DEPTH-1) is the maximum number of intervals that will be generated.
+    * 2^(DEFAULT_CALL_DEPTH-1) is the maximum number of intervals that will be generated.
     */
-   private static final int CALL_DEPTH = 4;
+   public static final int DEFAULT_CALL_DEPTH = 4;
    private IndexedColumn _indexedColumn;
+   private int _callDepth;
 
    public ScaleFactory(List<Object[]> rows, int colIx, ColumnDisplayDefinition colDef)
    {
+      this(rows, colIx, colDef, DEFAULT_CALL_DEPTH);
+   }
+
+   public ScaleFactory(List<Object[]> rows, int colIx, ColumnDisplayDefinition colDef, int callDepth)
+   {
       _indexedColumn = IndexedColumnFactory.create(rows, colIx, colDef);
+      _callDepth = callDepth;
    }
 
    public DataScale createScale(DataScaleListener dataScaleListener)
@@ -24,7 +31,7 @@ public class ScaleFactory
       Object min =  _indexedColumn.getMin();
       Object max =  _indexedColumn.getMax();
 
-      DataScale ret = new DataScale(_indexedColumn.getColumnName(), dataScaleListener, _indexedColumn.getColumnIndex());
+      DataScale ret = new DataScale(_indexedColumn.getColumnName(), dataScaleListener, _indexedColumn.getColumnIndex(), _indexedColumn.getColumnDisplayDefinition());
 
       if(0 == _indexedColumn.compareObjects(min, max))
       {
@@ -122,7 +129,7 @@ public class ScaleFactory
    {
        ++callDepth[0];
 
-      if(CALL_DEPTH == callDepth[0])
+      if(_callDepth == callDepth[0])
       {
          return;
       }

@@ -8,6 +8,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Overview tab: Now offers functionality to view query result data in bar charts. (Uses JFreeChart: http://www.jfree.org/jfreechart/)
+
 Overview tab: Now has a button to copy a HTML-report of an overview to clipboard
 
 Abbreviation/Auto-correction now works also if it is placed right after an opening bracket.

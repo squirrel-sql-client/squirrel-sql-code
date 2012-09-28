@@ -96,6 +96,65 @@ public class TimestampIndexedColumn extends IndexedColumn
       };
    }
 
+   @Override
+   public String calculateDist(Object beginData, Object endData)
+   {
+      if(null == beginData || null == endData)
+      {
+         return "" + 0;
+      }
+
+      Date dBeg = (Date) beginData;
+      Date dEnd = (Date) endData;
+
+
+      long diff = dEnd.getTime() - dBeg.getTime();
+
+      long diffInDays  = diff/1000/86400;
+      long diffInHours = (diff/1000 - 86400*diffInDays) / 3600;
+      long diffInMins  = (diff/1000 - 86400*diffInDays - 3600*diffInHours) / 60;
+      long diffInSecs  = (diff/1000 - 86400*diffInDays - 3600*diffInHours - 60*diffInMins);
+      long diffMillis = diff % 1000;
+
+      if(0 == diff)
+      {
+         return "" + 0;
+      }
+
+      String ret = "(";
+
+
+
+
+      if(0 < diffInDays)
+      {
+         ret += (diffInDays + " days  ");
+      }
+
+      if(0 < diffInHours)
+      {
+         ret += (diffInHours + " hours  ");
+      }
+
+      if(0 < diffInMins)
+      {
+         ret += (diffInMins + " minutes  ");
+      }
+
+      if(0 < diffInSecs)
+      {
+         ret += (diffInSecs + " seconds  ");
+      }
+
+
+      if(0 < diffMillis)
+      {
+         ret += (diffMillis + " millis ");
+      }
+
+      return ret.trim() + ")";
+   }
+
    private Object onGetMid(Object min, Object max)
    {
 

@@ -94,6 +94,17 @@ public class IntegerIndexedColumn extends IndexedColumn
       };
    }
 
+   @Override
+   public String calculateDist(Object beginData, Object endData)
+   {
+      if(null == beginData || null == endData)
+      {
+         return "" + 0;
+      }
+
+      return "" + ((Integer)endData - (Integer)beginData);
+   }
+
    private Object onGetMid(Object min, Object max)
    {
 

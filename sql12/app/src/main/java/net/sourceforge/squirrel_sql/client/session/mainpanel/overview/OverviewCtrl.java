@@ -18,28 +18,30 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OverwiewCtrl
+public class OverviewCtrl
 {
-   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(OverwiewCtrl.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(OverviewCtrl.class);
 
    private OverviewHolder _overviewHolder = new OverviewHolder();
-   private OverwiewPanel _overwiewPanel;
+   private OverviewPanel _overviewPanel;
    private IApplication _app;
    private ISession _session;
 
-   public OverwiewCtrl(final ISession session)
+   public OverviewCtrl(final ISession session)
    {
       _session = session;
       _app = session.getApplication();
-      _overwiewPanel = new OverwiewPanel(_app.getResources());
+      _overviewPanel = new OverviewPanel(_app.getResources());
 
-      _overwiewPanel.btnNext.addActionListener(new ActionListener()
+      _overviewPanel.btnNext.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
@@ -48,7 +50,7 @@ public class OverwiewCtrl
          }
       });
 
-      _overwiewPanel.btnPrev.addActionListener(new ActionListener()
+      _overviewPanel.btnPrev.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
@@ -57,7 +59,7 @@ public class OverwiewCtrl
          }
       });
 
-      _overwiewPanel.btnShowInTable.addActionListener(new ActionListener()
+      _overviewPanel.btnShowInTable.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
@@ -67,7 +69,7 @@ public class OverwiewCtrl
       });
 
 
-      _overwiewPanel.btnShowInTableWin.addActionListener(new ActionListener()
+      _overviewPanel.btnShowInTableWin.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
@@ -77,7 +79,7 @@ public class OverwiewCtrl
       });
 
 
-      _overwiewPanel.btnReport.addActionListener(new ActionListener()
+      _overviewPanel.btnReport.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
@@ -85,6 +87,48 @@ public class OverwiewCtrl
             onReport();
          }
       });
+
+      _overviewPanel.btnChart.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onChart();
+         }
+      });
+
+      _overviewPanel.cboCallDepth.setModel(new DefaultComboBoxModel(CallDepthComboModel.createModels()));
+      _overviewPanel.cboCallDepth.setSelectedItem(CallDepthComboModel.getDefaultSelected());
+
+      _overviewPanel.cboCallDepth.addItemListener(new ItemListener()
+      {
+         @Override
+         public void itemStateChanged(ItemEvent e)
+         {
+            onCallDepthSelected(e);
+         }
+      });
+
+
+   }
+
+   private void onCallDepthSelected(ItemEvent e)
+   {
+      if(ItemEvent.SELECTED == e.getStateChange())
+      {
+         CallDepthComboModel.saveSelection((CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem());
+      }
+
+   }
+
+   private void onChart()
+   {
+      int index = _overviewPanel.cboColumns.getSelectedIndex();
+      DataScale dataScale = _overviewHolder.getDataScaleTable().getDataScaleTableModel().getDataScaleAt(index);
+
+      CallDepthComboModel selItem = (CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem();
+
+      ChartHandler.doChart(dataScale, selItem.getCallDepth(), _app);
    }
 
    private void onReport()
@@ -147,7 +191,7 @@ public class OverwiewCtrl
 
    private void openWindowForTable(DataSetViewerTablePanel simpleTable)
    {
-      Window parent = SwingUtilities.windowForComponent(_overwiewPanel.btnShowInTableWin);
+      Window parent = SwingUtilities.windowForComponent(_overviewPanel.btnShowInTableWin);
 
       OverviewFrame overviewFrame = new OverviewFrame(simpleTable, _app, parent);
       _app.getMainFrame().addWidget(overviewFrame);
@@ -227,7 +271,7 @@ public class OverwiewCtrl
 
    public Component getPanel()
    {
-      return _overwiewPanel;
+      return _overviewPanel;
    }
 
    public void init(ResultSetDataSet rsds)
@@ -236,7 +280,6 @@ public class OverwiewCtrl
       {
          return;
       }
-
 
       List<Object[]> rows = rsds.getAllDataForReadOnly();
       DataSetDefinition dataSetDefinition = rsds.getDataSetDefinition();
@@ -326,12 +369,36 @@ public class OverwiewCtrl
 
    private void initGui()
    {
-      _overwiewPanel.btnPrev.setEnabled(_overviewHolder.hasParent());
-      _overwiewPanel.btnNext.setEnabled(_overviewHolder.hasKid());
+      _overviewPanel.btnPrev.setEnabled(_overviewHolder.hasParent());
+      _overviewPanel.btnNext.setEnabled(_overviewHolder.hasKid());
 
-      _overwiewPanel.btnShowInTable.setEnabled(_overviewHolder.canShowInSimpleTable());
-      _overwiewPanel.btnShowInTableWin.setEnabled(_overviewHolder.canShowInSimpleTable());
+      _overviewPanel.btnShowInTable.setEnabled(_overviewHolder.canShowInSimpleTable());
+      _overviewPanel.btnShowInTableWin.setEnabled(_overviewHolder.canShowInSimpleTable());
 
-      _overwiewPanel.scrollPane.setViewportView(_overviewHolder.getComponent());
+      _overviewPanel.scrollPane.setViewportView(_overviewHolder.getComponent());
+
+      if (_overviewHolder.isScaleTable() && 0 < _overviewHolder.getDataScaleTable().getAllRows().size())
+      {
+         _overviewPanel.cboColumns.setEnabled(true);
+
+         Object selectedItem = _overviewPanel.cboColumns.getSelectedItem();
+         DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel(ColumnComboModel.createColumnComboModels(_overviewHolder.getDataScaleTable().getColumnDisplayDefinitions()));
+         _overviewPanel.cboColumns.setModel(defaultComboBoxModel);
+         _overviewPanel.cboColumns.setSelectedItem(selectedItem);
+         if(null == _overviewPanel.cboColumns.getSelectedItem())
+         {
+            _overviewPanel.cboColumns.setSelectedIndex(0);
+         }
+
+         _overviewPanel.btnChart.setEnabled(true);
+         _overviewPanel.btnReport.setEnabled(true);
+      }
+      else
+      {
+         _overviewPanel.cboColumns.setEnabled(false);
+         _overviewPanel.btnChart.setEnabled(false);
+         _overviewPanel.btnReport.setEnabled(false);
+      }
+
    }
 }

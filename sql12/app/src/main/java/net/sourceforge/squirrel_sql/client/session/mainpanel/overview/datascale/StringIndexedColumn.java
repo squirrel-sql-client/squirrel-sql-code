@@ -86,4 +86,10 @@ public class StringIndexedColumn extends IndexedColumn
    {
       return new StringCalculator(_charRange);
    }
+
+   @Override
+   public String calculateDist(Object beginData, Object endData)
+   {
+      return null;
+   }
 }

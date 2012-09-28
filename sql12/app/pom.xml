@@ -106,6 +106,16 @@
 			<version>${fest-version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.17</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<!-- Filter in the version from the version-plugin below, into Version.properties. 

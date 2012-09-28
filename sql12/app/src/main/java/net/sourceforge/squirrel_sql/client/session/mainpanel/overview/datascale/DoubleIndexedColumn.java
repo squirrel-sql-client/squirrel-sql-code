@@ -94,6 +94,19 @@ public class DoubleIndexedColumn extends IndexedColumn
       };
    }
 
+   @Override
+   public String calculateDist(Object beginData, Object endData)
+   {
+      if(null == beginData || null == endData)
+      {
+         return "" + 0;
+      }
+
+
+      return String.format("%.3f",(((Number)endData).doubleValue() - ((Number)beginData).doubleValue()));
+
+   }
+
    private Object onGetMid(Object min, Object max)
    {
 

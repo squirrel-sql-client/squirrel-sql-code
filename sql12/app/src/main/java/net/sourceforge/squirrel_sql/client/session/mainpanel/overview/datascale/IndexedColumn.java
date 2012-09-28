@@ -123,4 +123,11 @@ public abstract class IndexedColumn
 
       return ret;
    }
+
+   public ColumnDisplayDefinition getColumnDisplayDefinition()
+   {
+      return _colDef;
+   }
+
+   public abstract String calculateDist(Object beginData, Object endData);
 }

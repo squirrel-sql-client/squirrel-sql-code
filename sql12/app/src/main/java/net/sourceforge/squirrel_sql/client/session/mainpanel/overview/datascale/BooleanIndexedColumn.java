@@ -96,6 +96,12 @@ public class BooleanIndexedColumn extends IndexedColumn
       };
    }
 
+   @Override
+   public String calculateDist(Object beginData, Object endData)
+   {
+      return null;
+   }
+
    private Object onGetMid(Object min, Object max)
    {
       return asBoolean(min) && asBoolean(max);

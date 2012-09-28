@@ -38,7 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverwiewCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
@@ -476,7 +476,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 
       final int overViewIx = _tp.getTabCount();
-      final OverwiewCtrl ctrl = new OverwiewCtrl(_session);
+      final OverviewCtrl ctrl = new OverviewCtrl(_session);
       _tp.addTab(ctrl.getTitle(), ctrl.getPanel());
 
       _tp.addChangeListener(new ChangeListener()

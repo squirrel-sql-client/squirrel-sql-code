@@ -141,7 +141,9 @@
 									<includedArtifact>com.ibm.icu:icu4j</includedArtifact>
 									<includedArtifact>org.mod4j.org.eclipse:osgi</includedArtifact>
 									<includedArtifact>xml-apis:xml-apis</includedArtifact>
-								</includedArtifacts>
+                                    <includedArtifact>org.jfree:jfreechart</includedArtifact>
+                                    <includedArtifact>org.jfree:jcommon</includedArtifact>
+                                </includedArtifacts>
 								<outputDirectory>${app-lib-output-dir}</outputDirectory>
 							</configuration>
 						</execution>
