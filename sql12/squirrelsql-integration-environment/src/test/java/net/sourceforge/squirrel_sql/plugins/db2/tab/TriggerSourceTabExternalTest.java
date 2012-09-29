@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractFormattedSourceTabExternalTest;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 
 
 public class TriggerSourceTabExternalTest extends AbstractFormattedSourceTabExternalTest
@@ -31,7 +32,7 @@ public class TriggerSourceTabExternalTest extends AbstractFormattedSourceTabExte
 	}
 		
 	protected BaseSourceTab getTabToTest() {
-		return new TriggerSourceTab("a hint", false, "");
+		return new TriggerSourceTab("a hint", "", new DB2SqlImpl("LUW"));
 	}
 	
 	protected String getAlias() {

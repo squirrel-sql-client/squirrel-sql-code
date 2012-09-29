@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBaseSourceTabExternalTest;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 
 public class ProcedureSourceTabExternalTest extends AbstractBaseSourceTabExternalTest
 {
@@ -43,7 +44,7 @@ public class ProcedureSourceTabExternalTest extends AbstractBaseSourceTabExterna
 	private class MyStatementCreator extends ProcedureSourceTab {
 		public MyStatementCreator()
 		{
-			super("",false,"");
+			super("","", new DB2SqlImpl("LUW"));
 		}
 
 		@Override

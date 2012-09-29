@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AbstractBasePreparedStatementTabExternalTest;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.AliasNames;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 
 public class TriggerDetailsTabExternalTest extends AbstractBasePreparedStatementTabExternalTest
 {
@@ -30,7 +31,7 @@ public class TriggerDetailsTabExternalTest extends AbstractBasePreparedStatement
 	}
 	
 	protected BasePreparedStatementTab getTabToTest() {
-		return new TriggerDetailsTab();
+		return new TriggerDetailsTab(new DB2SqlImpl("LUW"));
 	}
 	
 	protected String getAlias() {
