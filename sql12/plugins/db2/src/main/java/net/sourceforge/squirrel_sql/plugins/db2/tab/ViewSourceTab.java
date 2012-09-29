@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.db2.tab;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 /*
  * Copyright (C) 2007 Rob Manning
@@ -26,34 +27,21 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.For
  */
 public class ViewSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a stored procedure. */
-	private static final String SQL = 
-		"SELECT TEXT " + 
-		"FROM SYSCAT.VIEWS " + 
-		"WHERE VIEWSCHEMA = ? " + 
-		"AND VIEWNAME = ? ";
 
-	/** SQL that retrieves the source of a stored procedure on OS/400 */
-	private static final String OS_400_SQL = 
-		"select view_definition " + 
-		"from qsys2.sysviews " + 
-		"where table_schema = ? " + 
-		"and table_name = ? ";
-
-	/** boolean to indicate whether or not this session is OS/400 */
-	private boolean isOS400 = false;
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param isOS400
-	 *        whether or not we are connected to an OS/400 system
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public ViewSourceTab(String hint, String stmtSep, boolean isOS400) {
+	public ViewSourceTab(String hint, String stmtSep, DB2Sql db2Sql) {
 		super(hint);
 		super.setCompressWhitespace(true);
 		super.setupFormatter(stmtSep, null);
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
@@ -62,11 +50,6 @@ public class ViewSourceTab extends FormattedSourceTab
 	@Override
 	protected String getSqlStatement()
 	{
-		String sql = SQL;
-		if (isOS400)
-		{
-			sql = OS_400_SQL;
-		}
-		return sql;
+		return db2Sql.getViewSourceSql();
 	}
 }

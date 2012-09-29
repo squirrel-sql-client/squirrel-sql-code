@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.db2.exp;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -33,50 +34,38 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
+
 /**
- * This class handles the expanding of the "Sequence Group"
- * node. It will give a list of all the Sequences available in the schema.
- *
+ * This class handles the expanding of the "Sequence Group" node. It will give a list of all the Sequences
+ * available in the schema.
+ * 
  * @author manningr
  */
 public class SequenceParentExpander implements INodeExpander
 {
-	/** SQL used to load sequence names  */
-	private static final String SQL =
-        "select SEQNAME " +
-        "from SYSCAT.SEQUENCES " +
-        "WHERE SEQSCHEMA = ? " +
-        "AND SEQNAME like ? ";
-    
-	/** SQL used to load sequence names on OS/400 */
-	private static final String OS_400_SQL = 
-	    "select sequence_name " +
-	    "from qsys2.syssequences " +
-	    "where sequence_schema = ? " +
-	    "and sequence_name like ? ";
-	
-    /** whether or not we are connected to OS/400 */
-    private boolean isOS400 = false;	
-	
+
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
+
 	/**
 	 * Default ctor.
 	 */
-	public SequenceParentExpander(boolean isOS400)
+	public SequenceParentExpander(DB2Sql db2Sql)
 	{
 		super();
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
-	 *
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 *
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
+	 * Create the child nodes for the passed parent node and return them. Note that this method should
+	 * <B>not</B> actually add the child nodes to the parent node as this is taken care of in the caller.
+	 * 
+	 * @param session
+	 *           Current session.
+	 * @param node
+	 *           Node to be expanded.
+	 * @return A list of <TT>ObjectTreeNode</TT> objects representing the child nodes for the passed node.
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
@@ -87,36 +76,33 @@ public class SequenceParentExpander implements INodeExpander
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
-      final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
-        String sql = SQL;
-        if (isOS400) {
-            sql = OS_400_SQL;
-        }
+		String sql = db2Sql.getSequenceListSql();
 
 		final PreparedStatement pstmt = conn.prepareStatement(sql);
-        ResultSet rs = null;
+		ResultSet rs = null;
 		try
 		{
 			pstmt.setString(1, schemaName);
 			pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
 			rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-               IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
-                                    schemaName, rs.getString(1),
-                                    DatabaseObjectType.SEQUENCE, md);
+			while (rs.next())
+			{
+				IDatabaseObjectInfo si =
+					new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), DatabaseObjectType.SEQUENCE,
+						md);
 
-               if(filterMatcher.matches(si.getSimpleName()))
-               {
-                  childNodes.add(new ObjectTreeNode(session, si));
-               }
-            }
+				if (filterMatcher.matches(si.getSimpleName()))
+				{
+					childNodes.add(new ObjectTreeNode(session, si));
+				}
+			}
 		}
 		finally
 		{
-		    SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(pstmt);
+			SQLUtilities.closeResultSet(rs);
+			SQLUtilities.closeStatement(pstmt);
 		}
 		return childNodes;
 	}

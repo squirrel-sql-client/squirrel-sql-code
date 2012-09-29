@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 /**
  * This class will display the source for a DB2 table (including MQTs).
@@ -44,25 +45,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class TableSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a MQT. */
-	private static final String MQT_SQL = 
-		"SELECT text " + 
-		"FROM SYSCAT.VIEWS " + 
-		"WHERE viewschema = ? " +
-		"and viewname = ? ";
-
-	/** SQL that retrieves the source of a MQT on OS/400 */
-	private static final String OS400_MQT_SQL = 
-		"select mqt_definition " + 
-		"from qsys2.systables " + 
-		"where table_schema = ? " + 
-		"and table_name = ? ";
 
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(ViewSourceTab.class);
 
-	/** boolean to indicate whether or not this session is OS/400 */
-	private boolean isOS400 = false;
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
 
 	/**
 	 * Constructor
@@ -71,14 +59,14 @@ public class TableSourceTab extends FormattedSourceTab
 	 *        what the user sees on mouse-over tool-tip
 	 * @param stmtSep
 	 *        the string to use to separate SQL statements
-	 * @param isOS400
-	 *        whether or not we are connected to an OS/400 system
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public TableSourceTab(String hint, String stmtSep, boolean isOS400) {
+	public TableSourceTab(String hint, String stmtSep, DB2Sql db2Sql) {
 		super(hint);
 		super.setCompressWhitespace(true);
 		super.setupFormatter(stmtSep, null);
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
@@ -91,11 +79,8 @@ public class TableSourceTab extends FormattedSourceTab
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
 		ISQLConnection conn = session.getSQLConnection();
-		String sql = MQT_SQL;
-		if (isOS400)
-		{
-			sql = OS400_MQT_SQL;
-		}
+		String sql = db2Sql.getViewSourceSql();
+
 		boolean isMQT = isMQT();
 		if (!isMQT)
 		{
@@ -156,7 +141,7 @@ public class TableSourceTab extends FormattedSourceTab
 		String sql = getRegularTableSelectSql(ti);
 		if (sql == null)
 		{
-			sql = MQT_SQL;
+			sql = db2Sql.getViewSourceSql();
 		}
 		return sql;
 	}

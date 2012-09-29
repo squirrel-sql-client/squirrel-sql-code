@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.db2.exp;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -33,52 +34,38 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
+
 /**
- * This class handles the expanding of the "UDF"
- * node. It will give a list of all the User-Defined Functions in the schema that match the
- * object tree filter criteria.
- *
+ * This class handles the expanding of the "UDF" node. It will give a list of all the User-Defined Functions
+ * in the schema that match the object tree filter criteria.
+ * 
  * @author manningr
  */
 public class UDFParentExpander implements INodeExpander
 {
-	/** SQL used to load UDF names  */
-	private static final String SQL =
-	    "SELECT name " +
-	    "FROM SYSIBM.SYSFUNCTIONS " +
-	    "WHERE schema = ? " +
-	    "AND name like ? " +
-	    "AND implementation is null";
-	
-	/** SQL used to load UDF names on OS/400 systems */
-	private static final String OS_400_SQL = 
-	    "select routine_name " +
-	    "from QSYS2.SYSFUNCS " +
-	    "where routine_schema = ? " +
-	    "and routine_name like ? ";	    
-	
-	/** whether or not we are connected to OS/400 */
-	private boolean isOS400 = false;
-	
+
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
+
 	/**
 	 * Default ctor.
 	 */
-	public UDFParentExpander(boolean isOS400)
+	public UDFParentExpander(DB2Sql db2Sql)
 	{
 		super();
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
-	 * Create the child nodes for the passed parent node and return them. Note
-	 * that this method should <B>not</B> actually add the child nodes to the
-	 * parent node as this is taken care of in the caller.
-	 *
-	 * @param	session	Current session.
-	 * @param	node	Node to be expanded.
-	 *
-	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
-	 *			nodes for the passed node.
+	 * Create the child nodes for the passed parent node and return them. Note that this method should
+	 * <B>not</B> actually add the child nodes to the parent node as this is taken care of in the caller.
+	 * 
+	 * @param session
+	 *           Current session.
+	 * @param node
+	 *           Node to be expanded.
+	 * @return A list of <TT>ObjectTreeNode</TT> objects representing the child nodes for the passed node.
 	 */
 	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
@@ -89,35 +76,31 @@ public class UDFParentExpander implements INodeExpander
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
-      final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
+		final ObjFilterMatcher filterMatcher = new ObjFilterMatcher(session.getProperties());
 
+		String sql = db2Sql.getUserDefinedFunctionListSql();
 
-      String sql = SQL;
-		if (isOS400) {
-		    sql = OS_400_SQL;
-		}
 		final PreparedStatement pstmt = conn.prepareStatement(sql);
-        ResultSet rs = null;
+		ResultSet rs = null;
 		try
 		{
 			pstmt.setString(1, schemaName);
 			pstmt.setString(2, filterMatcher.getSqlLikeMatchString());
 			rs = pstmt.executeQuery();
-				while (rs.next())
+			while (rs.next())
+			{
+				IDatabaseObjectInfo si =
+					new DatabaseObjectInfo(catalogName, schemaName, rs.getString(1), DatabaseObjectType.UDF, md);
+				if (filterMatcher.matches(si.getSimpleName()))
 				{
-					IDatabaseObjectInfo si = new DatabaseObjectInfo(catalogName,
-												schemaName, rs.getString(1),
-												DatabaseObjectType.UDF, md);
-               if(filterMatcher.matches(si.getSimpleName()))
-               {
-                  childNodes.add(new ObjectTreeNode(session, si));
-               }
-            }
+					childNodes.add(new ObjectTreeNode(session, si));
+				}
+			}
 		}
 		finally
 		{
-		    SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(pstmt);
+			SQLUtilities.closeResultSet(rs);
+			SQLUtilities.closeStatement(pstmt);
 		}
 		return childNodes;
 	}

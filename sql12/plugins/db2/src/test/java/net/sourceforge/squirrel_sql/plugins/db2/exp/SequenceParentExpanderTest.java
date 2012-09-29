@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.db2.exp;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AbstractINodeExpanderTest;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +33,12 @@ public class SequenceParentExpanderTest extends AbstractINodeExpanderTest
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new SequenceParentExpander(false);
+		classUnderTest = new SequenceParentExpander(new DB2SqlImpl("LUW"));
 	}
 
 	@Test
 	public void testOS400() throws SQLException {
-		classUnderTest = new SequenceParentExpander(true);
+		classUnderTest = new SequenceParentExpander(new DB2SqlImpl("DB2 UDB for AS/400"));
 		super.testCreateChildren();
 	}
 	

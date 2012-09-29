@@ -44,6 +44,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.SchemaExpander;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.SequenceDetailsTab;
@@ -64,9 +66,6 @@ public class DB2Plugin extends DefaultSessionPlugin
 {
 
 	public static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
-
-	/** The product name that indicates we need to use os/400 queries */
-	private static final String OS_400_PRODUCT_NAME = "DB2 UDB for AS/400";
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DB2Plugin.class);
 
@@ -119,7 +118,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.04";
+		return "0.05";
 	}
 
 	/**
@@ -185,8 +184,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 		super.initialize();
 
 		// register custom DataTypeComponent factory for DB2 XML
-		CellComponentFactory.registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory(),
-			Types.OTHER,
+		CellComponentFactory.registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory(), Types.OTHER,
 			"XML");
 	}
 
@@ -213,10 +211,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 
-		if (!isPluginSession(session))
-		{
-			return null;
-		}
+		if (!isPluginSession(session)) { return null; }
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
 			public void run()
@@ -232,7 +227,8 @@ public class DB2Plugin extends DefaultSessionPlugin
 			{
 				session.setExceptionFormatter(new DB2JCCExceptionFormatter());
 			}
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
 			s_log.error("Problem installing exception formatter: " + e.getMessage());
 		}
@@ -248,82 +244,73 @@ public class DB2Plugin extends DefaultSessionPlugin
 
 	private void updateTreeApi(ISession session)
 	{
+		String databaseProductName = getDatabaseProductName(session);
+		final DB2Sql db2Sql = new DB2SqlImpl(databaseProductName);
 		String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
-		boolean isOS400 = isOS400(session);
+		
 
 		_treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE,
-																											isOS400,
-																											stmtSep));
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(	i18n.SHOW_VIEW_SOURCE,
-																								stmtSep,
-																								isOS400));
+			stmtSep, db2Sql));
+		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep,
+			db2Sql));
 
 		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(isOS400));
+		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(db2Sql));
 
 		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
 		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
 
 		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(isOS400));
+		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(db2Sql));
 
 		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, isOS400));
-		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(isOS400));
+		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, db2Sql));
+		_treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(db2Sql));
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new TableSourceTab("Show MQT Source", stmtSep, isOS400));
+		_treeAPI.addDetailTab(DatabaseObjectType.TABLE, new TableSourceTab("Show MQT Source", stmtSep, db2Sql));
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(isOS400));
+		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(db2Sql));
 
 		// Expanders - trigger and index expanders are added inside the table
 		// expander
 		TableWithChildNodesExpander tableExpander = new TableWithChildNodesExpander();
 
 		// tableExpander.setTableIndexExtractor(extractor);
-		ITableIndexExtractor indexExtractor = new DB2TableIndexExtractorImpl(isOS400);
+		ITableIndexExtractor indexExtractor = new DB2TableIndexExtractorImpl(db2Sql);
 		tableExpander.setTableIndexExtractor(indexExtractor);
 
-		ITableTriggerExtractor triggerExtractor = new DB2TableTriggerExtractorImpl(isOS400);
+		ITableTriggerExtractor triggerExtractor = new DB2TableTriggerExtractorImpl(db2Sql);
 		tableExpander.setTableTriggerExtractor(triggerExtractor);
 
 		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
 
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(	i18n.SHOW_TRIGGER_SOURCE,
-																										isOS400,
-																										stmtSep));
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab(db2Sql));
+		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE,
+			stmtSep, db2Sql));
 
 	}
 
 	/**
-	 * Determines whether or not we've connected to DB2 on OS/400.
+	 * Gets the database product name.
 	 * 
 	 * @param session
 	 * @return
 	 */
-	private boolean isOS400(ISession session)
+	private String getDatabaseProductName(ISession session)
 	{
-		boolean result = false;
+		String result = null;
 		try
 		{
-			String prodName = session.getMetaData().getDatabaseProductName();
-			if (prodName == null || prodName.equals(""))
-			{
-				s_log.info("isOS400: product name is null or empty.  " + "Assuming not an OS/400 DB2 session.");
-			} else if (prodName.equals(OS_400_PRODUCT_NAME))
-			{
-				s_log.info("isOS400: session appears to be an OS/400 DB2");
-				result = true;
-			} else
-			{
-				s_log.info("isOS400: session doesn't appear to be an OS/400 DB2");
-			}
-		} catch (SQLException e)
+			result = session.getMetaData().getDatabaseProductName();
+		}
+		catch (SQLException e)
 		{
-			s_log.error("isOS400: unable to determine the product name: " + e.getMessage(), e);
+			s_log.error(
+				"getDatabaseProductName: unable to determine the product name (assuming LUW): " + e.getMessage(),
+				e);
 		}
 		return result;
 	}

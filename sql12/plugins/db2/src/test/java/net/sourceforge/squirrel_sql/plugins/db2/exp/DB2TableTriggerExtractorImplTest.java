@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.db2.exp;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.AbstractTableTriggerExtractorTest;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2SqlImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,12 +30,12 @@ public class DB2TableTriggerExtractorImplTest extends AbstractTableTriggerExtrac
 	@Before
 	public void setUp() throws Exception
 	{
-		classUnderTest = new DB2TableTriggerExtractorImpl(false);
+		classUnderTest = new DB2TableTriggerExtractorImpl(new DB2SqlImpl("LUW"));
 	}
 
 	@Test
 	public void testOS400() {
-		classUnderTest = new DB2TableTriggerExtractorImpl(true);
+		classUnderTest = new DB2TableTriggerExtractorImpl(new DB2SqlImpl("DB2 UDB for AS/400"));
 		super.testGetTableTriggerQuery();
 	}
 }

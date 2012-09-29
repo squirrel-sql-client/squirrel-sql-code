@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.db2.tab;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,55 +19,41 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
+
 /**
- * This class provides the necessary information to the parent tab to  display the source for an DB2 trigger.
+ * This class provides the necessary information to the parent tab to display the source for an DB2 trigger.
  */
 public class TriggerSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a trigger. */
-	private final static String SQL =
-        "select TEXT from SYSCAT.TRIGGERS " +
-        "where TABSCHEMA = ? " +
-        "and TRIGNAME = ? ";
- 
-	/** SQL that retrieves the source of a trigger on DB2 on OS/400. */
-	private final static String OS2_400_SQL =
-	    "select action_statement " +
-	    "from qsys2.systriggers " +
-	    "where trigger_schema = ? " +
-	    "and trigger_name = ? ";
-	
-	/** a boolean value indicating whether or not this DB2 is on OS/400 */
-	private boolean isOS2400 = false;
+
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param hint
-	 *        what the user sees on mouse-over tool-tip
-	 * @param isOS2400
-	 *        a boolean value indicating whether or not this DB2 is on OS/400. 
-	 * @param stmtSep        
-	 *        the character that separates SQL statements
+	 *           what the user sees on mouse-over tool-tip
+	 * @param stmtSep
+	 *           the character that separates SQL statements
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public TriggerSourceTab(String hint, boolean isOS2400, String stmtSep)
+	public TriggerSourceTab(String hint, String stmtSep, DB2Sql db2Sql)
 	{
 		super(hint);
-        super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);
-        this.isOS2400 = isOS2400;
+		super.setCompressWhitespace(true);
+		super.setupFormatter(stmtSep, null);
+		this.db2Sql = db2Sql;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PSFormattedSourceTab#getSqlStatement()
 	 */
 	@Override
-   protected String getSqlStatement()
-   {
-		String sql = SQL;
-		if (isOS2400) {
-		    sql = OS2_400_SQL;
-		}
-	   return sql;
-   }
+	protected String getSqlStatement()
+	{
+		return db2Sql.getTriggerSourceSql();
+	}
 }

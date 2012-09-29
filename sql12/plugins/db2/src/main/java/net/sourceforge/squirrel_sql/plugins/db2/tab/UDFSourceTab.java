@@ -18,39 +18,16 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 /**
  * This class provides the necessary information to the parent tab to display the source for an DB2 
  * User-Defined function.
  */
 public class UDFSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a user-defined function. */
-	private static String SQL =
-	    "SELECT " +
-	    "case " +
-	    "    when body is null then 'No source available' " +
-	    "    else body " +
-	    "end " + 	    
-	    "FROM SYSIBM.SYSFUNCTIONS " +
-	    "WHERE schema = ? " +
-	    "AND name = ? " +
-	    "AND implementation is null ";
 	
-	/** SQL that retrieves the source of a user-defined function on OS/400 */
-	private static final String OS_400_SQL = 
-	    "select " +
-	    "case " +
-	    "    when body = 'SQL' and routine_definition is not null then routine_definition " +
-	    "    when body = 'SQL' and routine_definition is null then 'no source available' " +
-	    "    when body = 'EXTERNAL' and external_name is not null then external_name " +
-	    "    when body = 'EXTERNAL' and external_name is null then 'system-generated function' " +
-	    "end as definition " +
-	    "from QSYS2.SYSFUNCS " +
-	    "where routine_schema = ? " +
-	    "and routine_name = ? ";	    
-	
-	/** whether or not we are connected to OS/400 */
-	private boolean isOS400 = false;
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
 
 	/**
 	 * Constructor
@@ -59,14 +36,14 @@ public class UDFSourceTab extends FormattedSourceTab
 	 *        what the user sees on mouse-over tool-tip
 	 * @param stmtSep
 	 *        the string to use to separate SQL statements
-	 * @param isOS400
-	 *        whether or not we are connected to OS/400
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public UDFSourceTab(String hint, String stmtSep, boolean isOS400) {
+	public UDFSourceTab(String hint, String stmtSep, DB2Sql db2Sql ) {
 		super(hint);
 		super.setCompressWhitespace(true);
 		super.setupFormatter(stmtSep, null);
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
@@ -75,10 +52,6 @@ public class UDFSourceTab extends FormattedSourceTab
 	@Override
    protected String getSqlStatement()
    {
-      String sql = SQL;
-      if (isOS400) {
-          sql = OS_400_SQL;
-      }		
-      return sql;
+		return db2Sql.getUserDefinedFunctionSourceSql();
    }
 }

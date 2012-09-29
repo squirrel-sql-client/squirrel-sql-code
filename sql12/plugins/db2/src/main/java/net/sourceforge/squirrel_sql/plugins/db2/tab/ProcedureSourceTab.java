@@ -19,8 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.db2.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 /**
  * This class provides the necessary information to the parent tab to display the source for an DB2 stored 
@@ -28,58 +27,28 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class ProcedureSourceTab extends FormattedSourceTab
 {
-	private static interface i18n
-	{
-		StringManager s_stringMgr = StringManagerFactory.getStringManager(ProcedureSourceTab.class);
-
-		// i18n[ProcedureSourceTab.cLanguageProcMsg=This is a C-language routine. The
-		// source code is unavailable.]
-		String C_LANGUAGE_PROC_MSG = s_stringMgr.getString("ProcedureSourceTab.cLanguageProcMsg");
-	}
-
-	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
-		 "select " +
-		 "    case " +
-		 "        when language = 'C' then '" +i18n.C_LANGUAGE_PROC_MSG+"' " +
-		 "        else text " +
-		 "    end as text " +
-		 "from SYSCAT.PROCEDURES " +
-		 "where PROCSCHEMA = ? " +
-		 "and PROCNAME = ? ";
-	    
-	 /** SQL that retrieves the source of a stored procedure on OS/400 */ 
-	private static String OS_400_SQL =
-		 "select routine_definition from qsys2.sysroutines " +
-		 "where routine_schema = ? " +
-		 "and routine_name = ? ";
 	
-	/** boolean to indicate whether or not this session is OS/400 */
-	private boolean isOS400 = false;
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param hint
 	 *        what the user sees on mouse-over tool-tip
-	 * @param isOS400
-	 *        whether or not the session is OS/400
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public ProcedureSourceTab(String hint, boolean isOS400, String stmtSep) {
+	public ProcedureSourceTab(String hint, String stmtSep, DB2Sql db2Sql) {
 		super(hint);
 		super.setCompressWhitespace(false);
 		super.setupFormatter(stmtSep, null);
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	@Override
 	protected String getSqlStatement()
 	{
-		String sql = SQL;
-		if (isOS400)
-		{
-			sql = OS_400_SQL;
-		}
-		return sql;
+		return db2Sql.getProcedureSourceSql();
 	}
 }

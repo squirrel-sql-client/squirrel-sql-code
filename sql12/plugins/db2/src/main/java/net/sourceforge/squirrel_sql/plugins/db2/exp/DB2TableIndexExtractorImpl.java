@@ -25,68 +25,54 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 /**
  * Provides the query and parameter binding behavior for DB2's index catalog.
- *  
+ * 
  * @author manningr
  */
-public class DB2TableIndexExtractorImpl implements ITableIndexExtractor {
+public class DB2TableIndexExtractorImpl implements ITableIndexExtractor
+{
 
-    /** Logger for this class */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(DB2TableIndexExtractorImpl.class);
-                
-    /** The query that finds the indexes for a given table */
-    private static final String query = 
-        "select INDNAME from SYSCAT.INDEXES " +
-        "where TABSCHEMA = ? " +
-        "and TABNAME = ? ";
-    
-    /** The query that finds the indexes for a given table on OS/400 */
-    private static final String OS_400_SQL = 
-        "select " +
-        "index_name " +
-        "from qsys2.sysindexes " +
-        "where table_schema = ? " +
-        "and table_name = ? ";        
-    
-    /** boolean to indicate whether or not this session is OS/400 */
-    private boolean isOS400 = false;        
-    
-    /**
-     * Ctor.
-     * 
-     * @param isOS400 whether or not the session is OS/400
-     */
-    public DB2TableIndexExtractorImpl(boolean isOS400) {
-        this.isOS400 = isOS400;
-    }
-    
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
-     */
-    public void bindParamters(PreparedStatement pstmt, IDatabaseObjectInfo dbo)
-        throws SQLException 
-    {
-        if (s_log.isDebugEnabled()) {
-            s_log.debug("Binding schema name "+dbo.getSchemaName()+
-                        " as first bind value");
-            s_log.debug("Binding table name "+dbo.getSimpleName()+
-                        " as second bind value");            
-        }                        
-        pstmt.setString(1, dbo.getSchemaName());
-        pstmt.setString(2, dbo.getSimpleName());
-    }
+	/** Logger for this class */
+	private final static ILogger s_log = LoggerController.createLogger(DB2TableIndexExtractorImpl.class);
 
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#getTableIndexQuery()
-     */
-    public String getTableIndexQuery() {
-        if (isOS400) {
-            return OS_400_SQL;
-        }
-        return query;
-    }
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
+
+	/**
+	 * Ctor.
+	 * 
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
+	 */
+	public DB2TableIndexExtractorImpl(DB2Sql db2Sql)
+	{
+		this.db2Sql = db2Sql;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#bindParamters(java.sql.PreparedStatement,
+	 *      net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 */
+	public void bindParamters(PreparedStatement pstmt, IDatabaseObjectInfo dbo) throws SQLException
+	{
+		if (s_log.isDebugEnabled())
+		{
+			s_log.debug("Binding schema name " + dbo.getSchemaName() + " as first bind value");
+			s_log.debug("Binding table name " + dbo.getSimpleName() + " as second bind value");
+		}
+		pstmt.setString(1, dbo.getSchemaName());
+		pstmt.setString(2, dbo.getSimpleName());
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#getTableIndexQuery()
+	 */
+	public String getTableIndexQuery()
+	{
+		return db2Sql.getTableIndexListSql();
+	}
 
 }

@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.plugins.db2.sql.DB2Sql;
 
 /**
  * This class is an expander for the schema nodes. It will add Sequence and UDF Object 
@@ -37,16 +38,19 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 public class SchemaExpander implements INodeExpander
 {
 
-    /** whether or not we are connected to OS/400 */
-    private boolean isOS400 = false;
+	/** Object that contains methods for retrieving SQL that works for each DB2 platform */
+	private final DB2Sql db2Sql;
     
 	/**
 	 * Ctor.
+	 * 
+	 * @param db2Sql
+	 *           Object that contains methods for retrieving SQL that works for each DB2 platform
 	 */
-	public SchemaExpander(boolean isOS400)
+	public SchemaExpander(DB2Sql db2Sql)
 	{
 		super();
-		this.isOS400 = isOS400;
+		this.db2Sql = db2Sql;
 	}
 
 	/**
@@ -75,7 +79,7 @@ public class SchemaExpander implements INodeExpander
                                    DatabaseObjectType.SEQUENCE_TYPE_DBO, 
                                    md);
         ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
-        node.addExpander(new SequenceParentExpander(isOS400));
+        node.addExpander(new SequenceParentExpander(db2Sql));
         childNodes.add(node);
 
         IDatabaseObjectInfo udfInfo = 
@@ -85,7 +89,7 @@ public class SchemaExpander implements INodeExpander
                                    DatabaseObjectType.UDF_TYPE_DBO, 
                                    md);
         ObjectTreeNode udfnode = new ObjectTreeNode(session, udfInfo);
-        udfnode.addExpander(new UDFParentExpander(isOS400));
+        udfnode.addExpander(new UDFParentExpander(db2Sql));
         childNodes.add(udfnode);
         
         
