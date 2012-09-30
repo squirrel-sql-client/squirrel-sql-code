@@ -26,9 +26,17 @@ public class UserGrantsTabExternalTest extends AbstractBaseObjectTabExternalTest
 {
 	
 	protected String getSimpleName() {
-		return "dbcopydest";
+		return "root";
 	}
 	
+	@Override
+	protected String getSchemaName()
+	{
+		return null;
+	}
+
+
+
 	protected BaseObjectTab getTabToTest() {
 		return new UserGrantsTab();
 	}

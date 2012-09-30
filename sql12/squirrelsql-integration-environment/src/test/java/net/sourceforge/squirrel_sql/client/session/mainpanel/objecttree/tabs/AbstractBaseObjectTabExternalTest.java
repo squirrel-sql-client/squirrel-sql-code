@@ -56,7 +56,11 @@ public abstract class AbstractBaseObjectTabExternalTest
 			dboi = Mockito.mock(IDatabaseObjectInfo.class);
 			Mockito.when(dboi.getSchemaName()).thenReturn(getSchemaName());
 			Mockito.when(dboi.getSimpleName()).thenReturn(getSimpleName());
-			Mockito.when(dboi.getQualifiedName()).thenReturn(getSchemaName() + "." + getSimpleName());
+			if (getSchemaName() != null) {
+				Mockito.when(dboi.getQualifiedName()).thenReturn(getSchemaName() + "." + getSimpleName());
+			} else {
+				Mockito.when(dboi.getQualifiedName()).thenReturn(getSimpleName());
+			}
 		}
 		con = session.getSQLConnection().getConnection();
 		classUnderTest.setSession(session);
