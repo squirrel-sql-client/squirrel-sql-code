@@ -51,6 +51,6 @@ public class TableStatusTab extends BaseSQLTab
 	protected String getSQL()
 	{
 		final String db = getDatabaseObjectInfo().getQualifiedName();
-		return "show table status from " + db;
+		return "show table status in " + db;
 	}
 }
