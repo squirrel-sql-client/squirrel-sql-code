@@ -29,6 +29,12 @@ public class TableStatusTabExternalTest extends AbstractBaseObjectTabExternalTes
 		return "dbcopydest";
 	}
 	
+	@Override
+	protected String getSchemaName()
+	{
+		return null;
+	}
+
 	protected BaseObjectTab getTabToTest() {
 		return new TableStatusTab();
 	}
