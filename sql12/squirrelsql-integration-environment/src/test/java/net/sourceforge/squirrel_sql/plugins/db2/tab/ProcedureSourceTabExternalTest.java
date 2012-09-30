@@ -38,7 +38,7 @@ public class ProcedureSourceTabExternalTest extends AbstractBaseSourceTabExterna
 	}
 	
 	protected String getAlias() {
-		return AliasNames.DERBY_DEST_ALIAS_NAME;
+		return AliasNames.DB2_DEST_ALIAS_NAME;
 	}
 
 	private class MyStatementCreator extends ProcedureSourceTab {
