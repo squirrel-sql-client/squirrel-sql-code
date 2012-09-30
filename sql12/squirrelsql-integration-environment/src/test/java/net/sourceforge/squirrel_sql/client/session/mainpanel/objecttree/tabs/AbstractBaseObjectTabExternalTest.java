@@ -21,10 +21,15 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 
+import junit.framework.Assert;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.cli.SessionUtil;
 
+import org.jfree.util.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,6 +41,7 @@ public abstract class AbstractBaseObjectTabExternalTest
 	protected SessionUtil sessionUtil = new SessionUtil();
 	protected IDatabaseObjectInfo dboi = null;
 	protected Connection con = null;
+	private final static ILogger s_log = LoggerController.createLogger(AbstractBaseObjectTabExternalTest.class);
 	
 	protected abstract String getSimpleName();
 	
@@ -73,7 +79,14 @@ public abstract class AbstractBaseObjectTabExternalTest
 		Method m = classUnderTest.getClass().getDeclaredMethod("getSQL", (Class<?>[])null);
 		m.setAccessible(true);
 		Object result = m.invoke(classUnderTest, (Object[])null);
-		con.createStatement().executeQuery((String)result);
+		s_log.info("Executing SQL: "+result);
+		try {
+			con.createStatement().executeQuery((String)result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("Exception encountered while attempting to run SQL:\n ("+result+"):\n "+e.getMessage());
+			
+		}
 	}
 	
 	
