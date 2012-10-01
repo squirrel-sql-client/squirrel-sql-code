@@ -68,8 +68,8 @@ public class DB2SqlImpl implements DB2Sql
 				"else 'no source available' " +
 				"end as definition " +
 				"from SYSIBM.SYSROUTINES " +
-				"where routine_schema = ? " +
-				"and routine_name = ? " +
+				"where schema = ? " +
+				"and name = ? " +
 				"and ROUTINETYPE = 'F' ";			
 		}
 		
@@ -441,10 +441,11 @@ public class DB2SqlImpl implements DB2Sql
 			break;
 		case ZOS:
 			result = 
-			    "select routine_name " +
-			    "from SYSIBM.SYSROUTINES " +
-			    "where routine_schema = ? " +
-			    "and routine_name like ? ";	
+				"SELECT * " +
+				"FROM SYSIBM.SYSROUTINES " +
+				"WHERE ROUTINETYPE = 'F' " +
+				"AND SCHEMA = ? " +
+				"AND NAME like ? ";
 			result = "";
 			break;
 		}
