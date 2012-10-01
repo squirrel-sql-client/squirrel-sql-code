@@ -32,6 +32,8 @@ dandar3 for the tip.
 
 Bug fixes:
 
+Fixed repaint problem in Hibernate Plugin.
+
 Code completion: When selecting a completion by tab, overwriting of subsequent characters does not stop
   only at the next white space but also at .,'();"= characters.
 

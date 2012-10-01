@@ -57,6 +57,10 @@ public class ResultsController
          PersistentCollectionType persistentCollectionType = (PersistentCollectionType) type;
          new SingleResultController(persistentCollectionType.getSingleType(), _pnlResults, _session);
       }
+      _pnlResults.validate();
+      _pnlResults.repaint();
+
+
    }
 
    public void clear()
@@ -66,6 +70,7 @@ public class ResultsController
 
       _lblClear.scrollRectToVisible(new Rectangle(0,0,1,1));
 
+      _pnlResults.validate();
       _pnlResults.repaint();
 
    }
