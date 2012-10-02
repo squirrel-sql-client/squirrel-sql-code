@@ -441,7 +441,7 @@ public class DB2SqlImpl implements DB2Sql
 			break;
 		case ZOS:
 			result = 
-				"SELECT * " +
+				"SELECT NAME " +
 				"FROM SYSIBM.SYSROUTINES " +
 				"WHERE ROUTINETYPE = 'F' " +
 				"AND SCHEMA = ? " +
@@ -476,10 +476,10 @@ public class DB2SqlImpl implements DB2Sql
 			break;
 		case ZOS:
 			result = 
-	        "select SEQNAME " +
+	        "select NAME " +
            "from sysibm.SYSSEQUENCES " +
-           "WHERE SEQSCHEMA = ? " +
-           "AND SEQNAME like ? ";
+           "WHERE SCHEMA = ? " +
+           "AND NAME like ? ";
 			break;
 		}
 		
