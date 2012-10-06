@@ -84,6 +84,15 @@ public class SquirrelResources extends Resources
 
       String SMALL_FILE = "smallFile";
       String SMALL_FILE_CHANGED = "smallFileChanged";
+
+      String TAB_DETACH = "tabDetach";
+      String TAB_DETACH_SMALL = "tabDetachSmall";
+
+      String AGG_COUNT = "aggCount";
+      String AGG_SUM = "aggSum";
+      String AGG_XY = "aggXy";
+      String AGG_MIN = "aggMin";
+      String AGG_MAX = "aggMax";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

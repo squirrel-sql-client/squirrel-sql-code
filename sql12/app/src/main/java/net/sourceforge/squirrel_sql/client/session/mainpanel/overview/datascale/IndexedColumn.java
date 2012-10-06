@@ -50,6 +50,12 @@ public abstract class IndexedColumn
       return _rows.get(rowIx)[_colIx];
    }
 
+   public int getRowIx(int ix)
+   {
+      return _ix.get(ix);
+   }
+
+
 
    public int binarySearch(Object border)
    {
@@ -92,6 +98,20 @@ public abstract class IndexedColumn
 
       return ret;
    }
+
+   public int getFirstIndexOfVal(int startIx)
+   {
+      for (int i = startIx - 1; 0 <= i ; i--)
+      {
+         if(0 != _comparator.compare(new NoIx(get(startIx)), new NoIx(get(i))) )
+         {
+            return i;
+         }
+      }
+
+      return 0;
+   }
+
 
    public int compareObjects(Object o1, Object o2)
    {

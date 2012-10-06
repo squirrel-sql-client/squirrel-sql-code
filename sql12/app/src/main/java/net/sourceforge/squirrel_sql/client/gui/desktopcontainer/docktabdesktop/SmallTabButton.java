@@ -7,17 +7,32 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 
 
-public class SmallTabButton extends JButton
+public class SmallTabButton<T> extends JButton
 {
    private Icon _icon;
+   private T _userObject;
 
-   public SmallTabButton(String toolTipText, Icon icon)
+
+   public SmallTabButton(String toolTipText, ImageIcon icon)
+   {
+      this(toolTipText, icon, null);
+   }
+
+   public SmallTabButton(String toolTipText, ImageIcon icon, T userObject)
    {
       _icon = icon;
-      int size = 17;
+      _userObject = userObject;
+      int size;
+      if (null == icon)
+      {
+         size = 17;
+      }
+      else
+      {
+         size = Math.max(_icon.getIconWidth(), _icon.getIconHeight()) + 5;
+      }
       setPreferredSize(new Dimension(size, size));
       setToolTipText(toolTipText);
 
@@ -108,6 +123,20 @@ public class SmallTabButton extends JButton
    }
 
 
+   @Override
+   public void setIcon(Icon icon)
+   {
+      _icon = icon;
+      repaint();
+   }
 
+   public T getUserObject()
+   {
+      return _userObject;
+   }
 
+   public void setUserObject(T userObject)
+   {
+      _userObject = userObject;
+   }
 }

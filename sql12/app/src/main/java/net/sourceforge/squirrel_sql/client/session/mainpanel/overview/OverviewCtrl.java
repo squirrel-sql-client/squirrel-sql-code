@@ -18,13 +18,12 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class OverviewCtrl
 {
@@ -34,12 +33,17 @@ public class OverviewCtrl
    private OverviewPanel _overviewPanel;
    private IApplication _app;
    private ISession _session;
+   private static final String PREF_KEY_CHART_PANEL_SPLIT = "Squirrel.overview.chartPanel.splitloc";
+   private ChartConfigController _chartConfigController;
 
    public OverviewCtrl(final ISession session)
    {
       _session = session;
       _app = session.getApplication();
-      _overviewPanel = new OverviewPanel(_app.getResources());
+
+      _chartConfigController = new ChartConfigController(_app);
+
+      _overviewPanel = new OverviewPanel(_app.getResources(), _chartConfigController.getPanel());
 
       _overviewPanel.btnNext.addActionListener(new ActionListener()
       {
@@ -88,47 +92,32 @@ public class OverviewCtrl
          }
       });
 
-      _overviewPanel.btnChart.addActionListener(new ActionListener()
+
+      _overviewPanel.btnCreateBarChart.addActionListener(new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onChart();
+            onCreateBarChart();
          }
       });
-
-      _overviewPanel.cboCallDepth.setModel(new DefaultComboBoxModel(CallDepthComboModel.createModels()));
-      _overviewPanel.cboCallDepth.setSelectedItem(CallDepthComboModel.getDefaultSelected());
-
-      _overviewPanel.cboCallDepth.addItemListener(new ItemListener()
-      {
-         @Override
-         public void itemStateChanged(ItemEvent e)
-         {
-            onCallDepthSelected(e);
-         }
-      });
-
 
    }
 
-   private void onCallDepthSelected(ItemEvent e)
+   private void onCreateBarChart()
    {
-      if(ItemEvent.SELECTED == e.getStateChange())
+      if(_overviewPanel.btnCreateBarChart.isSelected())
       {
-         CallDepthComboModel.saveSelection((CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem());
+         _overviewPanel.split.setDividerSize(_overviewPanel.standardDividerSize);
+         _overviewPanel.split.setDividerLocation(Preferences.userRoot().getInt(PREF_KEY_CHART_PANEL_SPLIT, 400));
       }
+      else
+      {
+         Preferences.userRoot().putInt(PREF_KEY_CHART_PANEL_SPLIT, _overviewPanel.split.getDividerLocation());
 
-   }
-
-   private void onChart()
-   {
-      int index = _overviewPanel.cboColumns.getSelectedIndex();
-      DataScale dataScale = _overviewHolder.getDataScaleTable().getDataScaleTableModel().getDataScaleAt(index);
-
-      CallDepthComboModel selItem = (CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem();
-
-      ChartHandler.doChart(dataScale, selItem.getCallDepth(), _app);
+         _overviewPanel.split.setDividerSize(0);
+         _overviewPanel.split.setDividerLocation(Integer.MAX_VALUE);
+      }
    }
 
    private void onReport()
@@ -377,28 +366,23 @@ public class OverviewCtrl
 
       _overviewPanel.scrollPane.setViewportView(_overviewHolder.getComponent());
 
+
+
       if (_overviewHolder.isScaleTable() && 0 < _overviewHolder.getDataScaleTable().getAllRows().size())
       {
-         _overviewPanel.cboColumns.setEnabled(true);
-
-         Object selectedItem = _overviewPanel.cboColumns.getSelectedItem();
-         DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel(ColumnComboModel.createColumnComboModels(_overviewHolder.getDataScaleTable().getColumnDisplayDefinitions()));
-         _overviewPanel.cboColumns.setModel(defaultComboBoxModel);
-         _overviewPanel.cboColumns.setSelectedItem(selectedItem);
-         if(null == _overviewPanel.cboColumns.getSelectedItem())
-         {
-            _overviewPanel.cboColumns.setSelectedIndex(0);
-         }
-
-         _overviewPanel.btnChart.setEnabled(true);
          _overviewPanel.btnReport.setEnabled(true);
+         _chartConfigController.setDataScaleTable(_overviewHolder.getDataScaleTable());
+         _overviewPanel.btnCreateBarChart.setEnabled(true);
+
       }
       else
       {
-         _overviewPanel.cboColumns.setEnabled(false);
-         _overviewPanel.btnChart.setEnabled(false);
          _overviewPanel.btnReport.setEnabled(false);
+         if (_overviewPanel.btnCreateBarChart.isSelected())
+         {
+            _overviewPanel.btnCreateBarChart.doClick();
+         }
+         _overviewPanel.btnCreateBarChart.setEnabled(false);
       }
-
    }
 }

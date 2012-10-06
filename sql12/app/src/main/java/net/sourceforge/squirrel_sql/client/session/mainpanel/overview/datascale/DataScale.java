@@ -173,4 +173,9 @@ public class DataScale implements Comparable<DataScale>
 
       return _intervals.get(_intervals.size()-1).getWidth(); // Take the last because the first may start with NULL and no width can be calculated from that.
    }
+
+   public IndexedColumn getIndexedColumn()
+   {
+      return _intervals.get(0).getIndexedColumn();
+   }
 }

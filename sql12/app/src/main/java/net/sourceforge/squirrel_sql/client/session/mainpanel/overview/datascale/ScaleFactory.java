@@ -48,6 +48,7 @@ public class ScaleFactory
       Integer lastIx = null;
 
       Object lastBorder = min;
+
       for (Object border : borders)
       {
          int bsRet = _indexedColumn.binarySearch(border);
@@ -56,25 +57,57 @@ public class ScaleFactory
 
          if( 0 > bsRet)
          {
-            ip = (- bsRet - 1) - 1;
+            ip = (- bsRet - 1);
          }
          else
          {
-            ip = _indexedColumn.getLastIndexOfVal(bsRet);
+            //ip = _indexedColumn.getFirstIndexOfVal(bsRet);
+            ip = _indexedColumn.getLastIndexOfVal(bsRet)+1;
          }
 
          if(null == lastIx)
          {
-            ret.addInterval(new Interval(_indexedColumn, 0, ip, lastBorder, border));
-            lastBorder = border;
-            lastIx = ip + 1;
+            //ret.addInterval(new Interval(_indexedColumn, 0, Math.max(0, ip-1), lastBorder, border));
+
+//            int firstIx = 0;
+//            int endIx = Math.max(0, ip - 1);
+//            if (1 == endIx - firstIx)
+//            {
+//               ret.addInterval(new Interval(_indexedColumn, firstIx, firstIx, _indexedColumn.get(firstIx), _indexedColumn.get(firstIx)));
+//               ret.addInterval(new Interval(_indexedColumn, endIx, endIx, _indexedColumn.get(endIx), _indexedColumn.get(endIx)));
+//            }
+//            else
+//            {
+//               ret.addInterval(new Interval(_indexedColumn, 0, Math.max(0, ip-1), lastBorder, border));
+//            }
+
+            int firstIx = 0;
+            int endIx = Math.max(0, ip - 1);
+            if (1 == createBorders(_indexedColumn.get(firstIx), _indexedColumn.get(endIx)).size())
+            {
+               // This makes sure that the first interval can always drilled down to one single value.
+               // Without this it might happen that the first interval contains two different values and cannot be further drilled down.
+               int lastIndexOfVal = _indexedColumn.getLastIndexOfVal(firstIx);
+               ret.addInterval(new Interval(_indexedColumn, firstIx, lastIndexOfVal, _indexedColumn.get(firstIx), _indexedColumn.get(firstIx)));
+               if (lastIndexOfVal+1 <= endIx)
+               {
+                  ret.addInterval(new Interval(_indexedColumn, lastIndexOfVal+1, endIx, _indexedColumn.get(endIx), _indexedColumn.get(endIx)));
+               }
+            }
+            else
+            {
+               ret.addInterval(new Interval(_indexedColumn, 0, Math.max(0, ip-1), lastBorder, border));
+            }
+
+
+            lastIx = ip;
          }
          else if(ip > lastIx)
          {
-            ret.addInterval(new Interval(_indexedColumn, lastIx, ip, lastBorder, border));
-            lastBorder = border;
-            lastIx = ip + 1;
+            ret.addInterval(new Interval(_indexedColumn, lastIx, Math.max(0, ip-1), lastBorder, border));
+            lastIx = ip;
          }
+         lastBorder = border;
       }
 
       if (_indexedColumn.size() > lastIx)
@@ -115,12 +148,15 @@ public class ScaleFactory
 
       divide(min, max, ret, callDepth);
 
-      if(0 == ret.size())
-      {
-         // There was no value that fits between min and max.
-         // Now calling methods expect us to return min as a border.
-         ret.add(min);
-      }
+//      if(0 == ret.size())
+//      {
+//         // There was no value that fits between min and max.
+//         // Now calling methods expect us to return min as a border.
+//         ret.add(min);
+//      }
+
+      //ret.add(min);
+      ret.add(max);
 
       return ret;
    }

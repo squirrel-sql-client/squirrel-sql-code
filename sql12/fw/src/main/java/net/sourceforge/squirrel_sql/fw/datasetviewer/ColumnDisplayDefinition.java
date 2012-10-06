@@ -113,6 +113,7 @@ public class ColumnDisplayDefinition
    private DialectType _dialectType;
    private String _userProperty;
    private Integer _absoluteWidth;
+   private String _tableName;
 
    /**
     * Ctor.  The dialect type is set to GENERIC, so no plugin-overriding is 
@@ -225,11 +226,13 @@ public class ColumnDisplayDefinition
 		    String columnLabel = md.getColumnLabel(idx);
 		    String columnName = md.getColumnName(idx);
 		    int displayWidth = columnLabel.length();
-		    
-		    // Sometimes, the table name is null. eg if the select statement contains a union clause.
-		    String fullTableColumnName = 
+
+         _tableName = md.getTableName(idx);
+
+         // Sometimes, the table name is null. eg if the select statement contains a union clause.
+         String fullTableColumnName =
 		        new StringBuilder()
-		    			.append(md.getTableName(idx))
+		    			.append(_tableName)
 		                .append(":")
 		                .append(columnName)
 		                .toString();
@@ -529,5 +532,10 @@ public class ColumnDisplayDefinition
    public Integer getAbsoluteWidth()
    {
       return _absoluteWidth;
+   }
+
+   public String getTableName()
+   {
+      return _tableName;
    }
 }

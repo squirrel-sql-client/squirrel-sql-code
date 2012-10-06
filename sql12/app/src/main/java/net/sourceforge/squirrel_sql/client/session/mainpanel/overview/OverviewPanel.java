@@ -7,6 +7,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class OverviewPanel extends JPanel
 {
@@ -22,24 +25,32 @@ public class OverviewPanel extends JPanel
    JButton btnShowInTable;
 
    JButton btnReport;
-   JComboBox cboColumns;
-   JButton btnChart;
 
-   JComboBox cboCallDepth;
+   JSplitPane split;
+   JToggleButton btnCreateBarChart;
+   int standardDividerSize;
 
 
-   public OverviewPanel(SquirrelResources rsrc)
+   public OverviewPanel(SquirrelResources rsrc, JScrollPane pnlChartConfig)
    {
       setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
-      createButtonPanel(rsrc);
       add(createButtonPanel(rsrc), gbc);
 
+
+
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
-      add(scrollPane, gbc);
+      split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+      add(split, gbc);
+      split.setLeftComponent(scrollPane);
+      split.setRightComponent(pnlChartConfig);
+      standardDividerSize = split.getDividerSize();
+
+      split.setDividerSize(0);
+      split.setDividerLocation(Integer.MAX_VALUE);
    }
 
    private JPanel createButtonPanel(SquirrelResources rsrc)
@@ -81,37 +92,9 @@ public class OverviewPanel extends JPanel
       ret.add(new JPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,15,0,0),0,0);
-      ret.add(createChartPanel(), gbc);
-
-      return ret;
-   }
-
-   private JPanel createChartPanel()
-   {
-      JPanel ret = new JPanel(new GridBagLayout());
-
-      GridBagConstraints gbc;
-
-      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      ret.add(new JLabel(s_stringMgr.getString("OverviewPanel.showChartBegin")), gbc);
-
-      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      cboColumns = new JComboBox();
-      ret.add(cboColumns, gbc);
-
-      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,10),0,0);
-      btnChart = new JButton(s_stringMgr.getString("OverviewPanel.showChartEndButton"));
-      ret.add(btnChart, gbc);
-
-
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      ret.add(new JLabel(s_stringMgr.getString("OverviewPanel.maxBarCount")), gbc);
-
-      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,0,0,5),0,0);
-      cboCallDepth = new JComboBox();
-      ret.add(cboCallDepth, gbc);
-
+      gbc = new GridBagConstraints(6,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,15,0,0),0,0);
+      btnCreateBarChart = new JToggleButton(s_stringMgr.getString("OverwiewPanel.createBarChart"));
+      ret.add(btnCreateBarChart, gbc);
 
       return ret;
    }

@@ -6,38 +6,41 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.Interval;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.ScaleFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jfree.chart.*;
 import org.jfree.chart.block.*;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.text.TextBlockAnchor;
 import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleEdge;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ChartHandler
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ChartHandler.class);
+
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale dataScale, int callDepth, IApplication app)
+   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, int callDepth, IApplication app, ChartConfigMode mode)
    {
       try
       {
          ArrayList<Object[]> rows = new ArrayList<Object[]>();
 
-         for (Interval interval : dataScale.getIntervals())
+         for (Interval xAxisInterval : xAxisDataScale.getIntervals())
          {
-            rows.addAll(interval.getResultRows());
+            rows.addAll(xAxisInterval.getResultRows());
          }
 
 
-         ScaleFactory scaleFactory = new ScaleFactory(rows, dataScale.getColumnIx(), dataScale.getColumnDisplayDefinition(), callDepth);
+         ScaleFactory scaleFactory = new ScaleFactory(rows, xAxisDataScale.getColumnIx(), xAxisDataScale.getColumnDisplayDefinition(), callDepth);
 
          DataScaleListener dumDataScaleListener = new DataScaleListener()
          {
@@ -62,19 +65,19 @@ public class ChartHandler
 
          DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
 
-         String category = dataScale.getColumnDisplayDefinition().getColumnName();
+         String category = xAxisDataScale.getColumnDisplayDefinition().getColumnName();
 
          for (Interval interval : newScale.getIntervals())
          {
-            categoryDataset.addValue(interval.getLen(), interval.getLabel(), category);
+            categoryDataset.addValue(calculateValue(interval, mode, yAxisDataScale), interval.getLabel(), category);
          }
 
-         String title = "Chart for column: " + dataScale.getColumnDisplayDefinition().getColumnName();
+         String title = "Chart for column: " + xAxisDataScale.getColumnDisplayDefinition().getColumnName();
 
          JFreeChart chart = ChartFactory.createBarChart(
                title,   // chart title
                category,               // domain axis label
-               "Count",               // range axis label
+               mode.getYAxisLabel(yAxisDataScale),  // range axis label
                categoryDataset,                  // data
                PlotOrientation.VERTICAL,
                false,                     // include legend
@@ -124,6 +127,58 @@ public class ChartHandler
          throw new RuntimeException(e);
       }
 
+   }
+
+   private static double calculateValue(Interval interval, ChartConfigMode mode, DataScale yAxisDataScale)
+   {
+      switch(mode)
+      {
+         case COUNT:
+            return interval.getLen();
+         case SUM:
+
+            double retSum = 0;
+            for (int i = 0; i < interval.getLen(); i++)
+            {
+               Object o = interval.get(i);
+               if (null != o)
+               {
+                  retSum += ((Number) o).doubleValue();
+               }
+            }
+            return retSum;
+         case XY_COUNT_DISTINCT:
+            HashSet distinctSet = new HashSet();
+
+            for (int i = 0; i < interval.getLen(); i++)
+            {
+               int dataSetRowIndex = interval.getDataSetRowIndex(i);
+               Object obj = yAxisDataScale.getIndexedColumn().getRow(dataSetRowIndex);
+               distinctSet.add(obj);
+            }
+
+            return distinctSet.size();
+         case XY_SUM_COL:
+            double retXYSumCol = 0;
+
+            for (int i = 0; i < interval.getLen(); i++)
+            {
+               int dataSetRowIndex = interval.getDataSetRowIndex(i);
+               Object obj = yAxisDataScale.getIndexedColumn().getRow(dataSetRowIndex);
+               if (null != obj)
+               {
+                  retXYSumCol += ((Number) obj).doubleValue();
+               }
+            }
+
+            return retXYSumCol;
+
+         default:
+            throw new IllegalStateException("Dont know how to handle mode: " + mode);
+
+
+
+      }
    }
 
    private static String createLabel(DataScale dataScale, ArrayList<Object[]> rows)

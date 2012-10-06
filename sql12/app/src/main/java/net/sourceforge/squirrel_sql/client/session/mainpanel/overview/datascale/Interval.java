@@ -159,4 +159,19 @@ public class Interval
    {
       return _indexedColumn.calculateDist(_beginData, _endData);
    }
+
+   public Object get(int i)
+   {
+      return _indexedColumn.get(_firstIx + i);
+   }
+
+   public int getDataSetRowIndex(int intervalIx)
+   {
+      return _indexedColumn.getRowIx(_firstIx + intervalIx);
+   }
+
+   public IndexedColumn getIndexedColumn()
+   {
+      return _indexedColumn;
+   }
 }
