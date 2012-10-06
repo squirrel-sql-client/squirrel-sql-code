@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.MultipleWindowsHandler;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -13,18 +16,16 @@ public class ButtonTabComponent extends JPanel
          StringManagerFactory.getStringManager(ButtonTabComponent.class);
 
 
-   private final JTabbedPane _tabbedPane;
    private JLabel _label = new JLabel();
    private CloseTabButton _closeButton = new CloseTabButton();
    private JPanel _pnlSmallTabButtons;
+   private final SmallTabButton _toWindow;
 
-   public ButtonTabComponent(final JTabbedPane tabbedPane, String title, Icon icon)
+   public ButtonTabComponent(IApplication app, String title, Icon icon)
    {
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-      _tabbedPane = tabbedPane;
       setOpaque(false);
 
-      //tab button
       add(_closeButton);
 
       _label.setText(title);
@@ -40,11 +41,24 @@ public class ButtonTabComponent extends JPanel
       add(_pnlSmallTabButtons);
 
       setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+
+
+      _toWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), app.getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
+
+      if (MultipleWindowsHandler.DETACH_SESSION_WINDOW)
+      {
+         addSmallTabButton(_toWindow);
+      }
    }
 
    public JButton getClosebutton()
    {
       return _closeButton;
+   }
+
+   public JButton getToWindowButton()
+   {
+      return _toWindow;
    }
 
    public void setIcon(Icon icon)

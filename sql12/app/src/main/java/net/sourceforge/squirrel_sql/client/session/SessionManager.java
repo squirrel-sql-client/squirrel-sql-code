@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.MultipleWindowsHandler;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
@@ -146,6 +147,10 @@ public class SessionManager
       if (session != _activeSession || force)
       {
          _activeSession = session;
+         if (null != _activeSession && MultipleWindowsHandler.DETACH_SESSION_WINDOW)
+         {
+            System.out.println("NextSessionAction.setSession  " + (null != session.getActiveSessionWindow()?session.getActiveSessionWindow().getTitle() : " OPENING"));
+         }
          fireSessionActivated(session);
       }
    }

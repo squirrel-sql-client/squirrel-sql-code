@@ -45,7 +45,7 @@ import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
  */
 public interface IApplication
 {
-	public interface IMenuIDs extends MainFrame.IMenuIDs
+   public interface IMenuIDs extends MainFrame.IMenuIDs
 	{
 		// Empty body.
 	}
@@ -246,4 +246,5 @@ public interface IApplication
     */
    IWikiTableConfigurationFactory getWikiTableConfigFactory();
 
+   MultipleWindowsHandler getMultipleWindowsHandler();
 }

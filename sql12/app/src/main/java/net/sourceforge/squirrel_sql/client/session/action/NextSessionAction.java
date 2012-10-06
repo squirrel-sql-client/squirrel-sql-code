@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.MultipleWindowsHandler;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -40,7 +41,12 @@ public class NextSessionAction extends SquirrelAction
 
 	public void setSession(ISession session)
 	{
-		_session = session;
+      if (null != _session && MultipleWindowsHandler.DETACH_SESSION_WINDOW)
+      {
+         System.out.println("NextSessionAction.setSession  " + (null != _session.getActiveSessionWindow()?_session.getActiveSessionWindow().getTitle() : " OPENING"));
+      }
+
+      _session = session;
 	}
 
 	public void actionPerformed(ActionEvent evt)

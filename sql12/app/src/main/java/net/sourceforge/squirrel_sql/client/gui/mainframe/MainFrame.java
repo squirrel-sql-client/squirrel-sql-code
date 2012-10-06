@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DockWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.*;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
@@ -126,6 +127,11 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 				IDesktopContainer comp = getDesktopContainer();
 				comp.setPreferredSize(comp.getRequiredSize());
 				comp.revalidate();
+
+            if(_app.getDesktopStyle().isDockTabStyle())
+            {
+               _app.getMultipleWindowsHandler().registerMainFrame(_app, (DockTabDesktopPane)_desktop);
+            }
 			}
 		});
 		

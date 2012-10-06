@@ -1046,6 +1046,11 @@ public class WindowManager
       return _sessionWindows.getFramesOfSession(sessionIdentifier);
    }
 
+   public void disableSessionMenu()
+   {
+      getMainFrame().getSessionMenu().setEnabled(false);
+   }
+
 
    private final class SessionWindowListener implements WidgetListener
 	{

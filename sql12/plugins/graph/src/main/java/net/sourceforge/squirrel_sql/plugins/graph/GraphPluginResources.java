@@ -36,6 +36,7 @@ public final class GraphPluginResources extends PluginResources
       String JOIN_NONE = "EqualCrossed";
 
 
+      String TO_WINDOW_SMALL = "ToWindowSmall";
       String TO_WINDOW = "ToWindow";
 
       String SHOW_MENU = "Showmenu";

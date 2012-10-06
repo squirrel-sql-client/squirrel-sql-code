@@ -75,7 +75,6 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.WikiTableConfigurationStorage;
@@ -87,7 +86,6 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.ProxyHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -176,8 +174,10 @@ class Application implements IApplication
 	private PreLaunchHelperFactory preLaunchHelperFactory = new PreLaunchHelperFactoryImpl();
 	
 	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
-	
-	/**
+
+   private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler();
+
+   /**
 	 * Default ctor.
 	 */
 	Application()
@@ -1328,7 +1328,15 @@ class Application implements IApplication
 		return wikiTableConfigFactory;
 	}
 
-	public void setWikiTableConfigFactory(IWikiTableConfigurationFactory wikiTableConfigFactory) {
+
+   public void setWikiTableConfigFactory(IWikiTableConfigurationFactory wikiTableConfigFactory) {
 		this.wikiTableConfigFactory = wikiTableConfigFactory;
-	}	
+	}
+
+   @Override
+   public MultipleWindowsHandler getMultipleWindowsHandler()
+   {
+      return _multipleWindowsHandler;
+   }
+
 }

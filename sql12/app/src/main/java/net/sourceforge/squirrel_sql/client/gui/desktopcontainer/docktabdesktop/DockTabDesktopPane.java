@@ -1,30 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -60,7 +41,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private DockPanel _pnlDock = new DockPanel();
 
-   private DesktopTabbedPane _tabbedPane = new DesktopTabbedPane();
+   private DesktopTabbedPane _tabbedPane;
 
    private JSplitPane _split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
    private boolean _inOnToggleOpenDock;
@@ -80,6 +61,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    public DockTabDesktopPane(IApplication app)
    {
       _app = app;
+
+      _tabbedPane = new DesktopTabbedPane(_app);
 
       setLayout(new BorderLayout());
 
@@ -176,7 +159,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    {
    }
 
-   public void addWidget(TabWidget widget)
+   public void addWidget(final TabWidget widget)
    {
       final TabHandle tabHandle = new TabHandle(widget, this);
       ((TabDelegate) widget.getDelegate()).setTabHandle(tabHandle);
@@ -197,10 +180,37 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          }
       });
 
+      btc.getToWindowButton().addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onToWindow(tabHandle);
+         }
+      });
+
+
       _tabHandles.add(tabHandle);
       tabHandle.fireAdded();
       _tabbedPane.setSelectedIndex(tabIx);
       _scrollableTabHandler.tabAdded();
+   }
+
+   private void onToWindow(TabHandle tabHandle)
+   {
+      Point locationOnScreen = tabHandle.getWidget().getContentPane().getLocationOnScreen();
+      Dimension size = tabHandle.getWidget().getContentPane().getSize();
+
+      int tabIndex = getTabIndex(tabHandle);
+      if (-1 != tabIndex)
+      {
+         removeTabFromTabbedPane(tabIndex);
+      }
+      _tabHandles.remove(tabHandle);
+      tabHandle.removeTabHandleListener(_dockTabDesktopManager);
+
+
+      TabWindowController tabWindowController = new TabWindowController(tabHandle, locationOnScreen, size, _app);
+      _app.getMultipleWindowsHandler().registerDesktop(tabWindowController);
    }
 
    private void onDockPanelResized()
@@ -589,4 +599,17 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    {
    }
 
+   public void setSelected(boolean b)
+   {
+      TabHandle selectedHandle = getSelectedHandle();
+      if (null != selectedHandle)
+      {
+         selectedHandle._setSelected(b, true);
+      }
+      else
+      {
+         _app.getWindowManager().disableSessionMenu();
+
+      }
+   }
 }

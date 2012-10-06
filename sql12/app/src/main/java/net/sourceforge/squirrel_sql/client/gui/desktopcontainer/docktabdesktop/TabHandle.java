@@ -101,7 +101,12 @@ public class TabHandle
 
    public void setSelected(boolean b)
    {
-      if(_isSelected == b)
+      _setSelected(b, false);
+   }
+
+   public void _setSelected(boolean b, boolean force)
+   {
+      if(_isSelected == b && false == force)
       {
          return;
       }

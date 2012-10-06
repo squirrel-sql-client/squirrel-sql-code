@@ -1,11 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 
 public class GraphMainPanelTab extends BaseMainPanelTab
@@ -38,11 +42,9 @@ public class GraphMainPanelTab extends BaseMainPanelTab
 
 
       _tabComponent.add(_lblTitle, BorderLayout.CENTER);
-      ImageIcon icon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.TO_WINDOW);
+      ImageIcon icon = new GraphPluginResources(plugin).getIcon(GraphPluginResources.IKeys.TO_WINDOW_SMALL);
 
-      _btnToWindow = new JButton(icon);
-      _btnToWindow.setBorder(BorderFactory.createEmptyBorder());
-      _btnToWindow.setOpaque(false);
+      _btnToWindow = new SmallTabButton(s_stringMgr.getString("GraphMainPanelTab.showInNewWIndow"), icon);
       _tabComponent.add(_btnToWindow, BorderLayout.EAST);
    }
 

@@ -30,5 +30,8 @@ public class NewQueryBuilderWindowAction extends SquirrelAction implements ISess
    public void setSession(ISession session)
    {
       _session = session;
+
+      setEnabled(null != _session);
+
    }
 }
