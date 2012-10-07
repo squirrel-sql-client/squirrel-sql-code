@@ -65,4 +65,8 @@ public class DataScaleTableModel extends AbstractTableModel
       return _dataScales[row];
    }
 
+   public int getDataScaleCount()
+   {
+      return _dataScales.length;
+   }
 }

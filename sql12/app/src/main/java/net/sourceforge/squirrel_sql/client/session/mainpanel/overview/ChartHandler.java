@@ -45,7 +45,7 @@ public class ChartHandler
          DataScaleListener dumDataScaleListener = new DataScaleListener()
          {
             @Override
-            public void intervalSelected(Interval interval)
+            public void intervalSelected(Interval interval, JButton intervalButtonClicked)
             {
             }
 

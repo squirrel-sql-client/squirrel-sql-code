@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleTable;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class OverviewHolder
@@ -20,12 +22,27 @@ public class OverviewHolder
       return null == _dataScaleTable && null == _simpleTable;
    }
 
-   public void setOverview(DataScaleTable dataScaleTable)
+   public void setOverview(DataScaleTable dataScaleTable, boolean keepFormerRelations)
    {
 
       if(null != _dataScaleTable)
       {
-         dataScaleTable.setParentScaleTable(_dataScaleTable);
+         if (keepFormerRelations)
+         {
+            if (null != _dataScaleTable.getParentScaleTable())
+            {
+               dataScaleTable.setParentScaleTable(_dataScaleTable.getParentScaleTable());
+            }
+
+            if (null != _dataScaleTable.getKidScaleTable())
+            {
+               dataScaleTable.setKidScaleTable(_dataScaleTable.getKidScaleTable());
+            }
+         }
+         else
+         {
+            dataScaleTable.setParentScaleTable(_dataScaleTable);
+         }
       }
       _dataScaleTable = dataScaleTable;
 
@@ -124,6 +141,15 @@ public class OverviewHolder
    public boolean isScaleTable()
    {
       return null != _dataScaleTable; 
+   }
+
+   public void doClickTracing(JButton intervalButtonClicked)
+   {
+      for (int i = 0; i < _dataScaleTable.getDataScaleTableModel().getDataScaleCount(); i++)
+      {
+         DataScale dataScale = _dataScaleTable.getDataScaleTableModel().getDataScaleAt(i);
+         dataScale.initButtonColor(intervalButtonClicked);
+      }
    }
 
 

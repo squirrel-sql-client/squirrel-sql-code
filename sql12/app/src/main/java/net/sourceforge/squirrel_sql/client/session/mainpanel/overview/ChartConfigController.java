@@ -19,7 +19,7 @@ public class ChartConfigController
    private ChartConfigPanel _chartConfigPanel;
    private final ChartConfigPanelTabController[] _chartConfigPanelTabControllers;
 
-   public ChartConfigController(IApplication app)
+   public ChartConfigController(IApplication app, ChartConfigListener chartConfigListener)
    {
 
       _chartConfigPanelTabControllers = new ChartConfigPanelTabController[]
@@ -37,7 +37,7 @@ public class ChartConfigController
          chartConfigPanelTabs.add(chartConfigPanelTabController.getPanel());
       }
 
-      _chartConfigPanel = new ChartConfigPanel(chartConfigPanelTabs);
+      _chartConfigPanel = new ChartConfigPanel(chartConfigPanelTabs, chartConfigListener);
 
    }
 

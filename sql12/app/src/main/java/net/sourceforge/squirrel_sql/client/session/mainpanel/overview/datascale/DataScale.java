@@ -19,6 +19,7 @@ public class DataScale implements Comparable<DataScale>
    private int _columnIndex;
    private ColumnDisplayDefinition _columnDisplayDefinition;
    private HashMap<JButton, Interval> _intervalByButton = new HashMap<JButton, Interval>();
+   private Color _defaultButtonBackgroundColor;
 
    public DataScale(String column, DataScaleListener dataScaleListener, int columnIndex, ColumnDisplayDefinition columnDisplayDefinition)
    {
@@ -68,6 +69,8 @@ public class DataScale implements Comparable<DataScale>
       final String text = _intervals.get(intervalIx).getLabel();
 
       final JButton ret = new JButton(text);
+
+      _defaultButtonBackgroundColor = ret.getBackground();
       ret.setToolTipText(_intervals.get(intervalIx).getToolTip());
 
       ret.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -77,7 +80,7 @@ public class DataScale implements Comparable<DataScale>
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onButtonPressed(_intervals.get(intervalIx));
+            onButtonPressed(_intervals.get(intervalIx), ret);
          }
       });
 
@@ -86,9 +89,9 @@ public class DataScale implements Comparable<DataScale>
       return ret;
    }
 
-   private void onButtonPressed(Interval interval)
+   private void onButtonPressed(Interval interval, JButton ret)
    {
-      _dataScaleListener.intervalSelected(interval);
+      _dataScaleListener.intervalSelected(interval, ret);
    }
 
 
@@ -177,5 +180,20 @@ public class DataScale implements Comparable<DataScale>
    public IndexedColumn getIndexedColumn()
    {
       return _intervals.get(0).getIndexedColumn();
+   }
+
+   public void initButtonColor(JButton intervalButtonClicked)
+   {
+      for (JButton btn : getButtons())
+      {
+         if(btn == intervalButtonClicked)
+         {
+            btn.setBackground(Color.yellow);
+         }
+         else
+         {
+            btn.setBackground(_defaultButtonBackgroundColor);
+         }
+      }
    }
 }

@@ -10,10 +10,12 @@ Enhancements:
 
 Cristiano Guadagnino contributed all of the SQL required for the DB2Plugin to properly support the DB2 z/OS 
 platform. Many thanks to Cristiano Guadagnino.
-   
-Overview tab: Now offers functionality to view query result data in bar charts. (Uses JFreeChart: http://www.jfree.org/jfreechart/)
 
-Overview tab: Now has a button to copy a HTML-report of an overview to clipboard
+Overview tab:
+ - Allows to adjust the maximum number of intervals
+ - Traces drill downs by coloring clicked buttons
+ - Offers functionality to view query result data in bar charts. (Uses JFreeChart: http://www.jfree.org/jfreechart/)
+ - Has a button to copy a HTML-report of an overview to clipboard
 
 Abbreviation/Auto-correction now works also if it is placed right after an opening bracket.
 

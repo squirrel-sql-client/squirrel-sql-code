@@ -16,8 +16,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -36,12 +35,23 @@ public class OverviewCtrl
    private static final String PREF_KEY_CHART_PANEL_SPLIT = "Squirrel.overview.chartPanel.splitloc";
    private ChartConfigController _chartConfigController;
 
+   private List<Object[]> _currentRows;
+
    public OverviewCtrl(final ISession session)
    {
       _session = session;
       _app = session.getApplication();
 
-      _chartConfigController = new ChartConfigController(_app);
+      ChartConfigListener chartConfigListener = new ChartConfigListener()
+      {
+         @Override
+         public void closeSplit()
+         {
+            _overviewPanel.btnCreateBarChart.doClick();
+         }
+      };
+
+      _chartConfigController = new ChartConfigController(_app, chartConfigListener);
 
       _overviewPanel = new OverviewPanel(_app.getResources(), _chartConfigController.getPanel());
 
@@ -82,6 +92,17 @@ public class OverviewCtrl
          }
       });
 
+      CallDepthComboModel[] depthComboModels = CallDepthComboModel.createModels();
+      _overviewPanel.cboCallDepth.setModel(new DefaultComboBoxModel(depthComboModels));
+      _overviewPanel.cboCallDepth.setSelectedItem(depthComboModels[0]);
+      _overviewPanel.cboCallDepth.addItemListener(new ItemListener()
+      {
+         @Override
+         public void itemStateChanged(ItemEvent e)
+         {
+            onCallDepthSelected(e);
+         }
+      });
 
       _overviewPanel.btnReport.addActionListener(new ActionListener()
       {
@@ -102,6 +123,40 @@ public class OverviewCtrl
          }
       });
 
+      _overviewPanel.split.addComponentListener(new ComponentAdapter()
+      {
+         @Override
+         public void componentResized(ComponentEvent e)
+         {
+            adjustHiddenSpiltLocationOnResize();
+         }
+      });
+
+   }
+
+   private void adjustHiddenSpiltLocationOnResize()
+   {
+      if(false == _overviewPanel.btnCreateBarChart.isSelected())
+      {
+         _overviewPanel.split.setDividerLocation(Integer.MAX_VALUE);
+      }
+   }
+
+   private void onCallDepthSelected(ItemEvent itemEvent)
+   {
+      if(ItemEvent.DESELECTED ==itemEvent.getStateChange())
+      {
+         return;
+      }
+
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            initScales(_overviewHolder.getDataScaleTable().getAllRows(), _overviewHolder.getDataScaleTable().getColumnDisplayDefinitions(), true);
+         }
+      });
+
    }
 
    private void onCreateBarChart()
@@ -109,11 +164,13 @@ public class OverviewCtrl
       if(_overviewPanel.btnCreateBarChart.isSelected())
       {
          _overviewPanel.split.setDividerSize(_overviewPanel.standardDividerSize);
-         _overviewPanel.split.setDividerLocation(Preferences.userRoot().getInt(PREF_KEY_CHART_PANEL_SPLIT, 400));
+         int distToRight = Preferences.userRoot().getInt(PREF_KEY_CHART_PANEL_SPLIT, Math.max(0, _overviewPanel.split.getWidth() - _chartConfigController.getPanel().getPreferredSize().width));
+         _overviewPanel.split.setDividerLocation(_overviewPanel.split.getWidth() - distToRight);
       }
       else
       {
-         Preferences.userRoot().putInt(PREF_KEY_CHART_PANEL_SPLIT, _overviewPanel.split.getDividerLocation());
+         int distToRight = _overviewPanel.split.getWidth() - _overviewPanel.split.getDividerLocation();
+         Preferences.userRoot().putInt(PREF_KEY_CHART_PANEL_SPLIT, distToRight);
 
          _overviewPanel.split.setDividerSize(0);
          _overviewPanel.split.setDividerLocation(Integer.MAX_VALUE);
@@ -255,7 +312,7 @@ public class OverviewCtrl
 
    public String getTitle()
    {
-      return s_stringMgr.getString("OverwiewCtrl.title");
+      return s_stringMgr.getString("OverwiewCtrl.title_new");
    }
 
    public Component getPanel()
@@ -274,24 +331,27 @@ public class OverviewCtrl
       DataSetDefinition dataSetDefinition = rsds.getDataSetDefinition();
       ColumnDisplayDefinition[] columnDefinitions = dataSetDefinition.getColumnDefinitions();
 
-      initScales(rows, columnDefinitions);
+      initScales(rows, columnDefinitions, false);
    }
 
-   private void onIntervalSelected(Interval interval, ColumnDisplayDefinition[] columnDefinitions)
+   private void onIntervalSelected(Interval interval, ColumnDisplayDefinition[] columnDefinitions, JButton intervalButtonClicked)
    {
       if (false == interval.containsAllRows())
       {
+         _overviewHolder.doClickTracing(intervalButtonClicked);
+
          List<Object[]> rows = interval.getResultRows();
-         initScales(rows, columnDefinitions);
+         initScales(rows, columnDefinitions, false);
       }
    }
 
 
-   private void initScales(List<Object[]> rows, final ColumnDisplayDefinition[] columnDefinitions)
+   private void initScales(List<Object[]> rows, final ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent)
    {
+      _currentRows = rows;
       if(0 == rows.size())
       {
-         initScaleTable(new DataScale[0], rows, columnDefinitions);
+         initScaleTable(new DataScale[0], rows, columnDefinitions, keepFormerParent);
          return;
       }
 
@@ -301,9 +361,9 @@ public class OverviewCtrl
       DataScaleListener dataScaleListener = new DataScaleListener()
       {
          @Override
-         public void intervalSelected(Interval interval)
+         public void intervalSelected(Interval interval, JButton intervalButtonClicked)
          {
-            onIntervalSelected(interval, columnDefinitions);
+            onIntervalSelected(interval, columnDefinitions, intervalButtonClicked);
          }
 
          @Override
@@ -320,15 +380,16 @@ public class OverviewCtrl
       };
 
 
+      CallDepthComboModel selectedCallDepth = (CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem();
       for (int i = 0; i < columnDefinitions.length; i++)
       {
-         scales[i] = new ScaleFactory(rows, i, columnDefinitions[i]).createScale(dataScaleListener);
+         scales[i] = new ScaleFactory(rows, i, columnDefinitions[i], selectedCallDepth.getCallDepth()).createScale(dataScaleListener);
       }
 
-      initScaleTable(scales, rows, columnDefinitions);
+      initScaleTable(scales, rows, columnDefinitions, keepFormerParent);
    }
 
-   private void initScaleTable(DataScale[] scales, List<Object[]> rows, ColumnDisplayDefinition[] columnDefinitions)
+   private void initScaleTable(DataScale[] scales, List<Object[]> rows, ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent)
    {
       DataScaleTableModel dataScaleTableModel = new DataScaleTableModel(scales);
       DataScaleTable dataScaleTable = new DataScaleTable(dataScaleTableModel, rows, columnDefinitions);
@@ -351,7 +412,7 @@ public class OverviewCtrl
          tcm.addColumn(col);
       }
 
-      _overviewHolder.setOverview(dataScaleTable);
+      _overviewHolder.setOverview(dataScaleTable, keepFormerParent);
       initGui();
 
    }
@@ -373,6 +434,7 @@ public class OverviewCtrl
          _overviewPanel.btnReport.setEnabled(true);
          _chartConfigController.setDataScaleTable(_overviewHolder.getDataScaleTable());
          _overviewPanel.btnCreateBarChart.setEnabled(true);
+         _overviewPanel.cboCallDepth.setEnabled(true);
 
       }
       else
@@ -383,6 +445,8 @@ public class OverviewCtrl
             _overviewPanel.btnCreateBarChart.doClick();
          }
          _overviewPanel.btnCreateBarChart.setEnabled(false);
+         _overviewPanel.cboCallDepth.setEnabled(false);
+
       }
    }
 }
