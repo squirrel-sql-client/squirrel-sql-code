@@ -49,7 +49,7 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 
 	public DataSetViewerTextPanel()
 	{
-		super();
+      init(null);
 		_rowCount = 0;
 	}
 

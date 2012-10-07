@@ -34,6 +34,8 @@ dandar3 for the tip.
 
 Bug fixes:
 
+3575054: SQL results text mode is not working
+
 Fixed repaint problem in Hibernate Plugin.
 
 Code completion: When selecting a completion by tab, overwriting of subsequent characters does not stop
