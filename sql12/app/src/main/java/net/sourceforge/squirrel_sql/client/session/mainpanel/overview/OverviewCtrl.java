@@ -35,7 +35,7 @@ public class OverviewCtrl
    private static final String PREF_KEY_CHART_PANEL_SPLIT = "Squirrel.overview.chartPanel.splitloc";
    private ChartConfigController _chartConfigController;
 
-   private List<Object[]> _currentRows;
+   private boolean _dontReactToCallDepthChanges;
 
    public OverviewCtrl(final ISession session)
    {
@@ -144,19 +144,12 @@ public class OverviewCtrl
 
    private void onCallDepthSelected(ItemEvent itemEvent)
    {
-      if(ItemEvent.DESELECTED ==itemEvent.getStateChange())
+      if(ItemEvent.DESELECTED ==itemEvent.getStateChange() || _dontReactToCallDepthChanges)
       {
          return;
       }
 
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            initScales(_overviewHolder.getDataScaleTable().getAllRows(), _overviewHolder.getDataScaleTable().getColumnDisplayDefinitions(), true);
-         }
-      });
-
+      initScales(_overviewHolder.getDataScaleTable().getAllRows(), _overviewHolder.getDataScaleTable().getColumnDisplayDefinitions(), true);
    }
 
    private void onCreateBarChart()
@@ -300,13 +293,34 @@ public class OverviewCtrl
    private void onPrev()
    {
       _overviewHolder.setParent();
+
+      updateCallDepth();
+
       initGui();
 
+   }
+
+   private void updateCallDepth()
+   {
+      if (null != _overviewHolder.getDataScaleTable())
+      {
+         CallDepthComboModel callDepth = _overviewHolder.getDataScaleTable().getDataScaleTableModel().getCallDepth();
+         try
+         {
+            _dontReactToCallDepthChanges = true;
+            _overviewPanel.cboCallDepth.setSelectedItem(callDepth);
+         }
+         finally
+         {
+            _dontReactToCallDepthChanges = false;
+         }
+      }
    }
 
    private void onNext()
    {
       _overviewHolder.setKid();
+      updateCallDepth();
       initGui();
    }
 
@@ -348,10 +362,11 @@ public class OverviewCtrl
 
    private void initScales(List<Object[]> rows, final ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent)
    {
-      _currentRows = rows;
+      CallDepthComboModel selectedCallDepth = (CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem();
+
       if(0 == rows.size())
       {
-         initScaleTable(new DataScale[0], rows, columnDefinitions, keepFormerParent);
+         initScaleTable(new DataScale[0], rows, columnDefinitions, keepFormerParent, selectedCallDepth);
          return;
       }
 
@@ -380,18 +395,17 @@ public class OverviewCtrl
       };
 
 
-      CallDepthComboModel selectedCallDepth = (CallDepthComboModel) _overviewPanel.cboCallDepth.getSelectedItem();
       for (int i = 0; i < columnDefinitions.length; i++)
       {
          scales[i] = new ScaleFactory(rows, i, columnDefinitions[i], selectedCallDepth.getCallDepth()).createScale(dataScaleListener);
       }
 
-      initScaleTable(scales, rows, columnDefinitions, keepFormerParent);
+      initScaleTable(scales, rows, columnDefinitions, keepFormerParent, selectedCallDepth);
    }
 
-   private void initScaleTable(DataScale[] scales, List<Object[]> rows, ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent)
+   private void initScaleTable(DataScale[] scales, List<Object[]> rows, ColumnDisplayDefinition[] columnDefinitions, boolean keepFormerParent, CallDepthComboModel callDepth)
    {
-      DataScaleTableModel dataScaleTableModel = new DataScaleTableModel(scales);
+      DataScaleTableModel dataScaleTableModel = new DataScaleTableModel(scales, callDepth);
       DataScaleTable dataScaleTable = new DataScaleTable(dataScaleTableModel, rows, columnDefinitions);
 
       TableColumnModel tcm = new DefaultTableColumnModel();

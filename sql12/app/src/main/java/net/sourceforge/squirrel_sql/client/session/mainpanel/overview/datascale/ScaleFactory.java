@@ -15,11 +15,6 @@ public class ScaleFactory
    private IndexedColumn _indexedColumn;
    private int _callDepth;
 
-   public ScaleFactory(List<Object[]> rows, int colIx, ColumnDisplayDefinition colDef)
-   {
-      this(rows, colIx, colDef, DEFAULT_CALL_DEPTH);
-   }
-
    public ScaleFactory(List<Object[]> rows, int colIx, ColumnDisplayDefinition colDef, int callDepth)
    {
       _indexedColumn = IndexedColumnFactory.create(rows, colIx, colDef);

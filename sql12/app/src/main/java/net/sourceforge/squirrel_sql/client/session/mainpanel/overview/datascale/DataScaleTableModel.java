@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.CallDepthComboModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -16,11 +17,13 @@ public class DataScaleTableModel extends AbstractTableModel
 
 
    private DataScale[] _dataScales;
+   private CallDepthComboModel _callDepth;
 
 
-   public DataScaleTableModel(DataScale[] dataScales)
+   public DataScaleTableModel(DataScale[] dataScales, CallDepthComboModel callDepth)
    {
       _dataScales = dataScales;
+      _callDepth = callDepth;
    }
 
 
@@ -68,5 +71,10 @@ public class DataScaleTableModel extends AbstractTableModel
    public int getDataScaleCount()
    {
       return _dataScales.length;
+   }
+
+   public CallDepthComboModel getCallDepth()
+   {
+      return _callDepth;
    }
 }
