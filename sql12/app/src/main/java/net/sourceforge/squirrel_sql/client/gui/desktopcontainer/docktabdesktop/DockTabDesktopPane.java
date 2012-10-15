@@ -58,7 +58,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private ScrollableTabHandler _scrollableTabHandler;
 
-   public DockTabDesktopPane(IApplication app)
+   public DockTabDesktopPane(IApplication app, boolean belongsToMainApplicationWindow)
    {
       _app = app;
 
@@ -98,13 +98,16 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       closeDock();
 
-      _app.addApplicationListener(new ApplicationListener()
+      if (belongsToMainApplicationWindow)  // prevents memory leaks concerning detached windows
       {
-         public void saveApplicationState()
+         _app.addApplicationListener(new ApplicationListener()
          {
-            onSaveApplicationState();
-         }
-      });
+            public void saveApplicationState()
+            {
+               onSaveApplicationState();
+            }
+         });
+      }
 
       initTabRightMouseMenu();
    }
@@ -161,29 +164,30 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    public void addWidget(final TabWidget widget)
    {
+      addTabWidgetAt(widget, _tabbedPane.getTabCount());
+   }
+
+   public void addTabWidgetAt(TabWidget widget, int index)
+   {
       final TabHandle tabHandle = new TabHandle(widget, this);
       ((TabDelegate) widget.getDelegate()).setTabHandle(tabHandle);
 
       tabHandle.addTabHandleListener(_dockTabDesktopManager);
 
       TabPanel tabPanel = createTabPanel(tabHandle);
-      _tabbedPane.addTab(widget.getTitle(), null, tabPanel, widget.getTitle());
+      _tabbedPane.insertTab(widget.getTitle(), null, tabPanel, widget.getTitle(), index);
       int tabIx = _tabbedPane.indexOfComponent(tabPanel);
 
       ButtonTabComponent btc = (ButtonTabComponent) _tabbedPane.getTabComponentAt(tabIx);
 
-      btc.getClosebutton().addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
+      btc.getClosebutton().addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
             removeTab(tabHandle, e, TabClosingMode.CLOSE_BUTTON);
          }
       });
 
-      btc.getToWindowButton().addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
+      btc.getToWindowButton().addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
             onToWindow(tabHandle);
          }
       });
@@ -195,11 +199,37 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _scrollableTabHandler.tabAdded();
    }
 
+
+
    private void onToWindow(TabHandle tabHandle)
    {
-      Point locationOnScreen = tabHandle.getWidget().getContentPane().getLocationOnScreen();
-      Dimension size = tabHandle.getWidget().getContentPane().getSize();
 
+      ///////////////////////////////////////////////////////////////////////////////////
+      // The detaching tab might not be selected and thus not showing on screen.
+      // Trying to get position and size form that would fail.
+      // But we can as well take the selected tab to do this calculation.
+      Point locationOnScreen = getSelectedHandle().getWidget().getContentPane().getLocationOnScreen();
+      Dimension size = getSelectedHandle().getWidget().getContentPane().getSize();
+      //
+      ////////////////////////////////////////////////////////////////////////////////////
+      TabWindowController tabWindowController = new TabWindowController(locationOnScreen, size, _app);
+
+
+      _app.getMultipleWindowsHandler().registerDesktop(tabWindowController);
+
+      removeTabHandel(tabHandle);
+
+      tabWindowController.getDockTabDesktopPane().addWidget(tabHandle.getWidget());
+   }
+
+   public TabHandle removeTabHandel(int tabIndex)
+   {
+      TabHandle tabHandle = ((TabPanel) _tabbedPane.getComponentAt(tabIndex)).getTabHandle();
+      return removeTabHandel(tabHandle);
+   }
+
+   private TabHandle removeTabHandel(TabHandle tabHandle)
+   {
       int tabIndex = getTabIndex(tabHandle);
       if (-1 != tabIndex)
       {
@@ -208,10 +238,14 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       _tabHandles.remove(tabHandle);
       tabHandle.removeTabHandleListener(_dockTabDesktopManager);
 
-
-      TabWindowController tabWindowController = new TabWindowController(tabHandle, locationOnScreen, size, _app);
-      _app.getMultipleWindowsHandler().registerDesktop(tabWindowController);
+      return tabHandle;
    }
+
+   public boolean isMyTabbedPane(JTabbedPane tabbedPane)
+   {
+      return _tabbedPane == tabbedPane;
+   }
+
 
    private void onDockPanelResized()
    {
@@ -390,19 +424,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
             tabHandle.getWidget().setVisible(false);
             tabHandle.fireDeselected(e);
-            int tabIndex = getTabIndex(tabHandle);
-            if(-1 != tabIndex)
-            {
-               removeTabFromTabbedPane(tabIndex);
-            }
-
-            ////////////////////////////////////////////////////
-            // Is done in dispose itself because listeners must be fired even in DO_NOTHING_ON_CLOSE mode
-            // tabHandle.fireClosed(e);
-            ///////////////////////////////////////////////////
-
-            _tabHandles.remove(tabHandle);
-            tabHandle.removeTabHandleListener(_dockTabDesktopManager);
+            removeTabHandel(tabHandle);
 
 
             TabHandle newSelectedHandle = getSelectedHandle();
@@ -441,6 +463,12 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       return ret;
    }
+
+   public ArrayList<TabHandle> getAllHandels()
+   {
+      return _tabHandles;
+   }
+
 
    public IWidget getSelectedWidget()
    {
@@ -605,11 +633,6 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       if (null != selectedHandle)
       {
          selectedHandle._setSelected(b, true);
-      }
-      else
-      {
-         _app.getWindowManager().disableSessionMenu();
-
       }
    }
 }

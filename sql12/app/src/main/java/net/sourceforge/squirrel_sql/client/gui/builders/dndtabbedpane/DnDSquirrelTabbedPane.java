@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.gui.builders;
+package net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -20,13 +20,12 @@ package net.sourceforge.squirrel_sql.client.gui.builders;
  */
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.SquirrelTabbedPaneDelegate;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 
-import javax.swing.*;
-
-class DnDSquirrelTabbedPane extends DnDTabbedPane
+public class DnDSquirrelTabbedPane extends DnDTabbedPane
 {
-	DnDSquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
+	public DnDSquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
 	{
       new SquirrelTabbedPaneDelegate(prefs, app, this);
       setPaintScrollArea(false);

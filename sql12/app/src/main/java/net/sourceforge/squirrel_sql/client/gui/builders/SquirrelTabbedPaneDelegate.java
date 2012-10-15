@@ -21,7 +21,7 @@ public class SquirrelTabbedPaneDelegate
       // Empty block.
    }
 
-   SquirrelTabbedPaneDelegate(SquirrelPreferences prefs, IApplication app, JTabbedPane tabbedPane)
+   public SquirrelTabbedPaneDelegate(SquirrelPreferences prefs, IApplication app, JTabbedPane tabbedPane)
    {
       _tabbedPane = tabbedPane;
       if (prefs == null) { throw new IllegalArgumentException("SquirrelPreferences == null"); }

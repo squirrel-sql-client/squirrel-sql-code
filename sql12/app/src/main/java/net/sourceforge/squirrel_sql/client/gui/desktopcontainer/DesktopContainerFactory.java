@@ -12,7 +12,7 @@ public class DesktopContainerFactory
    {
       if (app.getDesktopStyle().isDockTabStyle())
       {
-         return new DockTabDesktopPane(app);
+         return new DockTabDesktopPane(app, true);
       }
       else
       {

@@ -39,13 +39,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.prefs.Preferences;
 
 
 @SuppressWarnings("serial")
@@ -130,7 +128,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
             if(_app.getDesktopStyle().isDockTabStyle())
             {
-               _app.getMultipleWindowsHandler().registerMainFrame(_app, (DockTabDesktopPane)_desktop);
+               _app.getMultipleWindowsHandler().registerMainFrame((DockTabDesktopPane)_desktop);
             }
 			}
 		});

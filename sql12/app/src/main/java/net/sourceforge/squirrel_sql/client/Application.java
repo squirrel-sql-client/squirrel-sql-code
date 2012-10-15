@@ -175,7 +175,7 @@ class Application implements IApplication
 	
 	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
 
-   private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler();
+   private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
 
    /**
 	 * Default ctor.

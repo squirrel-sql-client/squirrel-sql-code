@@ -45,10 +45,7 @@ public class ButtonTabComponent extends JPanel
 
       _toWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), app.getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
 
-      if (MultipleWindowsHandler.DETACH_SESSION_WINDOW)
-      {
-         addSmallTabButton(_toWindow);
-      }
+      addSmallTabButton(_toWindow);
    }
 
    public JButton getClosebutton()
@@ -70,6 +67,12 @@ public class ButtonTabComponent extends JPanel
    {
       _label.setText(title);
    }
+
+   public String getTitle()
+   {
+      return _label.getText();
+   }
+
 
    public void addSmallTabButton(SmallTabButton smallTabButton)
    {

@@ -3,31 +3,42 @@ package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.SquirrelDesktopManager;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 
 public class TabWindowController implements DockTabDesktopPaneHolder
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DockTabDesktopPaneHolder.class);
+
 
    private final DockTabDesktopPane _dockTabDesktopPane;
+   private IApplication _app;
+   private final JMenu _mnuSession;
 
-   public TabWindowController(final TabHandle tabHandle, Point locationOnScreen, Dimension size, final IApplication app)
+   public TabWindowController(Point locationOnScreen, Dimension size, final IApplication app)
    {
-      JFrame f = new JFrame();
+      _app = app;
+      JFrame f = new JFrame(_app.getMainFrame().getTitle() + " " +s_stringMgr.getString("docktabdesktop.TabWindowController.titlePostFix"));
 
       f.setLocation(locationOnScreen);
       f.setSize(size);
+      f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-      _dockTabDesktopPane = new DockTabDesktopPane(app);
+      _dockTabDesktopPane = new DockTabDesktopPane(app, false);
       _dockTabDesktopPane.setDesktopManager(new SquirrelDesktopManager(app));
 
       f.getContentPane().add(_dockTabDesktopPane);
 
       JMenuBar mnuBar = new JMenuBar();
-      mnuBar.add(cloneMenu(app.getMainFrame().getSessionMenu()));
+      _mnuSession = cloneMenu(app.getMainFrame().getSessionMenu());
+      mnuBar.add(_mnuSession);
 
       f.setJMenuBar(mnuBar);
 
@@ -36,7 +47,7 @@ public class TabWindowController implements DockTabDesktopPaneHolder
          @Override
          public void windowGainedFocus(WindowEvent e)
          {
-            onWindowFocusGained(app, tabHandle);
+            onWindowFocusGained(app);
          }
 
          @Override
@@ -54,9 +65,28 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       }
 
 
+      f.addWindowListener(new WindowAdapter()
+      {
+         @Override
+         public void windowClosing(WindowEvent e)
+         {
+            onWindowClosing();
+         }
+      });
 
       f.setVisible(true);
-      _dockTabDesktopPane.addWidget(tabHandle.getWidget());
+   }
+
+   private void onWindowClosing()
+   {
+      ArrayList<TabHandle> handels = _dockTabDesktopPane.getAllHandels();
+      TabHandle[] clone = handels.toArray(new TabHandle[handels.size()]);
+      for (TabHandle handel : clone)
+      {
+         handel.removeTab(DockTabDesktopPane.TabClosingMode.DISPOSE);
+      }
+
+      _app.getMultipleWindowsHandler().unregisterDesktop(this);
    }
 
 
@@ -66,7 +96,32 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       return _dockTabDesktopPane;
    }
 
-   private void onWindowFocusGained(IApplication app, TabHandle tabHandle)
+   @Override
+   public void setSelected(boolean b)
+   {
+      _dockTabDesktopPane.setSelected(true);
+      adjustSessionMenu();
+   }
+
+   private void adjustSessionMenu()
+   {
+      if(null == _dockTabDesktopPane.getSelectedWidget())
+      {
+         _mnuSession.setEnabled(false);
+      }
+      else
+      {
+         _mnuSession.setEnabled(true);
+      }
+   }
+
+   @Override
+   public void tabDragedAndDroped()
+   {
+      adjustSessionMenu();
+   }
+
+   private void onWindowFocusGained(IApplication app)
    {
       app.getMultipleWindowsHandler().selectDesktop(this);
    }

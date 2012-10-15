@@ -1046,9 +1046,9 @@ public class WindowManager
       return _sessionWindows.getFramesOfSession(sessionIdentifier);
    }
 
-   public void disableSessionMenu()
+   public void setEnabledSessionMenu(boolean b)
    {
-      getMainFrame().getSessionMenu().setEnabled(false);
+      getMainFrame().getSessionMenu().setEnabled(b);
    }
 
 

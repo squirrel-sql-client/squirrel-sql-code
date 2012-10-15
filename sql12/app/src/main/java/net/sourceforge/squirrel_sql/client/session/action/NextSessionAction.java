@@ -41,11 +41,6 @@ public class NextSessionAction extends SquirrelAction
 
 	public void setSession(ISession session)
 	{
-      if (null != _session && MultipleWindowsHandler.DETACH_SESSION_WINDOW)
-      {
-         System.out.println("NextSessionAction.setSession  " + (null != _session.getActiveSessionWindow()?_session.getActiveSessionWindow().getTitle() : " OPENING"));
-      }
-
       _session = session;
 	}
 

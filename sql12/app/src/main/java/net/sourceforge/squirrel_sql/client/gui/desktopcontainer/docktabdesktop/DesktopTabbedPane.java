@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.builders.DnDTabbedPane;
+import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.DnDTabbedPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +13,7 @@ public class DesktopTabbedPane extends DnDTabbedPane
 
    public DesktopTabbedPane(IApplication app)
    {
+      super(app.getMultipleWindowsHandler().getOutwardDndTabbedPaneChanel());
       _app = app;
       setPaintScrollArea(false);
       setPaintGhost(true);
@@ -49,6 +50,13 @@ public class DesktopTabbedPane extends DnDTabbedPane
    {
       super.addTab("", null, component, tip);
       int index = indexOfComponent(component);
+      setTabComponentAt(index, new ButtonTabComponent(_app, title, icon));
+   }
+
+   @Override
+   public void insertTab(String title, Icon icon, Component component, String tip, int index)
+   {
+      super.insertTab("", null, component, tip, index);
       setTabComponentAt(index, new ButtonTabComponent(_app, title, icon));
    }
 

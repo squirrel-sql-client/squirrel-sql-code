@@ -8,6 +8,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Session tabs can be detached in separate windows. The tabs can be arbitrarily moved between the main and separated windows using drag and drop.
+
 Cristiano Guadagnino contributed all of the SQL required for the DB2Plugin to properly support the DB2 z/OS 
 platform. Many thanks to Cristiano Guadagnino.
 

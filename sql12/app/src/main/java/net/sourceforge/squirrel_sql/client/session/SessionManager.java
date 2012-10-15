@@ -147,10 +147,6 @@ public class SessionManager
       if (session != _activeSession || force)
       {
          _activeSession = session;
-         if (null != _activeSession && MultipleWindowsHandler.DETACH_SESSION_WINDOW)
-         {
-            System.out.println("NextSessionAction.setSession  " + (null != session.getActiveSessionWindow()?session.getActiveSessionWindow().getTitle() : " OPENING"));
-         }
          fireSessionActivated(session);
       }
    }

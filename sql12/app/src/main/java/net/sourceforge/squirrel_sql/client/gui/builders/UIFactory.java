@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.gui.builders;
 import javax.swing.JTabbedPane;
 import javax.swing.event.EventListenerList;
 
+import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.DnDSquirrelTabbedPane;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.IApplication;
 /**
