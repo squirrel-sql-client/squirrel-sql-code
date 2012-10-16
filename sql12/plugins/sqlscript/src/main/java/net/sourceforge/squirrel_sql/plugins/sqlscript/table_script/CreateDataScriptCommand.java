@@ -21,8 +21,10 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -32,6 +34,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.sql.*;
 import java.util.Calendar;
@@ -67,21 +70,11 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       _session = session;
       _plugin = plugin;
       _templateScriptOnly = templateScriptOnly;
-      _abortController = new AbortController(_session.getApplication());
-   }
 
-   /**
-    * Ctor specifying the current session and IAbortController.
-    */   
-	public CreateDataScriptCommand(ISession session, IAbortController abortController, SQLScriptPlugin plugin,
-		boolean templateScriptOnly)
-	{
-		super();
-		_session = session;
-		_plugin = plugin;
-		_templateScriptOnly = templateScriptOnly;
-		_abortController = abortController;
-	}
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin));
+
+      _abortController = new AbortController(owningFrame);
+   }
 
    protected void showAbortFrame()
    {

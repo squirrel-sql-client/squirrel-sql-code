@@ -26,9 +26,9 @@ public class EditPasteTableNameDlg extends JDialog
    private String _tableName;
 
 
-   public EditPasteTableNameDlg(MainFrame mainFrame)
+   public EditPasteTableNameDlg(Frame owner)
    {
-      super(mainFrame, s_stringMgr.getString("EditPasteTableNameDlg.title"), true);
+      super(owner, s_stringMgr.getString("EditPasteTableNameDlg.title"), true);
       createUI();
 
       _btnOK.addActionListener(new ActionListener()

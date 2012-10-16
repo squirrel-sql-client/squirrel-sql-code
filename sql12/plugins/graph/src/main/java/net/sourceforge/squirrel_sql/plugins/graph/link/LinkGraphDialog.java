@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.link;
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -34,7 +35,7 @@ public class LinkGraphDialog extends JDialog
 
    public LinkGraphDialog(GraphPlugin graphPlugin, ISession session)
    {
-      super(session.getApplication().getMainFrame(), s_stringMgr.getString("linkGraph.dialog.title", session.getAlias().getUrl()));
+      super(SessionUtils.getOwningFrame(session), s_stringMgr.getString("linkGraph.dialog.title", session.getAlias().getUrl()));
 
       JPanel content = new JPanel(new GridBagLayout());
 

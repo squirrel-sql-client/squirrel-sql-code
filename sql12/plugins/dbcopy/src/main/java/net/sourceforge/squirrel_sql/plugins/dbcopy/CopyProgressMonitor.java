@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
@@ -57,7 +59,7 @@ public class CopyProgressMonitor extends I18NBaseObject
     private SessionInfoProvider prov = null;
     
     /** the window we use to display dialogs to the user */
-    private JFrame parent = null;
+    private Frame parent = null;
     
     /** whether or not to delete all table data */
     private boolean deleteAllTableData = false;
@@ -84,7 +86,7 @@ public class CopyProgressMonitor extends I18NBaseObject
     
     public CopyProgressMonitor(SessionInfoProvider provider) {
         prov = provider;
-        parent = prov.getDestSession().getApplication().getMainFrame();
+        parent = SessionUtils.getOwningFrame(prov.getDestSession());
     }
     
     // CopyTableListener interface methods
@@ -294,7 +296,7 @@ public class CopyProgressMonitor extends I18NBaseObject
                                    final String title, 
                                    final int messageType) 
     {
-        final JFrame f = parent;
+        final Frame f = parent;
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JOptionPane.showMessageDialog(f, 

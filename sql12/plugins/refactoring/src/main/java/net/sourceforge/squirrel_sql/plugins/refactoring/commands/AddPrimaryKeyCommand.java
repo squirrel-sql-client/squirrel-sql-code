@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -165,7 +166,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand
 		customDialog.addColumnSelectionListener(new ExecuteListener());
 		customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-		customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+		customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 		customDialog.setMultiSelection();
 		customDialog.setVisible(true);
 	}

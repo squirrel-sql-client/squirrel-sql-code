@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Defines a rename Table/View dialog.
@@ -74,9 +75,11 @@ public class RenameTableDialog extends AbstractRefactoringDialog {
      *
      * @param dbInfo     InfoObjects of the selected items in the tree.
      * @param dialogType type of the Dialog. (View, Table, ...).
+     * @param owningFrame
      */
-    public RenameTableDialog(IDatabaseObjectInfo[] dbInfo, int dialogType) {
-        this.dbInfo = dbInfo;
+    public RenameTableDialog(IDatabaseObjectInfo[] dbInfo, int dialogType, Frame owningFrame) {
+       super(owningFrame);
+       this.dbInfo = dbInfo;
         if (dialogType == DIALOG_TYPE_TABLE) setTitle(RenameTableDialog.i18n.TITLE_TABLE);
         else if (dialogType == DIALOG_TYPE_VIEW) setTitle(RenameTableDialog.i18n.TITLE_VIEW);
         init();

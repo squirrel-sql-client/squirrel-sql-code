@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.util.NumberDocument;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -100,9 +101,10 @@ public class AddModifySequenceDialog extends AbstractRefactoringDialog
 	 * @param dialogMode
 	 *           mode in which the dialog should be run.
 	 */
-	public AddModifySequenceDialog(int dialogMode)
+	public AddModifySequenceDialog(int dialogMode, Frame owningFrame)
 	{
-		if (dialogMode == MODIFY_MODE)
+      super(owningFrame);
+      if (dialogMode == MODIFY_MODE)
 		{
 			setTitle(i18n.TITLEMODIFY);
 		} else if (dialogMode == ADD_MODE)
@@ -135,9 +137,9 @@ public class AddModifySequenceDialog extends AbstractRefactoringDialog
 	 *           cycled value of the sequence.
 	 */
 	public AddModifySequenceDialog(int dialogMode, String sequenceName, String lastValue, String increment,
-		String minimum, String maximum, String cache, boolean cylced)
+		String minimum, String maximum, String cache, boolean cylced, Frame owningFrame)
 	{
-		this(dialogMode);
+      this(dialogMode, owningFrame);
 
 		_nameField.setText(sequenceName);
 		_lastValueField.setText(lastValue);
@@ -289,6 +291,6 @@ public class AddModifySequenceDialog extends AbstractRefactoringDialog
 
 	public static void main(String[] args)
 	{
-		new AddModifySequenceDialog(ADD_MODE).setVisible(true);
+		new AddModifySequenceDialog(ADD_MODE, null).setVisible(true);
 	}
 }

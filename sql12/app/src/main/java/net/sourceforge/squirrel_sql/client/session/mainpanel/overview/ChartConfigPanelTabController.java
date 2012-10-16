@@ -4,6 +4,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleTable;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -123,7 +124,7 @@ public class ChartConfigPanelTabController
 
       CallDepthComboModel selItem = (CallDepthComboModel) _chartConfigPanelTab.cboCallDepth.getSelectedItem();
 
-      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, selItem.getCallDepth(), _app, (ChartConfigMode) _chartConfigPanelTab.cboYAxisKind.getSelectedItem());
+      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, selItem.getCallDepth(), (ChartConfigMode) _chartConfigPanelTab.cboYAxisKind.getSelectedItem(), _app.getResources(), GUIUtils.getOwningFrame(_dataScaleTable));
    }
 
 

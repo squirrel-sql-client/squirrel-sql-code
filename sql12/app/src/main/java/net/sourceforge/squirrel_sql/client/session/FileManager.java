@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +74,7 @@ public class FileManager
       chooser.setAccessory(new ChooserPreviewer());
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
-      MainFrame frame = _sqlPanelAPI.getSession().getApplication().getMainFrame();
+      Frame frame = SessionUtils.getOwningFrame(_sqlPanelAPI);
 
 
       if (prefs.isFileOpenInPreviousDir())
@@ -149,7 +150,7 @@ public class FileManager
       JFileChooser chooser = getFileChooser();
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
-      MainFrame frame = _sqlPanelAPI.getSession().getApplication().getMainFrame();
+      Frame frame = SessionUtils.getOwningFrame(_sqlPanelAPI);
 
       for (; ;)
       {
@@ -216,7 +217,7 @@ public class FileManager
       return result;
    }
 
-   private boolean saveScript(JFrame frame, File file, boolean askReplace)
+   private boolean saveScript(Frame frame, File file, boolean askReplace)
    {
       boolean doSave = false;
       if (askReplace && file.exists())

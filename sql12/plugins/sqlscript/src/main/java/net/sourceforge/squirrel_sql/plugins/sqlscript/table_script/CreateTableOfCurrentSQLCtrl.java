@@ -1,8 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
@@ -17,9 +19,9 @@ public class CreateTableOfCurrentSQLCtrl
    private static final String PREFS_KEY_DROP_TABLE = "squirrel_sqlscript_drop_table";
 
 
-   public CreateTableOfCurrentSQLCtrl(ISession session)
+   public CreateTableOfCurrentSQLCtrl(Frame parent)
    {
-      _dlg = new CreateTableOfCurrentSQLDialog(session.getApplication().getMainFrame());
+      _dlg = new CreateTableOfCurrentSQLDialog(parent);
 
       _dlg.btnOK.addActionListener(new ActionListener()
       {

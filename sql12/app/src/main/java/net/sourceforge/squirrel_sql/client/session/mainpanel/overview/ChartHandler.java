@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleListener;
@@ -28,7 +28,7 @@ public class ChartHandler
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, int callDepth, IApplication app, ChartConfigMode mode)
+   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, int callDepth, ChartConfigMode mode, SquirrelResources resources, Frame parent)
    {
       try
       {
@@ -87,7 +87,7 @@ public class ChartHandler
 
          JFrame f = new JFrame(title);
 
-         final ImageIcon icon = app.getResources().getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
+         final ImageIcon icon = resources.getIcon(SquirrelResources.IImageNames.APPLICATION_ICON);
          if (icon != null)
          {
             f.setIconImage(icon.getImage());
@@ -117,8 +117,8 @@ public class ChartHandler
          f.getContentPane().add(chartPanel);
 
 
-         f.setLocation(app.getMainFrame().getLocationOnScreen());
-         f.setSize(app.getMainFrame().getSize());
+         f.setLocation(parent.getLocationOnScreen());
+         f.setSize(parent.getSize());
 
          f.setVisible(true);
       }

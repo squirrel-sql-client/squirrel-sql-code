@@ -25,6 +25,7 @@ import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -176,11 +177,11 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 				{
 					public void run()
 					{
-						customDialog = new RenameTableDialog(_info, RenameTableDialog.DIALOG_TYPE_VIEW);
+						customDialog = new RenameTableDialog(_info, RenameTableDialog.DIALOG_TYPE_VIEW, SessionUtils.getOwningFrame(_session));
 						customDialog.addExecuteListener(new ExecuteListener());
 						customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 						customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-						customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+						customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 						customDialog.setVisible(true);
 					}
 				});

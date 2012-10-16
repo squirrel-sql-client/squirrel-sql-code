@@ -5,6 +5,7 @@ import org.fife.ui.search.FindDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -12,9 +13,9 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
 {
    private ArrayList<SearchDialogClosingListener> _closingListeners = new ArrayList<SearchDialogClosingListener>();
 
-   public SquirrelFindDialog(MainFrame mainFrame)
+   public SquirrelFindDialog(Frame owner)
    {
-      super(mainFrame, null /* This ActionListener is not used, propably a bug in RText*/);
+      super(owner, null /* This ActionListener is not used, propably a bug in RText*/);
 
       super.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       

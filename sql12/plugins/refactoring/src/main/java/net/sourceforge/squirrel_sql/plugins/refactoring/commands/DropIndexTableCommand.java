@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -105,7 +106,7 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
 				listDialog =
 					new DefaultListDialog(_dropIndexInfo, _tableName, DefaultListDialog.DIALOG_TYPE_INDEX);
 				listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-				listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+				listDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 			}
 			listDialog.setVisible(true);
 		}
@@ -117,11 +118,11 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
             public void run() {
                 GUIUtils.processOnSwingEventThread(new Runnable() {
                     public void run() {
-                        customDialog = new DefaultDropDialog(_dropIndexInfo, DefaultDropDialog.DIALOG_TYPE_INDEX);
+                        customDialog = new DefaultDropDialog(_dropIndexInfo, DefaultDropDialog.DIALOG_TYPE_INDEX, SessionUtils.getOwningFrame(_session));
                         customDialog.addExecuteListener(new ExecuteListener());
                         customDialog.addEditSQLListener(new EditSQLListener(customDialog));
                         customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-                        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+                        customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
                         customDialog.setVisible(true);
                     }
                 });

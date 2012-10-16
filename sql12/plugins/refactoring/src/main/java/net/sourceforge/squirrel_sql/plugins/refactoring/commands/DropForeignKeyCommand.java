@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -95,7 +97,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 			_listDialog =
 				new DefaultListDialog(fkInfo, ti.getSimpleName(), DefaultListDialog.DIALOG_TYPE_FOREIGN_KEY);
 			_listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-			_listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+			_listDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 			_listDialog.setVisible(true);
 		}
 	}
@@ -192,11 +194,12 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 					public void run()
 					{
 						customDialog =
-							new DefaultDropDialog(_foreignKeyInfo, DefaultDropDialog.DIALOG_TYPE_FOREIGN_KEY);
+							new DefaultDropDialog(_foreignKeyInfo, DefaultDropDialog.DIALOG_TYPE_FOREIGN_KEY, SessionUtils.getOwningFrame(_session)
+                  );
 						customDialog.addExecuteListener(new ExecuteListener());
 						customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 						customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-						customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+						customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 						customDialog.setVisible(true);
 					}
 				});

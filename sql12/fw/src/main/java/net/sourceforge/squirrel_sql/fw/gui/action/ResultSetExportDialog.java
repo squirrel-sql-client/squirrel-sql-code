@@ -48,8 +48,12 @@ public class ResultSetExportDialog extends TableExportCsvDlg {
 	}
 
 	IntegerField txtLimitRows;
-	
-	/**
+
+   public ResultSetExportDialog()
+   {
+   }
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg#getSelelectionPanel()
 	 */
 	@Override

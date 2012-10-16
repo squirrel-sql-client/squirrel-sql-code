@@ -89,8 +89,9 @@ public abstract class AbstractRefactoringDialog extends JDialog implements IDisp
 
 	}
 
-	public AbstractRefactoringDialog()
+	public AbstractRefactoringDialog(Frame owningFrame)
 	{
+      super(owningFrame);
 		defaultInit();
 	}
 
@@ -200,19 +201,7 @@ public abstract class AbstractRefactoringDialog extends JDialog implements IDisp
 		contentPane.add(pane, BorderLayout.CENTER);
 		contentPane.add(getButtonPanel(), BorderLayout.SOUTH);
 
-		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke,
-			"CloseAction");
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
-		getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
-		getRootPane().getActionMap().put("CloseAction", new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent actionEvent)
-			{
-				setVisible(false);
-				dispose();
-			}
-		});
+      GUIUtils.enableCloseByEscape(this);
 	}
 
 	protected JPanel getButtonPanel()

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -27,10 +28,8 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -64,8 +63,9 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
     */
    public void execute()
    {
+      Frame owningFrame = SessionUtils.getOwningFrame(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin));
 
-      CreateTableOfCurrentSQLCtrl ctrl = new CreateTableOfCurrentSQLCtrl(_session);
+      CreateTableOfCurrentSQLCtrl ctrl = new CreateTableOfCurrentSQLCtrl(owningFrame);
 
       if(false == ctrl.isOK())
       {

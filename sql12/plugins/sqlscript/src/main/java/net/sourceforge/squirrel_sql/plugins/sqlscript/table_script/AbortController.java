@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.sql.IAbortController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -19,9 +19,9 @@ public class AbortController implements IAbortController
    private JDialog _dlg;
    private boolean _stop;
 
-   public AbortController(IApplication app)
+   public AbortController(Window owner)
    {
-      _dlg = new JDialog(app.getMainFrame());
+      _dlg = new JDialog(owner);
       _dlg.getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;

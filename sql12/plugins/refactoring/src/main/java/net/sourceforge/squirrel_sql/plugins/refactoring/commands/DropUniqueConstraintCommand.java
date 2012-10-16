@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -84,7 +85,7 @@ public class DropUniqueConstraintCommand extends AbstractRefactoringCommand {
         } else {
             listDialog = new DefaultListDialog(indexes.toArray(new IndexInfo[]{}), ti.getSimpleName(), DefaultListDialog.DIALOG_TYPE_UNIQUE_CONSTRAINTS);
             listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-            listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+            listDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
             listDialog.setVisible(true);
         }
     }
@@ -95,13 +96,13 @@ public class DropUniqueConstraintCommand extends AbstractRefactoringCommand {
             public void run() {
                 GUIUtils.processOnSwingEventThread(new Runnable() {
                     public void run() {
-                        customDialog = new DefaultDropDialog(_dropIndexInfo, DefaultDropDialog.DIALOG_TYPE_UNIQUE_CONSTRAINT_KEY);
+                        customDialog = new DefaultDropDialog(_dropIndexInfo, DefaultDropDialog.DIALOG_TYPE_UNIQUE_CONSTRAINT_KEY, SessionUtils.getOwningFrame(_session));
                         customDialog.setCascadeVisible(false);
 
                         customDialog.addExecuteListener(new ExecuteListener());
                         customDialog.addEditSQLListener(new EditSQLListener(customDialog));
                         customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-                        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+                        customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
                         customDialog.setVisible(true);
                     }
                 });

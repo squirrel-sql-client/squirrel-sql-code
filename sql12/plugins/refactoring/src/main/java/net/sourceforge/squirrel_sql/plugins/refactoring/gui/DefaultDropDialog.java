@@ -106,9 +106,11 @@ public class DefaultDropDialog extends AbstractRefactoringDialog {
      *
      * @param objectInfo InfoObjects of the selected items in the tree. (Views)
      * @param dialogType dialog constant type.
+     * @param owningFrame
      */
-    public DefaultDropDialog(IDatabaseObjectInfo[] objectInfo, int dialogType) {
-        this._objectInfo = objectInfo;
+    public DefaultDropDialog(IDatabaseObjectInfo[] objectInfo, int dialogType, Frame owningFrame) {
+       super(owningFrame);
+       this._objectInfo = objectInfo;
 
         setTypeByID(dialogType);
         init();

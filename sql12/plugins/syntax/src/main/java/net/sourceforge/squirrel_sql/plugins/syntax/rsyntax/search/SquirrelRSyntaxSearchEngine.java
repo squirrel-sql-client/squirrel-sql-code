@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -8,6 +9,7 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.regex.PatternSyntaxException;
@@ -53,13 +55,16 @@ public class SquirrelRSyntaxSearchEngine
          return;
       }
 
+
+      Frame owningFrame = GUIUtils.getOwningFrame(_squirrelRSyntaxTextArea);
+
       if (replace)
       {
-         _dialog = new SquirrelReplaceDialog(_session.getApplication().getMainFrame());
+         _dialog = new SquirrelReplaceDialog(owningFrame);
       }
       else
       {
-         _dialog = new SquirrelFindDialog(_session.getApplication().getMainFrame());
+         _dialog = new SquirrelFindDialog(owningFrame);
       }
 
       _dialog.addFindActionListener(new ActionListener()

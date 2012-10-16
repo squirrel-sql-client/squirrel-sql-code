@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -135,7 +136,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 			listDialog.setTableName(ti.getQualifiedName());
 			listDialog.setSingleSelection();
 			listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-			listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+			listDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 			listDialog.setVisible(true);
 		}
 	}
@@ -224,7 +225,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 		customDialog.addExecuteListener(new ExecuteListener());
 		customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-		customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+		customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 		customDialog.setVisible(true);
 	}
 

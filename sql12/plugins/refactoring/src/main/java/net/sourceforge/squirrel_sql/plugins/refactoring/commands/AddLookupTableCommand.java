@@ -29,6 +29,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -443,7 +444,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 		_customDialog.addExecuteListener(new ExecuteListener());
 		_customDialog.addEditSQLListener(new EditSQLListener(_customDialog));
 		_customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, _customDialog));
-		_customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+		_customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 		_customDialog.setVisible(true);
 	}
 

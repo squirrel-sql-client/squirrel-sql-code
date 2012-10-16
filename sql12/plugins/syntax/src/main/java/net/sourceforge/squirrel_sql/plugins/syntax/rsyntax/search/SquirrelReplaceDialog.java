@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import org.fife.ui.search.ReplaceDialog;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -16,9 +17,9 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    private ArrayList<SearchDialogClosingListener> _closingListeners = new ArrayList<SearchDialogClosingListener>();
    private HashMap<ActionListener, ActionListener> _listener_listenerProxy = new HashMap<ActionListener, ActionListener>();
 
-   public SquirrelReplaceDialog(MainFrame mainFrame)
+   public SquirrelReplaceDialog(Frame owner)
    {
-      super(mainFrame, null /* This ActionListener is not used, propably a bug in RText*/);
+      super(owner, null /* This ActionListener is not used, propably a bug in RText*/);
 
       cancelButton.addActionListener(new ActionListener()
       {

@@ -65,8 +65,9 @@ public class DropTableDialog extends AbstractRefactoringDialog {
 
     private ITableInfo[] tableInfos = null;
 
-    public DropTableDialog(ITableInfo[] tables) {
-        setTitle(i18n.TITLE);
+    public DropTableDialog(ITableInfo[] tables, Frame owningFrame) {
+       super(owningFrame);
+       setTitle(i18n.TITLE);
         tableInfos = tables;
         init();
     }

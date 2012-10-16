@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.sql.Types;
 
 /**
@@ -61,8 +62,10 @@ public class AddAutoIncrementDialog extends AbstractRefactoringDialog {
      * Constructor of AddAutoIncrementDialog.
      *
      * @param dbInfo InfoObjects of the selected items in the tree.
+     * @param owningFrame
      */
-    public AddAutoIncrementDialog(TableColumnInfo dbInfo) {
+    public AddAutoIncrementDialog(TableColumnInfo dbInfo, Frame owningFrame) {
+        super(owningFrame);
         this.dbInfo = dbInfo;
         setTitle(s_stringMgr.getString("AddAutoIncrementDialog.title", dbInfo.getColumnName()));
         init();
@@ -129,7 +132,7 @@ public class AddAutoIncrementDialog extends AbstractRefactoringDialog {
                 Types.VARCHAR, JDBCTypeMapper.getJdbcTypeName(Types.VARCHAR), 30,
                 0, 0, 1, null, null, 0, 1, "YES");
 
-        new AddAutoIncrementDialog(newColumn).setVisible(true);
+        new AddAutoIncrementDialog(newColumn, null).setVisible(true);
     }
 
 

@@ -20,14 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.actions;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -35,9 +31,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.PasteTableCommand;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 
@@ -83,13 +79,16 @@ public class PasteTableAsAction extends SquirrelAction
           return;
        }
 
+       Frame owningFrame = SessionUtils.getOwningFrame(sessionInfoProv.getDestSession());
+
        if(1 != sessionInfoProv.getSourceDatabaseObjects().size())
        {
-          JOptionPane.showMessageDialog(app.getMainFrame(), s_stringMgr.getString("EditPasteTableNameDlg.onlyOneTableMsg"));
+
+          JOptionPane.showMessageDialog(owningFrame, s_stringMgr.getString("EditPasteTableNameDlg.onlyOneTableMsg"));
           return;
        }
 
-       EditPasteTableNameDlg dlg = new EditPasteTableNameDlg(app.getMainFrame());
+       EditPasteTableNameDlg dlg = new EditPasteTableNameDlg(owningFrame);
        GUIUtils.centerWithinParent(dlg);
        dlg.setVisible(true);
 
@@ -105,7 +104,7 @@ public class PasteTableAsAction extends SquirrelAction
 
     }
 
-	/**
+   /**
 	 * Set the current session.
 	 * 
 	 * @param	session		The current session.

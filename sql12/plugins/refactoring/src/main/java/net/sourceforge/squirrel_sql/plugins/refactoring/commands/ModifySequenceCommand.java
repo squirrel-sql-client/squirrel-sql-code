@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -147,7 +149,7 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand
 		customDialog.addExecuteListener(new ExecuteListener());
 		customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-		customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+		customDialog.setLocationRelativeTo(SessionUtils.getOwningFrame(_session));
 		customDialog.setVisible(true);
 	}
 
@@ -184,7 +186,10 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand
 															increment_by,
 															min_value,
 															max_value,
-															cache_value, is_cyled);
+															cache_value,
+                                             is_cyled,
+                                             SessionUtils.getOwningFrame(_session)
+            );
 			} else {
 				throw new IllegalStateException("createCustomDialog: failed to find sequence named : "+simpleName);
 			}
