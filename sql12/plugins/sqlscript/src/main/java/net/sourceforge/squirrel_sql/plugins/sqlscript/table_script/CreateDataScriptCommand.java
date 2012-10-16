@@ -24,7 +24,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;

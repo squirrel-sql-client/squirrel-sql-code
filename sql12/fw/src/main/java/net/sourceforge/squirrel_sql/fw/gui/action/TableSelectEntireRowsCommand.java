@@ -18,7 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import javax.swing.JTable;
+import javax.swing.*;
 
 /**
  * Command to expand the current selection of a table to span the complete affected rows.

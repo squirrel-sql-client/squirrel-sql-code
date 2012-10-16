@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
  *
@@ -50,7 +51,7 @@ public class CreateAliasCommand implements ICommand
 
 	/**
 	 * Execute command.
-	 */
+    */
 	public void execute()
 	{
 		_app.getWindowManager().showNewAliasInternalFrame();

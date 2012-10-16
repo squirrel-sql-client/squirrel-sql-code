@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to install the defautl drivers.
  *
@@ -69,7 +70,7 @@ public class InstallDefaultDriversCommand implements ICommand
 	 * Load the default drivers into the cache and then
 	 * make sure that the drivers list is showing all
 	 * drivers.
-	 */
+    */
 	public void execute() throws BaseException
 	{
 		try

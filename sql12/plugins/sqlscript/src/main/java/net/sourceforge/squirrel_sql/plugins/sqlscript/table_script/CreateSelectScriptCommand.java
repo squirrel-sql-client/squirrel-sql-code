@@ -12,6 +12,8 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
+import javax.swing.*;
+
 public class CreateSelectScriptCommand implements ICommand
 {
    /**

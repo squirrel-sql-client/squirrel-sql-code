@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;

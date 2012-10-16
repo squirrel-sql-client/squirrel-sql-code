@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.ViewLogsSheet;
+
 /**
  * This <CODE>ICommand</CODE> displays the Logs window.
  *
@@ -51,7 +52,7 @@ public class ViewLogsCommand implements ICommand
 
 	/**
 	 * Display the Dialog
-	 */
+    */
 	public void execute()
 	{
 		ViewLogsSheet.showSheet(_app);

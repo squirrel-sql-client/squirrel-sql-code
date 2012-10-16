@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 
 import javax.swing.*;
@@ -101,7 +100,7 @@ public abstract class AbstractExportCommand {
 	 * @param data The data to export
 	 * @return the number of written data rows or a negative value, if not the whole data are exported.
 	 */
-	protected long writeFile(TableExportCsvController ctrl, IExportData data) {
+	protected long writeFile(final TableExportCsvController ctrl, IExportData data) {
 		File file = null;
 		try {
 
@@ -134,7 +133,7 @@ public abstract class AbstractExportCommand {
          {
             public void run()
             {
-               JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+               JOptionPane.showMessageDialog(ctrl.getOwningFrame(), msg);
             }
          };
 
@@ -146,7 +145,7 @@ public abstract class AbstractExportCommand {
 	}
 
 	
-	   private void executeCommand(String command)
+	   private void executeCommand(String command, final JFrame owner)
 	   {
 	      try
 	      {
@@ -163,7 +162,7 @@ public abstract class AbstractExportCommand {
             {
                public void run()
                {
-                  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+                  JOptionPane.showMessageDialog(owner, msg);
                }
             };
 
@@ -171,7 +170,7 @@ public abstract class AbstractExportCommand {
          }
 	   }
 
-   public void execute() throws ExportDataException
+   public void execute(final JFrame owner) throws ExportDataException
    {
       try
       {
@@ -181,7 +180,7 @@ public abstract class AbstractExportCommand {
          TableExportCsvController ctrl;
          do
          {
-            ctrl = createTableExportController();
+            ctrl = createTableExportController(owner);
 
             if (false == ctrl.isOK())
             {
@@ -190,7 +189,7 @@ public abstract class AbstractExportCommand {
 
             if (checkMissingData(ctrl.getSeparatorChar()))
             {
-               int choice = JOptionPane.showConfirmDialog(GUIUtils.getMainFrame(),
+               int choice = JOptionPane.showConfirmDialog(owner,
                      i18n.missingClobDataMsg);
                if (choice == JOptionPane.YES_OPTION)
                {
@@ -233,7 +232,7 @@ public abstract class AbstractExportCommand {
                {
                   public void run()
                   {
-                     JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.ANOTHER_EXPORT_IS_ACTIVE, i18n.TITLE_ANOTHER_EXPORT_IS_ACTIVE, JOptionPane.WARNING_MESSAGE);
+                     JOptionPane.showMessageDialog(owner, i18n.ANOTHER_EXPORT_IS_ACTIVE, i18n.TITLE_ANOTHER_EXPORT_IS_ACTIVE, JOptionPane.WARNING_MESSAGE);
                   }
                };
 
@@ -264,7 +263,7 @@ public abstract class AbstractExportCommand {
             {
                public void run()
                {
-                  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+                  JOptionPane.showMessageDialog(owner, i18n.FAILED);
                }
             };
 
@@ -279,7 +278,7 @@ public abstract class AbstractExportCommand {
 
             if (null != command)
             {
-               executeCommand(command);
+               executeCommand(command, owner);
             }
             else
             {
@@ -297,7 +296,7 @@ public abstract class AbstractExportCommand {
                {
                   public void run()
                   {
-                     JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
+                     JOptionPane.showMessageDialog(owner, msg);
                   }
                };
 
@@ -313,7 +312,7 @@ public abstract class AbstractExportCommand {
             {
                public void run()
                {
-                  JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), i18n.FAILED);
+                  JOptionPane.showMessageDialog(owner, i18n.FAILED);
                }
             };
 
@@ -342,8 +341,9 @@ public abstract class AbstractExportCommand {
 
 	/**
 	 * @return
+    * @param owner
 	 */
-	protected TableExportCsvController createTableExportController() {
+	protected TableExportCsvController createTableExportController(final JFrame owner) {
 
       try
       {
@@ -353,7 +353,7 @@ public abstract class AbstractExportCommand {
          {
             public void run()
             {
-               buf[0] = new TableExportCsvController();
+               buf[0] = new TableExportCsvController(owner);
             }
          };
          GUIUtils.processOnSwingEventThread(runnable, true);

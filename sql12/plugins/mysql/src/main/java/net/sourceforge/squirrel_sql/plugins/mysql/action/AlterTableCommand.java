@@ -30,6 +30,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mysql.gui.AlterTableDialog;
+
+import javax.swing.*;
+
 /**
  * AlterTableCommand.java
  *

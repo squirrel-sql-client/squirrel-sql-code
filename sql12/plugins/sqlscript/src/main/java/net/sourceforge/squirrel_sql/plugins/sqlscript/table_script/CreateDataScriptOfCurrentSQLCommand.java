@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;

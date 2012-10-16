@@ -25,8 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.IAbortEventHandler;
 import net.sourceforge.squirrel_sql.client.gui.ProgressAbortDialog;
@@ -35,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.ResultSetExportCommand;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -84,18 +84,13 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 	}
 
 	
-	/**
-	 * Does the job.
-	 * @see net.sourceforge.squirrel_sql.fw.util.ICommand#execute()
-	 */
-	@Override
-	public void execute() {
+	public void execute(final JFrame owner) {
 		
 		this.currentSQL = getSelectedSelectStatement();
 		
 		getSession().getApplication().getThreadPool().addTask(new Runnable() {
 			public void run() {
-				doCreateFileOfCurrentSQL();
+				doCreateFileOfCurrentSQL(owner);
 			}
 		});
 		 
@@ -105,8 +100,9 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 
 	/**
 	 * Do the work.
-	 */
-	private void doCreateFileOfCurrentSQL() {
+    * @param owner
+    */
+	private void doCreateFileOfCurrentSQL(JFrame owner) {
 		try {
 		
 			ISQLConnection unmanagedConnection = null;
@@ -137,7 +133,7 @@ public class CreateFileOfCurrentSQLCommand extends AbstractDataScriptCommand {
 				DialectType dialectType =
 			            DialectFactory.getDialectType(getSession().getMetaData());
 				resultSetExportCommand = new ResultSetExportCommand(stmt, currentSQL, dialectType, progressFactory);
-				resultSetExportCommand.execute();
+				resultSetExportCommand.execute(owner);
 				
 				stopWatch.stop();
 				

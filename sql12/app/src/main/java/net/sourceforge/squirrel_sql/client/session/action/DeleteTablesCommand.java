@@ -105,7 +105,7 @@ public class DeleteTablesCommand implements ICommand
 
 	/**
 	 * Delete records from the selected tables in the object tree.
-	 */
+    */
 	public void execute()
 	{		
 		ProgressCallBack cb =

@@ -1,11 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import java.awt.*;
 import java.util.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -20,11 +22,11 @@ public class AutoCorrectController
    private AutoCorrectDlg _dlg;
    private SyntaxPlugin _syntaxPugin;
 
-   public AutoCorrectController(SyntaxPlugin syntaxPugin)
+   public AutoCorrectController(SyntaxPlugin syntaxPugin, Frame parent)
    {
       _syntaxPugin = syntaxPugin;
 
-      _dlg = new AutoCorrectDlg(syntaxPugin.getApplication().getMainFrame());
+      _dlg = new AutoCorrectDlg(parent);
 
       AutoCorrectData autoCorrectData = syntaxPugin.getAutoCorrectProviderImpl().getAutoCorrectData();
 

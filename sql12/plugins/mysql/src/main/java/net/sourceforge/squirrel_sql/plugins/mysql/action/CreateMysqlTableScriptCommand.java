@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
+
 /**
  * Generate a &quot;CREATE TABLE&quot; script for the currently
  * selected tables.
@@ -62,7 +63,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 
 	/**
 	 * Execute this command. Place the "create table" script in the SQL entry panel.
-	 */
+    */
 	public void execute() throws BaseException
 	{
 		final ISQLConnection conn = _session.getSQLConnection();

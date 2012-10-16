@@ -19,6 +19,9 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import javax.swing.*;
+
 /**
  * @author gwg
  *
@@ -36,7 +39,7 @@ public class UndoMakeEditableCommand implements ICommand
 		_updateableModel = updateableModel;
 	}
 	
-	public void execute() 
+	public void execute()
 	{
 		// tell the underlying data model to stop forcing edit mode and return to the
 		// mode specified in the session parameters,

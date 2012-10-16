@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+
 /**
  * This <CODE>Action</CODE> allows the user to close all currently
  * open sessions.

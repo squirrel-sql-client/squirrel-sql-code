@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This <CODE>ICommand</CODE> commits the current SQL transaction.
  *
@@ -52,7 +53,7 @@ public class CommitCommand implements ICommand
 
 	/**
 	 * Commit the transaction.
-	 */
+    */
 	public void execute()
 	{
 		_session.commit();

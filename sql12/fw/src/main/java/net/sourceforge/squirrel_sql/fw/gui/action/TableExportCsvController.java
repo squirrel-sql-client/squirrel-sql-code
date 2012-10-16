@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -10,12 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.prefs.Preferences;
 
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvDlg.LineSeparator;
@@ -38,6 +33,10 @@ public class TableExportCsvController
    private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS";
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
 
+   public static final int EXPORT_FORMAT_CSV = 0;
+   public static final int EXPORT_FORMAT_XLS = 1;
+   public static final int EXPORT_FORMAT_XML = 2;
+
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TableExportCsvController.class);
 
@@ -45,13 +44,14 @@ public class TableExportCsvController
 
    private TableExportCsvDlg _dlg;
    private boolean _ok = false;
-   public static final int EXPORT_FORMAT_CSV = 0;
-   public static final int EXPORT_FORMAT_XLS = 1;
-   public static final int EXPORT_FORMAT_XML = 2;
 
-   TableExportCsvController()
+   private JFrame _owner;
+
+
+   TableExportCsvController(JFrame owner)
    {
-      _dlg = createDialog();
+      _owner = owner;
+      _dlg = createDialog(owner);
 
       initDlg();
 
@@ -76,8 +76,8 @@ public class TableExportCsvController
 
    }
 
-   protected TableExportCsvDlg createDialog() {
-	   return new TableExportCsvDlg();
+   protected TableExportCsvDlg createDialog(JFrame owner) {
+      return new TableExportCsvDlg(owner);
    }
 
    private void onSeparatorCharChanged(KeyEvent e)
@@ -657,5 +657,10 @@ protected void writePrefs()
    
    protected TableExportCsvDlg getDialog() {
 	   return this._dlg;
+   }
+
+   public Frame getOwningFrame()
+   {
+      return _owner;
    }
 }

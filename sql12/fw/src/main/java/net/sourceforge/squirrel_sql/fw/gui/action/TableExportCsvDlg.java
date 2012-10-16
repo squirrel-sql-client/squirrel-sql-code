@@ -7,17 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.nio.charset.Charset;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -71,9 +62,9 @@ public class TableExportCsvDlg extends JDialog
 	};
 
 	
-   public TableExportCsvDlg()
+   public TableExportCsvDlg(JFrame owner)
    {
-      super(GUIUtils.getMainFrame(), true);
+      super(owner, true);
 
       // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel / XML export]
       setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));

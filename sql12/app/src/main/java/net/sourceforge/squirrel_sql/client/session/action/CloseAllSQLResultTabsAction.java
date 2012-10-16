@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+
 /**
  * This <CODE>Action</CODE> allows the user to close all the SQL
  * result tabs for the current session.

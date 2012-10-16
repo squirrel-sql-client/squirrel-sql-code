@@ -106,9 +106,10 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.AbstractExportCommand#createTableExportController()
+    * @param owner
 	 */
 	@Override
-	protected TableExportCsvController createTableExportController()
+	protected TableExportCsvController createTableExportController(final JFrame owner)
    {
       try
       {
@@ -118,7 +119,7 @@ public class ResultSetExportCommand extends AbstractExportCommand  {
          {
             public void run()
             {
-               buf[0] = new ResultSetExportCsvController();
+               buf[0] = new ResultSetExportCsvController(owner);
             }
          };
 

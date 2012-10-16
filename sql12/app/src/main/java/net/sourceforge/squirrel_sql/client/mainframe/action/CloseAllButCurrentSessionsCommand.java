@@ -53,7 +53,7 @@ public class CloseAllButCurrentSessionsCommand implements ICommand
 
 	/**
 	 * Close all sessions.
-	 */
+    */
 	public void execute()
 	{
       _app.getSessionManager().closeAllButCurrentSessions();

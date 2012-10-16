@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+
 /**
  * This <CODE>ICommand</CODE> refreshes the object tree.
  *
@@ -53,7 +54,7 @@ public class GotoNextResultsTabCommand implements ICommand
 
 	/**
 	 * Display the next results tab.
-	 */
+    */
 	public void execute()
 	{
 		_panel.gotoNextResultsTab();

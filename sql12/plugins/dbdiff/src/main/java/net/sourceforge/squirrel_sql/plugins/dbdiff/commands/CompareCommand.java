@@ -50,7 +50,7 @@ public class CompareCommand extends AbstractDiffCommand implements ICommand
 	/**
 	 * Kicks off the diff operation. All pieces of information are provided by the SessionInfoProvider and have
 	 * been verified in the action prior to this point. Nothing left to do except start the copy operation.
-	 */
+    */
 	public void execute()
 	{
 		final DBDiffPreferenceBean preferenceBean =

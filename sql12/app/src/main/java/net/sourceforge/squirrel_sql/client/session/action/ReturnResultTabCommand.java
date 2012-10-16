@@ -20,6 +20,9 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultFrame;
+
+import javax.swing.*;
+
 /**
  * This <CODE>ICommand</CODE> returns the specifed SQL results
  * frame back where it was torn off from.

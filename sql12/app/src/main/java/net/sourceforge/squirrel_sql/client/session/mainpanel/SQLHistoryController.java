@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -40,7 +41,7 @@ public class SQLHistoryController
    {
       _sqlPanelAPI = sqlPanelAPI;
       _sqlHistoryItemWrappers = SQLHistoryItemWrapper.wrap(items);
-      _dlg = new SQLHistoryDlg(session.getApplication().getMainFrame(), session.getActiveSessionWindow().getTitle());
+      _dlg = new SQLHistoryDlg((JFrame) SessionUtils.getOwningFrame(session), session.getActiveSessionWindow().getTitle());
 
       GUIUtils.centerWithinParent(_dlg);
 

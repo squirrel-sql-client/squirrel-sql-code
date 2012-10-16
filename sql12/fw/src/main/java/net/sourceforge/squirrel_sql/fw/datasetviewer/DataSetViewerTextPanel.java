@@ -26,7 +26,6 @@ import java.util.Arrays;
 
 import javax.swing.JTextArea;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeGeneral;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;

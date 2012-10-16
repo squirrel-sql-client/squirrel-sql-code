@@ -89,7 +89,7 @@ public class CopyTableCommand implements ICommand
 	
 	/**
 	 * Execute this command. Save the session and selected objects in the plugin for use in paste command.
-	 */
+    */
 	public void execute()
 	{
 		IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();

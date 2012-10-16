@@ -4,7 +4,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class FilterObjectsAction extends SquirrelAction implements ISessionAction

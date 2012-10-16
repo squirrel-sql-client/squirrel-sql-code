@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;

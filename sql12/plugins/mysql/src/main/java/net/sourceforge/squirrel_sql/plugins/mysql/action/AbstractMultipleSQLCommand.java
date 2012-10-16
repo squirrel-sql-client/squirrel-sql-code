@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
+
 /**
  * This abstract command is a MySQL command that takes a table
  * as a parameter.
@@ -61,7 +62,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 
 	/**
 	 * Execute this command.
-	 */
+    */
 	public void execute()
 	{
 		final StringBuffer buf = new StringBuffer(2048);

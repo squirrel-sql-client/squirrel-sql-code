@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This <CODE>ICommand</CODE> closes the specified session.
  *
@@ -52,7 +53,7 @@ public class CloseSessionCommand implements ICommand
 
 	/**
 	 * Close the session.
-	 */
+    */
 	public void execute()
 	{
 		_session.getApplication().getSessionManager().closeSession(_session);

@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Stefan Willinger
  *
  */
-public abstract class AbstractDataScriptCommand extends WindowAdapter implements ICommand {
+public abstract class AbstractDataScriptCommand extends WindowAdapter{
 	
 	private static final StringManager s_stringMgr = StringManagerFactory
 	.getStringManager(AbstractDataScriptCommand.class);

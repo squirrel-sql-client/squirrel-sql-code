@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
+import javax.swing.*;
+
 /**
  * This command will remove &quot;newline&quot; characters from an SQL string.
  * 

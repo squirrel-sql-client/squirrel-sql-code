@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+
 /**
  * This <CODE>Action</CODE> will copy the object names of all objects
  * currently in the object tree and place on the system clipboard.
@@ -75,7 +76,7 @@ public class CopyObjectNameCommand implements ICommand
 
 	/**
 	 * Copy to clipboard.
-	 */
+    */
 	public void execute()
 	{
 		final StringBuffer buf = new StringBuffer(100);

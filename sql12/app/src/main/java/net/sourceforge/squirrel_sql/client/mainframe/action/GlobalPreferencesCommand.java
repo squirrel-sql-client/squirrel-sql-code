@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
+
 /**
  * This <CODE>ICommand</CODE> displays the Global Preferences dialog..
  *
@@ -51,7 +52,7 @@ public class GlobalPreferencesCommand implements ICommand
 
 	/**
 	 * Display the Dialog
-	 */
+    */
 	public void execute()
 	{
 		GlobalPreferencesSheet.showSheet(_app, null);

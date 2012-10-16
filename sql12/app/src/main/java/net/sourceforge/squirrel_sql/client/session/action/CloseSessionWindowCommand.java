@@ -56,7 +56,7 @@ public class CloseSessionWindowCommand implements ICommand
 
 	/**
 	 * Close the session.
-	 */
+    */
 	public void execute()
 	{
       ISessionWidget activeSessionWindow = _session.getActiveSessionWindow();

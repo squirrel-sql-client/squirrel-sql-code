@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to show/hide drivers in the
  * Drivers List that cannot be loaded.
@@ -93,7 +94,7 @@ public class ShowLoadedDriversOnlyCommand implements ICommand
 
 	/**
 	 * Execute this command.
-	 */
+    */
 	public void execute()
 	{
 		SquirrelPreferences prefs = _app.getSquirrelPreferences();

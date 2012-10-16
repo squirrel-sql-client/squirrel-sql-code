@@ -22,6 +22,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+
 /**
  * This <CODE>ICommand</CODE> refreshes the selected nodes in the object tree.
  *
@@ -52,7 +53,7 @@ public class RefreshObjectTreeItemCommand implements ICommand
 
 	/**
 	 * Refresh tree.
-	 */
+    */
 	public void execute()
 	{
 		_tree.refreshSelectedNodes();

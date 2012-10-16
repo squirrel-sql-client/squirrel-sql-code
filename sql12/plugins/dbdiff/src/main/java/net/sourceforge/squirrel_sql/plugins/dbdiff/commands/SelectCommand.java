@@ -54,7 +54,7 @@ public class SelectCommand extends AbstractDiffCommand implements ICommand
 
 	/**
 	 * Execute this command. Save the session and selected objects in the plugin for use in paste command.
-	 */
+    */
 	public void execute()
 	{
 		final IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();

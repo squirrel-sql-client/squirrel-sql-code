@@ -22,6 +22,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
+import javax.swing.*;
+
 public class ShrinkDatabaseFileCommand implements ICommand {
 	private ISession _session;
 	private final MssqlPlugin _plugin;

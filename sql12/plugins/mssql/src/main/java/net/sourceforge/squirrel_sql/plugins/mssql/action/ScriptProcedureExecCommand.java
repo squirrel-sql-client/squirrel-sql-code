@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
+import javax.swing.*;
+
 public class ScriptProcedureExecCommand implements ICommand {
 	private ISession _session;
 	private final MssqlPlugin _plugin;

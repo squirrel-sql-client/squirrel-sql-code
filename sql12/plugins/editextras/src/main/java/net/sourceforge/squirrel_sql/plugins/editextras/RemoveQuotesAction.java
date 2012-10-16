@@ -27,7 +27,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 /**
  * This action will remove &quot;quote&quot; from an SQL string.

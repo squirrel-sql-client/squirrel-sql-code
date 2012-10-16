@@ -27,7 +27,7 @@ public class AutoCorrectDlg extends JDialog
    JButton btnClose;
 
 
-   public AutoCorrectDlg(JFrame parent)
+   public AutoCorrectDlg(Frame parent)
    {
 		// i18n[syntax.configAutoCorr=Configure auto correct /abreviation]
 		super(parent, s_stringMgr.getString("syntax.configAutoCorr"));

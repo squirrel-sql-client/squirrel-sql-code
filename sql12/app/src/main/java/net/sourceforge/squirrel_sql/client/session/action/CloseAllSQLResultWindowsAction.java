@@ -27,8 +27,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This <CODE>Action</CODE> allows the user to close all the SQL
  * result windows for the current session.

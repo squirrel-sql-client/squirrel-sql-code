@@ -25,6 +25,9 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
+import javax.swing.*;
+
 /**
  * This command will convert the current SQL into native
  * format and append it to the SQL entry area.

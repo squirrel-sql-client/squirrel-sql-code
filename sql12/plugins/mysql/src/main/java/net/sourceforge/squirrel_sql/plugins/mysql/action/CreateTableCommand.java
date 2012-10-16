@@ -20,10 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;

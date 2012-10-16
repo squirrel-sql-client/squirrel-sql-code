@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+
 /**
  * This <CODE>Action</CODE> displays the applications About Box.
  *

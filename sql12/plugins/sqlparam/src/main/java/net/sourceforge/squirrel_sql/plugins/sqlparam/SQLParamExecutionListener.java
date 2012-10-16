@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SelectWidgetCommand;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;

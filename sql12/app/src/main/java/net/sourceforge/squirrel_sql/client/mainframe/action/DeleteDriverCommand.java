@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
  * <TT>ISQLDriver</TT>.
@@ -80,7 +81,7 @@ public class DeleteDriverCommand implements ICommand
 
 	/**
 	 * Delete the current <TT>ISQLDriver</TT> after confirmation.
-	 */
+    */
 	public void execute()
 	{
 		final Object[] args = {_sqlDriver.getName()};

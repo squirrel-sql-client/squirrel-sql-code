@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to launch the default
  * web-browser to view the driver's website.

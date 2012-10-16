@@ -23,6 +23,9 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import javax.swing.*;
+
 /**
  * This command will set the default catalog for a session.
  *

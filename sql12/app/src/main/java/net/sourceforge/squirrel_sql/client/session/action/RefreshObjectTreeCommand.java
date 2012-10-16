@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
 /**
  * This <CODE>ICommand</CODE> refreshes the object tree.
  *
@@ -51,7 +52,7 @@ public class RefreshObjectTreeCommand implements ICommand
 
 	/**
 	 * Refresh tree.
-	 */
+    */
 	public void execute()
 	{
 		_tree.refreshTree(true);

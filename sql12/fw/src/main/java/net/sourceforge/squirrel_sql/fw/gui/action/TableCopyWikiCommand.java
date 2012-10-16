@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 
-import javax.swing.JTable;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableConfiguration;
 import net.sourceforge.squirrel_sql.fw.gui.action.wikiTable.IWikiTableTransformer;
@@ -88,7 +88,7 @@ public class TableCopyWikiCommand implements ICommand {
 	 * Performs the action.
 	 * 
 	 * @see net.sourceforge.squirrel_sql.fw.util.ICommand#execute()
-	 */
+    */
 	@Override
 	public void execute() {
 

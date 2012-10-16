@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
@@ -52,7 +53,7 @@ public class AboutCommand implements ICommand
 
 	/**
 	 * Display the About Box.
-	 */
+    */
 	public void execute()
 	{
 		AboutBoxDialog.showAboutBox(_app);

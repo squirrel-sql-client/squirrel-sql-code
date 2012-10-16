@@ -24,6 +24,9 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.*;
+
 /**
  * This command will &quot;quote&quot; an SQL string.
  *

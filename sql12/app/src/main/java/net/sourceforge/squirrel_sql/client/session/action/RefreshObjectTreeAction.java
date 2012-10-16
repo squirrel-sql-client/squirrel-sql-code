@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+
 /**
  * This <CODE>Action</CODE> will refresh the object tree.
  *

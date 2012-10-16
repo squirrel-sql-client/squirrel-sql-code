@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLAlias</TT>.
  *

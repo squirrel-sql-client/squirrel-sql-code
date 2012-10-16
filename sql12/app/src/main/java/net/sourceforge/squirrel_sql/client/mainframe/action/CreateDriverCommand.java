@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
+import javax.swing.*;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *

@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.prefs.Preferences;
 
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
 import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
@@ -33,7 +31,6 @@ import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.DialogUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -85,7 +82,7 @@ public class ImportTableDataCommand implements ICommand {
 	 * importer.
 	 * 
 	 * Then the column mapping dialog is shown.
-	 */
+    */
 	public void execute() {
 		// Show a warning dialog and let the user confirm it.
 		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(),

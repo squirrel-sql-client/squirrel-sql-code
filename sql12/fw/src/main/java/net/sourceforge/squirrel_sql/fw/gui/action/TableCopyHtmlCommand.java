@@ -25,7 +25,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
@@ -84,7 +84,7 @@ public class TableCopyHtmlCommand implements ICommand
 
 	/**
 	 * Execute this command.
-	 */
+    */
 	public void execute()
 	{
 		int nbrSelRows = _table.getSelectedRowCount();

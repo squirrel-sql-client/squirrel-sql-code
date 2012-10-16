@@ -23,9 +23,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -49,8 +47,9 @@ public class ResultSetExportDialog extends TableExportCsvDlg {
 
 	IntegerField txtLimitRows;
 
-   public ResultSetExportDialog()
+   public ResultSetExportDialog(JFrame owner)
    {
+      super(owner);
    }
 
    /**

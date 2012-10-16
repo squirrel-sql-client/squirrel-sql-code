@@ -24,6 +24,8 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
+import javax.swing.*;
+
 public class TruncateLogCommand implements ICommand {
 	private ISession _session;
 	private final MssqlPlugin _plugin;

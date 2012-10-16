@@ -22,7 +22,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
@@ -129,7 +129,7 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	/**
 	 * Does general execution work that every refactoring command needs (e.g. HibernateDialect) and then calls
 	 * the onExecute method for the subclass's specific execution implementation.
-	 */
+    */
 	public void execute()
 	{
 		try

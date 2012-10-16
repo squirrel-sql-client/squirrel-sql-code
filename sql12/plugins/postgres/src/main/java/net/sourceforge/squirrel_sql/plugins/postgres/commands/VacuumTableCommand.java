@@ -72,7 +72,7 @@ public class VacuumTableCommand extends AbstractPostgresDialogCommand {
     }
 
 
-    /** Execute this command. */
+    /** Execute this command.  */
     public void execute() throws BaseException {
         showDialog(_infos);
     }

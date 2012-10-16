@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
+import javax.swing.*;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLAlias</TT> to a new one and then maintain the new one.

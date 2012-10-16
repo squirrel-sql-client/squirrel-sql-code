@@ -25,11 +25,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;

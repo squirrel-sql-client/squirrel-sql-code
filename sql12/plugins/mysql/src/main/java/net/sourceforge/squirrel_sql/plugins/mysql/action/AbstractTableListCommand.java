@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This abstract command is a MySQL command that takes a comma separated list
  * of tables as a parameter.
@@ -63,7 +64,7 @@ abstract class AbstractTableListCommand implements ICommand
 
 	/**
 	 * Execute this command.
-	 */
+    */
 	public void execute()
 	{
 		final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();

@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloaderF
 import net.sourceforge.squirrel_sql.fw.gui.JOptionPaneService;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapperFactoryImpl;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to check for updates and apply changes to the currently 
  * installed software.
@@ -58,7 +59,7 @@ public class UpdateCommand implements ICommand
 
 	/**
 	 * Display the software update dialog
-	 */
+    */
 	public void execute()
 	{
 	   UpdateController updateController = 

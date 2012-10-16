@@ -28,12 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;

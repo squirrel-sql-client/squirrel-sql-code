@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This <CODE>ICommand</CODE> displays a dialog box that allows the user to
  * enter a 'where' clause or an 'order by' clause used when getting data via
@@ -68,7 +69,7 @@ public class SQLFilterCommand implements ICommand
 
 	/**
 	 * Display the SQL Filter dialog.
-	 */
+    */
 	public void execute()
 	{
 		if (_objectTree != null)

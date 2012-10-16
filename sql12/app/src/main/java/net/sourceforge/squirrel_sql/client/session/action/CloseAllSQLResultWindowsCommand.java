@@ -22,6 +22,9 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+
+import javax.swing.*;
+
 /**
  * This <CODE>ICommand</CODE> closes all the torn off SQL Results
  * windows for the specified session.

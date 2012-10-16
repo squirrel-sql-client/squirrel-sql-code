@@ -22,6 +22,8 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 
+import javax.swing.*;
+
 /**
  * This command will remove &quot;quotes&quot; from an SQL string.
  *

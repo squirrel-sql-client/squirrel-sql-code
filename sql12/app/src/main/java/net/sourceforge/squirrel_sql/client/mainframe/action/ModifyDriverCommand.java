@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to modify an existing
  * <TT>ISQLDriver</TT>.
@@ -63,7 +64,7 @@ public class ModifyDriverCommand implements ICommand
 
 	/**
 	 * Display a dialog allowing user to maintain the <TT>ISQLDriver</TT>.
-	 */
+    */
 	public void execute()
 	{
 		_app.getWindowManager().showModifyDriverInternalFrame(_driver);

@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.util.prefs.Preferences;
 
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -38,7 +39,13 @@ import javax.swing.event.ChangeListener;
 public class ResultSetExportCsvController extends TableExportCsvController {
 
 	private static final String PREF_KEY_LIMIT_ROWS = "SquirrelSQL.sqlexport.limitRows";
-	/**
+
+   public ResultSetExportCsvController(JFrame owner)
+   {
+      super(owner);
+   }
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#shouldWarnIfExcel()
 	 */
 	@Override
@@ -48,10 +55,11 @@ public class ResultSetExportCsvController extends TableExportCsvController {
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController#createDialog()
+    * @param owner
 	 */
 	@Override
-	protected ResultSetExportDialog createDialog() {
-		final ResultSetExportDialog dlg = new ResultSetExportDialog();
+	protected ResultSetExportDialog createDialog(JFrame owner) {
+		final ResultSetExportDialog dlg = new ResultSetExportDialog(owner);
 		 
 		dlg.radComplete.addChangeListener(new ChangeListener() {
 			@Override

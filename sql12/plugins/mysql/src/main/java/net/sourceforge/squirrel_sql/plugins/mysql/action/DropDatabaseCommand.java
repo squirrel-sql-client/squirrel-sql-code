@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 
+import javax.swing.*;
+
 /**
  * DropDatabaseCommand.java
  *

@@ -18,15 +18,17 @@
  */
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action to store the result of the current SQL directly into a file.
@@ -35,8 +37,6 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
  * 
  */
 public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQLPanelAction {
-
-	private static final long serialVersionUID = 7015516163527109161L;
 
 	private SQLScriptPlugin plugin;
 
@@ -69,7 +69,7 @@ public class CreateFileOfCurrentSQLAction extends SquirrelAction implements ISQL
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		new CreateFileOfCurrentSQLCommand(session, plugin)
-				.execute();
+				.execute((JFrame) SessionUtils.getOwningFrame(session));
 	}
 
 	/**

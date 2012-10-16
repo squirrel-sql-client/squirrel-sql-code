@@ -16,11 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;

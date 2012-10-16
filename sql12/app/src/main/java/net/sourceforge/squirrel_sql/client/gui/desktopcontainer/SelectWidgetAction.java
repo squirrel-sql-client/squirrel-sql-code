@@ -1,13 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.IWidget;
-
-import javax.swing.*;
 
 public class SelectWidgetAction extends BaseAction
 {

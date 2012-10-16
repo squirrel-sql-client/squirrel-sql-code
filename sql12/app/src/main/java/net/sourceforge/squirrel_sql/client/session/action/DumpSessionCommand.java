@@ -139,7 +139,7 @@ public class DumpSessionCommand implements ICommand
 
 	/**
 	 * Dump the session.
-	 */
+    */
 	public void execute()
 	{
 		if (_session == null)

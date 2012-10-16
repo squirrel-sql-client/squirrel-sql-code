@@ -44,9 +44,6 @@ public class GUIUtils
 	private static final ILogger s_log =
 		LoggerController.createLogger(GUIUtils.class);
 
-
-   private static JFrame _mainFrame;
-
    /**
     * Centers <CODE>wind</CODE> within its parent. If it has no parent then
     * center within the screen. If centering would cause the title bar to go
@@ -397,21 +394,6 @@ public class GUIUtils
 		wind.setLocation(x, y);
 	}
 
-   /**
-    * To make the main window available to fw classes.
-    *
-    * This method is called during application start by WindowManager.
-    */
-   public static void setMainFrame(JFrame mainFrame)
-   {
-      _mainFrame = mainFrame;
-   }
-
-   public static JFrame  getMainFrame()
-   {
-      return _mainFrame;
-   }
-   
    /**
     * Inserts newlines at or before lineLength at spaces or commas. If no space 
     * or comma can be found, the resultant line will not be broken up by 

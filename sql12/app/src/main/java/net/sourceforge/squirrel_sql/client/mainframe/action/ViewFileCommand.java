@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.HtmlViewerSheet;
+
 /**
  * This <CODE>ICommand</CODE> displays the Help window.
  *
@@ -78,7 +79,7 @@ public class ViewFileCommand implements ICommand
 
 	/**
 	 * Display the Dialog
-	 */
+    */
 	public void execute() throws BaseException
 	{
 		try

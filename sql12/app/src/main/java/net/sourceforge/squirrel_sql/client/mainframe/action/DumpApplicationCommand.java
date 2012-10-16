@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionCommand;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+
 /**
  * This <CODE>ICommand</CODE> will dump the status of the application.
  *
@@ -112,7 +113,7 @@ public class DumpApplicationCommand implements ICommand
 
 	/**
 	 * Dump the application.
-	 */
+    */
 	public void execute()
 	{
 		List<File>   files  = new ArrayList<File>();

@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import java.sql.SQLException;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
@@ -117,7 +117,7 @@ public class ConnectToAliasCommand implements ICommand
 
 	/**
 	 * Display connection internal frame.
-	 */
+    */
 	public void execute()
 	{
 		try

@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+
 /**
  * This <CODE>Action</CODE> allows the user to commit the current SQL
  * transaction.

@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.HelpViewerWindow;
+
 /**
  * This <CODE>ICommand</CODE> displays the Help window.
  *
@@ -56,7 +57,7 @@ public class ViewHelpCommand implements ICommand
 
 	/**
 	 * Display the Help window
-	 */
+    */
 	public void execute() throws BaseException
 	{
 		synchronized (getClass())

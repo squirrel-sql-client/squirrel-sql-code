@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.action;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+
 /**
  * This <CODE>ICommand</CODE> displays a session properties dialog box
  * and allows the user to modify the properties.

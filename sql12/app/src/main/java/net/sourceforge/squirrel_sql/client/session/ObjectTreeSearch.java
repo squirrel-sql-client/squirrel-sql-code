@@ -66,7 +66,7 @@ public class ObjectTreeSearch
              s_stringMgr.getString(
                      "ObjectTreeSearch.error.objectnotfound",
                      candidates.getSearchString());
-         JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), msg);
+         JOptionPane.showMessageDialog(SessionUtils.getOwningFrame(session), msg);
       }
 
    }

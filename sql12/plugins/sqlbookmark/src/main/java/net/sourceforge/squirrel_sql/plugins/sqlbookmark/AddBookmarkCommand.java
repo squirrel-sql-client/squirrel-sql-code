@@ -21,7 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
 import java.awt.Frame;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
