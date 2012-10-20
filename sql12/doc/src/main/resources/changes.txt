@@ -36,6 +36,8 @@ dandar3 for the tip.
 
 Bug fixes:
 
+On DB2 for AS400 column completion didn't work in some cases. (Thanks to Stefan Hohenstein for the patch.)
+
 3575054: SQL results text mode is not working
 
 Fixed repaint problem in Hibernate Plugin.

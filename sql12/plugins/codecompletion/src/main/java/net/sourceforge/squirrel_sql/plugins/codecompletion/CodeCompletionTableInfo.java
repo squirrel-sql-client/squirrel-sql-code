@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
@@ -34,9 +37,12 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    private String _schema;
    private boolean _useCompletionPrefs;
    private CodeCompletionPreferences _prefs;
+   ////SH add the session object
+   private ISession _session;
 
 
-   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema, boolean useCompletionPrefs, CodeCompletionPreferences prefs)
+   //SH add the session object as last parameter
+   public CodeCompletionTableInfo(String tableName, String tableType, String catalog, String schema, boolean useCompletionPrefs, CodeCompletionPreferences prefs, ISession session)
    {
       _tableName = tableName;
       _tableType = tableType;
@@ -44,7 +50,8 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       _schema = schema;
       _useCompletionPrefs = useCompletionPrefs;
       _prefs = prefs;
-
+      //SH
+      _session = session;
 
       if(null != _tableType && !"TABLE".equals(_tableType))
       {
@@ -81,7 +88,9 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    public ArrayList<CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
       throws SQLException
    {
-      if(null == _colInfos)
+      //System.out.println("getColumns colInfos:" + _colInfos + " schemaInfo :" + schemaInfo + " colNamePattern :" + colNamePattern);
+      //SH
+      if(null == _colInfos || _colInfos.size() == 0)
       {
          ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_catalog, _schema, _tableName);
 
@@ -112,6 +121,28 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
             }
          }
 
+
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         // According to Stefan Hohenstein this block makes column completion work on db2/400 work in special cases where it didn't work before.
+         // The code is executed only in the peculiar case when no columns could be found for a table.
+         if(colInfosBuf.size() == 0 && _session != null)
+         {
+            SQLDatabaseMetaData sdmd = _session.getSQLConnection().getSQLMetaData();
+            TableColumnInfo[] ti = sdmd.getColumnInfo(_catalog, _schema, _tableName);
+            for(int x = 0; x < ti.length; x++)
+            {
+               CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(ti[x].getColumnName(), ti[x].getRemarks(), ti[x].getTypeName(), ti[x].getColumnSize(), ti[x].getDecimalDigits(), (ti[x].isNullable().equals("NO")) ? false : true, _useCompletionPrefs, _prefs.isShowRemarksInColumnCompletion());
+               String bufStr = buf.toString();
+               if (!uniqCols.contains(bufStr))
+               {
+                  uniqCols.add(bufStr);
+                  colInfosBuf.add(buf);
+               }
+            }
+         }
+         //
+         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
          _colInfos = colInfosBuf;
       }
 
@@ -130,7 +161,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          {
             ret.add(colInfo);
          }
-         
+
       }
 
       return ret;

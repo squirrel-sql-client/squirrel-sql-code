@@ -67,7 +67,7 @@ public class CodeCompletionInfoCollection
       {
          public void schemaInfoUpdated()
          {
-            _completionInfosByCataLogAndSchema = 
+            _completionInfosByCataLogAndSchema =
                 new Hashtable<String, Vector<CodeCompletionInfo>>();
          }
       });
@@ -103,12 +103,14 @@ public class CodeCompletionInfoCollection
 
             CodeCompletionTableInfo dupl = (CodeCompletionTableInfo) completionInfoByUcTableName.get(ucTableName);
 
+            //SH add the session object as last parameter
             CodeCompletionTableInfo tableInfo = new CodeCompletionTableInfo(tables[i].getSimpleName(),
-                                                                            tables[i].getType(),
-                                                                            tables[i].getCatalogName(),
-                                                                            tables[i].getSchemaName(),
-                                                                            _useCompletionPrefs,
-                                                                            _prefs);
+                  tables[i].getType(),
+                  tables[i].getCatalogName(),
+                  tables[i].getSchemaName(),
+                  _useCompletionPrefs,
+                  _prefs,
+                  _session);
 
             if(null != dupl)
             {
