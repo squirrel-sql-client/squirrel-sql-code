@@ -102,7 +102,7 @@ public class IntegerIndexedColumn extends IndexedColumn
          return "" + 0;
       }
 
-      return "" + ((Integer)endData - (Integer)beginData);
+      return "" + (((Number)endData).longValue() - ((Number)beginData).longValue());
    }
 
    private Object onGetMid(Object min, Object max)
