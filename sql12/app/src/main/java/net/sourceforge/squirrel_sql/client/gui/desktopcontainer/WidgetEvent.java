@@ -42,4 +42,9 @@ public class WidgetEvent
    {
       return _widget;
    }
+
+   public TabHandleEvent getTabHandleEvent()
+   {
+      return _the;
+   }
 }

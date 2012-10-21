@@ -1057,20 +1057,12 @@ public class WindowManager
 		{
 			final IWidget widget = evt.getWidget();
 
-			// JASON: Make menu smarter. When second window for the same
-			// session is added create a hierarchical menu for all windows
-			// for the session.
+         if (null != evt.getTabHandleEvent() && evt.getTabHandleEvent().isWasAddedToToMainApplicationWindow())
+         {
+            addWidgetToWindowMenu(widget);
+         }
 
-			// Add an item to the Windows menu for this window and
-			// store the menu item back in the internal frame.
-			final JMenu menu = getMainFrame().getWindowsMenu();
-
-			final Action action = new SelectWidgetAction(widget);
-
-         final JMenuItem menuItem = menu.add(action);
-			widget.putClientProperty(MENU, menuItem);
-
-			// Enable/Disable actions that require open session frames.
+         // Enable/Disable actions that require open session frames.
 			IWidget[] frames = WidgetUtils.getOpenNonToolWindows(getMainFrame().getDesktopContainer().getAllWidgets());
 			_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
@@ -1111,15 +1103,7 @@ public class WindowManager
 
 			// Remove menu item from Windows menu that relates to this
 			// internal frame.
-			final JMenuItem menuItem = (JMenuItem)widget.getClientProperty(MENU);
-			if (menuItem != null)
-			{
-				final JMenu menu = getMainFrame().getWindowsMenu();
-				if (menu != null)
-				{
-					menu.remove(menuItem);
-				}
-			}
+         removeWidgetFromWindowMenu(widget);
 
 			// Enable/Disable actions that require open session frames.
 			IWidget[] frames = WidgetUtils.getOpenNonToolWindows(getMainFrame().getDesktopContainer().getAllWidgets());
@@ -1150,7 +1134,30 @@ public class WindowManager
 		}
 	}
 
-	/**
+   private void addWidgetToWindowMenu(IWidget widget)
+   {
+      final JMenu menu = getMainFrame().getWindowsMenu();
+
+      final Action action = new SelectWidgetAction(widget);
+
+      final JMenuItem menuItem = menu.add(action);
+      widget.putClientProperty(MENU, menuItem);
+   }
+
+   public void removeWidgetFromWindowMenu(IWidget widget)
+   {
+      final JMenuItem menuItem = (JMenuItem)widget.getClientProperty(MENU);
+      if (menuItem != null)
+      {
+         final JMenu menu = getMainFrame().getWindowsMenu();
+         if (menu != null)
+         {
+            menu.remove(menuItem);
+         }
+      }
+   }
+
+   /**
 	 * Used to update the UI depending on various session events.
 	 */
 	private final class SessionListener extends SessionAdapter

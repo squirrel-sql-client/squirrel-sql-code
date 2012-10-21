@@ -61,13 +61,13 @@ public class TabHandle
       }
    }
 
-   public void fireAdded()
+   public void fireAdded(boolean wasAddedToToMainApplicationWindow)
    {
       TabHandleListener[] clone = _tabHandleListeners.toArray(new TabHandleListener[_tabHandleListeners.size()]);
 
       for (TabHandleListener listener : clone)
       {
-         listener.tabAdded(new TabHandleEvent(this, null));
+         listener.tabAdded(new TabHandleEvent(this, null, wasAddedToToMainApplicationWindow));
       }
    }
 

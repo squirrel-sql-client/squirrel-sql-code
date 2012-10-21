@@ -36,6 +36,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    }
 
    private IApplication _app;
+   private boolean _belongsToMainApplicationWindow;
 
    private JPanel _pnlButtons = new JPanel();
 
@@ -61,6 +62,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
    public DockTabDesktopPane(IApplication app, boolean belongsToMainApplicationWindow)
    {
       _app = app;
+      _belongsToMainApplicationWindow = belongsToMainApplicationWindow;
 
       _tabbedPane = new DesktopTabbedPane(_app);
 
@@ -98,7 +100,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       closeDock();
 
-      if (belongsToMainApplicationWindow)  // prevents memory leaks concerning detached windows
+      if (_belongsToMainApplicationWindow)  // prevents memory leaks concerning detached windows
       {
          _app.addApplicationListener(new ApplicationListener()
          {
@@ -194,7 +196,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
 
       _tabHandles.add(tabHandle);
-      tabHandle.fireAdded();
+      tabHandle.fireAdded(_belongsToMainApplicationWindow);
       _tabbedPane.setSelectedIndex(tabIx);
       _scrollableTabHandler.tabAdded();
    }
@@ -237,6 +239,11 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       }
       _tabHandles.remove(tabHandle);
       tabHandle.removeTabHandleListener(_dockTabDesktopManager);
+
+      if(_belongsToMainApplicationWindow)
+      {
+         _app.getWindowManager().removeWidgetFromWindowMenu(tabHandle.getWidget());
+      }
 
       return tabHandle;
    }
