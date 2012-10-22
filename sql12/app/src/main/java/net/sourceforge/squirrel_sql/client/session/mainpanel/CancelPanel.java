@@ -89,6 +89,7 @@ public class CancelPanel extends JPanel
       ++gbc.gridy;
       gbc.fill = GridBagConstraints.NONE;
       gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
+      gbc.gridwidth = 2;
       ret.add(createExecutionTimePanel(), gbc);
       return ret;
    }
