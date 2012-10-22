@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CancelPanel extends JPanel
 {
@@ -16,6 +18,7 @@ public class CancelPanel extends JPanel
    JLabel currentStatusLbl = new JLabel();
    JButton cancelBtn;
    JButton closeBtn;
+   JTextField txtExecTimeCounter;
 
 
    public CancelPanel(ISession session)
@@ -81,6 +84,32 @@ public class CancelPanel extends JPanel
       ++gbc.gridy;
       gbc.fill = GridBagConstraints.NONE;
       ret.add(cancelBtn, gbc);
+
+      gbc.gridx = 0;
+      ++gbc.gridy;
+      gbc.fill = GridBagConstraints.NONE;
+      gbc.insets = new Insets(30, gbc.insets.left, gbc.insets.bottom, gbc.insets.right);
+      ret.add(createExecutionTimePanel(), gbc);
+      return ret;
+   }
+
+   private JPanel createExecutionTimePanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.executingFor")), gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      txtExecTimeCounter = new JTextField();
+      txtExecTimeCounter.setEditable(false);
+      ret.add(txtExecTimeCounter, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
+      ret.add(new JLabel(s_stringMgr.getString("SQLResultExecuterPanel.execMillis")), gbc);
+
 
       return ret;
    }

@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,11 +26,26 @@ class CancelPanelCtrl
     */
    private int _currentQueryIndex = 0;
    private CancelPanelListener _listener;
+   private final Timer _timer;
+   private final long _beginMillis;
 
    CancelPanelCtrl(CancelPanelListener listener, ISession session)
    {
       _listener = listener;
       _panel = new CancelPanel(session);
+
+      _beginMillis = System.currentTimeMillis();
+      _timer = new Timer(100, new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onUpdateExecutionTime();
+         }
+      });
+      _timer.setRepeats(true);
+      _timer.start();
+
 
       _panel.cancelBtn.addActionListener(new ActionListener()
       {
@@ -50,6 +66,11 @@ class CancelPanelCtrl
       });
 
 
+   }
+
+   private void onUpdateExecutionTime()
+   {
+      _panel.txtExecTimeCounter.setText("" + (System.currentTimeMillis() - _beginMillis));
    }
 
    void incCurrentQueryIndex()
@@ -117,6 +138,7 @@ class CancelPanelCtrl
    {
       _panel.cancelBtn.doClick();
       _listener.closeRquested();
+      _timer.stop();
    }
 
 
