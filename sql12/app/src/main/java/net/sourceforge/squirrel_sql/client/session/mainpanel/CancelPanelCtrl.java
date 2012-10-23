@@ -35,7 +35,7 @@ class CancelPanelCtrl
       _panel = new CancelPanel(session);
 
       _beginMillis = System.currentTimeMillis();
-      _timer = new Timer(100, new ActionListener()
+      _timer = new Timer(300, new ActionListener()
       {
          @Override
          public void actionPerformed(ActionEvent e)
