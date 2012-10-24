@@ -740,7 +740,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
            s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",
                                  ": "+_panel.getSession().getAlias().getName());
        
-       JFrame f = getSession().getApplication().getMainFrame();
+       JFrame f = (JFrame) SessionUtils.getOwningFrame(this);
        int option = 
            JOptionPane.showConfirmDialog(f, 
                                          msg, 

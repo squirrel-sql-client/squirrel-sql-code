@@ -166,10 +166,10 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    public void addWidget(final TabWidget widget)
    {
-      addTabWidgetAt(widget, _tabbedPane.getTabCount());
+      addTabWidgetAt(widget, _tabbedPane.getTabCount(), new ArrayList<SmallTabButton>());
    }
 
-   public void addTabWidgetAt(TabWidget widget, int index)
+   public void addTabWidgetAt(TabWidget widget, int index, ArrayList<SmallTabButton> externalButtons)
    {
       final TabHandle tabHandle = new TabHandle(widget, this);
       ((TabDelegate) widget.getDelegate()).setTabHandle(tabHandle);
@@ -193,6 +193,12 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
             onToWindow(tabHandle);
          }
       });
+
+
+      for (SmallTabButton externalButton : externalButtons)
+      {
+         btc.addSmallTabButton(externalButton);
+      }
 
 
       _tabHandles.add(tabHandle);
@@ -219,23 +225,24 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       _app.getMultipleWindowsHandler().registerDesktop(tabWindowController);
 
-      removeTabHandel(tabHandle);
+      RemoveTabHandelResult removeTabHandelResult = removeTabHandel(tabHandle);
 
-      tabWindowController.getDockTabDesktopPane().addWidget(tabHandle.getWidget());
+      tabWindowController.getDockTabDesktopPane().addTabWidgetAt(tabHandle.getWidget(), _tabbedPane.getTabCount(), removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
    }
 
-   public TabHandle removeTabHandel(int tabIndex)
+   public RemoveTabHandelResult removeTabHandel(int tabIndex)
    {
       TabHandle tabHandle = ((TabPanel) _tabbedPane.getComponentAt(tabIndex)).getTabHandle();
       return removeTabHandel(tabHandle);
    }
 
-   private TabHandle removeTabHandel(TabHandle tabHandle)
+   private RemoveTabHandelResult removeTabHandel(TabHandle tabHandle)
    {
+      RemoveTabHandelResult ret = new RemoveTabHandelResult();
       int tabIndex = getTabIndex(tabHandle);
       if (-1 != tabIndex)
       {
-         removeTabFromTabbedPane(tabIndex);
+         ret.setRemovedButtonTabComponent(removeTabFromTabbedPane(tabIndex));
       }
       _tabHandles.remove(tabHandle);
       tabHandle.removeTabHandleListener(_dockTabDesktopManager);
@@ -245,7 +252,9 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          _app.getWindowManager().removeWidgetFromWindowMenu(tabHandle.getWidget());
       }
 
-      return tabHandle;
+      ret.setRemovedTabHandle(tabHandle);
+
+      return ret;
    }
 
    public boolean isMyTabbedPane(JTabbedPane tabbedPane)
@@ -452,10 +461,13 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       }
    }
 
-   private void removeTabFromTabbedPane(int tabIndex)
+   private ButtonTabComponent removeTabFromTabbedPane(int tabIndex)
    {
+      ButtonTabComponent ret = (ButtonTabComponent) _tabbedPane.getTabComponentAt(tabIndex);
       _tabbedPane.remove(tabIndex);
       _scrollableTabHandler.tabRemoved();
+
+      return ret;
    }
 
 

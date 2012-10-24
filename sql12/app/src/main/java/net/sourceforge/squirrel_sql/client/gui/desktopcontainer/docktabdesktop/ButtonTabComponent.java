@@ -1,13 +1,13 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.MultipleWindowsHandler;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class ButtonTabComponent extends JPanel
@@ -17,16 +17,16 @@ public class ButtonTabComponent extends JPanel
 
 
    private JLabel _label = new JLabel();
-   private CloseTabButton _closeButton = new CloseTabButton();
+   private CloseTabButton _btnClose = new CloseTabButton();
    private JPanel _pnlSmallTabButtons;
-   private final SmallTabButton _toWindow;
+   private final SmallTabButton _btnToWindow;
 
    public ButtonTabComponent(IApplication app, String title, Icon icon)
    {
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       setOpaque(false);
 
-      add(_closeButton);
+      add(_btnClose);
 
       _label.setText(title);
       _label.setIcon(icon);
@@ -43,19 +43,19 @@ public class ButtonTabComponent extends JPanel
       setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
 
 
-      _toWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), app.getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
+      _btnToWindow = new SmallTabButton(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.detachButtonTooltip"), app.getResources().getIcon(SquirrelResources.IImageNames.TAB_DETACH_SMALL));
 
-      addSmallTabButton(_toWindow);
+      _pnlSmallTabButtons.add(_btnToWindow);
    }
 
    public JButton getClosebutton()
    {
-      return _closeButton;
+      return _btnClose;
    }
 
    public JButton getToWindowButton()
    {
-      return _toWindow;
+      return _btnToWindow;
    }
 
    public void setIcon(Icon icon)
@@ -90,6 +90,23 @@ public class ButtonTabComponent extends JPanel
    public void removeSmallTabButton(SmallTabButton smallTabButton)
    {
       _pnlSmallTabButtons.remove(smallTabButton);
+   }
+
+   public ArrayList<SmallTabButton> getExternalButtons()
+   {
+      _pnlSmallTabButtons.getComponents();
+
+      ArrayList<SmallTabButton> ret = new ArrayList<SmallTabButton>();
+
+      for (Component cp : _pnlSmallTabButtons.getComponents())
+      {
+         if(cp instanceof SmallTabButton && cp != _btnToWindow)
+         {
+            ret.add((SmallTabButton) cp);
+         }
+      }
+
+      return ret;
    }
 
    private static class CloseTabButton extends SmallTabButton

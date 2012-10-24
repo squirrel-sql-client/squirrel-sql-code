@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.OutwardDnd
 import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.OutwardDndTabbedPaneChanel;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPaneHolder;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.RemoveTabHandelResult;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.TabHandle;
 
 import javax.swing.*;
@@ -67,11 +68,11 @@ class DesktopTabbedPaneOutwardDndChanel implements OutwardDndTabbedPaneChanel
 
       DockTabDesktopPaneHolder sourceDesktopPaneHolder = _app.getMultipleWindowsHandler().getDockTabDesktopPaneOfTabbedPane(_dnDTabbedPaneData.getTabbedPane());
 
-      TabHandle tabHandleToMove = sourceDesktopPaneHolder.getDockTabDesktopPane().removeTabHandel(_dnDTabbedPaneData.getDragTabIndex());
+      RemoveTabHandelResult moveTabHandelResult = sourceDesktopPaneHolder.getDockTabDesktopPane().removeTabHandel(_dnDTabbedPaneData.getDragTabIndex());
 
       DockTabDesktopPaneHolder targetDesktopPaneHolder = _app.getMultipleWindowsHandler().getDockTabDesktopPaneOfTabbedPane(targetTabbedPane);
 
-      targetDesktopPaneHolder.getDockTabDesktopPane().addTabWidgetAt(tabHandleToMove.getWidget(), targetTabIndex);
+      targetDesktopPaneHolder.getDockTabDesktopPane().addTabWidgetAt(moveTabHandelResult.getTabHandle().getWidget(), targetTabIndex, moveTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
 
       sourceDesktopPaneHolder.tabDragedAndDroped();
       targetDesktopPaneHolder.tabDragedAndDroped();

@@ -533,7 +533,7 @@ public class SessionManager
 
       final String msg = s_stringMgr.getString("SessionManager.confirmClose",
                      session.getTitle());
-      if (!Dialogs.showYesNo(_app.getMainFrame(), msg)) {
+      if (!Dialogs.showYesNo(SessionUtils.getOwningFrame(session), msg)) {
             return false;
         } else {
             return session.confirmClose();
