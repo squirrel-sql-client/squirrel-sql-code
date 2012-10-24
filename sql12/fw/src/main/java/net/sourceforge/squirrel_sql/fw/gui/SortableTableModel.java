@@ -24,7 +24,6 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -41,7 +40,7 @@ public class SortableTableModel extends AbstractTableModel
 	/** Column currently being sorted by. -1 means unsorted. */
 	private int _sortedColumn = -1;
 
-	private boolean _ascending;
+	private ColumnOrder _columnOrder = ColumnOrder.NATURAL;
 
 	/** The actual model that this model is wrapped around. */
 	private TableModel _actualModel;
@@ -216,15 +215,15 @@ public class SortableTableModel extends AbstractTableModel
 	 * was last sorted and then inverted that mode. If the column was not
 	 * the previous sorted column then it will be sorted in ascending mode.
 	 */
-	public boolean sortByColumn(int column)
+	public ColumnOrder sortByColumn(int column)
 	{
-		boolean b = true;
+		ColumnOrder newOrder = ColumnOrder.ASC;
 		if (column == _sortedColumn)
 		{
-			b = !_ascending;
+			newOrder = _columnOrder.next();
 		}
-		sortByColumn(column, b);
-		return b;
+		sortByColumn(column, newOrder);
+		return newOrder;
 	}
 
 	/**
@@ -233,32 +232,41 @@ public class SortableTableModel extends AbstractTableModel
 	 * @param	column		column to sort by
 	 * @param	ascending	sort ascending if <TT>true</TT> else descending.
 	 */
-	public void sortByColumn(int column, boolean ascending)
+	public void sortByColumn(int column, ColumnOrder newOrder)
 	{
 		_sortedColumn = column;
-		_ascending = ascending;
-		TableModelComparator comparator = new TableModelComparator(column, ascending);
-		// Should the data be first cloned so that the sorting doesn't take place
-		// on the array that is used in getValue()
-		// TODO: This is a must if sorting is done in a thread! ??
-		Arrays.sort(_indexes, comparator);
-		fireTableDataChanged();
-      fireSortingListeners(column, ascending);
+		_columnOrder = newOrder;
+      if (ColumnOrder.NATURAL != newOrder)
+      {
+         TableModelComparator comparator = new TableModelComparator(column, newOrder);
+         // Should the data be first cloned so that the sorting doesn't take place
+         // on the array that is used in getValue()
+         Arrays.sort(_indexes, comparator);
+      }
+      else
+      {
+         for (int i = 0; i < _indexes.length; i++)
+         {
+            _indexes[i] = i;
+         }
+      }
+      fireTableDataChanged();
+      fireSortingListeners(column, _columnOrder);
 	}
 
-   private void fireSortingListeners(int column, boolean ascending)
+   private void fireSortingListeners(int column, ColumnOrder columnOrder)
    {
       SortingListener[] listeners = _sortingListeners.toArray(new SortingListener[_sortingListeners.size()]);
 
       for (SortingListener listener : listeners)
       {
-         listener.sortingDone(column, ascending);         
+         listener.sortingDone(column, columnOrder);
       }
    }
 
-   public boolean isSortedAscending()
+   public ColumnOrder getColumnOrder()
 	{
-		return _ascending;
+		return _columnOrder;
 	}
 
 	public void tableChanged()
@@ -267,7 +275,7 @@ public class SortableTableModel extends AbstractTableModel
 
       if(-1 != _sortedColumn)
       {
-         sortByColumn(_sortedColumn, _ascending);
+         sortByColumn(_sortedColumn, _columnOrder);
       }
       else
       {
@@ -314,24 +322,19 @@ public class SortableTableModel extends AbstractTableModel
 
    class TableModelComparator implements Comparator<Integer>
 	{
-		private int _iColumn;
-		private int _iAscending;
-		 private final Collator _collator = Collator.getInstance();
-		 private boolean _allDataIsString = true;
+      private int _iColumn;
+      private int _iAscending;
+      private final Collator _collator = Collator.getInstance();
+      private boolean _allDataIsString = true;
 
-		public TableModelComparator(int iColumn)
-		{
-			this(iColumn, true);
-		}
-
-		public TableModelComparator(int iColumn, boolean ascending)
+      public TableModelComparator(int iColumn, ColumnOrder compColumnOrder)
 		{
 			_iColumn = iColumn;
-			if (ascending)
+         if (ColumnOrder.ASC == compColumnOrder)
 			{
 				_iAscending = 1;
 			}
-			else
+			else if (ColumnOrder.DESC == compColumnOrder)
 			{
 				_iAscending = -1;
 			}

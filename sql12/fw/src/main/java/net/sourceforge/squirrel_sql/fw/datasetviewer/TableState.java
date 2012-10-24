@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
+import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 
 import javax.swing.*;
@@ -14,7 +14,7 @@ public class TableState
    private boolean _applySorting;
 
    private int _sortedColumn;
-   private boolean _sortedAscending;
+   private ColumnOrder _columnOrder;
    private Rectangle _visibleRect;
    private HashMap<Integer, Integer> _columnWidthsByModelIndex = new HashMap<Integer, Integer>();
    private HashMap<Integer, Integer> _columnIndexByModelIndex = new HashMap<Integer, Integer>();
@@ -27,7 +27,7 @@ public class TableState
       {
          _applySorting = true;
          _sortedColumn = ((SortableTableModel)table.getModel()).getSortedColumn();
-         _sortedAscending = ((SortableTableModel)table.getModel()).isSortedAscending();
+         _columnOrder = ((SortableTableModel)table.getModel()).getColumnOrder();
       }
 
 
@@ -78,7 +78,7 @@ public class TableState
       {
          if(-1 != _sortedColumn)
          {
-            ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _sortedAscending);
+            ((SortableTableModel)table.getModel()).sortByColumn(_sortedColumn, _columnOrder);
          }
       }
       

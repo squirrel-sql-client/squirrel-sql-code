@@ -117,26 +117,30 @@ public class ButtonTableHeader extends JTableHeader
       _sortingListener = new SortingListener()
       {
          @Override
-         public void sortingDone(int modelColumnIx, boolean ascending)
+         public void sortingDone(int modelColumnIx, ColumnOrder columnOrder)
          {
-            onSortingDone(modelColumnIx, ascending);
+            onSortingDone(modelColumnIx, columnOrder);
          }
       };
 
    }
 
-   private void onSortingDone(int modelColumnIx, boolean ascending)
+   private void onSortingDone(int modelColumnIx, ColumnOrder columnOrder)
    {
       int viewColumnIndex = getViewColumnIndex(modelColumnIx);
 
 
-      if (ascending)
+      if (ColumnOrder.ASC == columnOrder)
       {
          _currentSortedColumnIcon = s_ascIcon;
       }
-      else
+      else if (ColumnOrder.DESC == columnOrder)
       {
          _currentSortedColumnIcon = s_descIcon;
+      }
+      else
+      {
+         _currentSortedColumnIcon = null;
       }
       _currentlySortedModelIdx = modelColumnIx;
       _pressedViewColumnIdx = viewColumnIndex;
@@ -320,7 +324,14 @@ public class ButtonTableHeader extends JTableHeader
 
          Rectangle2D bounds = headerFontMetrics.getStringBounds("" + column.getHeaderValue(), headerComp.getGraphics());
 
-         newWidth = Math.max(newWidth, bounds.getBounds().width);
+         int width = bounds.getBounds().width;
+         if(-1 != _currentlySortedModelIdx && colIx == getViewColumnIndex(_currentlySortedModelIdx) && null != _currentSortedColumnIcon)
+         {
+            width += _currentSortedColumnIcon.getIconWidth();
+         }
+
+
+         newWidth = Math.max(newWidth, width);
       }
 
 
@@ -438,13 +449,17 @@ public class ButtonTableHeader extends JTableHeader
                && tm instanceof SortableTableModel)
             {
                ((SortableTableModel) tm).sortByColumn(column);
-               if (((SortableTableModel)tm).isSortedAscending())
+               if (ColumnOrder.ASC == ((SortableTableModel)tm).getColumnOrder())
                {
                   _currentSortedColumnIcon = s_ascIcon;
                }
-               else
+               else if (ColumnOrder.DESC == ((SortableTableModel)tm).getColumnOrder())
                {
                   _currentSortedColumnIcon = s_descIcon;
+               }
+               else
+               {
+                  _currentSortedColumnIcon = null;
                }
                _currentlySortedModelIdx = column;
             }
