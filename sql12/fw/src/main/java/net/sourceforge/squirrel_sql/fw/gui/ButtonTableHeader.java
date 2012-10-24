@@ -74,13 +74,13 @@ public class ButtonTableHeader extends JTableHeader
     * if <tt>_pressed</tt> is <tt>true</tt> then this is the physical column
     * that the mouse was pressed in.
     */
-   private int _pressedColumnIdx;
+   private int _pressedViewColumnIdx;
 
    /** Icon for the currently sorted column. */
    private Icon _currentSortedColumnIcon;
 
    /** Physical (as opposed to model) index of the currently sorted column. */
-   private int _currentlySortedColumnIdx = -1;
+   private int _currentlySortedModelIdx = -1;
 
    static
    {
@@ -106,7 +106,7 @@ public class ButtonTableHeader extends JTableHeader
       super();
       _pressed = false;
       _dragged = false;
-      _pressedColumnIdx = -1;
+      _pressedViewColumnIdx = -1;
 
       setDefaultRenderer(new ButtonTableRenderer(getFont()));
 
@@ -138,8 +138,8 @@ public class ButtonTableHeader extends JTableHeader
       {
          _currentSortedColumnIcon = s_descIcon;
       }
-      _currentlySortedColumnIdx = viewColumnIndex;
-      _pressedColumnIdx = viewColumnIndex;
+      _currentlySortedModelIdx = modelColumnIx;
+      _pressedViewColumnIdx = viewColumnIndex;
 
       repaint();
    }
@@ -185,7 +185,7 @@ public class ButtonTableHeader extends JTableHeader
          }
       }
       _currentSortedColumnIcon = null;
-      _currentlySortedColumnIdx = -1;
+      _currentlySortedModelIdx = -1;
    }
 
    // SS: Display complete column header as tooltip if the column isn't wide enough to display it
@@ -220,9 +220,9 @@ public class ButtonTableHeader extends JTableHeader
    /**
     * @return The currently sorted column index. If no column is sorted -1.
     */
-   public int getCurrentlySortedColumnIdx()
+   public int getCurrentlySortedModelIdx()
    {
-      return _currentlySortedColumnIdx;
+      return _currentlySortedModelIdx;
    }
 
    /**
@@ -236,22 +236,22 @@ public class ButtonTableHeader extends JTableHeader
 
    public void columnIndexWillBeRemoved(int colIx)
    {
-      if( colIx < _currentlySortedColumnIdx)
-      {
-         --_currentlySortedColumnIdx;
-      }
-      else if (colIx == _currentlySortedColumnIdx)
-      {
-         _currentlySortedColumnIdx = -1;
-      }
+//      if( colIx < _currentlySortedModelIdx)
+//      {
+//         --_currentlySortedModelIdx;
+//      }
+//      else if (colIx == _currentlySortedModelIdx)
+//      {
+//         _currentlySortedModelIdx = -1;
+//      }
    }
 
    public void columnIndexWillBeAdded(int colIx)
    {
-      if( colIx <= _currentlySortedColumnIdx)
-      {
-         ++_currentlySortedColumnIdx;
-      }
+//      if( colIx <= _currentlySortedModelIdx)
+//      {
+//         ++_currentlySortedModelIdx;
+//      }
    }
 
    public void adjustAllColWidths(boolean includeColHeaders)
@@ -291,7 +291,7 @@ public class ButtonTableHeader extends JTableHeader
       public void tableChanged(TableModelEvent evt)
       {
          _currentSortedColumnIcon = null;
-         _currentlySortedColumnIdx = -1;
+         _currentlySortedModelIdx = -1;
       }
 
    }
@@ -373,7 +373,7 @@ public class ButtonTableHeader extends JTableHeader
          */
       public void mousePressed(MouseEvent e)
       {
-         if(getCursor().getType() == Cursor.E_RESIZE_CURSOR)
+         if(getCursor().getType() == Cursor.E_RESIZE_CURSOR || MouseEvent.BUTTON1 != e.getButton())
          {
             return;
          }
@@ -384,7 +384,7 @@ public class ButtonTableHeader extends JTableHeader
             return;
          }
 
-         _pressedColumnIdx = columnAtPoint(e.getPoint());
+         _pressedViewColumnIdx = columnAtPoint(e.getPoint());
          repaint();
       }
 
@@ -413,7 +413,7 @@ public class ButtonTableHeader extends JTableHeader
 		*/
       public void mouseReleased(MouseEvent e)
       {
-         if(getCursor().getType() == Cursor.E_RESIZE_CURSOR)
+         if(getCursor().getType() == Cursor.E_RESIZE_CURSOR || MouseEvent.BUTTON1 != e.getButton())
          {
             return;
          }
@@ -430,7 +430,7 @@ public class ButtonTableHeader extends JTableHeader
          if (!_dragged)
          {
             _currentSortedColumnIcon = null;
-            int column = getTable().convertColumnIndexToModel(_pressedColumnIdx);
+            int column = getTable().convertColumnIndexToModel(_pressedViewColumnIdx);
             TableModel tm = table.getModel();
 
             if (column > -1
@@ -446,7 +446,7 @@ public class ButtonTableHeader extends JTableHeader
                {
                   _currentSortedColumnIcon = s_descIcon;
                }
-               _currentlySortedColumnIdx = _pressedColumnIdx;
+               _currentlySortedModelIdx = column;
             }
             repaint();
          }
@@ -461,8 +461,9 @@ public class ButtonTableHeader extends JTableHeader
          _dragged = true;
          if (_pressed)
          {
-            _currentSortedColumnIcon = null;
-            _currentlySortedColumnIdx = -1;
+            //_currentSortedColumnIcon = null;
+//            _currentlySortedModelIdx = -1;
+//            _pressedViewColumnIdx = -1;
             _pressed = false;
             repaint();
          }
@@ -518,13 +519,13 @@ public class ButtonTableHeader extends JTableHeader
          }
 
          // Rendering the column that the mouse has been pressed in.
-         if (_pressedColumnIdx == column && _pressed)
+         if (_pressedViewColumnIdx == column && _pressed)
          {
             _buttonLowered.setText(value.toString());
 
             // If this is the column that the table is currently is
             // currently sorted by then display the sort icon.
-            if (column == _currentlySortedColumnIdx
+            if (column == getViewColumnIndex(_currentlySortedModelIdx)
                && _currentSortedColumnIcon != null)
             {
                _buttonLowered.setIcon(_currentSortedColumnIcon);
@@ -539,7 +540,7 @@ public class ButtonTableHeader extends JTableHeader
          // This is not the column that the mouse has been pressed in.
          _buttonRaised.setText(value.toString());
          if (_currentSortedColumnIcon != null
-            && column == _currentlySortedColumnIdx)
+            && column == getViewColumnIndex(_currentlySortedModelIdx))
          {
             _buttonRaised.setIcon(_currentSortedColumnIcon);
          }

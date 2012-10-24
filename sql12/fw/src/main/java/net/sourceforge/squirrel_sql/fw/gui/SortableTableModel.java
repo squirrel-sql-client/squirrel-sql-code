@@ -36,9 +36,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 public class SortableTableModel extends AbstractTableModel
 {
-    private static final long serialVersionUID = -3534263285990454876L;
-
-    transient private MyTableModelListener _actualModelLis = new MyTableModelListener();
+   transient private MyTableModelListener _actualModelLis = new MyTableModelListener();
 
 	/** Column currently being sorted by. -1 means unsorted. */
 	private int _sortedColumn = -1;

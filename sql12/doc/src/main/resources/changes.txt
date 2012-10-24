@@ -38,6 +38,10 @@ dandar3 for the tip.
 
 Bug fixes:
 
+Column sorting indicator icon was lost when sorted column headers where dragged to reorder columns
+
+2798081 Right click on column header changes sort order
+
 On DB2 for AS400 column completion didn't work in some cases. (Thanks to Stefan Hohenstein for the patch.)
 
 3575054: SQL results text mode is not working
