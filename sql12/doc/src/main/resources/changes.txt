@@ -8,6 +8,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Hibernate Plugin:
+   New function in tools pop up and right mouse menu of HQL editor: Copy SQL generated from current HQL to clipboard.
+
 Sorting can now be returned to natural order by clicking on a column header a third time. (First time is asc, second time desc and third time natural)
 
 Execution time passed is shown during SQL execution.

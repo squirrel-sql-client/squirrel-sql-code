@@ -7,7 +7,6 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.MappedClassInfoData;
-import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstitute;
 import net.sourceforge.squirrel_sql.plugins.hibernate.server.ObjectSubstituteRoot;
 import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
 
@@ -18,8 +17,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -130,12 +127,7 @@ public class ObjectResultTabController
 
    private void onCopySqlToClip(HibernateConnection con, String hqlQuery, ISession session)
    {
-      ArrayList<String> sqls = con.generateSQL(hqlQuery);
-
-      String allSqlsString = HibernateSQLUtil.createAllSqlsString(sqls, session);
-
-      StringSelection ss = new StringSelection(allSqlsString);
-      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+      HibernateSQLUtil.copySqlToClipboard(con, hqlQuery, session);
    }
 
    private void initHqlQueryLabel(List objects, String hqlQuery, int numResults, int maxNumResults)

@@ -8,6 +8,8 @@ import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HibernateSQLUtil;
+import net.sourceforge.squirrel_sql.plugins.hibernate.util.HqlQueryErrorUtil;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -25,7 +27,7 @@ public class HQLEntryPanelManager extends EntryPanelManager
    private ToolsPopupController _toolsPopupController;
 
 
-   public HQLEntryPanelManager(ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider)
+   public HQLEntryPanelManager(final ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider)
    {
       super(session);
       _connectionProvider = connectionProvider;
@@ -80,15 +82,39 @@ public class HQLEntryPanelManager extends EntryPanelManager
 
       // i18n[HQLEntryPanelManager.escapeDate=Escape date]
       String strEscapeDate = s_stringMgr.getString("HQLEntryPanelManager.escapeDate");
-      AbstractAction escapeDate = new AbstractAction(strUnquote)
+      AbstractAction escapeDate = new AbstractAction(strEscapeDate)
       {
          public void actionPerformed(ActionEvent e)
          {
             onEscapeDate();
          }
       };
-      unquoteHql.putValue(Action.SHORT_DESCRIPTION, strEscapeDate);
+      escapeDate.putValue(Action.SHORT_DESCRIPTION, strEscapeDate);
       addToSQLEntryAreaMenu(escapeDate, "date");
+
+      String strCopySqlToClip = s_stringMgr.getString("HQLEntryPanelManager.copySqlToClip");
+      AbstractAction copySqlToClip = new AbstractAction(strCopySqlToClip)
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCopySqlToClip(session);
+         }
+      };
+      copySqlToClip.putValue(Action.SHORT_DESCRIPTION, strCopySqlToClip);
+      addToSQLEntryAreaMenu(copySqlToClip, "sqltoclip");
+   }
+
+   private void onCopySqlToClip(ISession session)
+   {
+      try
+      {
+         HibernateSQLUtil.copySqlToClipboard(_connectionProvider.getHibernateConnection(), getEntryPanel().getSQLToBeExecuted(), session);
+         session.showMessage(s_stringMgr.getString("HQLEntryPanelManager.copySqlToClipSucceeded"));
+      }
+      catch (Throwable t)
+      {
+         HqlQueryErrorUtil.handleHqlQueryError(t, session, true);
+      }
    }
 
    private void onEscapeDate()
