@@ -106,6 +106,7 @@ public class CancelPanel extends JPanel
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);
       txtExecTimeCounter = new JTextField();
       txtExecTimeCounter.setEditable(false);
+      txtExecTimeCounter.setColumns(10);
       ret.add(txtExecTimeCounter, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,0), 0,0);

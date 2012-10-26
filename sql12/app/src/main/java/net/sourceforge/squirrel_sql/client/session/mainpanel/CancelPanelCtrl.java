@@ -6,8 +6,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import java.awt.event.*;
 
 class CancelPanelCtrl
 {
@@ -64,8 +65,6 @@ class CancelPanelCtrl
             onClose();
          }
       });
-
-
    }
 
    private void onUpdateExecutionTime()
@@ -138,7 +137,6 @@ class CancelPanelCtrl
    {
       _panel.cancelBtn.doClick();
       _listener.closeRquested();
-      _timer.stop();
    }
 
 
@@ -146,5 +144,11 @@ class CancelPanelCtrl
    CancelPanel getPanel()
    {
       return _panel;
+   }
+
+   public void wasRemoved()
+   {
+      _timer.stop();
+      System.out.println("CancelPanelCtrl.wasRemoved");
    }
 }

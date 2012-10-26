@@ -188,13 +188,14 @@ public class ResultFrame extends SessionDialogWidget
       });
    }
 
-   private void onRemoveCancelPanel(CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
+   private void onRemoveCancelPanel(final CancelPanelCtrl cancelPanelCtrl, IResultTab resultTabToReplace)
    {
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
             _centerPanel.removeAll();
+            cancelPanelCtrl.wasRemoved();
          }
       });
    }

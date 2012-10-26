@@ -719,6 +719,8 @@ public class SQLResultExecuterPanel extends JPanel
                _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
             }
 
+            cancelPanelCtrl.wasRemoved();
+
          }
       });
    }
