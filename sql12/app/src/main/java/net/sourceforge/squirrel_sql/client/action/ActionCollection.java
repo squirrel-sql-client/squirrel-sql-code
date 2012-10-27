@@ -446,12 +446,13 @@ public class ActionCollection
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
 		add(new FileNewAction(_app));
+		add(new FileDetachAction(_app));
 		add(new FileOpenAction(_app));
 		add(new FileAppendAction(_app));
 		add(new FileSaveAction(_app));
 		add(new FileSaveAsAction(_app));
-        add(new FilePrintAction(_app));
-		add(new FileCloseAction(_app));
+      add(new FileCloseAction(_app));
+      add(new FilePrintAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new GotoNextResultsTabAction(_app));
 		add(new GotoPreviousResultsTabAction(_app));

@@ -293,7 +293,9 @@ public interface ISQLPanelAPI
 
 	void fileNew();
 
-	void filePrint();
+   void fileDetach();
+
+   void filePrint();
 
 	void showToolsPopup();
 

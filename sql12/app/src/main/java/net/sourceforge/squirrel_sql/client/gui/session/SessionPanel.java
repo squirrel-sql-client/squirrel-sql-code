@@ -566,12 +566,13 @@ public class SessionPanel extends JPanel
 //			actions.get(SQLFilterAction.class).setEnabled(false);
          addSeparator();
          add(actions.get(FileNewAction.class));
+         add(actions.get(FileDetachAction.class));
          add(actions.get(FileOpenAction.class));
          add(actions.get(FileAppendAction.class));
          add(actions.get(FileSaveAction.class));
          add(actions.get(FileSaveAsAction.class));
-         add(actions.get(FilePrintAction.class));
          add(actions.get(FileCloseAction.class));
+         add(actions.get(FilePrintAction.class));
          addSeparator();
          add(actions.get(PreviousSqlAction.class));
          add(actions.get(NextSqlAction.class));

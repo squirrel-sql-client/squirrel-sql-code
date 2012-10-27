@@ -99,13 +99,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("undo", _panel.getUndoAction());
       _toolsPopupController.addAction("redo", _panel.getRedoAction());
       _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
+      _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
+      _toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
       _toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
       _toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
       _toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
-      _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
-      _toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
       _toolsPopupController.addAction("fileclose", ac.get(FileCloseAction.class));
+      _toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
 
       _toolsPopupController.addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
       _toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
@@ -196,29 +197,45 @@ public class SQLPanelAPI implements ISQLPanelAPI
    /* (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileClose()
     */
-   public void fileClose() {
-       if (unsavedEdits) {
-           showConfirmSaveDialog();
-       }
-       setEntireSQLScript("");
-       getActiveSessionTabWidget().setSqlFile(null);
-       fileOpened = false;
-       fileSaved = false;
-       unsavedEdits = false;
-       ActionCollection actions = 
-           getSession().getApplication().getActionCollection();
-       actions.enableAction(FileSaveAction.class, true);
-       _fileManager.clearCurrentFile();
+   public void fileClose()
+   {
+      _closeFile(true);
    }
-   
-   
+
+   private void _closeFile(boolean clearEditor)
+   {
+      if (unsavedEdits)
+      {
+         showConfirmSaveDialog();
+      }
+      if (clearEditor)
+      {
+         setEntireSQLScript("");
+      }
+      getActiveSessionTabWidget().setSqlFile(null);
+      fileOpened = false;
+      fileSaved = false;
+      unsavedEdits = false;
+      ActionCollection actions =
+            getSession().getApplication().getActionCollection();
+      actions.enableAction(FileSaveAction.class, true);
+      _fileManager.clearCurrentFile();
+   }
+
+
    /* (non-Javadoc)
-    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileNew()
-    */
-   public void fileNew() {
+   * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileNew()
+   */
+   public void fileNew()
+   {
        fileClose();
 	}
-   
+
+   public void fileDetach()
+   {
+       _closeFile(false);
+	}
+
    /* (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileSaveAs()
     */

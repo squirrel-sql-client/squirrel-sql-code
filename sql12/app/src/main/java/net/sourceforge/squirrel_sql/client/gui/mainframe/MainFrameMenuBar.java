@@ -433,13 +433,14 @@ final class MainFrameMenuBar extends JMenuBar
    private Component createFileMenu(Resources rsrc)
    {
       JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.FILE);
+      addToMenu(rsrc, FileNewAction.class, menu);
+      addToMenu(rsrc, FileDetachAction.class, menu);
+      addToMenu(rsrc, FileOpenAction.class, menu);
       addToMenu(rsrc, FileSaveAction.class, menu);
       addToMenu(rsrc, FileSaveAsAction.class, menu);
-      addToMenu(rsrc, FileOpenAction.class, menu);
-      addToMenu(rsrc, FileNewAction.class, menu);
+      addToMenu(rsrc, FileCloseAction.class, menu);
       addToMenu(rsrc, FileAppendAction.class, menu);
       addToMenu(rsrc, FilePrintAction.class, menu);
-      addToMenu(rsrc, FileCloseAction.class, menu);
       return menu;
    }
 
