@@ -75,6 +75,19 @@ public class CreateDataScriptCommand extends WindowAdapter implements ICommand
       _abortController = new AbortController(owningFrame);
    }
 
+   /**
+    * Ctor specifying the current session and IAbortController.
+    */   
+	public CreateDataScriptCommand(ISession session, IAbortController abortController, SQLScriptPlugin plugin,
+		boolean templateScriptOnly)
+	{
+		super();
+		_session = session;
+		_plugin = plugin;
+		_templateScriptOnly = templateScriptOnly;
+		_abortController = abortController;
+	}
+	
    protected void showAbortFrame()
    {
       if (false == _abortController.isVisble())
