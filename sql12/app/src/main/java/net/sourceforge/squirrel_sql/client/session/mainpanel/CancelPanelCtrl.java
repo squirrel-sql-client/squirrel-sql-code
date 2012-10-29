@@ -27,26 +27,12 @@ class CancelPanelCtrl
     */
    private int _currentQueryIndex = 0;
    private CancelPanelListener _listener;
-   private final Timer _timer;
-   private final long _beginMillis;
+   private final TimerHolder _timer;
 
    CancelPanelCtrl(CancelPanelListener listener, ISession session)
    {
       _listener = listener;
       _panel = new CancelPanel(session);
-
-      _beginMillis = System.currentTimeMillis();
-      _timer = new Timer(300, new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onUpdateExecutionTime();
-         }
-      });
-      _timer.setRepeats(true);
-      _timer.start();
-
 
       _panel.cancelBtn.addActionListener(new ActionListener()
       {
@@ -65,13 +51,8 @@ class CancelPanelCtrl
             onClose();
          }
       });
+      _timer = new TimerHolder(_panel.txtExecTimeCounter);
    }
-
-   private void onUpdateExecutionTime()
-   {
-      _panel.txtExecTimeCounter.setText("" + (System.currentTimeMillis() - _beginMillis));
-   }
-
    void incCurrentQueryIndex()
    {
       ++_currentQueryIndex;
@@ -149,6 +130,5 @@ class CancelPanelCtrl
    public void wasRemoved()
    {
       _timer.stop();
-      System.out.println("CancelPanelCtrl.wasRemoved");
    }
 }
