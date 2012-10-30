@@ -446,7 +446,6 @@ public class DB2SqlImpl implements DB2Sql
 				"WHERE ROUTINETYPE = 'F' " +
 				"AND SCHEMA = ? " +
 				"AND NAME like ? ";
-			result = "";
 			break;
 		}
 		
