@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -38,6 +40,7 @@ public class RefreshSchemaInfoAction extends SquirrelAction
 {
    /** Current Object Tree. */
    private ISession _session;
+   private SchemaInfoUpdateListener _schemaInfoUpdateListener;
 
    /**
     * Ctor specifying application API.
@@ -67,8 +70,32 @@ public class RefreshSchemaInfoAction extends SquirrelAction
          finally
          {
             cursorChg.restore();
+
+
+            if(null != _schemaInfoUpdateListener)
+            {
+               _session.getSchemaInfo().removeSchemaInfoUpdateListener(_schemaInfoUpdateListener);
+            }
+
+            _schemaInfoUpdateListener = new SchemaInfoUpdateListener()
+            {
+               public void schemaInfoUpdated()
+               {
+                  onSchemaInfoUpdated(_session);
+               }
+            };
+
+            _session.getSchemaInfo().addSchemaInfoUpdateListener(_schemaInfoUpdateListener);
          }
       }
+   }
+
+   private void onSchemaInfoUpdated(ISession session)
+   {
+      final IParserEventsProcessor parserEventsProcessor = session.getParserEventsProcessor(_session.getSessionSheet().getSQLEntryPanel().getIdentifier());
+      parserEventsProcessor.triggerParser();
+      _session.getSchemaInfo().removeSchemaInfoUpdateListener(_schemaInfoUpdateListener);
+      _schemaInfoUpdateListener = null;
    }
 }
 
