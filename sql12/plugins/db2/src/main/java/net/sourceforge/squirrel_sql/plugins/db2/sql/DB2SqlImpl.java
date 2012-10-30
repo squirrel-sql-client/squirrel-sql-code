@@ -710,7 +710,7 @@ public class DB2SqlImpl implements DB2Sql
 				"select TEXT " +
 				"FROM SYSIBM.SYSTRIGGERS " +
 				"where TBOWNER = ? " +
-				"and NAME = ? ";
+				"and TBNAME = ? ";
 			break;
 		}
 		
