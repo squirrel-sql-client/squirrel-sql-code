@@ -227,7 +227,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       RemoveTabHandelResult removeTabHandelResult = removeTabHandel(tabHandle);
 
-      tabWindowController.getDockTabDesktopPane().addTabWidgetAt(tabHandle.getWidget(), _tabbedPane.getTabCount(), removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+      tabWindowController.getDockTabDesktopPane().addTabWidgetAt(tabHandle.getWidget(), 0, removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
    }
 
    public RemoveTabHandelResult removeTabHandel(int tabIndex)
