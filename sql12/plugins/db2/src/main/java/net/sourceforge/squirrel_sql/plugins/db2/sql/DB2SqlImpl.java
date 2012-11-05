@@ -372,8 +372,8 @@ public class DB2SqlImpl implements DB2Sql
 					"T1.REMARKS AS comment " +
 					"FROM sysibm.SYSSEQUENCES T1 left outer join sysibm.SYSDATATYPES T2 " +
 					"on T1.DATATYPEID = T2.DATATYPEID " +
-					"where T1.SEQSCHEMA = ? " +
-					"and T1.SEQNAME = ? ";
+					"where T1.SCHEMA = ? " +
+					"and T1.NAME = ? ";
 			break;
 		}
 		
