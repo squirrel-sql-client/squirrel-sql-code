@@ -46,9 +46,11 @@ public class LibraryResources extends Resources
       String DOT_TRIGGERS = "dot.triggers";
       String DOT_FUNCTION = "dot.function";
 
-
-
-
+      String TABLE_MARKED = "tableMarked";
+      String TABLE_CLEAN = "tableClean";
+      String MARKED_TO_NEW_TABLE = "markedToTable";
+      String HIDE = "hide";
+      String HIDE_SELECTED = "hideSelected";
    }
 
 	public LibraryResources() throws IllegalArgumentException

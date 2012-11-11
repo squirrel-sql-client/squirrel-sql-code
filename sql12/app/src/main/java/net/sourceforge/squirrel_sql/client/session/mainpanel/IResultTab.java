@@ -87,4 +87,6 @@ public interface IResultTab {
     IIdentifier getIdentifier();
 
     TableState getResultSortableTableState();
+
+   void toggleShowFindPanel();
 }

@@ -17,9 +17,10 @@ package net.sourceforge.squirrel_sql.client.resources;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.net.URL;
 
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+
+import java.net.URL;
 
 public class SquirrelResources extends Resources
 {
@@ -29,7 +30,7 @@ public class SquirrelResources extends Resources
 	
 	private final String _defaultsPath;
 
-	public interface IMenuResourceKeys
+   public interface IMenuResourceKeys
 	{
 		String ALIASES = "aliases";
 		String CLOSE_ALL_SQL_RESULTS = "close_all_sql_results";
@@ -93,6 +94,13 @@ public class SquirrelResources extends Resources
       String AGG_XY = "aggXy";
       String AGG_MIN = "aggMin";
       String AGG_MAX = "aggMax";
+
+      String ARROW_DOWN = "next_nav";
+      String ARROW_UP = "prev_nav";
+
+      String UNMARK = "unmark";
+      String TABLE = "table";
+      String HIDE = "hide";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

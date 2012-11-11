@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.I
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -273,7 +273,7 @@ public class CellComponentFactory {
 					_dataTypeObject.isEditableInPopup(value) == true) {
 					// Use a CYAN background to indicate that the cell is
 					// editable in the popup
-				   setBackground(Color.cyan);
+				   setBackground(SquirrelConstants.MULTI_LINE_CELL_COLOR);
 			   }
 			   else {
 					// since the previous entry might have changed the color,
@@ -379,7 +379,7 @@ public class CellComponentFactory {
 		// When changing the backgroud color, it helps to set the inner component's border to zero.  Otherwise,
 		// the border can obscure the text and make it hard to see.  This is especially seen when using the
 		// kunstoff l&f.
-		textField.setBackground(Color.yellow);
+		textField.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);
 		textField.setBorder(new EmptyBorder(0,0,0,0));
 
 		ed = new CellEditorUsingRenderer(textField, dataTypeObject);

@@ -18,8 +18,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -50,10 +49,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.IOUtilitiesImpl;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+ import net.sourceforge.squirrel_sql.fw.util.*;
 
 /**
  * @author gwg
@@ -154,7 +150,7 @@ public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
 		if (isEditable) {
 			_ta.setEditable(true);
-			_ta.setBackground(Color.yellow);	// tell user it is editable
+			_ta.setBackground(SquirrelConstants.CELL_EDITABLE_COLOR);	// tell user it is editable
 		}
 		else {
 			_ta.setEditable(false);

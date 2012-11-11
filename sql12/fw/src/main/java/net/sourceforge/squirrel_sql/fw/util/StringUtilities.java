@@ -315,4 +315,9 @@ public class StringUtilities
 
       return ret;
    }
+
+   public static boolean isEmpty(String currentSearchString)
+   {
+      return null == currentSearchString || 0 == currentSearchString.length();
+   }
 }

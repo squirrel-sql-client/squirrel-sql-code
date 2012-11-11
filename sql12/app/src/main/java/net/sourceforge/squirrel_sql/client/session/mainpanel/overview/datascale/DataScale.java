@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -188,7 +189,7 @@ public class DataScale implements Comparable<DataScale>
       {
          if(btn == intervalButtonClicked)
          {
-            btn.setBackground(Color.yellow);
+            btn.setBackground(SquirrelConstants.TRACE_COLOR);
          }
          else
          {

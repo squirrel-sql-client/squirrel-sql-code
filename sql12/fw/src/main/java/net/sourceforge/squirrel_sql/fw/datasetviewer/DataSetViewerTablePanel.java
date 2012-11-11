@@ -43,6 +43,7 @@ import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.*;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -78,7 +79,6 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
    public DataSetViewerTablePanel()
 	{
-		super();
 	}
 
    public void init(IDataSetUpdateableModel updateableModel)
@@ -239,13 +239,17 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       throw new IllegalStateException("No col with header: " + header);
    }
 
+   public net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService createFindService()
+   {
+      return new DefaultFindService(_table);
+   }
+
 
    /*
      * The JTable used for displaying all DB ResultSet info.
      */
 	protected final class MyJTable extends JTable
 	{
-		private static final long serialVersionUID = 1L;
 		private final int _multiplier;
 		private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 

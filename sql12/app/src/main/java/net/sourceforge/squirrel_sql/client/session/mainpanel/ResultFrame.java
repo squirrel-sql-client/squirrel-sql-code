@@ -61,6 +61,7 @@ public class ResultFrame extends SessionDialogWidget
    private ResultTabFactory _resultTabFactory;
    private ResultFrameListener _resultFrameListener;
    private JButton _btnReturnToTab;
+   private TabButton _btnToggleFind;
    private JCheckBox _chkOnTop;
    private JButton _btnReRun;
    private JPanel _centerPanel;
@@ -117,10 +118,24 @@ public class ResultFrame extends SessionDialogWidget
          }
       });
 
+      _btnToggleFind.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onFind();
+         }
+      });
+
       if (false == isOnRerun)
       {
          showFrame(this, false);
       }
+   }
+
+   private void onFind()
+   {
+      _tab.toggleShowFindPanel();
    }
 
    private void onRerun()
@@ -265,10 +280,15 @@ public class ResultFrame extends SessionDialogWidget
       gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(new JPanel(), gbc);
 
-      ImageIcon icon = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
-      _btnReRun = new JButton(icon);
+      ImageIcon iconFind = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.FIND);
+      _btnToggleFind = new TabButton(iconFind);
+      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,0), 0,0);
+      pnlButtons.add(_btnToggleFind, gbc);
+
+      ImageIcon iconReRun = session.getApplication().getResources().getIcon(SquirrelResources.IImageNames.RERUN);
+      _btnReRun = new TabButton(iconReRun);
       _btnReRun.setToolTipText(s_stringMgr.getString("ResultFrame.rerun"));
-      gbc = new GridBagConstraints(3,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0);
       pnlButtons.add(_btnReRun, gbc);
 
       return pnlButtons;
