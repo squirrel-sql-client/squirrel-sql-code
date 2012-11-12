@@ -241,7 +241,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
    public net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.FindService createFindService()
    {
-      return new DefaultFindService(_table);
+      return new DefaultFindService(_table, getColumnDefinitions(), _table.getTypedModel());
    }
 
 

@@ -20,7 +20,7 @@ public class DataSetFindPanel extends JPanel
    JButton btnUnhighlightResult;
    JButton btnHideFindPanel;
    JButton btnHighlightFindResult;
-   JButton btnShowFoundRowsInTable;
+   JButton btnShowRowsFoundInTable;
 
    public DataSetFindPanel()
    {
@@ -72,10 +72,10 @@ public class DataSetFindPanel extends JPanel
       add(btnUnhighlightResult, gbc);
 
       gbc = new GridBagConstraints(7,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnShowFoundRowsInTable = new JButton(rsrc.getIcon(LibraryResources.IImageNames.MARKED_TO_NEW_TABLE));
-      btnShowFoundRowsInTable.setToolTipText(s_stringMgr.getString("DataSetFindPanel.showFoundRowsInTable"));
-      btnShowFoundRowsInTable.setBorder(BorderFactory.createEtchedBorder());
-      add(btnShowFoundRowsInTable, gbc);
+      btnShowRowsFoundInTable = new JButton(rsrc.getIcon(LibraryResources.IImageNames.MARKED_TO_NEW_TABLE));
+      btnShowRowsFoundInTable.setToolTipText(s_stringMgr.getString("DataSetFindPanel.showFoundRowsInTable"));
+      btnShowRowsFoundInTable.setBorder(BorderFactory.createEtchedBorder());
+      add(btnShowRowsFoundInTable, gbc);
 
       gbc = new GridBagConstraints(8,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnHideFindPanel = new JButton(rsrc.getIcon(LibraryResources.IImageNames.HIDE));

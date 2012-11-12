@@ -30,14 +30,12 @@ import javax.swing.table.AbstractTableModel;
 
 public final class MyTableModel extends AbstractTableModel
 {
-    private static final long serialVersionUID = 5511368149198548935L;
-
-    private List<Object[]> _data = new ArrayList<Object[]>();
-	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
-	private IDataSetTableControls _creator = null;
+   private List<Object[]> _data = new ArrayList<Object[]>();
+   private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
+   private IDataSetTableControls _creator = null;
 
 
-	MyTableModel(IDataSetTableControls creator)
+   MyTableModel(IDataSetTableControls creator)
 	{
 		super();
 		_creator = creator;
@@ -214,4 +212,9 @@ public final class MyTableModel extends AbstractTableModel
 		fireTableDataChanged();
 		
 	}
+
+   public Object[] getRowAt(Integer rowIx)
+   {
+      return _data.get(rowIx);
+   }
 }

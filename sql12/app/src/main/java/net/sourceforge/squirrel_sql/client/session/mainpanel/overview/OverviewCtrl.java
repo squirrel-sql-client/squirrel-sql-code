@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementatio
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.SimpleDataSet;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -276,7 +277,7 @@ public class OverviewCtrl
    {
       try
       {
-         OverviewDataSet ods = new OverviewDataSet(allRows, columnDisplayDefinitions);
+         SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions);
 
          DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
          dsv.init(null, new DefaultDataModelImplementationDetails(_session));

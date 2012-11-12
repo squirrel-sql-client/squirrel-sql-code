@@ -1,11 +1,14 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.util.*;
 import org.apache.commons.lang.StringUtils;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class DataSetFindPanelController
 {
@@ -71,6 +74,15 @@ public class DataSetFindPanelController
          }
       });
 
+      _dataSetFindPanel.btnShowRowsFoundInTable.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onShowRowsFoundInTable();
+         }
+      });
+
 
 
 
@@ -83,6 +95,49 @@ public class DataSetFindPanelController
          }
       });
 
+   }
+
+   private void onShowRowsFoundInTable()
+   {
+      Window parent = SwingUtilities.windowForComponent(_dataSetFindPanel);
+
+      JDialog dlg = new JDialog(parent, s_stringMgr.getString("DataSetFindPanel.searchResult"));
+      dlg.getContentPane().add(new JScrollPane(createSimpleTable().getComponent()));
+
+      dlg.setLocation(_dataSetViewerTablePanel.getComponent().getLocationOnScreen());
+      dlg.setSize(_findService.getVisibleSize());
+      dlg.setVisible(true);
+   }
+
+
+   private DataSetViewerTablePanel createSimpleTable()
+   {
+      try
+      {
+         List<Object[]> allRows = _findService.getRowsForIndexes(_trace.getRowsFound());
+         ColumnDisplayDefinition[] columnDisplayDefinitions = _findService.getColumnDisplayDefinitions();
+
+         SimpleDataSet ods = new SimpleDataSet(allRows, columnDisplayDefinitions);
+
+         DataSetViewerTablePanel dsv = new DataSetViewerTablePanel();
+
+         IDataModelImplementationDetails dataModelImplementationDetails = new IDataModelImplementationDetails()
+         {
+            @Override
+            public String getStatementSeparator()
+            {
+               return ";";
+            }
+         };
+
+         dsv.init(null, dataModelImplementationDetails);
+         dsv.show(ods);
+         return dsv;
+      }
+      catch (DataSetException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
 
@@ -107,12 +162,18 @@ public class DataSetFindPanelController
       {
          _findService = _dataSetViewerTablePanel.createFindService();
 
-         _findService.setFindServiceRenderCallBack(new FindServiceRenderCallBack()
+         _findService.setFindServiceCallBack(new FindServiceCallBack()
          {
             @Override
             public FindMarkColor getBackgroundColor(int viewRow, int viewColumn)
             {
                return onGetBackgroundColor(viewRow, viewColumn);
+            }
+
+            @Override
+            public void tableCellStructureChanged()
+            {
+               onUnhighlightResult();
             }
          });
 

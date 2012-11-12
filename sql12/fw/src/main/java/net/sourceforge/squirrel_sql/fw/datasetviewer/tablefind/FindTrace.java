@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class FindTrace
@@ -42,5 +44,19 @@ public class FindTrace
    {
       _current = null;
       _trace.clear();
+   }
+
+   public ArrayList<Integer> getRowsFound()
+   {
+      ArrayList<Integer> ret = new ArrayList();
+
+      for (Point point : _trace)
+      {
+         ret.add(point.x);
+      }
+
+      Collections.sort(ret);
+
+      return ret;
    }
 }

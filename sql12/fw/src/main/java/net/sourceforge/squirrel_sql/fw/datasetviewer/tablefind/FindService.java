@@ -1,5 +1,11 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public interface FindService
 {
    int getRowCount();
@@ -10,9 +16,15 @@ public interface FindService
 
    void scrollToVisible(int viewRow, int viewCol);
 
-   void setFindServiceRenderCallBack(FindServiceRenderCallBack findServiceRenderCallBack);
+   void setFindServiceCallBack(FindServiceCallBack findServiceCallBack);
 
    void repaintCell(int viewRow, int viewCol);
 
    void repaintAll();
+
+   ColumnDisplayDefinition[] getColumnDisplayDefinitions();
+
+   List<Object[]> getRowsForIndexes(ArrayList<Integer> rowsFound);
+
+   Dimension getVisibleSize();
 }

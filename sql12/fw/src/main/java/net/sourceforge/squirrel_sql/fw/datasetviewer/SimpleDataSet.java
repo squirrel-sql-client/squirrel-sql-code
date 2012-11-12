@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
+package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetDefinition;
@@ -8,14 +8,14 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import java.util.List;
 
-public class OverviewDataSet implements IDataSet
+public class SimpleDataSet implements IDataSet
 {
    private int _curIx = -1;
    private ColumnDisplayDefinition[] _columnDisplayDefinitions;
    private List<Object[]> _allRows;
 
 
-   public OverviewDataSet(List<Object[]> allRows, ColumnDisplayDefinition[] columnDisplayDefinitions)
+   public SimpleDataSet(List<Object[]> allRows, ColumnDisplayDefinition[] columnDisplayDefinitions)
    {
       _allRows = allRows;
       _columnDisplayDefinitions = columnDisplayDefinitions;

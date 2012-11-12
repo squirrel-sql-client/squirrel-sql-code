@@ -8,22 +8,22 @@ import java.util.HashMap;
 public class FindServiceCellRendererDecorator implements TableCellRenderer
 {
    private TableCellRenderer _delegate;
-   private FindServiceRenderCallBack _findServiceRenderCallBack;
+   private FindServiceCallBack _findServiceCallBack;
 
 
    private Point _pointBuffer = new Point();
    private HashMap<Point, Color> _originalColorsByCell = new HashMap<Point, Color>();
 
-   public FindServiceCellRendererDecorator(TableCellRenderer delegate, FindServiceRenderCallBack findServiceRenderCallBack)
+   public FindServiceCellRendererDecorator(TableCellRenderer delegate, FindServiceCallBack findServiceCallBack)
    {
       _delegate = delegate;
-      _findServiceRenderCallBack = findServiceRenderCallBack;
+      _findServiceCallBack = findServiceCallBack;
    }
 
    @Override
    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
    {
-      FindMarkColor findMarkColor = _findServiceRenderCallBack.getBackgroundColor(row, column);
+      FindMarkColor findMarkColor = _findServiceCallBack.getBackgroundColor(row, column);
 
       Component tableCellRendererComponent = _delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
