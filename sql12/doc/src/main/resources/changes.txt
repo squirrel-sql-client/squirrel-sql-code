@@ -8,6 +8,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Closing or reconnecting Sessions caused SQuirreL to hang when the JDBC driver's connection close method didn't return.
+   Now closing timeouts after 2 seconds.
+
 Function to detach/close a file while keeping its contents in the SQL editor. Accessible through Toolbar and tools pop up.
 
 Hibernate Plugin:

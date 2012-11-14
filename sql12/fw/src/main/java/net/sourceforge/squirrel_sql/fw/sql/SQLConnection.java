@@ -26,6 +26,7 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.*;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -87,41 +88,85 @@ public class SQLConnection implements ISQLConnection
 	 */
 	public void close() throws SQLException
 	{
-		SQLException savedEx = null;
-		if (_conn != null)
-		{
-			s_log.debug("Closing connection");
-			try
-			{
-				if (!_conn.getAutoCommit())
-				{
-					if (_autoCommitOnClose)
-					{
-						_conn.commit();
-					}
-					else
-					{
-						_conn.rollback();
-					}
-				}
-			}
-			catch (SQLException ex)
-			{
-				savedEx = ex;
-			}
-			_conn.close();
-			_conn = null;
-			_timeClosed = Calendar.getInstance().getTime();
-			if (savedEx != null)
-			{
-				s_log.debug("Connection close failed", savedEx);
-				throw savedEx;
-			}
-			s_log.debug("Connection closed successfully");
-		}
-	}
+      ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-	/**
+      int timeoutSeconds = 2;
+      try
+      {
+         Runnable task = new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               _closeIntern();
+            }
+         };
+         Future<?> future = executorService.submit(task);
+
+         future.get(timeoutSeconds, TimeUnit.SECONDS);
+
+      }
+      catch (TimeoutException e)
+      {
+         String message =
+               "The database connection took longer than " + timeoutSeconds + " seconds to close. " +
+               "Maybe closing will succeed later but SQuirreL stops waiting to stay responsive for user interaction.";
+         s_log.error(message, e);
+      }
+      catch (Throwable e)
+      {
+         s_log.error("Error while closing connection", e);
+      }
+      finally
+      {
+         _conn = null;
+      }
+   }
+
+   private void _closeIntern()
+   {
+      try
+      {
+         SQLException savedEx = null;
+         if (_conn != null)
+         {
+            s_log.debug("Closing connection");
+            try
+            {
+               if (!_conn.getAutoCommit())
+               {
+                  if (_autoCommitOnClose)
+                  {
+                     _conn.commit();
+                  }
+                  else
+                  {
+                     _conn.rollback();
+                  }
+               }
+            }
+            catch (SQLException ex)
+            {
+               savedEx = ex;
+            }
+            _conn.close();
+            _conn = null;
+            _timeClosed = Calendar.getInstance().getTime();
+            if (savedEx != null)
+            {
+               s_log.debug("Connection close failed", savedEx);
+               throw savedEx;
+            }
+            s_log.debug("Connection closed successfully");
+         }
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#commit()
 	 */
 	public void commit() throws SQLException
