@@ -48,12 +48,15 @@ public class FindTrace
 
    public ArrayList<Integer> getRowsFound()
    {
-      ArrayList<Integer> ret = new ArrayList();
+      HashSet<Integer> uniqueRows = new HashSet<Integer>();
+
 
       for (Point point : _trace)
       {
-         ret.add(point.x);
+         uniqueRows.add(point.x);
       }
+
+      ArrayList<Integer> ret = new ArrayList(uniqueRows);
 
       Collections.sort(ret);
 
