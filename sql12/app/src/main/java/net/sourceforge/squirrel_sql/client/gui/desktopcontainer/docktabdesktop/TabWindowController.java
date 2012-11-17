@@ -220,9 +220,13 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       cleanUpOnMove(removeTabHandelResult);
 
       DockTabDesktopPaneHolder mainDockTabDesktopHolder = _app.getMultipleWindowsHandler().getMainDockTabDesktopHolder();
-      ArrayList<SmallTabButton> externalButtons = removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons();
+      ButtonTabComponent removedButtonTabComponent = removeTabHandelResult.getRemovedButtonTabComponent();
 
-      mainDockTabDesktopHolder.addTabWidget(tabHandle.getWidget(), externalButtons);
+      if (null != removedButtonTabComponent)
+      {
+         ArrayList<SmallTabButton> externalButtons = removedButtonTabComponent.getExternalButtons();
+         mainDockTabDesktopHolder.addTabWidget(tabHandle.getWidget(), externalButtons);
+      }
    }
 
    @Override
