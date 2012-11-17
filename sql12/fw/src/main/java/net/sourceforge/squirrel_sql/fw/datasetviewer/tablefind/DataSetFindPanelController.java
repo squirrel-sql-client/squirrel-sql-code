@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 public class DataSetFindPanelController
@@ -70,7 +72,7 @@ public class DataSetFindPanelController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onUnhighlightResult();
+            clearFind();
          }
       });
 
@@ -92,6 +94,24 @@ public class DataSetFindPanelController
          public void actionPerformed(ActionEvent e)
          {
             dataSetFindPanelListener.hideFindPanel();
+         }
+      });
+
+      _dataSetFindPanel.chkCaseSensitive.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            clearFind();
+         }
+      });
+
+      _dataSetFindPanel.cboMatchType.addItemListener(new ItemListener()
+      {
+         @Override
+         public void itemStateChanged(ItemEvent e)
+         {
+            clearFind();
          }
       });
 
@@ -143,11 +163,11 @@ public class DataSetFindPanelController
 
    public void wasHidden()
    {
-      onUnhighlightResult();
+      clearFind();
    }
 
 
-   private void onUnhighlightResult()
+   private void clearFind()
    {
       _trace.clear();
       _findService.repaintAll();
@@ -173,7 +193,7 @@ public class DataSetFindPanelController
             @Override
             public void tableCellStructureChanged()
             {
-               onUnhighlightResult();
+               clearFind();
             }
          });
 
