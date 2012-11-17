@@ -48,6 +48,8 @@ dandar3 for the tip.
 
 Bug fixes:
 
+Tables cells that contained html where rendered incorrect. Now the plain html string is shown.
+
 When schema info was refreshed (using F5) the SQL editor used to color tables as undefined (error red).
 
 Column sorting indicator icon was lost when sorted column headers where dragged to reorder columns
