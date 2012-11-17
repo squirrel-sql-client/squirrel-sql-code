@@ -1,12 +1,16 @@
 package net.sourceforge.squirrel_sql.client;
 
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.TabWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPaneHolder;
 import net.sourceforge.squirrel_sql.client.gui.builders.dndtabbedpane.OutwardDndTabbedPaneChanel;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.RemoveTabHandelResult;
+import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class MultipleWindowsHandler
@@ -16,6 +20,7 @@ public class MultipleWindowsHandler
 
    private DesktopTabbedPaneOutwardDndChanel _outwardDndTabbedPaneChanel;
    private Application _app;
+   private DockTabDesktopPaneHolder _mainDockTabDesktopPaneHolder;
 
    public MultipleWindowsHandler(Application app)
    {
@@ -45,14 +50,8 @@ public class MultipleWindowsHandler
 
    public void registerMainFrame(final DockTabDesktopPane mainDesktop)
    {
-
-      final DockTabDesktopPaneHolder dockTabDesktopPaneHolder = new DockTabDesktopPaneHolder()
+      _mainDockTabDesktopPaneHolder = new DockTabDesktopPaneHolder()
       {
-         @Override
-         public DockTabDesktopPane getDockTabDesktopPane()
-         {
-            return mainDesktop;
-         }
 
          @Override
          public void setSelected(boolean b)
@@ -65,11 +64,35 @@ public class MultipleWindowsHandler
          {
             onTabDragedAndDroped(mainDesktop);
          }
+
+         @Override
+         public void addTabWidgetAt(TabWidget widget, int tabIndex, ArrayList<SmallTabButton> externalButtons)
+         {
+            mainDesktop.addTabWidgetAt(widget, tabIndex, externalButtons);
+         }
+
+         @Override
+         public RemoveTabHandelResult removeTabHandel(int tabIndex)
+         {
+            return mainDesktop.removeTabHandel(tabIndex);
+         }
+
+         @Override
+         public boolean isMyTabbedPane(JTabbedPane tabbedPane)
+         {
+            return mainDesktop.isMyTabbedPane(tabbedPane);
+         }
+
+         @Override
+         public void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons)
+         {
+            mainDesktop.addTabWidgetAt(widget, mainDesktop.getTabCount() , externalButtons);
+         }
       };
 
-      _dockTabDesktopPaneHolders.add(dockTabDesktopPaneHolder);
+      _dockTabDesktopPaneHolders.add(_mainDockTabDesktopPaneHolder);
 
-      _curSelectedDockTabDesktopPaneHolder = dockTabDesktopPaneHolder;
+      _curSelectedDockTabDesktopPaneHolder = _mainDockTabDesktopPaneHolder;
 
 
       _app.getMainFrame().addWindowFocusListener(new WindowFocusListener()
@@ -77,7 +100,7 @@ public class MultipleWindowsHandler
          @Override
          public void windowGainedFocus(WindowEvent e)
          {
-            selectDesktop(dockTabDesktopPaneHolder);
+            selectDesktop(_mainDockTabDesktopPaneHolder);
          }
 
          @Override
@@ -125,12 +148,17 @@ public class MultipleWindowsHandler
    {
       for (DockTabDesktopPaneHolder dockTabDesktopPaneHolder : _dockTabDesktopPaneHolders)
       {
-         if(dockTabDesktopPaneHolder.getDockTabDesktopPane().isMyTabbedPane(tabbedPane))
+         if(dockTabDesktopPaneHolder.isMyTabbedPane(tabbedPane))
          {
             return dockTabDesktopPaneHolder;
          }
       }
 
       throw new IllegalArgumentException("Could not find DockTabDesktopPane for TabbedPane " + tabbedPane);
+   }
+
+   public DockTabDesktopPaneHolder getMainDockTabDesktopHolder()
+   {
+      return _mainDockTabDesktopPaneHolder;
    }
 }

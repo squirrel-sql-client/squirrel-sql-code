@@ -88,6 +88,7 @@ public class SquirrelResources extends Resources
 
       String TAB_DETACH = "tabDetach";
       String TAB_DETACH_SMALL = "tabDetachSmall";
+      String TAB_DETACH_SMALL_REVERT = "tabDetachSmallRevert";
 
       String AGG_COUNT = "aggCount";
       String AGG_SUM = "aggSum";

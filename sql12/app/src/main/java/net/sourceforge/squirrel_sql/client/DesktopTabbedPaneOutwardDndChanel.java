@@ -68,11 +68,11 @@ class DesktopTabbedPaneOutwardDndChanel implements OutwardDndTabbedPaneChanel
 
       DockTabDesktopPaneHolder sourceDesktopPaneHolder = _app.getMultipleWindowsHandler().getDockTabDesktopPaneOfTabbedPane(_dnDTabbedPaneData.getTabbedPane());
 
-      RemoveTabHandelResult moveTabHandelResult = sourceDesktopPaneHolder.getDockTabDesktopPane().removeTabHandel(_dnDTabbedPaneData.getDragTabIndex());
+      RemoveTabHandelResult moveTabHandelResult = sourceDesktopPaneHolder.removeTabHandel(_dnDTabbedPaneData.getDragTabIndex());
 
       DockTabDesktopPaneHolder targetDesktopPaneHolder = _app.getMultipleWindowsHandler().getDockTabDesktopPaneOfTabbedPane(targetTabbedPane);
 
-      targetDesktopPaneHolder.getDockTabDesktopPane().addTabWidgetAt(moveTabHandelResult.getTabHandle().getWidget(), targetTabIndex, moveTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+      targetDesktopPaneHolder.addTabWidgetAt(moveTabHandelResult.getTabHandle().getWidget(), targetTabIndex, moveTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
 
       sourceDesktopPaneHolder.tabDragedAndDroped();
       targetDesktopPaneHolder.tabDragedAndDroped();
@@ -82,7 +82,7 @@ class DesktopTabbedPaneOutwardDndChanel implements OutwardDndTabbedPaneChanel
    {
       for (JTabbedPane tabbedPane : _listeners.keySet())
       {
-         if(dockTabDesktopPaneHolder.getDockTabDesktopPane().isMyTabbedPane(tabbedPane))
+         if(dockTabDesktopPaneHolder.isMyTabbedPane(tabbedPane))
          {
             _listeners.remove(tabbedPane);
             break;

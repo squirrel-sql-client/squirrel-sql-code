@@ -109,6 +109,19 @@ public class ButtonTabComponent extends JPanel
       return ret;
    }
 
+   public SmallTabButton findSmallTabButtonByUserObject(Object userObject)
+   {
+      for (Component cp : _pnlSmallTabButtons.getComponents())
+      {
+         SmallTabButton stb = (SmallTabButton) cp;
+         if(userObject == stb.getUserObject())
+         {
+            return stb;
+         }
+      }
+      return null;
+   }
+
    private static class CloseTabButton extends SmallTabButton
    {
       private CloseTabButton()

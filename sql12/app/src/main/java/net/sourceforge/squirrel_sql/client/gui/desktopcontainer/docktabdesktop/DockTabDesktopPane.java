@@ -37,6 +37,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private IApplication _app;
    private boolean _belongsToMainApplicationWindow;
+   private DockTabDesktopPaneListener _dockTabDesktopPaneListener;
 
    private JPanel _pnlButtons = new JPanel();
 
@@ -59,10 +60,11 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    private ScrollableTabHandler _scrollableTabHandler;
 
-   public DockTabDesktopPane(IApplication app, boolean belongsToMainApplicationWindow)
+   public DockTabDesktopPane(IApplication app, boolean belongsToMainApplicationWindow, DockTabDesktopPaneListener dockTabDesktopPaneListener)
    {
       _app = app;
       _belongsToMainApplicationWindow = belongsToMainApplicationWindow;
+      _dockTabDesktopPaneListener = dockTabDesktopPaneListener;
 
       _tabbedPane = new DesktopTabbedPane(_app);
 
@@ -169,7 +171,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       addTabWidgetAt(widget, _tabbedPane.getTabCount(), new ArrayList<SmallTabButton>());
    }
 
-   public void addTabWidgetAt(TabWidget widget, int index, ArrayList<SmallTabButton> externalButtons)
+   public TabHandle addTabWidgetAt(TabWidget widget, int index, ArrayList<SmallTabButton> externalButtons)
    {
       final TabHandle tabHandle = new TabHandle(widget, this);
       ((TabDelegate) widget.getDelegate()).setTabHandle(tabHandle);
@@ -182,14 +184,18 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       ButtonTabComponent btc = (ButtonTabComponent) _tabbedPane.getTabComponentAt(tabIx);
 
-      btc.getClosebutton().addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
+      btc.getClosebutton().addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
             removeTab(tabHandle, e, TabClosingMode.CLOSE_BUTTON);
          }
       });
 
-      btc.getToWindowButton().addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
+      btc.getToWindowButton().addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
             onToWindow(tabHandle);
          }
       });
@@ -205,6 +211,8 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       tabHandle.fireAdded(_belongsToMainApplicationWindow);
       _tabbedPane.setSelectedIndex(tabIx);
       _scrollableTabHandler.tabAdded();
+
+      return tabHandle;
    }
 
 
@@ -227,7 +235,12 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       RemoveTabHandelResult removeTabHandelResult = removeTabHandel(tabHandle);
 
-      tabWindowController.getDockTabDesktopPane().addTabWidgetAt(tabHandle.getWidget(), 0, removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+      tabWindowController.addTabWidgetAt(tabHandle.getWidget(), 0, removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+
+      if (null != _dockTabDesktopPaneListener)
+      {
+         _dockTabDesktopPaneListener.tabWasRemoved(tabHandle);
+      }
    }
 
    public RemoveTabHandelResult removeTabHandel(int tabIndex)
@@ -236,7 +249,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       return removeTabHandel(tabHandle);
    }
 
-   private RemoveTabHandelResult removeTabHandel(TabHandle tabHandle)
+   public RemoveTabHandelResult removeTabHandel(TabHandle tabHandle)
    {
       RemoveTabHandelResult ret = new RemoveTabHandelResult();
       int tabIndex = getTabIndex(tabHandle);
@@ -654,4 +667,10 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
          selectedHandle._setSelected(b, true);
       }
    }
+
+   public int getTabCount()
+   {
+      return _tabHandles.size();
+   }
+
 }

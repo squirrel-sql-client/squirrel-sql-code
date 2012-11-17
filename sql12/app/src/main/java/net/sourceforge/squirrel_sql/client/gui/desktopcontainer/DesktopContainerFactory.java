@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.ScrollableDesktopPane;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.DockTabDesktopPane;
 
 import java.awt.*;
@@ -12,7 +11,7 @@ public class DesktopContainerFactory
    {
       if (app.getDesktopStyle().isDockTabStyle())
       {
-         return new DockTabDesktopPane(app, true);
+         return new DockTabDesktopPane(app, true, null);
       }
       else
       {
