@@ -92,6 +92,7 @@ public class DataSetViewerFindDecorator
       if (_findPanelOpen)
       {
          _split.setDividerLocation(_dataSetFindPanelController.getPanel().getPreferredSize().height);
+         _dataSetFindPanelController.focusTextField();
       }
       else
       {

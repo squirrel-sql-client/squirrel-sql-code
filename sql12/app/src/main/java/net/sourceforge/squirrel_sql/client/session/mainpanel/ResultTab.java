@@ -567,6 +567,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    @Override
    public void toggleShowFindPanel()
    {
+      _tabResultTabs.setSelectedIndex(0);
       if(false == _resultSetOutput.toggleShowFindPanel())
       {
          _session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("ResultTab.tableSearchNotSupported"));

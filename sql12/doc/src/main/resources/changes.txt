@@ -8,6 +8,8 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Find function for SQL result tables.
+
 Closing or reconnecting Sessions caused SQuirreL to hang when the JDBC driver's connection close method didn't return.
    Now closing timeouts after 2 seconds.
 

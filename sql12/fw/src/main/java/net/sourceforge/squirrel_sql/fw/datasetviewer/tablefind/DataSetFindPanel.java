@@ -13,7 +13,7 @@ public class DataSetFindPanel extends JPanel
 
    JComboBox cboMatchType;
    JCheckBox chkCaseSensitive;
-   JTextField txtString;
+   JComboBox cboString;
 
    JButton btnDown;
    JButton btnUp;
@@ -40,8 +40,9 @@ public class DataSetFindPanel extends JPanel
       add(chkCaseSensitive, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
-      txtString = new JTextField();
-      add(txtString, gbc);
+      cboString = new JComboBox();
+      cboString.setEditable(true);
+      add(cboString, gbc);
 
 
       LibraryResources rsrc = new LibraryResources();

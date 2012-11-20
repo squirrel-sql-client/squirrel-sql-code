@@ -6,17 +6,19 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class DataSetFindPanelController
 {
 
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DataSetFindPanelController.class);
 
+   private static final String PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF = "SquirrelSQL.DataSetFind.tableSearch.StrPref_";
+
+   private static final int MAX_HIST_LENGTH = 10;
 
    private DataSetFindPanel _dataSetFindPanel;
 
@@ -115,6 +117,64 @@ public class DataSetFindPanelController
          }
       });
 
+      for (int i = 0; i <  MAX_HIST_LENGTH; i++)
+      {
+         String item = Preferences.userRoot().get(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, null);
+         if (null != item)
+         {
+            _dataSetFindPanel.cboString.addItem(item);
+         }
+      }
+      _dataSetFindPanel.cboString.getEditor().setItem(null);
+
+      initKeyStrokes();
+   }
+
+   private void initKeyStrokes()
+   {
+      Action findNextAction = new AbstractAction("DataSetFind.FindNext")
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFind(true);
+         }
+      };
+
+      Action findPrevAction = new AbstractAction("DataSetFind.FindPrev")
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFind(false);
+         }
+      };
+
+      Action unhighlightAction = new AbstractAction("DataSetFind.Unhighlight")
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            _dataSetFindPanel.btnUnhighlightResult.doClick();
+         }
+      };
+
+      JComponent comp = (JComponent) _dataSetFindPanel.cboString.getEditor().getEditorComponent();
+      comp.registerKeyboardAction(findNextAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), JComponent.WHEN_FOCUSED);
+      comp.registerKeyboardAction(findNextAction, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0, false), JComponent.WHEN_FOCUSED);
+
+      comp.registerKeyboardAction(findPrevAction, KeyStroke.getKeyStroke(KeyEvent.VK_F3, InputEvent.SHIFT_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
+
+      comp.registerKeyboardAction(unhighlightAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), JComponent.WHEN_FOCUSED);
+   }
+
+   private void onFind(boolean next)
+   {
+      if (next)
+      {
+         _dataSetFindPanel.btnDown.doClick();
+      }
+      else
+      {
+         _dataSetFindPanel.btnUp.doClick();
+      }
    }
 
    private void onShowRowsFoundInTable()
@@ -202,7 +262,7 @@ public class DataSetFindPanelController
       }
 
 
-      String searchString = _dataSetFindPanel.txtString.getText();
+      String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
 
 
       if(false == StringUtils.equals(searchString, _currentSearchString))
@@ -218,6 +278,10 @@ public class DataSetFindPanelController
       {
          return;
       }
+
+      addToComboList(_currentSearchString);
+
+
 
       boolean matchFound = false;
       for(int i=0; i < _tableTraverser.getCellCount(); ++i)
@@ -315,12 +379,11 @@ public class DataSetFindPanelController
 
    private FindMarkColor onGetBackgroundColor(int viewRow, int viewColumn)
    {
-      String searchString = _dataSetFindPanel.txtString.getText();
+      String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
       if(null == searchString)
       {
          return null;
       }
-
 
       if(_trace.contains(viewRow, viewColumn))
       {
@@ -339,5 +402,47 @@ public class DataSetFindPanelController
       }
 
    }
+
+   private void addToComboList(String searchString)
+   {
+      for (int i = 0; i < _dataSetFindPanel.cboString.getItemCount(); i++)
+      {
+          if(searchString.equals(_dataSetFindPanel.cboString.getItemAt(i)))
+          {
+             _dataSetFindPanel.cboString.removeItemAt(i);
+          }
+      }
+      ((DefaultComboBoxModel)_dataSetFindPanel.cboString.getModel()).insertElementAt(searchString, 0);
+
+
+      ArrayList itemsToRemove = new ArrayList();
+      for (int i = 0; i <  _dataSetFindPanel.cboString.getItemCount(); i++)
+      {
+         if (MAX_HIST_LENGTH > i)
+         {
+            Preferences.userRoot().put(PREF_KEY_DATASETFIND_TABLESEARCH_STRPREF + i, "" + _dataSetFindPanel.cboString.getItemAt(i));
+         }
+         else
+         {
+            itemsToRemove.add(_dataSetFindPanel.cboString.getItemAt(i));
+         }
+      }
+
+      for (Object item : itemsToRemove)
+      {
+         _dataSetFindPanel.cboString.removeItem(item);
+      }
+
+      _dataSetFindPanel.cboString.setSelectedIndex(0);
+
+   }
+
+   public void focusTextField()
+   {
+      _dataSetFindPanel.cboString.getEditor().getEditorComponent().requestFocus();
+
+   }
+
+
 
 }
