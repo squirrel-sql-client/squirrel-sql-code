@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class DataSetViewerFindDecorator
 {
@@ -43,16 +45,20 @@ public class DataSetViewerFindDecorator
       };
       _dataSetFindPanelController = new DataSetFindPanelController(messageHandler, dataSetFindPanelListener);
 
-      _split.setLeftComponent(_dataSetFindPanelController.getPanel());
+      _dataSetFindPanelController.setDataSetViewerTablePanel((DataSetViewerTablePanel) _dataSetViewer);
+      _split.setLeftComponent(new NullPanel());
 
-      if (_dataSetViewer instanceof DataSetViewerTablePanel)
+      _split.addComponentListener(new ComponentAdapter()
       {
-         _dataSetFindPanelController.setDataSetViewerTablePanel((DataSetViewerTablePanel) _dataSetViewer);
-      }
-      else
-      {
-         _split.setLeftComponent(new JPanel());
-      }
+         @Override
+         public void componentResized(ComponentEvent e)
+         {
+            if(_split.getLeftComponent() instanceof NullPanel)
+            {
+               _split.setDividerLocation(0);
+            }
+         }
+      });
 
 
       if (putTableInScrollpane)
@@ -91,11 +97,13 @@ public class DataSetViewerFindDecorator
       _findPanelOpen = !_findPanelOpen;
       if (_findPanelOpen)
       {
+         _split.setLeftComponent(_dataSetFindPanelController.getPanel());
          _split.setDividerLocation(_dataSetFindPanelController.getPanel().getPreferredSize().height);
          _dataSetFindPanelController.focusTextField();
       }
       else
       {
+         _split.setLeftComponent(new NullPanel());
          _split.setDividerLocation(0);
          _dataSetFindPanelController.wasHidden();
       }
@@ -125,4 +133,15 @@ public class DataSetViewerFindDecorator
          _dataSetFindPanelController.setDataSetViewerTablePanel(null);
       }
    }
+
+   private static class NullPanel extends JPanel
+   {
+      private NullPanel()
+      {
+         setPreferredSize(new Dimension(0,0));
+         setSize(new Dimension(0, 0));
+         setMaximumSize(new Dimension(0, 0));
+      }
+   }
+
 }

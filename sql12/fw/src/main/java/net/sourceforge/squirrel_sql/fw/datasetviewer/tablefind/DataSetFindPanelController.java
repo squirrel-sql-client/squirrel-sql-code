@@ -156,13 +156,15 @@ public class DataSetFindPanelController
          }
       };
 
+      EscapeAction escapeAction = new EscapeAction(_dataSetFindPanel.btnUnhighlightResult, _dataSetFindPanel.btnHideFindPanel);
+
       JComponent comp = (JComponent) _dataSetFindPanel.cboString.getEditor().getEditorComponent();
       comp.registerKeyboardAction(findNextAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), JComponent.WHEN_FOCUSED);
       comp.registerKeyboardAction(findNextAction, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0, false), JComponent.WHEN_FOCUSED);
 
       comp.registerKeyboardAction(findPrevAction, KeyStroke.getKeyStroke(KeyEvent.VK_F3, InputEvent.SHIFT_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 
-      comp.registerKeyboardAction(unhighlightAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), JComponent.WHEN_FOCUSED);
+      comp.registerKeyboardAction(escapeAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), JComponent.WHEN_FOCUSED);
    }
 
    private void onFind(boolean next)
@@ -194,6 +196,8 @@ public class DataSetFindPanelController
    {
       try
       {
+         ensureFindService();
+
          List<Object[]> allRows = _findService.getRowsForIndexes(_trace.getRowsFound());
          ColumnDisplayDefinition[] columnDisplayDefinitions = _findService.getColumnDisplayDefinitions();
 
@@ -230,6 +234,7 @@ public class DataSetFindPanelController
    private void clearFind()
    {
       _trace.clear();
+      ensureFindService();
       _findService.repaintAll();
       _tableTraverser.reset();
    }
@@ -238,28 +243,7 @@ public class DataSetFindPanelController
    {
       checkDataSetViewerPanel();
 
-      if(null == _findService)
-      {
-         _findService = _dataSetViewerTablePanel.createFindService();
-
-         _findService.setFindServiceCallBack(new FindServiceCallBack()
-         {
-            @Override
-            public FindMarkColor getBackgroundColor(int viewRow, int viewColumn)
-            {
-               return onGetBackgroundColor(viewRow, viewColumn);
-            }
-
-            @Override
-            public void tableCellStructureChanged()
-            {
-               clearFind();
-            }
-         });
-
-         _tableTraverser.setFindService(_findService);
-
-      }
+      ensureFindService();
 
 
       String searchString = "" + _dataSetFindPanel.cboString.getEditor().getItem();
@@ -326,6 +310,33 @@ public class DataSetFindPanelController
 
    }
 
+   private FindService ensureFindService()
+   {
+      if(null == _findService)
+      {
+         _findService = _dataSetViewerTablePanel.createFindService();
+
+         _findService.setFindServiceCallBack(new FindServiceCallBack()
+         {
+            @Override
+            public FindMarkColor getBackgroundColor(int viewRow, int viewColumn)
+            {
+               return onGetBackgroundColor(viewRow, viewColumn);
+            }
+
+            @Override
+            public void tableCellStructureChanged()
+            {
+               clearFind();
+            }
+         });
+
+         _tableTraverser.setFindService(_findService);
+
+      }
+
+      return _findService;
+   }
 
 
    private void checkDataSetViewerPanel()
