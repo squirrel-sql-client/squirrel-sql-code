@@ -7,8 +7,6 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.sql.Statement;
-
 public class CancelStatementThread extends Thread
 {
    private static final StringManager s_stringMgr =
@@ -17,14 +15,14 @@ public class CancelStatementThread extends Thread
    private static final ILogger s_log = LoggerController.createLogger(CancelStatementThread.class);
 
 
-   private Statement _stmt;
+   private StatementWrapper _stmtWrapper;
    private IMessageHandler _messageHandler;
    private boolean _threadFinished;
    private boolean _joinReturned;
 
-   public CancelStatementThread(Statement stmt, IMessageHandler messageHandler)
+   public CancelStatementThread(StatementWrapper stmtWrapper, IMessageHandler messageHandler)
    {
-      _stmt = stmt;
+      _stmtWrapper = stmtWrapper;
       _messageHandler = messageHandler;
    }
 
@@ -63,8 +61,8 @@ public class CancelStatementThread extends Thread
 
       try
       {
-          if (_stmt != null) {
-              _stmt.cancel();
+          if (_stmtWrapper != null) {
+              _stmtWrapper.cancel();
           }
          cancelSucceeded = true;
       }
@@ -83,8 +81,8 @@ public class CancelStatementThread extends Thread
          // cancel and stop fetching results.  This allows us to stop the query
          // processing gracefully.
          Utilities.sleep(500);
-         if (_stmt != null) {
-             _stmt.close();
+         if (_stmtWrapper != null) {
+             _stmtWrapper.closeIfContinueReadIsNotActive();
          }
          closeSucceeded = true;
       }

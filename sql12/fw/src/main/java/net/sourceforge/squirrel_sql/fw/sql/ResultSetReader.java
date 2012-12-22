@@ -25,7 +25,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
@@ -47,7 +49,7 @@ public class ResultSetReader
 		StringManagerFactory.getStringManager(ResultSetReader.class);
 
 	/** The <TT>ResultSet</TT> being read. */
-	private final ResultSet _rs;
+	private final ResultSetWrapper _rs;
 
 	/**
 	 * The indices into the <TT>ResultSet that we want to read, starting from
@@ -90,7 +92,11 @@ public class ResultSetReader
 		this(rs, null, dialectType);
 	}
 
-
+	public ResultSetReader(ResultSetWrapper rs, DialectType dialectType)
+		throws SQLException
+	{
+		this(rs, null, dialectType);
+	}
 
 	/**
 	 * @param rs
@@ -98,10 +104,13 @@ public class ResultSetReader
 	 * @param dialectType
 	 * @throws SQLException
 	 */
-	public ResultSetReader(ResultSet rs, int[] columnIndices,
-         DialectType dialectType) throws SQLException
+	public ResultSetReader(ResultSet rs, int[] columnIndices, DialectType dialectType) throws SQLException
 	{
-		super();
+      this(new ResultSetWrapper(rs), columnIndices, dialectType);
+	}
+
+	public ResultSetReader(ResultSetWrapper rs, int[] columnIndices, DialectType dialectType) throws SQLException
+	{
 		if (rs == null)
 		{
 			throw new IllegalArgumentException("ResultSet == null");
@@ -115,7 +124,7 @@ public class ResultSetReader
 		}
 		_columnIndices = columnIndices;
 
-		_rsmd = rs.getMetaData();
+		_rsmd = _rs.getResultSet().getMetaData();
 
 		_columnCount = columnIndices != null ? columnIndices.length
             : _rsmd.getColumnCount();
@@ -137,10 +146,10 @@ public class ResultSetReader
 	 *
 	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
 	 */
-	public Object[] readRow() throws SQLException
+	public Object[] readRow(BlockMode blockMode) throws SQLException
 	{
 		_errorOccured = false;
-		if (_rs.next())
+		if (_rs.next(blockMode))
 		{
 			return doRead();
 		}
@@ -166,10 +175,10 @@ public class ResultSetReader
 	 *
 	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
 	 */
-	public Object[] readRow(ColumnDisplayDefinition colDefs[]) throws SQLException
+	public Object[] readRow(ColumnDisplayDefinition colDefs[], BlockMode blockMode) throws SQLException
 	{
 		_errorOccured = false;
-		if (_rs.next())
+		if (_rs.next(blockMode))
 		{
 			return doContentTabRead(colDefs);
 		}
@@ -257,7 +266,7 @@ public class ResultSetReader
              * handle this column.
              */
             row[i] = 
-                CellComponentFactory.readResultWithPluginRegisteredDataType(_rs, 
+                CellComponentFactory.readResultWithPluginRegisteredDataType(_rs.getResultSet(),
                                                              columnType, 
                                                              columnTypeName, 
                                                              idx,
@@ -275,7 +284,7 @@ public class ResultSetReader
                   break;
 
                case Types.TIME:
-                  row[i] = _rs.getTime(idx);
+                  row[i] = _rs.getResultSet().getTime(idx);
                   break;
 
                case Types.DATE:
@@ -286,7 +295,7 @@ public class ResultSetReader
                case -101: // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101
                case -102: // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' ==
                   // -102
-                  row[i] = _rs.getTimestamp(idx);
+                  row[i] = _rs.getResultSet().getTimestamp(idx);
                   break;
 
                case Types.BIGINT:
@@ -316,8 +325,8 @@ public class ResultSetReader
                case Types.LONGVARCHAR:
                case Types.LONGNVARCHAR:
                case Types.ROWID:
-                  row[i] = _rs.getString(idx);
-                  if (_rs.wasNull()) {
+                  row[i] = _rs.getResultSet().getString(idx);
+                  if (_rs.getResultSet().wasNull()) {
                      row[i] = null;
                   }
                   break;
@@ -325,7 +334,7 @@ public class ResultSetReader
                case Types.BINARY:
                case Types.VARBINARY:
                case Types.LONGVARBINARY:
-                  row[i] = _rs.getString(idx);
+                  row[i] = _rs.getResultSet().getString(idx);
                   break;
 
                case Types.BLOB:
@@ -336,7 +345,7 @@ public class ResultSetReader
                   // that it
                   // has data.
 
-                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
+                  row[i] = DataTypeBlob.staticReadResultSet(_rs.getResultSet(), idx);
 
                   break;
 
@@ -345,7 +354,7 @@ public class ResultSetReader
                   // never see a CLOB. However, if we do we assume that
                   // it is printable text and that the user wants to see it, so
                   // read in the entire thing.
-                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
+                  row[i] = DataTypeClob.staticReadResultSet(_rs.getResultSet(), idx);
 
                   break;
 
@@ -393,7 +402,7 @@ public class ResultSetReader
 	}
 
    private Object readNumeric(int columnIdx) throws SQLException {
-      Object result = _rs.getObject(columnIdx);
+      Object result = _rs.getResultSet().getObject(columnIdx);
       if (result != null && !(result instanceof BigDecimal)) {
          if (result instanceof Number) {
             Number nbr = (Number) result;
@@ -428,8 +437,8 @@ public class ResultSetReader
    }
    
    private Object readObject(int columnIdx) throws SQLException {
-      Object result = _rs.getObject(columnIdx);
-      if (_rs.wasNull()) {
+      Object result = _rs.getResultSet().getObject(columnIdx);
+      if (_rs.getResultSet().wasNull()) {
          result = null;
       }
       return result;
@@ -447,8 +456,8 @@ public class ResultSetReader
 	 *            if an exception occurs.
 	 */
    private Object readInt(int columnIdx, String columnTypeName) throws SQLException {
-      Object result = _rs.getObject(columnIdx);
-      if (_rs.wasNull()) {
+      Object result = _rs.getResultSet().getObject(columnIdx);
+      if (_rs.getResultSet().wasNull()) {
          return null;
       }
       
@@ -479,7 +488,7 @@ public class ResultSetReader
    }
    
    private Object readFloat(int columnIdx) throws SQLException {
-      Object result = _rs.getObject(columnIdx);
+      Object result = _rs.getResultSet().getObject(columnIdx);
       if (result != null && !(result instanceof Double)) {
          if (result instanceof Number) {
             Number nbr = (Number) result;
@@ -494,15 +503,15 @@ public class ResultSetReader
    private Object readDate(int columnIdx) throws SQLException {
       Object result = null;
       if (DataTypeDate.getReadDateAsTimestamp()) {
-         result = _rs.getTimestamp(columnIdx);
+         result = _rs.getResultSet().getTimestamp(columnIdx);
       } else {
-         result = DataTypeDate.staticReadResultSet(_rs, columnIdx, false);
+         result = DataTypeDate.staticReadResultSet(_rs.getResultSet(), columnIdx, false);
       }
       return result;
    }
    
    private Object readBigint(int columnIdx) throws SQLException {
-      Object result = _rs.getObject(columnIdx);
+      Object result = _rs.getResultSet().getObject(columnIdx);
       if (result != null
          && !(result instanceof Long))
       {
@@ -520,7 +529,7 @@ public class ResultSetReader
    
    private Object readBoolean(int columnIdx) throws SQLException {
       Object result = null;
-      result = _rs.getObject(columnIdx);
+      result = _rs.getResultSet().getObject(columnIdx);
 
       if (result != null && !(result instanceof Boolean)) {
          if (result instanceof Number) {
@@ -600,7 +609,7 @@ public class ResultSetReader
 
 					default:
 						row[i] = CellComponentFactory.readResultSet(
-								colDefs[i], _rs, idx, true);
+								colDefs[i], _rs.getResultSet(), idx, true);
 
 						break;
 
@@ -634,4 +643,19 @@ public class ResultSetReader
     public boolean isStopExecution() {
         return _stopExecution;
     }
+
+   public boolean isAllResultsRead()
+   {
+      return _rs.isAllResultsRead();
+   }
+
+   public boolean areAllPossibleResultsOfSQLRead()
+   {
+      return _rs.areAllPossibleResultsOfSQLRead();
+   }
+
+   public void closeStatementAndResultSet()
+   {
+      _rs.closeStatementAndResultSet();
+   }
 }

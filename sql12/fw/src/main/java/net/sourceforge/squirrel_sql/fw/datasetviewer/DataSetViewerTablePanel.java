@@ -19,31 +19,10 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumnModel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DefaultFindService;
 import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.gui.RectangleSelectionHandler;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -52,6 +31,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
@@ -63,7 +53,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	private ILogger s_log = LoggerController.createLogger(DataSetViewerTablePanel.class);
 
 	private MyJTable _table = null;
-	private MyTableModel _typedModel;
+	private DataSetViewerTableModel _typedModel;
 	private IDataSetUpdateableModel _updateableModel;
    private DataSetViewerTableListSelectionHandler _selectionHandler;
 
@@ -76,6 +66,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
                return ";";
             }
          };
+   private ContinueReadHandler _continueReadHandler;
 
    public DataSetViewerTablePanel()
 	{
@@ -105,10 +96,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       }
 
       _table = new MyJTable(this, updateableModel, listSelectionMode);
+      _continueReadHandler = new ContinueReadHandler(_table);
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
       _updateableModel = updateableModel;
-
-
    }
 
 	
@@ -263,9 +253,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		MyJTable(IDataSetTableControls creator,
                IDataSetUpdateableModel updateableObject, int listSelectionMode)
 		{
-			super(new SortableTableModel(new MyTableModel(creator)));
+			super(new SortableTableModel(new DataSetViewerTableModel(creator)));
 			_creator = creator;
-			_typedModel = (MyTableModel) ((SortableTableModel) getModel()).getActualModel();
+			_typedModel = (DataSetViewerTableModel) ((SortableTableModel) getModel()).getActualModel();
 			_multiplier =
 				getFontMetrics(getFont()).stringWidth(data) / data.length();
 			setRowHeight(getFontMetrics(getFont()).getHeight());
@@ -441,7 +431,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			_tablePopupMenu.reset();
 		}
 
-		MyTableModel getTypedModel()
+		DataSetViewerTableModel getTypedModel()
 		{
 			return _typedModel;
 		}
@@ -889,5 +879,18 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
    public void applyResultSortableTableState(TableState sortableTableState)
    {
       sortableTableState.apply(_table);
+   }
+
+   @Override
+   public void setContinueReadChannel(ContinueReadChannel continueReadChannel)
+   {
+      _continueReadHandler.setContinueReadChannel(continueReadChannel);
+   }
+
+   @Override
+   public void disableContinueRead()
+   {
+      _continueReadHandler.disableContinueRead();
+
    }
 }

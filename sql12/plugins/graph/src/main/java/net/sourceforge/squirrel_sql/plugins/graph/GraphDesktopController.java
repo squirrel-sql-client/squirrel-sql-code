@@ -577,6 +577,7 @@ public class GraphDesktopController
       if(showRemoveOptionPane("graph.delGraph") == JOptionPane.YES_OPTION)
       {
          _listener.removeRequest();
+         _modeManager.graphClosed();
       }
    }
 

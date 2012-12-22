@@ -23,6 +23,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.CancelStatementThread;
+import net.sourceforge.squirrel_sql.client.session.StatementWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -40,7 +41,6 @@ import java.sql.Statement;
  * @author Thorsten Mürell
  */
 public class PleaseWaitDialog extends DialogWidget implements ActionListener {
-	private static final long serialVersionUID = 8870277695490954084L;
 
 	private static final StringManager stringMgr =
 		StringManagerFactory.getStringManager(PleaseWaitDialog.class);
@@ -104,7 +104,7 @@ public class PleaseWaitDialog extends DialogWidget implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 	      if (stmt != null) {
-	         CancelStatementThread cst = new CancelStatementThread(stmt, messageHandler);
+	         CancelStatementThread cst = new CancelStatementThread(new StatementWrapper(stmt), messageHandler);
 	         cst.tryCancel();
 	      }
 	}

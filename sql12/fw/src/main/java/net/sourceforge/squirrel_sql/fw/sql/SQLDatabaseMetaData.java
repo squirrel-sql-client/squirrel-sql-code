@@ -34,10 +34,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
@@ -281,7 +278,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				DialectType dialectType = DialectFactory.getDialectType(this);
 				final ResultSetReader rdr = new ResultSetReader(rs, dialectType);
 				Object[] row = null;
-				while ((row = rdr.readRow()) != null)
+				while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 				{
 					if (isMSSQLorSYBASE && row[0].equals("guest"))
 					{
@@ -461,7 +458,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				DialectType dialectType = DialectFactory.getDialectType(this);
 				final ResultSetReader rdr = new ResultSetReader(rs, dialectType);
 				Object[] row = null;
-				while ((row = rdr.readRow()) != null)
+				while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 				{
 					if (row != null && row[0] != null)
 					{
@@ -762,7 +759,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				DialectType dialectType = DialectFactory.getDialectType(this);
 				final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
 				Object[] row = null;
-				while ((row = rdr.readRow()) != null)
+				while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 				{
 					// Sybase IQ using jdbc3 driver returns null for some procedure return types - this is probably
 					// outside the JDBC spec.
@@ -1054,7 +1051,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			DialectType dialectType = DialectFactory.getDialectType(this);
 			final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
 			Object[] row = null;
-			while ((row = rdr.readRow()) != null)
+			while ((row = rdr.readRow(BlockMode.INDIFFERENT)) != null)
 			{
 				list.add(new UDTInfo(getAsString(row[0]), getAsString(row[1]), getAsString(row[2]),
 					getAsString(row[3]), getAsString(row[4]), getAsString(row[5]), this));

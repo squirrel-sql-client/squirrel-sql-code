@@ -82,6 +82,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String SQL_RESULTS_TAB_PLACEMENT = "sqlResultsTabPlacement";
       String SQL_LIMIT_ROWS = "sqlLimitRows";
       String SQL_NBR_ROWS_TO_SHOW = "sqlNbrOfRowsToShow";
+      String SQL_READ_ON = "sqlReadOn";
+      String SQL_READ_ON_BLOCK_SIZE = "sqlReadOnBlockSize";
       String SQL_RESULTS_OUTPUT_CLASS_NAME = "sqlResultsOutputClassName";
       String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
       String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
@@ -102,6 +104,7 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
    private boolean _autoCommit = true;
    private int _contentsNbrRowsToShow = 100;
    private int _sqlNbrRowsToShow = 100;
+   private int _sqlReadOnBlockSize = 100;
 
    /**
     * If <CODE>true</CODE> then issue a commit when closing a connection
@@ -112,6 +115,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
 
    private boolean _contentsLimitRows = true;
    private boolean _sqlLimitRows = true;
+
+   private boolean _sqlReadOn = false;
 
    /**
     * <CODE>true</CODE> if schemas and catalogs should be loaded in the object
@@ -574,6 +579,23 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
    }
 
+   public int getSQLReadOnBlockSize()
+   {
+      return _sqlReadOnBlockSize;
+   }
+
+   public void setSQLReadOnBlockSize(int value)
+   {
+      if (_sqlReadOnBlockSize != value)
+      {
+         final int oldValue = _sqlReadOnBlockSize;
+         _sqlReadOnBlockSize = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_READ_ON_BLOCK_SIZE,
+            oldValue, _sqlReadOnBlockSize);
+      }
+   }
+
    public boolean getContentsLimitRows()
    {
       return _contentsLimitRows;
@@ -608,6 +630,23 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       }
    }
    
+   public boolean getSQLReadOn()
+   {
+      return _sqlReadOn;
+   }
+
+   public void setSQLReadOn(boolean value)
+   {
+      if (_sqlReadOn != value)
+      {
+         final boolean oldValue = _sqlReadOn;
+         _sqlReadOn = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_READ_ON,
+            oldValue, _sqlReadOn);
+      }
+   }
+
    /**
     * Sets the number of rows which should be fetched at once.
     */

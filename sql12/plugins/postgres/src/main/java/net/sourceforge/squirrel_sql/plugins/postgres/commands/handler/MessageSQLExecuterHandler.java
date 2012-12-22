@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
  */
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -26,7 +27,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.gui.MessageDialog;
 
 import java.sql.SQLWarning;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandler {
@@ -99,7 +99,7 @@ public abstract class MessageSQLExecuterHandler extends ProgressSQLExecuterHandl
     }
 
 
-    public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model) {
+    public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model) {
         super.sqlResultSetAvailable(rst, info, model);
     }
 

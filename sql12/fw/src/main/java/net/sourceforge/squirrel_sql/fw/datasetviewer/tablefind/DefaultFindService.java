@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.gui.ColumnOrder;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
@@ -20,13 +20,13 @@ public class DefaultFindService implements FindService
 {
    private JTable _table;
    private ColumnDisplayDefinition[] _columnDefinitions;
-   private MyTableModel _myTableModel;
+   private DataSetViewerTableModel _dataSetViewerTableModel;
 
-   public DefaultFindService(JTable table, ColumnDisplayDefinition[] columnDefinitions, MyTableModel myTableModel)
+   public DefaultFindService(JTable table, ColumnDisplayDefinition[] columnDefinitions, DataSetViewerTableModel dataSetViewerTableModel)
    {
       _table = table;
       _columnDefinitions = columnDefinitions;
-      _myTableModel = myTableModel;
+      _dataSetViewerTableModel = dataSetViewerTableModel;
    }
 
    @Override
@@ -89,7 +89,7 @@ public class DefaultFindService implements FindService
 
       for (Integer row : rowIndexes)
       {
-         ret.add(_myTableModel.getRowAt(row));
+         ret.add(_dataSetViewerTableModel.getRowAt(row));
       }
       return ret;
    }

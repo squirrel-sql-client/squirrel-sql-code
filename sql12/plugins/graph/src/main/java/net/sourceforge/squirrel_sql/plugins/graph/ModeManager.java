@@ -182,4 +182,9 @@ public class ModeManager
    {
       return _queryBuilderController.getSelectStructure();
    }
+
+   public void graphClosed()
+   {
+      _queryBuilderController.graphClosed();
+   }
 }

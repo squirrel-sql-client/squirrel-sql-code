@@ -16,12 +16,12 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 
 /**
  * This default implementation of the sql executer handler simply notifies the
@@ -50,7 +50,7 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info,
+	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info,
 			IDataSetUpdateableTableModel model)
 	{
 	}

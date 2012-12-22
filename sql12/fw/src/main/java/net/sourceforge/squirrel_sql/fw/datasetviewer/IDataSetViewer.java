@@ -102,4 +102,8 @@ public interface IDataSetViewer
    TableState getResultSortableTableState();
 
    void applyResultSortableTableState(TableState sortableTableState);
+
+   void setContinueReadChannel(ContinueReadChannel continueReadChannel);
+
+   void disableContinueRead();
 }

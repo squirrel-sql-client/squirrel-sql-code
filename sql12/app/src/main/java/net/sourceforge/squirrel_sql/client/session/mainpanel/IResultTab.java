@@ -70,10 +70,7 @@ public interface IResultTab {
      */
     String getTitle();
 
-    /**
-     * Close this tab.
-     */
-    void closeTab();
+   void closeTab();
 
     void returnToTabbedPane();
 

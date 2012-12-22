@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
@@ -45,7 +46,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.ResultSet;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -341,12 +341,12 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		{
 		}
 
-		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
+		public void sqlResultSetAvailable(ResultSetWrapper rs, SQLExecutionInfo info,
 			IDataSetUpdateableTableModel model) throws DataSetException
 		{
 
 			ResultSetDataSet rsds = new ResultSetDataSet();
-			rsds.setResultSet(rs, _dialectType);
+			rsds.setResultSet(rs.getResultSet(), _dialectType);
 
 			if (_tabToReplace != null)
 			{
@@ -355,7 +355,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 			{
 				addExplainTab(rsds, info, model);
 			}
-		}
+      }
 
 		public void sqlExecutionWarning(SQLWarning warn)
 		{

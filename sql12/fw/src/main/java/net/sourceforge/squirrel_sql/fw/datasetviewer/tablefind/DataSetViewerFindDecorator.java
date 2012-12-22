@@ -113,6 +113,12 @@ public class DataSetViewerFindDecorator
 
    public void replaceDataSetViewer(IDataSetViewer dataSetViewer)
    {
+      if(null !=_dataSetViewer)
+      {
+         _dataSetViewer.disableContinueRead();
+
+      }
+
       _dataSetViewer = dataSetViewer;
       if (_putTableInScrollpane)
       {

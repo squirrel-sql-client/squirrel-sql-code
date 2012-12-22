@@ -24,13 +24,17 @@ public class QueryInfoPanel extends JPanel
       createGUI();
    }
 
-   void load(int rowCount,
-            SQLExecutionInfo exInfo)
+   void load(int rowCount, SQLExecutionInfo exInfo)
    {
       _queryLbl.setText(StringUtilities.cleanString(exInfo.getSQL()));
-      _rowCountLbl.setText(String.valueOf(rowCount));
+      displayRowCount(rowCount);
       _executedLbl.setText(exInfo.getSQLExecutionStartTime().toString());
       _elapsedLbl.setText(formatElapsedTime(exInfo));
+   }
+
+   public void displayRowCount(int rowCount)
+   {
+      _rowCountLbl.setText(String.valueOf(rowCount));
    }
 
    private String formatElapsedTime(SQLExecutionInfo exInfo)

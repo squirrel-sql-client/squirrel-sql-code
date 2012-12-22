@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
@@ -516,16 +515,8 @@ public class SQLResultExecuterPanel extends JPanel
    }
 
 
-   /**
-	 * Close the passed <TT>ResultTab</TT>. This is done by clearing
-	 * all data from the tab, removing it from the tabbed panel
-	 * and adding it to the list of available tabs.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
-	 */
-	private void closeResultTab(ResultTab tab)
-	{
+   private void closeResultTab(ResultTab tab)
+   {
 		if (tab == null)
 		{
 			throw new IllegalArgumentException("Null ResultTab passed");
@@ -533,7 +524,7 @@ public class SQLResultExecuterPanel extends JPanel
 		s_log
 				.debug("SQLPanel.closeResultTab(" + tab.getIdentifier().toString()
                   + ")");
-		tab.clear();
+		tab.closeTab();
 		_tabbedExecutionsPanel.remove(tab);
 	}
 

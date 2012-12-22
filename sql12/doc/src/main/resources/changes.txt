@@ -8,6 +8,11 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+New option to enables SQL result tables to read more query results when the user scrolls to the end of the table.
+  This option can be switched on in Session Properties and on top of the SQL-Editor just at the place where the
+  "Limit tows" check box is.
+
+
 Find function for SQL result tables.
 
 Closing or reconnecting Sessions caused SQuirreL to hang when the JDBC driver's connection close method didn't return.

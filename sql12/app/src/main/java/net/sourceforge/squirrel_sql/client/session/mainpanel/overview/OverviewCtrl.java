@@ -330,7 +330,7 @@ public class OverviewCtrl
       return s_stringMgr.getString("OverwiewCtrl.title_new");
    }
 
-   public Component getPanel()
+   public OverviewPanel getPanel()
    {
       return _overviewPanel;
    }
@@ -463,5 +463,10 @@ public class OverviewCtrl
          _overviewPanel.cboCallDepth.setEnabled(false);
 
       }
+   }
+
+   public static boolean isOverviewPanel(Component component)
+   {
+      return component instanceof OverviewPanel;
    }
 }

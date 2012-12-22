@@ -102,6 +102,7 @@ public class SquirrelResources extends Resources
       String UNMARK = "unmark";
       String TABLE = "table";
       String HIDE = "hide";
+      String LOADING_GIF = "loading_gif";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

@@ -30,7 +30,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 public class SortableTableModel extends AbstractTableModel
@@ -167,7 +167,7 @@ public class SortableTableModel extends AbstractTableModel
                 actualRows[i] = _indexes[rows[i]].intValue();
             }
 		}
-		((MyTableModel)_actualModel).deleteRows(actualRows);
+		((DataSetViewerTableModel)_actualModel).deleteRows(actualRows);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class SortableTableModel extends AbstractTableModel
 	public void insertRow(Object[] values)
 	{
 		// first attempt to add data to underlying table model
-		((MyTableModel)_actualModel).addRow(values);
+		((DataSetViewerTableModel)_actualModel).addRow(values);
 
 		// tell the rest of the world that the table has changed.
 		// The 'fire' method used here is very course - it says that the whole table
@@ -191,7 +191,7 @@ public class SortableTableModel extends AbstractTableModel
 		// to add a row is also used when loading the table with lots of rows, and
 		// in that case we do not want to generate events until all of the rows
 		// have been added, so the 'fire' cannot happen there.
-		((MyTableModel)_actualModel).fireTableChanged(new TableModelEvent(_actualModel));
+		((DataSetViewerTableModel)_actualModel).fireTableChanged(new TableModelEvent(_actualModel));
 		fireTableChanged(new TableModelEvent(this));
 	}
 

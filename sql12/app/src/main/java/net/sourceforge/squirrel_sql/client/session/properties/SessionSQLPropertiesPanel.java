@@ -128,10 +128,9 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _loadColumsInBackgroundChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.loadColumsInBackground"));
 		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
 		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
-		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
-		private JCheckBox _sqlLimitRowsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitrows"));
-		private JCheckBox _sqlFetchSizeChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.fetchSize"));
-		private IntegerField _sqlFetchSizeField = new IntegerField(5);
+
+      private SQLResultConfigCtrl _sqlResultConfigCtrl = new SQLResultConfigCtrl();
+
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
       // i18n[SessionSQLPropertiesPanel.removeMultiLineComment=Remove multi line comment (/*...*/) from SQL before sending to database]
@@ -174,10 +173,7 @@ public class SessionSQLPropertiesPanel
 
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
-			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
-			_sqlLimitRowsChk.setSelected(props.getSQLLimitRows());
-			_sqlFetchSizeChk.setSelected(props.getSQLUseFetchSize());
-			_sqlFetchSizeField.setInt(props.getSQLFetchSize());
+         _sqlResultConfigCtrl.loadData(props);
 
          if(null != _session)
          {
@@ -251,11 +247,16 @@ public class SessionSQLPropertiesPanel
 			props.setLoadColumnsInBackground(_loadColumsInBackgroundChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
-			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
-			props.setSQLLimitRows(_sqlLimitRowsChk.isSelected());
-			props.setSQLFetchSize(_sqlFetchSizeField.getInt());
-			props.setSQLUseFetchSize(_sqlFetchSizeChk.isSelected());
-			
+
+			props.setSQLLimitRows(_sqlResultConfigCtrl.isLimitRows());
+         props.setSQLNbrRowsToShow(_sqlResultConfigCtrl.getNbrRowsToShow());
+
+         props.setSQLReadOn(_sqlResultConfigCtrl.isReadOn());
+         props.setSQLReadOnBlockSize(_sqlResultConfigCtrl.getReadOnBlockSize());
+
+         props.setSQLUseFetchSize(_sqlResultConfigCtrl.isUseFetchSize());
+			props.setSQLFetchSize(_sqlResultConfigCtrl.getFetchSize());
+
 			props.setSQLStatementSeparator(_stmtSepField.getText());
 			props.setStartOfLineComment(_solCommentField.getText());
          props.setRemoveMultiLineComment(_removeMultiLineComment.isSelected());
@@ -284,9 +285,6 @@ public class SessionSQLPropertiesPanel
 		{
 			_commitOnClose.setEnabled(!_autoCommitChk.isSelected());
 
-			_sqlNbrRowsToShowField.setEnabled(_sqlLimitRowsChk.isSelected());
-
-         _sqlFetchSizeField.setEnabled(_sqlFetchSizeChk.isSelected());
 
          _limitSQLResultTabsField.setEnabled(_limitSQLResultTabsChk.isSelected());
 
@@ -325,9 +323,7 @@ public class SessionSQLPropertiesPanel
 			gbc.anchor = GridBagConstraints.CENTER;
 
 			_autoCommitChk.addChangeListener(_controlMediator);
-			_sqlLimitRowsChk.addChangeListener(_controlMediator);
-			_sqlFetchSizeChk.addChangeListener(_controlMediator);
-			_sqlNbrRowsToShowField.setColumns(5);
+
 			_stmtSepField.setColumns(5);
 
          _limitSQLResultTabsChk.addChangeListener(_controlMediator);
@@ -348,37 +344,12 @@ public class SessionSQLPropertiesPanel
 			gbc.gridwidth = 3;
 			pnl.add(_showResultsMetaChk, gbc);
 
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_sqlLimitRowsChk, gbc);
-			gbc.gridwidth = 1;
-			gbc.gridx+=2;
-			pnl.add(_sqlNbrRowsToShowField, gbc);
-			++gbc.gridx;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.rows")), gbc);
-			
-			
-			// Show fetchSize-Option
-			++gbc.gridy; // new line
-			gbc.gridx = 0;
-			gbc.gridwidth = 2;
-			pnl.add(_sqlFetchSizeChk, gbc);
-			gbc.gridwidth = 1;
-			gbc.gridx+=2;
-			pnl.add(_sqlFetchSizeField, gbc);
-			++gbc.gridx;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.rows")), gbc);
-			
-			
-			
-			
-			
-			
-			
-			
+         ++gbc.gridy;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         Insets oldInsets = gbc.insets;
+         gbc.insets = new Insets(oldInsets.top + 10, oldInsets.left, oldInsets.bottom + 10, oldInsets.right);
+         pnl.add(_sqlResultConfigCtrl.createResultLimitAndReadOnPanel(), gbc);
+         gbc.insets = oldInsets;
 
          ++gbc.gridy; // new line
          gbc.gridx = 0;

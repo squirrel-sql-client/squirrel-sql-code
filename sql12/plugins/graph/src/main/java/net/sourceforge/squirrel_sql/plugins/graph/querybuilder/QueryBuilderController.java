@@ -292,4 +292,9 @@ public class QueryBuilderController
    {
       return _graphQuerySelectPanelCtrl.getSelectStructure();
    }
+
+   public void graphClosed()
+   {
+      _graphQueryResultPanelCtrl.graphClosed();
+   }
 }

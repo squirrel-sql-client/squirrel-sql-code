@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.postgres.commands.handler;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.ResultSet;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 
@@ -26,10 +25,9 @@ import javax.swing.JDialog;
 
 import net.sourceforge.squirrel_sql.client.gui.IProgressCallBackFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgressCallBackFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -108,9 +106,9 @@ public abstract class ProgressSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
+	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
 	{
-	}
+   }
 
 	public String sqlExecutionException(Throwable th, String postErrorString)
 	{

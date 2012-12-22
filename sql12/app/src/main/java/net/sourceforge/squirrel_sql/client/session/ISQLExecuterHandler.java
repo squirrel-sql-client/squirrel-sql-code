@@ -17,12 +17,12 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 
 /**
  * This interface is the call back interface used during execution
@@ -61,7 +61,7 @@ public interface ISQLExecuterHandler
 	 * <p/>This callback is called from the thread that the SQLExecuter is running on.
 	 * It may or may not be the Swing thread so card should be taken with any gui actions 
 	 */
-	public void sqlResultSetAvailable(ResultSet rst, SQLExecutionInfo info,
+	public void sqlResultSetAvailable(ResultSetWrapper rst, SQLExecutionInfo info,
 			IDataSetUpdateableTableModel model) throws DataSetException;
 
 	/** Called when the SQLExecutor succesfully completes execution of a sql

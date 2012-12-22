@@ -219,4 +219,15 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
    public void applyResultSortableTableState(TableState sortableTableState)
    {
    }
+
+   @Override
+   public void setContinueReadChannel(ContinueReadChannel continueReadChannel)
+   {
+   }
+
+   @Override
+   public void disableContinueRead()
+   {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

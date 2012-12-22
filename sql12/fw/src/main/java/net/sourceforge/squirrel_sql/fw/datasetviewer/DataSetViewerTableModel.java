@@ -28,14 +28,14 @@ import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
 
 
-public final class MyTableModel extends AbstractTableModel
+public final class DataSetViewerTableModel extends AbstractTableModel
 {
    private List<Object[]> _data = new ArrayList<Object[]>();
    private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
    private IDataSetTableControls _creator = null;
 
 
-   MyTableModel(IDataSetTableControls creator)
+   DataSetViewerTableModel(IDataSetTableControls creator)
 	{
 		super();
 		_creator = creator;

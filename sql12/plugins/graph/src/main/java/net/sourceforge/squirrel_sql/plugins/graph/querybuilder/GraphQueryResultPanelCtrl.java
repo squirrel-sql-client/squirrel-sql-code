@@ -101,4 +101,10 @@ public class GraphQueryResultPanelCtrl
    {
       return _graphQueryResultPanel.chkAutoSyncSQL.isSelected();
    }
+
+   public void graphClosed()
+   {
+      _graphQueryResultPanel.resultExecuterPanel.closeAllSQLResultTabs();
+      _graphQueryResultPanel.resultExecuterPanel.closeAllSQLResultFrames();
+   }
 }

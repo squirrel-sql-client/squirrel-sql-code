@@ -42,7 +42,6 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -52,8 +51,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.SplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -72,9 +69,10 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.properties.ResultLimitAndReadOnPanelSmallPanel;
+import net.sourceforge.squirrel_sql.client.session.properties.SQLResultConfigCtrl;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -88,8 +86,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLPanel extends JPanel
 {
-    private static final long serialVersionUID = 1L;
-
     /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
@@ -110,13 +106,11 @@ public class SQLPanel extends JPanel
 	transient private ISession _session;
 
 	private SQLHistoryComboBox _sqlCombo;
-	transient private ISQLEntryPanel _sqlEntry;
-	private JCheckBox _limitRowsChk;
-	private IntegerField _nbrRows = new IntegerField();
+	private ISQLEntryPanel _sqlEntry;
 
 
-	transient private SqlComboListener _sqlComboListener = new SqlComboListener();
-	transient private MyPropertiesListener _propsListener;
+	private SqlComboListener _sqlComboListener = new SqlComboListener();
+   private MyPropertiesListener _propsListener;
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 //	private JTabbedPane _tabbedResultsPanel;
@@ -178,6 +172,8 @@ public class SQLPanel extends JPanel
 	transient private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
    private IUndoHandler _undoHandler;
+   private ResultLimitAndReadOnPanelSmallPanel _resultLimitAndReadOnPanelSmallPanel = new ResultLimitAndReadOnPanelSmallPanel();
+
 
 
    /**
@@ -199,6 +195,7 @@ public class SQLPanel extends JPanel
 		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryListener);
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this);
+      _resultLimitAndReadOnPanelSmallPanel.loadData(session.getProperties());
 	}
 
 	/**
@@ -700,13 +697,22 @@ public class SQLPanel extends JPanel
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
 		{
-			_limitRowsChk.setSelected(props.getSQLLimitRows());
+         _resultLimitAndReadOnPanelSmallPanel.propsChanged(props);
 		}
 
-		if (propName == null
-			|| propName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW))
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_NBR_ROWS_TO_SHOW))
 		{
-			_nbrRows.setInt(props.getSQLNbrRowsToShow());
+         _resultLimitAndReadOnPanelSmallPanel.propsChanged(props);
+		}
+
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_READ_ON))
+		{
+         _resultLimitAndReadOnPanelSmallPanel.propsChanged(props);
+		}
+
+		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_READ_ON_BLOCK_SIZE))
+		{
+         _resultLimitAndReadOnPanelSmallPanel.propsChanged(props);
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.FONT_INFO))
@@ -792,7 +798,6 @@ public class SQLPanel extends JPanel
 
 		setLayout(new BorderLayout());
 
-		_nbrRows.setColumns(8);
 
 		final SessionProperties props = _session.getProperties();
 		_sqlCombo = new SQLHistoryComboBox(props.getSQLShareHistory());
@@ -811,13 +816,7 @@ public class SQLPanel extends JPanel
 			box.add(new CopyLastButton(app));
 			box.add(new ShowHistoryButton(app));
 			box.add(Box.createHorizontalStrut(10));
-            // i18n[SQLPanel.limitrowscheckbox.hint=Limit rows: ]
-            String hint = 
-                s_stringMgr.getString("SQLPanel.limitrowscheckbox.label");
-            _limitRowsChk = new JCheckBox(hint);
-			box.add(_limitRowsChk);
-			box.add(Box.createHorizontalStrut(5));
-			box.add(_nbrRows);
+         box.add(_resultLimitAndReadOnPanelSmallPanel);
 			pnl.add(box, BorderLayout.EAST);
 			add(pnl, BorderLayout.NORTH);
 		}
@@ -842,8 +841,6 @@ public class SQLPanel extends JPanel
 		add(_splitPane, BorderLayout.CENTER);
 
 		_sqlCombo.addActionListener(_sqlComboListener);
-		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
-		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
 
 		// Set focus to the SQL entry panel.
 		SwingUtilities.invokeLater(new Runnable()
@@ -1037,69 +1034,8 @@ public class SQLPanel extends JPanel
 //		}
 	}
 
-	private class LimitRowsCheckBoxListener implements ChangeListener
-	{
-		public void stateChanged(ChangeEvent evt)
-		{
-			if (_propsListener != null)
-			{
-				_propsListener.stopListening();
-			}
-			try
-			{
-				final boolean limitRows = ((JCheckBox)evt.getSource()).isSelected();
-				_nbrRows.setEnabled(limitRows);
-				_session.getProperties().setSQLLimitRows(limitRows);
-			}
-			finally
-			{
-				if (_propsListener != null)
-				{
-					_propsListener.startListening();
-				}
-			}
-		}
-	}
 
-	private class LimitRowsTextBoxListener implements DocumentListener
-	{
-		public void insertUpdate(DocumentEvent evt)
-		{
-			updateProperties(evt);
-		}
-
-		public void changedUpdate(DocumentEvent evt)
-		{
-			updateProperties(evt);
-		}
-
-		public void removeUpdate(DocumentEvent evt)
-		{
-			updateProperties(evt);
-		}
-		@SuppressWarnings("unused")
-		private void updateProperties(DocumentEvent evt)
-		{
-			if (_propsListener != null)
-			{
-				_propsListener.stopListening();
-			}
-			try
-			{
-				_session.getProperties().setSQLNbrRowsToShow(_nbrRows.getInt());
-			}
-			finally
-			{
-				if (_propsListener != null)
-				{
-					_propsListener.startListening();
-				}
-			}
-		}
-	}
-
-
-	private class CopyLastButton extends JButton
+   private class CopyLastButton extends JButton
 	{
         private static final long serialVersionUID = 1L;
 

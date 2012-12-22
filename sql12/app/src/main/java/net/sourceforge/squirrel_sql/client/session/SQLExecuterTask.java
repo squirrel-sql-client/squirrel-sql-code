@@ -30,7 +30,6 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
@@ -38,15 +37,10 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -78,7 +72,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    /** SQL passed in to be executed. */
    private String _sql;
-   private Statement _stmt;
    private boolean _stopExecution = false;
 
    private int _currentQueryIndex = 0;
@@ -88,6 +81,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private IQueryTokenizer _tokenizer = null;
    /** Whether or not to check if the schema should be updated */
    private boolean schemaCheck = true;
+   private StatementWrapper _statementWrapper;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
@@ -150,21 +144,19 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       try
       {
          final ISQLConnection conn = _session.getSQLConnection();
-         _stmt = conn.createStatement();
+         _statementWrapper = new StatementWrapper(conn.createStatement(), _session);
 
          try
          {
-            if(props.getSQLUseFetchSize() && props.getSQLFetchSize() > 0)
-            {
-            	setFetchSize(props);
-            }
+            _statementWrapper.setFetchSize();
+
              
-             
-            final boolean correctlySupportsMaxRows = conn.getSQLMetaData()
-                  .correctlySupportsSetMaxRows();
-            if (correctlySupportsMaxRows && props.getSQLLimitRows())
+            final boolean correctlySupportsMaxRows = conn.getSQLMetaData().correctlySupportsSetMaxRows();
+
+            //boolean maxRowsHasBeenSet = false;
+            if (correctlySupportsMaxRows)
             {
-               setMaxRows(props);
+               _statementWrapper.setMaxRows();
             }
 
             if(_tokenizer.getQueryCount() == 0)
@@ -174,8 +166,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
             _currentQueryIndex = 0;
 
-            // Process each individual query.
-            boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
             int processedStatementCount = 0;
             statementCount = _tokenizer.getQueryCount();
 
@@ -195,29 +185,24 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   // Some driver don't correctly support setMaxRows. In
                   // these cases use setMaxRows only if this is a
                   // SELECT.
-                  if (!correctlySupportsMaxRows
-                        && props.getSQLLimitRows())
+                  if (false == correctlySupportsMaxRows)
                   {
                      if (isSelectStatement(querySql))
                      {
-                        if (!maxRowsHasBeenSet)
-                        {
-                           setMaxRows(props);
-                           maxRowsHasBeenSet = true;
-                        }
+                        _statementWrapper.setMaxRows();
                      }
-                     else if (maxRowsHasBeenSet)
+                     else if (_statementWrapper.isMaxRowsWasSet())
                      {
-                        _stmt.close();
-                        _stmt = conn.createStatement();
-                        maxRowsHasBeenSet = false;
+                        _statementWrapper.closeIfContinueReadIsNotActive();
+                        _statementWrapper = new StatementWrapper(conn.createStatement(), _session);
                      }
                   }
+
                   try
                   {
                      lastExecutedStatement = querySql;
 
-                     if (!processQuery(querySql, processedStatementCount, statementCount))
+                     if (!processQuery(querySql, processedStatementCount, statementCount, _statementWrapper))
                      {
                         break;
                      }
@@ -256,14 +241,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          finally
          {
-            try
-            {
-               _stmt.close();
-            }
-            finally
-            {
-               _stmt = null;
-            }
+            _statementWrapper.closeIfContinueReadIsNotActive();
          }
       }
       catch (final Throwable ex)
@@ -294,9 +272,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             }
             try
             {
-               if (_stmt != null)
+               if (_statementWrapper != null)
                {
-                  _stmt.cancel();
+                  _statementWrapper.cancel();
                }
             }
             catch (Throwable th)
@@ -340,33 +318,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       }
    }
 
-   /**
-	 * Set the fetchSize Arrtibute for the SQL-Statement;
-	 */
-	private void setFetchSize(SessionProperties props) 
-	{
-	    try
-		{
-		   _stmt.setFetchSize(props.getSQLFetchSize());
-		}
-		catch (Exception e)
-		{
-		   s_log.error("Can't Set FetchSize", e);
-		}
-	}
-
-	private void setMaxRows(final SessionProperties props)
-	{
-		try
-		{
-		   _stmt.setMaxRows(props.getSQLNbrRowsToShow());
-		}
-		catch (Exception e)
-		{
-		   s_log.error("Can't Set MaxRows", e);
-		}
-	}
-
 	/**
 	 * Returns a boolean indicating whether or not the specified querySql appears to be a SELECT statement.
 	 *
@@ -395,23 +346,24 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _session.getApplication().getMessageHandler().showMessage(msg);
 
       _stopExecution = true;
-      if (_stmt != null)
+
+      if (null != _statementWrapper)
       {
-         CancelStatementThread cst = new CancelStatementThread(_stmt, _session.getApplication().getMessageHandler());
+         CancelStatementThread cst = new CancelStatementThread(_statementWrapper, _session.getApplication().getMessageHandler());
          cst.tryCancel();
       }
    }
 
-   private boolean processQuery(String sql, int processedStatementCount, int statementCount) throws SQLException
+   private boolean processQuery(String sql, int processedStatementCount, int statementCount, StatementWrapper statementWrapper) throws SQLException
    {
       ++_currentQueryIndex;
 
-      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, getMaxRows(_stmt));
-      boolean firstResultIsResultSet = _stmt.execute(sql);
+      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, statementWrapper.getMaxRows());
+      boolean firstResultIsResultSet = statementWrapper.execute(sql);
       exInfo.sqlExecutionComplete();
 
       // Display any warnings generated by the SQL execution.
-      handleAllWarnings(_session.getSQLConnection(), _stmt);
+      handleAllWarnings(_session.getSQLConnection(), statementWrapper);
 
       boolean supportsMultipleResultSets = _session.getSQLConnection().getSQLMetaData().supportsMultipleResultSets();
       boolean inFirstLoop = true;
@@ -427,16 +379,16 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
 
 
-         int updateCount = _stmt.getUpdateCount();
+         int updateCount = statementWrapper.getUpdateCount();
 
-         ResultSet res = null;
+         ResultSetWrapper res = null;
          if (inFirstLoop && firstResultIsResultSet)
          {
-            res = _stmt.getResultSet();
+            res = statementWrapper.getResultSetWrapper();
          }
          else if(false == inFirstLoop)
          {
-            res = _stmt.getResultSet();
+            res = statementWrapper.getResultSetWrapper();
          }
 
 
@@ -464,9 +416,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                
                // Each call to _stmt.getMoreResults() places the to the next output.
                // As long as it is a ResultSet, we process it ...
-               if(supportsMultipleResultSets && _stmt.getMoreResults())
+               if(supportsMultipleResultSets && statementWrapper.getMoreResults())
                {
-                  res = _stmt.getResultSet();
+                  res = statementWrapper.getResultSetWrapper();
                   moreResultsReceived = true;
                }
                else
@@ -478,7 +430,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             if (moreResultsReceived) {
             	// ... now we have reached an output that is not a result. We now have to ask for this 
             	// outputs update count - but only if we received more results.
-            	updateCount = _stmt.getUpdateCount();
+            	updateCount = statementWrapper.getUpdateCount();
             }
          }
 
@@ -505,7 +457,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             break;
          }
 
-         if (!_stmt.getMoreResults() && -1 == updateCount)
+         if (!statementWrapper.getMoreResults() && -1 == updateCount)
          {
             // There is no need to close result sets if we call _stmt.getMoreResults() because it
             // implicitly closes any current ResultSet.
@@ -541,27 +493,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return true;
    }
 
-   /**
-    * Some drivers, such as SQLite, don't properly support getMaxRows/setMaxRows for statements.
-    *
-    * @param stmt the statement to get the max rows that could be returned in a result set for.
-    *
-    * @return the max number of rows that could be returned by this statement
-    */
-   private int getMaxRows(Statement stmt) {
-   	int result = 0;
-   	try
-		{
-			result = stmt.getMaxRows();
-		}
-		catch (SQLException e)
-		{
-			if (s_log.isDebugEnabled()) {
-				s_log.debug("Unexpected exception: "+e.getMessage(), e);
-			}
-		}
-		return result;
-   }
 
    private void fireExecutionListeners(final String sql)
    {
@@ -597,33 +528,41 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 
 
-   private boolean processResultSet(final ResultSet rs, final SQLExecutionInfo exInfo)
+   private boolean processResultSet(final ResultSetWrapper rs, final SQLExecutionInfo exInfo)
    {
       if (_stopExecution)
       {
          return false;
       }
 
-      if (_handler != null) {
-            try {
-                _handler.sqlResultSetAvailable(rs, exInfo, this);
-            } catch (DataSetException ex) {
-                if (_stopExecution) {
-                    return false;
-                } else {
-                    _session.showMessage(ex);
-                    s_log.error("Error reading ResultSet for SQL: "
-                            + exInfo.getSQL(), ex);
-                }
+      if (_handler != null)
+      {
+         try
+         {
+            _handler.sqlResultSetAvailable(rs, exInfo, this);
+         }
+         catch (DataSetException ex)
+         {
+            if (_stopExecution)
+            {
+               return false;
             }
-        }
+            else
+            {
+               _session.showMessage(ex);
+               s_log.error("Error reading ResultSet for SQL: "
+                     + exInfo.getSQL(), ex);
+            }
+         }
+      }
 
-      handleResultSetWarnings(rs);
-      SQLUtilities.closeResultSet(rs);
+      handleResultSetWarnings(rs.getResultSet());
+
+      rs.closeIfContinueReadIsNotActive();
       return true;
    }
 
-   private void handleAllWarnings(ISQLConnection conn, Statement stmt)
+   private void handleAllWarnings(ISQLConnection conn, StatementWrapper stmtWrapper)
    {
       // If SQL executing produced warnings then write them out to the session
       // message handler. TODO: This is a pain. PostgreSQL sends "raise
@@ -645,8 +584,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
       try
       {
-         handleWarnings(stmt.getWarnings());
-         stmt.clearWarnings();
+         handleWarnings(stmtWrapper.getWarnings());
+         stmtWrapper.clearWarnings();
       }
       catch (Throwable th)
       {

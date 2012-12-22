@@ -4,10 +4,7 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
@@ -17,7 +14,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.sql.ResultSet;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -389,7 +385,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
       _session.showMessage(msg);
    }
 
-   public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
+   public void sqlResultSetAvailable(ResultSetWrapper rs, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
          throws DataSetException
    {
 	   // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
@@ -404,14 +400,14 @@ class SQLExecutionHandler implements ISQLExecuterHandler
 		   ResultSetMetaDataDataSet rsmdds = null;
 		   if (props.getShowResultsMetaData())
 		   {
-			   rsmdds = new ResultSetMetaDataDataSet(rs);
+			   rsmdds = new ResultSetMetaDataDataSet(rs.getResultSet());
 		   }
 		   DialectType dialectType =
 				   DialectFactory.getDialectType(_session.getMetaData());
 
          // rsds.setContentsTabResultSet() reads the result set. So results processing on the DB is over
          // and this time is measured. None is interested in the time that it takes us to render Swing tables ...
-		   info.resultsProcessingComplete(rsds.setContentsTabResultSet(rs, null, dialectType));
+		   info.resultsProcessingComplete(rsds.setSqlExecutionTabResultSet(rs, null, dialectType));
 
 		   _executionHandlerListener.addResultsTab(info, rsds, rsmdds, model, _resultTabToReplace);
 
@@ -421,8 +417,7 @@ class SQLExecutionHandler implements ISQLExecuterHandler
     	   * the GC can clean them.
     	   */
     	  rsds = null;
-	}
-
+   	}
    }
 
    public void sqlExecutionWarning(SQLWarning warn)

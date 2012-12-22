@@ -36,6 +36,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -47,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -82,7 +82,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	private SQLResultExecuterPanelFacade _sqlResultExecuterPanelFacade;
 
 	/** Label shows the current SQL script. */
-	private JLabel _currentSqlLbl = new JLabel();
+	private CurrentSqlLabelController _currentSqlLblCtrl = new CurrentSqlLabelController();
 
 	/** The SQL execurtes, cleaned up for display. */
 	private String _sql;
@@ -99,7 +99,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private ResultSetDataSet _rsds;
    
-   /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ResultTab.class);
 
    private static ILogger s_log = LoggerController.createLogger(ResultTab.class);
@@ -107,6 +106,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 
    private ResultTabListener _resultTabListener;
+   private ReadMoreResultsHandler _readMoreResultsHandler;
+   private boolean _tabIsClosing;
 
    /**
     * Ctor.
@@ -146,11 +147,14 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       init(creator, exInfo);
 
 
+
+      _readMoreResultsHandler = new ReadMoreResultsHandler(_session);
+
       createGUI();
       propertiesHaveChanged(null);
    }
 
-	/**
+   /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
      */
 	private void init(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
@@ -242,27 +246,18 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_exInfo = exInfo;
 		_sql = StringUtilities.cleanString(exInfo.getSQL());
 
-		// Display the result set.
-		_resultSetOutput.getDataSetViewer().show(rsds, null);
+
       _rsds = rsds;
 
-		final int rowCount = _resultSetOutput.getDataSetViewer().getRowCount();
+		// Display the result set.
+		_resultSetOutput.getDataSetViewer().show(rsds, null);
+      initContinueReadChannel(_resultSetOutput);
 
-		final int maxRows =_exInfo.getMaxRows(); 
-      String escapedSql = Utilities.escapeHtmlChars(_sql);
 
-		if (maxRows > 0 && rowCount >= maxRows)
-		{
-         // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
-         String limitMsg = s_stringMgr.getString("ResultTab.limitMessage", Integer.valueOf(rowCount));
-         _currentSqlLbl.setText("<html><pre>&nbsp;" + limitMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
-		}
-		else
-		{
-         // i18n[ResultTab.rowsMessage=Rows {0}]
-         String rowsMsg = s_stringMgr.getString("ResultTab.rowsMessage", Integer.valueOf(rowCount));
-         _currentSqlLbl.setText("<html><pre>&nbsp;" + rowsMsg + ";&nbsp;&nbsp;" + escapedSql + "</pre></html>");
-		}
+		final int rowCount = _rsds.currentRowCount();
+
+      _currentSqlLblCtrl.setSql(_sql);
+      _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
 
 		// Display the result set metadata.
 		if (mdds != null && _metaDataOutput != null)
@@ -273,22 +268,76 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_queryInfoPanel.load(rowCount, _exInfo);				
 	}
 
+
+   private void initContinueReadChannel(DataSetViewerFindDecorator resultSetOutput)
+   {
+      final ReadMoreResultsHandlerListener readMoreResultsHandlerListener = new ReadMoreResultsHandlerListener()
+      {
+         @Override
+         public void moreResultsHaveBeenRead()
+         {
+            onMoreResultsHaveBeenRead();
+         }
+      };
+
+      resultSetOutput.getDataSetViewer().setContinueReadChannel(new ContinueReadChannel()
+      {
+         @Override
+         public void readMoreResults()
+         {
+            onReadMoreResults(readMoreResultsHandlerListener);
+         }
+
+         @Override
+         public void closeStatementAndResultSet()
+         {
+            onCloseStatementAndResultSet();
+         }
+      });
+   }
+
+   private void onCloseStatementAndResultSet()
+   {
+      _rsds.closeStatementAndResultSet();
+   }
+
+   private void onReadMoreResults(ReadMoreResultsHandlerListener readMoreResultsHandlerListener)
+   {
+      if(_rsds.isAllResultsRead())
+      {
+         return;
+      }
+
+      _readMoreResultsHandler.readMoreResults(_rsds, readMoreResultsHandlerListener);
+   }
+
+   private void onMoreResultsHaveBeenRead()
+   {
+      try
+      {
+
+         TableState resultSortableTableState = getTableState(_resultSetOutput.getDataSetViewer());
+         _resultSetOutput.getDataSetViewer().show(_rsds, null);
+         restoreTableState(resultSortableTableState, _resultSetOutput.getDataSetViewer());
+
+         _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
+         _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
+
+         reInitOverview();
+
+      }
+      catch (DataSetException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
    /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#clear()
      */
 	public void clear()
 	{
-		if (_metaDataOutput != null)
-		{
-			_metaDataOutput.clear();
-		}
-		if (_resultSetOutput != null)
-		{
-			_resultSetOutput.getDataSetViewer().clear();
-		}
-		_exInfo = null;
-		_currentSqlLbl.setText("");
-		_sql = "";
+      closeTab();
 	}
 
 	/**
@@ -320,14 +369,37 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		return title.substring(0, 15);
 	}
 
-	/**
-     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#closeTab()
-     */
-	public void closeTab()
-	{
-		add(_tabResultTabs, BorderLayout.CENTER);
-		_sqlResultExecuterPanelFacade.closeResultTab(this);
-	}
+   public void closeTab()
+   {
+      if(_tabIsClosing)
+      {
+         return;
+      }
+
+      try
+      {
+         _tabIsClosing = true;
+
+         if (_metaDataOutput != null)
+         {
+            _metaDataOutput.clear();
+         }
+         if (_resultSetOutput != null)
+         {
+            _resultSetOutput.getDataSetViewer().clear();
+         }
+         _exInfo = null;
+         _currentSqlLblCtrl.clear();
+         _sql = "";
+
+         _sqlResultExecuterPanelFacade.closeResultTab(this);
+         _rsds.closeStatementAndResultSet();
+      }
+      finally
+      {
+         _tabIsClosing = false;
+      }
+   }
 
 	/**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#returnToTabbedPane()
@@ -381,12 +453,10 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
                // _resultSetOutput = new DataSetViewerFindDecorator(dataSetViewer);
                _resultSetOutput.replaceDataSetViewer(dataSetViewer);
 
-               //  SCROLL
-               // _resultSetSp.setViewportView(_resultSetOutput.getComponent());
-               // _resultSetSp.setRowHeader(null);
-
                _rsds.resetCursor();
                _resultSetOutput.getDataSetViewer().show(_rsds, null);
+               initContinueReadChannel(_resultSetOutput);
+
 
                restoreTableState(resultSortableTableState, _resultSetOutput.getDataSetViewer());
             }
@@ -406,16 +476,12 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             TableState resultSortableTableState = getTableState(_resultSetOutput.getDataSetViewer());
 
             IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(readOnlyOutput, _creator, new DefaultDataModelImplementationDetails(_session));
-            // _resultSetOutput = new DataSetViewerFindDecorator(dataSetViewer);
             _resultSetOutput.replaceDataSetViewer(dataSetViewer);
 
 
-            //  SCROLL
-            // _resultSetSp.setViewportView(_resultSetOutput.getComponent());
-            // _resultSetSp.setRowHeader(null);
-
             _rsds.resetCursor();
             _resultSetOutput.getDataSetViewer().show(_rsds, null);
+            initContinueReadChannel(_resultSetOutput);
 
             restoreTableState(resultSortableTableState, _resultSetOutput.getDataSetViewer());
          }
@@ -447,7 +513,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private void createGUI()
 	{
-		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
 
       int sqlResultsTabPlacement = _session.getProperties().getSQLResultsTabPlacement();
@@ -456,13 +521,16 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();
 		panel2.setLayout(new GridLayout(1, 3, 0, 0));
+
+      panel2.add(_readMoreResultsHandler.getLoadingLabel());
+
       panel2.add(new TabButton(new RerunAction(_session.getApplication())));
       panel2.add(new TabButton(new FindInResultAction(_session.getApplication())));
 		panel2.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
 		panel2.add(new TabButton(new CloseAction()));
 		panel1.setLayout(new BorderLayout());
 		panel1.add(panel2, BorderLayout.EAST);
-		panel1.add(_currentSqlLbl, BorderLayout.CENTER);
+		panel1.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
 		add(panel1, BorderLayout.NORTH);
 		add(_tabResultTabs, BorderLayout.CENTER);
 
@@ -492,6 +560,17 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
+      reInitOverview();
+
+	}
+
+   private void reInitOverview()
+   {
+      if(OverviewCtrl.isOverviewPanel(_tabResultTabs.getComponentAt(_tabResultTabs.getTabCount()-1)))
+      {
+         _tabResultTabs.removeTabAt(_tabResultTabs.getTabCount()-1);
+      }
+
       final int overViewIx = _tabResultTabs.getTabCount();
       final OverviewCtrl ctrl = new OverviewCtrl(_session);
       _tabResultTabs.addTab(ctrl.getTitle(), ctrl.getPanel());
@@ -507,8 +586,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             }
          }
       });
-
-	}
+   }
 
    private class CloseAction extends SquirrelAction
 	{
