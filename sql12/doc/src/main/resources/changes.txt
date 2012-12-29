@@ -46,14 +46,14 @@ Updated French translations. Thanks to Erwan Duroselle.
 
 Positions of SQL result tabs and of Session tabs can now be changed using drag and drop.
 
+Bug fixes:
+
 Fixed bug in logging: Log level could not be set in log4j.properties file.
 
-2759952 (Update fails unless run as admin on Vista): Fixed mis-spelled variable in squirrel-sql.bat which 
+2759952 (Update fails unless run as admin on Vista): Fixed mis-spelled variable in squirrel-sql.bat which
 caused the application updater to fail to work properly with Windows when UAC is enabled.  Thanks to user
-dandar3 for the tip. 
+dandar3 for the tip.
 
-
-Bug fixes:
 
 Tables cells that contained html where rendered incorrect. Now the plain html string is shown.
 
