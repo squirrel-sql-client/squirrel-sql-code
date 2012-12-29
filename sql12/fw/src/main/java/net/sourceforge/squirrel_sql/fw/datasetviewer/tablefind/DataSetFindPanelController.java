@@ -384,6 +384,11 @@ public class DataSetFindPanelController
    public void setDataSetViewerTablePanel(DataSetViewerTablePanel dataSetViewerTablePanel)
    {
       _dataSetViewerTablePanel = dataSetViewerTablePanel;
+      reset();
+   }
+
+   public void reset()
+   {
       _findService = null;
       _trace.clear();
    }

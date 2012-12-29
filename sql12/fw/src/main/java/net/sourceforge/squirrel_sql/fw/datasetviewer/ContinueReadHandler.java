@@ -98,10 +98,10 @@ public class ContinueReadHandler
          scrollPane.getVerticalScrollBar().removeAdjustmentListener(_adjustmentListener);
       }
 
-      if(null != _continueReadChannel)
-      {
-         _continueReadChannel.closeStatementAndResultSet();
-
-      }
+//      if(null != _continueReadChannel)
+//      {
+//         _continueReadChannel.closeStatementAndResultSet();
+//
+//      }
    }
 }

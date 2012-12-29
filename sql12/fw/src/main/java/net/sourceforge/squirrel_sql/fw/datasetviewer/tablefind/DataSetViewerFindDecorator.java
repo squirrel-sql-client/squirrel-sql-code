@@ -140,6 +140,11 @@ public class DataSetViewerFindDecorator
       }
    }
 
+   public void resetFind()
+   {
+      _dataSetFindPanelController.reset();
+   }
+
    private static class NullPanel extends JPanel
    {
       private NullPanel()
