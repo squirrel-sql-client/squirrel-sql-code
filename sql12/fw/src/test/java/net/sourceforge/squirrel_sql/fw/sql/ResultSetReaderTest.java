@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
@@ -102,7 +103,7 @@ public class ResultSetReaderTest extends BaseSQuirreLTestCase
 
 		mockHelper.replayAll();
 		readerUnderTest = new ResultSetReader(localMockResultSet, DialectType.MYSQL5);
-		Object[] row = readerUnderTest.readRow();
+		Object[] row = readerUnderTest.readRow(BlockMode.INDIFFERENT);
 		assertEquals(unsignedIntegerValue, row[0]);
 		mockHelper.verifyAll();
 	}
@@ -124,7 +125,7 @@ public class ResultSetReaderTest extends BaseSQuirreLTestCase
 
 		replayAll();
 		readerUnderTest = new ResultSetReader(mockResultSet, DialectType.ORACLE);
-		Object[] result = readerUnderTest.readRow();
+		Object[] result = readerUnderTest.readRow(BlockMode.INDIFFERENT);
 		if (result[0].getClass().getName().equals(type))
 		{
 			// 
