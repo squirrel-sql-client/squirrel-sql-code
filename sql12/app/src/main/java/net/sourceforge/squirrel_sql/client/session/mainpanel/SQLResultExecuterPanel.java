@@ -794,6 +794,10 @@ public class SQLResultExecuterPanel extends JPanel
 
       while(props.getLimitSQLResultTabs() && props.getSqlResultTabLimit() < _tabbedExecutionsPanel.getTabCount())
       {
+         if(_tabbedExecutionsPanel.getComponentAt(0) instanceof CancelPanel)
+         {
+            break;
+         }
          closeTabAt(0);
       }
    }
