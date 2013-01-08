@@ -488,6 +488,7 @@ public class ActionCollection
       add(new FormatSQLAction(_app));
 
       add(new RenameSessionAction(_app));
+      add(new RerunCurrentSQLResultTabAction(_app));
 	}
 
 }

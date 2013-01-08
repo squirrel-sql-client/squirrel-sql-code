@@ -305,6 +305,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
 		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
 		addToMenu(rsrc, ToggleCurrentSQLResultTabStickyAction.class, menu);
+		addToMenu(rsrc, RerunCurrentSQLResultTabAction.class, menu);		
 		menu.addSeparator();
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();

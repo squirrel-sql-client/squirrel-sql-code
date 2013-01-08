@@ -29,25 +29,40 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
+import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ReadMoreResultsHandlerListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableState;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.tablefind.DataSetViewerFindDecorator;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -524,8 +539,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		panel2.setLayout(new GridLayout(1, 3, 0, 0));
 
       panel2.add(_readMoreResultsHandler.getLoadingLabel());
-
-      panel2.add(new TabButton(new RerunAction(_session.getApplication())));
+      panel2.add(new TabButton(getRerunCurrentSQLResultTabAction()));
       panel2.add(new TabButton(new FindInResultAction(_session.getApplication())));
 		panel2.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
 		panel2.add(new TabButton(new CloseAction()));
@@ -565,6 +579,15 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
 	}
 
+   private RerunCurrentSQLResultTabAction getRerunCurrentSQLResultTabAction()
+   {
+	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(_session.getApplication());
+	   
+	   rtn.setSQLPanel( _session.getSQLPanelAPIOfActiveSessionWindow() );
+ 
+	   return rtn;
+   }
+   
    private void reInitOverview()
    {
       if(OverviewCtrl.isOverviewPanel(_tabResultTabs.getComponentAt(_tabResultTabs.getTabCount()-1)))
