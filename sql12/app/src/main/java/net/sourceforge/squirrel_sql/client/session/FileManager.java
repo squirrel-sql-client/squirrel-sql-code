@@ -220,6 +220,17 @@ public class FileManager
    private boolean saveScript(Frame frame, File file, boolean askReplace)
    {
       boolean doSave = false;
+
+      if (file.exists() && !file.canWrite())
+      {
+          // i18n[FileManager.error.cannotwritefile=File {0} \ncannot be written to.]
+          String msg = 
+              s_stringMgr.getString("FileManager.error.cannotwritefile", 
+                                    file.getAbsolutePath());
+         Dialogs.showOk(frame, msg);
+         return false;
+      }
+      
       if (askReplace && file.exists())
       {
           // i18n[FileManager.confirm.filereplace={0} \nalready exists. Do you want to replace it?]
@@ -233,15 +244,7 @@ public class FileManager
          {
             return false;
          }
-         if (!file.canWrite())
-         {
-             // i18n[FileManager.error.cannotwritefile=File {0} \ncannot be written to.]
-             String msg = 
-                 s_stringMgr.getString("FileManager.error.cannotwritefile", 
-                                       file.getAbsolutePath());
-            Dialogs.showOk(frame, msg);
-            return false;
-         }
+
          file.delete();
       }
       else
