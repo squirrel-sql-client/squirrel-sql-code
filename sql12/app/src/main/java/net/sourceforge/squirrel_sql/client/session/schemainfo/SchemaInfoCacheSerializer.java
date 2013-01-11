@@ -164,9 +164,9 @@ public class SchemaInfoCacheSerializer
       {
          synchronized (SchemaInfoCacheSerializer.class)
          {
-            if(0 < _storingSessionIDs.size())
+            for(int i=0; 0 < _storingSessionIDs.size() || i >= 30; ++i)
             {
-               SchemaInfoCacheSerializer.class.wait(30000);
+               SchemaInfoCacheSerializer.class.wait(1000);
             }
          }
       }

@@ -227,27 +227,40 @@ class Application implements IApplication
 	 */
 	public boolean shutdown(boolean updateLaunchScript)
 	{
-		s_log.info(s_stringMgr.getString("Application.shutdown", Calendar.getInstance().getTime()));
+      long begin = System.currentTimeMillis();
+
+		s_log.info("Application.shutdown: BEGIN: " + Calendar.getInstance().getTime());
 
 		updateCheckTimer.stop();
-		
-		saveApplicationState();
+      s_log.info("Application.shutdown: updateCheckTimer.stop() ELAPSED: " + (System.currentTimeMillis() - begin));
 
-		if (!closeAllSessions()) { return false; }
-		_pluginManager.unloadPlugins();
+		_saveApplicationState(begin);
+      s_log.info("Application.shutdown: saveApplicationState() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      if (!closeAllSessions())
+      {
+         return false;
+      }
+
+      _pluginManager.unloadPlugins();
+      s_log.info("Application.shutdown: _pluginManager.unloadPlugins() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		closeAllViewers();
+      s_log.info("Application.shutdown: closeAllViewers() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		closeOutputStreams();
+      s_log.info("Application.shutdown: closeOutputStreams() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		SchemaInfoCacheSerializer.waitTillStoringIsDone();
-		
-		if (updateLaunchScript) {
+      s_log.info("Application.shutdown: SchemaInfoCacheSerializer.waitTillStoringIsDone() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+		if (updateLaunchScript)
+      {
 			updateLaunchScript();
+         s_log.info("Application.shutdown: updateLaunchScript() ELAPSED: " + (System.currentTimeMillis() - begin));
 		}
 
-		String msg = s_stringMgr.getString("Application.shutdowncomplete", Calendar.getInstance().getTime());
-		s_log.info(msg);
+      s_log.info("Application.shutdown END: " + Calendar.getInstance().getTime());
 		LoggerController.shutdown();
 
 		return true;
@@ -258,37 +271,55 @@ class Application implements IApplication
 	 */
 	public void saveApplicationState()
 	{
-
-		_prefs.setFirstRun(false);
-
-		for (ApplicationListener l : _listeners.toArray(new ApplicationListener[0]))
-		{
-			l.saveApplicationState();
-		}
-
-		saveDrivers();
-
-		saveAliases();
-
-		// Save Application level SQL history.
-		saveSQLHistory();
-
-		// Save options selected for Cell Import Export operations
-		saveCellImportExportInfo();
-
-		// Save options selected for Edit Where Columns
-		saveEditWhereColsInfo();
-
-		// Save options selected for DataType-specific properties
-		saveDataTypePreferences();
-		
-		// Save user specific WIKI configurations
-		saveUserSpecificWikiConfigurations();
-
-		_prefs.save();
+      _saveApplicationState(null);
 	}
 
-	/**
+   private void _saveApplicationState(Long begin)
+   {
+      if(null == begin)
+      {
+         begin = System.currentTimeMillis();
+      }
+
+      _prefs.setFirstRun(false);
+      s_log.info("Application.shutdown->_saveApplicationState: _prefs.setFirstRun(false) ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      for (ApplicationListener l : _listeners.toArray(new ApplicationListener[0]))
+      {
+         l.saveApplicationState();
+      }
+      s_log.info("Application.shutdown->_saveApplicationState: _listeners ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      saveDrivers();
+      s_log.info("Application.shutdown->_saveApplicationState: saveDrivers() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      saveAliases();
+      s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save Application level SQL history.
+      saveSQLHistory();
+      s_log.info("Application.shutdown->_saveApplicationState: saveSQLHistory() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save options selected for Cell Import Export operations
+      saveCellImportExportInfo();
+      s_log.info("Application.shutdown->_saveApplicationState: saveCellImportExportInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save options selected for Edit Where Columns
+      saveEditWhereColsInfo();
+      s_log.info("Application.shutdown->_saveApplicationState: saveEditWhereColsInfo() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save options selected for DataType-specific properties
+      saveDataTypePreferences();
+      s_log.info("Application.shutdown->_saveApplicationState: saveDataTypePreferences() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      // Save user specific WIKI configurations
+      saveUserSpecificWikiConfigurations();
+      s_log.info("Application.shutdown->_saveApplicationState: saveUserSpecificWikiConfigurations() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      _prefs.save();
+   }
+
+   /**
 	 * Builds a Locale from the user's preferred locale preference.
 	 * 
 	 * @param prefs
@@ -427,7 +458,7 @@ class Application implements IApplication
 		}
 		catch (Exception e)
 		{
-			s_log.error("Unexpected exception while attempting to update the launch script: "+e.getMessage(), e);
+			s_log.info("Unexpected exception while attempting to update the launch script: " + e.getMessage());
 		}		
 	}
 	

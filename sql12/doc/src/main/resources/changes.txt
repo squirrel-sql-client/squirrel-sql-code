@@ -8,6 +8,14 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Logging of Application shutdown:
+  Sometimes closing SQuirreL can take some time. From looking at the log file
+  one can find out which shutdown actions take long:
+  Choose log level: info
+  Search the log file for: "Application.shutdown"
+  The first Global preferences tab tells where log and log configuration files are.
+
+
 Introduced keyboard shortcut Ctrl+Shift+Enter to rerun SQL results.
   Thanks to Johnathan James for re-working and drawing attention to the patch hosted at
   http://muzso.hu/2011/06/04/patch-for-squirrel-sql-client-v3.2.1-adds-keyboard-shortcut-for-sql-query-rerun-re-execut
