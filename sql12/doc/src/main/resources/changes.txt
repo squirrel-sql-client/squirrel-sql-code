@@ -8,7 +8,7 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
-Logging of Application shutdown:
+Logging of application shutdown:
   Sometimes closing SQuirreL can take some time. From looking at the log file
   one can find out which shutdown actions take long:
   Choose log level: info
