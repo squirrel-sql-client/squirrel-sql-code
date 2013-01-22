@@ -28,18 +28,10 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 	public RerunCurrentSQLResultTabAction(IApplication app)
 	{
 		super(app);
-		if (app == null)
-		{
-			s_log.warn("RerunCurrentSQLResultTabAction(): IApplication == null");
-		}
 	}
 
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		if (panel == null)
-		{
-			s_log.warn("setSQLPanel(): ISQLPanelAPI == null");
-		}
 		_panel = panel;
 		setEnabled(_panel != null);
 	}
@@ -61,19 +53,7 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 				{
 					selectedResultTab.reRunSQL();
 				}
-				else
-				{
-					s_log.warn("actionPerformed(): IResultTab == null");
-				}
 			}
-			else
-			{
-				s_log.warn("actionPerformed(): ISQLResultExecuter == null");
-			}
-		}
-		else
-		{
-			s_log.warn("actionPerformed(): ISQLPanelAPI == null");
 		}
 	}
 }
