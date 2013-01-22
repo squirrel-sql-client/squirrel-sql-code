@@ -21,9 +21,9 @@ Introduced keyboard shortcut Ctrl+Shift+Enter to rerun SQL results.
   http://muzso.hu/2011/06/04/patch-for-squirrel-sql-client-v3.2.1-adds-keyboard-shortcut-for-sql-query-rerun-re-execut
   See also bug #1057.
 
-1609223: New option to enables SQL result tables to read more query results when the user scrolls to the end of the table.
+1609223: New option to enable SQL result tables to read more query results when the user scrolls to the end of the table.
   This option can be switched on in Session Properties and on top of the SQL-Editor just at the place where the
-  "Limit tows" check box is.
+  "Limit rows" check box is.
 
 
 2569169: Find function for SQL result tables.
