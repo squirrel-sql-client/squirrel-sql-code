@@ -17,7 +17,7 @@
 				<a href="index.php?page=screenshots">Introduction, Features, Screenshots</a>&nbsp;&nbsp;
 				<a href="index.php?page=programing">Programming</a>&nbsp;&nbsp;
 				<a href="#mailinglists">Mailing Lists</a>&nbsp;&nbsp;
-				<a href="#svn">SVN</a>&nbsp;&nbsp;
+				<a href="#git">GIT</a>&nbsp;&nbsp;
 			</p>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -74,7 +74,7 @@
 
          <P><B>
             For all changes and more details see <a
-            href="http://sourceforge.net/p/squirrel-sql/code/6726/tree/trunk/sql12/doc/src/main/resources/changes.txt">Changelog</a>.
+            href="http://sourceforge.net/p/squirrel-sql/git/ci/cf32722c6974108e5fdddff1c53d519205347617/tree/sql12/doc/src/main/resources/changes.txt">Changelog</a>.
             Please refer to SQuirreL's help section for an overview of all features.
             <p><a href="#installation">Download SQuirreL SQL Client</A></p>
 
@@ -248,17 +248,18 @@
 
 			<p>To checkout SQuirreL from the subversion repository use the command:
 			<BR><code>
-			&nbsp;&nbsp;&nbsp;svn checkout svn://svn.code.sf.net/p/squirrel-sql/code/trunk/sql12
+			&nbsp;&nbsp;&nbsp;git clone git://git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
 			</code>
             <BR>or
 			<BR><code>
-			&nbsp;&nbsp;&nbsp;svn checkout http://svn.code.sf.net/p/squirrel-sql/code/trunk/sql12
+			&nbsp;&nbsp;&nbsp;git clone https://gerdwagner@git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
 			</code>
             <p>Registered developers should use:
                 <BR><code>
-                    &nbsp;&nbsp;&nbsp;svn checkout --username=&lt;SF user name&gt; svn+ssh://&lt;SF user name&gt;@svn.code.sf.net/p/squirrel-sql/code/trunk/sql12
+                    &nbsp;&nbsp;&nbsp;git clone ssh://&lt;SF user name&gt;@git.code.sf.net/p/squirrel-sql/git squirrel-sql-git
                 </code>
 			</p>
+            The SQuirreL source code is in the sql12/ subdirectory of the clone.
 
          <p><a  href="index.php?page=programing">Click here for detailed information on how to program SQuirreL.</a></p>
 
@@ -320,11 +321,9 @@
 	<tr>
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
-			<h1 class="body"><a name="svn">SVN</a></h1>
-			<p>SVN is hosted at <A href="http://sourceforge.net/p/squirrel-sql/code/6728/tree/">SourceForge</A>.
-			The SVN module for maintenance of the 1.1 release is
-			<EM>squirrel-sql</EM> and subsequent releases are made from the
-			<EM>sql12</EM> module.</p>
+			<h1 class="body"><a name="git">GIT</a></h1>
+			<p>Git is hosted at <A href="https://sourceforge.net/p/squirrel-sql/git/ci/cf32722c6974108e5fdddff1c53d519205347617/tree/">SourceForge</A>.
+			The SQuirreL source code is in the sql12 subdirectory</EM> module.</p>
 
 		</td>
 		<td class="body_right_border">&nbsp;</td>
