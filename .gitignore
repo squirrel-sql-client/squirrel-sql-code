@@ -1,0 +1,3324 @@
+# /branches/squirrel-3_2_1-branch/
+/branches/squirrel-3_2_1-branch/target
+/branches/squirrel-3_2_1-branch/.project
+/branches/squirrel-3_2_1-branch/.classpath
+/branches/squirrel-3_2_1-branch/.settings
+
+# /branches/squirrel-3_2_1-branch/app/
+/branches/squirrel-3_2_1-branch/app/target
+/branches/squirrel-3_2_1-branch/app/.settings
+/branches/squirrel-3_2_1-branch/app/.project
+/branches/squirrel-3_2_1-branch/app/.classpath
+/branches/squirrel-3_2_1-branch/app/update
+
+# /branches/squirrel-3_2_1-branch/doc/
+/branches/squirrel-3_2_1-branch/doc/target
+/branches/squirrel-3_2_1-branch/doc/.settings
+/branches/squirrel-3_2_1-branch/doc/.project
+/branches/squirrel-3_2_1-branch/doc/.classpath
+
+# /branches/squirrel-3_2_1-branch/fw/
+/branches/squirrel-3_2_1-branch/fw/target
+/branches/squirrel-3_2_1-branch/fw/.settings
+/branches/squirrel-3_2_1-branch/fw/.project
+/branches/squirrel-3_2_1-branch/fw/.classpath
+
+# /branches/squirrel-3_2_1-branch/installer/
+/branches/squirrel-3_2_1-branch/installer/target
+/branches/squirrel-3_2_1-branch/installer/.project
+/branches/squirrel-3_2_1-branch/installer/.classpath
+/branches/squirrel-3_2_1-branch/installer/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-installer-deps/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-installer-deps/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-installer-deps/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-installer-deps/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-installer-deps/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-java-version-checker/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-java-version-checker/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-java-version-checker/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-java-version-checker/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-java-version-checker/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-launcher/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-launcher/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-launcher/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-launcher/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-launcher/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-macosx-installer/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-macosx-installer/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-macosx-installer/.settings
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-macosx-installer/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-macosx-installer/.classpath
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-other-installer/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-other-installer/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-other-installer/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-other-installer/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-other-installer/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-source/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-source/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-source/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-source/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-source/.settings
+
+# /branches/squirrel-3_2_1-branch/installer/squirrelsql-update-site/
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-update-site/target
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-update-site/.project
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-update-site/.classpath
+/branches/squirrel-3_2_1-branch/installer/squirrelsql-update-site/.settings
+
+# /branches/squirrel-3_2_1-branch/plugins/
+/branches/squirrel-3_2_1-branch/plugins/target
+/branches/squirrel-3_2_1-branch/plugins/.project
+/branches/squirrel-3_2_1-branch/plugins/.classpath
+/branches/squirrel-3_2_1-branch/plugins/.settings
+
+# /branches/squirrel-3_2_1-branch/plugins/cache/
+/branches/squirrel-3_2_1-branch/plugins/cache/target
+/branches/squirrel-3_2_1-branch/plugins/cache/.settings
+/branches/squirrel-3_2_1-branch/plugins/cache/.project
+/branches/squirrel-3_2_1-branch/plugins/cache/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/codecompletion/
+/branches/squirrel-3_2_1-branch/plugins/codecompletion/target
+/branches/squirrel-3_2_1-branch/plugins/codecompletion/.settings
+/branches/squirrel-3_2_1-branch/plugins/codecompletion/.project
+/branches/squirrel-3_2_1-branch/plugins/codecompletion/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/dataimport/
+/branches/squirrel-3_2_1-branch/plugins/dataimport/target
+/branches/squirrel-3_2_1-branch/plugins/dataimport/.settings
+/branches/squirrel-3_2_1-branch/plugins/dataimport/.project
+/branches/squirrel-3_2_1-branch/plugins/dataimport/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/db2/
+/branches/squirrel-3_2_1-branch/plugins/db2/target
+/branches/squirrel-3_2_1-branch/plugins/db2/.settings
+/branches/squirrel-3_2_1-branch/plugins/db2/.project
+/branches/squirrel-3_2_1-branch/plugins/db2/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/dbcopy/
+/branches/squirrel-3_2_1-branch/plugins/dbcopy/target
+/branches/squirrel-3_2_1-branch/plugins/dbcopy/.settings
+/branches/squirrel-3_2_1-branch/plugins/dbcopy/.project
+/branches/squirrel-3_2_1-branch/plugins/dbcopy/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/dbdiff/
+/branches/squirrel-3_2_1-branch/plugins/dbdiff/target
+/branches/squirrel-3_2_1-branch/plugins/dbdiff/.settings
+/branches/squirrel-3_2_1-branch/plugins/dbdiff/.project
+/branches/squirrel-3_2_1-branch/plugins/dbdiff/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/derby/
+/branches/squirrel-3_2_1-branch/plugins/derby/target
+/branches/squirrel-3_2_1-branch/plugins/derby/.settings
+/branches/squirrel-3_2_1-branch/plugins/derby/.project
+/branches/squirrel-3_2_1-branch/plugins/derby/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/editextras/
+/branches/squirrel-3_2_1-branch/plugins/editextras/target
+/branches/squirrel-3_2_1-branch/plugins/editextras/.settings
+/branches/squirrel-3_2_1-branch/plugins/editextras/.project
+/branches/squirrel-3_2_1-branch/plugins/editextras/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/example/
+/branches/squirrel-3_2_1-branch/plugins/example/target
+/branches/squirrel-3_2_1-branch/plugins/example/.settings
+/branches/squirrel-3_2_1-branch/plugins/example/.project
+/branches/squirrel-3_2_1-branch/plugins/example/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/exportconfig/
+/branches/squirrel-3_2_1-branch/plugins/exportconfig/target
+/branches/squirrel-3_2_1-branch/plugins/exportconfig/.settings
+/branches/squirrel-3_2_1-branch/plugins/exportconfig/.project
+/branches/squirrel-3_2_1-branch/plugins/exportconfig/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/favs/
+/branches/squirrel-3_2_1-branch/plugins/favs/target
+/branches/squirrel-3_2_1-branch/plugins/favs/.settings
+/branches/squirrel-3_2_1-branch/plugins/favs/.project
+/branches/squirrel-3_2_1-branch/plugins/favs/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/firebird/
+/branches/squirrel-3_2_1-branch/plugins/firebird/target
+/branches/squirrel-3_2_1-branch/plugins/firebird/.settings
+/branches/squirrel-3_2_1-branch/plugins/firebird/.project
+/branches/squirrel-3_2_1-branch/plugins/firebird/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/firebirdmanager/
+/branches/squirrel-3_2_1-branch/plugins/firebirdmanager/target
+/branches/squirrel-3_2_1-branch/plugins/firebirdmanager/.settings
+/branches/squirrel-3_2_1-branch/plugins/firebirdmanager/.project
+/branches/squirrel-3_2_1-branch/plugins/firebirdmanager/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/graph/
+/branches/squirrel-3_2_1-branch/plugins/graph/target
+/branches/squirrel-3_2_1-branch/plugins/graph/.settings
+/branches/squirrel-3_2_1-branch/plugins/graph/.project
+/branches/squirrel-3_2_1-branch/plugins/graph/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/h2/
+/branches/squirrel-3_2_1-branch/plugins/h2/target
+/branches/squirrel-3_2_1-branch/plugins/h2/.settings
+/branches/squirrel-3_2_1-branch/plugins/h2/.project
+/branches/squirrel-3_2_1-branch/plugins/h2/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/hibernate/
+/branches/squirrel-3_2_1-branch/plugins/hibernate/target
+/branches/squirrel-3_2_1-branch/plugins/hibernate/.settings
+/branches/squirrel-3_2_1-branch/plugins/hibernate/.project
+/branches/squirrel-3_2_1-branch/plugins/hibernate/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/i18n/
+/branches/squirrel-3_2_1-branch/plugins/i18n/target
+/branches/squirrel-3_2_1-branch/plugins/i18n/.settings
+/branches/squirrel-3_2_1-branch/plugins/i18n/.project
+/branches/squirrel-3_2_1-branch/plugins/i18n/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/informix/
+/branches/squirrel-3_2_1-branch/plugins/informix/target
+/branches/squirrel-3_2_1-branch/plugins/informix/.settings
+/branches/squirrel-3_2_1-branch/plugins/informix/.project
+/branches/squirrel-3_2_1-branch/plugins/informix/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/isqlj/
+/branches/squirrel-3_2_1-branch/plugins/isqlj/target
+/branches/squirrel-3_2_1-branch/plugins/isqlj/.settings
+/branches/squirrel-3_2_1-branch/plugins/isqlj/.project
+/branches/squirrel-3_2_1-branch/plugins/isqlj/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/laf/
+/branches/squirrel-3_2_1-branch/plugins/laf/target
+/branches/squirrel-3_2_1-branch/plugins/laf/.settings
+/branches/squirrel-3_2_1-branch/plugins/laf/.project
+/branches/squirrel-3_2_1-branch/plugins/laf/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/macosx/
+/branches/squirrel-3_2_1-branch/plugins/macosx/target
+/branches/squirrel-3_2_1-branch/plugins/macosx/.settings
+/branches/squirrel-3_2_1-branch/plugins/macosx/.project
+/branches/squirrel-3_2_1-branch/plugins/macosx/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/mssql/
+/branches/squirrel-3_2_1-branch/plugins/mssql/target
+/branches/squirrel-3_2_1-branch/plugins/mssql/.settings
+/branches/squirrel-3_2_1-branch/plugins/mssql/.project
+/branches/squirrel-3_2_1-branch/plugins/mssql/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/mysql/
+/branches/squirrel-3_2_1-branch/plugins/mysql/target
+/branches/squirrel-3_2_1-branch/plugins/mysql/.settings
+/branches/squirrel-3_2_1-branch/plugins/mysql/.project
+/branches/squirrel-3_2_1-branch/plugins/mysql/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/netezza/
+/branches/squirrel-3_2_1-branch/plugins/netezza/target
+/branches/squirrel-3_2_1-branch/plugins/netezza/.settings
+/branches/squirrel-3_2_1-branch/plugins/netezza/.project
+/branches/squirrel-3_2_1-branch/plugins/netezza/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/oracle/
+/branches/squirrel-3_2_1-branch/plugins/oracle/target
+/branches/squirrel-3_2_1-branch/plugins/oracle/.settings
+/branches/squirrel-3_2_1-branch/plugins/oracle/.project
+/branches/squirrel-3_2_1-branch/plugins/oracle/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/postgres/
+/branches/squirrel-3_2_1-branch/plugins/postgres/target
+/branches/squirrel-3_2_1-branch/plugins/postgres/.settings
+/branches/squirrel-3_2_1-branch/plugins/postgres/.project
+/branches/squirrel-3_2_1-branch/plugins/postgres/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/refactoring/
+/branches/squirrel-3_2_1-branch/plugins/refactoring/target
+/branches/squirrel-3_2_1-branch/plugins/refactoring/.settings
+/branches/squirrel-3_2_1-branch/plugins/refactoring/.project
+/branches/squirrel-3_2_1-branch/plugins/refactoring/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sessionscript/
+/branches/squirrel-3_2_1-branch/plugins/sessionscript/target
+/branches/squirrel-3_2_1-branch/plugins/sessionscript/.settings
+/branches/squirrel-3_2_1-branch/plugins/sessionscript/.project
+/branches/squirrel-3_2_1-branch/plugins/sessionscript/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/smarttools/
+/branches/squirrel-3_2_1-branch/plugins/smarttools/target
+/branches/squirrel-3_2_1-branch/plugins/smarttools/.settings
+/branches/squirrel-3_2_1-branch/plugins/smarttools/.project
+/branches/squirrel-3_2_1-branch/plugins/smarttools/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sqlbookmark/
+/branches/squirrel-3_2_1-branch/plugins/sqlbookmark/target
+/branches/squirrel-3_2_1-branch/plugins/sqlbookmark/.settings
+/branches/squirrel-3_2_1-branch/plugins/sqlbookmark/.project
+/branches/squirrel-3_2_1-branch/plugins/sqlbookmark/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sqlparam/
+/branches/squirrel-3_2_1-branch/plugins/sqlparam/target
+/branches/squirrel-3_2_1-branch/plugins/sqlparam/.settings
+/branches/squirrel-3_2_1-branch/plugins/sqlparam/.project
+/branches/squirrel-3_2_1-branch/plugins/sqlparam/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sqlreplace/
+/branches/squirrel-3_2_1-branch/plugins/sqlreplace/target
+/branches/squirrel-3_2_1-branch/plugins/sqlreplace/.settings
+/branches/squirrel-3_2_1-branch/plugins/sqlreplace/.project
+/branches/squirrel-3_2_1-branch/plugins/sqlreplace/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sqlscript/
+/branches/squirrel-3_2_1-branch/plugins/sqlscript/target
+/branches/squirrel-3_2_1-branch/plugins/sqlscript/.settings
+/branches/squirrel-3_2_1-branch/plugins/sqlscript/.project
+/branches/squirrel-3_2_1-branch/plugins/sqlscript/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/sqlval/
+/branches/squirrel-3_2_1-branch/plugins/sqlval/target
+/branches/squirrel-3_2_1-branch/plugins/sqlval/.settings
+/branches/squirrel-3_2_1-branch/plugins/sqlval/.project
+/branches/squirrel-3_2_1-branch/plugins/sqlval/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-assembly-descriptor/
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-assembly-descriptor/target
+
+# /branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-parent-pom/
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-parent-pom/target
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-parent-pom/.project
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-parent-pom/.classpath
+/branches/squirrel-3_2_1-branch/plugins/squirrelsql-plugins-parent-pom/.settings
+
+# /branches/squirrel-3_2_1-branch/plugins/sybase/
+/branches/squirrel-3_2_1-branch/plugins/sybase/target
+/branches/squirrel-3_2_1-branch/plugins/sybase/.settings
+/branches/squirrel-3_2_1-branch/plugins/sybase/.project
+/branches/squirrel-3_2_1-branch/plugins/sybase/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/syntax/
+/branches/squirrel-3_2_1-branch/plugins/syntax/target
+/branches/squirrel-3_2_1-branch/plugins/syntax/.settings
+/branches/squirrel-3_2_1-branch/plugins/syntax/.project
+/branches/squirrel-3_2_1-branch/plugins/syntax/.classpath
+
+# /branches/squirrel-3_2_1-branch/plugins/userscript/
+/branches/squirrel-3_2_1-branch/plugins/userscript/target
+/branches/squirrel-3_2_1-branch/plugins/userscript/.settings
+/branches/squirrel-3_2_1-branch/plugins/userscript/.project
+/branches/squirrel-3_2_1-branch/plugins/userscript/.classpath
+
+# /branches/squirrel-3_2_1-branch/squirrelsql-integration-environment/
+/branches/squirrel-3_2_1-branch/squirrelsql-integration-environment/target
+/branches/squirrel-3_2_1-branch/squirrelsql-integration-environment/.project
+/branches/squirrel-3_2_1-branch/squirrelsql-integration-environment/.classpath
+/branches/squirrel-3_2_1-branch/squirrelsql-integration-environment/.settings
+
+# /branches/squirrel-3_2_1-branch/squirrelsql-translations/
+/branches/squirrel-3_2_1-branch/squirrelsql-translations/target
+/branches/squirrel-3_2_1-branch/squirrelsql-translations/.settings
+/branches/squirrel-3_2_1-branch/squirrelsql-translations/.project
+/branches/squirrel-3_2_1-branch/squirrelsql-translations/.classpath
+
+# /branches/squirrel-3_2_1-branch/web-site/
+/branches/squirrel-3_2_1-branch/web-site/target
+/branches/squirrel-3_2_1-branch/web-site/.settings
+/branches/squirrel-3_2_1-branch/web-site/.project
+/branches/squirrel-3_2_1-branch/web-site/.classpath
+
+# /branches/squirrel-sql_3_1_1/mavenize/squirrelsql-integration-environment/
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-integration-environment/target
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-integration-environment/.project
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-integration-environment/.classpath
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-integration-environment/.settings
+
+# /branches/squirrel-sql_3_1_1/mavenize/squirrelsql-plugin-archetype/
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-plugin-archetype/target
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-plugin-archetype/.project
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-plugin-archetype/.classpath
+/branches/squirrel-sql_3_1_1/mavenize/squirrelsql-plugin-archetype/.settings
+
+# /branches/squirrel-sql_3_1_1/squirrel-sql/
+/branches/squirrel-sql_3_1_1/squirrel-sql/bin
+
+# /tags/dbcopy-3.3.0-rc2/
+/tags/dbcopy-3.3.0-rc2/target
+/tags/dbcopy-3.3.0-rc2/.settings
+/tags/dbcopy-3.3.0-rc2/.project
+/tags/dbcopy-3.3.0-rc2/.classpath
+/tags/dbcopy-3.3.0-rc2/*.iml
+
+# /tags/dbcopy-3.3.0-rc3/
+/tags/dbcopy-3.3.0-rc3/target
+/tags/dbcopy-3.3.0-rc3/.settings
+/tags/dbcopy-3.3.0-rc3/.project
+/tags/dbcopy-3.3.0-rc3/.classpath
+/tags/dbcopy-3.3.0-rc3/*.iml
+
+# /tags/dbcopy-cli-1.0.0/
+/tags/dbcopy-cli-1.0.0/target
+/tags/dbcopy-cli-1.0.0/.project
+/tags/dbcopy-cli-1.0.0/.classpath
+/tags/dbcopy-cli-1.0.0/.settings
+
+# /tags/dbcopy-cli-1.0.1/
+/tags/dbcopy-cli-1.0.1/target
+/tags/dbcopy-cli-1.0.1/.project
+/tags/dbcopy-cli-1.0.1/.classpath
+/tags/dbcopy-cli-1.0.1/.settings
+
+# /tags/dbcopy-cli-1.0.2/
+/tags/dbcopy-cli-1.0.2/target
+/tags/dbcopy-cli-1.0.2/.project
+/tags/dbcopy-cli-1.0.2/.classpath
+/tags/dbcopy-cli-1.0.2/.settings
+
+# /tags/maven-plugin-workspace-1.0.1/
+/tags/maven-plugin-workspace-1.0.1/target
+/tags/maven-plugin-workspace-1.0.1/.project
+/tags/maven-plugin-workspace-1.0.1/.classpath
+/tags/maven-plugin-workspace-1.0.1/.settings
+
+# /tags/maven-plugin-workspace-1.0.1/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.1/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.1/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.3/
+/tags/maven-plugin-workspace-1.0.3/target
+/tags/maven-plugin-workspace-1.0.3/.project
+/tags/maven-plugin-workspace-1.0.3/.classpath
+/tags/maven-plugin-workspace-1.0.3/.settings
+
+# /tags/maven-plugin-workspace-1.0.3/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.3/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.3/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.4/
+/tags/maven-plugin-workspace-1.0.4/target
+/tags/maven-plugin-workspace-1.0.4/.project
+/tags/maven-plugin-workspace-1.0.4/.classpath
+/tags/maven-plugin-workspace-1.0.4/.settings
+
+# /tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.4/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.4/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.5/
+/tags/maven-plugin-workspace-1.0.5/target
+/tags/maven-plugin-workspace-1.0.5/.project
+/tags/maven-plugin-workspace-1.0.5/.classpath
+/tags/maven-plugin-workspace-1.0.5/.settings
+
+# /tags/maven-plugin-workspace-1.0.5/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.5/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.6/
+/tags/maven-plugin-workspace-1.0.6/target
+/tags/maven-plugin-workspace-1.0.6/.project
+/tags/maven-plugin-workspace-1.0.6/.classpath
+/tags/maven-plugin-workspace-1.0.6/.settings
+
+# /tags/maven-plugin-workspace-1.0.6/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.6/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.6/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.7/
+/tags/maven-plugin-workspace-1.0.7/target
+/tags/maven-plugin-workspace-1.0.7/.project
+/tags/maven-plugin-workspace-1.0.7/.classpath
+/tags/maven-plugin-workspace-1.0.7/.settings
+
+# /tags/maven-plugin-workspace-1.0.7/squirrelsql-dependency-plugin/
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-dependency-plugin/target
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-dependency-plugin/.project
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-dependency-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-dependency-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.7/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.7/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.7/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.8/
+/tags/maven-plugin-workspace-1.0.8/target
+/tags/maven-plugin-workspace-1.0.8/.project
+/tags/maven-plugin-workspace-1.0.8/.classpath
+/tags/maven-plugin-workspace-1.0.8/.settings
+
+# /tags/maven-plugin-workspace-1.0.8/squirrelsql-dependency-plugin/
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-dependency-plugin/target
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-dependency-plugin/.project
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-dependency-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-dependency-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.8/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.8/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.8/squirrelsql-version-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.9/
+/tags/maven-plugin-workspace-1.0.9/target
+/tags/maven-plugin-workspace-1.0.9/.project
+/tags/maven-plugin-workspace-1.0.9/.classpath
+/tags/maven-plugin-workspace-1.0.9/.settings
+
+# /tags/maven-plugin-workspace-1.0.9/squirrelsql-dependency-plugin/
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-dependency-plugin/target
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-dependency-plugin/.project
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-dependency-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-dependency-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.9/squirrelsql-update-site-plugin/
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-update-site-plugin/target
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-update-site-plugin/.project
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-update-site-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-update-site-plugin/.settings
+
+# /tags/maven-plugin-workspace-1.0.9/squirrelsql-version-plugin/
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-version-plugin/target
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-version-plugin/.project
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-version-plugin/.classpath
+/tags/maven-plugin-workspace-1.0.9/squirrelsql-version-plugin/.settings
+
+# /tags/maven-utils-1.0.0/
+/tags/maven-utils-1.0.0/target
+/tags/maven-utils-1.0.0/.project
+/tags/maven-utils-1.0.0/.classpath
+/tags/maven-utils-1.0.0/.settings
+
+# /tags/pre-maven-conversion/archive/squirrel-sql/
+/tags/pre-maven-conversion/archive/squirrel-sql/bin
+
+# /tags/pre-maven-conversion/maven-plugin-workspace/
+/tags/pre-maven-conversion/maven-plugin-workspace/target
+/tags/pre-maven-conversion/maven-plugin-workspace/.project
+/tags/pre-maven-conversion/maven-plugin-workspace/.classpath
+/tags/pre-maven-conversion/maven-plugin-workspace/.settings
+
+# /tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-update-site-plugin/
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-update-site-plugin/target
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-update-site-plugin/.project
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-update-site-plugin/.classpath
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-update-site-plugin/.settings
+
+# /tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-version-plugin/
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-version-plugin/target
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-version-plugin/.project
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-version-plugin/.classpath
+/tags/pre-maven-conversion/maven-plugin-workspace/squirrelsql-version-plugin/.settings
+
+# /tags/pre-maven-conversion/mavenize/squirrelsql-plugin-archetype/
+/tags/pre-maven-conversion/mavenize/squirrelsql-plugin-archetype/target
+/tags/pre-maven-conversion/mavenize/squirrelsql-plugin-archetype/.project
+/tags/pre-maven-conversion/mavenize/squirrelsql-plugin-archetype/.classpath
+/tags/pre-maven-conversion/mavenize/squirrelsql-plugin-archetype/.settings
+
+# /tags/pre-maven-conversion/sql12/
+/tags/pre-maven-conversion/sql12/target
+/tags/pre-maven-conversion/sql12/.project
+/tags/pre-maven-conversion/sql12/.classpath
+/tags/pre-maven-conversion/sql12/.settings
+
+# /tags/pre-maven-conversion/sql12/installer/
+/tags/pre-maven-conversion/sql12/installer/target
+/tags/pre-maven-conversion/sql12/installer/.project
+/tags/pre-maven-conversion/sql12/installer/.classpath
+/tags/pre-maven-conversion/sql12/installer/.settings
+
+# /tags/pre-maven-conversion/sql12/installer/squirrelsql-java-version-checker/
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-java-version-checker/target
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-java-version-checker/.project
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-java-version-checker/.classpath
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/pre-maven-conversion/sql12/installer/squirrelsql-launcher/
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-launcher/target
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-launcher/.project
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-launcher/.classpath
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-launcher/.settings
+
+# /tags/pre-maven-conversion/sql12/installer/squirrelsql-macosx-installer/
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-macosx-installer/target
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-macosx-installer/.settings
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-macosx-installer/.project
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/pre-maven-conversion/sql12/installer/squirrelsql-other-installer/
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-other-installer/target
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-other-installer/.project
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-other-installer/.classpath
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-other-installer/.settings
+
+# /tags/pre-maven-conversion/sql12/installer/squirrelsql-source/
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-source/target
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-source/.project
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-source/.classpath
+/tags/pre-maven-conversion/sql12/installer/squirrelsql-source/.settings
+
+# /tags/pre-maven-conversion/sql12/squirrelsql-integration-environment/
+/tags/pre-maven-conversion/sql12/squirrelsql-integration-environment/target
+/tags/pre-maven-conversion/sql12/squirrelsql-integration-environment/.project
+/tags/pre-maven-conversion/sql12/squirrelsql-integration-environment/.classpath
+/tags/pre-maven-conversion/sql12/squirrelsql-integration-environment/.settings
+
+# /tags/pre-maven-conversion/sql12/squirrelsql-update-site/
+/tags/pre-maven-conversion/sql12/squirrelsql-update-site/target
+/tags/pre-maven-conversion/sql12/squirrelsql-update-site/.project
+/tags/pre-maven-conversion/sql12/squirrelsql-update-site/.classpath
+/tags/pre-maven-conversion/sql12/squirrelsql-update-site/.settings
+
+# /tags/squirrel-root-pom-3.2.2/
+/tags/squirrel-root-pom-3.2.2/target
+/tags/squirrel-root-pom-3.2.2/.project
+/tags/squirrel-root-pom-3.2.2/.classpath
+/tags/squirrel-root-pom-3.2.2/.settings
+
+# /tags/squirrel-root-pom-3.2.2/app/
+/tags/squirrel-root-pom-3.2.2/app/target
+/tags/squirrel-root-pom-3.2.2/app/.settings
+/tags/squirrel-root-pom-3.2.2/app/.project
+/tags/squirrel-root-pom-3.2.2/app/.classpath
+/tags/squirrel-root-pom-3.2.2/app/update
+
+# /tags/squirrel-root-pom-3.2.2/doc/
+/tags/squirrel-root-pom-3.2.2/doc/target
+/tags/squirrel-root-pom-3.2.2/doc/.settings
+/tags/squirrel-root-pom-3.2.2/doc/.project
+/tags/squirrel-root-pom-3.2.2/doc/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/fw/
+/tags/squirrel-root-pom-3.2.2/fw/target
+/tags/squirrel-root-pom-3.2.2/fw/.settings
+/tags/squirrel-root-pom-3.2.2/fw/.project
+/tags/squirrel-root-pom-3.2.2/fw/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/installer/
+/tags/squirrel-root-pom-3.2.2/installer/target
+/tags/squirrel-root-pom-3.2.2/installer/.project
+/tags/squirrel-root-pom-3.2.2/installer/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-installer-deps/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-installer-deps/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-installer-deps/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-java-version-checker/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-java-version-checker/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-java-version-checker/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-launcher/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-launcher/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-launcher/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-launcher/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-macosx-installer/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-macosx-installer/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-macosx-installer/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-other-installer/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-other-installer/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-other-installer/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-other-installer/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-source/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-source/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-source/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-source/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-source/.settings
+
+# /tags/squirrel-root-pom-3.2.2/installer/squirrelsql-update-site/
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-update-site/target
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-update-site/.project
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-update-site/.classpath
+/tags/squirrel-root-pom-3.2.2/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrel-root-pom-3.2.2/plugins/
+/tags/squirrel-root-pom-3.2.2/plugins/target
+/tags/squirrel-root-pom-3.2.2/plugins/.project
+/tags/squirrel-root-pom-3.2.2/plugins/.classpath
+/tags/squirrel-root-pom-3.2.2/plugins/.settings
+
+# /tags/squirrel-root-pom-3.2.2/plugins/cache/
+/tags/squirrel-root-pom-3.2.2/plugins/cache/target
+/tags/squirrel-root-pom-3.2.2/plugins/cache/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/cache/.project
+/tags/squirrel-root-pom-3.2.2/plugins/cache/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/codecompletion/
+/tags/squirrel-root-pom-3.2.2/plugins/codecompletion/target
+/tags/squirrel-root-pom-3.2.2/plugins/codecompletion/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/codecompletion/.project
+/tags/squirrel-root-pom-3.2.2/plugins/codecompletion/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/dataimport/
+/tags/squirrel-root-pom-3.2.2/plugins/dataimport/target
+/tags/squirrel-root-pom-3.2.2/plugins/dataimport/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/dataimport/.project
+/tags/squirrel-root-pom-3.2.2/plugins/dataimport/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/db2/
+/tags/squirrel-root-pom-3.2.2/plugins/db2/target
+/tags/squirrel-root-pom-3.2.2/plugins/db2/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/db2/.project
+/tags/squirrel-root-pom-3.2.2/plugins/db2/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/dbcopy/
+/tags/squirrel-root-pom-3.2.2/plugins/dbcopy/target
+/tags/squirrel-root-pom-3.2.2/plugins/dbcopy/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/dbcopy/.project
+/tags/squirrel-root-pom-3.2.2/plugins/dbcopy/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/dbdiff/
+/tags/squirrel-root-pom-3.2.2/plugins/dbdiff/target
+/tags/squirrel-root-pom-3.2.2/plugins/dbdiff/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/dbdiff/.project
+/tags/squirrel-root-pom-3.2.2/plugins/dbdiff/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/derby/
+/tags/squirrel-root-pom-3.2.2/plugins/derby/target
+/tags/squirrel-root-pom-3.2.2/plugins/derby/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/derby/.project
+/tags/squirrel-root-pom-3.2.2/plugins/derby/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/editextras/
+/tags/squirrel-root-pom-3.2.2/plugins/editextras/target
+/tags/squirrel-root-pom-3.2.2/plugins/editextras/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/editextras/.project
+/tags/squirrel-root-pom-3.2.2/plugins/editextras/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/example/
+/tags/squirrel-root-pom-3.2.2/plugins/example/target
+/tags/squirrel-root-pom-3.2.2/plugins/example/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/example/.project
+/tags/squirrel-root-pom-3.2.2/plugins/example/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/exportconfig/
+/tags/squirrel-root-pom-3.2.2/plugins/exportconfig/target
+/tags/squirrel-root-pom-3.2.2/plugins/exportconfig/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/exportconfig/.project
+/tags/squirrel-root-pom-3.2.2/plugins/exportconfig/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/favs/
+/tags/squirrel-root-pom-3.2.2/plugins/favs/target
+/tags/squirrel-root-pom-3.2.2/plugins/favs/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/favs/.project
+/tags/squirrel-root-pom-3.2.2/plugins/favs/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/firebird/
+/tags/squirrel-root-pom-3.2.2/plugins/firebird/target
+/tags/squirrel-root-pom-3.2.2/plugins/firebird/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/firebird/.project
+/tags/squirrel-root-pom-3.2.2/plugins/firebird/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/firebirdmanager/
+/tags/squirrel-root-pom-3.2.2/plugins/firebirdmanager/target
+/tags/squirrel-root-pom-3.2.2/plugins/firebirdmanager/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/firebirdmanager/.project
+/tags/squirrel-root-pom-3.2.2/plugins/firebirdmanager/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/graph/
+/tags/squirrel-root-pom-3.2.2/plugins/graph/target
+/tags/squirrel-root-pom-3.2.2/plugins/graph/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/graph/.project
+/tags/squirrel-root-pom-3.2.2/plugins/graph/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/h2/
+/tags/squirrel-root-pom-3.2.2/plugins/h2/target
+/tags/squirrel-root-pom-3.2.2/plugins/h2/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/h2/.project
+/tags/squirrel-root-pom-3.2.2/plugins/h2/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/hibernate/
+/tags/squirrel-root-pom-3.2.2/plugins/hibernate/target
+/tags/squirrel-root-pom-3.2.2/plugins/hibernate/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/hibernate/.project
+/tags/squirrel-root-pom-3.2.2/plugins/hibernate/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/i18n/
+/tags/squirrel-root-pom-3.2.2/plugins/i18n/target
+/tags/squirrel-root-pom-3.2.2/plugins/i18n/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/i18n/.project
+/tags/squirrel-root-pom-3.2.2/plugins/i18n/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/informix/
+/tags/squirrel-root-pom-3.2.2/plugins/informix/target
+/tags/squirrel-root-pom-3.2.2/plugins/informix/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/informix/.project
+/tags/squirrel-root-pom-3.2.2/plugins/informix/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/isqlj/
+/tags/squirrel-root-pom-3.2.2/plugins/isqlj/target
+/tags/squirrel-root-pom-3.2.2/plugins/isqlj/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/isqlj/.project
+/tags/squirrel-root-pom-3.2.2/plugins/isqlj/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/laf/
+/tags/squirrel-root-pom-3.2.2/plugins/laf/target
+/tags/squirrel-root-pom-3.2.2/plugins/laf/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/laf/.project
+/tags/squirrel-root-pom-3.2.2/plugins/laf/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/macosx/
+/tags/squirrel-root-pom-3.2.2/plugins/macosx/target
+/tags/squirrel-root-pom-3.2.2/plugins/macosx/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/macosx/.project
+/tags/squirrel-root-pom-3.2.2/plugins/macosx/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/mssql/
+/tags/squirrel-root-pom-3.2.2/plugins/mssql/target
+/tags/squirrel-root-pom-3.2.2/plugins/mssql/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/mssql/.project
+/tags/squirrel-root-pom-3.2.2/plugins/mssql/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/mysql/
+/tags/squirrel-root-pom-3.2.2/plugins/mysql/target
+/tags/squirrel-root-pom-3.2.2/plugins/mysql/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/mysql/.project
+/tags/squirrel-root-pom-3.2.2/plugins/mysql/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/netezza/
+/tags/squirrel-root-pom-3.2.2/plugins/netezza/target
+/tags/squirrel-root-pom-3.2.2/plugins/netezza/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/netezza/.project
+/tags/squirrel-root-pom-3.2.2/plugins/netezza/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/oracle/
+/tags/squirrel-root-pom-3.2.2/plugins/oracle/target
+/tags/squirrel-root-pom-3.2.2/plugins/oracle/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/oracle/.project
+/tags/squirrel-root-pom-3.2.2/plugins/oracle/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/postgres/
+/tags/squirrel-root-pom-3.2.2/plugins/postgres/target
+/tags/squirrel-root-pom-3.2.2/plugins/postgres/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/postgres/.project
+/tags/squirrel-root-pom-3.2.2/plugins/postgres/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/refactoring/
+/tags/squirrel-root-pom-3.2.2/plugins/refactoring/target
+/tags/squirrel-root-pom-3.2.2/plugins/refactoring/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/refactoring/.project
+/tags/squirrel-root-pom-3.2.2/plugins/refactoring/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sessionscript/
+/tags/squirrel-root-pom-3.2.2/plugins/sessionscript/target
+/tags/squirrel-root-pom-3.2.2/plugins/sessionscript/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sessionscript/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sessionscript/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/smarttools/
+/tags/squirrel-root-pom-3.2.2/plugins/smarttools/target
+/tags/squirrel-root-pom-3.2.2/plugins/smarttools/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/smarttools/.project
+/tags/squirrel-root-pom-3.2.2/plugins/smarttools/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sqlbookmark/
+/tags/squirrel-root-pom-3.2.2/plugins/sqlbookmark/target
+/tags/squirrel-root-pom-3.2.2/plugins/sqlbookmark/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sqlbookmark/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sqlbookmark/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sqlparam/
+/tags/squirrel-root-pom-3.2.2/plugins/sqlparam/target
+/tags/squirrel-root-pom-3.2.2/plugins/sqlparam/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sqlparam/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sqlparam/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sqlreplace/
+/tags/squirrel-root-pom-3.2.2/plugins/sqlreplace/target
+/tags/squirrel-root-pom-3.2.2/plugins/sqlreplace/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sqlreplace/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sqlreplace/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sqlscript/
+/tags/squirrel-root-pom-3.2.2/plugins/sqlscript/target
+/tags/squirrel-root-pom-3.2.2/plugins/sqlscript/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sqlscript/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sqlscript/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sqlval/
+/tags/squirrel-root-pom-3.2.2/plugins/sqlval/target
+/tags/squirrel-root-pom-3.2.2/plugins/sqlval/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sqlval/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sqlval/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-assembly-descriptor/target
+
+# /tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrel-root-pom-3.2.2/plugins/squirrelsql-plugins-parent-pom/.settings
+
+# /tags/squirrel-root-pom-3.2.2/plugins/sybase/
+/tags/squirrel-root-pom-3.2.2/plugins/sybase/target
+/tags/squirrel-root-pom-3.2.2/plugins/sybase/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/sybase/.project
+/tags/squirrel-root-pom-3.2.2/plugins/sybase/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/syntax/
+/tags/squirrel-root-pom-3.2.2/plugins/syntax/target
+/tags/squirrel-root-pom-3.2.2/plugins/syntax/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/syntax/.project
+/tags/squirrel-root-pom-3.2.2/plugins/syntax/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/plugins/userscript/
+/tags/squirrel-root-pom-3.2.2/plugins/userscript/target
+/tags/squirrel-root-pom-3.2.2/plugins/userscript/.settings
+/tags/squirrel-root-pom-3.2.2/plugins/userscript/.project
+/tags/squirrel-root-pom-3.2.2/plugins/userscript/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/squirrelsql-integration-environment/
+/tags/squirrel-root-pom-3.2.2/squirrelsql-integration-environment/target
+/tags/squirrel-root-pom-3.2.2/squirrelsql-integration-environment/.project
+/tags/squirrel-root-pom-3.2.2/squirrelsql-integration-environment/.classpath
+/tags/squirrel-root-pom-3.2.2/squirrelsql-integration-environment/.settings
+
+# /tags/squirrel-root-pom-3.2.2/squirrelsql-translations/
+/tags/squirrel-root-pom-3.2.2/squirrelsql-translations/target
+/tags/squirrel-root-pom-3.2.2/squirrelsql-translations/.settings
+/tags/squirrel-root-pom-3.2.2/squirrelsql-translations/.project
+/tags/squirrel-root-pom-3.2.2/squirrelsql-translations/.classpath
+
+# /tags/squirrel-root-pom-3.2.2/web-site/
+/tags/squirrel-root-pom-3.2.2/web-site/target
+/tags/squirrel-root-pom-3.2.2/web-site/.settings
+/tags/squirrel-root-pom-3.2.2/web-site/.project
+/tags/squirrel-root-pom-3.2.2/web-site/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/
+/tags/squirrel-root-pom-3.3.0/*.iml
+/tags/squirrel-root-pom-3.3.0/*.ipr
+/tags/squirrel-root-pom-3.3.0/*.iws
+/tags/squirrel-root-pom-3.3.0/.classpath
+/tags/squirrel-root-pom-3.3.0/.project
+/tags/squirrel-root-pom-3.3.0/.settings
+/tags/squirrel-root-pom-3.3.0/target
+
+# /tags/squirrel-root-pom-3.3.0/app/
+/tags/squirrel-root-pom-3.3.0/app/target
+/tags/squirrel-root-pom-3.3.0/app/.settings
+/tags/squirrel-root-pom-3.3.0/app/.project
+/tags/squirrel-root-pom-3.3.0/app/.classpath
+/tags/squirrel-root-pom-3.3.0/app/update
+/tags/squirrel-root-pom-3.3.0/app/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/cli/dbcopy/
+/tags/squirrel-root-pom-3.3.0/cli/dbcopy/target
+/tags/squirrel-root-pom-3.3.0/cli/dbcopy/.project
+/tags/squirrel-root-pom-3.3.0/cli/dbcopy/.classpath
+/tags/squirrel-root-pom-3.3.0/cli/dbcopy/.settings
+
+# /tags/squirrel-root-pom-3.3.0/doc/
+/tags/squirrel-root-pom-3.3.0/doc/target
+/tags/squirrel-root-pom-3.3.0/doc/.settings
+/tags/squirrel-root-pom-3.3.0/doc/.project
+/tags/squirrel-root-pom-3.3.0/doc/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/fw/
+/tags/squirrel-root-pom-3.3.0/fw/target
+/tags/squirrel-root-pom-3.3.0/fw/.settings
+/tags/squirrel-root-pom-3.3.0/fw/.project
+/tags/squirrel-root-pom-3.3.0/fw/.classpath
+/tags/squirrel-root-pom-3.3.0/fw/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/installer/
+/tags/squirrel-root-pom-3.3.0/installer/target
+/tags/squirrel-root-pom-3.3.0/installer/.project
+/tags/squirrel-root-pom-3.3.0/installer/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-installer-deps/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-installer-deps/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-installer-deps/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-java-version-checker/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-java-version-checker/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-java-version-checker/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-macosx-installer/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-macosx-installer/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-macosx-installer/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-other-installer/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-other-installer/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-other-installer/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-other-installer/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-source/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-source/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-source/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-source/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-source/.settings
+
+# /tags/squirrel-root-pom-3.3.0/installer/squirrelsql-update-site/
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-update-site/target
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-update-site/.project
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-update-site/.classpath
+/tags/squirrel-root-pom-3.3.0/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrel-root-pom-3.3.0/plugins/
+/tags/squirrel-root-pom-3.3.0/plugins/target
+/tags/squirrel-root-pom-3.3.0/plugins/.project
+/tags/squirrel-root-pom-3.3.0/plugins/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/cache/
+/tags/squirrel-root-pom-3.3.0/plugins/cache/target
+/tags/squirrel-root-pom-3.3.0/plugins/cache/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/cache/.project
+/tags/squirrel-root-pom-3.3.0/plugins/cache/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/plugins/codecompletion/
+/tags/squirrel-root-pom-3.3.0/plugins/codecompletion/*.iml
+/tags/squirrel-root-pom-3.3.0/plugins/codecompletion/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/codecompletion/.project
+/tags/squirrel-root-pom-3.3.0/plugins/codecompletion/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/codecompletion/target
+
+# /tags/squirrel-root-pom-3.3.0/plugins/dataimport/
+/tags/squirrel-root-pom-3.3.0/plugins/dataimport/target
+/tags/squirrel-root-pom-3.3.0/plugins/dataimport/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/dataimport/.project
+/tags/squirrel-root-pom-3.3.0/plugins/dataimport/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/dataimport/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/db2/
+/tags/squirrel-root-pom-3.3.0/plugins/db2/target
+/tags/squirrel-root-pom-3.3.0/plugins/db2/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/db2/.project
+/tags/squirrel-root-pom-3.3.0/plugins/db2/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/db2/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/dbcopy/
+/tags/squirrel-root-pom-3.3.0/plugins/dbcopy/target
+/tags/squirrel-root-pom-3.3.0/plugins/dbcopy/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/dbcopy/.project
+/tags/squirrel-root-pom-3.3.0/plugins/dbcopy/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/dbcopy/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/dbdiff/
+/tags/squirrel-root-pom-3.3.0/plugins/dbdiff/target
+/tags/squirrel-root-pom-3.3.0/plugins/dbdiff/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/dbdiff/.project
+/tags/squirrel-root-pom-3.3.0/plugins/dbdiff/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/dbdiff/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/derby/
+/tags/squirrel-root-pom-3.3.0/plugins/derby/target
+/tags/squirrel-root-pom-3.3.0/plugins/derby/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/derby/.project
+/tags/squirrel-root-pom-3.3.0/plugins/derby/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/derby/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/editextras/
+/tags/squirrel-root-pom-3.3.0/plugins/editextras/target
+/tags/squirrel-root-pom-3.3.0/plugins/editextras/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/editextras/.project
+/tags/squirrel-root-pom-3.3.0/plugins/editextras/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/editextras/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/example/
+/tags/squirrel-root-pom-3.3.0/plugins/example/target
+/tags/squirrel-root-pom-3.3.0/plugins/example/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/example/.project
+/tags/squirrel-root-pom-3.3.0/plugins/example/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/example/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/exportconfig/
+/tags/squirrel-root-pom-3.3.0/plugins/exportconfig/target
+/tags/squirrel-root-pom-3.3.0/plugins/exportconfig/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/exportconfig/.project
+/tags/squirrel-root-pom-3.3.0/plugins/exportconfig/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/exportconfig/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/favs/
+/tags/squirrel-root-pom-3.3.0/plugins/favs/target
+/tags/squirrel-root-pom-3.3.0/plugins/favs/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/favs/.project
+/tags/squirrel-root-pom-3.3.0/plugins/favs/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/favs/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/firebird/
+/tags/squirrel-root-pom-3.3.0/plugins/firebird/target
+/tags/squirrel-root-pom-3.3.0/plugins/firebird/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/firebird/.project
+/tags/squirrel-root-pom-3.3.0/plugins/firebird/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/firebird/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/
+/tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/target
+/tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/.project
+/tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/firebirdmanager/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/graph/
+/tags/squirrel-root-pom-3.3.0/plugins/graph/target
+/tags/squirrel-root-pom-3.3.0/plugins/graph/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/graph/.project
+/tags/squirrel-root-pom-3.3.0/plugins/graph/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/graph/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/greenplum/
+/tags/squirrel-root-pom-3.3.0/plugins/greenplum/target
+/tags/squirrel-root-pom-3.3.0/plugins/greenplum/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/greenplum/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/greenplum/.project
+
+# /tags/squirrel-root-pom-3.3.0/plugins/h2/
+/tags/squirrel-root-pom-3.3.0/plugins/h2/target
+/tags/squirrel-root-pom-3.3.0/plugins/h2/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/h2/.project
+/tags/squirrel-root-pom-3.3.0/plugins/h2/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/h2/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/hibernate/
+/tags/squirrel-root-pom-3.3.0/plugins/hibernate/target
+/tags/squirrel-root-pom-3.3.0/plugins/hibernate/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/hibernate/.project
+/tags/squirrel-root-pom-3.3.0/plugins/hibernate/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/hibernate/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/i18n/
+/tags/squirrel-root-pom-3.3.0/plugins/i18n/target
+/tags/squirrel-root-pom-3.3.0/plugins/i18n/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/i18n/.project
+/tags/squirrel-root-pom-3.3.0/plugins/i18n/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/i18n/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/informix/
+/tags/squirrel-root-pom-3.3.0/plugins/informix/target
+/tags/squirrel-root-pom-3.3.0/plugins/informix/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/informix/.project
+/tags/squirrel-root-pom-3.3.0/plugins/informix/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/informix/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/isqlj/
+/tags/squirrel-root-pom-3.3.0/plugins/isqlj/target
+/tags/squirrel-root-pom-3.3.0/plugins/isqlj/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/isqlj/.project
+/tags/squirrel-root-pom-3.3.0/plugins/isqlj/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/plugins/laf/
+/tags/squirrel-root-pom-3.3.0/plugins/laf/target
+/tags/squirrel-root-pom-3.3.0/plugins/laf/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/laf/.project
+/tags/squirrel-root-pom-3.3.0/plugins/laf/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/laf/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/macosx/
+/tags/squirrel-root-pom-3.3.0/plugins/macosx/target
+/tags/squirrel-root-pom-3.3.0/plugins/macosx/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/macosx/.project
+/tags/squirrel-root-pom-3.3.0/plugins/macosx/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/macosx/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/mssql/
+/tags/squirrel-root-pom-3.3.0/plugins/mssql/target
+/tags/squirrel-root-pom-3.3.0/plugins/mssql/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/mssql/.project
+/tags/squirrel-root-pom-3.3.0/plugins/mssql/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/mssql/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/mysql/
+/tags/squirrel-root-pom-3.3.0/plugins/mysql/target
+/tags/squirrel-root-pom-3.3.0/plugins/mysql/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/mysql/.project
+/tags/squirrel-root-pom-3.3.0/plugins/mysql/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/mysql/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/netezza/
+/tags/squirrel-root-pom-3.3.0/plugins/netezza/target
+/tags/squirrel-root-pom-3.3.0/plugins/netezza/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/netezza/.project
+/tags/squirrel-root-pom-3.3.0/plugins/netezza/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/netezza/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/oracle/
+/tags/squirrel-root-pom-3.3.0/plugins/oracle/target
+/tags/squirrel-root-pom-3.3.0/plugins/oracle/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/oracle/.project
+/tags/squirrel-root-pom-3.3.0/plugins/oracle/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/oracle/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/postgres/
+/tags/squirrel-root-pom-3.3.0/plugins/postgres/target
+/tags/squirrel-root-pom-3.3.0/plugins/postgres/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/postgres/.project
+/tags/squirrel-root-pom-3.3.0/plugins/postgres/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/postgres/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/refactoring/
+/tags/squirrel-root-pom-3.3.0/plugins/refactoring/target
+/tags/squirrel-root-pom-3.3.0/plugins/refactoring/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/refactoring/.project
+/tags/squirrel-root-pom-3.3.0/plugins/refactoring/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/refactoring/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sessionscript/
+/tags/squirrel-root-pom-3.3.0/plugins/sessionscript/target
+/tags/squirrel-root-pom-3.3.0/plugins/sessionscript/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sessionscript/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sessionscript/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sessionscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/smarttools/
+/tags/squirrel-root-pom-3.3.0/plugins/smarttools/target
+/tags/squirrel-root-pom-3.3.0/plugins/smarttools/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/smarttools/.project
+/tags/squirrel-root-pom-3.3.0/plugins/smarttools/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/smarttools/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/
+/tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/target
+/tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sqlbookmark/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sqlparam/
+/tags/squirrel-root-pom-3.3.0/plugins/sqlparam/target
+/tags/squirrel-root-pom-3.3.0/plugins/sqlparam/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sqlparam/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sqlparam/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sqlparam/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/
+/tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/target
+/tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sqlreplace/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sqlscript/
+/tags/squirrel-root-pom-3.3.0/plugins/sqlscript/target
+/tags/squirrel-root-pom-3.3.0/plugins/sqlscript/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sqlscript/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sqlscript/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sqlscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sqlval/
+/tags/squirrel-root-pom-3.3.0/plugins/sqlval/target
+/tags/squirrel-root-pom-3.3.0/plugins/sqlval/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sqlval/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sqlval/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sqlval/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/target
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/.project
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+
+# /tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/target
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-assembly-descriptor/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/squirrelsql-plugins-parent-pom/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/sybase/
+/tags/squirrel-root-pom-3.3.0/plugins/sybase/target
+/tags/squirrel-root-pom-3.3.0/plugins/sybase/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/sybase/.project
+/tags/squirrel-root-pom-3.3.0/plugins/sybase/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/sybase/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/syntax/
+/tags/squirrel-root-pom-3.3.0/plugins/syntax/target
+/tags/squirrel-root-pom-3.3.0/plugins/syntax/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/syntax/.project
+/tags/squirrel-root-pom-3.3.0/plugins/syntax/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/syntax/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/userscript/
+/tags/squirrel-root-pom-3.3.0/plugins/userscript/target
+/tags/squirrel-root-pom-3.3.0/plugins/userscript/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/userscript/.project
+/tags/squirrel-root-pom-3.3.0/plugins/userscript/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/userscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0/plugins/wikiTableConfigurations/
+/tags/squirrel-root-pom-3.3.0/plugins/wikiTableConfigurations/.project
+/tags/squirrel-root-pom-3.3.0/plugins/wikiTableConfigurations/.classpath
+/tags/squirrel-root-pom-3.3.0/plugins/wikiTableConfigurations/.settings
+/tags/squirrel-root-pom-3.3.0/plugins/wikiTableConfigurations/target
+
+# /tags/squirrel-root-pom-3.3.0/squirrelsql-integration-environment/
+/tags/squirrel-root-pom-3.3.0/squirrelsql-integration-environment/target
+/tags/squirrel-root-pom-3.3.0/squirrelsql-integration-environment/.project
+/tags/squirrel-root-pom-3.3.0/squirrelsql-integration-environment/.classpath
+/tags/squirrel-root-pom-3.3.0/squirrelsql-integration-environment/.settings
+
+# /tags/squirrel-root-pom-3.3.0/squirrelsql-translations/
+/tags/squirrel-root-pom-3.3.0/squirrelsql-translations/target
+/tags/squirrel-root-pom-3.3.0/squirrelsql-translations/.settings
+/tags/squirrel-root-pom-3.3.0/squirrelsql-translations/.project
+/tags/squirrel-root-pom-3.3.0/squirrelsql-translations/.classpath
+
+# /tags/squirrel-root-pom-3.3.0/web-site/
+/tags/squirrel-root-pom-3.3.0/web-site/target
+/tags/squirrel-root-pom-3.3.0/web-site/.settings
+/tags/squirrel-root-pom-3.3.0/web-site/.project
+/tags/squirrel-root-pom-3.3.0/web-site/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/
+/tags/squirrel-root-pom-3.3.0-rc1/*.iml
+/tags/squirrel-root-pom-3.3.0-rc1/*.ipr
+/tags/squirrel-root-pom-3.3.0-rc1/*.iws
+/tags/squirrel-root-pom-3.3.0-rc1/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/.project
+/tags/squirrel-root-pom-3.3.0-rc1/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/target
+
+# /tags/squirrel-root-pom-3.3.0-rc1/app/
+/tags/squirrel-root-pom-3.3.0-rc1/app/target
+/tags/squirrel-root-pom-3.3.0-rc1/app/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/app/.project
+/tags/squirrel-root-pom-3.3.0-rc1/app/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/app/update
+/tags/squirrel-root-pom-3.3.0-rc1/app/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/cli/dbcopy/
+/tags/squirrel-root-pom-3.3.0-rc1/cli/dbcopy/target
+/tags/squirrel-root-pom-3.3.0-rc1/cli/dbcopy/.project
+/tags/squirrel-root-pom-3.3.0-rc1/cli/dbcopy/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/cli/dbcopy/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/doc/
+/tags/squirrel-root-pom-3.3.0-rc1/doc/target
+/tags/squirrel-root-pom-3.3.0-rc1/doc/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/doc/.project
+/tags/squirrel-root-pom-3.3.0-rc1/doc/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/fw/
+/tags/squirrel-root-pom-3.3.0-rc1/fw/target
+/tags/squirrel-root-pom-3.3.0-rc1/fw/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/fw/.project
+/tags/squirrel-root-pom-3.3.0-rc1/fw/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/fw/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-installer-deps/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-installer-deps/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-installer-deps/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-java-version-checker/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-java-version-checker/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-java-version-checker/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-launcher/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-launcher/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-launcher/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-launcher/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-macosx-installer/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-macosx-installer/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-macosx-installer/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-other-installer/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-other-installer/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-other-installer/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-other-installer/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-source/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-source/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-source/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-source/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-source/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-update-site/
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-update-site/target
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-update-site/.project
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-update-site/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/cache/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/cache/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/cache/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/cache/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/cache/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/*.iml
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/codecompletion/target
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dataimport/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/db2/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbcopy/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/dbdiff/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/derby/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/editextras/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/example/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/example/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/example/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/example/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/example/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/example/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/exportconfig/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/favs/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebird/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/firebirdmanager/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/graph/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/greenplum/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/greenplum/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/greenplum/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/greenplum/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/greenplum/.project
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/h2/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/hibernate/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/i18n/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/informix/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/isqlj/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/isqlj/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/isqlj/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/isqlj/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/isqlj/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/laf/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/macosx/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mssql/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/mysql/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/netezza/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/oracle/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/postgres/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/refactoring/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sessionscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/smarttools/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlbookmark/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlparam/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlreplace/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sqlval/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/src
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-assembly-descriptor/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/squirrelsql-plugins-parent-pom/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/sybase/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/syntax/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/target
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/userscript/*.iml
+
+# /tags/squirrel-root-pom-3.3.0-rc1/plugins/wikiTableConfigurations/
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/wikiTableConfigurations/.project
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/wikiTableConfigurations/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/wikiTableConfigurations/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/plugins/wikiTableConfigurations/target
+
+# /tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-integration-environment/
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-integration-environment/target
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-integration-environment/.project
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-integration-environment/.classpath
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-integration-environment/.settings
+
+# /tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-translations/
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-translations/target
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-translations/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-translations/.project
+/tags/squirrel-root-pom-3.3.0-rc1/squirrelsql-translations/.classpath
+
+# /tags/squirrel-root-pom-3.3.0-rc1/web-site/
+/tags/squirrel-root-pom-3.3.0-rc1/web-site/target
+/tags/squirrel-root-pom-3.3.0-rc1/web-site/.settings
+/tags/squirrel-root-pom-3.3.0-rc1/web-site/.project
+/tags/squirrel-root-pom-3.3.0-rc1/web-site/.classpath
+
+# /tags/squirrelsql-3.2.0/
+/tags/squirrelsql-3.2.0/target
+/tags/squirrelsql-3.2.0/.project
+/tags/squirrelsql-3.2.0/.classpath
+/tags/squirrelsql-3.2.0/.settings
+
+# /tags/squirrelsql-3.2.0/app/
+/tags/squirrelsql-3.2.0/app/target
+/tags/squirrelsql-3.2.0/app/.settings
+/tags/squirrelsql-3.2.0/app/.project
+/tags/squirrelsql-3.2.0/app/.classpath
+/tags/squirrelsql-3.2.0/app/update
+
+# /tags/squirrelsql-3.2.0/doc/
+/tags/squirrelsql-3.2.0/doc/target
+/tags/squirrelsql-3.2.0/doc/.settings
+/tags/squirrelsql-3.2.0/doc/.project
+/tags/squirrelsql-3.2.0/doc/.classpath
+
+# /tags/squirrelsql-3.2.0/fw/
+/tags/squirrelsql-3.2.0/fw/target
+/tags/squirrelsql-3.2.0/fw/.settings
+/tags/squirrelsql-3.2.0/fw/.project
+/tags/squirrelsql-3.2.0/fw/.classpath
+
+# /tags/squirrelsql-3.2.0/installer/
+/tags/squirrelsql-3.2.0/installer/target
+/tags/squirrelsql-3.2.0/installer/.project
+/tags/squirrelsql-3.2.0/installer/.classpath
+/tags/squirrelsql-3.2.0/installer/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-installer-deps/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-installer-deps/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-installer-deps/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-java-version-checker/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-java-version-checker/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-java-version-checker/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-launcher/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-launcher/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-launcher/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-launcher/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-macosx-installer/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-macosx-installer/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrelsql-3.2.0/installer/squirrelsql-macosx-installer/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-other-installer/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-other-installer/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-other-installer/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-other-installer/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-source/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-source/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-source/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-source/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-source/.settings
+
+# /tags/squirrelsql-3.2.0/installer/squirrelsql-update-site/
+/tags/squirrelsql-3.2.0/installer/squirrelsql-update-site/target
+/tags/squirrelsql-3.2.0/installer/squirrelsql-update-site/.project
+/tags/squirrelsql-3.2.0/installer/squirrelsql-update-site/.classpath
+/tags/squirrelsql-3.2.0/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrelsql-3.2.0/plugins/
+/tags/squirrelsql-3.2.0/plugins/target
+/tags/squirrelsql-3.2.0/plugins/.project
+/tags/squirrelsql-3.2.0/plugins/.classpath
+/tags/squirrelsql-3.2.0/plugins/.settings
+
+# /tags/squirrelsql-3.2.0/plugins/cache/
+/tags/squirrelsql-3.2.0/plugins/cache/target
+/tags/squirrelsql-3.2.0/plugins/cache/.settings
+/tags/squirrelsql-3.2.0/plugins/cache/.project
+/tags/squirrelsql-3.2.0/plugins/cache/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/codecompletion/
+/tags/squirrelsql-3.2.0/plugins/codecompletion/target
+/tags/squirrelsql-3.2.0/plugins/codecompletion/.settings
+/tags/squirrelsql-3.2.0/plugins/codecompletion/.project
+/tags/squirrelsql-3.2.0/plugins/codecompletion/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/dataimport/
+/tags/squirrelsql-3.2.0/plugins/dataimport/target
+/tags/squirrelsql-3.2.0/plugins/dataimport/.settings
+/tags/squirrelsql-3.2.0/plugins/dataimport/.project
+/tags/squirrelsql-3.2.0/plugins/dataimport/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/db2/
+/tags/squirrelsql-3.2.0/plugins/db2/target
+/tags/squirrelsql-3.2.0/plugins/db2/.settings
+/tags/squirrelsql-3.2.0/plugins/db2/.project
+/tags/squirrelsql-3.2.0/plugins/db2/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/dbcopy/
+/tags/squirrelsql-3.2.0/plugins/dbcopy/target
+/tags/squirrelsql-3.2.0/plugins/dbcopy/.settings
+/tags/squirrelsql-3.2.0/plugins/dbcopy/.project
+/tags/squirrelsql-3.2.0/plugins/dbcopy/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/dbdiff/
+/tags/squirrelsql-3.2.0/plugins/dbdiff/target
+/tags/squirrelsql-3.2.0/plugins/dbdiff/.settings
+/tags/squirrelsql-3.2.0/plugins/dbdiff/.project
+/tags/squirrelsql-3.2.0/plugins/dbdiff/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/derby/
+/tags/squirrelsql-3.2.0/plugins/derby/target
+/tags/squirrelsql-3.2.0/plugins/derby/.settings
+/tags/squirrelsql-3.2.0/plugins/derby/.project
+/tags/squirrelsql-3.2.0/plugins/derby/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/editextras/
+/tags/squirrelsql-3.2.0/plugins/editextras/target
+/tags/squirrelsql-3.2.0/plugins/editextras/.settings
+/tags/squirrelsql-3.2.0/plugins/editextras/.project
+/tags/squirrelsql-3.2.0/plugins/editextras/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/example/
+/tags/squirrelsql-3.2.0/plugins/example/target
+/tags/squirrelsql-3.2.0/plugins/example/.settings
+/tags/squirrelsql-3.2.0/plugins/example/.project
+/tags/squirrelsql-3.2.0/plugins/example/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/exportconfig/
+/tags/squirrelsql-3.2.0/plugins/exportconfig/target
+/tags/squirrelsql-3.2.0/plugins/exportconfig/.settings
+/tags/squirrelsql-3.2.0/plugins/exportconfig/.project
+/tags/squirrelsql-3.2.0/plugins/exportconfig/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/favs/
+/tags/squirrelsql-3.2.0/plugins/favs/target
+/tags/squirrelsql-3.2.0/plugins/favs/.settings
+/tags/squirrelsql-3.2.0/plugins/favs/.project
+/tags/squirrelsql-3.2.0/plugins/favs/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/firebird/
+/tags/squirrelsql-3.2.0/plugins/firebird/target
+/tags/squirrelsql-3.2.0/plugins/firebird/.settings
+/tags/squirrelsql-3.2.0/plugins/firebird/.project
+/tags/squirrelsql-3.2.0/plugins/firebird/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/firebirdmanager/
+/tags/squirrelsql-3.2.0/plugins/firebirdmanager/target
+/tags/squirrelsql-3.2.0/plugins/firebirdmanager/.settings
+/tags/squirrelsql-3.2.0/plugins/firebirdmanager/.project
+/tags/squirrelsql-3.2.0/plugins/firebirdmanager/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/graph/
+/tags/squirrelsql-3.2.0/plugins/graph/target
+/tags/squirrelsql-3.2.0/plugins/graph/.settings
+/tags/squirrelsql-3.2.0/plugins/graph/.project
+/tags/squirrelsql-3.2.0/plugins/graph/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/h2/
+/tags/squirrelsql-3.2.0/plugins/h2/target
+/tags/squirrelsql-3.2.0/plugins/h2/.settings
+/tags/squirrelsql-3.2.0/plugins/h2/.project
+/tags/squirrelsql-3.2.0/plugins/h2/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/hibernate/
+/tags/squirrelsql-3.2.0/plugins/hibernate/target
+/tags/squirrelsql-3.2.0/plugins/hibernate/.settings
+/tags/squirrelsql-3.2.0/plugins/hibernate/.project
+/tags/squirrelsql-3.2.0/plugins/hibernate/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/i18n/
+/tags/squirrelsql-3.2.0/plugins/i18n/target
+/tags/squirrelsql-3.2.0/plugins/i18n/.settings
+/tags/squirrelsql-3.2.0/plugins/i18n/.project
+/tags/squirrelsql-3.2.0/plugins/i18n/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/informix/
+/tags/squirrelsql-3.2.0/plugins/informix/target
+/tags/squirrelsql-3.2.0/plugins/informix/.settings
+/tags/squirrelsql-3.2.0/plugins/informix/.project
+/tags/squirrelsql-3.2.0/plugins/informix/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/isqlj/
+/tags/squirrelsql-3.2.0/plugins/isqlj/target
+/tags/squirrelsql-3.2.0/plugins/isqlj/.settings
+/tags/squirrelsql-3.2.0/plugins/isqlj/.project
+/tags/squirrelsql-3.2.0/plugins/isqlj/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/laf/
+/tags/squirrelsql-3.2.0/plugins/laf/target
+/tags/squirrelsql-3.2.0/plugins/laf/.settings
+/tags/squirrelsql-3.2.0/plugins/laf/.project
+/tags/squirrelsql-3.2.0/plugins/laf/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/macosx/
+/tags/squirrelsql-3.2.0/plugins/macosx/target
+/tags/squirrelsql-3.2.0/plugins/macosx/.settings
+/tags/squirrelsql-3.2.0/plugins/macosx/.project
+/tags/squirrelsql-3.2.0/plugins/macosx/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/mssql/
+/tags/squirrelsql-3.2.0/plugins/mssql/target
+/tags/squirrelsql-3.2.0/plugins/mssql/.settings
+/tags/squirrelsql-3.2.0/plugins/mssql/.project
+/tags/squirrelsql-3.2.0/plugins/mssql/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/mysql/
+/tags/squirrelsql-3.2.0/plugins/mysql/target
+/tags/squirrelsql-3.2.0/plugins/mysql/.settings
+/tags/squirrelsql-3.2.0/plugins/mysql/.project
+/tags/squirrelsql-3.2.0/plugins/mysql/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/netezza/
+/tags/squirrelsql-3.2.0/plugins/netezza/target
+/tags/squirrelsql-3.2.0/plugins/netezza/.settings
+/tags/squirrelsql-3.2.0/plugins/netezza/.project
+/tags/squirrelsql-3.2.0/plugins/netezza/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/oracle/
+/tags/squirrelsql-3.2.0/plugins/oracle/target
+/tags/squirrelsql-3.2.0/plugins/oracle/.settings
+/tags/squirrelsql-3.2.0/plugins/oracle/.project
+/tags/squirrelsql-3.2.0/plugins/oracle/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/postgres/
+/tags/squirrelsql-3.2.0/plugins/postgres/target
+/tags/squirrelsql-3.2.0/plugins/postgres/.settings
+/tags/squirrelsql-3.2.0/plugins/postgres/.project
+/tags/squirrelsql-3.2.0/plugins/postgres/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/refactoring/
+/tags/squirrelsql-3.2.0/plugins/refactoring/target
+/tags/squirrelsql-3.2.0/plugins/refactoring/.settings
+/tags/squirrelsql-3.2.0/plugins/refactoring/.project
+/tags/squirrelsql-3.2.0/plugins/refactoring/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sessionscript/
+/tags/squirrelsql-3.2.0/plugins/sessionscript/target
+/tags/squirrelsql-3.2.0/plugins/sessionscript/.settings
+/tags/squirrelsql-3.2.0/plugins/sessionscript/.project
+/tags/squirrelsql-3.2.0/plugins/sessionscript/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/smarttools/
+/tags/squirrelsql-3.2.0/plugins/smarttools/target
+/tags/squirrelsql-3.2.0/plugins/smarttools/.settings
+/tags/squirrelsql-3.2.0/plugins/smarttools/.project
+/tags/squirrelsql-3.2.0/plugins/smarttools/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sqlbookmark/
+/tags/squirrelsql-3.2.0/plugins/sqlbookmark/target
+/tags/squirrelsql-3.2.0/plugins/sqlbookmark/.settings
+/tags/squirrelsql-3.2.0/plugins/sqlbookmark/.project
+/tags/squirrelsql-3.2.0/plugins/sqlbookmark/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sqlparam/
+/tags/squirrelsql-3.2.0/plugins/sqlparam/target
+/tags/squirrelsql-3.2.0/plugins/sqlparam/.settings
+/tags/squirrelsql-3.2.0/plugins/sqlparam/.project
+/tags/squirrelsql-3.2.0/plugins/sqlparam/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sqlreplace/
+/tags/squirrelsql-3.2.0/plugins/sqlreplace/target
+/tags/squirrelsql-3.2.0/plugins/sqlreplace/.settings
+/tags/squirrelsql-3.2.0/plugins/sqlreplace/.project
+/tags/squirrelsql-3.2.0/plugins/sqlreplace/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sqlscript/
+/tags/squirrelsql-3.2.0/plugins/sqlscript/target
+/tags/squirrelsql-3.2.0/plugins/sqlscript/.settings
+/tags/squirrelsql-3.2.0/plugins/sqlscript/.project
+/tags/squirrelsql-3.2.0/plugins/sqlscript/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/sqlval/
+/tags/squirrelsql-3.2.0/plugins/sqlval/target
+/tags/squirrelsql-3.2.0/plugins/sqlval/.settings
+/tags/squirrelsql-3.2.0/plugins/sqlval/.project
+/tags/squirrelsql-3.2.0/plugins/sqlval/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-assembly-descriptor/target
+
+# /tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrelsql-3.2.0/plugins/squirrelsql-plugins-parent-pom/.settings
+
+# /tags/squirrelsql-3.2.0/plugins/sybase/
+/tags/squirrelsql-3.2.0/plugins/sybase/target
+/tags/squirrelsql-3.2.0/plugins/sybase/.settings
+/tags/squirrelsql-3.2.0/plugins/sybase/.project
+/tags/squirrelsql-3.2.0/plugins/sybase/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/syntax/
+/tags/squirrelsql-3.2.0/plugins/syntax/target
+/tags/squirrelsql-3.2.0/plugins/syntax/.settings
+/tags/squirrelsql-3.2.0/plugins/syntax/.project
+/tags/squirrelsql-3.2.0/plugins/syntax/.classpath
+
+# /tags/squirrelsql-3.2.0/plugins/userscript/
+/tags/squirrelsql-3.2.0/plugins/userscript/target
+/tags/squirrelsql-3.2.0/plugins/userscript/.settings
+/tags/squirrelsql-3.2.0/plugins/userscript/.project
+/tags/squirrelsql-3.2.0/plugins/userscript/.classpath
+
+# /tags/squirrelsql-3.2.0/squirrelsql-integration-environment/
+/tags/squirrelsql-3.2.0/squirrelsql-integration-environment/target
+/tags/squirrelsql-3.2.0/squirrelsql-integration-environment/.project
+/tags/squirrelsql-3.2.0/squirrelsql-integration-environment/.classpath
+/tags/squirrelsql-3.2.0/squirrelsql-integration-environment/.settings
+
+# /tags/squirrelsql-3.2.0/squirrelsql-translations/
+/tags/squirrelsql-3.2.0/squirrelsql-translations/target
+/tags/squirrelsql-3.2.0/squirrelsql-translations/.settings
+/tags/squirrelsql-3.2.0/squirrelsql-translations/.project
+/tags/squirrelsql-3.2.0/squirrelsql-translations/.classpath
+
+# /tags/squirrelsql-3.2.0/web-site/
+/tags/squirrelsql-3.2.0/web-site/target
+/tags/squirrelsql-3.2.0/web-site/.settings
+/tags/squirrelsql-3.2.0/web-site/.project
+/tags/squirrelsql-3.2.0/web-site/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/
+/tags/squirrelsql-3.2.0-RC1/target
+/tags/squirrelsql-3.2.0-RC1/.project
+/tags/squirrelsql-3.2.0-RC1/.classpath
+/tags/squirrelsql-3.2.0-RC1/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/app/
+/tags/squirrelsql-3.2.0-RC1/app/target
+/tags/squirrelsql-3.2.0-RC1/app/.settings
+/tags/squirrelsql-3.2.0-RC1/app/.project
+/tags/squirrelsql-3.2.0-RC1/app/.classpath
+/tags/squirrelsql-3.2.0-RC1/app/update
+
+# /tags/squirrelsql-3.2.0-RC1/doc/
+/tags/squirrelsql-3.2.0-RC1/doc/target
+/tags/squirrelsql-3.2.0-RC1/doc/.settings
+/tags/squirrelsql-3.2.0-RC1/doc/.project
+/tags/squirrelsql-3.2.0-RC1/doc/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/fw/
+/tags/squirrelsql-3.2.0-RC1/fw/target
+/tags/squirrelsql-3.2.0-RC1/fw/.settings
+/tags/squirrelsql-3.2.0-RC1/fw/.project
+/tags/squirrelsql-3.2.0-RC1/fw/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/installer/
+/tags/squirrelsql-3.2.0-RC1/installer/target
+/tags/squirrelsql-3.2.0-RC1/installer/.project
+/tags/squirrelsql-3.2.0-RC1/installer/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-installer-deps/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-installer-deps/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-installer-deps/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-java-version-checker/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-java-version-checker/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-java-version-checker/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-launcher/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-launcher/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-launcher/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-launcher/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-macosx-installer/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-macosx-installer/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-macosx-installer/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-other-installer/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-other-installer/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-other-installer/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-other-installer/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-source/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-source/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-source/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-source/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-source/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-update-site/
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-update-site/target
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-update-site/.project
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-update-site/.classpath
+/tags/squirrelsql-3.2.0-RC1/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/
+/tags/squirrelsql-3.2.0-RC1/plugins/target
+/tags/squirrelsql-3.2.0-RC1/plugins/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/.classpath
+/tags/squirrelsql-3.2.0-RC1/plugins/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/cache/
+/tags/squirrelsql-3.2.0-RC1/plugins/cache/target
+/tags/squirrelsql-3.2.0-RC1/plugins/cache/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/cache/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/cache/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/codecompletion/
+/tags/squirrelsql-3.2.0-RC1/plugins/codecompletion/target
+/tags/squirrelsql-3.2.0-RC1/plugins/codecompletion/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/codecompletion/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/codecompletion/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/dataimport/
+/tags/squirrelsql-3.2.0-RC1/plugins/dataimport/target
+/tags/squirrelsql-3.2.0-RC1/plugins/dataimport/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/dataimport/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/dataimport/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/db2/
+/tags/squirrelsql-3.2.0-RC1/plugins/db2/target
+/tags/squirrelsql-3.2.0-RC1/plugins/db2/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/db2/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/db2/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/dbcopy/
+/tags/squirrelsql-3.2.0-RC1/plugins/dbcopy/target
+/tags/squirrelsql-3.2.0-RC1/plugins/dbcopy/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/dbcopy/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/dbcopy/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/dbdiff/
+/tags/squirrelsql-3.2.0-RC1/plugins/dbdiff/target
+/tags/squirrelsql-3.2.0-RC1/plugins/dbdiff/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/dbdiff/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/dbdiff/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/derby/
+/tags/squirrelsql-3.2.0-RC1/plugins/derby/target
+/tags/squirrelsql-3.2.0-RC1/plugins/derby/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/derby/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/derby/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/editextras/
+/tags/squirrelsql-3.2.0-RC1/plugins/editextras/target
+/tags/squirrelsql-3.2.0-RC1/plugins/editextras/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/editextras/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/editextras/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/example/
+/tags/squirrelsql-3.2.0-RC1/plugins/example/target
+/tags/squirrelsql-3.2.0-RC1/plugins/example/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/example/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/example/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/exportconfig/
+/tags/squirrelsql-3.2.0-RC1/plugins/exportconfig/target
+/tags/squirrelsql-3.2.0-RC1/plugins/exportconfig/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/exportconfig/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/exportconfig/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/favs/
+/tags/squirrelsql-3.2.0-RC1/plugins/favs/target
+/tags/squirrelsql-3.2.0-RC1/plugins/favs/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/favs/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/favs/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/firebird/
+/tags/squirrelsql-3.2.0-RC1/plugins/firebird/target
+/tags/squirrelsql-3.2.0-RC1/plugins/firebird/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/firebird/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/firebird/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/firebirdmanager/
+/tags/squirrelsql-3.2.0-RC1/plugins/firebirdmanager/target
+/tags/squirrelsql-3.2.0-RC1/plugins/firebirdmanager/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/firebirdmanager/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/firebirdmanager/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/graph/
+/tags/squirrelsql-3.2.0-RC1/plugins/graph/target
+/tags/squirrelsql-3.2.0-RC1/plugins/graph/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/graph/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/graph/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/h2/
+/tags/squirrelsql-3.2.0-RC1/plugins/h2/target
+/tags/squirrelsql-3.2.0-RC1/plugins/h2/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/h2/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/h2/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/hibernate/
+/tags/squirrelsql-3.2.0-RC1/plugins/hibernate/target
+/tags/squirrelsql-3.2.0-RC1/plugins/hibernate/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/hibernate/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/hibernate/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/i18n/
+/tags/squirrelsql-3.2.0-RC1/plugins/i18n/target
+/tags/squirrelsql-3.2.0-RC1/plugins/i18n/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/i18n/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/i18n/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/informix/
+/tags/squirrelsql-3.2.0-RC1/plugins/informix/target
+/tags/squirrelsql-3.2.0-RC1/plugins/informix/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/informix/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/informix/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/isqlj/
+/tags/squirrelsql-3.2.0-RC1/plugins/isqlj/target
+/tags/squirrelsql-3.2.0-RC1/plugins/isqlj/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/isqlj/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/isqlj/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/laf/
+/tags/squirrelsql-3.2.0-RC1/plugins/laf/target
+/tags/squirrelsql-3.2.0-RC1/plugins/laf/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/laf/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/laf/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/macosx/
+/tags/squirrelsql-3.2.0-RC1/plugins/macosx/target
+/tags/squirrelsql-3.2.0-RC1/plugins/macosx/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/macosx/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/macosx/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/mssql/
+/tags/squirrelsql-3.2.0-RC1/plugins/mssql/target
+/tags/squirrelsql-3.2.0-RC1/plugins/mssql/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/mssql/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/mssql/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/mysql/
+/tags/squirrelsql-3.2.0-RC1/plugins/mysql/target
+/tags/squirrelsql-3.2.0-RC1/plugins/mysql/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/mysql/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/mysql/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/netezza/
+/tags/squirrelsql-3.2.0-RC1/plugins/netezza/target
+/tags/squirrelsql-3.2.0-RC1/plugins/netezza/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/netezza/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/netezza/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/oracle/
+/tags/squirrelsql-3.2.0-RC1/plugins/oracle/target
+/tags/squirrelsql-3.2.0-RC1/plugins/oracle/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/oracle/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/oracle/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/postgres/
+/tags/squirrelsql-3.2.0-RC1/plugins/postgres/target
+/tags/squirrelsql-3.2.0-RC1/plugins/postgres/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/postgres/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/postgres/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/refactoring/
+/tags/squirrelsql-3.2.0-RC1/plugins/refactoring/target
+/tags/squirrelsql-3.2.0-RC1/plugins/refactoring/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/refactoring/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/refactoring/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sessionscript/
+/tags/squirrelsql-3.2.0-RC1/plugins/sessionscript/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sessionscript/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sessionscript/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sessionscript/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/smarttools/
+/tags/squirrelsql-3.2.0-RC1/plugins/smarttools/target
+/tags/squirrelsql-3.2.0-RC1/plugins/smarttools/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/smarttools/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/smarttools/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sqlbookmark/
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlbookmark/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlbookmark/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlbookmark/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlbookmark/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sqlparam/
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlparam/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlparam/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlparam/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlparam/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sqlreplace/
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlreplace/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlreplace/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlreplace/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlreplace/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sqlscript/
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlscript/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlscript/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlscript/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlscript/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sqlval/
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlval/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlval/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlval/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sqlval/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-assembly-descriptor/target
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrelsql-3.2.0-RC1/plugins/squirrelsql-plugins-parent-pom/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/sybase/
+/tags/squirrelsql-3.2.0-RC1/plugins/sybase/target
+/tags/squirrelsql-3.2.0-RC1/plugins/sybase/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/sybase/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/sybase/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/syntax/
+/tags/squirrelsql-3.2.0-RC1/plugins/syntax/target
+/tags/squirrelsql-3.2.0-RC1/plugins/syntax/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/syntax/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/syntax/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/plugins/userscript/
+/tags/squirrelsql-3.2.0-RC1/plugins/userscript/target
+/tags/squirrelsql-3.2.0-RC1/plugins/userscript/.settings
+/tags/squirrelsql-3.2.0-RC1/plugins/userscript/.project
+/tags/squirrelsql-3.2.0-RC1/plugins/userscript/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/squirrelsql-integration-environment/
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-integration-environment/target
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-integration-environment/.project
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-integration-environment/.classpath
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-integration-environment/.settings
+
+# /tags/squirrelsql-3.2.0-RC1/squirrelsql-translations/
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-translations/target
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-translations/.settings
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-translations/.project
+/tags/squirrelsql-3.2.0-RC1/squirrelsql-translations/.classpath
+
+# /tags/squirrelsql-3.2.0-RC1/web-site/
+/tags/squirrelsql-3.2.0-RC1/web-site/target
+/tags/squirrelsql-3.2.0-RC1/web-site/.settings
+/tags/squirrelsql-3.2.0-RC1/web-site/.project
+/tags/squirrelsql-3.2.0-RC1/web-site/.classpath
+
+# /tags/squirrelsql-3.4.0/
+/tags/squirrelsql-3.4.0/*.iml
+/tags/squirrelsql-3.4.0/*.ipr
+/tags/squirrelsql-3.4.0/*.iws
+/tags/squirrelsql-3.4.0/.classpath
+/tags/squirrelsql-3.4.0/.project
+/tags/squirrelsql-3.4.0/.settings
+/tags/squirrelsql-3.4.0/target
+
+# /tags/squirrelsql-3.4.0/app/
+/tags/squirrelsql-3.4.0/app/target
+/tags/squirrelsql-3.4.0/app/.settings
+/tags/squirrelsql-3.4.0/app/.project
+/tags/squirrelsql-3.4.0/app/.classpath
+/tags/squirrelsql-3.4.0/app/update
+/tags/squirrelsql-3.4.0/app/*.iml
+
+# /tags/squirrelsql-3.4.0/cli/dbcopy/
+/tags/squirrelsql-3.4.0/cli/dbcopy/target
+/tags/squirrelsql-3.4.0/cli/dbcopy/.project
+/tags/squirrelsql-3.4.0/cli/dbcopy/.classpath
+/tags/squirrelsql-3.4.0/cli/dbcopy/.settings
+
+# /tags/squirrelsql-3.4.0/doc/
+/tags/squirrelsql-3.4.0/doc/target
+/tags/squirrelsql-3.4.0/doc/.settings
+/tags/squirrelsql-3.4.0/doc/.project
+/tags/squirrelsql-3.4.0/doc/.classpath
+
+# /tags/squirrelsql-3.4.0/fw/
+/tags/squirrelsql-3.4.0/fw/target
+/tags/squirrelsql-3.4.0/fw/.settings
+/tags/squirrelsql-3.4.0/fw/.project
+/tags/squirrelsql-3.4.0/fw/.classpath
+/tags/squirrelsql-3.4.0/fw/*.iml
+
+# /tags/squirrelsql-3.4.0/installer/
+/tags/squirrelsql-3.4.0/installer/target
+/tags/squirrelsql-3.4.0/installer/.project
+/tags/squirrelsql-3.4.0/installer/.classpath
+/tags/squirrelsql-3.4.0/installer/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-installer-deps/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-installer-deps/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-installer-deps/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-installer-deps/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-installer-deps/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-java-version-checker/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-java-version-checker/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-java-version-checker/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-java-version-checker/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-java-version-checker/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-launcher/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-launcher/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-launcher/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-launcher/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-launcher/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-macosx-installer/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-macosx-installer/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-macosx-installer/.settings
+/tags/squirrelsql-3.4.0/installer/squirrelsql-macosx-installer/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-macosx-installer/.classpath
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-other-installer/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-other-installer/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-other-installer/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-other-installer/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-other-installer/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-source/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-source/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-source/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-source/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-source/.settings
+
+# /tags/squirrelsql-3.4.0/installer/squirrelsql-update-site/
+/tags/squirrelsql-3.4.0/installer/squirrelsql-update-site/target
+/tags/squirrelsql-3.4.0/installer/squirrelsql-update-site/.project
+/tags/squirrelsql-3.4.0/installer/squirrelsql-update-site/.classpath
+/tags/squirrelsql-3.4.0/installer/squirrelsql-update-site/.settings
+
+# /tags/squirrelsql-3.4.0/plugins/
+/tags/squirrelsql-3.4.0/plugins/target
+/tags/squirrelsql-3.4.0/plugins/.project
+/tags/squirrelsql-3.4.0/plugins/.classpath
+/tags/squirrelsql-3.4.0/plugins/.settings
+/tags/squirrelsql-3.4.0/plugins/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/cache/
+/tags/squirrelsql-3.4.0/plugins/cache/target
+/tags/squirrelsql-3.4.0/plugins/cache/.settings
+/tags/squirrelsql-3.4.0/plugins/cache/.project
+/tags/squirrelsql-3.4.0/plugins/cache/.classpath
+
+# /tags/squirrelsql-3.4.0/plugins/codecompletion/
+/tags/squirrelsql-3.4.0/plugins/codecompletion/*.iml
+/tags/squirrelsql-3.4.0/plugins/codecompletion/.classpath
+/tags/squirrelsql-3.4.0/plugins/codecompletion/.project
+/tags/squirrelsql-3.4.0/plugins/codecompletion/.settings
+/tags/squirrelsql-3.4.0/plugins/codecompletion/target
+
+# /tags/squirrelsql-3.4.0/plugins/dataimport/
+/tags/squirrelsql-3.4.0/plugins/dataimport/target
+/tags/squirrelsql-3.4.0/plugins/dataimport/.settings
+/tags/squirrelsql-3.4.0/plugins/dataimport/.project
+/tags/squirrelsql-3.4.0/plugins/dataimport/.classpath
+/tags/squirrelsql-3.4.0/plugins/dataimport/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/db2/
+/tags/squirrelsql-3.4.0/plugins/db2/target
+/tags/squirrelsql-3.4.0/plugins/db2/.settings
+/tags/squirrelsql-3.4.0/plugins/db2/.project
+/tags/squirrelsql-3.4.0/plugins/db2/.classpath
+/tags/squirrelsql-3.4.0/plugins/db2/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/dbcopy/
+/tags/squirrelsql-3.4.0/plugins/dbcopy/target
+/tags/squirrelsql-3.4.0/plugins/dbcopy/.settings
+/tags/squirrelsql-3.4.0/plugins/dbcopy/.project
+/tags/squirrelsql-3.4.0/plugins/dbcopy/.classpath
+/tags/squirrelsql-3.4.0/plugins/dbcopy/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/dbdiff/
+/tags/squirrelsql-3.4.0/plugins/dbdiff/target
+/tags/squirrelsql-3.4.0/plugins/dbdiff/.settings
+/tags/squirrelsql-3.4.0/plugins/dbdiff/.project
+/tags/squirrelsql-3.4.0/plugins/dbdiff/.classpath
+/tags/squirrelsql-3.4.0/plugins/dbdiff/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/derby/
+/tags/squirrelsql-3.4.0/plugins/derby/target
+/tags/squirrelsql-3.4.0/plugins/derby/.settings
+/tags/squirrelsql-3.4.0/plugins/derby/.project
+/tags/squirrelsql-3.4.0/plugins/derby/.classpath
+/tags/squirrelsql-3.4.0/plugins/derby/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/editextras/
+/tags/squirrelsql-3.4.0/plugins/editextras/target
+/tags/squirrelsql-3.4.0/plugins/editextras/.settings
+/tags/squirrelsql-3.4.0/plugins/editextras/.project
+/tags/squirrelsql-3.4.0/plugins/editextras/.classpath
+/tags/squirrelsql-3.4.0/plugins/editextras/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/example/
+/tags/squirrelsql-3.4.0/plugins/example/target
+/tags/squirrelsql-3.4.0/plugins/example/.settings
+/tags/squirrelsql-3.4.0/plugins/example/.project
+/tags/squirrelsql-3.4.0/plugins/example/.classpath
+/tags/squirrelsql-3.4.0/plugins/example/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/exportconfig/
+/tags/squirrelsql-3.4.0/plugins/exportconfig/target
+/tags/squirrelsql-3.4.0/plugins/exportconfig/.settings
+/tags/squirrelsql-3.4.0/plugins/exportconfig/.project
+/tags/squirrelsql-3.4.0/plugins/exportconfig/.classpath
+/tags/squirrelsql-3.4.0/plugins/exportconfig/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/favs/
+/tags/squirrelsql-3.4.0/plugins/favs/target
+/tags/squirrelsql-3.4.0/plugins/favs/.settings
+/tags/squirrelsql-3.4.0/plugins/favs/.project
+/tags/squirrelsql-3.4.0/plugins/favs/.classpath
+/tags/squirrelsql-3.4.0/plugins/favs/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/firebird/
+/tags/squirrelsql-3.4.0/plugins/firebird/target
+/tags/squirrelsql-3.4.0/plugins/firebird/.settings
+/tags/squirrelsql-3.4.0/plugins/firebird/.project
+/tags/squirrelsql-3.4.0/plugins/firebird/.classpath
+/tags/squirrelsql-3.4.0/plugins/firebird/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/firebirdmanager/
+/tags/squirrelsql-3.4.0/plugins/firebirdmanager/target
+/tags/squirrelsql-3.4.0/plugins/firebirdmanager/.settings
+/tags/squirrelsql-3.4.0/plugins/firebirdmanager/.project
+/tags/squirrelsql-3.4.0/plugins/firebirdmanager/.classpath
+/tags/squirrelsql-3.4.0/plugins/firebirdmanager/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/graph/
+/tags/squirrelsql-3.4.0/plugins/graph/target
+/tags/squirrelsql-3.4.0/plugins/graph/.settings
+/tags/squirrelsql-3.4.0/plugins/graph/.project
+/tags/squirrelsql-3.4.0/plugins/graph/.classpath
+/tags/squirrelsql-3.4.0/plugins/graph/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/greenplum/
+/tags/squirrelsql-3.4.0/plugins/greenplum/target
+/tags/squirrelsql-3.4.0/plugins/greenplum/.settings
+/tags/squirrelsql-3.4.0/plugins/greenplum/.classpath
+/tags/squirrelsql-3.4.0/plugins/greenplum/.project
+
+# /tags/squirrelsql-3.4.0/plugins/h2/
+/tags/squirrelsql-3.4.0/plugins/h2/target
+/tags/squirrelsql-3.4.0/plugins/h2/.settings
+/tags/squirrelsql-3.4.0/plugins/h2/.project
+/tags/squirrelsql-3.4.0/plugins/h2/.classpath
+/tags/squirrelsql-3.4.0/plugins/h2/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/hibernate/
+/tags/squirrelsql-3.4.0/plugins/hibernate/target
+/tags/squirrelsql-3.4.0/plugins/hibernate/.settings
+/tags/squirrelsql-3.4.0/plugins/hibernate/.project
+/tags/squirrelsql-3.4.0/plugins/hibernate/.classpath
+/tags/squirrelsql-3.4.0/plugins/hibernate/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/i18n/
+/tags/squirrelsql-3.4.0/plugins/i18n/target
+/tags/squirrelsql-3.4.0/plugins/i18n/.settings
+/tags/squirrelsql-3.4.0/plugins/i18n/.project
+/tags/squirrelsql-3.4.0/plugins/i18n/.classpath
+/tags/squirrelsql-3.4.0/plugins/i18n/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/informix/
+/tags/squirrelsql-3.4.0/plugins/informix/target
+/tags/squirrelsql-3.4.0/plugins/informix/.settings
+/tags/squirrelsql-3.4.0/plugins/informix/.project
+/tags/squirrelsql-3.4.0/plugins/informix/.classpath
+/tags/squirrelsql-3.4.0/plugins/informix/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/isqlj/
+/tags/squirrelsql-3.4.0/plugins/isqlj/target
+/tags/squirrelsql-3.4.0/plugins/isqlj/.settings
+/tags/squirrelsql-3.4.0/plugins/isqlj/.project
+/tags/squirrelsql-3.4.0/plugins/isqlj/.classpath
+
+# /tags/squirrelsql-3.4.0/plugins/laf/
+/tags/squirrelsql-3.4.0/plugins/laf/target
+/tags/squirrelsql-3.4.0/plugins/laf/.settings
+/tags/squirrelsql-3.4.0/plugins/laf/.project
+/tags/squirrelsql-3.4.0/plugins/laf/.classpath
+/tags/squirrelsql-3.4.0/plugins/laf/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/macosx/
+/tags/squirrelsql-3.4.0/plugins/macosx/target
+/tags/squirrelsql-3.4.0/plugins/macosx/.settings
+/tags/squirrelsql-3.4.0/plugins/macosx/.project
+/tags/squirrelsql-3.4.0/plugins/macosx/.classpath
+/tags/squirrelsql-3.4.0/plugins/macosx/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/mssql/
+/tags/squirrelsql-3.4.0/plugins/mssql/target
+/tags/squirrelsql-3.4.0/plugins/mssql/.settings
+/tags/squirrelsql-3.4.0/plugins/mssql/.project
+/tags/squirrelsql-3.4.0/plugins/mssql/.classpath
+/tags/squirrelsql-3.4.0/plugins/mssql/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/multisource/
+/tags/squirrelsql-3.4.0/plugins/multisource/target
+/tags/squirrelsql-3.4.0/plugins/multisource/.classpath
+/tags/squirrelsql-3.4.0/plugins/multisource/.project
+/tags/squirrelsql-3.4.0/plugins/multisource/.settings
+
+# /tags/squirrelsql-3.4.0/plugins/mysql/
+/tags/squirrelsql-3.4.0/plugins/mysql/target
+/tags/squirrelsql-3.4.0/plugins/mysql/.settings
+/tags/squirrelsql-3.4.0/plugins/mysql/.project
+/tags/squirrelsql-3.4.0/plugins/mysql/.classpath
+/tags/squirrelsql-3.4.0/plugins/mysql/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/netezza/
+/tags/squirrelsql-3.4.0/plugins/netezza/target
+/tags/squirrelsql-3.4.0/plugins/netezza/.settings
+/tags/squirrelsql-3.4.0/plugins/netezza/.project
+/tags/squirrelsql-3.4.0/plugins/netezza/.classpath
+/tags/squirrelsql-3.4.0/plugins/netezza/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/oracle/
+/tags/squirrelsql-3.4.0/plugins/oracle/target
+/tags/squirrelsql-3.4.0/plugins/oracle/.settings
+/tags/squirrelsql-3.4.0/plugins/oracle/.project
+/tags/squirrelsql-3.4.0/plugins/oracle/.classpath
+/tags/squirrelsql-3.4.0/plugins/oracle/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/postgres/
+/tags/squirrelsql-3.4.0/plugins/postgres/target
+/tags/squirrelsql-3.4.0/plugins/postgres/.settings
+/tags/squirrelsql-3.4.0/plugins/postgres/.project
+/tags/squirrelsql-3.4.0/plugins/postgres/.classpath
+/tags/squirrelsql-3.4.0/plugins/postgres/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/refactoring/
+/tags/squirrelsql-3.4.0/plugins/refactoring/target
+/tags/squirrelsql-3.4.0/plugins/refactoring/.settings
+/tags/squirrelsql-3.4.0/plugins/refactoring/.project
+/tags/squirrelsql-3.4.0/plugins/refactoring/.classpath
+/tags/squirrelsql-3.4.0/plugins/refactoring/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sessionscript/
+/tags/squirrelsql-3.4.0/plugins/sessionscript/target
+/tags/squirrelsql-3.4.0/plugins/sessionscript/.settings
+/tags/squirrelsql-3.4.0/plugins/sessionscript/.project
+/tags/squirrelsql-3.4.0/plugins/sessionscript/.classpath
+/tags/squirrelsql-3.4.0/plugins/sessionscript/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/smarttools/
+/tags/squirrelsql-3.4.0/plugins/smarttools/target
+/tags/squirrelsql-3.4.0/plugins/smarttools/.settings
+/tags/squirrelsql-3.4.0/plugins/smarttools/.project
+/tags/squirrelsql-3.4.0/plugins/smarttools/.classpath
+/tags/squirrelsql-3.4.0/plugins/smarttools/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sqlbookmark/
+/tags/squirrelsql-3.4.0/plugins/sqlbookmark/target
+/tags/squirrelsql-3.4.0/plugins/sqlbookmark/.settings
+/tags/squirrelsql-3.4.0/plugins/sqlbookmark/.project
+/tags/squirrelsql-3.4.0/plugins/sqlbookmark/.classpath
+/tags/squirrelsql-3.4.0/plugins/sqlbookmark/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sqlparam/
+/tags/squirrelsql-3.4.0/plugins/sqlparam/target
+/tags/squirrelsql-3.4.0/plugins/sqlparam/.settings
+/tags/squirrelsql-3.4.0/plugins/sqlparam/.project
+/tags/squirrelsql-3.4.0/plugins/sqlparam/.classpath
+/tags/squirrelsql-3.4.0/plugins/sqlparam/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sqlreplace/
+/tags/squirrelsql-3.4.0/plugins/sqlreplace/target
+/tags/squirrelsql-3.4.0/plugins/sqlreplace/.settings
+/tags/squirrelsql-3.4.0/plugins/sqlreplace/.project
+/tags/squirrelsql-3.4.0/plugins/sqlreplace/.classpath
+/tags/squirrelsql-3.4.0/plugins/sqlreplace/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sqlscript/
+/tags/squirrelsql-3.4.0/plugins/sqlscript/target
+/tags/squirrelsql-3.4.0/plugins/sqlscript/.settings
+/tags/squirrelsql-3.4.0/plugins/sqlscript/.project
+/tags/squirrelsql-3.4.0/plugins/sqlscript/.classpath
+/tags/squirrelsql-3.4.0/plugins/sqlscript/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/sqlval/
+/tags/squirrelsql-3.4.0/plugins/sqlval/target
+/tags/squirrelsql-3.4.0/plugins/sqlval/.settings
+/tags/squirrelsql-3.4.0/plugins/sqlval/.project
+/tags/squirrelsql-3.4.0/plugins/sqlval/.classpath
+/tags/squirrelsql-3.4.0/plugins/sqlval/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/target
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/.project
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/.classpath
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/.settings
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+
+# /tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/target
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-assembly-descriptor/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/target
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/.project
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/.classpath
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/.settings
+/tags/squirrelsql-3.4.0/plugins/squirrelsql-plugins-parent-pom/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/swingViolations/
+/tags/squirrelsql-3.4.0/plugins/swingViolations/.classpath
+/tags/squirrelsql-3.4.0/plugins/swingViolations/.project
+/tags/squirrelsql-3.4.0/plugins/swingViolations/.settings
+/tags/squirrelsql-3.4.0/plugins/swingViolations/target
+
+# /tags/squirrelsql-3.4.0/plugins/sybase/
+/tags/squirrelsql-3.4.0/plugins/sybase/target
+/tags/squirrelsql-3.4.0/plugins/sybase/.settings
+/tags/squirrelsql-3.4.0/plugins/sybase/.project
+/tags/squirrelsql-3.4.0/plugins/sybase/.classpath
+/tags/squirrelsql-3.4.0/plugins/sybase/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/syntax/
+/tags/squirrelsql-3.4.0/plugins/syntax/target
+/tags/squirrelsql-3.4.0/plugins/syntax/.settings
+/tags/squirrelsql-3.4.0/plugins/syntax/.project
+/tags/squirrelsql-3.4.0/plugins/syntax/.classpath
+/tags/squirrelsql-3.4.0/plugins/syntax/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/userscript/
+/tags/squirrelsql-3.4.0/plugins/userscript/target
+/tags/squirrelsql-3.4.0/plugins/userscript/.settings
+/tags/squirrelsql-3.4.0/plugins/userscript/.project
+/tags/squirrelsql-3.4.0/plugins/userscript/.classpath
+/tags/squirrelsql-3.4.0/plugins/userscript/*.iml
+
+# /tags/squirrelsql-3.4.0/plugins/wikiTableConfigurations/
+/tags/squirrelsql-3.4.0/plugins/wikiTableConfigurations/.project
+/tags/squirrelsql-3.4.0/plugins/wikiTableConfigurations/.classpath
+/tags/squirrelsql-3.4.0/plugins/wikiTableConfigurations/.settings
+/tags/squirrelsql-3.4.0/plugins/wikiTableConfigurations/target
+
+# /tags/squirrelsql-3.4.0/squirrelsql-integration-environment/
+/tags/squirrelsql-3.4.0/squirrelsql-integration-environment/target
+/tags/squirrelsql-3.4.0/squirrelsql-integration-environment/.project
+/tags/squirrelsql-3.4.0/squirrelsql-integration-environment/.classpath
+/tags/squirrelsql-3.4.0/squirrelsql-integration-environment/.settings
+
+# /tags/squirrelsql-3.4.0/squirrelsql-translations/
+/tags/squirrelsql-3.4.0/squirrelsql-translations/target
+/tags/squirrelsql-3.4.0/squirrelsql-translations/.settings
+/tags/squirrelsql-3.4.0/squirrelsql-translations/.project
+/tags/squirrelsql-3.4.0/squirrelsql-translations/.classpath
+
+# /tags/squirrelsql-3.4.0/web-site/
+/tags/squirrelsql-3.4.0/web-site/target
+/tags/squirrelsql-3.4.0/web-site/.settings
+/tags/squirrelsql-3.4.0/web-site/.project
+/tags/squirrelsql-3.4.0/web-site/.classpath
+
+# /tags/squirrelsql-plugin-archetype-3.3.0-rc2/
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/target
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/.project
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/.classpath
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/.settings
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/*.iml
+
+# /tags/squirrelsql-plugin-archetype-3.3.0-rc2/src/main/resources/archetype-resources/
+/tags/squirrelsql-plugin-archetype-3.3.0-rc2/src/main/resources/archetype-resources/
+
+# /tags/squirrelsql-plugin-archetype-3.3.0-rc3/
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/target
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/.project
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/.classpath
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/.settings
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/*.iml
+
+# /tags/squirrelsql-plugin-archetype-3.3.0-rc3/src/main/resources/archetype-resources/
+/tags/squirrelsql-plugin-archetype-3.3.0-rc3/src/main/resources/archetype-resources/
+
+# /tags/squirrelsql-plugins-parent-pom-3.3.1/
+/tags/squirrelsql-plugins-parent-pom-3.3.1/target
+/tags/squirrelsql-plugins-parent-pom-3.3.1/.project
+/tags/squirrelsql-plugins-parent-pom-3.3.1/.classpath
+/tags/squirrelsql-plugins-parent-pom-3.3.1/.settings
+/tags/squirrelsql-plugins-parent-pom-3.3.1/*.iml
+
+# /tags/squirrelsql-source-3.2.0/
+/tags/squirrelsql-source-3.2.0/target
+/tags/squirrelsql-source-3.2.0/.project
+/tags/squirrelsql-source-3.2.0/.classpath
+/tags/squirrelsql-source-3.2.0/.settings
+
+# /trunk/archive/mavenize/squirrelsql-plugin-archetype/
+/trunk/archive/mavenize/squirrelsql-plugin-archetype/target
+/trunk/archive/mavenize/squirrelsql-plugin-archetype/.project
+/trunk/archive/mavenize/squirrelsql-plugin-archetype/.classpath
+/trunk/archive/mavenize/squirrelsql-plugin-archetype/.settings
+
+# /trunk/archive/squirrel-sql/
+/trunk/archive/squirrel-sql/bin
+
+# /trunk/maven-plugin-workspace/
+/trunk/maven-plugin-workspace/target
+/trunk/maven-plugin-workspace/.project
+/trunk/maven-plugin-workspace/.classpath
+/trunk/maven-plugin-workspace/.settings
+
+# /trunk/maven-plugin-workspace/maven-utils/
+/trunk/maven-plugin-workspace/maven-utils/target
+/trunk/maven-plugin-workspace/maven-utils/.project
+/trunk/maven-plugin-workspace/maven-utils/.classpath
+/trunk/maven-plugin-workspace/maven-utils/.settings
+
+# /trunk/maven-plugin-workspace/squirrelsql-dependency-plugin/
+/trunk/maven-plugin-workspace/squirrelsql-dependency-plugin/target
+/trunk/maven-plugin-workspace/squirrelsql-dependency-plugin/.project
+/trunk/maven-plugin-workspace/squirrelsql-dependency-plugin/.classpath
+/trunk/maven-plugin-workspace/squirrelsql-dependency-plugin/.settings
+
+# /trunk/maven-plugin-workspace/squirrelsql-update-site-plugin/
+/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin/target
+/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin/.project
+/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin/.classpath
+/trunk/maven-plugin-workspace/squirrelsql-update-site-plugin/.settings
+
+# /trunk/maven-plugin-workspace/squirrelsql-version-plugin/
+/trunk/maven-plugin-workspace/squirrelsql-version-plugin/target
+/trunk/maven-plugin-workspace/squirrelsql-version-plugin/.project
+/trunk/maven-plugin-workspace/squirrelsql-version-plugin/.classpath
+/trunk/maven-plugin-workspace/squirrelsql-version-plugin/.settings
+
+# /trunk/sql12/
+/trunk/sql12/*.iml
+/trunk/sql12/*.ipr
+/trunk/sql12/*.iws
+/trunk/sql12/.classpath
+/trunk/sql12/.project
+/trunk/sql12/.settings
+/trunk/sql12/target
+
+# /trunk/sql12/app/
+/trunk/sql12/app/target
+/trunk/sql12/app/.settings
+/trunk/sql12/app/.project
+/trunk/sql12/app/.classpath
+/trunk/sql12/app/update
+/trunk/sql12/app/*.iml
+
+# /trunk/sql12/cli/dbcopy/
+/trunk/sql12/cli/dbcopy/target
+/trunk/sql12/cli/dbcopy/.project
+/trunk/sql12/cli/dbcopy/.classpath
+/trunk/sql12/cli/dbcopy/.settings
+
+# /trunk/sql12/doc/
+/trunk/sql12/doc/target
+/trunk/sql12/doc/.settings
+/trunk/sql12/doc/.project
+/trunk/sql12/doc/.classpath
+
+# /trunk/sql12/fw/
+/trunk/sql12/fw/target
+/trunk/sql12/fw/.settings
+/trunk/sql12/fw/.project
+/trunk/sql12/fw/.classpath
+/trunk/sql12/fw/*.iml
+
+# /trunk/sql12/installer/
+/trunk/sql12/installer/target
+/trunk/sql12/installer/.project
+/trunk/sql12/installer/.classpath
+/trunk/sql12/installer/.settings
+
+# /trunk/sql12/installer/squirrelsql-installer-deps/
+/trunk/sql12/installer/squirrelsql-installer-deps/target
+/trunk/sql12/installer/squirrelsql-installer-deps/.project
+/trunk/sql12/installer/squirrelsql-installer-deps/.classpath
+/trunk/sql12/installer/squirrelsql-installer-deps/.settings
+
+# /trunk/sql12/installer/squirrelsql-java-version-checker/
+/trunk/sql12/installer/squirrelsql-java-version-checker/target
+/trunk/sql12/installer/squirrelsql-java-version-checker/.project
+/trunk/sql12/installer/squirrelsql-java-version-checker/.classpath
+/trunk/sql12/installer/squirrelsql-java-version-checker/.settings
+
+# /trunk/sql12/installer/squirrelsql-launcher/
+/trunk/sql12/installer/squirrelsql-launcher/target
+/trunk/sql12/installer/squirrelsql-launcher/.project
+/trunk/sql12/installer/squirrelsql-launcher/.classpath
+/trunk/sql12/installer/squirrelsql-launcher/.settings
+
+# /trunk/sql12/installer/squirrelsql-macosx-installer/
+/trunk/sql12/installer/squirrelsql-macosx-installer/target
+/trunk/sql12/installer/squirrelsql-macosx-installer/.settings
+/trunk/sql12/installer/squirrelsql-macosx-installer/.project
+/trunk/sql12/installer/squirrelsql-macosx-installer/.classpath
+
+# /trunk/sql12/installer/squirrelsql-other-installer/
+/trunk/sql12/installer/squirrelsql-other-installer/target
+/trunk/sql12/installer/squirrelsql-other-installer/.project
+/trunk/sql12/installer/squirrelsql-other-installer/.classpath
+/trunk/sql12/installer/squirrelsql-other-installer/.settings
+
+# /trunk/sql12/installer/squirrelsql-source/
+/trunk/sql12/installer/squirrelsql-source/target
+/trunk/sql12/installer/squirrelsql-source/.project
+/trunk/sql12/installer/squirrelsql-source/.classpath
+/trunk/sql12/installer/squirrelsql-source/.settings
+
+# /trunk/sql12/installer/squirrelsql-update-site/
+/trunk/sql12/installer/squirrelsql-update-site/target
+/trunk/sql12/installer/squirrelsql-update-site/.project
+/trunk/sql12/installer/squirrelsql-update-site/.classpath
+/trunk/sql12/installer/squirrelsql-update-site/.settings
+
+# /trunk/sql12/plugins/
+/trunk/sql12/plugins/target
+/trunk/sql12/plugins/.project
+/trunk/sql12/plugins/.classpath
+/trunk/sql12/plugins/.settings
+/trunk/sql12/plugins/*.iml
+
+# /trunk/sql12/plugins/cache/
+/trunk/sql12/plugins/cache/target
+/trunk/sql12/plugins/cache/.settings
+/trunk/sql12/plugins/cache/.project
+/trunk/sql12/plugins/cache/.classpath
+
+# /trunk/sql12/plugins/codecompletion/
+/trunk/sql12/plugins/codecompletion/*.iml
+/trunk/sql12/plugins/codecompletion/.classpath
+/trunk/sql12/plugins/codecompletion/.project
+/trunk/sql12/plugins/codecompletion/.settings
+/trunk/sql12/plugins/codecompletion/target
+
+# /trunk/sql12/plugins/dataimport/
+/trunk/sql12/plugins/dataimport/target
+/trunk/sql12/plugins/dataimport/.settings
+/trunk/sql12/plugins/dataimport/.project
+/trunk/sql12/plugins/dataimport/.classpath
+/trunk/sql12/plugins/dataimport/*.iml
+
+# /trunk/sql12/plugins/db2/
+/trunk/sql12/plugins/db2/target
+/trunk/sql12/plugins/db2/.settings
+/trunk/sql12/plugins/db2/.project
+/trunk/sql12/plugins/db2/.classpath
+/trunk/sql12/plugins/db2/*.iml
+
+# /trunk/sql12/plugins/dbcopy/
+/trunk/sql12/plugins/dbcopy/target
+/trunk/sql12/plugins/dbcopy/.settings
+/trunk/sql12/plugins/dbcopy/.project
+/trunk/sql12/plugins/dbcopy/.classpath
+/trunk/sql12/plugins/dbcopy/*.iml
+
+# /trunk/sql12/plugins/dbdiff/
+/trunk/sql12/plugins/dbdiff/target
+/trunk/sql12/plugins/dbdiff/.settings
+/trunk/sql12/plugins/dbdiff/.project
+/trunk/sql12/plugins/dbdiff/.classpath
+/trunk/sql12/plugins/dbdiff/*.iml
+
+# /trunk/sql12/plugins/derby/
+/trunk/sql12/plugins/derby/target
+/trunk/sql12/plugins/derby/.settings
+/trunk/sql12/plugins/derby/.project
+/trunk/sql12/plugins/derby/.classpath
+/trunk/sql12/plugins/derby/*.iml
+
+# /trunk/sql12/plugins/editextras/
+/trunk/sql12/plugins/editextras/target
+/trunk/sql12/plugins/editextras/.settings
+/trunk/sql12/plugins/editextras/.project
+/trunk/sql12/plugins/editextras/.classpath
+/trunk/sql12/plugins/editextras/*.iml
+
+# /trunk/sql12/plugins/example/
+/trunk/sql12/plugins/example/target
+/trunk/sql12/plugins/example/.settings
+/trunk/sql12/plugins/example/.project
+/trunk/sql12/plugins/example/.classpath
+/trunk/sql12/plugins/example/*.iml
+
+# /trunk/sql12/plugins/exportconfig/
+/trunk/sql12/plugins/exportconfig/target
+/trunk/sql12/plugins/exportconfig/.settings
+/trunk/sql12/plugins/exportconfig/.project
+/trunk/sql12/plugins/exportconfig/.classpath
+/trunk/sql12/plugins/exportconfig/*.iml
+
+# /trunk/sql12/plugins/favs/
+/trunk/sql12/plugins/favs/target
+/trunk/sql12/plugins/favs/.settings
+/trunk/sql12/plugins/favs/.project
+/trunk/sql12/plugins/favs/.classpath
+/trunk/sql12/plugins/favs/*.iml
+
+# /trunk/sql12/plugins/firebird/
+/trunk/sql12/plugins/firebird/target
+/trunk/sql12/plugins/firebird/.settings
+/trunk/sql12/plugins/firebird/.project
+/trunk/sql12/plugins/firebird/.classpath
+/trunk/sql12/plugins/firebird/*.iml
+
+# /trunk/sql12/plugins/firebirdmanager/
+/trunk/sql12/plugins/firebirdmanager/target
+/trunk/sql12/plugins/firebirdmanager/.settings
+/trunk/sql12/plugins/firebirdmanager/.project
+/trunk/sql12/plugins/firebirdmanager/.classpath
+/trunk/sql12/plugins/firebirdmanager/*.iml
+
+# /trunk/sql12/plugins/graph/
+/trunk/sql12/plugins/graph/target
+/trunk/sql12/plugins/graph/.settings
+/trunk/sql12/plugins/graph/.project
+/trunk/sql12/plugins/graph/.classpath
+/trunk/sql12/plugins/graph/*.iml
+
+# /trunk/sql12/plugins/greenplum/
+/trunk/sql12/plugins/greenplum/target
+/trunk/sql12/plugins/greenplum/.settings
+/trunk/sql12/plugins/greenplum/.classpath
+/trunk/sql12/plugins/greenplum/.project
+
+# /trunk/sql12/plugins/h2/
+/trunk/sql12/plugins/h2/target
+/trunk/sql12/plugins/h2/.settings
+/trunk/sql12/plugins/h2/.project
+/trunk/sql12/plugins/h2/.classpath
+/trunk/sql12/plugins/h2/*.iml
+
+# /trunk/sql12/plugins/hibernate/
+/trunk/sql12/plugins/hibernate/target
+/trunk/sql12/plugins/hibernate/.settings
+/trunk/sql12/plugins/hibernate/.project
+/trunk/sql12/plugins/hibernate/.classpath
+/trunk/sql12/plugins/hibernate/*.iml
+
+# /trunk/sql12/plugins/i18n/
+/trunk/sql12/plugins/i18n/target
+/trunk/sql12/plugins/i18n/.settings
+/trunk/sql12/plugins/i18n/.project
+/trunk/sql12/plugins/i18n/.classpath
+/trunk/sql12/plugins/i18n/*.iml
+
+# /trunk/sql12/plugins/informix/
+/trunk/sql12/plugins/informix/target
+/trunk/sql12/plugins/informix/.settings
+/trunk/sql12/plugins/informix/.project
+/trunk/sql12/plugins/informix/.classpath
+/trunk/sql12/plugins/informix/*.iml
+
+# /trunk/sql12/plugins/isqlj/
+/trunk/sql12/plugins/isqlj/target
+/trunk/sql12/plugins/isqlj/.settings
+/trunk/sql12/plugins/isqlj/.project
+/trunk/sql12/plugins/isqlj/.classpath
+
+# /trunk/sql12/plugins/laf/
+/trunk/sql12/plugins/laf/target
+/trunk/sql12/plugins/laf/.settings
+/trunk/sql12/plugins/laf/.project
+/trunk/sql12/plugins/laf/.classpath
+/trunk/sql12/plugins/laf/*.iml
+
+# /trunk/sql12/plugins/macosx/
+/trunk/sql12/plugins/macosx/target
+/trunk/sql12/plugins/macosx/.settings
+/trunk/sql12/plugins/macosx/.project
+/trunk/sql12/plugins/macosx/.classpath
+/trunk/sql12/plugins/macosx/*.iml
+
+# /trunk/sql12/plugins/mssql/
+/trunk/sql12/plugins/mssql/target
+/trunk/sql12/plugins/mssql/.settings
+/trunk/sql12/plugins/mssql/.project
+/trunk/sql12/plugins/mssql/.classpath
+/trunk/sql12/plugins/mssql/*.iml
+
+# /trunk/sql12/plugins/multisource/
+/trunk/sql12/plugins/multisource/target
+/trunk/sql12/plugins/multisource/.classpath
+/trunk/sql12/plugins/multisource/.project
+/trunk/sql12/plugins/multisource/.settings
+
+# /trunk/sql12/plugins/mysql/
+/trunk/sql12/plugins/mysql/target
+/trunk/sql12/plugins/mysql/.settings
+/trunk/sql12/plugins/mysql/.project
+/trunk/sql12/plugins/mysql/.classpath
+/trunk/sql12/plugins/mysql/*.iml
+
+# /trunk/sql12/plugins/netezza/
+/trunk/sql12/plugins/netezza/target
+/trunk/sql12/plugins/netezza/.settings
+/trunk/sql12/plugins/netezza/.project
+/trunk/sql12/plugins/netezza/.classpath
+/trunk/sql12/plugins/netezza/*.iml
+
+# /trunk/sql12/plugins/oracle/
+/trunk/sql12/plugins/oracle/target
+/trunk/sql12/plugins/oracle/.settings
+/trunk/sql12/plugins/oracle/.project
+/trunk/sql12/plugins/oracle/.classpath
+/trunk/sql12/plugins/oracle/*.iml
+
+# /trunk/sql12/plugins/postgres/
+/trunk/sql12/plugins/postgres/target
+/trunk/sql12/plugins/postgres/.settings
+/trunk/sql12/plugins/postgres/.project
+/trunk/sql12/plugins/postgres/.classpath
+/trunk/sql12/plugins/postgres/*.iml
+
+# /trunk/sql12/plugins/refactoring/
+/trunk/sql12/plugins/refactoring/target
+/trunk/sql12/plugins/refactoring/.settings
+/trunk/sql12/plugins/refactoring/.project
+/trunk/sql12/plugins/refactoring/.classpath
+/trunk/sql12/plugins/refactoring/*.iml
+
+# /trunk/sql12/plugins/sessionscript/
+/trunk/sql12/plugins/sessionscript/target
+/trunk/sql12/plugins/sessionscript/.settings
+/trunk/sql12/plugins/sessionscript/.project
+/trunk/sql12/plugins/sessionscript/.classpath
+/trunk/sql12/plugins/sessionscript/*.iml
+
+# /trunk/sql12/plugins/smarttools/
+/trunk/sql12/plugins/smarttools/target
+/trunk/sql12/plugins/smarttools/.settings
+/trunk/sql12/plugins/smarttools/.project
+/trunk/sql12/plugins/smarttools/.classpath
+/trunk/sql12/plugins/smarttools/*.iml
+
+# /trunk/sql12/plugins/sqlbookmark/
+/trunk/sql12/plugins/sqlbookmark/target
+/trunk/sql12/plugins/sqlbookmark/.settings
+/trunk/sql12/plugins/sqlbookmark/.project
+/trunk/sql12/plugins/sqlbookmark/.classpath
+/trunk/sql12/plugins/sqlbookmark/*.iml
+
+# /trunk/sql12/plugins/sqlparam/
+/trunk/sql12/plugins/sqlparam/target
+/trunk/sql12/plugins/sqlparam/.settings
+/trunk/sql12/plugins/sqlparam/.project
+/trunk/sql12/plugins/sqlparam/.classpath
+/trunk/sql12/plugins/sqlparam/*.iml
+
+# /trunk/sql12/plugins/sqlreplace/
+/trunk/sql12/plugins/sqlreplace/target
+/trunk/sql12/plugins/sqlreplace/.settings
+/trunk/sql12/plugins/sqlreplace/.project
+/trunk/sql12/plugins/sqlreplace/.classpath
+/trunk/sql12/plugins/sqlreplace/*.iml
+
+# /trunk/sql12/plugins/sqlscript/
+/trunk/sql12/plugins/sqlscript/target
+/trunk/sql12/plugins/sqlscript/.settings
+/trunk/sql12/plugins/sqlscript/.project
+/trunk/sql12/plugins/sqlscript/.classpath
+/trunk/sql12/plugins/sqlscript/*.iml
+
+# /trunk/sql12/plugins/sqlval/
+/trunk/sql12/plugins/sqlval/target
+/trunk/sql12/plugins/sqlval/.settings
+/trunk/sql12/plugins/sqlval/.project
+/trunk/sql12/plugins/sqlval/.classpath
+/trunk/sql12/plugins/sqlval/*.iml
+
+# /trunk/sql12/plugins/squirrelsql-plugin-archetype/
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/target
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/.project
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/.classpath
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/.settings
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/*.iml
+
+# /trunk/sql12/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+/trunk/sql12/plugins/squirrelsql-plugin-archetype/src/main/resources/archetype-resources/
+
+# /trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/
+/trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/.project
+/trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/.classpath
+/trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/.settings
+/trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/target
+/trunk/sql12/plugins/squirrelsql-plugins-assembly-descriptor/*.iml
+
+# /trunk/sql12/plugins/squirrelsql-plugins-parent-pom/
+/trunk/sql12/plugins/squirrelsql-plugins-parent-pom/target
+/trunk/sql12/plugins/squirrelsql-plugins-parent-pom/.project
+/trunk/sql12/plugins/squirrelsql-plugins-parent-pom/.classpath
+/trunk/sql12/plugins/squirrelsql-plugins-parent-pom/.settings
+/trunk/sql12/plugins/squirrelsql-plugins-parent-pom/*.iml
+
+# /trunk/sql12/plugins/swingViolations/
+/trunk/sql12/plugins/swingViolations/.classpath
+/trunk/sql12/plugins/swingViolations/.project
+/trunk/sql12/plugins/swingViolations/.settings
+/trunk/sql12/plugins/swingViolations/target
+
+# /trunk/sql12/plugins/sybase/
+/trunk/sql12/plugins/sybase/target
+/trunk/sql12/plugins/sybase/.settings
+/trunk/sql12/plugins/sybase/.project
+/trunk/sql12/plugins/sybase/.classpath
+/trunk/sql12/plugins/sybase/*.iml
+
+# /trunk/sql12/plugins/syntax/
+/trunk/sql12/plugins/syntax/target
+/trunk/sql12/plugins/syntax/.settings
+/trunk/sql12/plugins/syntax/.project
+/trunk/sql12/plugins/syntax/.classpath
+/trunk/sql12/plugins/syntax/*.iml
+
+# /trunk/sql12/plugins/userscript/
+/trunk/sql12/plugins/userscript/target
+/trunk/sql12/plugins/userscript/.settings
+/trunk/sql12/plugins/userscript/.project
+/trunk/sql12/plugins/userscript/.classpath
+/trunk/sql12/plugins/userscript/*.iml
+
+# /trunk/sql12/plugins/wikiTableConfigurations/
+/trunk/sql12/plugins/wikiTableConfigurations/.project
+/trunk/sql12/plugins/wikiTableConfigurations/.classpath
+/trunk/sql12/plugins/wikiTableConfigurations/.settings
+/trunk/sql12/plugins/wikiTableConfigurations/target
+
+# /trunk/sql12/squirrelsql-integration-environment/
+/trunk/sql12/squirrelsql-integration-environment/target
+/trunk/sql12/squirrelsql-integration-environment/.project
+/trunk/sql12/squirrelsql-integration-environment/.classpath
+/trunk/sql12/squirrelsql-integration-environment/.settings
+
+# /trunk/sql12/squirrelsql-translations/
+/trunk/sql12/squirrelsql-translations/target
+/trunk/sql12/squirrelsql-translations/.settings
+/trunk/sql12/squirrelsql-translations/.project
+/trunk/sql12/squirrelsql-translations/.classpath
+
+# /trunk/sql12/web-site/
+/trunk/sql12/web-site/target
+/trunk/sql12/web-site/.settings
+/trunk/sql12/web-site/.project
+/trunk/sql12/web-site/.classpath
+
