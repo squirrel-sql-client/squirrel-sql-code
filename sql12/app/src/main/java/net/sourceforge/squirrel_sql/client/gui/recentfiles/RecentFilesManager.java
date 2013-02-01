@@ -1,11 +1,9 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
@@ -42,7 +40,21 @@ public class RecentFilesManager
 
 
 
-   private AliasFileXmlBean findOrCreateAliasFile(ISQLAliasExt alias)
+   private AliasFileXmlBean findOrCreateAliasFile(ISQLAlias alias)
+   {
+      AliasFileXmlBean ret = findAliasFile(alias);
+
+      if (null == ret)
+      {
+         ret = new AliasFileXmlBean();
+         ret.setAlisaIdentifierString(alias.getIdentifier().toString());
+         _recentFilesXmlBean.getAliasFileXmlBeans().add(ret);
+      }
+
+      return ret;
+   }
+
+   private AliasFileXmlBean findAliasFile(ISQLAlias alias)
    {
       AliasFileXmlBean ret = null;
       ArrayList<AliasFileXmlBean> aliasFileXmlBeans = _recentFilesXmlBean.getAliasFileXmlBeans();
@@ -54,14 +66,6 @@ public class RecentFilesManager
             break;
          }
       }
-
-      if (null == ret)
-      {
-         ret = new AliasFileXmlBean();
-         ret.setAlisaIdentifierString(alias.getIdentifier().toString());
-         _recentFilesXmlBean.getAliasFileXmlBeans().add(ret);
-      }
-
       return ret;
    }
 
@@ -100,5 +104,25 @@ public class RecentFilesManager
       {
          throw new RuntimeException(e);
       }
+   }
+
+   public ArrayList<String> getRecentFiles()
+   {
+      return _recentFilesXmlBean.getRecentFiles();
+   }
+
+   public ArrayList<String> getFavouriteFiles()
+   {
+      return _recentFilesXmlBean.getFavouriteFiles();
+   }
+
+   public ArrayList<String> getRecentFilesForAlias(ISQLAlias selectedAlias)
+   {
+      return findOrCreateAliasFile(selectedAlias).getRecentFiles();
+   }
+
+   public ArrayList<String> getFavouriteFilesForAlias(ISQLAlias selectedAlias)
+   {
+      return findOrCreateAliasFile(selectedAlias).getFavouriteFiles();
    }
 }

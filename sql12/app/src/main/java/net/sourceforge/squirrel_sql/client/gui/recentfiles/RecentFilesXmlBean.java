@@ -8,6 +8,7 @@ public class RecentFilesXmlBean
 {
    private ArrayList<String> _recentFiles = new ArrayList<String>();
    private ArrayList<AliasFileXmlBean> _aliasFileXmlBeans = new ArrayList<AliasFileXmlBean>();
+   private ArrayList<String> _favouriteFiles = new ArrayList<String>();
 
    public ArrayList<String> getRecentFiles()
    {
@@ -27,5 +28,15 @@ public class RecentFilesXmlBean
    public void setAliasFileXmlBeans(ArrayList<AliasFileXmlBean> aliasFileXmlBeans)
    {
       _aliasFileXmlBeans = aliasFileXmlBeans;
+   }
+
+   public ArrayList<String> getFavouriteFiles()
+   {
+      return _favouriteFiles;
+   }
+
+   public void setFavouriteFiles(ArrayList<String> favouriteFiles)
+   {
+      _favouriteFiles = favouriteFiles;
    }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class AliasFileXmlBean
 {
    private ArrayList<String> _recentFiles = new ArrayList<String>();
+   private ArrayList<String> _favouriteFiles = new ArrayList<String>();
    private String _alisaIdentifierString;
 
    public ArrayList<String> getRecentFiles()
@@ -25,5 +26,15 @@ public class AliasFileXmlBean
    public void setAlisaIdentifierString(String alisaIdentifierString)
    {
       _alisaIdentifierString = alisaIdentifierString;
+   }
+
+   public ArrayList<String> getFavouriteFiles()
+   {
+      return _favouriteFiles;
+   }
+
+   public void setFavouriteFiles(ArrayList<String> favouriteFiles)
+   {
+      _favouriteFiles = favouriteFiles;
    }
 }

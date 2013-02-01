@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
@@ -114,7 +115,7 @@ public class AliasFolderState implements Comparable<AliasFolderState>
    {
       if(null != _folderName)
       {
-         _node = AliasesTreeUtil.createFolderNode(_folderName);
+         _node = GUIUtils.createFolderNode(_folderName);
          parent.add(_node);
          for (AliasFolderState kid : _kids)
          {

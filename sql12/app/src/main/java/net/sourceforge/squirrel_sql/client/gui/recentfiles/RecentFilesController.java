@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class RecentFilesController
 {
@@ -18,19 +19,22 @@ public class RecentFilesController
 
    private RecentFilesDialog _dialog;
 
-   public RecentFilesController(Frame parent, ISQLAlias selectedAlias)
+   public RecentFilesController(RecentFilesManager recentFilesManager, Frame parent, ISQLAlias selectedAlias)
    {
-      init(parent, selectedAlias, false);
+      init(recentFilesManager, parent, selectedAlias, false);
    }
 
 
    public RecentFilesController(ISQLPanelAPI panel)
    {
-      init(GUIUtils.getOwningFrame(panel.getSQLEntryPanel().getTextComponent()), panel.getSession().getAlias(), true);
+      Frame parent = GUIUtils.getOwningFrame(panel.getSQLEntryPanel().getTextComponent());
+      RecentFilesManager recentFilesManager = panel.getSession().getApplication().getRecentFilesManager();
+
+      init(recentFilesManager, parent, panel.getSession().getAlias(), true);
    }
 
 
-   private void init(Frame parent, ISQLAlias selectedAlias, boolean showAppendOption)
+   private void init(RecentFilesManager recentFilesManager, Frame parent, ISQLAlias selectedAlias, boolean showAppendOption)
    {
       _dialog = new RecentFilesDialog(parent, showAppendOption);
 
@@ -45,10 +49,21 @@ public class RecentFilesController
 
       DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-      root.add(new DefaultMutableTreeNode(s_stringMgr.getString("RecentFilesController.recentFiles.global"), true));
-      root.add(new DefaultMutableTreeNode(s_stringMgr.getString("RecentFilesController.favouritFiles.global"), true));
-      root.add(new DefaultMutableTreeNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", selectedAlias.getName()), true));
-      root.add(new DefaultMutableTreeNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", selectedAlias.getName()), true));
+      DefaultMutableTreeNode recentFiles = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.global"));
+      root.add(recentFiles);
+      addFileKidsToNode(recentFiles, recentFilesManager.getRecentFiles());
+
+      DefaultMutableTreeNode favouriteFiles = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.global"));
+      root.add(favouriteFiles);
+      addFileKidsToNode(favouriteFiles, recentFilesManager.getFavouriteFiles());
+
+      DefaultMutableTreeNode recentFilesForAlias = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", selectedAlias.getName()));
+      root.add(recentFilesForAlias);
+      addFileKidsToNode(recentFilesForAlias, recentFilesManager.getRecentFilesForAlias(selectedAlias));
+
+      DefaultMutableTreeNode favouriteFilesForAlias = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", selectedAlias.getName()));
+      root.add(favouriteFilesForAlias);
+      addFileKidsToNode(favouriteFilesForAlias, recentFilesManager.getFavouriteFilesForAlias(selectedAlias));
 
       _dialog.treFiles.setModel(new DefaultTreeModel(root));
       _dialog.treFiles.setRootVisible(false);
@@ -56,4 +71,11 @@ public class RecentFilesController
       _dialog.setVisible(true);
    }
 
+   private void addFileKidsToNode(DefaultMutableTreeNode parentNode, ArrayList<String> filePaths)
+   {
+      for (String filePath : filePaths)
+      {
+         parentNode.add(new DefaultMutableTreeNode(filePath));
+      }
+   }
 }

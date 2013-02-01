@@ -5,11 +5,15 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesController;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.event.ActionEvent;
 
 public class AliasFileOpenAction extends SquirrelAction
 {
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AliasFileOpenAction.class);
+
    private IAliasesList _aliasList;
 
    public AliasFileOpenAction(IApplication app, IAliasesList al)
@@ -24,10 +28,11 @@ public class AliasFileOpenAction extends SquirrelAction
 
       if(null == selectedAlias)
       {
+         getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasFileOpenAction.noAliasSelected"));
          return;
       }
 
-      new RecentFilesController(getApplication().getMainFrame(), selectedAlias);
+      new RecentFilesController(getApplication().getRecentFilesManager(), getApplication().getMainFrame(), selectedAlias);
 
    }
 
