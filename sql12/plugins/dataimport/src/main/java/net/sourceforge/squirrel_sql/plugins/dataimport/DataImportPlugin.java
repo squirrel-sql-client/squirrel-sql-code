@@ -76,7 +76,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "0.05";
+		return "0.06";
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	 */
 	@Override
 	public String getContributors() {
-		return "Guido Wojke";
+		return "Guido Wojke,P_W999";
 	}
 
 

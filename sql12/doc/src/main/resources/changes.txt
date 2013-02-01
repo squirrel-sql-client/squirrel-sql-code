@@ -8,6 +8,10 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+Patch #57 Additional features for dataimport plugin.
+  New checkbox in data import dialog that allows to input rows with over 100.000 characters.
+  Thanks to Phillip (P_W999) for the patch
+
 Logging of application shutdown:
   Sometimes closing SQuirreL can take some time. From looking at the log file
   one can find out which shutdown actions take long:

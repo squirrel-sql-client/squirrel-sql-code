@@ -196,6 +196,11 @@ public class ImportDataIntoTableExecutor {
     		//i18n[ImportDataIntoTableExecutor.sqlException=A database error occured while inserting data]
     		//i18n[ImportDataIntoTableExecutor.error=Error]
     		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.sqlException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
+    		String query = stmt == null ? "null" : stmt.toString();
+    		if (query.length() >= 1024000) {	//with the safety switch off it's possible that this query is a few Mb long !
+    			query = query.substring(0, 1024000) + "... (truncated)";
+    		}
+    		log.error("Failing query: " + query);
     		log.error("Database error", sqle);
     	} catch (UnsupportedFormatException ufe) {
     		try { 

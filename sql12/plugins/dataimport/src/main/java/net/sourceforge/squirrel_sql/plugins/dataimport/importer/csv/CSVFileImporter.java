@@ -48,6 +48,7 @@ public class CSVFileImporter implements IFileImporter {
 	private CSVSettingsBean settings = null;
 	private File importFile = null;
 	private CsvReader reader = null;
+	private boolean safetySwitch = true;
 	
 	/**
 	 * The standard constructor
@@ -132,6 +133,7 @@ public class CSVFileImporter implements IFileImporter {
 			reader.close();
 		}
 		reader = new CsvReader(new InputStreamReader(new FileInputStream(importFile), settings.getImportCharset()), settings.getSeperator());
+		reader.setSafetySwitch(safetySwitch);
 		return true;
 	}
 	
@@ -206,5 +208,14 @@ public class CSVFileImporter implements IFileImporter {
 	 */
 	public JComponent getConfigurationPanel() {
 		return new CSVSettingsPanel(settings);
+	}
+	
+	/**
+	 * Sets the safetySwitch of the CSV reader. This allows reading lines which are over 100.000 characters long. <br />
+	 * The reader must be opened before setting the SafetySwitch.
+	 * @param safetySwitch the value of the switch (true = safety on)
+	 */
+	public void setSafetySwitch(boolean safetySwitch) {
+		this.safetySwitch = safetySwitch;
 	}
 }
