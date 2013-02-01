@@ -13,28 +13,26 @@ import java.util.ArrayList;
 
 public class RecentFilesManager
 {
-   private static final int MAX_FILES = 5;
-
    private RecentFilesXmlBean _recentFilesXmlBean;
 
    public void fileTouched(String absolutePath, ISQLAliasExt alias)
    {
       ArrayList<String> recentFiles = _recentFilesXmlBean.getRecentFiles();
-      adjustRecentFiles(absolutePath, recentFiles);
+      adjustFileArray(absolutePath, recentFiles);
 
 
       ArrayList<String> recentAliasFiles = findOrCreateAliasFile(alias).getRecentFiles();
-      adjustRecentFiles(absolutePath, recentAliasFiles);
+      adjustFileArray(absolutePath, recentAliasFiles);
    }
 
-   private void adjustRecentFiles(String newAbsolutePath, ArrayList<String> recentFiles)
+   private void adjustFileArray(String newAbsolutePath, ArrayList<String> fileArray)
    {
-      recentFiles.remove(newAbsolutePath);
-      recentFiles.add(0, newAbsolutePath);
+      fileArray.remove(newAbsolutePath);
+      fileArray.add(0, newAbsolutePath);
 
-      while (MAX_FILES < recentFiles.size())
+      while (_recentFilesXmlBean.getMaxRecentFiles() < fileArray.size())
       {
-         recentFiles.remove(recentFiles.size()-1);
+         fileArray.remove(fileArray.size()-1);
       }
    }
 
@@ -124,5 +122,25 @@ public class RecentFilesManager
    public ArrayList<String> getFavouriteFilesForAlias(ISQLAlias selectedAlias)
    {
       return findOrCreateAliasFile(selectedAlias).getFavouriteFiles();
+   }
+
+   public int getMaxRecentFiles()
+   {
+      return _recentFilesXmlBean.getMaxRecentFiles();
+   }
+
+   public void setMaxRecentFiles(int n)
+   {
+      _recentFilesXmlBean.setMaxRecentFiles(n);
+   }
+
+   public void adjustFavouriteFiles(File selectedFile)
+   {
+      adjustFileArray(selectedFile.getAbsolutePath(), _recentFilesXmlBean.getFavouriteFiles());
+   }
+
+   public void adjustFavouriteAliasFiles(ISQLAlias alias, File selectedFile)
+   {
+      adjustFileArray(selectedFile.getAbsolutePath(), findOrCreateAliasFile(alias).getFavouriteFiles());
    }
 }

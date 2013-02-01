@@ -32,7 +32,7 @@ public class AliasFileOpenAction extends SquirrelAction
          return;
       }
 
-      new RecentFilesController(getApplication().getRecentFilesManager(), getApplication().getMainFrame(), selectedAlias);
+      new RecentFilesController(getApplication(), selectedAlias);
 
    }
 
