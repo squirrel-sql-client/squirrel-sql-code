@@ -355,6 +355,8 @@ final class MainFrameMenuBar extends JMenuBar
       menu.addSeparator();
 		addToMenu(rsrc, AliasPropertiesAction.class, menu);
       menu.addSeparator();
+		addToMenu(rsrc, AliasFileOpenAction.class, menu);
+      menu.addSeparator();
       addToMenu(rsrc, SortAliasesAction.class, menu);
       menu.addSeparator();
       addToMenuAsCheckBoxMenuItem(rsrc, ToggleTreeViewAction.class, menu);
@@ -437,6 +439,7 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, FileNewAction.class, menu);
       addToMenu(rsrc, FileDetachAction.class, menu);
       addToMenu(rsrc, FileOpenAction.class, menu);
+      addToMenu(rsrc, FileOpenRecentAction.class, menu);
       addToMenu(rsrc, FileSaveAction.class, menu);
       addToMenu(rsrc, FileSaveAsAction.class, menu);
       addToMenu(rsrc, FileCloseAction.class, menu);

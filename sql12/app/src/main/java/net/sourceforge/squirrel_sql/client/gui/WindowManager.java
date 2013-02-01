@@ -883,6 +883,7 @@ public class WindowManager
 		actions.add(new CreateAliasAction(_app));
 		actions.add(new SortAliasesAction(_app, al));
 		actions.add(new AliasPropertiesAction(_app, al));
+		actions.add(new AliasFileOpenAction(_app, al));
 		actions.add(new ToggleTreeViewAction(_app, al));
 		actions.add(new NewAliasFolderAction(_app, al));
       actions.add(new CopyToPasteAliasFolderAction(_app, al));

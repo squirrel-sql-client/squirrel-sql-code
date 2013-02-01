@@ -101,7 +101,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
       _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       _toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
-      _toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
+      _toolsPopupController.addAction("fileopenrecent", ac.get(FileOpenRecentAction.class));
       _toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
       _toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
       _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
