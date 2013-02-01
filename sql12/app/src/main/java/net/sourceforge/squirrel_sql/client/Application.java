@@ -39,6 +39,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import org.apache.commons.lang.StringUtils;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -177,6 +178,8 @@ class Application implements IApplication
 
    private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
 
+   private RecentFilesManager _recentFilesManager = new RecentFilesManager();
+
    /**
 	 * Default ctor.
 	 */
@@ -294,6 +297,9 @@ class Application implements IApplication
       s_log.info("Application.shutdown->_saveApplicationState: saveDrivers() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       saveAliases();
+      s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
+
+      _recentFilesManager.saveXmlBean(_appFiles.getRecentFilesXmlBeanFile());
       s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save Application level SQL history.
@@ -852,11 +858,14 @@ class Application implements IApplication
 		updateCheckTimer = new UpdateCheckTimerImpl(this);
 		updateCheckTimer.start();
 		
-		if (args.getShutdownTimerSeconds() != null) {
+		if (args.getShutdownTimerSeconds() != null)
+      {
 			_shutdownTimer.setShutdownSeconds(args.getShutdownTimerSeconds());
 			_shutdownTimer.setApplication(this);
 			_shutdownTimer.start();
 		}
+
+      _recentFilesManager.initXmlBean(_appFiles.getRecentFilesXmlBeanFile());
 	}
 
 	/**
@@ -1368,6 +1377,12 @@ class Application implements IApplication
    public MultipleWindowsHandler getMultipleWindowsHandler()
    {
       return _multipleWindowsHandler;
+   }
+
+   @Override
+   public RecentFilesManager getRecentFilesManager()
+   {
+      return _recentFilesManager;
    }
 
 }
