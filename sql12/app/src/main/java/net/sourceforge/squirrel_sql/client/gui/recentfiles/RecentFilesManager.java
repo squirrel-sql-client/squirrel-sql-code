@@ -143,4 +143,24 @@ public class RecentFilesManager
    {
       adjustFileArray(selectedFile.getAbsolutePath(), findOrCreateAliasFile(alias).getFavouriteFiles());
    }
+
+   public void setRecentFiles(ArrayList<String> files)
+   {
+      _recentFilesXmlBean.setRecentFiles(files);
+   }
+
+   public void setFavouriteFiles(ArrayList<String> files)
+   {
+      _recentFilesXmlBean.setFavouriteFiles(files);
+   }
+
+   public void setRecentFilesForAlias(ISQLAlias alias, ArrayList<String> files)
+   {
+      findOrCreateAliasFile(alias).setRecentFiles(files);
+   }
+
+   public void setFavouriteFilesForAlias(ISQLAlias alias, ArrayList<String> files)
+   {
+      findOrCreateAliasFile(alias).setFavouriteFiles(files);
+   }
 }

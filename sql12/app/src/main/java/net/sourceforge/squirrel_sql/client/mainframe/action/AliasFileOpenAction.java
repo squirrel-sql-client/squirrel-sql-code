@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 public class AliasFileOpenAction extends SquirrelAction
 {
@@ -32,8 +33,9 @@ public class AliasFileOpenAction extends SquirrelAction
          return;
       }
 
-      new RecentFilesController(getApplication(), selectedAlias);
+      File fileToOpen = new RecentFilesController(getApplication(), selectedAlias).getFileToOpen();
 
+      System.out.println("fileToOpen = " + fileToOpen);
    }
 
 }

@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 
 public class FileOpenRecentAction extends SquirrelAction  implements ISQLPanelAction
@@ -25,7 +26,9 @@ public class FileOpenRecentAction extends SquirrelAction  implements ISQLPanelAc
          return;
       }
 
-      new RecentFilesController(_panel);
+      File fileToOpen = new RecentFilesController(_panel).getFileToOpen();
+
+      System.out.println("fileToOpen = " + fileToOpen);
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)

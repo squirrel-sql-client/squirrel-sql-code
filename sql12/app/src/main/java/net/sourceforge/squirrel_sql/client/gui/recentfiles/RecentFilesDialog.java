@@ -26,9 +26,10 @@ public class RecentFilesDialog extends JDialog
    JCheckBox chkAppend;
    JButton btnOpenFile;
    JButton btnClose;
+   JButton btnRemoveSeleted;
 
 
-   public RecentFilesDialog(Frame parent, boolean showAppendOption)
+   public RecentFilesDialog(Frame parent, boolean isCalledFromAliasView)
    {
       super(parent, true);
 
@@ -47,9 +48,9 @@ public class RecentFilesDialog extends JDialog
       getContentPane().add(createConfigPanel(), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5), 0,0);
-      getContentPane().add(createButtonsPanel(showAppendOption), gbc);
+      getContentPane().add(createButtonsPanel(isCalledFromAliasView), gbc);
 
-      setSize(getDimension());
+      setSize(getDim());
 
       GUIUtils.centerWithinParent(this);
       GUIUtils.enableCloseByEscape(this);
@@ -77,7 +78,7 @@ public class RecentFilesDialog extends JDialog
    }
 
 
-   private Dimension getDimension()
+   private Dimension getDim()
    {
       return new Dimension(
             Preferences.userRoot().getInt(PREF_KEY_RECENT_FILES_DIALOG_WIDTH, 500),
@@ -85,7 +86,7 @@ public class RecentFilesDialog extends JDialog
       );
    }
 
-   private JPanel createButtonsPanel(boolean showAppendOption)
+   private JPanel createButtonsPanel(boolean isCalledFromAliasView)
    {
       JPanel ret = new JPanel(new GridBagLayout());
 
@@ -93,7 +94,7 @@ public class RecentFilesDialog extends JDialog
 
       int gridy = 0;
 
-      if (showAppendOption)
+      if (false == isCalledFromAliasView)
       {
          gbc = new GridBagConstraints(0, gridy,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
          chkAppend = new JCheckBox(s_stringMgr.getString("recentfiles.RecentFilesDialog.append"));
@@ -102,8 +103,18 @@ public class RecentFilesDialog extends JDialog
 
       ++gridy;
       gbc = new GridBagConstraints(0,gridy,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      btnOpenFile = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.openFile"));
+      if (isCalledFromAliasView)
+      {
+         btnOpenFile = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.openFileInNewSession"));
+      }
+      else
+      {
+         btnOpenFile = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.openFile"));
+      }
       ret.add(btnOpenFile, gbc);
+
+
+
 
       gbc = new GridBagConstraints(1,gridy,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       btnClose = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.close"));
@@ -132,7 +143,8 @@ public class RecentFilesDialog extends JDialog
       ret.add(createAddFilesToFolderLine(), gbc);
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      ret.add(new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.removeSelectedFiles")), gbc);
+      btnRemoveSeleted = new JButton(s_stringMgr.getString("recentfiles.RecentFilesDialog.removeSelectedFiles"));
+      ret.add(btnRemoveSeleted, gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
       ret.add(new JPanel(), gbc);
