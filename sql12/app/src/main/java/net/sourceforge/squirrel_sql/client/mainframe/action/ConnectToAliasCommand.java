@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -365,7 +366,7 @@ public class ConnectToAliasCommand implements ICommand
 			final ISession session = sm.createSession(_app, sqlDriver,
 												_alias, conn, _user, _password);
 			_callback.sessionCreated(session);
-			SwingUtilities.invokeLater(new Runner(session, _connSheet));
+			SwingUtilities.invokeLater(new Runner(session, _connSheet, _callback));
 			return session;
 		}
 	}
@@ -374,13 +375,15 @@ public class ConnectToAliasCommand implements ICommand
 	{
 		private final ISession _session;
 		private final ConnectionInternalFrame _connSheet;
+      private ICompletionCallback _callback;
 
-		Runner(ISession session, ConnectionInternalFrame connSheet)
+      Runner(ISession session, ConnectionInternalFrame connSheet, ICompletionCallback callback)
 		{
 			super();
 			_session = session;
 			_connSheet = connSheet;
-		}
+         _callback = callback;
+      }
 
 		public void run()
 		{
@@ -388,8 +391,10 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				app.getWindowManager().createInternalFrame(_session);
-                _connSheet.executed(true);
+            SessionInternalFrame sessionInternalFrame = app.getWindowManager().createInternalFrame(_session);
+            _callback.sessionInternalFrameCreated(sessionInternalFrame);
+
+            _connSheet.executed(true);
 			}
 			catch (Throwable th)
 			{

@@ -57,10 +57,16 @@ public class FileManager
    }
       
    public boolean open(File f) {
+      return open(f, false);
+   }
+
+   public boolean open(File f, boolean appendToExisting) {
        boolean result = false;
        _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
        result = true;
-       _sqlPanelAPI.setEntireSQLScript("");
+      if (!appendToExisting) {
+         _sqlPanelAPI.setEntireSQLScript("");
+      }
        loadScript(f);
        return result;
    }

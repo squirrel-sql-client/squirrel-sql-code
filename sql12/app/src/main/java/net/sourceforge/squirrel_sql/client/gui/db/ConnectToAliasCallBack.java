@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
@@ -54,6 +55,11 @@ public class ConnectToAliasCallBack implements ICompletionCallback
    public void sessionCreated(ISession session)
    {
       // Empty.
+   }
+
+   @Override
+   public void sessionInternalFrameCreated(SessionInternalFrame sessionInternalFrame)
+   {
    }
 
    /**

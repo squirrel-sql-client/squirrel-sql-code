@@ -12,6 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
@@ -30,6 +31,8 @@ public class RecentFilesController
 
    private RecentFilesDialog _dialog;
    private IApplication _app;
+   private Frame _parent;
+   private ISQLAlias _selectedAlias;
    private DefaultMutableTreeNode _recentFilesNode;
    private DefaultMutableTreeNode _favouriteFilesNode;
    private DefaultMutableTreeNode _recentFilesForAliasNode;
@@ -52,7 +55,9 @@ public class RecentFilesController
    private void init(IApplication app, final Frame parent, final ISQLAlias selectedAlias, boolean showAppendOption)
    {
       _app = app;
-      _dialog = new RecentFilesDialog(parent, showAppendOption);
+      _parent = parent;
+      _selectedAlias = selectedAlias;
+      _dialog = new RecentFilesDialog(_parent, showAppendOption);
 
       _dialog.btnClose.addActionListener(new ActionListener()
       {
@@ -63,7 +68,7 @@ public class RecentFilesController
          }
       });
 
-      initAndLoadTree(selectedAlias);
+      initAndLoadTree();
 
       _dialog.txtNumberRecentFiles.setInt(_app.getRecentFilesManager().getMaxRecentFiles());
       _dialog.txtNumberRecentFiles.getDocument().addDocumentListener(new DocumentListener()
@@ -93,7 +98,7 @@ public class RecentFilesController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onAddToFavourites(parent, null);
+            onAddToFavourites(null);
          }
       });
 
@@ -102,7 +107,7 @@ public class RecentFilesController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onAddToFavourites(parent, selectedAlias);
+            onAddToFavourites(selectedAlias);
          }
       });
 
@@ -111,7 +116,7 @@ public class RecentFilesController
          @Override
          public void actionPerformed(ActionEvent e)
          {
-            onRemoveSelected(selectedAlias);
+            onRemoveSelected();
          }
       });
 
@@ -150,7 +155,6 @@ public class RecentFilesController
 
       if(null == _fileToOpen)
       {
-         JOptionPane.showMessageDialog(_dialog, s_stringMgr.getString("RecentFilesController.pleaseSelectFile"));
          return;
       }
 
@@ -168,7 +172,7 @@ public class RecentFilesController
       Preferences.userRoot().putBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, tre.isExpanded(new TreePath(_favouriteFilesForAliasNode.getPath())));
    }
 
-   private void onRemoveSelected(ISQLAlias selectedAlias)
+   private void onRemoveSelected()
    {
 
       HashSet<DefaultMutableTreeNode> changedParents = new HashSet<DefaultMutableTreeNode>();
@@ -193,8 +197,8 @@ public class RecentFilesController
       _app.getRecentFilesManager().setRecentFiles(getFileStringsFromNode(_recentFilesNode));
       _app.getRecentFilesManager().setFavouriteFiles(getFileStringsFromNode(_favouriteFilesNode));
 
-      _app.getRecentFilesManager().setRecentFilesForAlias(selectedAlias, getFileStringsFromNode(_recentFilesForAliasNode));
-      _app.getRecentFilesManager().setFavouriteFilesForAlias(selectedAlias, getFileStringsFromNode(_favouriteFilesForAliasNode));
+      _app.getRecentFilesManager().setRecentFilesForAlias(_selectedAlias, getFileStringsFromNode(_recentFilesForAliasNode));
+      _app.getRecentFilesManager().setFavouriteFilesForAlias(_selectedAlias, getFileStringsFromNode(_favouriteFilesForAliasNode));
 
    }
 
@@ -209,12 +213,12 @@ public class RecentFilesController
       return files;
    }
 
-   private void onAddToFavourites(Frame parent, ISQLAlias alias)
+   private void onAddToFavourites(ISQLAlias alias)
    {
       JFileChooser fc = new JFileChooser(_app.getSquirrelPreferences().getFilePreviousDir());
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-      int returnVal = fc.showOpenDialog(parent);
+      int returnVal = fc.showOpenDialog(_parent);
       if (returnVal != JFileChooser.APPROVE_OPTION)
       {
          return;
@@ -258,7 +262,7 @@ public class RecentFilesController
       }
    }
 
-   private void initAndLoadTree(ISQLAlias selectedAlias)
+   private void initAndLoadTree()
    {
       DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
@@ -278,14 +282,14 @@ public class RecentFilesController
       addFileKidsToNode(_favouriteFilesNode, _app.getRecentFilesManager().getFavouriteFiles(), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_FILES_EXPANDED, false));
 
 
-      _recentFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", selectedAlias.getName()));
+      _recentFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.recentFiles.alias", _selectedAlias.getName()));
       root.add(_recentFilesForAliasNode);
-      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, false));
+      addFileKidsToNode(_recentFilesForAliasNode, _app.getRecentFilesManager().getRecentFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_RECENT_ALIAS_FILES_EXPANDED, false));
 
 
-      _favouriteFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", selectedAlias.getName()));
+      _favouriteFilesForAliasNode = GUIUtils.createFolderNode(s_stringMgr.getString("RecentFilesController.favouritFiles.alias", _selectedAlias.getName()));
       root.add(_favouriteFilesForAliasNode);
-      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, false));
+      addFileKidsToNode(_favouriteFilesForAliasNode, _app.getRecentFilesManager().getFavouriteFilesForAlias(_selectedAlias), Preferences.userRoot().getBoolean(PREF_KEY_FAVOURITE_ALIAS_FILES_EXPANDED, false));
 
 
 
@@ -309,6 +313,78 @@ public class RecentFilesController
    }
 
    private File findFileToOpen(MouseEvent evt)
+   {
+
+      DefaultMutableTreeNode tn = getSelectedFileNode(evt);
+
+      if (tn == null)
+      {
+         if (null == evt) // The open button was pushed
+         {
+            JOptionPane.showMessageDialog(_dialog, s_stringMgr.getString("RecentFilesController.pleaseSelectFile"));
+         }
+         return null;
+      }
+
+      File file = (File) tn.getUserObject();
+
+
+      if(false == file.exists())
+      {
+         if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(_dialog, s_stringMgr.getString("RecentFilesController.fileDoesNotExist")))
+         {
+            DefaultTreeModel model = (DefaultTreeModel) _dialog.treFiles.getModel();
+            TreeNode parent = tn.getParent();
+            model.removeNodeFromParent(tn);
+            model.nodeStructureChanged(parent);
+
+            if(parent == _recentFilesNode)
+            {
+               _app.getRecentFilesManager().setRecentFiles(getFileStringsFromNode(_recentFilesNode));
+            }
+            else if(parent == _favouriteFilesNode)
+            {
+               _app.getRecentFilesManager().setFavouriteFiles(getFileStringsFromNode(_favouriteFilesNode));
+            }
+            else if(parent == _recentFilesForAliasNode)
+            {
+               _app.getRecentFilesManager().setRecentFilesForAlias(_selectedAlias, getFileStringsFromNode(_recentFilesForAliasNode));
+            }
+            else
+            {
+               _app.getRecentFilesManager().setFavouriteFilesForAlias(_selectedAlias, getFileStringsFromNode(_favouriteFilesForAliasNode));
+            }
+         }
+
+         return null;
+      }
+
+      if(file.isDirectory())
+      {
+         JFileChooser fc = new JFileChooser(file);
+         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+         int returnVal = fc.showOpenDialog(_parent);
+         if (returnVal != JFileChooser.APPROVE_OPTION)
+         {
+            return null;
+         }
+
+         file = fc.getSelectedFile();
+      }
+
+
+      if(false == file.canRead())
+      {
+         JOptionPane.showMessageDialog(_dialog, s_stringMgr.getString("RecentFilesController.fileIsNotReadable"));
+         return null;
+      }
+
+      return file;
+
+   }
+
+   private DefaultMutableTreeNode getSelectedFileNode(MouseEvent evt)
    {
       TreePath path = _dialog.treFiles.getSelectionPath();
 
@@ -338,8 +414,7 @@ public class RecentFilesController
       {
          return null;
       }
-
-      return (File)tn.getUserObject();
+      return tn;
    }
 
    private void addFileKidsToNode(final DefaultMutableTreeNode parentNode, ArrayList<String> filePaths, final boolean expand)
@@ -366,5 +441,10 @@ public class RecentFilesController
    public File getFileToOpen()
    {
       return _fileToOpen;
+   }
+
+   public boolean isAppend()
+   {
+      return _dialog.chkAppend.isSelected();
    }
 }

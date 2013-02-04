@@ -26,9 +26,13 @@ public class FileOpenRecentAction extends SquirrelAction  implements ISQLPanelAc
          return;
       }
 
-      File fileToOpen = new RecentFilesController(_panel).getFileToOpen();
+      RecentFilesController recentFilesController = new RecentFilesController(_panel);
+      File fileToOpen = recentFilesController.getFileToOpen();
 
-      System.out.println("fileToOpen = " + fileToOpen);
+      if (null != fileToOpen)
+      {
+         _panel.fileOpen(fileToOpen, recentFilesController.isAppend());
+      }
    }
 
    public void setSQLPanel(ISQLPanelAPI panel)

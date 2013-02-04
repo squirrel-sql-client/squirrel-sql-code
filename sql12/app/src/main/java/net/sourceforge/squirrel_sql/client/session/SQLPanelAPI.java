@@ -270,17 +270,21 @@ public class SQLPanelAPI implements ISQLPanelAPI
    }
 
    public void fileOpen(File f) {
-       if (unsavedEdits) {
-           showConfirmSaveDialog();
-       }              
-       if (_fileManager.open(f)) {
-           fileOpened = true;
-           fileSaved = false;
-           unsavedEdits = false;
-           ActionCollection actions = 
-               getSession().getApplication().getActionCollection();
-           actions.enableAction(FileSaveAction.class, false);           
-       }
+      fileOpen(f, false);
+   }
+
+   public void fileOpen(File f, boolean append){
+    if (unsavedEdits) {
+        showConfirmSaveDialog();
+    }
+    if (_fileManager.open(f, append)) {
+        fileOpened = true;
+        fileSaved = false;
+        unsavedEdits = false;
+        ActionCollection actions =
+            getSession().getApplication().getActionCollection();
+        actions.enableAction(FileSaveAction.class, false);
+    }
        
    }
    
