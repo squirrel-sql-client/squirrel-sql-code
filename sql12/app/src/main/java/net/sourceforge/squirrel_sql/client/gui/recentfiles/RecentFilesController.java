@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.dnd.DropedFileExtractor;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
@@ -17,10 +18,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 public class RecentFilesController
@@ -326,9 +328,83 @@ public class RecentFilesController
          {
             onDndExecuted();
          }
+
+         @Override
+         public ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
+         {
+            return onCreatePasteTreeNodesFromExternalTransfer(dtde, targetPath);
+         }
       };
 
-      new TreeDnDHandler(_dialog.treFiles, treeDnDHandlerCallback);
+      new TreeDnDHandler(_dialog.treFiles, treeDnDHandlerCallback, true);
+   }
+
+   private ArrayList<DefaultMutableTreeNode> onCreatePasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
+   {
+      List<File> files = DropedFileExtractor.getFiles(dtde, _app);
+
+      ArrayList<DefaultMutableTreeNode> ret = new ArrayList<DefaultMutableTreeNode>();
+
+      DefaultMutableTreeNode parent = findParent(targetPath);
+      for (File file : files)
+      {
+         if (false == parentContainsFile(parent, file))
+         {
+            ret.add(new DefaultMutableTreeNode(file));
+         }
+      }
+
+      return ret;
+
+   }
+
+   private boolean parentContainsFile(DefaultMutableTreeNode parentNode, File fileToCheck)
+   {
+      if(null == parentNode)
+      {
+         return false;
+      }
+
+      for (int i = 0; i < parentNode.getChildCount(); i++)
+      {
+         File file = (File) ((DefaultMutableTreeNode) parentNode.getChildAt(i)).getUserObject();
+
+         if(file.equals(fileToCheck))
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   private DefaultMutableTreeNode findParent(TreePath targetPath)
+   {
+      if(((DefaultMutableTreeNode)targetPath.getLastPathComponent()).getUserObject() instanceof File)
+      {
+         targetPath = targetPath.getParentPath();
+      }
+
+      if(targetPath.getLastPathComponent() == _recentFilesNode)
+      {
+         return _recentFilesNode;
+      }
+      else if(targetPath.getLastPathComponent() == _recentFilesForAliasNode)
+      {
+         return _recentFilesForAliasNode;
+      }
+      else if(targetPath.getLastPathComponent() == _favouriteFilesNode)
+      {
+         return _favouriteFilesNode;
+      }
+      else if(targetPath.getLastPathComponent() == _favouriteFilesForAliasNode)
+      {
+         return _favouriteFilesForAliasNode;
+      }
+      else
+      {
+         return null;
+      }
+
    }
 
    private void onDndExecuted()

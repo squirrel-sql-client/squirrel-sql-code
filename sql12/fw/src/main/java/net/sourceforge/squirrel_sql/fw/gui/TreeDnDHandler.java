@@ -23,11 +23,19 @@ public class TreeDnDHandler
 {
    private JTree _tree;
    private TreeDnDHandlerCallback _treeDnDHandlerCallback;
+   private boolean _allowExternalDrop;
 
    public TreeDnDHandler(JTree tree, TreeDnDHandlerCallback treeDnDHandlerCallback)
    {
+      this(tree, treeDnDHandlerCallback, false);
+
+   }
+
+   public TreeDnDHandler(JTree tree, TreeDnDHandlerCallback treeDnDHandlerCallback, boolean allowExternalDrop)
+   {
       _tree = tree;
       _treeDnDHandlerCallback = treeDnDHandlerCallback;
+      _allowExternalDrop = allowExternalDrop;
 
       initDnD();
    }
@@ -57,14 +65,33 @@ public class TreeDnDHandler
 
    private void onDrop(DropTargetDropEvent dtde)
    {
-      if(false == dtde.isLocalTransfer())
-      {
-         return;
-      }
+      TreePath[] toPaste;
 
       TreePath targetPath = _tree.getPathForLocation(dtde.getLocation().x, dtde.getLocation().y);
 
-      TreePath[] toPaste = _tree.getSelectionPaths();
+      if(false == dtde.isLocalTransfer())
+      {
+         if (false == _allowExternalDrop)
+         {
+            return;
+         }
+
+         ArrayList<DefaultMutableTreeNode> nodes = _treeDnDHandlerCallback.createPasteTreeNodesFromExternalTransfer(dtde, targetPath);
+
+         ArrayList<TreePath> buf = new ArrayList<TreePath>();
+         for (DefaultMutableTreeNode node : nodes)
+         {
+            buf.add(new TreePath(node));
+         }
+
+         toPaste = buf.toArray(new TreePath[buf.size()]);
+      }
+      else
+      {
+         toPaste = _tree.getSelectionPaths();
+      }
+
+
 
       if(0 != (DnDConstants.ACTION_COPY_OR_MOVE & dtde.getDropAction()))
       {
@@ -143,7 +170,10 @@ public class TreeDnDHandler
          {
             DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
             cutNodes.add(cutNode);
-            dtm.removeNodeFromParent(cutNode);
+            if (null != cutNode.getParent())
+            {
+               dtm.removeNodeFromParent(cutNode);
+            }
          }
       }
       return cutNodes;

@@ -22,6 +22,7 @@ import javax.swing.tree.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListDataEvent;
 import java.awt.*;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
@@ -179,9 +180,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
 
          @Override
-         public void dndExecuted()
+         public void dndExecuted() {}
+
+         @Override
+         public ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
          {
-            //To change body of implemented methods use File | Settings | File Templates.
+            return null;
          }
       };
 
