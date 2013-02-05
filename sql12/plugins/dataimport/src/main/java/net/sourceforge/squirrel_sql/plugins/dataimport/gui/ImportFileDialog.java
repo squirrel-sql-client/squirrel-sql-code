@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.dataimport.ImportDataIntoTableExecutor;
 import static net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping.*;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
+import net.sourceforge.squirrel_sql.plugins.dataimport.importer.csv.CSVFileImporter;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -66,6 +67,8 @@ public class ImportFileDialog extends DialogWidget
 	private JCheckBox headersIncluded = null;
 	private JCheckBox suggestColumns = null;
 	private JCheckBox suggestColumnsIgnoreCase = null;
+	private JCheckBox oneToOneMapping = null;
+	private JCheckBox safeMode = null;
 	private OkClosePanel btnsPnl = new OkClosePanel();
 	
 	private ISession session = null;
@@ -109,7 +112,7 @@ public class ImportFileDialog extends DialogWidget
 				"left:pref:grow",
 				// Rows
 //				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu,              6dlu, 80dlu:grow, 6dlu, pref"
-				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu, 2dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, pref"
+				"12dlu, 6dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, 12dlu, 2dlu, 12dlu, 2dlu, 12dlu, 2dlu, 12dlu, 6dlu, 80dlu:grow, 6dlu, pref"
 				);
 				
 		PanelBuilder builder = new PanelBuilder(layout);
@@ -142,6 +145,9 @@ public class ImportFileDialog extends DialogWidget
 			public void actionPerformed(ActionEvent e) {				
 				GUIUtils.processOnSwingEventThread(new Runnable() {
 					public void run() {
+						if (oneToOneMapping.isSelected()) {
+							oneToOneMapping.setSelected(false);
+						}
 						ImportFileDialog.this.suggestColumns();
 					}
 				});
@@ -159,6 +165,28 @@ public class ImportFileDialog extends DialogWidget
 				});
 			}
 		});
+		oneToOneMapping = new JCheckBox(stringMgr.getString("ImportFileDialog.oneToOneMapping"));
+		oneToOneMapping.setSelected(false);
+		oneToOneMapping.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIUtils.processOnSwingEventThread(new Runnable() {
+					public void run() {
+						if (suggestColumns.isSelected()) {
+							suggestColumns.setSelected(false);
+						}
+						if (suggestColumnsIgnoreCase.isSelected()) {
+							suggestColumnsIgnoreCase.setSelected(false);
+						}
+						ImportFileDialog.this.oneToOneColumns();
+					}
+				});
+			}
+		});
+		safeMode = new JCheckBox(stringMgr.getString("ImportFileDialog.safetySwitch"));
+		safeMode.setSelected(true);
+		
 		
 		int y = 1;
         //i18n[ImportFileDialog.dataPreview=Data preview]
@@ -175,6 +203,12 @@ public class ImportFileDialog extends DialogWidget
 		
 		y += 2;
 		builder.add(suggestColumnsIgnoreCase, cc.xy(1, y));
+
+		y += 2;
+		builder.add(oneToOneMapping, cc.xy(1, y));
+
+		y += 2;
+		builder.add(safeMode, cc.xy(1, y));
 		
 		y += 2;
 		builder.add(scrollPane2, cc.xy(1, y));
@@ -186,6 +220,8 @@ public class ImportFileDialog extends DialogWidget
 		return builder.getPanel();
 	}
 	
+
+
 	/**
 	 * Sets the preview data for the dialog
 	 * 
@@ -266,7 +302,10 @@ public class ImportFileDialog extends DialogWidget
 		if (suggestColumns.isSelected())
 		{
 			this.suggestColumns();
+		} else if (oneToOneMapping.isSelected()) {
+			this.oneToOneColumns();
 		}
+		
 	}
 	
 	public void suggestColumns()
@@ -295,6 +334,31 @@ public class ImportFileDialog extends DialogWidget
 		}
 	}	
 	
+	protected void oneToOneColumns() {
+		final ColumnMappingTableModel columnMappingTableModel = ((ColumnMappingTableModel) mappingTable.getModel());
+		if (oneToOneMapping.isSelected())
+		{
+			int i = 0;
+			for (String importerColumn : importerColumns )
+			{
+				if (null != importerColumn && !importerColumn.isEmpty() && i < columns.length)
+				{
+					final TableColumnInfo suggestedColumn = columns[i++];
+					if (suggestedColumn != null)
+					{						
+						final String suggestedColumnName = suggestedColumn.getColumnName();
+						int row = columnMappingTableModel.findTableColumn(suggestedColumnName);
+						columnMappingTableModel.setValueAt(importerColumn, row, ColumnMappingConstants.INDEX_IMPORTFILE_COLUMN);
+					}
+				}
+			}			
+		}
+		else
+		{
+			columnMappingTableModel.resetMappings();
+		}
+	}
+	
 	private TableColumnInfo suggestColumn(final String importerColumn, final boolean ignoreCase) {
 		for (TableColumnInfo colInfo : columns)
 		{
@@ -315,6 +379,10 @@ public class ImportFileDialog extends DialogWidget
 	 */
 	public void ok() {
 		dispose();
+		//Set the SafetySwitch of the CSVReader
+		if (importer instanceof CSVFileImporter) {
+			((CSVFileImporter) importer).setSafetySwitch(safeMode.isSelected());
+		}
 		ImportDataIntoTableExecutor executor = new ImportDataIntoTableExecutor(session, table, columns, importerColumns, (ColumnMappingTableModel) mappingTable.getModel(), importer);
 		executor.setSkipHeader(headersIncluded.isSelected());
 		executor.execute();

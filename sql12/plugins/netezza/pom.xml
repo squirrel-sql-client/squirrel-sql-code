@@ -36,9 +36,9 @@
 	</licenses>
 	<url>http://www.squirrelsql.org/</url>
 	<scm>
-		<connection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/netezza</connection>
-		<developerConnection>scm:svn:https://squirrel-sql.svn.sourceforge.net/svnroot/squirrel-sql/trunk/sql12/plugins/netezza</developerConnection>
-		<url>http://squirrel-sql.svn.sourceforge.net/viewvc/squirrel-sql/trunk/sql12/plugins/netezza</url>
+		<connection>scm:git:git://git.code.sf.net/p/squirrel-sql/git</connection>
+		<developerConnection>scm:git:ssh://git.code.sf.net/p/squirrel-sql/git</developerConnection>
+		<url>http://sourceforge.net/p/squirrel-sql/git/ci/fe9318bdee3991f010b5b476244e5629c7d8efee/tree</url>
 	</scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
