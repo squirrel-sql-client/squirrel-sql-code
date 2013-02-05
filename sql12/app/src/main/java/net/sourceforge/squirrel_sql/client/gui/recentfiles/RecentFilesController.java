@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.client.gui.recentfiles;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandler;
+import net.sourceforge.squirrel_sql.fw.gui.TreeDnDHandlerCallback;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -194,12 +196,17 @@ public class RecentFilesController
          model.nodeStructureChanged(changedParent);
       }
 
+      writeUiTreeToModel();
+
+   }
+
+   private void writeUiTreeToModel()
+   {
       _app.getRecentFilesManager().setRecentFiles(getFileStringsFromNode(_recentFilesNode));
       _app.getRecentFilesManager().setFavouriteFiles(getFileStringsFromNode(_favouriteFilesNode));
 
       _app.getRecentFilesManager().setRecentFilesForAlias(_selectedAlias, getFileStringsFromNode(_recentFilesForAliasNode));
       _app.getRecentFilesManager().setFavouriteFilesForAlias(_selectedAlias, getFileStringsFromNode(_favouriteFilesForAliasNode));
-
    }
 
    private ArrayList<String> getFileStringsFromNode(DefaultMutableTreeNode parentNode)
@@ -300,7 +307,44 @@ public class RecentFilesController
             onMouseClickedTree(evt);
          }
       });
+
+      initDnD();
    }
+
+   private void initDnD()
+   {
+      TreeDnDHandlerCallback treeDnDHandlerCallback = new TreeDnDHandlerCallback()
+      {
+         @Override
+         public boolean nodeAcceptsKids(DefaultMutableTreeNode selNode)
+         {
+            return onNodeAcceptsKids(selNode);
+         }
+
+         @Override
+         public void dndExecuted()
+         {
+            onDndExecuted();
+         }
+      };
+
+      new TreeDnDHandler(_dialog.treFiles, treeDnDHandlerCallback);
+   }
+
+   private void onDndExecuted()
+   {
+      writeUiTreeToModel();
+   }
+
+   private boolean onNodeAcceptsKids(DefaultMutableTreeNode selNode)
+   {
+      return _recentFilesNode == selNode ||
+            _recentFilesForAliasNode == selNode ||
+            _favouriteFilesNode == selNode ||
+            _favouriteFilesForAliasNode == selNode;
+
+   }
+
 
    private void onMouseClickedTree(MouseEvent evt)
    {

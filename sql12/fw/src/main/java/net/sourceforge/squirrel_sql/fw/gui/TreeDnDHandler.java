@@ -80,49 +80,48 @@ public class TreeDnDHandler
 
       ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
 
-      for (int i = 0; i < pathsToPaste.length; i++)
-      {
-         if(false == pathsToPaste[i].equals(targetPath))
-         {
-            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
-            cutNodes.add(cutNode);
-            dtm.removeNodeFromParent(cutNode);
-         }
-      }
-
       if (null == targetPath)
       {
          DefaultMutableTreeNode root = (DefaultMutableTreeNode) dtm.getRoot();
 
-         int[] childIndices = new int[cutNodes.size()];
-         for (int i = 0; i < cutNodes.size(); i++)
+         if (_treeDnDHandlerCallback.nodeAcceptsKids(root))
          {
-            childIndices[i] = root.getChildCount();
-            root.add(cutNodes.get(i));
+            cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
+
+            int[] childIndices = new int[cutNodes.size()];
+            for (int i = 0; i < cutNodes.size(); i++)
+            {
+               childIndices[i] = root.getChildCount();
+               root.add(cutNodes.get(i));
+            }
+            dtm.nodesWereInserted(root, childIndices);
          }
-         dtm.nodesWereInserted(root, childIndices);
       }
       else
       {
          DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
 
-         if (false == _treeDnDHandlerCallback.nodeAcceptsKids(selNode))
+         if (_treeDnDHandlerCallback.nodeAcceptsKids(selNode))
          {
-            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
-            for (int i = 0; i < cutNodes.size(); i++)
-            {
-               parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
-            }
-            dtm.nodeStructureChanged(parent);
-
-         }
-         else
-         {
+            cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
             for (int i = 0; i < cutNodes.size(); i++)
             {
                selNode.add(cutNodes.get(i));
             }
             dtm.nodeStructureChanged(selNode);
+         }
+         else
+         {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selNode.getParent();
+            if (_treeDnDHandlerCallback.nodeAcceptsKids(parent))
+            {
+               cutNodes = cutDragedNodes(pathsToPaste, targetPath, dtm);
+               for (int i = 0; i < cutNodes.size(); i++)
+               {
+                  parent.insert(cutNodes.get(i), parent.getIndex(selNode) + 1);
+               }
+               dtm.nodeStructureChanged(parent);
+            }
          }
       }
 
@@ -132,5 +131,21 @@ public class TreeDnDHandler
          newSelPaths[i] = new TreePath(cutNodes.get(i).getPath());
       }
       _tree.setSelectionPaths(newSelPaths);
+   }
+
+   private ArrayList<DefaultMutableTreeNode> cutDragedNodes(TreePath[] pathsToPaste, TreePath targetPath, DefaultTreeModel dtm)
+   {
+      ArrayList<DefaultMutableTreeNode> cutNodes = new ArrayList<DefaultMutableTreeNode>();
+
+      for (int i = 0; i < pathsToPaste.length; i++)
+      {
+         if(false == pathsToPaste[i].equals(targetPath))
+         {
+            DefaultMutableTreeNode cutNode = (DefaultMutableTreeNode) pathsToPaste[i].getLastPathComponent();
+            cutNodes.add(cutNode);
+            dtm.removeNodeFromParent(cutNode);
+         }
+      }
+      return cutNodes;
    }
 }
