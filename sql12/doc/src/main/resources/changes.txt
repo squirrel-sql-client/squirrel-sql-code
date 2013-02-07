@@ -70,6 +70,9 @@ Positions of SQL result tabs and of Session tabs can now be changed using drag a
 
 Bug fixes:
 
+Global Preference: "Select Object tree Nodes On Right Mouse Click" didn't work on windows.
+  Thanks to Betsy Baxter
+
 #1009 FileNotFoundException when trying to save write protected file. (Thanks to Johnathan James for the patch.)
 
 #1060  When more result tabs than the maximum defined in Session properties are in execution, SQuirreL freezes.
