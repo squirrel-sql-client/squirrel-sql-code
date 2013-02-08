@@ -70,6 +70,8 @@ Positions of SQL result tabs and of Session tabs can now be changed using drag a
 
 Bug fixes:
 
+#464 (Feature request) Add tho double quotes to Copy as HTML to become XML well formed output.
+
 Global Preference: "Select Object tree Nodes On Right Mouse Click" didn't work on windows.
   Thanks to Betsy Baxter
 

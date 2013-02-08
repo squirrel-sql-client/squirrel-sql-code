@@ -95,7 +95,7 @@ public class TableCopyHtmlCommand implements ICommand
 		if (selRows.length != 0 && selCols.length != 0)
 		{
             StringBuffer buf = new StringBuffer(1024);
-			buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
+			buf.append("<table border=\"1\"><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 			{
 				buf.append("<th>");
