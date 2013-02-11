@@ -288,7 +288,7 @@ public class LAFPlugin extends DefaultPlugin
 		return _resources;
 	}
 
-	XMLObjectCache<LAFPreferences> getSettingsCache()
+	public XMLObjectCache<LAFPreferences> getSettingsCache()
 	{
 		return _settingsCache;
 	}

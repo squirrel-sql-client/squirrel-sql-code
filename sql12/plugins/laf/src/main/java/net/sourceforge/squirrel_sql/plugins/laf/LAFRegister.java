@@ -50,13 +50,14 @@ import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLookAndFeelController;
 
 /**
  * Register of Look and Feels.
  * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class LAFRegister
+public class LAFRegister
 {
 	private final static int FONT_KEYS_ARRAY_OTHER = 0;
 
@@ -71,19 +72,18 @@ class LAFRegister
 	// Viewport.font, ColorChooser.font, InternalFrame.font,
 	// OptionPane.font, "Panel.font",
 	// ScrollPane.font, DesktopIcon.font
-	private final static String[][] FONT_KEYS =
-		{
-		// Editable Text
-				{ "EditorPane.font", "List.font", "TextArea.font", "TextField.font", "PasswordField.font",
-						"Table.font", "TableHeader.font", "TextPane.font", "Tree.font", },
-				// Menus
-				{ "CheckBoxMenuItem.acceleratorFont", "CheckBoxMenuItem.font", "Menu.acceleratorFont",
-						"Menu.font", "MenuBar.font", "MenuItem.acceleratorFont", "MenuItem.font", "PopupMenu.font",
-						"RadioButtonMenuItem.acceleratorFont", "RadioButtonMenuItem.font", },
-				// Static text
-				{ "Button.font", "CheckBox.font", "ComboBox.font", "InternalFrame.titleFont", "Label.font",
-						"ProgressBar.font", "RadioButton.font", "TabbedPane.font", "TitledBorder.font",
-						"ToggleButton.font", "ToolBar.font", "ToolTip.font", }, };
+	private final static String[][] FONT_KEYS = {
+			// Editable Text
+			{ "EditorPane.font", "List.font", "TextArea.font", "TextField.font", "PasswordField.font",
+					"Table.font", "TableHeader.font", "TextPane.font", "Tree.font", },
+			// Menus
+			{ "CheckBoxMenuItem.acceleratorFont", "CheckBoxMenuItem.font", "Menu.acceleratorFont", "Menu.font",
+					"MenuBar.font", "MenuItem.acceleratorFont", "MenuItem.font", "PopupMenu.font",
+					"RadioButtonMenuItem.acceleratorFont", "RadioButtonMenuItem.font", },
+			// Static text
+			{ "Button.font", "CheckBox.font", "ComboBox.font", "InternalFrame.titleFont", "Label.font",
+					"ProgressBar.font", "RadioButton.font", "TabbedPane.font", "TitledBorder.font",
+					"ToggleButton.font", "ToolBar.font", "ToolTip.font", }, };
 
 	/** Application API. */
 	private IApplication _app;
@@ -168,7 +168,7 @@ class LAFRegister
 	 * 
 	 * @return the ClassLoader used to load the look and feels.
 	 */
-	ClassLoader getLookAndFeelClassLoader()
+	public ClassLoader getLookAndFeelClassLoader()
 	{
 		return _lafClassLoader;
 	}
@@ -236,9 +236,10 @@ class LAFRegister
 			ILookAndFeelController lafCont = getLookAndFeelController(lafClassName);
 			lafCont.aboutToBeInstalled(this, laf);
 
-			// Set Look and Feel. If this is the Substance placeholder, skip it as it is not a real
+			// Set Look and Feel. If this is the Substance/JTattoo placeholder, skip it as it is not a real
 			// look and feel. The controller will handle setting the look and feel using the UIManager.
-			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME))
+			if (!lafClassName.equals(SubstanceLookAndFeelController.SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME)
+				&& !lafClassName.equals(JTattooLookAndFeelController.JTATTOO_LAF_PLACEHOLDER_CLASS_NAME))
 			{
 				if (s_log.isInfoEnabled())
 				{
@@ -454,6 +455,15 @@ class LAFRegister
 		catch (Throwable ex)
 		{
 			s_log.error("Error installing SubstanceLookAndFeelController", ex);
+		}
+		try
+		{
+			_lafControllers.put(JTattooLookAndFeelController.JTATTOO_LAF_PLACEHOLDER_CLASS_NAME,
+				new JTattooLookAndFeelController(plugin, this));
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error installing JTattooLookAndFeelController", ex);
 		}
 
 		// Initialize all the LAF controllers.

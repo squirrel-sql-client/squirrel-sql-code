@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<!-- This pom is slightly different from other plugin poms because it requires 
 		special assembly instructions since it includes LAF jars from other projects 
@@ -72,10 +73,10 @@
 		<url>https://www.squirrel-sql.org/hudson/</url>
 	</ciManagement>
 	<properties>
-		<pluginClassName>net.sourceforge.squirrel_sql.plugins.db2.DB2Plugin</pluginClassName>
+		<pluginClassName>net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin</pluginClassName>
 		<staging.dir>${project.build.directory}</staging.dir>
 		<laf.artifactIds>
-			ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf
+			ilf-gpl,kunstoff-laf,looks,napkinlaf,nimrod-laf,skinlf,substance,swingsetthemes,toniclf,tinylaf,JTattoo
 		</laf.artifactIds>
 	</properties>
 	<dependencies>
@@ -198,6 +199,11 @@
 			<artifactId>toniclf</artifactId>
 			<version>1.0.5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.jtattoo</groupId>
+			<artifactId>JTattoo</artifactId>
+			<version>1.6.7</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -275,7 +281,7 @@
 						<configuration>
 							<stripVersion>true</stripVersion>
 							<includeArtifactIds>${laf.artifactIds}</includeArtifactIds>
-							<outputDirectory>${staging.dir}/lafs</outputDirectory>
+							<outputDirectory>${staging.dir}/plugins/laf/lafs</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -323,6 +329,48 @@
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>launch</id>
+			<activation>
+				<property>
+					<name>launch</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<executable>java</executable>
+									<arguments>
+										<argument>-Xmx256m</argument>
+										<argument>-Xdebug</argument>
+										<argument>-Xnoagent</argument>
+										<argument>-Xrunjdwp:transport=dt_socket,address=8450,server=y,suspend=n</argument>
+										<argument>-Djava.compiler=NONE</argument>
+										<argument>-classpath</argument>
+										<classpath />
+										<argument>net.sourceforge.squirrel_sql.client.Main</argument>
+										<argument>-home</argument>
+										<argument>./target</argument>
+										<argument>-pluginlist</argument>
+										<argument>${pluginClassName}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>m2e</id>
 			<build>

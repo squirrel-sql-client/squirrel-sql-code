@@ -25,13 +25,16 @@ import javax.swing.JPanel;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-abstract class BaseLAFPreferencesPanelComponent extends JPanel
+public abstract class BaseLAFPreferencesPanelComponent extends JPanel
 {
-	BaseLAFPreferencesPanelComponent()
+
+	private static final long serialVersionUID = 1L;
+		
+	public BaseLAFPreferencesPanelComponent()
 	{
 		super();
 	}
-	BaseLAFPreferencesPanelComponent(LayoutManager lmgr)
+	public BaseLAFPreferencesPanelComponent(LayoutManager lmgr)
 	{
 		super(lmgr);
 	}

@@ -23,7 +23,7 @@ import javax.swing.LookAndFeel;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-class DefaultLookAndFeelController implements ILookAndFeelController
+public class DefaultLookAndFeelController implements ILookAndFeelController
 {
 	/**
 	 * Initialization.

@@ -24,6 +24,8 @@ import java.util.TreeMap;
 import javax.swing.JComboBox;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+
+import net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLafPlaceholder;
 /**
  * This <TT>JComboBox</TT> will display all the Look and Feels
  * that have been registered with the <TT>UIManager</TT>.
@@ -120,6 +122,12 @@ public class LookAndFeelComboBox extends JComboBox
 		LookAndFeelInfo substanceLafInfo = substanceLaf.getLookAndFeelInfo();
 		_lafsByName.put(substanceLaf.getName(), substanceLafInfo);
 		_lafsByClassName.put(SubstanceLafPlaceholder.class.getName(), substanceLafInfo);
+		
+		// Need to populate the list with the JTattoo placeholder.
+		JTattooLafPlaceholder jtattooLaf = new JTattooLafPlaceholder();
+		LookAndFeelInfo jtattooLafInfo = jtattooLaf.getLookAndFeelInfo();
+		_lafsByName.put(jtattooLaf.getName(), jtattooLafInfo);
+		_lafsByClassName.put(JTattooLafPlaceholder.class.getName(), jtattooLafInfo);
 
 		// Add the names of all LAF objects to control. By doing thru the Map
 		// these will be sorted.

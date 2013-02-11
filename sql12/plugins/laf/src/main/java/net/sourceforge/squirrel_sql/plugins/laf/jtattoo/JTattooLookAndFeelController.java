@@ -1,7 +1,7 @@
-package net.sourceforge.squirrel_sql.plugins.laf;
+package net.sourceforge.squirrel_sql.plugins.laf.jtattoo;
 
 /*
- * Copyright (C) 2010 Rob Manning
+ * Copyright (C) 2013 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -44,31 +44,36 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+import net.sourceforge.squirrel_sql.plugins.laf.BaseLAFPreferencesPanelComponent;
+import net.sourceforge.squirrel_sql.plugins.laf.DefaultLookAndFeelController;
+import net.sourceforge.squirrel_sql.plugins.laf.LAFPlugin;
+import net.sourceforge.squirrel_sql.plugins.laf.LAFRegister;
 
 /**
- * Behavior for the Substance Look and Feel.
+ * Behavior for JTattoo Look and Feel.
  * 
+ * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
+public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 {
-	/** Class name of the Substance LAF class to use by default. This can be re-skinned at any time. */
-	private static final String SUBSTANCE_LOOK_AND_FEEL_CLASS = 
-		"org.jvnet.substance.skin.SubstanceAutumnLookAndFeel";
+	/** Class name of the JTattoo LAF class to use by default. This can be re-skinned at any time. */
+	private static final String JTATTOO_LOOK_AND_FEEL_CLASS = 
+		"com.jtattoo.plaf.acryl.AcrylLookAndFeel";
 	
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SubstanceLookAndFeelController.class);
+		StringManagerFactory.getStringManager(JTattooLookAndFeelController.class);
 
 	/** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(SubstanceLookAndFeelController.class);
+	private static final ILogger s_log = LoggerController.createLogger(JTattooLookAndFeelController.class);
 
-	/** Placeholder LAF that identifies itself as "Substance".  No other LAF does this. */
-	public static final String SUBSTANCE_LAF_PLACEHOLDER_CLASS_NAME =
-		"net.sourceforge.squirrel_sql.plugins.laf.SubstanceLafPlaceholder";
+	/** Placeholder LAF that identifies itself as "JTattoo".  No other LAF does this. */
+	public static final String JTATTOO_LAF_PLACEHOLDER_CLASS_NAME =
+		"net.sourceforge.squirrel_sql.plugins.laf.jtattoo.JTattooLafPlaceholder";
 
 	/** Preferences for this LAF. */
-	private SubstancePreferences _prefs;
+	private JTattooPreferences _prefs;
 
-	private SubstanceLafData _lafData = null;
+	private JTattooLafData _lafData = null;
 
 	private ClassLoader _cl = null;
 	
@@ -78,29 +83,29 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 	 * @param plugin
 	 *           The plugin that this controller is a part of.
 	 */
-	SubstanceLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException
+	public JTattooLookAndFeelController(LAFPlugin plugin, LAFRegister register) throws IOException
 	{
 		super();
 
 		_cl = register.getLookAndFeelClassLoader();
-		_lafData = new SubstanceLafData(_cl);
+		_lafData = new JTattooLafData(_cl);
 		
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator<?> it = cache.getAllForClass(SubstancePreferences.class);
+		Iterator<?> it = cache.getAllForClass(JTattooPreferences.class);
 		if (it.hasNext())
 		{
-			_prefs = (SubstancePreferences) it.next();
+			_prefs = (JTattooPreferences) it.next();
 		}
 		else
 		{
-			_prefs = new SubstancePreferences();
+			_prefs = new JTattooPreferences();
 			try
 			{
 				cache.add(_prefs);
 			}
 			catch (DuplicateObjectException ex)
 			{
-				s_log.error("SubstancePreferences object already in XMLObjectCache", ex);
+				s_log.error("JTattooPreferences object already in XMLObjectCache", ex);
 			}
 		}
 
@@ -149,24 +154,24 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 	 */
 	public BaseLAFPreferencesPanelComponent getPreferencesComponent()
 	{
-		return new SubstanceSkinPrefsPanel(this);
+		return new JTattooSkinPrefsPanel(this);
 	}
 
-	private static final class SubstanceSkinPrefsPanel extends BaseLAFPreferencesPanelComponent
+	private static final class JTattooSkinPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
 		private static final long serialVersionUID = 1L;
 
 		interface SkinPrefsPanelI18n
 		{
-			// i18n[SubstanceLookAndFeelController.substanceSkinLabel=Substance Skin:]
-			String THEME_PACK = s_stringMgr.getString("SubstanceLookAndFeelController.substanceSkinLabel");
+			// i18n[JTattooLookAndFeelController.JTattooSkinLabel=JTattoo Skin:]
+			String SKIN_LABEL = s_stringMgr.getString("JTattooLookAndFeelController.JTattooSkinLabel");
 		}
 
-		private SubstanceLookAndFeelController _ctrl;
+		private JTattooLookAndFeelController _ctrl;
 
 		private JComboBox _skinCmb = new JComboBox();
 
-		SubstanceSkinPrefsPanel(SubstanceLookAndFeelController ctrl)
+		JTattooSkinPrefsPanel(JTattooLookAndFeelController ctrl)
 		{
 			super(new GridBagLayout());
 			_ctrl = ctrl;
@@ -182,7 +187,7 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
-			add(new JLabel(SkinPrefsPanelI18n.THEME_PACK, SwingConstants.RIGHT), gbc);
+			add(new JLabel(SkinPrefsPanelI18n.SKIN_LABEL, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridx;
 			add(_skinCmb, gbc);
@@ -194,10 +199,10 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		public void loadPreferencesPanel()
 		{
 			super.loadPreferencesPanel();
-			Set<String> substanceThemes = _ctrl._lafData.getSubstanceSkins();
-			Object[] comboItems = new Object[substanceThemes.size()];
+			Set<String> JTattooThemes = _ctrl._lafData.getSkins();
+			Object[] comboItems = new Object[JTattooThemes.size()];
 			int count = 0;
-			for (String theme : substanceThemes)
+			for (String theme : JTattooThemes)
 			{
 				comboItems[count++] = theme;
 			}
@@ -221,7 +226,7 @@ public class SubstanceLookAndFeelController extends DefaultLookAndFeelController
 		}
 	}
 
-	public static final class SubstancePreferences implements IHasIdentifier
+	public static final class JTattooPreferences implements IHasIdentifier
 	{
 
 		private String _skinName;
