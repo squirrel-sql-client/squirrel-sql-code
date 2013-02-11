@@ -568,6 +568,7 @@ public class SessionPanel extends JPanel
          add(actions.get(FileNewAction.class));
          add(actions.get(FileDetachAction.class));
          add(actions.get(FileOpenAction.class));
+         add(actions.get(FileOpenRecentAction.class));
          add(actions.get(FileAppendAction.class));
          add(actions.get(FileSaveAction.class));
          add(actions.get(FileSaveAsAction.class));

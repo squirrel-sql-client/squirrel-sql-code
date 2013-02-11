@@ -103,6 +103,9 @@ public class SquirrelResources extends Resources
       String TABLE = "table";
       String HIDE = "hide";
       String LOADING_GIF = "loading_gif";
+
+      String DIR_GIF = "dir_obj";
+      String FILE_GIF = "file_obj";
    }
 
 	public SquirrelResources(String rsrcBundleBaseName)

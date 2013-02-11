@@ -448,6 +448,7 @@ public class ActionCollection
 		add(new FileNewAction(_app));
 		add(new FileDetachAction(_app));
 		add(new FileOpenAction(_app));
+		add(new FileOpenRecentAction(_app));
 		add(new FileAppendAction(_app));
 		add(new FileSaveAction(_app));
 		add(new FileSaveAsAction(_app));

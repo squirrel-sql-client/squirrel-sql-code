@@ -22,7 +22,7 @@ import javax.swing.tree.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListDataEvent;
 import java.awt.*;
-import java.awt.dnd.*;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
@@ -180,9 +180,12 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
 
          @Override
-         public void dndExecuted()
+         public void dndExecuted() {}
+
+         @Override
+         public ArrayList<DefaultMutableTreeNode> createPasteTreeNodesFromExternalTransfer(DropTargetDropEvent dtde, TreePath targetPath)
          {
-            //To change body of implemented methods use File | Settings | File Templates.
+            return null;
          }
       };
 
@@ -697,7 +700,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
       DefaultTreeModel treeModel = (DefaultTreeModel) _tree.getModel();
       TreePath selPath = _tree.getSelectionPath();
 
-      DefaultMutableTreeNode newFolder = AliasesTreeUtil.createFolderNode(folderName);
+      DefaultMutableTreeNode newFolder = GUIUtils.createFolderNode(folderName);
 
 
       if(null != selPath)
@@ -841,7 +844,7 @@ public class JTreeAliasesListImpl implements IAliasesList, IAliasTreeInterface
          }
          else
          {
-            DefaultMutableTreeNode ret = AliasesTreeUtil.createFolderNode((String) nodeToCopy.getUserObject());
+            DefaultMutableTreeNode ret = GUIUtils.createFolderNode((String) nodeToCopy.getUserObject());
 
             for (int i = 0; i < nodeToCopy.getChildCount(); i++)
             {

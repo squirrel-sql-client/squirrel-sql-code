@@ -287,6 +287,8 @@ public interface ISQLPanelAPI
 	
 	void fileOpen(File f);
 
+   void fileOpen(File f, boolean append);
+
 	void fileAppend();
 
 	void fileClose();

@@ -133,6 +133,11 @@ public class ApplicationFiles
       return new File(_userSettingsDir + File.separator + "SQLAliases23_treeStructure.xml");
    }
 
+   public File getRecentFilesXmlBeanFile()
+   {
+      return new File(_userSettingsDir + File.separator + "RecentFilesXmlBean.xml");
+   }
+
 
    public File getDatabaseAliasesFile_before_version_2_3()
    {

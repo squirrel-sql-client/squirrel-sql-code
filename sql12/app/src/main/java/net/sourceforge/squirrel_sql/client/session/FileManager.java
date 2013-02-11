@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionTabWidget;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -59,10 +57,16 @@ public class FileManager
    }
       
    public boolean open(File f) {
+      return open(f, false);
+   }
+
+   public boolean open(File f, boolean appendToExisting) {
        boolean result = false;
        _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
        result = true;
-       _sqlPanelAPI.setEntireSQLScript("");
+      if (!appendToExisting) {
+         _sqlPanelAPI.setEntireSQLScript("");
+      }
        loadScript(f);
        return result;
    }
@@ -126,7 +130,7 @@ public class FileManager
          }
          _sqlPanelAPI.appendSQLScript(convertPlatformEOLToLineFeed(sb.toString()), true);
          setFile(file);
-         prefs.setFilePreviousDir(file.getAbsolutePath());
+         memorizeFile(file, prefs);
       }
       catch (java.io.IOException io)
       {
@@ -137,6 +141,12 @@ public class FileManager
       	ioUtil.closeInputStream(bis);
       	ioUtil.closeInputStream(fis);
       }
+   }
+
+   private void memorizeFile(File file, SquirrelPreferences prefs)
+   {
+      prefs.setFilePreviousDir(file.getAbsolutePath());
+      _sqlPanelAPI.getSession().getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _sqlPanelAPI.getSession().getAlias());
    }
 
    public boolean saveIntern(boolean toNewFile)
@@ -257,7 +267,7 @@ public class FileManager
 
       if (doSave)
       {
-         prefs.setFilePreviousDir(file.getParent());
+         memorizeFile(file, prefs);
 
          FileOutputStream fos = null;
          try

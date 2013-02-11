@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -482,5 +483,17 @@ public class GUIUtils
       dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
       dialog.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
       dialog.getRootPane().getActionMap().put("CloseAction", closeAction);
+   }
+
+   public static DefaultMutableTreeNode createFolderNode(Object userObject)
+   {
+      DefaultMutableTreeNode newFolder  = new DefaultMutableTreeNode(userObject)
+      {
+         public boolean isLeaf()
+         {
+            return false;
+         }
+      };
+      return newFolder;
    }
 }

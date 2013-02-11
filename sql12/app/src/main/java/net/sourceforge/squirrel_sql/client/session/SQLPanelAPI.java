@@ -101,7 +101,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
       _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
       _toolsPopupController.addAction("filedetach", ac.get(FileDetachAction.class));
-      _toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
+      _toolsPopupController.addAction("fileopenrecent", ac.get(FileOpenRecentAction.class));
       _toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
       _toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
       _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
@@ -270,17 +270,21 @@ public class SQLPanelAPI implements ISQLPanelAPI
    }
 
    public void fileOpen(File f) {
-       if (unsavedEdits) {
-           showConfirmSaveDialog();
-       }              
-       if (_fileManager.open(f)) {
-           fileOpened = true;
-           fileSaved = false;
-           unsavedEdits = false;
-           ActionCollection actions = 
-               getSession().getApplication().getActionCollection();
-           actions.enableAction(FileSaveAction.class, false);           
-       }
+      fileOpen(f, false);
+   }
+
+   public void fileOpen(File f, boolean append){
+    if (unsavedEdits) {
+        showConfirmSaveDialog();
+    }
+    if (_fileManager.open(f, append)) {
+        fileOpened = true;
+        fileSaved = false;
+        unsavedEdits = false;
+        ActionCollection actions =
+            getSession().getApplication().getActionCollection();
+        actions.enableAction(FileSaveAction.class, false);
+    }
        
    }
    

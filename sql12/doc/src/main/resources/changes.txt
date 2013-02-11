@@ -8,6 +8,11 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+New function to open recent and/or favourite sql script files in the SQL editor.
+  Available in the SQL editor's and the Aliase's toolbar.
+  Look for the icon showing a folder with a watch .
+
+
 Patch #57 Additional features for dataimport plugin.
   New checkbox in data import dialog that allows to input rows with over 100.000 characters.
   Thanks to Phillip (P_W999) for the patch
@@ -64,6 +69,11 @@ Updated French translations. Thanks to Erwan Duroselle.
 Positions of SQL result tabs and of Session tabs can now be changed using drag and drop.
 
 Bug fixes:
+
+#464 (Feature request) Add tho double quotes to Copy as HTML to become XML well formed output.
+
+Global Preference: "Select Object tree Nodes On Right Mouse Click" didn't work on windows.
+  Thanks to Betsy Baxter
 
 #1009 FileNotFoundException when trying to save write protected file. (Thanks to Johnathan James for the patch.)
 

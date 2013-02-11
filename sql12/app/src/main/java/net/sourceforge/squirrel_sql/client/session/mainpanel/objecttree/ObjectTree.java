@@ -220,38 +220,41 @@ class ObjectTree extends JTree
    // Mouse listener used to display popup menu.
    private class ObjectTreeMouseListener extends MouseAdapter {
       public void mousePressed(MouseEvent evt)
-      {      	
-      	 
-          if (evt.isPopupTrigger())
-          {
-    			// If the user wants to select for Right mouse clicks then change the selection before popup 
-         	// appears
-         	 if (_session.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick()) {         	 
-	         	 TreePath path = ObjectTree.this.getPathForLocation(evt.getX(), evt.getY());
-	         	 boolean alreadySelected = false;
-	         	 TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
-	         	 if (selectedPaths != null) {	         	 
-		         	 for (TreePath selectedPath : selectedPaths) {
-		         		 if (path != null && path.equals(selectedPath)) {
-		         			 alreadySelected = true;
-		         			 break;
-		         		 }
-		         	 }
-	         	 }
-	         	 if (!alreadySelected) {
-	         		 ObjectTree.this.setSelectionPath(path);
-	         	 }
-         	 }
-             showPopup(evt.getX(), evt.getY());
-          }
+      {
+
+         checkSelectAndPopUp(evt);
       }
+
+      private void checkSelectAndPopUp(MouseEvent evt)
+      {
+         if (evt.isPopupTrigger())
+         {
+            // If the user wants to select for Right mouse clicks then change the selection before popup
+           // appears
+            if (_session.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick()) {
+               TreePath path = ObjectTree.this.getPathForLocation(evt.getX(), evt.getY());
+               boolean alreadySelected = false;
+               TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
+               if (selectedPaths != null) {
+                  for (TreePath selectedPath : selectedPaths) {
+                     if (path != null && path.equals(selectedPath)) {
+                        alreadySelected = true;
+                        break;
+                     }
+                  }
+               }
+               if (!alreadySelected) {
+                  ObjectTree.this.setSelectionPath(path);
+               }
+            }
+            showPopup(evt.getX(), evt.getY());
+         }
+      }
+
       public void mouseReleased(MouseEvent evt)
       {
-          if (evt.isPopupTrigger())
-          {
-              showPopup(evt.getX(), evt.getY());
-          }
-      }   	
+         checkSelectAndPopUp(evt);
+      }
    }
    
 	/**

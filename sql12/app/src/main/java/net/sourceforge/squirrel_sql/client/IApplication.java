@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DesktopStyle;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
+import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
@@ -247,4 +248,6 @@ public interface IApplication
    IWikiTableConfigurationFactory getWikiTableConfigFactory();
 
    MultipleWindowsHandler getMultipleWindowsHandler();
+
+   RecentFilesManager getRecentFilesManager();
 }
