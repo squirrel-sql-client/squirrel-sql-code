@@ -41,6 +41,8 @@ public class JTattooLafData
 
 	private ClassLoader cl = null;
 	
+	public static final String MCWIN_LAF_CLASS_NAME = "com.jtattoo.plaf.mcwin.McWinLookAndFeel";
+	
 	public JTattooLafData(ClassLoader cl)
 	{
 		this.cl = cl;

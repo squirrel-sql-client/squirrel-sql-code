@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.ComboBoxModel;
@@ -126,9 +127,25 @@ public class JTattooLookAndFeelController extends DefaultLookAndFeelController
 		final String skinName = _prefs.getSkinName();
 		Class<?> skinClass = _lafData.getSkinClassForName(skinName);
 		LookAndFeel skinObject;
+		
+		
 		try
 		{
 			skinObject = (LookAndFeel)skinClass.newInstance();
+			
+			// McWin requires special handling to make table header rows more visually appealing (square borders
+			// instead of rounded ones that look like buttons)
+			if (skinClass.getName().equals(JTattooLafData.MCWIN_LAF_CLASS_NAME)) {
+				if (s_log.isInfoEnabled()) {
+					s_log.info("Detected McWin L&F selection.  Setting theme to draw square buttons.");
+				}
+				// Setup the look and feel properties
+            Properties props = new Properties();
+            props.put("drawSquareButtons", "on");
+            // Set theme
+            com.jtattoo.plaf.mcwin.McWinLookAndFeel.setCurrentTheme(props);
+			}
+			
 			UIManager.setLookAndFeel(skinObject);
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", _cl);
 		}
