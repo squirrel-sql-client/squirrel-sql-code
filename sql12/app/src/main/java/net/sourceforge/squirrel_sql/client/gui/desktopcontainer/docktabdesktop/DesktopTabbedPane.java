@@ -50,14 +50,14 @@ public class DesktopTabbedPane extends DnDTabbedPane
    {
       super.addTab("", null, component, tip);
       int index = indexOfComponent(component);
-      setTabComponentAt(index, new ButtonTabComponent(_app, title, icon));
+      setTabComponentAt(index, new ButtonTabComponent(_app, this, title, icon));
    }
 
    @Override
    public void insertTab(String title, Icon icon, Component component, String tip, int index)
    {
       super.insertTab("", null, component, tip, index);
-      setTabComponentAt(index, new ButtonTabComponent(_app, title, icon));
+      setTabComponentAt(index, new ButtonTabComponent(_app, this, title, icon));
    }
 
 

@@ -9,27 +9,45 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import javax.swing.plaf.ColorUIResource;
+
 
 public class ButtonTabComponent extends JPanel
 {
    private static final StringManager s_stringMgr =
          StringManagerFactory.getStringManager(ButtonTabComponent.class);
 
+   private JTabbedPane tabbedPane = null;
 
    private JLabel _label = new JLabel();
-   private CloseTabButton _btnClose = new CloseTabButton();
+   private CloseTabButton _btnClose = null;
    private JPanel _pnlSmallTabButtons;
    private final SmallTabButton _btnToWindow;
 
-   public ButtonTabComponent(IApplication app, String title, Icon icon)
+   private Font defaultFont = null; // the default font of the title label
+   private Font selectedFont = null; // the font of the title label if tab is selected
+   private Color selectedColor = null; // the foreground color of the title lable if tab is selected
+
+   public ButtonTabComponent(IApplication app, JTabbedPane tabbedPane, String title, Icon icon)
    {
+	  this.tabbedPane = tabbedPane;
+
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       setOpaque(false);
+
+      // the CloseTabButton needs a referrence to the ButtonTabComponent because we want to paint
+      // the X with selected foreground color if tab is selected.
+      _btnClose = new CloseTabButton(this);
 
       add(_btnClose);
 
       _label.setText(title);
+      _label.setOpaque(false);
       _label.setIcon(icon);
+
+      // get the defaults for rendering the title label
+      initLabelDefaults();
+
       add(_label);
       //add more space between the label and the button
       _label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
@@ -48,6 +66,68 @@ public class ButtonTabComponent extends JPanel
       _pnlSmallTabButtons.add(_btnToWindow);
    }
 
+   // if look and feel changes we have to set the new defaults for rendering the title label
+   @Override
+   public void updateUI() {
+     super.updateUI();
+     initLabelDefaults();
+   }
+
+   // initialize the defaults for the title label
+   private void initLabelDefaults() {
+     if (_label != null) {
+       defaultFont = _label.getFont().deriveFont(~Font.BOLD);
+       selectedFont = _label.getFont().deriveFont(Font.BOLD);
+       selectedColor = UIManager.getColor("TabbedPane.selectedForeground");
+       // some look and feels may not support the above property so we fall back to foreground color of tabbed pane
+       if (selectedColor == null) {
+         selectedColor = tabbedPane.getForeground();
+       }
+     }
+   }
+
+   // return the reference to the tabbed pane (we need this method for the CloseTabButton)
+   public JTabbedPane getTabbedPane() {
+       return tabbedPane;
+   }
+   
+   // return the selected foreground color (we need this method for the CloseTabButton)
+   public Color getSelectedColor() {
+       return selectedColor;
+   }
+   
+   // calculate the tab index of this tab component
+   private int getTabIndex() {
+     for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+       if (this.equals(tabbedPane.getTabComponentAt(i))) {
+         return i;
+       }
+     }
+     return -1;
+   }
+   
+   // we have to override paint to handle the rendering of the title label, because we want
+   // the title to be painted different when tab is selected.
+   @Override
+   public void paint(Graphics g) {
+     int tabIndex = getTabIndex();
+     if (tabIndex >= 0) {
+       if (tabIndex == tabbedPane.getSelectedIndex()) {
+         _label.setFont(selectedFont);
+         // check if the foreground color is not set by user through a call to setForegroundAt
+         if (tabbedPane.getForegroundAt(tabIndex) instanceof ColorUIResource) {
+           _label.setForeground(selectedColor);
+         } else {
+           _label.setForeground(tabbedPane.getForegroundAt(tabIndex));
+         }
+       } else {
+         _label.setFont(defaultFont);
+         _label.setForeground(tabbedPane.getForegroundAt(tabIndex));
+       }
+     }
+     super.paint(g);
+   }
+   
    public JButton getClosebutton()
    {
       return _btnClose;
@@ -124,12 +204,17 @@ public class ButtonTabComponent extends JPanel
 
    private static class CloseTabButton extends SmallTabButton
    {
-      private CloseTabButton()
+      private ButtonTabComponent tabComponent = null;
+
+      private CloseTabButton(ButtonTabComponent tabComponent)
       {
          super(s_stringMgr.getString("docktabdesktop.ButtonTabComponent.toolTip"), null);
+        
+         this.tabComponent = tabComponent;
       }
 
       //paint the cross
+      @Override
       protected void paintComponent(Graphics g)
       {
          super.paintComponent(g);
@@ -140,11 +225,26 @@ public class ButtonTabComponent extends JPanel
             g2.translate(1, 1);
          }
          g2.setStroke(new BasicStroke(2));
-         g2.setColor(Color.BLACK);
+         
+         // If tab is selected we want to paint the x with selected foreground color
          if (getModel().isRollover())
          {
             g2.setColor(Color.MAGENTA);
          }
+         else 
+         {
+            // find out if the tab is selected
+            int tabIndex = tabComponent.getTabIndex();
+            if (tabIndex == tabComponent.getTabbedPane().getSelectedIndex()) 
+            {
+              g2.setColor(tabComponent.getSelectedColor());
+            } 
+            else 
+            {
+              g2.setColor(tabComponent.getTabbedPane().getForegroundAt(tabIndex));  
+            }
+         }
+
          int delta = 6;
          g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
          g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
