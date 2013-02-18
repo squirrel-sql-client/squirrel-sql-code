@@ -17,20 +17,20 @@ public class ButtonTabComponent extends JPanel
    private static final StringManager s_stringMgr =
          StringManagerFactory.getStringManager(ButtonTabComponent.class);
 
-   private JTabbedPane tabbedPane = null;
+   private JTabbedPane _tabbedPane = null;
 
    private JLabel _label = new JLabel();
    private CloseTabButton _btnClose = null;
    private JPanel _pnlSmallTabButtons;
    private final SmallTabButton _btnToWindow;
 
-   private Font defaultFont = null; // the default font of the title label
-   private Font selectedFont = null; // the font of the title label if tab is selected
-   private Color selectedColor = null; // the foreground color of the title lable if tab is selected
+   private Font _defaultFont = null; // the default font of the title label
+   private Font _selectedFont = null; // the font of the title label if tab is selected
+   private Color _selectedColor = null; // the foreground color of the title lable if tab is selected
 
    public ButtonTabComponent(IApplication app, JTabbedPane tabbedPane, String title, Icon icon)
    {
-	  this.tabbedPane = tabbedPane;
+      _tabbedPane = tabbedPane;
 
       setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       setOpaque(false);
@@ -76,30 +76,21 @@ public class ButtonTabComponent extends JPanel
    // initialize the defaults for the title label
    private void initLabelDefaults() {
      if (_label != null) {
-       defaultFont = _label.getFont().deriveFont(~Font.BOLD);
-       selectedFont = _label.getFont().deriveFont(Font.BOLD);
-       selectedColor = UIManager.getColor("TabbedPane.selectedForeground");
+       _defaultFont = _label.getFont().deriveFont(~Font.BOLD);
+       _selectedFont = _label.getFont().deriveFont(Font.BOLD);
+       _selectedColor = UIManager.getColor("TabbedPane.selectedForeground");
        // some look and feels may not support the above property so we fall back to foreground color of tabbed pane
-       if (selectedColor == null) {
-         selectedColor = tabbedPane.getForeground();
+       if (_selectedColor == null) {
+         _selectedColor = _tabbedPane.getForeground();
        }
      }
    }
 
-   // return the reference to the tabbed pane (we need this method for the CloseTabButton)
-   public JTabbedPane getTabbedPane() {
-       return tabbedPane;
-   }
-   
-   // return the selected foreground color (we need this method for the CloseTabButton)
-   public Color getSelectedColor() {
-       return selectedColor;
-   }
-   
+
    // calculate the tab index of this tab component
    private int getTabIndex() {
-     for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-       if (this.equals(tabbedPane.getTabComponentAt(i))) {
+     for (int i = 0; i < _tabbedPane.getTabCount(); i++) {
+       if (this.equals(_tabbedPane.getTabComponentAt(i))) {
          return i;
        }
      }
@@ -112,17 +103,17 @@ public class ButtonTabComponent extends JPanel
    public void paint(Graphics g) {
      int tabIndex = getTabIndex();
      if (tabIndex >= 0) {
-       if (tabIndex == tabbedPane.getSelectedIndex()) {
-         _label.setFont(selectedFont);
+       if (tabIndex == _tabbedPane.getSelectedIndex()) {
+         _label.setFont(_selectedFont);
          // check if the foreground color is not set by user through a call to setForegroundAt
-         if (tabbedPane.getForegroundAt(tabIndex) instanceof ColorUIResource) {
-           _label.setForeground(selectedColor);
+         if (_tabbedPane.getForegroundAt(tabIndex) instanceof ColorUIResource) {
+           _label.setForeground(_selectedColor);
          } else {
-           _label.setForeground(tabbedPane.getForegroundAt(tabIndex));
+           _label.setForeground(_tabbedPane.getForegroundAt(tabIndex));
          }
        } else {
-         _label.setFont(defaultFont);
-         _label.setForeground(tabbedPane.getForegroundAt(tabIndex));
+         _label.setFont(_defaultFont);
+         _label.setForeground(_tabbedPane.getForegroundAt(tabIndex));
        }
      }
      super.paint(g);
@@ -235,13 +226,13 @@ public class ButtonTabComponent extends JPanel
          {
             // find out if the tab is selected
             int tabIndex = tabComponent.getTabIndex();
-            if (tabIndex == tabComponent.getTabbedPane().getSelectedIndex()) 
+            if (tabIndex == tabComponent._tabbedPane.getSelectedIndex())
             {
-              g2.setColor(tabComponent.getSelectedColor());
+              g2.setColor(tabComponent._selectedColor);
             } 
             else 
             {
-              g2.setColor(tabComponent.getTabbedPane().getForegroundAt(tabIndex));  
+              g2.setColor(tabComponent._tabbedPane.getForegroundAt(tabIndex));
             }
          }
 
