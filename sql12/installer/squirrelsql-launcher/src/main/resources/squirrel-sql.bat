@@ -29,7 +29,7 @@ set SQUIRREL_SQL_HOME=%basedir%
 @rem that version of higher.  The arguments to JavaVersionChecker below specify the minimum acceptable version 
 @rem (first arg) and any other acceptable subsequent versions.  <MAJOR>.<MINOR> should be all that is 
 @rem necessary for the version form. 
-"%LOCAL_JAVA%" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 1.6 1.7
+"%LOCAL_JAVA%" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 1.6 1.7 1.8
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
 @rem If the changelist.xml file isn't present or the downloaded update jars don't exist, skip launching the updater - these files are created by the 
