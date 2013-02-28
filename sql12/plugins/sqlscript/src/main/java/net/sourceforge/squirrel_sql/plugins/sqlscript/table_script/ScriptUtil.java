@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
@@ -24,41 +25,9 @@ public class ScriptUtil
     */
    public String getColumnDef(String sColumnName, String sType, int columnSize, int decimalDigits)
    {
-      String decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
-
       sColumnName = makeColumnNameUnique(sColumnName);
 
-      StringBuffer sbColDef = new StringBuffer();
-      String sLower = sType.toLowerCase();
-      sbColDef.append(sColumnName).append(" ");
-      sbColDef.append(sType);
-
-      if (sLower.indexOf("char") != -1)
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("numeric"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("number"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-      else if (sLower.equals("decimal"))
-      {
-         sbColDef.append("(");
-         sbColDef.append(columnSize).append(decimalDigitsString);
-         sbColDef.append(")");
-      }
-
-      return sbColDef.toString();
+      return SQLUtilities.createColumnDefinitionString(sColumnName, sType, columnSize, decimalDigits);
    }
 
    /**

@@ -1520,12 +1520,15 @@ public class DBUtil extends I18NBaseObject
 		{
 			checkKeyword(prov.getDestSession(), destTableName, columnName);
 		}
-		StringBuilder result = new StringBuilder(columnName);
-		boolean notNullable = colInfo.isNullable().equalsIgnoreCase("NO");
-		String typeName = ColTypeMapper.mapColType(
-		   prov.getSourceSession(), prov.getDestSession(), colInfo, sourceTableName, destTableName);
-		result.append(" ");
-		result.append(typeName);
+
+      String typeName = ColTypeMapper.mapColType(
+            prov.getSourceSession(), prov.getDestSession(), colInfo, sourceTableName, destTableName);
+
+      String columnDefinitionString = SQLUtilities.createColumnDefinitionString(columnName, typeName, colInfo.getColumnSize(), colInfo.getDecimalDigits());
+      StringBuilder result = new StringBuilder(columnDefinitionString);
+
+      boolean notNullable = colInfo.isNullable().equalsIgnoreCase("NO");
+
 		if (notNullable)
 		{
 			result.append(" NOT NULL");

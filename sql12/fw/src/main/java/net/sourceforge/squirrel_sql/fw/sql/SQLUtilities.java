@@ -405,6 +405,43 @@ public class SQLUtilities
       return ret;
    }
 
+   public static String createColumnDefinitionString(String sColumnName, String sType, int columnSize, int decimalDigits)
+   {
+      String decimalDigitsString = 0 == decimalDigits ? "" : "," + decimalDigits;
+
+      StringBuffer sbColDef = new StringBuffer();
+      String sLower = sType.toLowerCase();
+      sbColDef.append(sColumnName).append(" ");
+      sbColDef.append(sType);
+
+      if (sLower.indexOf("char") != -1)
+      {
+         sbColDef.append("(");
+         sbColDef.append(columnSize).append(decimalDigitsString);
+         sbColDef.append(")");
+      }
+      else if (sLower.equals("numeric"))
+      {
+         sbColDef.append("(");
+         sbColDef.append(columnSize).append(decimalDigitsString);
+         sbColDef.append(")");
+      }
+      else if (sLower.equals("number"))
+      {
+         sbColDef.append("(");
+         sbColDef.append(columnSize).append(decimalDigitsString);
+         sbColDef.append(")");
+      }
+      else if (sLower.equals("decimal"))
+      {
+         sbColDef.append("(");
+         sbColDef.append(columnSize).append(decimalDigitsString);
+         sbColDef.append(")");
+      }
+
+      return sbColDef.toString();
+   }
+
    /**
 	 * @author manningr
 	 */

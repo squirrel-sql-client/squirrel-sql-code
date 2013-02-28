@@ -71,7 +71,12 @@ Updated French translations. Thanks to Erwan Duroselle.
 
 Positions of SQL result tabs and of Session tabs can now be changed using drag and drop.
 
+
+
 Bug fixes:
+
+#939 DBCopy-Plugin: Copy to HSQLDB 2.0 failed because column lengths where not defined in create table statements for various column types.
+    This problem existed for other RDBMSes too.
 
 #464 (Feature request) Add tho double quotes to Copy as HTML to become XML well formed output.
 
