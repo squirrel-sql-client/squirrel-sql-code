@@ -305,12 +305,22 @@ public class GlobalPreferencesSheet extends DialogWidget
 		// This is a tool window.
 		makeToolWindow(true);
 
+      PrefrenceTabActvivationListener prefrenceTabActvivationListener = new PrefrenceTabActvivationListener()
+      {
+         @Override
+         public void activateTabForClass(Class<?> tabClass)
+         {
+            selectTab(tabClass);
+         }
+      };
+
+
 		// Add panels for core Squirrel functionality.
 		_panels.add(new GeneralPreferencesPanel());
 		_panels.add(new SQLPreferencesPanel(_app.getMainFrame()));
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
-		_panels.add(new UpdatePreferencesTab());
+		_panels.add(new UpdatePreferencesTab(prefrenceTabActvivationListener));
 		_panels.add(new WikiTablePreferencesTab());
 		_panels.add(new FormatSqlConfigPrefsTab(_app));
 

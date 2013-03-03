@@ -30,7 +30,7 @@ public class UpdatePreferencesTab implements IGlobalPreferencesPanel
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(UpdatePreferencesTab.class);
-   
+
    static interface i18n {
       
       // i18n[UpdatePreferencesTab.title=Update]
@@ -46,15 +46,17 @@ public class UpdatePreferencesTab implements IGlobalPreferencesPanel
 
 	/** Application API. */
 	private IApplication _app;
-	
-	
+
+   private PrefrenceTabActvivationListener _prefrenceTabActvivationListener;
+
 	/**
 	 * Default ctor.
-	 */
-	public UpdatePreferencesTab()
+    * @param prefrenceTabActvivationListener
+    */
+	public UpdatePreferencesTab(PrefrenceTabActvivationListener prefrenceTabActvivationListener)
 	{
-		super();
-	}
+      _prefrenceTabActvivationListener = prefrenceTabActvivationListener;
+   }
 
 	public void initialize(IApplication app)
 	{
@@ -79,7 +81,7 @@ public class UpdatePreferencesTab implements IGlobalPreferencesPanel
 	{
 		if (_myPanel == null)
 		{
-			_myPanel = new UpdatePreferencesPanel();
+			_myPanel = new UpdatePreferencesPanel(_prefrenceTabActvivationListener);
 		}
 		return _myPanel;
 	}

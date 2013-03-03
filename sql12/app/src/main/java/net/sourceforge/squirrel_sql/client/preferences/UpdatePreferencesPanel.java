@@ -18,15 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client.preferences;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.*;
+import java.awt.event.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -65,7 +58,7 @@ public class UpdatePreferencesPanel extends JPanel
 
 	private static final UpdateUtil _updateUtil = new UpdateUtilImpl();
 
-	static interface i18n
+   static interface i18n
 	{
 
 		// i18n[UpdatePreferencesPanel.atStartupLabel=At Startup]
@@ -198,10 +191,14 @@ public class UpdatePreferencesPanel extends JPanel
 
 	private IApplication _app;
 
-	public UpdatePreferencesPanel()
+   private PrefrenceTabActvivationListener _prefrenceTabActvivationListener;
+
+
+   public UpdatePreferencesPanel(PrefrenceTabActvivationListener prefrenceTabActvivationListener)
 	{
 		super(new GridBagLayout());
-		createUserInterface();
+      _prefrenceTabActvivationListener = prefrenceTabActvivationListener;
+      createUserInterface();
 	}
 
 	void loadData(SquirrelPreferences prefs)
@@ -385,9 +382,23 @@ public class UpdatePreferencesPanel extends JPanel
 		updateUrl();
 		pnl.add(_updateUrl, gbc);
 
-		// Test Connection Button Panel (Both the button and the status label
 
 		setFieldConstraints(gbc, 7);
+      JLabel lblProxy = new JLabel(s_stringMgr.getString("UpdatePreferencesPanel.proxyHintHtml"));
+      lblProxy.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      lblProxy.addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            _prefrenceTabActvivationListener.activateTabForClass(ProxyPreferenceTabComponent.class);
+         }
+      });
+      pnl.add(lblProxy, gbc);
+
+      // Test Connection Button Panel (Both the button and the status label
+
+		setFieldConstraints(gbc, 8);
 
 		Box buttonBox = Box.createHorizontalBox();
 		buttonBox.add(_testConnectionButton);
@@ -398,16 +409,16 @@ public class UpdatePreferencesPanel extends JPanel
 
 		// Separator
 
-		setSeparatorConstraints(gbc, 8);
+		setSeparatorConstraints(gbc, 9);
 		pnl.add(getSep(), gbc);
 
 		// Local update directory
 
-		setLabelConstraints(gbc, 9);
+		setLabelConstraints(gbc, 10);
 		_localPathLabel = new JLabel(i18n.LOCAL_PATH, SwingConstants.RIGHT);
 		pnl.add(_localPathLabel, gbc);
 
-		setFieldConstraints(gbc, 9);
+		setFieldConstraints(gbc, 10);
 		pnl.add(_localPath, gbc);
 		return pnl;
 	}
