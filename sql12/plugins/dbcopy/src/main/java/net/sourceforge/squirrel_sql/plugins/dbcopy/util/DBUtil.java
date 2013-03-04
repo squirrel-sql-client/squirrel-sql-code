@@ -1524,7 +1524,19 @@ public class DBUtil extends I18NBaseObject
       String typeName = ColTypeMapper.mapColType(
             prov.getSourceSession(), prov.getDestSession(), colInfo, sourceTableName, destTableName);
 
-      String columnDefinitionString = SQLUtilities.createColumnDefinitionString(columnName, typeName, colInfo.getColumnSize(), colInfo.getDecimalDigits());
+      String columnDefinitionString;
+
+      if (typeName.contains("("))
+      {
+         columnDefinitionString = columnName + " " + typeName;
+      }
+      else
+      {
+         // For example for HSQL varchar types do not get length from  ColTypeMapper.mapColType(...)
+         // We use this here as a fallback.
+         columnDefinitionString = SQLUtilities.createColumnDefinitionString(columnName, typeName, colInfo.getColumnSize(), colInfo.getDecimalDigits());
+      }
+
       StringBuilder result = new StringBuilder(columnDefinitionString);
 
       boolean notNullable = colInfo.isNullable().equalsIgnoreCase("NO");

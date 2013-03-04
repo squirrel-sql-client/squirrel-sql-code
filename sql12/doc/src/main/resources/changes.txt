@@ -8,6 +8,9 @@ Not yet released, available in our Subversion repository and in future snapshots
 
 Enhancements:
 
+DBCopy-Plugin: Added table name suggestion to "Paste table as ..."
+  dialog when a table is selected in the destination Object tree.
+
 Update Tab (in Global Preferences): Added hint/link to Proxy configuration.
 
 Added support for the JTattoo suite of Look-and-Feel classes to the Look-and-Feel plugin.  Thanks to Michael

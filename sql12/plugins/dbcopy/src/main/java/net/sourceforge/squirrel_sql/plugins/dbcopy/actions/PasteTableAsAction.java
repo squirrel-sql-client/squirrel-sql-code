@@ -24,6 +24,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionUtils;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -35,6 +37,8 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.*;
+import java.util.List;
 
 
 public class PasteTableAsAction extends SquirrelAction
@@ -88,7 +92,15 @@ public class PasteTableAsAction extends SquirrelAction
           return;
        }
 
-       EditPasteTableNameDlg dlg = new EditPasteTableNameDlg(owningFrame);
+       String destTableName = null;
+       List<ITableInfo> selectedTables = sessionInfoProv.getDestSession().getObjectTreeAPIOfActiveSessionWindow().getSelectedTables();
+
+       if(1 == selectedTables.size())
+       {
+          destTableName = selectedTables.get(0).getSimpleName();
+       }
+
+       EditPasteTableNameDlg dlg = new EditPasteTableNameDlg(owningFrame, destTableName);
        GUIUtils.centerWithinParent(dlg);
        dlg.setVisible(true);
 
