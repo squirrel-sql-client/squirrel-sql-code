@@ -65,7 +65,9 @@ import net.sourceforge.squirrel_sql.plugins.db2.types.DB2XmlTypeDataTypeComponen
 public class DB2Plugin extends DefaultSessionPlugin
 {
 
-	public static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
+	public static final String[] JCC_DRIVER_NAME =
+	{"IBM DB2 JDBC Universal Driver Architecture",
+		"IBM Data Server Driver for JDBC and SQLJ"};
 
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DB2Plugin.class);
 
@@ -223,9 +225,15 @@ public class DB2Plugin extends DefaultSessionPlugin
 		// Install DB2JCCExceptionFormatter iff we're using the JCC driver
 		try
 		{
-			if (JCC_DRIVER_NAME.equals(session.getMetaData().getJDBCMetaData().getDriverName()))
+			String driverName = session.getMetaData().getJDBCMetaData().getDriverName();
+			for(String n : JCC_DRIVER_NAME)
 			{
-				session.setExceptionFormatter(new DB2JCCExceptionFormatter());
+				if (n.equals(driverName))
+				{
+               s_log.info("SELECTED DRIVER NAME: " + n);
+               session.setExceptionFormatter(new DB2JCCExceptionFormatter());
+               break;
+				}
 			}
 		}
 		catch (SQLException e)

@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Formats an exception of the new DB2 JCC driver, where the human-readable error message needs to be obtained
@@ -54,6 +56,8 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 
 	private static final String METHOD_GET_MESSAGE = "getMessage";
 
+	private final static ILogger s_log = LoggerController.createLogger(DB2Plugin.class);
+
 	/**
 	 * Checks if this {@link Throwable} is a DB2 JCC SqlException (com.ibm.db2.jcc.*.SqlException) by testing
 	 * for the proper prefix and suffix of the class name
@@ -62,6 +66,7 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 	 */
 	public boolean formatsException(Throwable t)
 	{
+		s_log.info("LOGGING Throwable " + t.toString());
 		if (t == null)
 		{
 			return false;
@@ -69,7 +74,7 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 		else
 		{
 			String className = t.getClass().getName();
-			return className.startsWith(JCC_EXCEPTION_PREFIX) && className.endsWith(JCC_EXCEPTION_CLASS);
+			return className.startsWith(JCC_EXCEPTION_PREFIX) && className.endsWith("Exception");
 		}
 	}
 
@@ -97,6 +102,7 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 		Method getSqlState = sqlca.getClass().getMethod(METHOD_GET_SQL_STATE, (Class[]) null);
 		String sqlState = getSqlState.invoke(sqlca, (Object[]) null).toString();
 
+		s_log.info("MESSAGE: " + msg);
 		builder.append(msg).append(" SQL Code: ").append(sqlCode).append(", SQL State: ").append(sqlState);
 		return builder.toString();
 	}

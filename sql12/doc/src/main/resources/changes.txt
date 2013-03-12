@@ -80,6 +80,8 @@ Positions of SQL result tabs and of Session tabs can now be changed using drag a
 
 Bug fixes:
 
+#1073 db2 plugin - extended error code message. Thanks to Marcin Krol for the patch.
+
 #939 DBCopy-Plugin: Copy to HSQLDB 2.0 failed because column lengths where not defined in create table statements for various column types.
     This problem existed for other RDBMSes too.
 
