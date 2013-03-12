@@ -54,7 +54,7 @@ public class DB2PluginTest extends AbstractSessionPluginTest implements Database
 	@Test
 	public void testSessionStarted() throws SQLException
 	{
-		when(mockDatabaseMetaData.getDriverName()).thenReturn(DB2Plugin.JCC_DRIVER_NAME);
+		when(mockDatabaseMetaData.getDriverName()).thenReturn(DB2Plugin.JCC_DRIVER_NAME[0]);
 		PluginSessionCallback result = ((DB2Plugin) super.classUnderTest).sessionStarted(mockSession);
 		assertNotNull(result);
 	}

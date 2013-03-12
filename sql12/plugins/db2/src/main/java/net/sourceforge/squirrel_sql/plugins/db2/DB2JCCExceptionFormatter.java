@@ -66,7 +66,6 @@ public class DB2JCCExceptionFormatter implements ExceptionFormatter
 	 */
 	public boolean formatsException(Throwable t)
 	{
-		s_log.info("LOGGING Throwable " + t.toString());
 		if (t == null)
 		{
 			return false;
