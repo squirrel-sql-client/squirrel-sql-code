@@ -31,11 +31,8 @@ public class FileManager
    private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(FileManager.class);
    
-   private JFileChooser fileChooser = null;
-   
-   private HashMap<FileExtensionFilter, String> fileAppenixes = 
-       new HashMap<FileExtensionFilter, String>();
-   
+   private FileChooserManager _fileChooserManager = new FileChooserManager();
+
    private IOUtilities ioUtil = new IOUtilitiesImpl();
    public void setIOUtilities(IOUtilities ioutilities) {
    	this.ioUtil = ioutilities;
@@ -74,7 +71,7 @@ public class FileManager
    public boolean open(boolean appendToExisting)
    {
        boolean result = false;
-      JFileChooser chooser = getFileChooser();
+      JFileChooser chooser = _fileChooserManager.getFileChooser();
       chooser.setAccessory(new ChooserPreviewer());
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
@@ -149,7 +146,7 @@ public class FileManager
       _sqlPanelAPI.getSession().getApplication().getRecentFilesManager().fileTouched(file.getAbsolutePath(), _sqlPanelAPI.getSession().getAlias());
    }
 
-   public boolean saveIntern(boolean toNewFile)
+   private boolean saveIntern(boolean toNewFile)
    {
        boolean result = false;
       if (toNewFile)
@@ -157,7 +154,7 @@ public class FileManager
          _toSaveTo = null;
       }
 
-      JFileChooser chooser = getFileChooser();
+      JFileChooser chooser = _fileChooserManager.getFileChooser();
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
       Frame frame = SessionUtils.getOwningFrame(_sqlPanelAPI);
@@ -196,14 +193,14 @@ public class FileManager
 
          if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
          {
-             
+            _fileChooserManager.saveWasApproved();
             _toSaveTo = chooser.getSelectedFile();
 
-            if (!_toSaveTo.exists() && null != fileAppenixes.get(chooser.getFileFilter()))
+            if (!_toSaveTo.exists() && null != _fileChooserManager.getSelectedFileEnding())
             {
-               if (!_toSaveTo.getAbsolutePath().endsWith(fileAppenixes.get(chooser.getFileFilter())))
+               if (!_toSaveTo.getAbsolutePath().endsWith(_fileChooserManager.getSelectedFileEnding()))
                {
-                  _toSaveTo = new File(_toSaveTo.getAbsolutePath() + fileAppenixes.get(chooser.getFileFilter()));
+                  _toSaveTo = new File(_toSaveTo.getAbsolutePath() + _fileChooserManager.getSelectedFileEnding());
                }
             }
 
@@ -366,21 +363,8 @@ public class FileManager
    public File getFile() {
        return _toSaveTo;
    }
-   
-   private JFileChooser getFileChooser() {
-       if (fileChooser == null) {
-           fileChooser = new JFileChooser();
-           FileExtensionFilter filter = 
-               new FileExtensionFilter("Text files", new String[]{".txt"});
-           fileChooser.addChoosableFileFilter(filter);
-           fileAppenixes.put(filter, ".txt");
-           filter = new FileExtensionFilter("SQL files", new String[]{".sql"});
-           fileChooser.addChoosableFileFilter(filter);
-           fileAppenixes.put(filter, ".sql");
-       }
-       return fileChooser;
-   }
-   
+
+
    public void clearCurrentFile()
    {
       _toSaveTo = null;

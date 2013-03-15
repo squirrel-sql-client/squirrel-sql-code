@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+SQL script save/open dialog remembers the last selected file name extension.
+
 DBCopy-Plugin: Added table name suggestion to "Paste table as ..."
   dialog when a table is selected in the destination Object tree.
 
