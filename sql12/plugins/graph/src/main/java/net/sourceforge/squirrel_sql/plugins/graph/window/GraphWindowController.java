@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
@@ -167,7 +168,8 @@ public class GraphWindowController
          _frameWindow = null;
       }
 
-      _dlgWindow = new JDialog(_session.getApplication().getMainFrame());
+      Frame owningFrame = GUIUtils.getOwningFrame(_session.getObjectTreeAPIOfActiveSessionWindow().getDetailTabComp());
+      _dlgWindow = new JDialog(owningFrame);
       _dlgWindow.setTitle(title);
       _dlgWindow.getContentPane().setLayout(new GridLayout(1, 1));
       _dlgWindow.getContentPane().add(_contentPanel);

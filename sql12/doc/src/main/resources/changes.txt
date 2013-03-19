@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Updated French translations. Thanks to Erwan Duroselle.
+
 SQL script save/open dialog remembers the last selected file name extension.
 
 DBCopy-Plugin: Added table name suggestion to "Paste table as ..."
@@ -81,6 +83,9 @@ Positions of SQL result tabs and of Session tabs can now be changed using drag a
 
 
 Bug fixes:
+
+For detached Session windows drag and drop to query builder did not work
+  because the query builder became hidden behind the Session window.
 
 #1073 db2 plugin - extended error code message. Thanks to Marcin Krol for the patch.
 
