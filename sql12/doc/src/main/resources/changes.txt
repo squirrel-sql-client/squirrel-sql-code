@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Updated Italian translations. Thanks to Ivo Neri.
+
 Updated French translations. Thanks to Erwan Duroselle.
 
 SQL script save/open dialog remembers the last selected file name extension.
