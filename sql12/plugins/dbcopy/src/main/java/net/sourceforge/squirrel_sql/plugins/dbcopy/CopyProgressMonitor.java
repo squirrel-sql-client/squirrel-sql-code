@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -94,22 +95,33 @@ public class CopyProgressMonitor extends I18NBaseObject
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#copyStarted()
      */
-    public void copyStarted(CopyEvent e) {
-        if (pm != null) {
-            pm.setProgress(pm.getMaximum());
-        }
-        prov = e.getSessionInfoProvider();
-        int numTables = prov.getSourceDatabaseObjects().size();
-        int[] tableCounts = e.getTableCounts();
-        
-        createProgressDialog();
-        DualProgressBarDialog.setBottomBarMinMax(0, numTables);
-        DualProgressBarDialog.setBottomBarValue(0);
-        DualProgressBarDialog.setTopBarValue(0);
-        DualProgressBarDialog.setTableCounts(tableCounts);
+    public void copyStarted(final CopyEvent e)
+    {
+       Runnable runnable = new Runnable()
+       {
+          public void run()
+          {
+             if (pm != null)
+             {
+                pm.setProgress(pm.getMaximum());
+             }
+             prov = e.getSessionInfoProvider();
+             int numTables = prov.getSourceDatabaseObjects().size();
+             int[] tableCounts = e.getTableCounts();
+
+             createProgressDialog();
+             DualProgressBarDialog.setBottomBarMinMax(0, numTables);
+             DualProgressBarDialog.setBottomBarValue(0);
+             DualProgressBarDialog.setTopBarValue(0);
+             DualProgressBarDialog.setTableCounts(tableCounts);
+          }
+       };
+
+       GUIUtils.processOnSwingEventThread(runnable);
+
     }
-    
-    /* (non-Javadoc)
+
+   /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#tableCopyStarted(net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent)
      */
     public void tableCopyStarted(TableEvent e) {
@@ -459,27 +471,47 @@ public class CopyProgressMonitor extends I18NBaseObject
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#analyzingTable(net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent)
      */
-    public void analyzingTable(TableEvent e) {
-        if (pm.isCanceled()) {
-            
-        }
-        // i18n[CopyProgressMonitor.analyzingTableMessage=Analyzing table ]
-        pm.setNote(getMessage("CopyProgressMonitor.analyzingTableMessage")+e.getTableName());
-        pm.setProgress(e.getTableNumber());
+    public void analyzingTable(final TableEvent e)
+    {
+       Runnable runnable = new Runnable()
+       {
+          public void run()
+          {
+             if (pm.isCanceled())
+             {
+
+             }
+             // i18n[CopyProgressMonitor.analyzingTableMessage=Analyzing table ]
+             pm.setNote(getMessage("CopyProgressMonitor.analyzingTableMessage") + e.getTableName());
+             pm.setProgress(e.getTableNumber());
+          }
+       };
+
+       GUIUtils.processOnSwingEventThread(runnable);
     }
 
-    /**
+   /**
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#tableAnalysisStarted(net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent)
      */
-    public void tableAnalysisStarted(AnalysisEvent e) {
-        SessionInfoProvider prov = e.getSessionInfoProvider(); 
-        // TODO: set the total for the progress bar.
-        pm = new ProgressMonitor(parent,  
-                                 "Analyzing column names in tables to be copied",
-                                 "",
-                                 0,
-                                 prov.getSourceDatabaseObjects().size()); 
-        
-    }
+   public void tableAnalysisStarted(final AnalysisEvent e)
+   {
+      Runnable runnable = new Runnable()
+      {
+         public void run()
+         {
+            SessionInfoProvider prov = e.getSessionInfoProvider();
+            // TODO: set the total for the progress bar.
+            pm = new ProgressMonitor(parent,
+                  "Analyzing column names in tables to be copied",
+                  "",
+                  0,
+                  prov.getSourceDatabaseObjects().size());
+         }
+      };
+
+      GUIUtils.processOnSwingEventThread(runnable);
+
+
+   }
 
 }

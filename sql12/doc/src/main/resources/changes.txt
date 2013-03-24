@@ -86,6 +86,8 @@ Positions of SQL result tabs and of Session tabs can now be changed using drag a
 
 Bug fixes:
 
+#1077 EDT Violation reported in log while copying tables
+
 For detached Session windows drag and drop to query builder did not work
   because the query builder became hidden behind the Session window.
 
