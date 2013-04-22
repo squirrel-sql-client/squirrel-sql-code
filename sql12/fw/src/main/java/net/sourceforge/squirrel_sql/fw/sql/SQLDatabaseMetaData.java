@@ -981,9 +981,20 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			int count = 0;
 			while (tabResult != null && tabResult.next())
 			{
+				String tblRemark;
+				try
+				{
+               // Problems retrieving remarks have been seen on DB2, see bugs 1061 and 1076
+					tblRemark = tabResult.getString(5);
+				}
+				catch (Throwable th)
+				{
+					s_log.debug("Failed to retrieve REMARKS of a table: " + th.getMessage());
+					tblRemark = th.toString();
+				}
 				ITableInfo tabInfo =
 					new TableInfo(tabResult.getString(1), tabResult.getString(2), tabResult.getString(3),
-						tabResult.getString(4), tabResult.getString(5), this);
+						tabResult.getString(4), tblRemark, this);
 				if (nameMap != null)
 				{
 					nameMap.put(tabInfo.getSimpleName(), tabInfo);
