@@ -72,7 +72,7 @@
 		<javadoc-plugin-version>2.6</javadoc-plugin-version>
 		<maven-plugin-api-version>2.0</maven-plugin-api-version>
 		<pmd-plugin-version>2.4</pmd-plugin-version>
-		<release-plugin-version>2.1</release-plugin-version>
+		<release-plugin-version>2.4.1</release-plugin-version>
 		<scm-plugin-version>1.4</scm-plugin-version>
 		<source-plugin-version>2.1.2</source-plugin-version>
 		<squirrelsql-version-plugin-version>1.0.8</squirrelsql-version-plugin-version>
