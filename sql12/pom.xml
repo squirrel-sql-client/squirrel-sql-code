@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.squirrel-sql</groupId>
 	<artifactId>squirrel-root-pom</artifactId>
-	<version>3.5.0</version>
+	<version>3.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -46,7 +46,7 @@
 		<connection>scm:git:git://git.code.sf.net/p/squirrel-sql/git</connection>
 		<developerConnection>scm:git:ssh://git.code.sf.net/p/squirrel-sql/git</developerConnection>
 		<url>http://sourceforge.net/p/squirrel-sql/git/ci/fe9318bdee3991f010b5b476244e5629c7d8efee/tree</url>
-	  <tag>squirrel-sql-3.5.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
