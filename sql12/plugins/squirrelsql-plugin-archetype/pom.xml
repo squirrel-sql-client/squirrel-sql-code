@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql</groupId>
 		<artifactId>squirrel-root-pom</artifactId>
-		<version>3.5.1-SNAPSHOT</version>
+		<version>3.5.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<groupId>net.sf.squirrel-sql.plugins</groupId>
 	<artifactId>squirrelsql-plugin-archetype</artifactId>
-	<version>3.5.1-SNAPSHOT</version>
+	<version>3.5.0-SNAPSHOT</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>SQuirreL Plugin Archetype</name>
