@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.sf.squirrel-sql.plugins</groupId>
 		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
-		<version>3.5.0-SNAPSHOT</version>
+		<version>3.5.0</version>
 		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
 	</parent>
 	<artifactId>mysql</artifactId>
