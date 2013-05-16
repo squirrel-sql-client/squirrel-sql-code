@@ -12,6 +12,9 @@ public class Main extends Application
 {
    public static final String PREF_MAIN_WIN_WIDTH = "mainWin.width";
    public static final String PREF_MAIN_WIN_HEIGHT = "mainWin.height";
+   public static final String PREF_MAIN_WIN_X = "mainWin.x";
+   public static final String PREF_MAIN_WIN_Y = "mainWin.y";
+
    private I18n i18n = new I18n(getClass());
    private Pref pref = new Pref(getClass());
 
@@ -35,6 +38,9 @@ public class Main extends Application
       dockButtons.getChildren().add(new VerticalToggleButton(i18n.t("dock.button.aliases")));
       dockButtons.getChildren().add(new VerticalToggleButton(i18n.t("dock.button.drivers")));
 
+
+      primaryStage.setX(pref.getDouble(PREF_MAIN_WIN_X, 0d));
+      primaryStage.setY(pref.getDouble(PREF_MAIN_WIN_Y, 0d));
       primaryStage.setWidth(pref.getDouble(PREF_MAIN_WIN_WIDTH, 500d));
       primaryStage.setHeight(pref.getDouble(PREF_MAIN_WIN_HEIGHT, 500d));
 
@@ -53,6 +59,8 @@ public class Main extends Application
 
    private void onClose()
    {
+      pref.set(PREF_MAIN_WIN_X, _primaryStage.getX());
+      pref.set(PREF_MAIN_WIN_Y, _primaryStage.getY());
       pref.set(PREF_MAIN_WIN_WIDTH, _primaryStage.getWidth());
       pref.set(PREF_MAIN_WIN_HEIGHT, _primaryStage.getHeight());
    }
