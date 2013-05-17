@@ -2,9 +2,9 @@ package org.squirrelsql;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -31,13 +31,29 @@ public class Main extends Application
       BorderPane borderPane = new BorderPane();
       primaryStage.setScene(new Scene(borderPane));
 
-      VBox dockButtons = new VBox();
+      final SplitController splitController = new SplitController();
+      borderPane.setCenter(splitController.getNode());
+
+
+      DockButtonsListener dockButtonsListener = new DockButtonsListener()
+      {
+         @Override
+         public void driversChanged(boolean selected)
+         {
+            splitController.showDrivers(selected);
+         }
+
+         @Override
+         public void aliasesChanged(boolean selected)
+         {
+            splitController.showAliases(selected);
+         }
+      };
+
+      DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockButtonsListener);
+      Node dockButtons = dockButtonsCtrl.getNode();
 
       borderPane.setLeft(dockButtons);
-
-      dockButtons.getChildren().add(new VerticalToggleButton(i18n.t("dock.button.aliases")));
-      dockButtons.getChildren().add(new VerticalToggleButton(i18n.t("dock.button.drivers")));
-
 
       primaryStage.setX(pref.getDouble(PREF_MAIN_WIN_X, 0d));
       primaryStage.setY(pref.getDouble(PREF_MAIN_WIN_Y, 0d));
