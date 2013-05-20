@@ -9,6 +9,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.io.PrintStream;
+
 public class Main extends Application
 {
    public static final String PREF_MAIN_WIN_WIDTH = "mainWin.width";
@@ -56,6 +58,8 @@ public class Main extends Application
 
       borderPane.setLeft(dockButtons);
 
+      borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
+
       primaryStage.setX(pref.getDouble(PREF_MAIN_WIN_X, 0d));
       primaryStage.setY(pref.getDouble(PREF_MAIN_WIN_Y, 0d));
       primaryStage.setWidth(pref.getDouble(PREF_MAIN_WIN_WIDTH, 500d));
@@ -72,6 +76,8 @@ public class Main extends Application
             onClose();
          }
       });
+
+
 
       primaryStage.show();
    }
@@ -96,11 +102,14 @@ public class Main extends Application
       pref.set(PREF_MAIN_WIN_Y, _primaryStage.getY());
       pref.set(PREF_MAIN_WIN_WIDTH, _primaryStage.getWidth());
       pref.set(PREF_MAIN_WIN_HEIGHT, _primaryStage.getHeight());
+
+      Platform.exit();
    }
 
 
    public static void main(String[] args)
    {
+      ExceptionHandler.initHandling();
       launch(args);
    }
 }

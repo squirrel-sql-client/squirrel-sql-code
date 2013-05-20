@@ -4,6 +4,8 @@ public class AppState
 {
    private static AppState _appState = new AppState();
 
+   private StatusBarCtrl _statusBarCtrl = new StatusBarCtrl();
+
    public static AppState get()
    {
       return _appState;
@@ -14,5 +16,11 @@ public class AppState
    public PrefImpl getPrefImpl()
    {
       return _prefImpl;
+   }
+
+
+   public StatusBarCtrl getStatusBarCtrl()
+   {
+      return _statusBarCtrl;
    }
 }

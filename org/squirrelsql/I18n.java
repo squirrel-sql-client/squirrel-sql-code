@@ -12,7 +12,7 @@ public class I18n
       _clazz = clazz;
    }
 
-   public String t(String s)
+   public String t(String s, Object ... params)
    {
       try
       {
@@ -25,7 +25,7 @@ public class I18n
             ret = "no resource: " + s;
          }
 
-         return ret;
+         return String.format(ret, params);
       }
       catch (IOException e)
       {

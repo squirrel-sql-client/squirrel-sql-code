@@ -23,7 +23,7 @@ public class SplitController
    public SplitController()
    {
       _spltHoriz.setOrientation(Orientation.HORIZONTAL);
-      _spltHoriz.getItems().add(new TextArea("Session"));
+      _spltHoriz.getItems().add(new SessionTabbedPaneCtrl().getNode());
 
       _spltVert.setOrientation(Orientation.VERTICAL);
       _spltVert.getItems().add(_spltHoriz);
