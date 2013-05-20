@@ -1,9 +1,6 @@
 package org.squirrelsql.workaround;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 
@@ -12,72 +9,48 @@ import java.util.TimerTask;
 
 public class SplitDividerWA
 {
-   private SplitPane _splt;
-   private boolean _firstCall = true;
 
-   public SplitDividerWA(SplitPane splt)
+   public static void addItemAndAdjustDivider(final SplitPane splt, Node node, final int divIx, final double divLoc)
    {
-      _splt = splt;
-   }
+      splt.getItems().add(divIx, node);
 
-   public void addItemAndAdjustDivider(Node node, final int divIx, final double divLoc)
-   {
-      _splt.getItems().add(divIx, node);
+      splt.setDividerPosition(divIx, divLoc);
 
-      _splt.setDividerPosition(divIx, divLoc);
-
-      if (_firstCall)
+      final Timer timer = new Timer();
+      TimerTask timerTask = new TimerTask()
       {
-         final SimpleDoubleProperty doubleProperty = new SimpleDoubleProperty(divLoc);
-         _splt.getDividers().get(divIx).positionProperty().bindBidirectional(doubleProperty);
-
-
-         final Timer timer = new Timer();
-         TimerTask timerTask = new TimerTask()
+         @Override
+         public void run()
          {
-            @Override
-            public void run()
-            {
-               onTimerTick(timer, divLoc, divIx, doubleProperty);
-            }
-         };
-         timer.schedule(timerTask,0, 100);
+            onTimerTick(splt, timer, divLoc, divIx);
+         }
+      };
+      timer.schedule(timerTask, 0, 100);
 
-         doubleProperty.addListener(new ChangeListener<Number>()
-         {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2)
-            {
-               forceDividerAdjust(timer, divLoc, divIx, doubleProperty);
-            }
-         });
-
-
-         _firstCall = false;
-      }
    }
 
-   private void onTimerTick(final Timer timer, final double divLoc, final int divIx, final SimpleDoubleProperty doubleProperty)
+   private static void onTimerTick(final SplitPane splt, final Timer timer, final double divLoc, final int divIx)
    {
       Platform.runLater(new Runnable()
       {
          @Override
          public void run()
          {
-            forceDividerAdjust(timer, divLoc, divIx, doubleProperty);
+            forceDividerAdjust(splt, timer, divLoc, divIx);
          }
       });
    }
 
-   private void forceDividerAdjust(Timer timer, double divLoc, int divIx, SimpleDoubleProperty doubleProperty)
+   private static void forceDividerAdjust(SplitPane splt, Timer timer, double divLoc, int divIx)
    {
-      if(Math.abs(divLoc - _splt.getDividerPositions()[0]) > 0.0003)
+      if (0 == splt.getDividerPositions().length)
       {
-         System.out.println("_splt.getDividerPositions()[0] " + _splt.getDividerPositions()[0]);
+         return;
+      }
 
-         System.out.println("doubleProperty = " + doubleProperty.getValue());
-
-         _splt.setDividerPosition(divIx, divLoc);
+      if (Math.abs(divLoc - splt.getDividerPositions()[0]) > 0.01)
+      {
+         splt.setDividerPosition(divIx, divLoc);
       }
       else
       {

@@ -10,7 +10,6 @@ public class SplitController
 {
    private static final String PREF_DRIVER_SPLIT_LOC = "driver.split.loc";
    private static final String PREF_ALIASES_SPLIT_LOC = "driver.split.loc";
-   private final SplitDividerWA _splitDividerWA;
 
    private Pref _pref = new Pref(this.getClass());
 
@@ -32,7 +31,6 @@ public class SplitController
 
       _spltVert.getItems().add(new TextArea("Message"));
 
-      _splitDividerWA = new SplitDividerWA(_spltHoriz);
    }
 
    public void showDrivers(boolean selected)
@@ -40,7 +38,7 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         _splitDividerWA.addItemAndAdjustDivider(_driversController.getNode(), 0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
+         SplitDividerWA.addItemAndAdjustDivider(_spltHoriz, _driversController.getNode(), 0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
       }
    }
 
@@ -49,7 +47,7 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         _splitDividerWA.addItemAndAdjustDivider(_aliasesController.getNode(), 0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
+         SplitDividerWA.addItemAndAdjustDivider(_spltHoriz, _aliasesController.getNode(), 0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
       }
    }
 
