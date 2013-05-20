@@ -4,11 +4,13 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SplitController
 {
    private static final String PREF_DRIVER_SPLIT_LOC = "driver.split.loc";
    private static final String PREF_ALIASES_SPLIT_LOC = "driver.split.loc";
+   private final SplitDividerWA _splitDividerWA;
 
    private Pref _pref = new Pref(this.getClass());
 
@@ -30,6 +32,7 @@ public class SplitController
 
       _spltVert.getItems().add(new TextArea("Message"));
 
+      _splitDividerWA = new SplitDividerWA(_spltHoriz);
    }
 
    public void showDrivers(boolean selected)
@@ -37,8 +40,7 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         _spltHoriz.getItems().add(0, _driversController.getNode());
-         _spltHoriz.setDividerPosition(0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
+         _splitDividerWA.addItemAndAdjustDivider(_driversController.getNode(), 0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
       }
    }
 
@@ -47,8 +49,7 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         _spltHoriz.getItems().add(0, _aliasesController.getNode());
-         _spltHoriz.setDividerPosition(0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
+         _splitDividerWA.addItemAndAdjustDivider(_aliasesController.getNode(), 0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
       }
    }
 
