@@ -10,10 +10,8 @@ import java.util.TimerTask;
 public class SplitDividerWA
 {
 
-   public static void addItemAndAdjustDivider(final SplitPane splt, Node node, final int divIx, final double divLoc)
+   public static void adjustDivider(final SplitPane splt, final int divIx, final double divLoc)
    {
-      splt.getItems().add(divIx, node);
-
       splt.setDividerPosition(divIx, divLoc);
 
       final Timer timer = new Timer();

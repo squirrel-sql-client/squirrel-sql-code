@@ -9,7 +9,7 @@ import org.squirrelsql.workaround.SplitDividerWA;
 public class SplitController
 {
    private static final String PREF_DRIVER_SPLIT_LOC = "driver.split.loc";
-   private static final String PREF_ALIASES_SPLIT_LOC = "driver.split.loc";
+   private static final String PREF_ALIASES_SPLIT_LOC = "aliases.split.loc";
 
    private Pref _pref = new Pref(this.getClass());
 
@@ -38,7 +38,8 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         SplitDividerWA.addItemAndAdjustDivider(_spltHoriz, _driversController.getNode(), 0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
+         _spltHoriz.getItems().add(0, _driversController.getNode());
+         SplitDividerWA.adjustDivider(_spltHoriz, 0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
       }
    }
 
@@ -47,14 +48,22 @@ public class SplitController
       checkRemove();
       if (selected)
       {
-         SplitDividerWA.addItemAndAdjustDivider(_spltHoriz, _aliasesController.getNode(), 0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
+         _spltHoriz.getItems().add(0, _aliasesController.getNode());
+         SplitDividerWA.adjustDivider(_spltHoriz, 0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
       }
    }
 
    private void checkRemove()
    {
-      if (_spltHoriz.getItems().get(0) == _driversController.getNode() || _spltHoriz.getItems().get(0) == _aliasesController.getNode())
+      if (_spltHoriz.getItems().get(0) == _driversController.getNode())
       {
+         _pref.set(PREF_DRIVER_SPLIT_LOC, _spltHoriz.getDividerPositions()[0]);
+         _spltHoriz.getItems().remove(0);
+      }
+
+      if (_spltHoriz.getItems().get(0) == _aliasesController.getNode())
+      {
+         _pref.set(PREF_ALIASES_SPLIT_LOC, _spltHoriz.getDividerPositions()[0]);
          _spltHoriz.getItems().remove(0);
       }
    }
