@@ -7,19 +7,26 @@ import javafx.scene.control.TextArea;
 
 public class SplitController
 {
+   private static final String PREF_DRIVER_SPLIT_LOC = "driver.split.loc";
+   private static final String PREF_ALIASES_SPLIT_LOC = "driver.split.loc";
+
+   private Pref _pref = new Pref(this.getClass());
+
    private SplitPane _spltVert;
+   private final SplitPane _spltHoriz;
+   private DriversController _driversController = new DriversController();
+   private AliasesController _aliasesController = new AliasesController();
 
    public SplitController()
    {
-      SplitPane spltHoriz = new SplitPane();
-      spltHoriz.setOrientation(Orientation.HORIZONTAL);
+      _spltHoriz = new SplitPane();
+      _spltHoriz.setOrientation(Orientation.HORIZONTAL);
 
       _spltVert = new SplitPane();
       _spltVert.setOrientation(Orientation.VERTICAL);
 
-      spltHoriz.getItems().add(new TextArea("Alias/Drivers"));
-      spltHoriz.getItems().add(new TextArea("Session"));
-      _spltVert.getItems().add(spltHoriz);
+      _spltHoriz.getItems().add(new TextArea("Session"));
+      _spltVert.getItems().add(_spltHoriz);
 
       _spltVert.getItems().add(new TextArea("Message"));
 
@@ -27,16 +34,35 @@ public class SplitController
 
    public void showDrivers(boolean selected)
    {
-      //To change body of created methods use File | Settings | File Templates.
+      checkRemove();
+      if (selected)
+      {
+         _spltHoriz.getItems().add(0, _driversController.getNode());
+         _spltHoriz.setDividerPosition(0, _pref.getDouble(PREF_DRIVER_SPLIT_LOC, 0.2d));
+      }
    }
 
    public void showAliases(boolean selected)
    {
-      //To change body of created methods use File | Settings | File Templates.
+      checkRemove();
+      if (selected)
+      {
+         _spltHoriz.getItems().add(0, _aliasesController.getNode());
+         _spltHoriz.setDividerPosition(0, _pref.getDouble(PREF_ALIASES_SPLIT_LOC, 0.2d));
+      }
    }
+
+   private void checkRemove()
+   {
+      if (_spltHoriz.getItems().get(0) == _driversController.getNode() || _spltHoriz.getItems().get(0) == _aliasesController.getNode())
+      {
+         _spltHoriz.getItems().remove(0);
+      }
+   }
+
 
    public Node getNode()
    {
-      return _spltVert;  //To change body of created methods use File | Settings | File Templates.
+      return _spltVert;
    }
 }
