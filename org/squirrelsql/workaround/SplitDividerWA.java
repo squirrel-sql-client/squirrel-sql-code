@@ -46,6 +46,8 @@ public class SplitDividerWA
          return;
       }
 
+      // System.out.println("splt.getDividerPositions()[0] = " + splt.getDividerPositions()[0] + ", divLoc = " + divLoc);
+
       if (Math.abs(divLoc - splt.getDividerPositions()[0]) > 0.01)
       {
          splt.setDividerPosition(divIx, divLoc);

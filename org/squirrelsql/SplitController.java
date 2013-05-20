@@ -1,5 +1,8 @@
 package org.squirrelsql;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -10,27 +13,24 @@ public class SplitController
 {
    private static final String PREF_DRIVER_SPLIT_LOC = "driver.split.loc";
    private static final String PREF_ALIASES_SPLIT_LOC = "aliases.split.loc";
+   private static final String PREF_MESSAGES_SPLIT_LOC = "messages.split.loc";
 
    private Pref _pref = new Pref(this.getClass());
 
-   private SplitPane _spltVert;
-   private final SplitPane _spltHoriz;
+   private SplitPane _spltVert = new SplitPane();
+   private final SplitPane _spltHoriz = new SplitPane();
+
    private DriversController _driversController = new DriversController();
    private AliasesController _aliasesController = new AliasesController();
 
    public SplitController()
    {
-      _spltHoriz = new SplitPane();
       _spltHoriz.setOrientation(Orientation.HORIZONTAL);
-
-      _spltVert = new SplitPane();
-      _spltVert.setOrientation(Orientation.VERTICAL);
-
       _spltHoriz.getItems().add(new TextArea("Session"));
+
+      _spltVert.setOrientation(Orientation.VERTICAL);
       _spltVert.getItems().add(_spltHoriz);
-
       _spltVert.getItems().add(new TextArea("Message"));
-
    }
 
    public void showDrivers(boolean selected)
@@ -72,5 +72,15 @@ public class SplitController
    public Node getNode()
    {
       return _spltVert;
+   }
+
+   public void close()
+   {
+      _pref.set(PREF_MESSAGES_SPLIT_LOC, _spltVert.getDividerPositions()[0]);
+   }
+
+   public void adjustMessageSplit()
+   {
+      SplitDividerWA.adjustDivider(_spltVert, 0, _pref.getDouble(PREF_MESSAGES_SPLIT_LOC, 0.85d));
    }
 }

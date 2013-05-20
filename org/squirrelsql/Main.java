@@ -1,6 +1,7 @@
 package org.squirrelsql;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ public class Main extends Application
 
    public static final String VERSION = "4fx";
    private Stage _primaryStage;
+   private final SplitController _splitController = new SplitController();
 
    @Override
    public void start(Stage primaryStage) throws Exception
@@ -31,8 +33,7 @@ public class Main extends Application
       BorderPane borderPane = new BorderPane();
       primaryStage.setScene(new Scene(borderPane));
 
-      final SplitController splitController = new SplitController();
-      borderPane.setCenter(splitController.getNode());
+      borderPane.setCenter(_splitController.getNode());
 
 
       DockButtonsListener dockButtonsListener = new DockButtonsListener()
@@ -40,13 +41,13 @@ public class Main extends Application
          @Override
          public void driversChanged(boolean selected)
          {
-            splitController.showDrivers(selected);
+            _splitController.showDrivers(selected);
          }
 
          @Override
          public void aliasesChanged(boolean selected)
          {
-            splitController.showAliases(selected);
+            _splitController.showAliases(selected);
          }
       };
 
@@ -59,6 +60,9 @@ public class Main extends Application
       primaryStage.setY(pref.getDouble(PREF_MAIN_WIN_Y, 0d));
       primaryStage.setWidth(pref.getDouble(PREF_MAIN_WIN_WIDTH, 500d));
       primaryStage.setHeight(pref.getDouble(PREF_MAIN_WIN_HEIGHT, 500d));
+      adjustMessageSplit();
+
+
 
       primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()
       {
@@ -70,11 +74,24 @@ public class Main extends Application
       });
 
       primaryStage.show();
+   }
 
+   private void adjustMessageSplit()
+   {
+      Runnable runnable = new Runnable()
+      {
+         public void run()
+         {
+            _splitController.adjustMessageSplit();
+         }
+      };
+
+      Platform.runLater(runnable);
    }
 
    private void onClose()
    {
+      _splitController.close();
       pref.set(PREF_MAIN_WIN_X, _primaryStage.getX());
       pref.set(PREF_MAIN_WIN_Y, _primaryStage.getY());
       pref.set(PREF_MAIN_WIN_WIDTH, _primaryStage.getWidth());
