@@ -4,7 +4,10 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.workaround.SplitDividerWA;
+
+// http://docs.oracle.com/javafx/2/ui_controls/editor.htm
 
 public class SplitController
 {
@@ -27,7 +30,7 @@ public class SplitController
 
       _spltVert.setOrientation(Orientation.VERTICAL);
       _spltVert.getItems().add(_spltHoriz);
-      _spltVert.getItems().add(new TextArea("Message"));
+      _spltVert.getItems().add(AppState.get().getMessagePanelCtrl().getNode());
    }
 
    public void showDrivers(boolean selected)

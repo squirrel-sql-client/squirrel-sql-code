@@ -1,4 +1,6 @@
-package org.squirrelsql;
+package org.squirrelsql.services;
+
+import org.squirrelsql.AppState;
 
 public class Pref
 {

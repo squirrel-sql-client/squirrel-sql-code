@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import org.squirrelsql.services.I18n;
 
 public class DockButtonsCtrl
 {

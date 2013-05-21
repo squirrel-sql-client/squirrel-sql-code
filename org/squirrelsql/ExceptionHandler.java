@@ -1,12 +1,16 @@
 package org.squirrelsql;
 
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+
 import java.io.PrintStream;
 
 public class ExceptionHandler
 {
    public static void handle(final Throwable t)
    {
-      AppState.get().getStatusBarCtrl().error(t);
+      MessageHandler mh = new MessageHandler(ExceptionHandler.class, MessageHandlerDestination.MESSAGE_LOG);
+      mh.error(t);
    }
 
    public static void initHandling()

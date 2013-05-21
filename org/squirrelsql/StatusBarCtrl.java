@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import org.squirrelsql.services.I18n;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -130,6 +131,12 @@ public class StatusBarCtrl
       refreshMessage(_iconError);
    }
 
+   public void error(String s)
+   {
+      ++_countError;
+      refreshMessage(_iconError);
+   }
+
    public void warning(String s)
    {
       ++_countWarning;
@@ -141,4 +148,5 @@ public class StatusBarCtrl
       ++_countInfo;
       refreshMessage(_iconInfo);
    }
+
 }

@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.io.PrintStream;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 
 public class Main extends Application
 {
@@ -104,6 +104,7 @@ public class Main extends Application
       pref.set(PREF_MAIN_WIN_HEIGHT, _primaryStage.getHeight());
 
       Platform.exit();
+      System.exit(0);
    }
 
 

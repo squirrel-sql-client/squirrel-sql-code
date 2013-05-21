@@ -1,4 +1,4 @@
-package org.squirrelsql;
+package org.squirrelsql.services;
 
 import java.io.IOException;
 import java.util.Properties;
