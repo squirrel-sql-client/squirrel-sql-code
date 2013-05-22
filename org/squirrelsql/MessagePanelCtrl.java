@@ -1,6 +1,8 @@
 package org.squirrelsql;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -20,6 +22,16 @@ public class MessagePanelCtrl
       _messages = new VBox();
       _sp = new ScrollPane();
       _sp.setContent(_messages);
+
+      _messages.heightProperty().addListener(new ChangeListener()
+      {
+         @Override
+         public void changed(ObservableValue observable, Object oldvalue, Object newValue)
+         {
+            _sp.setVvalue((Double) newValue);
+         }
+      });
+
    }
 
    public void error(String s)
@@ -43,15 +55,8 @@ public class MessagePanelCtrl
 
       _messages.getChildren().add(label);
 
-      Runnable runnable = new Runnable()
-      {
-         public void run()
-         {
-            _sp.setVvalue(1);
-         }
-      };
+//      _sp.setVvalue(_sp.getVmax());
 
-      Platform.runLater(runnable);
    }
 
    public void error(Throwable t)
