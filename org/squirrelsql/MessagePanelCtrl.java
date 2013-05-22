@@ -1,6 +1,5 @@
 package org.squirrelsql;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -14,49 +13,64 @@ import java.io.StringWriter;
 
 public class MessagePanelCtrl
 {
+   private static final String STYLE_RED = "-fx-border-color: red; -fx-border-width: 3;";
+   private static final String STYLE_YELLOW = "-fx-border-color: yellow; -fx-border-width: 3;";
+   private static final String STYLE_GREEN = "-fx-border-color: green; -fx-border-width: 3;";
+   private static final String STYLE_LIGHT_RED = "-fx-border-color: indianred; -fx-border-width: 3";
+
+
    private VBox _messages;
    private final ScrollPane _sp;
 
    public MessagePanelCtrl()
    {
       _messages = new VBox();
+      _messages.setFillWidth(true);
+
       _sp = new ScrollPane();
       _sp.setContent(_messages);
 
-      _messages.heightProperty().addListener(new ChangeListener()
+      _messages.heightProperty().addListener(new ChangeListener<Number>()
       {
          @Override
-         public void changed(ObservableValue observable, Object oldvalue, Object newValue)
+         public void changed(ObservableValue<? extends Number> observableValue, Number oldNumber, Number newNumber)
          {
-            _sp.setVvalue((Double) newValue);
+            _sp.setVvalue(newNumber.doubleValue());
          }
       });
-
    }
 
    public void error(String s)
    {
-      addMessage(s);
+      addMessage(s, STYLE_RED);
    }
 
    public void warning(String s)
    {
-      addMessage(s);
+      addMessage(s, STYLE_YELLOW);
    }
 
    public void info(String s)
    {
-      addMessage(s);
+      addMessage(s, STYLE_GREEN);
    }
 
-   private void addMessage(String s)
+   private void addMessage(String s, String style)
    {
+      int size = _messages.getChildren().size();
+      if(0 < size)
+      {
+         Label label = (Label) _messages.getChildren().get(size - 1);
+
+         if(STYLE_RED.equals(label.getStyle()))
+         {
+            label.setStyle(STYLE_LIGHT_RED);
+         }
+      }
+
       Label label = new Label(s);
-
+      label.setStyle(style);
       _messages.getChildren().add(label);
-
-//      _sp.setVvalue(_sp.getVmax());
-
    }
 
    public void error(Throwable t)
@@ -68,7 +82,7 @@ public class MessagePanelCtrl
       pw.flush();
       sw.flush();
 
-      addMessage(sw.toString());
+      error(sw.toString());
 
       try
       {
