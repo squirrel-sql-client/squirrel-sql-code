@@ -68,6 +68,7 @@ public class MessagePanelCtrl
          }
       }
 
+      //https://forums.oracle.com/forums/thread.jspa?threadID=2317231
       Label label = new Label(s);
       label.setStyle(style);
       _messages.getChildren().add(label);
