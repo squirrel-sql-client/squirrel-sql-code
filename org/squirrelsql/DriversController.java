@@ -3,22 +3,36 @@ package org.squirrelsql;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class DriversController
 {
-   private ListView _lst;
+   private Props _props = new Props(this.getClass());
+
+   private ListView _lstDrivers;
+   private ToolBar _toolBar;
+   private final BorderPane _borderPane;
 
 
    public DriversController()
    {
-      _lst = new ListView();
+      _borderPane = new BorderPane();
+
+      _toolBar = new ToolBar();
+      addButton("driver_add.png");
+      addButton("driver_remove.png");
+      addButton("driver_edit.png");
+      addToggleButton("driver_filter.gif");
+
+      _lstDrivers = new ListView();
+
+      _borderPane.setTop(_toolBar);
+      _borderPane.setCenter(_lstDrivers);
 
       ObservableList<SquirrelDriver> observableList = FXCollections.observableArrayList();
 
@@ -40,9 +54,9 @@ public class DriversController
       observableList.addAll(driversToDisplay);
 
 
-      _lst.setItems(observableList);
+      _lstDrivers.setItems(observableList);
 
-      _lst.setCellFactory(new Callback<ListView, ListCell>()
+      _lstDrivers.setCellFactory(new Callback<ListView, ListCell>()
       {
          @Override
          public ListCell call(ListView listView)
@@ -53,8 +67,26 @@ public class DriversController
 
    }
 
+   private ToggleButton addToggleButton(String icon)
+   {
+      ToggleButton btn = new ToggleButton ();
+      btn.setGraphic(_props.getImageView(icon));
+      _toolBar.getItems().add(btn);
+
+      return btn;
+   }
+
+   private Button addButton(String icon)
+   {
+      Button btn = new Button();
+      btn.setGraphic(_props.getImageView(icon));
+      _toolBar.getItems().add(btn);
+
+      return btn;
+   }
+
    public Node getNode()
    {
-      return _lst;
+      return _borderPane;
    }
 }

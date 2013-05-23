@@ -2,6 +2,8 @@ package org.squirrelsql;
 
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 
 public class Props
 {
@@ -15,5 +17,10 @@ public class Props
    public Image getImage(String nameInPackage)
    {
       return new Image(_clazz.getResource(nameInPackage).toString());
+   }
+
+   public ImageView getImageView(String nameInPackage)
+   {
+      return new ImageView(getImage(nameInPackage));
    }
 }
