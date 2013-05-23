@@ -7,6 +7,8 @@ import javafx.scene.image.ImageView;
 public class DriverCell extends ListCell<SquirrelDriver>
 {
    private Props _props = new Props(this.getClass());
+   private ImageView _iconLoaded = new ImageView(_props.getImage("driver_loaded.png"));
+   private ImageView _iconNotLoaded = new ImageView(_props.getImage("driver_not_loaded.png"));
 
    @Override
    protected void updateItem(SquirrelDriver squirrelDriver, boolean b)
@@ -18,8 +20,6 @@ public class DriverCell extends ListCell<SquirrelDriver>
          return;
       }
 
-      System.out.println("DriverCell.updateItem");
-
       Label label = new Label(squirrelDriver.getName());
       label.setGraphic(getIcon(squirrelDriver));
       setGraphic(label);
@@ -29,11 +29,11 @@ public class DriverCell extends ListCell<SquirrelDriver>
    {
       if (squirrelDriver.isLoaded())
       {
-         return new ImageView(_props.getImage("driver_loaded.png"));
+         return _iconLoaded;
       }
       else
       {
-         return new ImageView(_props.getImage("driver_not_loaded.png"));
+         return _iconNotLoaded;
       }
    }
 }

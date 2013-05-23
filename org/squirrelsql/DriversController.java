@@ -7,6 +7,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DriversController
 {
    private ListView _lst;
@@ -18,7 +22,22 @@ public class DriversController
 
       ObservableList<SquirrelDriver> observableList = FXCollections.observableArrayList();
 
-      observableList.addAll(new SquirrelDriver(), new SquirrelDriver(), new SquirrelDriver());
+      ArrayList<SquirrelDriver> driversToDisplay =  Dao.loadSquirrelDrivers();
+
+      ArrayList<SquirrelDriver> preDefinedDrivers = PreDefinedDrivers.get();
+
+
+      for (SquirrelDriver preDefinedDriver : preDefinedDrivers)
+      {
+         if(false == driversToDisplay.contains(preDefinedDriver))
+         {
+            driversToDisplay.add(preDefinedDriver);
+         }
+      }
+
+      Collections.sort(driversToDisplay);
+
+      observableList.addAll(driversToDisplay);
 
 
       _lst.setItems(observableList);
