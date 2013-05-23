@@ -15,7 +15,6 @@ public class DriversController
    private Props _props = new Props(this.getClass());
 
    private ListView _lstDrivers;
-   private ToolBar _toolBar;
    private final BorderPane _borderPane;
 
 
@@ -23,15 +22,11 @@ public class DriversController
    {
       _borderPane = new BorderPane();
 
-      _toolBar = new ToolBar();
-      addButton("driver_add.png");
-      addButton("driver_remove.png");
-      addButton("driver_edit.png");
-      addToggleButton("driver_filter.gif");
+      createToolBar();
 
       _lstDrivers = new ListView();
 
-      _borderPane.setTop(_toolBar);
+      _borderPane.setTop(createToolBar());
       _borderPane.setCenter(_lstDrivers);
 
       ObservableList<SquirrelDriver> observableList = FXCollections.observableArrayList();
@@ -67,20 +62,43 @@ public class DriversController
 
    }
 
-   private ToggleButton addToggleButton(String icon)
+   private BorderPane createToolBar()
+   {
+      BorderPane ret = new BorderPane();
+
+      ToolBar toolBarDrivers = new ToolBar();
+      addButton("driver_add.png", toolBarDrivers);
+      addButton("driver_remove.png", toolBarDrivers);
+      addButton("driver_edit.png", toolBarDrivers);
+      addToggleButton("driver_filter.gif", toolBarDrivers);
+
+      ret.setCenter(toolBarDrivers);
+
+
+      ToolBar toolBarDockWin = new ToolBar();
+      addToggleButton("dock_win_stick.png", toolBarDockWin);
+      addButton("dock_win_close.png", toolBarDockWin);
+
+      ret.setRight(toolBarDockWin);
+
+      return ret;
+
+   }
+
+   private ToggleButton addToggleButton(String icon, ToolBar toolBar)
    {
       ToggleButton btn = new ToggleButton ();
       btn.setGraphic(_props.getImageView(icon));
-      _toolBar.getItems().add(btn);
+      toolBar.getItems().add(btn);
 
       return btn;
    }
 
-   private Button addButton(String icon)
+   private Button addButton(String icon, ToolBar toolBar)
    {
       Button btn = new Button();
       btn.setGraphic(_props.getImageView(icon));
-      _toolBar.getItems().add(btn);
+      toolBar.getItems().add(btn);
 
       return btn;
    }
