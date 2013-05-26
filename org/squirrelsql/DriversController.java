@@ -64,6 +64,11 @@ public class DriversController
          }
       });
 
+      if (0 < _lstDrivers.getItems().size())
+      {
+         _lstDrivers.getSelectionModel().select(0);
+      }
+
    }
 
    private BorderPane createToolBar()
@@ -73,7 +78,15 @@ public class DriversController
       ToolBar toolBarDrivers = new ToolBar();
       addButton("driver_add.png", toolBarDrivers);
       addButton("driver_remove.png", toolBarDrivers);
-      addButton("driver_edit.png", toolBarDrivers);
+      addButton("driver_edit.png", toolBarDrivers).setOnAction(new EventHandler<ActionEvent>()
+      {
+         @Override
+         public void handle(ActionEvent actionEvent)
+         {
+            onEdit();
+         }
+      });
+
       addToggleButton("driver_filter.gif", toolBarDrivers);
 
       ret.setCenter(toolBarDrivers);
@@ -94,6 +107,12 @@ public class DriversController
 
       return ret;
 
+   }
+
+   private void onEdit()
+   {
+      SquirrelDriver  squirrelDriver = (SquirrelDriver) _lstDrivers.getSelectionModel().getSelectedItem();
+      new DriverEditCtrl(squirrelDriver);
    }
 
    private ToggleButton addToggleButton(String icon, ToolBar toolBar)

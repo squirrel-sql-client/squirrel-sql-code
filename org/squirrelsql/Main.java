@@ -28,6 +28,8 @@ public class Main extends Application
    @Override
    public void start(Stage primaryStage) throws Exception
    {
+      AppState.init(primaryStage);
+
       _primaryStage = primaryStage;
 
       primaryStage.setTitle(i18n.t("mainWin.title") + " " + VERSION);
