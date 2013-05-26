@@ -3,12 +3,11 @@ package org.squirrelsql;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.squirrelsql.services.I18n;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class DriverEditCtrl
 {
@@ -18,13 +17,18 @@ public class DriverEditCtrl
    {
       try
       {
-         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DriverEditView.fxml"));
+
+         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DriverEditView.fxml"), ResourceBundle.getBundle(getClass().getPackage().getName() + ".i18n"));
          Parent parent = (Parent) fxmlLoader.load();
          DriverEditView driverEditView = fxmlLoader.getController();
 
+         String title = _i18n.t("change.driver.title", squirrelDriver.getName());
+
+         driverEditView.lblChangeDriver.setText(title);
+
 
          Stage dialog = new Stage();
-         dialog.setTitle(_i18n.t("change.driver.title", squirrelDriver.getName()));
+         dialog.setTitle(title);
          dialog.initOwner(AppState.get().getPrimaryStage());
 
 

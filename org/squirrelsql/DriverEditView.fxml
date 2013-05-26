@@ -5,29 +5,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="684.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.DriverEditView">
   <children>
-    <Label id="txt" fx:id="lblChangeDriver" layoutX="0.0" layoutY="7.0" minHeight="14.0" prefHeight="19.0" prefWidth="600.0" text="Change Driver:" />
-    <Label id="lblName" layoutX="62.0" layoutY="48.0" text="Name:" />
-    <Label id="lblUrl" layoutX="14.0" layoutY="81.0" text="Example URL:" />
-    <Label id="lblWebSIte" layoutX="18.0" layoutY="115.0" text="Website URL:" />
+    <Label id="txt" fx:id="lblChangeDriver" layoutX="0.0" layoutY="7.0" minHeight="14.0" prefHeight="19.0" prefWidth="599.9999000000025" text="%change.driver" />
+    <Label id="lblName" layoutX="62.0" layoutY="48.0" text="%driver.name" />
+    <Label id="lblUrl" layoutX="14.0" layoutY="81.0" text="%driver.example.url" />
+    <Label id="lblWebSIte" layoutX="18.0" layoutY="115.0" text="%driver.website.url" />
     <ListView fx:id="lstClasspath" prefHeight="271.0" prefWidth="572.0" AnchorPane.bottomAnchor="244.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="169.0" />
-    <Label id="lblDriverClasspath" layoutX="14.0" layoutY="153.0" text="Driver classpath:" />
+    <Label id="lblDriverClasspath" layoutX="14.0" layoutY="153.0" text="%driver.classpath" />
     <TextField fx:id="txtName" layoutY="42.0" prefWidth="447.0" AnchorPane.leftAnchor="139.0" AnchorPane.rightAnchor="14.0" />
     <TextField fx:id="txtUrl" layoutY="75.0" prefWidth="447.0" AnchorPane.leftAnchor="139.0" AnchorPane.rightAnchor="14.0" />
     <TextField fx:id="txtWebUrl" layoutY="109.0" prefWidth="447.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="13.0" />
-    <Button fx:id="btnDriverCPAdd" layoutX="141.0" mnemonicParsing="false" text="Add" AnchorPane.bottomAnchor="216.0" />
-    <Label layoutX="15.0" prefWidth="125.00009999999747" text="Classpath entries:" AnchorPane.bottomAnchor="219.0" />
-    <Button fx:id="btnDriverCPRemove" layoutX="201.0" mnemonicParsing="false" text="Remove" AnchorPane.bottomAnchor="216.0" />
-    <Button fx:id="btnDriverCPUp" layoutX="290.0" mnemonicParsing="false" text="Up" AnchorPane.bottomAnchor="216.0" />
-    <Button fx:id="btnDriverCPDown" layoutX="344.0" mnemonicParsing="false" text="Down" AnchorPane.bottomAnchor="216.0" />
-    <Button fx:id="btnListDrivers" layoutX="15.0" mnemonicParsing="false" text="List Drivers" AnchorPane.bottomAnchor="161.0" />
+    <Button fx:id="btnDriverCPAdd" layoutX="141.0" mnemonicParsing="false" text="%driver.classpath.add" AnchorPane.bottomAnchor="216.0" />
+    <Label layoutX="15.0" prefWidth="125.00009999999747" text="%driver.classpath.entries" AnchorPane.bottomAnchor="219.0" />
+    <Button fx:id="btnDriverCPRemove" layoutX="201.0" mnemonicParsing="false" text="%driver.classpath.remove" AnchorPane.bottomAnchor="216.0" />
+    <Button fx:id="btnDriverCPUp" layoutX="290.0" mnemonicParsing="false" text="%driver.classpath.up" AnchorPane.bottomAnchor="216.0" />
+    <Button fx:id="btnDriverCPDown" layoutX="344.0" mnemonicParsing="false" text="%driver.classpath.down" AnchorPane.bottomAnchor="216.0" />
+    <Button fx:id="btnListDrivers" layoutX="15.0" mnemonicParsing="false" text="%list.drivers" AnchorPane.bottomAnchor="161.0" />
     <ListView fx:id="lstDriverClasses" prefHeight="97.0" prefWidth="513.0" AnchorPane.bottomAnchor="62.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="72.0" />
     <HBox alignment="CENTER" prefHeight="29.0" prefWidth="571.9998779296875" spacing="10.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="13.0">
       <children>
-        <Button fx:id="btnOk" mnemonicParsing="false" text="Ok" />
-        <Button fx:id="btnClose" contentDisplay="TOP" mnemonicParsing="false" text="Close" textAlignment="LEFT" />
+        <Button fx:id="btnOk" mnemonicParsing="false" text="%driver.ok" />
+        <Button fx:id="btnClose" contentDisplay="TOP" mnemonicParsing="false" text="%driver.close" textAlignment="LEFT" />
       </children>
     </HBox>
   </children>
