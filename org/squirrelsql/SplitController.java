@@ -3,7 +3,6 @@ package org.squirrelsql;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.workaround.SplitDividerWA;
 
@@ -20,20 +19,37 @@ public class SplitController
    private SplitPane _spltVert = new SplitPane();
    private final SplitPane _spltHoriz = new SplitPane();
 
-   private DriversController _driversController = new DriversController();
+   private DriversController _driversController;
    private AliasesController _aliasesController = new AliasesController();
 
-   public SplitController()
+   public SplitController(DockPaneChanel dockPaneChanel)
    {
+      _driversController = new DriversController(dockPaneChanel);
       _spltHoriz.setOrientation(Orientation.HORIZONTAL);
       _spltHoriz.getItems().add(new SessionTabbedPaneCtrl().getNode());
 
       _spltVert.setOrientation(Orientation.VERTICAL);
       _spltVert.getItems().add(_spltHoriz);
       _spltVert.getItems().add(AppState.get().getMessagePanelCtrl().getNode());
+
+
+      dockPaneChanel.addListener(new DockPaneChanelAdapter()
+      {
+         @Override
+         public void showDrivers(boolean selected)
+         {
+            onShowDrivers(selected);
+         }
+
+         @Override
+         public void showAliases(boolean selected)
+         {
+            onShowAliases(selected);
+         }
+      });
    }
 
-   public void showDrivers(boolean selected)
+   private void onShowDrivers(boolean selected)
    {
       checkRemove();
       if (selected)
@@ -43,7 +59,7 @@ public class SplitController
       }
    }
 
-   public void showAliases(boolean selected)
+   private void onShowAliases(boolean selected)
    {
       checkRemove();
       if (selected)

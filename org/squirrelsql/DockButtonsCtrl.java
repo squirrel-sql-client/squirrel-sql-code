@@ -9,13 +9,22 @@ import org.squirrelsql.services.I18n;
 public class DockButtonsCtrl
 {
    private I18n i18n = new I18n(getClass());
-   private DockButtonsListener _dockButtonsListener;
+   private DockPaneChanel _dockPaneChanel;
    private VerticalToggleButton _btnAliases;
    private VerticalToggleButton _btnDrivers;
 
-   public DockButtonsCtrl(DockButtonsListener dockButtonsListener)
+   public DockButtonsCtrl(DockPaneChanel dockPaneChanel)
    {
-      _dockButtonsListener = dockButtonsListener;
+      _dockPaneChanel = dockPaneChanel;
+
+      _dockPaneChanel.addListener(new DockPaneChanelAdapter(){
+         @Override
+         public void closeDriver()
+         {
+            _btnDrivers.setSelected(false);
+            onDrivers();
+         }
+      });
    }
 
    public Node getNode()
@@ -54,7 +63,7 @@ public class DockButtonsCtrl
          _btnAliases.setSelected(false);
       }
 
-      _dockButtonsListener.driversChanged(_btnDrivers.isSelected());
+      _dockPaneChanel.driversChanged(_btnDrivers.isSelected());
    }
 
    private void onAliases()
@@ -64,6 +73,6 @@ public class DockButtonsCtrl
          _btnDrivers.setSelected(false);
       }
 
-      _dockButtonsListener.aliasesChanged(_btnAliases.isSelected());
+      _dockPaneChanel.aliasesChanged(_btnAliases.isSelected());
    }
 }

@@ -23,7 +23,7 @@ public class Main extends Application
 
    public static final String VERSION = "4fx";
    private Stage _primaryStage;
-   private final SplitController _splitController = new SplitController();
+   private SplitController _splitController;
 
    @Override
    public void start(Stage primaryStage) throws Exception
@@ -32,28 +32,20 @@ public class Main extends Application
 
       primaryStage.setTitle(i18n.t("mainWin.title") + " " + VERSION);
 
+      DockPaneChanel dockPaneChanel = new DockPaneChanel();
+
+      _splitController = new SplitController(dockPaneChanel);
+
+
+
       BorderPane borderPane = new BorderPane();
       primaryStage.setScene(new Scene(borderPane));
 
       borderPane.setCenter(_splitController.getNode());
 
 
-      DockButtonsListener dockButtonsListener = new DockButtonsListener()
-      {
-         @Override
-         public void driversChanged(boolean selected)
-         {
-            _splitController.showDrivers(selected);
-         }
 
-         @Override
-         public void aliasesChanged(boolean selected)
-         {
-            _splitController.showAliases(selected);
-         }
-      };
-
-      DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockButtonsListener);
+      DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
       Node dockButtons = dockButtonsCtrl.getNode();
 
       borderPane.setLeft(dockButtons);

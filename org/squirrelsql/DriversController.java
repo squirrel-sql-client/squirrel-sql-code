@@ -2,6 +2,8 @@ package org.squirrelsql;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -16,10 +18,12 @@ public class DriversController
 
    private ListView _lstDrivers;
    private final BorderPane _borderPane;
+   private DockPaneChanel _dockPaneChanel;
 
 
-   public DriversController()
+   public DriversController(DockPaneChanel dockPaneChanel)
    {
+      _dockPaneChanel = dockPaneChanel;
       _borderPane = new BorderPane();
 
       createToolBar();
@@ -76,8 +80,15 @@ public class DriversController
 
 
       ToolBar toolBarDockWin = new ToolBar();
-      addToggleButton("dock_win_stick.png", toolBarDockWin);
-      addButton("dock_win_close.png", toolBarDockWin);
+      // addToggleButton("dock_win_stick.png", toolBarDockWin);
+      addButton("dock_win_close.png", toolBarDockWin).setOnAction(new EventHandler<ActionEvent>()
+      {
+         @Override
+         public void handle(ActionEvent actionEvent)
+         {
+            _dockPaneChanel.closeDriver();
+         }
+      });
 
       ret.setRight(toolBarDockWin);
 
