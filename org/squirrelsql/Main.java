@@ -10,13 +10,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.StageDimensionSaver;
 
 public class Main extends Application
 {
-   public static final String PREF_MAIN_WIN_WIDTH = "mainWin.width";
-   public static final String PREF_MAIN_WIN_HEIGHT = "mainWin.height";
-   public static final String PREF_MAIN_WIN_X = "mainWin.x";
-   public static final String PREF_MAIN_WIN_Y = "mainWin.y";
 
    private I18n i18n = new I18n(getClass());
    private Pref pref = new Pref(getClass());
@@ -54,10 +51,8 @@ public class Main extends Application
 
       borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
 
-      primaryStage.setX(pref.getDouble(PREF_MAIN_WIN_X, 0d));
-      primaryStage.setY(pref.getDouble(PREF_MAIN_WIN_Y, 0d));
-      primaryStage.setWidth(pref.getDouble(PREF_MAIN_WIN_WIDTH, 500d));
-      primaryStage.setHeight(pref.getDouble(PREF_MAIN_WIN_HEIGHT, 500d));
+      final StageDimensionSaver dimesionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
+
       adjustMessageSplit();
 
 
@@ -67,7 +62,7 @@ public class Main extends Application
          @Override
          public void handle(WindowEvent windowEvent)
          {
-            onClose();
+            onClose(dimesionSaver);
          }
       });
 
@@ -89,14 +84,10 @@ public class Main extends Application
       Platform.runLater(runnable);
    }
 
-   private void onClose()
+   private void onClose(StageDimensionSaver dimesionSaver)
    {
       _splitController.close();
-      pref.set(PREF_MAIN_WIN_X, _primaryStage.getX());
-      pref.set(PREF_MAIN_WIN_Y, _primaryStage.getY());
-      pref.set(PREF_MAIN_WIN_WIDTH, _primaryStage.getWidth());
-      pref.set(PREF_MAIN_WIN_HEIGHT, _primaryStage.getHeight());
-
+      dimesionSaver.save(); // Needed because we are going to exit
       Platform.exit();
       System.exit(0);
    }

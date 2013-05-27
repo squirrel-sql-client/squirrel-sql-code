@@ -7,18 +7,18 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="684.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.DriverEditView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="705.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.DriverEditView">
   <children>
     <Label id="txt" fx:id="lblChangeDriver" layoutX="0.0" layoutY="7.0" minHeight="14.0" prefHeight="19.0" prefWidth="599.9999000000025" text="%change.driver" />
     <Label id="lblName" layoutX="62.0" layoutY="48.0" text="%driver.name" />
     <Label id="lblUrl" layoutX="14.0" layoutY="81.0" text="%driver.example.url" />
     <Label id="lblWebSIte" layoutX="18.0" layoutY="115.0" text="%driver.website.url" />
-    <ListView fx:id="lstClasspath" prefHeight="271.0" prefWidth="572.0" AnchorPane.bottomAnchor="244.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="169.0" />
+    <ListView fx:id="lstClasspath" prefHeight="260.0" prefWidth="572.0" AnchorPane.bottomAnchor="290.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="169.0" />
     <Label id="lblDriverClasspath" layoutX="14.0" layoutY="153.0" text="%driver.classpath" />
     <TextField fx:id="txtName" layoutY="42.0" prefWidth="447.0" AnchorPane.leftAnchor="139.0" AnchorPane.rightAnchor="14.0" />
     <TextField fx:id="txtUrl" layoutY="75.0" prefWidth="447.0" AnchorPane.leftAnchor="139.0" AnchorPane.rightAnchor="14.0" />
     <TextField fx:id="txtWebUrl" layoutY="109.0" prefWidth="447.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="13.0" />
-    <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="576.0" spacing="5.0" AnchorPane.bottomAnchor="217.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.0">
+    <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="576.0" spacing="5.0" AnchorPane.bottomAnchor="263.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.0">
       <children>
         <Label prefWidth="125.00009999999747" text="%driver.classpath.entries" />
         <Button fx:id="btnDriverCPAdd" mnemonicParsing="false" text="%driver.classpath.add" />
@@ -27,9 +27,11 @@
         <Button fx:id="btnDriverCPDown" mnemonicParsing="false" text="%driver.classpath.down" />
       </children>
     </HBox>
-    <Button fx:id="btnListDrivers" layoutX="15.0" mnemonicParsing="false" text="%list.drivers" AnchorPane.bottomAnchor="161.0" />
-    <ListView fx:id="lstDriverClasses" prefHeight="112.0" prefWidth="513.0" AnchorPane.bottomAnchor="47.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="72.0" />
-    <HBox alignment="CENTER" prefHeight="29.0" prefWidth="571.9998779296875" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+    <Button fx:id="btnListDrivers" layoutX="14.0" mnemonicParsing="false" prefWidth="111.0" text="%list.drivers" AnchorPane.bottomAnchor="207.0" />
+    <ListView fx:id="lstDriverClasses" prefHeight="112.0" prefWidth="514.0" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="72.0" />
+    <TextField fx:id="txtSelectedDriver" alignment="CENTER_LEFT" prefWidth="456.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="14.0" />
+    <Label alignment="CENTER_LEFT" contentDisplay="LEFT" prefWidth="126.0" text="%driver.selected" AnchorPane.bottomAnchor="68.0" AnchorPane.leftAnchor="18.0" />
+    <HBox alignment="CENTER" prefHeight="29.0001220703125" prefWidth="572.0000999999975" spacing="10.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
       <children>
         <Button fx:id="btnOk" mnemonicParsing="false" text="%driver.ok" />
         <Button fx:id="btnClose" contentDisplay="TOP" mnemonicParsing="false" text="%driver.close" textAlignment="LEFT" />

@@ -19,6 +19,7 @@ public class DriverEditView
    @FXML Button btnDriverCPDown;
    @FXML Button btnListDrivers;
    @FXML ListView lstDriverClasses;
+   @FXML TextField txtSelectedDriver;
    @FXML Button btnOk;
    @FXML Button btnClose;
 }
