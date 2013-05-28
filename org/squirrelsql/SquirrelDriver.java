@@ -51,16 +51,6 @@ public class SquirrelDriver implements Comparable<SquirrelDriver>
       _name = name;
    }
 
-   public String getJarFileName()
-   {
-      return _jarFileName;
-   }
-
-   public void setJarFileName(String jarFileName)
-   {
-      _jarFileName = jarFileName;
-   }
-
    public List<String> getJarFileNamesList()
    {
       return _jarFileNamesList;

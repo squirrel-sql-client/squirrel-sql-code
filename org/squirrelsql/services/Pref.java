@@ -2,6 +2,8 @@ package org.squirrelsql.services;
 
 import org.squirrelsql.AppState;
 
+import java.io.File;
+
 public class Pref
 {
    private Class _clazz;
@@ -24,5 +26,15 @@ public class Pref
    private String genKey(String key)
    {
       return _clazz.getPackage().getName() + "." + key;
+   }
+
+   public String getString(String key, String def)
+   {
+      return AppState.get().getPrefImpl().getString(genKey(key), def);
+   }
+
+   public void set(String key, String val)
+   {
+      AppState.get().getPrefImpl().set(genKey(key), val);
    }
 }

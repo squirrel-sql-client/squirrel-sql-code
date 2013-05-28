@@ -13,4 +13,14 @@ public class PrefImpl
    {
       Preferences.userRoot().putDouble(key, val);
    }
+
+   public String getString(String key, String def)
+   {
+      return Preferences.userRoot().get(key, def);
+   }
+
+   public void set(String key, String val)
+   {
+      Preferences.userRoot().put(key, val);
+   }
 }
