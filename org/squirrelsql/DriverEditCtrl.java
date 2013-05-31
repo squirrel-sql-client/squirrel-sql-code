@@ -77,14 +77,7 @@ public class DriverEditCtrl
 
    private void initListeners()
    {
-      _driverEditView.btnDriverCPAdd.setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent actionEvent)
-         {
-            onDriverCPAdd();
-         }
-      });
+      _driverEditView.btnDriverCPAdd.setOnAction((x) -> onDriverCPAdd());
    }
 
    private void onDriverCPAdd()
