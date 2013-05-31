@@ -1,6 +1,7 @@
 package org.squirrelsql;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -77,7 +78,16 @@ public class DriverEditCtrl
 
    private void initListeners()
    {
-      _driverEditView.btnDriverCPAdd.setOnAction((x) -> onDriverCPAdd());
+      _driverEditView.btnDriverCPAdd.setOnAction((e) -> onDriverCPAdd());
+      _driverEditView.btnDriverCPRemove.setOnAction((e) -> onDriverCPRemove());
+   }
+
+   private void onDriverCPRemove()
+   {
+      ObservableList selectedItems = _driverEditView.lstClasspath.getSelectionModel().getSelectedItems();
+
+      _driverEditView.lstClasspath.getItems().removeAll(selectedItems.toArray(new Object[selectedItems.size()]));
+
    }
 
    private void onDriverCPAdd()
