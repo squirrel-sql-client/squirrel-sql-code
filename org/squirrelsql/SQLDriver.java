@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SquirrelDriver implements Comparable<SquirrelDriver>
+public class SQLDriver implements Comparable<SQLDriver>
 {
    private String _id = UUID.randomUUID().toString();
 
    private String _name;
-
-   private String _jarFileName = null;
 
    private List<String> _jarFileNamesList = new ArrayList<String>();
 
@@ -22,7 +20,7 @@ public class SquirrelDriver implements Comparable<SquirrelDriver>
 
    private String _websiteUrl;
 
-   public SquirrelDriver(String id, String name, String driverClassName, String url, String websiteUrl)
+   public SQLDriver(String id, String name, String driverClassName, String url, String websiteUrl)
    {
       _id = id;
       _name = name;
@@ -104,12 +102,12 @@ public class SquirrelDriver implements Comparable<SquirrelDriver>
    @Override
    public boolean equals(Object obj)
    {
-      if(false == obj instanceof SquirrelDriver)
+      if(false == obj instanceof SQLDriver)
       {
          return false;
       }
 
-      return ((SquirrelDriver)obj)._id.equals(_id);
+      return ((SQLDriver)obj)._id.equals(_id);
    }
 
    @Override
@@ -119,7 +117,7 @@ public class SquirrelDriver implements Comparable<SquirrelDriver>
    }
 
    @Override
-   public int compareTo(SquirrelDriver other)
+   public int compareTo(SQLDriver other)
    {
       return _name.compareTo(other._name);
    }

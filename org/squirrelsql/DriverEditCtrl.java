@@ -2,8 +2,6 @@ package org.squirrelsql;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.SelectionMode;
@@ -16,11 +14,9 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -35,7 +31,7 @@ public class DriverEditCtrl
    private final Stage _dialog;
 
 
-   public DriverEditCtrl(SquirrelDriver squirrelDriver)
+   public DriverEditCtrl(SQLDriver SQLDriver)
    {
       try
       {
@@ -44,16 +40,16 @@ public class DriverEditCtrl
          Region parent = (Region) fxmlLoader.load();
          _driverEditView = fxmlLoader.getController();
 
-         String title = _i18n.t("change.driver.title", squirrelDriver.getName());
+         String title = _i18n.t("change.driver.title", SQLDriver.getName());
 
          _driverEditView.lblChangeDriver.setText(title);
 
-         _driverEditView.txtName.setText(squirrelDriver.getName());
-         _driverEditView.txtUrl.setText(squirrelDriver.getUrl());
-         _driverEditView.txtWebUrl.setText(squirrelDriver.getWebsiteUrl());
-         _driverEditView.txtSelectedDriver.setText(squirrelDriver.getDriverClassName());
+         _driverEditView.txtName.setText(SQLDriver.getName());
+         _driverEditView.txtUrl.setText(SQLDriver.getUrl());
+         _driverEditView.txtWebUrl.setText(SQLDriver.getWebsiteUrl());
+         _driverEditView.txtSelectedDriver.setText(SQLDriver.getDriverClassName());
 
-         _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(squirrelDriver.getJarFileNamesList())));
+         _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(SQLDriver.getJarFileNamesList())));
 
          _driverEditView.lstClasspath.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 

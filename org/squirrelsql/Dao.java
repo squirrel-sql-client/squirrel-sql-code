@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Dao
 {
-   public static ArrayList<SquirrelDriver> loadSquirrelDrivers()
+   public static ArrayList<SQLDriver> loadSquirrelDrivers()
    {
       return new ArrayList<>();
    }

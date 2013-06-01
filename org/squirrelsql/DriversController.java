@@ -33,14 +33,14 @@ public class DriversController
       _borderPane.setTop(createToolBar());
       _borderPane.setCenter(_lstDrivers);
 
-      ObservableList<SquirrelDriver> observableList = FXCollections.observableArrayList();
+      ObservableList<SQLDriver> observableList = FXCollections.observableArrayList();
 
-      ArrayList<SquirrelDriver> driversToDisplay =  Dao.loadSquirrelDrivers();
+      ArrayList<SQLDriver> driversToDisplay =  Dao.loadSquirrelDrivers();
 
-      ArrayList<SquirrelDriver> preDefinedDrivers = PreDefinedDrivers.get();
+      ArrayList<SQLDriver> preDefinedDrivers = PreDefinedDrivers.get();
 
 
-      for (SquirrelDriver preDefinedDriver : preDefinedDrivers)
+      for (SQLDriver preDefinedDriver : preDefinedDrivers)
       {
          if(false == driversToDisplay.contains(preDefinedDriver))
          {
@@ -111,8 +111,8 @@ public class DriversController
 
    private void onEdit()
    {
-      SquirrelDriver  squirrelDriver = (SquirrelDriver) _lstDrivers.getSelectionModel().getSelectedItem();
-      new DriverEditCtrl(squirrelDriver);
+      SQLDriver SQLDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
+      new DriverEditCtrl(SQLDriver);
    }
 
    private ToggleButton addToggleButton(String icon, ToolBar toolBar)
