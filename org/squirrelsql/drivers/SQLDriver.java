@@ -1,4 +1,4 @@
-package org.squirrelsql;
+package org.squirrelsql.drivers;
 
 import java.util.ArrayList;
 import java.util.List;

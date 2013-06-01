@@ -1,5 +1,7 @@
 package org.squirrelsql;
 
+import org.squirrelsql.drivers.SQLDriver;
+
 import java.util.ArrayList;
 
 public class Dao

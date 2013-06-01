@@ -1,8 +1,9 @@
-package org.squirrelsql;
+package org.squirrelsql.drivers;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;
+import org.squirrelsql.Props;
 
 public class DriverCell extends ListCell<SQLDriver>
 {

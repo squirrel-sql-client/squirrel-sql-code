@@ -3,6 +3,7 @@ package org.squirrelsql;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import org.squirrelsql.drivers.DriversController;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.workaround.SplitDividerWA;
 

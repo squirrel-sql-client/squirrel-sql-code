@@ -1,4 +1,4 @@
-package org.squirrelsql;
+package org.squirrelsql.drivers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.Conversions;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;

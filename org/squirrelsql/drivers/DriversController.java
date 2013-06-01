@@ -1,4 +1,4 @@
-package org.squirrelsql;
+package org.squirrelsql.drivers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
+import org.squirrelsql.Dao;
+import org.squirrelsql.DockPaneChanel;
+import org.squirrelsql.PreDefinedDrivers;
+import org.squirrelsql.Props;
 
 import java.util.ArrayList;
 import java.util.Collections;
