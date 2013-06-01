@@ -30,14 +30,7 @@ public class MessagePanelCtrl
       _sp = new ScrollPane();
       _sp.setContent(_messages);
 
-      _messages.heightProperty().addListener(new ChangeListener<Number>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Number> observableValue, Number oldNumber, Number newNumber)
-         {
-            _sp.setVvalue(newNumber.doubleValue());
-         }
-      });
+      _messages.heightProperty().addListener((observableValue, oldNumber, newNumber) -> _sp.setVvalue(newNumber.doubleValue()));
    }
 
    public void error(String s)
