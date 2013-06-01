@@ -83,9 +83,53 @@ public class DriverEditCtrl
       _driverEditView.btnDriverCPAdd.setOnAction((e) -> onDriverCPAdd());
       _driverEditView.btnDriverCPRemove.setOnAction((e) -> onDriverCPRemove());
       _driverEditView.btnDriverCPUp.setOnAction((e) -> onDriverCPUp());
+      _driverEditView.btnDriverCPDown.setOnAction((e) -> onDriverCPDown());
    }
 
+   private void onDriverCPDown()
+   {
+      ObservableList<Integer> selectedIndices = _driverEditView.lstClasspath.getSelectionModel().getSelectedIndices();
 
+      if (0 == selectedIndices.size())
+      {
+         return;
+      }
+
+      int[] newSelectedIndices = moveDown(Conversions.toInts(selectedIndices.toArray(new Integer[selectedIndices.size()])));
+
+      _driverEditView.lstClasspath.getSelectionModel().clearSelection();
+
+      for (int newSelectedIndex : newSelectedIndices)
+      {
+         _driverEditView.lstClasspath.getSelectionModel().select(newSelectedIndex);
+      }
+
+      //_driverEditView.lstClasspath.scrollTo(newSelectedIndices[newSelectedIndices.length - 1]);
+      _driverEditView.lstClasspath.scrollTo(newSelectedIndices[0]);
+
+   }
+
+   private int[] moveDown(int[] toMoveDown)
+   {
+      for (int i : toMoveDown)
+      {
+         if (_driverEditView.lstClasspath.getItems().size() - 1 == i)
+         {
+            return toMoveDown;
+         }
+      }
+
+      int[] newSelIndices = new int[toMoveDown.length];
+      for (int i = toMoveDown.length - 1; i >= 0; --i)
+      {
+         Object item = _driverEditView.lstClasspath.getItems().get(toMoveDown[i]);
+         _driverEditView.lstClasspath.getItems().remove((int)toMoveDown[i]);
+         newSelIndices[i] = toMoveDown[i] + 1;
+         _driverEditView.lstClasspath.getItems().add(newSelIndices[i], item);
+      }
+
+      return newSelIndices;
+   }
 
    private void onDriverCPUp()
    {
@@ -104,7 +148,7 @@ public class DriverEditCtrl
       {
          _driverEditView.lstClasspath.getSelectionModel().select(newSelectedIndex);
       }
-      //_panel.tblOrder.scrollRectToVisible(_panel.tblOrder.getCellRect(newSelRows[0], 0, false));
+      _driverEditView.lstClasspath.scrollTo(newSelectedIndices[0]);
    }
 
    private void onDriverCPRemove()
