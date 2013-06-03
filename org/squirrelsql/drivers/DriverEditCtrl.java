@@ -10,13 +10,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.Conversions;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.services.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,7 +28,7 @@ public class DriverEditCtrl
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
    private DriverEditView _driverEditView;
-   private final Stage _dialog;
+   private final ProgressibleStage _dialog;
 
 
    public DriverEditCtrl(SQLDriver SQLDriver)
@@ -58,15 +57,15 @@ public class DriverEditCtrl
 
          initListeners();
 
-         _dialog = new Stage();
-         _dialog.initModality(Modality.WINDOW_MODAL);
-         _dialog.setTitle(title);
-         _dialog.initOwner(AppState.get().getPrimaryStage());
-         _dialog.setScene(new Scene(parent));
+         _dialog = ProgressUtil.makeProgressible(new Stage());
+         _dialog.getStage().initModality(Modality.WINDOW_MODAL);
+         _dialog.getStage().setTitle(title);
+         _dialog.getStage().initOwner(AppState.get().getPrimaryStage());
+         _dialog.setSceneRoot(parent);
 
-         new StageDimensionSaver("driveredit", _dialog, _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getOwner());
+         new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
 
-         _dialog.show();
+         _dialog.getStage().show();
 
       }
       catch (IOException e)
@@ -81,6 +80,59 @@ public class DriverEditCtrl
       _driverEditView.btnDriverCPRemove.setOnAction((e) -> onDriverCPRemove());
       _driverEditView.btnDriverCPUp.setOnAction((e) -> onDriverCPUp());
       _driverEditView.btnDriverCPDown.setOnAction((e) -> onDriverCPDown());
+      _driverEditView.btnListDrivers.setOnAction((e) -> onListDrivers());
+
+
+   }
+
+   private void onListDrivers()
+   {
+      ProgressTask<ArrayList<Class>> pt = new ProgressTask<ArrayList<Class>>()
+      {
+         @Override
+         public ArrayList<Class> call()
+         {
+             return findDriverClassNames();
+         }
+
+         @Override
+         public void goOn(ArrayList<Class> driverClasses)
+         {
+            fillDriverList(driverClasses);
+         }
+      };
+
+      ProgressUtil.start(pt, _dialog.getStage());
+   }
+
+   private ArrayList<Class> findDriverClassNames()
+   {
+      try
+      {
+         ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
+
+         ArrayList<URL> urls = new ArrayList<>();
+
+         for (String fileName : fileNames)
+         {
+            urls.add(new File(fileName).toURI().toURL());
+         }
+
+
+         SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);
+
+         return cl.getDriverClasses();
+      }
+      catch (MalformedURLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private void fillDriverList(ArrayList<Class> driverClassNames)
+   {
+      _driverEditView.lstDriverClasses.getItems().clear();
+      _driverEditView.lstDriverClasses.getItems().addAll(FXCollections.observableArrayList(driverClassNames));
    }
 
    private void onDriverCPDown()
@@ -190,7 +242,7 @@ public class DriverEditCtrl
 
       fc.setInitialDirectory(new File(lastClasspathDir));
 
-      List<File> files = fc.showOpenMultipleDialog(_dialog);
+      List<File> files = fc.showOpenMultipleDialog(_dialog.getStage());
 
       if(null == files || 0 == files.size())
       {

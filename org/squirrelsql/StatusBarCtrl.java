@@ -125,18 +125,6 @@ public class StatusBarCtrl
       Platform.runLater(runnable);
    }
 
-   public void error(Throwable t)
-   {
-      ++_countError;
-      refreshMessage(_iconError);
-   }
-
-   public void error(String s)
-   {
-      ++_countError;
-      refreshMessage(_iconError);
-   }
-
    public void warning(String s)
    {
       ++_countWarning;
@@ -149,4 +137,19 @@ public class StatusBarCtrl
       refreshMessage(_iconInfo);
    }
 
+   public void error(Throwable t)
+   {
+      error(null, t);
+   }
+
+   public void error(String s)
+   {
+      error(s, null);
+   }
+
+   public void error(String s, Throwable t)
+   {
+      ++_countError;
+      refreshMessage(_iconError);
+   }
 }

@@ -69,14 +69,43 @@ public class MessagePanelCtrl
 
    public void error(Throwable t)
    {
+   }
+
+   public Node getNode()
+   {
+      return _sp;
+   }
+
+   public void error(String s, Throwable t)
+   {
+      if (null == s && null == t)
+      {
+         return;
+      }
+      else if (null == s && null != t)
+      {
+         error(getStackString(t));
+      }
+      else if (null != s && null == t)
+      {
+         error(s);
+      }
+      else
+      {
+         error(s + "\n" + getStackString(t));
+      }
+
+   }
+
+   private String getStackString(Throwable t)
+   {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       t.printStackTrace(pw);
 
       pw.flush();
       sw.flush();
-
-      error(sw.toString());
+      String msg = sw.toString();
 
       try
       {
@@ -87,11 +116,6 @@ public class MessagePanelCtrl
       {
 
       }
-
-   }
-
-   public Node getNode()
-   {
-      return _sp;
+      return msg;
    }
 }
