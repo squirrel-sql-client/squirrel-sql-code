@@ -3,6 +3,9 @@ package org.squirrelsql.services;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -32,6 +35,8 @@ public class ProgressibleStage
 
    public void setSceneRoot(Node root)
    {
+//      root.setStyle("-fx-border-color: blue;");
+//      stackPane.setStyle("-fx-border-color: red;");
       stackPane.getChildren().add(0, root);
    }
 

@@ -7,7 +7,7 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="705.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.drivers.DriverEditView">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.drivers.DriverEditView">
   <children>
     <Label id="txt" fx:id="lblChangeDriver" layoutX="0.0" layoutY="7.0" minHeight="14.0" prefHeight="19.0" prefWidth="599.9999000000025" text="%change.driver" />
     <Label id="lblName" layoutX="62.0" layoutY="48.0" text="%driver.name" />
