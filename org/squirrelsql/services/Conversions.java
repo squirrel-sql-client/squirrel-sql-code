@@ -43,4 +43,19 @@ public class Conversions
 
       return ret;
    }
+
+
+   public static interface NameExtractor<T>{String getName(T t);}
+
+   public static <U> ArrayList<String> toNames(ArrayList<U> us, NameExtractor<U> nameExtractor)
+   {
+      ArrayList<String> ret = new ArrayList<>();
+
+      for (U u : us)
+      {
+         ret.add(nameExtractor.getName(u));
+      }
+
+      return ret;
+   }
 }

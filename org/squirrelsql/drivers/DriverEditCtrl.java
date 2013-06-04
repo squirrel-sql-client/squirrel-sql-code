@@ -1,5 +1,7 @@
 package org.squirrelsql.drivers;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -82,7 +84,30 @@ public class DriverEditCtrl
       _driverEditView.btnDriverCPDown.setOnAction((e) -> onDriverCPDown());
       _driverEditView.btnListDrivers.setOnAction((e) -> onListDrivers());
 
+      _driverEditView.lstDriverClasses.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) this::onDriverClassSelected);
 
+      _driverEditView.btnClose.setOnAction((e) -> onClose());
+      _driverEditView.btnOk.setOnAction((e) -> onOk());
+
+
+   }
+
+   private void onDriverClassSelected(ObservableValue ov, String oldStr, String newStr)
+   {
+      if(null != newStr)
+      {
+         _driverEditView.txtSelectedDriver.setText(newStr);
+      }
+   }
+
+   private void onOk()
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   private void onClose()
+   {
+      _dialog.getStage().close();
    }
 
    private void onListDrivers()
@@ -129,9 +154,12 @@ public class DriverEditCtrl
       }
    }
 
-   private void fillDriverList(ArrayList<Class> driverClassNames)
+   private void fillDriverList(ArrayList<Class> driverClasses)
    {
       _driverEditView.lstDriverClasses.getItems().clear();
+
+      ArrayList<String> driverClassNames = Conversions.toNames(driverClasses, (x) -> x.getName());
+
       _driverEditView.lstDriverClasses.getItems().addAll(FXCollections.observableArrayList(driverClassNames));
    }
 
