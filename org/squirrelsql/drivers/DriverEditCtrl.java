@@ -1,11 +1,11 @@
 package org.squirrelsql.drivers;
 
+import com.google.common.base.Strings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
@@ -31,10 +31,12 @@ public class DriverEditCtrl
    private Pref _pref = new Pref(getClass());
    private DriverEditView _driverEditView;
    private final ProgressibleStage _dialog;
+   private SQLDriver _sqlDriver;
 
 
-   public DriverEditCtrl(SQLDriver SQLDriver)
+   public DriverEditCtrl(SQLDriver sqlDriver)
    {
+      _sqlDriver = sqlDriver;
       try
       {
 
@@ -42,16 +44,16 @@ public class DriverEditCtrl
          Region parent = (Region) fxmlLoader.load();
          _driverEditView = fxmlLoader.getController();
 
-         String title = _i18n.t("change.driver.title", SQLDriver.getName());
+         String title = _i18n.t("change.driver.title", sqlDriver.getName());
 
          _driverEditView.lblChangeDriver.setText(title);
 
-         _driverEditView.txtName.setText(SQLDriver.getName());
-         _driverEditView.txtUrl.setText(SQLDriver.getUrl());
-         _driverEditView.txtWebUrl.setText(SQLDriver.getWebsiteUrl());
-         _driverEditView.txtSelectedDriver.setText(SQLDriver.getDriverClassName());
+         _driverEditView.txtName.setText(sqlDriver.getName());
+         _driverEditView.txtUrl.setText(sqlDriver.getUrl());
+         _driverEditView.txtWebUrl.setText(sqlDriver.getWebsiteUrl());
+         _driverEditView.txtDriverToUse.setText(sqlDriver.getDriverClassName());
 
-         _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(SQLDriver.getJarFileNamesList())));
+         _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(sqlDriver.getJarFileNamesList())));
 
          _driverEditView.lstClasspath.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -96,13 +98,78 @@ public class DriverEditCtrl
    {
       if(null != newStr)
       {
-         _driverEditView.txtSelectedDriver.setText(newStr);
+         _driverEditView.txtDriverToUse.setText(newStr);
       }
    }
 
    private void onOk()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      if(Strings.isNullOrEmpty(_driverEditView.txtName.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.name.empty"));
+         return;
+      }
+
+      if(Strings.isNullOrEmpty(_driverEditView.txtUrl.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.url.empty"));
+         return;
+      }
+
+      if(Strings.isNullOrEmpty(_driverEditView.txtDriverToUse.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.driver.empty"));
+         return;
+      }
+
+      ProgressTask<Boolean> pt = new ProgressTask<Boolean>()
+      {
+         @Override
+         public Boolean call()
+         {
+            return checkDriverLoad();
+         }
+
+         @Override
+         public void goOn(Boolean driverFound)
+         {
+            onFinishOk(driverFound);
+         }
+      };
+
+      ProgressUtil.start(pt, _dialog.getStage());
+   }
+
+   private boolean checkDriverLoad()
+   {
+      try
+      {
+         ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
+         createDriverClassLoader(fileNames).loadClass(_driverEditView.txtDriverToUse.getText());
+         return true;
+      }
+      catch (ClassNotFoundException e)
+      {
+         return false;
+      }
+   }
+
+   private void onFinishOk(boolean driverFound)
+   {
+
+      if (false == driverFound &&
+          false == FXMessageBox.YES.equals(FXMessageBox.showYesNo(_dialog.getStage(), _i18n.t("info.driver.not.loaded"))))
+      {
+         return;
+      }
+
+      _sqlDriver.setDriverClassName(_driverEditView.txtDriverToUse.getText());
+      _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
+      _sqlDriver.setName(_driverEditView.txtName.getText());
+      _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
+      _sqlDriver.setJarFileNamesList(_driverEditView.lstClasspath.getItems());
+
+      _dialog.getStage().close();
    }
 
    private void onClose()
@@ -132,10 +199,17 @@ public class DriverEditCtrl
 
    private ArrayList<Class> findDriverClassNames()
    {
+      ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
+
+      SQLDriverClassLoader cl = createDriverClassLoader(fileNames);
+
+      return cl.getDriverClasses();
+   }
+
+   private SQLDriverClassLoader createDriverClassLoader(ObservableList<String> fileNames)
+   {
       try
       {
-         ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
-
          ArrayList<URL> urls = new ArrayList<>();
 
          for (String fileName : fileNames)
@@ -144,9 +218,7 @@ public class DriverEditCtrl
          }
 
 
-         SQLDriverClassLoader cl = new SQLDriverClassLoader(urls);
-
-         return cl.getDriverClasses();
+         return new SQLDriverClassLoader(urls);
       }
       catch (MalformedURLException e)
       {

@@ -31,43 +31,11 @@ public class ProgressUtil
          }
       };
 
-      service.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent workerStateEvent)
-         {
-            pt.goOn(concurrentTask.getValue());
-         }
-      });
+      service.setOnSucceeded(workerStateEvent -> pt.goOn(concurrentTask.getValue()));
 
-      service.setOnFailed(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent workerStateEvent)
-         {
-            Throwable t = new RuntimeException("Progress task execution failed");
+      service.setOnFailed(workerStateEvent -> onHandleException(concurrentTask));
 
-            try
-            {
-               concurrentTask.get();
-            }
-            catch (Throwable tOrig)
-            {
-               t = tOrig;
-            }
-
-            throw new RuntimeException(t);
-         }
-      });
-
-      service.setOnCancelled(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent workerStateEvent)
-         {
-            throw new UnsupportedOperationException("NYI");
-         }
-      });
+      service.setOnCancelled(workerStateEvent -> {throw new UnsupportedOperationException("NYI");});
 
 
       if(false == stage.getScene().getRoot() instanceof StackPane)
@@ -118,6 +86,22 @@ public class ProgressUtil
 
       service.start();
 
+   }
+
+   private static <T> void onHandleException(Task<T> concurrentTask)
+   {
+      Throwable t = new RuntimeException("Progress task execution failed");
+
+      try
+      {
+         concurrentTask.get();
+      }
+      catch (Throwable tOrig)
+      {
+         t = tOrig;
+      }
+
+      throw new RuntimeException(t);
    }
 
    public static ProgressibleStage makeProgressible(Stage stage)

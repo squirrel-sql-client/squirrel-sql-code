@@ -29,7 +29,7 @@
     </HBox>
     <Button fx:id="btnListDrivers" layoutX="14.0" mnemonicParsing="false" prefWidth="111.0" text="%list.drivers" AnchorPane.bottomAnchor="207.0" />
     <ListView fx:id="lstDriverClasses" prefHeight="112.0" prefWidth="514.0" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="72.0" />
-    <TextField fx:id="txtSelectedDriver" alignment="CENTER_LEFT" prefWidth="-1.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="91.0" AnchorPane.rightAnchor="14.0" />
+    <TextField fx:id="txtDriverToUse" alignment="CENTER_LEFT" prefWidth="-1.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="91.0" AnchorPane.rightAnchor="14.0" />
     <Label alignment="CENTER_LEFT" contentDisplay="LEFT" prefWidth="-1.0" text="%driver.use" AnchorPane.bottomAnchor="68.0" AnchorPane.leftAnchor="18.0" />
     <HBox alignment="CENTER" prefHeight="29.0001220703125" prefWidth="572.0000999999975" spacing="10.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
       <children>
