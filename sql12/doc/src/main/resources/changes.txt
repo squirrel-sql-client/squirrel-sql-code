@@ -3,6 +3,15 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
+Not yet released, available in our GIT repository and in future snapshots and releases.
+===============================================================================================
+
+Enhancements:
+
+#1084 Added MariaDB driver to default driver list
+
+
+
 3.5.0 (5/5/2013)
 ==================
 

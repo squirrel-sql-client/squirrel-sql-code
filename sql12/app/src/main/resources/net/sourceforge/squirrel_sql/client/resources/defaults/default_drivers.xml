@@ -702,4 +702,16 @@
 		</identifier>
 		<websiteUrl>http://www.unityjdbc.com</websiteUrl>
  	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>MariaDB Driver for MySQL and MariaDB</name>
+        	<driverClassName>org.mariadb.jdbc.Driver</driverClassName>
+        	<url>jdbc:mysql:host:3306/database</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-61</string>
+		</identifier>
+		<websiteUrl>https://downloads.mariadb.org/client-java/</websiteUrl>
+ 	</Bean>
 </Beans>
