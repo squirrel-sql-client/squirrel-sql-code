@@ -1,9 +1,11 @@
 package org.squirrelsql.drivers;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@XmlRootElement(name = "sqlDriver")
 public class SQLDriver implements Comparable<SQLDriver>
 {
    private String _id = UUID.randomUUID().toString();
@@ -27,6 +29,11 @@ public class SQLDriver implements Comparable<SQLDriver>
       _driverClassName = driverClassName;
       _url = url;
       _websiteUrl = websiteUrl;
+   }
+
+   // For Json deserialization
+   public SQLDriver()
+   {
    }
 
    public String getId()
@@ -120,5 +127,15 @@ public class SQLDriver implements Comparable<SQLDriver>
    public int compareTo(SQLDriver other)
    {
       return _name.compareTo(other._name);
+   }
+
+   public void update(SQLDriver driver)
+   {
+      //_id = id;
+      _name = driver._name;
+      _driverClassName = driver._driverClassName;
+      _url = driver._url;
+      _websiteUrl = driver._websiteUrl;
+      _jarFileNamesList = driver._jarFileNamesList;
    }
 }

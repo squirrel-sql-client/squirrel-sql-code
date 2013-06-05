@@ -8,10 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
-import org.squirrelsql.Dao;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
+import org.squirrelsql.services.Dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,8 +115,18 @@ public class DriversController
 
    private void onEdit()
    {
-      SQLDriver SQLDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
-      new DriverEditCtrl(SQLDriver);
+      SQLDriver sqlDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
+      DriverEditCtrl driverEditCtrl = new DriverEditCtrl(sqlDriver);
+
+      if(driverEditCtrl.isOk())
+      {
+         sqlDriver.update(driverEditCtrl.getDriver());
+
+         Dao.writeDrivers(new ArrayList<SQLDriver>(_lstDrivers.getItems()));
+
+      }
+
+      System.out.println("DriversController.onEdit");
    }
 
    private ToggleButton addToggleButton(String icon, ToolBar toolBar)

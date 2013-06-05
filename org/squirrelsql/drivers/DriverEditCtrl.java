@@ -32,6 +32,7 @@ public class DriverEditCtrl
    private DriverEditView _driverEditView;
    private final ProgressibleStage _dialog;
    private SQLDriver _sqlDriver;
+   private boolean _ok;
 
 
    public DriverEditCtrl(SQLDriver sqlDriver)
@@ -69,7 +70,7 @@ public class DriverEditCtrl
 
          new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
 
-         _dialog.getStage().show();
+         _dialog.getStage().showAndWait();
 
       }
       catch (IOException e)
@@ -169,6 +170,7 @@ public class DriverEditCtrl
       _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
       _sqlDriver.setJarFileNamesList(_driverEditView.lstClasspath.getItems());
 
+      _ok = true;
       _dialog.getStage().close();
    }
 
@@ -356,4 +358,13 @@ public class DriverEditCtrl
    }
 
 
+   public SQLDriver getDriver()
+   {
+      return _sqlDriver;
+   }
+
+   public boolean isOk()
+   {
+      return _ok;
+   }
 }

@@ -1,11 +1,17 @@
 package org.squirrelsql;
 
+import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.squirrelsql.services.PropertiesHandler;
+import org.squirrelsql.services.SquirrelProperty;
+
+import java.io.File;
 
 public class AppState
 {
    private static AppState _appState;
+   private final PropertiesHandler _propertiesHandler;
 
    private StatusBarCtrl _statusBarCtrl = new StatusBarCtrl();
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
@@ -20,9 +26,10 @@ public class AppState
 
    private Stage _primaryStage;
 
-   public AppState(Stage primaryStage)
+   public AppState(Stage primaryStage, Application.Parameters parameters)
    {
       _primaryStage = primaryStage;
+      _propertiesHandler = new PropertiesHandler(parameters);
    }
 
 
@@ -47,8 +54,20 @@ public class AppState
       return _primaryStage;
    }
 
-   public static void init(Stage primaryStage)
+   public static void init(Stage primaryStage, Application.Parameters parameters)
    {
-      _appState = new AppState(primaryStage);
+      _appState = new AppState(primaryStage, parameters);
+   }
+
+   public PropertiesHandler getPropertiesHandler()
+   {
+      return _propertiesHandler;
+   }
+
+   public File getUserDir()
+   {
+      File file = new File(_propertiesHandler.getProperty(SquirrelProperty.USER_DIR));
+      file.mkdirs();
+      return file;
    }
 }

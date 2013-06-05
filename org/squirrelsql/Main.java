@@ -25,7 +25,7 @@ public class Main extends Application
    @Override
    public void start(Stage primaryStage) throws Exception
    {
-      AppState.init(primaryStage);
+      AppState.init(primaryStage, getParameters());
 
       _primaryStage = primaryStage;
 
