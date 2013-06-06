@@ -52,6 +52,11 @@ public class DriversController
          }
       }
 
+      for (SQLDriver sqlDriver : driversToDisplay)
+      {
+         sqlDriver.setLoaded(DriversUtil.checkDriverLoading(sqlDriver));
+      }
+
       Collections.sort(driversToDisplay);
 
       observableList.addAll(driversToDisplay);
@@ -59,14 +64,7 @@ public class DriversController
 
       _lstDrivers.setItems(observableList);
 
-      _lstDrivers.setCellFactory(new Callback<ListView, ListCell>()
-      {
-         @Override
-         public ListCell call(ListView listView)
-         {
-            return new DriverCell();
-         }
-      });
+      _lstDrivers.setCellFactory(listView -> new DriverCell());
 
       if (0 < _lstDrivers.getItems().size())
       {
@@ -115,18 +113,17 @@ public class DriversController
 
    private void onEdit()
    {
-      SQLDriver sqlDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
-      DriverEditCtrl driverEditCtrl = new DriverEditCtrl(sqlDriver);
+      int selectedIndex = _lstDrivers.getSelectionModel().getSelectedIndex();
+      SQLDriver selectedDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
+      DriverEditCtrl driverEditCtrl = new DriverEditCtrl(selectedDriver);
 
       if(driverEditCtrl.isOk())
       {
-         sqlDriver.update(driverEditCtrl.getDriver());
-
+         selectedDriver.update(driverEditCtrl.getDriver());
          Dao.writeDrivers(new ArrayList<SQLDriver>(_lstDrivers.getItems()));
 
+         _lstDrivers.getItems().set(selectedIndex, selectedDriver);
       }
-
-      System.out.println("DriversController.onEdit");
    }
 
    private ToggleButton addToggleButton(String icon, ToolBar toolBar)

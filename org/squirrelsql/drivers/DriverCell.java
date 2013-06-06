@@ -10,25 +10,27 @@ public class DriverCell extends ListCell<SQLDriver>
    private Props _props = new Props(this.getClass());
    private ImageView _iconLoaded = new ImageView(_props.getImage("driver_loaded.png"));
    private ImageView _iconNotLoaded = new ImageView(_props.getImage("driver_not_loaded.png"));
+   private Label _label = new Label();
 
    @Override
-   protected void updateItem(SQLDriver SQLDriver, boolean b)
+   protected void updateItem(SQLDriver sqlDriver, boolean b)
    {
-      super.updateItem(SQLDriver, b);
+      super.updateItem(sqlDriver, b);
 
-      if(null == SQLDriver)
+      if(null == sqlDriver)
       {
          return;
       }
 
-      Label label = new Label(SQLDriver.getName());
-      label.setGraphic(getIcon(SQLDriver));
-      setGraphic(label);
+
+      _label.setText(sqlDriver.getName());
+      _label.setGraphic(getIcon(sqlDriver));
+      setGraphic(_label);
    }
 
-   private ImageView getIcon(SQLDriver SQLDriver)
+   private ImageView getIcon(SQLDriver sqlDriver)
    {
-      if (SQLDriver.isLoaded())
+      if (sqlDriver.isLoaded())
       {
          return _iconLoaded;
       }

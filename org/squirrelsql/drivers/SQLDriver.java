@@ -1,5 +1,7 @@
 package org.squirrelsql.drivers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +88,7 @@ public class SQLDriver implements Comparable<SQLDriver>
       _url = url;
    }
 
+   @JsonIgnore
    public boolean isLoaded()
    {
       return _loaded;

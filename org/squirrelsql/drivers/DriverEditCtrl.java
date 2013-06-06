@@ -16,8 +16,6 @@ import org.squirrelsql.services.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -128,7 +126,7 @@ public class DriverEditCtrl
          @Override
          public Boolean call()
          {
-            return checkDriverLoad();
+            return DriversUtil.checkDriverLoading(DriverEditCtrl.this._driverEditView.lstClasspath.getItems(), DriverEditCtrl.this._driverEditView.txtDriverToUse.getText());
          }
 
          @Override
@@ -139,20 +137,6 @@ public class DriverEditCtrl
       };
 
       ProgressUtil.start(pt, _dialog.getStage());
-   }
-
-   private boolean checkDriverLoad()
-   {
-      try
-      {
-         ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
-         createDriverClassLoader(fileNames).loadClass(_driverEditView.txtDriverToUse.getText());
-         return true;
-      }
-      catch (ClassNotFoundException e)
-      {
-         return false;
-      }
    }
 
    private void onFinishOk(boolean driverFound)
@@ -169,6 +153,7 @@ public class DriverEditCtrl
       _sqlDriver.setName(_driverEditView.txtName.getText());
       _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
       _sqlDriver.setJarFileNamesList(_driverEditView.lstClasspath.getItems());
+      _sqlDriver.setLoaded(driverFound);
 
       _ok = true;
       _dialog.getStage().close();
@@ -203,29 +188,9 @@ public class DriverEditCtrl
    {
       ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
 
-      SQLDriverClassLoader cl = createDriverClassLoader(fileNames);
+      SQLDriverClassLoader cl = DriversUtil.createDriverClassLoader(fileNames);
 
       return cl.getDriverClasses();
-   }
-
-   private SQLDriverClassLoader createDriverClassLoader(ObservableList<String> fileNames)
-   {
-      try
-      {
-         ArrayList<URL> urls = new ArrayList<>();
-
-         for (String fileName : fileNames)
-         {
-            urls.add(new File(fileName).toURI().toURL());
-         }
-
-
-         return new SQLDriverClassLoader(urls);
-      }
-      catch (MalformedURLException e)
-      {
-         throw new RuntimeException(e);
-      }
    }
 
    private void fillDriverList(ArrayList<Class> driverClasses)
