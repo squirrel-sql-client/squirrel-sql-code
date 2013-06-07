@@ -5,6 +5,7 @@ import java.util.Properties;
 
 public class I18n
 {
+   public static final String I18N_PROPERTIES_FILE_NAME = "i18n.properties";
    private Class _clazz;
 
    public I18n(Class clazz)
@@ -17,12 +18,12 @@ public class I18n
       try
       {
          Properties props = new Properties();
-         props.load(_clazz.getResourceAsStream("i18n.properties"));
+         props.load(_clazz.getResourceAsStream(I18N_PROPERTIES_FILE_NAME));
          String ret = props.getProperty(s);
 
          if(null == ret)
          {
-            ret = "no resource: " + s;
+            ret = "Resource " + s + " missing in " + _clazz.getPackage().getName() + "." + I18N_PROPERTIES_FILE_NAME;
          }
 
          return String.format(ret, params);

@@ -2,27 +2,32 @@ package org.squirrelsql.drivers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.util.Callback;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.I18n;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 public class DriversController
 {
    private Props _props = new Props(this.getClass());
+   private I18n _i18n = new I18n(this.getClass());
 
-   private ListView _lstDrivers;
+   private ListView<SQLDriver> _lstDrivers;
    private final BorderPane _borderPane;
    private DockPaneChanel _dockPaneChanel;
+   private DriversManager _driversManager = new DriversManager();
+   private ToggleButton _btnFilter;
 
 
    public DriversController(DockPaneChanel dockPaneChanel)
@@ -37,32 +42,8 @@ public class DriversController
       _borderPane.setTop(createToolBar());
       _borderPane.setCenter(_lstDrivers);
 
-      ObservableList<SQLDriver> observableList = FXCollections.observableArrayList();
 
-      ArrayList<SQLDriver> driversToDisplay =  Dao.loadSquirrelDrivers();
-
-      ArrayList<SQLDriver> preDefinedDrivers = PreDefinedDrivers.get();
-
-
-      for (SQLDriver preDefinedDriver : preDefinedDrivers)
-      {
-         if(false == driversToDisplay.contains(preDefinedDriver))
-         {
-            driversToDisplay.add(preDefinedDriver);
-         }
-      }
-
-      for (SQLDriver sqlDriver : driversToDisplay)
-      {
-         sqlDriver.setLoaded(DriversUtil.checkDriverLoading(sqlDriver));
-      }
-
-      Collections.sort(driversToDisplay);
-
-      observableList.addAll(driversToDisplay);
-
-
-      _lstDrivers.setItems(observableList);
+      onFilter();
 
       _lstDrivers.setCellFactory(listView -> new DriverCell());
 
@@ -78,37 +59,29 @@ public class DriversController
       BorderPane ret = new BorderPane();
 
       ToolBar toolBarDrivers = new ToolBar();
-      addButton("driver_add.png", toolBarDrivers);
-      addButton("driver_remove.png", toolBarDrivers);
-      addButton("driver_edit.png", toolBarDrivers).setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent actionEvent)
-         {
-            onEdit();
-         }
-      });
+      addButton("driver_add.png", _i18n.t("tooltip.add"), toolBarDrivers);
+      addButton("driver_remove.png", _i18n.t("tooltip.remove"), toolBarDrivers);
+      addButton("driver_edit.png", _i18n.t("tooltip.edit"), toolBarDrivers).setOnAction(e -> onEdit());
 
-      addToggleButton("driver_filter.gif", toolBarDrivers);
+      _btnFilter = addToggleButton("driver_filter.gif", _i18n.t("tooltip.filter"), toolBarDrivers);
+      _btnFilter.setOnAction(e -> onFilter());
 
       ret.setCenter(toolBarDrivers);
 
 
       ToolBar toolBarDockWin = new ToolBar();
       // addToggleButton("dock_win_stick.png", toolBarDockWin);
-      addButton("dock_win_close.png", toolBarDockWin).setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent actionEvent)
-         {
-            _dockPaneChanel.closeDriver();
-         }
-      });
+      addButton("dock_win_close.png", _i18n.t("tooltip.close"), toolBarDockWin).setOnAction(e -> _dockPaneChanel.closeDriver());
 
       ret.setRight(toolBarDockWin);
 
       return ret;
 
+   }
+
+   private void onFilter()
+   {
+      _lstDrivers.getItems().setAll(_driversManager.getDrivers(_btnFilter.isSelected()));
    }
 
    private void onEdit()
@@ -126,19 +99,21 @@ public class DriversController
       }
    }
 
-   private ToggleButton addToggleButton(String icon, ToolBar toolBar)
+   private ToggleButton addToggleButton(String icon, String tooltip, ToolBar toolBar)
    {
       ToggleButton btn = new ToggleButton ();
       btn.setGraphic(_props.getImageView(icon));
+      btn.setTooltip(new Tooltip(tooltip));
       toolBar.getItems().add(btn);
 
       return btn;
    }
 
-   private Button addButton(String icon, ToolBar toolBar)
+   private Button addButton(String icon, String tooltip, ToolBar toolBar)
    {
       Button btn = new Button();
       btn.setGraphic(_props.getImageView(icon));
+      btn.setTooltip(new Tooltip(tooltip));
       toolBar.getItems().add(btn);
 
       return btn;
