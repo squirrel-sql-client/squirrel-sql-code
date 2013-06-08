@@ -53,7 +53,7 @@ public class FXMessageBox
    public static String showMessageBox(Window parent, Icon icon, String title, String msg, Integer defaultOptionIndex, final String... options)
    {
 
-      final Stage dialog = new Stage(StageStyle.UTILITY);
+      final Stage dialog = new Stage();
       dialog.setTitle(title);
       dialog.setResizable(false);
       dialog.initModality(Modality.WINDOW_MODAL);
@@ -159,7 +159,9 @@ public class FXMessageBox
 
       totalPane.getChildren().add(new Label(""));//$NON-NLS-1$
 
-      // Below method is supported JavaFX 2.2 or lator.
+      GuiUtils.makeEscapeClosable(totalPane);
+
+      // Below method is supported JavaFX 2.2 or later.
       dialog.showAndWait();
 
       return result[0];

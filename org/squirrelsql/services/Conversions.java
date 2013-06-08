@@ -44,6 +44,18 @@ public class Conversions
       return ret;
    }
 
+   public static String changeFileNameToClassName(String name)
+   {
+      String className = null;
+      if (name.toLowerCase().endsWith(".class"))
+      {
+         className = name.replace('/', '.');
+         className = className.replace('\\', '.');
+         className = className.substring(0, className.length() - 6);
+      }
+      return className;
+   }
+
 
    public static interface NameExtractor<T>{String getName(T t);}
 

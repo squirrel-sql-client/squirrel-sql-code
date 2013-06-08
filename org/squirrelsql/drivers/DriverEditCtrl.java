@@ -66,6 +66,9 @@ public class DriverEditCtrl
          _dialog.getStage().initOwner(AppState.get().getPrimaryStage());
          _dialog.setSceneRoot(parent);
 
+
+         GuiUtils.makeEscapeClosable(parent);
+
          new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
 
          _dialog.getStage().showAndWait();
@@ -151,7 +154,7 @@ public class DriverEditCtrl
       _sqlDriver.setDriverClassName(_driverEditView.txtDriverToUse.getText());
       _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
       _sqlDriver.setName(_driverEditView.txtName.getText());
-      _sqlDriver.setUrl(_driverEditView.txtUrl.getText());
+      _sqlDriver.setWebsiteUrl(_driverEditView.txtWebUrl.getText());
       _sqlDriver.setJarFileNamesList(_driverEditView.lstClasspath.getItems());
       _sqlDriver.setLoaded(driverFound);
 

@@ -55,7 +55,7 @@ public class DriversController
       BorderPane ret = new BorderPane();
 
       ToolBar toolBarDrivers = new ToolBar();
-      addButton("driver_add.png", _i18n.t("tooltip.add"), toolBarDrivers);
+      addButton("driver_add.png", _i18n.t("tooltip.add"), toolBarDrivers).setOnAction(e -> onAdd());
       addButton("driver_remove.png", _i18n.t("tooltip.remove"), toolBarDrivers).setOnAction(e -> onRemove());
       addButton("driver_edit.png", _i18n.t("tooltip.edit"), toolBarDrivers).setOnAction(e -> onEdit());
 
@@ -73,6 +73,22 @@ public class DriversController
 
       return ret;
 
+   }
+
+   private void onAdd()
+   {
+      SQLDriver newDriver = new SQLDriver();
+      DriverEditCtrl driverEditCtrl = new DriverEditCtrl(newDriver);
+
+      if(driverEditCtrl.isOk())
+      {
+         newDriver.update(driverEditCtrl.getDriver());
+         _lstDrivers.getItems().add(newDriver);
+         _lstDrivers.getSelectionModel().select(newDriver);
+         _lstDrivers.scrollTo(_lstDrivers.getItems().size() - 1);
+
+         Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
+      }
    }
 
    private void onRemove()
@@ -123,7 +139,16 @@ public class DriversController
    private void onEdit()
    {
       int selectedIndex = _lstDrivers.getSelectionModel().getSelectedIndex();
-      SQLDriver selectedDriver = (SQLDriver) _lstDrivers.getSelectionModel().getSelectedItem();
+      SQLDriver selectedDriver = _lstDrivers.getSelectionModel().getSelectedItem();
+
+      if(null == selectedDriver)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("driver.edit.noselection.message"));
+         return;
+      }
+
+
+
       DriverEditCtrl driverEditCtrl = new DriverEditCtrl(selectedDriver);
 
       if(driverEditCtrl.isOk())

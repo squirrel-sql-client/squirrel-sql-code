@@ -2,10 +2,6 @@ package org.squirrelsql.services;
 
 import org.squirrelsql.drivers.ClassLoaderListener;
 import org.squirrelsql.drivers.EnumerationIterator;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.services.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,7 +115,7 @@ public class MyURLClassLoader extends URLClassLoader
             {
                Class cls = null;
                String entryName = ((ZipEntry) it.next()).getName();
-               String className = Utils.changeFileNameToClassName(entryName);
+               String className = Conversions.changeFileNameToClassName(entryName);
                if (className != null)
                {
                   try
