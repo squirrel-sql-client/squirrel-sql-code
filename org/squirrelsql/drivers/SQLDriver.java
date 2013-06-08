@@ -24,6 +24,11 @@ public class SQLDriver implements Comparable<SQLDriver>
 
    private String _websiteUrl;
 
+   private boolean _squirrelPredefinedDriver;
+
+   /**
+    * Constructor for PreDefinedDrivers class
+    */
    public SQLDriver(String id, String name, String driverClassName, String url, String websiteUrl)
    {
       _id = id;
@@ -31,6 +36,7 @@ public class SQLDriver implements Comparable<SQLDriver>
       _driverClassName = driverClassName;
       _url = url;
       _websiteUrl = websiteUrl;
+      _squirrelPredefinedDriver = true;
    }
 
    // For Json deserialization
@@ -140,5 +146,16 @@ public class SQLDriver implements Comparable<SQLDriver>
       _url = driver._url;
       _websiteUrl = driver._websiteUrl;
       _jarFileNamesList = driver._jarFileNamesList;
+      _loaded = driver._loaded;
+   }
+
+   public boolean isSquirrelPredefinedDriver()
+   {
+      return _squirrelPredefinedDriver;
+   }
+
+   public void setSquirrelPredefinedDriver(boolean b)
+   {
+      _squirrelPredefinedDriver = b;
    }
 }

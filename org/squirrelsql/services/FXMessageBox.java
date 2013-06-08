@@ -18,10 +18,14 @@ import javafx.stage.Window;
 public class FXMessageBox
 {
 
-   public static final int ICON_ERROR = 0x01000000;
-   public static final int ICON_WARNING = 0x02000000;
-   public static final int ICON_INFORMATION = 0x04000000;
-   public static final int ICON_QUESTION = 0x08000000;
+
+   public enum Icon
+   {
+      ICON_ERROR,
+      ICON_WARNING,
+      ICON_INFORMATION,
+      ICON_QUESTION
+   }
 
 
    public static final String OK = new I18n(FXMessageBox.class).t("FXMessageBox.OK");
@@ -32,22 +36,21 @@ public class FXMessageBox
    public static final String IGNORE = new I18n(FXMessageBox.class).t("FXMessageBox.IGNORE");
    public static final String CANCEL = new I18n(FXMessageBox.class).t("FXMessageBox.CANCEL");
 
+   public static final String TITLE_TEXT_INFORMATION = new I18n(FXMessageBox.class).t("FXMessageBox.Information");
+
+
+
    public static void showInfoOk(Window parent, String msg)
    {
-      showMessageBox(parent, ICON_INFORMATION, 0, new I18n(FXMessageBox.class).t("FXMessageBox.Information"), msg, OK);
+      showMessageBox(parent, Icon.ICON_INFORMATION, TITLE_TEXT_INFORMATION, msg, 0, OK);
    }
 
    public static String showYesNo(Window parent, String msg)
    {
-      return showMessageBox(parent, ICON_QUESTION, 0, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, YES, NO);
+      return showMessageBox(parent, Icon.ICON_QUESTION, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, 0, YES, NO);
    }
 
-   public static void showInfoOk(Window parent, String title, String message)
-   {
-      showMessageBox(parent, ICON_INFORMATION, 0, title, message, OK);
-   }
-
-   public static String showMessageBox(Window parent, Integer icon, Integer defaultOptionIndex, String title, String msg, final String... options)
+   public static String showMessageBox(Window parent, Icon icon, String title, String msg, Integer defaultOptionIndex, final String... options)
    {
 
       final Stage dialog = new Stage(StageStyle.UTILITY);
@@ -81,22 +84,22 @@ public class FXMessageBox
 
       if (null != icon)
       {
-         if ((icon & ICON_ERROR) == ICON_ERROR)
+         if (Icon.ICON_ERROR == icon)
          {
             final Group group = MessageIconBuilder.drawErrorIcon(3);
             vbox.getChildren().add(group);
          }
-         else if ((icon & ICON_WARNING) == ICON_WARNING)
+         else if (Icon.ICON_WARNING == icon)
          {
             final Group group = MessageIconBuilder.drawWarningIcon(3);
             vbox.getChildren().add(group);
          }
-         else if ((icon & ICON_INFORMATION) == ICON_INFORMATION)
+         else if (Icon.ICON_INFORMATION == icon)
          {
             final Group group = MessageIconBuilder.drawInformationIcon(3);
             vbox.getChildren().add(group);
          }
-         else if ((icon & ICON_QUESTION) == ICON_QUESTION)
+         else if (Icon.ICON_QUESTION == icon)
          {
             final Group group = MessageIconBuilder.drawQuestionIcon(3);
             vbox.getChildren().add(group);

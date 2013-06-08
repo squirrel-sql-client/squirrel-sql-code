@@ -1,6 +1,7 @@
 package org.squirrelsql;
 
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +75,12 @@ public class PreDefinedDrivers
    
    public static ArrayList<SQLDriver> get()
    {
-      return new ArrayList<SQLDriver>(Arrays.asList(PREDEFINED_DRIVERS));
+      return new ArrayList<>(Arrays.asList(PREDEFINED_DRIVERS));
+   }
+
+   public static SQLDriver find(String id)
+   {
+      return CollectionUtil.filter(get(), d -> d.getId().equals(id)).get(0);
    }
 }
 
