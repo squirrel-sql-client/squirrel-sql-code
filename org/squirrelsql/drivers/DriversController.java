@@ -9,6 +9,7 @@ import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.DockToolbarBuilder;
 import org.squirrelsql.services.FXMessageBox;
 import org.squirrelsql.services.I18n;
 
@@ -31,8 +32,6 @@ public class DriversController
       _dockPaneChanel = dockPaneChanel;
       _borderPane = new BorderPane();
 
-      createToolBar();
-
       _lstDrivers = new ListView();
 
       _borderPane.setTop(createToolBar());
@@ -52,27 +51,18 @@ public class DriversController
 
    private BorderPane createToolBar()
    {
-      BorderPane ret = new BorderPane();
+      DockToolbarBuilder dockToolbarBuilder = new DockToolbarBuilder();
 
-      ToolBar toolBarDrivers = new ToolBar();
-      addButton("driver_add.png", _i18n.t("tooltip.add"), toolBarDrivers).setOnAction(e -> onAdd());
-      addButton("driver_remove.png", _i18n.t("tooltip.remove"), toolBarDrivers).setOnAction(e -> onRemove());
-      addButton("driver_edit.png", _i18n.t("tooltip.edit"), toolBarDrivers).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
 
-      _btnFilter = addToggleButton("driver_filter.gif", _i18n.t("tooltip.filter"), toolBarDrivers);
+      _btnFilter = dockToolbarBuilder.addToggleButtonLeft(_props.getImageView("driver_filter.gif"), _i18n.t("tooltip.filter"));
       _btnFilter.setOnAction(e -> onFilter());
 
-      ret.setCenter(toolBarDrivers);
+      dockToolbarBuilder.addButtonRight(_props.getImageView("dock_win_close.png"), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeDriver());
 
-
-      ToolBar toolBarDockWin = new ToolBar();
-      // addToggleButton("dock_win_stick.png", toolBarDockWin);
-      addButton("dock_win_close.png", _i18n.t("tooltip.close"), toolBarDockWin).setOnAction(e -> _dockPaneChanel.closeDriver());
-
-      ret.setRight(toolBarDockWin);
-
-      return ret;
-
+      return dockToolbarBuilder.getToolbarPane();
    }
 
    private void onAdd()
@@ -158,26 +148,6 @@ public class DriversController
 
          _lstDrivers.getItems().set(selectedIndex, selectedDriver);
       }
-   }
-
-   private ToggleButton addToggleButton(String icon, String tooltip, ToolBar toolBar)
-   {
-      ToggleButton btn = new ToggleButton ();
-      btn.setGraphic(_props.getImageView(icon));
-      btn.setTooltip(new Tooltip(tooltip));
-      toolBar.getItems().add(btn);
-
-      return btn;
-   }
-
-   private Button addButton(String icon, String tooltip, ToolBar toolBar)
-   {
-      Button btn = new Button();
-      btn.setGraphic(_props.getImageView(icon));
-      btn.setTooltip(new Tooltip(tooltip));
-      toolBar.getItems().add(btn);
-
-      return btn;
    }
 
    public Node getNode()
