@@ -40,4 +40,14 @@ public class DockPaneChanel
    {
       _listeners.add(dockPaneChanelAdapter) ;
    }
+
+   public void closeAliases()
+   {
+      DockPaneChanelAdapter[] dockPaneChanelAdapters = _listeners.toArray(new DockPaneChanelAdapter[_listeners.size()]);
+
+      for (DockPaneChanelAdapter dockPaneChanelAdapter : dockPaneChanelAdapters)
+      {
+         dockPaneChanelAdapter.closeAliases();
+      }
+   }
 }

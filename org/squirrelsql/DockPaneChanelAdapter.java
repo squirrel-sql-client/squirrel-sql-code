@@ -7,4 +7,6 @@ public class DockPaneChanelAdapter
    public void showAliases(boolean selected) {}
 
    public void closeDriver() {}
+
+   public void closeAliases() {}
 }

@@ -23,4 +23,14 @@ public class PrefImpl
    {
       Preferences.userRoot().put(key, val);
    }
+
+   public boolean getBoolean(String key, boolean def)
+   {
+      return Preferences.userRoot().getBoolean(key, def);
+   }
+
+   public void set(String key, boolean val)
+   {
+      Preferences.userRoot().putBoolean(key, val);
+   }
 }

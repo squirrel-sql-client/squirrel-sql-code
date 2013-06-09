@@ -40,6 +40,11 @@ public class DockToolbarBuilder
       return addToggleButton(imageView, tooltip, _toolbarLeft);
    }
 
+   public ToggleButton addToggleButtonRight(ImageView imageView, String tooltip)
+   {
+      return addToggleButton(imageView, tooltip, _toolbarRight);
+   }
+
 
    private Button addButton(ImageView icon, String tooltip, ToolBar toolBar)
    {

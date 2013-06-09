@@ -37,4 +37,14 @@ public class Pref
    {
       AppState.get().getPrefImpl().set(genKey(key), val);
    }
+
+   public boolean getBoolean(String key, boolean def)
+   {
+      return AppState.get().getPrefImpl().getBoolean(genKey(key), def);
+   }
+
+   public void set(String key, boolean val)
+   {
+      AppState.get().getPrefImpl().set(genKey(key), val);
+   }
 }

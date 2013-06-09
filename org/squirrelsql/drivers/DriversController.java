@@ -8,20 +8,22 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
-import org.squirrelsql.services.Dao;
-import org.squirrelsql.services.DockToolbarBuilder;
-import org.squirrelsql.services.FXMessageBox;
-import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.*;
 
 import java.util.ArrayList;
 
 public class DriversController
 {
+   private static final String PREF_DRIVERS_FILTERED = "drivers.filtered";
+
+
    private Props _props = new Props(this.getClass());
    private I18n _i18n = new I18n(this.getClass());
+   private Pref _pref = new Pref(this.getClass());
 
-   private ListView<SQLDriver> _lstDrivers;
-   private final BorderPane _borderPane;
+
+   private final BorderPane _borderPane = new BorderPane();
+   private ListView<SQLDriver> _lstDrivers = new ListView();
    private DockPaneChanel _dockPaneChanel;
    private DriversManager _driversManager = new DriversManager();
    private ToggleButton _btnFilter;
@@ -30,14 +32,12 @@ public class DriversController
    public DriversController(DockPaneChanel dockPaneChanel)
    {
       _dockPaneChanel = dockPaneChanel;
-      _borderPane = new BorderPane();
-
-      _lstDrivers = new ListView();
 
       _borderPane.setTop(createToolBar());
       _borderPane.setCenter(_lstDrivers);
 
 
+      _btnFilter.setSelected(_pref.getBoolean(PREF_DRIVERS_FILTERED, false));
       onFilter();
 
       _lstDrivers.setCellFactory(listView -> new DriverCell());
@@ -124,6 +124,8 @@ public class DriversController
    private void onFilter()
    {
       _lstDrivers.getItems().setAll(_driversManager.getDrivers(_btnFilter.isSelected()));
+
+      _pref.set(PREF_DRIVERS_FILTERED, _btnFilter.isSelected());
    }
 
    private void onEdit()

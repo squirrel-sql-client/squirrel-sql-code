@@ -3,6 +3,7 @@ package org.squirrelsql;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import org.squirrelsql.aliases.AliasesController;
 import org.squirrelsql.drivers.DriversController;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.workaround.SplitDividerWA;
@@ -21,11 +22,12 @@ public class SplitController
    private final SplitPane _spltHoriz = new SplitPane();
 
    private DriversController _driversController;
-   private AliasesController _aliasesController = new AliasesController();
+   private AliasesController _aliasesController;
 
    public SplitController(DockPaneChanel dockPaneChanel)
    {
       _driversController = new DriversController(dockPaneChanel);
+      _aliasesController = new AliasesController(dockPaneChanel);
       _spltHoriz.setOrientation(Orientation.HORIZONTAL);
       _spltHoriz.getItems().add(new SessionTabbedPaneCtrl().getNode());
 

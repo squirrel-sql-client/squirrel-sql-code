@@ -17,12 +17,20 @@ public class DockButtonsCtrl
    {
       _dockPaneChanel = dockPaneChanel;
 
-      _dockPaneChanel.addListener(new DockPaneChanelAdapter(){
+      _dockPaneChanel.addListener(new DockPaneChanelAdapter()
+      {
          @Override
          public void closeDriver()
          {
             _btnDrivers.setSelected(false);
             onDrivers();
+         }
+
+         @Override
+         public void closeAliases()
+         {
+            _btnAliases.setSelected(false);
+            onAliases();
          }
       });
    }
