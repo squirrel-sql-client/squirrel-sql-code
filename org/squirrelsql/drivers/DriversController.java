@@ -53,9 +53,9 @@ public class DriversController
    {
       DockToolbarBuilder dockToolbarBuilder = new DockToolbarBuilder();
 
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("driver_edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
 
       _btnFilter = dockToolbarBuilder.addToggleButtonLeft(_props.getImageView("driver_filter.gif"), _i18n.t("tooltip.filter"));
       _btnFilter.setOnAction(e -> onFilter());
