@@ -3,6 +3,7 @@ package org.squirrelsql.aliases;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
@@ -24,6 +25,7 @@ public class AliasesController
       _dockPaneChanel = dockPaneChanel;
 
       _borderPane.setTop(createToolBar());
+      _borderPane.setCenter(new TreeView<SQLAlias>());
 
    }
 
@@ -44,8 +46,6 @@ public class AliasesController
       dockToolbarBuilder.addButtonLeft(_props.getImageView("copy_to_klip.png"), _i18n.t("tooltip.copy.alias.to.clip")).setOnAction(e -> onSort());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("cut.png"), _i18n.t("tooltip.cut.alias")).setOnAction(e -> onSort());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("paste.png"), _i18n.t("tooltip.paste.alias")).setOnAction(e -> onSort());
-
-
 
       _btnPinned = dockToolbarBuilder.addToggleButtonRight(_props.getImageView("dock_win_unpinned.png"), _i18n.t("tooltip.pinned"));
       _btnPinned.setOnAction(e -> onPinnedChanged());
