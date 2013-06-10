@@ -1,9 +1,6 @@
 package org.squirrelsql.services;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
@@ -69,5 +66,10 @@ public class DockToolbarBuilder
    public BorderPane getToolbarPane()
    {
       return _borderPane;
+   }
+
+   public void addSeparatorLeft()
+   {
+      _toolbarLeft.getItems().add(new Separator());
    }
 }

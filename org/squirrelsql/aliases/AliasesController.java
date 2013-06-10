@@ -32,6 +32,18 @@ public class AliasesController
       DockToolbarBuilder dockToolbarBuilder = new DockToolbarBuilder();
 
       dockToolbarBuilder.addButtonLeft(_props.getImageView("database_connect.png"), _i18n.t("tooltip.connect")).setOnAction(e -> onConnect());
+      dockToolbarBuilder.addSeparatorLeft();
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("copy.png"), _i18n.t("tooltip.copy")).setOnAction(e -> onCopy());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
+      dockToolbarBuilder.addSeparatorLeft();
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("sort-ascend.png"), _i18n.t("tooltip.sort")).setOnAction(e -> onSort());
+      dockToolbarBuilder.addSeparatorLeft();
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("folder_new.png"), _i18n.t("tooltip.new.alias.folder")).setOnAction(e -> onSort());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("copy_to_klip.png"), _i18n.t("tooltip.copy.alias.to.clip")).setOnAction(e -> onSort());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("cut.png"), _i18n.t("tooltip.cut.alias")).setOnAction(e -> onSort());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("paste.png"), _i18n.t("tooltip.paste.alias")).setOnAction(e -> onSort());
 
 
 
@@ -41,6 +53,31 @@ public class AliasesController
       dockToolbarBuilder.addButtonRight(_props.getImageView("dock_win_close.png"), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeAliases());
 
       return dockToolbarBuilder.getToolbarPane();
+   }
+
+   private void onSort()
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   private void onEdit()
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   private void onRemove()
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   private void onCopy()
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   private void onAdd()
+   {
+      //To change body of created methods use File | Settings | File Templates.
    }
 
    private void onPinnedChanged()
