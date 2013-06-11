@@ -69,6 +69,8 @@ public class Main extends Application
 
 
       primaryStage.show();
+
+      Platform.runLater(() -> AppState.get().doAfterBootstrap());
    }
 
    private void adjustMessageSplit()

@@ -66,8 +66,14 @@ public class AppState
 
    public File getUserDir()
    {
-      File file = new File(_propertiesHandler.getProperty(SquirrelProperty.USER_DIR));
+      String userDir = _propertiesHandler.getProperty(SquirrelProperty.USER_DIR).trim();
+      File file = new File(userDir);
       file.mkdirs();
       return file;
+   }
+
+   public void doAfterBootstrap()
+   {
+      _propertiesHandler.doAfterBootstrap();
    }
 }
