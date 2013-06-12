@@ -60,4 +60,10 @@ public class EmptyWhereClausePart implements IWhereClausePart {
 		throw new IllegalStateException(
 				"A NopWhereClauseParte does not support a whereClause");
 	}
+
+   @Override
+   public Object getParamValue()
+   {
+      return "<has no value>";
+   }
 }

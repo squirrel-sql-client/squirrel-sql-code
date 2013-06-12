@@ -10,7 +10,8 @@ Enhancements:
 
 #1084 Added MariaDB driver to default driver list
 
-
+Made data editing problems that concern update row counts more transparent by printing
+  out details to SQuirreL's message panel. This may help to fix bugs like #1086.
 
 3.5.0 (5/5/2013)
 ==================

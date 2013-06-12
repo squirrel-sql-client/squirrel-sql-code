@@ -61,5 +61,6 @@ public interface IWhereClausePart{
 	 * @return true, if this part can be used in an where-clause. Otherwise false.
 	 */
 	public boolean shouldBeUsed();
-	
-   }
+
+   Object getParamValue();
+}

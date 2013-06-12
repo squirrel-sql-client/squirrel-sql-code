@@ -13,12 +13,9 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataModelImplementationDetails;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePartUtil;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.WhereClausePartUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -221,9 +218,11 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       int count = -1;	// start with illegal number of rows matching query
 
+      CountResult countResult = null;
       try
       {
-         count = count(whereClauseParts, conn);
+         countResult = count(whereClauseParts, conn);
+         count = countResult.getCount();
       }
       catch (SQLException ex)
       {
@@ -238,19 +237,34 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       if (count == -1) {
           // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
+         reportUpdateFail(countResult);
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
       }
       if (count == 0) {
           // i18n[DataSetUpdateableTableModelImpl.error.staleupdaterow=This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?]
+         reportUpdateFail(countResult);
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.staleupdaterow");
       }
       if (count > 1) {
           // i18n[DataSetUpdateableTableModelImpl.info.updateidenticalrows=This operation will update {0} identical rows.\nDo you wish to proceed?]
+         reportUpdateFail(countResult);
           return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.updateidenticalrows",
                                        Long.valueOf(count));
       }
       // no problems found, so do not return a warning message.
       return null;	// nothing for user to worry about
+   }
+
+   private void reportUpdateFail(CountResult countResult)
+   {
+      if(null == countResult)
+      {
+         return;
+      }
+
+      String msg = "Editing led to a warning message because the number of rows that would be updated was found to be " + countResult.getCount() + " instead of 1.\n" +
+                   "Here's some information about the query that was used to predict the number of rows that would be affected:\n" + countResult.getCheckSQLDetails();
+      _session.getApplication().getMessageHandler().showWarningMessage(msg);
    }
 
    /**
@@ -260,21 +274,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * @return number of rows in the database, which will be selected by the given whereClauseParts
     * @throws SQLException if an SQLExcetpion occurs.
     */
-   private int count(List<IWhereClausePart> whereClauseParts,
+   private CountResult count(List<IWhereClausePart> whereClauseParts,
 		   final ISQLConnection conn) throws SQLException {
-	   int count;
+      CountResult countResult = new CountResult();
 	   PreparedStatement pstmt = null;
 	   ResultSet rs = null;
 	   try
 	   {
 		   String whereClause = whereClausePartUtil.createWhereClause(whereClauseParts);
 		   String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
+         countResult.setSql(countSql);
 		   pstmt = conn.prepareStatement(countSql);
-		   whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
+		   whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, countResult);
 
 		   rs = pstmt.executeQuery();
 		   rs.next();
-		   count = rs.getInt(1);
+		   countResult.setCount(rs.getInt(1));
 	   }
 	   finally
 	   {
@@ -284,7 +299,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 		   SQLUtilities.closeResultSet(rs);
 		   SQLUtilities.closeStatement(pstmt);
 	   }
-	   return count;
+	   return countResult;
    }
 
 
@@ -314,7 +329,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
          try
          {
-        	count = count(whereClauseParts, conn);
+        	count = count(whereClauseParts, conn).getCount();
         	
          }
          catch (SQLException ex)
@@ -402,7 +417,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
               whereClause;
     	  
          final PreparedStatement pstmt = conn.prepareStatement(queryString);
-         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
+         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
          
 
          try
@@ -499,7 +514,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                 colDefs[col], pstmt, newValue, 1);
          
          // Fill the parameters of the where clause - start at position 2 because the data which is updated is at position 1
-         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 2);
+         whereClausePartUtil.setParameters(pstmt, whereClauseParts, 2, null);
          count = pstmt.executeUpdate();
       }
       catch (SQLException ex)
@@ -674,7 +689,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // count how many rows this WHERE matches
          try {
         	 
-        	 int count = count(whereClauseParts, conn);
+        	 int count = count(whereClauseParts, conn).getCount();
                if (count != 1) {
                   if (count == 0) {
                       // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
@@ -733,7 +748,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
         	 String sql = "DELETE FROM " +
 		      ti.getQualifiedName() + whereClause;
         	 final PreparedStatement pstmt = conn.prepareStatement(sql);
-        	 whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1);
+        	 whereClausePartUtil.setParameters(pstmt, whereClauseParts, 1, null);
             try
             {
             	pstmt.executeUpdate();

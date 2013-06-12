@@ -41,4 +41,11 @@ public class IsNullWhereClausePart extends NoParameterWhereClausePart {
 		return (columnDef.getColumnName() + " is null");
 	}
 
+   @Override
+   public Object getParamValue()
+   {
+      return "IS NULL";
+   }
+
+
 }

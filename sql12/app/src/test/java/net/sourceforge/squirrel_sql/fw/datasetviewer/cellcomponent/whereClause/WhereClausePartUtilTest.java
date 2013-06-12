@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.session.IWhereClausePartUtil;
+import net.sourceforge.squirrel_sql.client.session.WhereClausePartUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 
@@ -101,7 +103,7 @@ public class WhereClausePartUtilTest extends BaseSQuirreLJUnit4TestCase{
 		parts.add(parameterWhereClause);
 		parts.add(anotherParameterWhereClause);
 		
-		int nextIndex = whereClausePartUtil.setParameters(mockPstmt, parts , 2);
+		int nextIndex = whereClausePartUtil.setParameters(mockPstmt, parts , 2, null);
 		assertEquals(4, nextIndex);
 		EasyMock.verify(mockLongDataTypeComponent);
 		EasyMock.verify(mockStringDataTypeComponent);

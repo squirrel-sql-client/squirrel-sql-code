@@ -105,4 +105,11 @@ public class ParameterWhereClausePart extends AbstractWhereClausePart {
 	public boolean isParameterUsed() {
 		return true;
 	}
+
+   @Override
+   public Object getParamValue()
+   {
+      return parameterValue;
+   }
+
 }

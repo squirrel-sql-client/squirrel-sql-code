@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.session.IWhereClausePartUtil;
+import net.sourceforge.squirrel_sql.client.session.WhereClausePartUtil;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -147,11 +149,11 @@ public abstract class AbstractAdhocTests extends BaseSQuirreLJUnit4TestCase {
 			
 			IWhereClausePartUtil whereClausePartUtil = new WhereClausePartUtil();
 			String where = whereClausePartUtil.createWhereClause(whereClause);
-			
+
 			String countSql = "select count(*) from basicTypes " + where;
 			System.out.println(countSql);
 			PreparedStatement pstmt = sqlConn.prepareStatement(countSql);
-			whereClausePartUtil.setParameters(pstmt, whereClause, 1);
+			whereClausePartUtil.setParameters(pstmt, whereClause, 1, null);
 			ResultSet countRS = pstmt.executeQuery();
 			countRS.next();
 			assertEquals(1, countRS.getInt(1));

@@ -119,7 +119,13 @@ public abstract class AbstractWhereClausePart implements IWhereClausePart {
 		return true;
 	}
 
-	/**
+   @Override
+   public Object getParamValue()
+   {
+      return "<has no value>";
+   }
+
+   /**
 	 * The name of the related column
 	 * @return the name of the related column
 	 */
