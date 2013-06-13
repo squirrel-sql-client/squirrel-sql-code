@@ -1,5 +1,5 @@
 package org.squirrelsql.aliases;
 
-public class SQLAlias
+public class AliasTreeNode
 {
 }

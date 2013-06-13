@@ -36,48 +36,40 @@ public class DriverEditCtrl
    public DriverEditCtrl(SQLDriver sqlDriver)
    {
       _sqlDriver = sqlDriver;
-      try
-      {
 
-         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DriverEditView.fxml"), ResourceBundle.getBundle(getClass().getPackage().getName() + ".i18n"));
-         Region parent = (Region) fxmlLoader.load();
-         _driverEditView = fxmlLoader.getController();
+      FxmlHelper<DriverEditView> fxmlHelper = new FxmlHelper<>(DriverEditView.class);
+      Region parent = fxmlHelper.getRegion();
+      _driverEditView = fxmlHelper.getView();
 
-         String title = _i18n.t("change.driver.title", sqlDriver.getName());
+      String title = _i18n.t("change.driver.title", sqlDriver.getName());
 
-         _driverEditView.lblChangeDriver.setText(title);
+      _driverEditView.lblChangeDriver.setText(title);
 
-         _driverEditView.txtName.setText(sqlDriver.getName());
-         _driverEditView.txtUrl.setText(sqlDriver.getUrl());
-         _driverEditView.txtWebUrl.setText(sqlDriver.getWebsiteUrl());
-         _driverEditView.txtDriverToUse.setText(sqlDriver.getDriverClassName());
+      _driverEditView.txtName.setText(sqlDriver.getName());
+      _driverEditView.txtUrl.setText(sqlDriver.getUrl());
+      _driverEditView.txtWebUrl.setText(sqlDriver.getWebsiteUrl());
+      _driverEditView.txtDriverToUse.setText(sqlDriver.getDriverClassName());
 
-         _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(sqlDriver.getJarFileNamesList())));
+      _driverEditView.lstClasspath.setItems(FXCollections.observableList(new ArrayList(sqlDriver.getJarFileNamesList())));
 
-         _driverEditView.lstClasspath.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      _driverEditView.lstClasspath.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 
 
-         initListeners();
+      initListeners();
 
-         _dialog = ProgressUtil.makeProgressible(new Stage());
-         _dialog.getStage().initModality(Modality.WINDOW_MODAL);
-         _dialog.getStage().setTitle(title);
-         _dialog.getStage().initOwner(AppState.get().getPrimaryStage());
-         _dialog.setSceneRoot(parent);
+      _dialog = ProgressUtil.makeProgressible(new Stage());
+      _dialog.getStage().initModality(Modality.WINDOW_MODAL);
+      _dialog.getStage().setTitle(title);
+      _dialog.getStage().initOwner(AppState.get().getPrimaryStage());
+      _dialog.setSceneRoot(parent);
 
 
-         GuiUtils.makeEscapeClosable(parent);
+      GuiUtils.makeEscapeClosable(parent);
 
-         new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
+      new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
 
-         _dialog.getStage().showAndWait();
-
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
+      _dialog.getStage().showAndWait();
    }
 
    private void initListeners()
