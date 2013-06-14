@@ -1,31 +1,20 @@
 package org.squirrelsql.services;
 
 
+import org.squirrelsql.drivers.SQLDriver;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 
 public class CollectionUtil
 {
-
-   public static interface Criterion<T>{boolean matches(T t);}
-
-
-   /**
-    * Should be inlined when JDK 8 filtering is there.
-    */
-   public static <T> ArrayList<T> filter(List<T> toFilter, Criterion<T> criterion)
+   public static <T> ArrayList<T> filter(List<T> toFilter, Predicate<T> predicate)
    {
-      ArrayList<T> ret = new ArrayList<>();
-
-      for (T t : toFilter)
-      {
-         if(criterion.matches(t))
-         {
-            ret.add(t);
-         }
-      }
-
-      return ret;
+      Stream<T> stream = toFilter.stream().filter(predicate);
+      return new ArrayList(Arrays.asList(stream.toArray()));
    }
 }

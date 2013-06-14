@@ -7,7 +7,10 @@ import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class DriversManager
 {
@@ -40,7 +43,7 @@ public class DriversManager
    {
       if(filtered)
       {
-         ArrayList<SQLDriver> filteredList = CollectionUtil.filter(_allDrivers, sqlDriver -> sqlDriver.isLoaded());
+         ArrayList<SQLDriver> filteredList = CollectionUtil.filter(_allDrivers, SQLDriver::isLoaded);
          return FXCollections.observableList(filteredList);
       }
 
