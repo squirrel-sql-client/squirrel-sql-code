@@ -7,11 +7,19 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="375.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.EditFolderNameView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="267.9998779296875" prefWidth="520.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.EditFolderNameView">
   <children>
     <Label layoutX="14.0" layoutY="14.0" text="%aliastree.edit.folder.name" />
     <TextField fx:id="txtFolderName" layoutY="40.0" prefWidth="347.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-    <Button fx:id="btnOk" layoutX="14.0" layoutY="74.0" mnemonicParsing="false" text="%aliastree.edit.folder.ok" />
-    <Button fx:id="btnCancel" layoutX="65.0" layoutY="74.0" mnemonicParsing="false" text="%aliastree.edit.folder.cancel" />
+    <Button fx:id="btnOk" layoutX="14.0" layoutY="214.0" mnemonicParsing="false" text="%aliastree.edit.folder.ok" />
+    <Button fx:id="btnCancel" layoutX="60.0" layoutY="214.0" mnemonicParsing="false" text="%aliastree.edit.folder.cancel" />
+    <AnchorPane layoutX="14.0" layoutY="96.0" minHeight="106.0" prefHeight="106.0" prefWidth="492.0" style="-fx-border-width: 2; -fx-border-color: grey lightgrey lightgrey grey; -fx-border-style: solid line-join bevel;">
+      <children>
+        <RadioButton fx:id="radToRoot" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToRoot" />
+        <RadioButton fx:id="radToSelectedAsChild" layoutX="264.0" layoutY="43.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedAsChild" />
+        <RadioButton fx:id="radToSelectedParentAsSuccessor" layoutX="66.0" layoutY="74.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsSuccessor" />
+        <RadioButton fx:id="radToSelectedParentAsAncestor" layoutX="66.0" layoutY="14.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsAncestor" />
+      </children>
+    </AnchorPane>
   </children>
 </AnchorPane>

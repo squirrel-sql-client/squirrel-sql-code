@@ -86,14 +86,15 @@ public class AliasesController
 
    private void onNewFolder()
    {
-      String newFolderName = new EditFolderNameCtrl().getNewFolderName();
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      String newFolderName = new EditFolderNameCtrl(null != selectedItem).getNewFolderName();
 
       if(Strings.isNullOrEmpty(newFolderName))
       {
          return;
       }
 
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
       if(null == selectedItem)
       {
          selectedItem = _treeView.getRoot();

@@ -2,11 +2,13 @@ package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
 import javafx.scene.Scene;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.FXMessageBox;
 import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
 
 public class EditFolderNameCtrl
@@ -17,14 +19,39 @@ public class EditFolderNameCtrl
    private String _newFolderName;
 
 
-   public EditFolderNameCtrl()
+   public EditFolderNameCtrl(boolean parentNodeSelected)
    {
       FxmlHelper<EditFolderNameView> fxmlHelper = new FxmlHelper<>(EditFolderNameView.class);
       _editFolderNameView = fxmlHelper.getView();
 
       _editFolderNameView.btnOk.setOnAction(actionEvent -> onOk());
 
-      fxmlHelper.getView().btnCancel.setOnAction(actionEvent -> onCancel());
+      _editFolderNameView.btnCancel.setOnAction(actionEvent -> onCancel());
+
+
+      ToggleGroup toggleGroup = new ToggleGroup();
+
+      toggleGroup.getToggles().addAll
+         (
+            _editFolderNameView.radToRoot,
+            _editFolderNameView.radToSelectedAsChild,
+            _editFolderNameView.radToSelectedParentAsAncestor,
+            _editFolderNameView.radToSelectedParentAsSuccessor
+         );
+
+      if(parentNodeSelected)
+      {
+         _editFolderNameView.radToSelectedAsChild.setSelected(true);
+      }
+      else
+      {
+         _editFolderNameView.radToRoot.setSelected(true);
+
+         _editFolderNameView.radToRoot.setDisable(true);
+         _editFolderNameView.radToSelectedAsChild.setDisable(true);
+         _editFolderNameView.radToSelectedParentAsAncestor.setDisable(true);
+         _editFolderNameView.radToSelectedParentAsSuccessor.setDisable(true);
+      }
 
 
       _dialog = new Stage();
@@ -32,6 +59,7 @@ public class EditFolderNameCtrl
       _dialog.setTitle(_i18n.t("aliastree.edit.folder.name.title"));
       _dialog.initOwner(AppState.get().getPrimaryStage());
       _dialog.setScene(new Scene(fxmlHelper.getRegion()));
+      GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
 
       _dialog.showAndWait();
 
