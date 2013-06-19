@@ -13,13 +13,13 @@ public class DriverCell extends ListCell<SQLDriver>
    private Props _props = new Props(this.getClass());
    private ImageView _iconLoaded = new ImageView(_props.getImage("driver_loaded.png"));
    private ImageView _iconNotLoaded = new ImageView(_props.getImage("driver_not_loaded.png"));
-   private Label _label = new Label();
 
    private Paint _stdTextFill;
 
    public DriverCell()
    {
-      _stdTextFill = _label.getTextFill();
+      Label label = new Label();
+      _stdTextFill = label.getTextFill();
    }
 
    @Override
@@ -33,14 +33,12 @@ public class DriverCell extends ListCell<SQLDriver>
       }
 
 
-      _label.setText(sqlDriver.getName());
-      _label.setGraphic(getIcon(sqlDriver));
-      _label.setTextFill(getTextFill(sqlDriver));
-
-      setGraphic(_label);
+      setText(sqlDriver.getName());
+      setGraphic(getIcon(sqlDriver));
+      setTextFill(getTextFillColor(sqlDriver));
    }
 
-   private Paint getTextFill(SQLDriver sqlDriver)
+   private Paint getTextFillColor(SQLDriver sqlDriver)
    {
       if(sqlDriver.isSquirrelPredefinedDriver())
       {

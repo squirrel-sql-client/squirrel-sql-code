@@ -17,8 +17,8 @@
       <children>
         <RadioButton fx:id="radToRoot" layoutX="14.0" layoutY="43.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToRoot" />
         <RadioButton fx:id="radToSelectedAsChild" layoutX="264.0" layoutY="43.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedAsChild" />
-        <RadioButton fx:id="radToSelectedParentAsSuccessor" layoutX="66.0" layoutY="74.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsSuccessor" />
-        <RadioButton fx:id="radToSelectedParentAsAncestor" layoutX="66.0" layoutY="14.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsAncestor" />
+        <RadioButton fx:id="radToSelectedAsSuccessor" layoutX="66.0" layoutY="74.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsSuccessor" />
+        <RadioButton fx:id="radToSelectedAsAncestor" layoutX="66.0" layoutY="14.0" mnemonicParsing="false" text="%aliastree.edit.folder.addToSelectedParentAsAncestor" />
       </children>
     </AnchorPane>
   </children>

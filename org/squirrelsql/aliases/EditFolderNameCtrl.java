@@ -35,8 +35,8 @@ public class EditFolderNameCtrl
          (
             _editFolderNameView.radToRoot,
             _editFolderNameView.radToSelectedAsChild,
-            _editFolderNameView.radToSelectedParentAsAncestor,
-            _editFolderNameView.radToSelectedParentAsSuccessor
+            _editFolderNameView.radToSelectedAsAncestor,
+            _editFolderNameView.radToSelectedAsSuccessor
          );
 
       if(parentNodeSelected)
@@ -49,8 +49,8 @@ public class EditFolderNameCtrl
 
          _editFolderNameView.radToRoot.setDisable(true);
          _editFolderNameView.radToSelectedAsChild.setDisable(true);
-         _editFolderNameView.radToSelectedParentAsAncestor.setDisable(true);
-         _editFolderNameView.radToSelectedParentAsSuccessor.setDisable(true);
+         _editFolderNameView.radToSelectedAsAncestor.setDisable(true);
+         _editFolderNameView.radToSelectedAsSuccessor.setDisable(true);
       }
 
 
@@ -88,4 +88,27 @@ public class EditFolderNameCtrl
    {
       return _newFolderName;
    }
+
+
+   public boolean isAddToRoot()
+   {
+      return _editFolderNameView.radToRoot.isSelected();
+   }
+
+   public boolean isAddToSelectedAsChild()
+   {
+      return _editFolderNameView.radToSelectedAsChild.isSelected();
+   }
+
+   public boolean isAddToSelectedAsAncestor()
+   {
+      return _editFolderNameView.radToSelectedAsAncestor.isSelected();
+   }
+
+   public boolean isAddToSelectedAsSuccessor()
+   {
+      return _editFolderNameView.radToSelectedAsSuccessor.isSelected();
+   }
+
+
 }

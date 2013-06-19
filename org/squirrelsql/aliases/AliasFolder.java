@@ -1,6 +1,6 @@
 package org.squirrelsql.aliases;
 
-public class AliasFolder extends AliasTreeNode
+public class AliasFolder implements AliasTreeNode
 {
    private String _folderName;
 
@@ -10,7 +10,7 @@ public class AliasFolder extends AliasTreeNode
    }
 
    @Override
-   public String toString()
+   public String getName()
    {
       return _folderName;
    }

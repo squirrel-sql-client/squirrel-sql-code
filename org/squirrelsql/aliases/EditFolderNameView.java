@@ -10,8 +10,8 @@ public class EditFolderNameView
    @FXML TextField txtFolderName;
    @FXML RadioButton radToRoot;
    @FXML RadioButton radToSelectedAsChild;
-   @FXML RadioButton radToSelectedParentAsAncestor;
-   @FXML RadioButton radToSelectedParentAsSuccessor;
+   @FXML RadioButton radToSelectedAsAncestor;
+   @FXML RadioButton radToSelectedAsSuccessor;
    @FXML Button btnOk;
    @FXML Button btnCancel;
 }

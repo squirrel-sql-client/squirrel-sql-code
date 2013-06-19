@@ -1,5 +1,6 @@
 package org.squirrelsql.aliases;
 
-public class AliasTreeNode
+public interface AliasTreeNode
 {
+   public String getName();
 }

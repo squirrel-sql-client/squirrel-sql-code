@@ -6,15 +6,18 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
+import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.DockToolbarBuilder;
+import org.squirrelsql.services.FXMessageBox;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 
 public class AliasesController
 {
    private static final String PREF_ALIASES_PINED = "aliases.pinned";
+   private final AliasCell _aliasCell;
 
 
    private Props _props = new Props(this.getClass());
@@ -35,6 +38,9 @@ public class AliasesController
       _borderPane.setCenter(_treeView);
       _treeView.setShowRoot(false);
       _treeView.setRoot(new TreeItem<AliasTreeNode>(new AliasFolder("This folder is root and should not be visible")));
+
+      _aliasCell = new AliasCell();
+      _treeView.setCellFactory(cf -> _aliasCell);
 
 
 
@@ -71,12 +77,20 @@ public class AliasesController
 
    private void onPaste()
    {
-      //To change body of created methods use File | Settings | File Templates.
+
    }
 
    private void onCut()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.cut"));
+         return;
+      }
+
+      _aliasCell.setTreeItemBeingCut(selectedItem);
    }
 
    private void onCopyToClip()
@@ -88,19 +102,43 @@ public class AliasesController
    {
       TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      String newFolderName = new EditFolderNameCtrl(null != selectedItem).getNewFolderName();
+      EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(null != selectedItem);
+
+      String newFolderName = editFolderNameCtrl.getNewFolderName();
 
       if(Strings.isNullOrEmpty(newFolderName))
       {
          return;
       }
 
-      if(null == selectedItem)
+      TreeItem<AliasTreeNode> newTreeItem = new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), _props.getImageView("folder.png"));
+
+      if(editFolderNameCtrl.isAddToRoot())
       {
-         selectedItem = _treeView.getRoot();
+         _treeView.getRoot().getChildren().add(newTreeItem);
+      }
+      else if(editFolderNameCtrl.isAddToSelectedAsChild())
+      {
+         selectedItem.getChildren().add(newTreeItem);
+         selectedItem.setExpanded(true);
+      }
+      else if(editFolderNameCtrl.isAddToSelectedAsAncestor())
+      {
+         TreeItem<AliasTreeNode> parent = selectedItem.getParent();
+
+         int ixOfSelected = parent.getChildren().indexOf(selectedItem);
+         parent.getChildren().add(ixOfSelected, newTreeItem);
+
+      }
+      else if(editFolderNameCtrl.isAddToSelectedAsSuccessor())
+      {
+         TreeItem<AliasTreeNode> parent = selectedItem.getParent();
+
+         int ixOfSelected = parent.getChildren().indexOf(selectedItem);
+         parent.getChildren().add(ixOfSelected + 1, newTreeItem);
       }
 
-      selectedItem.getChildren().add(new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName)));
+
    }
 
    private void onSort()

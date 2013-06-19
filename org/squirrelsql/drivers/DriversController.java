@@ -40,7 +40,7 @@ public class DriversController
       _btnFilter.setSelected(_pref.getBoolean(PREF_DRIVERS_FILTERED, false));
       onFilter();
 
-      _lstDrivers.setCellFactory(listView -> new DriverCell());
+      _lstDrivers.setCellFactory(cf -> new DriverCell());
 
       if (0 < _lstDrivers.getItems().size())
       {
