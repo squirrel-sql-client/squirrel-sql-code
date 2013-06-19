@@ -40,8 +40,13 @@ public class AliasesController
       _treeView.setRoot(new TreeItem<AliasTreeNode>(new AliasFolder("This folder is root and should not be visible")));
 
       _aliasCell = new AliasCell();
-      _treeView.setCellFactory(cf -> _aliasCell);
 
+
+      if (false)
+      {
+         // Hier sollten ausgeschnittene Konten grau gemalt werden --> Funktioniert noch nicht.
+         _treeView.setCellFactory(cf -> _aliasCell);
+      }
 
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
@@ -77,7 +82,50 @@ public class AliasesController
 
    private void onPaste()
    {
+      if(null == _aliasCell.getTreeItemBeingCut() && null == _aliasCell.getTreeItemBeingCopied())
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.nothing.to.paste"));
+         return;
+      }
 
+      if(null != _aliasCell.getTreeItemBeingCut())
+      {
+         TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+         TreeItem<AliasTreeNode> beingCut = _aliasCell.getTreeItemBeingCut();
+
+         if (selectedItem == beingCut)
+         {
+            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.cannot.paste.to.itself"));
+            return;
+         }
+
+
+         TreeItem<AliasTreeNode> oldParent = beingCut.getParent();
+
+         oldParent.getChildren().remove(beingCut);
+
+
+         if(null == selectedItem)
+         {
+            _treeView.getRoot().getChildren().add(beingCut);
+
+         }
+         else
+         {
+            selectedItem.getChildren().add(beingCut);
+            selectedItem.setExpanded(true);
+         }
+
+         _aliasCell.setTreeItemBeingCut(null);
+
+
+
+      }
+      else if(null != _aliasCell.getTreeItemBeingCopied())
+      {
+
+      }
    }
 
    private void onCut()

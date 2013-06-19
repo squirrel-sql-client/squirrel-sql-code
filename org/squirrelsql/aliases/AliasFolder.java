@@ -14,4 +14,10 @@ public class AliasFolder implements AliasTreeNode
    {
       return _folderName;
    }
+
+   @Override
+   public String toString()
+   {
+      return getName();
+   }
 }

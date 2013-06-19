@@ -13,6 +13,7 @@ public class AliasCell extends TreeCell<AliasTreeNode>
    private TreeItem<AliasTreeNode> _treeItemBeingCut;
 
    private Paint _stdTextFill;
+   private TreeItem<AliasTreeNode> _treeItemBeingCopied;
 
    public AliasCell()
    {
@@ -33,8 +34,8 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       }
 
       setText(aliasTreeNode.getName());
-//      setTextFill(getTextFillColor(aliasTreeNode));
-//      setGraphic(getTreeItem().getGraphic());
+      setTextFill(getTextFillColor(aliasTreeNode));
+      setGraphic(getTreeItem().getGraphic());
    }
 
 
@@ -50,14 +51,24 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       }
    }
 
-   private ImageView getIcon(AliasTreeNode aliasTreeNode)
-   {
-      return null;  //To change body of created methods use File | Settings | File Templates.
-   }
-
    public void setTreeItemBeingCut(TreeItem<AliasTreeNode> treeItemBeingCut)
    {
       _treeItemBeingCut = treeItemBeingCut;
    }
 
+   public TreeItem<AliasTreeNode> getTreeItemBeingCut()
+   {
+      return _treeItemBeingCut;
+   }
+
+
+   public TreeItem<AliasTreeNode> getTreeItemBeingCopied()
+   {
+      return _treeItemBeingCopied;
+   }
+
+   public void setTreeItemBeingCopied(TreeItem<AliasTreeNode> treeItemBeingCopied)
+   {
+      _treeItemBeingCopied = treeItemBeingCopied;
+   }
 }

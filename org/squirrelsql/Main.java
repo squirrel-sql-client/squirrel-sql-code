@@ -51,20 +51,13 @@ public class Main extends Application
 
       borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
 
-      final StageDimensionSaver dimesionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
+      final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
 
       adjustMessageSplit();
 
 
 
-      primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>()
-      {
-         @Override
-         public void handle(WindowEvent windowEvent)
-         {
-            onClose(dimesionSaver);
-         }
-      });
+      primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
 
 
 
