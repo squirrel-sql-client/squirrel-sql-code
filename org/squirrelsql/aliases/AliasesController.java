@@ -94,12 +94,11 @@ public class AliasesController
 
          TreeItem<AliasTreeNode> beingCut = _aliasCell.getTreeItemBeingCut();
 
-         if (selectedItem == beingCut)
+         if (isEqualsOrAbove(beingCut, selectedItem))
          {
-            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.cannot.paste.to.itself"));
+            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.cannot.cutnpaste.to.itself.ordesc"));
             return;
          }
-
 
          TreeItem<AliasTreeNode> oldParent = beingCut.getParent();
 
@@ -126,6 +125,23 @@ public class AliasesController
       {
 
       }
+   }
+
+   private boolean isEqualsOrAbove(TreeItem<AliasTreeNode> item, TreeItem<AliasTreeNode> toCheck)
+   {
+      TreeItem<AliasTreeNode> p = toCheck;
+
+      while(null != p)
+      {
+         if(p == item)
+         {
+            return true;
+         }
+
+         p = p.getParent();
+      }
+
+      return false;
    }
 
    private void onCut()
