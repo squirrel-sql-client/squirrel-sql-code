@@ -105,25 +105,43 @@ public class AliasesController
          oldParent.getChildren().remove(beingCut);
 
 
-         if(null == selectedItem)
-         {
-            _treeView.getRoot().getChildren().add(beingCut);
-
-         }
-         else
-         {
-            selectedItem.getChildren().add(beingCut);
-            selectedItem.setExpanded(true);
-         }
+         addToTree(selectedItem, beingCut);
 
          _aliasCell.setTreeItemBeingCut(null);
-
-
-
       }
       else if(null != _aliasCell.getTreeItemBeingCopied())
       {
+         TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
+         TreeItem<AliasTreeNode> beingCopied = _aliasCell.getTreeItemBeingCopied();
+
+         if(null == selectedItem)
+         {
+            selectedItem = _treeView.getRoot();
+         }
+
+
+         TreeItem<AliasTreeNode> aliasNodePathCopy = AliasTreeUtil.deepCopy(beingCopied);
+
+         addToTree(selectedItem, aliasNodePathCopy);
+
+         _aliasCell.setTreeItemBeingCopied(null);
+
+      }
+   }
+
+
+   private void addToTree(TreeItem<AliasTreeNode> toAddTo, TreeItem<AliasTreeNode> toAdd)
+   {
+      if(null == toAddTo)
+      {
+         _treeView.getRoot().getChildren().add(toAdd);
+
+      }
+      else
+      {
+         toAddTo.getChildren().add(toAdd);
+         toAddTo.setExpanded(true);
       }
    }
 
@@ -159,7 +177,15 @@ public class AliasesController
 
    private void onCopyToClip()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.copy"));
+         return;
+      }
+
+      _aliasCell.setTreeItemBeingCopied(selectedItem);
    }
 
    private void onNewFolder()
@@ -175,7 +201,7 @@ public class AliasesController
          return;
       }
 
-      TreeItem<AliasTreeNode> newTreeItem = new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), _props.getImageView("folder.png"));
+      TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createFolderNode(newFolderName);
 
       if(editFolderNameCtrl.isAddToRoot())
       {
