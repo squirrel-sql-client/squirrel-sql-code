@@ -1,9 +1,7 @@
 package org.squirrelsql.services;
 
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 
 public class StageDimensionSaver
 {
@@ -41,19 +39,7 @@ public class StageDimensionSaver
          stage.setY(y);
       }
 
-      stage.setOnCloseRequest(new EventHandler<WindowEvent>()
-      {
-         @Override
-         public void handle(WindowEvent windowEvent)
-         {
-            onClose();
-         }
-      });
-   }
-
-   private void onClose()
-   {
-      save();
+      stage.setOnHiding((windowEvent) -> save());
    }
 
    public void save()

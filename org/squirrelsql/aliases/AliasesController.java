@@ -253,7 +253,16 @@ public class AliasesController
 
    private void onAdd()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> toAddTo = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == toAddTo)
+      {
+         toAddTo = _treeView.getRoot();
+      }
+
+      AliasEditController aliasEditController = new AliasEditController();
+
+      Alias alias = aliasEditController.getAlias();
    }
 
    private void onPinnedChanged()

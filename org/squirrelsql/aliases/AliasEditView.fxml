@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="482.9998779296875" prefWidth="679.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.AliasEditView">
+  <children>
+    <Label fx:id="lblChangeDriver" layoutX="7.0" layoutY="8.0" prefWidth="572.0" text="%title.change.alias" />
+    <TextField fx:id="txtName" layoutY="55.0" prefWidth="409.9998779296875" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="32.0" />
+    <ComboBox fx:id="cboDriver" layoutY="95.0" prefWidth="333.0" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="109.0" />
+    <TextField fx:id="txtUrl" layoutY="135.0" prefWidth="409.0" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="33.0" />
+    <TextField fx:id="txtUserName" layoutY="175.0" prefWidth="410.0" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="32.0" />
+    <CheckBox fx:id="chkConnectAtStartUp" layoutX="157.0" layoutY="310.0" mnemonicParsing="false" prefWidth="200.0001220703125" text="%alias.connect.on.startup" />
+    <Button fx:id="btnProperties" layoutX="35.0" layoutY="375.0" mnemonicParsing="false" prefWidth="128.0" text="%alias.properties" />
+    <Label layoutX="36.0" layoutY="58.0" prefWidth="110.0" text="%alias.name" />
+    <Label layoutX="37.0" layoutY="98.0" prefWidth="110.0" text="%alias.driver" />
+    <Label layoutX="36.0" layoutY="138.0" prefWidth="110.0" text="%alias.url" />
+    <Label layoutX="37.0" layoutY="178.0" prefWidth="110.0" text="%alias.user.name" />
+    <Label fx:id="lblPassword" layoutX="36.0" layoutY="271.0" prefWidth="110.0" text="%alias.user.password" />
+    <CheckBox fx:id="chkAutoLogon" layoutX="35.0" layoutY="310.0" mnemonicParsing="false" prefWidth="110.0" text="%alias.auto.logon" />
+    <Button fx:id="btnNewDriver" layoutY="95.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="66.00009999999747" text="%alias.drivers.new" AnchorPane.rightAnchor="33.0" />
+    <Separator layoutY="220.0" prefWidth="610.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="33.0" />
+    <CheckBox fx:id="chkSavePassword" layoutX="36.0" layoutY="234.0" mnemonicParsing="false" prefWidth="533.0" text="%alias.password.save.password" />
+    <Separator layoutY="344.0" prefWidth="610.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="34.0" />
+    <HBox id="HBox" alignment="CENTER" layoutY="427.0" prefWidth="610.0" spacing="5.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="32.0">
+      <children>
+        <Button fx:id="btnOk" mnemonicParsing="false" text="%alias.edit.ok" />
+        <Button fx:id="btnCancel" mnemonicParsing="false" text="%alias.edit.cancel" />
+        <Button fx:id="btnTest" mnemonicParsing="false" text="%alias.edit.test" />
+      </children>
+    </HBox>
+    <PasswordField fx:id="txtPassword" layoutY="268.0" prefWidth="488.0" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="33.0" />
+  </children>
+</AnchorPane>

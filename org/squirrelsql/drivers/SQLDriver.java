@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@XmlRootElement(name = "sqlDriver")
 public class SQLDriver implements Comparable<SQLDriver>
 {
    private String _id = UUID.randomUUID().toString();
