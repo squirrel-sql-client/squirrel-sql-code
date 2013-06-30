@@ -157,4 +157,11 @@ public class SQLDriver implements Comparable<SQLDriver>
    {
       _squirrelPredefinedDriver = b;
    }
+
+
+   @Override
+   public String toString()
+   {
+      return _name;
+   }
 }

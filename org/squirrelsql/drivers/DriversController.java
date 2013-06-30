@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class DriversController
 {
-   private static final String PREF_DRIVERS_FILTERED = "drivers.filtered";
 
 
    private Props _props = new Props(this.getClass());
@@ -37,7 +36,7 @@ public class DriversController
       _borderPane.setCenter(_lstDrivers);
 
 
-      _btnFilter.setSelected(_pref.getBoolean(PREF_DRIVERS_FILTERED, false));
+      _btnFilter.setSelected(DriversFilteredPref.isFiltered());
       onFilter();
 
       _lstDrivers.setCellFactory(cf -> new DriverCell());
@@ -125,7 +124,7 @@ public class DriversController
    {
       _lstDrivers.getItems().setAll(_driversManager.getDrivers(_btnFilter.isSelected()));
 
-      _pref.set(PREF_DRIVERS_FILTERED, _btnFilter.isSelected());
+      DriversFilteredPref.setFiltered(_btnFilter.isSelected());
    }
 
    private void onEdit()
