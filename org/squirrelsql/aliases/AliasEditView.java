@@ -19,7 +19,7 @@ public class AliasEditView
    @FXML Button btnNewDriver;
    @FXML CheckBox chkSavePassword;
    @FXML Button btnOk;
-   @FXML Button btnCancel;
+   @FXML Button btnClose;
    @FXML Button btnTest;
    @FXML PasswordField txtPassword;
    @FXML Label lblPassword;

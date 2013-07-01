@@ -12,14 +12,13 @@ import org.squirrelsql.drivers.DriversManager;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.*;
 
-import java.sql.DriverManager;
-
 public class AliasEditController
 {
    private Pref _pref = new Pref(getClass());
 
    private I18n _i18n = new I18n(this.getClass());
    private final AliasEditView _aliasEditView;
+   private final Stage _dialog;
 
 
    public AliasEditController()
@@ -39,27 +38,64 @@ public class AliasEditController
 
       _aliasEditView.cboDriver.setCellFactory(cf -> new DriverCell());
 
-      _aliasEditView.lnkSetToSampleUrl.setOnAction(e -> onSetSampleURL());
-
-
       if(0 < drivers.size())
       {
          _aliasEditView.cboDriver.getSelectionModel().select(0);
       }
 
 
-      Stage dialog = new Stage();
-      dialog.setTitle(title);
-      dialog.initModality(Modality.WINDOW_MODAL);
-      dialog.initOwner(AppState.get().getPrimaryStage());
+      initListener();
+
+
+      _dialog = new Stage();
+      _dialog.setTitle(title);
+      _dialog.initModality(Modality.WINDOW_MODAL);
+      _dialog.initOwner(AppState.get().getPrimaryStage());
       Region region = fxmlHelper.getRegion();
-      dialog.setScene(new Scene(region));
+      _dialog.setScene(new Scene(region));
 
       GuiUtils.makeEscapeClosable(region);
 
-      new StageDimensionSaver("aliasedit", dialog, _pref, region.getPrefWidth(), region.getPrefHeight(), dialog.getOwner());
+      new StageDimensionSaver("aliasedit", _dialog, _pref, region.getPrefWidth(), region.getPrefHeight(), _dialog.getOwner());
 
-      dialog.showAndWait();
+      _dialog.showAndWait();
+   }
+
+   private void initListener()
+   {
+      _aliasEditView.lnkSetToSampleUrl.setOnAction(e -> onSetSampleURL());
+
+      _aliasEditView.btnClose.setOnAction(e -> onClose());
+      _aliasEditView.btnOk.setOnAction(e -> onOk());
+   }
+
+   private void onOk()
+   {
+      if(false == Utils.isFilledString(_aliasEditView.txtName.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.name"));
+         return;
+      }
+
+      if(false == Utils.isFilledString(_aliasEditView.txtUrl.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.url"));
+         return;
+      }
+
+      SQLDriver sqlDriver = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
+      if(false == sqlDriver.isLoaded() && FXMessageBox.NO.equals(FXMessageBox.showYesNo(_dialog, _i18n.t("alias.edit.driver.not.loaded.continue"))))
+      {
+         return;
+      }
+
+
+
+   }
+
+   private void onClose()
+   {
+      _dialog.close();
    }
 
    private void onSetSampleURL()

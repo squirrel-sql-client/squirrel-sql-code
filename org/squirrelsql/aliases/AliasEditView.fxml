@@ -30,7 +30,7 @@
     <HBox id="HBox" alignment="CENTER" layoutY="443.0" prefWidth="610.0" spacing="5.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="32.0">
       <children>
         <Button fx:id="btnOk" mnemonicParsing="false" text="%alias.edit.ok" />
-        <Button fx:id="btnCancel" mnemonicParsing="false" text="%alias.edit.cancel" />
+        <Button fx:id="btnClose" mnemonicParsing="false" text="%alias.edit.close" />
         <Button fx:id="btnTest" mnemonicParsing="false" text="%alias.edit.test" />
       </children>
     </HBox>

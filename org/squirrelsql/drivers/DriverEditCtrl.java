@@ -98,19 +98,19 @@ public class DriverEditCtrl
 
    private void onOk()
    {
-      if(Strings.isNullOrEmpty(_driverEditView.txtName.getText()))
+      if(Utils.isFilledString(_driverEditView.txtName.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.name.empty"));
          return;
       }
 
-      if(Strings.isNullOrEmpty(_driverEditView.txtUrl.getText()))
+      if(Utils.isFilledString(_driverEditView.txtUrl.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.url.empty"));
          return;
       }
 
-      if(Strings.isNullOrEmpty(_driverEditView.txtDriverToUse.getText()))
+      if(Utils.isFilledString(_driverEditView.txtDriverToUse.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.driver.empty"));
          return;
