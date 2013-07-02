@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Fixed bug in Oracle dialect concerning type information for timestamps.
+
 #1084 Added MariaDB driver to default driver list
 
 Made data editing problems that concern update row counts more transparent by printing

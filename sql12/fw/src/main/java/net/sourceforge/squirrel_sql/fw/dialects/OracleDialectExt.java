@@ -120,7 +120,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 		if (nativeColumnTypeName.toLowerCase().equals("nclob")) {
 			return Types.NCLOB;
 		}
-		if (nativeColumnTypeName.toLowerCase().startsWith("TIMESTAMP")) {
+		if (nativeColumnTypeName.toLowerCase().startsWith("timestamp")) {
 			return Types.TIMESTAMP;
 		}
 		return super.getJavaTypeForNativeType(nativeColumnTypeName);
