@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Fixed bug in windows start script squirrel-sql.bat: javaw.exe could not be found in certain cases.
+
 Fixed bug in Oracle dialect concerning type information for timestamps.
 
 #1084 Added MariaDB driver to default driver list

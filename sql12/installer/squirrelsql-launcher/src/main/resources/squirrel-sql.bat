@@ -1,7 +1,7 @@
 @echo off
 
 @rem IZPACK_JAVA is filtered in by the IzPack installer when this script is installed
-set IZPACK_JAVA="%JAVA_HOME%"
+set "IZPACK_JAVA=%JAVA_HOME%"
 
 @rem We detect the java executable to use according to the following algorithm:
 @rem
@@ -10,7 +10,7 @@ set IZPACK_JAVA="%JAVA_HOME%"
 @rem 
 
 if exist "%IZPACK_JAVA%\bin\javaw.exe" (
-  set LOCAL_JAVA=%IZPACK_JAVA%\bin\javaw.exe
+  set "LOCAL_JAVA=%IZPACK_JAVA%\bin\javaw.exe"
 ) else (
   set LOCAL_JAVA=javaw.exe
 )
