@@ -70,6 +70,7 @@ public class PreDefinedDrivers
          new SQLDriver("PRE_DEF_0057", "Sybase Adaptive Server Anywhere", "com.sybase.jdbc2.jdbc.SybDriver", "jdbc:sybase:Tds:<host>:<port>?ServiceName=<DBNAME>", "http://www.sybase.com/products/middleware/jconnectforjdbc"),
          new SQLDriver("PRE_DEF_0058", "PostgreSQL", "org.postgresql.Driver", "jdbc:postgresql:[<//host>[:<5432>/]]<database>", "http://jdbc.postgresql.org"),
          new SQLDriver("PRE_DEF_0059", "Sybase Adaptive Server Enterprise", "com.sybase.jdbc2.jdbc.SybDriver", "jdbc:sybase:Tds:<host>:<port>/<DBNAME>", "http://www.sybase.com/products/middleware/jconnectforjdbc"),
+         new SQLDriver("PRE_DEF_0060", "HP Vertica", "com.vertica.jdbc.Driver", "jdbc:vertica://10.10.92.160:5433/VMart?user=uidbadmin123&password=uidbadmin123", "http://www.vertica.com"),
    };
    
    
