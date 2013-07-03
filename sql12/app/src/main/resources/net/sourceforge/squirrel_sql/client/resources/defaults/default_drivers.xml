@@ -714,4 +714,16 @@
 		</identifier>
 		<websiteUrl>https://downloads.mariadb.org/client-java/</websiteUrl>
  	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>HP Vertica</name>
+        	<driverClassName>com.vertica.jdbc.Driver</driverClassName>
+        	<url>jdbc:vertica://10.10.92.160:5433/VMart?user=uidbadmin123&amp;password=uidbadmin123</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-62</string>
+		</identifier>
+		<websiteUrl>http://www.vertica.com</websiteUrl>
+ 	</Bean>
 </Beans>
