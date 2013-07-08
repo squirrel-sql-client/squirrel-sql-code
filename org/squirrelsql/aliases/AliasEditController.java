@@ -1,7 +1,10 @@
 package org.squirrelsql.aliases;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -67,6 +70,51 @@ public class AliasEditController
 
       _aliasEditView.btnClose.setOnAction(e -> onClose());
       _aliasEditView.btnOk.setOnAction(e -> onOk());
+
+      _aliasEditView.chkUserEmpty.setOnAction(this::onAjustUserNullEmpty);
+      _aliasEditView.chkUserNull.setOnAction(this::onAjustUserNullEmpty);
+
+      _aliasEditView.chkPasswordEmpty.setOnAction(this::onAjustPwdNullEmpty);
+      _aliasEditView.chkPasswordNull.setOnAction(this::onAjustPwdNullEmpty);
+
+
+   }
+
+   private void onAjustUserNullEmpty(ActionEvent e)
+   {
+      _adjustEmptyNull(e, _aliasEditView.chkUserNull, _aliasEditView.chkUserEmpty, _aliasEditView.txtUserName);
+   }
+
+   private void onAjustPwdNullEmpty(ActionEvent e)
+   {
+      _adjustEmptyNull(e, _aliasEditView.chkPasswordNull, _aliasEditView.chkPasswordEmpty, _aliasEditView.txtPassword);
+   }
+
+   private void _adjustEmptyNull(ActionEvent e, CheckBox chkNull, CheckBox chkEmpty, TextField txt)
+   {
+      if(e.getSource() == chkEmpty)
+      {
+         if (chkEmpty.isSelected())
+         {
+            chkNull.setSelected(false);
+         }
+      }
+      else
+      {
+         if (chkNull.isSelected())
+         {
+            chkEmpty.setSelected(false);
+         }
+      }
+
+      if(chkNull.isSelected() || chkEmpty.isSelected())
+      {
+         txt.setDisable(true);
+      }
+      else
+      {
+         txt.setDisable(false);
+      }
    }
 
    private void onOk()
@@ -121,6 +169,8 @@ public class AliasEditController
       _aliasEditView.txtPassword.setDisable(true);
       _aliasEditView.chkAutoLogon.setDisable(true);
       _aliasEditView.chkConnectAtStartUp.setDisable(true);
+      _aliasEditView.chkPasswordNull.setDisable(true);
+      _aliasEditView.chkPasswordEmpty.setDisable(true);
 
       if(_aliasEditView.chkSavePassword.isSelected())
       {
@@ -128,6 +178,8 @@ public class AliasEditController
          _aliasEditView.txtPassword.setDisable(false);
          _aliasEditView.chkAutoLogon.setDisable(false);
          _aliasEditView.chkConnectAtStartUp.setDisable(false);
+         _aliasEditView.chkPasswordNull.setDisable(false);
+         _aliasEditView.chkPasswordEmpty.setDisable(false);
       }
    }
 

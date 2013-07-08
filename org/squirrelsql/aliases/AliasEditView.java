@@ -13,6 +13,8 @@ public class AliasEditView
    @FXML ComboBox<SQLDriver> cboDriver;
    @FXML TextField txtUrl;
    @FXML TextField txtUserName;
+   @FXML CheckBox chkUserNull;
+   @FXML CheckBox chkUserEmpty;
    @FXML CheckBox chkConnectAtStartUp;
    @FXML Button btnProperties;
    @FXML CheckBox chkAutoLogon;
@@ -22,5 +24,7 @@ public class AliasEditView
    @FXML Button btnClose;
    @FXML Button btnTest;
    @FXML PasswordField txtPassword;
+   @FXML CheckBox chkPasswordNull;
+   @FXML CheckBox chkPasswordEmpty;
    @FXML Label lblPassword;
 }
