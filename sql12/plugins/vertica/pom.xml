@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>net.sf.squirrel-sql.plugins</groupId>
+		<artifactId>squirrelsql-plugins-parent-pom</artifactId>
+		<version>3.6.0-SNAPSHOT</version>
+		<relativePath>../squirrelsql-plugins-parent-pom/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>vertica</artifactId>
+	<packaging>jar</packaging>
+	<name>Vertica Plugin</name>
+	<description>Vertica Plugin</description>
+	<inceptionYear>2013</inceptionYear>
+	<developers>
+		<developer>
+			<name>Vertica Team</name>
+			<roles>
+				<role>Developer</role>
+			</roles>
+	    </developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<url>http://www.squirrelsql.org/</url>
+	<scm>
+		<connection>scm:git:git://git.code.sf.net/p/squirrel-sql/git</connection>
+		<developerConnection>scm:git:ssh://git.code.sf.net/p/squirrel-sql/git</developerConnection>
+		<url>http://sourceforge.net/p/squirrel-sql/git/ci/fe9318bdee3991f010b5b476244e5629c7d8efee/tree</url>
+	</scm>
+	<issueManagement>
+		<system>SourceForge Tracker</system>
+		<url>http://sourceforge.net/tracker/?group_id=28383%26atid=393414</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>https://www.squirrel-sql.org/hudson/</url>
+	</ciManagement>
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>fw</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.squirrel-sql</groupId>
+			<artifactId>squirrel-sql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
+	</dependencies>
+	<properties>
+		<pluginClassName>net.sourceforge.squirrel_sql.plugins.vertica.VerticaPlugin</pluginClassName>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

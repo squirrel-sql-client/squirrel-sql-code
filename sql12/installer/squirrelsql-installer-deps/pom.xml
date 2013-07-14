@@ -325,6 +325,13 @@
             <type>zip</type>
         </dependency>
         <dependency>
+            <groupId>net.sf.squirrel-sql.plugins</groupId>
+            <artifactId>vertica</artifactId>
+            <version>${project.version}</version>
+            <classifier>assembly</classifier>
+            <type>zip</type>
+        </dependency>
+        <dependency>
 			<groupId>net.sf.squirrel-sql.translations</groupId>
 			<artifactId>squirrelsql-translations</artifactId>
 			<version>${project.version}</version>

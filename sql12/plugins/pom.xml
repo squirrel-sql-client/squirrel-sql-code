@@ -103,6 +103,7 @@
         <module>greenplum</module>
   		<module>swingViolations</module>
   		<module>multisource</module>
+  		<module>vertica</module>
   </modules>
 
 </project>

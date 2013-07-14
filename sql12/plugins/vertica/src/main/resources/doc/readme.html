@@ -1,0 +1,95 @@
+<html>
+
+<head>
+<title>Vertica Plugin</title>
+</head>
+
+<body>
+<center>
+<h1>Vertica Plugin</h1>
+</center>
+
+<h2>Introduction</h2>
+
+<p>The Vertica plugin adds Vertica-specific functionality to the SQuirreL SQL Client. 
+The plugin requires Vertica 4.1 PS1 or later release and read access to the system schema 
+V_CATALOG is required for this additional functionality to work correctly.</p>
+<p></p>
+<p></p>
+
+<h2>Object Tree Enhancements</h2>
+
+<p>Vertica plugin adds the following objects to the Object Tree:</p>
+<ul>
+	<li>SYSTEM TABLE</li>
+	<li>SEQUENCE</li>
+	<li>UDF (User Function)</li>
+</ul>
+<p>The screenshot below shows the database <b>Demo</b> with default schemas present in Vertica databases:</p>
+
+<p></p>
+<img src="images/1-db-objects.png" width="800" height="564" alt="View 1 of the Object Tree with active Vertica plugin">
+<p></p>
+<img src="images/1-sys-tables.png" width="800" height="564" alt="View 2 of the Object Tree with active Vertica plugin">
+<p></p>
+<p></p>
+
+<h2>Additional Tabs</h2>
+
+<p>Vertica plugin adds new tabs to all types of objects in the Object Tree as follows:</p>
+<p></p>
+
+<!-- PROJECTIONS TAB -->
+<h3>Projections Tab</h3>
+The Projections Tab is only available a Table object. It shows essential details of all projections anchored on the given table. 
+System tables do not have projections (they are effectively relational "views" of internal in-memory structures). 
+The Projections Tab for a Table is similar "in spirit" to the Definition Tab for a Sequence or UDF.
+<p></p>
+<img src="images/2-projections_tab.png" width="800" height="564" alt="Projections Tab">
+<p></p>
+<p></p>
+
+<!-- SOURCE TAB -->
+<h3>Source Tab</h3>
+The Source tab shows DDL (data definition SQL) for each object - Table, Projection, View, Sequence, and User Functions. 
+The generated DDL is guaranteed to work and may be used for cloning an object. Source DDL for a table includes its projection(s). 
+DDL for system tables is not provided. Source DDL examples for various object types are below:
+<p></p>
+<img src="images/3-source-tab.png" width="800" height="564" alt="DDL for the a table">
+<p></p>
+<img src="images/3-source-view.png" width="800" height="564" alt="DDL for the a view">
+<p></p>
+<img src="images/3-source-seq.png" width="800" height="564" alt="DDL for the a sequence">
+<p></p>
+<img src="images/3-source-udf.png" width="800" height="564" alt="DDL for the a User Function">
+<p></p>
+<p></p>
+
+<!-- DETAILS TAB -->
+<h3>Details Tab</h3>
+The Details tab provides the definition for Projection, Sequence, and UDF objects. For example:
+<p></p>
+<img src="images/4-detail-proj.png" width="800" height="564" alt="Definition of a Projection">
+<p></p>
+<img src="images/4-detail-seq.png" width="800" height="564" alt="Definition of a Sequence">
+<p></p>
+<img src="images/4-detail-udf.png" width="800" height="564" alt="Definition of a User Function">
+<p></p>
+<p></p>
+
+<!-- CONTENT PLUS TAB -->
+<h3>Content(+) Tab</h3>
+The Content Plus tab is available for all relational objects in the Object Tree - Tables, Views, and System Tables. 
+It's essentially similar to the "stock" Content tab, but includes a Vertica specific enhancement to address a uability 
+issue when viewing a table with very large number of records, e.g. a fact table with billions of rows.<br />
+Content(+) tab enforces "SQL results - Limit rows" setting in the New Session Properties more efficiently by injecting 
+the LIMIT N clause into the SQL query, thus making the database server aware of the client's intent to use only the first few 
+rows of the result set. <br />
+Users are advised to use the Content(+) tab instead of the "stock" Content tab.
+<p></p>
+<img src="images/5-content+.png" width="800" height="564" alt="Content Plus Tab">
+<p></p>
+<p></p>
+
+</body>
+</html>

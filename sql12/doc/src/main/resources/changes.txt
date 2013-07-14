@@ -8,6 +8,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+New Plugin: Vertica DB Plugin
+  New Plugin for the Vertica DB. Thanks to Vertica team.
+
+
 Added Vertica driver to default driver list.
 
 Fixed bug in windows start script squirrel-sql.bat: javaw.exe could not be found in certain cases.
