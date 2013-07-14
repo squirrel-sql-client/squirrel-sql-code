@@ -300,7 +300,7 @@ class Application implements IApplication
       s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       _recentFilesManager.saveXmlBean(_appFiles.getRecentFilesXmlBeanFile());
-      s_log.info("Application.shutdown->_saveApplicationState: saveAliases() ELAPSED: " + (System.currentTimeMillis() - begin));
+      s_log.info("Application.shutdown->_saveApplicationState: saveRecentFiles() ELAPSED: " + (System.currentTimeMillis() - begin));
 
       // Save Application level SQL history.
       saveSQLHistory();

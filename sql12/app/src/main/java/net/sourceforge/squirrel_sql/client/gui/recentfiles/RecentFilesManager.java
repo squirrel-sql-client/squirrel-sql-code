@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class RecentFilesManager
 {
-   private RecentFilesXmlBean _recentFilesXmlBean;
+   private RecentFilesXmlBean _recentFilesXmlBean = new RecentFilesXmlBean();
 
    public void fileTouched(String absolutePath, ISQLAliasExt alias)
    {
@@ -89,7 +89,6 @@ public class RecentFilesManager
    {
       if(false == recentFilesXmlBeanFile.exists())
       {
-         _recentFilesXmlBean = new RecentFilesXmlBean();
          return;
       }
 
