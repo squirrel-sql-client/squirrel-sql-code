@@ -64,7 +64,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			registerColumnType(Types.CLOB, "clob");
 			registerColumnType(Types.NCLOB, "nclob");
 			registerColumnType(Types.DATE, "date");
-			registerColumnType(Types.DECIMAL, "decimal($p)");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
 			registerColumnType(Types.DOUBLE, "float($p)");
 			registerColumnType(Types.FLOAT, "float($p)");
 			registerColumnType(Types.INTEGER, "int");
