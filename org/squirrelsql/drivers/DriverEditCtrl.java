@@ -1,11 +1,9 @@
 package org.squirrelsql.drivers;
 
-import com.google.common.base.Strings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
@@ -15,10 +13,8 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class DriverEditCtrl
 {
@@ -98,19 +94,19 @@ public class DriverEditCtrl
 
    private void onOk()
    {
-      if(false == Utils.isFilledString(_driverEditView.txtName.getText()))
+      if(Utils.isEmptyString(_driverEditView.txtName.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.name.empty"));
          return;
       }
 
-      if(false == Utils.isFilledString(_driverEditView.txtUrl.getText()))
+      if(Utils.isEmptyString(_driverEditView.txtUrl.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.url.empty"));
          return;
       }
 
-      if(false == Utils.isFilledString(_driverEditView.txtDriverToUse.getText()))
+      if(Utils.isEmptyString(_driverEditView.txtDriverToUse.getText()))
       {
          FXMessageBox.showInfoOk(_dialog.getStage(), _i18n.t("info.driver.empty"));
          return;

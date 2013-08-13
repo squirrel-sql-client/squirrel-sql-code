@@ -22,6 +22,8 @@ public class AliasEditController
    private I18n _i18n = new I18n(this.getClass());
    private final AliasEditView _aliasEditView;
    private final Stage _dialog;
+   private Alias _alias = new Alias();
+   private boolean _ok = false;
 
 
    public AliasEditController()
@@ -119,15 +121,34 @@ public class AliasEditController
 
    private void onOk()
    {
-      if(false == Utils.isFilledString(_aliasEditView.txtName.getText()))
+      if(Utils.isEmptyString(_aliasEditView.txtName.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.name"));
          return;
       }
 
-      if(false == Utils.isFilledString(_aliasEditView.txtUrl.getText()))
+
+      if(Utils.isEmptyString(_aliasEditView.txtUrl.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.url"));
+         return;
+      }
+
+
+      if(   false == _aliasEditView.chkUserEmpty.isSelected()
+         && false == _aliasEditView.chkUserNull.isSelected()
+         && Utils.isEmptyString(_aliasEditView.txtUserName.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.user"));
+         return;
+      }
+
+      if(_aliasEditView.chkSavePassword.isSelected()
+         && false == _aliasEditView.chkPasswordEmpty.isSelected()
+         && false == _aliasEditView.chkPasswordNull.isSelected()
+         && Utils.isEmptyString(_aliasEditView.txtPassword.getText()))
+      {
+         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.password"));
          return;
       }
 
@@ -137,7 +158,24 @@ public class AliasEditController
          return;
       }
 
+      _alias.setName(_aliasEditView.txtName.getText().trim());
+      _alias.setDriverId(sqlDriver.getId());
+      _alias.setUrl(_aliasEditView.txtUrl.getText().trim());
 
+      _alias.setUserName(_aliasEditView.txtUserName.getText().trim());
+      _alias.setUserNull(_aliasEditView.chkUserNull.isSelected());
+      _alias.setUserEmptyString(_aliasEditView.chkUserEmpty.isSelected());
+
+      _alias.setSavePassword(_aliasEditView.chkSavePassword.isSelected());
+
+      _alias.setPassword(_aliasEditView.txtPassword.getText().trim());
+      _alias.setPasswordNull(_aliasEditView.chkPasswordNull.isSelected());
+      _alias.setPasswordEmptyString(_aliasEditView.chkPasswordEmpty.isSelected());
+
+      _alias.setAutoLogon(_aliasEditView.chkAutoLogon.isSelected());
+      _alias.setConnectAtStartUp(_aliasEditView.chkConnectAtStartUp.isSelected());
+
+      _ok = true;
 
    }
 
@@ -185,6 +223,11 @@ public class AliasEditController
 
    public Alias getAlias()
    {
-      return null;  //To change body of created methods use File | Settings | File Templates.
+      return _alias;
+   }
+
+   public boolean isOk()
+   {
+      return _ok;
    }
 }

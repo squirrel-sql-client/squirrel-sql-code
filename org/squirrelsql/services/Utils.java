@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 
 public class Utils
 {
-   public static boolean isFilledString(String text)
+   public static boolean isEmptyString(String text)
    {
       return Strings.isNullOrEmpty(text) || Strings.isNullOrEmpty(text.trim());
    }

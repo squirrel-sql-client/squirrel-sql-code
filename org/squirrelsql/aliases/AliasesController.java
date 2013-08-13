@@ -262,7 +262,10 @@ public class AliasesController
 
       AliasEditController aliasEditController = new AliasEditController();
 
-      Alias alias = aliasEditController.getAlias();
+      if(aliasEditController.isOk())
+      {
+         Alias alias = aliasEditController.getAlias();
+      }
    }
 
    private void onPinnedChanged()
