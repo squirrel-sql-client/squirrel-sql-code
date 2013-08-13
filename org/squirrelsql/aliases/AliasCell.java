@@ -30,6 +30,9 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
       if(null == aliasTreeNode)
       {
+         setText(null);
+         setGraphic(null);
+         setTextFill(_stdTextFill);
          return;
       }
 

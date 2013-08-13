@@ -29,6 +29,9 @@ public class DriverCell extends ListCell<SQLDriver>
 
       if(null == sqlDriver)
       {
+         setText(null);
+         setGraphic(null);
+         setTextFill(_stdTextFill);
          return;
       }
 
