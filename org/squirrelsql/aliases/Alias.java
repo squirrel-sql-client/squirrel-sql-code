@@ -5,15 +5,15 @@ import java.util.UUID;
 
 public class Alias implements AliasTreeNode
 {
-   private String id = UUID.randomUUID().toString();
-   private String name;
-   private String driverId;
-   private String url;
-   private String userName;
-   private boolean connectAtStartUp;
-   private boolean autoLogon;
-   private boolean savePassword;
-   private String password;
+   private String _id = UUID.randomUUID().toString();
+   private String _name;
+   private String _driverId;
+   private String _url;
+   private String _userName;
+   private boolean _connectAtStartUp;
+   private boolean _autoLogon;
+   private boolean _savePassword;
+   private String _password;
    private boolean _userNull;
    private boolean _userEmptyString;
    private boolean _passwordNull;
@@ -22,92 +22,92 @@ public class Alias implements AliasTreeNode
 
    public String getId()
    {
-      return id;
+      return _id;
    }
 
    public void setId(String id)
    {
-      this.id = id;
+      this._id = id;
    }
 
    public String getName()
    {
-      return name;
+      return _name;
    }
 
    public void setName(String name)
    {
-      this.name = name;
+      this._name = name;
    }
 
    public String getDriverId()
    {
-      return driverId;
+      return _driverId;
    }
 
    public void setDriverId(String driverId)
    {
-      this.driverId = driverId;
+      this._driverId = driverId;
    }
 
    public String getUrl()
    {
-      return url;
+      return _url;
    }
 
    public void setUrl(String url)
    {
-      this.url = url;
+      this._url = url;
    }
 
    public String getUserName()
    {
-      return userName;
+      return _userName;
    }
 
    public void setUserName(String userName)
    {
-      this.userName = userName;
+      this._userName = userName;
    }
 
    public boolean isConnectAtStartUp()
    {
-      return connectAtStartUp;
+      return _connectAtStartUp;
    }
 
    public void setConnectAtStartUp(boolean connectAtStartUp)
    {
-      this.connectAtStartUp = connectAtStartUp;
+      this._connectAtStartUp = connectAtStartUp;
    }
 
    public boolean isAutoLogon()
    {
-      return autoLogon;
+      return _autoLogon;
    }
 
    public void setAutoLogon(boolean autoLogon)
    {
-      this.autoLogon = autoLogon;
+      this._autoLogon = autoLogon;
    }
 
    public boolean isSavePassword()
    {
-      return savePassword;
+      return _savePassword;
    }
 
    public void setSavePassword(boolean savePassword)
    {
-      this.savePassword = savePassword;
+      this._savePassword = savePassword;
    }
 
    public String getPassword()
    {
-      return password;
+      return _password;
    }
 
    public void setPassword(String password)
    {
-      this.password = password;
+      this._password = password;
    }
 
    public void setUserNull(boolean userNull)
@@ -148,5 +148,11 @@ public class Alias implements AliasTreeNode
    public boolean isPasswordEmptyString()
    {
       return _passwordEmptyString;
+   }
+
+   @Override
+   public String toString()
+   {
+      return _name;
    }
 }

@@ -41,13 +41,7 @@ public class AliasesController
 
       _aliasCell = new AliasCell();
 
-
-      if (false)
-      {
-         // Hier sollten ausgeschnittene Konten grau gemalt werden --> Funktioniert noch nicht.
-         _treeView.setCellFactory(cf -> _aliasCell);
-      }
-
+      //_treeView.setCellFactory(cf -> _aliasCell);
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
@@ -192,7 +186,7 @@ public class AliasesController
    {
       TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(null != selectedItem);
+      EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(null != selectedItem, null != selectedItem && selectedItem.getValue() instanceof AliasFolder);
 
       String newFolderName = editFolderNameCtrl.getNewFolderName();
 
@@ -265,6 +259,8 @@ public class AliasesController
       if(aliasEditController.isOk())
       {
          Alias alias = aliasEditController.getAlias();
+
+         toAddTo.getChildren().add(new TreeItem<AliasTreeNode>(alias));
       }
    }
 

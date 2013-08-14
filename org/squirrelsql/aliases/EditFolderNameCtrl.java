@@ -19,7 +19,7 @@ public class EditFolderNameCtrl
    private String _newFolderName;
 
 
-   public EditFolderNameCtrl(boolean parentNodeSelected)
+   public EditFolderNameCtrl(boolean parentNodeSelected, boolean allowsChildern)
    {
       FxmlHelper<EditFolderNameView> fxmlHelper = new FxmlHelper<>(EditFolderNameView.class);
       _editFolderNameView = fxmlHelper.getView();
@@ -41,7 +41,15 @@ public class EditFolderNameCtrl
 
       if(parentNodeSelected)
       {
-         _editFolderNameView.radToSelectedAsChild.setSelected(true);
+         if (allowsChildern)
+         {
+            _editFolderNameView.radToSelectedAsChild.setSelected(true);
+         }
+         else
+         {
+            _editFolderNameView.radToSelectedAsChild.setDisable(true);
+            _editFolderNameView.radToSelectedAsSuccessor.setSelected(true);
+         }
       }
       else
       {

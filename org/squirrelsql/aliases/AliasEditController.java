@@ -177,6 +177,7 @@ public class AliasEditController
 
       _ok = true;
 
+      _dialog.close();
    }
 
    private void onClose()
