@@ -17,8 +17,8 @@ import org.squirrelsql.services.Pref;
 public class AliasesController
 {
    private static final String PREF_ALIASES_PINED = "aliases.pinned";
-   private final AliasCell _aliasCell;
 
+   private AliasCutCopyState _aliasCutCopyState = new AliasCutCopyState();
 
    private Props _props = new Props(this.getClass());
    private Pref _prefs = new Pref(this.getClass());
@@ -39,9 +39,9 @@ public class AliasesController
       _treeView.setShowRoot(false);
       _treeView.setRoot(new TreeItem<AliasTreeNode>(new AliasFolder("This folder is root and should not be visible")));
 
-      _aliasCell = new AliasCell();
 
-      //_treeView.setCellFactory(cf -> _aliasCell);
+
+      _treeView.setCellFactory(cf -> new AliasCell(_aliasCutCopyState));
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
@@ -76,17 +76,17 @@ public class AliasesController
 
    private void onPaste()
    {
-      if(null == _aliasCell.getTreeItemBeingCut() && null == _aliasCell.getTreeItemBeingCopied())
+      if(null == _aliasCutCopyState.getTreeItemBeingCut() && null == _aliasCutCopyState.getTreeItemBeingCopied())
       {
          FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.nothing.to.paste"));
          return;
       }
 
-      if(null != _aliasCell.getTreeItemBeingCut())
+      if(null != _aliasCutCopyState.getTreeItemBeingCut())
       {
          TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-         TreeItem<AliasTreeNode> beingCut = _aliasCell.getTreeItemBeingCut();
+         TreeItem<AliasTreeNode> beingCut = _aliasCutCopyState.getTreeItemBeingCut();
 
          if (isEqualsOrAbove(beingCut, selectedItem))
          {
@@ -101,13 +101,13 @@ public class AliasesController
 
          addToTree(selectedItem, beingCut);
 
-         _aliasCell.setTreeItemBeingCut(null);
+         _aliasCutCopyState.setTreeItemBeingCut(null);
       }
-      else if(null != _aliasCell.getTreeItemBeingCopied())
+      else if(null != _aliasCutCopyState.getTreeItemBeingCopied())
       {
          TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-         TreeItem<AliasTreeNode> beingCopied = _aliasCell.getTreeItemBeingCopied();
+         TreeItem<AliasTreeNode> beingCopied = _aliasCutCopyState.getTreeItemBeingCopied();
 
          if(null == selectedItem)
          {
@@ -119,7 +119,7 @@ public class AliasesController
 
          addToTree(selectedItem, aliasNodePathCopy);
 
-         _aliasCell.setTreeItemBeingCopied(null);
+         _aliasCutCopyState.setTreeItemBeingCopied(null);
 
       }
    }
@@ -166,7 +166,7 @@ public class AliasesController
          return;
       }
 
-      _aliasCell.setTreeItemBeingCut(selectedItem);
+      _aliasCutCopyState.setTreeItemBeingCut(selectedItem);
    }
 
    private void onCopyToClip()
@@ -179,7 +179,7 @@ public class AliasesController
          return;
       }
 
-      _aliasCell.setTreeItemBeingCopied(selectedItem);
+      _aliasCutCopyState.setTreeItemBeingCopied(selectedItem);
    }
 
    private void onNewFolder()

@@ -2,21 +2,19 @@ package org.squirrelsql.aliases;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class AliasCell extends TreeCell<AliasTreeNode>
 {
    private Label _label = new Label();
-   private TreeItem<AliasTreeNode> _treeItemBeingCut;
 
    private Paint _stdTextFill;
-   private TreeItem<AliasTreeNode> _treeItemBeingCopied;
+   private AliasCutCopyState _aliasCutCopyState;
 
-   public AliasCell()
+   public AliasCell(AliasCutCopyState aliasCutCopyState)
    {
+      _aliasCutCopyState = aliasCutCopyState;
       _stdTextFill = _label.getTextFill();
    }
 
@@ -24,11 +22,11 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
 
    @Override
-   protected void updateItem(AliasTreeNode aliasTreeNode, boolean b)
+   protected void updateItem(AliasTreeNode aliasTreeNode, boolean empty)
    {
-      super.updateItem(aliasTreeNode, b);
+      super.updateItem(aliasTreeNode, empty);
 
-      if(null == aliasTreeNode)
+      if(empty)
       {
          setText(null);
          setGraphic(null);
@@ -42,9 +40,11 @@ public class AliasCell extends TreeCell<AliasTreeNode>
    }
 
 
+
+
    private Paint getTextFillColor(AliasTreeNode aliasTreeNode)
    {
-      if(null != _treeItemBeingCut && aliasTreeNode == _treeItemBeingCut.getValue())
+      if(null != _aliasCutCopyState.getTreeItemBeingCut() && aliasTreeNode == _aliasCutCopyState.getTreeItemBeingCut().getValue())
       {
          return Color.LIGHTGRAY;
       }
@@ -52,26 +52,5 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       {
          return _stdTextFill;
       }
-   }
-
-   public void setTreeItemBeingCut(TreeItem<AliasTreeNode> treeItemBeingCut)
-   {
-      _treeItemBeingCut = treeItemBeingCut;
-   }
-
-   public TreeItem<AliasTreeNode> getTreeItemBeingCut()
-   {
-      return _treeItemBeingCut;
-   }
-
-
-   public TreeItem<AliasTreeNode> getTreeItemBeingCopied()
-   {
-      return _treeItemBeingCopied;
-   }
-
-   public void setTreeItemBeingCopied(TreeItem<AliasTreeNode> treeItemBeingCopied)
-   {
-      _treeItemBeingCopied = treeItemBeingCopied;
    }
 }
