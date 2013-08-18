@@ -1,10 +1,13 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
@@ -39,13 +42,21 @@ public class AliasesController
       _treeView.setShowRoot(false);
       _treeView.setRoot(new TreeItem<AliasTreeNode>(new AliasFolder("This folder is root and should not be visible")));
 
-
-
       _treeView.setCellFactory(cf -> new AliasCell(_aliasCutCopyState));
+
+      _borderPane.setOnKeyPressed(this::uncutOnEscape);
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
 
+   }
+
+   private void uncutOnEscape(KeyEvent ke)
+   {
+      if (ke.getCode() == KeyCode.ESCAPE)
+      {
+         _aliasCutCopyState.setTreeItemBeingCut(null);
+      }
    }
 
    private BorderPane createToolBar()
