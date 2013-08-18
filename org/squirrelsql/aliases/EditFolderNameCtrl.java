@@ -14,6 +14,7 @@ import org.squirrelsql.services.I18n;
 public class EditFolderNameCtrl
 {
    private final EditFolderNameView _editFolderNameView;
+   private final TreePositionCtrl _treePositionCtrl;
    private I18n _i18n = new I18n(this.getClass());
    private final Stage _dialog;
    private String _newFolderName;
@@ -24,42 +25,10 @@ public class EditFolderNameCtrl
       FxmlHelper<EditFolderNameView> fxmlHelper = new FxmlHelper<>(EditFolderNameView.class);
       _editFolderNameView = fxmlHelper.getView();
 
+      _treePositionCtrl = new TreePositionCtrl(_editFolderNameView.treePositionViewController, parentNodeSelected, allowsChildern);
+
       _editFolderNameView.btnOk.setOnAction(actionEvent -> onOk());
-
       _editFolderNameView.btnCancel.setOnAction(actionEvent -> onCancel());
-
-
-      ToggleGroup toggleGroup = new ToggleGroup();
-
-      toggleGroup.getToggles().addAll
-         (
-            _editFolderNameView.radToRoot,
-            _editFolderNameView.radToSelectedAsChild,
-            _editFolderNameView.radToSelectedAsAncestor,
-            _editFolderNameView.radToSelectedAsSuccessor
-         );
-
-      if(parentNodeSelected)
-      {
-         if (allowsChildern)
-         {
-            _editFolderNameView.radToSelectedAsChild.setSelected(true);
-         }
-         else
-         {
-            _editFolderNameView.radToSelectedAsChild.setDisable(true);
-            _editFolderNameView.radToSelectedAsSuccessor.setSelected(true);
-         }
-      }
-      else
-      {
-         _editFolderNameView.radToRoot.setSelected(true);
-
-         _editFolderNameView.radToRoot.setDisable(true);
-         _editFolderNameView.radToSelectedAsChild.setDisable(true);
-         _editFolderNameView.radToSelectedAsAncestor.setDisable(true);
-         _editFolderNameView.radToSelectedAsSuccessor.setDisable(true);
-      }
 
 
       _dialog = new Stage();
@@ -98,25 +67,10 @@ public class EditFolderNameCtrl
    }
 
 
-   public boolean isAddToRoot()
+
+
+   public TreePositionCtrl getTreePositionCtrl()
    {
-      return _editFolderNameView.radToRoot.isSelected();
+      return _treePositionCtrl;
    }
-
-   public boolean isAddToSelectedAsChild()
-   {
-      return _editFolderNameView.radToSelectedAsChild.isSelected();
-   }
-
-   public boolean isAddToSelectedAsAncestor()
-   {
-      return _editFolderNameView.radToSelectedAsAncestor.isSelected();
-   }
-
-   public boolean isAddToSelectedAsSuccessor()
-   {
-      return _editFolderNameView.radToSelectedAsSuccessor.isSelected();
-   }
-
-
 }

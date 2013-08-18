@@ -1,7 +1,6 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
@@ -209,16 +208,21 @@ public class AliasesController
 
       TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createFolderNode(newFolderName);
 
-      if(editFolderNameCtrl.isAddToRoot())
+      positionNewItem(editFolderNameCtrl.getTreePositionCtrl(), selectedItem, newTreeItem);
+   }
+
+   private void positionNewItem(TreePositionCtrl treePositionCtrl, TreeItem<AliasTreeNode> selectedItem, TreeItem<AliasTreeNode> newTreeItem)
+   {
+      if(treePositionCtrl.isAddToRoot())
       {
          _treeView.getRoot().getChildren().add(newTreeItem);
       }
-      else if(editFolderNameCtrl.isAddToSelectedAsChild())
+      else if(treePositionCtrl.isAddToSelectedAsChild())
       {
          selectedItem.getChildren().add(newTreeItem);
          selectedItem.setExpanded(true);
       }
-      else if(editFolderNameCtrl.isAddToSelectedAsAncestor())
+      else if(treePositionCtrl.isAddToSelectedAsAncestor())
       {
          TreeItem<AliasTreeNode> parent = selectedItem.getParent();
 
@@ -226,15 +230,13 @@ public class AliasesController
          parent.getChildren().add(ixOfSelected, newTreeItem);
 
       }
-      else if(editFolderNameCtrl.isAddToSelectedAsSuccessor())
+      else if(treePositionCtrl.isAddToSelectedAsSuccessor())
       {
          TreeItem<AliasTreeNode> parent = selectedItem.getParent();
 
          int ixOfSelected = parent.getChildren().indexOf(selectedItem);
          parent.getChildren().add(ixOfSelected + 1, newTreeItem);
       }
-
-
    }
 
    private void onSort()
@@ -259,22 +261,17 @@ public class AliasesController
 
    private void onAdd()
    {
-      TreeItem<AliasTreeNode> toAddTo = _treeView.getSelectionModel().getSelectedItem();
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      if(null == toAddTo)
-      {
-         toAddTo = _treeView.getRoot();
-      }
 
-      AliasEditController aliasEditController = new AliasEditController();
+      AliasEditController aliasEditController = new AliasEditController(null != selectedItem, selectedItem.getValue() instanceof AliasFolder);
 
       if(aliasEditController.isOk())
       {
          Alias alias = aliasEditController.getAlias();
          TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
 
-         addToTree(toAddTo, newTreeItem);
-
+         positionNewItem(aliasEditController.getTreePositionCtrl(), selectedItem, newTreeItem);
       }
    }
 

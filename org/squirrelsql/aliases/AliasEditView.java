@@ -3,6 +3,7 @@ package org.squirrelsql.aliases;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import org.squirrelsql.drivers.SQLDriver;
 
 public class AliasEditView
@@ -27,4 +28,13 @@ public class AliasEditView
    @FXML CheckBox chkPasswordNull;
    @FXML CheckBox chkPasswordEmpty;
    @FXML Label lblPassword;
+
+   //////////////////////////////////////////////////////////////////////
+   // Naming convention, see:
+   // http://docs.oracle.com/javafx/2/fxml_get_started/whats_new2.htm
+   public TreePositionView treePositionViewController; // fx:id in EditFolderNameView.fxml plus postfix "Controller"
+   public AnchorPane treePositionView; // fx:id in EditFolderNameView.fxml
+   //
+   ///////////////////////////////////////////////////////////////////////
+
 }

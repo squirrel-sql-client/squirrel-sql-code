@@ -17,6 +17,7 @@ import org.squirrelsql.services.*;
 
 public class AliasEditController
 {
+   private final TreePositionCtrl _treePositionCtrl;
    private Pref _pref = new Pref(getClass());
 
    private I18n _i18n = new I18n(this.getClass());
@@ -26,11 +27,13 @@ public class AliasEditController
    private boolean _ok = false;
 
 
-   public AliasEditController()
+   public AliasEditController(boolean parentNodeSelected, boolean parentAllowsChildren)
    {
       FxmlHelper<AliasEditView> fxmlHelper = new FxmlHelper<>(AliasEditView.class);
 
       _aliasEditView = fxmlHelper.getView();
+
+      _treePositionCtrl = new TreePositionCtrl(_aliasEditView.treePositionViewController, parentNodeSelected, parentAllowsChildren);
 
       String title = _i18n.t("title.new.alias");
       _aliasEditView.lblChangeDriver.setText(title);
@@ -230,5 +233,10 @@ public class AliasEditController
    public boolean isOk()
    {
       return _ok;
+   }
+
+   public TreePositionCtrl getTreePositionCtrl()
+   {
+      return _treePositionCtrl;
    }
 }
