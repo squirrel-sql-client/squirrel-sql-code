@@ -45,6 +45,7 @@ public class AliasesController
       _treeView.setCellFactory(cf -> new AliasCell(_aliasCutCopyState));
 
       _borderPane.setOnKeyPressed(this::uncutOnEscape);
+      _treeView.setOnKeyPressed(this::uncutOnEscape);
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
