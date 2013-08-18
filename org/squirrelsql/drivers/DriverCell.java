@@ -23,11 +23,11 @@ public class DriverCell extends ListCell<SQLDriver>
    }
 
    @Override
-   protected void updateItem(SQLDriver sqlDriver, boolean b)
+   protected void updateItem(SQLDriver sqlDriver, boolean empty)
    {
-      super.updateItem(sqlDriver, b);
+      super.updateItem(sqlDriver, empty);
 
-      if(null == sqlDriver)
+      if(empty)
       {
          setText(null);
          setGraphic(null);
