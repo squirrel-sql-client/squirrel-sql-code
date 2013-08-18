@@ -2,6 +2,7 @@ package org.squirrelsql.aliases;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -15,10 +16,17 @@ public class AliasCell extends TreeCell<AliasTreeNode>
    public AliasCell(AliasCutCopyState aliasCutCopyState)
    {
       _aliasCutCopyState = aliasCutCopyState;
+      _aliasCutCopyState.addListener(this::onTreeItemCutCopy);
       _stdTextFill = _label.getTextFill();
    }
 
-
+   private void onTreeItemCutCopy(TreeItem<AliasTreeNode> ti)
+   {
+      if(super.getTreeItem() == ti)
+      {
+         updateItem(ti.getValue(), false);
+      }
+   }
 
 
    @Override
@@ -46,7 +54,7 @@ public class AliasCell extends TreeCell<AliasTreeNode>
    {
       if(null != _aliasCutCopyState.getTreeItemBeingCut() && aliasTreeNode == _aliasCutCopyState.getTreeItemBeingCut().getValue())
       {
-         return Color.LIGHTGRAY;
+         return Color.GRAY;
       }
       else
       {
