@@ -16,11 +16,11 @@ public class AliasCell extends TreeCell<AliasTreeNode>
    public AliasCell(AliasCutCopyState aliasCutCopyState)
    {
       _aliasCutCopyState = aliasCutCopyState;
-      _aliasCutCopyState.addListener(this::onTreeItemCutCopy);
+      _aliasCutCopyState.addListener(this::onTreeItemCutChanged);
       _stdTextFill = _label.getTextFill();
    }
 
-   private void onTreeItemCutCopy(TreeItem<AliasTreeNode> ti)
+   private void onTreeItemCutChanged(TreeItem<AliasTreeNode> ti)
    {
       if(super.getTreeItem() == ti)
       {
