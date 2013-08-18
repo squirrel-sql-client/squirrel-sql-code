@@ -271,8 +271,10 @@ public class AliasesController
       if(aliasEditController.isOk())
       {
          Alias alias = aliasEditController.getAlias();
+         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
 
-         toAddTo.getChildren().add(new TreeItem<AliasTreeNode>(alias));
+         addToTree(toAddTo, newTreeItem);
+
       }
    }
 

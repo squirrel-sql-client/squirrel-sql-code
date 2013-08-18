@@ -42,4 +42,8 @@ public class AliasTreeUtil
       return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), new Props(AliasTreeUtil.class).getImageView("folder.png"));
    }
 
+   public static TreeItem<AliasTreeNode> createAliasNode(Alias alias)
+   {
+      return new TreeItem<AliasTreeNode>(alias, new Props(AliasTreeUtil.class).getImageView("alias.png"));
+   }
 }
