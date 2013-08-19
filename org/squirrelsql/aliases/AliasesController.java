@@ -19,9 +19,9 @@ import org.squirrelsql.services.Pref;
 public class AliasesController
 {
    private static final String PREF_ALIASES_PINED = "aliases.pinned";
+   private final AliasTreeNodeChannel _aliasTreeNodeChannel = new AliasTreeNodeChannel();
 
-   private AliasCutCopyState _aliasCutCopyState = new AliasCutCopyState();
-
+   private AliasCutCopyState _aliasCutCopyState = new AliasCutCopyState(_aliasTreeNodeChannel);
    private Props _props = new Props(this.getClass());
    private Pref _prefs = new Pref(this.getClass());
    private I18n _i18n = new I18n(this.getClass());
@@ -41,7 +41,7 @@ public class AliasesController
       _treeView.setShowRoot(false);
       _treeView.setRoot(new TreeItem<AliasTreeNode>(new AliasFolder("This folder is root and should not be visible")));
 
-      _treeView.setCellFactory(cf -> new AliasCell(_aliasCutCopyState));
+      _treeView.setCellFactory(cf -> new AliasCell(_aliasTreeNodeChannel, _aliasCutCopyState));
 
       _borderPane.setOnKeyPressed(this::uncutOnEscape);
       _treeView.setOnKeyPressed(this::uncutOnEscape);
@@ -267,6 +267,7 @@ public class AliasesController
          }
 
          af.setName(changedFolderName);
+         _aliasTreeNodeChannel.fireChanged(selectedItem);
       }
    }
 

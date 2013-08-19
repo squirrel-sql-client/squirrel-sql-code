@@ -12,15 +12,17 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
    private Paint _stdTextFill;
    private AliasCutCopyState _aliasCutCopyState;
+   private AliasTreeNodeChannel _aliasTreeNodeChannel;
 
-   public AliasCell(AliasCutCopyState aliasCutCopyState)
+   public AliasCell(AliasTreeNodeChannel aliasTreeNodeChannel, AliasCutCopyState aliasCutCopyState)
    {
+      _aliasTreeNodeChannel = aliasTreeNodeChannel;
       _aliasCutCopyState = aliasCutCopyState;
-      _aliasCutCopyState.addListener(this::onTreeItemCutChanged);
+      _aliasTreeNodeChannel.addListener(this::onTreeNodeChanged);
       _stdTextFill = _label.getTextFill();
    }
 
-   private void onTreeItemCutChanged(TreeItem<AliasTreeNode> ti)
+   private void onTreeNodeChanged(TreeItem<AliasTreeNode> ti)
    {
       if(super.getTreeItem() == ti)
       {
