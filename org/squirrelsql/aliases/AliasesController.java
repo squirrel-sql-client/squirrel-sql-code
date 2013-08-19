@@ -273,7 +273,32 @@ public class AliasesController
 
    private void onRemove()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.remove"));
+         return;
+      }
+
+      if (selectedItem.getValue() instanceof Alias)
+      {
+         String msg = _i18n.t("alias.confirm.remove", selectedItem.getValue().getName());
+         if(false == FXMessageBox.YES.equals(FXMessageBox.showYesNo(AppState.get().getPrimaryStage(), msg)))
+         {
+            return;
+         }
+      }
+      else
+      {
+         String msg = _i18n.t("aliasfolder.confirm.remove", selectedItem.getValue().getName());
+         if(false == FXMessageBox.YES.equals(FXMessageBox.showYesNo(AppState.get().getPrimaryStage(), msg)))
+         {
+            return;
+         }
+      }
+
+      selectedItem.getParent().getChildren().remove(selectedItem);
    }
 
    private void onCopy()
