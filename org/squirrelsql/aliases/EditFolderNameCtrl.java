@@ -2,7 +2,6 @@ package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
 import javafx.scene.Scene;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
@@ -13,19 +12,36 @@ import org.squirrelsql.services.I18n;
 
 public class EditFolderNameCtrl
 {
-   private final EditFolderNameView _editFolderNameView;
-   private final TreePositionCtrl _treePositionCtrl;
+   private EditFolderNameView _editFolderNameView;
+   private TreePositionCtrl _treePositionCtrl;
    private I18n _i18n = new I18n(this.getClass());
-   private final Stage _dialog;
+   private Stage _dialog;
    private String _newFolderName;
 
 
    public EditFolderNameCtrl(boolean parentNodeSelected, boolean allowsChildern)
    {
+      _init(parentNodeSelected, allowsChildern, null);
+   }
+
+   public EditFolderNameCtrl(String folderNameToEdit)
+   {
+      _init(false, false, folderNameToEdit);
+   }
+
+   private void _init(boolean parentNodeSelected, boolean allowsChildern, String folderNameToEdit)
+   {
       FxmlHelper<EditFolderNameView> fxmlHelper = new FxmlHelper<>(EditFolderNameView.class);
       _editFolderNameView = fxmlHelper.getView();
 
-      _treePositionCtrl = new TreePositionCtrl(_editFolderNameView.treePositionViewController, parentNodeSelected, allowsChildern);
+      if (null == folderNameToEdit)
+      {
+         _treePositionCtrl = new TreePositionCtrl(_editFolderNameView.treePositionViewController, parentNodeSelected, allowsChildern);
+      }
+      else
+      {
+         _editFolderNameView.treePositionView.setDisable(true);
+      }
 
       _editFolderNameView.btnOk.setOnAction(actionEvent -> onOk());
       _editFolderNameView.btnCancel.setOnAction(actionEvent -> onCancel());
@@ -39,8 +55,8 @@ public class EditFolderNameCtrl
       GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
 
       _dialog.showAndWait();
-
    }
+
 
    private void onCancel()
    {

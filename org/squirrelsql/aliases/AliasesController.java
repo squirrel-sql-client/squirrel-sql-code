@@ -246,7 +246,28 @@ public class AliasesController
 
    private void onEdit()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.edit"));
+         return;
+      }
+
+      if(selectedItem.getValue() instanceof AliasFolder)
+      {
+         AliasFolder af = (AliasFolder) selectedItem.getValue();
+         EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(af.getName());
+
+         String changedFolderName = editFolderNameCtrl.getNewFolderName();
+
+         if(Strings.isNullOrEmpty(changedFolderName))
+         {
+            return;
+         }
+
+         af.setName(changedFolderName);
+      }
    }
 
    private void onRemove()
@@ -264,7 +285,7 @@ public class AliasesController
       TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
 
-      AliasEditController aliasEditController = new AliasEditController(null != selectedItem, selectedItem.getValue() instanceof AliasFolder);
+      AliasEditController aliasEditController = new AliasEditController(null != selectedItem, null != selectedItem && selectedItem.getValue() instanceof AliasFolder);
 
       if(aliasEditController.isOk())
       {

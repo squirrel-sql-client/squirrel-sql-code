@@ -21,4 +21,8 @@ public class AliasFolder implements AliasTreeNode
       return getName();
    }
 
+   public void setName(String changedFolderName)
+   {
+      _folderName = changedFolderName;
+   }
 }
