@@ -7,6 +7,7 @@ import org.squirrelsql.services.PropertiesHandler;
 import org.squirrelsql.services.SquirrelProperty;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class AppState
 {
@@ -15,6 +16,8 @@ public class AppState
 
    private StatusBarCtrl _statusBarCtrl = new StatusBarCtrl();
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
+
+   private ArrayList<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
 
 
    public static AppState get()
@@ -75,5 +78,20 @@ public class AppState
    public void doAfterBootstrap()
    {
       _propertiesHandler.doAfterBootstrap();
+   }
+
+   public void addApplicationCloseListener(ApplicationCloseListener l)
+   {
+      _applicationCloseListeners.add(l);
+   }
+
+   public void fireApplicationClosing()
+   {
+      ApplicationCloseListener[] clone = _applicationCloseListeners.toArray(new ApplicationCloseListener[_applicationCloseListeners.size()]);
+
+      for (ApplicationCloseListener applicationCloseListener : clone)
+      {
+         applicationCloseListener.applicationClosing();
+      }
    }
 }

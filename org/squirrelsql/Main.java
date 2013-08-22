@@ -81,6 +81,7 @@ public class Main extends Application
 
    private void onClose(StageDimensionSaver dimesionSaver)
    {
+      AppState.get().fireApplicationClosing();
       _splitController.close();
       dimesionSaver.save(); // Needed because we are going to exit
       Platform.exit();

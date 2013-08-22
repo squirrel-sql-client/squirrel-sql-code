@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
@@ -9,12 +10,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
+import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
-import org.squirrelsql.services.DockToolbarBuilder;
-import org.squirrelsql.services.FXMessageBox;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.*;
+
+import java.util.ArrayList;
 
 public class AliasesController
 {
@@ -49,6 +50,36 @@ public class AliasesController
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
 
+
+      AliasTreeStructureNode structRoot = Dao.loadAliasTree();
+      ArrayList<Alias> aliases = Dao.loadAliases();
+
+      ArrayList<Alias>  unappliedAliases = structRoot.apply(_treeView.getRoot(), aliases);
+
+      //////////////////////////////////////////////////////////////////////////////////////////////////////
+      // unappliedAliases should always be empty. But because people are so unhappy when aliases get lost
+      // we do this for precautions only.
+      for (Alias unappliedAlias : unappliedAliases)
+      {
+         _treeView.getRoot().getChildren().add(new TreeItem<AliasTreeNode>(unappliedAlias));
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+      AppState.get().addApplicationCloseListener(this::onApplicationClosing);
+
+   }
+
+   private void onApplicationClosing()
+   {
+      ObservableList<TreeItem<AliasTreeNode>> items = _treeView.getRoot().getChildren();
+
+      ArrayList<Alias> aliases = new ArrayList<>();
+
+      AliasTreeStructureNode structRoot = new AliasTreeStructureNode();
+      structRoot.addAll(items, aliases);
+
+      Dao.writeAliases(aliases, structRoot);
    }
 
    private void uncutOnEscape(KeyEvent ke)
