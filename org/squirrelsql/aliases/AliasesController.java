@@ -9,8 +9,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.*;
@@ -104,7 +104,7 @@ public class AliasesController
       dockToolbarBuilder.addButtonLeft(_props.getImageView("sort-ascend.png"), _i18n.t("tooltip.sort")).setOnAction(e -> onSort());
       dockToolbarBuilder.addSeparatorLeft();
       dockToolbarBuilder.addButtonLeft(_props.getImageView("folder_new.png"), _i18n.t("tooltip.new.alias.folder")).setOnAction(e -> onNewFolder());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("copy_to_klip.png"), _i18n.t("tooltip.copy.alias.to.clip")).setOnAction(e -> onCopyToClip());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("copy_to_clip.png"), _i18n.t("tooltip.copy.alias.to.clip")).setOnAction(e -> onCopyToClip());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("cut.png"), _i18n.t("tooltip.cut.alias")).setOnAction(e -> onCut());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("paste.png"), _i18n.t("tooltip.paste.alias")).setOnAction(e -> onPaste());
 
@@ -263,11 +263,16 @@ public class AliasesController
       }
       else if(treePositionCtrl.isAddToSelectedAsSuccessor())
       {
-         TreeItem<AliasTreeNode> parent = selectedItem.getParent();
-
-         int ixOfSelected = parent.getChildren().indexOf(selectedItem);
-         parent.getChildren().add(ixOfSelected + 1, newTreeItem);
+         addAsSuccessor(selectedItem, newTreeItem);
       }
+   }
+
+   private void addAsSuccessor(TreeItem<AliasTreeNode> selectedItem, TreeItem<AliasTreeNode> newTreeItem)
+   {
+      TreeItem<AliasTreeNode> parent = selectedItem.getParent();
+
+      int ixOfSelected = parent.getChildren().indexOf(selectedItem);
+      parent.getChildren().add(ixOfSelected + 1, newTreeItem);
    }
 
    private void onSort()
@@ -304,10 +309,13 @@ public class AliasesController
       {
          Alias alias = (Alias) selectedItem.getValue();
 
-         AliasEditController aliasEditController = new AliasEditController(alias);
+         AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.EDIT);
 
-         selectedItem.setValue(aliasEditController.getAlias());
-         _aliasTreeNodeChannel.fireChanged(selectedItem);
+         if (aliasEditController.isOk())
+         {
+            selectedItem.setValue(aliasEditController.getAlias());
+            _aliasTreeNodeChannel.fireChanged(selectedItem);
+         }
       }
    }
 
@@ -343,7 +351,38 @@ public class AliasesController
 
    private void onCopy()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.alias.to.copy"));
+         return;
+      }
+
+      if(selectedItem.getValue() instanceof AliasFolder)
+      {
+         Stage stage = AppState.get().getPrimaryStage();
+         String msg = _i18n.t("aliases.cannot.copy.folder");
+         if(FXMessageBox.YES.equals(FXMessageBox.showYesNo(stage, msg, _props.getImageView("copy_to_clip.png"))))
+         {
+            onCopyToClip();
+         }
+         return;
+      }
+
+      Alias alias = (Alias) selectedItem.getValue();
+
+      alias = AliasTreeUtil.cloneAlias(alias);
+
+      AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.COPY);
+
+      if (aliasEditController.isOk())
+      {
+         alias = aliasEditController.getAlias();
+         TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
+         addAsSuccessor(selectedItem, newTreeItem);
+      }
+
    }
 
    private void onAdd()
@@ -357,7 +396,6 @@ public class AliasesController
       {
          Alias alias = aliasEditController.getAlias();
          TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
-
          positionNewItem(aliasEditController.getTreePositionCtrl(), selectedItem, newTreeItem);
       }
    }

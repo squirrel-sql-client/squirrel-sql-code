@@ -1,9 +1,10 @@
 package org.squirrelsql.aliases;
 
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class Alias implements AliasTreeNode
+public class Alias implements AliasTreeNode, Serializable
 {
    private String _id = UUID.randomUUID().toString();
    private String _name;
@@ -154,5 +155,10 @@ public class Alias implements AliasTreeNode
    public String toString()
    {
       return _name;
+   }
+
+   public void initAfterClone()
+   {
+      _id = UUID.randomUUID().toString();
    }
 }

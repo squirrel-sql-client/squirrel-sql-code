@@ -17,6 +17,9 @@ import org.squirrelsql.services.*;
 
 public class AliasEditController
 {
+   public static enum ConstructorState { EDIT, COPY }
+
+
    private TreePositionCtrl _treePositionCtrl;
    private Pref _pref = new Pref(getClass());
 
@@ -29,16 +32,16 @@ public class AliasEditController
 
    public AliasEditController(boolean parentNodeSelected, boolean parentAllowsChildren)
    {
-      _init(parentNodeSelected, parentAllowsChildren, null);
+      _init(parentNodeSelected, parentAllowsChildren, null, null);
    }
 
 
-   public AliasEditController(Alias alias)
+   public AliasEditController(Alias alias, ConstructorState constructorState)
    {
-      _init(false, false, alias);
+      _init(false, false, alias, constructorState);
    }
 
-   private void _init(boolean parentNodeSelected, boolean parentAllowsChildren, Alias alias)
+   private void _init(boolean parentNodeSelected, boolean parentAllowsChildren, Alias alias, ConstructorState constructorState)
    {
       FxmlHelper<AliasEditView> fxmlHelper = new FxmlHelper<>(AliasEditView.class);
 
@@ -57,12 +60,18 @@ public class AliasEditController
       }
       else
       {
-         _aliasEditView.treePositionView.setDisable(true);
-
-
          _alias = alias;
 
-         title = _i18n.t("title.edit.alias", _alias.getName());
+         _aliasEditView.treePositionView.setDisable(true);
+         if (ConstructorState.EDIT == constructorState)
+         {
+            title = _i18n.t("title.edit.alias", _alias.getName());
+
+         }
+         else
+         {
+            title = _i18n.t("title.copy.alias", _alias.getName());
+         }
 
          SQLDriver driver = findDriver(alias.getDriverId(), drivers);
 

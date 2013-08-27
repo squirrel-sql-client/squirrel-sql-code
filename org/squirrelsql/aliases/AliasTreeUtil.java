@@ -2,6 +2,7 @@ package org.squirrelsql.aliases;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import org.apache.commons.lang3.SerializationUtils;
 import org.squirrelsql.Props;
 
 public class AliasTreeUtil
@@ -33,7 +34,7 @@ public class AliasTreeUtil
       }
       else
       {
-         throw new UnsupportedOperationException("NYI");
+         return createAliasNode(cloneAlias((Alias) toCopy.getValue()));
       }
    }
 
@@ -45,5 +46,12 @@ public class AliasTreeUtil
    public static TreeItem<AliasTreeNode> createAliasNode(Alias alias)
    {
       return new TreeItem<AliasTreeNode>(alias, new Props(AliasTreeUtil.class).getImageView("alias.png"));
+   }
+
+   public static Alias cloneAlias(Alias alias)
+   {
+      alias = SerializationUtils.clone(alias);
+      alias.initAfterClone();
+      return alias;
    }
 }

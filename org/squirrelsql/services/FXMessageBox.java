@@ -8,11 +8,12 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 public class FXMessageBox
@@ -42,15 +43,26 @@ public class FXMessageBox
 
    public static void showInfoOk(Window parent, String msg)
    {
-      showMessageBox(parent, Icon.ICON_INFORMATION, TITLE_TEXT_INFORMATION, msg, 0, OK);
+      showMessageBox(parent, Icon.ICON_INFORMATION, TITLE_TEXT_INFORMATION, msg, 0, Option.createStringOnly(OK));
    }
 
    public static String showYesNo(Window parent, String msg)
    {
-      return showMessageBox(parent, Icon.ICON_QUESTION, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, 0, YES, NO);
+      return showMessageBox(parent, Icon.ICON_QUESTION, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, 0, Option.createStringOnly(YES, NO));
    }
 
+   public static String showYesNo(Window parent, String msg, ImageView yesButtonIcon)
+   {
+      return showMessageBox(parent, Icon.ICON_QUESTION, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, 0, new Option(YES, yesButtonIcon), new Option(NO));
+   }
+
+
    public static String showMessageBox(Window parent, Icon icon, String title, String msg, Integer defaultOptionIndex, final String... options)
+   {
+      return showMessageBox(parent, icon, title, msg, defaultOptionIndex, Option.createStringOnly(options));
+   }
+
+   public static String showMessageBox(Window parent, Icon icon, String title, String msg, Integer defaultOptionIndex, final Option... options)
    {
 
       final Stage dialog = new Stage();
@@ -135,14 +147,20 @@ public class FXMessageBox
       for (int i = 0; i < options.length; i++)
       {
          final Button btn = new Button();
-         btn.setText(options[i]);
+         btn.setText(options[i].getText());
+
+         if (null != options[i].getImage())
+         {
+            btn.setGraphic(options[i].getImage());
+         }
+
          final int finalIndex = i;
          btn.setOnAction(new EventHandler<ActionEvent>()
          {
             @Override
             public void handle(ActionEvent e)
             {
-               result[0] = options[finalIndex];
+               result[0] = options[finalIndex].getText();
                dialog.close();
             }
          });
