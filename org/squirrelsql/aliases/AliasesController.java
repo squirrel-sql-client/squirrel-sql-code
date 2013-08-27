@@ -300,6 +300,15 @@ public class AliasesController
          af.setName(changedFolderName);
          _aliasTreeNodeChannel.fireChanged(selectedItem);
       }
+      else
+      {
+         Alias alias = (Alias) selectedItem.getValue();
+
+         AliasEditController aliasEditController = new AliasEditController(alias);
+
+         selectedItem.setValue(aliasEditController.getAlias());
+         _aliasTreeNodeChannel.fireChanged(selectedItem);
+      }
    }
 
    private void onRemove()

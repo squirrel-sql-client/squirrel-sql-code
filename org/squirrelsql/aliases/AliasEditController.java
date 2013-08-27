@@ -17,30 +17,66 @@ import org.squirrelsql.services.*;
 
 public class AliasEditController
 {
-   private final TreePositionCtrl _treePositionCtrl;
+   private TreePositionCtrl _treePositionCtrl;
    private Pref _pref = new Pref(getClass());
 
    private I18n _i18n = new I18n(this.getClass());
-   private final AliasEditView _aliasEditView;
-   private final Stage _dialog;
+   private AliasEditView _aliasEditView;
+   private Stage _dialog;
    private Alias _alias = new Alias();
    private boolean _ok = false;
 
 
    public AliasEditController(boolean parentNodeSelected, boolean parentAllowsChildren)
    {
+      _init(parentNodeSelected, parentAllowsChildren, null);
+   }
+
+
+   public AliasEditController(Alias alias)
+   {
+      _init(false, false, alias);
+   }
+
+   private void _init(boolean parentNodeSelected, boolean parentAllowsChildren, Alias alias)
+   {
       FxmlHelper<AliasEditView> fxmlHelper = new FxmlHelper<>(AliasEditView.class);
 
       _aliasEditView = fxmlHelper.getView();
 
-      _treePositionCtrl = new TreePositionCtrl(_aliasEditView.treePositionViewController, parentNodeSelected, parentAllowsChildren);
-
-      String title = _i18n.t("title.new.alias");
-      _aliasEditView.lblChangeDriver.setText(title);
-
-      initListeners();
 
       ObservableList<SQLDriver> drivers = new DriversManager().getDrivers(DriversFilteredPref.isFiltered());
+
+      String title;
+
+
+      if (null == alias)
+      {
+         title = _i18n.t("title.new.alias");
+         _treePositionCtrl = new TreePositionCtrl(_aliasEditView.treePositionViewController, parentNodeSelected, parentAllowsChildren);
+      }
+      else
+      {
+         _aliasEditView.treePositionView.setDisable(true);
+
+
+         _alias = alias;
+
+         title = _i18n.t("title.edit.alias", _alias.getName());
+
+         SQLDriver driver = findDriver(alias.getDriverId(), drivers);
+
+         if(null == driver)
+         {
+            drivers = new DriversManager().getDrivers(false);
+         }
+
+         driver = findDriver(alias.getDriverId(), drivers);
+
+         loadOrStore(false, driver);
+      }
+
+
 
       _aliasEditView.cboDriver.getItems().addAll(drivers);
 
@@ -51,10 +87,10 @@ public class AliasEditController
          _aliasEditView.cboDriver.getSelectionModel().select(0);
       }
 
-
       initListener();
 
 
+      _aliasEditView.lblChangeDriver.setText(title);
       _dialog = new Stage();
       _dialog.setTitle(title);
       _dialog.initModality(Modality.WINDOW_MODAL);
@@ -67,6 +103,19 @@ public class AliasEditController
       new StageDimensionSaver("aliasedit", _dialog, _pref, region.getPrefWidth(), region.getPrefHeight(), _dialog.getOwner());
 
       _dialog.showAndWait();
+   }
+
+   private SQLDriver findDriver(String driverId, ObservableList<SQLDriver> drivers)
+   {
+      for (SQLDriver driver : drivers)
+      {
+         if(driver.getId().equals(driverId))
+         {
+            return driver;
+         }
+      }
+
+      return null;
    }
 
    private void initListener()
@@ -112,6 +161,11 @@ public class AliasEditController
          }
       }
 
+      initEnableTextField(chkNull, chkEmpty, txt);
+   }
+
+   private void initEnableTextField(CheckBox chkNull, CheckBox chkEmpty, TextField txt)
+   {
       if(chkNull.isSelected() || chkEmpty.isSelected())
       {
          txt.setDisable(true);
@@ -161,26 +215,58 @@ public class AliasEditController
          return;
       }
 
-      _alias.setName(_aliasEditView.txtName.getText().trim());
-      _alias.setDriverId(sqlDriver.getId());
-      _alias.setUrl(_aliasEditView.txtUrl.getText().trim());
-
-      _alias.setUserName(_aliasEditView.txtUserName.getText().trim());
-      _alias.setUserNull(_aliasEditView.chkUserNull.isSelected());
-      _alias.setUserEmptyString(_aliasEditView.chkUserEmpty.isSelected());
-
-      _alias.setSavePassword(_aliasEditView.chkSavePassword.isSelected());
-
-      _alias.setPassword(_aliasEditView.txtPassword.getText().trim());
-      _alias.setPasswordNull(_aliasEditView.chkPasswordNull.isSelected());
-      _alias.setPasswordEmptyString(_aliasEditView.chkPasswordEmpty.isSelected());
-
-      _alias.setAutoLogon(_aliasEditView.chkAutoLogon.isSelected());
-      _alias.setConnectAtStartUp(_aliasEditView.chkConnectAtStartUp.isSelected());
+      loadOrStore(true, sqlDriver);
 
       _ok = true;
 
       _dialog.close();
+   }
+
+   private void loadOrStore(boolean store, SQLDriver sqlDriver)
+   {
+      if (store)
+      {
+         _alias.setName(_aliasEditView.txtName.getText().trim());
+         _alias.setDriverId(sqlDriver.getId());
+         _alias.setUrl(_aliasEditView.txtUrl.getText().trim());
+
+         _alias.setUserName(_aliasEditView.txtUserName.getText().trim());
+         _alias.setUserNull(_aliasEditView.chkUserNull.isSelected());
+         _alias.setUserEmptyString(_aliasEditView.chkUserEmpty.isSelected());
+
+         _alias.setSavePassword(_aliasEditView.chkSavePassword.isSelected());
+
+         _alias.setPassword(_aliasEditView.txtPassword.getText().trim());
+         _alias.setPasswordNull(_aliasEditView.chkPasswordNull.isSelected());
+         _alias.setPasswordEmptyString(_aliasEditView.chkPasswordEmpty.isSelected());
+
+         _alias.setAutoLogon(_aliasEditView.chkAutoLogon.isSelected());
+         _alias.setConnectAtStartUp(_aliasEditView.chkConnectAtStartUp.isSelected());
+      }
+      else
+      {
+         _aliasEditView.txtName.setText(_alias.getName());
+         _aliasEditView.cboDriver.getSelectionModel().select(sqlDriver);
+         _aliasEditView.txtUrl.setText(_alias.getUrl());
+
+         _aliasEditView.txtUserName.setText(_alias.getUserName());
+         _aliasEditView.chkUserNull.setSelected(_alias.isUserNull());
+         _aliasEditView.chkUserEmpty.setSelected(_alias.isUserEmptyString());
+         initEnableTextField(_aliasEditView.chkUserNull, _aliasEditView.chkUserEmpty, _aliasEditView.txtUserName);
+
+         _aliasEditView.chkSavePassword.setSelected(_alias.isSavePassword());
+
+         _aliasEditView.txtPassword.setText(_alias.getPassword());
+         _aliasEditView.chkPasswordNull.setSelected(_alias.isPasswordNull());
+         _aliasEditView.chkPasswordEmpty.setSelected(_alias.isPasswordEmptyString());
+         initEnableTextField(_aliasEditView.chkPasswordNull, _aliasEditView.chkPasswordEmpty, _aliasEditView.txtPassword);
+
+
+         _aliasEditView.chkAutoLogon.setSelected(_alias.isAutoLogon());
+         _aliasEditView.chkConnectAtStartUp.setSelected(_alias.isConnectAtStartUp());
+
+
+      }
    }
 
    private void onClose()

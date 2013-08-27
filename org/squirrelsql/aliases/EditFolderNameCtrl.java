@@ -5,10 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.FXMessageBox;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.GuiUtils;
-import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.*;
 
 public class EditFolderNameCtrl
 {
@@ -41,6 +38,7 @@ public class EditFolderNameCtrl
       else
       {
          _editFolderNameView.treePositionView.setDisable(true);
+         _editFolderNameView.txtFolderName.setText(folderNameToEdit);
       }
 
       _editFolderNameView.btnOk.setOnAction(actionEvent -> onOk());
