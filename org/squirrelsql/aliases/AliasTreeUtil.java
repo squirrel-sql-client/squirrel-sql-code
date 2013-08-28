@@ -54,4 +54,14 @@ public class AliasTreeUtil
       alias.initAfterClone();
       return alias;
    }
+
+   public static void sortChildren(TreeItem<AliasTreeNode> parent)
+   {
+      parent.getChildren().sort((n1, n2) -> n1.getValue().getName().compareTo(n2.getValue().getName()));
+
+      for (TreeItem<AliasTreeNode> child : parent.getChildren())
+      {
+         sortChildren(child);
+      }
+   }
 }

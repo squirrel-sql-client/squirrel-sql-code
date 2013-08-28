@@ -277,7 +277,7 @@ public class AliasesController
 
    private void onSort()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      AliasTreeUtil.sortChildren(_treeView.getRoot());
    }
 
    private void onEdit()
