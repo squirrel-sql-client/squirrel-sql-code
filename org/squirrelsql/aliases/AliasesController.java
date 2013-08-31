@@ -2,12 +2,14 @@ package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
@@ -46,6 +48,15 @@ public class AliasesController
 
       _borderPane.setOnKeyPressed(this::uncutOnEscape);
       _treeView.setOnKeyPressed(this::uncutOnEscape);
+
+      _treeView.setOnDragDetected(new EventHandler<MouseEvent>()
+      {
+         @Override
+         public void handle(MouseEvent event)
+         {
+            //To change body of implemented methods use File | Settings | File Templates.
+         }
+      });
 
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
