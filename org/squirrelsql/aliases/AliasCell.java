@@ -3,10 +3,11 @@ package org.squirrelsql.aliases;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public class AliasCell extends TreeCell<AliasTreeNode>
+public class AliasCell extends DndDragPositionMarkableTreeCell<AliasTreeNode>
 {
    private Label _label = new Label();
 
@@ -20,6 +21,26 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       _aliasCutCopyState = aliasCutCopyState;
       _aliasTreeNodeChannel.addListener(this::onTreeNodeChanged);
       _stdTextFill = _label.getTextFill();
+
+
+      setOnDragDetected(this::onDragDetected);
+
+
+      new DndDragPositionMarker<AliasTreeNode>(this);
+   }
+
+
+   private void onDragDetected(MouseEvent event)
+   {
+      if (isEmpty())
+      {
+         return;
+      }
+      Dragboard dragBoard = startDragAndDrop(TransferMode.MOVE);
+      ClipboardContent content = new ClipboardContent();
+      content.put(DataFormat.PLAIN_TEXT, "" + getItem());
+      dragBoard.setContent(content);
+      event.consume();
    }
 
    private void onTreeNodeChanged(TreeItem<AliasTreeNode> ti)
