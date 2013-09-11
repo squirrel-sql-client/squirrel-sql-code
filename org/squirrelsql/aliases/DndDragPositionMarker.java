@@ -29,15 +29,25 @@ public class DndDragPositionMarker<T>
 
    private void onDragExit(DragEvent dragEvent)
    {
+      clearMarks();
+   }
+
+   private void clearMarks()
+   {
       _treeCell.getChildrenModifiable().remove(_upperLinePath);
       _treeCell.getChildrenModifiable().remove(_lowerLinePath);
       _treeCell.getChildrenModifiable().remove(_rightLinePath);
    }
 
 
-
    private void onDragOver(DragEvent dragEvent)
    {
+      if(_treeCell.isEmpty())
+      {
+         clearMarks();
+         return;
+      }
+
       initHorizontalPathLine(true, _upperLinePath);
       initHorizontalPathLine(false, _lowerLinePath);
       initRightPathLine(_rightLinePath);
@@ -73,17 +83,15 @@ public class DndDragPositionMarker<T>
 
    private boolean isOnTheRight(DragEvent dragEvent)
    {
-      if(0 >= getNodeXEnd() - dragEvent.getX())
+      //if(getNodeXBegin() + (getNodeXEnd() - getNodeXBegin()) / 2 < dragEvent.getX())
+      if(Math.max(getNodeXBegin() + (getNodeXEnd() - getNodeXBegin()) / 2 , getNodeXEnd() - 20) < dragEvent.getX())
       {
          return true;
       }
-
-      if(0 >= dragEvent.getX() - getNodeXBegin())
+      else
       {
          return false;
       }
-
-      return getNodeXEnd() - dragEvent.getX() > dragEvent.getX() - getNodeXBegin();
    }
 
    private boolean isOnTheLower(DragEvent dragEvent)
@@ -100,15 +108,15 @@ public class DndDragPositionMarker<T>
    {
       path.getElements().clear();
 
-      double rightLineX = Math.min(getNodeXEnd() + 15, _treeCell.getWidth());
+      double rightLineX = Math.min(getNodeXEnd(), _treeCell.getWidth());
 
       MoveTo moveTo = new MoveTo();
-      moveTo.setX(rightLineX - STROKE_WIDTH);
-      moveTo.setY(0 + STROKE_WIDTH);
+      moveTo.setX(rightLineX + STROKE_WIDTH);
+      moveTo.setY(_treeCell.getHeight() / 2);
 
       LineTo lineTo = new LineTo();
-      lineTo.setX(rightLineX - STROKE_WIDTH);
-      lineTo.setY(_treeCell.getHeight() - STROKE_WIDTH);
+      lineTo.setX(rightLineX + 10);
+      lineTo.setY(_treeCell.getHeight() / 2);
 
       path.getElements().add(moveTo);
       path.getElements().add(lineTo);
