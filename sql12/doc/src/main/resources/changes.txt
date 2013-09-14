@@ -8,6 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Added MongoDB driver to default driver list.
+
+
 New Plugin: Vertica DB Plugin
   New Plugin for the Vertica DB. Thanks to Vertica team.
 

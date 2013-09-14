@@ -726,4 +726,16 @@
 		</identifier>
 		<websiteUrl>http://www.vertica.com</websiteUrl>
  	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        	<name>MongoDB</name>
+        	<driverClassName>mongodb.jdbc.MongoDriver</driverClassName>
+        	<url>jdbc:mongo://&lt;servername>&gt;</url>
+		<usesClassPath>true</usesClassPath>
+		<jarFileNames Indexed="true"/>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-63</string>
+		</identifier>
+		<websiteUrl>http://www.unitiyjdbc.com/mongojdbc/</websiteUrl>
+ 	</Bean>
 </Beans>
