@@ -1,7 +1,11 @@
 package org.squirrelsql.aliases;
 
+import java.util.UUID;
+
 public class AliasFolder implements AliasTreeNode
 {
+   private String _id = UUID.randomUUID().toString();
+
    private String _folderName;
 
    public AliasFolder(String folderName)
@@ -13,6 +17,11 @@ public class AliasFolder implements AliasTreeNode
    public String getName()
    {
       return _folderName;
+   }
+
+   public String getId()
+   {
+      return _id;
    }
 
    @Override

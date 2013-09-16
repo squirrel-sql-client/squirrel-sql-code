@@ -3,6 +3,7 @@ package org.squirrelsql.aliases;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -28,10 +29,44 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
       DndDragPositionMarker<AliasTreeNode> marker = new DndDragPositionMarker<>(this, this::getChildren);
 
-      setOnDragOver((e) -> {marker.onDragOver(e);});
+      setOnDragOver((e) -> {marker.onDragOver(e); onDragOver(e);});
 
       setOnDragExited(marker::onDragExit);
 
+      setOnDragOver((e) -> {marker.onDragOver(e); onDragOver(e);});
+
+      setOnDragDropped(dragEvent -> onDragDropped(dragEvent));
+   }
+
+
+   private void onDragDropped(DragEvent dragEvent)
+   {
+// TODO
+//      System.out.println("Drag dropped on " + getItem());
+//      int valueToMove = Integer.parseInt(dragEvent.getDragboard().getString());
+//      TreeItem<Integer> itemToMove = search(getTreeView().getRoot(), valueToMove);
+//      TreeItem<Integer> newParent = search(parentTree.getRoot(), item);
+//      // Remove from former parent.
+//      itemToMove.getParent().getChildren().remove(itemToMove);
+//      // Add to new parent.
+//      newParent.getChildren().add(itemToMove);
+//      newParent.setExpanded(true);
+//      dragEvent.consume();
+   }
+
+
+
+   private void onDragOver(DragEvent dragEvent)
+   {
+      if (dragEvent.getDragboard().hasString())
+      {
+         String id = dragEvent.getDragboard().getString();
+         if (false == isEmpty() && false == getItem().getId().equals(id))
+         {
+            dragEvent.acceptTransferModes(TransferMode.MOVE);
+         }
+      }
+      dragEvent.consume();
    }
 
 
@@ -45,7 +80,7 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       }
       Dragboard dragBoard = startDragAndDrop(TransferMode.MOVE);
       ClipboardContent content = new ClipboardContent();
-      content.put(DataFormat.PLAIN_TEXT, "" + getItem());
+      content.put(DataFormat.PLAIN_TEXT, "" + getItem().getId());
       dragBoard.setContent(content);
       event.consume();
    }
