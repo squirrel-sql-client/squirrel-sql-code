@@ -6,8 +6,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.squirrelsql.aliases.dnd.DndDragPositionMarker;
 
-public class AliasCell extends DndDragPositionMarkableTreeCell<AliasTreeNode>
+public class AliasCell extends TreeCell<AliasTreeNode>
 {
    private Label _label = new Label();
 
@@ -25,9 +26,15 @@ public class AliasCell extends DndDragPositionMarkableTreeCell<AliasTreeNode>
 
       setOnDragDetected(this::onDragDetected);
 
+      DndDragPositionMarker<AliasTreeNode> marker = new DndDragPositionMarker<>(this, this::getChildren);
 
-      new DndDragPositionMarker<AliasTreeNode>(this);
+      setOnDragOver((e) -> {marker.onDragOver(e);});
+
+      setOnDragExited(marker::onDragExit);
+
    }
+
+
 
 
    private void onDragDetected(MouseEvent event)

@@ -1,6 +1,7 @@
-package org.squirrelsql.aliases;
+package org.squirrelsql.aliases.dnd;
 
 import javafx.scene.Node;
+import javafx.scene.control.TreeCell;
 import javafx.scene.input.DragEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
@@ -10,37 +11,34 @@ import javafx.scene.shape.Path;
 public class DndDragPositionMarker<T>
 {
    public static final Color STROKE_COLOR = Color.BLACK;
-   private DndDragPositionMarkableTreeCell<T> _treeCell;
+   private TreeCell<T> _treeCell;
+   private ModifyableChildrensAccessor _accessor;
 
    private Path _upperLinePath = new Path();
    private Path _rightLinePath = new Path();
    private Path _lowerLinePath = new Path();
    public static final int STROKE_WIDTH = 3;
 
-   public DndDragPositionMarker(DndDragPositionMarkableTreeCell<T> treeCell)
+   public DndDragPositionMarker(TreeCell<T> treeCell, ModifyableChildrensAccessor accessor)
    {
       _treeCell = treeCell;
-
-      _treeCell.setOnDragOver(this::onDragOver);
-
-      _treeCell.setOnDragExited(this::onDragExit);
-
+      _accessor = accessor;
    }
 
-   private void onDragExit(DragEvent dragEvent)
+   public void onDragExit(DragEvent dragEvent)
    {
       clearMarks();
    }
 
    private void clearMarks()
    {
-      _treeCell.getChildrenModifiable().remove(_upperLinePath);
-      _treeCell.getChildrenModifiable().remove(_lowerLinePath);
-      _treeCell.getChildrenModifiable().remove(_rightLinePath);
+      _accessor.getChildrenModifiable().remove(_upperLinePath);
+      _accessor.getChildrenModifiable().remove(_lowerLinePath);
+      _accessor.getChildrenModifiable().remove(_rightLinePath);
    }
 
 
-   private void onDragOver(DragEvent dragEvent)
+   public void onDragOver(DragEvent dragEvent)
    {
       if(_treeCell.isEmpty())
       {
@@ -54,29 +52,29 @@ public class DndDragPositionMarker<T>
 
       if(isOnTheRight(dragEvent))
       {
-         _treeCell.getChildrenModifiable().remove(_upperLinePath);
-         _treeCell.getChildrenModifiable().remove(_lowerLinePath);
-         if (false == _treeCell.getChildrenModifiable().contains(_rightLinePath))
+         _accessor.getChildrenModifiable().remove(_upperLinePath);
+         _accessor.getChildrenModifiable().remove(_lowerLinePath);
+         if (false == _accessor.getChildrenModifiable().contains(_rightLinePath))
          {
-            _treeCell.getChildrenModifiable().add(_rightLinePath);
+            _accessor.getChildrenModifiable().add(_rightLinePath);
          }
       }
       else if(isOnTheUpper(dragEvent))
       {
-         _treeCell.getChildrenModifiable().remove(_rightLinePath);
-         _treeCell.getChildrenModifiable().remove(_lowerLinePath);
-         if (false == _treeCell.getChildrenModifiable().contains(_upperLinePath))
+         _accessor.getChildrenModifiable().remove(_rightLinePath);
+         _accessor.getChildrenModifiable().remove(_lowerLinePath);
+         if (false == _accessor.getChildrenModifiable().contains(_upperLinePath))
          {
-            _treeCell.getChildrenModifiable().add(_upperLinePath);
+            _accessor.getChildrenModifiable().add(_upperLinePath);
          }
       }
       else if(isOnTheLower(dragEvent))
       {
-         _treeCell.getChildrenModifiable().remove(_rightLinePath);
-         _treeCell.getChildrenModifiable().remove(_upperLinePath);
-         if (false == _treeCell.getChildrenModifiable().contains(_lowerLinePath))
+         _accessor.getChildrenModifiable().remove(_rightLinePath);
+         _accessor.getChildrenModifiable().remove(_upperLinePath);
+         if (false == _accessor.getChildrenModifiable().contains(_lowerLinePath))
          {
-            _treeCell.getChildrenModifiable().add(_lowerLinePath);
+            _accessor.getChildrenModifiable().add(_lowerLinePath);
          }
       }
    }
@@ -161,7 +159,7 @@ public class DndDragPositionMarker<T>
    {
       double ret = Double.MIN_VALUE;
 
-      for (Node node : _treeCell.getChildrenModifiable())
+      for (Node node : _accessor.getChildrenModifiable())
       {
          if(false == node instanceof Path)
          {
@@ -176,7 +174,7 @@ public class DndDragPositionMarker<T>
    {
       double ret = Double.MAX_VALUE;
 
-      for (Node node : _treeCell.getChildrenModifiable())
+      for (Node node : _accessor.getChildrenModifiable())
       {
          if(false == node instanceof Path)
          {
