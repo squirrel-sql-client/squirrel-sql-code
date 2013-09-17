@@ -28,4 +28,9 @@ public class AliasTreeNodeChannel
          listener.treeNodeChanged(changedItem);
       }
    }
+
+   public void moveNode(TreeItem<AliasTreeNode> itemToMove, TreeItem<AliasTreeNode> itemToMoveTo, MovePosition movePosition)
+   {
+      System.out.println("Moving " + itemToMove.getValue().getName()  + " to " + itemToMoveTo.getValue().getName() + " as " + movePosition);
+   }
 }

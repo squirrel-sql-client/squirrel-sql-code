@@ -27,31 +27,28 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
       setOnDragDetected(this::onDragDetected);
 
-      DndDragPositionMarker<AliasTreeNode> marker = new DndDragPositionMarker<>(this, this::getChildren);
+      DndDragPositionMarker<AliasTreeNode> dragPositionMarker = new DndDragPositionMarker<>(this, this::getChildren);
 
-      setOnDragOver((e) -> {marker.onDragOver(e); onDragOver(e);});
+      setOnDragOver(e -> {dragPositionMarker.onDragOver(e); onDragOver(e);});
 
-      setOnDragExited(marker::onDragExit);
+      setOnDragExited(dragPositionMarker::onDragExit);
 
-      setOnDragOver((e) -> {marker.onDragOver(e); onDragOver(e);});
+      setOnDragOver(e -> {
+         dragPositionMarker.onDragOver(e); onDragOver(e);});
 
-      setOnDragDropped(dragEvent -> onDragDropped(dragEvent));
+      setOnDragDropped(e -> onDragDropped(e, dragPositionMarker));
    }
 
 
-   private void onDragDropped(DragEvent dragEvent)
+   private void onDragDropped(DragEvent dragEvent, DndDragPositionMarker<AliasTreeNode> dragPositionMarker)
    {
-// TODO
-//      System.out.println("Drag dropped on " + getItem());
-//      int valueToMove = Integer.parseInt(dragEvent.getDragboard().getString());
-//      TreeItem<Integer> itemToMove = search(getTreeView().getRoot(), valueToMove);
-//      TreeItem<Integer> newParent = search(parentTree.getRoot(), item);
-//      // Remove from former parent.
-//      itemToMove.getParent().getChildren().remove(itemToMove);
-//      // Add to new parent.
-//      newParent.getChildren().add(itemToMove);
-//      newParent.setExpanded(true);
-//      dragEvent.consume();
+      String idToMove = dragEvent.getDragboard().getString();
+      TreeItem<AliasTreeNode> itemToMove = AliasTreeUtil.search(getTreeView().getRoot(), idToMove);
+      TreeItem<AliasTreeNode> itemToMoveTo = getTreeItem();
+
+      _aliasTreeNodeChannel.moveNode(itemToMove, itemToMoveTo, dragPositionMarker.getMovePosition());
+
+      dragEvent.consume();
    }
 
 

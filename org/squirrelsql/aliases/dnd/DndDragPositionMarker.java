@@ -7,6 +7,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import org.squirrelsql.aliases.AliasFolder;
+import org.squirrelsql.aliases.MovePosition;
 
 public class DndDragPositionMarker<T>
 {
@@ -46,11 +48,11 @@ public class DndDragPositionMarker<T>
          return;
       }
 
-      initHorizontalPathLine(true, _upperLinePath);
-      initHorizontalPathLine(false, _lowerLinePath);
+      initSiblingPathLine(true, _upperLinePath);
+      initSiblingPathLine(false, _lowerLinePath);
       initRightPathLine(_rightLinePath);
 
-      if(isOnTheRight(dragEvent))
+      if(allowsChildren(_treeCell.getItem()) && isOnTheRight(dragEvent))
       {
          _accessor.getChildrenModifiable().remove(_upperLinePath);
          _accessor.getChildrenModifiable().remove(_lowerLinePath);
@@ -77,6 +79,11 @@ public class DndDragPositionMarker<T>
             _accessor.getChildrenModifiable().add(_lowerLinePath);
          }
       }
+   }
+
+   private boolean allowsChildren(T item)
+   {
+      return item instanceof AliasFolder;
    }
 
    private boolean isOnTheRight(DragEvent dragEvent)
@@ -122,7 +129,7 @@ public class DndDragPositionMarker<T>
       path.setStroke(STROKE_COLOR);
    }
 
-   private void initHorizontalPathLine(boolean upper, Path path)
+   private void initSiblingPathLine(boolean upper, Path path)
    {
       path.getElements().clear();
 
@@ -188,5 +195,19 @@ public class DndDragPositionMarker<T>
    }
 
 
-
+   public MovePosition getMovePosition()
+   {
+      if(_accessor.getChildrenModifiable().contains(_upperLinePath))
+      {
+         return MovePosition.UPPER_SIBLING;
+      }
+      else if(_accessor.getChildrenModifiable().contains(_lowerLinePath))
+      {
+         return MovePosition.LOWER_SIBLING;
+      }
+      else
+      {
+         return MovePosition.CHILD;
+      }
+   }
 }

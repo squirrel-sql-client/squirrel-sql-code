@@ -64,4 +64,23 @@ public class AliasTreeUtil
          sortChildren(child);
       }
    }
+
+   public static TreeItem<AliasTreeNode> search(TreeItem<AliasTreeNode> currentNode, String idToFind)
+   {
+      if (currentNode.getValue().getId().equals(idToFind))
+      {
+         return currentNode;
+      }
+
+      for (TreeItem<AliasTreeNode> child : currentNode.getChildren())
+      {
+         TreeItem<AliasTreeNode> result = search(child, idToFind);
+         if (result != null)
+         {
+            return result;
+         }
+      }
+
+      return null;
+   }
 }
