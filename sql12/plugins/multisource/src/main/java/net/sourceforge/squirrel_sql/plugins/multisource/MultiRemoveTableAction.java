@@ -52,8 +52,9 @@ public class MultiRemoveTableAction extends SquirrelAction {
 	
 	/**
 	 * Removes a table from the global schema using reflection.
+	 * 
 	 * @param gs
-	 * @return
+	 * 		GlobalSchema
 	 */
 	public void removeTable(String sourceName, String tableName, Object gs)
 	{
@@ -73,6 +74,5 @@ public class MultiRemoveTableAction extends SquirrelAction {
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException(e);			
 		}
-	}
-	
+	}	
 }

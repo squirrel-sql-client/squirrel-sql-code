@@ -1,0 +1,20 @@
+BODY, HTML {COLOR: #000000;}
+
+DIV.img {padding: 10px 0px 10px 0px;}
+DIV.bottom{padding-bottom: 10px;}
+A {text-decoration: none;}
+A:link {COLOR: #0000FF;text-decoration: underline;}
+A:visited {COLOR: #0000FF;text-decoration: underline;}
+A:hover {COLOR: #FF0000;text-decoration: underline;}
+A:active {COLOR: #FF0000;text-decoration: underline;}
+
+
+TABLE {MARGIN: 1px; PADDING-BOTTOM: 10px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;
+}
+
+TH {PADDING-TOP: 10px;}
+TR {	MARGIN: 2px; PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;  text-align: center; vertical-align: top;}
+
+TD {text-align: center;}
+
+

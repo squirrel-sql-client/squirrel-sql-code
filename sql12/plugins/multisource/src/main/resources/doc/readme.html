@@ -1,6 +1,8 @@
 <html>
 <head>
 	<title>MultiSource Virtualization Plugin</title>
+	<link rel="stylesheet" type="text/css" href="multisource-style.css"	title="SQuirreL MultiSource Plugin Stylesheet">
+</head>
 </head>
 <body>
 
@@ -8,7 +10,7 @@
 
 <h3>Overview</h3>
 
-<p>The multiple source query plugin allows SQuirreL users to create a virtual data source that may consist of multiple data sources on different servers and platforms.  The user can enter one SQL query to combine and join information from multiple sources.</p>
+<p>The multiple source query plugin allows SQuirreL users to create a virtual data source that may consist of multiple data sources on different servers and platforms.  The user can enter one SQL query to combine and join information from multiple sources.  Any database that has a JDBC driver is supported including NoSQL databases such as MongoDB.</p>
 
 
 <h3>Benefits</h3>
@@ -17,101 +19,124 @@
 <li>The plugin allows SQuirreL to natively support multiple source queries.</li>
 <li>No data source or server changes are required.</li>
 <li>The plugin supports standard SQL including joins, group by, aggregation, LIMIT, and ordering where tables may come from one or more sources.</li>
-<li>The plugin will perform function translation where a user requests a function that is not supported on a certain source.</li>
+<li>The plugin will perform function translation when a user requests a function or SQL feature/syntax that is not supported by a certain source.</li>
+<li>Users can export the virtualization information and use the virtualization driver in other Java programs and reporting software.</li>
 </ul>
 
 <h3>Installation</h3>
 
 <ol>
-<li>Download and install SQuirreL.</li>
-<li>Download the plugin at <a href="http://people.ok.ubc.ca/rlawrenc/multisource.zip">http://people.ok.ubc.ca/rlawrenc/multisource.zip</a>.</li>
-<li>Unzip the multisource.zip into the directory squirrel/plugins.
+<li>Download and install SQuirreL.  Add the MultiSource plugin during installation. <br><div class=img> <img src="img/add_multisource_plugin_install.png"></div></li>
 
+<li>The plugin contains <tt>unityjdbc.jar</tt> in the folder <tt>squirrel/plugins/multisource</tt>.  Copy this jar into the <tt>squirrel/lib</tt> folder.  <strong>Make sure to add other database JDBC jars into the <tt>squirrel/lib</tt> folder or JRE classpath.  The plugin cannot access drivers in custom classpaths used by SQuirreL.</strong><br />
 <table>
-<tr><th>Before Unzip</th>	<th>After Unzip</th></tr>
-<tr><td><img src="img/install_before_unzip.png"/></td><td><img src="img/install_after_unzip.png"/></td></tr>
+<tr><th>UnityJDBC JAR Location</th>	<th>Put UnityJDBC JAR in <tt>squirrel/lib</tt> folder</th></tr>
+<tr><td><img src="img/install_unityjdbc_jar.png"/></td><td><img src="img/install_squirrel_lib.png"/></td></tr>
 </table>
-
 </li>
 
-<li>Copy the unityjdbc.jar into the squirrel/lib directory or JAVA_HOME/jre/lib/ext directory.</li>
-<li>For any other JDBC drivers used (say the driver for MySQL), they must be in the squirrel/lib directory or JAVA_HOME/jre/lib/ext directory as well.</li>
-<li>Start SQuirreL.  The multisource plugin should be visible in the plugin list.</li>
-<li>Register the UnityJDBC driver in the driver list.<br/>
-
-<img src="img/register_driver.png"/></li>
+<li>Start SQuirreL.  The multisource plugin should be visible in the plugin list.
+<div class=img>
+<img src="img/multisource_plugin_list.png">
+</div></li>
 </ol>
-
 
 
 <h3>How It Works</h3>
 
 <ol>
-<li>Register data source aliases as usual.  Here we have created connections to a Microsoft SQL Server database, a MySQL database, an Oracle database, and a PostgreSQL database all containing the TPC-H benchmark schema.  Note that any database with a JDBC driver is supported including those accessible using the JDBC-ODBC bridge.<br/>
-
+<li>Register data source aliases in SQuirreL as usual.  This example has connections to a Microsoft SQL Server database, a MySQL database, an Oracle database, a PostgreSQL database, and a MongoDB database all containing the TPC-H benchmark data.  Note that any database with a JDBC driver is supported including those accessible using the JDBC-ODBC bridge.  For MongoDB support, the latest MongoDB Java driver should also be in the <tt>squirrel/lib</tt> folder.<br/>
 <table>
 <tr><th>Microsoft SQL Server</th>	<th>MySQL</th></tr>
 <tr><td><img src="img/add_mssql.png"/></td><td><img src="img/add_mysql.png"/></td></tr>
 <tr><th>Oracle</th>	<th>Postgres</th></tr>
 <tr><td><img src="img/add_oracle.png"/></td><td><img src="img/add_postgres.png"/></td></tr>
+<tr><th>Register MongoDB Driver</th><th>MongoDB</th></tr>
+<tr><td><img src="img/add_mongo_driver.png"/></td><td><img src="img/add_mongo.png"/></td></tr>
+</table></li>
+<li>Make sure you have registered the UnityJDBC MultiSource Virtualization driver (during installation). Create an alias consisting of virtual sources.  The name field can be any name.  It does not have to contain "virtual".
+
+<table>
+<tr><th>Create Virtual Source</th>	<th>Connect to Virtual Source</th></tr>
+<tr><td><img src="img/create_virtual_source.png"/></td><td><img src="img/connect_virtual_source.png"/></td></tr>
 </table>
 
-<li>Make sure you have registered the UnityJDBC driver (during installation). Create an alias consisting of virtual sources.  The name field can be any name.  It does not have to be virtual.
-
-<li>The user adds each database alias to the virtual source.
-
-<h4>Before add MSSQL source:</h4>
+<li>Add existing JDBC connections (SQuirreL aliases), to the virtual source.  The example adds all five of the sources created above.  On the source name (in this case <tt>virtualDemo</tt>), right click and select <tt>(Virtualization) Add source</tt>.
+<div class=bottom>
+<h4>Before add Microsoft SQL (mssql) source:</h4>
 
 <img src="img/before_add_mssql.png"/>
 
-<h4>Prompt for source (alias) to add:</h4>
+<h4>Select the source to add and click the Add button.  Progress is shown.</h4>
 
-<img src="img/add_alias_prompt.png"/>
+<img src="img/add_mssql_to_virtualization.png"/>
 
-<h4>After add Microsoft source.  Tables of MSSQL sources are visible in object tree view.</h4>
+<h4>After adding the Microsoft source.  Tables are visible in the object tree view.</h4>
 
 <img src="img/after_add_mssql.png"/>
-
+</div>
 </li>
 
-<li>User can add as many sources as they wish.  You can also rename the source in the virtual view.  It does not have to be the same as the alias name used by SQuirreL.  When adding Oracle sources, make sure to specify a schema so that system tables and tables from all schemas are not extracted.
-
+<li>Users can add as many sources as they wish.  You can also rename the source in the virtual view.  It does not have to be the same as the alias name used by SQuirreL.  When adding Oracle sources, make sure to specify a schema so that system tables and tables from all schemas are not extracted.  You can also filter tables added by catalog name, schema name, and table filters.  The table filters to include are specified in SQL (JDBC) syntax with a % as a wild-card match.  The table exclusion filters are specified as Java regular expressions.
+<div class=bottom>
 <h4>Adding an Oracle Source with a Schema</h4>
 
-<img src="img/add_oracle_with_schema.png"/>
+<img src="img/add_oracle_virtualization.png"/>
 
-<h4>Object Tree View with all Four Sources Added</h4>
+<h4>Object Tree View with all Five Sources Added</h4>
 
-<img src="img/example_four_sources.png"/>
-
+<img src="img/after_all_sources_added.png"/>
+</div>
 </li>
 
 <li>The user can execute an SQL query that spans multiple sources and get a single result.  The virtualization is transparent to the user and SQuirreL.
 
-<h4>Join across two data sources.</h4>
+<h4>SQL Query joining tables in MySQL, Microsoft SQL Server, Oracle, PostgreSQL, and MongoDB</h4>
 
-<img src="img/two_source_join.png"/>
+<img src="img/example_five_source_query.png"/>
 
 
 <h3>A Translation Example</h3>
 
-<p>The UnityJDBC driver used to perform the virtualization will also translate functions that are not implemented by certain sources.  For example, MSSQL does not support TRIM(), but you can do the same result using RTRIM(LTRIM()).  Unity will automatically translate a TRIM() function specified in a MSSQL query to the correct syntax supported by the database.</p>
+<p>The plugin uses features of the UnityJDBC driver to perform virtualization and translate functions that are not implemented by certain sources.  For example, MSSQL does not support TRIM(), but you can do the same result using RTRIM(LTRIM()).  Unity will automatically translate a TRIM() function specified in a MSSQL query to the correct syntax supported by the database.</p>
 
 <h4>Example TRIM() Translation for MSSQL</h4>
-
-<img src="img/trim_translation_example.png"/>
-
+<div class=bottom>
+<img src="img/trim_example.png"/>
+</div>
 <p>This translation is supported for common databases and can be freely extended by user-defined functions and translations for each database dialect.</p>
+
+<p>EXPLAIN can be used to understand how a SQL query is translated to queries on individual sources.</p>
+
+
+<h3>Encryption</h3>
+
+<p>The plugin saves its configuration information in the folder <tt>multisource</tt> under the SQuirreL user folder.  If no password is specified when creating an alias, schema and connection informtaion (including passwords) are stored in plain text.  To encrypt the configuration files, specify a password during connection (user id is ignored).</p>
+
+<h4>Configuration File Location</h4>
+
+<img src="img/file_locations.png">
+
+<h4>Specify Encryption by Providing a Password</h4>
+
+<img src="img/encryption_example.png">
+
+<h4>Virtualization Export for use with Other Programs and Reporting Software</h4>
+
+<p>Once a virtualization has been created, all the information necessary is available in the XML files created and stored in the <tt>plugin/multisource</tt> folder in the SQuirreL user directory.  These files can be copied and moved to another location and used with any Java/JDBC program or reporting software.  These files can be copied directly or exported from within SQuirreL.</p>
+<div class=img>
+<img src="img/export_source_example.png">
+</div>
+<p>Existing XML configuration files can be used by specifying an absolute or relative path in the JDBC URL.  For example, if the user has saved the <tt>sources.xml</tt> file (and the associated schema files for sources in the directory <tt>C:\tmp</tt>, then a JDBC connection URL is: <tt>jdbc:unity://c:\tmp\sources.xml</tt>.</p>
 
 
 <h3>Plugin Limits</h3>
 
-<p>The plugin source code, like all of SQuirreL, is released under the GNU Lesser General Public License.  The UnityJDBC virtualization driver is released under a commercial license.  However, the UnityJDBC driver included in the plugin is fully functioning with no time limits allowing an unlimited number of sources and queries.  The only limitation is the size of the result set is limited to the first 100 rows.  (Note there is no limit on the number of rows extracted from each source.  So select count(*) from table with a 1 million row table is fine as it only returns one result row.)  Use LIMIT 100 to get the first 100 results of a query.</p>
-
-
-<p>For More Information and Technical Support Contact:<br/>
-Dr. Ramon Lawrence, ramon.lawrence@ubc.ca, 250-807-9390<br/>
-Associate Professor, Computer Science, University of British Columbia Okanagan, Canada<br/>
+<p>The plugin source code, like all of SQuirreL, is released under the GNU Lesser General Public License.  The UnityJDBC virtualization driver is released under a commercial license.  However, the UnityJDBC driver included in the plugin is fully functioning with no time limits allowing an unlimited number of sources and queries.  The only limitation is the size of the result set is limited to the first 100 rows.  (Note there is no limit on the number of rows extracted from each source.  So <tt>SELECT COUNT(*) FROM <em>table</em></tt> with a 1 million row table works as it only returns one result row.)  Use <tt>LIMIT 100</tt> to get the first 100 results of a query.</p>
+<br/>
+<p>For more information and technical support for the MultiSource plugin contact:<br>
+Dr. Ramon Lawrence, ramon.lawrence@ubc.ca, 250-807-9390<br>
+Associate Professor, Computer Science, University of British Columbia Okanagan, Canada<br>
 UnityJDBC driver information: <a href="http://www.unityjdbc.com">www.unityjdbc.com</a></p>
 
 
