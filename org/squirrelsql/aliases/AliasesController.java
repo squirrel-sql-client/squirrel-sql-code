@@ -2,19 +2,18 @@ package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
+import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.services.*;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 public class AliasesController
 {
    private static final String PREF_ALIASES_PINED = "aliases.pinned";
-   private final AliasTreeNodeChannel _aliasTreeNodeChannel = new AliasTreeNodeChannel();
+   private final AliasTreeNodeChannel _aliasTreeNodeChannel = new AliasTreeNodeChannel(this::onMoveNodeRequest);
 
    private AliasCutCopyState _aliasCutCopyState = new AliasCutCopyState(_aliasTreeNodeChannel);
    private Props _props = new Props(this.getClass());
@@ -49,15 +48,6 @@ public class AliasesController
       _borderPane.setOnKeyPressed(this::uncutOnEscape);
       _treeView.setOnKeyPressed(this::uncutOnEscape);
 
-      _treeView.setOnDragDetected(new EventHandler<MouseEvent>()
-      {
-         @Override
-         public void handle(MouseEvent event)
-         {
-            //To change body of implemented methods use File | Settings | File Templates.
-         }
-      });
-
       _btnPinned.setSelected(_prefs.getBoolean(PREF_ALIASES_PINED, false));
       onPinnedChanged();
 
@@ -80,6 +70,12 @@ public class AliasesController
       AppState.get().addApplicationCloseListener(this::onApplicationClosing);
 
    }
+
+   public void onMoveNodeRequest(TreeItem<AliasTreeNode> itemToMove, TreeItem<AliasTreeNode> itemToMoveTo, MovePosition movePosition)
+   {
+      System.out.println("Moving " + itemToMove.getValue().getName()  + " to " + itemToMoveTo.getValue().getName() + " as " + movePosition);
+   }
+
 
    private void onApplicationClosing()
    {

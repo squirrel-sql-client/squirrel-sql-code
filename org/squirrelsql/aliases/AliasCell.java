@@ -3,10 +3,10 @@ package org.squirrelsql.aliases;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.dnd.DndDragPositionMarker;
 
 public class AliasCell extends TreeCell<AliasTreeNode>
@@ -46,7 +46,7 @@ public class AliasCell extends TreeCell<AliasTreeNode>
       TreeItem<AliasTreeNode> itemToMove = AliasTreeUtil.search(getTreeView().getRoot(), idToMove);
       TreeItem<AliasTreeNode> itemToMoveTo = getTreeItem();
 
-      _aliasTreeNodeChannel.moveNode(itemToMove, itemToMoveTo, dragPositionMarker.getMovePosition());
+      _aliasTreeNodeChannel.moveNodeRequest(itemToMove, itemToMoveTo, dragPositionMarker.getMovePosition());
 
       dragEvent.consume();
    }

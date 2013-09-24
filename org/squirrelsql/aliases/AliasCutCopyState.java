@@ -1,8 +1,7 @@
 package org.squirrelsql.aliases;
 
 import javafx.scene.control.TreeItem;
-
-import java.util.ArrayList;
+import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 
 public class AliasCutCopyState
 {
