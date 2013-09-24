@@ -54,25 +54,29 @@ public class TreePositionCtrl
       }
    }
 
-   public boolean isAddToRoot()
+   public RelativeNodePosition getRelativeNodePosition()
    {
-      return _treePositionView.radToRoot.isSelected();
+      if(_treePositionView.radToRoot.isSelected())
+      {
+         return RelativeNodePosition.ROOT;
+      }
+      else if(_treePositionView.radToSelectedAsChild.isSelected())
+      {
+         return RelativeNodePosition.CHILD;
+      }
+      else if(_treePositionView.radToSelectedAsAncestor.isSelected())
+      {
+         return RelativeNodePosition.UPPER_SIBLING;
+      }
+      else if(_treePositionView.radToSelectedAsSuccessor.isSelected())
+      {
+         return RelativeNodePosition.LOWER_SIBLING;
+      }
+      else
+      {
+         throw new IllegalStateException("You may ask yourself: How did I get here");
+      }
+
+
    }
-
-   public boolean isAddToSelectedAsChild()
-   {
-      return _treePositionView.radToSelectedAsChild.isSelected();
-   }
-
-   public boolean isAddToSelectedAsAncestor()
-   {
-      return _treePositionView.radToSelectedAsAncestor.isSelected();
-   }
-
-   public boolean isAddToSelectedAsSuccessor()
-   {
-      return _treePositionView.radToSelectedAsSuccessor.isSelected();
-   }
-
-
 }

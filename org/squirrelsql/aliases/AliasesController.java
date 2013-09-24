@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
@@ -71,9 +72,31 @@ public class AliasesController
 
    }
 
-   public void onMoveNodeRequest(TreeItem<AliasTreeNode> itemToMove, TreeItem<AliasTreeNode> itemToMoveTo, MovePosition movePosition)
+   private void onMoveNodeRequest(TreeItem<AliasTreeNode> itemToMoveTo, TreeItem<AliasTreeNode> itemToMove, RelativeNodePosition relativeNodePosition)
    {
-      System.out.println("Moving " + itemToMove.getValue().getName()  + " to " + itemToMoveTo.getValue().getName() + " as " + movePosition);
+      if (isEqualsOrAbove(itemToMove, itemToMoveTo))
+      {
+         Platform.runLater(new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               showInvalidMoveMessage();
+            }
+         });
+
+         return;
+
+      }
+
+      positionItem(itemToMoveTo, itemToMove, relativeNodePosition);
+      //System.out.println("Moving " + itemToMove.getValue().getName() + " to " + itemToMoveTo.getValue().getName() + " as " + relativeNodePosition);
+
+   }
+
+   private void showInvalidMoveMessage()
+   {
+      FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.cannot.cutnpaste.to.itself.ordesc"));
    }
 
 
@@ -139,7 +162,7 @@ public class AliasesController
 
          if (isEqualsOrAbove(beingCut, selectedItem))
          {
-            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.cannot.cutnpaste.to.itself.ordesc"));
+            showInvalidMoveMessage();
             return;
          }
 
@@ -172,6 +195,7 @@ public class AliasesController
 
       }
    }
+
 
 
    private void addToTree(TreeItem<AliasTreeNode> toAddTo, TreeItem<AliasTreeNode> toAdd)
@@ -246,40 +270,41 @@ public class AliasesController
 
       TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createFolderNode(newFolderName);
 
-      positionNewItem(editFolderNameCtrl.getTreePositionCtrl(), selectedItem, newTreeItem);
+      positionItem(selectedItem, newTreeItem, editFolderNameCtrl.getTreePositionCtrl().getRelativeNodePosition());
    }
 
-   private void positionNewItem(TreePositionCtrl treePositionCtrl, TreeItem<AliasTreeNode> selectedItem, TreeItem<AliasTreeNode> newTreeItem)
+   private void positionItem(TreeItem<AliasTreeNode> selectedItem, TreeItem<AliasTreeNode> treeItemToPosition, RelativeNodePosition relativeNodePosition)
    {
-      if(treePositionCtrl.isAddToRoot())
+      if(null != treeItemToPosition.getParent())
       {
-         _treeView.getRoot().getChildren().add(newTreeItem);
+         treeItemToPosition.getParent().getChildren().remove(treeItemToPosition);
       }
-      else if(treePositionCtrl.isAddToSelectedAsChild())
+
+
+      if(relativeNodePosition == RelativeNodePosition.ROOT)
       {
-         selectedItem.getChildren().add(newTreeItem);
+         _treeView.getRoot().getChildren().add(treeItemToPosition);
+      }
+      else if(relativeNodePosition == RelativeNodePosition.CHILD)
+      {
+         selectedItem.getChildren().add(treeItemToPosition);
          selectedItem.setExpanded(true);
       }
-      else if(treePositionCtrl.isAddToSelectedAsAncestor())
+      else if(relativeNodePosition == RelativeNodePosition.UPPER_SIBLING)
       {
          TreeItem<AliasTreeNode> parent = selectedItem.getParent();
 
          int ixOfSelected = parent.getChildren().indexOf(selectedItem);
-         parent.getChildren().add(ixOfSelected, newTreeItem);
+         parent.getChildren().add(ixOfSelected, treeItemToPosition);
 
       }
-      else if(treePositionCtrl.isAddToSelectedAsSuccessor())
+      else if(relativeNodePosition == RelativeNodePosition.LOWER_SIBLING)
       {
-         addAsSuccessor(selectedItem, newTreeItem);
+         TreeItem<AliasTreeNode> parent = selectedItem.getParent();
+
+         int ixOfSelected = parent.getChildren().indexOf(selectedItem);
+         parent.getChildren().add(ixOfSelected + 1, treeItemToPosition);
       }
-   }
-
-   private void addAsSuccessor(TreeItem<AliasTreeNode> selectedItem, TreeItem<AliasTreeNode> newTreeItem)
-   {
-      TreeItem<AliasTreeNode> parent = selectedItem.getParent();
-
-      int ixOfSelected = parent.getChildren().indexOf(selectedItem);
-      parent.getChildren().add(ixOfSelected + 1, newTreeItem);
    }
 
    private void onSort()
@@ -387,7 +412,7 @@ public class AliasesController
       {
          alias = aliasEditController.getAlias();
          TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
-         addAsSuccessor(selectedItem, newTreeItem);
+         positionItem(selectedItem, newTreeItem, RelativeNodePosition.LOWER_SIBLING);
       }
 
    }
@@ -403,7 +428,7 @@ public class AliasesController
       {
          Alias alias = aliasEditController.getAlias();
          TreeItem<AliasTreeNode> newTreeItem = AliasTreeUtil.createAliasNode(alias);
-         positionNewItem(aliasEditController.getTreePositionCtrl(), selectedItem, newTreeItem);
+         positionItem(selectedItem, newTreeItem, aliasEditController.getTreePositionCtrl().getRelativeNodePosition());
       }
    }
 

@@ -2,7 +2,7 @@ package org.squirrelsql.aliases.channel;
 
 import javafx.scene.control.TreeItem;
 import org.squirrelsql.aliases.AliasTreeNode;
-import org.squirrelsql.aliases.MovePosition;
+import org.squirrelsql.aliases.RelativeNodePosition;
 
 import java.util.ArrayList;
 
@@ -38,8 +38,8 @@ public class AliasTreeNodeChannel
       }
    }
 
-   public void moveNodeRequest(TreeItem<AliasTreeNode> itemToMove, TreeItem<AliasTreeNode> itemToMoveTo, MovePosition movePosition)
+   public void moveNodeRequest(TreeItem<AliasTreeNode> itemToMove, TreeItem<AliasTreeNode> itemToMoveTo, RelativeNodePosition relativeNodePosition)
    {
-      _aliasTreeNodeMoveListener.moveNodeRequest(itemToMove, itemToMoveTo, movePosition);
+      _aliasTreeNodeMoveListener.moveNodeRequest(itemToMoveTo, itemToMove, relativeNodePosition);
    }
 }

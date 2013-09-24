@@ -8,7 +8,7 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import org.squirrelsql.aliases.AliasFolder;
-import org.squirrelsql.aliases.MovePosition;
+import org.squirrelsql.aliases.RelativeNodePosition;
 
 public class DndDragPositionMarker<T>
 {
@@ -195,19 +195,19 @@ public class DndDragPositionMarker<T>
    }
 
 
-   public MovePosition getMovePosition()
+   public RelativeNodePosition getMovePosition()
    {
       if(_accessor.getChildrenModifiable().contains(_upperLinePath))
       {
-         return MovePosition.UPPER_SIBLING;
+         return RelativeNodePosition.UPPER_SIBLING;
       }
       else if(_accessor.getChildrenModifiable().contains(_lowerLinePath))
       {
-         return MovePosition.LOWER_SIBLING;
+         return RelativeNodePosition.LOWER_SIBLING;
       }
       else
       {
-         return MovePosition.CHILD;
+         return RelativeNodePosition.CHILD;
       }
    }
 }
