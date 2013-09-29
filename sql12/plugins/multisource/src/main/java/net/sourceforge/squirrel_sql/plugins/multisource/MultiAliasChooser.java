@@ -36,15 +36,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 /**
  * A dialog that allows a user to select an existing alias to add to the virtualization.
  */
-public class MultiAliasChooser extends JDialog {
+public class MultiAliasChooser extends JDialog 
+{	
 	private static final long serialVersionUID = 1L;
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MultiAliasChooser.class);
 
 	private ExtractStatusWrapper _statusWrapper;
-	
-	@SuppressWarnings("rawtypes")
+		
 	private JComboBox _aliasCbx;
 	private JTextField _nameTxt;
 	private JTextField _schemaTxt;
@@ -75,7 +75,7 @@ public class MultiAliasChooser extends JDialog {
 	private JLabel _countLbl;
 	private JLabel _lastMessageLbl;
 	private JLabel _messageLbl;
-	private JComboBox<String> _statsCbx;
+	private JComboBox _statsCbx;
 	
 	private JTextArea txtMessages;
 	private JButton btnExit, btnAdd;
@@ -104,8 +104,7 @@ public class MultiAliasChooser extends JDialog {
 
 	/**
 	 * Builds the components of the dialog.
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	 */	
 	private void createUserInterface() {
 		FlowLayout flowLayout2 = new FlowLayout();
 		flowLayout2.setAlignment(java.awt.FlowLayout.LEFT);
@@ -215,10 +214,10 @@ public class MultiAliasChooser extends JDialog {
 		tlbl.setFont(labelFont);
 		tmp.add(tlbl);
 		
-		this._statsCbx = new JComboBox<String>();
+		this._statsCbx = new JComboBox();
 		this._statsCbx.setLocation(130, 3);
 		this._statsCbx.setSize(100, 19);
-		this._statsCbx.setModel(new DefaultComboBoxModel<String>(new String[] {"None", "Row Counts", "All"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		this._statsCbx.setModel(new DefaultComboBoxModel(new String[] {"None", "Row Counts", "All"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		this._statsCbx.setSelectedIndex(1);
 		tmp.add(this._statsCbx);
 		rightAddPanel.add(tmp);
