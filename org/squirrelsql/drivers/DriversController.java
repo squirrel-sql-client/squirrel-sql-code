@@ -46,6 +46,14 @@ public class DriversController
          _lstDrivers.getSelectionModel().select(0);
       }
 
+      AppState.get().addApplicationCloseListener(this::onApplicationClosing);
+
+
+   }
+
+   private void onApplicationClosing()
+   {
+      writeDrivers();
    }
 
    private BorderPane createToolBar()
@@ -76,7 +84,7 @@ public class DriversController
          _lstDrivers.getSelectionModel().select(newDriver);
          _lstDrivers.scrollTo(_lstDrivers.getItems().size() - 1);
 
-         Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
+         writeDrivers();
       }
    }
 
@@ -115,7 +123,7 @@ public class DriversController
          if(FXMessageBox.YES.equals(opt))
          {
             _lstDrivers.getItems().remove(selectedItem);
-            Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
+            writeDrivers();
          }
       }
    }
@@ -145,10 +153,15 @@ public class DriversController
       if(driverEditCtrl.isOk())
       {
          selectedDriver.update(driverEditCtrl.getDriver());
-         Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
+         writeDrivers();
 
          _lstDrivers.getItems().set(selectedIndex, selectedDriver);
       }
+   }
+
+   private void writeDrivers()
+   {
+      Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
    }
 
    public Node getNode()
