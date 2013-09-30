@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+Upgraded to the latest RSyntax version (2.5.0 / 3).
+
 Added MongoDB driver to default driver list.
 
 

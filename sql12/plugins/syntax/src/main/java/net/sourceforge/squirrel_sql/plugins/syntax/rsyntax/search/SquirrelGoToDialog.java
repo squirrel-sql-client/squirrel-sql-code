@@ -29,7 +29,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.fife.ui.EscapableDialog;
-import org.fife.ui.RButton;
+import org.fife.ui.RColorButton;
 import org.fife.ui.ResizableFrameContentPane;
 
 import javax.swing.*;
@@ -126,9 +126,9 @@ public class SquirrelGoToDialog extends EscapableDialog
 
    }
 
-   public static final RButton createRButton(String textKey, String mnemonicKey)
+   public static final JButton createRButton(String textKey, String mnemonicKey)
    {
-      RButton b = new RButton(textKey);
+      JButton b = new JButton(textKey);
       b.setMnemonic((int) mnemonicKey.charAt(0));
       return b;
    }

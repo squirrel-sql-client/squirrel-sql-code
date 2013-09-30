@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import org.fife.ui.search.ReplaceDialog;
+
+import org.fife.rsta.ui.search.ReplaceDialog;
 
 import javax.swing.*;
 import java.awt.*;

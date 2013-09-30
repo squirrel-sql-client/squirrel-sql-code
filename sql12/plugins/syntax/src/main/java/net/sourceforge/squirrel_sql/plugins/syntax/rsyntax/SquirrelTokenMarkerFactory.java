@@ -34,4 +34,9 @@ public class SquirrelTokenMarkerFactory extends AbstractTokenMakerFactory implem
       return _squirrelTokenMarker;
    }
 
+   @Override
+   protected void initTokenMakerMap()
+   {
+      super.putMapping(SYNTAX_STYLE_SQL, "fw.SquirrelTokenMarker");
+   }
 }

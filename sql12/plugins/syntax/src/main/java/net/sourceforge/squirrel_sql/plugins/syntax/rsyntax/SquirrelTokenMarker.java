@@ -5,7 +5,7 @@ import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 
 public class SquirrelTokenMarker extends SquirrelTokenMakerBase
 {
-   private static int _curTokenArrayIndex =Token.NUM_TOKEN_TYPES;
+   private static int _curTokenArrayIndex =Token.DEFAULT_NUM_TOKEN_TYPES;
 
    public static final int TOKEN_IDENTIFIER_TABLE = _curTokenArrayIndex++;
    public static final int TOKEN_IDENTIFIER_DATA_TYPE = _curTokenArrayIndex++;

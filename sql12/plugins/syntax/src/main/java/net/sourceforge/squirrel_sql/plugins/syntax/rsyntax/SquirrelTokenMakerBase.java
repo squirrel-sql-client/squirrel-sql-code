@@ -370,7 +370,7 @@ public class SquirrelTokenMakerBase extends AbstractJFlexTokenMaker {
 			return yylex();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			return new DefaultToken();
+			return currentToken;
 		}
 
 	}

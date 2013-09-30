@@ -1,21 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Style;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.lang.reflect.Field;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 
 public class SquirrelSyntaxScheme extends SyntaxScheme
 {
@@ -28,7 +23,7 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
    {
       super.restoreDefaults(fontInfo.createFont());
       Style[] stylesBuf = new Style[SquirrelTokenMarker.getNumTokenTypes()];
-      System.arraycopy(styles, 0, stylesBuf, 0, styles.length);
+      System.arraycopy(super.getStyles(), 0, stylesBuf, 0, super.getStyles().length);
 
       StyleContext sc = StyleContext.getDefaultStyleContext();
 
@@ -61,7 +56,7 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       stylesBuf[Token.ERROR_NUMBER_FORMAT] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
       stylesBuf[Token.ERROR_STRING_DOUBLE] = createRSyntaxStyle(prefs.getErrorStyle(), boldFont, italicFont);
 
-      styles = stylesBuf;
+      super.setStyles(stylesBuf);
    }
 
    private Style createRSyntaxStyle(SyntaxStyle squirrelStyle, Font boldFont, Font italicFont)
@@ -82,26 +77,6 @@ public class SquirrelSyntaxScheme extends SyntaxScheme
       }
 
       return style;
-   }
-
-
-
-
-   public Object clone()
-   {
-      SyntaxScheme shcs = null;
-      shcs = (SyntaxScheme) super.clone();
-
-      shcs.styles = new Style[SquirrelTokenMarker.getNumTokenTypes()];
-      for (int i = 0; i < SquirrelTokenMarker.getNumTokenTypes(); i++)
-      {
-         Style s = styles[i];
-         if (s != null)
-         {
-            shcs.styles[i] = (Style) s.clone();
-         }
-      }
-      return shcs;
    }
 
 }

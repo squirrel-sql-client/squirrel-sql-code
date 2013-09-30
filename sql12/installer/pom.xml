@@ -98,6 +98,7 @@
 									<includedArtifact>axis:axis-wsdl4j</includedArtifact>
 									<includedArtifact>cglib:cglib</includedArtifact>
 									<includedArtifact>com.fifesoft.rtext:common</includedArtifact>
+									<includedArtifact>com.fifesoft:rstaui</includedArtifact>
 									<includedArtifact>commons-cli:commons-cli</includedArtifact>
 									<includedArtifact>commons-codec:commons-codec</includedArtifact>
 									<includedArtifact>commons-collections:commons-collections</includedArtifact>

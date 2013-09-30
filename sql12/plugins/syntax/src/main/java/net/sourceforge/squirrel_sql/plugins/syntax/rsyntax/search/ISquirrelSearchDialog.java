@@ -8,7 +8,8 @@ import java.util.Vector;
 
 public interface ISquirrelSearchDialog
 {
-   void setSearchParameters(Vector findComboBoxStrings, boolean matchCase, boolean wholeWord, boolean regExp, boolean searchUp, boolean markAll);
+   //void setSearchParameters(Vector findComboBoxStrings, boolean matchCase, boolean wholeWord, boolean regExp, boolean searchUp, boolean markAll);
+   //public void setSearchContext(org.fife.rsta.ui.search.SearchDialogSearchContext context);
 
    void setSearchString(String selectedText);
 

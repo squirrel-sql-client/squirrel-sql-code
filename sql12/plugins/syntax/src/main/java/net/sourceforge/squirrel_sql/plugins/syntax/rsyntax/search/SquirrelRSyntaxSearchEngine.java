@@ -5,7 +5,9 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
+import org.fife.rsta.ui.search.SearchDialogSearchContext;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -102,7 +104,11 @@ public class SquirrelRSyntaxSearchEngine
          comboBoxStrings.add(_lastSearchString);
       }
 
-      (_dialog).setSearchParameters(comboBoxStrings, false, false, false, false, false);
+//      SearchDialogSearchContext sdsc = new SearchDialogSearchContext();
+//      (_dialog).setSearchContext(sdsc);
+//
+//      (_dialog).setSearchParameters(comboBoxStrings, false, false, false, false, false);
+
 
       String selectedText = _squirrelRSyntaxTextArea.getSelectedText();
 
@@ -129,9 +135,21 @@ public class SquirrelRSyntaxSearchEngine
    {
       _lastSearchString = _dialog.getSearchString();
 
-      int count = SearchEngine.replaceAll(_squirrelRSyntaxTextArea, _lastSearchString,
-                  _dialog.getReplaceString(),
-                  _dialog.isMatchCase(), _dialog.isWholeWord(), _dialog.isRegExp());
+      SearchContext sc = new SearchContext(_lastSearchString);
+      sc.setWholeWord(_dialog.isWholeWord());
+      sc.setMatchCase(_dialog.isMatchCase());
+      sc.setRegularExpression(_dialog.isRegExp());
+      sc.setReplaceWith(_dialog.getReplaceString());
+
+      int count = SearchEngine.replaceAll(_squirrelRSyntaxTextArea, sc);
+
+//      int count = SearchEngine.replaceAll(
+//            _squirrelRSyntaxTextArea,
+//            _lastSearchString,
+//            _dialog.getReplaceString(),
+//            _dialog.isMatchCase(),
+//            _dialog.isWholeWord(),
+//            _dialog.isRegExp());
 
 
       if (_dialog.isMarkAll() && null != _dialog.getReplaceString() && 0 < _dialog.getReplaceString().length())
@@ -149,14 +167,23 @@ public class SquirrelRSyntaxSearchEngine
 
          _lastSearchString = _dialog.getSearchString();
 
-         boolean found = SearchEngine.replace(
-            _squirrelRSyntaxTextArea,
-            _lastSearchString,
-            _dialog.getReplaceString(),
-            !_dialog.isSearchUp(),
-            _dialog.isMatchCase(),
-            _dialog.isWholeWord(),
-            _dialog.isRegExp());
+         SearchContext sc = new SearchContext(_lastSearchString);
+         sc.setWholeWord(_dialog.isWholeWord());
+         sc.setMatchCase(_dialog.isMatchCase());
+         sc.setRegularExpression(_dialog.isRegExp());
+         sc.setReplaceWith(_dialog.getReplaceString());
+
+         boolean found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc);
+
+
+//         boolean found = SearchEngine.replace(
+//            _squirrelRSyntaxTextArea,
+//            _lastSearchString,
+//            _dialog.getReplaceString(),
+//            !_dialog.isSearchUp(),
+//            _dialog.isMatchCase(),
+//            _dialog.isWholeWord(),
+//            _dialog.isRegExp());
 
          if (_dialog.isMarkAll() && null != _dialog.getReplaceString() && 0 < _dialog.getReplaceString().length())
          {
@@ -178,14 +205,18 @@ public class SquirrelRSyntaxSearchEngine
                   _squirrelRSyntaxTextArea.setCaretPosition(0);
                }
 
-               found = SearchEngine.replace(
-                  _squirrelRSyntaxTextArea,
-                  _lastSearchString,
-                  _dialog.getReplaceString(),
-                  !_dialog.isSearchUp(),
-                  _dialog.isMatchCase(),
-                  _dialog.isWholeWord(),
-                  _dialog.isRegExp());
+
+               found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc);
+
+
+//               found = SearchEngine.replace(
+//                  _squirrelRSyntaxTextArea,
+//                  _lastSearchString,
+//                  _dialog.getReplaceString(),
+//                  !_dialog.isSearchUp(),
+//                  _dialog.isMatchCase(),
+//                  _dialog.isWholeWord(),
+//                  _dialog.isRegExp());
 
                if (_dialog.isMarkAll() && null != _dialog.getReplaceString() && 0 < _dialog.getReplaceString().length())
                {
@@ -267,14 +298,21 @@ public class SquirrelRSyntaxSearchEngine
                _dialog.isRegExp());
          }
 
+         SearchContext sc = new SearchContext(_lastSearchString);
+         sc.setWholeWord(_dialog.isWholeWord());
+         sc.setMatchCase(_dialog.isMatchCase());
+         sc.setRegularExpression(_dialog.isRegExp());
 
-         boolean found = SearchEngine.find(
-            _squirrelRSyntaxTextArea,
-            _lastSearchString,
-            !_dialog.isSearchUp(),
-            _dialog.isMatchCase(),
-            _dialog.isWholeWord(),
-            _dialog.isRegExp());
+         boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+
+
+//         boolean found = SearchEngine.find(
+//            _squirrelRSyntaxTextArea,
+//            _lastSearchString,
+//            !_dialog.isSearchUp(),
+//            _dialog.isMatchCase(),
+//            _dialog.isWholeWord(),
+//            _dialog.isRegExp());
 
          if(false == found)
          {
@@ -290,13 +328,16 @@ public class SquirrelRSyntaxSearchEngine
                   _squirrelRSyntaxTextArea.setCaretPosition(0);
                }
 
-               found = SearchEngine.find(
-                  _squirrelRSyntaxTextArea,
-                  _lastSearchString,
-                  !_dialog.isSearchUp(),
-                  _dialog.isMatchCase(),
-                  _dialog.isWholeWord(),
-                  _dialog.isRegExp());
+               found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+
+
+//               found = SearchEngine.find(
+//                  _squirrelRSyntaxTextArea,
+//                  _lastSearchString,
+//                  !_dialog.isSearchUp(),
+//                  _dialog.isMatchCase(),
+//                  _dialog.isWholeWord(),
+//                  _dialog.isRegExp());
 
                if(false == found)
                {
@@ -342,14 +383,23 @@ public class SquirrelRSyntaxSearchEngine
    private void _repeatLastFind(SearchDialogState searchDialogState)
    {
 
-      boolean found =
-         SearchEngine.find(
-            _squirrelRSyntaxTextArea,
-            _lastSearchString,
-            !searchDialogState.isSearchUp(),
-            searchDialogState.isMatchCase(),
-            searchDialogState.isWholeWord(),
-            searchDialogState.isRegExp());
+      SearchContext sc = new SearchContext(_lastSearchString);
+      sc.setSearchForward(!searchDialogState.isSearchUp());
+      sc.setMatchCase(searchDialogState.isMatchCase());
+      sc.setWholeWord(searchDialogState.isWholeWord());
+      sc.setRegularExpression(searchDialogState.isRegExp());
+
+      boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+
+
+//      boolean found =
+//         SearchEngine.find(
+//            _squirrelRSyntaxTextArea,
+//            _lastSearchString,
+//            !searchDialogState.isSearchUp(),
+//            searchDialogState.isMatchCase(),
+//            searchDialogState.isWholeWord(),
+//            searchDialogState.isRegExp());
 
       if(false == found)
       {
@@ -363,13 +413,7 @@ public class SquirrelRSyntaxSearchEngine
             _squirrelRSyntaxTextArea.setCaretPosition(0);
          }
 
-         found = SearchEngine.find(
-            _squirrelRSyntaxTextArea,
-            _lastSearchString,
-            !searchDialogState.isSearchUp(),
-            searchDialogState.isMatchCase(),
-            searchDialogState.isWholeWord(),
-            searchDialogState.isRegExp());
+         found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
 
          if(false == found)
          {
