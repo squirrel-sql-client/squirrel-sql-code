@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+1.0
+===
+- Plugin now has interface for controlling tables extracted by catalog, schema, and table name (inclusion/exclusion patterns).
+- Interface shows extraction progress and processing performed.
+- Support for latest Unity virtualization driver including support for subqueries.
+- Support for Microsoft SQL Server integrated authentication.
+- Support for MongoDB.  A JDBC driver for MongoDB is built-in to the Unity virtualization driver and can be used to query MongoDB with SQL with or without using virtualization.
+- Encrypted connection and schema information supported by supplying a user id and password when building and using an virtualization alias.
+
 0.1
 ===
 - Initial release
+- Support for cross-database queries and joins for relational databases such as MySQL, Oracle, Microsoft SQL Server, PostgreSQL.
+

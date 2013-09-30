@@ -45,11 +45,7 @@ public class MultiAddSourceAction extends SquirrelAction {
 				// Must have at least one alias source defined
 				// Put up window to select an alias
 				MultiAliasChooser dialog = new MultiAliasChooser(this._app, _session, aliasList);
-				ISQLAlias selected = dialog.showDialog();
-				if (selected != null) { 
-					// Added a source. Update object tree information
-					MultiSourcePlugin.updateSession(_session);
-				}
+				dialog.showDialog();
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

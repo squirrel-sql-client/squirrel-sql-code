@@ -2,14 +2,19 @@ package net.sourceforge.squirrel_sql.plugins.multisource;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -26,16 +31,19 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.FileWrapper;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 /**
- * MultiSourcePlugin allows a user to query multiple databases with one query.
+ * MultiSourcePlugin allows a user to query multiple databases with one SQL query.
  */
 public class MultiSourcePlugin extends DefaultSessionPlugin
 {
 	private PluginResources _resources;
 	private static FileWrapper _userSettingsFolder;
 	private static boolean isTrial;
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MultiSourcePlugin.class);
 	
 	/**
 	 * Return the internal name of this plugin.
@@ -64,7 +72,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.1";
+		return "1.0";
 	}
 
 	/**
@@ -115,7 +123,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	 */
 	public String getContributors()
 	{
-		return "";
+		return "Michael Henderson";
 	}
 
 	/**
@@ -153,7 +161,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	{
 		String dbName = null;
 
-		// Determine if this is a Unity session.
+		// Determine if this is a Unity multisource session.
 		try
 		{
 			if (session != null)
@@ -162,37 +170,67 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 		catch (SQLException e) {}
 
 		if (dbName != null && dbName.contains("unity"))
-		{	// Add new popup menu options for a Unity session
-			addTreeNodeMenuActions(session);		
-					
+		{								
 			IMessageHandler messageHandler = session.getApplication().getMessageHandler();
 			MultiSqlExecutionListener sqlExecutionListener = new MultiSqlExecutionListener(messageHandler);
 			
 			session.getSessionSheet().getSQLPaneAPI().addSQLExecutionListener(sqlExecutionListener);
-			
 			// Load session configuration information if URL says virtual
 			if (session.getAlias() != null) {
 				isTrial = MultiSourcePlugin.isTrial(session.getSQLConnection().getConnection());
 				String url = session.getAlias().getUrl();
 				if (url.toLowerCase().indexOf("/virtual") > 0) {	
-					// Try to load based on session name
-					
+					// Try to load based on session name					
 					Object schema = MultiSourcePlugin.getSchema(session.getSQLConnection().getConnection());		// Retrieve schema
-					if (schema != null) {
+					String filePath = getSourceFilePath(session);
+					File file = new File(filePath);
+
+					boolean loaded = true;
+
+					// Load virtualization schema information from configuration files
+					// When connection is first made with jdbc:unity://virtual there will be no schema information in the connection.
+					// This code loads the schema information from the SQuirreL folder for the connection that stores the XML files (perhaps encrypted) with the required information.
+					if (schema != null && file.exists()) {
 						try {
-							Method parseSourcesMethod = schema.getClass().getMethod("parseSourcesFile", new Class[]{java.io.BufferedReader.class, java.lang.String.class});
-							String filePath = getSourceFilePath(session);
-							BufferedReader reader = new BufferedReader(new FileReader(filePath));
-							parseSourcesMethod.invoke(schema, new Object[]{reader, "jdbc:unity://"+filePath});
-							// TODO: Not sure why these two lines below do not work.
-							// IObjectTreeAPI otree = session.getSessionInternalFrame().getObjectTreeAPI();
-							// otree.refreshTree();
-							new UpdateThread(session).run();	// A poor solution to force the object tree to update after a slight delay
+							// Get method that loads sources file
+							Method parseSourcesMethod = schema.getClass().getMethod("parseSourcesFile", new Class[]{java.io.BufferedReader.class, java.lang.String.class, java.util.Properties.class});
+							
+							// Get password from SQuirreL connection information as password (if present) is used to encrypt source and schema files
+							String password = session.getAlias().getPassword();
+							Properties info = new Properties();
+							
+							BufferedReader reader = null;
+							if (password != null && password.length() > 0) {								
+								info.setProperty("password", password);
+								ClassLoader loader = session.getSQLConnection().getConnection().getClass().getClassLoader();
+								Class<?> fileManagerClass = Class.forName("unity.io.FileManager", true, loader);
+								
+								// If password is present, setup method to decrypt input stream
+								Method getDecryptedStreamMethod = fileManagerClass.getMethod("getDecryptedStream", new Class[] {java.lang.String.class, java.lang.String.class, java.util.Properties.class});
+								Properties prop = new Properties();
+								
+								InputStream is = (InputStream)getDecryptedStreamMethod.invoke(null, new Object[] {filePath, password, prop});
+								reader = new BufferedReader(new InputStreamReader(is));
+							} else {
+								reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charset.forName("UTF-8")));
+							}
+							
+							// Parse the sources file (list of sources in the virtualization)
+							parseSourcesMethod.invoke(schema, new Object[]{reader, "jdbc:unity://"+filePath, info});
+							
+							new UpdateThread(session).start();	// A poor solution to force the object tree to update after a slight delay
 						}
 						catch (Exception e) {
+							JOptionPane.showMessageDialog(null, s_stringMgr.getString("MultiSourcePlugin.loadFailed"));
 							System.out.println(e);
+							loaded = false;
 						}
 					}
+					
+					if (loaded) {
+						// Add new popup menu options for a Unity session
+						addTreeNodeMenuActions(session);
+					}						
 				}
 			}
 		}
@@ -211,18 +249,25 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	    }
 		
 	    public void run() {
-	    	try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
+	    	try 
+	    	{
+				Thread.sleep(1000);
+			} 
+	    	catch (InterruptedException e) 
+	    	{	/* Exception ignored */
 			}
-	    	refreshTree(session);
+	    	
+	    	session.getSessionSheet().getObjectTreePanel().refreshTree(true);
 	    }
 	}
 	
 	/**
 	 * Returns the complete file path of the virtualization configuration file for the session.
-	 * @param session
+	 * 
+	 * @param session 
+	 * 		SQuirreL session
 	 * @return
+	 * 		path to sources file for the session
 	 */
 	private static String getSourceFilePath(ISession session)
 	{
@@ -233,7 +278,9 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
 	/**
 	 * Adds virtualization menu items to the popup menu for the object tree.
+	 * 
 	 * @param session
+	 * 		SQuirreL session
 	 */
 	private void addTreeNodeMenuActions(ISession session)
 	{
@@ -245,11 +292,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 			otApi.addToPopup(DatabaseObjectType.SESSION, new MultiAddSourceAction(app, _resources, session));
 			otApi.addToPopup(DatabaseObjectType.SESSION, new MultiExportAction(app, _resources, session));
 			otApi.addToPopup(DatabaseObjectType.SCHEMA, new MultiRemoveSourceAction(app, _resources, session));
-			// otApi.addToPopup(DatabaseObjectType.SCHEMA, new MultiRenameSourceAction(app, _resources, session));
 			otApi.addToPopup(DatabaseObjectType.TABLE, new MultiRemoveTableAction(app, _resources, session));
-			// otApi.addToPopup(DatabaseObjectType.TABLE, new MultiRenameTableAction(app, _resources, session));
-			otApi.addToPopup(DatabaseObjectType.COLUMN, new MultiRemoveFieldAction(app, _resources, session));
-			// otApi.addToPopup(DatabaseObjectType.COLUMN, new MultiRenameFieldAction(app, _resources, session));
 		}
 		catch (Exception e)
 		{
@@ -258,27 +301,41 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 	}
 
 	/**
-	 * Gets the virtual schema from the connection using reflections.
+	 * Gets the virtual schema from the connection using reflection.
+	 * 
 	 * @param con
+	 * 		JDBC connection
 	 * @return
+	 * 		GlobalSchema for virtual connection
 	 */
 	public static Object getSchema(Connection con)
 	{
 		Class<? extends Connection> cls = con.getClass();
 
         Object retobj;
-		try {
-			Method meth = cls.getMethod("getSchema", (Class[])  null);
+		try 
+		{
+			Method meth = cls.getMethod("getGlobalSchema", (Class[])  null);
 			retobj = meth.invoke(con, (Object[]) null);
-		} catch (IllegalArgumentException e) {
+		} 
+		catch (IllegalArgumentException e) 
+		{
 			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
+		} 
+		catch (IllegalAccessException e) 
+		{
 			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
+		} 
+		catch (InvocationTargetException e) 
+		{
 			throw new RuntimeException(e);
-		} catch (SecurityException e) {
+		} 
+		catch (SecurityException e) 
+		{
 			throw new RuntimeException(e);
-		} catch (NoSuchMethodException e) {
+		} 
+		catch (NoSuchMethodException e) 
+		{
 			throw new RuntimeException(e);
 		}
 		return retobj;
@@ -286,8 +343,11 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
 	/**
 	 * Returns true if virtualization driver is run in trial mode.
+	 * 
 	 * @param con
+	 * 		JDBC connection
 	 * @return
+	 * 		true if trial (limited) mode, false otherwise
 	 */
 	public static boolean isTrial(Connection con)
 	{
@@ -295,6 +355,7 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
         Object retobj;
 		try {
+			// Trial mode depends on the underlying UnityJDBC driver
 			Method meth = cls.getMethod("isTrial", (Class[])  null);
 			retobj = meth.invoke(con, (Object[]) null);
 			return ((Boolean) retobj).booleanValue();
@@ -311,12 +372,20 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 		}		
 	}
 	
+	/**
+	 * Returns true if virtualization driver is run in trial mode.
+	 * 	
+	 * @return
+	 * 		true if trial (limited) mode, false otherwise
+	 */
 	public static boolean isTrial()
 	{	return isTrial; }
 	
 	/**
 	 * Updates any session information including virtualization configuration files.
+	 * 
 	 * @param session
+	 * 		SQuirreL session
 	 */
 	public static void updateSession(ISession session)
 	{	// Saves session information in user settings directory
@@ -326,7 +395,9 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
 	/**
 	 * Refreshes object tree.  Used when virtual schema changes (e.g. adding a source).
+	 * 
 	 * @param session
+	 * 		SQuirreL session
 	 */
 	public static void refreshTree(ISession session)
 	{
@@ -337,8 +408,11 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 
 	/**
 	 * Saves the virtualization configuration file to disk in a given file location.
+	 * 
 	 * @param sourcesFileName
+	 * 		file name for sources file
 	 * @param session
+	 * 		SQuirreL session
 	 */
 	public static void export(String sourcesFileName, ISession session) {
 		File f = new File(sourcesFileName);
@@ -363,40 +437,40 @@ public class MultiSourcePlugin extends DefaultSessionPlugin
 		
 		try {
 			// Each source schema file is prefixed with sources file name (no extension) plus source name.
-			// Export schema files of each source first as each file location is needed in the sources file listing all sources.
-			Method exportSourceMethod = schema.getClass().getMethod("exportSchema", new Class[] { java.lang.String.class });
+			// Export schema files of each source first as each file location is needed in the sources file listing all sources.			
+			String password = session.getAlias().getPassword();
+			if (password != null && password.length() < 1) {
+				// No encryption of files if a password is not specified (including empty-string password)
+				password = null;
+			}
+			
+			// Retrieve list of all databases (sources)
 			Method getDBsMethod = schema.getClass().getMethod("getAnnotatedDatabases", (Class[]) null);
 			@SuppressWarnings("unchecked")
 			ArrayList<Object> dbs = (ArrayList<Object>) getDBsMethod.invoke(schema, (Object[]) null);
 			for (int i = 0; i < dbs.size(); i++) {
 				Object db = dbs.get(i);
+				
+				// Export each source to its own XML file
+				Method sdExportMethod = db.getClass().getMethod("export", new Class[] {java.io.OutputStream.class, java.lang.String.class});
 				Method getDBNameMethod = db.getClass().getMethod("getDatabaseName", (Class[]) null);
+				
 				Method setDBSchemaMethod = db.getClass().getMethod("setSchemaFile", new Class[] { java.lang.String.class });
 				String dbName = (String) getDBNameMethod.invoke(db, (Object[]) null);
 				String fileName = sourcesNoExt + "_" + dbName + ".xml";
 				setDBSchemaMethod.invoke(db, new Object[] { fileName });
-				String source = (String) exportSourceMethod.invoke(schema, new Object[] { dbName });
-				writeToFile(path + fileName, source);
+				FileOutputStream fos = new FileOutputStream(path + fileName);
+				sdExportMethod.invoke(db, new Object[]{fos,password});
+				fos.close();
 			}
 
 			// Write out sources file
-			Method exportSourcesMethod = schema.getClass().getMethod("exportSources", (Class[]) null);
-			String sources = (String) exportSourcesMethod.invoke(schema, (Object[]) null);
-			writeToFile(path + sourcesFileName, sources);
+			Method gsExportMethod = schema.getClass().getMethod("export", new Class[] {java.io.OutputStream.class, java.lang.String.class});
+			FileOutputStream fos = new FileOutputStream(path + sourcesFileName);
+			gsExportMethod.invoke(schema, new Object[]{fos, password});
+			fos.close();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	/**
-	 * Writes to a given fileName the string contents.  Note: The file is over-written if it previously exists.
-	 * @param fileName
-	 * @param contents
-	 */
-	private static void writeToFile(String fileName, String contents) throws IOException
-	{
-		PrintWriter io = new PrintWriter(fileName);
-		io.print(contents);
-		io.close();
 	}
 }
