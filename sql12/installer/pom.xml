@@ -198,7 +198,8 @@
 				<module>squirrelsql-launcher</module>
 				<module>squirrelsql-other-installer</module>
 				<module>squirrelsql-macosx-installer</module>
-				<module>squirrelsql-source</module>
+				<!-- Source excluded until it is modified to work with git. -->
+				<!-- <module>squirrelsql-source</module> -->
 				<module>squirrelsql-installer-deps</module>
 				<module>squirrelsql-update-site</module>
 			</modules>
