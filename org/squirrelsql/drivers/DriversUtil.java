@@ -1,6 +1,7 @@
 package org.squirrelsql.drivers;
 
 import com.google.common.base.Strings;
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -51,5 +52,23 @@ public class DriversUtil
       }
 
       return checkDriverLoading(sqlDriver.getJarFileNamesList(), sqlDriver.getDriverClassName());
+   }
+
+   public static SQLDriver findDriver(String driverId)
+   {
+      return findDriver(driverId, new DriversManager().getDrivers(false));
+   }
+
+   public static SQLDriver findDriver(String driverId, ObservableList<SQLDriver> drivers)
+   {
+      for (SQLDriver driver : drivers)
+      {
+         if(driver.getId().equals(driverId))
+         {
+            return driver;
+         }
+      }
+
+      return null;
    }
 }

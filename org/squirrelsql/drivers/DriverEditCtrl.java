@@ -54,7 +54,7 @@ public class DriverEditCtrl
 
       initListeners();
 
-      _dialog = ProgressUtil.makeProgressible(new Stage());
+      _dialog = ProgressUtil.makeProgressible(new Stage(), false);
       _dialog.getStage().initModality(Modality.WINDOW_MODAL);
       _dialog.getStage().setTitle(title);
       _dialog.getStage().initOwner(AppState.get().getPrimaryStage());

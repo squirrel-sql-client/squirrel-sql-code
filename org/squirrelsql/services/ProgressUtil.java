@@ -35,7 +35,7 @@ public class ProgressUtil
 
       service.setOnFailed(workerStateEvent -> onHandleException(concurrentTask));
 
-      service.setOnCancelled(workerStateEvent -> {throw new UnsupportedOperationException("NYI");});
+      service.setOnCancelled(workerStateEvent -> ((CancelableProgressTask)pt).cancel());
 
 
       if(false == stage.getScene().getRoot() instanceof StackPane)
@@ -59,6 +59,16 @@ public class ProgressUtil
          else if(node instanceof ProgressRegion)
          {
             veil = (ProgressRegion) node;
+
+            if(veil.isCancelable())
+            {
+               if(false == pt instanceof CancelableProgressTask)
+               {
+                  throw new IllegalArgumentException("The progress window is cancelable. Please provide a CancelableProgressTask.");
+               }
+
+               veil.getCancelButton().setOnAction(e -> service.cancel());
+            }
          }
          else
          {
@@ -104,9 +114,9 @@ public class ProgressUtil
       throw new RuntimeException(t);
    }
 
-   public static ProgressibleStage makeProgressible(Stage stage)
+   public static ProgressibleStage makeProgressible(Stage stage, boolean cancelable)
    {
-      return new ProgressibleStage(stage);
+      return new ProgressibleStage(stage, cancelable);
    }
 
 }

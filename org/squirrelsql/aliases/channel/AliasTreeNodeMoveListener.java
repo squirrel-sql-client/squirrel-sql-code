@@ -7,4 +7,6 @@ import org.squirrelsql.aliases.RelativeNodePosition;
 public interface AliasTreeNodeMoveListener
 {
    void moveNodeRequest(TreeItem<AliasTreeNode> itemToMoveTo, TreeItem<AliasTreeNode> itemToMove, RelativeNodePosition relativeNodePosition);
+
+   void doubleClicked(TreeItem<AliasTreeNode> selectedItem);
 }

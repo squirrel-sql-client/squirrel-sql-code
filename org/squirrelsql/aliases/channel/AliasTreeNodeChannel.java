@@ -42,4 +42,9 @@ public class AliasTreeNodeChannel
    {
       _aliasTreeNodeMoveListener.moveNodeRequest(itemToMoveTo, itemToMove, relativeNodePosition);
    }
+
+   public void doubleClicked(TreeItem<AliasTreeNode> selectedItem)
+   {
+      _aliasTreeNodeMoveListener.doubleClicked(selectedItem);
+   }
 }

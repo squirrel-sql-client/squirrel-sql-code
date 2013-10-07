@@ -15,16 +15,20 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
+import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
+import org.squirrelsql.aliases.dbconnector.DBConnector;
+import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
 import org.squirrelsql.services.*;
+import org.squirrelsql.session.DbConnectorResult;
 
 import java.util.ArrayList;
 
 public class AliasesController
 {
    private static final String PREF_ALIASES_PINED = "aliases.pinned";
-   private final AliasTreeNodeChannel _aliasTreeNodeChannel = new AliasTreeNodeChannel(this::onMoveNodeRequest);
+   private final AliasTreeNodeChannel _aliasTreeNodeChannel;
 
-   private AliasCutCopyState _aliasCutCopyState = new AliasCutCopyState(_aliasTreeNodeChannel);
+   private AliasCutCopyState _aliasCutCopyState;
    private Props _props = new Props(this.getClass());
    private Pref _prefs = new Pref(this.getClass());
    private I18n _i18n = new I18n(this.getClass());
@@ -37,6 +41,25 @@ public class AliasesController
 
    public AliasesController(DockPaneChanel dockPaneChanel)
    {
+
+      _aliasTreeNodeChannel = new AliasTreeNodeChannel(new AliasTreeNodeMoveListener()
+      {
+         @Override
+         public void moveNodeRequest(TreeItem<AliasTreeNode> itemToMoveTo, TreeItem<AliasTreeNode> itemToMove, RelativeNodePosition relativeNodePosition)
+         {
+            onMoveNodeRequest(itemToMoveTo, itemToMove, relativeNodePosition);
+         }
+
+         @Override
+         public void doubleClicked(TreeItem<AliasTreeNode> selectedItem)
+         {
+            onTreeItemDoubleClicked(selectedItem);
+         }
+      });
+
+      _aliasCutCopyState = new AliasCutCopyState(_aliasTreeNodeChannel);
+
+
       _dockPaneChanel = dockPaneChanel;
 
       _borderPane.setTop(createToolBar());
@@ -70,6 +93,18 @@ public class AliasesController
 
       AppState.get().addApplicationCloseListener(this::onApplicationClosing);
 
+   }
+
+   private void onTreeItemDoubleClicked(TreeItem<AliasTreeNode> selectedItem)
+   {
+      if(selectedItem.getValue() instanceof Alias)
+      {
+         doConnect(selectedItem);
+      }
+      else
+      {
+         editAliasFolder(selectedItem);
+      }
    }
 
    private void onMoveNodeRequest(TreeItem<AliasTreeNode> itemToMoveTo, TreeItem<AliasTreeNode> itemToMove, RelativeNodePosition relativeNodePosition)
@@ -231,24 +266,22 @@ public class AliasesController
 
    private void onCut()
    {
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
-
-      if(null == selectedItem)
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.node.to.cut");
+      if (selectedItem == null)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.cut"));
          return;
       }
+
 
       _aliasCutCopyState.setTreeItemBeingCut(selectedItem);
    }
 
    private void onCopyToClip()
    {
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      if(null == selectedItem)
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.node.to.copy");
+      if (selectedItem == null)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.copy"));
          return;
       }
 
@@ -314,28 +347,16 @@ public class AliasesController
 
    private void onEdit()
    {
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
-
-      if(null == selectedItem)
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.node.to.edit");
+      if (selectedItem == null)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.edit"));
          return;
       }
 
+
       if(selectedItem.getValue() instanceof AliasFolder)
       {
-         AliasFolder af = (AliasFolder) selectedItem.getValue();
-         EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(af.getName());
-
-         String changedFolderName = editFolderNameCtrl.getNewFolderName();
-
-         if(Strings.isNullOrEmpty(changedFolderName))
-         {
-            return;
-         }
-
-         af.setName(changedFolderName);
-         _aliasTreeNodeChannel.fireChanged(selectedItem);
+         editAliasFolder(selectedItem);
       }
       else
       {
@@ -351,15 +372,31 @@ public class AliasesController
       }
    }
 
-   private void onRemove()
+   private void editAliasFolder(TreeItem<AliasTreeNode> selectedItem)
    {
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+      AliasFolder af = (AliasFolder) selectedItem.getValue();
+      EditFolderNameCtrl editFolderNameCtrl = new EditFolderNameCtrl(af.getName());
 
-      if(null == selectedItem)
+      String changedFolderName = editFolderNameCtrl.getNewFolderName();
+
+      if(Strings.isNullOrEmpty(changedFolderName))
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.remove"));
          return;
       }
+
+      af.setName(changedFolderName);
+      _aliasTreeNodeChannel.fireChanged(selectedItem);
+   }
+
+   private void onRemove()
+   {
+
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.node.to.remove");
+      if (selectedItem == null)
+      {
+         return;
+      }
+
 
       if (selectedItem.getValue() instanceof Alias)
       {
@@ -383,11 +420,10 @@ public class AliasesController
 
    private void onCopy()
    {
-      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
 
-      if(null == selectedItem)
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.alias.to.copy");
+      if (selectedItem == null)
       {
-         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.alias.to.copy"));
          return;
       }
 
@@ -448,7 +484,48 @@ public class AliasesController
 
    private void onConnect()
    {
-      //To change body of created methods use File | Settings | File Templates.
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem || false == selectedItem.getValue() instanceof Alias)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliases.select.node.to.connect"));
+         return;
+      }
+
+      doConnect(selectedItem);
+   }
+
+   private void doConnect(TreeItem<AliasTreeNode> selectedItem)
+   {
+      Alias alias = (Alias) selectedItem.getValue();
+
+
+      DBConnector dbConnector = new DBConnector(alias, null);
+
+
+      dbConnector.tryConnect(r -> onTryConnectFinished(r, alias));
+   }
+
+   private void onTryConnectFinished(DbConnectorResult dbConnectorResult, Alias alias)
+   {
+      AppState.get().getSessionFactory().createSession(alias, dbConnectorResult);
+
+      if(false == _btnPinned.isSelected())
+      {
+         _dockPaneChanel.closeAliases();
+      }
+   }
+
+   private TreeItem<AliasTreeNode> getSelectedNodeOrComplain(String complaintMessageKey)
+   {
+      TreeItem<AliasTreeNode> selectedItem = _treeView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t(complaintMessageKey));
+         return null;
+      }
+      return selectedItem;
    }
 
 

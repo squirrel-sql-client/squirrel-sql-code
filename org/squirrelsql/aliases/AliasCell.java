@@ -37,8 +37,25 @@ public class AliasCell extends TreeCell<AliasTreeNode>
          dragPositionMarker.onDragOver(e); onDragOver(e);});
 
       setOnDragDropped(e -> onDragDropped(e, dragPositionMarker));
+
+      setOnMouseClicked(this::onMouseClicked);
+
    }
 
+   private void onMouseClicked(MouseEvent mouseEvent)
+   {
+      if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2)
+      {
+         TreeItem<AliasTreeNode> selectedItem = getTreeItem();
+
+         if(null == selectedItem)
+         {
+            return;
+         }
+
+         _aliasTreeNodeChannel.doubleClicked(selectedItem);
+      }
+   }
 
    private void onDragDropped(DragEvent dragEvent, DndDragPositionMarker<AliasTreeNode> dragPositionMarker)
    {

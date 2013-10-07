@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.squirrelsql.services.PropertiesHandler;
 import org.squirrelsql.services.SquirrelProperty;
+import org.squirrelsql.session.SessionFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class AppState
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
 
    private ArrayList<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
+   private SessionFactory _sessionFactory = new SessionFactory();
 
 
    public static AppState get()
@@ -93,5 +95,10 @@ public class AppState
       {
          applicationCloseListener.applicationClosing();
       }
+   }
+
+   public SessionFactory getSessionFactory()
+   {
+      return _sessionFactory;
    }
 }

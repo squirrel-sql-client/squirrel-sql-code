@@ -9,11 +9,11 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
-import org.squirrelsql.drivers.DriverCell;
-import org.squirrelsql.drivers.DriversFilteredPref;
-import org.squirrelsql.drivers.DriversManager;
-import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.aliases.dbconnector.DBConnector;
+import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
+import org.squirrelsql.drivers.*;
 import org.squirrelsql.services.*;
+import org.squirrelsql.session.DbConnectorResult;
 
 public class AliasEditController
 {
@@ -73,14 +73,14 @@ public class AliasEditController
             title = _i18n.t("title.copy.alias", _alias.getName());
          }
 
-         SQLDriver driver = findDriver(alias.getDriverId(), drivers);
+         SQLDriver driver = DriversUtil.findDriver(alias.getDriverId(), drivers);
 
          if(null == driver)
          {
             drivers = new DriversManager().getDrivers(false);
          }
 
-         driver = findDriver(alias.getDriverId(), drivers);
+         driver = DriversUtil.findDriver(alias.getDriverId(), drivers);
 
          loadOrStore(false, driver);
       }
@@ -114,25 +114,13 @@ public class AliasEditController
       _dialog.showAndWait();
    }
 
-   private SQLDriver findDriver(String driverId, ObservableList<SQLDriver> drivers)
-   {
-      for (SQLDriver driver : drivers)
-      {
-         if(driver.getId().equals(driverId))
-         {
-            return driver;
-         }
-      }
-
-      return null;
-   }
-
    private void initListener()
    {
       _aliasEditView.lnkSetToSampleUrl.setOnAction(e -> onSetSampleURL());
 
       _aliasEditView.btnClose.setOnAction(e -> onClose());
       _aliasEditView.btnOk.setOnAction(e -> onOk());
+      _aliasEditView.btnTest.setOnAction(e -> onTest());
 
       _aliasEditView.chkUserEmpty.setOnAction(this::onAjustUserNullEmpty);
       _aliasEditView.chkUserNull.setOnAction(this::onAjustUserNullEmpty);
@@ -141,6 +129,36 @@ public class AliasEditController
       _aliasEditView.chkPasswordNull.setOnAction(this::onAjustPwdNullEmpty);
 
 
+   }
+
+   private void onTest()
+   {
+      if(validate())
+      {
+         SQLDriver sqlDriver = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
+         Alias buf = new Alias();
+         storeToAlias(buf, sqlDriver);
+
+         DBConnector dbConnector = new DBConnector(_alias, _dialog);
+
+         dbConnector.tryConnect(new DbConnectorListener()
+         {
+            @Override
+            public void finished(DbConnectorResult dbConnectorResult)
+            {
+               onTryConnectFinished(dbConnectorResult);
+            }
+         });
+
+      }
+   }
+
+   private void onTryConnectFinished(DbConnectorResult dbConnectorResult)
+   {
+      if (dbConnectorResult.isConnected())
+      {
+         FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.test.ok"));
+      }
    }
 
    private void onAjustUserNullEmpty(ActionEvent e)
@@ -187,17 +205,32 @@ public class AliasEditController
 
    private void onOk()
    {
+      if (false == validate())
+      {
+         return;
+      }
+
+      SQLDriver sqlDriver = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
+      loadOrStore(true, sqlDriver);
+
+      _ok = true;
+
+      _dialog.close();
+   }
+
+   private boolean validate()
+   {
       if(Utils.isEmptyString(_aliasEditView.txtName.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.name"));
-         return;
+         return false;
       }
 
 
       if(Utils.isEmptyString(_aliasEditView.txtUrl.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.url"));
-         return;
+         return false;
       }
 
 
@@ -206,7 +239,7 @@ public class AliasEditController
          && Utils.isEmptyString(_aliasEditView.txtUserName.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.user"));
-         return;
+         return false;
       }
 
       if(_aliasEditView.chkSavePassword.isSelected()
@@ -215,42 +248,23 @@ public class AliasEditController
          && Utils.isEmptyString(_aliasEditView.txtPassword.getText()))
       {
          FXMessageBox.showInfoOk(_dialog, _i18n.t("alias.edit.no.password"));
-         return;
+         return false;
       }
 
-      SQLDriver sqlDriver = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
-      if(false == sqlDriver.isLoaded() && FXMessageBox.NO.equals(FXMessageBox.showYesNo(_dialog, _i18n.t("alias.edit.driver.not.loaded.continue"))))
+      SQLDriver sqlDriverBuf = _aliasEditView.cboDriver.getSelectionModel().getSelectedItem();
+      if(false == sqlDriverBuf.isLoaded() && FXMessageBox.NO.equals(FXMessageBox.showYesNo(_dialog, _i18n.t("alias.edit.driver.not.loaded.continue"))))
       {
-         return;
+         return false;
       }
 
-      loadOrStore(true, sqlDriver);
-
-      _ok = true;
-
-      _dialog.close();
+      return true;
    }
 
    private void loadOrStore(boolean store, SQLDriver sqlDriver)
    {
       if (store)
       {
-         _alias.setName(_aliasEditView.txtName.getText().trim());
-         _alias.setDriverId(sqlDriver.getId());
-         _alias.setUrl(_aliasEditView.txtUrl.getText().trim());
-
-         _alias.setUserName(_aliasEditView.txtUserName.getText().trim());
-         _alias.setUserNull(_aliasEditView.chkUserNull.isSelected());
-         _alias.setUserEmptyString(_aliasEditView.chkUserEmpty.isSelected());
-
-         _alias.setSavePassword(_aliasEditView.chkSavePassword.isSelected());
-
-         _alias.setPassword(_aliasEditView.txtPassword.getText().trim());
-         _alias.setPasswordNull(_aliasEditView.chkPasswordNull.isSelected());
-         _alias.setPasswordEmptyString(_aliasEditView.chkPasswordEmpty.isSelected());
-
-         _alias.setAutoLogon(_aliasEditView.chkAutoLogon.isSelected());
-         _alias.setConnectAtStartUp(_aliasEditView.chkConnectAtStartUp.isSelected());
+         storeToAlias(_alias, sqlDriver);
       }
       else
       {
@@ -276,6 +290,26 @@ public class AliasEditController
 
 
       }
+   }
+
+   private void storeToAlias(Alias alias, SQLDriver sqlDriver)
+   {
+      alias.setName(_aliasEditView.txtName.getText().trim());
+      alias.setDriverId(sqlDriver.getId());
+      alias.setUrl(_aliasEditView.txtUrl.getText().trim());
+
+      alias.setUserName(_aliasEditView.txtUserName.getText().trim());
+      alias.setUserNull(_aliasEditView.chkUserNull.isSelected());
+      alias.setUserEmptyString(_aliasEditView.chkUserEmpty.isSelected());
+
+      alias.setSavePassword(_aliasEditView.chkSavePassword.isSelected());
+
+      alias.setPassword(_aliasEditView.txtPassword.getText().trim());
+      alias.setPasswordNull(_aliasEditView.chkPasswordNull.isSelected());
+      alias.setPasswordEmptyString(_aliasEditView.chkPasswordEmpty.isSelected());
+
+      alias.setAutoLogon(_aliasEditView.chkAutoLogon.isSelected());
+      alias.setConnectAtStartUp(_aliasEditView.chkConnectAtStartUp.isSelected());
    }
 
    private void onClose()
