@@ -14,9 +14,9 @@
     <TextArea fx:id="txtErrMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="0.0" wrapText="false" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="104.0" />
     <HBox minHeight="16.0" prefHeight="22.0" prefWidth="530.0" spacing="7.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0">
       <children>
-        <Button fx:id="btnClose" mnemonicParsing="false" prefWidth="87.0" text="%connectingto.close" />
-        <Button fx:id="btnRelogin" mnemonicParsing="false" prefWidth="100.0" text="%connectingto.relogin" />
-        <Button fx:id="btnEditAlias" mnemonicParsing="false" prefWidth="82.00009999999747" text="%connectingto.editAlias" />
+        <Button fx:id="btnClose" mnemonicParsing="false" text="%connectingto.close" />
+        <Button fx:id="btnRelogin" mnemonicParsing="false"  text="%connectingto.relogin" />
+        <Button fx:id="btnEditAlias" mnemonicParsing="false" text="%connectingto.editAlias" />
       </children>
     </HBox>
     <Label fx:id="lblErrorOccured" layoutX="14.0" layoutY="81.0" prefWidth="383.0" text="%connectingto.errorConnecting" textFill="RED" />
