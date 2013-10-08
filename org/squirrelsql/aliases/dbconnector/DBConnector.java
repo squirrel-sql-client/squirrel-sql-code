@@ -4,7 +4,6 @@ import javafx.stage.Window;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.CancelableProgressTask;
-import org.squirrelsql.session.DbConnectorResult;
 
 import java.sql.SQLException;
 

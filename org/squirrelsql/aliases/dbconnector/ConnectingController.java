@@ -6,7 +6,6 @@ import javafx.stage.Window;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.*;
-import org.squirrelsql.session.DbConnectorResult;
 
 public class ConnectingController
 {

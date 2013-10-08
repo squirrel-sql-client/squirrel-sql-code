@@ -13,7 +13,7 @@ import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
 import org.squirrelsql.drivers.*;
 import org.squirrelsql.services.*;
-import org.squirrelsql.session.DbConnectorResult;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 
 public class AliasEditController
 {
@@ -141,14 +141,7 @@ public class AliasEditController
 
          DBConnector dbConnector = new DBConnector(_alias, _dialog);
 
-         dbConnector.tryConnect(new DbConnectorListener()
-         {
-            @Override
-            public void finished(DbConnectorResult dbConnectorResult)
-            {
-               onTryConnectFinished(dbConnectorResult);
-            }
-         });
+         dbConnector.tryConnect(dbConnectorResult -> onTryConnectFinished(dbConnectorResult));
 
       }
    }

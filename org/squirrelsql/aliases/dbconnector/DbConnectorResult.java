@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.aliases.dbconnector;
 
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.ConnectFailureDecisionListener;

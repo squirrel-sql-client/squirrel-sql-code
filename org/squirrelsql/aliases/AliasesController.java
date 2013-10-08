@@ -17,9 +17,8 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
-import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
 import org.squirrelsql.services.*;
-import org.squirrelsql.session.DbConnectorResult;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 
 import java.util.ArrayList;
 
@@ -360,15 +359,20 @@ public class AliasesController
       }
       else
       {
-         Alias alias = (Alias) selectedItem.getValue();
+         editAlias(selectedItem);
+      }
+   }
 
-         AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.EDIT);
+   private void editAlias(TreeItem<AliasTreeNode> item)
+   {
+      Alias alias = (Alias) item.getValue();
 
-         if (aliasEditController.isOk())
-         {
-            selectedItem.setValue(aliasEditController.getAlias());
-            _aliasTreeNodeChannel.fireChanged(selectedItem);
-         }
+      AliasEditController aliasEditController = new AliasEditController(alias, AliasEditController.ConstructorState.EDIT);
+
+      if (aliasEditController.isOk())
+      {
+         item.setValue(aliasEditController.getAlias());
+         _aliasTreeNodeChannel.fireChanged(item);
       }
    }
 
@@ -510,7 +514,21 @@ public class AliasesController
    {
       AppState.get().getSessionFactory().createSession(alias, dbConnectorResult);
 
-      if(false == _btnPinned.isSelected())
+      if(dbConnectorResult.isEditAliasRequested())
+      {
+         TreeItem<AliasTreeNode> searchRes = AliasTreeUtil.search(_treeView.getRoot(), alias.getId());
+
+         if(null == searchRes)
+         {
+            FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("aliasecontroller.cannotfind.alias.to.edit"));
+            return;
+         }
+
+         editAlias(searchRes);
+         return;
+      }
+
+      if(dbConnectorResult.isConnected() && false == _btnPinned.isSelected())
       {
          _dockPaneChanel.closeAliases();
       }
