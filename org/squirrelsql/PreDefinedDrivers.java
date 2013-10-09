@@ -1,11 +1,10 @@
 package org.squirrelsql;
 
-import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class PreDefinedDrivers
 {

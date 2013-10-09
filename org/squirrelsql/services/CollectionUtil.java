@@ -1,8 +1,6 @@
 package org.squirrelsql.services;
 
 
-import org.squirrelsql.drivers.SQLDriver;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

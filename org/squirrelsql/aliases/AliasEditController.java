@@ -10,10 +10,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
-import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
 import org.squirrelsql.drivers.*;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 public class AliasEditController
 {

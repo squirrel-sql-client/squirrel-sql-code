@@ -5,9 +5,14 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasUtil;
 import org.squirrelsql.drivers.DriversUtil;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
+import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 import org.squirrelsql.services.CancelableProgressTask;
 
+import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class DBConnector
 {
@@ -102,19 +107,31 @@ public class DBConnector
    {
       try
       {
-         _alias.getDriverId();
+         SQLDriver sqlDriver = DriversUtil.findDriver(_alias.getDriverId());
 
-         DriversUtil.findDriver(_alias.getDriverId());
+         SQLDriverClassLoader driverClassLoader = DriversUtil.createDriverClassLoader(sqlDriver.getJarFileNamesList());
 
+         Driver driver = (Driver)(Class.forName(sqlDriver.getDriverClassName(), false, driverClassLoader).newInstance());
 
+         Properties myProps = new Properties();
+         if (user != null)
+         {
+            myProps.put("user", user);
+         }
+         if (password != null)
+         {
+            myProps.put("password", password);
+         }
 
+         Connection jdbcConn = driver.connect(_alias.getUrl(), myProps);
 
-         Thread.sleep(5000);
+         // TODO SQLConnection drum und rein ins dbConnectorResult
+
          DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
          dbConnectorResult.setConnectException(new SQLException("Nix Connection"));
          return dbConnectorResult;
       }
-      catch (InterruptedException e)
+      catch (Exception e)
       {
          throw new RuntimeException(e);
       }

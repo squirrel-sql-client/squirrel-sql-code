@@ -9,6 +9,7 @@ import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.*;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 import java.util.ArrayList;
 

@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Dao;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 import java.util.ArrayList;
 import java.util.Collections;

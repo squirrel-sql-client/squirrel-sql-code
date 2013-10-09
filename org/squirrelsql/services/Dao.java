@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.type.SimpleType;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
-import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 import java.io.File;
 import java.io.FileWriter;

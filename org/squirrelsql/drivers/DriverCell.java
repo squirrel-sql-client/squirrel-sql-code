@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.squirrelsql.Props;
+import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 public class DriverCell extends ListCell<SQLDriver>
 {

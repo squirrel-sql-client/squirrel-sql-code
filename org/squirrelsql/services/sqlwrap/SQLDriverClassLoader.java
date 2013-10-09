@@ -1,4 +1,4 @@
-package org.squirrelsql.drivers;
+package org.squirrelsql.services.sqlwrap;
 /*
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
