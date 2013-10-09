@@ -3,6 +3,8 @@ package org.squirrelsql.aliases.dbconnector;
 import javafx.stage.Window;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasUtil;
+import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.services.CancelableProgressTask;
 
 import java.sql.SQLException;
@@ -31,16 +33,30 @@ public class DBConnector
 
    private void _tryConnect(final DbConnectorListener dbConnectorListener, boolean forceLogin)
    {
+
+      final String user[] = new String[1];
+      final String password[] = new String[1];
+
+
       if(false == _alias.isAutoLogon() || forceLogin)
       {
          LoginController loginController = new LoginController(_alias, _owner);
 
          if(false == loginController.isOk())
          {
-            DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias);
+            DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, null);
+            dbConnectorResult.setLoginCanceled(true);
             dbConnectorListener.finished(dbConnectorResult);
             return;
          }
+
+         user[0] = loginController.getUserName();
+         password[0] = loginController.getPassword();
+      }
+      else
+      {
+         user[0] = AliasUtil.getUserNameRespectAliasConfig(_alias);
+         password[0] = AliasUtil.getPasswordRespectAliasConfig(_alias);
       }
 
 
@@ -51,7 +67,7 @@ public class DBConnector
          @Override
          public DbConnectorResult call()
          {
-            return doTryConnect();
+            return doTryConnect(user[0], password[0]);
          }
 
          @Override
@@ -63,7 +79,7 @@ public class DBConnector
          @Override
          public void cancel()
          {
-            onCanceled(dbConnectorListener, connectingController);
+            onCanceled(dbConnectorListener, connectingController, user[0]);
          }
       };
 
@@ -75,19 +91,26 @@ public class DBConnector
 
    }
 
-   private void onCanceled(DbConnectorListener dbConnectorListener, ConnectingController connectingController)
+   private void onCanceled(DbConnectorListener dbConnectorListener, ConnectingController connectingController, String user)
    {
-      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias);
+      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
       dbConnectorResult.setCanceled(true);
       onGoOn(dbConnectorResult, dbConnectorListener, connectingController);
    }
 
-   private DbConnectorResult doTryConnect()
+   private DbConnectorResult doTryConnect(String user, String password)
    {
       try
       {
+         _alias.getDriverId();
+
+         DriversUtil.findDriver(_alias.getDriverId());
+
+
+
+
          Thread.sleep(5000);
-         DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias);
+         DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
          dbConnectorResult.setConnectException(new SQLException("Nix Connection"));
          return dbConnectorResult;
       }

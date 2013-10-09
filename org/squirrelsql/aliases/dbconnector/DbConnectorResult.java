@@ -9,17 +9,22 @@ public class DbConnectorResult
 {
    private SQLException _connectException;
    private Alias _alias;
+
+   private String _user; // Should only be null if login was canceled.
+
    private boolean _canceled;
    private boolean _editAliasRequested;
+   private boolean _loginCanceled;
 
-   public DbConnectorResult(Alias alias)
+   public DbConnectorResult(Alias alias, String user)
    {
       _alias = alias;
+      _user = user;
    }
 
    public boolean isConnected()
    {
-      return null == _connectException && false == _canceled;
+      return null == _connectException && false == _canceled && false == _loginCanceled;
    }
 
    public void setConnectException(SQLException connectException)
@@ -53,4 +58,13 @@ public class DbConnectorResult
    }
 
 
+   public void setLoginCanceled(boolean loginCanceled)
+   {
+      _loginCanceled = loginCanceled;
+   }
+
+   public boolean isLoginCanceled()
+   {
+      return _loginCanceled;
+   }
 }
