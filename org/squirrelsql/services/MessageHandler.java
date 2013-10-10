@@ -17,13 +17,18 @@ public class MessageHandler
 
    public void warning(String s)
    {
+      warning(s, null);
+   }
+
+   public void warning(String s, Throwable t)
+   {
       if (MessageHandlerDestination.MESSAGE_LOG == _dest)
       {
          AppState.get().getStatusBarCtrl().warning(s);
       }
       else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
       {
-         AppState.get().getMessagePanelCtrl().warning(s);
+         AppState.get().getMessagePanelCtrl().warning(s, t);
       }
       else
       {
