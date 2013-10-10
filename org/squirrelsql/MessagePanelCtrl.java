@@ -43,6 +43,12 @@ public class MessagePanelCtrl
       addMessage(s, STYLE_YELLOW);
    }
 
+   public void warning(String s, Throwable t)
+   {
+      addMessage(formatMessageWithStacktrace(s, t), STYLE_YELLOW);
+   }
+
+
    public void info(String s)
    {
       addMessage(s, STYLE_GREEN);
@@ -92,9 +98,21 @@ public class MessagePanelCtrl
       }
       else
       {
-         error(s + "\n" + getStackString(t));
+         error(formatMessageWithStacktrace(s, t));
       }
 
+   }
+
+   private String formatMessageWithStacktrace(String s, Throwable t)
+   {
+      String ret = s;
+
+      if (null != t)
+      {
+         s += "\n" + getStackString(t);
+      }
+
+      return ret;
    }
 
    private String getStackString(Throwable t)
