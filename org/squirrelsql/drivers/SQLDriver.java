@@ -1,4 +1,4 @@
-package org.squirrelsql.services.sqlwrap;
+package org.squirrelsql.drivers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

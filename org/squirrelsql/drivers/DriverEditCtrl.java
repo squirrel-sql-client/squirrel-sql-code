@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 
 import java.io.File;

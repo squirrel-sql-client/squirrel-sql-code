@@ -5,7 +5,8 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasUtil;
 import org.squirrelsql.drivers.DriversUtil;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
+import org.squirrelsql.services.sqlwrap.SQLConnection;
+import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 import org.squirrelsql.services.CancelableProgressTask;
 
@@ -105,6 +106,8 @@ public class DBConnector
 
    private DbConnectorResult doTryConnect(String user, String password)
    {
+      DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
+
       try
       {
          SQLDriver sqlDriver = DriversUtil.findDriver(_alias.getDriverId());
@@ -125,15 +128,14 @@ public class DBConnector
 
          Connection jdbcConn = driver.connect(_alias.getUrl(), myProps);
 
-         // TODO SQLConnection drum und rein ins dbConnectorResult
+         dbConnectorResult.setSQLConnection(new SQLConnection(jdbcConn));
 
-         DbConnectorResult dbConnectorResult = new DbConnectorResult(_alias, user);
-         dbConnectorResult.setConnectException(new SQLException("Nix Connection"));
          return dbConnectorResult;
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
-         throw new RuntimeException(e);
+         dbConnectorResult.setConnectException(e);
+         return dbConnectorResult;
       }
    }
 

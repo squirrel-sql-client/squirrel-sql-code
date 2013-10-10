@@ -1,13 +1,13 @@
 package org.squirrelsql.aliases.dbconnector;
 
 import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.aliases.dbconnector.ConnectFailureDecisionListener;
+import org.squirrelsql.services.sqlwrap.SQLConnection;
 
 import java.sql.SQLException;
 
 public class DbConnectorResult
 {
-   private SQLException _connectException;
+   private Throwable _connectException;
    private Alias _alias;
 
    private String _user; // Should only be null if login was canceled.
@@ -15,6 +15,7 @@ public class DbConnectorResult
    private boolean _canceled;
    private boolean _editAliasRequested;
    private boolean _loginCanceled;
+   private SQLConnection _sqlConnection;
 
    public DbConnectorResult(Alias alias, String user)
    {
@@ -24,15 +25,15 @@ public class DbConnectorResult
 
    public boolean isConnected()
    {
-      return null == _connectException && false == _canceled && false == _loginCanceled;
+      return null != _sqlConnection;
    }
 
-   public void setConnectException(SQLException connectException)
+   public void setConnectException(Throwable connectException)
    {
       _connectException = connectException;
    }
 
-   public SQLException getConnectException()
+   public Throwable getConnectException()
    {
       return _connectException;
    }
@@ -66,5 +67,15 @@ public class DbConnectorResult
    public boolean isLoginCanceled()
    {
       return _loginCanceled;
+   }
+
+   public void setSQLConnection(SQLConnection sqlConnection)
+   {
+      _sqlConnection = sqlConnection;
+   }
+
+   public SQLConnection getSQLConnection()
+   {
+      return _sqlConnection;
    }
 }

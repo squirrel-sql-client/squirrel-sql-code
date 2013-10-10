@@ -5,9 +5,9 @@ import javafx.collections.ObservableList;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Dao;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 public class DriversManager
@@ -48,4 +48,30 @@ public class DriversManager
       return FXCollections.observableList(_allDrivers);
    }
 
+   public ArrayList<SQLDriver> getFilteredOutDrivers()
+   {
+      return CollectionUtil.filter(_allDrivers, d -> false == d.isLoaded());
+   }
+
+   public void remove(SQLDriver selectedItem)
+   {
+      _allDrivers.remove(selectedItem);
+      Dao.writeDrivers(_allDrivers);
+   }
+
+   public void add(SQLDriver newDriver)
+   {
+      _allDrivers.add(newDriver);
+      Dao.writeDrivers(_allDrivers);
+   }
+
+   public void editedDriver(SQLDriver selectedDriver)
+   {
+      Dao.writeDrivers(_allDrivers);
+   }
+
+   public void applicationClosing()
+   {
+      Dao.writeDrivers(_allDrivers);
+   }
 }

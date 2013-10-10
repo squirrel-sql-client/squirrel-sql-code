@@ -4,7 +4,7 @@ package org.squirrelsql.aliases;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
+import org.squirrelsql.drivers.SQLDriver;
 
 public class AliasEditView
 {

@@ -7,6 +7,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.*;
 
+import java.sql.SQLException;
+
 public class ConnectingController
 {
    private I18n _i18n = new I18n(this.getClass());
@@ -80,9 +82,19 @@ public class ConnectingController
 
       String text = dbConnectorResult.getConnectException().getMessage();
 
-      text += "\nSQLState: " + dbConnectorResult.getConnectException().getSQLState();
-      text += "\nErrorCode: " + dbConnectorResult.getConnectException().getErrorCode();
-      text += "\n\n" + ExceptionUtils.getStackTrace(dbConnectorResult.getConnectException());
+      if (dbConnectorResult.getConnectException() instanceof SQLException)
+      {
+         SQLException sqlException = (SQLException) dbConnectorResult.getConnectException();
+
+         text += "\nSQLState: " + sqlException.getSQLState();
+         text += "\nErrorCode: " + sqlException.getErrorCode();
+         text += "\n\n" + ExceptionUtils.getStackTrace(dbConnectorResult.getConnectException());
+      }
+      else
+      {
+         text += "\nMessage: " + dbConnectorResult.getConnectException().getMessage();
+         text += "\n\n" + ExceptionUtils.getStackTrace(dbConnectorResult.getConnectException());
+      }
 
       _connectingViewFxml.getView().txtErrMessage.setStyle("-fx-vbar-policy: always");
       _connectingViewFxml.getView().txtErrMessage.setText(text);

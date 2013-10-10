@@ -1,6 +1,6 @@
 package org.squirrelsql;
 
-import org.squirrelsql.services.sqlwrap.SQLDriver;
+import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;

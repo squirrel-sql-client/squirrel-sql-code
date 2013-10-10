@@ -13,7 +13,7 @@ import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.drivers.*;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
+import org.squirrelsql.drivers.SQLDriver;
 
 public class AliasEditController
 {

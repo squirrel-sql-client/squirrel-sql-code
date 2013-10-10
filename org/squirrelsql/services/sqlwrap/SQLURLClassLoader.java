@@ -1,7 +1,11 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.sqlwrap;
 
 import org.squirrelsql.drivers.ClassLoaderListener;
 import org.squirrelsql.drivers.EnumerationIterator;
+import org.squirrelsql.services.Conversions;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 
-public class MyURLClassLoader extends URLClassLoader
+public class SQLURLClassLoader extends URLClassLoader
 {
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
 
@@ -24,17 +28,17 @@ public class MyURLClassLoader extends URLClassLoader
 
    ArrayList<ClassLoaderListener> listeners = new ArrayList<ClassLoaderListener>();
 
-   public MyURLClassLoader(String fileName) throws IOException
+   public SQLURLClassLoader(String fileName) throws IOException
    {
       this(new File(fileName).toURI().toURL());
    }
 
-   public MyURLClassLoader(URL url)
+   public SQLURLClassLoader(URL url)
    {
       this(Arrays.asList(url));
    }
 
-   public MyURLClassLoader(List<URL> urls)
+   public SQLURLClassLoader(List<URL> urls)
    {
       super(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
    }

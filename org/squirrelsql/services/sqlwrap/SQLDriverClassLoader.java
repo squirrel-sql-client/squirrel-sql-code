@@ -20,7 +20,6 @@ package org.squirrelsql.services.sqlwrap;
 
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.services.MyURLClassLoader;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
@@ -31,22 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SQLDriverClassLoader extends MyURLClassLoader
+public class SQLDriverClassLoader extends SQLURLClassLoader
 {
-   public SQLDriverClassLoader(SQLDriver sqlDriver) throws MalformedURLException
-   {
-      super(createURLs(sqlDriver.getName(), sqlDriver.getJarFileNamesList()));
-   }
-
    public SQLDriverClassLoader(List<URL> urls)
    {
       super(urls);
    }
 
-   public SQLDriverClassLoader(URL url)
-   {
-      super(url);
-   }
 
    public ArrayList<Class> getDriverClasses()
    {

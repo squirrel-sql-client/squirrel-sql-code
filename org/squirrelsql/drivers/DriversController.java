@@ -9,7 +9,6 @@ import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.*;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
 
 import java.util.ArrayList;
 
@@ -54,7 +53,7 @@ public class DriversController
 
    private void onApplicationClosing()
    {
-      writeDrivers();
+      _driversManager.applicationClosing();
    }
 
    private BorderPane createToolBar()
@@ -85,7 +84,7 @@ public class DriversController
          _lstDrivers.getSelectionModel().select(newDriver);
          _lstDrivers.scrollTo(_lstDrivers.getItems().size() - 1);
 
-         writeDrivers();
+         _driversManager.add(newDriver);
       }
    }
 
@@ -124,7 +123,7 @@ public class DriversController
          if(FXMessageBox.YES.equals(opt))
          {
             _lstDrivers.getItems().remove(selectedItem);
-            writeDrivers();
+            _driversManager.remove(selectedItem);
          }
       }
    }
@@ -154,17 +153,11 @@ public class DriversController
       if(driverEditCtrl.isOk())
       {
          selectedDriver.update(driverEditCtrl.getDriver());
-         writeDrivers();
+         _driversManager.editedDriver(selectedDriver);
 
          _lstDrivers.getItems().set(selectedIndex, selectedDriver);
       }
    }
-
-   private void writeDrivers()
-   {
-      Dao.writeDrivers(new ArrayList<>(_lstDrivers.getItems()));
-   }
-
    public Node getNode()
    {
       return _borderPane;

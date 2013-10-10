@@ -2,7 +2,6 @@ package org.squirrelsql.drivers;
 
 import com.google.common.base.Strings;
 import javafx.collections.ObservableList;
-import org.squirrelsql.services.sqlwrap.SQLDriver;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 
 import java.io.File;
