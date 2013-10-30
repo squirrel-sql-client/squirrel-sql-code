@@ -1,12 +1,19 @@
 package org.squirrelsql.session;
 
-import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.SessionTabbedPaneCtrl;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 
 public class SessionFactory
 {
-   public void createSession(Alias alias, DbConnectorResult dbConnectorResult)
+   private SessionTabbedPaneCtrl _sessionTabbedPaneController = new SessionTabbedPaneCtrl();
+
+   public void createSession(DbConnectorResult dbConnectorResult)
    {
-      //To change body of created methods use File | Settings | File Templates.
+      _sessionTabbedPaneController.addSessionTab(new SessionCtrl(dbConnectorResult));
+   }
+
+   public SessionTabbedPaneCtrl getSessionTabbedPaneCtrl()
+   {
+      return _sessionTabbedPaneController;
    }
 }

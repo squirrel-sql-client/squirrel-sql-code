@@ -4,22 +4,27 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.session.SessionCtrl;
 
 public class SessionTabbedPaneCtrl
 {
    private MessageHandler _mhPanel = new MessageHandler(this.getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private MessageHandler _mhLog = new MessageHandler(this.getClass(), MessageHandlerDestination.MESSAGE_LOG);
 
+   private TabPane _tabPane = new TabPane();
+
 
    public Node getNode()
    {
       BorderPane bp = new BorderPane();
-      bp.setCenter(new TextArea("Session"));
+      bp.setCenter(_tabPane);
 
 
       EventHandler<ActionEvent> eventHandler = new EventHandler<ActionEvent>()
@@ -72,5 +77,19 @@ public class SessionTabbedPaneCtrl
          _mhLog.info("Test info");
          _mhPanel.info("Test info");
       }
+   }
+
+   public Tab addSessionTab(SessionCtrl sessionCtrl)
+   {
+      Tab ret = new Tab();
+
+      //http://code.google.com/p/javafx-demos/source/browse/trunk/javafx-demos/src/main/java/com/ezest/javafx/components/TabPaneComponent.java?r=3
+      ret.setText(sessionCtrl.getTabHeaderNode());
+
+      ret.setContent(sessionCtrl.getNode());
+
+      _tabPane.getTabs().add(ret);
+
+      return ret;
    }
 }

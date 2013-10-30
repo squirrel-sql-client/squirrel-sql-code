@@ -78,4 +78,14 @@ public class DbConnectorResult
    {
       return _sqlConnection;
    }
+
+   public Alias getAlias()
+   {
+      return _alias;
+   }
+
+   public String getUser()
+   {
+      return _user;
+   }
 }

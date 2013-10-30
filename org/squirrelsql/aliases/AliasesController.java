@@ -512,8 +512,6 @@ public class AliasesController
 
    private void onTryConnectFinished(DbConnectorResult dbConnectorResult, Alias alias)
    {
-      AppState.get().getSessionFactory().createSession(alias, dbConnectorResult);
-
       if(dbConnectorResult.isEditAliasRequested())
       {
          TreeItem<AliasTreeNode> searchRes = AliasTreeUtil.search(_treeView.getRoot(), alias.getId());
@@ -528,10 +526,18 @@ public class AliasesController
          return;
       }
 
-      if(dbConnectorResult.isConnected() && false == _btnPinned.isSelected())
+      if(false == dbConnectorResult.isConnected())
+      {
+         return;
+      }
+
+
+      if(false == _btnPinned.isSelected())
       {
          _dockPaneChanel.closeAliases();
       }
+
+      AppState.get().getSessionFactory().createSession(dbConnectorResult);
    }
 
    private TreeItem<AliasTreeNode> getSelectedNodeOrComplain(String complaintMessageKey)
