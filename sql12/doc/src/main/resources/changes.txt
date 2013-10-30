@@ -30,6 +30,8 @@ Made data editing problems that concern update row counts more transparent by pr
 
 Bug fixes:
 
+#1064 DataSetViewerTextPanel cannot be cast to DataSetViewerTablePanel
+
 Fixed NullPointer during shutdown:
 java.lang.IllegalArgumentException: obj parameter must not be null
     at net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager.saveXmlBean(RecentFilesManager.java:84)

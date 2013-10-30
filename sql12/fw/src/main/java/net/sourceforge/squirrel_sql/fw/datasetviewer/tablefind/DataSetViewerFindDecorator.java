@@ -45,7 +45,11 @@ public class DataSetViewerFindDecorator
       };
       _dataSetFindPanelController = new DataSetFindPanelController(messageHandler, dataSetFindPanelListener);
 
-      _dataSetFindPanelController.setDataSetViewerTablePanel((DataSetViewerTablePanel) _dataSetViewer);
+      if (_dataSetViewer instanceof DataSetViewerTablePanel)
+      {
+         _dataSetFindPanelController.setDataSetViewerTablePanel((DataSetViewerTablePanel) _dataSetViewer);
+      }
+
       _split.setLeftComponent(new NullPanel());
 
       _split.addComponentListener(new ComponentAdapter()
