@@ -1,6 +1,5 @@
 package org.squirrelsql.session;
 
-import org.squirrelsql.SessionTabbedPaneCtrl;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 
 public class SessionFactory

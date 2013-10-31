@@ -17,13 +17,13 @@ public class SessionCtrl
       _dbConnectorResult = dbConnectorResult;
    }
 
-   public String getTabHeaderNode()
+   public Node getTabHeaderNode()
    {
       Alias alias = _dbConnectorResult.getAlias();
-      return _i18n.t("session.tab.header", alias.getName(), alias.getUserName());
+      return new Label(_i18n.t("session.tab.header", alias.getName(), alias.getUserName()));
    }
 
-   public Node getNode()
+   public Node getTabNode()
    {
       return new Label("Session goes here");
    }
