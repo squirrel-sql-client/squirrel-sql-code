@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.scene.control.Tab;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 
 public class SessionFactory
@@ -8,7 +9,9 @@ public class SessionFactory
 
    public void createSession(DbConnectorResult dbConnectorResult)
    {
-      _sessionTabbedPaneController.addSessionTab(new SessionCtrl(dbConnectorResult));
+      SessionCtrl sessionCtrl = new SessionCtrl(dbConnectorResult);
+      Tab tab = _sessionTabbedPaneController.addSessionTab(sessionCtrl);
+      sessionCtrl.setSessionTab(tab);
    }
 
    public SessionTabbedPaneCtrl getSessionTabbedPaneCtrl()
