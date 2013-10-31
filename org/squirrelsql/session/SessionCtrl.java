@@ -1,10 +1,12 @@
 package org.squirrelsql.session;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
+import org.squirrelsql.AppState;
+import org.squirrelsql.ApplicationCloseListener;
+import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasCell;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 
@@ -14,9 +16,42 @@ public class SessionCtrl
 
    private I18n _i18n = new I18n(getClass());
 
+   private Props _props = new Props(getClass());
+   private TabPane _sessionTabPane;
+
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
       _dbConnectorResult = dbConnectorResult;
+      AppState.get().addApplicationCloseListener(this::onClose);
+
+      _sessionTabPane = new TabPane();
+
+      Tab objectsTab = createObjectsTab();
+      _sessionTabPane.getTabs().add(objectsTab);
+
+
+
+
+      Tab sqlTab = new Tab(_i18n.t("session.tab.sql"));
+      sqlTab.setClosable(false);
+      _sessionTabPane.getTabs().add(sqlTab);
+
+   }
+
+   private Tab createObjectsTab()
+   {
+      Tab objectsTab = new Tab(_i18n.t("session.tab.objects"));
+      objectsTab.setClosable(false);
+
+      TreeView<ObjectTreeNode> objectsTree = new TreeView();
+
+      objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
+
+      objectsTree.setRoot(new TreeItem(new ObjectTreeNode(_dbConnectorResult.getAlias().getName(), _props.getImageView("database.png"))));
+
+      objectsTab.setContent(objectsTree);
+
+      return objectsTab;
    }
 
    public Node getTabHeaderNode()
@@ -27,10 +62,7 @@ public class SessionCtrl
 
    public Node getTabNode()
    {
-      TabPane tp = new TabPane();
-
-
-      return new Label("Session goes here");
+      return _sessionTabPane;
    }
 
    public void setSessionTab(Tab sessionTab)
