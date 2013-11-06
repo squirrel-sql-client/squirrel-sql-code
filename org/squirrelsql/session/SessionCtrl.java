@@ -3,12 +3,13 @@ package org.squirrelsql.session;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import org.squirrelsql.AppState;
-import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.aliases.AliasCell;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.session.objecttree.AliasCatalogsSchemasAndTypesCreator;
+import org.squirrelsql.session.objecttree.ObjectTreeNode;
+import org.squirrelsql.session.objecttree.ObjectsTreeCell;
 
 public class SessionCtrl
 {
@@ -47,12 +48,13 @@ public class SessionCtrl
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
-      objectsTree.setRoot(new TreeItem(new ObjectTreeNode(_dbConnectorResult.getAlias().getName(), _props.getImageView("database.png"))));
+      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _dbConnectorResult);
 
       objectsTab.setContent(objectsTree);
 
       return objectsTab;
    }
+
 
    public Node getTabHeaderNode()
    {

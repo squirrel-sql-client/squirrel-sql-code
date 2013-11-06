@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeCell;
 

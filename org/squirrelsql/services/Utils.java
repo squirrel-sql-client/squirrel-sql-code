@@ -8,4 +8,19 @@ public class Utils
    {
       return Strings.isNullOrEmpty(text) || Strings.isNullOrEmpty(text.trim());
    }
+
+   public static boolean compareRespectEmpty(String s1, String s2)
+   {
+      if(null == s1 && null == s2)
+      {
+         return true;
+      }
+
+      if(s1 == null)
+      {
+         return false;
+      }
+
+      return s1.equals(s2);
+   }
 }
