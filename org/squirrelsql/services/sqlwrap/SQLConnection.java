@@ -123,4 +123,58 @@ public class SQLConnection
          throw new RuntimeException(e);
       }
    }
+
+   public boolean supportsSchemas() throws SQLException
+   {
+      return supportsSchemasInDataManipulation() || supportsSchemasInTableDefinitions();
+   }
+
+   public synchronized boolean supportsSchemasInDataManipulation() throws SQLException
+   {
+      boolean ret = false;
+      try
+      {
+         ret = _con.getMetaData().supportsSchemasInDataManipulation();
+      }
+      catch (SQLException ex)
+      {
+         boolean isSQLServer = DialectFactory.isSyBase(_con) || DialectFactory.isMSSQLServer(_con);
+
+         if (isSQLServer)
+         {
+            ret = true;
+         }
+         throw ex;
+      }
+
+
+      return ret;
+   }
+
+   public synchronized boolean supportsSchemasInTableDefinitions() throws SQLException
+   {
+      boolean ret = false;
+      try
+      {
+         ret = _con.getMetaData().supportsSchemasInTableDefinitions();
+      }
+      catch (SQLException ex)
+      {
+         boolean isSQLServer = DialectFactory.isSyBase(_con) || DialectFactory.isMSSQLServer(_con);
+
+         if (isSQLServer)
+         {
+            ret = true;
+         }
+         throw ex;
+      }
+
+
+      return ret;
+   }
+
+   public ArrayList<String> getTableTypes()
+   {
+      return new ArrayList<>();
+   }
 }
