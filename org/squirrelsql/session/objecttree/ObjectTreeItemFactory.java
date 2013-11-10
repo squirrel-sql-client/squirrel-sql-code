@@ -27,8 +27,18 @@ public class ObjectTreeItemFactory
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY, _i18n.t("session.objecttree.schema", schema.getSchema()), schema.getCatalog(), schema.getSchema(), _props.getImageView("schema.png")));
    }
 
-   public static TreeItem<ObjectTreeNode> createTableType(String type)
+   public static TreeItem<ObjectTreeNode> createTableType(String type, String catalog, String schema)
    {
-      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, _i18n.t("session.objecttree.tableType", type), null, null, _props.getImageView("tableType.png")));
+      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, _i18n.t("session.objecttree.tableType", type), catalog, schema, _props.getImageView("tableType.png")));
+   }
+
+   public static TreeItem<ObjectTreeNode> createProcedureType(String catalog, String schema)
+   {
+      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.PROCEDURE_TYPE_KEY, _i18n.t("session.objecttree.procedureType"), catalog, schema, _props.getImageView("procedureType.png")));
+   }
+
+   public static TreeItem<ObjectTreeNode> createUDTType(String catalog, String schema)
+   {
+      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.UDT_TYPE_KEY, _i18n.t("session.objecttree.udtType"), catalog, schema, _props.getImageView("udtType.png")));
    }
 }

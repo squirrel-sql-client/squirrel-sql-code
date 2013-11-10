@@ -37,23 +37,9 @@ public class AliasCatalogsSchemasAndTypesCreator
    private static boolean appendChildren(TreeItem<ObjectTreeNode> parent, DbConnectorResult dbConnectorResult)
    {
 
-      boolean supportsCatalogs = false;
-      try
-      {
-         supportsCatalogs = dbConnectorResult.getSQLConnection().supportsCatalogs();
-      }
-      catch (Exception ex)
-      {
-      }
+      boolean supportsCatalogs = supportsCatalogs(dbConnectorResult);
 
-      boolean supportsSchemas = false;
-      try
-      {
-         supportsSchemas = dbConnectorResult.getSQLConnection().supportsSchemas();
-      }
-      catch (SQLException ex)
-      {
-      }
+      boolean supportsSchemas = supportsSchemas(dbConnectorResult);
 
       boolean addedChildren = false;
 
@@ -98,16 +84,65 @@ public class AliasCatalogsSchemasAndTypesCreator
       return addedChildren;
    }
 
+   private static boolean supportsSchemas(DbConnectorResult dbConnectorResult)
+   {
+      boolean supportsSchemas = false;
+      try
+      {
+         supportsSchemas = dbConnectorResult.getSQLConnection().supportsSchemas();
+      }
+      catch (SQLException ex)
+      {
+      }
+      return supportsSchemas;
+   }
+
+   private static boolean supportsCatalogs(DbConnectorResult dbConnectorResult)
+   {
+      boolean supportsCatalogs = false;
+      try
+      {
+         supportsCatalogs = dbConnectorResult.getSQLConnection().supportsCatalogs();
+      }
+      catch (Exception ex)
+      {
+      }
+      return supportsCatalogs;
+   }
+
+   private static boolean supportsProcerdures(DbConnectorResult dbConnectorResult)
+   {
+      boolean supportsProcedures = false;
+      try
+      {
+         supportsProcedures = dbConnectorResult.getSQLConnection().supportsStoredProcedures();
+      }
+      catch (Exception ex)
+      {
+      }
+      return supportsProcedures;
+   }
+
+
    private static boolean appendTypes(TreeItem<ObjectTreeNode> parent, DbConnectorResult dbConnectorResult, String catalog, String schema)
    {
+      boolean addedChildren = false;
+
       ArrayList<String> types = dbConnectorResult.getSQLConnection().getTableTypes();
 
-      boolean addedChildren = false;
       for (String type : types)
       {
-         parent.getChildren().add(ObjectTreeItemFactory.createTableType(type));
+         parent.getChildren().add(ObjectTreeItemFactory.createTableType(type, catalog, schema));
          addedChildren = true;
       }
+
+      if (supportsProcerdures(dbConnectorResult))
+      {
+         parent.getChildren().add(ObjectTreeItemFactory.createProcedureType(catalog, schema));
+      }
+
+      parent.getChildren().add(ObjectTreeItemFactory.createUDTType(catalog, schema));
+
       return addedChildren;
    }
 

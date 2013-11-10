@@ -175,6 +175,37 @@ public class SQLConnection
 
    public ArrayList<String> getTableTypes()
    {
-      return new ArrayList<>();
+      try
+      {
+         DatabaseMetaData metaData = _con.getMetaData();
+         ResultSet tableTypes = metaData.getTableTypes();
+
+         ArrayList<String> ret = new ArrayList<>();
+
+         while(tableTypes.next())
+         {
+            ret.add(tableTypes.getString(1));
+         }
+
+         return ret;
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public boolean supportsStoredProcedures()
+   {
+      try
+      {
+         DatabaseMetaData metaData = _con.getMetaData();
+
+         return metaData.supportsStoredProcedures();
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 }
