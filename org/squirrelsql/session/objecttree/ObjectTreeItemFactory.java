@@ -5,6 +5,7 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.DBSchema;
+import org.squirrelsql.session.Table;
 
 public class ObjectTreeItemFactory
 {
@@ -27,9 +28,12 @@ public class ObjectTreeItemFactory
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY, _i18n.t("session.objecttree.schema", schema.getSchema()), schema.getCatalog(), schema.getSchema(), _props.getImageView("schema.png")));
    }
 
-   public static TreeItem<ObjectTreeNode> createTableType(String type, String catalog, String schema)
+   public static TreeItem<ObjectTreeNode> createTableType(String tableType, String catalog, String schema)
    {
-      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, _i18n.t("session.objecttree.tableType", type), catalog, schema, _props.getImageView("tableType.png")));
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_TYPE_KEY, _i18n.t("session.objecttree.tableType", tableType), catalog, schema, _props.getImageView("tableType.png"));
+      objectTreeNode.setTableType(tableType);
+
+      return new TreeItem(objectTreeNode);
    }
 
    public static TreeItem<ObjectTreeNode> createProcedureType(String catalog, String schema)
@@ -40,5 +44,13 @@ public class ObjectTreeItemFactory
    public static TreeItem<ObjectTreeNode> createUDTType(String catalog, String schema)
    {
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.UDT_TYPE_KEY, _i18n.t("session.objecttree.udtType"), catalog, schema, _props.getImageView("udtType.png")));
+   }
+
+   public static TreeItem<ObjectTreeNode> createTable(Table table)
+   {
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, table.getName(), table.getCatalog(), table.getSchema(), _props.getImageView("table.png"));
+      objectTreeNode.setTable(table);
+
+      return new TreeItem(objectTreeNode);
    }
 }

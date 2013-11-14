@@ -20,10 +20,19 @@ public class Props
    {
       URL resource = _clazz.getResource(nameInPackage);
 
+      String globalName = "/org/squirrelsql/globalicons/" + nameInPackage;
+
       if(null == resource)
       {
-         resource = _clazz.getResource("/org/squirrelsql/globalicons/" + nameInPackage);
+         resource = _clazz.getResource(globalName);
       }
+
+      if(null == resource)
+      {
+         String localName = _clazz.getPackage().getName().replaceAll("\\.", "/") + "/" + nameInPackage;
+         throw new IllegalArgumentException("Could find neither " + localName + " nor " + globalName);
+      }
+
       return new Image(resource.toString());
    }
 

@@ -5,6 +5,7 @@ import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.DBSchema;
+import org.squirrelsql.session.Table;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -202,6 +203,28 @@ public class SQLConnection
          DatabaseMetaData metaData = _con.getMetaData();
 
          return metaData.supportsStoredProcedures();
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public ArrayList<Table> getTables(String catalog, String schema, String tableType)
+   {
+      try
+      {
+         ArrayList<Table> ret = new ArrayList<>();
+
+         ResultSet tables = _con.getMetaData().getTables(catalog, schema, null, new String[]{tableType});
+
+         while (tables.next())
+         {
+            Table t = new Table(tables.getString("TABLE_CAT"), tables.getString("TABLE_SCHEM"), tables.getString("TABLE_TYPE"), tables.getString("TABLE_NAME"));
+            ret.add(t);
+         }
+
+         return ret;
       }
       catch (SQLException e)
       {

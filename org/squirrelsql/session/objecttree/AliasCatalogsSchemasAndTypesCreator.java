@@ -5,6 +5,7 @@ import javafx.scene.control.TreeView;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.DBSchema;
+import org.squirrelsql.session.Session;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,34 +13,34 @@ import java.util.ArrayList;
 public class AliasCatalogsSchemasAndTypesCreator
 {
 
-   public static void createNodes(TreeView<ObjectTreeNode> objectsTree, DbConnectorResult dbConnectorResult)
+   public static void createNodes(TreeView<ObjectTreeNode> objectsTree, Session session)
    {
-      TreeItem<ObjectTreeNode> aliasRoot = ObjectTreeItemFactory.createAlias(dbConnectorResult);
+      TreeItem<ObjectTreeNode> aliasRoot = ObjectTreeItemFactory.createAlias(session.getDbConnectorResult());
 
-      recursiveAppendChildren(aliasRoot, dbConnectorResult);
+      recursiveAppendChildren(aliasRoot, session);
 
       objectsTree.setRoot(aliasRoot);
 
    }
 
-   private static void recursiveAppendChildren(TreeItem<ObjectTreeNode> parent, DbConnectorResult dbConnectorResult)
+   private static void recursiveAppendChildren(TreeItem<ObjectTreeNode> parent, Session session)
    {
-      if(appendChildren(parent, dbConnectorResult))
+      if(appendChildren(parent, session))
       {
          for (TreeItem<ObjectTreeNode> child : parent.getChildren())
          {
-            recursiveAppendChildren(child, dbConnectorResult);
+            recursiveAppendChildren(child, session);
          }
       }
 
    }
 
-   private static boolean appendChildren(TreeItem<ObjectTreeNode> parent, DbConnectorResult dbConnectorResult)
+   private static boolean appendChildren(TreeItem<ObjectTreeNode> parent, Session session)
    {
 
-      boolean supportsCatalogs = supportsCatalogs(dbConnectorResult);
+      boolean supportsCatalogs = supportsCatalogs(session.getDbConnectorResult());
 
-      boolean supportsSchemas = supportsSchemas(dbConnectorResult);
+      boolean supportsSchemas = supportsSchemas(session.getDbConnectorResult());
 
       boolean addedChildren = false;
 
@@ -49,17 +50,17 @@ public class AliasCatalogsSchemasAndTypesCreator
          // provide schema/catalog nodes, try to get other nodes.
          if (supportsCatalogs)
          {
-            addedChildren = appendCatalogs(parent, dbConnectorResult);
+            addedChildren = appendCatalogs(parent, session.getDbConnectorResult());
          }
 
          if (false == addedChildren && supportsSchemas)
          {
-            addedChildren = appendSchemas(parent, dbConnectorResult, null);
+            addedChildren = appendSchemas(parent, session, null);
          }
 
          if (false == addedChildren)
          {
-            addedChildren = appendTypes(parent, dbConnectorResult, null, null);
+            addedChildren = appendTypes(parent, session.getDbConnectorResult(), null, null);
          }
       }
       else if (parent.getValue().isOfType(ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY))
@@ -69,16 +70,16 @@ public class AliasCatalogsSchemasAndTypesCreator
          final String catalogName = parent.getValue().getCatalog();
          if (supportsSchemas)
          {
-            addedChildren = appendSchemas(parent, dbConnectorResult, catalogName);
+            addedChildren = appendSchemas(parent, session, catalogName);
          }
          if (false == addedChildren)
          {
-            addedChildren = appendTypes(parent, dbConnectorResult, null, catalogName);
+            addedChildren = appendTypes(parent, session.getDbConnectorResult(), null, catalogName);
          }
       }
       else if (parent.getValue().isOfType(ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY))
       {
-         addedChildren = appendTypes(parent, dbConnectorResult, parent.getValue().getCatalog(), parent.getValue().getSchema());
+         addedChildren = appendTypes(parent, session.getDbConnectorResult(), parent.getValue().getCatalog(), parent.getValue().getSchema());
       }
 
       return addedChildren;
@@ -146,17 +147,20 @@ public class AliasCatalogsSchemasAndTypesCreator
       return addedChildren;
    }
 
-   private static boolean appendSchemas(TreeItem<ObjectTreeNode> parent, DbConnectorResult dbConnectorResult, String catalogName)
+   private static boolean appendSchemas(TreeItem<ObjectTreeNode> parent, Session session, String catalogName)
    {
       boolean addedChildren = false;
-      ArrayList<DBSchema> schemas = dbConnectorResult.getSQLConnection().getSchemas();
+      ArrayList<DBSchema> schemas = session.getDbConnectorResult().getSQLConnection().getSchemas();
 
       for (DBSchema schema : schemas)
       {
          if (Utils.compareRespectEmpty(catalogName, schema.getCatalog()))
          {
-            parent.getChildren().add(ObjectTreeItemFactory.createSchema(schema));
-            addedChildren = true;
+            if (session.getSchemaCache().shouldLoadSchema(schema))
+            {
+               parent.getChildren().add(ObjectTreeItemFactory.createSchema(schema));
+               addedChildren = true;
+            }
          }
       }
       return addedChildren;

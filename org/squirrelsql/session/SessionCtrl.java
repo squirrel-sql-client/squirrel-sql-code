@@ -7,13 +7,13 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.objecttree.AliasCatalogsSchemasAndTypesCreator;
-import org.squirrelsql.session.objecttree.ObjectTreeNode;
-import org.squirrelsql.session.objecttree.ObjectsTreeCell;
+import org.squirrelsql.session.objecttree.*;
+
+import java.util.ArrayList;
 
 public class SessionCtrl
 {
-   private DbConnectorResult _dbConnectorResult;
+   private final Session _session;
 
    private I18n _i18n = new I18n(getClass());
 
@@ -22,7 +22,8 @@ public class SessionCtrl
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
-      _dbConnectorResult = dbConnectorResult;
+      _session = new Session(dbConnectorResult);
+
       AppState.get().addApplicationCloseListener(this::onClose);
 
       _sessionTabPane = new TabPane();
@@ -48,7 +49,22 @@ public class SessionCtrl
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
-      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _dbConnectorResult);
+      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _session);
+
+      ArrayList<TreeItem<ObjectTreeNode>> tableTypeItems = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.TABLE_TYPE_TYPE_KEY);
+
+      for (TreeItem<ObjectTreeNode> tableTypeItem : tableTypeItems)
+      {
+         TableTypeObjectTreeNode value = tableTypeItem.getValue();
+         ArrayList<Table> tables = _session.getSchemaCache().getTables(value.getCatalog(), value.getSchema(), value.getTableType());
+
+         for (Table table : tables)
+         {
+            tableTypeItem.getChildren().add(ObjectTreeItemFactory.createTable(table));
+         }
+
+      }
+
 
       objectsTab.setContent(objectsTree);
 
@@ -58,7 +74,7 @@ public class SessionCtrl
 
    public Node getTabHeaderNode()
    {
-      Alias alias = _dbConnectorResult.getAlias();
+      Alias alias = _session.getAlias();
       return new Label(_i18n.t("session.tab.header", alias.getName(), alias.getUserName()));
    }
 
@@ -74,6 +90,6 @@ public class SessionCtrl
 
    private void onClose()
    {
-      _dbConnectorResult.getSQLConnection().close();
+      _session.close();
    }
 }
