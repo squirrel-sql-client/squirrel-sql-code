@@ -32,6 +32,8 @@ Made data editing problems that concern update row counts more transparent by pr
 
 Bug fixes:
 
+SQL editors keyboard short cut to comment block (Ctrl-) didn't work.
+
 #1064 DataSetViewerTextPanel cannot be cast to DataSetViewerTablePanel
 
 Fixed NullPointer during shutdown:
