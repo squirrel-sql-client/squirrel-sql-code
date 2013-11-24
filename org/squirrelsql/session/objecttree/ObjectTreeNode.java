@@ -1,9 +1,11 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.scene.image.ImageView;
-import org.squirrelsql.session.Table;
+import org.squirrelsql.session.ProcedureInfo;
+import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.UDTInfo;
 
-public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeNode
+public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeNode, ProcedureObjectTreeNode
 {
    private ObjectTreeNodeTypeKey _typeKey;
    private String _nodeName;
@@ -11,7 +13,9 @@ public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeN
    private final String _schema;
    private ImageView _imageView;
    private String _tableType;
-   private Table _table;
+   private TableInfo _tableInfo;
+   private ProcedureInfo _procedureInfo;
+   private UDTInfo _UDTInfo;
 
    public ObjectTreeNode(ObjectTreeNodeTypeKey typeKey, String nodeName, String catalog, String schema, ImageView imageView)
    {
@@ -63,13 +67,33 @@ public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeN
       _tableType = tableType;
    }
 
-   public void setTable(Table table)
+   public void setTableInfo(TableInfo tableInfo)
    {
-      _table = table;
+      _tableInfo = tableInfo;
    }
 
-   public Table getTable()
+   public TableInfo getTableInfo()
    {
-      return _table;
+      return _tableInfo;
+   }
+
+   public void setProcedureInfo(ProcedureInfo procedureInfo)
+   {
+      _procedureInfo = procedureInfo;
+   }
+
+   public ProcedureInfo getProcedureInfo()
+   {
+      return _procedureInfo;
+   }
+
+   public void setUDTInfo(UDTInfo UDTInfo)
+   {
+      _UDTInfo = UDTInfo;
+   }
+
+   public UDTInfo getUDTInfo()
+   {
+      return _UDTInfo;
    }
 }

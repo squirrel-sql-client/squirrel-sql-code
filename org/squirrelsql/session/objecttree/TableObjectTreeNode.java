@@ -1,8 +1,8 @@
 package org.squirrelsql.session.objecttree;
 
-import org.squirrelsql.session.Table;
+import org.squirrelsql.session.TableInfo;
 
 public interface TableObjectTreeNode
 {
-   Table getTable();
+   TableInfo getTableInfo();
 }

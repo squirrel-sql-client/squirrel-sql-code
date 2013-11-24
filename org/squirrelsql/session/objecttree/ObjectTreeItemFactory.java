@@ -5,7 +5,9 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.DBSchema;
-import org.squirrelsql.session.Table;
+import org.squirrelsql.session.ProcedureInfo;
+import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.UDTInfo;
 
 public class ObjectTreeItemFactory
 {
@@ -46,10 +48,27 @@ public class ObjectTreeItemFactory
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.UDT_TYPE_KEY, _i18n.t("session.objecttree.udtType"), catalog, schema, _props.getImageView("udtType.png")));
    }
 
-   public static TreeItem<ObjectTreeNode> createTable(Table table)
+   public static TreeItem<ObjectTreeNode> createTable(TableInfo tableInfo)
    {
-      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, table.getName(), table.getCatalog(), table.getSchema(), _props.getImageView("table.png"));
-      objectTreeNode.setTable(table);
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY, tableInfo.getName(), tableInfo.getCatalog(), tableInfo.getSchema(), _props.getImageView("table.png"));
+      objectTreeNode.setTableInfo(tableInfo);
+
+      return new TreeItem(objectTreeNode);
+   }
+
+
+   public static TreeItem<ObjectTreeNode> createProcedure(ProcedureInfo procedureInfo)
+   {
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.PROCEDURE_TYPE_KEY, procedureInfo.getName(), procedureInfo.getCatalog(), procedureInfo.getSchema(), _props.getImageView("procedure.png"));
+      objectTreeNode.setProcedureInfo(procedureInfo);
+
+      return new TreeItem(objectTreeNode);
+   }
+
+   public static TreeItem<ObjectTreeNode> createUDT(UDTInfo udtInfo)
+   {
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.UDT_TYPE_KEY, udtInfo.getName(), udtInfo.getCatalog(), udtInfo.getSchema(), _props.getImageView("udt.png"));
+      objectTreeNode.setUDTInfo(udtInfo);
 
       return new TreeItem(objectTreeNode);
    }

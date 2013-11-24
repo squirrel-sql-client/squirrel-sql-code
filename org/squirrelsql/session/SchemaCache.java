@@ -1,8 +1,6 @@
 package org.squirrelsql.session;
 
-import javafx.scene.control.TreeItem;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.session.objecttree.ObjectTreeNode;
 
 import java.util.ArrayList;
 
@@ -20,8 +18,18 @@ public class SchemaCache
       return true;
    }
 
-   public ArrayList<Table> getTables(String catalog, String schema, String tableType)
+   public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
    {
-      return _dbConnectorResult.getSQLConnection().getTables(catalog, schema, tableType);
+      return _dbConnectorResult.getSQLConnection().getTableInfos(catalog, schema, tableType);
+   }
+
+   public ArrayList<ProcedureInfo> getProcedureInfos(String catalog, String schema)
+   {
+      return _dbConnectorResult.getSQLConnection().getProcedureInfos(catalog, schema);
+   }
+
+   public ArrayList<UDTInfo> getUDTInfos(String catalog, String schema)
+   {
+      return _dbConnectorResult.getSQLConnection().getUDTInfos(catalog, schema);
    }
 }

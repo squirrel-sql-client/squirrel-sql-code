@@ -7,6 +7,11 @@ public class SQLUtil
 {
    public static void close(Connection con)
    {
+      if(null == con)
+      {
+         return;
+      }
+
       try
       {
          con.close();
@@ -19,6 +24,11 @@ public class SQLUtil
 
    public static void close(ResultSet res)
    {
+      if(null == res)
+      {
+         return;
+      }
+
       try
       {
          res.close();

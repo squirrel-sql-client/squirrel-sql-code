@@ -9,12 +9,17 @@ import java.util.ArrayList;
 
 public class ObjectTreeUtil
 {
-   public static ArrayList<TreeItem<ObjectTreeNode>> findTreeItems(TreeView<ObjectTreeNode> objectsTree, ObjectTreeNodeTypeKey tableTypeKey)
+   public static ArrayList<TreeItem<ObjectTreeNode>> findTreeItems(TreeView<ObjectTreeNode> objectsTree, ObjectTreeNodeTypeKey objectTreeNodeTypeKey)
+   {
+      return findByType(objectsTree, objectTreeNodeTypeKey);
+   }
+
+   private static ArrayList<TreeItem<ObjectTreeNode>> findByType(TreeView<ObjectTreeNode> objectsTree, ObjectTreeNodeTypeKey objectTreeNodeTypeKey)
    {
       ArrayList<TreeItem<ObjectTreeNode>> matches = new ArrayList<>();
       TreeItem<ObjectTreeNode> root = objectsTree.getRoot();
 
-      recurse(root, matches, objectTreeNodeTreeItem -> objectTreeNodeTreeItem.getValue().getTypeKey().equals(tableTypeKey));
+      recurse(root, matches, objectTreeNodeTreeItem -> objectTreeNodeTreeItem.getValue().getTypeKey().equals(objectTreeNodeTypeKey));
 
       return matches;
    }
@@ -30,5 +35,17 @@ public class ObjectTreeUtil
       {
          recurse(objectTreeNodeTreeItem, matches, objectTreeNodeItemMatcher);
       }
+   }
+
+   public static TreeItem<ObjectTreeNode> findSingleTreeItem(TreeView<ObjectTreeNode> objectsTree, ObjectTreeNodeTypeKey objectTreeNodeTypeKey)
+   {
+      ArrayList<TreeItem<ObjectTreeNode>> arr = findByType(objectsTree, objectTreeNodeTypeKey);
+
+      if(1 == arr.size())
+      {
+         return arr.get(0);
+      }
+
+      throw new IllegalStateException("Found " + arr.size() + " instead of one");
    }
 }

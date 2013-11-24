@@ -1,18 +1,18 @@
 package org.squirrelsql.session;
 
-public class Table
+public class UDTInfo
 {
    private final String _catalog;
    private final String _schema;
-   private final String _tableType;
    private final String _name;
+   private final int _dataType;
 
-   public Table(String catalog, String schema, String tableType, String name)
+   public UDTInfo(String catalog, String schema, String name, int dataType)
    {
       _catalog = catalog;
       _schema = schema;
-      _tableType = tableType;
       _name = name;
+      _dataType = dataType;
    }
 
    public String getCatalog()
@@ -25,13 +25,13 @@ public class Table
       return _schema;
    }
 
-   public String getTableType()
-   {
-      return _tableType;
-   }
-
    public String getName()
    {
       return _name;
+   }
+
+   public int getDataType()
+   {
+      return _dataType;
    }
 }

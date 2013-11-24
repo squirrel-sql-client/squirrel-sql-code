@@ -9,8 +9,6 @@ import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.objecttree.*;
 
-import java.util.ArrayList;
-
 public class SessionCtrl
 {
    private final Session _session;
@@ -51,19 +49,7 @@ public class SessionCtrl
 
       AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _session);
 
-      ArrayList<TreeItem<ObjectTreeNode>> tableTypeItems = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.TABLE_TYPE_TYPE_KEY);
-
-      for (TreeItem<ObjectTreeNode> tableTypeItem : tableTypeItems)
-      {
-         TableTypeObjectTreeNode value = tableTypeItem.getValue();
-         ArrayList<Table> tables = _session.getSchemaCache().getTables(value.getCatalog(), value.getSchema(), value.getTableType());
-
-         for (Table table : tables)
-         {
-            tableTypeItem.getChildren().add(ObjectTreeItemFactory.createTable(table));
-         }
-
-      }
+      TablesProceduresAndUDTsCreator.createNodes(objectsTree, _session);
 
 
       objectsTab.setContent(objectsTree);
