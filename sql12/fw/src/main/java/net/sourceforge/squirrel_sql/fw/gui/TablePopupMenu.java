@@ -54,14 +54,15 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_WHERE_STATEMENT = 4;
 		int COPY_UPDATE_STATEMENT = 5;
 		int COPY_INSERT_STATEMENT = 6;
-		int EXPORT_CSV = 7;
-		int SELECT_ALL = 8;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 9;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 10;
-		int SHOW_ROW_NUMBERS = 11;
-		int COPY_WIKI = 12;
-		int SELECT_ROWS = 13;
-		int LAST_ENTRY = 14;
+		int COPY_COLUMN_HEADER = 7;
+		int EXPORT_CSV = 8;
+		int SELECT_ALL = 9;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 10;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 11;
+		int SHOW_ROW_NUMBERS = 12;
+		int COPY_WIKI = 13;
+		int SELECT_ROWS = 14;
+		int LAST_ENTRY = 15;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -82,6 +83,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyWhereStatementAction _copyWhereStatement = new CopyWhereStatementAction();
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
+	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
@@ -144,6 +146,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WHERE_STATEMENT] = add(_copyWhereStatement);
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
       _menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
+      _menuItems[IOptionTypes.COPY_COLUMN_HEADER] = add(_copyColumnHeader);
       addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
@@ -376,6 +379,23 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				new TableCopyInsertStatementCommand(_table, getStatementSeparatorFromModel()).execute();
+			}
+		}
+
+   }
+
+	private class CopyColumnHeaderAction extends BaseAction
+	{
+      CopyColumnHeaderAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copycolumnheader"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyColumnHeaderCommand(_table).execute();
 			}
 		}
 

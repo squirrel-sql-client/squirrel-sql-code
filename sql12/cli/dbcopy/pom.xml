@@ -80,6 +80,8 @@
 									<exclude>commons-httpclient:commons-httpclient</exclude>
 									<exlcude>jgoodies:forms</exlcude>
 									<exclude>net.sourceforge.jexcelapi:jxl</exclude>
+									<exclude>org.apache.poi:poi</exclude>
+									<exclude>org.apache.poi:poi-ooxml</exclude>
 									<exclude>net.sf.ehcache:ehcache</exclude>
 									<exclude>org.hibernate:hibernate-annotations</exclude>
 									<exclude>org.hibernate:hibernate-commons-annotations</exclude>

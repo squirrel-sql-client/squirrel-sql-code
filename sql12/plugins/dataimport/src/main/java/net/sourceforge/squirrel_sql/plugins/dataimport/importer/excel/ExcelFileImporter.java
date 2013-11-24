@@ -23,15 +23,15 @@ import java.util.Date;
 
 import javax.swing.JComponent;
 
-import jxl.Cell;
-import jxl.CellType;
-import jxl.DateCell;
-import jxl.NumberCell;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * This implementation of the <code>IFileImporter</code> interface is to 
@@ -64,9 +64,9 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public boolean open() throws IOException {
 		try {
-			workbook = Workbook.getWorkbook(importFile);
-		} catch (BiffException be) {
-			throw new IOException(be.toString());
+                        workbook= WorkbookFactory.create(importFile);
+		} catch (InvalidFormatException fe) {
+			throw new IOException(fe.toString());
 		}
 		reset();
 		return true;
@@ -77,8 +77,7 @@ public class ExcelFileImporter implements IFileImporter {
 	 * @see net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter#close()
 	 */
 	public boolean close() throws IOException {
-		workbook.close();
-		return true;
+        	return true;
 	}
 
 	/* (non-Javadoc)
@@ -89,24 +88,23 @@ public class ExcelFileImporter implements IFileImporter {
 		Workbook wb = null;
 		Sheet sht = null; 
 		try {
-			wb = Workbook.getWorkbook(importFile);
+			wb = WorkbookFactory.create(importFile);
 			sht = getSheet(wb);
-		} catch (BiffException be) {
-			throw new IOException(be.toString());
+		} catch (InvalidFormatException fe) {
+			throw new IOException(fe.toString());
 		}
 
 		int y = 0;
 		int x = 0;
-		int maxLines = (noOfLines < sht.getRows()) ? noOfLines : sht.getRows();
-		data = new String[maxLines][sht.getColumns()];
+		int maxLines = (noOfLines < sht.getPhysicalNumberOfRows()) ? noOfLines : sht.getPhysicalNumberOfRows();
+                Row row= sht.getRow(0);
+		data = new String[maxLines][row.getPhysicalNumberOfCells()];
 
 		for (y = 0; y < maxLines; y++) {
-			for (x = 0; x < sht.getColumns(); x++) {
-				data[y][x] = sht.getCell(x, y).getContents();
+			for (x = 0; x < row.getPhysicalNumberOfCells(); x++) {
+				data[y][x] = row.getCell(x).toString();
 			}
 		}
-		wb.close();
-		
 		return data;
 	}
 	
@@ -116,7 +114,7 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public boolean reset() throws IOException {
 		sheet = getSheet(workbook);
-		size = sheet.getRows();
+		size = sheet.getPhysicalNumberOfRows();
 		pointer = -1;
 		return true;
 	}
@@ -152,7 +150,7 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public String getString(int column) throws IOException {
 		checkPointer();
-		return sheet.getCell(column, pointer).getContents();
+		return sheet.getRow(pointer).getCell(column).toString();
 	}
 	
 	/*
@@ -161,11 +159,11 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public Integer getInt(int column) throws IOException, UnsupportedFormatException {
 		checkPointer();
-		Cell cell = sheet.getCell(column, pointer);
-		if (cell.getType() != CellType.NUMBER) {
+		Cell cell = sheet.getRow(pointer).getCell(column);
+		if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
 			throw new UnsupportedFormatException();
 		}
-		return (new Double(((NumberCell) cell).getValue())).intValue();
+		return ((Double)cell.getNumericCellValue()).intValue();
 	}
 	
 	/*
@@ -174,11 +172,11 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public Date getDate(int column) throws IOException, UnsupportedFormatException {
 		checkPointer();
-		Cell cell = sheet.getCell(column, pointer);
-		if (cell.getType() != CellType.DATE) {
+		Cell cell = sheet.getRow(pointer).getCell(column);
+		if (DateUtil.isCellDateFormatted(cell)) {
 			throw new UnsupportedFormatException();
 		}
-		return ((DateCell) cell).getDate(); 
+		return DateUtil.getJavaDate(cell.getNumericCellValue());
 	}
 	
 	/*
@@ -187,11 +185,11 @@ public class ExcelFileImporter implements IFileImporter {
 	 */
 	public Long getLong(int column) throws IOException, UnsupportedFormatException {
 		checkPointer();
-		Cell cell = sheet.getCell(column, pointer);
-		if (cell.getType() != CellType.NUMBER) {
+		Cell cell = sheet.getRow(pointer).getCell(column);
+		if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
 			throw new UnsupportedFormatException();
 		}
-		return (new Double(((NumberCell) cell).getValue())).longValue();
+		return ((Double)cell.getNumericCellValue()).longValue();
 	}
 	
 	/*
@@ -208,7 +206,7 @@ public class ExcelFileImporter implements IFileImporter {
 			s = wb.getSheet(settings.getSheetName());
 		}
 		if (s == null) {
-			s = wb.getSheet(0);
+			s = wb.getSheetAt(0);
 		}
 		return s;
 	}

@@ -112,6 +112,9 @@
 									<includedArtifact>org.hibernate:hibernate-commons-annotations</includedArtifact>
 									<includedArtifact>org.hibernate:hibernate-entitymanager</includedArtifact>
 									<includedArtifact>org.hibernate:hibernate</includedArtifact>
+									<includedArtifact>org.apache.poi:poi</includedArtifact>
+									<includedArtifact>org.apache.poi:poi-ooxml</includedArtifact>
+									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>log4j:log4j</includedArtifact>
 									<includedArtifact>be.cyberelf.nanoxml:nanoxml</includedArtifact>
