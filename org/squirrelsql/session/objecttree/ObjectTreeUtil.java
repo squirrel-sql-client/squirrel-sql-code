@@ -1,9 +1,7 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import org.squirrelsql.session.objecttree.ObjectTreeNode;
-import org.squirrelsql.session.objecttree.ObjectTreeNodeTypeKey;
 
 import java.util.ArrayList;
 
