@@ -5,7 +5,7 @@ import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
 
-public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeNode, ProcedureObjectTreeNode
+public class ObjectTreeNode
 {
    private ObjectTreeNodeTypeKey _typeKey;
    private String _nodeName;
@@ -51,7 +51,6 @@ public class ObjectTreeNode implements TableTypeObjectTreeNode, TableObjectTreeN
       return _schema;
    }
 
-   @Override
    public String getTableType()
    {
       return _tableType;

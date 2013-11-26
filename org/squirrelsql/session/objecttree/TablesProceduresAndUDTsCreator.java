@@ -53,7 +53,7 @@ public class TablesProceduresAndUDTsCreator
 
       for (TreeItem<ObjectTreeNode> tableTypeItem : tableTypeItems)
       {
-         TableTypeObjectTreeNode value = tableTypeItem.getValue();
+         ObjectTreeNode value = tableTypeItem.getValue();
          ArrayList<TableInfo> tableInfos = session.getSchemaCache().getTableInfos(value.getCatalog(), value.getSchema(), value.getTableType());
 
          for (TableInfo tableInfo : tableInfos)

@@ -2,18 +2,18 @@ package org.squirrelsql.session.objecttree;
 
 public class ObjectTreeNodeTypeKey
 {
-   public static final ObjectTreeNodeTypeKey ALIAS_TYPE_KEY = new ObjectTreeNodeTypeKey("ALIAS_TYPE_KEY", null);
-   public static final ObjectTreeNodeTypeKey CATALOG_TYPE_KEY = new ObjectTreeNodeTypeKey("CATALOG_TYPE_KEY", null);
-   public static final ObjectTreeNodeTypeKey SCHEMA_TYPE_KEY = new ObjectTreeNodeTypeKey("SCHEMA_TYPE_KEY", null);
-   public static final ObjectTreeNodeTypeKey TABLE_TYPE_TYPE_KEY = new ObjectTreeNodeTypeKey("TABLE_TYPE_TYPE_KEY", TableTypeObjectTreeNode.class);
-   public static final ObjectTreeNodeTypeKey PROCEDURE_TYPE_KEY = new ObjectTreeNodeTypeKey("PROCEDURE_TYPE_KEY", null);
-   public static final ObjectTreeNodeTypeKey UDT_TYPE_KEY = new ObjectTreeNodeTypeKey("UDT_TYPE_KEY", null);
-   public static final ObjectTreeNodeTypeKey TABLE_TYPE_KEY = new ObjectTreeNodeTypeKey("TABLE_TYPE_KEY", null);
+   public static final ObjectTreeNodeTypeKey ALIAS_TYPE_KEY = new ObjectTreeNodeTypeKey("ALIAS_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey CATALOG_TYPE_KEY = new ObjectTreeNodeTypeKey("CATALOG_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey SCHEMA_TYPE_KEY = new ObjectTreeNodeTypeKey("SCHEMA_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey TABLE_TYPE_TYPE_KEY = new ObjectTreeNodeTypeKey("TABLE_TYPE_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey PROCEDURE_TYPE_KEY = new ObjectTreeNodeTypeKey("PROCEDURE_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey UDT_TYPE_KEY = new ObjectTreeNodeTypeKey("UDT_TYPE_KEY");
+   public static final ObjectTreeNodeTypeKey TABLE_TYPE_KEY = new ObjectTreeNodeTypeKey("TABLE_TYPE_KEY");
 
 
    private String _key;
 
-   public ObjectTreeNodeTypeKey(String key, Class interfaceToBeCastTo)
+   public ObjectTreeNodeTypeKey(String key)
    {
       _key = key;
    }
