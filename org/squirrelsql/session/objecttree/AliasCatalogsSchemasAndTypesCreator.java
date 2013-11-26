@@ -21,6 +21,8 @@ public class AliasCatalogsSchemasAndTypesCreator
 
       objectsTree.setRoot(aliasRoot);
 
+      aliasRoot.setExpanded(true);
+
    }
 
    private static void recursiveAppendChildren(TreeItem<ObjectTreeNode> parent, Session session)
