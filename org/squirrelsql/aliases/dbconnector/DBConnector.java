@@ -128,6 +128,17 @@ public class DBConnector
 
          Connection jdbcConn = driver.connect(_alias.getUrl(), myProps);
 
+         if(null == jdbcConn)
+         {
+            // See Api doc of java.sql.Driver.connect();
+            String msg =
+                  "Wrong driver class \"" + sqlDriver.getDriverClassName() +
+                  "\" to connect to URL \"" + _alias.getUrl() + "\"" +
+                  "\nDid you choose the wrong driver in your Alias definition?";
+
+            throw new IllegalStateException(msg);
+         }
+
          dbConnectorResult.setSQLConnection(new SQLConnection(jdbcConn));
 
          return dbConnectorResult;

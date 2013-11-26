@@ -53,10 +53,21 @@ public class AliasEditController
       String title;
 
 
+      _aliasEditView.cboDriver.getItems().addAll(drivers);
+
+      _aliasEditView.cboDriver.setCellFactory(cf -> new DriverCell());
+
+
       if (null == alias)
       {
          title = _i18n.t("title.new.alias");
          _treePositionCtrl = new TreePositionCtrl(_aliasEditView.treePositionViewController, parentNodeSelected, parentAllowsChildren);
+
+         if(0 < drivers.size())
+         {
+            _aliasEditView.cboDriver.getSelectionModel().select(0);
+         }
+
       }
       else
       {
@@ -85,16 +96,6 @@ public class AliasEditController
          loadOrStore(false, driver);
       }
 
-
-
-      _aliasEditView.cboDriver.getItems().addAll(drivers);
-
-      _aliasEditView.cboDriver.setCellFactory(cf -> new DriverCell());
-
-      if(0 < drivers.size())
-      {
-         _aliasEditView.cboDriver.getSelectionModel().select(0);
-      }
 
       initListener();
 
