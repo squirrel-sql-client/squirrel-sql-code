@@ -4,7 +4,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -77,7 +80,9 @@ public class DriverEditCtrl
       _driverEditView.btnDriverCPDown.setOnAction((e) -> onDriverCPDown());
       _driverEditView.btnListDrivers.setOnAction((e) -> onListDrivers());
 
-      _driverEditView.lstDriverClasses.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) this::onDriverClassSelected);
+      _driverEditView.lstDriverClasses.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onDriverClassSelected((String)newValue));
+
+      _driverEditView.lstDriverClasses.setOnMouseClicked(this::onMouseClickedDriverList);
 
       _driverEditView.btnClose.setOnAction((e) -> onClose());
       _driverEditView.btnOk.setOnAction((e) -> onOk());
@@ -85,7 +90,22 @@ public class DriverEditCtrl
 
    }
 
-   private void onDriverClassSelected(ObservableValue ov, String oldStr, String newStr)
+   private void onMouseClickedDriverList(MouseEvent mouseEvent)
+   {
+      if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+      {
+         if (mouseEvent.getClickCount() == 2)
+         {
+            ObservableList selectedItems = _driverEditView.lstDriverClasses.getSelectionModel().getSelectedItems();
+            if (1 == selectedItems.size())
+            {
+               onDriverClassSelected((String) selectedItems.get(0));
+            }
+         }
+      }
+   }
+
+   private void onDriverClassSelected(String newStr)
    {
       if(null != newStr)
       {
