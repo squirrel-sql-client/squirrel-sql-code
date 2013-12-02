@@ -72,4 +72,24 @@ public class DriversUtil
 
       return null;
    }
+
+   public static String getJarFileNamesListString(SQLDriver driver)
+   {
+      String ret = null;
+
+      for (String fileName : driver.getJarFileNamesList())
+      {
+
+         if(null == ret)
+         {
+            ret = fileName;
+         }
+         else
+         {
+            ret += File.pathSeparator + fileName;
+         }
+      }
+
+      return ret;
+   }
 }

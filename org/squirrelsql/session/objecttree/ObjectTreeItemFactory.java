@@ -17,7 +17,10 @@ public class ObjectTreeItemFactory
 
    public static TreeItem createAlias(DbConnectorResult dbConnectorResult)
    {
-      return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY, _i18n.t("session.objecttree.alias", dbConnectorResult.getAlias().getName()), null, null, _props.getImageView("database.png")));
+      ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY, _i18n.t("session.objecttree.alias", dbConnectorResult.getAlias().getName()), null, null, _props.getImageView("database.png"));
+      objectTreeNode.setDBConnectorResult(dbConnectorResult);
+
+      return new TreeItem(objectTreeNode);
    }
 
    static TreeItem createCatalog(String catalog)

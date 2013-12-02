@@ -1,6 +1,7 @@
 package org.squirrelsql.session.objecttree;
 
 import javafx.scene.image.ImageView;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
@@ -16,6 +17,7 @@ public class ObjectTreeNode
    private TableInfo _tableInfo;
    private ProcedureInfo _procedureInfo;
    private UDTInfo _UDTInfo;
+   private DbConnectorResult _DBConnectorResult;
 
    public ObjectTreeNode(ObjectTreeNodeTypeKey typeKey, String nodeName, String catalog, String schema, ImageView imageView)
    {
@@ -94,5 +96,15 @@ public class ObjectTreeNode
    public UDTInfo getUDTInfo()
    {
       return _UDTInfo;
+   }
+
+   public void setDBConnectorResult(DbConnectorResult DBConnectorResult)
+   {
+      _DBConnectorResult = DBConnectorResult;
+   }
+
+   public DbConnectorResult getDBConnectorResult()
+   {
+      return _DBConnectorResult;
    }
 }

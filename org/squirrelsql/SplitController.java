@@ -95,6 +95,7 @@ public class SplitController
 
    public void close()
    {
+      checkRemove();
       _pref.set(PREF_MESSAGES_SPLIT_LOC, _spltVert.getDividerPositions()[0]);
    }
 

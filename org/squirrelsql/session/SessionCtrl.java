@@ -1,5 +1,8 @@
 package org.squirrelsql.session;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import org.squirrelsql.AppState;
@@ -7,16 +10,22 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.objecttree.*;
+import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SessionCtrl
 {
+   private static final String PREF_OBJECT_TREE_SPLIT_LOC = "objecttree.split.loc";
+
+
    private final Session _session;
 
    private I18n _i18n = new I18n(getClass());
 
-   private Props _props = new Props(getClass());
    private TabPane _sessionTabPane;
+   private Pref _pref = new Pref(SessionCtrl.class);
+   private SplitPane _splitPane = new SplitPane();
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -52,7 +61,14 @@ public class SessionCtrl
       TablesProceduresAndUDTsCreator.createNodes(objectsTree, _session);
 
 
-      objectsTab.setContent(objectsTree);
+      _splitPane.setOrientation(Orientation.HORIZONTAL);
+      _splitPane.getItems().add(objectsTree);
+      _splitPane.getItems().add(new TreeDetailsController(objectsTree).getComponent());
+
+      SplitDividerWA.adjustDivider(_splitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
+
+
+      objectsTab.setContent(_splitPane);
 
       return objectsTab;
    }
@@ -76,6 +92,7 @@ public class SessionCtrl
 
    private void onClose()
    {
+      _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _splitPane.getDividerPositions()[0]);
       _session.close();
    }
 }
