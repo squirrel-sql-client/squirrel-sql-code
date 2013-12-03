@@ -317,4 +317,16 @@ public class SQLConnection
       return _con.getMetaData().getDriverName();
    }
 
+   public DatabaseMetaData getDatabaseMetaData()
+   {
+      try
+      {
+         return _con.getMetaData();
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+   }
 }
