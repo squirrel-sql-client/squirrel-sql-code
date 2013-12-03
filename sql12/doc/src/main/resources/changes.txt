@@ -8,6 +8,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+File export: Replaced the old xls export by the newer xlsx export which allows far mor rows to export.
+   Thanks to André Schild for the patch.
+   This also fixes bug #625
+
 #1108 (in bugs): New entry in table's right mouse menu: Copy column names
 
 Upgraded to the latest RSyntax version (2.5.0 / 3).

@@ -114,7 +114,10 @@
 									<includedArtifact>org.hibernate:hibernate</includedArtifact>
 									<includedArtifact>org.apache.poi:poi</includedArtifact>
 									<includedArtifact>org.apache.poi:poi-ooxml</includedArtifact>
-									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
+                                    <includedArtifact>org.apache.xmlbeans:xmlbeans</includedArtifact>
+                                    <includedArtifact>org.apache.poi:poi-ooxml-schemas</includedArtifact>
+                                    <includedArtifact>dom4j:dom4j</includedArtifact>
+                                    <includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>net.sourceforge.jexcelapi:jxl</includedArtifact>
 									<includedArtifact>log4j:log4j</includedArtifact>
 									<includedArtifact>be.cyberelf.nanoxml:nanoxml</includedArtifact>

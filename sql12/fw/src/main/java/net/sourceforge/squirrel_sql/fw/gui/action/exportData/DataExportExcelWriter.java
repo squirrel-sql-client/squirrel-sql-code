@@ -19,18 +19,21 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.exportData;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Types;
 import java.util.Calendar;
 
-import jxl.Workbook;
-import jxl.write.WritableCell;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
 
 /**
  * Exports {@link IExportData} to a Excel file.
@@ -39,9 +42,10 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
  *
  */
 public class DataExportExcelWriter extends AbstractDataExportFileWriter {
-	private WritableWorkbook workbook;
-	private WritableSheet sheet;
-	private boolean withHeader = false;
+    private SXSSFWorkbook workbook; // The streaming api export for (very) large xlsx files
+    private Sheet   sheet; // We write the data to this sheet
+    private File    file; // File where the export is written to
+    private boolean withHeader = false;
 	
 	
 
@@ -55,46 +59,50 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 		super(file, ctrl, includeHeaders, progressController);
 	}
 
-	private WritableCell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj) {
+	private Cell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj) {
+                Row row= sheet.getRow(curRow);
+                if (row == null)
+                {
+                    row= sheet.createRow(curRow);
+                }
+                Cell retVal= row.createCell(colIdx);
+
 		if (null == cellObj) {
-			return new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+			retVal.setCellValue(getDataXLSAsString(cellObj));
+		} else if (null == colDef) {
+			retVal.setCellValue(getDataXLSAsString(cellObj));
 		}
 
-		if (null == colDef) {
-			return new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
-		}
-
-		WritableCell ret;
 		int colType = colDef.getSqlType();
 		switch (colType) {
 		case Types.BIT:
 		case Types.BOOLEAN:
-			ret = new jxl.write.Boolean(colIdx, curRow, (Boolean) cellObj);
+			retVal.setCellValue((Boolean) cellObj);
 			break;
 		case Types.INTEGER:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.SMALLINT:
 		case Types.TINYINT:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.DECIMAL:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.NUMERIC:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.FLOAT:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.DOUBLE:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.REAL:
-			ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).doubleValue());
+			retVal.setCellValue(((Number) cellObj).doubleValue());
 			break;
 		case Types.BIGINT:
-			ret = new jxl.write.Number(colIdx, curRow, Long.parseLong(cellObj.toString()));
+			retVal.setCellValue(Long.parseLong(cellObj.toString()));
 			break;
 		case Types.DATE:
 		case Types.TIMESTAMP:
@@ -118,19 +126,19 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 			}
 
 			java.util.Date xlsUTCDate = new java.util.Date(utcTime);
-			ret = new jxl.write.DateTime(colIdx, curRow, xlsUTCDate, jxl.write.DateTime.GMT);
+			retVal.setCellValue(xlsUTCDate);
 			break;
 		case Types.CHAR:
 		case Types.VARCHAR:
 		case Types.LONGVARCHAR:
 			cellObj = CellComponentFactory.renderObject(cellObj, colDef);
-			ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+			retVal.setCellValue(getDataXLSAsString(cellObj));
 			break;
 		default:
 			cellObj = CellComponentFactory.renderObject(cellObj, colDef);
-			ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+			retVal.setCellValue(getDataXLSAsString(cellObj));
 		}
-		return ret;
+		return retVal;
 	}
 	
 	private String getDataXLSAsString(Object cellObj) {
@@ -146,8 +154,9 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 	 */
 	@Override
 	protected void beforeWorking(File file) throws IOException{
-		this.workbook = Workbook.createWorkbook(file);
-		this.sheet = workbook.createSheet("Squirrel SQL Export", 0);
+		this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+                this.file= file;
+		this.sheet = workbook.createSheet("Squirrel SQL Export");
 	}
 
 	/**
@@ -156,8 +165,13 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 	@Override
 	protected void addHeaderCell(int colIdx, String columnName) throws Exception {
 		this.withHeader = true;
-		jxl.write.Label label = new jxl.write.Label(colIdx, 0, columnName);
-		sheet.addCell(label);		
+                Row headerRow= sheet.getRow(0);
+                if (headerRow == null)
+                {
+                    headerRow= sheet.createRow(0);
+                }
+                Cell cell= headerRow.createCell(colIdx);
+                cell.setCellValue(columnName);
 	}
 
 	/**
@@ -165,14 +179,13 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 	 */
 	@Override
 	protected void addCell(IExportDataCell cell) throws Exception{
-		WritableCell xlsCell;
+		Cell xlsCell;
 		if (getCtrl().useGloablPrefsFormatting()) {
 			xlsCell = getXlsCell(cell.getColumnDisplayDefinition(), cell.getColumnIndex(),
 					calculateRowIdx(cell), cell.getObject());
 		} else {
 			xlsCell = getXlsCell(null, cell.getColumnIndex(), calculateRowIdx(cell), cell.getObject());
 		}
-		sheet.addCell(xlsCell);		
 	}
 
 
@@ -193,8 +206,12 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 	 */
 	@Override
 	protected void afterWorking() throws Exception{
-		workbook.write();
-		workbook.close();		
+            FileOutputStream out = new FileOutputStream(this.file);
+            this.workbook.write(out);
+            out.close();
+
+            // dispose of temporary files backing this workbook on disk
+            this.workbook.dispose();            
 	}
 
 }

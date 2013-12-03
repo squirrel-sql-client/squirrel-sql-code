@@ -243,7 +243,7 @@ public class TableExportCsvController
       }
       else if (_dlg.radFormatXLS.isSelected())
       {
-         newEnding = "xls";
+         newEnding = "xlsx";
       }
       else if (_dlg.radFormatXML.isSelected())
       {
@@ -449,7 +449,7 @@ protected void writePrefs()
    private void initDlg()
    {
       Preferences userRoot = Preferences.userRoot();
-		_dlg.txtFile.setText(userRoot.get(PREF_KEY_CSV_FILE, null));
+		_dlg.txtFile.setText(replaceXlsByXlsx(userRoot.get(PREF_KEY_CSV_FILE, null)));
       _dlg.charsets.setSelectedItem(userRoot.get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
       _dlg.chkWithHeaders.setSelected(userRoot.getBoolean(PREF_KEY_WITH_HEADERS, true));
 
@@ -504,6 +504,17 @@ protected void writePrefs()
       	LineSeparator.valueOf(userRoot.get(PREF_KEY_LINE_SEPERATOR, LineSeparator.DEFAULT.name()));
       
       _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
+   }
+
+   private String replaceXlsByXlsx(String fileName)
+   {
+      String oldXlsSuffix = ".xls";
+      if(null != fileName && fileName.toLowerCase().endsWith(oldXlsSuffix))
+      {
+         fileName = fileName.substring(0, fileName.length() - oldXlsSuffix.length()) + ".xlsx";
+      }
+
+      return fileName;
    }
 
    /**

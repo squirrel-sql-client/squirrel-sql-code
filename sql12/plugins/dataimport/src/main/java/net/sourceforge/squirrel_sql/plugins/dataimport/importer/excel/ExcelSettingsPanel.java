@@ -24,13 +24,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import jxl.Workbook;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * This panel holds the excel specific settings for the importer.
@@ -38,7 +39,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Thorsten Mürell
  */
 public class ExcelSettingsPanel extends JPanel {
-	private static final long serialVersionUID = -649828189112224370L;
+
 	
 	private static final StringManager stringMgr =
 		StringManagerFactory.getStringManager(ExcelSettingsPanel.class);
@@ -57,7 +58,7 @@ public class ExcelSettingsPanel extends JPanel {
 	public ExcelSettingsPanel(ExcelSettingsBean settings, File f) {
 		this.settings = settings;
 		try {
-			this.wb = Workbook.getWorkbook(f);
+			this.wb = WorkbookFactory.create(f);
 		} catch (Exception e) {
 			this.wb = null;
 		}
@@ -73,8 +74,9 @@ public class ExcelSettingsPanel extends JPanel {
 		};
 		sheetName = new JComboBox();
 		if (wb != null) {
-			for (String name : wb.getSheetNames()) {
-				sheetName.addItem(name);
+                    int nSheets= wb.getNumberOfSheets();
+			for (int i= 0; i < nSheets; i++) {
+				sheetName.addItem(wb.getSheetAt(i).getSheetName());
 			}
 		}
 		sheetName.addActionListener(stateChangedListener);
