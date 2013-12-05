@@ -1,6 +1,5 @@
 package org.squirrelsql.session.objecttree;
 
-import javafx.scene.control.TreeItem;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
@@ -11,6 +10,7 @@ import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashSet;
 
 public class DataBaseMetaDataLoader
@@ -36,12 +36,10 @@ public class DataBaseMetaDataLoader
 
    private static final String UNSUPPORTED = "unsupported";
 
-   static TableLoader loadMetaData(TreeItem<ObjectTreeNode> aliasItem)
+   static TableLoader loadMetaData(DbConnectorResult dbConnectorResult)
    {
       I18n _i18n = new I18n(DataBaseMetaDataLoader.class);
 
-
-      DbConnectorResult dbConnectorResult = aliasItem.getValue().getDBConnectorResult();
 
       TableLoader tableLoader = new TableLoader();
       tableLoader.addColumn(_i18n.t("objecttree.details.alias.metadata.propertyName"));
@@ -51,6 +49,7 @@ public class DataBaseMetaDataLoader
 
       tableLoader.addRow("JDBC Driver CLASSNAME", driver.getDriverClassName());
       tableLoader.addRow("JDBC Driver CLASSPATH", DriversUtil.getJarFileNamesListString(driver));
+      tableLoader.addRow("getTimeOpened", new Date());
 
       DatabaseMetaData md = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
 

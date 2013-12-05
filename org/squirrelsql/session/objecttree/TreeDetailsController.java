@@ -29,10 +29,23 @@ public class TreeDetailsController
 
       if (ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
-
          loadAliasMetaData(selectedItem);
+         loadDataTypes(selectedItem);
       }
 
+   }
+
+   private void loadDataTypes(TreeItem<ObjectTreeNode> selectedItem)
+   {
+      Tab tab = new Tab(_i18n.t("objecttree.details.alias.dataTypes"));
+      tab.setClosable(false);
+      _objectTreeDetailsTabPane.getTabs().add(tab);
+
+      TableLoader tableLoader = DataTypesLoader.loadTypes(selectedItem.getValue().getDBConnectorResult());
+
+      TableView tableMetadata = new TableView();
+      tableLoader.load(tableMetadata);
+      tab.setContent(tableMetadata);
    }
 
    private void loadAliasMetaData(TreeItem<ObjectTreeNode> selectedItem)
@@ -41,8 +54,7 @@ public class TreeDetailsController
       tab.setClosable(false);
       _objectTreeDetailsTabPane.getTabs().add(tab);
 
-      TableLoader tableLoader = DataBaseMetaDataLoader.loadMetaData(selectedItem);
-
+      TableLoader tableLoader = DataBaseMetaDataLoader.loadMetaData(selectedItem.getValue().getDBConnectorResult());
 
       TableView tableMetadata = new TableView();
       tableLoader.load(tableMetadata);
