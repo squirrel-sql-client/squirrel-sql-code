@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableLoader
 {
@@ -19,6 +20,11 @@ public class TableLoader
    public void addColumn(String header)
    {
       _columns.add(header);
+   }
+
+   public void addRow(List row)
+   {
+      addRow(row.toArray(new Object[row.size()]));
    }
 
    public void addRow(Object... row)

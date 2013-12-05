@@ -42,7 +42,7 @@ public class DataTypesLoader
       }
    }
 
-   private static Object[] getNextRow(ResultSet rs, int columnCount)
+   private static ArrayList getNextRow(ResultSet rs, int columnCount)
    {
       try
       {
@@ -172,7 +172,7 @@ public class DataTypesLoader
 
             }
          }
-         return row.toArray(new Object[row.size()]);
+         return row;
       }
       catch (SQLException e)
       {
