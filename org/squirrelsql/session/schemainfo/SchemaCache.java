@@ -23,6 +23,19 @@ public class SchemaCache
    public SchemaCache(DbConnectorResult dbConnectorResult)
    {
       _dbConnectorResult = dbConnectorResult;
+
+      load();
+   }
+
+   private void load()
+   {
+      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult);
+      _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult);
+      _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult);
+      _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult);
+      _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult);
+      _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult);
+      _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult);
    }
 
    public boolean shouldLoadSchema(DBSchema schema)
@@ -47,64 +60,36 @@ public class SchemaCache
 
    public TableLoader getTypes()
    {
-      if (null == _dataTypes)
-      {
-         _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult);
-      }
       return _dataTypes;
    }
 
    public TableLoader getDatabaseMetaData()
    {
-      if (null == _dataBaseMetadData)
-      {
-         _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult);
-      }
       return _dataBaseMetadData;
    }
 
    public TableLoader getNumericFunctions()
    {
-      if (null == _numericFunctions)
-      {
-         _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult);
-      }
       return _numericFunctions;
    }
 
    public TableLoader getStringFunctions()
    {
-      if (null == _stringFunctions)
-      {
-         _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult);
-      }
       return _stringFunctions;
    }
 
    public TableLoader getSystemFunctions()
    {
-      if (null == _systemFunctions)
-      {
-         _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult);
-      }
       return _systemFunctions;
    }
 
    public TableLoader getTimeDateFunctions()
    {
-      if (null == _timeDateFunctions)
-      {
-         _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult);
-      }
       return _timeDateFunctions;
    }
 
    public TableLoader getKeywords()
    {
-      if (null == _keywords)
-      {
-         _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult);
-      }
       return _keywords;
    }
 }
