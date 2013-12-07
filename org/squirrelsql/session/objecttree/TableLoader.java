@@ -13,6 +13,7 @@ import java.util.List;
 
 public class TableLoader
 {
+   private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
    private ArrayList<String> _columns = new ArrayList<>();
 
    private ArrayList<ArrayList<SimpleObjectProperty>> _rows = new ArrayList<>();
@@ -52,7 +53,7 @@ public class TableLoader
          {
             public ObservableValue<Object> call(TableColumn.CellDataFeatures<ArrayList<SimpleObjectProperty>, Object> row)
             {
-               return row.getValue().get(finalI);
+               return interpretValue(row.getValue().get(finalI));
             }
          });
          cols.add(tableColumn);
@@ -63,5 +64,15 @@ public class TableLoader
       ObservableList<ArrayList<SimpleObjectProperty>> items = FXCollections.observableArrayList(_rows);
       tv.setItems(items);
 
+   }
+
+   private SimpleObjectProperty interpretValue(SimpleObjectProperty simpleObjectProperty)
+   {
+      if(null == simpleObjectProperty.get())
+      {
+         return NULL_PROPERTY;
+      }
+
+      return simpleObjectProperty;
    }
 }

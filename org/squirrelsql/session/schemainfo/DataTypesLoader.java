@@ -1,8 +1,9 @@
-package org.squirrelsql.session.objecttree;
+package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.JDBCTypeMapper;
+import org.squirrelsql.session.objecttree.TableLoader;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 public class DataTypesLoader
 {
 
-   static TableLoader loadTypes(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadTypes(DbConnectorResult dbConnectorResult)
    {
       try
       {

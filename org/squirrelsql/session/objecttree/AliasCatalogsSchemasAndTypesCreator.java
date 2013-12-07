@@ -20,9 +20,6 @@ public class AliasCatalogsSchemasAndTypesCreator
       recursiveAppendChildren(aliasRoot, session);
 
       objectsTree.setRoot(aliasRoot);
-
-      aliasRoot.setExpanded(true);
-
    }
 
    private static void recursiveAppendChildren(TreeItem<ObjectTreeNode> parent, Session session)

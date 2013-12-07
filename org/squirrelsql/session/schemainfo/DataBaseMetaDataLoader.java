@@ -1,10 +1,11 @@
-package org.squirrelsql.session.objecttree;
+package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
+import org.squirrelsql.session.objecttree.TableLoader;
 
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
@@ -36,14 +37,14 @@ public class DataBaseMetaDataLoader
 
    private static final String UNSUPPORTED = "unsupported";
 
-   static TableLoader loadMetaData(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadMetaData(DbConnectorResult dbConnectorResult)
    {
-      I18n _i18n = new I18n(DataBaseMetaDataLoader.class);
+      I18n i18n = new I18n(DataBaseMetaDataLoader.class);
 
 
       TableLoader tableLoader = new TableLoader();
-      tableLoader.addColumn(_i18n.t("objecttree.details.alias.metadata.propertyName"));
-      tableLoader.addColumn(_i18n.t("objecttree.details.alias.metadata.value"));
+      tableLoader.addColumn(i18n.t("objecttree.details.alias.metadata.propertyName"));
+      tableLoader.addColumn(i18n.t("objecttree.details.alias.metadata.value"));
 
       SQLDriver driver = DriversUtil.findDriver(dbConnectorResult.getAlias().getDriverId());
 
@@ -162,6 +163,94 @@ public class DataBaseMetaDataLoader
       catch (Throwable th)
       {
          return UNSUPPORTED;
+      }
+   }
+
+   public static TableLoader loadNumericFunctions(DbConnectorResult dbConnectorResult)
+   {
+      try
+      {
+         I18n i18n = new I18n(SchemaCache.class);
+         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         return buildCommaSeparatedTable(i18n.t("schemacache.numeric.functions"), databaseMetaData.getNumericFunctions());
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static TableLoader loadStringFunctions(DbConnectorResult dbConnectorResult)
+   {
+      try
+      {
+         I18n i18n = new I18n(SchemaCache.class);
+         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         return buildCommaSeparatedTable(i18n.t("schemacache.string.functions"), databaseMetaData.getStringFunctions());
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+
+
+   private static TableLoader buildCommaSeparatedTable(String columnName, String commaSepString) throws SQLException
+   {
+      TableLoader table = new TableLoader();
+
+      table.addColumn(columnName);
+
+      for (String fct : commaSepString.split(","))
+      {
+         table.addRow(fct);
+      }
+
+      return table;
+   }
+
+
+   public static TableLoader loadSystemFunctions(DbConnectorResult dbConnectorResult)
+   {
+      try
+      {
+         I18n i18n = new I18n(SchemaCache.class);
+         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         return buildCommaSeparatedTable(i18n.t("schemacache.system.functions"), databaseMetaData.getSystemFunctions());
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static TableLoader loadTimeDateFunctions(DbConnectorResult dbConnectorResult)
+   {
+      try
+      {
+         I18n i18n = new I18n(SchemaCache.class);
+         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         return buildCommaSeparatedTable(i18n.t("schemacache.timeDate.functions"), databaseMetaData.getTimeDateFunctions());
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static TableLoader loadKeyWords(DbConnectorResult dbConnectorResult)
+   {
+      try
+      {
+         I18n i18n = new I18n(SchemaCache.class);
+         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         return buildCommaSeparatedTable(i18n.t("schemacache.keywords"), databaseMetaData.getSQLKeywords());
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
       }
    }
 }

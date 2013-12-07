@@ -63,10 +63,15 @@ public class SessionCtrl
 
       _splitPane.setOrientation(Orientation.HORIZONTAL);
       _splitPane.getItems().add(objectsTree);
-      _splitPane.getItems().add(new TreeDetailsController(objectsTree).getComponent());
+      _splitPane.getItems().add(new TreeDetailsController(objectsTree, _session).getComponent());
+
+
+      TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
+      aliasItem.setExpanded(true);
+      objectsTree.getSelectionModel().select(aliasItem);
+
 
       SplitDividerWA.adjustDivider(_splitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
-
 
       objectsTab.setContent(_splitPane);
 
