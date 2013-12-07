@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
@@ -8,10 +9,16 @@ import org.squirrelsql.session.UDTInfo;
 import org.squirrelsql.session.objecttree.TableLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SchemaCache
 {
-   private DbConnectorResult _dbConnectorResult;
+   private final Alias _alias;
+   private final SQLConnection _sqlConnection;
+   private final SchemaCacheConfig _schemaCacheConfig;
+
+   private DatabaseStructure _databaseStructure;
+
    private TableLoader _dataTypes;
    private TableLoader _dataBaseMetadData;
    private TableLoader _numericFunctions;
@@ -20,42 +27,79 @@ public class SchemaCache
    private TableLoader _timeDateFunctions;
    private TableLoader _keywords;
 
-   public SchemaCache(DbConnectorResult dbConnectorResult)
-   {
-      _dbConnectorResult = dbConnectorResult;
+   private HashMap<StructItemTableType, ArrayList<TableInfo>> _tableInfos = new HashMap<>();
+   private HashMap<StructItemProcedureType, ArrayList<ProcedureInfo>> _procedureInfos = new HashMap<>();
+   private HashMap<StructItemUDTType, ArrayList<UDTInfo>> _udtInfos = new HashMap<>();
 
-      load();
+
+   public SchemaCache(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
+   {
+      _alias = alias;
+      _sqlConnection = sqlConnection;
+      _schemaCacheConfig = schemaCacheConfig;
+      _databaseStructure = databaseStructure;
    }
 
-   private void load()
+   public void load()
    {
-      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult);
-      _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult);
-      _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult);
-      _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult);
-      _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult);
-      _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult);
-      _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult);
+      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_alias, _sqlConnection);
+      _dataTypes = DataTypesLoader.loadTypes(_sqlConnection);
+      _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_sqlConnection);
+      _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_sqlConnection);
+      _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_sqlConnection);
+      _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_sqlConnection);
+      _keywords = DataBaseMetaDataLoader.loadKeyWords(_sqlConnection);
+
+      ArrayList<StructItem> leaves = _databaseStructure.getLeaves();
+
+      for (StructItem leaf : leaves)
+      {
+         if(leaf instanceof StructItemTableType)
+         {
+            StructItemTableType buf = (StructItemTableType) leaf;
+            if (_schemaCacheConfig.shouldLoadTables(buf))
+            {
+               _tableInfos.put(buf, _sqlConnection.getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType()));
+            }
+         }
+         else if(leaf instanceof StructItemProcedureType)
+         {
+            StructItemProcedureType buf = (StructItemProcedureType) leaf;
+            if (_schemaCacheConfig.shouldLoadProcedures(buf))
+            {
+               _procedureInfos.put(buf, _sqlConnection.getProcedureInfos(buf.getCatalog(), buf.getSchema()));
+            }
+         }
+         else if(leaf instanceof StructItemUDTType)
+         {
+            StructItemUDTType buf = (StructItemUDTType) leaf;
+            if (_schemaCacheConfig.shouldLoadUDTs(buf))
+            {
+               _udtInfos.put(buf, _sqlConnection.getUDTInfos(buf.getCatalog(), buf.getSchema()));
+            }
+         }
+      }
    }
 
-   public boolean shouldLoadSchema(DBSchema schema)
+   public DatabaseStructure getDataBaseStructure()
    {
-      return true;
+      return _databaseStructure;
    }
+
 
    public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
    {
-      return _dbConnectorResult.getSQLConnection().getTableInfos(catalog, schema, tableType);
+      return _tableInfos.get(new StructItemTableType(tableType, catalog, schema));
    }
 
    public ArrayList<ProcedureInfo> getProcedureInfos(String catalog, String schema)
    {
-      return _dbConnectorResult.getSQLConnection().getProcedureInfos(catalog, schema);
+      return _procedureInfos.get(new StructItemProcedureType(catalog, schema));
    }
 
    public ArrayList<UDTInfo> getUDTInfos(String catalog, String schema)
    {
-      return _dbConnectorResult.getSQLConnection().getUDTInfos(catalog, schema);
+      return _udtInfos.get(new StructItemUDTType(catalog, schema));
    }
 
    public TableLoader getTypes()

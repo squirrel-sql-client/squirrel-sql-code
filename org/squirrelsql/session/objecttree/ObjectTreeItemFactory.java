@@ -15,7 +15,7 @@ public class ObjectTreeItemFactory
    private static Props _props = new Props(ObjectTreeItemFactory.class);
 
 
-   public static TreeItem createAlias(DbConnectorResult dbConnectorResult)
+   public static TreeItem<ObjectTreeNode> createAlias(DbConnectorResult dbConnectorResult)
    {
       ObjectTreeNode objectTreeNode = new ObjectTreeNode(ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY, _i18n.t("session.objecttree.alias", dbConnectorResult.getAlias().getName()), null, null, _props.getImageView("database.png"));
       objectTreeNode.setDBConnectorResult(dbConnectorResult);
@@ -23,12 +23,12 @@ public class ObjectTreeItemFactory
       return new TreeItem(objectTreeNode);
    }
 
-   static TreeItem createCatalog(String catalog)
+   static TreeItem<ObjectTreeNode> createCatalog(String catalog)
    {
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY, _i18n.t("session.objecttree.catalog", catalog), catalog, null, _props.getImageView("catalog.png")));
    }
 
-   public static TreeItem createSchema(DBSchema schema)
+   public static TreeItem<ObjectTreeNode> createSchema(DBSchema schema)
    {
       return new TreeItem(new ObjectTreeNode(ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY, _i18n.t("session.objecttree.schema", schema.getSchema()), schema.getCatalog(), schema.getSchema(), _props.getImageView("schema.png")));
    }

@@ -19,6 +19,7 @@ import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 
 import java.util.ArrayList;
 
@@ -504,7 +505,7 @@ public class AliasesController
       Alias alias = (Alias) selectedItem.getValue();
 
 
-      DBConnector dbConnector = new DBConnector(alias, null);
+      DBConnector dbConnector = new DBConnector(alias, null, SchemaCacheConfig.ALL);
 
 
       dbConnector.tryConnect(r -> onTryConnectFinished(r, alias));

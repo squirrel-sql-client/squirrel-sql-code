@@ -2,6 +2,7 @@ package org.squirrelsql.aliases.dbconnector;
 
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
+import org.squirrelsql.session.schemainfo.SchemaCache;
 
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ public class DbConnectorResult
    private boolean _editAliasRequested;
    private boolean _loginCanceled;
    private SQLConnection _sqlConnection;
+   private SchemaCache _schemaCache;
 
    public DbConnectorResult(Alias alias, String user)
    {
@@ -87,5 +89,15 @@ public class DbConnectorResult
    public String getUser()
    {
       return _user;
+   }
+
+   public void setSchemaCache(SchemaCache schemaCache)
+   {
+      _schemaCache = schemaCache;
+   }
+
+   public SchemaCache getSchemaCache()
+   {
+      return _schemaCache;
    }
 }

@@ -1,10 +1,11 @@
 package org.squirrelsql.session.schemainfo;
 
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.drivers.DriversUtil;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
+import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.objecttree.TableLoader;
 
 import java.lang.reflect.Method;
@@ -37,7 +38,7 @@ public class DataBaseMetaDataLoader
 
    private static final String UNSUPPORTED = "unsupported";
 
-   public static TableLoader loadMetaData(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadMetaData(Alias alias, SQLConnection sqlConnection)
    {
       I18n i18n = new I18n(DataBaseMetaDataLoader.class);
 
@@ -46,13 +47,13 @@ public class DataBaseMetaDataLoader
       tableLoader.addColumn(i18n.t("objecttree.details.alias.metadata.propertyName"));
       tableLoader.addColumn(i18n.t("objecttree.details.alias.metadata.value"));
 
-      SQLDriver driver = DriversUtil.findDriver(dbConnectorResult.getAlias().getDriverId());
+      SQLDriver driver = DriversUtil.findDriver(alias.getDriverId());
 
       tableLoader.addRow("JDBC Driver CLASSNAME", driver.getDriverClassName());
       tableLoader.addRow("JDBC Driver CLASSPATH", DriversUtil.getJarFileNamesListString(driver));
       tableLoader.addRow("getTimeOpened", new Date());
 
-      DatabaseMetaData md = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+      DatabaseMetaData md = sqlConnection.getDatabaseMetaData();
 
       Method[] methods = DatabaseMetaData.class.getMethods();
       for (int i = 0; i < methods.length; ++i)
@@ -166,12 +167,12 @@ public class DataBaseMetaDataLoader
       }
    }
 
-   public static TableLoader loadNumericFunctions(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadNumericFunctions(SQLConnection sqlConnection)
    {
       try
       {
          I18n i18n = new I18n(SchemaCache.class);
-         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         DatabaseMetaData databaseMetaData = sqlConnection.getDatabaseMetaData();
          return buildCommaSeparatedTable(i18n.t("schemacache.numeric.functions"), databaseMetaData.getNumericFunctions());
       }
       catch (SQLException e)
@@ -180,12 +181,12 @@ public class DataBaseMetaDataLoader
       }
    }
 
-   public static TableLoader loadStringFunctions(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadStringFunctions(SQLConnection sqlConnection)
    {
       try
       {
          I18n i18n = new I18n(SchemaCache.class);
-         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         DatabaseMetaData databaseMetaData = sqlConnection.getDatabaseMetaData();
          return buildCommaSeparatedTable(i18n.t("schemacache.string.functions"), databaseMetaData.getStringFunctions());
       }
       catch (SQLException e)
@@ -212,12 +213,12 @@ public class DataBaseMetaDataLoader
    }
 
 
-   public static TableLoader loadSystemFunctions(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadSystemFunctions(SQLConnection sqlConnection)
    {
       try
       {
          I18n i18n = new I18n(SchemaCache.class);
-         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         DatabaseMetaData databaseMetaData = sqlConnection.getDatabaseMetaData();
          return buildCommaSeparatedTable(i18n.t("schemacache.system.functions"), databaseMetaData.getSystemFunctions());
       }
       catch (SQLException e)
@@ -226,12 +227,12 @@ public class DataBaseMetaDataLoader
       }
    }
 
-   public static TableLoader loadTimeDateFunctions(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadTimeDateFunctions(SQLConnection sqlConnection)
    {
       try
       {
          I18n i18n = new I18n(SchemaCache.class);
-         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         DatabaseMetaData databaseMetaData = sqlConnection.getDatabaseMetaData();
          return buildCommaSeparatedTable(i18n.t("schemacache.timeDate.functions"), databaseMetaData.getTimeDateFunctions());
       }
       catch (SQLException e)
@@ -240,12 +241,12 @@ public class DataBaseMetaDataLoader
       }
    }
 
-   public static TableLoader loadKeyWords(DbConnectorResult dbConnectorResult)
+   public static TableLoader loadKeyWords(SQLConnection sqlConnection)
    {
       try
       {
          I18n i18n = new I18n(SchemaCache.class);
-         DatabaseMetaData databaseMetaData = dbConnectorResult.getSQLConnection().getDatabaseMetaData();
+         DatabaseMetaData databaseMetaData = sqlConnection.getDatabaseMetaData();
          return buildCommaSeparatedTable(i18n.t("schemacache.keywords"), databaseMetaData.getSQLKeywords());
       }
       catch (SQLException e)

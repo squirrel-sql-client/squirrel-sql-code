@@ -9,6 +9,9 @@ import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 import org.squirrelsql.services.CancelableProgressTask;
+import org.squirrelsql.session.schemainfo.SchemaCache;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
+import org.squirrelsql.session.schemainfo.SchemaCacheFactory;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -19,12 +22,14 @@ public class DBConnector
 {
    private Alias _alias;
    private Window _owner;
+   private SchemaCacheConfig _schemaCacheConfig;
 
-   public DBConnector(Alias alias, Window owner)
+   public DBConnector(Alias alias, Window owner, SchemaCacheConfig schemaCacheConfig)
    {
       _alias = alias;
 
       _owner = owner;
+      _schemaCacheConfig = schemaCacheConfig;
       if (null == _owner)
       {
          _owner = AppState.get().getPrimaryStage();
@@ -139,7 +144,12 @@ public class DBConnector
             throw new IllegalStateException(msg);
          }
 
-         dbConnectorResult.setSQLConnection(new SQLConnection(jdbcConn));
+         SQLConnection sqlConnection = new SQLConnection(jdbcConn);
+         dbConnectorResult.setSQLConnection(sqlConnection);
+
+         SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult.getAlias(), sqlConnection, _schemaCacheConfig);
+         schemaCache.load();
+         dbConnectorResult.setSchemaCache(schemaCache);
 
          return dbConnectorResult;
       }

@@ -6,13 +6,11 @@ import org.squirrelsql.session.schemainfo.SchemaCache;
 
 public class Session
 {
-   private SchemaCache _schemaCache;
    private DbConnectorResult _dbConnectorResult;
 
    public Session(DbConnectorResult dbConnectorResult)
    {
       _dbConnectorResult = dbConnectorResult;
-      _schemaCache = new SchemaCache(dbConnectorResult);
    }
 
    public Alias getAlias()
@@ -32,6 +30,6 @@ public class Session
 
    public SchemaCache getSchemaCache()
    {
-      return _schemaCache;
+      return _dbConnectorResult.getSchemaCache();
    }
 }

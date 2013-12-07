@@ -14,6 +14,7 @@ import org.squirrelsql.drivers.*;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 
 public class AliasEditController
 {
@@ -140,7 +141,7 @@ public class AliasEditController
          Alias buf = new Alias();
          storeToAlias(buf, sqlDriver);
 
-         DBConnector dbConnector = new DBConnector(_alias, _dialog);
+         DBConnector dbConnector = new DBConnector(_alias, _dialog, SchemaCacheConfig.NONE);
 
          dbConnector.tryConnect(dbConnectorResult -> onTryConnectFinished(dbConnectorResult));
 
