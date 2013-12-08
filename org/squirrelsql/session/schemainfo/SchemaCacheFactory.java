@@ -12,10 +12,10 @@ public class SchemaCacheFactory
 {
    public static SchemaCache createSchemaCache(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
    {
-      return new SchemaCache(alias, sqlConnection, schemaCacheConfig, createAliasCatalogAndTypes(alias, sqlConnection));
+      return new SchemaCache(alias, sqlConnection, schemaCacheConfig, createDatabaseStructure(alias, sqlConnection));
    }
 
-   private static DatabaseStructure createAliasCatalogAndTypes(Alias alias, SQLConnection sqlConnection)
+   private static DatabaseStructure createDatabaseStructure(Alias alias, SQLConnection sqlConnection)
    {
       DatabaseStructure aliasRoot = new DatabaseStructure(alias.getName());
 

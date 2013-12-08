@@ -57,7 +57,7 @@ public class SchemaCache
          if(leaf instanceof StructItemTableType)
          {
             StructItemTableType buf = (StructItemTableType) leaf;
-            if (_schemaCacheConfig.shouldLoadTables(buf))
+            if (buf.shouldLoad(_schemaCacheConfig))
             {
                _tableInfos.put(buf, _sqlConnection.getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType()));
             }
@@ -65,7 +65,7 @@ public class SchemaCache
          else if(leaf instanceof StructItemProcedureType)
          {
             StructItemProcedureType buf = (StructItemProcedureType) leaf;
-            if (_schemaCacheConfig.shouldLoadProcedures(buf))
+            if (buf.shouldLoad(_schemaCacheConfig))
             {
                _procedureInfos.put(buf, _sqlConnection.getProcedureInfos(buf.getCatalog(), buf.getSchema()));
             }
@@ -73,7 +73,7 @@ public class SchemaCache
          else if(leaf instanceof StructItemUDTType)
          {
             StructItemUDTType buf = (StructItemUDTType) leaf;
-            if (_schemaCacheConfig.shouldLoadUDTs(buf))
+            if (buf.shouldLoad(_schemaCacheConfig))
             {
                _udtInfos.put(buf, _sqlConnection.getUDTInfos(buf.getCatalog(), buf.getSchema()));
             }
@@ -86,6 +86,10 @@ public class SchemaCache
       return _databaseStructure;
    }
 
+   public SchemaCacheConfig getSchemaCacheConfig()
+   {
+      return _schemaCacheConfig;
+   }
 
    public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
    {

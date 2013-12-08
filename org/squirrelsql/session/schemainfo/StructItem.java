@@ -11,6 +11,11 @@ public class StructItem
       return _children;
    }
 
+   public boolean shouldLoad(SchemaCacheConfig schemaCacheConfig)
+   {
+      return true;
+   }
+
    protected void fillLeaves(ArrayList<StructItem> toFill)
    {
       if(0 == _children.size())
@@ -26,12 +31,15 @@ public class StructItem
       }
    }
 
-   protected <T> void visit(DatabaseStructureVisitor<T> databaseStructureVisitor, T parent)
+   protected <T> void visit(DatabaseStructureVisitor<T> databaseStructureVisitor, T parent, SchemaCacheConfig schemaCacheConfig)
    {
       for (StructItem child : _children)
       {
-         T newParent = databaseStructureVisitor.visit(parent, child);
-         child.visit(databaseStructureVisitor, newParent);
+         if (child.shouldLoad(schemaCacheConfig))
+         {
+            T newParent = databaseStructureVisitor.visit(parent, child);
+            child.visit(databaseStructureVisitor, newParent, schemaCacheConfig);
+         }
       }
    }
 

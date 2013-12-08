@@ -13,6 +13,12 @@ public class StructItemTableType extends StructItem
       _schema = schema;
    }
 
+   @Override
+   public boolean shouldLoad(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldLoadTables(this);
+   }
+
    public String getType()
    {
       return _type;

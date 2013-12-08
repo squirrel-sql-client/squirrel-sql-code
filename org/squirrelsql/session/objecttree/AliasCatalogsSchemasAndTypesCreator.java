@@ -18,7 +18,9 @@ public class AliasCatalogsSchemasAndTypesCreator
    {
       DatabaseStructure dataBaseStructure = session.getSchemaCache().getDataBaseStructure();
 
-      TreeItem<ObjectTreeNode> aliasRoot = dataBaseStructure.visitTopToBottom((parent, structItem) -> createTreeItem(session, parent, structItem));
+      DatabaseStructureVisitor<TreeItem<ObjectTreeNode>> databaseStructureVisitor = (parent, structItem) -> createTreeItem(session, parent, structItem);
+
+      TreeItem<ObjectTreeNode> aliasRoot = dataBaseStructure.visitTopToBottom(databaseStructureVisitor, session.getSchemaCache().getSchemaCacheConfig());
 
       objectsTree.setRoot(aliasRoot);
    }

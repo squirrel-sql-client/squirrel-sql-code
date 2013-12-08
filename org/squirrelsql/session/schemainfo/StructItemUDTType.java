@@ -11,6 +11,13 @@ public class StructItemUDTType extends StructItem
       _schema = schema;
    }
 
+   @Override
+   public boolean shouldLoad(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldLoadUDTs(this);
+   }
+
+
    public String getCatalog()
    {
       return _catalog;

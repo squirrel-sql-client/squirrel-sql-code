@@ -11,6 +11,12 @@ public class StructItemProcedureType extends StructItem
       _schema = schema;
    }
 
+   @Override
+   public boolean shouldLoad(SchemaCacheConfig schemaCacheConfig)
+   {
+      return schemaCacheConfig.shouldLoadProcedures(this);
+   }
+
    public String getCatalog()
    {
       return _catalog;

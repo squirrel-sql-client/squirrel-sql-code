@@ -39,11 +39,11 @@ public class DatabaseStructure extends StructItem
       return _aliasName != null ? _aliasName.hashCode() : 0;
    }
 
-   public <T> T visitTopToBottom(DatabaseStructureVisitor<T> databaseStructureVisitor)
+   public <T> T visitTopToBottom(DatabaseStructureVisitor<T> databaseStructureVisitor, SchemaCacheConfig schemaCacheConfig)
    {
       T parent =  databaseStructureVisitor.visit(null, this);
 
-      visit(databaseStructureVisitor, parent);
+      visit(databaseStructureVisitor, parent, schemaCacheConfig);
 
       return parent;
    }
