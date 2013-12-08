@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.table.TableLoader;
 
 public class TreeDetailsController
 {
@@ -40,6 +41,10 @@ public class TreeDetailsController
          addTreeDetailsTab(_i18n.t("objecttree.details.alias.timedateFunctions"), _session.getSchemaCache().getTimeDateFunctions());
          addTreeDetailsTab(_i18n.t("objecttree.details.alias.keywords"), _session.getSchemaCache().getKeywords());
       }
+      else if(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
+      {
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.content"), TableContentReader.readContent(_session, selectedItem.getValue()));
+      }
 
    }
 
@@ -50,9 +55,9 @@ public class TreeDetailsController
       tab.setClosable(false);
       _objectTreeDetailsTabPane.getTabs().add(tab);
 
-      TableView tableMetadata = new TableView();
-      tableLoader.load(tableMetadata);
-      tab.setContent(tableMetadata);
+      TableView tableView = new TableView();
+      tableLoader.load(tableView);
+      tab.setContent(tableView);
    }
 
 

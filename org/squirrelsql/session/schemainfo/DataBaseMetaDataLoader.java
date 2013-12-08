@@ -6,7 +6,7 @@ import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
-import org.squirrelsql.session.objecttree.TableLoader;
+import org.squirrelsql.table.TableLoader;
 
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;

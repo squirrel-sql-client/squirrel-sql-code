@@ -6,13 +6,15 @@ public class TableInfo
    private final String _schema;
    private final String _tableType;
    private final String _name;
+   private String _qualifiedName;
 
-   public TableInfo(String catalog, String schema, String tableType, String name)
+   public TableInfo(String catalog, String schema, String tableType, String name, String qualifiedName)
    {
       _catalog = catalog;
       _schema = schema;
       _tableType = tableType;
       _name = name;
+      _qualifiedName = qualifiedName;
    }
 
    public String getCatalog()
@@ -33,5 +35,10 @@ public class TableInfo
    public String getName()
    {
       return _name;
+   }
+
+   public String getQualifiedName()
+   {
+      return _qualifiedName;
    }
 }

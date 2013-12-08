@@ -1,4 +1,4 @@
-package org.squirrelsql.session.objecttree;
+package org.squirrelsql.table;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -44,7 +44,7 @@ public class TableLoader
    {
       ArrayList<TableColumn> cols = new ArrayList<>();
 
-      for (int i = 0; i < _rows.get(0).size(); i++)
+      for (int i = 0; i < _columns.size(); i++)
       {
          TableColumn tableColumn = new TableColumn(_columns.get(i));
 

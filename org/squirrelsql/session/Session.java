@@ -32,4 +32,9 @@ public class Session
    {
       return _dbConnectorResult.getSchemaCache();
    }
+
+   public SessionProperties getSessionProperties()
+   {
+      return new SessionProperties();
+   }
 }

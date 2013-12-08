@@ -3,7 +3,7 @@ package org.squirrelsql.session.schemainfo;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.JDBCTypeMapper;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
-import org.squirrelsql.session.objecttree.TableLoader;
+import org.squirrelsql.table.TableLoader;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

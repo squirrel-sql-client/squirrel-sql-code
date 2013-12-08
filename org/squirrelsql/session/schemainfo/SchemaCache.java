@@ -2,11 +2,10 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
-import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
-import org.squirrelsql.session.objecttree.TableLoader;
+import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;

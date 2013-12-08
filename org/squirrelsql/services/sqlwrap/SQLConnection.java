@@ -1,6 +1,7 @@
 package org.squirrelsql.services.sqlwrap;
 
 import org.squirrelsql.dialects.DialectFactory;
+import org.squirrelsql.services.DatabaseObjectType;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.SQLUtil;
@@ -240,7 +241,13 @@ public class SQLConnection
 
          while (tables.next())
          {
-            TableInfo t = new TableInfo(tables.getString("TABLE_CAT"), tables.getString("TABLE_SCHEM"), tables.getString("TABLE_TYPE"), tables.getString("TABLE_NAME"));
+            String table_cat = tables.getString("TABLE_CAT");
+            String table_schem = tables.getString("TABLE_SCHEM");
+            String table_name = tables.getString("TABLE_NAME");
+
+            String qualifiedName = SQLUtil.generateQualifiedName(_con, table_cat, table_schem, table_name, DatabaseObjectType.TABLE);
+
+            TableInfo t = new TableInfo(table_cat, table_schem, tables.getString("TABLE_TYPE"), table_name, qualifiedName);
             ret.add(t);
          }
 
@@ -328,5 +335,11 @@ public class SQLConnection
          throw new RuntimeException(e);
       }
 
+   }
+
+
+   public Connection getConnection()
+   {
+      return _con;
    }
 }
