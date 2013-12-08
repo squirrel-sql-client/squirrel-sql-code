@@ -505,7 +505,7 @@ public class AliasesController
       Alias alias = (Alias) selectedItem.getValue();
 
 
-      DBConnector dbConnector = new DBConnector(alias, null, SchemaCacheConfig.ALL);
+      DBConnector dbConnector = new DBConnector(alias, null, SchemaCacheConfig.LOAD_ALL);
 
 
       dbConnector.tryConnect(r -> onTryConnectFinished(r, alias));

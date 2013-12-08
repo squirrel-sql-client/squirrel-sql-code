@@ -2,21 +2,27 @@ package org.squirrelsql.session.schemainfo;
 
 public class SchemaCacheConfig
 {
-   public static final SchemaCacheConfig ALL = new SchemaCacheConfig(SchemaCacheConfigFlags.ALL);
-   public static final SchemaCacheConfig NONE = new SchemaCacheConfig(SchemaCacheConfigFlags.NONE);
-
+   public static final SchemaCacheConfig LOAD_ALL = new SchemaCacheConfig(SchemaCacheConfigFlags.ALL);
+   public static final SchemaCacheConfig LOAD_NOTHING = new SchemaCacheConfig(SchemaCacheConfigFlags.NOTHING);
+   private SchemaCacheConfigFlags _schemaCacheConfigFlag;
 
 
    private static enum SchemaCacheConfigFlags
    {
       ALL,
-      NONE
+      NOTHING
    }
 
-   public SchemaCacheConfig(SchemaCacheConfigFlags schemaCacheConfigFlags)
+   public SchemaCacheConfig(SchemaCacheConfigFlags schemaCacheConfigFlag)
    {
-
+      _schemaCacheConfigFlag = schemaCacheConfigFlag;
    }
+
+   public boolean shouldNotLoad()
+   {
+      return SchemaCacheConfigFlags.NOTHING == _schemaCacheConfigFlag;
+   }
+
 
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
    {

@@ -42,6 +42,12 @@ public class SchemaCache
 
    public void load()
    {
+      if(_schemaCacheConfig.shouldNotLoad())
+      {
+         return;
+      }
+
+
       _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_alias, _sqlConnection);
       _dataTypes = DataTypesLoader.loadTypes(_sqlConnection);
       _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_sqlConnection);
