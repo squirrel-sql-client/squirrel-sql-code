@@ -43,7 +43,17 @@ public class TreeDetailsController
       }
       else if(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
-         addTreeDetailsTab(_i18n.t("objecttree.details.table.content"), TableContentReader.readContent(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), TableDetailsReader.readColumns(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.content"), TableDetailsReader.readContent(_session, selectedItem.getValue()));
+
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.primaryKey"), TableDetailsReader.readPrimaryKey(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.exportedKeys"), TableDetailsReader.readExportedKeys(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.importedKeys"), TableDetailsReader.readImportedKeys(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.indexes"), TableDetailsReader.readIndexes(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.tablePrivileges"), TableDetailsReader.readTablePrivileges(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.columnPrivileges"), TableDetailsReader.readColumnPrivileges(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.bestRowIdentifier"), TableDetailsReader.readBestRowIdentifier(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.versionColumns"), TableDetailsReader.readVersionColumns(_session, selectedItem.getValue()));
       }
 
    }
