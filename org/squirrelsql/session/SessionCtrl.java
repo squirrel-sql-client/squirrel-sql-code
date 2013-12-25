@@ -1,22 +1,24 @@
 package org.squirrelsql.session;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import org.squirrelsql.AppState;
-import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.objecttree.*;
+import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SessionCtrl
 {
    private static final String PREF_OBJECT_TREE_SPLIT_LOC = "objecttree.split.loc";
+   private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
 
 
    private final Session _session;
@@ -25,7 +27,8 @@ public class SessionCtrl
 
    private TabPane _sessionTabPane;
    private Pref _pref = new Pref(SessionCtrl.class);
-   private SplitPane _splitPane = new SplitPane();
+   private SplitPane _objectTabSplitPane = new SplitPane();
+   private SplitPane _sqlTabSplitPane = new SplitPane();
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -35,17 +38,78 @@ public class SessionCtrl
 
       _sessionTabPane = new TabPane();
 
-      Tab objectsTab = createObjectsTab();
-      _sessionTabPane.getTabs().add(objectsTab);
+
+      _sessionTabPane.getTabs().add(createObjectsTab());
+
+      _sessionTabPane.getTabs().add(createSqlTab());
 
 
+      /////////////////////////////////////////////////////////////
+      // BUG BUG: Only Tabs selected this way get layouted right.
+      _sessionTabPane.getSelectionModel().select(1);
+      //
+      /////////////////////////////////////////////////////////////
+   }
 
-
+   private Tab createSqlTab()
+   {
       Tab sqlTab = new Tab(_i18n.t("session.tab.sql"));
       sqlTab.setClosable(false);
-      _sessionTabPane.getTabs().add(sqlTab);
 
+      _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
+
+      TabPane sqlOutputTabPane = new TabPane();
+      TextArea sqlTextArea = new TextArea();
+      _sqlTabSplitPane.getItems().add(sqlTextArea);
+      _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
+
+
+      EventHandler<KeyEvent> keyEventHandler =
+            new EventHandler<KeyEvent>()
+            {
+               public void handle(final KeyEvent keyEvent)
+               {
+                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
+                  if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
+                  {
+                     onExecuteSql(sqlTextArea, sqlOutputTabPane);
+                     keyEvent.consume();
+                  }
+               }
+            };
+
+      sqlTextArea.setOnKeyTyped(keyEventHandler);
+
+
+
+      sqlTab.setContent(_sqlTabSplitPane);
+      SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
+
+
+      return sqlTab;
    }
+
+   private void onExecuteSql(TextArea sqlTextArea, TabPane sqlOutputTabPane)
+   {
+      String sql = sqlTextArea.getText();
+
+
+      TableLoader tableLoader = TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100);
+
+      String s = sql.replaceAll("\n", " ");
+      Tab outputTab = new Tab(s);
+
+      TableView tv = new TableView();
+
+      tableLoader.load(tv);
+
+      outputTab.setContent(tv);
+
+      sqlOutputTabPane.getTabs().add(outputTab);
+
+      sqlOutputTabPane.getSelectionModel().select(outputTab);
+   }
+
 
    private Tab createObjectsTab()
    {
@@ -61,9 +125,10 @@ public class SessionCtrl
       TablesProceduresAndUDTsCreator.createNodes(objectsTree, _session);
 
 
-      _splitPane.setOrientation(Orientation.HORIZONTAL);
-      _splitPane.getItems().add(objectsTree);
-      _splitPane.getItems().add(new TreeDetailsController(objectsTree, _session).getComponent());
+      _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
+      _objectTabSplitPane.getItems().add(objectsTree);
+      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _session).getComponent());
+      SplitDividerWA.adjustDivider(_objectTabSplitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
 
 
       TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
@@ -71,9 +136,8 @@ public class SessionCtrl
       objectsTree.getSelectionModel().select(aliasItem);
 
 
-      SplitDividerWA.adjustDivider(_splitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
 
-      objectsTab.setContent(_splitPane);
+      objectsTab.setContent(_objectTabSplitPane);
 
       return objectsTab;
    }
@@ -97,7 +161,8 @@ public class SessionCtrl
 
    private void onClose()
    {
-      _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _splitPane.getDividerPositions()[0]);
+      _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _objectTabSplitPane.getDividerPositions()[0]);
+      _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
       _session.close();
    }
 }
