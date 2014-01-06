@@ -1,7 +1,5 @@
 package org.squirrelsql;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -10,6 +8,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 
 public class MessagePanelCtrl
 {
@@ -135,5 +134,27 @@ public class MessagePanelCtrl
 
       }
       return msg;
+   }
+
+   public String errorSQLNoStack(SQLException e)
+   {
+      SQLException buf = e;
+
+      String errMsg = "";
+
+      while(null != buf)
+      {
+         errMsg = getSQLNoStackMessage(buf) + errMsg;
+         buf = buf.getNextException();
+      }
+
+      addMessage(errMsg, STYLE_RED);
+
+      return errMsg;
+   }
+
+   private String getSQLNoStackMessage(SQLException e)
+   {
+      return e.getMessage() + "\nError code: " + e.getErrorCode() + "\nSQL state: " + e.getSQLState();
    }
 }

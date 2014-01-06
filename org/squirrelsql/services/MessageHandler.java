@@ -2,7 +2,7 @@ package org.squirrelsql.services;
 
 import org.squirrelsql.AppState;
 
-import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 public class MessageHandler
 {
@@ -77,5 +77,10 @@ public class MessageHandler
       {
          throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
       }
+   }
+
+   public String errorSQLNoStack(SQLException e)
+   {
+      return AppState.get().getMessagePanelCtrl().errorSQLNoStack(e);
    }
 }

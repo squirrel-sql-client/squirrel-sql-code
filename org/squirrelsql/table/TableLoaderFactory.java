@@ -2,6 +2,9 @@ package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.session.SQLResult;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -52,7 +55,7 @@ public class TableLoaderFactory
       }
    }
 
-   public static TableLoader loadDataFromSQL(DbConnectorResult dbConnectorResult, String sql, Integer maxResults)
+   public static SQLResult loadDataFromSQL(DbConnectorResult dbConnectorResult, String sql, Integer maxResults)
    {
       try
       {
@@ -63,8 +66,16 @@ public class TableLoaderFactory
             stat.setMaxRows(maxResults);
          }
 
-         ResultSet res = stat.executeQuery(sql);
-         return loadDataFromResultSet(res);
+         ResultSet res = null;
+         try
+         {
+            res = stat.executeQuery(sql);
+         }
+         catch (SQLException e)
+         {
+            return new SQLResult(e);
+         }
+         return new SQLResult(loadDataFromResultSet(res));
       }
       catch (SQLException e)
       {

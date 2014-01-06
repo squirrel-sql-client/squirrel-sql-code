@@ -5,13 +5,14 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.objecttree.*;
-import org.squirrelsql.table.TableLoader;
 import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SplitDividerWA;
 
@@ -29,6 +30,7 @@ public class SessionCtrl
    private Pref _pref = new Pref(SessionCtrl.class);
    private SplitPane _objectTabSplitPane = new SplitPane();
    private SplitPane _sqlTabSplitPane = new SplitPane();
+   private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -91,23 +93,73 @@ public class SessionCtrl
 
    private void onExecuteSql(TextArea sqlTextArea, TabPane sqlOutputTabPane)
    {
-      String sql = sqlTextArea.getText();
+      String sql = sqlTextArea.getSelectedText();
+
+      if(Utils.isEmptyString(sql))
+      {
+         int caretPosition = sqlTextArea.getCaretPosition();
+         String sqlTextAreaText = sqlTextArea.getText();
+
+         String sep = System.lineSeparator() + System.lineSeparator();
+
+         int begin = caretPosition;
+         while(0 < begin && false == sqlTextAreaText.substring(0, begin).endsWith(sep))
+         {
+            --begin;
+         }
+
+         int end = caretPosition;
+         while(sqlTextAreaText.length() > end && false == sqlTextAreaText.substring(end).startsWith(sep))
+         {
+            ++end;
+         }
+
+         sql = sqlTextAreaText.substring(begin, end);
+      }
 
 
-      TableLoader tableLoader = TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100);
 
-      String s = sql.replaceAll("\n", " ");
-      Tab outputTab = new Tab(s);
 
-      TableView tv = new TableView();
+      SQLResult sqlResult = TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100);
 
-      tableLoader.load(tv);
+      if(null != sqlResult.getSqlException())
+      {
+         String errMsg = _mh.errorSQLNoStack(sqlResult.getSqlException());
 
-      outputTab.setContent(tv);
+         Tab errorTab = new Tab();
 
-      sqlOutputTabPane.getTabs().add(outputTab);
+         Label errorTabLabel = new Label("Error");
+         errorTabLabel.setTextFill(Color.RED);
+         errorTab.setGraphic(errorTabLabel);
 
-      sqlOutputTabPane.getSelectionModel().select(outputTab);
+         Label errorLabel = new Label(errMsg);
+
+         errorLabel.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 15));
+         errorLabel.setTextFill(Color.RED);
+         errorTab.setContent(errorLabel);
+
+         sqlOutputTabPane.getTabs().add(errorTab);
+
+         sqlOutputTabPane.getSelectionModel().select(errorTab);
+
+      }
+      else
+      {
+         String s =  sql.replaceAll("\n", " ");
+         Tab outputTab = new Tab(s);
+
+         TableView tv = new TableView();
+
+         sqlResult.getTableLoader().load(tv);
+
+         outputTab.setContent(tv);
+
+         sqlOutputTabPane.getTabs().add(outputTab);
+
+         sqlOutputTabPane.getSelectionModel().select(outputTab);
+      }
+
+
    }
 
 
