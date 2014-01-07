@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -61,8 +62,10 @@ public class SessionCtrl
       _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
 
       TabPane sqlOutputTabPane = new TabPane();
-      TextArea sqlTextArea = new TextArea();
-      _sqlTabSplitPane.getItems().add(sqlTextArea);
+
+      SQLTextAreaServices sqlTextAreaServices = new SQLTextAreaServices();
+
+      _sqlTabSplitPane.getItems().add(sqlTextAreaServices.getTextAreaComponent());
       _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
 
 
@@ -74,13 +77,18 @@ public class SessionCtrl
                   // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
                   if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
                   {
-                     onExecuteSql(sqlTextArea, sqlOutputTabPane);
+                     onExecuteSql(sqlTextAreaServices, sqlOutputTabPane);
+                     keyEvent.consume();
+                  }
+                  else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
+                  {
+                     onCompleteCode(sqlTextAreaServices);
                      keyEvent.consume();
                   }
                }
             };
 
-      sqlTextArea.setOnKeyTyped(keyEventHandler);
+      sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
 
 
 
@@ -91,32 +99,17 @@ public class SessionCtrl
       return sqlTab;
    }
 
-   private void onExecuteSql(TextArea sqlTextArea, TabPane sqlOutputTabPane)
+   private void onCompleteCode(SQLTextAreaServices sqlTextAreaServices)
    {
-      String sql = sqlTextArea.getSelectedText();
+      String tokenAtCarret = sqlTextAreaServices.getTokenAtCarret();
 
-      if(Utils.isEmptyString(sql))
-      {
-         int caretPosition = sqlTextArea.getCaretPosition();
-         String sqlTextAreaText = sqlTextArea.getText();
+      System.out.println("### Completing for token >" + tokenAtCarret + "<");
+   }
 
-         String sep = System.lineSeparator() + System.lineSeparator();
+   private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
+   {
 
-         int begin = caretPosition;
-         while(0 < begin && false == sqlTextAreaText.substring(0, begin).endsWith(sep))
-         {
-            --begin;
-         }
-
-         int end = caretPosition;
-         while(sqlTextAreaText.length() > end && false == sqlTextAreaText.substring(end).startsWith(sep))
-         {
-            ++end;
-         }
-
-         sql = sqlTextAreaText.substring(begin, end);
-      }
-
+      String sql = sqlTextAreaServices.getCurrentSql();
 
 
 
