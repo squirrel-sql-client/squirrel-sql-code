@@ -1,9 +1,11 @@
 package org.squirrelsql.session;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
 
 public class SQLTextAreaServices
@@ -59,6 +61,12 @@ public class SQLTextAreaServices
 
    public String getTokenAtCarret()
    {
+      return _getTokenAtCarretInfo().getToken();
+
+   }
+
+   private TokenAtCarretInfo _getTokenAtCarretInfo()
+   {
       int caretPosition = _sqlTextArea.getCaretPosition();
       String sqlTextAreaText = _sqlTextArea.getText();
 
@@ -68,9 +76,33 @@ public class SQLTextAreaServices
       {
          --begin;
       }
-      String token = sqlTextAreaText.substring(Math.max(begin, 0), caretPosition).trim();
 
-      return token;
+      if(0 < begin)
+      {
+         begin +=1; // keep the whitespace
+      }
 
+      begin = Math.max(begin, 0);
+      String token = sqlTextAreaText.substring(begin, caretPosition).trim();
+
+      return new TokenAtCarretInfo(token, begin, caretPosition);
+   }
+
+   public Point2D getCarretLocationOnScreen()
+   {
+      return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
+   }
+
+   public void replaceCurrentTokenBy(String selItem)
+   {
+      TokenAtCarretInfo tci = _getTokenAtCarretInfo();
+//      if (tci.getTokenBeginPos() < tci.getCaretPosition())
+//      {
+         _sqlTextArea.replaceText(tci.getTokenBeginPos(), tci.getCaretPosition(), selItem);
+//      }
+//      else
+//      {
+//         _sqlTextArea.insertText(tci.getTokenBeginPos(), selItem);
+//      }
    }
 }

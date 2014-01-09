@@ -1,14 +1,18 @@
 package org.squirrelsql.session;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Popup;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
@@ -16,6 +20,7 @@ import org.squirrelsql.services.*;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SplitDividerWA;
+
 
 public class SessionCtrl
 {
@@ -104,6 +109,53 @@ public class SessionCtrl
       String tokenAtCarret = sqlTextAreaServices.getTokenAtCarret();
 
       System.out.println("### Completing for token >" + tokenAtCarret + "<");
+
+      Popup pp = new Popup();
+
+      ListView<String> listView = new ListView<>(FXCollections.observableArrayList("Complete1", "Complete2", "Complete3"));
+      listView.getSelectionModel().selectFirst();
+
+
+      EventHandler<KeyEvent> keyEventHandler =
+            new EventHandler<KeyEvent>()
+            {
+               public void handle(final KeyEvent keyEvent)
+               {
+                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
+                  if (("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
+                  {
+                     pp.hide();
+                     String selItem = listView.getSelectionModel().getSelectedItems().get(0);
+                     sqlTextAreaServices.replaceCurrentTokenBy(selItem);
+                     keyEvent.consume();
+                  }
+                  else if(27 == keyEvent.getCharacter().charAt(0)) // ESCAPE Key
+                  {
+                     pp.hide();
+                     keyEvent.consume();
+                  }
+               }
+            };
+
+      listView.setOnKeyTyped(keyEventHandler);
+
+      pp.focusedProperty().addListener(new ChangeListener<Boolean>()
+      {
+         @Override
+         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue)
+         {
+            if(false == newValue)
+            {
+               pp.hide();
+            }
+         }
+      });
+
+
+      pp.getContent().add(listView);
+      Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
+      pp.show(sqlTextAreaServices.getTextAreaComponent(), cl.getX(), cl.getY());
+
    }
 
    private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
