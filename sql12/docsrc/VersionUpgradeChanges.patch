@@ -1,0 +1,62 @@
+Index: ../squirrel-sql-git/sql12/installer/squirrelsql-other-installer/src/main/resources/izpack-other.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../squirrel-sql-git/sql12/installer/squirrelsql-other-installer/src/main/resources/izpack-other.xml	(revision 1110259b0a76416661d401494421b970079fee3d)
++++ ../squirrel-sql-git/sql12/installer/squirrelsql-other-installer/src/main/resources/izpack-other.xml	(revision )
+@@ -2,8 +2,8 @@
+ 
+ 	<info>
+ 		<appname>SQuirreL SQL Client</appname>
+-		<appsubpath>squirrel-sql-${squirrelsql.version}</appsubpath>
+-		<appversion>${squirrelsql.version}</appversion>
++		<appsubpath>squirrel-sql-3.5.1</appsubpath>
++		<appversion>3.5.1</appversion>
+ 		<authors>
+ 			<author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner" />
+ 			<author email="manningr@users.sourceforge.net" name="Rob Manning" />
+Index: ../squirrel-sql-git/sql12/installer/squirrelsql-macosx-installer/src/main/resources/izpack-mac.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../squirrel-sql-git/sql12/installer/squirrelsql-macosx-installer/src/main/resources/izpack-mac.xml	(revision 1110259b0a76416661d401494421b970079fee3d)
++++ ../squirrel-sql-git/sql12/installer/squirrelsql-macosx-installer/src/main/resources/izpack-mac.xml	(revision )
+@@ -3,7 +3,7 @@
+ 	<info>
+ 		<appname>SQuirreL SQL Client</appname>
+ 		<appsubpath>SQuirreLSQL.app</appsubpath>
+-		<appversion>${squirrelsql.version}</appversion>
++		<appversion>3.5.1</appversion>
+ 		<authors>
+ 			<author
+ 				email="gerdwagner@users.sourceforge.net"
+Index: ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/I18NStrings.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/I18NStrings.properties	(revision 1110259b0a76416661d401494421b970079fee3d)
++++ ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/I18NStrings.properties	(revision )
+@@ -50,7 +50,7 @@
+ Application.splash.showmainwindow=Showing main window...
+ 
+ Version.appname=SQuirreL SQL Client
+-Version.copyright=Copyright (c) 2001-2013 \nColin Bell, Gerd Wagner, Rob Manning and others
++Version.copyright=Copyright (c) 2001-2014 \nColin Bell, Gerd Wagner, Rob Manning and others
+ Version.website=http://www.squirrelsql.org
+ 
+ OutOfMemoryErrorHandler.message=The query results have exceeded the maximum amount of memory allocated to this application.  All result tabs have been closed to allow you to save your work and restart the application.
+Index: ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/Version.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/Version.properties	(revision 1110259b0a76416661d401494421b970079fee3d)
++++ ../squirrel-sql-git/sql12/app/src/main/resources/net/sourceforge/squirrel_sql/client/Version.properties	(revision )
+@@ -1,1 +1,1 @@
+-squirrelsql.version=${squirrelsql.version}
+\ No newline at end of file
++squirrelsql.version=3.5.1
+\ No newline at end of file
