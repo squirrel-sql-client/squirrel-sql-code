@@ -128,7 +128,13 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 							"getObjectFilterExclude", "setObjectFilterExclude"),
 
 						new PropertyDescriptor(IPropNames.LOAD_COLUMNS_IN_BACKGROUND, SessionProperties.class,
-							"getLoadColumnsInBackground", "setLoadColumnsInBackground") 
+							"getLoadColumnsInBackground", "setLoadColumnsInBackground"),
+
+                  new PropertyDescriptor(IPropNames.SQL_READ_ON, SessionProperties.class,
+                        "getSQLReadOn", "setSQLReadOn"),
+
+                  new PropertyDescriptor(IPropNames.SQL_READ_ON_BLOCK_SIZE, SessionProperties.class,
+                        "getSQLReadOnBlockSize", "setSQLReadOnBlockSize")
             };
 
 			return result;

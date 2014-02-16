@@ -6,6 +6,14 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Bug fixes:
+
+#1130 Unable to save SQLReadOn properties
+
+
+3.5.1 (02/01/2014)
+==================
+
 Enhancements:
 
 File export: Replaced the old xls export by the newer xlsx export which allows far mor rows to export.
