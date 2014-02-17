@@ -2,6 +2,7 @@ package org.squirrelsql.session;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -15,7 +16,10 @@ import javafx.stage.Popup;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.*;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.completion.CompletionCandidate;
 import org.squirrelsql.session.completion.Completor;
 import org.squirrelsql.session.objecttree.*;
@@ -113,7 +117,10 @@ public class SessionCtrl
 
       Popup pp = new Popup();
 
-      ListView<CompletionCandidate> listView = new ListView<>(new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret));
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret);
+      ListView<CompletionCandidate> listView = new ListView<>();
+      listView.setItems(completions);
+
       listView.getSelectionModel().selectFirst();
 
 
@@ -151,7 +158,8 @@ public class SessionCtrl
             }
          }
       });
-
+ 
+      listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 2);
 
       pp.getContent().add(listView);
       Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
