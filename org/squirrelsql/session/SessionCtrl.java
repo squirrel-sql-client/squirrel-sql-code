@@ -2,7 +2,6 @@ package org.squirrelsql.session;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -17,6 +16,8 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.*;
+import org.squirrelsql.session.completion.CompletionCandidate;
+import org.squirrelsql.session.completion.Completor;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SplitDividerWA;
@@ -112,7 +113,7 @@ public class SessionCtrl
 
       Popup pp = new Popup();
 
-      ListView<String> listView = new ListView<>(FXCollections.observableArrayList("Complete1", "Complete2", "Complete3"));
+      ListView<CompletionCandidate> listView = new ListView<>(new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret));
       listView.getSelectionModel().selectFirst();
 
 
@@ -121,12 +122,12 @@ public class SessionCtrl
             {
                public void handle(final KeyEvent keyEvent)
                {
-                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
+                  // if (keyEvent.getCode() == KeyCode.ENTER) doesn't work
                   if (("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
                   {
                      pp.hide();
-                     String selItem = listView.getSelectionModel().getSelectedItems().get(0);
-                     sqlTextAreaServices.replaceCurrentTokenBy(selItem);
+                     CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
+                     sqlTextAreaServices.replaceTokenAtCarretBy(selItem.getReplacement());
                      keyEvent.consume();
                   }
                   else if(27 == keyEvent.getCharacter().charAt(0)) // ESCAPE Key
@@ -154,7 +155,7 @@ public class SessionCtrl
 
       pp.getContent().add(listView);
       Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
-      pp.show(sqlTextAreaServices.getTextAreaComponent(), cl.getX(), cl.getY());
+      pp.show(sqlTextAreaServices.getTextAreaComponent(), cl.getX(), cl.getY() + sqlTextAreaServices.getFontHight() + 4);
 
    }
 

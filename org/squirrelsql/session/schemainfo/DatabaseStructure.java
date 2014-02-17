@@ -1,5 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.CollectionUtil;
+
 import java.util.ArrayList;
 
 public class DatabaseStructure extends StructItem
@@ -48,4 +50,50 @@ public class DatabaseStructure extends StructItem
       return parent;
    }
 
+
+   private <T extends StructItem> ArrayList<T> getStructItemsByType(final Class<T> structItemClass)
+   {
+      ArrayList<T> ret = new ArrayList<>();
+
+      DatabaseStructureVisitor<Object> databaseStructureVisitor = new DatabaseStructureVisitor<Object>()
+      {
+         @Override
+         public Object visit(Object resultOfParenVisit, StructItem structItem)
+         {
+            if(structItemClass.equals(structItem.getClass()))
+            {
+               ret.add((T) structItem);
+            }
+            return null;
+         }
+      };
+
+      visitTopToBottom(databaseStructureVisitor, SchemaCacheConfig.LOAD_ALL );
+      return ret;
+   }
+
+   public ArrayList<StructItemCatalog> getCatalogs()
+   {
+      return getStructItemsByType(StructItemCatalog.class);
+   }
+
+   public ArrayList<StructItemSchema> getSchemas()
+   {
+      return getStructItemsByType(StructItemSchema.class);
+   }
+
+   public StructItemCatalog getCatalogByName(String catalogName)
+   {
+      return CollectionUtil.filter(getCatalogs(), (t) ->  t.getCatalog().equalsIgnoreCase(catalogName)).get(0);
+   }
+
+   public ArrayList<StructItemSchema> getSchemasByName(String schemaName)
+   {
+      return CollectionUtil.filter(getSchemas(), (t) ->  schemaName.equalsIgnoreCase(t.getSchema()));
+   }
+
+   public ArrayList<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
+   {
+      return CollectionUtil.filter(getSchemas(), (t) ->  catalogName.equalsIgnoreCase(t.getCatalog()) && schemaName.equalsIgnoreCase(t.getSchema()));
+   }
 }

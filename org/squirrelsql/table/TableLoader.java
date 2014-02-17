@@ -75,4 +75,26 @@ public class TableLoader
 
       return simpleObjectProperty;
    }
+
+   public ArrayList<String> getCellsAsString(int col)
+   {
+      ArrayList<String> ret = new ArrayList<>(_rows.size());
+      for (ArrayList<SimpleObjectProperty> row : _rows)
+      {
+         SimpleObjectProperty simpleObjectProperty = interpretValue(row.get(col));
+         ret.add(getStringValue(simpleObjectProperty));
+      }
+
+      return ret;
+   }
+
+   private String getStringValue(SimpleObjectProperty simpleObjectProperty)
+   {
+      if(simpleObjectProperty.get() instanceof String)
+      {
+         return (String) simpleObjectProperty.get();
+      }
+
+      return simpleObjectProperty.get().toString();
+   }
 }

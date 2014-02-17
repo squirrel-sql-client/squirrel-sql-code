@@ -93,7 +93,7 @@ public class SQLTextAreaServices
       return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
    }
 
-   public void replaceCurrentTokenBy(String selItem)
+   public void replaceTokenAtCarretBy(String selItem)
    {
       TokenAtCarretInfo tci = _getTokenAtCarretInfo();
 //      if (tci.getTokenBeginPos() < tci.getCaretPosition())
@@ -104,5 +104,17 @@ public class SQLTextAreaServices
 //      {
 //         _sqlTextArea.insertText(tci.getTokenBeginPos(), selItem);
 //      }
+   }
+
+   public double getFontHight()
+   {
+      if( 0 > _sqlTextArea.getFont().getSize())
+      {
+         return 12;
+      }
+      else
+      {
+         return _sqlTextArea.getFont().getSize();
+      }
    }
 }

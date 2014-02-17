@@ -27,6 +27,7 @@ public class SchemaCache
    private TableLoader _keywords;
 
    private HashMap<StructItemTableType, ArrayList<TableInfo>> _tableInfos = new HashMap<>();
+   private HashMap<QualifiedTableName, ArrayList<TableInfo>> _tableInfosByQualifiedName = new HashMap<>();
    private HashMap<StructItemProcedureType, ArrayList<ProcedureInfo>> _procedureInfos = new HashMap<>();
    private HashMap<StructItemUDTType, ArrayList<UDTInfo>> _udtInfos = new HashMap<>();
 
@@ -64,7 +65,23 @@ public class SchemaCache
             StructItemTableType buf = (StructItemTableType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               _tableInfos.put(buf, _sqlConnection.getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType()));
+               ArrayList<TableInfo> tableInfos = _sqlConnection.getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
+               _tableInfos.put(buf, tableInfos);
+
+
+               for (TableInfo tableInfo : tableInfos)
+               {
+                  QualifiedTableName key = new QualifiedTableName(buf.getCatalog(), buf.getSchema(), tableInfo.getName());
+                  ArrayList<TableInfo> arr = _tableInfosByQualifiedName.get(key);
+
+                  if(null == arr)
+                  {
+                     arr = new ArrayList<>();
+                     _tableInfosByQualifiedName.put(key, arr);
+                  }
+                  arr.add(tableInfo);
+               }
+
             }
          }
          else if(leaf instanceof StructItemProcedureType)
@@ -98,17 +115,27 @@ public class SchemaCache
 
    public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
    {
-      return _tableInfos.get(new StructItemTableType(tableType, catalog, schema));
+      return convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
+   }
+
+   private <T> ArrayList<T> convertNullToArray(ArrayList<T> arr)
+   {
+      if (null == arr)
+      {
+         return new ArrayList<>();
+      }
+
+      return arr;
    }
 
    public ArrayList<ProcedureInfo> getProcedureInfos(String catalog, String schema)
    {
-      return _procedureInfos.get(new StructItemProcedureType(catalog, schema));
+      return convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
    }
 
    public ArrayList<UDTInfo> getUDTInfos(String catalog, String schema)
    {
-      return _udtInfos.get(new StructItemUDTType(catalog, schema));
+      return convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
    }
 
    public TableLoader getTypes()
@@ -144,5 +171,47 @@ public class SchemaCache
    public TableLoader getKeywords()
    {
       return _keywords;
+   }
+
+   public ArrayList<StructItemCatalog> getCatalogs()
+   {
+      return _databaseStructure.getCatalogs();
+   }
+
+   public ArrayList<StructItemSchema> getSchemas()
+   {
+      return convertNullToArray(_databaseStructure.getSchemas());
+   }
+
+   public ArrayList<String> getAllFunctions()
+   {
+      ArrayList<String> ret = new ArrayList<>();
+
+      ret.addAll(_stringFunctions.getCellsAsString(0));
+      ret.addAll(_numericFunctions.getCellsAsString(0));
+      ret.addAll(_timeDateFunctions.getCellsAsString(0));
+      ret.addAll(_systemFunctions.getCellsAsString(0));
+
+      return ret;
+   }
+
+   public StructItemCatalog getCatalogByName(String catalogName)
+   {
+      return _databaseStructure.getCatalogByName(catalogName);
+   }
+
+   public ArrayList<StructItemSchema> getSchemasByName(String schemaName)
+   {
+      return convertNullToArray(_databaseStructure.getSchemasByName(schemaName));
+   }
+
+   public ArrayList<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
+   {
+      return convertNullToArray(_databaseStructure.getSchemaByNameAsArray(catalogName, schemaName));
+   }
+
+   public ArrayList<TableInfo> getTablesByName(String catalog, String schema, String tableName)
+   {
+      return convertNullToArray(_tableInfosByQualifiedName.get(new QualifiedTableName(catalog, schema, tableName)));
    }
 }
