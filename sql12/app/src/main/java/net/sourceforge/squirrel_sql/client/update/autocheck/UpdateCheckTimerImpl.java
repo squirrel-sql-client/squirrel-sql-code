@@ -156,12 +156,12 @@ public class UpdateCheckTimerImpl implements UpdateCheckTimer
 				logDebug("isUpToDate: checking to see if software is up-to-date; currentTimeMillis = "
 					+ System.currentTimeMillis());
 
-				ReleaseFileUpdateCheckTask task =
-					new ReleaseFileUpdateCheckTask(null, _updateSettings, _util, _app);
-
-				// Since this thread is not a UI thread, it is ok to run the task synchronously.
-				task.run();
-				result = task.isUpToDate();
+//				ReleaseFileUpdateCheckTask task =
+//					new ReleaseFileUpdateCheckTask(null, _updateSettings, _util, _app);
+//
+//				// Since this thread is not a UI thread, it is ok to run the task synchronously.
+//				task.run();
+//				result = task.isUpToDate();
 			}
 			catch (Exception e)
 			{

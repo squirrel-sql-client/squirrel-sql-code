@@ -320,7 +320,7 @@ public class GlobalPreferencesSheet extends DialogWidget
 		_panels.add(new SQLPreferencesPanel(_app.getMainFrame()));
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
-		_panels.add(new UpdatePreferencesTab(prefrenceTabActvivationListener));
+//		_panels.add(new UpdatePreferencesTab(prefrenceTabActvivationListener));
 		_panels.add(new WikiTablePreferencesTab());
 		_panels.add(new FormatSqlConfigPrefsTab(_app));
 

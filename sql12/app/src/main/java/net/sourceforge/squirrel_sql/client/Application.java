@@ -170,7 +170,7 @@ class Application implements IApplication
 
 	private List<ApplicationListener> _listeners = new ArrayList<ApplicationListener>();
 
-	private UpdateCheckTimer updateCheckTimer = null; 
+//	private UpdateCheckTimer updateCheckTimer = null;
 	
 	private PreLaunchHelperFactory preLaunchHelperFactory = new PreLaunchHelperFactoryImpl();
 	
@@ -234,8 +234,8 @@ class Application implements IApplication
 
 		s_log.info("Application.shutdown: BEGIN: " + Calendar.getInstance().getTime());
 
-		updateCheckTimer.stop();
-      s_log.info("Application.shutdown: updateCheckTimer.stop() ELAPSED: " + (System.currentTimeMillis() - begin));
+//		updateCheckTimer.stop();
+//      s_log.info("Application.shutdown: updateCheckTimer.stop() ELAPSED: " + (System.currentTimeMillis() - begin));
 
 		_saveApplicationState(begin);
       s_log.info("Application.shutdown: saveApplicationState() ELAPSED: " + (System.currentTimeMillis() - begin));
@@ -855,8 +855,8 @@ class Application implements IApplication
 			}
 		}
 		
-		updateCheckTimer = new UpdateCheckTimerImpl(this);
-		updateCheckTimer.start();
+//		updateCheckTimer = new UpdateCheckTimerImpl(this);
+//		updateCheckTimer.start();
 		
 		if (args.getShutdownTimerSeconds() != null)
       {
@@ -1344,7 +1344,7 @@ class Application implements IApplication
 	}
 	
 	public void setUpdateCheckTimer(UpdateCheckTimer timer) {
-		this.updateCheckTimer = timer;
+		//this.updateCheckTimer = timer;
 	}
 	
 	public void setPreLaunchHelperFactory(PreLaunchHelperFactory preLaunchHelperFactory)

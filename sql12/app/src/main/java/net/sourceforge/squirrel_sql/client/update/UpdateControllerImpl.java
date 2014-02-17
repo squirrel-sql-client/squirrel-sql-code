@@ -545,9 +545,9 @@ public class UpdateControllerImpl implements UpdateController, CheckUpdateListen
 
 		};
 
-		ReleaseFileUpdateCheckTask runnable =
-			new ReleaseFileUpdateCheckTask(callback, getUpdateSettings(), _util, _app);
-		runnable.start();
+//		ReleaseFileUpdateCheckTask runnable =
+//			new ReleaseFileUpdateCheckTask(callback, getUpdateSettings(), _util, _app);
+//		runnable.start();
 
 	}
 
