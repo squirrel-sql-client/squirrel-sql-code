@@ -8,6 +8,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Note: Automatic updates were disabled in this snapshot release. Please use our home page to download latest versions and snapshots.
 
+Enhancements:
+
+Allowed command line arguments to be defined by Plugins. See Method IPlugin.getPluginApplicationArguments().
+Thanks to David Green for the patch
+
+
 Bug fixes:
 
 #1130 Unable to save SQLReadOn properties
