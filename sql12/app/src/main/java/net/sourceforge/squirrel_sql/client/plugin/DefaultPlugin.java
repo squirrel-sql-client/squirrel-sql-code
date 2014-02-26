@@ -20,8 +20,11 @@ package net.sourceforge.squirrel_sql.client.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.IApplicationArgument;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
@@ -326,6 +329,10 @@ public abstract class DefaultPlugin implements IPlugin
 		Utilities.checkNull("setFileWrapperFactory", "fileWrapperFactory", fileWrapperFactory);
 		this.fileWrapperFactory = fileWrapperFactory;
 	}
-   
 
+   @Override
+   public Collection<IApplicationArgument> getPluginApplicationArguments()
+   {
+      return Collections.EMPTY_LIST;
+   }
 }

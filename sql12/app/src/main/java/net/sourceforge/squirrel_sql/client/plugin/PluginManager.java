@@ -124,12 +124,11 @@ public class PluginManager implements IPluginManager
 	 */
 	public PluginManager(IApplication app)
 	{
-		super();
+                super();
 		if (app == null)
 		{
 			throw new IllegalArgumentException("IApplication == null");
 		}
-
 		_app = app;
 	}
 
@@ -680,7 +679,17 @@ public class PluginManager implements IPluginManager
 			return false;
 		}
 
-		return true;
+      try
+      {
+         ApplicationArguments.getInstance().addPluginApplicationArguments(plugin.getPluginApplicationArguments());
+      }
+      catch (IllegalArgumentException ex)
+      {
+         s_log.error("Plugin " + plugin.getClass().getName() + ": Calling ApplicationArguments.getInstance().addPluginApplicationArguments() failed", ex);
+         return false;
+      }
+
+      return true;
 	}
 
 	private PluginLoadInfo getPluginLoadInfo(IPlugin plugin)

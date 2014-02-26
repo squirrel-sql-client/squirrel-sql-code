@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client;
 
+import java.util.Collection;
 import java.util.List;
 
 /*
@@ -84,5 +85,9 @@ public interface IApplicationArguments
 	 * @return
 	 */
 	List<String> getPluginList();
+
+   public void addPluginApplicationArguments(Collection<IApplicationArgument> group);
+
+   void validateArgs(boolean stopAtUnknownArgs) throws IllegalArgumentException;
 
 }

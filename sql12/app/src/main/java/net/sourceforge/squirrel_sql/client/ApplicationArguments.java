@@ -20,8 +20,12 @@ package net.sourceforge.squirrel_sql.client;
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -29,6 +33,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 /**
@@ -111,87 +116,134 @@ public class ApplicationArguments implements IApplicationArguments
 	 *
 	 * @param	args	Arguments passed on command line.
 	 *
-	 * @throws	ParseException
-	 * 			Thrown if unable to parse arguments.
 	 */
 	private ApplicationArguments(String[] args)
-		throws ParseException
 	{
 		super();
 		createOptions();
 
-        // set up array to return for public access to cmd line args
-        _rawArgs = args;        
+      // set up array to return for public access to cmd line args
+      _rawArgs = args;
+   }
 
-		final CommandLineParser parser = new GnuParser();
-		try
-		{
-			_cmdLine = parser.parse(_options, args);
-		}
-		catch(ParseException ex)
-		{
-			System.err.println("Parsing failed. Reason: " + ex.getMessage());
-			printHelp();
-			throw ex;
-		}
+   @Override
+   public void validateArgs(final boolean stopAtUnknownArgs) throws IllegalArgumentException
+   {
+      final CommandLineParser parser = new GnuParser()
+      {
+         @Override
+         protected void processOption(final String arg, final ListIterator iter) throws ParseException
+         {
+            if (stopAtUnknownArgs || getOptions().hasOption(arg))
+            {
+               super.processOption(arg, iter);
+            }
+         }
+      };
 
-		if (_cmdLine.hasOption(IOptions.SQUIRREL_HOME[0]))
-		{
-			_squirrelHome = _cmdLine.getOptionValue(IOptions.SQUIRREL_HOME[0]);
-		}
-		if (_cmdLine.hasOption(IOptions.USER_SETTINGS_DIR[0]))
-		{
-			_userSettingsDir = _cmdLine.getOptionValue(IOptions.USER_SETTINGS_DIR[0]);
-		}
-		if (_cmdLine.hasOption(IOptions.LOG_FILE[0]))
-		{
-			_loggingConfigFile = _cmdLine.getOptionValue(IOptions.LOG_FILE[0]);
-		}
-		if (_cmdLine.hasOption(IOptions.PLUGIN_LIST[0]))
-		{
-			String pluginList = _cmdLine.getOptionValue(IOptions.PLUGIN_LIST[0]);
-			if (pluginList != null && !pluginList.isEmpty()) {
-				String[] pluginArr = pluginList.split(",");
-				_pluginList = new ArrayList<String>(Arrays.asList(pluginArr));
-				_pluginList = Collections.unmodifiableList(_pluginList);
-			}
-		}
-		if (_cmdLine.hasOption(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0])) {
-			_shutdownTimerSeconds = Integer.parseInt(_cmdLine.getOptionValue(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0]));
-		}
-		
-	}
+      try
+      {
+         _cmdLine = parser.parse(_options, _rawArgs);
+      }
+      catch (ParseException ex)
+      {
+         System.err.println("Parsing failed. Reason: " + ex.getMessage());
+         printHelp();
+         throw new IllegalArgumentException(ex);
+      }
+   }
 
-	/**
-	 * Initialize application arguments.
-	 *
-	 * @param	args	Arguments passed on command line.
-	 *
-	 * @return	<TT>true</TT> if arguments parsed successfully else
-	 *			<TT>false<.TT>. If parsing was unsuccessful an error was written
-	 *			to standard error.
-	 */
-	public synchronized static boolean initialize(String[] args)
-	{
-		if (s_instance == null)
-		{
-			try
-			{
-				s_instance = new ApplicationArguments(args);
-			}
-			catch (ParseException ex)
-			{
-				return false;
-			}
-		}
-		else
-		{
-			System.out.println("ApplicationArguments.initialize() called twice");
-		}
-		return true;
-	}
+   @Override
+   public void addPluginApplicationArguments(Collection<IApplicationArgument> args) throws IllegalArgumentException
+   {
+      if (args.isEmpty())
+      {
+         return;
+      }
 
-	/**
+      Map<IApplicationArgument, Option> options = new HashMap<IApplicationArgument, Option>(args.size());
+      for (IApplicationArgument arg : args)
+      {
+         Option option = new Option(arg.getArgumentName(), arg.getDescription());
+         option.setOptionalArg(false);
+         option.setRequired(arg.isRequired());
+         option.setType(String.class);
+         option.setArgs(arg.getNumberOfArgumentValues());
+         _options.addOption(option);
+      }
+
+      // capture values for callback loop
+      validateArgs(false);
+
+      // cycle through our recently created options and callback the values to the IApplicationArgument
+      // only set values if the entry was there (aka, if it was an optional value and it's not set, don't add empty values
+      for (Map.Entry<IApplicationArgument, Option> entry : options.entrySet())
+      {
+         if (_options.hasOption(entry.getValue().getArgName()))
+         {
+            entry.getKey().setArgumentValues(Arrays.asList(entry.getValue().getValues()));
+         }
+      }
+   }
+
+   /**
+     * Initialize application arguments.
+     *
+     * @param	args	Arguments passed on command line.
+     *
+     * @return	<TT>true</TT> if arguments parsed successfully else
+     * <TT>false<.TT>. If parsing was unsuccessful an error was written to
+     * standard error.
+     */
+   public synchronized static boolean initialize(String[] args)
+   {
+      if (s_instance == null)
+      {
+         try
+         {
+            s_instance = new ApplicationArguments(args);
+            s_instance.validateArgs(false);
+
+            if (s_instance._cmdLine.hasOption(IOptions.SQUIRREL_HOME[0]))
+            {
+               s_instance._squirrelHome = s_instance._cmdLine.getOptionValue(IOptions.SQUIRREL_HOME[0]);
+            }
+            if (s_instance._cmdLine.hasOption(IOptions.USER_SETTINGS_DIR[0]))
+            {
+               s_instance._userSettingsDir = s_instance._cmdLine.getOptionValue(IOptions.USER_SETTINGS_DIR[0]);
+            }
+            if (s_instance._cmdLine.hasOption(IOptions.LOG_FILE[0]))
+            {
+               s_instance._loggingConfigFile = s_instance._cmdLine.getOptionValue(IOptions.LOG_FILE[0]);
+            }
+            if (s_instance._cmdLine.hasOption(IOptions.PLUGIN_LIST[0]))
+            {
+               String pluginList = s_instance._cmdLine.getOptionValue(IOptions.PLUGIN_LIST[0]);
+               if (pluginList != null && !pluginList.isEmpty())
+               {
+                  String[] pluginArr = pluginList.split(",");
+                  s_instance._pluginList = new ArrayList<String>(Arrays.asList(pluginArr));
+                  s_instance._pluginList = Collections.unmodifiableList(s_instance._pluginList);
+               }
+            }
+            if (s_instance._cmdLine.hasOption(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0]))
+            {
+               s_instance._shutdownTimerSeconds = Integer.parseInt(s_instance._cmdLine.getOptionValue(IOptions.SHUTDOWN_TIMEOUT_SECONDS[0]));
+            }
+
+         }
+         catch (IllegalArgumentException ex)
+         {
+            return false;
+         }
+      } else
+      {
+         System.out.println("ApplicationArguments.initialize() called twice");
+      }
+      return true;
+   }
+
+   /**
 	 * Return the single instance of this class.
 	 *
 	 * @return the single instance of this class. If initialize() hasn't yet been called, then it is
@@ -201,11 +253,7 @@ public class ApplicationArguments implements IApplicationArguments
 	{
 		if (s_instance == null)
 		{
-			try {
-				s_instance = new ApplicationArguments(new String[] {});
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+                    s_instance = new ApplicationArguments(new String[] {});
 		}
 		return s_instance;
 	}

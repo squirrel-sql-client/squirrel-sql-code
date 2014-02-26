@@ -19,8 +19,10 @@ package net.sourceforge.squirrel_sql.client.plugin;
  */
 
 import java.io.IOException;
+import java.util.Collection;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.IApplicationArgument;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -227,5 +229,9 @@ public interface IPlugin
 	 */
 	public void setFileWrapperFactory(FileWrapperFactory fileWrapperFactory);
 
+   /**
+    * Used by external Plugins not hosted at SQuirreL's site.
+    */
+   Collection<IApplicationArgument> getPluginApplicationArguments();
 
 }

@@ -68,7 +68,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.update.autocheck.UpdateCheckTimer;
-import net.sourceforge.squirrel_sql.client.update.autocheck.UpdateCheckTimerImpl;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperFactory;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperFactoryImpl;
@@ -176,9 +175,9 @@ class Application implements IApplication
 	
 	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
 
-   private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
+        private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
 
-   private RecentFilesManager _recentFilesManager = new RecentFilesManager();
+        private RecentFilesManager _recentFilesManager = new RecentFilesManager();
 
    /**
 	 * Default ctor.
@@ -191,6 +190,7 @@ class Application implements IApplication
 	/**
 	 * Application is starting up.
 	 */
+   @Override
 	public void startup()
 	{
 
@@ -757,7 +757,10 @@ class Application implements IApplication
 			}
 		}
 
-		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
+      // Final argument validation after all plugins have been loaded.  This will exit if there is an unrecognized argument in the list.
+      args.validateArgs(true);
+
+      indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingactions"));
 		_actions = new ActionCollection(this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadinguseracc"));
@@ -1239,7 +1242,7 @@ class Application implements IApplication
 	/**
 	 * Setup applications Look and Feel.
 	 */
-	private void setupLookAndFeel(ApplicationArguments args)
+	protected void setupLookAndFeel(IApplicationArguments args)
 	{
 		/* 
 		 * Don't prevent the user from overriding the laf is they choose to use 
@@ -1385,4 +1388,8 @@ class Application implements IApplication
       return _recentFilesManager;
    }
 
+   protected void exitApplication(int code){
+       System.exit(code);
+   }
+   
 }
