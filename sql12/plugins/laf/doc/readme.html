@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Linux)">
+	<META NAME="CREATED" CONTENT="20050606;23085800">
+	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
+	<META NAME="CHANGED" CONTENT="20050606;23172900">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><B>Look and Feel Plugin</B><SPAN STYLE="font-weight: medium">-
+Colin Bell</SPAN></P>
+<P>This plugin allows you to select a Look and Feel other than the
+default Java one and to specify the fonts for the different GUI
+controls. It ships with the following Look and Feel implementations:</P>
+<UL>
+	<LI>InfoNode 1.4 -
+    	<A HREF="http://www.infonode.net/">http://www.infonode.net/</A>
+   	</LI>
+   	
+	<LI>JGoodies Looks 2.1pre4 -
+    	<A HREF="http://www.jgoodies.com/">http://www.jgoodies.com</A>
+   	</LI>
+
+	<LI>Kunststoff 2.0.2 -
+    	<A HREF="http://www.incors.org/">http://www.incors.org</A>
+   	</LI>
+
+	<LI>Metouia 1.0beta -
+    	<A HREF="http://mlf.sourceforge.net/">http://mlf.sourceforge.net</A>
+   	</LI>
+
+	<LI>Napkin 1.0-
+    	<A HREF="http://napkinlaf.sourceforge.net/">http://napkinlaf.sourceforge.net/</A>
+   	</LI>
+	
+	<LI>Nimrod 0.94 -
+	   <A HREF="http://personales.ya.com/nimrod/index-en.html">http://personales.ya.com/nimrod/index-en.html</A>
+   </LI>
+
+	<LI>Oyoaha 3.0rc1 -
+	   <A HREF="http://www.oyoaha.com/">http://www.oyoaha.com</A>
+	</LI>
+	
+	<LI>Skin 1.2.9 -
+	   <A HREF="http://www.l2fprod.com/">http://www.l2fprod.com</A>
+	</LI>
+
+	<LI>Tiny 1.3.04 -
+    	<A HREF="http://www.muntjak.de/hans/java/tinylaf/index.html">http://www.muntjak.de/hans/java/tinylaf/index.html</A>
+   	</LI>
+
+	<LI>Tonic 1.0.5 -
+    	<A HREF="http://www.digitprop.com/p.php?page=toniclf">http://www.digitprop.com/p.php?page=toniclf</A>
+   	</LI>
+	
+	<LI>The SwingSet theme - See the SwingSet demo of JDK 1.4.x</P>
+</UL>
+
+<p>The Oyoaha and Metouia Look &amp; Feels do not work under Java 6 and
+later.</p>
+
+<p>
+The &quot;Allow L&amp;F to set tilebar and window borders &quot;
+checkbox allows you to specify whether the Look and Feel can set
+these, otherwise the Window Manager will set them. This setting
+only takes effect for newly created windows.
+</P>
+
+<P>The L &amp; F tab in the Global Preferences Dialog will allow you
+to select the Look and Feel as well as optionally allowing you to
+configure that Look and Feel if it supports configuration.</P>
+<P>The Fonts tab in the Global Preferences Dialog will allow you to
+specify the fonts used for various controls in SQuirreL. If you are
+using one of the Plastic Look and Feels it is suggested that you
+don't specify fonts on the Fonts Preferences Tab as these Look and
+Feels do a good job of specifying default fonts.</P>
+<P>Both the Skin and Oyoaha Look and Feels allow the use of &quot;skins&quot;.
+Skin Look and Feel themepacks should be placed in the
+plugins/laf/skinlf-theme-packs directory within the SQuirreL program
+directory and Oyoaha themes should be placed in the directory
+plugins/laf/oyoaha-theme-packs.</P>
+<P>If you have other Look and Feel implementations that you would
+like to use with SQuirreL drop the jar files into the directory</P>
+<P>~/.squirrel-sql/plugins/laf/extralafs</P>
+<P>where ~ is your home directory. This directory will be created (if
+it doesn't exist) the first time you run SQuirreL with the Look and
+Feel plugin installed. Then use a text editor to enter information
+about the new Look and Feel in the file</P>
+<P>~/.squirrel-sql/plugins/laf/extralafs/extralafs.properties</P>
+<P>Each new Look and Feel should have a line in extralafs.properties
+classnameX=LookAndFeelClassname which specifies the class name of the
+Look and Feel (consult the documentation that came with your new Look
+and Feel for this information) and an line jarX=JarFIleName which
+specifies the name of the jar (or zip) file that contains the Look
+and Feel. Replace X with 0 for the first Look and Feel specified, 1
+for the second etc.</P>
+<P>Here is an example:</P>
+
+<pre>
+classname0=com.incors.plaf.kunststoff.KunststoffLookAndFeel
+jar0=kunststoff.jar
+</pre>
+</BODY>
+</HTML>

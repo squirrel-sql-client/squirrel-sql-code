@@ -1,5 +1,0 @@
-<Beans>
-    <Bean Class="net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory">
-        <data Indexed="true"/>
-    </Bean>
-</Beans>
