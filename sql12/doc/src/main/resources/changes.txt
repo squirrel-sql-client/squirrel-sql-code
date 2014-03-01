@@ -1,7 +1,6 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Commit Test Master
 
 ${squirrelsql.changelog.header}
 
