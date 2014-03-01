@@ -1,8 +1,6 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Commit Test
-
 ${squirrelsql.changelog.header}
 
 Not yet released, available in our GIT repository and in future snapshots and releases.
