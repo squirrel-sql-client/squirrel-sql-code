@@ -3,7 +3,7 @@
 
     <target name="cleanAllAndInit" description="cleanAllAndInit">
 
-        <tstamp/>
+        <tstamp/> <!-- Needed to initialize DSTAMP and TSTAMP variables-->
 
         <!-- DEFINE VERSION ONLY HERE -->
         <!--<property name="squirrelsql.version" value="3.6"/>-->
