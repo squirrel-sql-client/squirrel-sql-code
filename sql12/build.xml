@@ -10,7 +10,6 @@
         </fileset>
     </path>
 
-    <taskdef name="IzPack" classpath="${basedir}/installer/izpack/lib/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
 
 
     <target name="cleanAllAndInit" description="cleanAllAndInit">
@@ -22,9 +21,6 @@
         <mkdir dir="output/izPackInstallJars"/>
         <mkdir dir="output/plainZip/work"/>
     </target>
-
-
-
 
 
     <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
@@ -65,6 +61,8 @@
 
     </target>
 
+
+    <taskdef name="IzPack" classpath="${basedir}/installer/izpack/lib/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
 
     <target name="createIZPackInstallJars" description="createIZPackInstallJars">
 
