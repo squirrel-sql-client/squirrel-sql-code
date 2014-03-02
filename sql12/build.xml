@@ -1,18 +1,14 @@
 <project name="SQuirreLSQL" default="buildAll" basedir=".">
 
-    <!-- DEFINE VERSION HERE -->
-    <property name="squirrelsql.version" value="3.5.1"/>
-
-
-    <path id="build.classpath">
-        <fileset dir="core/lib">
-            <include name="**/*" />
-        </fileset>
-    </path>
-
-
 
     <target name="cleanAllAndInit" description="cleanAllAndInit">
+
+        <tstamp/>
+
+        <!-- DEFINE VERSION ONLY HERE -->
+        <!--<property name="squirrelsql.version" value="3.6"/>-->
+        <property name="squirrelsql.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
+
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>
         <mkdir dir="output/dist"/>
@@ -21,6 +17,13 @@
         <mkdir dir="output/izPackInstallJars"/>
         <mkdir dir="output/plainZip/work"/>
     </target>
+
+
+    <path id="build.classpath">
+        <fileset dir="core/lib">
+            <include name="**/*" />
+        </fileset>
+    </path>
 
 
     <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
@@ -41,7 +44,7 @@
     <target name="createPlainZip" description="createPlainZip">
         <delete dir="output/plainZip/work"/>
 
-        <property name="plainZipName" value="squirrelsql-plainzip-${squirrelsql.version}-${plainZipNamePostfix}"/>
+        <property name="plainZipName" value="squirrelsql-${squirrelsql.version}-${plainZipNamePostfix}"/>
 
         <mkdir dir="output/plainZip/work/${plainZipName}"/>
 
@@ -67,14 +70,14 @@
     <target name="createIZPackInstallJars" description="createIZPackInstallJars">
 
         <IzPack input="installer/other/izpack-other.xml"
-                output="output/izPackInstallJars/squirrel-sql-other-izpack-installer.jar"
+                output="output/izPackInstallJars/squirrel-sql-${squirrelsql.version}-standard.jar"
                 installerType="standard"
                 basedir="${basedir}"
                 inheritAll="true">
         </IzPack>
 
         <IzPack input="installer/mac/izpack-mac.xml"
-                output="output/izPackInstallJars/squirrel-sql-macos-izpack-installer.jar"
+                output="output/izPackInstallJars/squirrel-sql-${squirrelsql.version}-MACOSX-install.jar"
                 installerType="standard"
                 basedir="${basedir}"
                 inheritAll="true">
