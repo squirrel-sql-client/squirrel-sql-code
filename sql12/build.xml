@@ -4,9 +4,6 @@
     <property name="squirrelsql.version" value="3.5.1"/>
 
 
-
-
-
     <path id="build.classpath">
         <fileset dir="core/lib">
             <include name="**/*" />
@@ -16,13 +13,58 @@
     <taskdef name="IzPack" classpath="${basedir}/installer/izpack/lib/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
 
 
-    <target name="cleanAll" description="cleanAll">
+    <target name="cleanAllAndInit" description="cleanAllAndInit">
         <delete dir="output"/>
+        <mkdir dir="output/work/bin"/>
+        <mkdir dir="output/dist"/>
+        <mkdir dir="output/dist/lib"/>
+        <mkdir dir="output/dist/plugins"/>
+        <mkdir dir="output/izPackInstallJars"/>
+        <mkdir dir="output/plainZip/work"/>
     </target>
 
 
-    <target name="buildAll" description="buildAll" depends="cleanAll, initDirs, compileCore, compilePlugins, createIZPackInstallJars">
+
+
+
+    <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
+
+        <antcall target="compileCore"/>
+        <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="base"/></antcall>
+
+        <antcall target="compileStandardPlugins"/>
+        <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="standard"/></antcall>
+
+        <antcall target="compileOptionalPlugins"/>
+        <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="optional"/></antcall>
+
+        <antcall target="compileMacPlugin"/>
+        <antcall target="createIZPackInstallJars"/>
     </target>
+
+    <target name="createPlainZip" description="createPlainZip">
+        <delete dir="output/plainZip/work"/>
+
+        <property name="plainZipName" value="squirrelsql-plainzip-${squirrelsql.version}-${plainZipNamePostfix}"/>
+
+        <mkdir dir="output/plainZip/work/${plainZipName}"/>
+
+        <copy todir="output/plainZip/work/${plainZipName}">
+            <fileset dir="output/dist">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+
+        <copy todir="output/plainZip/work/${plainZipName}" overwrite="true">
+            <fileset dir="plainZipScripts">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+
+        <zip destfile="output/plainZip/${plainZipName}.zip" basedir="output/plainZip/work"/>
+
+    </target>
+
 
     <target name="createIZPackInstallJars" description="createIZPackInstallJars">
 
@@ -42,15 +84,6 @@
 
     </target>
 
-
-
-    <target name="initDirs" description="initDirs">
-        <mkdir dir="output/work/bin"/>
-        <mkdir dir="output/dist"/>
-        <mkdir dir="output/dist/lib"/>
-        <mkdir dir="output/dist/plugins"/>
-        <mkdir dir="output/izPackInstallJars"/>
-    </target>
 
     <target name="compileCore" description="compileCore">
         <javac srcdir="core/src" destdir="output/work/bin" classpathref="build.classpath"/>
@@ -76,7 +109,21 @@
     </target>
 
 
-    <target name="compilePlugins" description="CompilePlugins">
+    <target name="compileStandardPlugins" description="compileStandardPlugins">
+        <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="editextras"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="graph"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="laf"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="refactoring"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="sqlbookmark"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="sqlscript"/></antcall>
+        <antcall target="doCompilePlugin"><param name="pluginName" value="syntax"/></antcall>
+    </target>
+
+
+    <target name="compileOptionalPlugins" description="compileOptionalPlugins">
         <antcall target="doCompilePlugin"><param name="pluginName" value="codecompletion"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbcopy"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="dbdiff"/></antcall>
@@ -103,7 +150,6 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="i18n"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="informix"/></antcall>
         <!--<antcall target="doCompilePlugin"><param name="pluginName" value="isqlj"/></antcall>-->
-        <antcall target="doCompilePlugin"><param name="pluginName" value="macosx"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="mssql"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="multisource"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="mysql"/></antcall>
@@ -120,9 +166,13 @@
         <antcall target="doCompilePlugin"><param name="pluginName" value="userscript"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="vertica"/></antcall>
         <antcall target="doCompilePlugin"><param name="pluginName" value="wikiTableConfigurations"/></antcall>
-
-
     </target>
+
+    <target name="compileMacPlugin" description="compileMacPlugin">
+        <antcall target="doCompilePlugin"><param name="pluginName" value="macosx"/></antcall>
+    </target>
+
+
 
 
 
