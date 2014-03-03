@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
@@ -9,6 +10,8 @@ import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class SchemaCache
 {
@@ -131,7 +134,47 @@ public class SchemaCache
       }
 
       return ret;
+   }
 
+   public ArrayList<ProcedureInfo> getProcedureInfosExact(String catalog, String schema)
+   {
+      return convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
+   }
+
+   public ArrayList<ProcedureInfo> getProcedureInfosMatching(String catalog, String schema)
+   {
+      ArrayList<ProcedureInfo> ret = new ArrayList<>();
+
+      for (StructItemProcedureType structItemProcedureType : _procedureInfos.keySet())
+      {
+         if(structItemProcedureType.matchesRespectNull(catalog, schema))
+         {
+            ret.addAll(_procedureInfos.get(structItemProcedureType));
+         }
+      }
+
+      return ret;
+   }
+
+   public ArrayList<UDTInfo> getUDTInfosExact(String catalog, String schema)
+   {
+      return convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
+   }
+
+
+   public ArrayList<UDTInfo> getUDTInfosMatching(String catalog, String schema)
+   {
+      ArrayList<UDTInfo> ret = new ArrayList<>();
+
+      for (StructItemUDTType structItemUDTType : _udtInfos.keySet())
+      {
+         if(structItemUDTType.matchesRespectNull(catalog, schema))
+         {
+            ret.addAll(_udtInfos.get(structItemUDTType));
+         }
+      }
+
+      return ret;
    }
 
    private <T> ArrayList<T> convertNullToArray(ArrayList<T> arr)
@@ -142,16 +185,6 @@ public class SchemaCache
       }
 
       return arr;
-   }
-
-   public ArrayList<ProcedureInfo> getProcedureInfos(String catalog, String schema)
-   {
-      return convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
-   }
-
-   public ArrayList<UDTInfo> getUDTInfos(String catalog, String schema)
-   {
-      return convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
    }
 
    public TableLoader getTypes()

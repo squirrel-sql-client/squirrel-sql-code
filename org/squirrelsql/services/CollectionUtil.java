@@ -3,14 +3,24 @@ package org.squirrelsql.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
 public class CollectionUtil
 {
-   public static <T> ArrayList<T> filter(List<T> toFilter, Predicate<T> predicate)
+   // calling this looks rather complicated.
+   public static <T> void visitFiltered(Collection<T> toVisitFiltered, Predicate<T> predicate, Consumer<T> consumer)
+   {
+      filter(toVisitFiltered, predicate).forEach(consumer);
+   }
+
+
+   public static <T> ArrayList<T> filter(Collection<T> toFilter, Predicate<T> predicate)
    {
       Stream<T> stream = toFilter.stream().filter(predicate);
       return new ArrayList(Arrays.asList(stream.toArray()));

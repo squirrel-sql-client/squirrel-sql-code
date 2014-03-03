@@ -1,6 +1,6 @@
 package org.squirrelsql.session.schemainfo;
 
-public class StructItemUDTType extends StructItem
+public class StructItemUDTType extends StructItem implements CatalogSchema
 {
    private final String _catalog;
    private final String _schema;

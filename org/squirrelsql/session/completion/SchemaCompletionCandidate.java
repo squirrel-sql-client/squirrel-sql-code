@@ -27,5 +27,11 @@ public class SchemaCompletionCandidate extends CompletionCandidate
       return ret + _schema.getSchema();
    }
 
+   @Override
+   public String getObjectTypeName()
+   {
+      return "SCHEMA";
+   }
+
 
 }

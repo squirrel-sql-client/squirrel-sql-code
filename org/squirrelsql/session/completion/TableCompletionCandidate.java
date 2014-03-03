@@ -21,4 +21,10 @@ public class TableCompletionCandidate extends CompletionCandidate
       return CompletorUtil.getCatalogSchemaPrefix(_schema) + _tableInfo.getName();
    }
 
+   @Override
+   public String getObjectTypeName()
+   {
+      return "TABLE/" + _tableInfo.getTableType();
+   }
+
 }

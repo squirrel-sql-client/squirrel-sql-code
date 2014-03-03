@@ -14,4 +14,10 @@ public class KeywordCompletionCandidate extends CompletionCandidate
    {
       return _keyword;
    }
+
+   @Override
+   public String getObjectTypeName()
+   {
+      return "KEYWORD";
+   }
 }

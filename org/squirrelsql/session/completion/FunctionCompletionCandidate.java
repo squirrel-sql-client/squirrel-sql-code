@@ -1,8 +1,5 @@
 package org.squirrelsql.session.completion;
 
-/**
- * Created by gerd on 16.02.14.
- */
 public class FunctionCompletionCandidate extends CompletionCandidate
 {
    private String _function;
@@ -16,5 +13,11 @@ public class FunctionCompletionCandidate extends CompletionCandidate
    public String getReplacement()
    {
       return _function;
+   }
+
+   @Override
+   public String getObjectTypeName()
+   {
+      return "FUNCTION";
    }
 }

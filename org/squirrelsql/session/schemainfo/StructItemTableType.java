@@ -1,6 +1,6 @@
 package org.squirrelsql.session.schemainfo;
 
-public class StructItemTableType extends StructItem
+public class StructItemTableType extends StructItem implements CatalogSchema
 {
    private final String _type;
    private final String _catalog;
@@ -60,8 +60,7 @@ public class StructItemTableType extends StructItem
 
    public boolean matchesRespectNull(String catalog, String schema, String tableType)
    {
-      return   (null == catalog || catalog.equalsIgnoreCase(_catalog))
-            && (null == schema || schema.equalsIgnoreCase(_schema))
+      return matchesRespectNull(catalog, schema)
             && (null == tableType || tableType.equalsIgnoreCase(_type));
    }
 }

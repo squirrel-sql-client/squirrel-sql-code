@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.Utils;
 
 import java.util.ArrayList;
 
@@ -84,16 +85,24 @@ public class DatabaseStructure extends StructItem
 
    public StructItemCatalog getCatalogByName(String catalogName)
    {
-      return CollectionUtil.filter(getCatalogs(), (t) ->  t.getCatalog().equalsIgnoreCase(catalogName)).get(0);
+      ArrayList<StructItemCatalog> catalogs = CollectionUtil.filter(getCatalogs(), (t) -> Utils.compareRespectEmpty(t.getCatalog(), catalogName));
+
+      if(0 == catalogs.size())
+      {
+         return null;
+      }
+
+      return catalogs.get(0);
    }
+
 
    public ArrayList<StructItemSchema> getSchemasByName(String schemaName)
    {
-      return CollectionUtil.filter(getSchemas(), (t) ->  schemaName.equalsIgnoreCase(t.getSchema()));
+      return CollectionUtil.filter(getSchemas(), (t) -> Utils.compareRespectEmpty(schemaName, t.getSchema()));
    }
 
    public ArrayList<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
    {
-      return CollectionUtil.filter(getSchemas(), (t) ->  catalogName.equalsIgnoreCase(t.getCatalog()) && schemaName.equalsIgnoreCase(t.getSchema()));
+      return CollectionUtil.filter(getSchemas(), (t) -> Utils.compareRespectEmpty(catalogName, t.getCatalog()) && Utils.compareRespectEmpty(schemaName, t.getSchema()));
    }
 }

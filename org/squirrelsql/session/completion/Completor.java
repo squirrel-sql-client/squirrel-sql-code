@@ -198,7 +198,7 @@ public class Completor
             }
          }
 
-         ArrayList<ProcedureInfo> procedureInfos = _schemaCache.getProcedureInfos(schema.getCatalog(), schema.getSchema());
+         ArrayList<ProcedureInfo> procedureInfos = _schemaCache.getProcedureInfosMatching(schema.getCatalog(), schema.getSchema());
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {
@@ -208,7 +208,7 @@ public class Completor
             }
          }
 
-         ArrayList<UDTInfo> udtInfos = _schemaCache.getUDTInfos(schema.getCatalog(), schema.getSchema());
+         ArrayList<UDTInfo> udtInfos = _schemaCache.getUDTInfosMatching(schema.getCatalog(), schema.getSchema());
 
          for (UDTInfo udtInfo : udtInfos)
          {
