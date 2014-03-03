@@ -57,4 +57,11 @@ public class StructItemTableType extends StructItem
       result = 31 * result + (_schema != null ? _schema.hashCode() : 0);
       return result;
    }
+
+   public boolean matchesRespectNull(String catalog, String schema, String tableType)
+   {
+      return   (null == catalog || catalog.equalsIgnoreCase(_catalog))
+            && (null == schema || schema.equalsIgnoreCase(_schema))
+            && (null == tableType || tableType.equalsIgnoreCase(_type));
+   }
 }

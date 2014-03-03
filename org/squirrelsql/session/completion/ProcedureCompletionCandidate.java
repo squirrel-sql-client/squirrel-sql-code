@@ -20,6 +20,6 @@ public class ProcedureCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return CompletorUtil.getCatalogSchemaString(_schema) + "." + _procedureInfo.getName();
+      return CompletorUtil.getCatalogSchemaPrefix(_schema) + "." + _procedureInfo.getName();
    }
 }

@@ -2,12 +2,9 @@ package org.squirrelsql.session.completion;
 
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 
-/**
- * Created by gerd on 16.02.14.
- */
 public class CompletorUtil
 {
-   public static String getCatalogSchemaString(StructItemSchema schema)
+   public static String getCatalogSchemaPrefix(StructItemSchema schema)
    {
       String ret = "";
 

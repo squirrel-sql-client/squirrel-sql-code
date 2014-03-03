@@ -18,7 +18,7 @@ public class TableCompletionCandidate extends CompletionCandidate
    public String getReplacement()
    {
 
-      return CompletorUtil.getCatalogSchemaString(_schema) + "." + _tableInfo.getName();
+      return CompletorUtil.getCatalogSchemaPrefix(_schema) + _tableInfo.getName();
    }
 
 }

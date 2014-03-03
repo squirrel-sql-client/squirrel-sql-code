@@ -2,7 +2,6 @@ package org.squirrelsql.session.completion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
@@ -189,7 +188,7 @@ public class Completor
    {
       for (StructItemSchema schema : schemas)
       {
-         ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfos(schema.getCatalog(), schema.getSchema(), null);
+         ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), null);
 
          for (TableInfo tableInfo : tableInfos)
          {

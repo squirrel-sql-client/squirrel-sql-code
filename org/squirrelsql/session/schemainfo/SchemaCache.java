@@ -113,9 +113,25 @@ public class SchemaCache
       return _schemaCacheConfig;
    }
 
-   public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
+   public ArrayList<TableInfo> getTableInfosExact(String catalog, String schema, String tableType)
    {
       return convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
+   }
+
+   public ArrayList<TableInfo> getTableInfosMatching(String catalog, String schema, String tableType)
+   {
+      ArrayList<TableInfo> ret = new ArrayList<>();
+
+      for (StructItemTableType structItemTableType : _tableInfos.keySet())
+      {
+         if(structItemTableType.matchesRespectNull(catalog, schema, tableType))
+         {
+            ret.addAll(_tableInfos.get(structItemTableType));
+         }
+      }
+
+      return ret;
+
    }
 
    private <T> ArrayList<T> convertNullToArray(ArrayList<T> arr)

@@ -20,6 +20,6 @@ public class UDTCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return CompletorUtil.getCatalogSchemaString(_schema) + "." + _udtInfo.getName();
+      return CompletorUtil.getCatalogSchemaPrefix(_schema) + "." + _udtInfo.getName();
    }
 }
