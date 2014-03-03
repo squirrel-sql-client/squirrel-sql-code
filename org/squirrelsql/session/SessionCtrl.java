@@ -57,12 +57,7 @@ public class SessionCtrl
 
       _sessionTabPane.getTabs().add(createSqlTab());
 
-
-      /////////////////////////////////////////////////////////////
-      // BUG BUG: Only Tabs selected this way get layouted right.
-      new SessionTabSelectionRepaintWA(_sessionTabPane);
-      //
-      /////////////////////////////////////////////////////////////
+      SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(_sessionTabPane);
    }
 
    private Tab createSqlTab()
