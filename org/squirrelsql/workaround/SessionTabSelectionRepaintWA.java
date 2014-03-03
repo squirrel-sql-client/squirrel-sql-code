@@ -19,7 +19,7 @@ public class SessionTabSelectionRepaintWA
             SplitPane newValueContent = (SplitPane) newValue.getContent();
 
 
-            newValue.setContent(newValue.getContent());
+//            newValue.setContent(newValue.getContent());
             Node lastItem = newValueContent.getItems().get(newValueContent.getItems().size() - 1);
             newValueContent.getItems().remove(lastItem);
             newValueContent.getItems().add(lastItem);
