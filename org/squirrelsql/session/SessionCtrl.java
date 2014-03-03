@@ -24,6 +24,7 @@ import org.squirrelsql.session.completion.CompletionCandidate;
 import org.squirrelsql.session.completion.Completor;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.table.TableLoaderFactory;
+import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 
@@ -59,7 +60,7 @@ public class SessionCtrl
 
       /////////////////////////////////////////////////////////////
       // BUG BUG: Only Tabs selected this way get layouted right.
-      _sessionTabPane.getSelectionModel().select(1);
+      new SessionTabSelectionRepaintWA(_sessionTabPane);
       //
       /////////////////////////////////////////////////////////////
    }
