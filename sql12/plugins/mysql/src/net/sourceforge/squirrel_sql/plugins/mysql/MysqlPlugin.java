@@ -287,13 +287,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		_prefsManager.initialize(this, new MysqlPreferenceBean());
 		
       /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
-      CellComponentFactory.registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory(),
-                                                   -6,
-                                                   "TINYINT UNSIGNED");
+      CellComponentFactory.registerDataTypeFactory(new MySQLByteTypeDataTypeComponentFactory());
       /* Register custom DataTypeComponent factory for MySQL TINYINT UNSIGNED type */
-      CellComponentFactory.registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory(),
-                                                   -6,
-                                                   "TINYINT UNSIGNED");
+      CellComponentFactory.registerDataTypeFactory(new MySQL5ByteTypeDataTypeComponentFactory());
 
 	}
 

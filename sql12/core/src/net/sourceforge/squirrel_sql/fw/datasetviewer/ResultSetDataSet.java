@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -30,6 +31,7 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -63,14 +65,22 @@ public class ResultSetDataSet implements IDataSet {
     */   
    private DialectType _dialectType = null;
 
-   /**
-    * Default constructor.
-    */
-   public ResultSetDataSet() {
-      super();
-   }
+   private TableColumnInfo[] tableColumnInfos;
 
    /**
+    * Default constructor.
+ * @param tableColumnInfos 
+    */
+   public ResultSetDataSet(TableColumnInfo[] tableColumnInfos) {
+      super();
+	this.tableColumnInfos = tableColumnInfos;
+   }
+
+   public ResultSetDataSet() {
+	   this.tableColumnInfos = new TableColumnInfo[]{};
+}
+
+/**
     * Form used by Tabs other than ContentsTab
     * 
     * @param rs
@@ -163,6 +173,9 @@ public class ResultSetDataSet implements IDataSet {
                fullTableName,
                columnIndices,
                computeWidths);
+         
+        
+         
          _dataSetDefinition = new DataSetDefinition(colDefs, columnIndices);
 
          // Read the entire row, since some drivers complain if columns are
@@ -304,6 +317,8 @@ public class ResultSetDataSet implements IDataSet {
             }
          }
       }
+      
+      
 
       ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
       for (int i = 0; i < _columnCount; ++i) {
@@ -358,10 +373,34 @@ public class ResultSetDataSet implements IDataSet {
          } catch (SQLException e) {
             s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
          }
+
+         // KLUDGE:
+         // We want some info about the columns to be available for validating the
+         // user input during cell editing operations.  Ideally we would get that
+         // info inside the ResultSetDataSet class during the creation of the
+         // columnDefinition objects by using various functions in ResultSetMetaData
+         // such as isNullable(idx).  Unfortunately, in at least some DBMSs (e.g.
+         // Postgres, HSDB) the results of those calls are not the same (and are less accurate
+         // than) the SQLMetaData.getColumns() call used in ColumnsTab to get the column info.
+         // Even more unfortunate is the fact that the set of attributes reported on by the two
+         // calls is not the same, with the ResultSetMetadata listing things not provided by
+         // getColumns.  Most of the data provided by the ResultSetMetaData calls is correct.
+         // However, the nullable/not-nullable property is not set correctly in at least two
+         // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
+         // we collect the collumn nullability information from getColumns() and pass that
+         // info to the ResultSet to override what it got from the ResultSetMetaData.
          
-         String columnName = md.getColumnName(idx);
-         String columnTypeName = md.getColumnTypeName(idx);
-         int columnType = fixColumnType(columnName, md.getColumnType(idx), columnTypeName);
+         if (i < tableColumnInfos.length) {
+             TableColumnInfo info = tableColumnInfos[i];
+             if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
+                 isNullable = false;
+             }
+         }
+         
+         String columnName =  getColumnName(i,md,idx);
+         String columnTypeName = getColumnTypeName(i,md, idx);
+         int baseColumnType = getColumnType(i,md,idx);
+		int columnType = fixColumnType(columnName, baseColumnType, columnTypeName);
          
          columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i]
                                                            : md.getColumnDisplaySize(idx),
@@ -384,7 +423,26 @@ public class ResultSetDataSet implements IDataSet {
       return columnDefs;
    }
 
-   /**
+   private String getColumnName(int i, ResultSetMetaData md, int idx) throws SQLException {
+	   if (i < tableColumnInfos.length) {
+		   return tableColumnInfos[i].getColumnName();
+	   }
+	   return md.getColumnName(idx);
+   }
+   private String getColumnTypeName(int i, ResultSetMetaData md, int idx) throws SQLException {
+	   if (i < tableColumnInfos.length) {
+		   return tableColumnInfos[i].getTypeName();
+	   }
+	   return md.getColumnTypeName(idx);
+   }
+   private int getColumnType(int i,ResultSetMetaData md, int idx) throws SQLException {
+	   if (i < tableColumnInfos.length) {
+		   return tableColumnInfos[i].getDataType();
+	   }
+	   return md.getColumnType(idx);
+   }
+
+/**
     * The following is a synopsis of email conversations with David Crawshaw, who maintains the SQLite JDBC 
     * driver: 
     * 

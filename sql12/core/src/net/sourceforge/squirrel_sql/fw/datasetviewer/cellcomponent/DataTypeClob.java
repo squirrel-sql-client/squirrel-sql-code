@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -804,9 +805,12 @@ public class DataTypeClob extends BaseDataTypeComponent
 		return new ClobOkJPanel();
 	 }
 
+	 @Override
+	protected String quoteTextConditionValue(String value) {
+		 return StringUtilities.singleQuote(value);
+	}
 
-
-	 /**
+	/**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */

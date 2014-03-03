@@ -186,8 +186,7 @@ public class DB2Plugin extends DefaultSessionPlugin
 		super.initialize();
 
 		// register custom DataTypeComponent factory for DB2 XML
-		CellComponentFactory.registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory(), Types.OTHER,
-			"XML");
+		CellComponentFactory.registerDataTypeFactory(new DB2XmlTypeDataTypeComponentFactory());
 	}
 
 	/**

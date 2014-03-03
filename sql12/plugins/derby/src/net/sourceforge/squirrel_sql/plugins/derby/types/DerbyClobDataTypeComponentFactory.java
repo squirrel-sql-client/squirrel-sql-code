@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.derby.types;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -47,5 +49,10 @@ public class DerbyClobDataTypeComponentFactory implements
    public DialectType getDialectType() {
       return DialectType.DERBY;
    }
-
+	public boolean matches(DialectType dialectType, int sqlType,
+			String sqlTypeName) {
+		return new EqualsBuilder().append(getDialectType(), dialectType)
+				.append(2005, sqlType)
+				.append("CLOB", sqlTypeName).isEquals();
+	}
 }

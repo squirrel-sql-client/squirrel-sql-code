@@ -202,9 +202,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
       if (prefBean.isReadClobsFully()) {
          /* Register custom DataTypeComponent factory for Derby CLOB type */
-         CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory(),
-                                                      2005,
-                                                      "CLOB");
+         CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory());
       }      
    }
 

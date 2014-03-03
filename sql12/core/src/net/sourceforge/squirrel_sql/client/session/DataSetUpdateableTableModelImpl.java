@@ -422,7 +422,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
          try
          {
-            ResultSet rs = pstmt.executeQuery(queryString);
+        	//did anyone used that code here? It had no possibility to run (at least under postgres). 
+            ResultSet rs = pstmt.executeQuery();
 
             // There should be one row in the data, so try to move to it
             if (rs.next() == false) {

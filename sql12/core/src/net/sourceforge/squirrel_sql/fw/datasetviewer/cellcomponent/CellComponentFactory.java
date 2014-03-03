@@ -10,6 +10,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -18,12 +19,12 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -143,14 +144,14 @@ public class CellComponentFactory {
 	static HashMap<ColumnDisplayDefinition, IDataTypeComponent> _colDataTypeObjects = 
         new HashMap<ColumnDisplayDefinition, IDataTypeComponent>();
 	
-	/* map of DBMS-specific registered data handlers.
+	/* list of DBMS-specific registered data handlers.
 	 * The key is a string of the form:
 	 *   <SQL type as a string>:<SQL type name>
 	 * and the value is a factory that can create instances of DBMS-specific
 	 * DataTypeComponets.
 	 */
-	 static HashMap<String,IDataTypeComponentFactory> _pluginDataTypeFactories = 
-         new HashMap<String,IDataTypeComponentFactory>();
+	 static List<IDataTypeComponentFactory> _pluginDataTypeFactories = 
+         new ArrayList<IDataTypeComponentFactory>();
 
 	/* The current JTable that we are working with.
 	 * This is used only to see when the user moves
@@ -460,9 +461,8 @@ public class CellComponentFactory {
             int sqlType, String sqlTypeName, int index, DialectType dialectType) throws Exception {
 
         Object result = null;
-        String typeNameKey = getRegDataTypeKey(dialectType, sqlType, sqlTypeName);
-        if (_pluginDataTypeFactories.containsKey(typeNameKey)) {
-            IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeNameKey);
+        IDataTypeComponentFactory factory = findMatchingFactory(dialectType, sqlType, sqlTypeName);
+        if (factory!=null) {
             IDataTypeComponent dtComp = factory.constructDataTypeComponent();
             ColumnDisplayDefinition colDef = new ColumnDisplayDefinition(
                 rs, index, factory.getDialectType());
@@ -627,10 +627,7 @@ public class CellComponentFactory {
 		dataTypeObject.exportObject(outStream, text);	 		
 	 }
 	
-	/**
-    * Constructs a key that is used to lookup previously registered custom
-    * types.
-    * 
+    /* 
     * @param dialectType
     *           the type of dialect that describes the session that is in use.
     *           This is an important component in making the key because it
@@ -644,18 +641,13 @@ public class CellComponentFactory {
     * 
     * @return a key that can be used to store/retreive a custom type.
     */
-	private static String getRegDataTypeKey(DialectType dialectType, int sqlType, String sqlTypeName) {
-	    StringBuilder result = new StringBuilder();
-	    if (dialectType == null) {
-	       result.append(DialectType.GENERIC.name());
-	    } else {
-	       result.append(dialectType.name());
-	    }
-	    result.append(":");
-	    result.append(sqlType);
-	    result.append(":");
-	    result.append(sqlTypeName);
-	    return result.toString();
+	private static IDataTypeComponentFactory findMatchingFactory(DialectType dialectType, int sqlType, String sqlTypeName) {
+		for (IDataTypeComponentFactory factory : _pluginDataTypeFactories) {
+			if (factory.matches(dialectType, sqlType, sqlTypeName)) {
+				return factory;
+			}
+		}
+		return null;
 	}
 	 
 	/**
@@ -663,11 +655,10 @@ public class CellComponentFactory {
     * type (or for overriding a standard handler).
     */
    public static void registerDataTypeFactory(
-         IDataTypeComponentFactory factory, int sqlType, String sqlTypeName) 
+         IDataTypeComponentFactory factory) 
    {
-      String typeName = getRegDataTypeKey(factory.getDialectType(), sqlType, sqlTypeName);
 
-      _pluginDataTypeFactories.put(typeName, factory);
+      _pluginDataTypeFactories.add(factory);
    }
 	
 	
@@ -765,7 +756,7 @@ public class CellComponentFactory {
 	 * specific syntax or size constraints based on the SQL data type and the
 	 * metadata from the DB, so we use different CellRenderer/Editor components
 	 * for each column.  However, JTable's rendering/editing algorithm allows
-	 * us to re-use the same component for all cells in the same column, which
+	 * us to re-use the same component for all cells in the same column, which 
 	 * is what we do.  By saving the component, we avoid the need to create
 	 * new instances each time the userstarts editing, creates the popup dialog,
 	 * or does an operation requireing a static method call (e.g. validateAndConvert).
@@ -777,7 +768,7 @@ public class CellComponentFactory {
     *               registered 
 	 * 
 	 */
-	private static IDataTypeComponent getDataTypeObject(
+	public static IDataTypeComponent getDataTypeObject(
 		JTable table, ColumnDisplayDefinition colDef) {
 		
 	   if (s_log.isDebugEnabled()) {
@@ -843,10 +834,9 @@ public class CellComponentFactory {
 	            && colDef.getDialectType() != null) 
 	      {
 	        
-	         String typeName = getRegDataTypeKey(colDef.getDialectType(),
-	                                             colDef.getSqlType(),
-	                                             colDef.getSqlTypeName());
-	         IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeName);
+	         IDataTypeComponentFactory factory = findMatchingFactory(colDef.getDialectType(),
+                     colDef.getSqlType(),
+                     colDef.getSqlTypeName());
 	         if (factory != null) {
 	            dataTypeComponent = factory.constructDataTypeComponent();
 	            if (colDef != null) {
@@ -1005,5 +995,37 @@ public class CellComponentFactory {
       }
       return dataTypeComponent;
    }
-   
+
+   /**
+    * Allows to get Cell Component based on TableColumnInfo and DialectType.
+    * Table is just for compatibility with other methods. Might be null
+    * @param table
+    * @param column
+    * @param dialectType
+    * @return
+    */
+	public static IDataTypeComponent getDataTypeObject(JTable table,
+			TableColumnInfo column, DialectType dialectType) {
+		ColumnDisplayDefinition colDef = new  ColumnDisplayDefinition(0, "");
+		colDef.setColumnName(column.getColumnName());
+		colDef.setDialectType(dialectType);
+		colDef.setSqlType(column.getDataType());
+		colDef.setSqlTypeName(column.getTypeName());
+		return getDataTypeObject(table, colDef);
+	}
+	
+	/**
+	 * Gets prefix column for select. Components can override it in order to modify select clause.
+	 * For example retrieving all geometries does not make any sense. Better is to get only summary and reRead on demand  
+	 * @param table
+	 * @param tableColumnInfo
+	 * @param dialectType
+	 * @param prefix
+	 * @return
+	 */
+	public static String getColumnForContentSelect(JTable table,
+			TableColumnInfo tableColumnInfo, DialectType dialectType, String prefix) {
+		return getDataTypeObject(table, tableColumnInfo, dialectType).getColumnForContentSelect(prefix);
+	}
+
 }

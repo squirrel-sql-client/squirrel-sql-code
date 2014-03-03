@@ -320,4 +320,11 @@ public class StringUtilities
    {
       return null == currentSearchString || 0 == currentSearchString.length();
    }
+   
+   public static String singleQuote(String value) {
+		if (!value.trim().startsWith("'")) {
+			return "'" + value + "'";
+		}
+		return value;
+	}
 }

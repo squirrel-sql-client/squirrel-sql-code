@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.postgres;
 
 /*
- * Copyright (C) 2007 Rob Manning manningr@users.sourceforge.net This library is free software; you can
- * redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
- * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details. You should have received a copy of the GNU Lesser General Public License along
- * with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA 02111-1307 USA
+ * Copyright (C) 2007 Rob Manning manningr@users.sourceforge.net This library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation;
+ * either version 2.1 of the License, or (at your option) any later version. This library is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser
+ * General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
  */
 
 import javax.swing.JMenu;
@@ -30,7 +29,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.SchemaExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
-import net.sourceforge.squirrel_sql.plugins.postgres.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -53,7 +51,11 @@ import net.sourceforge.squirrel_sql.plugins.postgres.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlArrayTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlGeometryTypeDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlOtherTypeDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlUUIDTypeDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeDataTypeComponentFactory;
 
 /**
@@ -61,290 +63,285 @@ import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeData
  * 
  * @author manningr
  */
-public class PostgresPlugin extends DefaultSessionPlugin
-{
-	private IResources _resources;
+public class PostgresPlugin extends DefaultSessionPlugin {
 
-	private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
-	/**
-	 * @param resourcesFactory the resourcesFactory to set
-	 */
-	public void setResourcesFactory(IPluginResourcesFactory resourcesFactory)
-	{
-		_resourcesFactory = resourcesFactory;
-	}
+    private IResources _resources;
 
-	/** Logger for this class. */
-	@SuppressWarnings("unused")
-	private final static ILogger s_log = LoggerController.createLogger(PostgresPlugin.class);
+    private IPluginResourcesFactory _resourcesFactory = new PluginResourcesFactory();
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(PostgresPlugin.class);
+    /**
+     * @param resourcesFactory the resourcesFactory to set
+     */
+    public void setResourcesFactory(final IPluginResourcesFactory resourcesFactory) {
+        _resourcesFactory = resourcesFactory;
+    }
 
-	static interface i18n
-	{
-		// i18n[PostgresPlugin.showIndexSource=Show index source]
-		String SHOW_INDEX_SOURCE = s_stringMgr.getString("PostgresPlugin.showIndexSource");
+    /** Logger for this class. */
+    @SuppressWarnings("unused")
+    private final static ILogger s_log = LoggerController.createLogger(PostgresPlugin.class);
 
-		// i18n[PostgresPlugin.showViewSource=Show view source]
-		String SHOW_VIEW_SOURCE = s_stringMgr.getString("PostgresPlugin.showViewSource");
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PostgresPlugin.class);
 
-		// i18n[PostgresPlugin.showProcedureSource=Show procedure source]
-		String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("PostgresPlugin.showProcedureSource");
-	}
+    static interface i18n {
 
-	public interface IMenuResourceKeys
-	{
-		String POSTGRES = "postgres";
-	}
+        // i18n[PostgresPlugin.showIndexSource=Show index source]
+        String SHOW_INDEX_SOURCE = s_stringMgr.getString("PostgresPlugin.showIndexSource");
 
-	/**
-	 * Return the internal name of this plugin.
-	 * 
-	 * @return the internal name of this plugin.
-	 */
-	public String getInternalName()
-	{
-		return "postgres";
-	}
+        // i18n[PostgresPlugin.showViewSource=Show view source]
+        String SHOW_VIEW_SOURCE = s_stringMgr.getString("PostgresPlugin.showViewSource");
 
-	/**
-	 * Return the descriptive name of this plugin.
-	 * 
-	 * @return the descriptive name of this plugin.
-	 */
-	public String getDescriptiveName()
-	{
-		return "Postgres Plugin";
-	}
+        // i18n[PostgresPlugin.showProcedureSource=Show procedure source]
+        String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("PostgresPlugin.showProcedureSource");
+    }
 
-	/**
-	 * Returns the current version of this plugin.
-	 * 
-	 * @return the current version of this plugin.
-	 */
-	public String getVersion()
-	{
-		return "0.22";
-	}
+    public interface IMenuResourceKeys {
 
-	/**
-	 * Returns the authors name.
-	 * 
-	 * @return the authors name.
-	 */
-	public String getAuthor()
-	{
-		return "Rob Manning";
-	}
+        String POSTGRES = "postgres";
+    }
 
-	/**
-	 * Returns a comma separated list of other contributors.
-	 * 
-	 * @return Contributors names.
-	 */
-	public String getContributors()
-	{
-		return "Daniel Regli, Yannick Winiger";
-	}
+    /**
+     * Return the internal name of this plugin.
+     * 
+     * @return the internal name of this plugin.
+     */
+    @Override
+    public String getInternalName() {
+        return "postgres";
+    }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
-	 */
-	public String getChangeLogFileName()
-	{
-		return "changes.txt";
-	}
+    /**
+     * Return the descriptive name of this plugin.
+     * 
+     * @return the descriptive name of this plugin.
+     */
+    @Override
+    public String getDescriptiveName() {
+        return "Postgres Plugin";
+    }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
-	 */
-	public String getHelpFileName()
-	{
-		return "readme.html";
-	}
+    /**
+     * Returns the current version of this plugin.
+     * 
+     * @return the current version of this plugin.
+     */
+    @Override
+    public String getVersion() {
+        return "0.22";
+    }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
-	 */
-	public String getLicenceFileName()
-	{
-		return "licence.txt";
-	}
+    /**
+     * Returns the authors name.
+     * 
+     * @return the authors name.
+     */
+    @Override
+    public String getAuthor() {
+        return "Rob Manning";
+    }
 
-	/**
-	 * Load this plugin.
-	 * 
-	 * @param app
-	 *           Application API.
-	 */
-	public synchronized void load(IApplication app) throws PluginException
-	{
-		super.load(app);
+    /**
+     * Returns a comma separated list of other contributors.
+     * 
+     * @return Contributors names.
+     */
+    @Override
+    public String getContributors() {
+        return "Daniel Regli, Yannick Winiger";
+    }
 
-		_resources = _resourcesFactory.createResource(getClass().getName(), this);
-	}
+    /**
+     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+     */
+    @Override
+    public String getChangeLogFileName() {
+        return "changes.txt";
+    }
 
-	/**
-	 * Initialize this plugin.
-	 */
-	public synchronized void initialize() throws PluginException
-	{
-		super.initialize();
+    /**
+     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+     */
+    @Override
+    public String getHelpFileName() {
+        return "readme.html";
+    }
 
-		final IApplication app = getApplication();
-		final ActionCollection col = getApplication().getActionCollection();
+    /**
+     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+     */
+    @Override
+    public String getLicenceFileName() {
+        return "licence.txt";
+    }
 
-		col.add(new VacuumTableAction(app, _resources));
-		col.add(new VacuumDatabaseAction(app, _resources));
+    /**
+     * Load this plugin.
+     * 
+     * @param app Application API.
+     */
+    @Override
+    public synchronized void load(final IApplication app) throws PluginException {
+        super.load(app);
 
-		JMenu sessionMenu = createSessionMenu(col);
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, sessionMenu);
-		super.registerSessionMenu(sessionMenu);
+        _resources = _resourcesFactory.createResource(getClass().getName(), this);
+    }
 
-		CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory(),
-			java.sql.Types.OTHER, "xml");
-		CellComponentFactory.registerDataTypeFactory(
-			new PostgreSqlOtherTypeDataTypeComponentFactory("interval"), java.sql.Types.OTHER, "interval");
+    /**
+     * Initialize this plugin.
+     */
+    @Override
+    public synchronized void initialize() throws PluginException {
+        super.initialize();
 
-	}
+        final IApplication app = getApplication();
+        final ActionCollection col = getApplication().getActionCollection();
 
-	public boolean allowsSessionStartedInBackground()
-	{
-		return true;
-	}
+        col.add(new VacuumTableAction(app, _resources));
+        col.add(new VacuumDatabaseAction(app, _resources));
 
-	/**
-	 * Session has been started. Update the tree api in using the event thread
-	 * 
-	 * @param session
-	 *           Session that has started.
-	 * @return <TT>true</TT> if session is Oracle in which case this plugin is interested in it.
-	 */
-	public PluginSessionCallback sessionStarted(final ISession session)
-	{
-		if (!isPluginSession(session)) { return null; }
+        final JMenu sessionMenu = createSessionMenu(col);
+        app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, sessionMenu);
+        super.registerSessionMenu(sessionMenu);
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				updateTreeApi(session);
-			}
-		});
+        CellComponentFactory.registerDataTypeFactory(new PostgreSqlGeometryTypeDataTypeComponentFactory(app.getSessionManager()));
+        CellComponentFactory.registerDataTypeFactory(new PostgreSqlUUIDTypeDataTypeComponentFactory());
+        CellComponentFactory.registerDataTypeFactory(new PostgreSqlArrayTypeDataTypeComponentFactory());
+        CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory());
+        CellComponentFactory.registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"));
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecuterPanel(session));
-			}
-		});
+    }
 
-		return new PluginSessionCallback()
-		{
-			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
-			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						sqlInternalFrame.getSQLPanelAPI().addExecutor(new ExplainExecuterPanel(sess));
-					}
-				});
-			}
+    @Override
+    public boolean allowsSessionStartedInBackground() {
+        return true;
+    }
 
-			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
-				ISession sess)
-			{
-				// Plugin supports only the main session window
-			}
-		};
-	}
+    /**
+     * Session has been started. Update the tree api in using the event thread
+     * 
+     * @param session Session that has started.
+     * @return <TT>true</TT> if session is Oracle in which case this plugin is interested in it.
+     */
+    @Override
+    public PluginSessionCallback sessionStarted(final ISession session) {
+        if (!isPluginSession(session)) {
+            return null;
+        }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
-	 */
-	@Override
-	protected boolean isPluginSession(ISession session)
-	{
-		return DialectFactory.isPostgreSQL(session.getMetaData());
-	}
+        GUIUtils.processOnSwingEventThread(new Runnable() {
 
-	/**
-	 * @param session
-	 *           the current session whose tree API should be updated
-	 */
-	private void updateTreeApi(ISession session)
-	{
-		IObjectTreeAPI _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-		final String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
-		final ActionCollection col = getApplication().getActionCollection();
+            @Override
+            public void run() {
+                updateTreeApi(session);
+            }
+        });
 
-		// ////// Object Tree Expanders ////////
-		// Schema Expanders - sequence
-		_treeAPI.addExpander(DatabaseObjectType.SCHEMA, 
-			new SchemaExpander(new PostgresSequenceInodeExpanderFactory(), DatabaseObjectType.SEQUENCE));
+        SwingUtilities.invokeLater(new Runnable() {
 
-		// Table Expanders - trigger and index
-		// expander
-		TableWithChildNodesExpander tableExpander = new TableWithChildNodesExpander();
+            @Override
+            public void run() {
+                session.getSQLPanelAPIOfActiveSessionWindow().addExecutor(new ExplainExecuterPanel(session));
+            }
+        });
 
-		// extractors
-		ITableIndexExtractor indexExtractor = new PostgresTableIndexExtractorImpl();
-		ITableTriggerExtractor triggerExtractor = new PostgresTableTriggerExtractorImpl();
+        return new PluginSessionCallback() {
 
-		tableExpander.setTableTriggerExtractor(triggerExtractor);
-		tableExpander.setTableIndexExtractor(indexExtractor);
+            @Override
+            public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess) {
+                SwingUtilities.invokeLater(new Runnable() {
 
-		_treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
+                    @Override
+                    public void run() {
+                        sqlInternalFrame.getSQLPanelAPI().addExecutor(new ExplainExecuterPanel(sess));
+                    }
+                });
+            }
 
-		// ////// Detail Tabs ////////
-		// Procedure tab
-		_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+            @Override
+            public void objectTreeInternalFrameOpened(final ObjectTreeInternalFrame objectTreeInternalFrame,
+                final ISession sess) {
+                // Plugin supports only the main session window
+            }
+        };
+    }
 
-		// View Tab
-		_treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+    /**
+     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#isPluginSession(net.sourceforge.squirrel_sql.client.session.ISession)
+     */
+    @Override
+    protected boolean isPluginSession(final ISession session) {
+        return DialectFactory.isPostgreSQL(session.getMetaData());
+    }
 
-		// Index tab
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
+    /**
+     * @param session the current session whose tree API should be updated
+     */
+    private void updateTreeApi(final ISession session) {
+        final IObjectTreeAPI _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+        final String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+        final ActionCollection col = getApplication().getActionCollection();
 
-		// Trigger tabs
-		_treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+        // ////// Object Tree Expanders ////////
+        // Schema Expanders - sequence
+        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(new PostgresSequenceInodeExpanderFactory(),
+            DatabaseObjectType.SEQUENCE));
 
-		// Sequence tabs
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-		_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+        // Table Expanders - trigger and index
+        // expander
+        final TableWithChildNodesExpander tableExpander = new TableWithChildNodesExpander();
 
-		// Lock tab
-		_treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
+        // extractors
+        final ITableIndexExtractor indexExtractor = new PostgresTableIndexExtractorImpl();
+        final ITableTriggerExtractor triggerExtractor = new PostgresTableTriggerExtractorImpl();
 
-		// ////// Popup Menus ////////
-		JMenu tableMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
-		_resources.addToMenu(col.get(VacuumTableAction.class), tableMenu);
-		_treeAPI.addToPopup(DatabaseObjectType.TABLE, tableMenu);
+        tableExpander.setTableTriggerExtractor(triggerExtractor);
+        tableExpander.setTableIndexExtractor(indexExtractor);
 
-		_treeAPI.addToPopup(DatabaseObjectType.SESSION, createSessionMenu(col));
-	}
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
 
-	/**
-	 * Creates the postgres session menu from the actions in the specified collection
-	 * 
-	 * @param col
-	 *           the ActionCollection to pull postgres actions from
-	 * @return the JMenu to add to the session menu
-	 */
-	private JMenu createSessionMenu(ActionCollection col)
-	{
-		JMenu sessionMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
-		_resources.addToMenu(col.get(VacuumDatabaseAction.class), sessionMenu);
-		return sessionMenu;
-	}
+        // ////// Detail Tabs ////////
+        // Procedure tab
+        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+
+        // View Tab
+        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+
+        // Index tab
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
+
+        // Trigger tabs
+        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+
+        // Sequence tabs
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+
+        // Lock tab
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
+
+        // ////// Popup Menus ////////
+        final JMenu tableMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
+        _resources.addToMenu(col.get(VacuumTableAction.class), tableMenu);
+        _treeAPI.addToPopup(DatabaseObjectType.TABLE, tableMenu);
+
+        _treeAPI.addToPopup(DatabaseObjectType.SESSION, createSessionMenu(col));
+    }
+
+    /**
+     * Creates the postgres session menu from the actions in the specified collection
+     * 
+     * @param col the ActionCollection to pull postgres actions from
+     * @return the JMenu to add to the session menu
+     */
+    private JMenu createSessionMenu(final ActionCollection col) {
+        final JMenu sessionMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);
+        _resources.addToMenu(col.get(VacuumDatabaseAction.class), sessionMenu);
+        return sessionMenu;
+    }
 
 }

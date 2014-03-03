@@ -7,9 +7,20 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
-Note: Automatic updates were disabled in this snapshot release. Please use our home page to download latest versions and snapshots.
+Note: Automatic updates were disabled. Please use our home page to download latest versions and snapshots.
 
 Enhancements:
+
+- SQLFilter tab can support custom operators and functions depending on column type
+- Improved loading of content tab for tables with big data
+- Added support for postgres UUID-s
+- Added support for postgres arrays
+- Added support for postgis Geometry (requires postgis.jar added to driver classpath).
+  Geometries are presented and edited as WKT. WKT is more human readable and allows quick editing.
+  Content tab displays summary (containing only: type, center point, and total number of vertexes)
+  that is lazy loaded and substituted, with full content, when given cell is clicked.
+Thanks to Jaroslaw Jarmolowicz for the patches
+
 
 Allowed command line arguments to be defined by Plugins. See Method IPlugin.getPluginApplicationArguments().
 Thanks to David Green for the patch

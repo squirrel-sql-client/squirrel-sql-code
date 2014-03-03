@@ -17,6 +17,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.db2.types;
 
+import java.sql.Types;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
@@ -43,6 +47,13 @@ public class DB2XmlTypeDataTypeComponentFactory implements
 	 */
 	public DialectType getDialectType() {
 		return DialectType.DB2;
+	}
+
+	@Override
+	public boolean matches(DialectType dialectType, int sqlType,String sqlTypeName) {
+			return new EqualsBuilder().append(getDialectType(), dialectType)
+					.append(Types.OTHER, sqlType)
+					.append("XML", sqlTypeName).isEquals();
 	}
 
 }

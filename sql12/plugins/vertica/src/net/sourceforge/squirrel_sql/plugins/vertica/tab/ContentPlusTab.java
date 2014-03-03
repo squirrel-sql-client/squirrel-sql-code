@@ -226,7 +226,7 @@ public class ContentPlusTab extends ContentsTab {
                    rs = stmt.executeQuery(buf.toString());
                 }
 
-                final ResultSetDataSet rsds = new ResultSetDataSet();
+                final ResultSetDataSet rsds = new ResultSetDataSet(md.getColumnInfo(ti));
 
                 // to allow the fw to save and reload user options related to
                 // specific columns, we construct a unique name for the table
@@ -243,38 +243,7 @@ public class ContentPlusTab extends ContentsTab {
                 if (rs != null) {
                     try { rs.close(); } catch (SQLException e) {}
                 }
-                // KLUDGE:
-                // We want some info about the columns to be available for validating the
-                // user input during cell editing operations.  Ideally we would get that
-                // info inside the ResultSetDataSet class during the creation of the
-                // columnDefinition objects by using various functions in ResultSetMetaData
-                // such as isNullable(idx).  Unfortunately, in at least some DBMSs (e.g.
-                // Postgres, HSDB) the results of those calls are not the same (and are less accurate
-                // than) the SQLMetaData.getColumns() call used in ColumnsTab to get the column info.
-                // Even more unfortunate is the fact that the set of attributes reported on by the two
-                // calls is not the same, with the ResultSetMetadata listing things not provided by
-                // getColumns.  Most of the data provided by the ResultSetMetaData calls is correct.
-                // However, the nullable/not-nullable property is not set correctly in at least two
-                // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
-                // we collect the collumn nullability information from getColumns() and pass that
-                // info to the ResultSet to override what it got from the ResultSetMetaData.
-                TableColumnInfo[] columnInfos = md.getColumnInfo(getTableInfo());
-                final ColumnDisplayDefinition[] colDefs = 
-                    rsds.getDataSetDefinition().getColumnDefinitions();
 
-                // get the nullability information and pass it into the ResultSet
-                // Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
-                // SQL documentation, so we have to guess that the result set is in column order
-                for (int i = 0; i < columnInfos.length; i++) {
-                    boolean isNullable = true;
-                    TableColumnInfo info = columnInfos[i];
-                    if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
-                        isNullable = false;
-                    }
-                    if (i < colDefs.length) {
-                        colDefs[i].setIsNullable(isNullable);
-                    }
-                }
 
                 //?? remember which column is the rowID (if any) so we can
                 //?? prevent editing on it

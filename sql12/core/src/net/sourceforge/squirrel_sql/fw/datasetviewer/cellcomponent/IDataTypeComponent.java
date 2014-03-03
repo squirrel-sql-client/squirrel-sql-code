@@ -243,4 +243,18 @@ public interface IDataTypeComponent {
      * @param helper
      */
     public void setBeepHelper(IToolkitBeepHelper helper);
+
+    
+    /**
+     * Method that allows DataType to handle it's very specific where conditions 
+     * @param column
+     * @param operator
+     * @param value
+     * @return condition representation
+     */
+	public String getCondition(String column, String operator, String value);
+
+	public String[] getSupportedOperators();
+
+	String getColumnForContentSelect(String columnPrefix);
 }

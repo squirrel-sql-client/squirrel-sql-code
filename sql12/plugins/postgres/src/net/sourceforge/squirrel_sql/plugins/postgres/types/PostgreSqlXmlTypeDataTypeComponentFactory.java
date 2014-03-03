@@ -18,9 +18,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.postgres.types;
 
+import java.sql.Types;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * A factory that creates PostgreSqlXmlTypeDataTypeComponents for rendering xml columns.
@@ -33,6 +37,7 @@ public class PostgreSqlXmlTypeDataTypeComponentFactory implements IDataTypeCompo
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#constructDataTypeComponent()
 	 */
+	@Override
 	public IDataTypeComponent constructDataTypeComponent()
 	{
 		return new PostgreSqlXmlTypeDataTypeComponent();
@@ -41,9 +46,17 @@ public class PostgreSqlXmlTypeDataTypeComponentFactory implements IDataTypeCompo
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#getDialectType()
 	 */
+	@Override
 	public DialectType getDialectType()
 	{
 		return DialectType.POSTGRES;
 	}
 
+	@Override
+	public boolean matches(DialectType dialectType, int sqlType,
+			String sqlTypeName) {
+		return new EqualsBuilder().append(getDialectType(), dialectType)
+				.append(Types.OTHER, sqlType)
+				.append("xml", sqlTypeName).isEquals();
+	}
 }

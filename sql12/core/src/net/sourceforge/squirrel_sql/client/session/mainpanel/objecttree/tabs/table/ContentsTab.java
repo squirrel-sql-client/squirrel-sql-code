@@ -22,6 +22,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JTable;
+
+import org.hibernate.sql.JoinFragment;
+
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
@@ -34,7 +38,10 @@ import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -238,6 +245,8 @@ public class ContentsTab extends BaseTableTab
             }
 
             ResultSet rs = null;
+            StringBuilder coded = gatherColumnsForContentSelect(md, ti);
+			
             try
             {
                // Note. Some DBMSs such as Oracle do not allow:
@@ -246,7 +255,7 @@ public class ContentsTab extends BaseTableTab
                // if you have * in there. Aliasing the table name seems to
                // be the best way to get around the problem.
                final StringBuffer buf = new StringBuffer();
-               buf.append("select tbl.*")
+               buf.append("select " + coded)
                   .append(pseudoColumn)
                   .append(" from ")
                   .append(ti.getQualifiedName())
@@ -306,7 +315,7 @@ public class ContentsTab extends BaseTableTab
                // TODO: Should we change the mode from editable to
                // non-editable?
                final StringBuffer buf = new StringBuffer();
-               buf.append("select *")
+               buf.append("select "+ coded)
                   .append(" from ")
                   .append(ti.getQualifiedName())
                   .append(" tbl");
@@ -325,7 +334,22 @@ public class ContentsTab extends BaseTableTab
                rs = stmt.executeQuery(buf.toString());
             }
 
-            final ResultSetDataSet rsds = new ResultSetDataSet();
+            // KLUDGE:
+            // We want some info about the columns to be available for validating the
+            // user input during cell editing operations.  Ideally we would get that
+            // info inside the ResultSetDataSet class during the creation of the
+            // columnDefinition objects by using various functions in ResultSetMetaData
+            // such as isNullable(idx).  Unfortunately, in at least some DBMSs (e.g.
+            // Postgres, HSDB) the results of those calls are not the same (and are less accurate
+            // than) the SQLMetaData.getColumns() call used in ColumnsTab to get the column info.
+            // Even more unfortunate is the fact that the set of attributes reported on by the two
+            // calls is not the same, with the ResultSetMetadata listing things not provided by
+            // getColumns.  Most of the data provided by the ResultSetMetaData calls is correct.
+            // However, the nullable/not-nullable property is not set correctly in at least two
+            // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
+            // we collect the collumn nullability information from getColumns() and pass that
+            // info to the ResultSet to override what it got from the ResultSetMetaData.
+            final ResultSetDataSet rsds = new ResultSetDataSet(md.getColumnInfo(getTableInfo()));
 
             // to allow the fw to save and reload user options related to
             // specific columns, we construct a unique name for the table
@@ -342,38 +366,7 @@ public class ContentsTab extends BaseTableTab
             if (rs != null) {
                 try { rs.close(); } catch (SQLException e) {}
             }
-            // KLUDGE:
-            // We want some info about the columns to be available for validating the
-            // user input during cell editing operations.  Ideally we would get that
-            // info inside the ResultSetDataSet class during the creation of the
-            // columnDefinition objects by using various functions in ResultSetMetaData
-            // such as isNullable(idx).  Unfortunately, in at least some DBMSs (e.g.
-            // Postgres, HSDB) the results of those calls are not the same (and are less accurate
-            // than) the SQLMetaData.getColumns() call used in ColumnsTab to get the column info.
-            // Even more unfortunate is the fact that the set of attributes reported on by the two
-            // calls is not the same, with the ResultSetMetadata listing things not provided by
-            // getColumns.  Most of the data provided by the ResultSetMetaData calls is correct.
-            // However, the nullable/not-nullable property is not set correctly in at least two
-            // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
-            // we collect the collumn nullability information from getColumns() and pass that
-            // info to the ResultSet to override what it got from the ResultSetMetaData.
-            TableColumnInfo[] columnInfos = md.getColumnInfo(getTableInfo());
-            final ColumnDisplayDefinition[] colDefs = 
-                rsds.getDataSetDefinition().getColumnDefinitions();
 
-            // get the nullability information and pass it into the ResultSet
-            // Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
-            // SQL documentation, so we have to guess that the result set is in column order
-            for (int i = 0; i < columnInfos.length; i++) {
-                boolean isNullable = true;
-                TableColumnInfo info = columnInfos[i];
-                if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
-                    isNullable = false;
-                }
-                if (i < colDefs.length) {
-                    colDefs[i].setIsNullable(isNullable);
-                }
-            }
 
             //?? remember which column is the rowID (if any) so we can
             //?? prevent editing on it
@@ -397,6 +390,23 @@ public class ContentsTab extends BaseTableTab
           disposeWaitDialog();
       }
    }
+
+   
+
+	private StringBuilder gatherColumnsForContentSelect(ISQLDatabaseMetaData md,
+			final ITableInfo ti) throws SQLException {
+		DialectType dialectType = DialectFactory.getDialectType(md);
+		TableColumnInfo[] columnInfo = md.getColumnInfo(ti);
+		StringBuilder coded = new StringBuilder();
+		JTable table = (JTable) ((DataSetScrollingPanel) getComponent()).getViewer().getComponent();
+		for(int i=0;i < columnInfo.length; ++i) {
+			coded.append(CellComponentFactory.getColumnForContentSelect(table, columnInfo[i], dialectType,"tbl."));
+			if (i < columnInfo.length - 1) {
+				coded.append(',');
+			}
+		}
+		return coded;
+	}
 
    /**
     * Returns true if the ObjectTree tab is selected.

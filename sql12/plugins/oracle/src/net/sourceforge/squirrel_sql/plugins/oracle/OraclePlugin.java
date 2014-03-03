@@ -138,7 +138,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * A list of Oracle sessions that are open so we'll know when none are left
 	 */
-	private ArrayList<ISession> oracleSessions = new ArrayList<ISession>();
+	private final ArrayList<ISession> oracleSessions = new ArrayList<ISession>();
 
 	/**
 	 * SQL to find schemas to which the logged in user has access
@@ -183,6 +183,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return the internal name of this plugin.
 	 */
+	@Override
 	public String getInternalName()
 	{
 		return "oracle";
@@ -193,6 +194,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return the descriptive name of this plugin.
 	 */
+	@Override
 	public String getDescriptiveName()
 	{
 		return "Oracle Plugin";
@@ -203,6 +205,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return the current version of this plugin.
 	 */
+	@Override
 	public String getVersion()
 	{
 		return "0.21";
@@ -213,6 +216,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return the authors name.
 	 */
+	@Override
 	public String getAuthor()
 	{
 		return "Colin Bell";
@@ -223,6 +227,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return Contributors names.
 	 */
+	@Override
 	public String getContributors()
 	{
 		return "Alexander Buloichik, Rob Manning";
@@ -231,6 +236,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
 	 */
+	@Override
 	public String getChangeLogFileName()
 	{
 		return "changes.txt";
@@ -239,6 +245,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
 	 */
+	@Override
 	public String getHelpFileName()
 	{
 		return "readme.html";
@@ -247,6 +254,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
 	 */
+	@Override
 	public String getLicenceFileName()
 	{
 		return "licence.txt";
@@ -257,6 +265,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * 
 	 * @return properties panel.
 	 */
+	@Override
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
 		PluginQueryTokenizerPreferencesPanel _prefsPanel = new OraclePluginPreferencesPanel(_prefsManager);
@@ -270,6 +279,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 			{ tab };
 	}
 
+	@Override
 	public void initialize() throws PluginException
 	{
 		try
@@ -289,6 +299,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 			app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
 			{
+				@Override
 				public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
 				{
 					return onGetAllowedSchemas(con, alias);
@@ -318,7 +329,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 			/* Register custom DataTypeComponent factory for Oracles XMLType */
 			CellComponentFactory.registerDataTypeFactory(
-			   new OracleXmlTypeDataTypeComponentFactory(), 2007, "SYS.XMLTYPE");
+			   new OracleXmlTypeDataTypeComponentFactory());
 		}
       catch (Exception e)
 		{
@@ -326,6 +337,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		}
 	}
 
+	@Override
 	public void load(IApplication app) throws PluginException
 	{
 		super.load(app);
@@ -336,6 +348,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_ALIAS_PREFS_FILE);
 	}
 
+	@Override
 	public void unload()
 	{
 		try
@@ -361,6 +374,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	/**
 	 * Create Alias prefs panel.
 	 */
+	@Override
 	public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
 	{
 		if (false == isOracle(alias))
@@ -381,6 +395,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 			{ new OracleAliasPrefsPanelController(aliasPrefs) };
 	}
 
+	@Override
 	public void aliasCopied(SQLAlias source, SQLAlias target)
 	{
 		if (false == isOracle(source) || false == isOracle(target))
@@ -399,6 +414,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		}
 	}
 
+	@Override
 	public void aliasRemoved(SQLAlias alias)
 	{
 		_oracleAliasPrefsByAliasIdentifier.remove(alias.getIdentifier());
@@ -410,12 +426,14 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * @param session
 	 *        The session that is ending.
 	 */
+	@Override
 	public void sessionEnding(ISession session)
 	{
 		super.sessionEnding(session);
 		oracleSessions.remove(session);
 	}
 
+	@Override
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		if (!isOracle(session))
@@ -437,6 +455,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				addActions(session);
@@ -449,11 +468,13 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
+			@Override
 			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 			{
 				onSQLInternaFrameOpened(sqlInternalFrame, sess);
 			}
 
+			@Override
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame,
 			      ISession sess)
 			{
@@ -464,6 +485,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
@@ -585,6 +607,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 * return non null here if they wish to override the default node expander bahaviour. Most plugins should
 	 * return null here.
 	 */
+	@Override
 	public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type)
 	{
 		boolean isOracle = isOracle(session.getAlias());
@@ -859,6 +882,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		// performance even when loading all schemas.
 		GUIUtils.processOnSwingEventThread(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				objTree.refreshTree();

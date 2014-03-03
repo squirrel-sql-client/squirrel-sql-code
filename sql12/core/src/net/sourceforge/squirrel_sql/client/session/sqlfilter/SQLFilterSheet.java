@@ -27,7 +27,14 @@ import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.DialogWidget;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.SessionDialogWidget;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -38,6 +45,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,7 +98,8 @@ public class SQLFilterSheet extends SessionDialogWidget
 
 	/** A reference to a panel for the SQL Order By Clause. */
 	transient private OrderByClausePanel _orderByClausePanel = null;
-
+	
+	transient private JTable dummytable = new JTable();
 	/**
 	 * Creates a new instance of SQLFilterSheet
 	 *
@@ -266,33 +275,26 @@ public class SQLFilterSheet extends SessionDialogWidget
 	 */
 	private void createGUI()
 	{
-		SortedSet<String> columnNames = new TreeSet<String>();
-		Map<String, Boolean> textColumns = new TreeMap<String, Boolean>();
+		LinkedHashMap<String,IDataTypeComponent> columnComponents = new LinkedHashMap<String, IDataTypeComponent>();
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle(getTitle());
 
 		// This is a tool window.
 		makeToolWindow(true);
-
 		try
 		{
 			ISQLConnection sqlConnection = getSession().getSQLConnection();
-            SQLDatabaseMetaData md = sqlConnection.getSQLMetaData();
-            TableColumnInfo[] infos = md.getColumnInfo((ITableInfo)_objectInfo);
-            for (int i = 0; i < infos.length; i++) {
-                String columnName = infos[i].getColumnName();
-                int dataType = infos[i].getDataType();
-                columnNames.add(columnName);
-                if ((dataType == Types.CHAR)
-                        || (dataType == Types.CLOB)
-                        || (dataType == Types.LONGVARCHAR)
-                        || (dataType == Types.VARCHAR))
-                {
-                    textColumns.put(columnName, Boolean.TRUE);
-                }
-                
-            }
+			ITableInfo tableInfo = (ITableInfo) _objectInfo;
+			TableColumnInfo[] columns = sqlConnection.getSQLMetaData().getColumnInfo(tableInfo);
+			
+			HibernateDialect dialect = DialectFactory.getDialect(sqlConnection.getSQLMetaData());
+			
+			for (TableColumnInfo column: columns ) {
+				
+				IDataTypeComponent typeComponent = CellComponentFactory.getDataTypeObject(dummytable,  column, dialect.getDialectType() );
+				columnComponents.put(column.getColumnName(), typeComponent);
+			}
 		}
 		catch (SQLException ex)
 		{
@@ -304,9 +306,9 @@ public class SQLFilterSheet extends SessionDialogWidget
 		}
 
 		_whereClausePanel =
-		    new WhereClausePanel(columnNames, textColumns, _objectInfo.getQualifiedName());
+		    new WhereClausePanel(columnComponents, _objectInfo.getQualifiedName());
 		_orderByClausePanel =
-			new OrderByClausePanel(columnNames, _objectInfo.getQualifiedName());
+			new OrderByClausePanel(columnComponents, _objectInfo.getQualifiedName());
 		_panels.add(_whereClausePanel);
 		_panels.add(_orderByClausePanel);
 

@@ -22,6 +22,9 @@ package net.sourceforge.squirrel_sql.client.session.sqlfilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.swing.BorderFactory;
@@ -33,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -55,13 +59,13 @@ public class OrderByClausePanel implements ISQLFilterPanel
 	/**
 	 * Create a new instance of an OrderByClausePanel
 	 *
-	 * @param	columnList	A list of column names for the database table.
+	 * @param	columnComponents	A list of column names for the database table.
 	 * @param	tableName	The name of the database table that the filter
 	 * 						information will apply to.
 	 */
-	public OrderByClausePanel(SortedSet<String> columnList, String tableName)
+	public OrderByClausePanel(LinkedHashMap<String, IDataTypeComponent> columnComponents, String tableName)
 	{
-		_myPanel = new OrderByClauseSubPanel(columnList, tableName);
+		_myPanel = new OrderByClauseSubPanel(columnComponents.keySet(), tableName);
 	}
 
 	/**
@@ -180,13 +184,13 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		private String _tableName;
 
 		/** A JPanel used for a bulk of the GUI elements of the panel.
-		 * @param columnList A list of the column names for the table.
+		 * @param set A list of the column names for the table.
 		 * @param tableName The name of the database table.
 		 *
 		 */
-		OrderByClauseSubPanel(SortedSet<String> columnList, String tableName)
+		OrderByClauseSubPanel(Set<String> set, String tableName)
 		{
-			_columnCombo = new JComboBox(columnList.toArray());
+			_columnCombo = new JComboBox(set.toArray());
 			_tableName = tableName;
 			createUserInterface();
 		}

@@ -22,6 +22,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComp
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 /**
  * A factory that creates OracleXmlTypeDataTypeComponents for rendering 
  * SYS.xmlltype columns.
@@ -35,15 +37,27 @@ public class OracleXmlTypeDataTypeComponentFactory implements
     /**
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#constructDataTypeComponent()
     */
-   public IDataTypeComponent constructDataTypeComponent() {
+   @Override
+public IDataTypeComponent constructDataTypeComponent() {
         return new OracleXmlTypeDataTypeComponent();
     }
 
    /**
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#getDialectType()
     */
-   public DialectType getDialectType() {
+   @Override
+public DialectType getDialectType() {
       return DialectType.ORACLE;
    }
+   
+   
+
+	@Override
+	public boolean matches(DialectType dialectType, int sqlType,
+			String sqlTypeName) {
+		return new EqualsBuilder().append(getDialectType(), dialectType)
+				.append(2007, sqlType)
+				.append("SYS.XMLTYPE", sqlTypeName).isEquals();
+	}
    
 }

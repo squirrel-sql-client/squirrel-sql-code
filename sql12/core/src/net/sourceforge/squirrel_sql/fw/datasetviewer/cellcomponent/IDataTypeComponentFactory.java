@@ -49,4 +49,22 @@ public interface IDataTypeComponentFactory {
     * @return a DialectType from the DialectType enumeration.
     */
    DialectType getDialectType();
+   
+   /**
+    * Check if given factory is suitable for requested type
+    * 
+    * @param dialectType
+    *           the type of dialect that describes the session that is in use.
+    *           This is an important component in making the key because it
+    *           allows plugins for example to provide IDataTypeComponents for
+    *           standard types that are only used when a session that the plugin
+    *           is interested in is in use.
+    * @param sqlType
+    *           the JDBC type code supplied by the driver
+    * @param sqlTypeName
+    *           the JDBC type name supplied by the driver
+    * @return
+    */
+   public abstract boolean matches(DialectType dialectType, int sqlType,
+			String sqlTypeName);
 }

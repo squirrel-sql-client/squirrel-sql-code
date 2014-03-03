@@ -98,7 +98,7 @@ public class ProjectionTab extends BaseTableTab
 			pstmt.setString(1, ti.getSchemaName());
 			pstmt.setString(2, ti.getSimpleName());
 			rs = pstmt.executeQuery();
-			ResultSetDataSet rsds = new ResultSetDataSet();
+			ResultSetDataSet rsds = new ResultSetDataSet(md.getColumnInfo(ti));
 			rsds.setResultSet(rs, DialectFactory.getDialectType(md));
 			return rsds;
 

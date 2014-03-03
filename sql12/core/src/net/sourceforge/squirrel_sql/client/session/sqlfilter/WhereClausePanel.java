@@ -26,7 +26,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.swing.BorderFactory;
@@ -40,6 +46,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.util.SquirrelConstants;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -71,14 +79,14 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 * @throws	IllegalArgumentException
 	 *			The exception thrown if invalid arguments are passed.
 	 */
-	public WhereClausePanel(SortedSet<String> columnList, 
-	                        Map<String, Boolean> textColumns, 
+	public WhereClausePanel(LinkedHashMap<String, IDataTypeComponent> columnComponents, 
 							String tableName)
 		throws IllegalArgumentException
 	{
 		super();
-		_myPanel = new WhereClauseSubPanel(columnList, textColumns, tableName);
+		_myPanel = new WhereClauseSubPanel(columnComponents, tableName);
 	}
+
 
 	/**
 	 * Initialize the components of the WhereClausePanel.
@@ -172,10 +180,6 @@ public class WhereClausePanel implements ISQLFilterPanel
             // be internationalized
 		    String AND = "AND";                 // No I18N
 		    String OR = "OR";                   // No I18N            
-		    String LIKE = "LIKE";               // No I18N            
-		    String IN = "IN";                   // No I18N            
-		    String IS_NULL = "IS NULL";         // No I18N             
-		    String IS_NOT_NULL = "IS NOT NULL"; // No I18N
 		}
 
 		/**
@@ -220,8 +224,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 		/** The name of the database table the Where clause applies to. */
 		private String _tableName;
 
-		/** A List containing the names of the text columns */
-		private Map<String, Boolean> _textColumns;
+		/** A List containing all column components */
+		private Map<String,IDataTypeComponent> _columnComponents;
 
 		/**
 		 * A JPanel used for a bulk of the GUI elements of the panel.
@@ -229,13 +233,12 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 * @param	columnList	A list of the column names for the table.
 		 * @param	tableName	The name of the database table.
 		 */
-		WhereClauseSubPanel(SortedSet<String> columnList, 
-		                    Map<String, Boolean> textColumns,
+		WhereClauseSubPanel(LinkedHashMap<String, IDataTypeComponent> columnComponents,
 						    String tableName)
 		{
 			_tableName = tableName;
-			_columnCombo = new JComboBox(columnList.toArray());
-			_textColumns = textColumns;
+			_columnCombo = new JComboBox(columnComponents.keySet().toArray());
+			_columnComponents = columnComponents;
 			createGUI();
 		}
 
@@ -250,6 +253,11 @@ public class WhereClausePanel implements ISQLFilterPanel
 		{
 			_whereClauseArea.setText(
 				sqlFilterClauses.get(getClauseIdentifier(), _tableName));
+			
+			Set<Entry<String, IDataTypeComponent>> entrySet = _columnComponents.entrySet();
+			if (! entrySet.isEmpty()) {
+				_operatorCombo.setItems( entrySet.iterator().next().getValue().getSupportedOperators() );
+			}
 		}
 
 		/** Update the current SQuirreL session with any changes to the SQL filter
@@ -338,27 +346,29 @@ public class WhereClausePanel implements ISQLFilterPanel
                addTextToClause();
             }
          });
+         _columnCombo.addItemListener(new ItemListener() {
+     	    @Override
+     	    public void itemStateChanged(ItemEvent event) {
+     	       if (event.getStateChange() == ItemEvent.SELECTED) {
+     	          Object item = event.getItem();
+     	          _operatorCombo.setItems( _columnComponents.get(item).getSupportedOperators());
+     	       }
+     	    }       
+     	});
 
          return ret;
       }
 
-      private static final class OperatorTypeCombo extends JComboBox
-		{
-            private static final long serialVersionUID = 1L;
+		private static final class OperatorTypeCombo extends JComboBox {
+			private static final long serialVersionUID = 1L;
 
-            OperatorTypeCombo()
-			{
-				addItem("=");
-				addItem("<>");
-				addItem(">");
-				addItem("<");
-				addItem(">=");
-				addItem("<=");
-				addItem(WhereClauseSubPanelI18n.IN);
-				addItem(WhereClauseSubPanelI18n.LIKE);
-				addItem(WhereClauseSubPanelI18n.IS_NULL);
-				addItem(WhereClauseSubPanelI18n.IS_NOT_NULL);
+			public void setItems(String[] supportedOperators) {
+				removeAllItems();
+				for (String operator : supportedOperators) {
+					addItem(operator);
+				}
 			}
+
 		}
 
 		private static final class AndOrCombo extends JComboBox
@@ -381,8 +391,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 			String value = _valueField.getText();
 			String operator = (String)_operatorCombo.getSelectedItem();
 			if (((value != null) && (value.length() > 0))
-					|| ((operator.equals(WhereClauseSubPanelI18n.IS_NULL))
-					|| 	(operator.equals(WhereClauseSubPanelI18n.IS_NOT_NULL))))
+					|| ((operator.equals(SquirrelConstants.IS_NULL))
+					|| 	(operator.equals(SquirrelConstants.IS_NOT_NULL))))
 			{
 				String andOr = (String)_andOrCombo.getSelectedItem();
 				String column = (String)_columnCombo.getSelectedItem();
@@ -394,30 +404,10 @@ public class WhereClausePanel implements ISQLFilterPanel
 					_whereClauseArea.append("\n" + andOr + " ");
 				}
 
-				// If the operator is 'IN' and there are no parenthesis
-				// around the value, put them there.
-				if (operator.equals(WhereClauseSubPanelI18n.IN)
-					&& (!value.trim().startsWith("(")))
-				{
-					value = "(" + value + ")";
-				}
-
-				// If the column is a text column, and there aren't single quotes around the value, put them there.
-
-				else if ((value != null) && (value.length() > 0)) 
-				{
-					if (_textColumns.containsKey(column)
-							&& (!value.trim().startsWith("'")))
-					{
-						value = "'" + value + "'";
-					}
-				}
-				_whereClauseArea.append(column + " " + operator);
-
-				if ((value != null) && (value.length() > 0)) 
-				{
-					_whereClauseArea.append(" " + value);
-				}
+				IDataTypeComponent typeComponent = _columnComponents.get(column);
+				
+				String result = typeComponent.getCondition(column, operator, value);
+				_whereClauseArea.append(result);
 			}
 			_valueField.setText("");
 		}
