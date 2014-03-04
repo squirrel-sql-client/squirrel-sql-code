@@ -1,17 +1,15 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
+import org.squirrelsql.session.completion.TableTypes;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class SchemaCache
 {
@@ -121,13 +119,13 @@ public class SchemaCache
       return convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
    }
 
-   public ArrayList<TableInfo> getTableInfosMatching(String catalog, String schema, String tableType)
+   public ArrayList<TableInfo> getTableInfosMatching(String catalog, String schema, TableTypes[] allowedTypes)
    {
       ArrayList<TableInfo> ret = new ArrayList<>();
 
       for (StructItemTableType structItemTableType : _tableInfos.keySet())
       {
-         if(structItemTableType.matchesRespectNull(catalog, schema, tableType))
+         if(structItemTableType.matchesRespectNull(catalog, schema, allowedTypes))
          {
             ret.addAll(_tableInfos.get(structItemTableType));
          }

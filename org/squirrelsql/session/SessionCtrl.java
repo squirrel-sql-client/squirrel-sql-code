@@ -137,6 +137,12 @@ public class SessionCtrl
          return;
       }
 
+      if(1 == completions.size())
+      {
+         sqlTextAreaServices.replaceTokenAtCarretBy(completions.get(0).getReplacement());
+         return;
+      }
+
       Popup pp = new Popup();
 
       ListView<CompletionCandidate> listView = new ListView<>();
@@ -180,7 +186,7 @@ public class SessionCtrl
          }
       });
  
-      listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 2);
+      listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 3);
 
 //      Font font = listView.cellFactoryProperty().get().call(listView).getFont();
       Font font = new Label().getFont();

@@ -1,5 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.session.completion.TableTypes;
+
 public class StructItemTableType extends StructItem implements CatalogSchema
 {
    private final String _type;
@@ -58,9 +60,26 @@ public class StructItemTableType extends StructItem implements CatalogSchema
       return result;
    }
 
-   public boolean matchesRespectNull(String catalog, String schema, String tableType)
+   public boolean matchesRespectNull(String catalog, String schema, TableTypes[] allowedTypes)
    {
-      return matchesRespectNull(catalog, schema)
-            && (null == tableType || tableType.equalsIgnoreCase(_type));
+
+      boolean allowed = false;
+      for (TableTypes allowedType : allowedTypes)
+      {
+         if(allowedType.toString().equalsIgnoreCase(_type))
+         {
+            allowed = true;
+            break;
+         }
+
+      }
+
+      if(false == allowed)
+      {
+         return false;
+      }
+
+
+      return matchesRespectNull(catalog, schema);
    }
 }

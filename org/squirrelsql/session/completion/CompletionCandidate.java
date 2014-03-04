@@ -1,5 +1,7 @@
 package org.squirrelsql.session.completion;
 
+import org.squirrelsql.services.Utils;
+
 public abstract class CompletionCandidate
 {
    public abstract String getReplacement();

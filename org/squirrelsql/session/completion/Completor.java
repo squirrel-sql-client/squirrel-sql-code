@@ -196,7 +196,7 @@ public class Completor
    {
       for (StructItemSchema schema : schemas)
       {
-         ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), null);
+         ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
 
          for (TableInfo tableInfo : tableInfos)
          {
@@ -216,15 +216,16 @@ public class Completor
             }
          }
 
-         ArrayList<UDTInfo> udtInfos = _schemaCache.getUDTInfosMatching(schema.getCatalog(), schema.getSchema());
-
-         for (UDTInfo udtInfo : udtInfos)
-         {
-            if(tokenParser.uncompletedSplitMatches(udtInfo.getName()))
-            {
-               ret.add(new UDTCompletionCandidate(udtInfo, schema));
-            }
-         }
+//         Looks bad for Postgres should be made configurable
+//         ArrayList<UDTInfo> udtInfos = _schemaCache.getUDTInfosMatching(schema.getCatalog(), schema.getSchema());
+//
+//         for (UDTInfo udtInfo : udtInfos)
+//         {
+//            if(tokenParser.uncompletedSplitMatches(udtInfo.getName()))
+//            {
+//               ret.add(new UDTCompletionCandidate(udtInfo, schema));
+//            }
+//         }
       }
    }
 }

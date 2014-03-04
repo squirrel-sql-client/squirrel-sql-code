@@ -17,14 +17,24 @@ public class TableCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-
       return CompletorUtil.getCatalogSchemaPrefix(_schema) + _tableInfo.getName();
    }
 
    @Override
    public String getObjectTypeName()
    {
-      return "TABLE/" + _tableInfo.getTableType();
+      if (TableTypes.TABLE.toString().equalsIgnoreCase(_tableInfo.getTableType()))
+      {
+         return TableTypes.TABLE.toString();
+      }
+      else if (TableTypes.VIEW.toString().equalsIgnoreCase(_tableInfo.getTableType()))
+      {
+         return TableTypes.VIEW.toString();
+      }
+      else
+      {
+         return "TABLE/" + _tableInfo.getTableType();
+      }
    }
 
 }
