@@ -38,6 +38,7 @@ public class SessionCtrl
 
 
    private final Session _session;
+   private final Tab _sqlTab;
 
    private I18n _i18n = new I18n(getClass());
 
@@ -46,6 +47,7 @@ public class SessionCtrl
    private SplitPane _objectTabSplitPane = new SplitPane();
    private SplitPane _sqlTabSplitPane = new SplitPane();
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
+   private SQLTextAreaServices _sqlTextAreaServices;
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -58,9 +60,24 @@ public class SessionCtrl
 
       _sessionTabPane.getTabs().add(createObjectsTab());
 
-      _sessionTabPane.getTabs().add(createSqlTab());
+      _sqlTextAreaServices = new SQLTextAreaServices();
+      _sqlTab = createSqlTab();
+      _sessionTabPane.getTabs().add(_sqlTab);
+
 
       SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(_sessionTabPane);
+
+      _sessionTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+
+   }
+
+   private void onTabChanged(Tab newSelectedTab)
+   {
+      if(_sqlTab == newSelectedTab)
+      {
+         _sqlTextAreaServices.requestFocus();
+      }
+
    }
 
    private Tab createSqlTab()
@@ -72,9 +89,7 @@ public class SessionCtrl
 
       TabPane sqlOutputTabPane = new TabPane();
 
-      SQLTextAreaServices sqlTextAreaServices = new SQLTextAreaServices();
-
-      _sqlTabSplitPane.getItems().add(sqlTextAreaServices.getTextAreaComponent());
+      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextAreaComponent());
       _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
 
 
@@ -86,18 +101,18 @@ public class SessionCtrl
                   // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
                   if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
                   {
-                     onExecuteSql(sqlTextAreaServices, sqlOutputTabPane);
+                     onExecuteSql(_sqlTextAreaServices, sqlOutputTabPane);
                      keyEvent.consume();
                   }
                   else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
                   {
-                     onCompleteCode(sqlTextAreaServices);
+                     onCompleteCode(_sqlTextAreaServices);
                      keyEvent.consume();
                   }
                }
             };
 
-      sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
+      _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
 
 
 

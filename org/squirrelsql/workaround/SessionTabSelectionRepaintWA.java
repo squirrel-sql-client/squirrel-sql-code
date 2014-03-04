@@ -11,30 +11,28 @@ public class SessionTabSelectionRepaintWA
 {
    public static void forceTabContentRepaintOnSelection(TabPane sessionTabPane)
    {
-      sessionTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>()
+      sessionTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+   }
+
+   private static void onTabChanged(Tab newValue)
+   {
+      SplitPane objectTreeOrSqlTab = (SplitPane) newValue.getContent();
+
+      double divPos = objectTreeOrSqlTab.getDividerPositions()[0];
+
+      double differentDivPos;
+      if(divPos == 0.5d)
       {
-         @Override
-         public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue)
-         {
-            SplitPane objectTreeOrSqlTab = (SplitPane) newValue.getContent();
+         differentDivPos = 0;
+      }
+      else
+      {
+         differentDivPos = 1 - divPos;
+      }
+      objectTreeOrSqlTab.setDividerPosition(0, differentDivPos);
 
-            double divPos = objectTreeOrSqlTab.getDividerPositions()[0];
+      SplitDividerWA.adjustDivider(objectTreeOrSqlTab, 0, divPos);
 
-            double differentDivPos;
-            if(divPos == 0.5d)
-            {
-               differentDivPos = 0;
-            }
-            else
-            {
-               differentDivPos = 1 - divPos;
-            }
-            objectTreeOrSqlTab.setDividerPosition(0, differentDivPos);
-
-            SplitDividerWA.adjustDivider(objectTreeOrSqlTab, 0, divPos);
-
-            //System.out.println("org.squirrelsql.workaround.SessionTabSelectionRepaintWA.changed");
-         }
-      });
+      //System.out.println("org.squirrelsql.workaround.SessionTabSelectionRepaintWA.changed");
    }
 }

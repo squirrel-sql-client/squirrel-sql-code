@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
 public class SQLTextAreaServices
 {
@@ -116,5 +117,10 @@ public class SQLTextAreaServices
       {
          return _sqlTextArea.getFont().getSize();
       }
+   }
+
+   public void requestFocus()
+   {
+      FocusSqlTextAreaWA.forceFocus(_sqlTextArea);
    }
 }
