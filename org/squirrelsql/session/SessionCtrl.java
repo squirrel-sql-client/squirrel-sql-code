@@ -1,5 +1,7 @@
 package org.squirrelsql.session;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -112,9 +114,16 @@ public class SessionCtrl
 
       System.out.println("### Completing for token >" + tokenAtCarret + "<");
 
-      Popup pp = new Popup();
 
       ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret);
+
+      if(0 == completions.size())
+      {
+         return;
+      }
+
+      Popup pp = new Popup();
+
       ListView<CompletionCandidate> listView = new ListView<>();
       listView.setItems(completions);
 
@@ -157,6 +166,17 @@ public class SessionCtrl
       });
  
       listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 2);
+
+//      Font font = listView.cellFactoryProperty().get().call(listView).getFont();
+      Font font = new Label().getFont();
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+
+      double maxItemWidth = 0;
+      for (CompletionCandidate completionCandidate : listView.getItems())
+      {
+         maxItemWidth = Math.max(fontMetrics.computeStringWidth(completionCandidate.toString()), maxItemWidth);
+      }
+      listView.setPrefWidth(maxItemWidth + 35);
 
       pp.getContent().add(listView);
       Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
