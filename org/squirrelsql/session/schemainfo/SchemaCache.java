@@ -263,4 +263,9 @@ public class SchemaCache
    {
       return convertNullToArray(_tableInfosByQualifiedName.get(new QualifiedTableName(catalog, schema, tableName)));
    }
+
+   public String[] getDefaultKeywords()
+   {
+      return DefaultKeywords.KEY_WORDS;
+   }
 }

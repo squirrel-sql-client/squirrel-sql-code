@@ -32,6 +32,14 @@ public class Completor
 
          // Last loaded columns here
 
+         for (String keyword : _schemaCache.getDefaultKeywords())
+         {
+            if(tokenParser.uncompletedSplitMatches(keyword))
+            {
+               ret.add(new KeywordCompletionCandidate(keyword));
+            }
+         }
+
          for (String keyword : _schemaCache.getKeywords().getCellsAsString(0))
          {
             if(tokenParser.uncompletedSplitMatches(keyword))
