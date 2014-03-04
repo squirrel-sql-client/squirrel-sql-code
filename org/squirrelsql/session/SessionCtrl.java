@@ -10,7 +10,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -89,7 +88,7 @@ public class SessionCtrl
 
       TabPane sqlOutputTabPane = new TabPane();
 
-      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextAreaComponent());
+      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextArea());
       _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
 
 
@@ -189,8 +188,7 @@ public class SessionCtrl
       listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 3);
 
 //      Font font = listView.cellFactoryProperty().get().call(listView).getFont();
-      Font font = new Label().getFont();
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(new Label().getFont());
 
       double maxItemWidth = 0;
       for (CompletionCandidate completionCandidate : listView.getItems())
@@ -201,7 +199,10 @@ public class SessionCtrl
 
       pp.getContent().add(listView);
       Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
-      pp.show(sqlTextAreaServices.getTextAreaComponent(), cl.getX(), cl.getY() + sqlTextAreaServices.getFontHight() + 4);
+
+      double x = cl.getX() - sqlTextAreaServices.getStringWidth(tokenAtCarret);
+
+      pp.show(sqlTextAreaServices.getTextArea(), x, cl.getY() + sqlTextAreaServices.getFontHight() + 4);
 
    }
 

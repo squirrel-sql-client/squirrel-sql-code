@@ -21,7 +21,7 @@ public class SessionTabSelectionRepaintWA
       double divPos = objectTreeOrSqlTab.getDividerPositions()[0];
 
       double differentDivPos;
-      if(divPos == 0.5d)
+      if(Math.abs(divPos - 0.5d) < 0.1d)
       {
          differentDivPos = 0;
       }

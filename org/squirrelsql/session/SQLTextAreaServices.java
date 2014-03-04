@@ -1,8 +1,11 @@
 package org.squirrelsql.session;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
@@ -20,7 +23,7 @@ public class SQLTextAreaServices
 
    }
 
-   public Node getTextAreaComponent()
+   public TextArea getTextArea()
    {
       return _sqlTextArea;
    }
@@ -97,14 +100,8 @@ public class SQLTextAreaServices
    public void replaceTokenAtCarretBy(String selItem)
    {
       TokenAtCarretInfo tci = _getTokenAtCarretInfo();
-//      if (tci.getTokenBeginPos() < tci.getCaretPosition())
-//      {
-         _sqlTextArea.replaceText(tci.getTokenBeginPos(), tci.getCaretPosition(), selItem);
-//      }
-//      else
-//      {
-//         _sqlTextArea.insertText(tci.getTokenBeginPos(), selItem);
-//      }
+
+      _sqlTextArea.replaceText(tci.getTokenBeginPos(), tci.getCaretPosition(), selItem);
    }
 
    public double getFontHight()
@@ -122,5 +119,11 @@ public class SQLTextAreaServices
    public void requestFocus()
    {
       FocusSqlTextAreaWA.forceFocus(_sqlTextArea);
+   }
+
+   public double getStringWidth(String tokenAtCarret)
+   {
+      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(_sqlTextArea.getFont());
+      return fontMetrics.computeStringWidth(tokenAtCarret);
    }
 }
