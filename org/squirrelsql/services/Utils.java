@@ -21,6 +21,6 @@ public class Utils
          return false;
       }
 
-      return s1.equals(s2);
+      return s1.equalsIgnoreCase(s2);
    }
 }

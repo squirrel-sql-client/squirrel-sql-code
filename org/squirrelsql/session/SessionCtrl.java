@@ -1,20 +1,13 @@
 package org.squirrelsql.session;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Popup;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
@@ -22,8 +15,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.Pref;
-import org.squirrelsql.session.completion.CompletionCandidate;
-import org.squirrelsql.session.completion.Completor;
+import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
@@ -105,7 +97,7 @@ public class SessionCtrl
                   }
                   else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
                   {
-                     onCompleteCode(_sqlTextAreaServices);
+                     new CompletionCtrl(_session, _sqlTextAreaServices).completeCode();
                      keyEvent.consume();
                   }
                }
@@ -113,97 +105,11 @@ public class SessionCtrl
 
       _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
 
-
-
       sqlTab.setContent(_sqlTabSplitPane);
       SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
 
 
       return sqlTab;
-   }
-
-   private void onCompleteCode(SQLTextAreaServices sqlTextAreaServices)
-   {
-      String tokenAtCarret = sqlTextAreaServices.getTokenAtCarret();
-
-      System.out.println("### Completing for token >" + tokenAtCarret + "<");
-
-
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret);
-
-      if(0 == completions.size())
-      {
-         return;
-      }
-
-      if(1 == completions.size())
-      {
-         sqlTextAreaServices.replaceTokenAtCarretBy(completions.get(0).getReplacement());
-         return;
-      }
-
-      Popup pp = new Popup();
-
-      ListView<CompletionCandidate> listView = new ListView<>();
-      listView.setItems(completions);
-
-      listView.getSelectionModel().selectFirst();
-
-
-      EventHandler<KeyEvent> keyEventHandler =
-            new EventHandler<KeyEvent>()
-            {
-               public void handle(final KeyEvent keyEvent)
-               {
-                  // if (keyEvent.getCode() == KeyCode.ENTER) doesn't work
-                  if (("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
-                  {
-                     pp.hide();
-                     CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
-                     sqlTextAreaServices.replaceTokenAtCarretBy(selItem.getReplacement());
-                     keyEvent.consume();
-                  }
-                  else if(27 == keyEvent.getCharacter().charAt(0)) // ESCAPE Key
-                  {
-                     pp.hide();
-                     keyEvent.consume();
-                  }
-               }
-            };
-
-      listView.setOnKeyTyped(keyEventHandler);
-
-      pp.focusedProperty().addListener(new ChangeListener<Boolean>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue)
-         {
-            if(false == newValue)
-            {
-               pp.hide();
-            }
-         }
-      });
- 
-      listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 3);
-
-//      Font font = listView.cellFactoryProperty().get().call(listView).getFont();
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(new Label().getFont());
-
-      double maxItemWidth = 0;
-      for (CompletionCandidate completionCandidate : listView.getItems())
-      {
-         maxItemWidth = Math.max(fontMetrics.computeStringWidth(completionCandidate.toString()), maxItemWidth);
-      }
-      listView.setPrefWidth(maxItemWidth + 35);
-
-      pp.getContent().add(listView);
-      Point2D cl = sqlTextAreaServices.getCarretLocationOnScreen();
-
-      double x = cl.getX() - sqlTextAreaServices.getStringWidth(tokenAtCarret);
-
-      pp.show(sqlTextAreaServices.getTextArea(), x, cl.getY() + sqlTextAreaServices.getFontHight() + 4);
-
    }
 
    private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
