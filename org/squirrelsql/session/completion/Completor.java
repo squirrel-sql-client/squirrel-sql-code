@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class Completor
 {
    private SchemaCache _schemaCache;
+   private TableCompletionCandidate _lastSeenTable;
 
-   public Completor(SchemaCache schemaCache)
+   public Completor(SchemaCache schemaCache, TableCompletionCandidate lastSeenTable)
    {
       _schemaCache = schemaCache;
+      _lastSeenTable = lastSeenTable;
    }
 
    public ObservableList<CompletionCandidate> getCompletions(String tokenAtCarret)
@@ -30,7 +32,17 @@ public class Completor
       if(0 == tokenParser.completedSplitsCount()) // everything
       {
 
-         // Last loaded columns here
+         if(null != _lastSeenTable)
+         {
+
+            for (ColumnInfo columnInfo : _schemaCache.getColumns(_lastSeenTable.getTableInfo()))
+            {
+               if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
+               {
+                  ret.add(new ColumnCompletionCandidate(columnInfo, null));
+               }
+            }
+         }
 
          for (String keyword : _schemaCache.getDefaultKeywords())
          {
@@ -207,9 +219,8 @@ public class Completor
    {
       for (TableInfo table : tables)
       {
-         ArrayList<ColumnInfo> columnInfos = _schemaCache.getColumns(table);
 
-         for (ColumnInfo columnInfo : columnInfos)
+         for (ColumnInfo columnInfo : _schemaCache.getColumns(table))
          {
             if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
             {

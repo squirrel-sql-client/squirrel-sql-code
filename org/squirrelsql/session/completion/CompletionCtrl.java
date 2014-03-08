@@ -3,23 +3,24 @@ package org.squirrelsql.session.completion;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.SQLTextAreaServices;
 import org.squirrelsql.session.Session;
+
+import java.util.ArrayList;
 
 public class CompletionCtrl
 {
    private final Session _session;
    private final SQLTextAreaServices _sqlTextAreaServices;
+   private TableCompletionCandidate _lastSeenTable;
 
    public CompletionCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
    {
@@ -40,7 +41,7 @@ public class CompletionCtrl
       System.out.println("### Completing for token >" + tokenAtCarret + "<");
 
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache()).getCompletions(tokenAtCarret);
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _lastSeenTable).getCompletions(tokenAtCarret);
 
       if(0 == completions.size())
       {
@@ -49,7 +50,7 @@ public class CompletionCtrl
 
       if(1 == completions.size() && false == showPopupForSizeOne)
       {
-         _sqlTextAreaServices.replaceTokenAtCarretBy(completions.get(0).getReplacement());
+         executeCompletion(completions.get(0));
          return;
       }
 
@@ -98,10 +99,7 @@ public class CompletionCtrl
       // if (keyEvent.getCode() == KeyCode.ENTER) doesn't work
       if (("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
       {
-         pp.hide();
-         CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
-         _sqlTextAreaServices.replaceTokenAtCarretBy(selItem.getReplacement());
-         keyEvent.consume();
+         onCompletionSelected(keyEvent, pp, listView);
       }
       else if(27 == keyEvent.getCharacter().charAt(0)) // ESCAPE Key
       {
@@ -117,4 +115,23 @@ public class CompletionCtrl
          }
       }
    }
+
+   private void onCompletionSelected(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView)
+   {
+      pp.hide();
+      CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
+      executeCompletion(selItem);
+      keyEvent.consume();
+   }
+
+   private void executeCompletion(CompletionCandidate completionCandidate)
+   {
+      if(completionCandidate instanceof TableCompletionCandidate)
+      {
+         _lastSeenTable = (TableCompletionCandidate)completionCandidate;
+      }
+
+      _sqlTextAreaServices.replaceTokenAtCarretBy(completionCandidate.getReplacement());
+   }
+
 }

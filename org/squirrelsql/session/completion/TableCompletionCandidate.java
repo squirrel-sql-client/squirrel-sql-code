@@ -37,4 +37,8 @@ public class TableCompletionCandidate extends CompletionCandidate
       }
    }
 
+   public TableInfo getTableInfo()
+   {
+      return _tableInfo;
+   }
 }

@@ -39,6 +39,7 @@ public class SessionCtrl
    private SplitPane _sqlTabSplitPane = new SplitPane();
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private SQLTextAreaServices _sqlTextAreaServices;
+   private CompletionCtrl _completionCtrl;
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -60,6 +61,7 @@ public class SessionCtrl
 
       _sessionTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
 
+      _completionCtrl = new CompletionCtrl(_session, _sqlTextAreaServices);
    }
 
    private void onTabChanged(Tab newSelectedTab)
@@ -97,7 +99,7 @@ public class SessionCtrl
                   }
                   else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
                   {
-                     new CompletionCtrl(_session, _sqlTextAreaServices).completeCode();
+                     _completionCtrl.completeCode();
                      keyEvent.consume();
                   }
                }
