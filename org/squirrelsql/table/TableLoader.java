@@ -97,4 +97,52 @@ public class TableLoader
 
       return simpleObjectProperty.get().toString();
    }
+
+   public String getCellAsString(String columnName, int rowIx)
+   {
+      return getCellAt(rowIx, getColIxByName(columnName));
+
+   }
+
+   private int getColIxByName(String columnName)
+   {
+      int colIx = -1;
+      for (int i = 0; i < _columns.size(); i++)
+      {
+         if(_columns.get(i).equalsIgnoreCase(columnName))
+         {
+            colIx = i;
+            break;
+         }
+      }
+
+      if (-1 == colIx)
+      {
+         throw new IllegalArgumentException("Unknown column name: " + columnName);
+      }
+      return colIx;
+   }
+
+   public int getCellAsInt(String columnName, int rowIx)
+   {
+      return (int) _rows.get(rowIx).get(getColIxByName(columnName)).get();
+   }
+
+   public Integer getCellAsInteger(String columnName, int rowIx)
+   {
+      return (Integer) _rows.get(rowIx).get(getColIxByName(columnName)).get();
+   }
+
+
+   private String getCellAt(int rowIx, int colIx)
+   {
+      SimpleObjectProperty simpleObjectProperty = interpretValue(_rows.get(rowIx).get(colIx));
+      return getStringValue(simpleObjectProperty);
+   }
+
+   public int size()
+   {
+      return _rows.size();
+   }
+
 }

@@ -1,6 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.DBSchema;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 
 public class SchemaCacheFactory
 {
-   public static SchemaCache createSchemaCache(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
+   public static SchemaCache createSchemaCache(DbConnectorResult dbConnectorResult, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
    {
-      return new SchemaCache(alias, sqlConnection, schemaCacheConfig, createDatabaseStructure(alias, sqlConnection));
+      return new SchemaCache(dbConnectorResult, schemaCacheConfig, createDatabaseStructure(dbConnectorResult.getAlias(), sqlConnection));
    }
 
    private static DatabaseStructure createDatabaseStructure(Alias alias, SQLConnection sqlConnection)

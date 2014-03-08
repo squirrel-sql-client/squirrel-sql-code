@@ -43,7 +43,9 @@ public class TreeDetailsController
       }
       else if(ObjectTreeNodeTypeKey.TABLE_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
-         addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), TableDetailsReader.readColumns(_session, selectedItem.getValue()));
+         addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), _session.getSchemaCache().getColumnsAsTableLoader(selectedItem.getValue().getTableInfo()));
+         //addTreeDetailsTab(_i18n.t("objecttree.details.table.columns"), TableDetailsReader.readColumns(_session, selectedItem.getValue()));
+
          addTreeDetailsTab(_i18n.t("objecttree.details.table.content"), TableDetailsReader.readContent(_session, selectedItem.getValue()));
 
          addTreeDetailsTab(_i18n.t("objecttree.details.table.primaryKey"), TableDetailsReader.readPrimaryKey(_session, selectedItem.getValue()));

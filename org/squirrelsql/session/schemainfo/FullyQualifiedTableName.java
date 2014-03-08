@@ -1,15 +1,12 @@
 package org.squirrelsql.session.schemainfo;
 
-/**
- * Created by gerd on 16.02.14.
- */
-public class QualifiedTableName
+public class FullyQualifiedTableName
 {
    private final String _catalog;
    private final String _schema;
    private final String _name;
 
-   public QualifiedTableName(String catalog, String schema, String name)
+   public FullyQualifiedTableName(String catalog, String schema, String name)
    {
       _catalog = catalog;
       _schema = schema;
@@ -22,7 +19,7 @@ public class QualifiedTableName
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      QualifiedTableName that = (QualifiedTableName) o;
+      FullyQualifiedTableName that = (FullyQualifiedTableName) o;
 
       if (_catalog != null ? !_catalog.equals(that._catalog) : that._catalog != null) return false;
       if (_name != null ? !_name.equals(that._name) : that._name != null) return false;

@@ -1,6 +1,8 @@
 package org.squirrelsql.session.objecttree;
 
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.table.TableLoader;
 import org.squirrelsql.table.TableLoaderFactory;
 
@@ -41,9 +43,9 @@ public class TableDetailsReader
       }
    }
 
-   public static TableLoader readColumns(Session session, ObjectTreeNode objectTreeNode)
+   public static TableLoader readColumns(TableInfo ti, DbConnectorResult dbConnectorResult)
    {
-      return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getColumns(catalog, schema, tableName, null));
+      return _loadTableMetaData(ti, (catalog, schema, tableName) -> dbConnectorResult.getSQLConnection().getDatabaseMetaData().getColumns(ti.getCatalog(), ti.getSchema(), ti.getName(), null));
    }
 
    public static TableLoader readPrimaryKey(Session session, ObjectTreeNode objectTreeNode)
@@ -88,11 +90,16 @@ public class TableDetailsReader
 
    private static TableLoader loadTableMetaData(ObjectTreeNode objectTreeNode, MetaDataFunction metaDataFunction)
    {
+      return _loadTableMetaData(objectTreeNode.getTableInfo(), metaDataFunction);
+   }
+
+   private static TableLoader _loadTableMetaData(TableInfo tableInfo, MetaDataFunction metaDataFunction)
+   {
       try
       {
-         String catalog = objectTreeNode.getTableInfo().getCatalog();
-         String schema = objectTreeNode.getTableInfo().getSchema();
-         String name = objectTreeNode.getTableInfo().getName();
+         String catalog = tableInfo.getCatalog();
+         String schema = tableInfo.getSchema();
+         String name = tableInfo.getName();
 
          ResultSet resultSet = metaDataFunction.apply(catalog, schema, name);
 

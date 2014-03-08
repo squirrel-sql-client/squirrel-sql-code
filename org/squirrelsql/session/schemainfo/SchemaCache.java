@@ -1,11 +1,12 @@
 package org.squirrelsql.session.schemainfo;
 
-import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.services.sqlwrap.SQLConnection;
+import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.UDTInfo;
 import org.squirrelsql.session.completion.TableTypes;
+import org.squirrelsql.session.objecttree.TableDetailsReader;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -13,8 +14,6 @@ import java.util.HashMap;
 
 public class SchemaCache
 {
-   private final Alias _alias;
-   private final SQLConnection _sqlConnection;
    private final SchemaCacheConfig _schemaCacheConfig;
 
    private DatabaseStructure _databaseStructure;
@@ -28,15 +27,19 @@ public class SchemaCache
    private TableLoader _keywords;
 
    private HashMap<StructItemTableType, ArrayList<TableInfo>> _tableInfos = new HashMap<>();
-   private HashMap<QualifiedTableName, ArrayList<TableInfo>> _tableInfosByQualifiedName = new HashMap<>();
+
+   private HashMap<FullyQualifiedTableName, ArrayList<TableInfo>> _tableInfosByFullyQualifiedName = new HashMap<>();
+   private HashMap<SchemaQualifiedTableName, ArrayList<TableInfo>> _tableInfosBySchemaQualifiedName = new HashMap<>();
+   private HashMap<String, ArrayList<TableInfo>> _tableInfosBySimpleName = new HashMap<>();
+
    private HashMap<StructItemProcedureType, ArrayList<ProcedureInfo>> _procedureInfos = new HashMap<>();
    private HashMap<StructItemUDTType, ArrayList<UDTInfo>> _udtInfos = new HashMap<>();
+   private DbConnectorResult _dbConnectorResult;
 
 
-   public SchemaCache(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
+   public SchemaCache(DbConnectorResult dbConnectorResult, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
    {
-      _alias = alias;
-      _sqlConnection = sqlConnection;
+      _dbConnectorResult = dbConnectorResult;
       _schemaCacheConfig = schemaCacheConfig;
       _databaseStructure = databaseStructure;
    }
@@ -49,13 +52,13 @@ public class SchemaCache
       }
 
 
-      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_alias, _sqlConnection);
-      _dataTypes = DataTypesLoader.loadTypes(_sqlConnection);
-      _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_sqlConnection);
-      _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_sqlConnection);
-      _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_sqlConnection);
-      _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_sqlConnection);
-      _keywords = DataBaseMetaDataLoader.loadKeyWords(_sqlConnection);
+      _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAlias(), _dbConnectorResult.getSQLConnection());
+      _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult.getSQLConnection());
+      _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult.getSQLConnection());
+      _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult.getSQLConnection());
+      _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult.getSQLConnection());
+      _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult.getSQLConnection());
+      _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult.getSQLConnection());
 
       ArrayList<StructItem> leaves = _databaseStructure.getLeaves();
 
@@ -66,21 +69,43 @@ public class SchemaCache
             StructItemTableType buf = (StructItemTableType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               ArrayList<TableInfo> tableInfos = _sqlConnection.getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
+               ArrayList<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
                _tableInfos.put(buf, tableInfos);
 
 
                for (TableInfo tableInfo : tableInfos)
                {
-                  QualifiedTableName key = new QualifiedTableName(buf.getCatalog(), buf.getSchema(), tableInfo.getName());
-                  ArrayList<TableInfo> arr = _tableInfosByQualifiedName.get(key);
+                  ArrayList<TableInfo> arr;
+
+                  FullyQualifiedTableName fullyQualifiedTableName = new FullyQualifiedTableName(buf.getCatalog(), buf.getSchema(), tableInfo.getName());
+                  arr = _tableInfosByFullyQualifiedName.get(fullyQualifiedTableName);
 
                   if(null == arr)
                   {
                      arr = new ArrayList<>();
-                     _tableInfosByQualifiedName.put(key, arr);
+                     _tableInfosByFullyQualifiedName.put(fullyQualifiedTableName, arr);
                   }
                   arr.add(tableInfo);
+
+                  SchemaQualifiedTableName schemaQualifiedTableName = new SchemaQualifiedTableName(buf.getSchema(), tableInfo.getName());
+                  arr = _tableInfosByFullyQualifiedName.get(schemaQualifiedTableName);
+
+                  if(null == arr)
+                  {
+                     arr = new ArrayList<>();
+                     _tableInfosBySchemaQualifiedName.put(schemaQualifiedTableName, arr);
+                  }
+                  arr.add(tableInfo);
+
+                  arr = _tableInfosBySimpleName.get(tableInfo.getName());
+
+                  if(null == arr)
+                  {
+                     arr = new ArrayList<>();
+                     _tableInfosBySimpleName.put(tableInfo.getName(), arr);
+                  }
+                  arr.add(tableInfo);
+
                }
 
             }
@@ -90,7 +115,7 @@ public class SchemaCache
             StructItemProcedureType buf = (StructItemProcedureType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               _procedureInfos.put(buf, _sqlConnection.getProcedureInfos(buf.getCatalog(), buf.getSchema()));
+               _procedureInfos.put(buf, _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema()));
             }
          }
          else if(leaf instanceof StructItemUDTType)
@@ -98,7 +123,7 @@ public class SchemaCache
             StructItemUDTType buf = (StructItemUDTType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               _udtInfos.put(buf, _sqlConnection.getUDTInfos(buf.getCatalog(), buf.getSchema()));
+               _udtInfos.put(buf, _dbConnectorResult.getSQLConnection().getUDTInfos(buf.getCatalog(), buf.getSchema()));
             }
          }
       }
@@ -257,13 +282,46 @@ public class SchemaCache
       return convertNullToArray(_databaseStructure.getSchemaByNameAsArray(catalogName, schemaName));
    }
 
-   public ArrayList<TableInfo> getTablesByName(String catalog, String schema, String tableName)
+   public ArrayList<TableInfo> getTablesByFullyQualifiedName(String catalog, String schema, String tableName)
    {
-      return convertNullToArray(_tableInfosByQualifiedName.get(new QualifiedTableName(catalog, schema, tableName)));
+      return convertNullToArray(_tableInfosByFullyQualifiedName.get(new FullyQualifiedTableName(catalog, schema, tableName)));
    }
+
+   public ArrayList<TableInfo> getTablesBySchemaQualifiedName(String schema, String tableName)
+   {
+      return convertNullToArray(_tableInfosBySchemaQualifiedName.get(new SchemaQualifiedTableName(schema, tableName)));
+   }
+
+   public ArrayList<TableInfo> getTablesBySimpleName(String tableName)
+   {
+      return convertNullToArray(_tableInfosBySimpleName.get(tableName));
+   }
+
+
 
    public String[] getDefaultKeywords()
    {
       return DefaultKeywords.KEY_WORDS;
    }
+
+   public TableLoader getColumnsAsTableLoader(TableInfo table)
+   {
+      initCols(table);
+      return table.getColumnsAsTableLoader();
+   }
+
+   public ArrayList<ColumnInfo> getColumns(TableInfo table)
+   {
+      initCols(table);
+      return table.getColumns();
+   }
+
+   private void initCols(TableInfo table)
+   {
+      if(null == table.getColumnsAsTableLoader())
+      {
+         table.setColumnsAsTableLoader(TableDetailsReader.readColumns(table, _dbConnectorResult));
+      }
+   }
+
 }

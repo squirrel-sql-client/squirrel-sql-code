@@ -147,7 +147,7 @@ public class DBConnector
          SQLConnection sqlConnection = new SQLConnection(jdbcConn);
          dbConnectorResult.setSQLConnection(sqlConnection);
 
-         SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult.getAlias(), sqlConnection, _schemaCacheConfig);
+         SchemaCache schemaCache = SchemaCacheFactory.createSchemaCache(dbConnectorResult, sqlConnection, _schemaCacheConfig);
          schemaCache.load();
          dbConnectorResult.setSchemaCache(schemaCache);
 

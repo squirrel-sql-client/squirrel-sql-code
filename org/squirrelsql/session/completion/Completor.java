@@ -2,9 +2,9 @@ package org.squirrelsql.session.completion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
-import org.squirrelsql.session.UDTInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.StructItemCatalog;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
@@ -177,18 +177,45 @@ public class Completor
    {
       for (StructItemSchema schema : schemas)
       {
-         ArrayList<TableInfo> tables = _schemaCache.getTablesByName(schema.getCatalog(), schema.getSchema(), tableName);
+         ArrayList<TableInfo> tables;
 
-//         for (TableInfo table : tables)
-//         {
-//            ArrayList<ColumnInfo> columnInfo = table.getColumns();
-//
-//            if(tokenParser.uncompletedSplitMatches(columnInfo.getName()))
-//            {
-//               ret.add(new ColumnCompletionCandidate(columnInfo));
-//            }
-//         }
+         tables = _schemaCache.getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
 
+         fillMatchingCols(ret, tokenParser, tables, schema);
+
+         if(tables.size() > 0)
+         {
+            return;
+         }
+
+         tables = _schemaCache.getTablesBySchemaQualifiedName(schema.getSchema(), tableName);
+
+         fillMatchingCols(ret, tokenParser, tables, schema);
+
+         if(tables.size() > 0)
+         {
+            return;
+         }
+
+         tables = _schemaCache.getTablesBySimpleName(tableName);
+
+         fillMatchingCols(ret, tokenParser, tables, schema);
+      }
+   }
+
+   private void fillMatchingCols(ArrayList<CompletionCandidate> ret, TokenParser tokenParser, ArrayList<TableInfo> tables, StructItemSchema schema)
+   {
+      for (TableInfo table : tables)
+      {
+         ArrayList<ColumnInfo> columnInfos = _schemaCache.getColumns(table);
+
+         for (ColumnInfo columnInfo : columnInfos)
+         {
+            if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
+            {
+               ret.add(new ColumnCompletionCandidate(columnInfo, new TableCompletionCandidate(table, schema)));
+            }
+         }
       }
    }
 
