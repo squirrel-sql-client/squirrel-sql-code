@@ -11,21 +11,22 @@
         <p>
         <p>
          <FONT SIZE=3>In the beginnig of 2014 an new simplfied <a href="http://ant.apache.org/">Ant</a> based build system was introduced.
-             To build SQuirrel you need to download Ant version 1.9.3 or higher <a href="http://ant.apache.org/bindownload.cgi">here</a>.
-             Then change your directory to &lt;squirrel-git-root&gt;/sql12/ and form there execute &lt;ant-home&gt;/bin/ant.
+             To build SQuirreL you need to download Ant version 1.9.3 or higher from <a href="http://ant.apache.org/bindownload.cgi">here</a>.
              <p>
+             Then open a cmd/shell window and change directory to &lt;squirrel-git-root&gt;/sql12/. Form there execute &lt;ant-home&gt;/bin/ant.
              This will generate the directory &lt;squirrel-git-root&gt;/sql12/output/ where all the build artefacts (installer jars, plainzip packages) are placed.
              <p>
              The build script itself is located at &lt;squirrel-git-root&gt;/sql12/build.xml and contains a few more than 200 lines of code.
              <p>
              <p>
-             With the resturcturing of the build system went a new directory structure:
+             <br>
+             With the restructuring of the build system went a new directory structure:
 
              <ul>
-             <li>&lt;squirrel-git-root&gt;/sql12/core/ contains the former fw and app parts of the SQuirrel base application.</li>
-             <li>&lt;squirrel-git-root&gt;/sql12/plugins/ contains all Plugins.</li>
-             <li>&lt;squirrel-git-root&gt;/sql12/launcher/ contains the basis auf the SQuirrel's start scripts in a way they are needed for building the installer packages.</li>
-             <li>&lt;squirrel-git-root&gt;/sql12/plainZipScript/ Scripts if copied to the launcher are able to start SQuirreL without installation. These are used for our plain zip distributions</li>
+             <li>&lt;squirrel-git-root&gt;/sql12/core/: contains the former fw and app parts of SQuirreL's base application.</li>
+             <li>&lt;squirrel-git-root&gt;/sql12/plugins/: contains all Plugins.</li>
+             <li>&lt;squirrel-git-root&gt;/sql12/launcher/: contains the basis of SQuirreL's start scripts in a way they are needed for building the installer packages.</li>
+             <li>&lt;squirrel-git-root&gt;/sql12/plainZipScript/: Scripts for plain zip distributions. If copied to the launcher directory these scripts are able to start SQuirreL without installation.</li>
              </ul>
 
              <p>
@@ -33,11 +34,11 @@
              Hints for developers:
              <p>
              <ul>
-                 <li>Use &lt;squirrel-git-root&gt;/sql12/output/dist/ as SQuirrel's home directory (commandline: -home &lt;squirrel-git-root&gt;/sql12/output/dist/).</li>
+                 <li>Use &lt;squirrel-git-root&gt;/sql12/output/dist/ as SQuirreL's home directory (command line: -home &lt;squirrel-git-root&gt;/sql12/output/dist/).</li>
                  <li>Put the files in &lt;squirrel-git-root&gt;/sql12/core/lib in your  classpath</li>
                  <li>In case you want to work with the Look & Feel Plugin put the files contained in
                      &lt;squirrel-git-root&gt;/sql12/pluins/laf/ and &lt;squirrel-git-root&gt;/sql12/pluins/skinlf-theme-packs/ in your classpath</li>
-                 <li>SQuirrel's source code is in &lt;squirrel-git-root&gt;/sql12/core/src and &lt;squirrel-git-root&gt;/sql12/plugins/<... plugin ...>/src</li>
+                 <li>SQuirreL's source code is in &lt;squirrel-git-root&gt;/sql12/core/src/ and &lt;squirrel-git-root&gt;/sql12/plugins/&lt;plugin&gt;/src/</li>
              </ul>
          </FONT></p>
 
