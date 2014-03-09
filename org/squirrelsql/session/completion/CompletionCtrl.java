@@ -27,11 +27,11 @@ public class CompletionCtrl
 
    public void completeCode()
    {
-      _completeCode(false);
+      _completeCode(false, null);
 
    }
 
-   private void _completeCode(boolean showPopupForSizeOne)
+   private void _completeCode(boolean showPopupForSizeOne, Double formerXPos)
    {
       String tokenAtCarret = _sqlTextAreaServices.getTokenAtCarret();
 
@@ -80,7 +80,16 @@ public class CompletionCtrl
       pp.getContent().add(listView);
       Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();
 
-      double x = cl.getX() - _sqlTextAreaServices.getStringWidth(tokenParser.getUncompletedSplit());
+      double x;
+      if (null == formerXPos)
+      {
+         x = cl.getX() - _sqlTextAreaServices.getStringWidth(tokenParser.getUncompletedSplit());
+      }
+      else
+      {
+         // This formerXPos is a workaround because the completion list jumps horizontally when the user enters chars while the completion list is open.
+         x = formerXPos;
+      }
 
       pp.show(_sqlTextAreaServices.getTextArea(), x, cl.getY() + _sqlTextAreaServices.getFontHight() + 4);
    }
@@ -107,16 +116,17 @@ public class CompletionCtrl
       }
       else
       {
+         Double formerXPos = pp.getX();
          pp.hide();
-         Platform.runLater(() -> onCompleteNextChar());
+         Platform.runLater(() -> onCompleteNextChar(formerXPos));
       }
    }
 
-   private void onCompleteNextChar()
+   private void onCompleteNextChar(Double formerXPos)
    {
       if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenAtCarret()))
       {
-         _completeCode(true);
+         _completeCode(true, formerXPos);
       }
    }
 
