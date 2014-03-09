@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -86,4 +87,8 @@ public class TableInfo
       return ret;
    }
 
+   public StructItemSchema getStructItemSchema()
+   {
+      return new StructItemSchema(_schema, _catalog);
+   }
 }

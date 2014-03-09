@@ -4,7 +4,7 @@ import org.squirrelsql.session.schemainfo.StructItemSchema;
 
 public class CompletorUtil
 {
-   public static String getCatalogSchemaPrefix(StructItemSchema schema)
+   public static String getCatalogSchemaString(StructItemSchema schema)
    {
       String ret = "";
 
@@ -15,7 +15,7 @@ public class CompletorUtil
 
       if(null != schema.getSchema())
       {
-         ret += schema.getSchema() + ".";
+         ret += schema.getSchema();
       }
       return ret;
    }

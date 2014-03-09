@@ -7,6 +7,7 @@ public class TableCompletionCandidate extends CompletionCandidate
 {
    private TableInfo _tableInfo;
    private StructItemSchema _schema;
+   private boolean _showQualifiedHint;
 
    public TableCompletionCandidate(TableInfo tableInfo, StructItemSchema schema)
    {
@@ -23,22 +24,41 @@ public class TableCompletionCandidate extends CompletionCandidate
    @Override
    public String getObjectTypeName()
    {
+      String ret;
+
       if (TableTypes.TABLE.toString().equalsIgnoreCase(_tableInfo.getTableType()))
       {
-         return TableTypes.TABLE.toString();
+         ret = TableTypes.TABLE.toString();
       }
       else if (TableTypes.VIEW.toString().equalsIgnoreCase(_tableInfo.getTableType()))
       {
-         return TableTypes.VIEW.toString();
+         ret = TableTypes.VIEW.toString();
       }
       else
       {
-         return "TABLE/" + _tableInfo.getTableType();
+         ret = "TABLE/" + _tableInfo.getTableType();
       }
+
+      if(_showQualifiedHint)
+      {
+         ret += " in " + CompletorUtil.getCatalogSchemaString(_tableInfo.getStructItemSchema());
+      }
+
+      return ret;
    }
 
    public TableInfo getTableInfo()
    {
       return _tableInfo;
+   }
+
+   public String getSimpleName()
+   {
+      return _tableInfo.getName();
+   }
+
+   public void setShowQualifiedHint(boolean showQualifiedHint)
+   {
+      _showQualifiedHint = showQualifiedHint;
    }
 }

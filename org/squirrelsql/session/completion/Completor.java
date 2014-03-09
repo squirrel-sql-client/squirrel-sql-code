@@ -234,11 +234,20 @@ public class Completor
       {
          ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
 
+         DuplicateSimpleNamesCheck duplicateSimpleNamesCheck = new DuplicateSimpleNamesCheck();
+
          for (TableInfo tableInfo : tableInfos)
          {
             if(tokenParser.uncompletedSplitMatches(tableInfo.getName()))
             {
-               ret.add(new TableCompletionCandidate(tableInfo, schema));
+               /////////////////////////////////////////////////////////////////////
+               // For now we check duplicates for tables only.
+               TableCompletionCandidate tableCompletionCandidate = new TableCompletionCandidate(tableInfo, schema);
+               duplicateSimpleNamesCheck.check(tableCompletionCandidate);
+               //
+               //////////////////////////////////////////////////////////////////////
+
+               ret.add(tableCompletionCandidate);
             }
          }
 
