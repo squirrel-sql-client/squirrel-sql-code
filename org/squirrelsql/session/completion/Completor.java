@@ -22,11 +22,9 @@ public class Completor
       _lastSeenTable = lastSeenTable;
    }
 
-   public ObservableList<CompletionCandidate> getCompletions(String tokenAtCarret)
+   public ObservableList<CompletionCandidate> getCompletions(TokenParser tokenParser)
    {
       ArrayList<CompletionCandidate> ret = new ArrayList<>();
-
-      TokenParser tokenParser = new TokenParser(tokenAtCarret);
 
 
       if(0 == tokenParser.completedSplitsCount()) // everything
@@ -39,7 +37,7 @@ public class Completor
             {
                if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
                {
-                  ret.add(new ColumnCompletionCandidate(columnInfo, null));
+                  ret.add(new ColumnCompletionCandidate(columnInfo, _lastSeenTable));
                }
             }
          }

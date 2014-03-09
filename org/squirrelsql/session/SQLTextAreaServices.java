@@ -97,11 +97,11 @@ public class SQLTextAreaServices
       return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
    }
 
-   public void replaceTokenAtCarretBy(String selItem)
+   public void replaceTokenAtCarretBy(int offset, String selItem)
    {
       TokenAtCarretInfo tci = _getTokenAtCarretInfo();
 
-      _sqlTextArea.replaceText(tci.getTokenBeginPos(), tci.getCaretPosition(), selItem);
+      _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), selItem);
    }
 
    public double getFontHight()
@@ -121,9 +121,9 @@ public class SQLTextAreaServices
       FocusSqlTextAreaWA.forceFocus(_sqlTextArea);
    }
 
-   public double getStringWidth(String tokenAtCarret)
+   public double getStringWidth(String str)
    {
       FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(_sqlTextArea.getFont());
-      return fontMetrics.computeStringWidth(tokenAtCarret);
+      return fontMetrics.computeStringWidth(str);
    }
 }

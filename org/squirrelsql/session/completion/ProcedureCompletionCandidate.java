@@ -17,7 +17,7 @@ public class ProcedureCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return CompletorUtil.getCatalogSchemaPrefix(_schema) + _procedureInfo.getName();
+      return _procedureInfo.getName();
    }
 
    @Override

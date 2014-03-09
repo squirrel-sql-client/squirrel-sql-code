@@ -17,7 +17,7 @@ public class TableCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return CompletorUtil.getCatalogSchemaPrefix(_schema) + _tableInfo.getName();
+      return _tableInfo.getName();
    }
 
    @Override

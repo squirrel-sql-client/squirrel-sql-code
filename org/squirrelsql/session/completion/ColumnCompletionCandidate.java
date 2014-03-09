@@ -18,19 +18,19 @@ public class ColumnCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return getQualifiyingPrefix() + _columnInfo.getColName();
+      return _columnInfo.getColName();
    }
 
-   private String getQualifiyingPrefix()
-   {
-      String qualifyingString = "";
-
-      if (null != _tableCompletionCandidate)
-      {
-         qualifyingString = _tableCompletionCandidate.getReplacement() + ".";
-      }
-      return qualifyingString;
-   }
+//   private String getQualifiyingPrefix()
+//   {
+//      String qualifyingString = "";
+//
+//      if (null != _tableCompletionCandidate)
+//      {
+//         qualifyingString = _tableCompletionCandidate.getReplacement() + ".";
+//      }
+//      return qualifyingString;
+//   }
 
    @Override
    public String getObjectTypeName()
@@ -41,6 +41,6 @@ public class ColumnCompletionCandidate extends CompletionCandidate
    @Override
    public String toString()
    {
-      return getQualifiyingPrefix() + _columnInfo.getDescription();
+      return _columnInfo.getDescription();
    }
 }

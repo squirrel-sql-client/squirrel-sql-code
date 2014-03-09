@@ -10,11 +10,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.SQLTextAreaServices;
 import org.squirrelsql.session.Session;
-
-import java.util.ArrayList;
 
 public class CompletionCtrl
 {
@@ -41,7 +38,9 @@ public class CompletionCtrl
       System.out.println("### Completing for token >" + tokenAtCarret + "<");
 
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _lastSeenTable).getCompletions(tokenAtCarret);
+      TokenParser tokenParser = new TokenParser(tokenAtCarret);
+
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _lastSeenTable).getCompletions(tokenParser);
 
       if(0 == completions.size())
       {
@@ -81,7 +80,7 @@ public class CompletionCtrl
       pp.getContent().add(listView);
       Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();
 
-      double x = cl.getX() - _sqlTextAreaServices.getStringWidth(tokenAtCarret);
+      double x = cl.getX() - _sqlTextAreaServices.getStringWidth(tokenParser.getUncompletedSplit());
 
       pp.show(_sqlTextAreaServices.getTextArea(), x, cl.getY() + _sqlTextAreaServices.getFontHight() + 4);
    }
@@ -131,7 +130,8 @@ public class CompletionCtrl
          _lastSeenTable = (TableCompletionCandidate)completionCandidate;
       }
 
-      _sqlTextAreaServices.replaceTokenAtCarretBy(completionCandidate.getReplacement());
+      TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenAtCarret());
+      _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), completionCandidate.getReplacement());
    }
 
 }

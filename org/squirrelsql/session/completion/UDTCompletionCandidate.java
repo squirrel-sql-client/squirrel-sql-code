@@ -17,7 +17,7 @@ public class UDTCompletionCandidate extends CompletionCandidate
    @Override
    public String getReplacement()
    {
-      return CompletorUtil.getCatalogSchemaPrefix(_schema) + _udtInfo.getName();
+      return _udtInfo.getName();
    }
 
    @Override

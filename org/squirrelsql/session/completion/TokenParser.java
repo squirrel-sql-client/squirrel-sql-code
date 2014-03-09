@@ -22,7 +22,7 @@ public class TokenParser
          _splits.add("");
       }
 
-      _ucUncompletedSplit = _splits.get(_splits.size()-1).toUpperCase();
+      _ucUncompletedSplit = getUncompletedSplit().toUpperCase();
    }
 
    public String getCompletedSplitAt(int ix)
@@ -56,4 +56,20 @@ public class TokenParser
       System.out.println("completedSplitsCount " + new TokenParser("a.ff.").completedSplitsCount());
    }
 
+   public String getUncompletedSplit()
+   {
+      return _splits.get(_splits.size()-1);
+   }
+
+   public int getCompletedSplitsStringLength()
+   {
+      int ret = _tokenAtCarret.lastIndexOf('.');
+
+      if(0 > ret)
+      {
+         return 0;
+      }
+
+      return ret + 1;
+   }
 }
