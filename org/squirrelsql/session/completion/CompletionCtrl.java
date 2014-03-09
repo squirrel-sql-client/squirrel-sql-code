@@ -108,10 +108,15 @@ public class CompletionCtrl
       else
       {
          pp.hide();
-         if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenAtCarret()))
-         {
-            Platform.runLater(() -> _completeCode(true));
-         }
+         Platform.runLater(() -> onCompleteNextChar());
+      }
+   }
+
+   private void onCompleteNextChar()
+   {
+      if (false == Utils.isEmptyString(_sqlTextAreaServices.getTokenAtCarret()))
+      {
+         _completeCode(true);
       }
    }
 
