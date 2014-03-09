@@ -27,6 +27,8 @@ public class SessionCtrl
    private static final String PREF_OBJECT_TREE_SPLIT_LOC = "objecttree.split.loc";
    private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
 
+   private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
+
 
    private final Session _session;
    private final Tab _sqlTab;
@@ -55,6 +57,12 @@ public class SessionCtrl
       _sqlTextAreaServices = new SQLTextAreaServices();
       _sqlTab = createSqlTab();
       _sessionTabPane.getTabs().add(_sqlTab);
+
+      if(_pref.getBoolean(PREF_PRE_SELECT_SQL_TAB, false))
+      {
+         _sessionTabPane.getSelectionModel().select(_sqlTab);
+         _sqlTextAreaServices.requestFocus();
+      }
 
 
       SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(_sessionTabPane);
@@ -216,6 +224,8 @@ public class SessionCtrl
    {
       _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _objectTabSplitPane.getDividerPositions()[0]);
       _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
+
+      _pref.set(PREF_PRE_SELECT_SQL_TAB, _sessionTabPane.getSelectionModel().getSelectedItem() == _sqlTab);
       _session.close();
    }
 }
