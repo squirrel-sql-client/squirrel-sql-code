@@ -25,23 +25,19 @@ import org.squirrelsql.workaround.SplitDividerWA;
 public class SessionCtrl
 {
    private static final String PREF_OBJECT_TREE_SPLIT_LOC = "objecttree.split.loc";
-   private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
 
    private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
 
 
    private final Session _session;
-   private final Tab _sqlTab;
+
 
    private I18n _i18n = new I18n(getClass());
 
    private TabPane _sessionTabPane;
-   private Pref _pref = new Pref(SessionCtrl.class);
+   private Pref _pref = new Pref(getClass());
    private SplitPane _objectTabSplitPane = new SplitPane();
-   private SplitPane _sqlTabSplitPane = new SplitPane();
-   private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
-   private SQLTextAreaServices _sqlTextAreaServices;
-   private CompletionCtrl _completionCtrl;
+   private final SqlTabCtrl _sqlTabCtrl;
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
@@ -54,14 +50,13 @@ public class SessionCtrl
 
       _sessionTabPane.getTabs().add(createObjectsTab());
 
-      _sqlTextAreaServices = new SQLTextAreaServices();
-      _sqlTab = createSqlTab();
-      _sessionTabPane.getTabs().add(_sqlTab);
+      _sqlTabCtrl = new SqlTabCtrl(_session);
+      _sessionTabPane.getTabs().add(_sqlTabCtrl.getSqlTab());
 
       if(_pref.getBoolean(PREF_PRE_SELECT_SQL_TAB, false))
       {
-         _sessionTabPane.getSelectionModel().select(_sqlTab);
-         _sqlTextAreaServices.requestFocus();
+         _sessionTabPane.getSelectionModel().select(_sqlTabCtrl.getSqlTab());
+         _sqlTabCtrl.requestFocus();
       }
 
 
@@ -69,108 +64,17 @@ public class SessionCtrl
 
       _sessionTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
 
-      _completionCtrl = new CompletionCtrl(_session, _sqlTextAreaServices);
+
    }
 
    private void onTabChanged(Tab newSelectedTab)
    {
-      if(_sqlTab == newSelectedTab)
+      if(_sqlTabCtrl.getSqlTab() == newSelectedTab)
       {
-         _sqlTextAreaServices.requestFocus();
+         _sqlTabCtrl.requestFocus();
       }
 
    }
-
-   private Tab createSqlTab()
-   {
-      Tab sqlTab = new Tab(_i18n.t("session.tab.sql"));
-      sqlTab.setClosable(false);
-
-      _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
-
-      TabPane sqlOutputTabPane = new TabPane();
-
-      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextArea());
-      _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
-
-
-      EventHandler<KeyEvent> keyEventHandler =
-            new EventHandler<KeyEvent>()
-            {
-               public void handle(final KeyEvent keyEvent)
-               {
-                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
-                  if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
-                  {
-                     onExecuteSql(_sqlTextAreaServices, sqlOutputTabPane);
-                     keyEvent.consume();
-                  }
-                  else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
-                  {
-                     _completionCtrl.completeCode();
-                     keyEvent.consume();
-                  }
-               }
-            };
-
-      _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
-
-      sqlTab.setContent(_sqlTabSplitPane);
-      SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
-
-
-      return sqlTab;
-   }
-
-   private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
-   {
-
-      String sql = sqlTextAreaServices.getCurrentSql();
-
-
-
-      SQLResult sqlResult = TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100);
-
-      if(null != sqlResult.getSqlException())
-      {
-         String errMsg = _mh.errorSQLNoStack(sqlResult.getSqlException());
-
-         Tab errorTab = new Tab();
-
-         Label errorTabLabel = new Label("Error");
-         errorTabLabel.setTextFill(Color.RED);
-         errorTab.setGraphic(errorTabLabel);
-
-         Label errorLabel = new Label(errMsg);
-
-         errorLabel.setFont(Font.font("Courier", FontWeight.EXTRA_BOLD, 15));
-         errorLabel.setTextFill(Color.RED);
-         errorTab.setContent(errorLabel);
-
-         sqlOutputTabPane.getTabs().add(errorTab);
-
-         sqlOutputTabPane.getSelectionModel().select(errorTab);
-
-      }
-      else
-      {
-         String s =  sql.replaceAll("\n", " ");
-         Tab outputTab = new Tab(s);
-
-         TableView tv = new TableView();
-
-         sqlResult.getTableLoader().load(tv);
-
-         outputTab.setContent(tv);
-
-         sqlOutputTabPane.getTabs().add(outputTab);
-
-         sqlOutputTabPane.getSelectionModel().select(outputTab);
-      }
-
-
-   }
-
 
    private Tab createObjectsTab()
    {
@@ -223,9 +127,9 @@ public class SessionCtrl
    private void onClose()
    {
       _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _objectTabSplitPane.getDividerPositions()[0]);
-      _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
+      _pref.set(PREF_PRE_SELECT_SQL_TAB, _sessionTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
 
-      _pref.set(PREF_PRE_SELECT_SQL_TAB, _sessionTabPane.getSelectionModel().getSelectedItem() == _sqlTab);
+      _sqlTabCtrl.close();
       _session.close();
    }
 }
