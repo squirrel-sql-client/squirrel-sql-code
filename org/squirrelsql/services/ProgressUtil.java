@@ -11,6 +11,11 @@ import javafx.stage.Stage;
 
 public class ProgressUtil
 {
+   public static <T> void  start(final ProgressTask<T> pt)
+   {
+      start(pt, null);
+   }
+
    public static <T> void  start(final ProgressTask<T> pt, Stage stage)
    {
       final Task<T> concurrentTask = new Task<T>()
@@ -37,7 +42,20 @@ public class ProgressUtil
 
       service.setOnCancelled(workerStateEvent -> ((CancelableProgressTask)pt).cancel());
 
+      boolean isCancelableTask = pt instanceof CancelableProgressTask;
 
+
+      if (null != stage)
+      {
+         showProgressStage(stage, service, isCancelableTask);
+      }
+
+      service.start();
+
+   }
+
+   private static <T> void showProgressStage(Stage stage, Service<T> service, boolean isCancelableTask)
+   {
       if(false == stage.getScene().getRoot() instanceof StackPane)
       {
          throw new IllegalArgumentException("The stage parameter is not progressible. Use ProgressUtil.makeProgressible()");
@@ -62,7 +80,7 @@ public class ProgressUtil
 
             if(veil.isCancelable())
             {
-               if(false == pt instanceof CancelableProgressTask)
+               if(false == isCancelableTask)
                {
                   throw new IllegalArgumentException("The progress window is cancelable. Please provide a CancelableProgressTask.");
                }
@@ -93,9 +111,6 @@ public class ProgressUtil
 
       veil.visibleProperty().bind(service.runningProperty());
       progressIndicator.visibleProperty().bind(service.runningProperty());
-
-      service.start();
-
    }
 
    private static <T> void onHandleException(Task<T> concurrentTask)

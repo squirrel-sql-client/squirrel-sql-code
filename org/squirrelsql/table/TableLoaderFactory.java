@@ -2,9 +2,10 @@ package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CollectionUtil;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SQLResult;
+import org.squirrelsql.session.StatementChannel;
+import org.squirrelsql.session.StatementExecutionState;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -15,6 +16,10 @@ import java.util.ArrayList;
 public class TableLoaderFactory
 {
    public static TableLoader loadDataFromResultSet(ResultSet res, String ... excludeColNames)
+   {
+      return _loadDataFromResultSet(res, new StatementChannel(), excludeColNames);
+   }
+   private static TableLoader _loadDataFromResultSet(ResultSet res, StatementChannel statementChannel, String ... excludeColNames)
    {
       try
       {
@@ -38,6 +43,11 @@ public class TableLoaderFactory
             {
                final String colName = metaData.getColumnName(i);
 
+               if(statementChannel.isCanceled())
+               {
+                  return tableLoader;
+               }
+
                if (false == CollectionUtil.contains(excludeColNames, (t) -> colName.equalsIgnoreCase(t)))
                {
                   row.add(res.getObject(i));
@@ -55,31 +65,49 @@ public class TableLoaderFactory
       }
    }
 
-   public static SQLResult loadDataFromSQL(DbConnectorResult dbConnectorResult, String sql, Integer maxResults)
+   public static SQLResult loadDataFromSQL(DbConnectorResult dbConnectorResult, String sql, Integer maxResults, StatementChannel statementChannel)
    {
+      Statement stat = null;
+      ResultSet res = null;
       try
       {
-         Statement stat = dbConnectorResult.getSQLConnection().getConnection().createStatement();
+         stat = dbConnectorResult.getSQLConnection().getConnection().createStatement();
 
          if (null != maxResults)
          {
             stat.setMaxRows(maxResults);
          }
 
-         ResultSet res = null;
          try
          {
+            statementChannel.setStatementExecutionState(StatementExecutionState.EXECUTING);
+
+            statementChannel.setCancelCandidate(stat);
             res = stat.executeQuery(sql);
+            statementChannel.setCancelCandidate(null);
+
+            if(statementChannel.isCanceled())
+            {
+               return new SQLResult(new SQLException("Statement canceled while executing"));
+            }
+
          }
          catch (SQLException e)
          {
+            statementChannel.setStatementExecutionState(StatementExecutionState.ERROR);
             return new SQLResult(e);
          }
-         return new SQLResult(loadDataFromResultSet(res));
+         statementChannel.setStatementExecutionState(StatementExecutionState.BUILDING_OUTPUT);
+         return new SQLResult(_loadDataFromResultSet(res, statementChannel));
       }
       catch (SQLException e)
       {
          throw new RuntimeException(e);
+      }
+      finally
+      {
+         Utils.close(res);
+         Utils.close(stat);
       }
    }
 }

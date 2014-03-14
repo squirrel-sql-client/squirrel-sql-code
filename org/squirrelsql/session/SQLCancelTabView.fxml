@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.session.SQLCancelTabView">
+  <children>
+    <Button fx:id="btnCancel" layoutX="14.0" mnemonicParsing="false" text="%session.tab.sql.cancel" AnchorPane.bottomAnchor="14.0" />
+    <Label layoutX="14.0" text="%session.tab.sql.executing.since" AnchorPane.bottomAnchor="49.0" />
+    <TextField fx:id="txtExecTime" editable="false" layoutX="136.0" prefHeight="25.0" prefWidth="147.0" AnchorPane.bottomAnchor="44.0" />
+    <Label layoutX="307.0" text="%session.tab.sql.executing.millis" AnchorPane.bottomAnchor="48.0" />
+    <Label layoutX="14.0" layoutY="14.0" text="%session.tab.sql.executing.sql" />
+    <TextArea fx:id="txtSql" editable="false" prefHeight="248.00009999999747" prefWidth="625.0" wrapText="true" AnchorPane.bottomAnchor="122.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="30.0" />
+    <Label layoutX="14.0" text="%session.tab.sql.executing.state" AnchorPane.bottomAnchor="83.0" />
+    <TextField fx:id="txtStatus" editable="false" layoutX="66.0" prefWidth="337.0" AnchorPane.bottomAnchor="80.0" />
+  </children>
+</AnchorPane>

@@ -2,6 +2,9 @@ package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class Utils
 {
    public static boolean isEmptyString(String text)
@@ -22,5 +25,37 @@ public class Utils
       }
 
       return s1.equalsIgnoreCase(s2);
+   }
+
+   public static void close(ResultSet res)
+   {
+      if(null == res)
+      {
+         return;
+      }
+
+      try
+      {
+         res.close();
+      }
+      catch(Throwable t)
+      {
+      }
+   }
+
+   public static void close(Statement stat)
+   {
+      if(null == stat)
+      {
+         return;
+      }
+
+      try
+      {
+         stat.close();
+      }
+      catch(Throwable t)
+      {
+      }
    }
 }

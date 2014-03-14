@@ -7,10 +7,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SplitDividerWA;
@@ -32,6 +29,7 @@ public class SqlTabCtrl
 
    private final Tab _sqlTab;
    private Session _session;
+   private final TabPane _sqlOutputTabPane;
 
    public SqlTabCtrl(Session session)
    {
@@ -40,8 +38,41 @@ public class SqlTabCtrl
 
       _completionCtrl = new CompletionCtrl(session, _sqlTextAreaServices);
 
-      _sqlTab = createSqlTab();
+      _sqlTab = new Tab(_i18n.t("session.tab.sql"));
+      _sqlTab.setClosable(false);
 
+
+      _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
+
+      _sqlOutputTabPane = new TabPane();
+
+      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextArea());
+      _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
+
+
+      EventHandler<KeyEvent> keyEventHandler =
+            new EventHandler<KeyEvent>()
+            {
+               public void handle(final KeyEvent keyEvent)
+               {
+                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
+                  if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
+                  {
+                     onExecuteSql(_sqlTextAreaServices, _sqlOutputTabPane);
+                     keyEvent.consume();
+                  }
+                  else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
+                  {
+                     _completionCtrl.completeCode();
+                     keyEvent.consume();
+                  }
+               }
+            };
+
+      _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
+
+      _sqlTab.setContent(_sqlTabSplitPane);
+      SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
    }
 
    public Tab getSqlTab()
@@ -55,55 +86,42 @@ public class SqlTabCtrl
    }
 
 
-   private Tab createSqlTab()
-   {
-      Tab sqlTab = new Tab(_i18n.t("session.tab.sql"));
-      sqlTab.setClosable(false);
-
-
-      _sqlTabSplitPane.setOrientation(Orientation.VERTICAL);
-
-      TabPane sqlOutputTabPane = new TabPane();
-
-      _sqlTabSplitPane.getItems().add(_sqlTextAreaServices.getTextArea());
-      _sqlTabSplitPane.getItems().add(sqlOutputTabPane);
-
-
-      EventHandler<KeyEvent> keyEventHandler =
-            new EventHandler<KeyEvent>()
-            {
-               public void handle(final KeyEvent keyEvent)
-               {
-                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
-                  if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
-                  {
-                     onExecuteSql(_sqlTextAreaServices, sqlOutputTabPane);
-                     keyEvent.consume();
-                  } else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
-                  {
-                     _completionCtrl.completeCode();
-                     keyEvent.consume();
-                  }
-               }
-            };
-
-      _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
-
-      sqlTab.setContent(_sqlTabSplitPane);
-      SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
-
-
-      return sqlTab;
-   }
-
    private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
    {
 
       String sql = sqlTextAreaServices.getCurrentSql();
 
+      StatementChannel statementChannel = new StatementChannel();
 
-      SQLResult sqlResult = TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100);
+      SQLCancelTabCtrl sqlCancelTabCtrl = new SQLCancelTabCtrl(sql, statementChannel);
 
+      Tab cancelTab = new Tab(_i18n.t("session.tab.sql.executing.tab.title"));
+      cancelTab.setContent(sqlCancelTabCtrl.getNode());
+
+      _sqlOutputTabPane.getTabs().add(cancelTab);
+      _sqlOutputTabPane.getSelectionModel().select(cancelTab);
+
+
+      ProgressTask<SQLResult> pt = new ProgressTask<SQLResult>()
+      {
+         @Override
+         public SQLResult  call()
+         {
+            return TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 1000000, statementChannel);
+         }
+
+         @Override
+         public void goOn(SQLResult  sqlResult)
+         {
+            onGoOn(sqlResult, sql, sqlCancelTabCtrl);
+         }
+      };
+
+      ProgressUtil.start(pt);
+   }
+
+   private void onGoOn(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   {
       if (null != sqlResult.getSqlException())
       {
          String errMsg = _mh.errorSQLNoStack(sqlResult.getSqlException());
@@ -120,11 +138,12 @@ public class SqlTabCtrl
          errorLabel.setTextFill(Color.RED);
          errorTab.setContent(errorLabel);
 
-         sqlOutputTabPane.getTabs().add(errorTab);
+         _sqlOutputTabPane.getTabs().add(errorTab);
 
-         sqlOutputTabPane.getSelectionModel().select(errorTab);
+         _sqlOutputTabPane.getSelectionModel().select(errorTab);
 
-      } else
+      }
+      else
       {
          String s = sql.replaceAll("\n", " ");
          Tab outputTab = new Tab(s);
@@ -135,12 +154,10 @@ public class SqlTabCtrl
 
          outputTab.setContent(tv);
 
-         sqlOutputTabPane.getTabs().add(outputTab);
+         _sqlOutputTabPane.getTabs().add(outputTab);
 
-         sqlOutputTabPane.getSelectionModel().select(outputTab);
+         _sqlOutputTabPane.getSelectionModel().select(outputTab);
       }
-
-
    }
 
 
