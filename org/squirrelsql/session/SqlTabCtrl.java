@@ -9,7 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
-import org.squirrelsql.table.TableLoaderFactory;
+import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SqlTabCtrl
@@ -107,7 +107,7 @@ public class SqlTabCtrl
          @Override
          public SQLResult  call()
          {
-            return TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100000, statementChannel);
+            return SQLExecutor.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100000, statementChannel);
          }
 
          @Override

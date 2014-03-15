@@ -16,9 +16,9 @@ public class TableLoaderFactory
 {
    public static TableLoader loadDataFromResultSet(ResultSet res, String ... excludeColNames)
    {
-      return _loadDataFromResultSet(res, new StatementChannel(), excludeColNames);
+      return loadDataFromResultSet(res, new StatementChannel(), excludeColNames);
    }
-   private static TableLoader _loadDataFromResultSet(ResultSet res, StatementChannel statementChannel, String ... excludeColNames)
+   public static TableLoader loadDataFromResultSet(ResultSet res, StatementChannel statementChannel, String ... excludeColNames)
    {
       try
       {
@@ -67,63 +67,4 @@ public class TableLoaderFactory
       }
    }
 
-   public static SQLResult loadDataFromSQL(DbConnectorResult dbConnectorResult, String sql, Integer maxResults, StatementChannel statementChannel)
-   {
-      Statement stat = null;
-      ResultSet res = null;
-      try
-      {
-         stat = dbConnectorResult.getSQLConnection().getConnection().createStatement();
-
-         if (null != maxResults)
-         {
-            stat.setMaxRows(maxResults);
-         }
-
-         long executionTimeBegin;
-         long executionTimeEnd;
-         long buildingOutputTimeBegin;
-         long buildingOutputTimeEnd;
-
-         try
-         {
-            statementChannel.setStatementExecutionState(StatementExecutionState.EXECUTING);
-
-            statementChannel.setCancelCandidate(stat);
-            executionTimeBegin = System.currentTimeMillis();
-            res = stat.executeQuery(sql);
-            executionTimeEnd = System.currentTimeMillis();
-            statementChannel.setCancelCandidate(null);
-
-            if(statementChannel.isCanceled())
-            {
-               return new SQLResult(new SQLException("Statement canceled while executing"));
-            }
-
-         }
-         catch (SQLException e)
-         {
-            statementChannel.setStatementExecutionState(StatementExecutionState.ERROR);
-            return new SQLResult(e);
-         }
-         statementChannel.setStatementExecutionState(StatementExecutionState.BUILDING_OUTPUT);
-
-         buildingOutputTimeBegin = System.currentTimeMillis();
-         TableLoader tableLoader = _loadDataFromResultSet(res, statementChannel);
-         buildingOutputTimeEnd = System.currentTimeMillis();
-         statementChannel.setStatementExecutionState(StatementExecutionState.FINSHED);
-
-         return new SQLResult(tableLoader, executionTimeEnd - executionTimeBegin, buildingOutputTimeEnd - buildingOutputTimeBegin);
-      }
-      catch (Throwable e)
-      {
-         statementChannel.setStatementExecutionState(StatementExecutionState.ERROR);
-         throw new RuntimeException(e);
-      }
-      finally
-      {
-         Utils.close(res);
-         Utils.close(stat);
-      }
-   }
 }
