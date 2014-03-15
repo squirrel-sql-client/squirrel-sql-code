@@ -4,9 +4,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.Callable;
 
 public class StatementCancelRunnable implements Runnable
 {
@@ -40,11 +38,11 @@ public class StatementCancelRunnable implements Runnable
       {
          if(_reachedTimeout)
          {
-            mh.warning(_i18n.t("session.tab.sql.executing.cancel.faild.after.to"), t);
+            mh.warning(_i18n.t("session.tab.sql.executing.cancel.failed.after.to"), t);
          }
          else
          {
-            mh.warning(_i18n.t("session.tab.sql.executing.cancel.faild"), t);
+            mh.warning(_i18n.t("session.tab.sql.executing.cancel.failed"), t);
          }
       }
 
