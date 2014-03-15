@@ -44,21 +44,20 @@ public class SQLExecutor
             {
                return new SQLResult(new SQLException("Statement canceled while executing"));
             }
+            statementChannel.setStatementExecutionState(StatementExecutionState.BUILDING_OUTPUT);
 
+            buildingOutputTimeBegin = System.currentTimeMillis();
+            TableLoader tableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
+            buildingOutputTimeEnd = System.currentTimeMillis();
+            statementChannel.setStatementExecutionState(StatementExecutionState.FINSHED);
+
+            return new SQLResult(tableLoader, executionTimeEnd - executionTimeBegin, buildingOutputTimeEnd - buildingOutputTimeBegin);
          }
          catch (SQLException e)
          {
             statementChannel.setStatementExecutionState(StatementExecutionState.ERROR);
             return new SQLResult(e);
          }
-         statementChannel.setStatementExecutionState(StatementExecutionState.BUILDING_OUTPUT);
-
-         buildingOutputTimeBegin = System.currentTimeMillis();
-         TableLoader tableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
-         buildingOutputTimeEnd = System.currentTimeMillis();
-         statementChannel.setStatementExecutionState(StatementExecutionState.FINSHED);
-
-         return new SQLResult(tableLoader, executionTimeEnd - executionTimeBegin, buildingOutputTimeEnd - buildingOutputTimeBegin);
       }
       catch (Throwable e)
       {
