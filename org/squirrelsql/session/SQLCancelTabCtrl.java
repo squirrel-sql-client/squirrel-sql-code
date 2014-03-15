@@ -11,7 +11,6 @@ public class SQLCancelTabCtrl
    private final SQLCancelTabView _view;
    private final Region _region;
 
-   private I18n _i18n = new I18n(getClass());
 
 
    public SQLCancelTabCtrl(String sql, StatementChannel statementChannel)

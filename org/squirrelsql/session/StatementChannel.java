@@ -1,6 +1,7 @@
 package org.squirrelsql.session;
 
 import javafx.application.Platform;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 
@@ -14,6 +15,8 @@ public class StatementChannel
    private boolean _isCanceled;
    private StateChannelListener _stateChannelListener;
    private Statement _cancelCandidate;
+
+   private I18n _i18n = new I18n(getClass());
 
    public void cancelStatement()
    {
@@ -34,12 +37,12 @@ public class StatementChannel
             try
             {
                submit.get(1000, TimeUnit.MILLISECONDS);
-               mh.info("Canceled statement");
+               mh.info(_i18n.t("session.tab.sql.executing.cancel.success"));
             }
             catch (TimeoutException e)
             {
                cancelRunnable.reachedTimeout();
-               mh.warning("Cancel did not succeed within one second. If cancel succeeds later you will get further messages");
+               mh.warning(_i18n.t("session.tab.sql.executing.cancel.unsuccess"));
             }
          }
       }

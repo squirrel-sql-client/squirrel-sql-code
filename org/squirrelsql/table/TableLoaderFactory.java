@@ -1,10 +1,7 @@
 package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.CollectionUtil;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.SQLResult;
 import org.squirrelsql.session.StatementChannel;
 import org.squirrelsql.session.StatementExecutionState;
@@ -47,7 +44,9 @@ public class TableLoaderFactory
 
                if(statementChannel.isCanceled())
                {
-                  new MessageHandler(TableLoaderFactory.class, MessageHandlerDestination.MESSAGE_PANEL).warning("Building output was canceled. Result is not complete.");
+                  MessageHandler mh = new MessageHandler(TableLoaderFactory.class, MessageHandlerDestination.MESSAGE_PANEL);
+                  I18n i18n = new I18n(TableLoaderFactory.class);
+                  mh.warning(i18n.t("session.tab.sql.executing.cancel.building.output"));
                   return tableLoader;
                }
 

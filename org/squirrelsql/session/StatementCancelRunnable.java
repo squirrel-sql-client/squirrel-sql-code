@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 
@@ -11,6 +12,8 @@ public class StatementCancelRunnable implements Runnable
 {
    private Statement _statement;
    private boolean _reachedTimeout;
+   private I18n _i18n = new I18n(getClass());
+
 
    public StatementCancelRunnable(Statement statement)
    {
@@ -29,7 +32,7 @@ public class StatementCancelRunnable implements Runnable
 
          if(_reachedTimeout)
          {
-            mh.info("Canceling statement succeeded after timeout. Canceling took " + (end - begin) + " millis");
+            mh.info(_i18n.t("session.tab.sql.executing.cancel.success.after.to", (end - begin)));
          }
 
       }
@@ -37,11 +40,11 @@ public class StatementCancelRunnable implements Runnable
       {
          if(_reachedTimeout)
          {
-            mh.warning("Canceling statement failed after timeout", t);
+            mh.warning(_i18n.t("session.tab.sql.executing.cancel.faild.after.to"), t);
          }
          else
          {
-            mh.warning("Canceling statement failed", t);
+            mh.warning(_i18n.t("session.tab.sql.executing.cancel.faild"), t);
          }
       }
 

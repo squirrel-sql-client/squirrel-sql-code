@@ -107,7 +107,7 @@ public class SqlTabCtrl
          @Override
          public SQLResult  call()
          {
-            return TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100, statementChannel);
+            return TableLoaderFactory.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100000, statementChannel);
          }
 
          @Override
@@ -158,7 +158,7 @@ public class SqlTabCtrl
 
          _sqlOutputTabPane.getSelectionModel().select(outputTab);
 
-         _mh.info("Query 1 of 1, Rows read: " + tv.getItems().size() + ", Elapsed time (milli seconds) - Total: " + sqlResult.getCompleteTime() + ", SQL query: " + sqlResult.getExecutionTime() + ", Reading results: " + sqlResult.getBuildingOutputTime());
+         _mh.info(_i18n.t("session.tab.sql.executing.times", tv.getItems().size(), sqlResult.getCompleteTime(), sqlResult.getExecutionTime(), sqlResult.getBuildingOutputTime()));
       }
    }
 
