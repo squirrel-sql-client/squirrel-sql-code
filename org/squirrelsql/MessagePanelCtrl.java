@@ -1,5 +1,6 @@
 package org.squirrelsql;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -54,6 +55,19 @@ public class MessagePanelCtrl
    }
 
    private void addMessage(String s, String style)
+   {
+      if(Platform.isFxApplicationThread())
+      {
+         _addMessage(s, style);
+      }
+      else
+      {
+         Platform.runLater(() -> _addMessage(s, style));
+      }
+
+   }
+
+   private void _addMessage(String s, String style)
    {
       int size = _messages.getChildren().size();
       if(0 < size)

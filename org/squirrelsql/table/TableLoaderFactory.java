@@ -2,6 +2,8 @@ package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SQLResult;
 import org.squirrelsql.session.StatementChannel;
@@ -45,6 +47,7 @@ public class TableLoaderFactory
 
                if(statementChannel.isCanceled())
                {
+                  new MessageHandler(TableLoaderFactory.class, MessageHandlerDestination.MESSAGE_PANEL).warning("Building output was canceled. Result is not complete.");
                   return tableLoader;
                }
 
@@ -78,12 +81,19 @@ public class TableLoaderFactory
             stat.setMaxRows(maxResults);
          }
 
+         long executionTimeBegin;
+         long executionTimeEnd;
+         long buildingOutputTimeBegin;
+         long buildingOutputTimeEnd;
+
          try
          {
             statementChannel.setStatementExecutionState(StatementExecutionState.EXECUTING);
 
             statementChannel.setCancelCandidate(stat);
+            executionTimeBegin = System.currentTimeMillis();
             res = stat.executeQuery(sql);
+            executionTimeEnd = System.currentTimeMillis();
             statementChannel.setCancelCandidate(null);
 
             if(statementChannel.isCanceled())
@@ -98,10 +108,17 @@ public class TableLoaderFactory
             return new SQLResult(e);
          }
          statementChannel.setStatementExecutionState(StatementExecutionState.BUILDING_OUTPUT);
-         return new SQLResult(_loadDataFromResultSet(res, statementChannel));
+
+         buildingOutputTimeBegin = System.currentTimeMillis();
+         TableLoader tableLoader = _loadDataFromResultSet(res, statementChannel);
+         buildingOutputTimeEnd = System.currentTimeMillis();
+         statementChannel.setStatementExecutionState(StatementExecutionState.FINSHED);
+
+         return new SQLResult(tableLoader, executionTimeEnd - executionTimeBegin, buildingOutputTimeEnd - buildingOutputTimeBegin);
       }
-      catch (SQLException e)
+      catch (Throwable e)
       {
+         statementChannel.setStatementExecutionState(StatementExecutionState.ERROR);
          throw new RuntimeException(e);
       }
       finally
