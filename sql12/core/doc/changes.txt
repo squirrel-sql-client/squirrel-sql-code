@@ -1,11 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-
 ${squirrelsql.changelog.header}
+
 
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
+
+
+3.5.2 (03/15/2014)
+==================
 
 Note: Automatic updates were disabled. Please use our home page to download latest versions and snapshots.
 
