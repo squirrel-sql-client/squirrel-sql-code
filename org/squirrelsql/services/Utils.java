@@ -1,9 +1,11 @@
 package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
+import org.squirrelsql.session.SQLResult;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Utils
 {
@@ -57,5 +59,16 @@ public class Utils
       catch(Throwable t)
       {
       }
+   }
+
+   public static <T> ArrayList<T> asArray(T ... ts)
+   {
+      ArrayList<T> ret = new ArrayList<>();
+
+      for (T t : ts)
+      {
+         ret.add(t);
+      }
+      return ret;
    }
 }

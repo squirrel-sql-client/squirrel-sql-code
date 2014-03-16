@@ -10,6 +10,7 @@ import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
+import org.squirrelsql.table.StatementExecution;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SqlTabCtrl
@@ -102,29 +103,29 @@ public class SqlTabCtrl
       _sqlOutputTabPane.getSelectionModel().select(cancelTab);
 
 
-      ProgressTask<SQLResult> pt = new ProgressTask<SQLResult>()
+      ProgressTask<StatementExecution> pt = new ProgressTask<StatementExecution>()
       {
          @Override
-         public SQLResult  call()
+         public StatementExecution  call()
          {
-            return SQLExecutor.loadDataFromSQL(_session.getDbConnectorResult(), sql, 100000, statementChannel);
+            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, 100000, statementChannel);
          }
 
          @Override
-         public void goOn(SQLResult  sqlResult)
+         public void goOn(StatementExecution  statementExecution)
          {
-            onGoOn(sqlResult, sql, sqlCancelTabCtrl);
+            onGoOn(statementExecution, sql, sqlCancelTabCtrl);
          }
       };
 
       ProgressUtil.start(pt);
    }
 
-   private void onGoOn(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
-      if (null != sqlResult.getSqlException())
+      if (null != statExec.getFirstSqlException())
       {
-         String errMsg = _mh.errorSQLNoStack(sqlResult.getSqlException());
+         String errMsg = _mh.errorSQLNoStack(statExec.getFirstSqlException());
 
          Tab errorTab = new Tab();
 
@@ -150,15 +151,26 @@ public class SqlTabCtrl
 
          TableView tv = new TableView();
 
-         sqlResult.getTableLoader().load(tv);
+         for (SQLResult sqlResult : statExec.getQueryResults())
+         {
+            sqlResult.getTableLoader().load(tv);
 
-         outputTab.setContent(tv);
+            outputTab.setContent(tv);
 
-         _sqlOutputTabPane.getTabs().add(outputTab);
+            _sqlOutputTabPane.getTabs().add(outputTab);
 
-         _sqlOutputTabPane.getSelectionModel().select(outputTab);
+            _sqlOutputTabPane.getSelectionModel().select(outputTab);
+         }
 
-         _mh.info(_i18n.t("session.tab.sql.executing.times", tv.getItems().size(), sqlResult.getCompleteTime(), sqlResult.getExecutionTime(), sqlResult.getBuildingOutputTime()));
+         for (SQLResult sqlResult : statExec.getUpdateCounts())
+         {
+            _mh.info(_i18n.t("session.tab.sql.update.count", sqlResult.getUpdateCount()));
+         }
+
+         _mh.info(_i18n.t("session.tab.sql.executing.times", tv.getItems().size(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
+
+
+
       }
    }
 
