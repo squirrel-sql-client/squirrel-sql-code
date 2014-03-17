@@ -7,6 +7,8 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Hibernate Plugin: HQL queries that returned results with enum types used to lead to unmarshall exceptions.
+
 
 3.5.2 (03/15/2014)
 ==================

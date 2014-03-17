@@ -87,7 +87,7 @@
 
 
     <target name="compileCore" description="compileCore">
-        <javac srcdir="core/src" destdir="output/work/bin" classpathref="build.classpath"/>
+        <javac srcdir="core/src" destdir="output/work/bin" classpathref="build.classpath" debug="true"/>
         <copy todir="output/work/bin">
             <fileset dir="core/src">
                 <exclude name="**/*.java" />
@@ -183,7 +183,7 @@
 
         <echo message="###Compiling Plugin ${pluginName}"/>
 
-        <javac srcdir="plugins/${pluginName}/src" destdir="output/work/${pluginName}/bin" >
+        <javac srcdir="plugins/${pluginName}/src" destdir="output/work/${pluginName}/bin" debug="true" >
             <classpath refid="build.classpath"/>
             <classpath>
                 <path id="plugin.classpath.core">

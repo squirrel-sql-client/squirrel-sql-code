@@ -29,6 +29,12 @@ public class PropertySubstitute  implements Serializable
    {
       _hibernatePropertyInfo = hibernatePropertyInfo;
       _plainValue = plainValue;
+
+      if(null != plainValue && plainValue.getClass().isEnum())
+      {
+         _plainValue = ""  + plainValue;
+      }
+
       _initialized = isInitialized;
    }
 
