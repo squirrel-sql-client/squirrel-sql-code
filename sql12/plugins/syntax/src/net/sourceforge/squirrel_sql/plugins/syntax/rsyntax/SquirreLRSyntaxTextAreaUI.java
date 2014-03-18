@@ -70,6 +70,9 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
       shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK));
       shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK));
 
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK));
+      shared.remove(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK));
+
       /*
        *       Remove this Keystroke, because it triggers auto-complete of the current word with a matching most recent word,
        *       as long the shift and space key are pressed.

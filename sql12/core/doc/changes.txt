@@ -7,7 +7,15 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Bug fixes:
+
+#1129 Export table to XLSX does not work / #1129 Export table to XLSX does not work --> Export broke on null values
+#1135 Export of date/time values to XLSX exports number instead of date
+#1132 keyboard shortcut alt-down/alt-up not working
+
 Hibernate Plugin: HQL queries that returned results with enum types used to lead to unmarshall exceptions.
+
+
 
 
 3.5.2 (03/15/2014)

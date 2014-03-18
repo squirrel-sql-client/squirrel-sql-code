@@ -23,16 +23,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Types;
 import java.util.Calendar;
+import java.util.Date;
 
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 
 
 /**
@@ -59,89 +58,113 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 		super(file, ctrl, includeHeaders, progressController);
 	}
 
-	private Cell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj) {
-                Row row= sheet.getRow(curRow);
-                if (row == null)
-                {
-                    row= sheet.createRow(curRow);
-                }
-                Cell retVal= row.createCell(colIdx);
+	private Cell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj)
+   {
+      Row row = sheet.getRow(curRow);
+      if (row == null)
+      {
+         row = sheet.createRow(curRow);
+      }
+      Cell retVal = row.createCell(colIdx);
 
-		if (null == cellObj) {
-			retVal.setCellValue(getDataXLSAsString(cellObj));
-		} else if (null == colDef) {
-			retVal.setCellValue(getDataXLSAsString(cellObj));
-		}
+      if (null == cellObj)
+      {
+         retVal.setCellValue(getDataXLSAsString(cellObj));
+      }
+      else if (null == colDef)
+      {
+         retVal.setCellValue(getDataXLSAsString(cellObj));
+      }
 
-		int colType = colDef.getSqlType();
-		switch (colType) {
-		case Types.BIT:
-		case Types.BOOLEAN:
-			retVal.setCellValue((Boolean) cellObj);
-			break;
-		case Types.INTEGER:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.SMALLINT:
-		case Types.TINYINT:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.DECIMAL:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.NUMERIC:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.FLOAT:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.DOUBLE:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.REAL:
-			retVal.setCellValue(((Number) cellObj).doubleValue());
-			break;
-		case Types.BIGINT:
-			retVal.setCellValue(Long.parseLong(cellObj.toString()));
-			break;
-		case Types.DATE:
-		case Types.TIMESTAMP:
-		case Types.TIME:
-			/* Work around some UTC and Daylight saving offsets */
-			long time = (((java.util.Date) cellObj).getTime());
+      int colType = colDef.getSqlType();
 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime((java.util.Date) cellObj);
+      switch (colType)
+      {
+         case Types.BIT:
+         case Types.BOOLEAN:
+            retVal.setCellValue((Boolean) cellObj);
+            break;
+         case Types.INTEGER:
+            if (null == cellObj)
+            {
+               //retVal.setCellValue((Integer)null);
+            }
+            else
+            {
+               retVal.setCellValue(((Number) cellObj).intValue());
+            }
+            break;
+         case Types.SMALLINT:
+         case Types.TINYINT:
+            if (null == cellObj)
+            {
+               //retVal.setCellValue(((Short) null));
+            }
+            else
+            {
+               retVal.setCellValue(((Number) cellObj).shortValue());
+            }
+            break;
+         case Types.NUMERIC:
+         case Types.DECIMAL:
+         case Types.FLOAT:
+         case Types.DOUBLE:
+         case Types.REAL:
+            if (null == cellObj)
+            {
+               //retVal.setCellValue((Double) null);
+            }
+            else
+            {
+               retVal.setCellValue(((Number) cellObj).doubleValue());
+            }
+            break;
+         case Types.BIGINT:
+            if (null == cellObj)
+            {
+               //retVal.setCellValue((Long)null);
+            }
+            else
+            {
+               retVal.setCellValue(Long.parseLong(cellObj.toString()));
+            }
+            break;
+         case Types.DATE:
+            makeTemporalCell(retVal, (Date) cellObj, "m/d/yy");
+            break;
+         case Types.TIMESTAMP:
+            makeTemporalCell(retVal, (Date) cellObj, "m/d/yy h:mm");
+            break;
+         case Types.TIME:
+            makeTemporalCell(retVal, (Date) cellObj, "h:mm");
+            break;
+         case Types.CHAR:
+         case Types.VARCHAR:
+         case Types.LONGVARCHAR:
+            cellObj = CellComponentFactory.renderObject(cellObj, colDef);
+            retVal.setCellValue(getDataXLSAsString(cellObj));
+            break;
+         default:
+            cellObj = CellComponentFactory.renderObject(cellObj, colDef);
+            retVal.setCellValue(getDataXLSAsString(cellObj));
+      }
 
-			int offset = (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET));
+      return retVal;
+   }
 
-			long utcTime = time + offset;
-			/*
-			 * Work around Excel's problem with dates before 1900-03-01
-			 * http://support.microsoft.com/kb/214058 -2203891200000l is
-			 * 1900-03-01 UTC time 8640000 means 24 hours
-			 */
-			if (utcTime < -2203891200000l) {
-				utcTime += 86400000;
-			}
+   private void makeTemporalCell(Cell retVal, Date cellObj, String format)
+   {
+      CreationHelper creationHelper = workbook.getCreationHelper();
+      CellStyle cellStyle = workbook.createCellStyle();
+      cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
+      retVal.setCellStyle(cellStyle);
 
-			java.util.Date xlsUTCDate = new java.util.Date(utcTime);
-			retVal.setCellValue(xlsUTCDate);
-			break;
-		case Types.CHAR:
-		case Types.VARCHAR:
-		case Types.LONGVARCHAR:
-			cellObj = CellComponentFactory.renderObject(cellObj, colDef);
-			retVal.setCellValue(getDataXLSAsString(cellObj));
-			break;
-		default:
-			cellObj = CellComponentFactory.renderObject(cellObj, colDef);
-			retVal.setCellValue(getDataXLSAsString(cellObj));
-		}
-		return retVal;
-	}
-	
-	private String getDataXLSAsString(Object cellObj) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime((Date) cellObj);
+      retVal.setCellValue(calendar);
+   }
+
+   private String getDataXLSAsString(Object cellObj) {
 		if (cellObj == null) {
 			return "";
 		} else {
