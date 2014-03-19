@@ -123,6 +123,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private ResultTabListener _resultTabListener;
    private ReadMoreResultsHandler _readMoreResultsHandler;
    private boolean _tabIsClosing;
+   private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
    /**
     * Ctor.
@@ -191,6 +192,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		{
          IDataSetViewer dataSetViewer = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator, new DefaultDataModelImplementationDetails(_session));
          _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler());
+         _selectRowColLabelController.setDataSetViewer(dataSetViewer);
 
 		}
 		else
@@ -204,6 +206,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
                props.getReadOnlySQLResultsOutputClassName(), null, new DefaultDataModelImplementationDetails(_session));
 
          _dataSetViewerFindDecorator = new DataSetViewerFindDecorator(dataSetViewer, _session.getApplication().getMessageHandler());
+         _selectRowColLabelController.setDataSetViewer(dataSetViewer);
 		}
 
 
@@ -534,19 +537,11 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       int sqlResultsTabPlacement = _session.getProperties().getSQLResultsTabPlacement();
       _tabResultTabs = UIFactory.getInstance().createTabbedPane(sqlResultsTabPlacement);
 
-		JPanel panel1 = new JPanel();
-		JPanel panel2 = new JPanel();
-		panel2.setLayout(new GridLayout(1, 3, 0, 0));
-
-      panel2.add(_readMoreResultsHandler.getLoadingLabel());
-      panel2.add(new TabButton(getRerunCurrentSQLResultTabAction()));
-      panel2.add(new TabButton(new FindInResultAction(_session.getApplication())));
-		panel2.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
-		panel2.add(new TabButton(new CloseAction()));
-		panel1.setLayout(new BorderLayout());
-		panel1.add(panel2, BorderLayout.EAST);
-		panel1.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
-		add(panel1, BorderLayout.NORTH);
+		JPanel panel = new JPanel();
+      panel.setLayout(new BorderLayout());
+		panel.add(createRightPanel(), BorderLayout.EAST);
+		panel.add(_currentSqlLblCtrl.getLabel(), BorderLayout.CENTER);
+		add(panel, BorderLayout.NORTH);
 		add(_tabResultTabs, BorderLayout.CENTER);
 
        //  SCROLL _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
@@ -578,6 +573,30 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       reInitOverview();
 
 	}
+
+   private JPanel createRightPanel()
+   {
+      JPanel ret = new JPanel(new BorderLayout(5,0));
+
+      ret.add(createButtonsPanel(), BorderLayout.EAST);
+
+      ret.add(_selectRowColLabelController.getLabel(), BorderLayout.CENTER);
+
+      return ret;
+   }
+
+   private JPanel createButtonsPanel()
+   {
+      JPanel ret = new JPanel();
+      ret.setLayout(new GridLayout(1, 3, 0, 0));
+
+      ret.add(_readMoreResultsHandler.getLoadingLabel());
+      ret.add(new TabButton(getRerunCurrentSQLResultTabAction()));
+      ret.add(new TabButton(new FindInResultAction(_session.getApplication())));
+      ret.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
+      ret.add(new TabButton(new CloseAction()));
+      return ret;
+   }
 
    private RerunCurrentSQLResultTabAction getRerunCurrentSQLResultTabAction()
    {

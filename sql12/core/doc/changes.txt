@@ -7,6 +7,10 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Enhancements:
+#469 Show selected row count (like result row count)
+
+
 Bug fixes:
 
 #1137 ArrayIndexOutOfBoundsException when querying PostGIS geometry columns

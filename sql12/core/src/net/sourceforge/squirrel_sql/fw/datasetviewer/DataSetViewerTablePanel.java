@@ -33,6 +33,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -67,6 +69,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
             }
          };
    private ContinueReadHandler _continueReadHandler;
+   private RowColSelectedCountListener _rowColSelectedCountListener;
 
    public DataSetViewerTablePanel()
 	{
@@ -99,10 +102,32 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
       _continueReadHandler = new ContinueReadHandler(_table);
       _selectionHandler = new DataSetViewerTableListSelectionHandler(_table);
       _updateableModel = updateableModel;
+
+      _table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+      {
+         @Override
+         public void valueChanged(ListSelectionEvent e)
+         {
+            onSelectionChanged();
+         }
+      });
    }
 
-	
-	public IDataSetUpdateableModel getUpdateableModel()
+   private void onSelectionChanged()
+   {
+      if(null != _rowColSelectedCountListener)
+      {
+         _rowColSelectedCountListener.rowColSelectedCountChanged(_table.getSelectedRowCount(), _table.getSelectedColumnCount());
+      }
+   }
+
+   @Override
+   public void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
+   {
+      _rowColSelectedCountListener = rowColSelectedCountListener;
+   }
+
+   public IDataSetUpdateableModel getUpdateableModel()
 	{
 		return _updateableModel;
 	}

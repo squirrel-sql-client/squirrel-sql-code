@@ -106,4 +106,6 @@ public interface IDataSetViewer
    void setContinueReadChannel(ContinueReadChannel continueReadChannel);
 
    void disableContinueRead();
+
+   void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener);
 }

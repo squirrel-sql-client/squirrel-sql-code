@@ -230,4 +230,9 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
    {
       //To change body of implemented methods use File | Settings | File Templates.
    }
+
+   @Override
+   public void setRowColSelectedCountListener(RowColSelectedCountListener rowColSelectedCountListener)
+   {
+   }
 }
