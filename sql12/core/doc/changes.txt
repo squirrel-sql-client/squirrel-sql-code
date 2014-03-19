@@ -10,6 +10,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 Bug fixes:
 
 #1137 ArrayIndexOutOfBoundsException when querying PostGIS geometry columns
+Thanks to Jaroslaw Jarmolowicz for the patch
+
 
 #1129 Export table to XLSX does not work / #1129 Export table to XLSX does not work --> Export broke on null values
 #1135 Export of date/time values to XLSX exports number instead of date
