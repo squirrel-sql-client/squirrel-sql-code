@@ -63,13 +63,13 @@ public class ResultSetReader
 	 * The number of columns to read. This may or may not be the same as the
 	 * number of columns in the <TT>ResultSet</TT>. @see _columnIndices.
 	 */
-	private int _columnCount;
+	private final int _columnCount;
 
 	/** <TT>true</TT> if an error occured reading a column in th previous row. */
 	private boolean _errorOccured = false;
 
 	/** Metadata for the <TT>ResultSet</TT>. */
-	private ResultSetMetaData _rsmd;
+	private final ResultSetMetaData _rsmd;
 
     /** whether or not the user requested to cancel the query */
    private volatile boolean _stopExecution = false; 
@@ -172,15 +172,16 @@ public class ResultSetReader
 	 * element of the array, but no exception will be thrown. To see if an
 	 * error occured retrieving column data you can call
 	 * <TT>getColumnErrorInPreviousRow</TT> after the call to <TT>readRow()</TT>.
+	 * @param limitRead TODO
 	 *
 	 * @throws	SQLException	Error occured on <TT>ResultSet.next()</TT>.
 	 */
-	public Object[] readRow(ColumnDisplayDefinition colDefs[], BlockMode blockMode) throws SQLException
+	public Object[] readRow(ColumnDisplayDefinition colDefs[], BlockMode blockMode, boolean limitRead) throws SQLException
 	{
 		_errorOccured = false;
 		if (_rs.next(blockMode))
 		{
-			return doContentTabRead(colDefs);
+			return doContentTabRead(colDefs, limitRead);
 		}
 		return null;
 	}
@@ -548,8 +549,9 @@ public class ResultSetReader
 	/**
     * Method used to read data for the ContentsTab, where the data is used for
     * both reading and editing.
+	 * @param limitDataRead TODO
     */
-	private Object[] doContentTabRead(ColumnDisplayDefinition colDefs[])
+	private Object[] doContentTabRead(ColumnDisplayDefinition colDefs[], boolean limitDataRead)
 	{
 		Object[] row = new Object[_columnCount];
 		for (int i = 0; i < _columnCount && !_stopExecution; ++i)
@@ -609,7 +611,7 @@ public class ResultSetReader
 
 					default:
 						row[i] = CellComponentFactory.readResultSet(
-								colDefs[i], _rs.getResultSet(), idx, true);
+								colDefs[i], _rs.getResultSet(), idx, limitDataRead);
 
 						break;
 

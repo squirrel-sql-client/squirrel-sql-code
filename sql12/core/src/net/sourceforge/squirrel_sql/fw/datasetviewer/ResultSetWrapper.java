@@ -1,9 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 
 public class ResultSetWrapper
 {
@@ -12,6 +12,7 @@ public class ResultSetWrapper
    private int _countRowsRead = 0;
    private boolean _resNextHasReturnedFalse;
    private boolean _followUpBlockReached;
+   private boolean limitRead = false;
 
    public ResultSetWrapper(ResultSet resultSet, StatementCallback parent)
    {
@@ -144,4 +145,14 @@ public class ResultSetWrapper
 
       return true;
    }
+
+	public boolean isLimitRead() {
+		return limitRead;
+	}
+	
+	public void setLimitRead(boolean limitRead) {
+		this.limitRead = limitRead;
+	}
+   
+   
 }

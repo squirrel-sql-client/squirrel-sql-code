@@ -9,25 +9,13 @@
  */
 package net.sourceforge.squirrel_sql.plugins.postgres.types;
 
-import java.awt.event.KeyListener;
+import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-
-import org.postgis.PGgeometry;
-import org.postgis.Point;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.BaseDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.EmptyWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IWhereClausePart;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.IsNullWhereClausePart;
@@ -39,6 +27,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import org.postgis.PGgeometry;
+import org.postgis.Point;
+
 /**
  * A custom DatatType implementation of IDataTypeComponent that can handle
  * Postgis geometry
@@ -48,13 +39,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class PostgreSqlGeometryTypeDataTypeComponent extends
 		BaseDataTypeComponent {
 
-	private static final int NUM_POINTS_INDEX = 2;
+	private static final int NUM_POINTS_INDEX = 3;
 
-	private static final int CENTER_INDEX = 1;
+	private static final int CENTER_INDEX = 2;
 
-	private static final int TYPE_INDEX = 0;
-
-	private static final int MAX_POINTS_IN_SHORT_VIEW = 3;
+	private static final int TYPE_INDEX = 1;
+	
+	private static final int BRIEF_INDICATOR_INDEX = 0;
 
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController
@@ -66,7 +57,9 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	private static final StringManager s_stringMgr = StringManagerFactory
 			.getStringManager(PostgreSqlGeometryTypeDataTypeComponent.class);
 
-	private PostgreSqlGeometryTypeDataTypeComponentFactory factory;
+	private static final String BRIEF_INDICATOR = "bRiEf";
+
+	private final PostgreSqlGeometryTypeDataTypeComponentFactory factory;
 
 	/**
 	 * I18n messages
@@ -167,19 +160,25 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	public Object readResultSet(final ResultSet rs, final int idx,
 			final boolean limitDataRead) throws SQLException {
 
+		Object object = rs.getObject(idx);
+		if (object ==null) {
+			return NULL_VALUE_PATTERN;
+		}
 		if (limitDataRead) {
-			return createBriefInfo(rs.getObject(idx).toString().split(";"));
+			
+			String[] split = object.toString().split(";");
+			if (split[BRIEF_INDICATOR_INDEX].equals(BRIEF_INDICATOR)) {
+				return createBriefInfo(split);
+			}
 		}
 
 		try {
-			final PGgeometry temp = (PGgeometry) rs.getObject(idx);
-			if (temp == null) {
-				return NULL_VALUE_PATTERN;
-			}
-			return temp.getGeometry();
+			//there are problems with postgis, postgres versions so casting to PGgeometry can cause class cast exceptions
+			Method method = PGgeometry.class.getMethod("getGeometry");
+			return method.invoke(object);
 		} catch (final Exception e) {
 			s_log.error(
-					"Unexpected exception while attempting to read PostgreSQL XML column",
+					"Unexpected exception while attempting to read PostgreSQL Geometry column",
 					e);
 		}
 		return i18n.CELL_ERROR_MSG;
@@ -262,7 +261,7 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	@Override
 	public String getColumnForContentSelect(String columnPrefix) {
 		String fullName = columnPrefix + _colDef.getColumnName();
-		return "GeometryType(" + fullName + ")||';'||st_asText(st_centroid("
+		return "'"+BRIEF_INDICATOR+";'||GeometryType(" + fullName + ")||';'||st_asText(st_centroid("
 				+ fullName + "))||';'||st_NPoints(" + fullName + ")";
 	}
 }

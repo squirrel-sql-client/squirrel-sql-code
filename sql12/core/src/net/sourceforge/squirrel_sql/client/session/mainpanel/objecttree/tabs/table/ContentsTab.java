@@ -24,22 +24,24 @@ import java.sql.Statement;
 
 import javax.swing.JTable;
 
-import org.hibernate.sql.JoinFragment;
-
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.StatementWrapper;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -63,7 +65,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ContentsTab extends BaseTableTab
 	implements IDataSetUpdateableTableModel
 {
-   private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
+   private final DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
@@ -78,7 +80,7 @@ public class ContentsTab extends BaseTableTab
 	 */
 	String previousTableName = "";
 
-   private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
+   private final SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
 
 
 	/** Logger for this class. */
@@ -103,6 +105,7 @@ public class ContentsTab extends BaseTableTab
 	 *
 	 * @return	The title for the tab.
 	 */
+	@Override
 	public String getTitle()
 	{
 		return getContentsTabTitle();
@@ -125,6 +128,7 @@ public class ContentsTab extends BaseTableTab
 	 *
 	 * @return	The hint for the tab.
 	 */
+	@Override
 	public String getHint()
 	{
 		// i18n[ContentsTab.hint=View the contents of the selected table]
@@ -141,6 +145,7 @@ public class ContentsTab extends BaseTableTab
    /**
     * Create the <TT>IDataSet</TT> to be displayed in this tab.
     */
+   @Override
    protected IDataSet createDataSet() throws DataSetException
    {
       final ISession session = getSession();
@@ -350,6 +355,7 @@ public class ContentsTab extends BaseTableTab
             // we collect the collumn nullability information from getColumns() and pass that
             // info to the ResultSet to override what it got from the ResultSetMetaData.
             final ResultSetDataSet rsds = new ResultSetDataSet(md.getColumnInfo(getTableInfo()));
+            rsds.setLimitDataRead(true);
 
             // to allow the fw to save and reload user options related to
             // specific columns, we construct a unique name for the table
@@ -446,7 +452,8 @@ public class ContentsTab extends BaseTableTab
          _treePanel.saveSelectedPaths();
          
          GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
+         @Override
+			public void run() {
                _waitDialog = new PleaseWaitDialog(stmt, _app);
                _waitDialog.showDialog(_app);                                          
                // Restore the paths
@@ -464,7 +471,8 @@ public class ContentsTab extends BaseTableTab
    private void disposeWaitDialog() {
    	if (!_prefs.getShowPleaseWaitDialog()) return;
           GUIUtils.processOnSwingEventThread(new Runnable() {
-              public void run() {
+              @Override
+			public void run() {
             	  if (_waitDialog != null) {
                   _waitDialog.dispose();
               }
@@ -472,12 +480,14 @@ public class ContentsTab extends BaseTableTab
           });
    }
    
+   @Override
    public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
    {
       super.setDatabaseObjectInfo(value);
       _dataSetUpdateableTableModel.setTableInfo(getTableInfo());
    }
 
+   @Override
    public void setSession(ISession session) throws IllegalArgumentException
    {
       super.setSession(session);
@@ -501,67 +511,80 @@ public class ContentsTab extends BaseTableTab
    ////////////////////////////////////////////////////////
    // Implementataion of IDataSetUpdateableTableModel:
    // Delegation to _dataSetUpdateableTableModel
+   @Override
    public String getWarningOnCurrentData(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue)
    {
       return _dataSetUpdateableTableModel.getWarningOnCurrentData(values, colDefs, col, oldValue);
    }
 
+   @Override
    public String getWarningOnProjectedUpdate(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object newValue)
    {
       return _dataSetUpdateableTableModel.getWarningOnProjectedUpdate(values, colDefs, col, newValue);
    }
 
+   @Override
    public Object reReadDatum(Object[] values, ColumnDisplayDefinition[] colDefs, int col, StringBuffer message)
    {
       return _dataSetUpdateableTableModel.reReadDatum(values, colDefs, col, message);
    }
 
+   @Override
    public String updateTableComponent(Object[] values, ColumnDisplayDefinition[] colDefs, int col, Object oldValue, Object newValue)
    {
       return _dataSetUpdateableTableModel.updateTableComponent(values, colDefs, col, oldValue, newValue);
    }
 
+   @Override
    public int getRowidCol()
    {
       return _dataSetUpdateableTableModel.getRowidCol();
    }
 
+   @Override
    public String deleteRows(Object[][] rowData, ColumnDisplayDefinition[] colDefs)
    {
       return _dataSetUpdateableTableModel.deleteRows(rowData, colDefs);
    }
 
+   @Override
    public String[] getDefaultValues(ColumnDisplayDefinition[] colDefs)
    {
       return _dataSetUpdateableTableModel.getDefaultValues(colDefs);
    }
 
+   @Override
    public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs)
    {
       return _dataSetUpdateableTableModel.insertRow(values, colDefs);
    }
 
+   @Override
    public void addListener(DataSetUpdateableTableModelListener l)
    {
       _dataSetUpdateableTableModel.addListener(l);
    }
 
+   @Override
    public void removeListener(DataSetUpdateableTableModelListener l)
    {
       _dataSetUpdateableTableModel.removeListener(l);
    }
 
+   @Override
    public void forceEditMode(boolean mode)
    {
       _dataSetUpdateableTableModel.forceEditMode(mode);
    }
 
+   @Override
    public boolean editModeIsForced()
    {
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
 
+   @Override
    protected String getDestinationClassName()
    {
       return _dataSetUpdateableTableModel.getDestinationClassName();

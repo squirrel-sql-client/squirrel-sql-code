@@ -65,7 +65,9 @@ public class ResultSetDataSet implements IDataSet {
     */   
    private DialectType _dialectType = null;
 
-   private TableColumnInfo[] tableColumnInfos;
+   private final TableColumnInfo[] tableColumnInfos;
+
+   private boolean _limitDataRead = false;
 
    /**
     * Default constructor.
@@ -93,8 +95,17 @@ public class ResultSetDataSet implements IDataSet {
    {
       return _setResultSet(new ResultSetWrapper(rs), null, null, false, false, dialectType);
    }
-
+   
+   
    /**
+    * Content Tab may wish to limit data read for big columns. 
+    * @param limitDataRead
+    */
+   public void setLimitDataRead(boolean limitDataRead) {
+	   this._limitDataRead = limitDataRead;
+   }
+
+/**
     * Form used by ContentsTab, and for SQL results
     * 
     * @param rs
@@ -223,7 +234,7 @@ public class ResultSetDataSet implements IDataSet {
 
       if (useColumnDefs)
       {
-         row = _rdr.readRow(colDefs, blockMode);
+         row = _rdr.readRow(colDefs, blockMode, _limitDataRead);
       }
       else
       {
@@ -258,15 +269,18 @@ public class ResultSetDataSet implements IDataSet {
       return row;
    }
 
-   public final int getColumnCount() {
+   @Override
+public final int getColumnCount() {
       return _columnCount;
    }
 
-   public DataSetDefinition getDataSetDefinition() {
+   @Override
+public DataSetDefinition getDataSetDefinition() {
       return _dataSetDefinition;
    }
 
-   public synchronized boolean next(IMessageHandler msgHandler)
+   @Override
+public synchronized boolean next(IMessageHandler msgHandler)
          throws DataSetException {
       // TODO: This should be handled with an Iterator
       if (++_iCurrent < _alData.size()) {
@@ -281,7 +295,8 @@ public class ResultSetDataSet implements IDataSet {
     * 
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet#get(int)
     */
-   public Object get(int columnIndex) {
+   @Override
+public Object get(int columnIndex) {
       if (_currentRow != null) {
          return _currentRow[columnIndex];
       } else {
@@ -510,7 +525,8 @@ public class ResultSetDataSet implements IDataSet {
       }
    }
    
-   public String toString() {
+   @Override
+public String toString() {
    	StringBuilder result = new StringBuilder();
    	if (_dataSetDefinition != null) {
    		for (ColumnDisplayDefinition colDef : _dataSetDefinition.getColumnDefinitions()) {
