@@ -44,7 +44,7 @@ public class SQLExecutor
             statementChannel.setStatementExecutionState(StatementExecutionState.PROCESSING_RESULTS);
 
             ret.setProcessingResultsTimeBegin(System.currentTimeMillis());
-            ret.addRes(processResults(stat, firstResultIsResultSet, dbConnectorResult, statementChannel));
+            ret.addRes(processResults(stat, firstResultIsResultSet, dbConnectorResult, statementChannel, maxResults));
             ret.setProcessinngResultsTimeEnd(System.currentTimeMillis());
             statementChannel.setStatementExecutionState(StatementExecutionState.FINSHED);
 
@@ -69,7 +69,7 @@ public class SQLExecutor
       }
    }
 
-   private static ArrayList<SQLResult> processResults(Statement stat, boolean firstResultIsResultSet, DbConnectorResult dbConnectorResult, StatementChannel statementChannel) throws SQLException
+   private static ArrayList<SQLResult> processResults(Statement stat, boolean firstResultIsResultSet, DbConnectorResult dbConnectorResult, StatementChannel statementChannel, Integer maxResults) throws SQLException
    {
       ResultSet res = null;
 
@@ -111,10 +111,11 @@ public class SQLExecutor
             while(true)
             {
 
-               TableLoader tableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
+               TableLoader resultTableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
+               TableLoader resultMetaDataTableLoader = ResultSetMetaDataLoader.loadMetaData(res);
 
 
-               results.add(new SQLResult(tableLoader));
+               results.add(new SQLResult(resultTableLoader, resultMetaDataTableLoader, maxResults));
 
                if(statementChannel.isCanceled())
                {
@@ -180,4 +181,5 @@ public class SQLExecutor
 
       return results;
    }
+
 }

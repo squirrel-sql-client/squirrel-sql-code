@@ -18,6 +18,7 @@ public class TableLoaderFactory
    {
       return loadDataFromResultSet(res, new StatementChannel(), excludeColNames);
    }
+
    public static TableLoader loadDataFromResultSet(ResultSet res, StatementChannel statementChannel, String ... excludeColNames)
    {
       try

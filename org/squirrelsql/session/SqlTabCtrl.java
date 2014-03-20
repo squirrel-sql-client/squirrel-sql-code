@@ -13,6 +13,8 @@ import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 import org.squirrelsql.workaround.SplitDividerWA;
 
+import java.util.ArrayList;
+
 public class SqlTabCtrl
 {
    private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
@@ -96,11 +98,9 @@ public class SqlTabCtrl
 
       SQLCancelTabCtrl sqlCancelTabCtrl = new SQLCancelTabCtrl(sql, statementChannel);
 
-      Tab cancelTab = new Tab(_i18n.t("session.tab.sql.executing.tab.title"));
-      cancelTab.setContent(sqlCancelTabCtrl.getNode());
+      Tab cancelTab = sqlCancelTabCtrl.getTab();
 
-      _sqlOutputTabPane.getTabs().add(cancelTab);
-      _sqlOutputTabPane.getSelectionModel().select(cancelTab);
+      addAndSelectTab(cancelTab);
 
 
       ProgressTask<StatementExecution> pt = new ProgressTask<StatementExecution>()
@@ -108,7 +108,7 @@ public class SqlTabCtrl
          @Override
          public StatementExecution  call()
          {
-            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, 100000, statementChannel);
+            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, 100, statementChannel);
          }
 
          @Override
@@ -123,11 +123,15 @@ public class SqlTabCtrl
 
    private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
+      removeErrorTab();
+
+      _sqlOutputTabPane.getTabs().remove(sqlCancelTabCtrl.getTab());
+
       if (null != statExec.getFirstSqlException())
       {
          String errMsg = _mh.errorSQLNoStack(statExec.getFirstSqlException());
 
-         Tab errorTab = new Tab();
+         ErrorTab errorTab = new ErrorTab();
 
          Label errorTabLabel = new Label("Error");
          errorTabLabel.setTextFill(Color.RED);
@@ -139,27 +143,29 @@ public class SqlTabCtrl
          errorLabel.setTextFill(Color.RED);
          errorTab.setContent(errorLabel);
 
-         _sqlOutputTabPane.getTabs().add(errorTab);
-
-         _sqlOutputTabPane.getSelectionModel().select(errorTab);
+         addAndSelectTab(errorTab);
 
       }
       else
       {
-         String s = sql.replaceAll("\n", " ");
-         Tab outputTab = new Tab(s);
-
-         TableView tv = new TableView();
-
-         for (SQLResult sqlResult : statExec.getQueryResults())
+         for (int i = 0; i < statExec.getQueryResults().size(); i++)
          {
-            sqlResult.getTableLoader().load(tv);
+            SQLResult sqlResult = statExec.getQueryResults().get(i);
 
-            outputTab.setContent(tv);
+            ResultTabController resultTabController;
 
-            _sqlOutputTabPane.getTabs().add(outputTab);
+            if (0 == i)
+            {
+               sqlCancelTabCtrl.convertToInfoTab(statExec.getCompleteTime());
+               resultTabController = new ResultTabController(sqlResult, sql, sqlCancelTabCtrl);
+            }
+            else
+            {
+               resultTabController = new ResultTabController(sqlResult, sql, null);
+            }
 
-            _sqlOutputTabPane.getSelectionModel().select(outputTab);
+            Tab outputTab = resultTabController.getTab();
+            addAndSelectTab(outputTab);
          }
 
          for (SQLResult sqlResult : statExec.getUpdateCounts())
@@ -167,11 +173,31 @@ public class SqlTabCtrl
             _mh.info(_i18n.t("session.tab.sql.update.count", sqlResult.getUpdateCount()));
          }
 
-         _mh.info(_i18n.t("session.tab.sql.executing.times", tv.getItems().size(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
+         _mh.info(_i18n.t("session.tab.sql.executing.times", statExec.getBestQueryCount(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
 
 
 
       }
+   }
+
+   private void removeErrorTab()
+   {
+      ArrayList<ErrorTab> toRemove = new ArrayList<>();
+      for (Tab tab : _sqlOutputTabPane.getTabs())
+      {
+         if(tab instanceof ErrorTab)
+         {
+            toRemove.add((ErrorTab) tab);
+         }
+      }
+
+      _sqlOutputTabPane.getTabs().removeAll(toRemove.toArray(new Tab[toRemove.size()]));
+   }
+
+   private void addAndSelectTab(Tab outputTab)
+   {
+      _sqlOutputTabPane.getTabs().add(outputTab);
+      _sqlOutputTabPane.getSelectionModel().select(outputTab);
    }
 
 

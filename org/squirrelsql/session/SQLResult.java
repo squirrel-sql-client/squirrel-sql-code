@@ -7,7 +7,9 @@ import java.sql.SQLException;
 public class SQLResult
 {
    private SQLException _sqlExc;
-   private TableLoader _tableLoader;
+   private TableLoader _resultTableLoader;
+   private TableLoader _resultMetaDateTableLoader;
+   private Integer _maxResults;
    private Integer _updateCount;
 
    public SQLResult(SQLException sqlExc)
@@ -20,9 +22,11 @@ public class SQLResult
       _updateCount = updateCount;
    }
 
-   public SQLResult(TableLoader tableLoader)
+   public SQLResult(TableLoader resultTableLoader, TableLoader resultMetaDateTableLoader, Integer maxResults)
    {
-      _tableLoader = tableLoader;
+      _resultTableLoader = resultTableLoader;
+      _resultMetaDateTableLoader = resultMetaDateTableLoader;
+      _maxResults = maxResults;
    }
 
    public SQLException getSqlException()
@@ -30,13 +34,28 @@ public class SQLResult
       return _sqlExc;
    }
 
-   public TableLoader getTableLoader()
+   public TableLoader getResultTableLoader()
    {
-      return _tableLoader;
+      return _resultTableLoader;
+   }
+
+   public TableLoader getResultMetaDateTableLoader()
+   {
+      return _resultMetaDateTableLoader;
    }
 
    public Integer getUpdateCount()
    {
       return _updateCount;
+   }
+
+   public Integer getMaxResults()
+   {
+      return _maxResults;
+   }
+
+   public boolean isMaxResultsReached()
+   {
+      return null != _maxResults && _maxResults <= _resultTableLoader.size();
    }
 }

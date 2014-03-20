@@ -35,8 +35,6 @@ public class CompletionCtrl
    {
       String tokenAtCarret = _sqlTextAreaServices.getTokenAtCarret();
 
-      System.out.println("### Completing for token >" + tokenAtCarret + "<");
-
 
       TokenParser tokenParser = new TokenParser(tokenAtCarret);
 

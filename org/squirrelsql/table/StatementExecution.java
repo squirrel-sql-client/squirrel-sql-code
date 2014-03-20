@@ -75,11 +75,23 @@ public class StatementExecution
 
    public ArrayList<SQLResult> getQueryResults()
    {
-      return CollectionUtil.filter(_sqlResults, (rs) -> null != rs.getTableLoader());
+      return CollectionUtil.filter(_sqlResults, (rs) -> null != rs.getResultTableLoader());
    }
 
    public ArrayList<SQLResult> getUpdateCounts()
    {
       return CollectionUtil.filter(_sqlResults, (rs) -> null != rs.getUpdateCount());
+   }
+
+   public int getBestQueryCount()
+   {
+      if(0 == getQueryResults().size())
+      {
+         return 0;
+      }
+      else
+      {
+         return getQueryResults().get(0).getResultTableLoader().size();
+      }
    }
 }

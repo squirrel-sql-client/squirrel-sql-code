@@ -18,9 +18,12 @@ public class TableLoader
 
    private ArrayList<ArrayList<SimpleObjectProperty>> _rows = new ArrayList<>();
 
-   public void addColumn(String header)
+   public void addColumn(String... headers)
    {
-      _columns.add(header);
+      for (String header : headers)
+      {
+         _columns.add(header);
+      }
    }
 
    public void addRow(List row)
