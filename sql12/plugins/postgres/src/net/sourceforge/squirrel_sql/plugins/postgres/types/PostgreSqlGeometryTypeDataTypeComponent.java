@@ -28,7 +28,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import org.postgis.PGgeometry;
-import org.postgis.Point;
 
 /**
  * A custom DatatType implementation of IDataTypeComponent that can handle
@@ -36,26 +35,23 @@ import org.postgis.Point;
  * 
  * @author jarmolow
  */
-public class PostgreSqlGeometryTypeDataTypeComponent extends
-		BaseDataTypeComponent {
+public class PostgreSqlGeometryTypeDataTypeComponent extends BaseDataTypeComponent {
 
 	private static final int NUM_POINTS_INDEX = 3;
 
 	private static final int CENTER_INDEX = 2;
 
 	private static final int TYPE_INDEX = 1;
-	
+
 	private static final int BRIEF_INDICATOR_INDEX = 0;
 
 	/** Logger for this class. */
-	private static ILogger s_log = LoggerController
-			.createLogger(PostgreSqlGeometryTypeDataTypeComponent.class);
+	private static ILogger s_log = LoggerController.createLogger(PostgreSqlGeometryTypeDataTypeComponent.class);
 
 	/**
 	 * Internationalized strings for this class.
 	 */
-	private static final StringManager s_stringMgr = StringManagerFactory
-			.getStringManager(PostgreSqlGeometryTypeDataTypeComponent.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(PostgreSqlGeometryTypeDataTypeComponent.class);
 
 	private static final String BRIEF_INDICATOR = "bRiEf";
 
@@ -68,11 +64,9 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 
 		// i18n[PostgreSqlXmlTypeDataTypeComponent.cellErrorMsg=<Error: see log
 		// file>]
-		String CELL_ERROR_MSG = s_stringMgr
-				.getString("PostgreSqlXmlTypeDataTypeComponent.cellErrorMsg");
+		String CELL_ERROR_MSG = s_stringMgr.getString("PostgreSqlXmlTypeDataTypeComponent.cellErrorMsg");
 		String BRIEF_GEO_FORMAT = "PostgreSqlGeometryTypeDataTypeComponent.briefGeoFormat";
 	}
-
 
 	public PostgreSqlGeometryTypeDataTypeComponent(PostgreSqlGeometryTypeDataTypeComponentFactory factory) {
 		this.factory = factory;
@@ -105,13 +99,11 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 		if (dbDefaultValue != null) {
 			return dbDefaultValue;
 		}
-		Point point = new Point(0, 0);
 		try {
-			point.setSrid(factory.fetchSrid(_colDef));
+			return "SRID=" + factory.fetchSrid(_colDef) + ";POINT(0 0)";
 		} catch (SQLException sqlE) {
-			new RuntimeException(sqlE);
+			throw new RuntimeException(sqlE);
 		}
-		return point;
 	}
 
 	/**
@@ -119,8 +111,7 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
 	 */
 	@Override
-	public IWhereClausePart getWhereClauseValue(final Object value,
-			final ISQLDatabaseMetaData md) {
+	public IWhereClausePart getWhereClauseValue(final Object value, final ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null)
 			return new IsNullWhereClausePart(_colDef);
 		else {
@@ -157,15 +148,14 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	 *      int, boolean)
 	 */
 	@Override
-	public Object readResultSet(final ResultSet rs, final int idx,
-			final boolean limitDataRead) throws SQLException {
+	public Object readResultSet(final ResultSet rs, final int idx, final boolean limitDataRead) throws SQLException {
 
 		Object object = rs.getObject(idx);
-		if (object ==null) {
+		if (object == null) {
 			return NULL_VALUE_PATTERN;
 		}
 		if (limitDataRead) {
-			
+
 			String[] split = object.toString().split(";");
 			if (split[BRIEF_INDICATOR_INDEX].equals(BRIEF_INDICATOR)) {
 				return createBriefInfo(split);
@@ -173,22 +163,23 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 		}
 
 		try {
-			//there are problems with postgis, postgres versions so casting to PGgeometry can cause class cast exceptions
-			Method method = PGgeometry.class.getMethod("getGeometry");
-			return method.invoke(object);
+			// there are problems with postgis, postgres versions so casting to
+			// PGgeometry can cause class cast exceptions
+			if (object.getClass().getName().equals(PGgeometry.class.getName())) {
+				Method method = object.getClass().getMethod("getGeometry");
+				return method.invoke(object);
+			} else {
+				return object.toString();
+			}
 		} catch (final Exception e) {
-			s_log.error(
-					"Unexpected exception while attempting to read PostgreSQL Geometry column",
-					e);
+			s_log.error("Unexpected exception while attempting to read PostgreSQL Geometry column", e);
 		}
 		return i18n.CELL_ERROR_MSG;
 	}
 
 	private Object createBriefInfo(String[] info) {
-		return s_stringMgr
-				.getString(i18n.BRIEF_GEO_FORMAT, info[TYPE_INDEX],
-						info[CENTER_INDEX].replace("POINT", ""),
-						info[NUM_POINTS_INDEX]);
+		return s_stringMgr.getString(i18n.BRIEF_GEO_FORMAT, info[TYPE_INDEX], info[CENTER_INDEX].replace("POINT", ""),
+				info[NUM_POINTS_INDEX]);
 	}
 
 	/**
@@ -196,17 +187,14 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	 *      java.lang.Object, int)
 	 */
 	@Override
-	public void setPreparedStatementValue(final PreparedStatement pstmt,
-			final Object value, final int position) throws SQLException {
+	public void setPreparedStatementValue(final PreparedStatement pstmt, final Object value, final int position) throws SQLException {
 		if (value == null) {
 			pstmt.setNull(position, java.sql.Types.OTHER);
 		} else {
 			try {
 				pstmt.setObject(position, value, Types.OTHER);
 			} catch (final Exception e) {
-				s_log.error(
-						"setPreparedStatementValue: Unexpected exception - "
-								+ e.getMessage(), e);
+				s_log.error("setPreparedStatementValue: Unexpected exception - " + e.getMessage(), e);
 			}
 
 		}
@@ -237,10 +225,8 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	@Override
 	public String getCondition(String column, String operator, String value) {
 		if (operator.startsWith("ST_")) {
-			return new StringBuilder().append(operator).append('(')
-					.append(column).append(',')
-					.append(StringUtilities.singleQuote(value)).append(')')
-					.toString();
+			return new StringBuilder().append(operator).append('(').append(column).append(',').append(StringUtilities.singleQuote(value))
+					.append(')').toString();
 		} else {
 			return super.getCondition(column, operator, value);
 		}
@@ -248,11 +234,9 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 
 	@Override
 	public String[] getSupportedOperators() {
-		return new String[] { "=", "<>", SquirrelConstants.IN,
-				SquirrelConstants.IS_NULL, SquirrelConstants.IS_NOT_NULL,
-				"ST_Equals", "ST_Intersects", "ST_Touches", "ST_Crosses",
-				"ST_Within", "ST_Overlaps", "ST_Contains", "ST_Covers",
-				"ST_CoveredBy", "ST_Intersects" };
+		return new String[] { "=", "<>", SquirrelConstants.IN, SquirrelConstants.IS_NULL, SquirrelConstants.IS_NOT_NULL, "ST_Equals",
+				"ST_Intersects", "ST_Touches", "ST_Crosses", "ST_Within", "ST_Overlaps", "ST_Contains", "ST_Covers", "ST_CoveredBy",
+				"ST_Intersects" };
 	}
 
 	/**
@@ -261,7 +245,7 @@ public class PostgreSqlGeometryTypeDataTypeComponent extends
 	@Override
 	public String getColumnForContentSelect(String columnPrefix) {
 		String fullName = columnPrefix + _colDef.getColumnName();
-		return "'"+BRIEF_INDICATOR+";'||GeometryType(" + fullName + ")||';'||st_asText(st_centroid("
-				+ fullName + "))||';'||st_NPoints(" + fullName + ")";
+		return "'" + BRIEF_INDICATOR + ";'||GeometryType(" + fullName + ")||';'||st_asText(st_centroid(" + fullName
+				+ "))||';'||st_NPoints(" + fullName + ")";
 	}
 }
