@@ -1,23 +1,16 @@
 package org.squirrelsql.session;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
+import org.squirrelsql.Props;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.services.Pref;
-import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.objecttree.*;
-import org.squirrelsql.table.TableLoaderFactory;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
@@ -30,41 +23,65 @@ public class SessionCtrl
 
 
    private final Session _session;
+   private final TabPane _objectTreeAndSqlTabPane;
 
 
    private I18n _i18n = new I18n(getClass());
 
-   private TabPane _sessionTabPane;
    private Pref _pref = new Pref(getClass());
    private SplitPane _objectTabSplitPane = new SplitPane();
-   private final SqlTabCtrl _sqlTabCtrl;
+   private SqlTabCtrl _sqlTabCtrl;
+   private final BorderPane _sessionPane;
 
    public SessionCtrl(DbConnectorResult dbConnectorResult)
    {
       _session = new Session(dbConnectorResult);
 
+      _sessionPane = new BorderPane();
+
+      _sessionPane.setTop(createTopPane());
+
+      _objectTreeAndSqlTabPane = createObjectTreeAndSqlTabPane();
+
+      _sessionPane.setCenter(_objectTreeAndSqlTabPane);
+
       AppState.get().addApplicationCloseListener(this::onClose);
+   }
 
-      _sessionTabPane = new TabPane();
+   private ToolBar createTopPane()
+   {
+      Props props = new Props(this.getClass());
 
+      ToolBar toolBar = new ToolBar();
 
-      _sessionTabPane.getTabs().add(createObjectsTab());
+      Button btnRun = new Button();
+      btnRun.setGraphic(props.getImageView("run.png"));
+
+      toolBar.getItems().add(btnRun);
+      return toolBar;
+   }
+
+   private TabPane createObjectTreeAndSqlTabPane()
+   {
+      TabPane ret = new TabPane();
+
+      ret.getTabs().add(createObjectsTab());
 
       _sqlTabCtrl = new SqlTabCtrl(_session);
-      _sessionTabPane.getTabs().add(_sqlTabCtrl.getSqlTab());
+      ret.getTabs().add(_sqlTabCtrl.getSqlTab());
 
       if(_pref.getBoolean(PREF_PRE_SELECT_SQL_TAB, false))
       {
-         _sessionTabPane.getSelectionModel().select(_sqlTabCtrl.getSqlTab());
+         ret.getSelectionModel().select(_sqlTabCtrl.getSqlTab());
          _sqlTabCtrl.requestFocus();
       }
 
 
-      SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(_sessionTabPane);
+      SessionTabSelectionRepaintWA.forceTabContentRepaintOnSelection(ret);
 
-      _sessionTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
+      ret.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onTabChanged(newValue));
 
-
+      return ret;
    }
 
    private void onTabChanged(Tab newSelectedTab)
@@ -116,7 +133,7 @@ public class SessionCtrl
 
    public Node getTabNode()
    {
-      return _sessionTabPane;
+      return _sessionPane;
    }
 
    public void setSessionTab(Tab sessionTab)
@@ -127,7 +144,7 @@ public class SessionCtrl
    private void onClose()
    {
       _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _objectTabSplitPane.getDividerPositions()[0]);
-      _pref.set(PREF_PRE_SELECT_SQL_TAB, _sessionTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
+      _pref.set(PREF_PRE_SELECT_SQL_TAB, _objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
 
       _sqlTabCtrl.close();
       _session.close();
