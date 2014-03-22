@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public enum StandardActionConfigurations
 {
-   RUN_SQL(new ActionConfiguration(ActionScope.SQL_EDITOR, Const.props.getImageView("run.png"), Const.i18n.t("sql.run"), true));
+   RUN_SQL(new ActionConfiguration(Help.props.getImageView("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, true));
 
 
-   private static class Const
+   private static class Help
    {
       private static final I18n i18n = new I18n(StandardActionConfigurations.class);
       private static final Props props = new Props(StandardActionConfigurations.class);

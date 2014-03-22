@@ -13,7 +13,7 @@ public class ActionConfiguration
    private final boolean _onToolbar;
 
 
-   public ActionConfiguration(ActionScope actionScope, ImageView icon, String text, boolean onToolbar)
+   public ActionConfiguration(ImageView icon, String text, ActionScope actionScope, boolean onToolbar)
    {
       _actionScope = actionScope;
       _icon = icon;
