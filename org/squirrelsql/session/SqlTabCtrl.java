@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.*;
+import org.squirrelsql.session.action.StandardActionConfigurations;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
@@ -53,6 +54,8 @@ public class SqlTabCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
+      session.getActionManager().getActionHandle(StandardActionConfigurations.RUN_SQL).setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
+
       EventHandler<KeyEvent> keyEventHandler =
             new EventHandler<KeyEvent>()
             {
@@ -61,7 +64,7 @@ public class SqlTabCtrl
                   // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
                   if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
                   {
-                     onExecuteSql(_sqlTextAreaServices, _sqlOutputTabPane);
+                     onExecuteSql(_sqlTextAreaServices);
                      keyEvent.consume();
                   }
                   else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
@@ -89,10 +92,16 @@ public class SqlTabCtrl
    }
 
 
-   private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices, TabPane sqlOutputTabPane)
+   private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices)
    {
 
       String sql = sqlTextAreaServices.getCurrentSql();
+
+      if(0 == sql.trim().length())
+      {
+         _mh.error(_i18n.t("session.tab.sql.no.sql"));
+         return;
+      }
 
       StatementChannel statementChannel = new StatementChannel();
 

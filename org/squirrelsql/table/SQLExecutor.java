@@ -18,6 +18,11 @@ public class SQLExecutor
       Statement stat = null;
       try
       {
+         if(Utils.isEmptyString(sql))
+         {
+            throw new IllegalStateException("No SQL to execute");
+         }
+
          stat = dbConnectorResult.getSQLConnection().getConnection().createStatement();
 
          if (null != maxResults)

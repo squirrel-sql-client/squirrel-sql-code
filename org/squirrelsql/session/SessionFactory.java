@@ -10,8 +10,7 @@ public class SessionFactory
    public void createSession(DbConnectorResult dbConnectorResult)
    {
       SessionCtrl sessionCtrl = new SessionCtrl(dbConnectorResult);
-      Tab tab = _sessionTabbedPaneController.addSessionTab(sessionCtrl);
-      sessionCtrl.setSessionTab(tab);
+      _sessionTabbedPaneController.addSessionTab(sessionCtrl);
    }
 
    public SessionTabbedPaneCtrl getSessionTabbedPaneCtrl()

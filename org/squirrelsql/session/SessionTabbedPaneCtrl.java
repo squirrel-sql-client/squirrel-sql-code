@@ -19,16 +19,9 @@ public class SessionTabbedPaneCtrl
    }
 
 
-   public Tab addSessionTab(SessionCtrl sessionCtrl)
+   public void addSessionTab(SessionCtrl sessionCtrl)
    {
-      Tab ret = new Tab();
-
-      ret.setGraphic(sessionCtrl.getTabHeaderNode());
-
-      ret.setContent(sessionCtrl.getTabNode());
-
-      _tabPane.getTabs().add(ret);
-
-      return ret;
+      Tab tab = sessionCtrl.getSessionTab();
+      _tabPane.getTabs().add(tab);
    }
 }
