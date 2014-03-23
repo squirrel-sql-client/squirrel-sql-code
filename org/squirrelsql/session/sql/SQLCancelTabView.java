@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

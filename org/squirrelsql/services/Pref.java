@@ -18,6 +18,11 @@ public class Pref
       AppState.get().getPrefImpl().set(genKey(key), val);
    }
 
+   public void set(String key, int val)
+   {
+      AppState.get().getPrefImpl().set(genKey(key), val);
+   }
+
    public double getDouble(String key, double def)
    {
       return AppState.get().getPrefImpl().getDouble(genKey(key), def);
@@ -46,5 +51,10 @@ public class Pref
    public void set(String key, boolean val)
    {
       AppState.get().getPrefImpl().set(genKey(key), val);
+   }
+
+   public int getInt(String key, int def)
+   {
+      return AppState.get().getPrefImpl().getInt(genKey(key), def);
    }
 }

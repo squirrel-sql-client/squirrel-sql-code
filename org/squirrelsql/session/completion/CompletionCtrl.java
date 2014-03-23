@@ -10,8 +10,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.SQLTextAreaServices;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.sql.SQLTextAreaServices;
 
 public class CompletionCtrl
 {
@@ -59,7 +59,7 @@ public class CompletionCtrl
       listView.getSelectionModel().selectFirst();
 
 
-      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList(keyEvent, pp, listView));
+      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, pp, listView));
 
       pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
 

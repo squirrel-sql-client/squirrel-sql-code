@@ -2,9 +2,9 @@ package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.session.SQLResult;
-import org.squirrelsql.session.StatementChannel;
-import org.squirrelsql.session.StatementExecutionState;
+import org.squirrelsql.session.sql.SQLResult;
+import org.squirrelsql.session.sql.StatementChannel;
+import org.squirrelsql.session.sql.StatementExecutionState;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

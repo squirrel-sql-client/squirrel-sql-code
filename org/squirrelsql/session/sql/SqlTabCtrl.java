@@ -1,13 +1,15 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.*;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.action.StandardActionConfigurations;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 public class SqlTabCtrl
 {
    private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
+   private final SQLEditTopPanelCtrl _sqlEditTopPanelCtrl = new SQLEditTopPanelCtrl();
 
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private I18n _i18n = new I18n(getClass());
@@ -77,7 +80,11 @@ public class SqlTabCtrl
 
       _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
 
-      _sqlTab.setContent(_sqlTabSplitPane);
+      BorderPane bp = new BorderPane();
+      bp.setTop(_sqlEditTopPanelCtrl.getView());
+      bp.setCenter(_sqlTabSplitPane);
+
+      _sqlTab.setContent(bp);
       SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
    }
 
@@ -117,7 +124,7 @@ public class SqlTabCtrl
          @Override
          public StatementExecution  call()
          {
-            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, 100, statementChannel);
+            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, _sqlEditTopPanelCtrl.getRowLimit(), statementChannel);
          }
 
          @Override
@@ -213,6 +220,7 @@ public class SqlTabCtrl
    public void close()
    {
       _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
+      _sqlEditTopPanelCtrl.close();
    }
 }
 

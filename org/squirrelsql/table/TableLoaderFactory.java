@@ -1,15 +1,14 @@
 package org.squirrelsql.table;
 
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.*;
-import org.squirrelsql.session.SQLResult;
-import org.squirrelsql.session.StatementChannel;
-import org.squirrelsql.session.StatementExecutionState;
+import org.squirrelsql.services.CollectionUtil;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.session.sql.StatementChannel;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 public class TableLoaderFactory

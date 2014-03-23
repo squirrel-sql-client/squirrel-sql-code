@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import org.squirrelsql.services.I18n;
 

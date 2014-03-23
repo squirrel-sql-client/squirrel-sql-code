@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import javafx.scene.control.Tab;
 

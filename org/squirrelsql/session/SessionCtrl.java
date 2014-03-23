@@ -11,6 +11,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.objecttree.*;
+import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 

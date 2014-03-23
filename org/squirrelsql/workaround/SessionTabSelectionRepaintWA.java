@@ -16,6 +16,11 @@ public class SessionTabSelectionRepaintWA
 
    private static void onTabChanged(Tab newValue)
    {
+      if(false == newValue.getContent() instanceof SplitPane)
+      {
+         return;
+      }
+
       SplitPane objectTreeOrSqlTab = (SplitPane) newValue.getContent();
 
       double divPos = objectTreeOrSqlTab.getDividerPositions()[0];

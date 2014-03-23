@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

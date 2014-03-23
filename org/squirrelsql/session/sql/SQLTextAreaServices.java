@@ -1,4 +1,4 @@
-package org.squirrelsql.session;
+package org.squirrelsql.session.sql;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import org.squirrelsql.session.TokenAtCarretInfo;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;

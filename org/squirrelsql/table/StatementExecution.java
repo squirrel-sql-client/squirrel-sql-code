@@ -1,7 +1,7 @@
 package org.squirrelsql.table;
 
 import org.squirrelsql.services.CollectionUtil;
-import org.squirrelsql.session.SQLResult;
+import org.squirrelsql.session.sql.SQLResult;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -1,7 +1,9 @@
 package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
-import org.squirrelsql.session.SQLResult;
+import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -70,5 +72,20 @@ public class Utils
          ret.add(t);
       }
       return ret;
+   }
+
+   public static void makePositiveIntegerField(TextField txtField)
+   {
+      txtField.addEventFilter(KeyEvent.KEY_TYPED, Utils::onCheckInt);
+   }
+
+   private static void onCheckInt(KeyEvent t)
+   {
+      char ar[] = t.getCharacter().toCharArray();
+      char ch = ar[t.getCharacter().toCharArray().length - 1];
+      if (!(ch >= '0' && ch <= '9'))
+      {
+         t.consume();
+      }
    }
 }

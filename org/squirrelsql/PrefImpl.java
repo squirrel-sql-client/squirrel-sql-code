@@ -14,6 +14,11 @@ public class PrefImpl
       Preferences.userRoot().putDouble(key, val);
    }
 
+   public void set(String key, int val)
+   {
+      Preferences.userRoot().putInt(key, val);
+   }
+
    public String getString(String key, String def)
    {
       return Preferences.userRoot().get(key, def);
@@ -32,5 +37,10 @@ public class PrefImpl
    public void set(String key, boolean val)
    {
       Preferences.userRoot().putBoolean(key, val);
+   }
+
+   public int getInt(String key, int def)
+   {
+      return Preferences.userRoot().getInt(key, def);
    }
 }
