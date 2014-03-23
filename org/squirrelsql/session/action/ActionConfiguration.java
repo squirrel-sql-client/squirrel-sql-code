@@ -1,6 +1,7 @@
 package org.squirrelsql.session.action;
 
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ActionConfiguration
@@ -8,12 +9,12 @@ public class ActionConfiguration
 
 
    private ActionScope _actionScope;
-   private final ImageView _icon;
+   private final Image _icon;
    private final String _text;
    private final boolean _onToolbar;
 
 
-   public ActionConfiguration(ImageView icon, String text, ActionScope actionScope, boolean onToolbar)
+   public ActionConfiguration(Image icon, String text, ActionScope actionScope, boolean onToolbar)
    {
       _actionScope = actionScope;
       _icon = icon;
@@ -28,7 +29,7 @@ public class ActionConfiguration
 
    public ImageView getIcon()
    {
-      return _icon;
+      return new ImageView(_icon);
    }
 
    public String getText()

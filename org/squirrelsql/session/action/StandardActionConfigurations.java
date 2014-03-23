@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public enum StandardActionConfigurations
 {
-   RUN_SQL(new ActionConfiguration(Help.props.getImageView("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, true));
+   RUN_SQL(new ActionConfiguration(Help.props.getImage("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, true));
 
 
    private static class Help
