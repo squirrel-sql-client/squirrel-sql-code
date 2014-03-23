@@ -57,7 +57,11 @@ public class ResultTabController
       containerTabPane.getTabs().add(createResultsTab(sqlResult));
       containerTabPane.getTabs().add(createResultMetaDataTab(sqlResult));
 
-      containerTabPane.getTabs().add(sqlCancelTabCtrl.getTab());
+      if (null != sqlCancelTabCtrl)
+      {
+         containerTabPane.getTabs().add(sqlCancelTabCtrl.getTab());
+      }
+
       return containerTabPane;
    }
 
