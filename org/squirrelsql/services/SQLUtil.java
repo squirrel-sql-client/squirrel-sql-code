@@ -273,4 +273,23 @@ public class SQLUtil
    }
 
 
+   public static String getQualifiedName(String catalogName, String schemaName)
+   {
+      if(null == catalogName && null == schemaName)
+      {
+         return null;
+      }
+
+      if(null != catalogName && null == schemaName)
+      {
+         return catalogName;
+      }
+
+      if(null == catalogName && null != schemaName)
+      {
+         return schemaName;
+      }
+
+      return catalogName + "." + schemaName;
+   }
 }

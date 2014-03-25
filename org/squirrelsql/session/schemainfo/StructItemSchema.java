@@ -1,5 +1,9 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.SQLUtil;
+
+import java.util.List;
+
 public class StructItemSchema extends StructItem
 {
    private final String _schema;
@@ -20,6 +24,12 @@ public class StructItemSchema extends StructItem
    public String getSchema()
    {
       return _schema;
+   }
+
+
+   public String getQualifiedName()
+   {
+      return SQLUtil.getQualifiedName(_catalogName, _schema);
    }
 
 
@@ -44,4 +54,5 @@ public class StructItemSchema extends StructItem
       result = 31 * result + (_catalogName != null ? _catalogName.hashCode() : 0);
       return result;
    }
+
 }

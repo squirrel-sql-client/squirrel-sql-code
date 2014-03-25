@@ -164,6 +164,7 @@ public class AliasesController
       dockToolbarBuilder.addButtonLeft(_props.getImageView("add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("copy.png"), _i18n.t("tooltip.copy")).setOnAction(e -> onCopy());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView("alias_properties.png"), _i18n.t("tooltip.alias_properties")).setOnAction(e -> onAliasProperties());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
       dockToolbarBuilder.addSeparatorLeft();
       dockToolbarBuilder.addButtonLeft(_props.getImageView("sort-ascend.png"), _i18n.t("tooltip.sort")).setOnAction(e -> onSort());
@@ -363,6 +364,18 @@ public class AliasesController
          editAlias(selectedItem);
       }
    }
+
+   private void onAliasProperties()
+   {
+      TreeItem<AliasTreeNode> selectedItem = getSelectedNodeOrComplain("aliases.select.node.to.edit.properties");
+      if (selectedItem == null || selectedItem.getValue() instanceof AliasFolder)
+      {
+         return;
+      }
+
+      new AliasPropertiesEditCtrl((Alias)selectedItem.getValue());
+   }
+
 
    private void editAlias(TreeItem<AliasTreeNode> item)
    {
