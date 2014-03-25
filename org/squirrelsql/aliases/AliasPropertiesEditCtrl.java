@@ -52,6 +52,7 @@ public class AliasPropertiesEditCtrl
 
       _view.btnConnectDb.setOnAction(e -> onConnectDb());
 
+      createEmptyTableLoader().load(_view.tblSchemas);
 
       initWindow(alias, fxmlHelper);
 
@@ -73,12 +74,7 @@ public class AliasPropertiesEditCtrl
 
       ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
-      TableLoader tl = new TableLoader();
-
-      tl.addColumn(_i18n.t("alias.properties.schema"));
-      tl.addColumn(_i18n.t("alias.properties.tables"));
-      tl.addColumn(_i18n.t("alias.properties.views"));
-      tl.addColumn(_i18n.t("alias.properties.procedures"));
+      TableLoader tl = createEmptyTableLoader();
 
       for (StructItemSchema schema : schemas)
       {
@@ -86,6 +82,17 @@ public class AliasPropertiesEditCtrl
       }
 
       tl.load(_view.tblSchemas);
+   }
+
+   private TableLoader createEmptyTableLoader()
+   {
+      TableLoader tl = new TableLoader();
+
+      tl.addColumn(_i18n.t("alias.properties.schema"));
+      tl.addColumn(_i18n.t("alias.properties.tables"));
+      tl.addColumn(_i18n.t("alias.properties.views"));
+      tl.addColumn(_i18n.t("alias.properties.procedures"));
+      return tl;
    }
 
    private void onOk()
