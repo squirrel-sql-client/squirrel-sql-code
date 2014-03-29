@@ -15,7 +15,7 @@ Enhancements:
 
 Bug fixes:
 
-Reintroduced compatibility with JDK 1.6
+Reintroduced compatibility with Java 1.6
 
 #1137 ArrayIndexOutOfBoundsException when querying PostGIS geometry columns
 Thanks to Jaroslaw Jarmolowicz for the patch
