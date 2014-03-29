@@ -30,12 +30,10 @@ public class TableExportCsvController
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
    private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
-   private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS";
+   private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS"; // is xlsx
+   private static final String PREF_KEY_FORMAT_XLS_OLD = "SquirrelSQL.csvexport.formatXLS_OLD"; // is xls
    private static final String PREF_KEY_FORMAT_XML = "SquirrelSQL.csvexport.formatXML";
 
-   public static final int EXPORT_FORMAT_CSV = 0;
-   public static final int EXPORT_FORMAT_XLS = 1;
-   public static final int EXPORT_FORMAT_XML = 2;
 
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TableExportCsvController.class);
@@ -123,6 +121,14 @@ public class TableExportCsvController
          }
       });
 
+      _dlg.radFormatXLSX.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFormat(true);
+         }
+      });
+
       _dlg.radFormatXLS.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -130,7 +136,7 @@ public class TableExportCsvController
             onFormat(true);
          }
       });
-      
+
       _dlg.radFormatXML.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -203,7 +209,7 @@ public class TableExportCsvController
             replaceFileEnding();
          }
       }
-      else if (_dlg.radFormatXLS.isSelected())
+      else if (_dlg.radFormatXLSX.isSelected() || _dlg.radFormatXLS.isSelected())
       {
          _dlg.lblSeparator.setEnabled(false);
          _dlg.lblCharset.setEnabled(false);
@@ -241,9 +247,13 @@ public class TableExportCsvController
       {
          newEnding = "csv";
       }
-      else if (_dlg.radFormatXLS.isSelected())
+      else if (_dlg.radFormatXLSX.isSelected())
       {
          newEnding = "xlsx";
+      }
+      else if (_dlg.radFormatXLS.isSelected())
+      {
+         newEnding = "xls";
       }
       else if (_dlg.radFormatXML.isSelected())
       {
@@ -434,7 +444,8 @@ protected void writePrefs()
       Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
       Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
-      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLS.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLSX.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS_OLD, _dlg.radFormatXLS.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XML, _dlg.radFormatXML.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
@@ -449,7 +460,16 @@ protected void writePrefs()
    private void initDlg()
    {
       Preferences userRoot = Preferences.userRoot();
-		_dlg.txtFile.setText(replaceXlsByXlsx(userRoot.get(PREF_KEY_CSV_FILE, null)));
+
+      if (formatIsNewXlsx(userRoot))
+      {
+         _dlg.txtFile.setText(replaceXlsByXlsx(userRoot.get(PREF_KEY_CSV_FILE, null)));
+      }
+      else
+      {
+         _dlg.txtFile.setText(userRoot.get(PREF_KEY_CSV_FILE, null));
+      }
+
       _dlg.charsets.setSelectedItem(userRoot.get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
       _dlg.chkWithHeaders.setSelected(userRoot.getBoolean(PREF_KEY_WITH_HEADERS, true));
 
@@ -465,7 +485,11 @@ protected void writePrefs()
       {
          _dlg.radFormatCSV.setSelected(true);
       }
-      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XLS, false))
+      else if(formatIsNewXlsx(userRoot))
+      {
+         _dlg.radFormatXLSX.setSelected(true);
+      }
+      else if(userRoot.getBoolean(PREF_KEY_FORMAT_XLS_OLD, false))
       {
          _dlg.radFormatXLS.setSelected(true);
       }
@@ -504,6 +528,11 @@ protected void writePrefs()
       	LineSeparator.valueOf(userRoot.get(PREF_KEY_LINE_SEPERATOR, LineSeparator.DEFAULT.name()));
       
       _dlg._lineSeparators.setSelectedItem(preferredLineSeparator);
+   }
+
+   private boolean formatIsNewXlsx(Preferences userRoot)
+   {
+      return userRoot.getBoolean(PREF_KEY_FORMAT_XLS, false);
    }
 
    private String replaceXlsByXlsx(String fileName)
@@ -645,19 +674,23 @@ protected void writePrefs()
       }
    }
 
-   public int getExportFormat()
+   public ExportFormat getExportFormat()
    {
       if(_dlg.radFormatCSV.isSelected())
       {
-         return EXPORT_FORMAT_CSV;
+         return ExportFormat.EXPORT_FORMAT_CSV;
+      }
+      else if(_dlg.radFormatXLSX.isSelected())
+      {
+         return ExportFormat.EXPORT_FORMAT_XLSX;
       }
       else if(_dlg.radFormatXLS.isSelected())
       {
-         return EXPORT_FORMAT_XLS;
+         return ExportFormat.EXPORT_FORMAT_XLS;
       }
       else if(_dlg.radFormatXML.isSelected())
       {
-         return EXPORT_FORMAT_XML;
+         return ExportFormat.EXPORT_FORMAT_XML;
       }
       else
       {

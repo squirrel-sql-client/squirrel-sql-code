@@ -10,8 +10,12 @@ Not yet released, available in our GIT repository and in future snapshots and re
 Enhancements:
 #469 Show selected row count (like result row count)
 
+#490 Continue offering MS Exel XLS (older file format) export.
+  Users can now choose between XLSX and XLS.
 
 Bug fixes:
+
+Reintroduced compatibility with JDK 1.6
 
 #1137 ArrayIndexOutOfBoundsException when querying PostGIS geometry columns
 Thanks to Jaroslaw Jarmolowicz for the patch

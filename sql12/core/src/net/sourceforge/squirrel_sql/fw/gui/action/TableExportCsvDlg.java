@@ -1,10 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.nio.charset.Charset;
 
 import javax.swing.*;
@@ -23,6 +20,7 @@ public class TableExportCsvDlg extends JDialog
    JTextField txtFile;
    JButton btnFile;
    JCheckBox chkWithHeaders;
+   JRadioButton radFormatXLSX;
    JRadioButton radFormatXLS;
    JRadioButton radFormatXML;
    JRadioButton radFormatCSV;
@@ -125,10 +123,10 @@ public class TableExportCsvDlg extends JDialog
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
       ret.add(radFormatCSV, gbc);
 
-      // i18n[TableExportCsvDlg.formatXLS=Export MS Excel (XLS) file]
-      radFormatXLS = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLS"));
+
+
       gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
-      ret.add(radFormatXLS, gbc);
+      ret.add(createMsExcelPanel(), gbc);
       
       // i18n[TableExportCsvDlg.formatXML=Export XML file]
       radFormatXML = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXML"));
@@ -141,10 +139,27 @@ public class TableExportCsvDlg extends JDialog
 
       ButtonGroup bg = new ButtonGroup();
       bg.add(radFormatCSV);
+      bg.add(radFormatXLSX);
       bg.add(radFormatXLS);
       bg.add(radFormatXML);
 
       return ret;
+   }
+
+   private JPanel createMsExcelPanel()
+   {
+      JPanel ret = new JPanel(new GridLayout(2,1,5,0));
+
+      // i18n[TableExportCsvDlg.formatXLS=Export MS Excel (XLS) file]
+      radFormatXLSX = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLSX"));
+      ret.add(radFormatXLSX);
+
+      // i18n[TableExportCsvDlg.formatXLS=Export MS Excel (XLS) file]
+      radFormatXLS = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLS"));
+      ret.add(radFormatXLS);
+
+      return ret;
+
    }
 
    private Component getFormattingPanel()

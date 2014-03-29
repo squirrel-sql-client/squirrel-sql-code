@@ -111,15 +111,22 @@ public abstract class AbstractExportCommand {
 
 			boolean includeHeaders = ctrl.includeHeaders();
 
-			if (TableExportCsvController.EXPORT_FORMAT_CSV == ctrl.getExportFormat()) {
-				return new DataExportCSVWriter(file, ctrl, includeHeaders, progressController).write(data);
-			} else if (TableExportCsvController.EXPORT_FORMAT_XLS == ctrl.getExportFormat()) {
-				return new DataExportExcelWriter(file, ctrl, includeHeaders, progressController).write(data);
-			} else if (TableExportCsvController.EXPORT_FORMAT_XML == ctrl.getExportFormat()) {
-				return new DataExportXMLWriter(file, ctrl, includeHeaders, progressController).write(data);
-			} else {
-				throw new IllegalStateException("Unknown export format " + ctrl.getExportFormat());
-			}
+         if (ExportFormat.EXPORT_FORMAT_CSV == ctrl.getExportFormat())
+         {
+            return new DataExportCSVWriter(file, ctrl, includeHeaders, progressController).write(data);
+         }
+         else if (ExportFormat.EXPORT_FORMAT_XLSX == ctrl.getExportFormat() || ExportFormat.EXPORT_FORMAT_XLS == ctrl.getExportFormat())
+         {
+            return new DataExportExcelWriter(file, ctrl, includeHeaders, ctrl.getExportFormat(), progressController).write(data);
+         }
+         else if (ExportFormat.EXPORT_FORMAT_XML == ctrl.getExportFormat())
+         {
+            return new DataExportXMLWriter(file, ctrl, includeHeaders, progressController).write(data);
+         }
+         else
+         {
+            throw new IllegalStateException("Unknown export format " + ctrl.getExportFormat());
+         }
 
 		} catch (Exception e) {
 

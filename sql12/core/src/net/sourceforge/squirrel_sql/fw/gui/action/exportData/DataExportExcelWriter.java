@@ -25,6 +25,7 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.fw.gui.action.ExportFormat;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
@@ -32,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.action.TableExportCsvController;
 import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
@@ -41,22 +43,24 @@ import net.sourceforge.squirrel_sql.fw.sql.ProgressAbortCallback;
  *
  */
 public class DataExportExcelWriter extends AbstractDataExportFileWriter {
-    private SXSSFWorkbook workbook; // The streaming api export for (very) large xlsx files
+    private Workbook workbook; // The streaming api export for (very) large xlsx files
     private Sheet   sheet; // We write the data to this sheet
     private File    file; // File where the export is written to
     private boolean withHeader = false;
-	
-	
+   private ExportFormat _exportFormat;
 
-	/**
-	 * @param file
-	 * @param ctrl
-	 * @param includeHeaders
-	 * @param progressController 
-	 */
-	public DataExportExcelWriter(File file, TableExportCsvController ctrl, boolean includeHeaders, ProgressAbortCallback progressController) {
+
+   /**
+    * @param file
+    * @param ctrl
+    * @param includeHeaders
+    * @param exportFormat
+    * @param progressController
+    */
+	public DataExportExcelWriter(File file, TableExportCsvController ctrl, boolean includeHeaders, ExportFormat exportFormat, ProgressAbortCallback progressController) {
 		super(file, ctrl, includeHeaders, progressController);
-	}
+      _exportFormat = exportFormat;
+   }
 
 	private Cell getXlsCell(ColumnDisplayDefinition colDef, int colIdx, int curRow, Object cellObj)
    {
@@ -176,11 +180,19 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#beforeWorking()
 	 */
 	@Override
-	protected void beforeWorking(File file) throws IOException{
-		this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
-                this.file= file;
-		this.sheet = workbook.createSheet("Squirrel SQL Export");
-	}
+   protected void beforeWorking(File file) throws IOException
+   {
+      if (_exportFormat == ExportFormat.EXPORT_FORMAT_XLS)
+      {
+         this.workbook = new XSSFWorkbook(); // keep 100 rows in memory, exceeding rows will be flushed to disk
+      }
+      else
+      {
+         this.workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+      }
+      this.file = file;
+      this.sheet = workbook.createSheet("Squirrel SQL Export");
+   }
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.gui.action.exportData.AbstractDataExportFileWriter#addHeaderCell(int, java.lang.String)
@@ -234,7 +246,10 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
             out.close();
 
             // dispose of temporary files backing this workbook on disk
-            this.workbook.dispose();            
-	}
+      if (workbook instanceof SXSSFWorkbook)
+      {
+         ((SXSSFWorkbook)workbook).dispose();
+      }
+   }
 
 }
