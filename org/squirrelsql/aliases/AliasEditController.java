@@ -141,7 +141,7 @@ public class AliasEditController
          Alias buf = new Alias();
          storeToAlias(buf, sqlDriver);
 
-         DBConnector dbConnector = new DBConnector(_alias, _dialog, SchemaCacheConfig.LOAD_NOTHING);
+         DBConnector dbConnector = new DBConnector(buf, _dialog, SchemaCacheConfig.LOAD_NOTHING);
 
          dbConnector.tryConnect(dbConnectorResult -> onTryConnectFinished(dbConnectorResult));
 
