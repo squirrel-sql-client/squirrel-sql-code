@@ -26,6 +26,7 @@ public class AliasPropertiesEditCtrl
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
    private Alias _alias;
+   private final TableLoader _tableLoader;
 
    public AliasPropertiesEditCtrl(Alias alias)
    {
@@ -39,7 +40,27 @@ public class AliasPropertiesEditCtrl
       _view.radLoadAllCacheNon.setToggleGroup(tg);
       _view.radLoadAndCacheAll.setToggleGroup(tg);
       _view.radSpecifyLoading.setToggleGroup(tg);
-      _view.radLoadAllCacheNon.setSelected(true);
+
+
+      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId());
+
+      _tableLoader = createEmptyTableLoader();
+
+      if(aliasProperties.isLoadAllCacheNon())
+      {
+         _view.radLoadAllCacheNon.setSelected(true);
+      }
+      else if(aliasProperties.isLoadAndCacheAll())
+      {
+         _view.radLoadAndCacheAll.setSelected(true);
+      }
+      else
+      {
+         _view.radSpecifyLoading.setSelected(true);
+         _tableLoader.addRows(aliasProperties.getSpecifiedLoading());
+      }
+      _tableLoader.load(_view.tblSchemas);
+
       onDisableSpecifyControls();
 
       _view.radLoadAllCacheNon.setOnAction(e -> onDisableSpecifyControls());
@@ -52,7 +73,6 @@ public class AliasPropertiesEditCtrl
 
       _view.btnConnectDb.setOnAction(e -> onConnectDb());
 
-      createEmptyTableLoader().load(_view.tblSchemas);
 
       initWindow(alias, fxmlHelper);
 
@@ -74,14 +94,12 @@ public class AliasPropertiesEditCtrl
 
       ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
-      TableLoader tl = createEmptyTableLoader();
-
       for (StructItemSchema schema : schemas)
       {
-         tl.addRow(schema.getQualifiedName());
+         _tableLoader.addRow(schema.getQualifiedName(), SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE);
       }
 
-      tl.load(_view.tblSchemas);
+      _tableLoader.load(_view.tblSchemas);
    }
 
    private TableLoader createEmptyTableLoader()
@@ -89,14 +107,19 @@ public class AliasPropertiesEditCtrl
       TableLoader tl = new TableLoader();
 
       tl.addColumn(_i18n.t("alias.properties.schema"));
-      tl.addColumn(_i18n.t("alias.properties.tables"));
-      tl.addColumn(_i18n.t("alias.properties.views"));
-      tl.addColumn(_i18n.t("alias.properties.procedures"));
+      tl.addColumn(_i18n.t("alias.properties.tables")).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(_i18n.t("alias.properties.views")).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(_i18n.t("alias.properties.procedures")).setSelectableValues(SchemaLoadOptions.values());
       return tl;
    }
 
    private void onOk()
    {
+      ArrayList<ArrayList> rows = _tableLoader.getRows();
+
+      AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected());
+
+      Dao.writeAliasProperties(aliasProperties);
       _dialog.close();
    }
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
+import org.squirrelsql.aliases.AliasProperties;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 
@@ -20,6 +21,28 @@ public class Dao
    public static final String FILE_NAME_DRIVERS = "drivers.json";
    public static final String FILE_NAME_ALIASES = "aliases.json";
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
+   public static final String FILE_NAME_ALIAS_PROPERTIES = "aliasProperties.json";
+
+   public static void writeDrivers(ArrayList<SQLDriver> sqlDrivers)
+   {
+      writeObject(sqlDrivers, FILE_NAME_DRIVERS);
+   }
+
+   public static void writeAliases(ArrayList<Alias> aliases, AliasTreeStructureNode treeStructureNode)
+   {
+      writeObject(aliases, FILE_NAME_ALIASES);
+      writeObject(treeStructureNode, FILE_NAME_ALIAS_TREE);
+   }
+
+   public static void writeAliasProperties(AliasProperties aliasProperties)
+   {
+      writeObject(aliasProperties, getAliasPropertiesFileName(aliasProperties.getAliasId()));
+   }
+
+   private static String getAliasPropertiesFileName(String aliasId)
+   {
+      return FILE_NAME_ALIAS_PROPERTIES + "_" + aliasId;
+   }
 
    public static ArrayList<SQLDriver> loadSquirrelDrivers()
    {
@@ -36,42 +59,6 @@ public class Dao
          ArrayList<SQLDriver> drivers = mapper.readValue(driversFile, CollectionType.construct(ArrayList.class, SimpleType.construct(SQLDriver.class)));
 
          return drivers;
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   public static void writeDrivers(ArrayList<SQLDriver> sqlDrivers)
-   {
-      try
-      {
-         File driversFile = new File(AppState.get().getUserDir(), FILE_NAME_DRIVERS);
-
-         ObjectMapper mapper = new ObjectMapper();
-         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
-         objectWriter.writeValue(new FileWriter(driversFile), sqlDrivers);
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   public static void writeAliases(ArrayList<Alias> aliases, AliasTreeStructureNode treeStructureNode)
-   {
-      try
-      {
-
-         ObjectMapper mapper = new ObjectMapper();
-         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
-
-         File driversFile = new File(AppState.get().getUserDir(), FILE_NAME_ALIASES);
-         objectWriter.writeValue(new FileWriter(driversFile), aliases);
-
-         File aliasTreeFile = new File(AppState.get().getUserDir(), FILE_NAME_ALIAS_TREE);
-         objectWriter.writeValue(new FileWriter(aliasTreeFile), treeStructureNode);
       }
       catch (IOException e)
       {
@@ -121,5 +108,30 @@ public class Dao
       {
          throw new RuntimeException(e);
       }
+   }
+
+
+   private static void writeObject(Object aliasProperties, String unqualifiedFileName)
+   {
+      try
+      {
+
+         ObjectMapper mapper = new ObjectMapper();
+         ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
+
+         File file = new File(AppState.get().getUserDir(), unqualifiedFileName);
+         FileWriter fileWriter = new FileWriter(file);
+         objectWriter.writeValue(fileWriter, aliasProperties);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+   public static AliasProperties loadAliasProperties(String aliasId)
+   {
+      return null;
    }
 }

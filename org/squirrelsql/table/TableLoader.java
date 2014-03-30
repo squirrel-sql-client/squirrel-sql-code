@@ -4,8 +4,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
@@ -14,16 +16,15 @@ import java.util.List;
 public class TableLoader
 {
    private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
-   private ArrayList<String> _columns = new ArrayList<>();
+   private ArrayList<ColumnHandle> _columns = new ArrayList<>();
 
    private ArrayList<ArrayList<SimpleObjectProperty>> _rows = new ArrayList<>();
 
-   public void addColumn(String... headers)
+   public ColumnHandle addColumn(String header)
    {
-      for (String header : headers)
-      {
-         _columns.add(header);
-      }
+      ColumnHandle columnHandle = new ColumnHandle(header);
+      _columns.add(columnHandle);
+      return columnHandle;
    }
 
    public void addRow(List row)
@@ -49,7 +50,24 @@ public class TableLoader
 
       for (int i = 0; i < _columns.size(); i++)
       {
-         TableColumn tableColumn = new TableColumn(_columns.get(i));
+         ColumnHandle columnHandle = _columns.get(i);
+         TableColumn tableColumn = new TableColumn(columnHandle.getHeader());
+
+         if(0 < columnHandle.getSelectableValues().length)
+         {
+            tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
+            {
+               @Override
+               public TableCell call(TableColumn param)
+               {
+                  return new ComboBoxTableCell(columnHandle.getSelectableValues());
+               }
+            });
+
+            tableColumn.setEditable(true);
+            tv.setEditable(true);
+         }
+
 
          final int finalI = i;
          tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ArrayList<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
@@ -124,7 +142,7 @@ public class TableLoader
       int colIx = -1;
       for (int i = 0; i < _columns.size(); i++)
       {
-         if(_columns.get(i).equalsIgnoreCase(columnName))
+         if(_columns.get(i).getHeader().equalsIgnoreCase(columnName))
          {
             colIx = i;
             break;
@@ -151,8 +169,13 @@ public class TableLoader
 
    private String getCellAt(int rowIx, int colIx)
    {
-      SimpleObjectProperty simpleObjectProperty = interpretValue(_rows.get(rowIx).get(colIx));
+      SimpleObjectProperty simpleObjectProperty = getObjectPropertyAt(rowIx, colIx);
       return getStringValue(simpleObjectProperty);
+   }
+
+   private SimpleObjectProperty getObjectPropertyAt(int rowIx, int colIx)
+   {
+      return interpretValue(_rows.get(rowIx).get(colIx));
    }
 
    public int size()
@@ -160,4 +183,38 @@ public class TableLoader
       return _rows.size();
    }
 
+   public ArrayList<ArrayList> getRows()
+   {
+      ArrayList<ArrayList> ret = new ArrayList<>();
+
+      for (int i = 0; i < size(); i++)
+      {
+         ArrayList row = new ArrayList();
+         for (int j = 0; j < _columns.size(); j++)
+         {
+            ArrayList<SimpleObjectProperty> sopRow = _rows.get(i);
+            if (j < sopRow.size())
+            {
+               SimpleObjectProperty simpleObjectProperty = sopRow.get(j);
+               row.add(simpleObjectProperty.get());
+            }
+            else
+            {
+               row.add(null);
+            }
+         }
+
+         ret.add(row);
+      }
+
+      return ret;
+   }
+
+   public void addRows(ArrayList<ArrayList> rows)
+   {
+      for (ArrayList row : rows)
+      {
+         addRow(row);
+      }
+   }
 }
