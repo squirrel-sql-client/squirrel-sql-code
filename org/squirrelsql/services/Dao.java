@@ -21,7 +21,6 @@ public class Dao
    public static final String FILE_NAME_DRIVERS = "drivers.json";
    public static final String FILE_NAME_ALIASES = "aliases.json";
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
-   public static final String FILE_NAME_ALIAS_PROPERTIES = "aliasProperties.json";
 
    public static void writeDrivers(ArrayList<SQLDriver> sqlDrivers)
    {
@@ -41,22 +40,67 @@ public class Dao
 
    private static String getAliasPropertiesFileName(String aliasId)
    {
-      return FILE_NAME_ALIAS_PROPERTIES + "_" + aliasId;
+      return "aliasProperties" + "_" + aliasId + ".json";
    }
 
    public static ArrayList<SQLDriver> loadSquirrelDrivers()
    {
+      return loadObjectArray(FILE_NAME_DRIVERS, SQLDriver.class);
+   }
+
+
+   public static AliasTreeStructureNode loadAliasTree()
+   {
+      return loadObject(FILE_NAME_ALIAS_TREE, new AliasTreeStructureNode());
+   }
+
+   public static ArrayList<Alias> loadAliases()
+   {
+      return loadObjectArray(FILE_NAME_ALIASES, Alias.class);
+   }
+
+   public static AliasProperties loadAliasProperties(String aliasId)
+   {
+      return loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties());
+   }
+
+
+   private static<T> T loadObject(String fileName, T defaultObject)
+   {
       try
       {
-         File driversFile = new File(AppState.get().getUserDir(), FILE_NAME_DRIVERS);
+         File file = new File(AppState.get().getUserDir(), fileName);
 
-         if(false == driversFile.exists())
+         if(false == file.exists())
+         {
+            return defaultObject;
+         }
+
+         ObjectMapper mapper = new ObjectMapper();
+         T ret = mapper.readValue(file, SimpleType.construct(defaultObject.getClass()));
+
+         return ret;
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+   private static<T> ArrayList<T> loadObjectArray(String fileName, Class<T> objectType)
+   {
+      try
+      {
+         File file = new File(AppState.get().getUserDir(), fileName);
+
+         if(false == file.exists())
          {
             return new ArrayList<>();
          }
 
          ObjectMapper mapper = new ObjectMapper();
-         ArrayList<SQLDriver> drivers = mapper.readValue(driversFile, CollectionType.construct(ArrayList.class, SimpleType.construct(SQLDriver.class)));
+         ArrayList<T> drivers = mapper.readValue(file, CollectionType.construct(ArrayList.class, SimpleType.construct(objectType)));
 
          return drivers;
       }
@@ -65,51 +109,6 @@ public class Dao
          throw new RuntimeException(e);
       }
    }
-
-   public static AliasTreeStructureNode loadAliasTree()
-   {
-      try
-      {
-         File aliasTreeFile = new File(AppState.get().getUserDir(), FILE_NAME_ALIAS_TREE);
-
-         if(false == aliasTreeFile.exists())
-         {
-            return new AliasTreeStructureNode();
-         }
-
-         ObjectMapper mapper = new ObjectMapper();
-         AliasTreeStructureNode aliasTree = mapper.readValue(aliasTreeFile, SimpleType.construct(AliasTreeStructureNode.class));
-
-         return aliasTree;
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
-   public static ArrayList<Alias> loadAliases()
-   {
-      try
-      {
-         File aliasesFile = new File(AppState.get().getUserDir(), FILE_NAME_ALIASES);
-
-         if(false == aliasesFile.exists())
-         {
-            return new ArrayList<>();
-         }
-
-         ObjectMapper mapper = new ObjectMapper();
-         ArrayList<Alias> aliases = mapper.readValue(aliasesFile, CollectionType.construct(ArrayList.class, SimpleType.construct(Alias.class)));
-
-         return aliases;
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
-
 
    private static void writeObject(Object aliasProperties, String unqualifiedFileName)
    {
@@ -129,9 +128,4 @@ public class Dao
       }
    }
 
-
-   public static AliasProperties loadAliasProperties(String aliasId)
-   {
-      return null;
-   }
 }

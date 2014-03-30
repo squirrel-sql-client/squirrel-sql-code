@@ -217,4 +217,9 @@ public class TableLoader
          addRow(row);
       }
    }
+
+   public void clearRows()
+   {
+      _rows.clear();
+   }
 }

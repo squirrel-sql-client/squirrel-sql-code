@@ -1,21 +1,17 @@
 package org.squirrelsql.aliases;
 
 import javafx.scene.Scene;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
-import org.squirrelsql.aliases.dbconnector.DbConnectorListener;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.schemainfo.DatabaseStructure;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
-import org.squirrelsql.table.TableLoaderFactory;
 
 import java.util.ArrayList;
 
@@ -26,7 +22,7 @@ public class AliasPropertiesEditCtrl
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
    private Alias _alias;
-   private final TableLoader _tableLoader;
+   private TableLoader _tableLoaderSchemas;
 
    public AliasPropertiesEditCtrl(Alias alias)
    {
@@ -42,26 +38,7 @@ public class AliasPropertiesEditCtrl
       _view.radSpecifyLoading.setToggleGroup(tg);
 
 
-      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId());
-
-      _tableLoader = createEmptyTableLoader();
-
-      if(aliasProperties.isLoadAllCacheNon())
-      {
-         _view.radLoadAllCacheNon.setSelected(true);
-      }
-      else if(aliasProperties.isLoadAndCacheAll())
-      {
-         _view.radLoadAndCacheAll.setSelected(true);
-      }
-      else
-      {
-         _view.radSpecifyLoading.setSelected(true);
-         _tableLoader.addRows(aliasProperties.getSpecifiedLoading());
-      }
-      _tableLoader.load(_view.tblSchemas);
-
-      onDisableSpecifyControls();
+      loadAliasProperties(alias);
 
       _view.radLoadAllCacheNon.setOnAction(e -> onDisableSpecifyControls());
       _view.radLoadAndCacheAll.setOnAction(e -> onDisableSpecifyControls());
@@ -76,6 +53,30 @@ public class AliasPropertiesEditCtrl
 
       initWindow(alias, fxmlHelper);
 
+   }
+
+   private void loadAliasProperties(Alias alias)
+   {
+      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId());
+
+      _tableLoaderSchemas = createEmptyTableLoader();
+
+      if(aliasProperties.isLoadAllCacheNon())
+      {
+         _view.radLoadAllCacheNon.setSelected(true);
+      }
+      else if(aliasProperties.isLoadAndCacheAll())
+      {
+         _view.radLoadAndCacheAll.setSelected(true);
+      }
+      else
+      {
+         _view.radSpecifyLoading.setSelected(true);
+      }
+      _tableLoaderSchemas.addRows(aliasProperties.getSpecifiedLoading());
+      _tableLoaderSchemas.load(_view.tblSchemas);
+
+      onDisableSpecifyControls();
    }
 
    private void onConnectDb()
@@ -94,12 +95,15 @@ public class AliasPropertiesEditCtrl
 
       ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
+      _tableLoaderSchemas.clearRows();
+
+
       for (StructItemSchema schema : schemas)
       {
-         _tableLoader.addRow(schema.getQualifiedName(), SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE);
+         _tableLoaderSchemas.addRow(schema.getQualifiedName(), SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE);
       }
 
-      _tableLoader.load(_view.tblSchemas);
+      _tableLoaderSchemas.load(_view.tblSchemas);
    }
 
    private TableLoader createEmptyTableLoader()
@@ -115,7 +119,7 @@ public class AliasPropertiesEditCtrl
 
    private void onOk()
    {
-      ArrayList<ArrayList> rows = _tableLoader.getRows();
+      ArrayList<ArrayList> rows = _tableLoaderSchemas.getRows();
 
       AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected());
 
