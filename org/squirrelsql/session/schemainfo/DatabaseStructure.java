@@ -69,7 +69,7 @@ public class DatabaseStructure extends StructItem
          }
       };
 
-      visitTopToBottom(databaseStructureVisitor, SchemaCacheConfig.LOAD_ALL );
+      visitTopToBottom(databaseStructureVisitor, SchemaCacheConfig.LOAD_ALL);
       return ret;
    }
 

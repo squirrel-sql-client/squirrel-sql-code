@@ -1,10 +1,19 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.aliases.AliasPropertiesDecorator;
+
 public class SchemaCacheConfig
 {
    public static final SchemaCacheConfig LOAD_ALL = new SchemaCacheConfig(SchemaCacheConfigFlags.ALL);
    public static final SchemaCacheConfig LOAD_NOTHING = new SchemaCacheConfig(SchemaCacheConfigFlags.NOTHING);
+
    private SchemaCacheConfigFlags _schemaCacheConfigFlag;
+   private AliasPropertiesDecorator _aliasPropertiesDecorator;
+
+   public SchemaCacheConfig(AliasPropertiesDecorator aliasPropertiesDecorator)
+   {
+      _aliasPropertiesDecorator = aliasPropertiesDecorator;
+   }
 
 
    private static enum SchemaCacheConfigFlags
@@ -26,17 +35,17 @@ public class SchemaCacheConfig
 
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
    {
-      return true;
+      return _aliasPropertiesDecorator.shouldLoadTables(structItemTableType);
    }
 
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
    {
-      return true;
+      return _aliasPropertiesDecorator.shouldLoadProcedures(structItemProcedureType);
    }
 
    public boolean shouldLoadUDTs(StructItemUDTType structItemUDTType)
    {
-      return true;
+      return false; // _aliasPropertiesDecorator.shouldLoadUDTs(structItemUDTType);
    }
 
 }

@@ -8,9 +8,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.*;
-import org.squirrelsql.session.schemainfo.DatabaseStructure;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
-import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -57,9 +55,9 @@ public class AliasPropertiesEditCtrl
 
    private void loadAliasProperties(Alias alias)
    {
-      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId());
+      AliasProperties aliasProperties = Dao.loadAliasProperties(alias.getId()).getAliasProperties();
 
-      _tableLoaderSchemas = createEmptyTableLoader();
+      _tableLoaderSchemas = AliasPropertiesDecorator.createEmptyTableLoader();
 
       if(aliasProperties.isLoadAllCacheNon())
       {
@@ -91,30 +89,11 @@ public class AliasPropertiesEditCtrl
          return;
       }
 
-      DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCache().getDataBaseStructure();
-
-      ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
-
       _tableLoaderSchemas.clearRows();
 
-
-      for (StructItemSchema schema : schemas)
-      {
-         _tableLoaderSchemas.addRow(schema.getQualifiedName(), SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE);
-      }
+      AliasPropertiesDecorator.fillSchemaTable(dbConnectorResult, _tableLoaderSchemas);
 
       _tableLoaderSchemas.load(_view.tblSchemas);
-   }
-
-   private TableLoader createEmptyTableLoader()
-   {
-      TableLoader tl = new TableLoader();
-
-      tl.addColumn(_i18n.t("alias.properties.schema"));
-      tl.addColumn(_i18n.t("alias.properties.tables")).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(_i18n.t("alias.properties.views")).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(_i18n.t("alias.properties.procedures")).setSelectableValues(SchemaLoadOptions.values());
-      return tl;
    }
 
    private void onOk()

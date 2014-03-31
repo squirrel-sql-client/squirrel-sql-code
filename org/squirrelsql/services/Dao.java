@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.type.SimpleType;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasProperties;
+import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 
@@ -59,9 +60,9 @@ public class Dao
       return loadObjectArray(FILE_NAME_ALIASES, Alias.class);
    }
 
-   public static AliasProperties loadAliasProperties(String aliasId)
+   public static AliasPropertiesDecorator loadAliasProperties(String aliasId)
    {
-      return loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties());
+      return new AliasPropertiesDecorator(loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties()));
    }
 
 
