@@ -13,12 +13,12 @@ public class SchemaCacheFactory
 {
    public static SchemaCache createSchemaCache(DbConnectorResult dbConnectorResult, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
    {
-      return new SchemaCache(dbConnectorResult, schemaCacheConfig, createDatabaseStructure(dbConnectorResult.getAlias(), sqlConnection));
+      return new SchemaCache(dbConnectorResult, schemaCacheConfig, createDatabaseStructure(dbConnectorResult.getAlias(), sqlConnection, schemaCacheConfig));
    }
 
-   private static DatabaseStructure createDatabaseStructure(Alias alias, SQLConnection sqlConnection)
+   private static DatabaseStructure createDatabaseStructure(Alias alias, SQLConnection sqlConnection, SchemaCacheConfig schemaCacheConfig)
    {
-      DatabaseStructure aliasRoot = new DatabaseStructure(alias.getName());
+      DatabaseStructure aliasRoot = new DatabaseStructure(alias.getName(), schemaCacheConfig);
 
       recursiveAppendChildren(aliasRoot, sqlConnection);
 

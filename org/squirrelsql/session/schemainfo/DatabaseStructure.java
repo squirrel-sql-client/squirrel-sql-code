@@ -8,10 +8,12 @@ import java.util.ArrayList;
 public class DatabaseStructure extends StructItem
 {
    private String _aliasName;
+   private SchemaCacheConfig _schemaCacheConfig;
 
-   public DatabaseStructure(String aliasName)
+   public DatabaseStructure(String aliasName, SchemaCacheConfig schemaCacheConfig)
    {
       _aliasName = aliasName;
+      _schemaCacheConfig = schemaCacheConfig;
    }
 
    public ArrayList<StructItem> getLeaves()
@@ -69,7 +71,7 @@ public class DatabaseStructure extends StructItem
          }
       };
 
-      visitTopToBottom(databaseStructureVisitor, SchemaCacheConfig.LOAD_ALL);
+      visitTopToBottom(databaseStructureVisitor, _schemaCacheConfig);
       return ret;
    }
 

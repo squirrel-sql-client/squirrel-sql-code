@@ -31,6 +31,12 @@ public class TreeDetailsController
    {
       _objectTreeDetailsTabPane.getTabs().clear();
 
+      if (null == selectedItem)
+      {
+         return;
+      }
+
+
       if (ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY.equals(selectedItem.getValue().getTypeKey()))
       {
          addTreeDetailsTab(_i18n.t("objecttree.details.alias.metadata"), _session.getSchemaCache().getDatabaseMetaData());
