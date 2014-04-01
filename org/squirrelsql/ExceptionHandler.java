@@ -28,7 +28,6 @@ public class ExceptionHandler
 
    private static void handle(final Throwable t)
    {
-      t.printStackTrace(System.err);
       MessageHandler mh = new MessageHandler(ExceptionHandler.class, MessageHandlerDestination.MESSAGE_LOG);
       mh.error(t);
    }

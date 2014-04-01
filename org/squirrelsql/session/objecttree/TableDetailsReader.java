@@ -1,6 +1,9 @@
 package org.squirrelsql.session.objecttree;
 
+import org.squirrelsql.ExceptionHandler;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.table.TableLoader;
@@ -39,7 +42,8 @@ public class TableDetailsReader
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         new MessageHandler(TableDetailsReader.class, MessageHandlerDestination.MESSAGE_LOG).error("Failed to load content for table: " + objectTreeNode.getTableInfo().getQualifiedName(), e);
+         return TableLoaderFactory.createEmptyLoader();
       }
    }
 

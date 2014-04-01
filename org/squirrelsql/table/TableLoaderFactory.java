@@ -67,4 +67,8 @@ public class TableLoaderFactory
       }
    }
 
+   public static TableLoader createEmptyLoader()
+   {
+      return new TableLoader();
+   }
 }

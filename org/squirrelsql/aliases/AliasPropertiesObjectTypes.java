@@ -6,7 +6,8 @@ public enum AliasPropertiesObjectTypes
 {
    TABLE(Helper.i18n.t("alias.properties.object.type.tables"), 1),
    VIEW(Helper.i18n.t("alias.properties.object.type.views"), 2),
-   PROCEDURE(Helper.i18n.t("alias.properties.object.type.procedures"), 3);
+   PROCEDURE(Helper.i18n.t("alias.properties.object.type.procedures"), 3),
+   OTHER_TABLE_TYPES(Helper.i18n.t("alias.properties.object.type.othertabletypes"), 4);
 
    private static class Helper
    {

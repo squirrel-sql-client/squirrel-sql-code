@@ -94,6 +94,13 @@ public class AliasPropertiesEditCtrl
             row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
          }
       }
+      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.OTHER_TABLE_TYPES)
+      {
+         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         {
+            row.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx()).set(selectedLoadOption);
+         }
+      }
       else
       {
          for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
@@ -101,6 +108,7 @@ public class AliasPropertiesEditCtrl
             row.get(AliasPropertiesObjectTypes.TABLE.getColIx()).set(selectedLoadOption);
             row.get(AliasPropertiesObjectTypes.VIEW.getColIx()).set(selectedLoadOption);
             row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
+            row.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx()).set(selectedLoadOption);
          }
 
       }

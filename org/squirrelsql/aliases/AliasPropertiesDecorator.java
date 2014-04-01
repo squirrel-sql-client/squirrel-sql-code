@@ -37,33 +37,52 @@ public class AliasPropertiesDecorator
    {
       if(_aliasProperties.isLoadAllCacheNon() || _aliasProperties.isLoadAndCacheAll())
       {
-         return true;
+         if (isOfTypeTable(structItemTableType) || isOfTypeView(structItemTableType))
+         {
+            return true;
+         }
+
+         return false; // By default we ignore system table types. They can only be included by specified loading, See below.
       }
 
       for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
       {
          String schemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
 
-         if("TABLE".equalsIgnoreCase(structItemTableType.getType()))
+         if(isOfTypeTable(structItemTableType))
          {
             if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
             {
                return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.TABLE.getColIx());
             }
          }
-         else if("VIEW".equalsIgnoreCase(structItemTableType.getType()))
+         else if(isOfTypeView(structItemTableType))
          {
             if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
             {
                return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.VIEW.getColIx());
             }
          }
-
-         // TODO other table types are all ignored
-
+         else
+         {
+            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
+            {
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx());
+            }
+         }
       }
 
       return false;
+   }
+
+   private boolean isOfTypeView(StructItemTableType structItemTableType)
+   {
+      return "VIEW".equalsIgnoreCase(structItemTableType.getType());
+   }
+
+   private boolean isOfTypeTable(StructItemTableType structItemTableType)
+   {
+      return "TABLE".equalsIgnoreCase(structItemTableType.getType());
    }
 
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
@@ -98,6 +117,7 @@ public class AliasPropertiesDecorator
       tl.addColumn(AliasPropertiesObjectTypes.TABLE.toString()).setSelectableValues(SchemaLoadOptions.values());
       tl.addColumn(AliasPropertiesObjectTypes.VIEW.toString()).setSelectableValues(SchemaLoadOptions.values());
       tl.addColumn(AliasPropertiesObjectTypes.PROCEDURE.toString()).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.toString()).setSelectableValues(SchemaLoadOptions.values());
       return tl;
    }
 
@@ -113,7 +133,12 @@ public class AliasPropertiesDecorator
 
       for (StructItemSchema schema : schemas)
       {
-         tableLoaderSchemasToFill.addRow(schema.getQualifiedName(), SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE, SchemaLoadOptions.LOAD_BUT_DONT_CACHE);
+         tableLoaderSchemasToFill.addRow(
+               schema.getQualifiedName(),
+               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
+               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
+               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
+               SchemaLoadOptions.DONT_LOAD);
       }
    }
 

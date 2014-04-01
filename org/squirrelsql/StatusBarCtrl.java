@@ -149,6 +149,16 @@ public class StatusBarCtrl
 
    public void error(String s, Throwable t)
    {
+      if(null != s)
+      {
+         System.err.println(s);
+      }
+      if(null != t)
+      {
+         t.printStackTrace(System.err);
+      }
+
+
       ++_countError;
       refreshMessage(_iconError);
    }
