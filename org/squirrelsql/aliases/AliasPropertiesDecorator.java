@@ -13,9 +13,6 @@ import java.util.ArrayList;
 public class AliasPropertiesDecorator
 {
    public static final int SCHEMA_NAME_COL_IX = 0;
-   public static final int TABLE_COL_IX = 1;
-   public static final int VIEW_COL_IX = 2;
-   public static final int PROCEDURE_COL_IX = 3;
 
    private static I18n _i18n = new I18n(AliasPropertiesDecorator.class);
 
@@ -45,18 +42,20 @@ public class AliasPropertiesDecorator
 
       for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
       {
+         String schemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
+
          if("TABLE".equalsIgnoreCase(structItemTableType.getType()))
          {
-            if (structItemTableType.getSchema().equalsIgnoreCase((String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX)))
+            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
             {
-               return false == SchemaLoadOptions.DONT_LOAD.equals(SchemaLoadOptions.valueOf((String) specifiedLoadingRows.get(TABLE_COL_IX)));
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.TABLE.getColIx());
             }
          }
          else if("VIEW".equalsIgnoreCase(structItemTableType.getType()))
          {
-            if (structItemTableType.getSchema().equalsIgnoreCase((String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX)))
+            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
             {
-               return false == SchemaLoadOptions.DONT_LOAD.equals(SchemaLoadOptions.valueOf((String) specifiedLoadingRows.get(VIEW_COL_IX)));
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.VIEW.getColIx());
             }
          }
 
@@ -76,9 +75,11 @@ public class AliasPropertiesDecorator
 
       for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
       {
-         if (structItemProcedureType.getSchema().equalsIgnoreCase((String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX)))
+         String schemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
+
+         if (structItemProcedureType.getSchema().equalsIgnoreCase(schemaName))
          {
-            return false == SchemaLoadOptions.DONT_LOAD.equals(SchemaLoadOptions.valueOf((String) specifiedLoadingRows.get(PROCEDURE_COL_IX)));
+            return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx());
          }
       }
 
@@ -94,14 +95,14 @@ public class AliasPropertiesDecorator
       TableLoader tl = new TableLoader();
 
       tl.addColumn(_i18n.t("alias.properties.schema"));
-      tl.addColumn(_i18n.t("alias.properties.tables")).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(_i18n.t("alias.properties.views")).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(_i18n.t("alias.properties.procedures")).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.TABLE.toString()).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.VIEW.toString()).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.PROCEDURE.toString()).setSelectableValues(SchemaLoadOptions.values());
       return tl;
    }
 
    /**
-    * This needs to match the ...COL_IX constants
+    * This needs to match the AliasPropertiesObjectTypes.getColIx()
     */
    public static void fillSchemaTable(DbConnectorResult dbConnectorResult, TableLoader tableLoaderSchemasToFill)
    {
@@ -117,4 +118,20 @@ public class AliasPropertiesDecorator
    }
 
 
+   public static AliasProperties convertStringsToSchemaLoadOptions(AliasProperties aliasProperties)
+   {
+      for (ArrayList row : aliasProperties.getSpecifiedLoading())
+      {
+         for (AliasPropertiesObjectTypes aliasPropertiesObjectType : AliasPropertiesObjectTypes.values())
+         {
+            int ix = aliasPropertiesObjectType.getColIx();
+            if(row.get(ix) instanceof String)
+            {
+               row.set(ix, SchemaLoadOptions.valueOf((String)row.get(ix)));
+            }
+         }
+      }
+
+      return aliasProperties;
+   }
 }

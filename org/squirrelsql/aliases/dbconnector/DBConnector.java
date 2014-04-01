@@ -167,7 +167,7 @@ public class DBConnector
          connectingController.close();
          dbConnectorListener.finished(dbConnectorResult);
       }
-      else if(false == dbConnectorResult.isConnected())
+      else if(false == dbConnectorResult.isConnected() || null != dbConnectorResult.getConnectException())
       {
          connectingController.displayAndDecideOnConnectFailure(dbConnectorResult, d -> onConnectFailureDecision(d, dbConnectorResult, dbConnectorListener));
       }

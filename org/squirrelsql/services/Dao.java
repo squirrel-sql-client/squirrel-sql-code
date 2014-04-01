@@ -62,7 +62,12 @@ public class Dao
 
    public static AliasPropertiesDecorator loadAliasProperties(String aliasId)
    {
-      return new AliasPropertiesDecorator(loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties()));
+      AliasProperties aliasProperties = loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties());
+
+      aliasProperties = AliasPropertiesDecorator.convertStringsToSchemaLoadOptions(aliasProperties);
+
+
+      return new AliasPropertiesDecorator(aliasProperties);
    }
 
 

@@ -4,7 +4,6 @@ import org.squirrelsql.aliases.AliasPropertiesDecorator;
 
 public class SchemaCacheConfig
 {
-   public static final SchemaCacheConfig LOAD_ALL = new SchemaCacheConfig(SchemaCacheConfigFlags.ALL);
    public static final SchemaCacheConfig LOAD_NOTHING = new SchemaCacheConfig(SchemaCacheConfigFlags.NOTHING);
 
    private SchemaCacheConfigFlags _schemaCacheConfigFlag;
@@ -29,17 +28,26 @@ public class SchemaCacheConfig
 
    public boolean shouldNotLoad()
    {
-      return SchemaCacheConfigFlags.NOTHING == _schemaCacheConfigFlag;
+      return LOAD_NOTHING == this;
    }
 
 
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
    {
+      if(LOAD_NOTHING == this)
+      {
+         return false;
+      }
+
       return _aliasPropertiesDecorator.shouldLoadTables(structItemTableType);
    }
 
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
    {
+      if(LOAD_NOTHING == this)
+      {
+         return false;
+      }
       return _aliasPropertiesDecorator.shouldLoadProcedures(structItemProcedureType);
    }
 

@@ -222,4 +222,9 @@ public class TableLoader
    {
       _rows.clear();
    }
+
+   public ArrayList<ArrayList<SimpleObjectProperty>> getSimpleObjectPropertyRows()
+   {
+      return _rows;
+   }
 }

@@ -5,7 +5,7 @@ import org.squirrelsql.services.I18n;
 public enum SchemaLoadOptions
 {
    LOAD_BUT_DONT_CACHE(Helper.i18n.t("alias.load.option.load.no.cache")),
-   LOAD_BUT_AND_CACHE(Helper.i18n.t("alias.load.option.load.and.cache")),
+   LOAD_AND_CACHE(Helper.i18n.t("alias.load.option.load.and.cache")),
    DONT_LOAD(Helper.i18n.t("alias.load.option.dont.load"));
 
 

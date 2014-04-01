@@ -1,5 +1,6 @@
 package org.squirrelsql.aliases;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
@@ -38,6 +39,14 @@ public class AliasPropertiesEditCtrl
 
       loadAliasProperties(alias);
 
+      _view.cboObjectTypes.getItems().clear();
+      _view.cboObjectTypes.getItems().add(_i18n.t("alias.properties.all.objects"));
+      _view.cboObjectTypes.getItems().addAll(AliasPropertiesObjectTypes.values());
+      _view.cboObjectTypes.getSelectionModel().selectFirst();
+
+      _view.cboSchemaLoadOptions.getItems().clear();
+      _view.cboSchemaLoadOptions.getItems().addAll(SchemaLoadOptions.values());
+
       _view.radLoadAllCacheNon.setOnAction(e -> onDisableSpecifyControls());
       _view.radLoadAndCacheAll.setOnAction(e -> onDisableSpecifyControls());
       _view.radSpecifyLoading.setOnAction(e -> onDisableSpecifyControls());
@@ -46,11 +55,55 @@ public class AliasPropertiesEditCtrl
       _view.btnClose.setOnAction(e -> _dialog.close());
       _view.btnOk.setOnAction(e -> onOk());
 
+      _view.btnApply.setOnAction(e -> onApply());
+
       _view.btnConnectDb.setOnAction(e -> onConnectDb());
 
 
       initWindow(alias, fxmlHelper);
 
+   }
+
+   private void onApply()
+   {
+      SchemaLoadOptions selectedLoadOption = _view.cboSchemaLoadOptions.getSelectionModel().getSelectedItem();
+      if(null == selectedLoadOption)
+      {
+         return;
+      }
+
+      if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.TABLE)
+      {
+         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         {
+            row.get(AliasPropertiesObjectTypes.TABLE.getColIx()).set(selectedLoadOption);
+         }
+      }
+      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.VIEW)
+      {
+         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         {
+            row.get(AliasPropertiesObjectTypes.VIEW.getColIx()).set(selectedLoadOption);
+         }
+
+      }
+      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.PROCEDURE)
+      {
+         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         {
+            row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
+         }
+      }
+      else
+      {
+         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         {
+            row.get(AliasPropertiesObjectTypes.TABLE.getColIx()).set(selectedLoadOption);
+            row.get(AliasPropertiesObjectTypes.VIEW.getColIx()).set(selectedLoadOption);
+            row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
+         }
+
+      }
    }
 
    private void loadAliasProperties(Alias alias)
