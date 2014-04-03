@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="329.9998779296875" prefWidth="457.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.dbconnector.LoginView">
+  <children>
+    <Label layoutX="14.0" prefWidth="147.0" text="%login.aliasname" AnchorPane.topAnchor="40.0" />
+    <Label layoutX="14.0" text="%login.driver" AnchorPane.topAnchor="70.0" />
+    <Label layoutX="14.0" text="%login.url" AnchorPane.topAnchor="100.0" />
+    <Label layoutX="14.0" text="%login.user" AnchorPane.topAnchor="140.0" />
+    <Label layoutX="14.0" text="%login.pwd" AnchorPane.topAnchor="170.0" />
+    <Label fx:id="lblAlias" layoutY="40.0" prefWidth="259.0" text="Label" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="28.0" />
+    <Label fx:id="lblDriver" layoutY="73.0" prefWidth="259.0" text="Label" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="28.0" />
+    <Label fx:id="lblUrl" layoutY="100.0" prefWidth="259.0" text="Label" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="28.0" />
+    <TextField fx:id="txtUser" layoutY="134.0" prefWidth="258.9999000000025" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="28.0" />
+    <PasswordField fx:id="txtPassword" layoutY="164.0" prefWidth="259.0" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="28.0" />
+    <HBox id="HBox" alignment="CENTER" layoutY="228.0" prefWidth="429.0" spacing="15.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+      <children>
+        <Button fx:id="btnConnect" mnemonicParsing="false" text="%login.doConnect" />
+        <Button fx:id="btnClose" mnemonicParsing="false" text="%login.close" />
+      </children>
+    </HBox>
+  </children>
+</AnchorPane>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="214.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.session.sql.SQLEditTopPanelView">
+  <children>
+    <CheckBox fx:id="chkLimitRows" layoutY="4.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="111.0" text="%session.tab.sql.executing.limit.rows" AnchorPane.rightAnchor="94.0" />
+    <TextField fx:id="txtRowLimit" layoutY="3.0" prefWidth="94.0" AnchorPane.rightAnchor="5.0" />
+  </children>
+</AnchorPane>

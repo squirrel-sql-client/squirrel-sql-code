@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="444.0000999999975" prefWidth="598.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.dbconnector.ConnectingView">
+  <children>
+    <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="20.0" prefWidth="284.0" text="%connectingto.to" textAlignment="LEFT" />
+    <Label fx:id="lblAliasConnecting" alignment="TOP_LEFT" layoutY="34.0" prefWidth="383.0" text="Here the url will show up" textAlignment="LEFT" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="15.0" />
+    <TextArea fx:id="txtErrMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="0.0" wrapText="false" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="104.0" />
+    <HBox minHeight="16.0" prefHeight="22.0" prefWidth="530.0" spacing="7.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0">
+      <children>
+        <Button fx:id="btnClose" mnemonicParsing="false" text="%connectingto.close" />
+        <Button fx:id="btnRelogin" mnemonicParsing="false"  text="%connectingto.relogin" />
+        <Button fx:id="btnEditAlias" mnemonicParsing="false" text="%connectingto.editAlias" />
+      </children>
+    </HBox>
+    <Label fx:id="lblErrorOccured" layoutX="14.0" layoutY="81.0" prefWidth="383.0" text="%connectingto.errorConnecting" textFill="RED" />
+  </children>
+</AnchorPane>
