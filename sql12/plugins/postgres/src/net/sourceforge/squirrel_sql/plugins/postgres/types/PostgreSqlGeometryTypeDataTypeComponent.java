@@ -32,8 +32,7 @@ import org.postgis.PGgeometry;
 /**
  * A custom DatatType implementation of IDataTypeComponent that can handle
  * Postgis geometry
- * 
- * Test commit
+ *
  * @author jarmolow
  */
 public class PostgreSqlGeometryTypeDataTypeComponent extends BaseDataTypeComponent {
