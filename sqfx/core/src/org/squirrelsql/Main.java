@@ -12,6 +12,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
 
+//test commit
 public class Main extends Application
 {
 
