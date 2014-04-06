@@ -1,0 +1,75 @@
+<project name="SQuirreLSQL" default="buildAll" basedir=".">
+
+
+    <target name="cleanAllAndInit" description="cleanAllAndInit">
+
+        <tstamp/> <!-- Needed to initialize DSTAMP and TSTAMP variables-->
+
+        <!-- DEFINE VERSION ONLY HERE -->
+        <!--<property name="squirrelsqlfx.version" value="0."/>-->
+        <property name="squirrelsqlfx.version" value="snapshot-${DSTAMP}_${TSTAMP}"/>
+
+        <delete dir="output"/>
+        <mkdir dir="output/work/bin"/>
+        <mkdir dir="output/dist"/>
+        <mkdir dir="output/dist/lib"/>
+        <mkdir dir="output/plainZip/work"/>
+    </target>
+
+
+    <path id="build.classpath">
+        <fileset dir="core/lib">
+            <include name="**/*" />
+        </fileset>
+    </path>
+
+
+    <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
+
+        <antcall target="compileCore"/>
+        <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="base"/></antcall>
+
+    </target>
+
+    <target name="createPlainZip" description="createPlainZip">
+        <delete dir="output/plainZip/work"/>
+
+        <property name="plainZipName" value="squirrelsqlfx-${squirrelsqlfx.version}-${plainZipNamePostfix}"/>
+
+        <mkdir dir="output/plainZip/work/${plainZipName}"/>
+
+        <copy todir="output/plainZip/work/${plainZipName}">
+            <fileset dir="output/dist">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+
+        <zip destfile="output/plainZip/${plainZipName}.zip" basedir="output/plainZip/work"/>
+
+    </target>
+
+
+    <target name="compileCore" description="compileCore">
+        <javac srcdir="core/src" destdir="output/work/bin" classpathref="build.classpath" debug="true"/>
+        <copy todir="output/work/bin">
+            <fileset dir="core/src">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+
+
+        <jar jarfile="output/dist/squirrel-sql-fx.jar" basedir="output/work/bin"/>
+        <copy todir="output/dist/lib">
+            <fileset dir="core/lib">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <copy todir="output/dist/">
+            <fileset dir="launcher">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+    </target>
+
+
+</project> 
