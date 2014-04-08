@@ -1,4 +1,4 @@
-<project name="SQuirreLSQL" default="buildAll" basedir=".">
+<project name="SQuirreLSQLFX" default="buildAll" basedir=".">
 
 
     <target name="cleanAllAndInit" description="cleanAllAndInit">
@@ -27,14 +27,14 @@
     <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
 
         <antcall target="compileCore"/>
-        <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="base"/></antcall>
+        <antcall target="createPlainZip"></antcall>
 
     </target>
 
     <target name="createPlainZip" description="createPlainZip">
         <delete dir="output/plainZip/work"/>
 
-        <property name="plainZipName" value="squirrelsqlfx-${squirrelsqlfx.version}-${plainZipNamePostfix}"/>
+        <property name="plainZipName" value="squirrelsqlfx-${squirrelsqlfx.version}"/>
 
         <mkdir dir="output/plainZip/work/${plainZipName}"/>
 

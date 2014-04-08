@@ -2,9 +2,8 @@ SQuirreL SQL FX Change Log
 ==============================
 
 
-0.1
-===============================
-First release
+
+Features of initial snapshot:
 - Drivers
 - Aliases including schema loading properties
 - Session with Object tree and SQL execution
