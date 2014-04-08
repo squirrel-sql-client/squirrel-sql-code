@@ -47,25 +47,25 @@ public class AliasPropertiesDecorator
 
       for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
       {
-         String schemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
+         String qualifiedSchemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
 
          if(isOfTypeTable(structItemTableType))
          {
-            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
+            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
             {
                return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.TABLE.getColIx());
             }
          }
          else if(isOfTypeView(structItemTableType))
          {
-            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
+            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
             {
                return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.VIEW.getColIx());
             }
          }
          else
          {
-            if (structItemTableType.getSchema().equalsIgnoreCase(schemaName))
+            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
             {
                return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx());
             }
@@ -94,9 +94,9 @@ public class AliasPropertiesDecorator
 
       for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
       {
-         String schemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
+         String qualifiedSchemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
 
-         if (structItemProcedureType.getSchema().equalsIgnoreCase(schemaName))
+         if (structItemProcedureType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
          {
             return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx());
          }

@@ -1,5 +1,7 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.SQLUtil;
+
 public class StructItemProcedureType extends StructItem implements CatalogSchema
 {
    private final String _catalog;
@@ -48,5 +50,10 @@ public class StructItemProcedureType extends StructItem implements CatalogSchema
       int result = _catalog != null ? _catalog.hashCode() : 0;
       result = 31 * result + (_schema != null ? _schema.hashCode() : 0);
       return result;
+   }
+
+   public String getQualifiedSchema()
+   {
+      return SQLUtil.getQualifiedName(_catalog, _schema);
    }
 }

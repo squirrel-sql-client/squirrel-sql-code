@@ -1,5 +1,6 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.SQLUtil;
 import org.squirrelsql.session.completion.TableTypes;
 
 public class StructItemTableType extends StructItem implements CatalogSchema
@@ -81,5 +82,10 @@ public class StructItemTableType extends StructItem implements CatalogSchema
 
 
       return matchesRespectNull(catalog, schema);
+   }
+
+   public String getQualifiedSchema()
+   {
+      return SQLUtil.getQualifiedName(_catalog, _schema);
    }
 }
