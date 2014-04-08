@@ -1,0 +1,11 @@
+SQuirreL SQL FX Change Log
+==============================
+
+
+0.1
+===============================
+First release
+- Drivers
+- Aliases including schema loading properties
+- Session with Object tree and SQL execution
+- SQL Code completion
