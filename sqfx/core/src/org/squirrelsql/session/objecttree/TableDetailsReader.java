@@ -74,7 +74,7 @@ public class TableDetailsReader
 
    public static TableLoader readTablePrivileges(Session session, ObjectTreeNode objectTreeNode)
    {
-      return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getTablePrivileges(catalog, schema, tableName));
+       return loadTableMetaData(objectTreeNode, (catalog,schema,tableName) -> session.getDbConnectorResult().getSQLConnection().getDatabaseMetaData().getTablePrivileges(catalog, schema, tableName));
    }
 
    public static TableLoader readColumnPrivileges(Session session, ObjectTreeNode objectTreeNode)

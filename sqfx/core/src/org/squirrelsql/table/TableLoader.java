@@ -13,13 +13,12 @@ import javafx.util.Callback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableLoader<T>
+public class TableLoader
 {
    private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
    private ArrayList<ColumnHandle> _columns = new ArrayList<>();
 
    private ArrayList<ArrayList<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
-   private ArrayList<RowObjectHandle<T>> _rowObjectHandles = new ArrayList<>();
 
    public ColumnHandle addColumn(String header)
    {
@@ -36,8 +35,13 @@ public class TableLoader<T>
    public ArrayList<SimpleObjectProperty> addRow(Object... row)
    {
       ArrayList<SimpleObjectProperty> buf = TableUtil.createSimpleObjectPropertyRow(row);
-      _simpleObjectPropertyRows.add(buf);
+      addSimpleObjectPropertyRow(buf);
       return buf;
+   }
+
+   void addSimpleObjectPropertyRow(ArrayList<SimpleObjectProperty> buf)
+   {
+      _simpleObjectPropertyRows.add(buf);
    }
 
    public void load(TableView tv)
@@ -206,55 +210,13 @@ public class TableLoader<T>
       return ret;
    }
 
-   public void addRows(ArrayList<ArrayList> rows)
-   {
-      for (ArrayList row : rows)
-      {
-         addRow(row);
-      }
-   }
-
    public void clearRows()
    {
       _simpleObjectPropertyRows.clear();
    }
 
-   public  void addRowObjects(ArrayList<T> rowObjects, TableLoaderRowObjectAccess<T> cols)
+   public int getColumnCount()
    {
-      for (T rowObject : rowObjects)
-      {
-         addRowObject(rowObject, cols);
-      }
-   }
-
-   public void addRowObject(T rowObject, TableLoaderRowObjectAccess<T> rowObjectAccess)
-   {
-
-      RowObjectHandle h = new RowObjectHandle<T>(rowObject, rowObjectAccess, _columns.size());
-
-      _simpleObjectPropertyRows.add(h.getSimpleObjectProperties());
-      _rowObjectHandles.add(h);
-   }
-
-   public ArrayList<RowObjectHandle<T>> getRowObjectHandles()
-   {
-      return _rowObjectHandles;
-   }
-
-   public ArrayList<T> getRowObjects()
-   {
-      ArrayList<T> ret = new ArrayList<>();
-
-      for (RowObjectHandle<T> rowObjectHandle : _rowObjectHandles)
-      {
-         ret.add(rowObjectHandle.getRowObject());
-      }
-
-      return ret;
-   }
-
-   public void updateUI()
-   {
-      _rowObjectHandles.forEach(h -> h.updateUI());
+      return _columns.size();
    }
 }

@@ -10,6 +10,7 @@ import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 import org.squirrelsql.table.RowObjectHandle;
+import org.squirrelsql.table.RowObjectTableLoader;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class AliasPropertiesEditCtrl
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
    private Alias _alias;
-   private TableLoader<AliasPropertiesSpecifiedLoading> _tableLoaderSchemas;
+   private RowObjectTableLoader<AliasPropertiesSpecifiedLoading> _tableLoaderSchemas;
 
    public AliasPropertiesEditCtrl(Alias alias)
    {

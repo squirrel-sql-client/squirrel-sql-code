@@ -77,7 +77,7 @@ public class SchemaCacheFactory
          }
          if (false == addedChildren)
          {
-            addedChildren = appendTypes(parent, sqlConnection, null, catalogName);
+            addedChildren = appendTypes(parent, sqlConnection, catalogName, null);
          }
       }
       else if (parent instanceof StructItemSchema)

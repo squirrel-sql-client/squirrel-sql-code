@@ -4,6 +4,7 @@ import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.schemainfo.*;
+import org.squirrelsql.table.RowObjectTableLoader;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class AliasPropertiesDecorator
       {
          if (specifiedLoading.getAliasPropertiesSchema().matches(structItemProcedureType))
          {
-            return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getProcOpt();
+            return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getProcedureOpt();
          }
       }
 
@@ -100,9 +101,9 @@ public class AliasPropertiesDecorator
    }
 
 
-   public static TableLoader createEmptyTableLoader()
+   public static RowObjectTableLoader createEmptyTableLoader()
    {
-      TableLoader tl = new TableLoader();
+      RowObjectTableLoader<AliasPropertiesSpecifiedLoading> tl = new RowObjectTableLoader<>();
 
       tl.addColumn(_i18n.t("alias.properties.schema"));
       tl.addColumn(AliasPropertiesObjectTypes.TABLE.toString()).setSelectableValues(SchemaLoadOptions.values());
@@ -112,7 +113,7 @@ public class AliasPropertiesDecorator
       return tl;
    }
 
-   public static void fillSchemaTableDefault(DbConnectorResult dbConnectorResult, TableLoader tableLoaderSchemasToFill)
+   public static void fillSchemaTableDefault(DbConnectorResult dbConnectorResult, RowObjectTableLoader<AliasPropertiesSpecifiedLoading> tableLoaderSchemasToFill)
    {
       DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCache().getDataBaseStructure();
 

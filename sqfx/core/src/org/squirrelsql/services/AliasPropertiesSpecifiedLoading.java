@@ -9,15 +9,15 @@ public class AliasPropertiesSpecifiedLoading
    private AliasPropertiesSchema _aliasPropertiesSchema;
    private SchemaLoadOptions _tableOpt;
    private SchemaLoadOptions _viewOpt;
-   private SchemaLoadOptions _procOpt;
+   private SchemaLoadOptions _procedureOpt;
    private SchemaLoadOptions _otherTableOpt;
 
-   public AliasPropertiesSpecifiedLoading(AliasPropertiesSchema aliasPropertiesSchema, SchemaLoadOptions tableOpt, SchemaLoadOptions viewOpt, SchemaLoadOptions procOpt, SchemaLoadOptions otherTableOpt)
+   public AliasPropertiesSpecifiedLoading(AliasPropertiesSchema aliasPropertiesSchema, SchemaLoadOptions tableOpt, SchemaLoadOptions viewOpt, SchemaLoadOptions procedureOpt, SchemaLoadOptions otherTableOpt)
    {
       _aliasPropertiesSchema = aliasPropertiesSchema;
       _tableOpt = tableOpt;
       _viewOpt = viewOpt;
-      _procOpt = procOpt;
+      _procedureOpt = procedureOpt;
       _otherTableOpt = otherTableOpt;
    }
 
@@ -61,14 +61,15 @@ public class AliasPropertiesSpecifiedLoading
       _viewOpt = viewOpt;
    }
 
-   public SchemaLoadOptions getProcOpt()
+
+   public SchemaLoadOptions getProcedureOpt()
    {
-      return _procOpt;
+      return _procedureOpt;
    }
 
-   public void setProcedureOpt(SchemaLoadOptions procOpt)
+   public void setProcedureOpt(SchemaLoadOptions procedureOpt)
    {
-      _procOpt = procOpt;
+      _procedureOpt = procedureOpt;
    }
 
    public SchemaLoadOptions getOtherTableOpt()
@@ -101,7 +102,7 @@ public class AliasPropertiesSpecifiedLoading
          }
          else if(3 == colIx)
          {
-            return o._procOpt;
+            return o._procedureOpt;
          }
          else if(4 == colIx)
          {
@@ -130,7 +131,7 @@ public class AliasPropertiesSpecifiedLoading
          }
          else if(3 == colIx)
          {
-            o._procOpt = (SchemaLoadOptions) cellValue;
+            o._procedureOpt = (SchemaLoadOptions) cellValue;
          }
          else if(4 == colIx)
          {
