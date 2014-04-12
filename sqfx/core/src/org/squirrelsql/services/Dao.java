@@ -36,6 +36,7 @@ public class Dao
 
    public static void writeAliasProperties(AliasProperties aliasProperties)
    {
+
       writeObject(aliasProperties, getAliasPropertiesFileName(aliasProperties.getAliasId()));
    }
 
@@ -63,9 +64,6 @@ public class Dao
    public static AliasPropertiesDecorator loadAliasProperties(String aliasId)
    {
       AliasProperties aliasProperties = loadObject(getAliasPropertiesFileName(aliasId), new AliasProperties());
-
-      aliasProperties = AliasPropertiesDecorator.convertStringsToSchemaLoadOptions(aliasProperties);
-
 
       return new AliasPropertiesDecorator(aliasProperties);
    }

@@ -1,18 +1,15 @@
 package org.squirrelsql.aliases;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.schemainfo.DatabaseStructure;
-import org.squirrelsql.session.schemainfo.StructItemProcedureType;
-import org.squirrelsql.session.schemainfo.StructItemSchema;
-import org.squirrelsql.session.schemainfo.StructItemTableType;
+import org.squirrelsql.session.schemainfo.*;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 
 public class AliasPropertiesDecorator
 {
-   public static final int SCHEMA_NAME_COL_IX = 0;
 
    private static I18n _i18n = new I18n(AliasPropertiesDecorator.class);
 
@@ -45,29 +42,28 @@ public class AliasPropertiesDecorator
          return false; // By default we ignore system table types. They can only be included by specified loading, See below.
       }
 
-      for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
+      for (AliasPropertiesSpecifiedLoading specifiedLoading : _aliasProperties.getSpecifiedLoadings())
       {
-         String qualifiedSchemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
 
          if(isOfTypeTable(structItemTableType))
          {
-            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
+            if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.TABLE.getColIx());
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getTableOpt();
             }
          }
          else if(isOfTypeView(structItemTableType))
          {
-            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
+            if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.VIEW.getColIx());
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getViewOpt();
             }
          }
          else
          {
-            if (structItemTableType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
+            if (specifiedLoading.getAliasPropertiesSchema().matches(structItemTableType))
             {
-               return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx());
+               return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getOtherTableOpt();
             }
          }
       }
@@ -92,13 +88,11 @@ public class AliasPropertiesDecorator
          return true;
       }
 
-      for (ArrayList specifiedLoadingRows : _aliasProperties.getSpecifiedLoading())
+      for (AliasPropertiesSpecifiedLoading specifiedLoading : _aliasProperties.getSpecifiedLoadings())
       {
-         String qualifiedSchemaName = (String) specifiedLoadingRows.get(SCHEMA_NAME_COL_IX);
-
-         if (structItemProcedureType.getQualifiedSchema().equalsIgnoreCase(qualifiedSchemaName))
+         if (specifiedLoading.getAliasPropertiesSchema().matches(structItemProcedureType))
          {
-            return SchemaLoadOptions.DONT_LOAD != specifiedLoadingRows.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx());
+            return SchemaLoadOptions.DONT_LOAD != specifiedLoading.getProcOpt();
          }
       }
 
@@ -106,9 +100,6 @@ public class AliasPropertiesDecorator
    }
 
 
-   /**
-    * This needs to match the ...COL_IX constants
-    */
    public static TableLoader createEmptyTableLoader()
    {
       TableLoader tl = new TableLoader();
@@ -121,42 +112,30 @@ public class AliasPropertiesDecorator
       return tl;
    }
 
-   /**
-    * This needs to match the AliasPropertiesObjectTypes.getColIx()
-    */
-   public static void fillSchemaTable(DbConnectorResult dbConnectorResult, TableLoader tableLoaderSchemasToFill)
+   public static void fillSchemaTableDefault(DbConnectorResult dbConnectorResult, TableLoader tableLoaderSchemasToFill)
    {
       DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCache().getDataBaseStructure();
 
       ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
+      AliasPropertiesSpecifiedLoading.TableLoaderAccess tableLoaderAccess = new AliasPropertiesSpecifiedLoading.TableLoaderAccess();
 
-      for (StructItemSchema schema : schemas)
+
+      if (0 < schemas.size())
       {
-         tableLoaderSchemasToFill.addRow(
-               schema.getQualifiedName(),
-               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
-               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
-               SchemaLoadOptions.LOAD_BUT_DONT_CACHE,
-               SchemaLoadOptions.DONT_LOAD);
-      }
-   }
-
-
-   public static AliasProperties convertStringsToSchemaLoadOptions(AliasProperties aliasProperties)
-   {
-      for (ArrayList row : aliasProperties.getSpecifiedLoading())
-      {
-         for (AliasPropertiesObjectTypes aliasPropertiesObjectType : AliasPropertiesObjectTypes.values())
+         for (StructItemSchema schema : schemas)
          {
-            int ix = aliasPropertiesObjectType.getColIx();
-            if(row.get(ix) instanceof String)
-            {
-               row.set(ix, SchemaLoadOptions.valueOf((String)row.get(ix)));
-            }
+            tableLoaderSchemasToFill.addRowObject(new AliasPropertiesSpecifiedLoading(new AliasPropertiesSchema(schema)), tableLoaderAccess);
          }
       }
+      else
+      {
+         ArrayList<StructItemCatalog> catalogs = dataBaseStructure.getCatalogs();
+         for (StructItemCatalog catalog : catalogs)
+         {
+            tableLoaderSchemasToFill.addRowObject(new AliasPropertiesSpecifiedLoading(new AliasPropertiesSchema(catalog)), tableLoaderAccess);
+         }
 
-      return aliasProperties;
+      }
    }
 }

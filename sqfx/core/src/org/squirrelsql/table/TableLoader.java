@@ -13,12 +13,13 @@ import javafx.util.Callback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableLoader
+public class TableLoader<T>
 {
    private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
    private ArrayList<ColumnHandle> _columns = new ArrayList<>();
 
-   private ArrayList<ArrayList<SimpleObjectProperty>> _rows = new ArrayList<>();
+   private ArrayList<ArrayList<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
+   private ArrayList<RowObjectHandle<T>> _rowObjectHandles = new ArrayList<>();
 
    public ColumnHandle addColumn(String header)
    {
@@ -27,21 +28,16 @@ public class TableLoader
       return columnHandle;
    }
 
-   public void addRow(List row)
+   public ArrayList<SimpleObjectProperty> addRow(List row)
    {
-      addRow(row.toArray(new Object[row.size()]));
+      return addRow(row.toArray(new Object[row.size()]));
    }
 
-   public void addRow(Object... row)
+   public ArrayList<SimpleObjectProperty> addRow(Object... row)
    {
-      ArrayList<SimpleObjectProperty> buf = new ArrayList<>();
-
-      for (Object o : row)
-      {
-         buf.add(new SimpleObjectProperty(o));
-      }
-
-      _rows.add(buf);
+      ArrayList<SimpleObjectProperty> buf = TableUtil.createSimpleObjectPropertyRow(row);
+      _simpleObjectPropertyRows.add(buf);
+      return buf;
    }
 
    public void load(TableView tv)
@@ -82,7 +78,7 @@ public class TableLoader
 
       tv.getColumns().setAll(cols);
 
-      ObservableList<ArrayList<SimpleObjectProperty>> items = FXCollections.observableArrayList(_rows);
+      ObservableList<ArrayList<SimpleObjectProperty>> items = FXCollections.observableArrayList(_simpleObjectPropertyRows);
       tv.setItems(items);
 
    }
@@ -111,8 +107,8 @@ public class TableLoader
 
    public ArrayList<String> getCellsAsString(int col)
    {
-      ArrayList<String> ret = new ArrayList<>(_rows.size());
-      for (ArrayList<SimpleObjectProperty> row : _rows)
+      ArrayList<String> ret = new ArrayList<>(_simpleObjectPropertyRows.size());
+      for (ArrayList<SimpleObjectProperty> row : _simpleObjectPropertyRows)
       {
          SimpleObjectProperty simpleObjectProperty = interpretValue(row.get(col));
          ret.add(getStringValue(simpleObjectProperty));
@@ -158,12 +154,12 @@ public class TableLoader
 
    public int getCellAsInt(String columnName, int rowIx)
    {
-      return (int) _rows.get(rowIx).get(getColIxByName(columnName)).get();
+      return (int) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
    }
 
    public Integer getCellAsInteger(String columnName, int rowIx)
    {
-      return (Integer) _rows.get(rowIx).get(getColIxByName(columnName)).get();
+      return (Integer) _simpleObjectPropertyRows.get(rowIx).get(getColIxByName(columnName)).get();
    }
 
 
@@ -175,12 +171,12 @@ public class TableLoader
 
    private SimpleObjectProperty getObjectPropertyAt(int rowIx, int colIx)
    {
-      return interpretValue(_rows.get(rowIx).get(colIx));
+      return interpretValue(_simpleObjectPropertyRows.get(rowIx).get(colIx));
    }
 
    public int size()
    {
-      return _rows.size();
+      return _simpleObjectPropertyRows.size();
    }
 
    public ArrayList<ArrayList> getRows()
@@ -192,7 +188,7 @@ public class TableLoader
          ArrayList row = new ArrayList();
          for (int j = 0; j < _columns.size(); j++)
          {
-            ArrayList<SimpleObjectProperty> sopRow = _rows.get(i);
+            ArrayList<SimpleObjectProperty> sopRow = _simpleObjectPropertyRows.get(i);
             if (j < sopRow.size())
             {
                SimpleObjectProperty simpleObjectProperty = sopRow.get(j);
@@ -220,11 +216,45 @@ public class TableLoader
 
    public void clearRows()
    {
-      _rows.clear();
+      _simpleObjectPropertyRows.clear();
    }
 
-   public ArrayList<ArrayList<SimpleObjectProperty>> getSimpleObjectPropertyRows()
+   public  void addRowObjects(ArrayList<T> rowObjects, TableLoaderRowObjectAccess<T> cols)
    {
-      return _rows;
+      for (T rowObject : rowObjects)
+      {
+         addRowObject(rowObject, cols);
+      }
+   }
+
+   public void addRowObject(T rowObject, TableLoaderRowObjectAccess<T> rowObjectAccess)
+   {
+
+      RowObjectHandle h = new RowObjectHandle<T>(rowObject, rowObjectAccess, _columns.size());
+
+      _simpleObjectPropertyRows.add(h.getSimpleObjectProperties());
+      _rowObjectHandles.add(h);
+   }
+
+   public ArrayList<RowObjectHandle<T>> getRowObjectHandles()
+   {
+      return _rowObjectHandles;
+   }
+
+   public ArrayList<T> getRowObjects()
+   {
+      ArrayList<T> ret = new ArrayList<>();
+
+      for (RowObjectHandle<T> rowObjectHandle : _rowObjectHandles)
+      {
+         ret.add(rowObjectHandle.getRowObject());
+      }
+
+      return ret;
+   }
+
+   public void updateUI()
+   {
+      _rowObjectHandles.forEach(h -> h.updateUI());
    }
 }

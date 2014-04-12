@@ -1,6 +1,5 @@
 package org.squirrelsql.aliases;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
@@ -10,6 +9,7 @@ import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
+import org.squirrelsql.table.RowObjectHandle;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class AliasPropertiesEditCtrl
    private I18n _i18n = new I18n(this.getClass());
    private Pref _pref = new Pref(getClass());
    private Alias _alias;
-   private TableLoader _tableLoaderSchemas;
+   private TableLoader<AliasPropertiesSpecifiedLoading> _tableLoaderSchemas;
 
    public AliasPropertiesEditCtrl(Alias alias)
    {
@@ -72,46 +72,34 @@ public class AliasPropertiesEditCtrl
          return;
       }
 
-      if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.TABLE)
+      for (RowObjectHandle<AliasPropertiesSpecifiedLoading> hRow : _tableLoaderSchemas.getRowObjectHandles())
       {
-         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
+         if (_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.TABLE)
          {
-            row.get(AliasPropertiesObjectTypes.TABLE.getColIx()).set(selectedLoadOption);
+            hRow.getRowObject().setTableOpt(selectedLoadOption);
+         }
+         else if (_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.VIEW)
+         {
+            hRow.getRowObject().setViewOpt(selectedLoadOption);
+         }
+         else if (_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.PROCEDURE)
+         {
+            hRow.getRowObject().setProcedureOpt(selectedLoadOption);
+         }
+         else if (_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.OTHER_TABLE_TYPES)
+         {
+            hRow.getRowObject().setOtherTableOpt(selectedLoadOption);
+         }
+         else
+         {
+            hRow.getRowObject().setTableOpt(selectedLoadOption);
+            hRow.getRowObject().setViewOpt(selectedLoadOption);
+            hRow.getRowObject().setProcedureOpt(selectedLoadOption);
+            hRow.getRowObject().setOtherTableOpt(selectedLoadOption);
          }
       }
-      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.VIEW)
-      {
-         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
-         {
-            row.get(AliasPropertiesObjectTypes.VIEW.getColIx()).set(selectedLoadOption);
-         }
 
-      }
-      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.PROCEDURE)
-      {
-         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
-         {
-            row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
-         }
-      }
-      else if(_view.cboObjectTypes.getSelectionModel().getSelectedItem() == AliasPropertiesObjectTypes.OTHER_TABLE_TYPES)
-      {
-         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
-         {
-            row.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx()).set(selectedLoadOption);
-         }
-      }
-      else
-      {
-         for (ArrayList<SimpleObjectProperty> row : _tableLoaderSchemas.getSimpleObjectPropertyRows())
-         {
-            row.get(AliasPropertiesObjectTypes.TABLE.getColIx()).set(selectedLoadOption);
-            row.get(AliasPropertiesObjectTypes.VIEW.getColIx()).set(selectedLoadOption);
-            row.get(AliasPropertiesObjectTypes.PROCEDURE.getColIx()).set(selectedLoadOption);
-            row.get(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.getColIx()).set(selectedLoadOption);
-         }
-
-      }
+      _tableLoaderSchemas.updateUI();
    }
 
    private void loadAliasProperties(Alias alias)
@@ -132,7 +120,9 @@ public class AliasPropertiesEditCtrl
       {
          _view.radSpecifyLoading.setSelected(true);
       }
-      _tableLoaderSchemas.addRows(aliasProperties.getSpecifiedLoading());
+
+      AliasPropertiesSpecifiedLoading.TableLoaderAccess tableLoaderAccess = new AliasPropertiesSpecifiedLoading.TableLoaderAccess();
+      _tableLoaderSchemas.addRowObjects(aliasProperties.getSpecifiedLoadings(), tableLoaderAccess);
       _tableLoaderSchemas.load(_view.tblSchemas);
 
       onDisableSpecifyControls();
@@ -152,14 +142,14 @@ public class AliasPropertiesEditCtrl
 
       _tableLoaderSchemas.clearRows();
 
-      AliasPropertiesDecorator.fillSchemaTable(dbConnectorResult, _tableLoaderSchemas);
+      AliasPropertiesDecorator.fillSchemaTableDefault(dbConnectorResult, _tableLoaderSchemas);
 
       _tableLoaderSchemas.load(_view.tblSchemas);
    }
 
    private void onOk()
    {
-      ArrayList<ArrayList> rows = _tableLoaderSchemas.getRows();
+      ArrayList<AliasPropertiesSpecifiedLoading> rows = _tableLoaderSchemas.getRowObjects();
 
       AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected());
 
