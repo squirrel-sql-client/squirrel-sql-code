@@ -5,10 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import org.squirrelsql.services.Utils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.SQLException;
 
 public class MessagePanelCtrl
@@ -103,7 +101,7 @@ public class MessagePanelCtrl
       }
       else if (null == s && null != t)
       {
-         error(getStackString(t));
+         error(Utils.getStackString(t));
       }
       else if (null != s && null == t)
       {
@@ -122,32 +120,10 @@ public class MessagePanelCtrl
 
       if (null != t)
       {
-         s += "\n" + getStackString(t);
+         s += "\n" + Utils.getStackString(t);
       }
 
       return ret;
-   }
-
-   private String getStackString(Throwable t)
-   {
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
-      t.printStackTrace(pw);
-
-      pw.flush();
-      sw.flush();
-      String msg = sw.toString();
-
-      try
-      {
-         pw.close();
-         sw.close();
-      }
-      catch (IOException e)
-      {
-
-      }
-      return msg;
    }
 
    public String errorSQLNoStack(SQLException e)

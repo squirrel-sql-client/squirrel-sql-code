@@ -13,7 +13,7 @@ public class ExceptionHandler
    {
       if(false == Platform.isFxApplicationThread())
       {
-         throw new IllegalStateException("MUst bot");
+         throw new IllegalStateException("Must be on called on FxApplicationThread");
       }
 
       Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler()

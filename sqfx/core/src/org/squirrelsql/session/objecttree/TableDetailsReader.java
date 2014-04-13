@@ -1,9 +1,10 @@
 package org.squirrelsql.session.objecttree;
 
-import org.squirrelsql.ExceptionHandler;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.table.TableLoader;
@@ -20,7 +21,6 @@ public class TableDetailsReader
    {
       ResultSet apply(String catalog, String schema, String tableName) throws SQLException;
    }
-
 
    public static TableLoader readContent(Session session, ObjectTreeNode objectTreeNode)
    {
@@ -114,7 +114,25 @@ public class TableDetailsReader
       }
       catch (SQLException e)
       {
-         throw new RuntimeException(e);
+         // E.g. for MySQL reading some meta data requires special privileges.
+         // Trying to access these meta data will result in an exception.
+         // We display this exception nicely here.
+
+         TableLoader tableLoader = new TableLoader();
+
+         I18n i18n = new I18n(TableDetailsReader.class);
+
+         String errorHeader = i18n.t("objecttree.tableDetailsReader.fail");
+         tableLoader.addColumn(errorHeader);
+
+         tableLoader.addRow(Utils.getStackString(e));
+
+         MessageHandler mh = new MessageHandler(TableDetailsReader.class, MessageHandlerDestination.MESSAGE_LOG);
+
+         mh.error(errorHeader, e);
+
+         return tableLoader;
+
       }
    }
 }

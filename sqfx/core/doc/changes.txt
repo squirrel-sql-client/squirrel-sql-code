@@ -2,6 +2,7 @@ SQuirreL SQL FX Change Log
 ==============================
 
 
+Bug fix: Reading object tree details failed if some meta data where not accessible e.g. for privilege reasons on MySQL
 Bug fix: Schema loading configuration did not work for databases with catalogs but no schemas, e.g. MySQL.
 
 
