@@ -126,12 +126,14 @@ public class AliasPropertiesEditCtrl
       _tableLoaderSchemas.addRowObjects(aliasProperties.getSpecifiedLoadings(), tableLoaderAccess);
       _tableLoaderSchemas.load(_view.tblSchemas);
 
+      _view.chkHideEmptySchemas.setSelected(aliasProperties.isHideEmptySchemasInObjectTree());
+
       onDisableSpecifyControls();
    }
 
    private void onConnectDb()
    {
-      new DBConnector(_alias, _dialog, SchemaCacheConfig.LOAD_NOTHING).tryConnect(this::onConnected);
+      new DBConnector(_alias, _dialog, SchemaCacheConfig.createLoadNothing()).tryConnect(this::onConnected);
    }
 
    private void onConnected(DbConnectorResult dbConnectorResult)
@@ -152,7 +154,7 @@ public class AliasPropertiesEditCtrl
    {
       ArrayList<AliasPropertiesSpecifiedLoading> rows = _tableLoaderSchemas.getRowObjects();
 
-      AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected());
+      AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected(), _view.chkHideEmptySchemas.isSelected());
 
       Dao.writeAliasProperties(aliasProperties);
       _dialog.close();

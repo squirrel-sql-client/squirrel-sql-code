@@ -5,7 +5,6 @@ import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.schemainfo.*;
 import org.squirrelsql.table.RowObjectTableLoader;
-import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 
@@ -138,5 +137,10 @@ public class AliasPropertiesDecorator
          }
 
       }
+   }
+
+   public boolean isHideEmptySchemasInObjectTree()
+   {
+      return _aliasProperties.isHideEmptySchemasInObjectTree();
    }
 }

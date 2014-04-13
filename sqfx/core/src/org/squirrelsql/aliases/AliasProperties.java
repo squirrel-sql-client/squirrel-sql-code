@@ -10,18 +10,20 @@ public class AliasProperties
    private String _aliasId;
    private boolean _loadAllCacheNon = true;
    private boolean _loadAndCacheAll;
+   private boolean _hideEmptySchemasInObjectTree = true;
 
 
    public AliasProperties()
    {
    }
 
-   public AliasProperties(ArrayList<AliasPropertiesSpecifiedLoading> specifiedLoadings, String aliasId, boolean loadAllCacheNon, boolean loadAndCacheAll)
+   public AliasProperties(ArrayList<AliasPropertiesSpecifiedLoading> specifiedLoadings, String aliasId, boolean loadAllCacheNon, boolean loadAndCacheAll, boolean hideEmptySchemasInObjectTree)
    {
       _specifiedLoadings = specifiedLoadings;
       _aliasId = aliasId;
       _loadAllCacheNon = loadAllCacheNon;
       _loadAndCacheAll = loadAndCacheAll;
+      _hideEmptySchemasInObjectTree = hideEmptySchemasInObjectTree;
    }
 
 
@@ -63,5 +65,15 @@ public class AliasProperties
    public void setLoadAndCacheAll(boolean loadAndCacheAll)
    {
       _loadAndCacheAll = loadAndCacheAll;
+   }
+
+   public boolean isHideEmptySchemasInObjectTree()
+   {
+      return _hideEmptySchemasInObjectTree;
+   }
+
+   public void setHideEmptySchemasInObjectTree(boolean hideEmptySchemasInObjectTree)
+   {
+      _hideEmptySchemasInObjectTree = hideEmptySchemasInObjectTree;
    }
 }

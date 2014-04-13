@@ -15,6 +15,8 @@ import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
+import java.util.ArrayList;
+
 
 public class SessionCtrl
 {
@@ -115,6 +117,8 @@ public class SessionCtrl
 
       TablesProceduresAndUDTsCreator.createNodes(objectsTree, _session);
 
+      removeEmptySchemasIfRequested(objectsTree, _session);
+
 
       _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
       _objectTabSplitPane.getItems().add(objectsTree);
@@ -131,6 +135,40 @@ public class SessionCtrl
       objectsTab.setContent(_objectTabSplitPane);
 
       return objectsTab;
+   }
+
+
+   private void removeEmptySchemasIfRequested(TreeView<ObjectTreeNode> objectsTree, Session session)
+   {
+      if(false == session.getSchemaCache().getAliasPropertiesDecorator().isHideEmptySchemasInObjectTree())
+      {
+         return;
+      }
+
+      ArrayList<TreeItem<ObjectTreeNode>> schemas = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY);
+      removeEmptyNodes(schemas);
+
+      ArrayList<TreeItem<ObjectTreeNode>> catalogs = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY);
+      removeEmptyNodes(catalogs);
+
+   }
+
+   private void removeEmptyNodes(ArrayList<TreeItem<ObjectTreeNode>> nodes)
+   {
+      ArrayList<TreeItem<ObjectTreeNode>> toRemove = new ArrayList<>();
+
+      for (TreeItem<ObjectTreeNode> schema : nodes)
+      {
+         if(0 == schema.getChildren().size())
+         {
+            toRemove.add(schema);
+         }
+      }
+
+      for (TreeItem<ObjectTreeNode> del : toRemove)
+      {
+         del.getParent().getChildren().remove(del);
+      }
    }
 
 

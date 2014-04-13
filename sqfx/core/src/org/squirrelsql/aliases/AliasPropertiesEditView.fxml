@@ -3,46 +3,55 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.collections.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="547.0" prefWidth="756.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.aliases.AliasPropertiesEditView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.9998779296875" prefWidth="756.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.aliases.AliasPropertiesEditView">
   <children>
     <RadioButton fx:id="radLoadAllCacheNon" layoutX="13.0" layoutY="48.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.none" />
     <RadioButton fx:id="radLoadAndCacheAll" layoutX="13.0" layoutY="85.0" mnemonicParsing="false" text="%aliases.properties.load.all.cache.all" />
     <RadioButton fx:id="radSpecifyLoading" layoutX="14.0" layoutY="121.0" mnemonicParsing="false" text="%aliases.properties.specify" />
-    <Button fx:id="btnConnectDb" layoutX="14.0" layoutY="144.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="343.0" text="%aliases.properties.connect" />
-    <TableView fx:id="tblSchemas" prefHeight="240.0" prefWidth="573.0" AnchorPane.bottomAnchor="107.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="200.0">
-      <columns>
-        <TableColumn prefWidth="75.0" text="Column X" />
-        <TableColumn prefWidth="75.0" text="Column X" />
-      </columns>
-    </TableView>
-    <Label layoutX="14.0" layoutY="184.0" prefWidth="144.0" text="%aliases.properties.schema.table" />
+    <Button fx:id="btnConnectDb" layoutX="284.0" layoutY="116.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="343.0" text="%aliases.properties.connect" />
+    <AnchorPane id="AnchorPane" prefHeight="355.9998779296875" prefWidth="729.0" style="-fx-border-width: 2; -fx-border-color: grey lightgrey lightgrey grey; -fx-border-style: solid line-join bevel;" AnchorPane.bottomAnchor="102.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="153.0">
+      <children>
+        <TableView fx:id="tblSchemas" prefHeight="240.0" prefWidth="573.0" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+          <columns>
+            <TableColumn prefWidth="75.0" text="Column X" />
+            <TableColumn prefWidth="75.0" text="Column X" />
+          </columns>
+        </TableView>
+        <Label layoutX="8.0" layoutY="6.0" prefWidth="144.0" text="%aliases.properties.schema.table" />
+        <Label prefWidth="40.0" text="%alias.properties.set" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="1.0" />
+        <ComboBox fx:id="cboObjectTypes" prefWidth="269.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="427.0">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <Label prefWidth="113.0" text="%alias.properties.inall" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="303.0" />
+        <ComboBox id="cbo" fx:id="cboSchemaLoadOptions" prefWidth="219.0" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="70.0">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="Item 1" />
+              <String fx:value="Item 2" />
+              <String fx:value="Item 3" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <Button fx:id="btnApply" mnemonicParsing="false" prefWidth="65.0" text="%alias.properties.apply" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="1.0" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+      </padding>
+    </AnchorPane>
     <Button fx:id="btnOk" layoutX="13.0" mnemonicParsing="false" text="%aliases.properties.ok" AnchorPane.bottomAnchor="13.0" />
     <Button fx:id="btnClose" layoutX="65.0" mnemonicParsing="false" text="%aliases.properties.close" AnchorPane.bottomAnchor="13.0" />
-    <Label layoutY="455.0" prefWidth="40.0" text="%alias.properties.set" AnchorPane.leftAnchor="12.0" />
-    <ComboBox fx:id="cboObjectTypes" layoutY="452.0" prefWidth="269.0" AnchorPane.leftAnchor="44.0" AnchorPane.rightAnchor="443.0">
-      <items>
-        <FXCollections fx:factory="observableArrayList">
-          <String fx:value="Item 1" />
-          <String fx:value="Item 2" />
-          <String fx:value="Item 3" />
-        </FXCollections>
-      </items>
-    </ComboBox>
-    <Label layoutY="455.0" prefWidth="113.0" text="%alias.properties.inall" AnchorPane.rightAnchor="319.0" />
-    <ComboBox id="cbo" fx:id="cboSchemaLoadOptions" layoutY="452.0" prefWidth="219.0" AnchorPane.rightAnchor="86.0">
-      <items>
-        <FXCollections fx:factory="observableArrayList">
-          <String fx:value="Item 1" />
-          <String fx:value="Item 2" />
-          <String fx:value="Item 3" />
-        </FXCollections>
-      </items>
-    </ComboBox>
-    <Button fx:id="btnApply" layoutY="453.0" mnemonicParsing="false" prefWidth="65.0" text="%alias.properties.apply" AnchorPane.rightAnchor="14.0" />
+    <CheckBox fx:id="chkHideEmptySchemas" layoutX="14.0" mnemonicParsing="false" prefWidth="522.0" text="%alias.properties.hide.empty.schemas" AnchorPane.bottomAnchor="60.0" />
   </children>
 </AnchorPane>

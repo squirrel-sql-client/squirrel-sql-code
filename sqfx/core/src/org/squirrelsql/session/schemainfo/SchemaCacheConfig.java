@@ -4,8 +4,6 @@ import org.squirrelsql.aliases.AliasPropertiesDecorator;
 
 public class SchemaCacheConfig
 {
-   public static final SchemaCacheConfig LOAD_NOTHING = new SchemaCacheConfig(SchemaCacheConfigFlags.NOTHING);
-
    private SchemaCacheConfigFlags _schemaCacheConfigFlag;
    private AliasPropertiesDecorator _aliasPropertiesDecorator;
 
@@ -14,11 +12,15 @@ public class SchemaCacheConfig
       _aliasPropertiesDecorator = aliasPropertiesDecorator;
    }
 
-
    private static enum SchemaCacheConfigFlags
    {
       ALL,
       NOTHING
+   }
+
+   public static SchemaCacheConfig createLoadNothing()
+   {
+      return new SchemaCacheConfig(SchemaCacheConfigFlags.NOTHING);
    }
 
    public SchemaCacheConfig(SchemaCacheConfigFlags schemaCacheConfigFlag)
@@ -28,13 +30,13 @@ public class SchemaCacheConfig
 
    public boolean shouldNotLoad()
    {
-      return LOAD_NOTHING == this;
+      return SchemaCacheConfigFlags.NOTHING == _schemaCacheConfigFlag;
    }
 
 
    public boolean shouldLoadTables(StructItemTableType structItemTableType)
    {
-      if(LOAD_NOTHING == this)
+      if(shouldNotLoad())
       {
          return false;
       }
@@ -44,7 +46,7 @@ public class SchemaCacheConfig
 
    public boolean shouldLoadProcedures(StructItemProcedureType structItemProcedureType)
    {
-      if(LOAD_NOTHING == this)
+      if(shouldNotLoad())
       {
          return false;
       }
@@ -55,5 +57,11 @@ public class SchemaCacheConfig
    {
       return false; // _aliasPropertiesDecorator.shouldLoadUDTs(structItemUDTType);
    }
+
+   public AliasPropertiesDecorator getAliasPropertiesDecorator()
+   {
+      return _aliasPropertiesDecorator;
+   }
+
 
 }

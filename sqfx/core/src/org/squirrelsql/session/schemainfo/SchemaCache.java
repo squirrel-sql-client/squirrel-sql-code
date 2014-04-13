@@ -1,5 +1,6 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
@@ -324,4 +325,8 @@ public class SchemaCache
       }
    }
 
+   public AliasPropertiesDecorator getAliasPropertiesDecorator()
+   {
+      return _schemaCacheConfig.getAliasPropertiesDecorator();
+   }
 }
