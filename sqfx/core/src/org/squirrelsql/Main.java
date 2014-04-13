@@ -59,6 +59,7 @@ public class Main extends Application
       primaryStage.setOnCloseRequest(windowEvent -> onClose(dimensionSaver));
 
 
+      primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
 
       primaryStage.show();
 
