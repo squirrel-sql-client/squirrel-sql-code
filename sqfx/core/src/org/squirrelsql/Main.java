@@ -3,8 +3,12 @@ package org.squirrelsql;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -50,6 +54,9 @@ public class Main extends Application
 
       borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
 
+      borderPane.setTop(createMenuBar(primaryStage));
+
+
       final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
 
       adjustMessageSplit();
@@ -64,6 +71,25 @@ public class Main extends Application
       primaryStage.show();
 
       Platform.runLater(() -> AppState.get().doAfterBootstrap());
+   }
+
+   private MenuBar createMenuBar(Stage primaryStage)
+   {
+      MenuBar ret = new MenuBar();
+
+      Menu file = new Menu(i18n.t("main.menu.file"));
+      ret.getMenus().add(file);
+
+      MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
+      file.getItems().add(exit);
+      exit.setOnAction(e -> onExit(primaryStage));
+
+      return ret;
+   }
+
+   private void onExit(Stage primaryStage)
+   {
+      primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
    }
 
    private void adjustMessageSplit()
