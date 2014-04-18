@@ -66,23 +66,14 @@ for a in "$UNIX_STYLE_HOME"/lib/*; do
         TMP_CP="$TMP_CP":"$a"
 done
 
-# Set the update app's classpath to use jars in download area first, then the installed jars
-UPDATE_CP=$TMP_CP
-for a in "$UNIX_STYLE_HOME"/update/downloads/core/*; do
-    UPDATE_CP="$a":"$UPDATE_CP"
-done
-
 
 # Now add the system classpath to the classpath. If running
 # Cygwin we also need to change the classpath to Windows format.
 if $cygwin ; then
         TMP_CP=`cygpath -w -p $TMP_CP`
-        UPDATE_CP=`cygpath -w -p $UPDATE_CP`
         TMP_CP=$TMP_CP';'$CLASSPATH
-        UPDATE_CP=$UPDATE_CP';'$CLASSPATH
 else
         TMP_CP=$TMP_CP:$CLASSPATH
-        UPDATE_CP=$UPDATE_CP:$CLASSPATH
 fi
 
 SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"

@@ -66,36 +66,24 @@ for a in "$UNIX_STYLE_HOME"/lib/*; do
         TMP_CP="$TMP_CP":"$a"
 done
 
-# Set the update app's classpath to use jars in download area first, then the installed jars
-UPDATE_CP=$TMP_CP
-for a in "$UNIX_STYLE_HOME"/update/downloads/core/*; do
-    UPDATE_CP="$a":"$UPDATE_CP"
-done
+
 
 
 # Now add the system classpath to the classpath. If running
 # Cygwin we also need to change the classpath to Windows format.
 if $cygwin ; then
         TMP_CP=`cygpath -w -p $TMP_CP`
-        UPDATE_CP=`cygpath -w -p $UPDATE_CP`
         TMP_CP=$TMP_CP';'$CLASSPATH
-        UPDATE_CP=$UPDATE_CP';'$CLASSPATH
 else
         TMP_CP=$TMP_CP:$CLASSPATH
-        UPDATE_CP=$UPDATE_CP:$CLASSPATH
 fi
 
 if $macosx ; then
         # Define mac-specific system properties if running on Mac OS X
-        MACOSX_UPDATER_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQLUpdater"
         MACOSX_SQUIRREL_PROPS="-Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=SQuirreLSQL"
         NATIVE_LAF_PROP="--native-laf"
 fi
 
-# Check for updates and prompt to apply if any are available
-if [ -f "$UNIX_STYLE_HOME/update/downloads/core/squirrel-sql.jar" -a -f "$UNIX_STYLE_HOME/update/changeList.xml" ]; then
-        $JAVACMD -cp "$UPDATE_CP" $MACOSX_UPDATER_PROPS -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication -l "$UNIX_STYLE_HOME/update-log4j.properties"
-fi
 
 if $macosx ; then
         # macosx provides unknown args to the script, causing SQuirreL to bail..

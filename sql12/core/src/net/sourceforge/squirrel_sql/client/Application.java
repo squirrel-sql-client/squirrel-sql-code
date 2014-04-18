@@ -67,10 +67,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
-import net.sourceforge.squirrel_sql.client.update.autocheck.UpdateCheckTimer;
-import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper;
-import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperFactory;
-import net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperFactoryImpl;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
@@ -170,8 +166,6 @@ class Application implements IApplication
 
 //	private UpdateCheckTimer updateCheckTimer = null;
 	
-	private PreLaunchHelperFactory preLaunchHelperFactory = new PreLaunchHelperFactoryImpl();
-	
 	private IShutdownTimer _shutdownTimer = new ShutdownTimer();
 
         private MultipleWindowsHandler _multipleWindowsHandler = new MultipleWindowsHandler(this);
@@ -255,12 +249,6 @@ class Application implements IApplication
 
 		SchemaInfoCacheSerializer.waitTillStoringIsDone();
       s_log.info("Application.shutdown: SchemaInfoCacheSerializer.waitTillStoringIsDone() ELAPSED: " + (System.currentTimeMillis() - begin));
-
-		if (updateLaunchScript)
-      {
-			updateLaunchScript();
-         s_log.info("Application.shutdown: updateLaunchScript() ELAPSED: " + (System.currentTimeMillis() - begin));
-		}
 
       s_log.info("Application.shutdown END: " + Calendar.getInstance().getTime());
 		LoggerController.shutdown();
@@ -446,27 +434,7 @@ class Application implements IApplication
 		return result;
 	}
 
-	/**
-	 * Ideally, it would be unnecessary to update the launch script here.  Unfortunately, in squirrel-sql.sh
-	 * due to a bug in how the updater's CLASSPATH is being built, the update application uses the old 
-	 * application and library jars instead of the ones in the downloads section.  So, the new code that 
-	 * fixes the launch scripts doesn't get executed until the second update.  Once that code is out there,
-	 * ( that is, the 3.2 version has been released for a while, and we are pretty sure there are no older 
-	 * 3.x installations that still need to be upgraded), then it would be safe to remove this code.
-	 */
-	private void updateLaunchScript() {
-		try
-		{
-			PreLaunchHelper helper = preLaunchHelperFactory.createPreLaunchHelper();
-			helper.updateLaunchScript();
-			helper.copySplashImage();
-		}
-		catch (Exception e)
-		{
-			s_log.info("Unexpected exception while attempting to update the launch script: " + e.getMessage());
-		}		
-	}
-	
+
 	public IPluginManager getPluginManager()
 	{
 		return _pluginManager;
@@ -1345,15 +1313,6 @@ class Application implements IApplication
 		}
 	}
 	
-	public void setUpdateCheckTimer(UpdateCheckTimer timer) {
-		//this.updateCheckTimer = timer;
-	}
-	
-	public void setPreLaunchHelperFactory(PreLaunchHelperFactory preLaunchHelperFactory)
-	{
-		this.preLaunchHelperFactory = preLaunchHelperFactory;
-	}
-
 	/**
 	 * @param shutdownTimer the _shutdownTimer to set
 	 */

@@ -479,7 +479,6 @@ public class ActionCollection
 		add(new TileHorizontalAction(_app));
 		add(new TileVerticalAction(_app));
 		add(new ToggleAutoCommitAction(_app));
-		//add(new UpdateAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 		add(new PreviousSqlAction(_app));

@@ -32,17 +32,6 @@ set SQUIRREL_SQL_HOME=%basedir%
 "%LOCAL_JAVA%" -cp "%SQUIRREL_SQL_HOME%\lib\versioncheck.jar" JavaVersionChecker 1.6 1.7 1.8
 if ErrorLevel 1 goto ExitForWrongJavaVersion
 
-@rem If the changelist.xml file isn't present or the downloaded update jars don't exist, skip launching the updater - these files are created by the 
-@rem software update feature inside of SQuirreL. So their absence, simply means the software update feature hasn't been accessed.
-if not exist "%SQUIRREL_SQL_HOME%\update\changeList.xml" goto launchsquirrel
-SET TMP_CP="%SQUIRREL_SQL_HOME%\update\downloads\core\squirrel-sql.jar"
-if not exist %TMP_CP% goto launchsquirrel
-dir /b "%SQUIRREL_SQL_HOME%\update\downloads\core\*.*" >"%TEMP%\update-lib.tmp"
-FOR /F "usebackq" %%I IN ("%TEMP%\update-lib.tmp") DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\update\downloads\core\%%I"
-SET UPDATE_CP=%TMP_CP%
-SET UPDATE_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\update-log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
-"%LOCAL_JAVA%" -cp %UPDATE_CP% -Dlog4j.defaultInitOverride=true -Dprompt=true net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchUpdateApplication %UPDATE_PARMS%
-
 :launchsquirrel
 @rem build SQuirreL's classpath
 set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
