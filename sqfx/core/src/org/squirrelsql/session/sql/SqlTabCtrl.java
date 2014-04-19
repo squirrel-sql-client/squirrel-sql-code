@@ -62,7 +62,7 @@ public class SqlTabCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      ActionHandle hRun = new ActionManager().getActionHandleForActiveOrActivatingSessionContext(StandardActionConfiguration.RUN_SQL);
+      ActionHandle hRun = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
 
       hRun.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
 

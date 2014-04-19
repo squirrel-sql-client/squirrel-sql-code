@@ -3,6 +3,7 @@ package org.squirrelsql.session.action;
 import javafx.scene.control.Menu;
 import javafx.scene.control.ToolBar;
 import org.squirrelsql.AppState;
+import org.squirrelsql.session.SessionTabContext;
 
 
 public class ActionManager
@@ -22,8 +23,13 @@ public class ActionManager
       AppState.get().getActionMangerImpl().setCurrentActionScope(actionScope);
    }
 
-   public ActionHandle getActionHandleForActiveOrActivatingSessionContext(StandardActionConfiguration standardActionConfiguration)
+   public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration standardActionConfiguration)
    {
-      return AppState.get().getActionMangerImpl().getActionHandleForActiveOrActivatingSessionContext(standardActionConfiguration.getActionConfiguration());
+      return AppState.get().getActionMangerImpl().getActionHandleForActiveOrActivatingSessionTabContext(standardActionConfiguration.getActionConfiguration());
+   }
+
+   public ActionHandle getActionHandle(StandardActionConfiguration standardActionConfiguration, SessionTabContext sessionTabContext)
+   {
+      return AppState.get().getActionMangerImpl().getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
    }
 }

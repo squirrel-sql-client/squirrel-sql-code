@@ -82,7 +82,7 @@ public class ActionMangerImpl
       for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.SESSION_TOOLBAR)
       {
          ActionConfiguration actionConfiguration = standardActionConfiguration.getActionConfiguration();
-         ActionHandle actionHandle = getActionHandleForActiveOrActivatingSessionContext(actionConfiguration);
+         ActionHandle actionHandle = getActionHandleForActiveOrActivatingSessionTabContext(actionConfiguration);
 
          Button b = new Button();
          actionHandle.setToolbarButton(b);
@@ -98,12 +98,12 @@ public class ActionMangerImpl
       CollectionUtil.forEachFiltered(_actionHandles, ah -> ah.matchesSessionContext(_activeOrActivatingSessionTabContext), ah -> ah.setActionScope(_currentActionScope));
    }
 
-   public ActionHandle getActionHandleForActiveOrActivatingSessionContext(ActionConfiguration actionConfiguration)
+   public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(ActionConfiguration actionConfiguration)
    {
       return getActionHandle(actionConfiguration, _activeOrActivatingSessionTabContext);
    }
 
-   private ActionHandle getActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
+   public ActionHandle getActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
    {
       ActionHandle ret;
 
