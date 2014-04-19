@@ -3,6 +3,8 @@ package org.squirrelsql.session.sql;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -16,6 +18,7 @@ import org.squirrelsql.session.action.StandardActionConfiguration;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
+import org.squirrelsql.workaround.KeyMatchWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 import java.util.ArrayList;
@@ -59,22 +62,21 @@ public class SqlTabCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      ActionHandle actionHandle = new ActionManager().getActionHandleForActiveOrActivatingSessionContext(StandardActionConfiguration.RUN_SQL);
+      ActionHandle hRun = new ActionManager().getActionHandleForActiveOrActivatingSessionContext(StandardActionConfiguration.RUN_SQL);
 
-      actionHandle.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
+      hRun.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
 
       EventHandler<KeyEvent> keyEventHandler =
             new EventHandler<KeyEvent>()
             {
                public void handle(final KeyEvent keyEvent)
                {
-                  // if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.ENTER) doesn't work
-                  if (keyEvent.isControlDown() && ("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
+                  if (hRun.matchesKeyEvent(keyEvent))
                   {
                      onExecuteSql(_sqlTextAreaServices);
                      keyEvent.consume();
                   }
-                  else if (keyEvent.isControlDown() && " ".equals(keyEvent.getCharacter()))
+                  else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN)))
                   {
                      _completionCtrl.completeCode();
                      keyEvent.consume();

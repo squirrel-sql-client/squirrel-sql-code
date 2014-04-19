@@ -3,7 +3,10 @@ package org.squirrelsql.session.action;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.workaround.KeyMatchWA;
 
 public class ActionHandle
 {
@@ -40,7 +43,6 @@ public class ActionHandle
       _toolbarButton.setOnAction((e) -> actionPerformed());
       _toolbarButton.setGraphic(_actionConfiguration.getIcon());
       _toolbarButton.setTooltip(new Tooltip(_actionConfiguration.getText() + "\t" + _actionConfiguration.getKeyCodeCombination()));
-
    }
 
    public ActionConfiguration getActionConfiguration()
@@ -93,4 +95,11 @@ public class ActionHandle
    {
       setDisable(false == _actionConfiguration.getActionScope().equals(actionScope));
    }
+
+   public boolean matchesKeyEvent(KeyEvent keyEvent)
+   {
+      KeyCodeCombination keyCodeCombination = _actionConfiguration.getKeyCodeCombination();
+      return KeyMatchWA.matches(keyEvent, keyCodeCombination);
+   }
+
 }

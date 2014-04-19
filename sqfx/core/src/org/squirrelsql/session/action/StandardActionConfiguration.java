@@ -7,7 +7,7 @@ import org.squirrelsql.services.I18n;
 
 public enum StandardActionConfiguration
 {
-   RUN_SQL(new ActionConfiguration(Help.props.getImage("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN)));
+   RUN_SQL(new ActionConfiguration(Help.props.getImage("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN)));
 
    public static StandardActionConfiguration[] SESSION_TOOLBAR = new StandardActionConfiguration[]
    {
