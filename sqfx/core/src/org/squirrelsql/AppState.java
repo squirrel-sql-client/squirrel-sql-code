@@ -2,10 +2,10 @@ package org.squirrelsql;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.squirrelsql.services.PropertiesHandler;
 import org.squirrelsql.services.SquirrelProperty;
-import org.squirrelsql.session.SessionFactory;
+import org.squirrelsql.session.SessionManager;
+import org.squirrelsql.session.action.ActionMangerImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +19,8 @@ public class AppState
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
 
    private ArrayList<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
-   private SessionFactory _sessionFactory = new SessionFactory();
+   private SessionManager _sessionManager = new SessionManager();
+   private ActionMangerImpl _actionMangerImpl = new ActionMangerImpl(_sessionManager);
 
 
    public static AppState get()
@@ -97,8 +98,13 @@ public class AppState
       }
    }
 
-   public SessionFactory getSessionFactory()
+   public SessionManager getSessionManager()
    {
-      return _sessionFactory;
+      return _sessionManager;
+   }
+
+   public ActionMangerImpl getActionMangerImpl()
+   {
+      return _actionMangerImpl;
    }
 }

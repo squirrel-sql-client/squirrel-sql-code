@@ -29,7 +29,7 @@ public class SplitController
       _driversController = new DriversController(dockPaneChanel);
       _aliasesController = new AliasesController(dockPaneChanel);
       _spltHoriz.setOrientation(Orientation.HORIZONTAL);
-      _spltHoriz.getItems().add(AppState.get().getSessionFactory().getSessionTabbedPaneCtrl().getNode());
+      _spltHoriz.getItems().add(AppState.get().getSessionManager().getSessionTabbedPaneCtrl().getNode());
 
       _spltVert.setOrientation(Orientation.VERTICAL);
       _spltVert.getItems().add(_spltHoriz);

@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class CollectionUtil
 {
    // calling this looks rather complicated.
-   public static <T> void visitFiltered(Collection<T> toVisitFiltered, Predicate<T> predicate, Consumer<T> consumer)
+   public static <T> void forEachFiltered(Collection<T> toVisitFiltered, Predicate<T> predicate, Consumer<T> consumer)
    {
       filter(toVisitFiltered, predicate).forEach(consumer);
    }
@@ -34,5 +34,11 @@ public class CollectionUtil
    public static <T>boolean contains(List<T> toFilter, Predicate<T> predicate)
    {
       return toFilter.stream().anyMatch(predicate);
+   }
+
+
+   public static <T> void removeAll(Collection<T> toRemoveFrom, Predicate<T> predicate)
+   {
+      toRemoveFrom.removeIf(predicate);
    }
 }

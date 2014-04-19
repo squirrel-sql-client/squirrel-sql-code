@@ -9,8 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.squirrelsql.services.*;
-import org.squirrelsql.session.Session;
-import org.squirrelsql.session.action.StandardActionConfigurations;
+import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.action.ActionHandle;
+import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.StandardActionConfiguration;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
@@ -35,15 +37,15 @@ public class SqlTabCtrl
    private SplitPane _sqlTabSplitPane = new SplitPane();
 
    private final Tab _sqlTab;
-   private Session _session;
+   private SessionTabContext _sessionTabContext;
    private final TabPane _sqlOutputTabPane;
 
-   public SqlTabCtrl(Session session)
+   public SqlTabCtrl(SessionTabContext sessionTabContext)
    {
-      _session = session;
+      _sessionTabContext = sessionTabContext;
       _sqlTextAreaServices = new SQLTextAreaServices();
 
-      _completionCtrl = new CompletionCtrl(session, _sqlTextAreaServices);
+      _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), _sqlTextAreaServices);
 
       _sqlTab = new Tab(_i18n.t("session.tab.sql"));
       _sqlTab.setClosable(false);
@@ -57,7 +59,9 @@ public class SqlTabCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      session.getActionManager().getActionHandle(StandardActionConfigurations.RUN_SQL).setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
+      ActionHandle actionHandle = new ActionManager().getActionHandleForActiveOrActivatingSessionContext(StandardActionConfiguration.RUN_SQL);
+
+      actionHandle.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
 
       EventHandler<KeyEvent> keyEventHandler =
             new EventHandler<KeyEvent>()
@@ -124,7 +128,7 @@ public class SqlTabCtrl
          @Override
          public StatementExecution  call()
          {
-            return SQLExecutor.processQuery(_session.getDbConnectorResult(), sql, _sqlEditTopPanelCtrl.getRowLimit(), statementChannel);
+            return SQLExecutor.processQuery(_sessionTabContext.getSession().getDbConnectorResult(), sql, _sqlEditTopPanelCtrl.getRowLimit(), statementChannel);
          }
 
          @Override

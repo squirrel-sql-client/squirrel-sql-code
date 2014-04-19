@@ -1,14 +1,15 @@
 package org.squirrelsql.session;
 
+import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
+import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.session.sql.SqlTabCtrl;
@@ -25,7 +26,6 @@ public class SessionCtrl
    private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
 
 
-   private final Session _session;
    private final TabPane _objectTreeAndSqlTabPane;
 
 
@@ -36,14 +36,15 @@ public class SessionCtrl
    private SqlTabCtrl _sqlTabCtrl;
    private final BorderPane _sessionPane;
    private final Tab _sessionTab;
+   private SessionTabContext _sessionTabContext;
 
-   public SessionCtrl(DbConnectorResult dbConnectorResult)
+   public SessionCtrl(SessionTabContext sessionTabContext)
    {
-      _session = new Session(dbConnectorResult);
+      _sessionTabContext = sessionTabContext;
 
       _sessionPane = new BorderPane();
 
-      _sessionPane.setTop(_session.getActionManager().getToolbar());
+      _sessionPane.setTop(new ActionManager().createToolbar());
 
       _objectTreeAndSqlTabPane = createObjectTreeAndSqlTabPane();
 
@@ -55,7 +56,17 @@ public class SessionCtrl
 
 
       _sessionTab.setOnClosed(e -> onClose());
+      _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
       AppState.get().addApplicationCloseListener(this::onClose);
+   }
+
+   private void onSelectionChanged(Event e)
+   {
+      if(_sessionTab.isSelected())
+      {
+         AppState.get().getSessionManager().setCurrentlyActiveOrActivatingContext(_sessionTabContext);
+         onTabChanged(_objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem());
+      }
    }
 
    private TabPane createObjectTreeAndSqlTabPane()
@@ -64,8 +75,10 @@ public class SessionCtrl
 
       Tab objectsTab = createObjectsTab();
       ret.getTabs().add(objectsTab);
+      new ActionManager().setCurrentActionScope(ActionScope.OBJECT_TREE);
 
-      _sqlTabCtrl = new SqlTabCtrl(_session);
+
+      _sqlTabCtrl = new SqlTabCtrl(_sessionTabContext);
 
       Tab sqlTab = _sqlTabCtrl.getSqlTab();
       ret.getTabs().add(sqlTab);
@@ -87,7 +100,7 @@ public class SessionCtrl
    private void onSwitchedToSqlTab()
    {
       _sqlTabCtrl.requestFocus();
-      _session.getActionManager().setActionScope(ActionScope.SQL_EDITOR);
+      new ActionManager().setCurrentActionScope(ActionScope.SQL_EDITOR);
    }
 
    private void onTabChanged(Tab newSelectedTab)
@@ -98,10 +111,8 @@ public class SessionCtrl
       }
       else
       {
-         _session.getActionManager().setActionScope(ActionScope.OBJECT_TREE);
+         new ActionManager().setCurrentActionScope(ActionScope.OBJECT_TREE);
       }
-
-
    }
 
    private Tab createObjectsTab()
@@ -113,16 +124,16 @@ public class SessionCtrl
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
-      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _session);
+      AliasCatalogsSchemasAndTypesCreator.createNodes(objectsTree, _sessionTabContext.getSession());
 
-      TablesProceduresAndUDTsCreator.createNodes(objectsTree, _session);
+      TablesProceduresAndUDTsCreator.createNodes(objectsTree, _sessionTabContext.getSession());
 
-      removeEmptySchemasIfRequested(objectsTree, _session);
+      removeEmptySchemasIfRequested(objectsTree, _sessionTabContext.getSession());
 
 
       _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
       _objectTabSplitPane.getItems().add(objectsTree);
-      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _session).getComponent());
+      _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
       SplitDividerWA.adjustDivider(_objectTabSplitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
 
 
@@ -174,7 +185,7 @@ public class SessionCtrl
 
    public Node getTabHeaderNode()
    {
-      Alias alias = _session.getAlias();
+      Alias alias = _sessionTabContext.getSession().getAlias();
       return new Label(_i18n.t("session.tab.header", alias.getName(), alias.getUserName()));
    }
 
@@ -184,7 +195,10 @@ public class SessionCtrl
       _pref.set(PREF_PRE_SELECT_SQL_TAB, _objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
 
       _sqlTabCtrl.close();
-      _session.close();
+      _sessionTabContext.getSession().close();
+
+      AppState.get().getSessionManager().sessionClose(_sessionTabContext);
+
    }
 
    public Tab getSessionTab()

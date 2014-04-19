@@ -551,7 +551,7 @@ public class AliasesController
          _dockPaneChanel.closeAliases();
       }
 
-      AppState.get().getSessionFactory().createSession(dbConnectorResult);
+      AppState.get().getSessionManager().createSession(dbConnectorResult);
    }
 
    private TreeItem<AliasTreeNode> getSelectedNodeOrComplain(String complaintMessageKey)

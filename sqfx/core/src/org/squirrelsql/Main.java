@@ -2,8 +2,6 @@ package org.squirrelsql;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -15,6 +13,7 @@ import javafx.stage.WindowEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.session.action.ActionManager;
 
 public class Main extends Application
 {
@@ -82,7 +81,12 @@ public class Main extends Application
 
       MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
       file.getItems().add(exit);
+
+
       exit.setOnAction(e -> onExit(primaryStage));
+
+      ret.getMenus().add(new ActionManager().getSessionMenu());
+
 
       return ret;
    }
