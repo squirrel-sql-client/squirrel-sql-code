@@ -12,6 +12,7 @@ import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.objecttree.*;
+import org.squirrelsql.session.sql.NewSqlTabHelper;
 import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
@@ -57,6 +58,8 @@ public class SessionCtrl
 
       _sessionTab.setOnClosed(e -> onClose());
       _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
+
+      NewSqlTabHelper.registerSessionTabListener(sessionTabContext, _sessionTab);
       AppState.get().addApplicationCloseListener(this::onClose);
    }
 

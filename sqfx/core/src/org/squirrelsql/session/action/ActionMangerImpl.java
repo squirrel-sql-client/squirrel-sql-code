@@ -28,7 +28,7 @@ public class ActionMangerImpl
    public ActionMangerImpl(SessionManager sessionManager)
    {
       _sessionManager = sessionManager;
-      sessionManager.setSessionManagerListener(new SessionManagerListener()
+      sessionManager.addSessionManagerListener(new SessionManagerListener()
       {
          @Override
          public void contextActiveOrActivating(SessionTabContext sessionTabContext)
@@ -66,6 +66,8 @@ public class ActionMangerImpl
          MenuItem menuItem = new MenuItem(standardActionConfiguration.getActionConfiguration().getText());
          ActionHandle actionHandle = getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
          actionHandle.setMenuItem(menuItem);
+         actionHandle.refreshActionScopeDisplay();
+
          _sessionMenu.getItems().add(menuItem);
       }
    }

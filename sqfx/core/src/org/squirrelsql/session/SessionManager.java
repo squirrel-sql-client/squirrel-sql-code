@@ -1,15 +1,18 @@
 package org.squirrelsql.session;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.session.sql.SqlTabController;
+
+import java.util.ArrayList;
 
 public class SessionManager
 {
    private SessionTabbedPaneCtrl _sessionTabbedPaneController = new SessionTabbedPaneCtrl();
-   private SessionManagerListener _sessionManagerListener;
 
    private SessionTabContext _currentlyActiveOrActivatingContext;
 
    private volatile int _sessionIdSequence;
+   private ArrayList<SessionManagerListener> _sessionManagerListeners = new ArrayList<>();
 
    public int getNextSessionContextId()
    {
@@ -19,20 +22,38 @@ public class SessionManager
 
    public void createSession(DbConnectorResult dbConnectorResult)
    {
-      setCurrentlyActiveOrActivatingContext(new SessionTabContext(new Session(dbConnectorResult)));
+      Session session = new Session(dbConnectorResult);
+      SessionTabContext sessionTabContext = new SessionTabContext(session, true);
+      session.setMainTabContext(sessionTabContext);
+
+      setCurrentlyActiveOrActivatingContext(sessionTabContext);
 
       SessionCtrl sessionCtrl = new SessionCtrl(_currentlyActiveOrActivatingContext);
-      _sessionTabbedPaneController.addSessionTab(sessionCtrl);
+      sessionTabContext.setTab(_sessionTabbedPaneController.addSessionTab(sessionCtrl));
    }
+
+   public void createSqlTab(SessionTabContext sessionTabContext)
+   {
+      SessionTabContext newSessionTabContext = new SessionTabContext(sessionTabContext.getSession(), false);
+      SqlTabController sqlTabController = new SqlTabController(newSessionTabContext);
+      newSessionTabContext.setTab(_sessionTabbedPaneController.addSqlTab(sqlTabController));
+   }
+
 
    public SessionTabbedPaneCtrl getSessionTabbedPaneCtrl()
    {
       return _sessionTabbedPaneController;
    }
 
-   public void setSessionManagerListener(SessionManagerListener sessionManagerListener)
+   public void addSessionManagerListener(SessionManagerListener sessionManagerListener)
    {
-      _sessionManagerListener = sessionManagerListener;
+      _sessionManagerListeners.remove(sessionManagerListener);
+      _sessionManagerListeners.add(sessionManagerListener);
+   }
+
+   public void removeSessionManagerListener(SessionManagerListener sessionManagerListener)
+   {
+      _sessionManagerListeners.remove(sessionManagerListener);
    }
 
    public SessionTabContext getCurrentlyActiveOrActivatingContext()
@@ -43,7 +64,15 @@ public class SessionManager
    public void setCurrentlyActiveOrActivatingContext(SessionTabContext currentlyActiveOrActivatingContext)
    {
       _currentlyActiveOrActivatingContext = currentlyActiveOrActivatingContext;
-      _sessionManagerListener.contextActiveOrActivating(currentlyActiveOrActivatingContext);
+      fireContextActiveOrActivating(currentlyActiveOrActivatingContext);
+   }
+
+   private void fireContextActiveOrActivating(SessionTabContext currentlyActiveOrActivatingContext)
+   {
+      for (SessionManagerListener sessionManagerListener : _sessionManagerListeners.toArray(new SessionManagerListener[0]))
+      {
+         sessionManagerListener.contextActiveOrActivating(currentlyActiveOrActivatingContext);
+      }
    }
 
 
@@ -52,13 +81,21 @@ public class SessionManager
 
       // This codes contract is: Closing is always followed by a call to contextActiveOrActivating()
 
-      _sessionManagerListener.contextClosing(sessionTabContext);
+      fireContextClosing(sessionTabContext);
 
       if(sessionTabContext.matches(_currentlyActiveOrActivatingContext))
       {
          _currentlyActiveOrActivatingContext = null;
       }
 
-      _sessionManagerListener.contextActiveOrActivating(_currentlyActiveOrActivatingContext);
+      fireContextActiveOrActivating(_currentlyActiveOrActivatingContext);
+   }
+
+   private void fireContextClosing(SessionTabContext sessionTabContext)
+   {
+      for (SessionManagerListener sessionManagerListener : _sessionManagerListeners.toArray(new SessionManagerListener[0]))
+      {
+         sessionManagerListener.contextClosing(sessionTabContext);
+      }
    }
 }

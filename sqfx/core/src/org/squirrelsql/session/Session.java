@@ -7,6 +7,7 @@ import org.squirrelsql.session.schemainfo.SchemaCache;
 public class Session
 {
    private DbConnectorResult _dbConnectorResult;
+   private SessionTabContext _mainTabContext;
 
    public Session(DbConnectorResult dbConnectorResult)
    {
@@ -38,4 +39,13 @@ public class Session
       return new SessionProperties();
    }
 
+   public void setMainTabContext(SessionTabContext mainTabContext)
+   {
+      _mainTabContext = mainTabContext;
+   }
+
+   public SessionTabContext getMainTabContext()
+   {
+      return _mainTabContext;
+   }
 }

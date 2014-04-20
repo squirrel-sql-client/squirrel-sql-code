@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.session.sql.SqlTabController;
 
 public class SessionTabbedPaneCtrl
 {
@@ -19,9 +20,23 @@ public class SessionTabbedPaneCtrl
    }
 
 
-   public void addSessionTab(SessionCtrl sessionCtrl)
+   public Tab addSessionTab(SessionCtrl sessionCtrl)
    {
       Tab tab = sessionCtrl.getSessionTab();
-      _tabPane.getTabs().add(tab);
+      return addTabAndSelect(tab);
    }
+
+   public Tab addSqlTab(SqlTabController sqlTabController)
+   {
+      Tab tab = sqlTabController.getSqlTab();
+      return addTabAndSelect(tab);
+   }
+
+   private Tab addTabAndSelect(Tab tab)
+   {
+      _tabPane.getTabs().add(tab);
+      _tabPane.getSelectionModel().select(tab);
+      return tab;
+   }
+
 }

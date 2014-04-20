@@ -62,16 +62,17 @@ public class SqlTabCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      ActionHandle hRun = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
+      ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
+      ActionHandle hNewSqlTab = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.NEW_SQL_TAB);
 
-      hRun.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
+      hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
 
       EventHandler<KeyEvent> keyEventHandler =
             new EventHandler<KeyEvent>()
             {
                public void handle(final KeyEvent keyEvent)
                {
-                  if (hRun.matchesKeyEvent(keyEvent))
+                  if (hRunSql.matchesKeyEvent(keyEvent))
                   {
                      onExecuteSql(_sqlTextAreaServices);
                      keyEvent.consume();
@@ -79,6 +80,11 @@ public class SqlTabCtrl
                   else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN)))
                   {
                      _completionCtrl.completeCode();
+                     keyEvent.consume();
+                  }
+                  else if (hNewSqlTab.matchesKeyEvent(keyEvent))
+                  {
+                     NewSqlTabHelper.openNewSqlTab(_sessionTabContext);
                      keyEvent.consume();
                   }
                }

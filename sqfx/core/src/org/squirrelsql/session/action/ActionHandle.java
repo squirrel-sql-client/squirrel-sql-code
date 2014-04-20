@@ -16,6 +16,7 @@ public class ActionHandle
    private SqFxActionListener _sqFxActionListener;
    private MenuItem _menuItem;
    private Button _toolbarButton;
+   private ActionScope _currentActionScope;
 
    public ActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
    {
@@ -73,7 +74,6 @@ public class ActionHandle
       _menuItem = menuItem;
       _menuItem.setOnAction((e) -> actionPerformed());
       _menuItem.setAccelerator(_actionConfiguration.getKeyCodeCombination());
-
    }
 
    public MenuItem getMenuItem()
@@ -88,12 +88,25 @@ public class ActionHandle
 
    public boolean matchesPrimaryKey(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
    {
-      return matchesSessionContext(sessionTabContext) && actionConfiguration.matches(actionConfiguration);
+      return matchesSessionContext(sessionTabContext) && _actionConfiguration.matches(actionConfiguration);
    }
 
    public void setActionScope(ActionScope actionScope)
    {
-      setDisable(false == _actionConfiguration.getActionScope().equals(actionScope));
+      _currentActionScope = actionScope;
+
+      if(null == _actionConfiguration.getActionScope())
+      {
+         return;
+      }
+
+      if(null == actionScope)
+      {
+         setDisable(true);
+         return;
+      }
+
+      setDisable(false == _actionConfiguration.getActionScope().equals(_currentActionScope));
    }
 
    public boolean matchesKeyEvent(KeyEvent keyEvent)
@@ -102,4 +115,8 @@ public class ActionHandle
       return KeyMatchWA.matches(keyEvent, keyCodeCombination);
    }
 
+   public void refreshActionScopeDisplay()
+   {
+      setActionScope(_currentActionScope);
+   }
 }
