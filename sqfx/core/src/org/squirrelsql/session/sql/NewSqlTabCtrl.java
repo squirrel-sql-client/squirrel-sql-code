@@ -5,12 +5,12 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.session.SessionManagerListener;
 import org.squirrelsql.session.SessionTabContext;
 
-public class NewSqlTabController
+public class NewSqlTabCtrl
 {
    private Tab _sqlSessionTab = new Tab("Hallo");
    private final SessionManagerListener _sessionManagerListener;
 
-   public NewSqlTabController(SessionTabContext sessionTabContext)
+   public NewSqlTabCtrl(SessionTabContext sessionTabContext)
    {
       _sessionManagerListener = new SessionManagerListener()
       {

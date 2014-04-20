@@ -1,14 +1,8 @@
 package org.squirrelsql.session;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import org.squirrelsql.services.MessageHandler;
-import org.squirrelsql.services.MessageHandlerDestination;
-import org.squirrelsql.session.sql.SqlTabController;
+import org.squirrelsql.session.sql.NewSqlTabCtrl;
 
 public class SessionTabbedPaneCtrl
 {
@@ -26,9 +20,9 @@ public class SessionTabbedPaneCtrl
       return addTabAndSelect(tab);
    }
 
-   public Tab addSqlTab(SqlTabController sqlTabController)
+   public Tab addSqlTab(NewSqlTabCtrl newSqlTabCtrl)
    {
-      Tab tab = sqlTabController.getSqlTab();
+      Tab tab = newSqlTabCtrl.getSqlTab();
       return addTabAndSelect(tab);
    }
 
