@@ -17,6 +17,7 @@ public class ActionHandle
    private MenuItem _menuItem;
    private Button _toolbarButton;
    private ActionScope _currentActionScope;
+   private boolean _disabledByExtern = false;
 
    public ActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
    {
@@ -27,6 +28,7 @@ public class ActionHandle
    public void setOnAction(SqFxActionListener sqFxActionListener)
    {
       _sqFxActionListener = sqFxActionListener;
+      refreshActionUI();
    }
 
    private void actionPerformed()
@@ -44,6 +46,7 @@ public class ActionHandle
       _toolbarButton.setOnAction((e) -> actionPerformed());
       _toolbarButton.setGraphic(_actionConfiguration.getIcon());
       _toolbarButton.setTooltip(new Tooltip(_actionConfiguration.getText() + "\t" + _actionConfiguration.getKeyCodeCombination()));
+      refreshActionUI();
    }
 
    public ActionConfiguration getActionConfiguration()
@@ -53,16 +56,10 @@ public class ActionHandle
 
    public void setDisable(boolean b)
    {
-      if(null != _toolbarButton)
-      {
-         _toolbarButton.setDisable(b);
-      }
-      if(null != _menuItem)
-      {
-         _menuItem.setDisable(b);
-      }
-   }
+      _disabledByExtern = b;
 
+      refreshActionUI();
+   }
 
    public SessionTabContext getSessionTabContext()
    {
@@ -74,6 +71,7 @@ public class ActionHandle
       _menuItem = menuItem;
       _menuItem.setOnAction((e) -> actionPerformed());
       _menuItem.setAccelerator(_actionConfiguration.getKeyCodeCombination());
+      refreshActionUI();
    }
 
    public MenuItem getMenuItem()
@@ -94,19 +92,7 @@ public class ActionHandle
    public void setActionScope(ActionScope actionScope)
    {
       _currentActionScope = actionScope;
-
-      if(null == _actionConfiguration.getActionScope())
-      {
-         return;
-      }
-
-      if(null == actionScope)
-      {
-         setDisable(true);
-         return;
-      }
-
-      setDisable(false == _actionConfiguration.getActionScope().equals(_currentActionScope));
+      refreshActionUI();
    }
 
    public boolean matchesKeyEvent(KeyEvent keyEvent)
@@ -115,8 +101,47 @@ public class ActionHandle
       return KeyMatchWA.matches(keyEvent, keyCodeCombination);
    }
 
-   public void refreshActionScopeDisplay()
+   public void refreshActionUI()
    {
-      setActionScope(_currentActionScope);
+      if(_disabledByExtern)
+      {
+         updateControls(true);
+         return;
+      }
+
+      if(null == _sqFxActionListener)
+      {
+         updateControls(true);
+         return;
+      }
+
+
+      if(null == _actionConfiguration.getActionScope())
+      {
+         updateControls(false);
+         return;
+      }
+
+      if(null == _currentActionScope)
+      {
+         updateControls(true);
+         return;
+      }
+
+
+      updateControls(false == _actionConfiguration.getActionScope().equals(_currentActionScope));
    }
+
+   private void updateControls(boolean disable)
+   {
+      if(null != _toolbarButton)
+      {
+         _toolbarButton.setDisable(disable);
+      }
+      if(null != _menuItem)
+      {
+         _menuItem.setDisable(disable);
+      }
+   }
+
 }

@@ -18,9 +18,9 @@ public class ActionManager
       return AppState.get().getActionMangerImpl().createToolbar();
    }
 
-   public void setCurrentActionScope(ActionScope actionScope)
+   public void setActionScope(ActionScope actionScope)
    {
-      AppState.get().getActionMangerImpl().setCurrentActionScope(actionScope);
+      AppState.get().getActionMangerImpl().setActionScope(actionScope);
    }
 
    public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration standardActionConfiguration)
@@ -31,5 +31,10 @@ public class ActionManager
    public ActionHandle getActionHandle(StandardActionConfiguration standardActionConfiguration, SessionTabContext sessionTabContext)
    {
       return AppState.get().getActionMangerImpl().getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
+   }
+
+   public void updateActionUIs()
+   {
+      AppState.get().getActionMangerImpl().updateActionUIs();
    }
 }

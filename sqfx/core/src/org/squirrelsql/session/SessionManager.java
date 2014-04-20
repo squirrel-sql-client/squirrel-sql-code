@@ -1,6 +1,7 @@
 package org.squirrelsql.session;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.sql.NewSqlTabCtrl;
 
 import java.util.ArrayList;
@@ -30,13 +31,18 @@ public class SessionManager
 
       SessionCtrl sessionCtrl = new SessionCtrl(_currentlyActiveOrActivatingContext);
       sessionTabContext.setTab(_sessionTabbedPaneController.addSessionTab(sessionCtrl));
+      new ActionManager().updateActionUIs();
    }
 
    public void createSqlTab(SessionTabContext sessionTabContext)
    {
-      SessionTabContext newSessionTabContext = new SessionTabContext(sessionTabContext.getSession(), false);
-      NewSqlTabCtrl newSqlTabCtrl = new NewSqlTabCtrl(newSessionTabContext);
-      newSessionTabContext.setTab(_sessionTabbedPaneController.addSqlTab(newSqlTabCtrl));
+      SessionTabContext newSqlTabContext = new SessionTabContext(sessionTabContext.getSession(), false);
+      setCurrentlyActiveOrActivatingContext(newSqlTabContext);
+
+
+      NewSqlTabCtrl newSqlTabCtrl = new NewSqlTabCtrl(newSqlTabContext);
+      newSqlTabContext.setTab(_sessionTabbedPaneController.addSqlTab(newSqlTabCtrl));
+      new ActionManager().updateActionUIs();
    }
 
 

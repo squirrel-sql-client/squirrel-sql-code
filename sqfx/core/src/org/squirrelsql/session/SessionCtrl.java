@@ -78,7 +78,7 @@ public class SessionCtrl
 
       Tab objectsTab = createObjectsTab();
       ret.getTabs().add(objectsTab);
-      new ActionManager().setCurrentActionScope(ActionScope.OBJECT_TREE);
+      new ActionManager().setActionScope(ActionScope.OBJECT_TREE);
 
 
       _sqlTabCtrl = new SqlTabCtrl(_sessionTabContext);
@@ -103,7 +103,7 @@ public class SessionCtrl
    private void onSwitchedToSqlTab()
    {
       _sqlTabCtrl.requestFocus();
-      new ActionManager().setCurrentActionScope(ActionScope.SQL_EDITOR);
+      new ActionManager().setActionScope(ActionScope.SQL_EDITOR);
    }
 
    private void onTabChanged(Tab newSelectedTab)
@@ -114,7 +114,7 @@ public class SessionCtrl
       }
       else
       {
-         new ActionManager().setCurrentActionScope(ActionScope.OBJECT_TREE);
+         new ActionManager().setActionScope(ActionScope.OBJECT_TREE);
       }
    }
 

@@ -51,4 +51,9 @@ public class SessionTabContext
    {
       return _tab;
    }
+
+   public boolean equalsSession(SessionTabContext other)
+   {
+      return _session.getMainTabContext().matches(other._session.getMainTabContext());
+   }
 }

@@ -66,7 +66,7 @@ public class ActionMangerImpl
          MenuItem menuItem = new MenuItem(standardActionConfiguration.getActionConfiguration().getText());
          ActionHandle actionHandle = getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
          actionHandle.setMenuItem(menuItem);
-         actionHandle.refreshActionScopeDisplay();
+         actionHandle.refreshActionUI();
 
          _sessionMenu.getItems().add(menuItem);
       }
@@ -94,10 +94,15 @@ public class ActionMangerImpl
       return ret;
    }
 
-   public void setCurrentActionScope(ActionScope currentActionScope)
+   public void setActionScope(ActionScope currentActionScope)
    {
       _currentActionScope = currentActionScope;
       CollectionUtil.forEachFiltered(_actionHandles, ah -> ah.matchesSessionContext(_activeOrActivatingSessionTabContext), ah -> ah.setActionScope(_currentActionScope));
+   }
+
+   public void updateActionUIs()
+   {
+      CollectionUtil.forEachFiltered(_actionHandles, ah -> ah.matchesSessionContext(_activeOrActivatingSessionTabContext), ah -> ah.refreshActionUI());
    }
 
    public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(ActionConfiguration actionConfiguration)
