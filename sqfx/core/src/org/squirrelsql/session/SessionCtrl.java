@@ -2,11 +2,9 @@ package org.squirrelsql.session;
 
 import javafx.event.Event;
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.action.ActionManager;
@@ -52,7 +50,7 @@ public class SessionCtrl
       _sessionPane.setCenter(_objectTreeAndSqlTabPane);
 
       _sessionTab = new Tab();
-      _sessionTab.setGraphic(getTabHeaderNode());
+      _sessionTab.setGraphic(SessionUtil.createSessionTabHeader(_sessionTabContext));
       _sessionTab.setContent(_sessionPane);
 
 
@@ -185,12 +183,6 @@ public class SessionCtrl
       }
    }
 
-
-   public Node getTabHeaderNode()
-   {
-      Alias alias = _sessionTabContext.getSession().getAlias();
-      return new Label(_i18n.t("session.tab.header", alias.getName(), alias.getUserName()));
-   }
 
    private void onClose()
    {

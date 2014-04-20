@@ -14,6 +14,16 @@ public class NewSqlTabHelper
 {
    public static void registerSessionTabListener(SessionTabContext sessionTabContext, Tab sessionTab)
    {
+      registerListener(sessionTabContext, sessionTab);
+   }
+
+   public static void registerNewSqlTabListener(SessionTabContext newSqlTabContext, Tab newSqlTab)
+   {
+      registerListener(newSqlTabContext, newSqlTab);
+   }
+
+   private static void registerListener(SessionTabContext sessionTabContext, Tab sessionTab)
+   {
       ActionHandle actionHandle = new ActionManager().getActionHandle(StandardActionConfiguration.NEW_SQL_TAB, sessionTabContext);
       actionHandle.setOnAction(() -> openNewSqlTab(sessionTabContext));
       sessionTab.getContent().setOnKeyTyped(e -> onKeyTyped((KeyEvent) e, sessionTabContext));
@@ -28,10 +38,9 @@ public class NewSqlTabHelper
       }
    }
 
-
-
-   public static void openNewSqlTab(SessionTabContext sessionTabContext)
+   private static void openNewSqlTab(SessionTabContext sessionTabContext)
    {
       AppState.get().getSessionManager().createSqlTab(sessionTabContext);
    }
+
 }

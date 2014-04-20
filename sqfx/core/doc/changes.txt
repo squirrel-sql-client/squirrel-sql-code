@@ -2,6 +2,10 @@ SQuirreL SQL FX Change Log
 ==============================
 
 
+Feature: Open SQL editor tabs for existing Session
+
+Feature: Menu bar including Session menu
+
 Feature: Alias schema loading has a new check box which allows to hide empty schema or catalog nodes in the object tree.
 
 Bug fix: Reading object tree details failed if some meta data where not accessible e.g. for privilege reasons on MySQL

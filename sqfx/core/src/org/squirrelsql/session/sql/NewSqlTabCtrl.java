@@ -1,10 +1,13 @@
 package org.squirrelsql.session.sql;
 
+import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
+import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.SessionManagerListener;
 import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.SessionUtil;
 import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StandardActionConfiguration;
@@ -36,7 +39,8 @@ public class NewSqlTabCtrl
 
       AppState.get().getSessionManager().addSessionManagerListener(_sessionManagerListener);
 
-      _newSqlTab = new Tab("Hallo");
+      _newSqlTab = new Tab();
+      _newSqlTab.setGraphic(SessionUtil.createSessionTabHeader(newSqlTabContext, StandardActionConfiguration.NEW_SQL_TAB.getActionConfiguration().getIcon()));
 
       _sqlPaneCtrl = new SqlPaneCtrl(newSqlTabContext);
       _sqlPaneCtrl.requestFocus();
@@ -47,10 +51,20 @@ public class NewSqlTabCtrl
 
       _newSqlTab.setContent(bp);
 
-      new ActionManager().getActionHandle(StandardActionConfiguration.NEW_SQL_TAB, _newSqlTabContext).setOnAction(()-> NewSqlTabHelper.openNewSqlTab(_newSqlTabContext));
+      NewSqlTabHelper.registerNewSqlTabListener(_newSqlTabContext, _newSqlTab);
 
+      _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
       _newSqlTab.setOnClosed(e -> close(_newSqlTabContext));
    }
+
+   private void onSelectionChanged(Event e)
+   {
+      if(_newSqlTab.isSelected())
+      {
+         AppState.get().getSessionManager().setCurrentlyActiveOrActivatingContext(_newSqlTabContext);
+      }
+   }
+
 
    private void close(SessionTabContext sessionTabContext)
    {

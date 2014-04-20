@@ -83,7 +83,7 @@ public class SqlPaneCtrl
                   }
                   else if (hNewSqlTab.matchesKeyEvent(keyEvent))
                   {
-                     NewSqlTabHelper.openNewSqlTab(_sessionTabContext);
+                     hNewSqlTab.fire();
                      keyEvent.consume();
                   }
                }

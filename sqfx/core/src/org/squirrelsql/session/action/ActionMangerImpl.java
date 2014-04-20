@@ -70,6 +70,8 @@ public class ActionMangerImpl
 
          _sessionMenu.getItems().add(menuItem);
       }
+
+      updateActionUIs();
    }
 
    public Menu getSessionMenu()

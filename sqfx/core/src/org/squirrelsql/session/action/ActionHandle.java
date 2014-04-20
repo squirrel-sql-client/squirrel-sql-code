@@ -144,4 +144,8 @@ public class ActionHandle
       }
    }
 
+   public void fire()
+   {
+      _sqFxActionListener.actionPerformed();
+   }
 }
