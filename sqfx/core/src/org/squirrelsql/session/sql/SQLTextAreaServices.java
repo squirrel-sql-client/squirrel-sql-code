@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.session.TokenAtCarretInfo;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
@@ -16,15 +17,15 @@ import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 public class SQLTextAreaServices
 {
 
-   private final TextArea _sqlTextArea;
+   private final CodeArea _sqlTextArea;
 
    public SQLTextAreaServices()
    {
-      _sqlTextArea = new TextArea();
+      _sqlTextArea = new CodeArea();
 
    }
 
-   public TextArea getTextArea()
+   public CodeArea getTextArea()
    {
       return _sqlTextArea;
    }

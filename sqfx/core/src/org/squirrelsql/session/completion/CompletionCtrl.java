@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
+import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
@@ -90,6 +91,14 @@ public class CompletionCtrl
       }
 
       pp.show(_sqlTextAreaServices.getTextArea(), x, cl.getY() + _sqlTextAreaServices.getFontHight() + 4);
+
+//      int pos = _sqlTextAreaServices.getTextArea().getCaretPosition();
+//      int col = _sqlTextAreaServices.getTextArea().getCaretColumn();
+//
+//      System.out.println("col = " + col + ", pos = " + pos);
+//
+//      _sqlTextAreaServices.getTextArea().setPopupAtCaret(pp);
+//      pp.show(AppState.get().getPrimaryStage());
    }
 
    private void hideIfNotFocused(Boolean newValue, Popup pp)

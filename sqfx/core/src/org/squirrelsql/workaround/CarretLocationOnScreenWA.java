@@ -8,9 +8,36 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.shape.Path;
 import javafx.stage.Window;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.skin.StyledTextAreaSkin;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
 
 public class CarretLocationOnScreenWA
 {
+
+
+
+   public static Point2D getCarretLocationOnScreen(CodeArea sqlTextArea)
+   {
+      try
+      {
+         Method m = StyledTextAreaSkin.class.getDeclaredMethod("getCaretLocationOnScreen");
+
+         m.setAccessible(true);
+         Optional<Point2D> buf = (Optional<Point2D>) m.invoke((StyledTextAreaSkin) sqlTextArea.getSkin());
+         Point2D ret = buf.get();
+         return new Point2D(Math.max(0d,ret.getX()-5d), ret.getY());
+
+         //return ((StyledTextAreaSkin)sqlTextArea.getSkin()).getCaretLocationOnScreen();
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
    public static Point2D getCarretLocationOnScreen(TextArea sqlTextArea)
    {
       Path caret = findCaret(sqlTextArea);
