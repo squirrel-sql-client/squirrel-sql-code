@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.shape.Path;
 import javafx.stage.Window;
 
+//Test commit
 public class CarretLocationOnScreenWA
 {
    public static Point2D getCarretLocationOnScreen(TextArea sqlTextArea)
