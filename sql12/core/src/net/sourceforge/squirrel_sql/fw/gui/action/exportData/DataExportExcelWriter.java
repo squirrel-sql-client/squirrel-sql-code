@@ -163,9 +163,12 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
       cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
       retVal.setCellStyle(cellStyle);
 
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTime((Date) cellObj);
-      retVal.setCellValue(calendar);
+      if (null != cellObj)
+      {
+         Calendar calendar = Calendar.getInstance();
+         calendar.setTime((Date) cellObj);
+         retVal.setCellValue(calendar);
+      }
    }
 
    private String getDataXLSAsString(Object cellObj) {
