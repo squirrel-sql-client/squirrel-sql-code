@@ -1,4 +1,46 @@
 .keyword {
-    -fx-fill: brown;
+    -fx-fill: blue;
     -fx-font-weight: bold;
 }
+
+.table {
+    -fx-fill: green;
+    /*-fx-font-weight: bold;*/
+}
+
+.function {
+    -fx-fill: purple;
+    /*-fx-font-weight: bold;*/
+}
+
+.column {
+    -fx-fill: darkgoldenrod;
+    /*-fx-font-weight: bold;*/
+}
+
+.comment {
+    -fx-fill: lightgray;
+    /*-fx-font-weight: bold;*/
+}
+
+.literal{
+    -fx-fill: orchid;
+    /*-fx-font-weight: bold;*/
+}
+
+.separator{
+    -fx-fill: cornflowerblue;
+    /*-fx-font-weight: bold;*/
+}
+
+.error{
+    -fx-fill: red;
+    /*-fx-font-weight: bold;*/
+}
+
+.sqldefault{
+    -fx-fill: black;
+    /*-fx-font-weight: bold;*/
+}
+
+

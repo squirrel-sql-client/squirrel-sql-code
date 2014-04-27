@@ -45,7 +45,7 @@ public class SQLSyntaxHighlighting
 
 
 
-         System.out.println("----------------------------------------------------------");
+         //System.out.println("----------------------------------------------------------");
 
          int lastTokenEnd = 0;
          int lineStart = 0;
@@ -61,12 +61,12 @@ public class SQLSyntaxHighlighting
                if (0 < emptyLength)
                {
                   spansBuilder.add(Collections.emptyList(), emptyLength);
-                  System.out.println("  EmptyLength=" + emptyLength);
+                  //System.out.println("  EmptyLength=" + emptyLength);
                }
 
                int keywordLength = token.length();
-               spansBuilder.add(Collections.singleton("keyword"), keywordLength);
-               System.out.println("KeywordLength=" + keywordLength + "   " + token);
+               spansBuilder.add(Collections.singleton(TokenToCssStyleMapper.getTokenStyle(token)), keywordLength);
+               //System.out.println("KeywordLength=" + keywordLength + "   " + token);
 
                lastTokenEnd = lineStart + token.getTextOffset() + keywordLength;
             }

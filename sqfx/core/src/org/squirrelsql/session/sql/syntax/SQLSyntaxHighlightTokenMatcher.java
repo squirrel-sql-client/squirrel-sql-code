@@ -33,12 +33,6 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    }
 
    @Override
-   public boolean isDataType(char[] buffer, int offset, int len)
-   {
-      return false;
-   }
-
-   @Override
    public boolean isStatementSeparator(char[] buffer, int offset, int len)
    {
       return false;

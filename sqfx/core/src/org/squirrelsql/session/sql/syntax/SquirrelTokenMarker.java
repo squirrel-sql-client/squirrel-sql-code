@@ -7,7 +7,6 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
    private static int _curTokenArrayIndex =Token.DEFAULT_NUM_TOKEN_TYPES;
 
    public static final int TOKEN_IDENTIFIER_TABLE = _curTokenArrayIndex++;
-   public static final int TOKEN_IDENTIFIER_DATA_TYPE = _curTokenArrayIndex++;
    public static final int TOKEN_IDENTIFIER_COLUMN = _curTokenArrayIndex++;
    public static final int TOKEN_IDENTIFIER_FUNCTION = _curTokenArrayIndex++;
    public static final int TOKEN_IDENTIFIER_STATEMENT_SEPARATOR = _curTokenArrayIndex++;
@@ -48,10 +47,6 @@ public class SquirrelTokenMarker extends SquirrelTokenMakerBase
          else if(_syntaxHighlightTokenMatcher.isTable(array, start, len))
          {
             super.addToken(array, start, end, TOKEN_IDENTIFIER_TABLE, startOffset, hyperlink);
-         }
-         else if(_syntaxHighlightTokenMatcher.isDataType(array, start, len))
-         {
-            super.addToken(array, start, end, TOKEN_IDENTIFIER_DATA_TYPE, startOffset, hyperlink);
          }
          else if(_syntaxHighlightTokenMatcher.isColumn(array, start, len))
          {

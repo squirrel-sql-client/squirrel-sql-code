@@ -12,8 +12,6 @@ public interface ISyntaxHighlightTokenMatcher
 
    boolean isFunction(char[] buffer, int offset, int len);
 
-   boolean isDataType(char[] buffer, int offset, int len);
-
    boolean isStatementSeparator(char[] buffer, int offset, int len);
 
    boolean isColumn(char[] buffer, int offset, int len);
