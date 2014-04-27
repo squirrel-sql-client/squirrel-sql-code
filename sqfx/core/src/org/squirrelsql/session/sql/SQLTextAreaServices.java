@@ -4,12 +4,10 @@ import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.session.TokenAtCarretInfo;
+import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
@@ -23,6 +21,7 @@ public class SQLTextAreaServices
    {
       _sqlTextArea = new CodeArea();
 
+      new SQLSyntaxHighlighting(_sqlTextArea);
    }
 
    public CodeArea getTextArea()
