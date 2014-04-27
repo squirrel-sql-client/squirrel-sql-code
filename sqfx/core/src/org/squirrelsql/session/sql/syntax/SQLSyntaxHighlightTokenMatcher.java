@@ -1,7 +1,16 @@
 package org.squirrelsql.session.sql.syntax;
 
+import org.squirrelsql.session.schemainfo.SchemaCache;
+
 public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatcher
 {
+   private final SchemaCache _schemaCache;
+
+   public SQLSyntaxHighlightTokenMatcher(SchemaCache schemaCache)
+   {
+      _schemaCache = schemaCache;
+   }
+
    @Override
    public boolean isError(int offset, int len)
    {
@@ -11,7 +20,7 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isTable(char[] buffer, int offset, int len)
    {
-      return false;
+      return _schemaCache.isTable(buffer, offset, len);
    }
 
    @Override
@@ -29,7 +38,7 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isFunction(char[] buffer, int offset, int len)
    {
-      return false;
+      return _schemaCache.isProcedure(buffer, offset, len);
    }
 
    @Override
@@ -47,7 +56,7 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isKeyword(char[] buffer, int offset, int len)
    {
-      return false;
+      return _schemaCache.isKeyword(buffer, offset, len);
    }
 
 }

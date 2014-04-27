@@ -49,7 +49,7 @@ public class SqlPaneCtrl
    public SqlPaneCtrl(SessionTabContext sessionTabContext)
    {
       _sessionTabContext = sessionTabContext;
-      _sqlTextAreaServices = new SQLTextAreaServices();
+      _sqlTextAreaServices = new SQLTextAreaServices(_sessionTabContext);
 
       _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), _sqlTextAreaServices);
 

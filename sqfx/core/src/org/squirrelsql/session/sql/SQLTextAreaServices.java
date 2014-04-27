@@ -6,7 +6,9 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.TokenAtCarretInfo;
+import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.services.Utils;
@@ -17,11 +19,11 @@ public class SQLTextAreaServices
 
    private final CodeArea _sqlTextArea;
 
-   public SQLTextAreaServices()
+   public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
       _sqlTextArea = new CodeArea();
 
-      new SQLSyntaxHighlighting(_sqlTextArea);
+      new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(sessionTabContext.getSession().getSchemaCache()));
    }
 
    public CodeArea getTextArea()

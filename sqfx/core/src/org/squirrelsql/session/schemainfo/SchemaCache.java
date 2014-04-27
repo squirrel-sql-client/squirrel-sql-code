@@ -2,6 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
@@ -12,6 +13,7 @@ import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class SchemaCache
 {
@@ -38,6 +40,8 @@ public class SchemaCache
    private DbConnectorResult _dbConnectorResult;
 
 
+   private CaseInsensitiveCache _caseInsensitiveCache = new CaseInsensitiveCache();
+
    public SchemaCache(DbConnectorResult dbConnectorResult, SchemaCacheConfig schemaCacheConfig, DatabaseStructure databaseStructure)
    {
       _dbConnectorResult = dbConnectorResult;
@@ -55,11 +59,26 @@ public class SchemaCache
 
       _dataBaseMetadData = DataBaseMetaDataLoader.loadMetaData(_dbConnectorResult.getAlias(), _dbConnectorResult.getSQLConnection());
       _dataTypes = DataTypesLoader.loadTypes(_dbConnectorResult.getSQLConnection());
+
       _numericFunctions = DataBaseMetaDataLoader.loadNumericFunctions(_dbConnectorResult.getSQLConnection());
+      _numericFunctions.getRows().forEach(e -> _caseInsensitiveCache.addProc((String) e.get(0)));
+
       _stringFunctions = DataBaseMetaDataLoader.loadStringFunctions(_dbConnectorResult.getSQLConnection());
+      _stringFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
+
       _systemFunctions = DataBaseMetaDataLoader.loadSystemFunctions(_dbConnectorResult.getSQLConnection());
+      _systemFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
+
       _timeDateFunctions = DataBaseMetaDataLoader.loadTimeDateFunctions(_dbConnectorResult.getSQLConnection());
+      _timeDateFunctions.getRows().forEach(e ->  _caseInsensitiveCache.addProc((String) e.get(0)));
+
       _keywords = DataBaseMetaDataLoader.loadKeyWords(_dbConnectorResult.getSQLConnection());
+      _keywords.getRows().forEach(e ->  _caseInsensitiveCache.addKeyword((String) e.get(0)));
+
+      for (String keyWord : DefaultKeywords.KEY_WORDS)
+      {
+         _caseInsensitiveCache.addKeyword(keyWord);
+      }
 
       ArrayList<StructItem> leaves = _databaseStructure.getLeaves();
 
@@ -107,6 +126,8 @@ public class SchemaCache
                   }
                   arr.add(tableInfo);
 
+                  _caseInsensitiveCache.addTable(tableInfo.getName());
+
                }
 
             }
@@ -116,7 +137,13 @@ public class SchemaCache
             StructItemProcedureType buf = (StructItemProcedureType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               _procedureInfos.put(buf, _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema()));
+               ArrayList<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema());
+               _procedureInfos.put(buf, procedureInfos);
+
+               for (ProcedureInfo procedureInfo : procedureInfos)
+               {
+                  _caseInsensitiveCache.addProc(procedureInfo.getName());
+               }
             }
          }
          else if(leaf instanceof StructItemUDTType)
@@ -328,5 +355,20 @@ public class SchemaCache
    public AliasPropertiesDecorator getAliasPropertiesDecorator()
    {
       return _schemaCacheConfig.getAliasPropertiesDecorator();
+   }
+
+   public boolean isTable(char[] buffer, int offset, int len)
+   {
+      return _caseInsensitiveCache.isTable(buffer, offset, len);
+   }
+
+   public boolean isProcedure(char[] buffer, int offset, int len)
+   {
+      return _caseInsensitiveCache.isProcedure(buffer, offset, len);
+   }
+
+   public boolean isKeyword(char[] buffer, int offset, int len)
+   {
+      return _caseInsensitiveCache.isKeyword(buffer, offset, len);
    }
 }

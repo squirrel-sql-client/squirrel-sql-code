@@ -3,6 +3,7 @@ package org.squirrelsql.session.sql.syntax;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.StyleSpansBuilder;
+import org.squirrelsql.session.SessionTabContext;
 
 import javax.swing.text.Segment;
 import java.io.BufferedReader;
@@ -14,12 +15,16 @@ import java.util.Collections;
 
 public class SQLSyntaxHighlighting
 {
-   public SQLSyntaxHighlighting(CodeArea sqlTextArea)
+
+   private SQLSyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
+
+   public SQLSyntaxHighlighting(CodeArea sqlTextArea, SQLSyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher)
    {
 
       sqlTextArea.getStylesheets().add(getClass().getResource("sql-syntax.css").toExternalForm());
 
       sqlTextArea.textProperty().addListener((observable, oldText, newText) -> onTextPropertyChanged(newText, sqlTextArea));
+      _syntaxHighlightTokenMatcher = syntaxHighlightTokenMatcher;
    }
 
    private void onTextPropertyChanged(String sql, CodeArea codeArea)
@@ -93,7 +98,7 @@ public class SQLSyntaxHighlighting
    {
       ArrayList<Token> tokens = new ArrayList<>();
 
-      Token token = new SquirrelTokenMarker(new SQLSyntaxHighlightTokenMatcher()).getTokenList(new Segment(line.toCharArray(), 0, line.length()), initialTokenType, 0);
+      Token token = new SquirrelTokenMarker(_syntaxHighlightTokenMatcher).getTokenList(new Segment(line.toCharArray(), 0, line.length()), initialTokenType, 0);
 
       while (null != token && 0 < token.length())
       {
@@ -108,9 +113,8 @@ public class SQLSyntaxHighlighting
 
    private ArrayList<String> getLines(String newText) throws IOException
    {
-      ArrayList<String> lines;
+      ArrayList<String> lines = new ArrayList<>();
       BufferedReader rdr = new BufferedReader(new StringReader(newText));
-      lines = new ArrayList<String>();
       for (String line = rdr.readLine(); line != null; line = rdr.readLine())
       {
          lines.add(line);
