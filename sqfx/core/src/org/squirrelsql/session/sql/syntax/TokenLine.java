@@ -29,6 +29,11 @@ public class TokenLine
          return _formerInitialTokenType;
       }
 
+      if(_line.endsWith("'") && false == _line.endsWith("''"))
+      {
+         return SquirrelTokenMakerBase.YYINITIAL;
+      }
+
       return _tokens.get(_tokens.size() - 1).getType();
    }
 
