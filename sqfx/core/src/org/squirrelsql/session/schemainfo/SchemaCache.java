@@ -126,7 +126,7 @@ public class SchemaCache
                   }
                   arr.add(tableInfo);
 
-                  _caseInsensitiveCache.addTable(tableInfo.getName());
+                  _caseInsensitiveCache.addTable(tableInfo);
 
                }
 
@@ -348,7 +348,14 @@ public class SchemaCache
    {
       if(null == table.getColumnsAsTableLoader())
       {
-         table.setColumnsAsTableLoader(TableDetailsReader.readColumns(table, _dbConnectorResult));
+         TableLoader cols = TableDetailsReader.readColumns(table, _dbConnectorResult);
+
+         for (int i = 0; i < cols.getRows().size(); i++)
+         {
+            _caseInsensitiveCache.addColumn(cols.getCellAsString("COLUMN_NAME", i));
+         }
+
+         table.setColumnsAsTableLoader(cols);
       }
    }
 
@@ -359,7 +366,20 @@ public class SchemaCache
 
    public boolean isTable(char[] buffer, int offset, int len)
    {
-      return _caseInsensitiveCache.isTable(buffer, offset, len);
+      ArrayList<TableInfo> tables = _caseInsensitiveCache.getTables(buffer, offset, len);
+
+      if(null == tables)
+      {
+         return false;
+      }
+
+      for (TableInfo table : tables)
+      {
+         initCols(table);
+      }
+
+      return true;
+
    }
 
    public boolean isProcedure(char[] buffer, int offset, int len)
@@ -370,5 +390,10 @@ public class SchemaCache
    public boolean isKeyword(char[] buffer, int offset, int len)
    {
       return _caseInsensitiveCache.isKeyword(buffer, offset, len);
+   }
+
+   public boolean isColumn(char[] buffer, int offset, int len)
+   {
+      return _caseInsensitiveCache.isColumn(buffer, offset, len);
    }
 }

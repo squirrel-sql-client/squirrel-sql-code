@@ -50,7 +50,7 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isColumn(char[] buffer, int offset, int len)
    {
-      return false;
+      return _schemaCache.isColumn(buffer, offset, len);
    }
 
    @Override

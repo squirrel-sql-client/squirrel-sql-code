@@ -1,15 +1,19 @@
 package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.services.CaseInsensitiveString;
+import org.squirrelsql.session.TableInfo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class CaseInsensitiveCache implements Serializable
 {
-   private HashSet<CaseInsensitiveString> _ciTableNames = new HashSet<>();
+   private HashMap<CaseInsensitiveString, ArrayList<TableInfo>> _ciTableNames = new HashMap<>();
    private HashSet<CaseInsensitiveString> _ciProcedureNames = new HashSet<>();
    private HashSet<CaseInsensitiveString> _ciKeywords = new HashSet<>();
+   private HashSet<CaseInsensitiveString> _ciColumns = new HashSet<>();
 
    private CaseInsensitiveString _buf = new CaseInsensitiveString();
 
@@ -23,15 +27,28 @@ public class CaseInsensitiveCache implements Serializable
       _ciKeywords.add(new CaseInsensitiveString(s));
    }
 
-   public void addTable(String s)
+   public void addTable(TableInfo ti)
    {
-      _ciTableNames.add(new CaseInsensitiveString(s));
+      CaseInsensitiveString tableName = new CaseInsensitiveString(ti.getName());
+      ArrayList<TableInfo> tableInfos = _ciTableNames.get(tableName);
+
+      if(null == tableInfos)
+      {
+         tableInfos = new ArrayList<>();
+         _ciTableNames.put(tableName, tableInfos);
+      }
+      tableInfos.add(ti);
+   }
+
+   public void addColumn(String s)
+   {
+      _ciColumns.add(new CaseInsensitiveString(s));
    }
 
 
-   public boolean isTable(char[] buffer, int offset, int len)
+   public ArrayList<TableInfo> getTables(char[] buffer, int offset, int len)
    {
-      return _ciTableNames.contains(_buf.setCharBuffer(buffer, offset, len));
+      return _ciTableNames.get(_buf.setCharBuffer(buffer, offset, len));
    }
 
    public boolean isProcedure(char[] buffer, int offset, int len)
@@ -42,5 +59,10 @@ public class CaseInsensitiveCache implements Serializable
    public boolean isKeyword(char[] buffer, int offset, int len)
    {
       return _ciKeywords.contains(_buf.setCharBuffer(buffer, offset, len));
+   }
+
+   public boolean isColumn(char[] buffer, int offset, int len)
+   {
+      return _ciColumns.contains(_buf.setCharBuffer(buffer, offset, len));
    }
 }
