@@ -2,7 +2,6 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
@@ -12,8 +11,9 @@ import org.squirrelsql.session.objecttree.TableDetailsReader;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 
 public class SchemaCache
 {
@@ -346,17 +346,21 @@ public class SchemaCache
 
    private void initCols(TableInfo table)
    {
-      if(null == table.getColumnsAsTableLoader())
+      if(null != table.getColumnsAsTableLoader())
       {
-         TableLoader cols = TableDetailsReader.readColumns(table, _dbConnectorResult);
-
-         for (int i = 0; i < cols.getRows().size(); i++)
-         {
-            _caseInsensitiveCache.addColumn(cols.getCellAsString("COLUMN_NAME", i));
-         }
-
-         table.setColumnsAsTableLoader(cols);
+         // already loaded
+         return;
       }
+
+      TableLoader cols = TableDetailsReader.readColumns(table, _dbConnectorResult);
+
+      for (int i = 0; i < cols.getRows().size(); i++)
+      {
+         _caseInsensitiveCache.addColumn(cols.getCellAsString("COLUMN_NAME", i));
+      }
+
+      table.setColumnsAsTableLoader(cols);
+
    }
 
    public AliasPropertiesDecorator getAliasPropertiesDecorator()
@@ -364,13 +368,13 @@ public class SchemaCache
       return _schemaCacheConfig.getAliasPropertiesDecorator();
    }
 
-   public boolean isTable(char[] buffer, int offset, int len)
+   public List<TableInfo> getTables(char[] buffer, int offset, int len)
    {
       ArrayList<TableInfo> tables = _caseInsensitiveCache.getTables(buffer, offset, len);
 
       if(null == tables)
       {
-         return false;
+         return Collections.emptyList();
       }
 
       for (TableInfo table : tables)
@@ -378,7 +382,7 @@ public class SchemaCache
          initCols(table);
       }
 
-      return true;
+      return tables;
 
    }
 

@@ -10,16 +10,21 @@ import org.squirrelsql.session.schemainfo.StructItemCatalog;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Completor
 {
    private SchemaCache _schemaCache;
-   private TableCompletionCandidate _lastSeenTable;
+   private ArrayList<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
 
-   public Completor(SchemaCache schemaCache, TableCompletionCandidate lastSeenTable)
+   public Completor(SchemaCache schemaCache, List<TableInfo> currentTableInfosNextToCursor)
    {
       _schemaCache = schemaCache;
-      _lastSeenTable = lastSeenTable;
+
+      for (TableInfo tableInfo : currentTableInfosNextToCursor)
+      {
+         _currentTableCandidatesNextToCursors.add(new TableCompletionCandidate(tableInfo, tableInfo.getStructItemSchema()));
+      }
    }
 
    public ObservableList<CompletionCandidate> getCompletions(TokenParser tokenParser)
@@ -30,17 +35,17 @@ public class Completor
       if(0 == tokenParser.completedSplitsCount()) // everything
       {
 
-         if(null != _lastSeenTable)
+         for (TableCompletionCandidate tableCompletionCandidate : _currentTableCandidatesNextToCursors)
          {
-
-            for (ColumnInfo columnInfo : _schemaCache.getColumns(_lastSeenTable.getTableInfo()))
+            for (ColumnInfo columnInfo : _schemaCache.getColumns(tableCompletionCandidate.getTableInfo()))
             {
                if(tokenParser.uncompletedSplitMatches(columnInfo.getColName()))
                {
-                  ret.add(new ColumnCompletionCandidate(columnInfo, _lastSeenTable));
+                  ret.add(new ColumnCompletionCandidate(columnInfo, tableCompletionCandidate));
                }
             }
          }
+
 
          for (String keyword : _schemaCache.getDefaultKeywords())
          {

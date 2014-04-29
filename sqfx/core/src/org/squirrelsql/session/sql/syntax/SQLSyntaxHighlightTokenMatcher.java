@@ -20,19 +20,7 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    @Override
    public boolean isTable(char[] buffer, int offset, int len)
    {
-      return _schemaCache.isTable(buffer, offset, len);
-   }
-
-   @Override
-   public void removeSQLTokenListener(SQLTokenListener tl)
-   {
-
-   }
-
-   @Override
-   public void addSQLTokenListener(SQLTokenListener tl)
-   {
-
+      return 0 < _schemaCache.getTables(buffer, offset, len).size();
    }
 
    @Override
@@ -58,5 +46,4 @@ public class SQLSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    {
       return _schemaCache.isKeyword(buffer, offset, len);
    }
-
 }

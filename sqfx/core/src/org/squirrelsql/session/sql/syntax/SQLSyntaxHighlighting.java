@@ -3,7 +3,7 @@ package org.squirrelsql.session.sql.syntax;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.StyleSpansBuilder;
-import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.schemainfo.SchemaCache;
 
 import javax.swing.text.Segment;
 import java.io.BufferedReader;
@@ -16,10 +16,13 @@ import java.util.Collections;
 public class SQLSyntaxHighlighting
 {
 
-   private SQLSyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
+   private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
+   private SchemaCache _schemaCache;
+   private TableNextToCursorListener _tableNextToCursorListener;
 
-   public SQLSyntaxHighlighting(CodeArea sqlTextArea, SQLSyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher)
+   public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, SchemaCache schemaCache)
    {
+      _schemaCache = schemaCache;
 
       sqlTextArea.getStylesheets().add(getClass().getResource("sql-syntax.css").toExternalForm());
 
@@ -49,6 +52,8 @@ public class SQLSyntaxHighlighting
          StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
 
 
+         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_tableNextToCursorListener, codeArea.getCaretPosition(), _schemaCache);
+
 
          //System.out.println("----------------------------------------------------------");
 
@@ -73,6 +78,8 @@ public class SQLSyntaxHighlighting
                spansBuilder.add(Collections.singleton(TokenToCssStyleMapper.getTokenStyle(token)), keywordLength);
                //System.out.println("KeywordLength=" + keywordLength + "   " + token);
 
+               tableNextToCursorHandler.checkToken(lineStart, token);
+
                lastTokenEnd = lineStart + token.getTextOffset() + keywordLength;
             }
             lineStart += tokenLine.getLineLength();
@@ -87,12 +94,15 @@ public class SQLSyntaxHighlighting
 
          codeArea.setStyleSpans(0, spansBuilder.create());
 
+         tableNextToCursorHandler.fireTableNextToCursor();
+
       }
       catch (IOException e)
       {
          throw new RuntimeException(e);
       }
    }
+
 
    private TokenLine getTokenLine(String line, int initialTokenType)
    {
@@ -121,5 +131,10 @@ public class SQLSyntaxHighlighting
       }
       rdr.close();
       return lines;
+   }
+
+   public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
+   {
+      _tableNextToCursorListener = tableNextToCursorListener;
    }
 }

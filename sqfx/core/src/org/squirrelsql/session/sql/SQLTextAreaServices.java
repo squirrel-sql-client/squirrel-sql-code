@@ -6,24 +6,28 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.TokenAtCarretInfo;
+import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
+import org.squirrelsql.session.sql.syntax.TableNextToCursorListener;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
-import org.squirrelsql.services.Utils;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
 public class SQLTextAreaServices
 {
 
    private final CodeArea _sqlTextArea;
+   private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
 
    public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
       _sqlTextArea = new CodeArea();
 
-      new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(sessionTabContext.getSession().getSchemaCache()));
+      SchemaCache schemaCache = sessionTabContext.getSession().getSchemaCache();
+      _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
    }
 
    public CodeArea getTextArea()
@@ -128,5 +132,10 @@ public class SQLTextAreaServices
    {
       FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(_sqlTextArea.getFont());
       return fontMetrics.computeStringWidth(str);
+   }
+
+   public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
+   {
+      _sqlSyntaxHighlighting.setTableNextToCursorListener(tableNextToCursorListener);
    }
 }

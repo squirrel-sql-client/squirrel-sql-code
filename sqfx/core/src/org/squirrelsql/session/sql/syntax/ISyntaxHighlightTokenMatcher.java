@@ -6,10 +6,6 @@ public interface ISyntaxHighlightTokenMatcher
 
    boolean isTable(char[] buffer, int offset, int len);
 
-   void removeSQLTokenListener(SQLTokenListener tl);
-
-   void addSQLTokenListener(SQLTokenListener tl);
-
    boolean isFunction(char[] buffer, int offset, int len);
 
    boolean isStatementSeparator(char[] buffer, int offset, int len);

@@ -9,21 +9,34 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
-import org.squirrelsql.AppState;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.session.sql.syntax.TableNextToCursorListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CompletionCtrl
 {
    private final Session _session;
    private final SQLTextAreaServices _sqlTextAreaServices;
-   private TableCompletionCandidate _lastSeenTable;
+   private List<TableInfo> _currentTableInfosNextToCursor = new ArrayList<>();
 
    public CompletionCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
    {
       _session = session;
       _sqlTextAreaServices = sqlTextAreaServices;
+
+      _sqlTextAreaServices.setTableNextToCursorListener(new TableNextToCursorListener()
+      {
+         @Override
+         public void currentTableInfosNextToCursor(List<TableInfo> tableInfos)
+         {
+            _currentTableInfosNextToCursor = tableInfos;
+         }
+      });
    }
 
    public void completeCode()
@@ -39,7 +52,7 @@ public class CompletionCtrl
 
       TokenParser tokenParser = new TokenParser(tokenAtCarret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _lastSeenTable).getCompletions(tokenParser);
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _currentTableInfosNextToCursor).getCompletions(tokenParser);
 
       if(0 == completions.size())
       {
@@ -147,11 +160,6 @@ public class CompletionCtrl
 
    private void executeCompletion(CompletionCandidate completionCandidate)
    {
-      if(completionCandidate instanceof TableCompletionCandidate)
-      {
-         _lastSeenTable = (TableCompletionCandidate)completionCandidate;
-      }
-
       TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenAtCarret());
       _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), completionCandidate.getReplacement());
    }
