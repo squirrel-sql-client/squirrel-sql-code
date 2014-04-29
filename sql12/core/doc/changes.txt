@@ -15,6 +15,7 @@ Enhancements:
 
 Bug fixes:
 
+#1144 Error exporting null valued boolean/bit cols to XLS/XLSX
 #1143 Error exporting null valued date cols to XLS/XLSX
 
 Reintroduced compatibility with Java 1.6

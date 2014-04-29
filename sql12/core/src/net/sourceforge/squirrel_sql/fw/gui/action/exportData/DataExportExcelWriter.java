@@ -86,7 +86,14 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
       {
          case Types.BIT:
          case Types.BOOLEAN:
-            retVal.setCellValue((Boolean) cellObj);
+            if (null == cellObj)
+            {
+               //retVal.setCellValue((Boolean)null);
+            }
+            else
+            {
+               retVal.setCellValue((Boolean) cellObj);
+            }
             break;
          case Types.INTEGER:
             if (null == cellObj)
