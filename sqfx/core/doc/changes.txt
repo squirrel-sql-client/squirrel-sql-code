@@ -1,6 +1,7 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Syntax highlighting based on Tomas Mikula's RichTextFX. See https://github.com/TomasMikula/RichTextFX
 
 Feature: Open SQL editor tabs for existing Session
 

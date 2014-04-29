@@ -42,6 +42,9 @@
 		case 'programing':
 			$pageFileName = 'programming.html';
 			break;
+		case 'squirrelFx':
+			$pageFileName = 'squirrelFx.html';
+			break;
 		case 'faq':
 			$pageFileName = 'faq.html';
 			break;
