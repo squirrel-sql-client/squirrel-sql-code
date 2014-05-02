@@ -107,4 +107,9 @@ public class AppState
    {
       return _actionMangerImpl;
    }
+
+   public void removeApplicationCloseListener(ApplicationCloseListener l)
+   {
+      _applicationCloseListeners.remove(l);
+   }
 }

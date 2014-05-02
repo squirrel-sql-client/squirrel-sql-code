@@ -5,6 +5,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
+import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.action.ActionManager;
@@ -26,6 +27,7 @@ public class SessionCtrl
 
 
    private final TabPane _objectTreeAndSqlTabPane;
+   private final ApplicationCloseListener _applicationCloseListener;
 
 
    private I18n _i18n = new I18n(getClass());
@@ -58,7 +60,9 @@ public class SessionCtrl
       _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
 
       NewSqlTabHelper.registerSessionTabListener(sessionTabContext, _sessionTab);
-      AppState.get().addApplicationCloseListener(this::onClose);
+
+      _applicationCloseListener = this::onClose;
+      AppState.get().addApplicationCloseListener(_applicationCloseListener);
    }
 
    private void onSelectionChanged(Event e)
@@ -194,6 +198,7 @@ public class SessionCtrl
 
       AppState.get().getSessionManager().sessionClose(_sessionTabContext);
 
+      AppState.get().removeApplicationCloseListener(_applicationCloseListener);
    }
 
    public Tab getSessionTab()
