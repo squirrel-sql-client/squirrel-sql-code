@@ -5,6 +5,9 @@ import org.fife.ui.rsyntaxtextarea.TokenTypes;
 
 public class TokenToCssStyleMapper
 {
+
+   public static final String ERROR_STYLE = "error";
+
    public static String getTokenStyle(Token token)
    {
       switch (token.getType())
@@ -30,7 +33,7 @@ public class TokenToCssStyleMapper
             return "literal";
 
          case Token.ERROR_IDENTIFIER:
-            return "error";
+            return ERROR_STYLE;
 
          default:
 
@@ -56,5 +59,10 @@ public class TokenToCssStyleMapper
             }
 
       }
+   }
+
+   public static String getErrorStyle()
+   {
+      return ERROR_STYLE;
    }
 }

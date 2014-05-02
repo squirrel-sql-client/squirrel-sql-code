@@ -229,6 +229,7 @@ public class SqlPaneCtrl
 
    public void close()
    {
+      _sqlTextAreaServices.close();
       _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
       _sqlEditTopPanelCtrl.close();
    }

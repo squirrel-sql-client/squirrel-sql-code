@@ -9,6 +9,10 @@ import org.fxmisc.richtext.CodeArea;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.TokenAtCarretInfo;
+import org.squirrelsql.session.parser.ParserEventsListener;
+import org.squirrelsql.session.parser.ParserEventsProcessor;
+import org.squirrelsql.session.parser.kernel.ErrorInfo;
+import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
@@ -21,12 +25,31 @@ public class SQLTextAreaServices
 
    private final CodeArea _sqlTextArea;
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
+   private final ParserEventsProcessor _parserEventsProcessor;
 
    public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
       _sqlTextArea = new CodeArea();
 
       SchemaCache schemaCache = sessionTabContext.getSession().getSchemaCache();
+
+      _parserEventsProcessor = new ParserEventsProcessor(this, sessionTabContext.getSession());
+
+      _parserEventsProcessor.addParserEventsListener(new ParserEventsListener()
+      {
+         @Override
+         public void aliasesFound(TableAliasInfo[] aliasInfos)
+         {
+
+         }
+
+         @Override
+         public void errorsFound(ErrorInfo[] errorInfos)
+         {
+            _sqlSyntaxHighlighting.setErrorInfos(errorInfos);
+         }
+      });
+
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
    }
 
@@ -137,5 +160,10 @@ public class SQLTextAreaServices
    public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
    {
       _sqlSyntaxHighlighting.setTableNextToCursorListener(tableNextToCursorListener);
+   }
+
+   public void close()
+   {
+      _parserEventsProcessor.endProcessing();
    }
 }

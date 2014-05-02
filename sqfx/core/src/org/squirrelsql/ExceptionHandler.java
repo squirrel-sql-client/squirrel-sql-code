@@ -4,8 +4,6 @@ import javafx.application.Platform;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 
-import java.io.PrintStream;
-
 public class ExceptionHandler
 {
 
@@ -21,9 +19,19 @@ public class ExceptionHandler
          @Override
          public void uncaughtException(Thread t, Throwable e)
          {
-            handle(e);
+            onUncaughtException(e);
          }
       });
+   }
+
+   private static void onUncaughtException(Throwable e)
+   {
+      if(Platform.isFxApplicationThread())
+      {
+         handle(e);
+      }
+
+      Platform.runLater(() -> handle(e));
    }
 
    private static void handle(final Throwable t)

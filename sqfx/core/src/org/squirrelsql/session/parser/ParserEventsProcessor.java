@@ -1,5 +1,6 @@
 package org.squirrelsql.session.parser;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.squirrelsql.session.Session;
@@ -80,7 +81,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	public void endProcessing()
 	{
-      _processingEnded = true;
+         _processingEnded = true;
 
 
       _sqlTextAreaServices.getTextArea().textProperty().removeListener(_triggerParserKeyListener);
@@ -110,13 +111,13 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	private void onParsingFinished()
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				fireParsingFinished();
-			}
-		});
+		Platform.runLater(new Runnable()
+      {
+         public void run()
+         {
+            fireParsingFinished();
+         }
+      });
 	}
 
 	private void fireParsingFinished()

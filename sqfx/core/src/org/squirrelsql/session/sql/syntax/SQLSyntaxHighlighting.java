@@ -3,6 +3,8 @@ package org.squirrelsql.session.sql.syntax;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.StyleSpansBuilder;
+import org.squirrelsql.session.parser.ParserEventsProcessor;
+import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
 import javax.swing.text.Segment;
@@ -17,20 +19,23 @@ public class SQLSyntaxHighlighting
 {
 
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
+   private CodeArea _sqlTextArea;
    private SchemaCache _schemaCache;
    private TableNextToCursorListener _tableNextToCursorListener;
+   private ErrorInfo[] _errorInfos = new ErrorInfo[0];
 
    public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, SchemaCache schemaCache)
    {
+      _sqlTextArea = sqlTextArea;
       _schemaCache = schemaCache;
 
-      sqlTextArea.getStylesheets().add(getClass().getResource("sql-syntax.css").toExternalForm());
+      _sqlTextArea.getStylesheets().add(getClass().getResource("sql-syntax.css").toExternalForm());
 
-      sqlTextArea.textProperty().addListener((observable, oldText, newText) -> onTextPropertyChanged(newText, sqlTextArea));
+      _sqlTextArea.textProperty().addListener((observable, oldText, newText) -> onTextPropertyChanged(newText));
       _syntaxHighlightTokenMatcher = syntaxHighlightTokenMatcher;
    }
 
-   private void onTextPropertyChanged(String sql, CodeArea codeArea)
+   private void onTextPropertyChanged(String sql)
    {
       try
       {
@@ -49,10 +54,10 @@ public class SQLSyntaxHighlighting
          }
 
 
-         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+         StyleSpansBuilderWrapper spansBuilder = new StyleSpansBuilderWrapper();
 
 
-         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_tableNextToCursorListener, codeArea.getCaretPosition(), _schemaCache);
+         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_tableNextToCursorListener, _sqlTextArea.getCaretPosition(), _schemaCache);
 
 
          //System.out.println("----------------------------------------------------------");
@@ -75,7 +80,7 @@ public class SQLSyntaxHighlighting
                }
 
                int keywordLength = token.length();
-               spansBuilder.add(Collections.singleton(TokenToCssStyleMapper.getTokenStyle(token)), keywordLength);
+               spansBuilder.add(Collections.singleton(getTokenStyle(lineStart, token)), keywordLength);
                //System.out.println("KeywordLength=" + keywordLength + "   " + token);
 
                tableNextToCursorHandler.checkToken(lineStart, token);
@@ -92,7 +97,10 @@ public class SQLSyntaxHighlighting
             spansBuilder.add(Collections.emptyList(), endLength);
          }
 
-         codeArea.setStyleSpans(0, spansBuilder.create());
+         if (spansBuilder.hasSpans())
+         {
+            _sqlTextArea.setStyleSpans(0, spansBuilder.create());
+         }
 
          tableNextToCursorHandler.fireTableNextToCursor();
 
@@ -101,6 +109,23 @@ public class SQLSyntaxHighlighting
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private String getTokenStyle(int lineStart, Token token)
+   {
+      for (ErrorInfo errorInfo : _errorInfos)
+      {
+         int tokenBegin = lineStart + token.getTextOffset();
+         int tokenEnd = lineStart + token.getTextOffset() + token.length() - 1;
+         if(errorInfo.beginPos <= tokenBegin && tokenEnd <= errorInfo.endPos)
+         {
+            //System.out.println("   " + errorInfo + " ## BEGIN=" + tokenBegin + " END=" + tokenEnd + "  TOKEN="+token);
+
+            return TokenToCssStyleMapper.getErrorStyle();
+         }
+      }
+
+      return TokenToCssStyleMapper.getTokenStyle(token);
    }
 
 
@@ -136,5 +161,27 @@ public class SQLSyntaxHighlighting
    public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
    {
       _tableNextToCursorListener = tableNextToCursorListener;
+   }
+
+   public void setErrorInfos(ErrorInfo[] errorInfos)
+   {
+      ErrorInfo[] oldErrorInfos = _errorInfos;
+      _errorInfos = errorInfos;
+
+      if(oldErrorInfos.length != _errorInfos.length)
+      {
+         onTextPropertyChanged(_sqlTextArea.getText());
+         return;
+      }
+
+      for (int i = 0; i < _errorInfos.length; i++)
+      {
+         ErrorInfo errorInfo = _errorInfos[i];
+
+         if(false == errorInfo.equals(oldErrorInfos[i]))
+         {
+            onTextPropertyChanged(_sqlTextArea.getText());
+         }
+      }
    }
 }
