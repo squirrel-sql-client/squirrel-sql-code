@@ -22,7 +22,8 @@ public class SQLSyntaxHighlighting
    private CodeArea _sqlTextArea;
    private SchemaCache _schemaCache;
    private TableNextToCursorListener _tableNextToCursorListener;
-   private ErrorInfo[] _errorInfos = new ErrorInfo[0];
+
+   private ErrorInfosHandler _errorInfosHandler = new ErrorInfosHandler();
 
    public SQLSyntaxHighlighting(CodeArea sqlTextArea, ISyntaxHighlightTokenMatcher syntaxHighlightTokenMatcher, SchemaCache schemaCache)
    {
@@ -113,16 +114,9 @@ public class SQLSyntaxHighlighting
 
    private String getTokenStyle(int lineStart, Token token)
    {
-      for (ErrorInfo errorInfo : _errorInfos)
+      if(_errorInfosHandler.isError(lineStart, token))
       {
-         int tokenBegin = lineStart + token.getTextOffset();
-         int tokenEnd = lineStart + token.getTextOffset() + token.length() - 1;
-         if(errorInfo.beginPos <= tokenBegin && tokenEnd <= errorInfo.endPos)
-         {
-            //System.out.println("   " + errorInfo + " ## BEGIN=" + tokenBegin + " END=" + tokenEnd + "  TOKEN="+token);
-
-            return TokenToCssStyleMapper.getErrorStyle();
-         }
+         return _errorInfosHandler.getErrorStyle();
       }
 
       return TokenToCssStyleMapper.getTokenStyle(token);
@@ -165,23 +159,9 @@ public class SQLSyntaxHighlighting
 
    public void setErrorInfos(ErrorInfo[] errorInfos)
    {
-      ErrorInfo[] oldErrorInfos = _errorInfos;
-      _errorInfos = errorInfos;
-
-      if(oldErrorInfos.length != _errorInfos.length)
+      if(_errorInfosHandler.setErrorInfos(errorInfos))
       {
          onTextPropertyChanged(_sqlTextArea.getText());
-         return;
-      }
-
-      for (int i = 0; i < _errorInfos.length; i++)
-      {
-         ErrorInfo errorInfo = _errorInfos[i];
-
-         if(false == errorInfo.equals(oldErrorInfos[i]))
-         {
-            onTextPropertyChanged(_sqlTextArea.getText());
-         }
       }
    }
 }
