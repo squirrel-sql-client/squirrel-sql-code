@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Reasonable default for home directory: <user.home>/squirrel-sql-fx
+
 Feature: Integration of SQL parser
  - Highlighting of SQL syntax errors
  - Support of table alias names in code completion
