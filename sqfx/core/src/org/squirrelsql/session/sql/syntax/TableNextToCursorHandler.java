@@ -9,23 +9,23 @@ import java.util.List;
 
 public class TableNextToCursorHandler
 {
-   private TableNextToCursorListener _tableNextToCursorListener;
+   private LexAndParseResultListener _lexAndParseResultListener;
    private final int _caretPosition;
    private final SchemaCache _schemaCache;
    private List<TableInfo> _tablesNextToCursor = new ArrayList<>();
 
    private int _minDistToCursor = Integer.MAX_VALUE;
 
-   public TableNextToCursorHandler(TableNextToCursorListener tableNextToCursorListener, int caretPosition, SchemaCache schemaCache)
+   public TableNextToCursorHandler(LexAndParseResultListener lexAndParseResultListener, int caretPosition, SchemaCache schemaCache)
    {
-      _tableNextToCursorListener = tableNextToCursorListener;
+      _lexAndParseResultListener = lexAndParseResultListener;
       _caretPosition = caretPosition;
       _schemaCache = schemaCache;
    }
 
    public void checkToken(int lineStart, Token token)
    {
-      if(null == _tableNextToCursorListener)
+      if(null == _lexAndParseResultListener)
       {
          return;
       }
@@ -49,12 +49,12 @@ public class TableNextToCursorHandler
 
    public void fireTableNextToCursor()
    {
-      if(null == _tableNextToCursorListener)
+      if(null == _lexAndParseResultListener)
       {
          return;
       }
 
-      _tableNextToCursorListener.currentTableInfosNextToCursor(_tablesNextToCursor);
+      _lexAndParseResultListener.currentTableInfosNextToCursor(_tablesNextToCursor);
 
    }
 }

@@ -16,7 +16,7 @@ import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
-import org.squirrelsql.session.sql.syntax.TableNextToCursorListener;
+import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
@@ -26,6 +26,7 @@ public class SQLTextAreaServices
    private final CodeArea _sqlTextArea;
    private final SQLSyntaxHighlighting _sqlSyntaxHighlighting;
    private final ParserEventsProcessor _parserEventsProcessor;
+   private LexAndParseResultListener _lexAndParseResultListener;
 
    public SQLTextAreaServices(SessionTabContext sessionTabContext)
    {
@@ -40,7 +41,7 @@ public class SQLTextAreaServices
          @Override
          public void aliasesFound(TableAliasInfo[] aliasInfos)
          {
-
+            onAliasesFound(aliasInfos);
          }
 
          @Override
@@ -51,6 +52,14 @@ public class SQLTextAreaServices
       });
 
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
+   }
+
+   private void onAliasesFound(TableAliasInfo[] aliasInfos)
+   {
+      if(null != _lexAndParseResultListener)
+      {
+         _lexAndParseResultListener.aliasesFound(aliasInfos);
+      }
    }
 
    public CodeArea getTextArea()
@@ -157,9 +166,10 @@ public class SQLTextAreaServices
       return fontMetrics.computeStringWidth(str);
    }
 
-   public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
+   public void setLexAndParseResultListener(LexAndParseResultListener lexAndParseResultListener)
    {
-      _sqlSyntaxHighlighting.setTableNextToCursorListener(tableNextToCursorListener);
+      _lexAndParseResultListener = lexAndParseResultListener;
+      _sqlSyntaxHighlighting.setLexAndParseResultListener(lexAndParseResultListener);
    }
 
    public void close()

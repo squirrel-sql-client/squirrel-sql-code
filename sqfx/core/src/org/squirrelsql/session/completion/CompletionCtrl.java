@@ -12,8 +12,9 @@ import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
-import org.squirrelsql.session.sql.syntax.TableNextToCursorListener;
+import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +24,25 @@ public class CompletionCtrl
    private final Session _session;
    private final SQLTextAreaServices _sqlTextAreaServices;
    private List<TableInfo> _currentTableInfosNextToCursor = new ArrayList<>();
+   private TableAliasInfo[] _currentAliasInfos = new TableAliasInfo[0];
 
    public CompletionCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
    {
       _session = session;
       _sqlTextAreaServices = sqlTextAreaServices;
 
-      _sqlTextAreaServices.setTableNextToCursorListener(new TableNextToCursorListener()
+      _sqlTextAreaServices.setLexAndParseResultListener(new LexAndParseResultListener()
       {
          @Override
          public void currentTableInfosNextToCursor(List<TableInfo> tableInfos)
          {
             _currentTableInfosNextToCursor = tableInfos;
+         }
+
+         @Override
+         public void aliasesFound(TableAliasInfo[] aliasInfos)
+         {
+            _currentAliasInfos = aliasInfos;
          }
       });
    }
@@ -52,7 +60,7 @@ public class CompletionCtrl
 
       TokenParser tokenParser = new TokenParser(tokenAtCarret);
 
-      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _currentTableInfosNextToCursor).getCompletions(tokenParser);
+      ObservableList<CompletionCandidate> completions = new Completor(_session.getSchemaCache(), _currentTableInfosNextToCursor, _currentAliasInfos).getCompletions(tokenParser);
 
       if(0 == completions.size())
       {
