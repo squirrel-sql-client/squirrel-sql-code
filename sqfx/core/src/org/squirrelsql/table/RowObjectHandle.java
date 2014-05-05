@@ -4,11 +4,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RowObjectHandle<T>
 {
 
-   private final ArrayList<SimpleObjectProperty> _simpleObjectProperties;
+   private final List<SimpleObjectProperty> _simpleObjectProperties;
    private final T _rowObject;
    private TableLoaderRowObjectAccess<T> _rowObjectAccess;
    private int _columnCount;
@@ -18,7 +19,7 @@ public class RowObjectHandle<T>
       _rowObject = rowObject;
       _rowObjectAccess = rowObjectAccess;
       _columnCount = columnCount;
-      ArrayList row = new ArrayList();
+      List row = new ArrayList();
 
       for (int i = 0; i < columnCount; i++)
       {
@@ -42,7 +43,7 @@ public class RowObjectHandle<T>
    }
 
 
-   public ArrayList<SimpleObjectProperty> getSimpleObjectProperties()
+   public List<SimpleObjectProperty> getSimpleObjectProperties()
    {
       return _simpleObjectProperties;
    }

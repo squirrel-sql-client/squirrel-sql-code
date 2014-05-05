@@ -8,12 +8,13 @@ import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
 import javax.swing.text.Segment;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class SQLSyntaxHighlighting
 {
@@ -40,9 +41,9 @@ public class SQLSyntaxHighlighting
    {
       try
       {
-         ArrayList<String> lines = getLines(sql);
+         List<String> lines = getLines(sql);
 
-         ArrayList<TokenLine> tokenlines = new ArrayList<>();
+         List<TokenLine> tokenlines = new ArrayList<>();
 
          int initialTokenType = SquirrelTokenMakerBase.YYINITIAL;
          for (String line : lines)
@@ -125,7 +126,7 @@ public class SQLSyntaxHighlighting
 
    private TokenLine getTokenLine(String line, int initialTokenType)
    {
-      ArrayList<Token> tokens = new ArrayList<>();
+      List<Token> tokens = new ArrayList<>();
 
       Token token = new SquirrelTokenMarker(_syntaxHighlightTokenMatcher).getTokenList(new Segment(line.toCharArray(), 0, line.length()), initialTokenType, 0);
 
@@ -140,9 +141,9 @@ public class SQLSyntaxHighlighting
       return new TokenLine(tokens, line, initialTokenType);
    }
 
-   private ArrayList<String> getLines(String newText) throws IOException
+   private List<String> getLines(String newText) throws IOException
    {
-      ArrayList<String> lines = new ArrayList<>();
+      List<String> lines = new ArrayList<>();
       BufferedReader rdr = new BufferedReader(new StringReader(newText));
       for (String line = rdr.readLine(); line != null; line = rdr.readLine())
       {

@@ -2,11 +2,12 @@ package org.squirrelsql.session.completion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TokenParser
 {
    private final String _tokenAtCarret;
-   private final ArrayList<String> _splits = new ArrayList<>();
+   private final List<String> _splits = new ArrayList<>();
    private String _ucUncompletedSplit;
 
    public TokenParser(String tokenAtCarret)

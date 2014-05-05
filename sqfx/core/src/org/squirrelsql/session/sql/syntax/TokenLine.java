@@ -2,22 +2,22 @@ package org.squirrelsql.session.sql.syntax;
 
 import org.fife.ui.rsyntaxtextarea.Token;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TokenLine
 {
-   private final ArrayList<Token> _tokens;
+   private final List<Token> _tokens;
    private final String _line;
    private final int _formerInitialTokenType;
 
-   public TokenLine(ArrayList<Token> tokens, String line, int formerInitialTokenType)
+   public TokenLine(List<Token> tokens, String line, int formerInitialTokenType)
    {
       _tokens = tokens;
       _line = line;
       _formerInitialTokenType = formerInitialTokenType;
    }
 
-   public ArrayList<Token> getTokens()
+   public List<Token> getTokens()
    {
       return _tokens;
    }

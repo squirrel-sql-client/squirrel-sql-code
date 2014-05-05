@@ -200,7 +200,7 @@ public interface SQLSchema
       protected void loadColumns()
       {
          List<String> cols = new ArrayList<String>();
-         ArrayList<ColumnInfo> infos = session.getSchemaCache().getTablesByFullyQualifiedName(catalog, schema, name).get(0).getColumns();
+         List<ColumnInfo> infos = session.getSchemaCache().getTablesByFullyQualifiedName(catalog, schema, name).get(0).getColumns();
 
          for (ColumnInfo info : infos)
          {

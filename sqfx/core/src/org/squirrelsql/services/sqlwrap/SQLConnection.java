@@ -15,6 +15,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SQLConnection
 {
@@ -38,11 +39,11 @@ public class SQLConnection
       SQLUtil.close(_con);
    }
 
-   public ArrayList<String> getCatalogs()
+   public List<String> getCatalogs()
    {
       try
       {
-         ArrayList<String> ret = new ArrayList<>();
+         List<String> ret = new ArrayList<>();
 
          ResultSet catalogs = _con.getMetaData().getCatalogs();
 
@@ -76,7 +77,7 @@ public class SQLConnection
       }
    }
 
-   public ArrayList<DBSchema> getSchemas()
+   public List<DBSchema> getSchemas()
    {
       try
       {
@@ -88,7 +89,7 @@ public class SQLConnection
          boolean isDB2 = DialectFactory.isDB2(_con);
 
 
-         ArrayList<DBSchema> ret = new ArrayList<>();
+         List<DBSchema> ret = new ArrayList<>();
 
          ResultSet schemas = _con.getMetaData().getSchemas();
 
@@ -183,14 +184,14 @@ public class SQLConnection
       return ret;
    }
 
-   public ArrayList<String> getTableTypes()
+   public List<String> getTableTypes()
    {
       try
       {
          DatabaseMetaData metaData = _con.getMetaData();
          ResultSet tableTypes = metaData.getTableTypes();
 
-         ArrayList<String> ret = new ArrayList<>();
+         List<String> ret = new ArrayList<>();
 
          while (tableTypes.next())
          {
@@ -219,7 +220,7 @@ public class SQLConnection
       }
    }
 
-   public ArrayList<TableInfo> getTableInfos(String catalog, String schema, String tableType)
+   public List<TableInfo> getTableInfos(String catalog, String schema, String tableType)
    {
       try
       {
@@ -235,7 +236,7 @@ public class SQLConnection
          }
 
 
-         ArrayList<TableInfo> ret = new ArrayList<>();
+         List<TableInfo> ret = new ArrayList<>();
 
          ResultSet tables = _con.getMetaData().getTables(catalog, schema, null, new String[]{tableType});
 
@@ -261,11 +262,11 @@ public class SQLConnection
       }
    }
 
-   public ArrayList<ProcedureInfo> getProcedureInfos(String catalog, String schema)
+   public List<ProcedureInfo> getProcedureInfos(String catalog, String schema)
    {
       try
       {
-         ArrayList<ProcedureInfo> list = new ArrayList<>();
+         List<ProcedureInfo> list = new ArrayList<>();
          ResultSet procedures = _con.getMetaData().getProcedures(catalog, schema, null);
 
          while (procedures.next())
@@ -294,11 +295,11 @@ public class SQLConnection
       }
    }
 
-   public ArrayList<UDTInfo> getUDTInfos(String catalog, String schema)
+   public List<UDTInfo> getUDTInfos(String catalog, String schema)
    {
       try
       {
-         ArrayList<UDTInfo> list = new ArrayList<>();
+         List<UDTInfo> list = new ArrayList<>();
          ResultSet udts = _con.getMetaData().getUDTs(catalog, schema, null, null);
 
          while (udts.next())

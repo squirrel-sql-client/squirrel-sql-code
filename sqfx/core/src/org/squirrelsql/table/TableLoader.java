@@ -16,9 +16,9 @@ import java.util.List;
 public class TableLoader
 {
    private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
-   private ArrayList<ColumnHandle> _columns = new ArrayList<>();
+   private List<ColumnHandle> _columns = new ArrayList<>();
 
-   private ArrayList<ArrayList<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
+   private List<List<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
 
    public ColumnHandle addColumn(String header)
    {
@@ -27,26 +27,26 @@ public class TableLoader
       return columnHandle;
    }
 
-   public ArrayList<SimpleObjectProperty> addRow(List row)
+   public List<SimpleObjectProperty> addRow(List row)
    {
       return addRow(row.toArray(new Object[row.size()]));
    }
 
-   public ArrayList<SimpleObjectProperty> addRow(Object... row)
+   public List<SimpleObjectProperty> addRow(Object... row)
    {
-      ArrayList<SimpleObjectProperty> buf = TableUtil.createSimpleObjectPropertyRow(row);
+      List<SimpleObjectProperty> buf = TableUtil.createSimpleObjectPropertyRow(row);
       addSimpleObjectPropertyRow(buf);
       return buf;
    }
 
-   void addSimpleObjectPropertyRow(ArrayList<SimpleObjectProperty> buf)
+   void addSimpleObjectPropertyRow(List<SimpleObjectProperty> buf)
    {
       _simpleObjectPropertyRows.add(buf);
    }
 
    public void load(TableView tv)
    {
-      ArrayList<TableColumn> cols = new ArrayList<>();
+      List<TableColumn> cols = new ArrayList<>();
 
       for (int i = 0; i < _columns.size(); i++)
       {
@@ -70,9 +70,9 @@ public class TableLoader
 
 
          final int finalI = i;
-         tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ArrayList<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
+         tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
          {
-            public ObservableValue<Object> call(TableColumn.CellDataFeatures<ArrayList<SimpleObjectProperty>, Object> row)
+            public ObservableValue<Object> call(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row)
             {
                return getCellValue(finalI, row.getValue());
             }
@@ -82,12 +82,12 @@ public class TableLoader
 
       tv.getColumns().setAll(cols);
 
-      ObservableList<ArrayList<SimpleObjectProperty>> items = FXCollections.observableArrayList(_simpleObjectPropertyRows);
+      ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
       tv.setItems(items);
 
    }
 
-   private SimpleObjectProperty getCellValue(int ix, ArrayList<SimpleObjectProperty> row)
+   private SimpleObjectProperty getCellValue(int ix, List<SimpleObjectProperty> row)
    {
       if (row.size() > ix)
       {
@@ -109,10 +109,10 @@ public class TableLoader
       return simpleObjectProperty;
    }
 
-   public ArrayList<String> getCellsAsString(int col)
+   public List<String> getCellsAsString(int col)
    {
-      ArrayList<String> ret = new ArrayList<>(_simpleObjectPropertyRows.size());
-      for (ArrayList<SimpleObjectProperty> row : _simpleObjectPropertyRows)
+      List<String> ret = new ArrayList<>(_simpleObjectPropertyRows.size());
+      for (List<SimpleObjectProperty> row : _simpleObjectPropertyRows)
       {
          SimpleObjectProperty simpleObjectProperty = interpretValue(row.get(col));
          ret.add(getStringValue(simpleObjectProperty));
@@ -183,16 +183,16 @@ public class TableLoader
       return _simpleObjectPropertyRows.size();
    }
 
-   public ArrayList<ArrayList> getRows()
+   public List<List> getRows()
    {
-      ArrayList<ArrayList> ret = new ArrayList<>();
+      List<List> ret = new ArrayList<>();
 
       for (int i = 0; i < size(); i++)
       {
-         ArrayList row = new ArrayList();
+         List row = new ArrayList();
          for (int j = 0; j < _columns.size(); j++)
          {
-            ArrayList<SimpleObjectProperty> sopRow = _simpleObjectPropertyRows.get(i);
+            List<SimpleObjectProperty> sopRow = _simpleObjectPropertyRows.get(i);
             if (j < sopRow.size())
             {
                SimpleObjectProperty simpleObjectProperty = sopRow.get(j);

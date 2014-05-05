@@ -26,7 +26,7 @@ public class SQLURLClassLoader extends URLClassLoader
 
    private Map<String, Class> _classes = new HashMap<String, Class>();
 
-   ArrayList<ClassLoaderListener> listeners = new ArrayList<ClassLoaderListener>();
+   List<ClassLoaderListener> listeners = new ArrayList<ClassLoaderListener>();
 
    public SQLURLClassLoader(String fileName) throws IOException
    {
@@ -84,9 +84,9 @@ public class SQLURLClassLoader extends URLClassLoader
       listeners.remove(listener);
    }
 
-   public ArrayList<Class> getAssignableClasses(Class type)
+   public List<Class> getAssignableClasses(Class type)
    {
-      ArrayList<Class> classes = new ArrayList<>();
+      List<Class> classes = new ArrayList<>();
       URL[] urls = getURLs();
       for (int i = 0; i < urls.length; ++i)
       {
@@ -100,10 +100,34 @@ public class SQLURLClassLoader extends URLClassLoader
 
          if (!file.isDirectory() && file.exists() && file.canRead())
          {
-            ZipFile zipFile = null;
-            try
+            try (ZipFile zipFile = new ZipFile(file))
             {
-               zipFile = new ZipFile(file);
+	            notifyListenersLoadedZipFile(file.getName());
+	
+	
+	            for (Iterator it = new EnumerationIterator(zipFile.entries()); it.hasNext(); )
+	            {
+	               Class cls = null;
+	               String entryName = ((ZipEntry) it.next()).getName();
+	               String className = Conversions.changeFileNameToClassName(entryName);
+	               if (className != null)
+	               {
+	                  try
+	                  {
+	                     cls = Class.forName(className, false, this);
+	                  }
+	                  catch (Throwable th)
+	                  {
+	                  }
+	                  if (cls != null)
+	                  {
+	                     if (type.isAssignableFrom(cls))
+	                     {
+	                        classes.add(cls);
+	                     }
+	                  }
+	               }
+	            }
             }
             catch (IOException ex)
             {
@@ -112,33 +136,8 @@ public class SQLURLClassLoader extends URLClassLoader
                _mh.error(msg, ex);
                continue;
             }
-            notifyListenersLoadedZipFile(file.getName());
 
-
-            for (Iterator it = new EnumerationIterator(zipFile.entries()); it.hasNext(); )
-            {
-               Class cls = null;
-               String entryName = ((ZipEntry) it.next()).getName();
-               String className = Conversions.changeFileNameToClassName(entryName);
-               if (className != null)
-               {
-                  try
-                  {
-                     cls = Class.forName(className, false, this);
-                  }
-                  catch (Throwable th)
-                  {
-                  }
-                  if (cls != null)
-                  {
-                     if (type.isAssignableFrom(cls))
-                     {
-                        classes.add(cls);
-                     }
-                  }
-               }
-            }
-         }
+         } 
       }
       notifyListenersFinished();
       return classes;

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultSetMetaDataLoader
 {
@@ -39,7 +40,7 @@ public class ResultSetMetaDataLoader
          ResultSetMetaData md = res.getMetaData();
          for (int i = 1; i <= md.getColumnCount(); i++)
          {
-            ArrayList row = new ArrayList();
+            List row = new ArrayList();
 
             row.add(i); // Column index
             row.add(md.getColumnName(i)); // getColumnName

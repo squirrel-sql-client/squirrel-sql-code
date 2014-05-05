@@ -1,6 +1,7 @@
 package org.squirrelsql.session.action;
 
 import javafx.scene.control.*;
+
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
@@ -8,6 +9,7 @@ import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.SessionManagerListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ActionMangerImpl
 {
@@ -16,7 +18,7 @@ public class ActionMangerImpl
    private SessionManager _sessionManager;
    private SessionTabContext _activeOrActivatingSessionTabContext;
 
-   private ArrayList<ActionHandle> _actionHandles = new ArrayList<>();
+   private List<ActionHandle> _actionHandles = new ArrayList<>();
    private volatile int _actionConfigurationIdSequence;
 
    public int getNextActionConfigurationId()
@@ -116,7 +118,7 @@ public class ActionMangerImpl
    {
       ActionHandle ret;
 
-      ArrayList<ActionHandle> handles = CollectionUtil.filter(_actionHandles, ah -> ah.matchesPrimaryKey(actionConfiguration, sessionTabContext));
+      List<ActionHandle> handles = CollectionUtil.filter(_actionHandles, ah -> ah.matchesPrimaryKey(actionConfiguration, sessionTabContext));
 
       if(0 == handles.size())
       {

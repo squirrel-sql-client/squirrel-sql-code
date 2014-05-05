@@ -3,12 +3,13 @@ package org.squirrelsql.table;
 import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableUtil
 {
-   public static ArrayList<SimpleObjectProperty> createSimpleObjectPropertyRow(Object[] row)
+   public static List<SimpleObjectProperty> createSimpleObjectPropertyRow(Object[] row)
    {
-      ArrayList<SimpleObjectProperty> buf = new ArrayList<>();
+      List<SimpleObjectProperty> buf = new ArrayList<>();
 
       for (Object o : row)
       {
@@ -17,7 +18,7 @@ public class TableUtil
       return buf;
    }
 
-   public static ArrayList<SimpleObjectProperty> createSimpleObjectPropertyRow(ArrayList row)
+   public static List<SimpleObjectProperty> createSimpleObjectPropertyRow(List row)
    {
       return createSimpleObjectPropertyRow(row.toArray(new Object[row.size()]));
    }

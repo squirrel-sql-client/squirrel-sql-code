@@ -4,10 +4,11 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasTreeStructureNode
 {
-   ArrayList<AliasTreeStructureNode> _kids = new ArrayList<>();
+   List<AliasTreeStructureNode> _kids = new ArrayList<>();
    private String _aliasId;
    private boolean _expanded;
    private String _folderName;
@@ -27,12 +28,12 @@ public class AliasTreeStructureNode
       _expanded = item.isExpanded();
    }
 
-   public ArrayList<AliasTreeStructureNode> getKids()
+   public List<AliasTreeStructureNode> getKids()
    {
       return _kids;
    }
 
-   public void setKids(ArrayList<AliasTreeStructureNode> kids)
+   public void setKids(List<AliasTreeStructureNode> kids)
    {
       _kids = kids;
    }
@@ -67,7 +68,7 @@ public class AliasTreeStructureNode
       _folderName = folderName;
    }
 
-   public void addAll(ObservableList<TreeItem<AliasTreeNode>> items, ArrayList<Alias> toFill)
+   public void addAll(ObservableList<TreeItem<AliasTreeNode>> items, List<Alias> toFill)
    {
       for (TreeItem<AliasTreeNode> item : items)
       {
@@ -87,7 +88,7 @@ public class AliasTreeStructureNode
    }
 
 
-   public ArrayList<Alias> apply(TreeItem<AliasTreeNode> parent, ArrayList<Alias> aliases)
+   public List<Alias> apply(TreeItem<AliasTreeNode> parent, List<Alias> aliases)
    {
       for (AliasTreeStructureNode kid : _kids)
       {
@@ -112,7 +113,7 @@ public class AliasTreeStructureNode
       return aliases;
    }
 
-   private Alias findAndRemoveAlias(ArrayList<Alias> aliases, String aliasId)
+   private Alias findAndRemoveAlias(List<Alias> aliases, String aliasId)
    {
       for (Alias alias : aliases)
       {

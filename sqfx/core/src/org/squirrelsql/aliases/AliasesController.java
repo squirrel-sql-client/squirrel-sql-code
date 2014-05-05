@@ -1,6 +1,7 @@
 package org.squirrelsql.aliases;
 
 import com.google.common.base.Strings;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -11,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
@@ -22,6 +24,7 @@ import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasesController
 {
@@ -77,9 +80,9 @@ public class AliasesController
 
 
       AliasTreeStructureNode structRoot = Dao.loadAliasTree();
-      ArrayList<Alias> aliases = Dao.loadAliases();
+      List<Alias> aliases = Dao.loadAliases();
 
-      ArrayList<Alias>  unappliedAliases = structRoot.apply(_treeView.getRoot(), aliases);
+      List<Alias>  unappliedAliases = structRoot.apply(_treeView.getRoot(), aliases);
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       // unappliedAliases should always be empty. But because people are so unhappy when aliases get lost
@@ -139,7 +142,7 @@ public class AliasesController
    {
       ObservableList<TreeItem<AliasTreeNode>> items = _treeView.getRoot().getChildren();
 
-      ArrayList<Alias> aliases = new ArrayList<>();
+      List<Alias> aliases = new ArrayList<>();
 
       AliasTreeStructureNode structRoot = new AliasTreeStructureNode();
       structRoot.addAll(items, aliases);

@@ -7,10 +7,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class CaseInsensitiveCache implements Serializable
 {
-   private HashMap<CaseInsensitiveString, ArrayList<TableInfo>> _ciTableNames = new HashMap<>();
+   private static final long serialVersionUID = -5825984073414170251L;
+
+   private HashMap<CaseInsensitiveString, List<TableInfo>> _ciTableNames = new HashMap<>();
    private HashSet<CaseInsensitiveString> _ciProcedureNames = new HashSet<>();
    private HashSet<CaseInsensitiveString> _ciKeywords = new HashSet<>();
    private HashSet<CaseInsensitiveString> _ciColumns = new HashSet<>();
@@ -30,7 +33,7 @@ public class CaseInsensitiveCache implements Serializable
    public void addTable(TableInfo ti)
    {
       CaseInsensitiveString tableName = new CaseInsensitiveString(ti.getName());
-      ArrayList<TableInfo> tableInfos = _ciTableNames.get(tableName);
+      List<TableInfo> tableInfos = _ciTableNames.get(tableName);
 
       if(null == tableInfos)
       {
@@ -46,7 +49,7 @@ public class CaseInsensitiveCache implements Serializable
    }
 
 
-   public ArrayList<TableInfo> getTables(char[] buffer, int offset, int len)
+   public List<TableInfo> getTables(char[] buffer, int offset, int len)
    {
       return _ciTableNames.get(_buf.setCharBuffer(buffer, offset, len));
    }

@@ -4,6 +4,7 @@ import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseStructure extends StructItem
 {
@@ -16,9 +17,9 @@ public class DatabaseStructure extends StructItem
       _schemaCacheConfig = schemaCacheConfig;
    }
 
-   public ArrayList<StructItem> getLeaves()
+   public List<StructItem> getLeaves()
    {
-      ArrayList<StructItem> ret = new ArrayList<>();
+      List<StructItem> ret = new ArrayList<>();
 
       fillLeaves(ret);
 
@@ -54,9 +55,9 @@ public class DatabaseStructure extends StructItem
    }
 
 
-   private <T extends StructItem> ArrayList<T> getStructItemsByType(final Class<T> structItemClass)
+   private <T extends StructItem> List<T> getStructItemsByType(final Class<T> structItemClass)
    {
-      ArrayList<T> ret = new ArrayList<>();
+      List<T> ret = new ArrayList<>();
 
       DatabaseStructureVisitor<Object> databaseStructureVisitor = new DatabaseStructureVisitor<Object>()
       {
@@ -75,19 +76,19 @@ public class DatabaseStructure extends StructItem
       return ret;
    }
 
-   public ArrayList<StructItemCatalog> getCatalogs()
+   public List<StructItemCatalog> getCatalogs()
    {
       return getStructItemsByType(StructItemCatalog.class);
    }
 
-   public ArrayList<StructItemSchema> getSchemas()
+   public List<StructItemSchema> getSchemas()
    {
       return getStructItemsByType(StructItemSchema.class);
    }
 
    public StructItemCatalog getCatalogByName(String catalogName)
    {
-      ArrayList<StructItemCatalog> catalogs = CollectionUtil.filter(getCatalogs(), (t) -> Utils.compareRespectEmpty(t.getCatalog(), catalogName));
+      List<StructItemCatalog> catalogs = CollectionUtil.filter(getCatalogs(), (t) -> Utils.compareRespectEmpty(t.getCatalog(), catalogName));
 
       if(0 == catalogs.size())
       {
@@ -98,12 +99,12 @@ public class DatabaseStructure extends StructItem
    }
 
 
-   public ArrayList<StructItemSchema> getSchemasByName(String schemaName)
+   public List<StructItemSchema> getSchemasByName(String schemaName)
    {
       return CollectionUtil.filter(getSchemas(), (t) -> Utils.compareRespectEmpty(schemaName, t.getSchema()));
    }
 
-   public ArrayList<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
+   public List<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
    {
       return CollectionUtil.filter(getSchemas(), (t) -> Utils.compareRespectEmpty(catalogName, t.getCatalog()) && Utils.compareRespectEmpty(schemaName, t.getSchema()));
    }

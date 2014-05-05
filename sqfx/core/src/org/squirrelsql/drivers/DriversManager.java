@@ -2,23 +2,23 @@ package org.squirrelsql.drivers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.services.CollectionUtil;
 import org.squirrelsql.services.Dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class DriversManager
 {
-   private ArrayList<SQLDriver> _allDrivers;
+   private List<SQLDriver> _allDrivers;
 
    public DriversManager()
    {
       _allDrivers = Dao.loadSquirrelDrivers();
 
-      ArrayList<SQLDriver> preDefinedDrivers = PreDefinedDrivers.get();
+      List<SQLDriver> preDefinedDrivers = PreDefinedDrivers.get();
 
 
       for (SQLDriver preDefinedDriver : preDefinedDrivers)
@@ -41,14 +41,14 @@ public class DriversManager
    {
       if(filtered)
       {
-         ArrayList<SQLDriver> filteredList = CollectionUtil.filter(_allDrivers, SQLDriver::isLoaded);
+         List<SQLDriver> filteredList = CollectionUtil.filter(_allDrivers, SQLDriver::isLoaded);
          return FXCollections.observableList(filteredList);
       }
 
       return FXCollections.observableList(_allDrivers);
    }
 
-   public ArrayList<SQLDriver> getFilteredOutDrivers()
+   public List<SQLDriver> getFilteredOutDrivers()
    {
       return CollectionUtil.filter(_allDrivers, d -> false == d.isLoaded());
    }

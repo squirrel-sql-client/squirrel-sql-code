@@ -7,6 +7,7 @@ import org.squirrelsql.session.schemainfo.*;
 import org.squirrelsql.table.RowObjectTableLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasPropertiesDecorator
 {
@@ -116,7 +117,7 @@ public class AliasPropertiesDecorator
    {
       DatabaseStructure dataBaseStructure = dbConnectorResult.getSchemaCache().getDataBaseStructure();
 
-      ArrayList<StructItemSchema> schemas = dataBaseStructure.getSchemas();
+      List<StructItemSchema> schemas = dataBaseStructure.getSchemas();
 
       AliasPropertiesSpecifiedLoading.TableLoaderAccess tableLoaderAccess = new AliasPropertiesSpecifiedLoading.TableLoaderAccess();
 
@@ -130,7 +131,7 @@ public class AliasPropertiesDecorator
       }
       else
       {
-         ArrayList<StructItemCatalog> catalogs = dataBaseStructure.getCatalogs();
+         List<StructItemCatalog> catalogs = dataBaseStructure.getCatalogs();
          for (StructItemCatalog catalog : catalogs)
          {
             tableLoaderSchemasToFill.addRowObject(new AliasPropertiesSpecifiedLoading(new AliasPropertiesSchema(catalog)), tableLoaderAccess);

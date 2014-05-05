@@ -29,7 +29,7 @@ public class DriversUtil
    {
       try
       {
-         ArrayList<URL> urls = new ArrayList<>();
+         List<URL> urls = new ArrayList<>();
 
          for (String fileName : fileNames)
          {

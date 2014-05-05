@@ -1,12 +1,13 @@
 package org.squirrelsql.session.schemainfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StructItem
 {
-   private ArrayList<StructItem> _children = new ArrayList<>();
+   private List<StructItem> _children = new ArrayList<>();
 
-   public ArrayList<StructItem> getChildren()
+   public List<StructItem> getChildren()
    {
       return _children;
    }
@@ -16,7 +17,7 @@ public class StructItem
       return true;
    }
 
-   protected void fillLeaves(ArrayList<StructItem> toFill)
+   protected void fillLeaves(List<StructItem> toFill)
    {
       if(0 == _children.size())
       {

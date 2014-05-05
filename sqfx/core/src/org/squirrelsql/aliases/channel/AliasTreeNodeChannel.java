@@ -1,10 +1,12 @@
 package org.squirrelsql.aliases.channel;
 
 import javafx.scene.control.TreeItem;
+
 import org.squirrelsql.aliases.AliasTreeNode;
 import org.squirrelsql.aliases.RelativeNodePosition;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasTreeNodeChannel
 {
@@ -15,7 +17,7 @@ public class AliasTreeNodeChannel
       _aliasTreeNodeMoveListener = aliasTreeNodeMoveListener;
    }
 
-   private ArrayList<AliasTreeNodeChangedListener> _listeners = new ArrayList<>();
+   private List<AliasTreeNodeChangedListener> _listeners = new ArrayList<>();
 
    public void addListener(AliasTreeNodeChangedListener l)
    {

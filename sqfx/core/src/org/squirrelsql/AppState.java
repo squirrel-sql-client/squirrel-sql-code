@@ -2,6 +2,7 @@ package org.squirrelsql;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+
 import org.squirrelsql.services.PropertiesHandler;
 import org.squirrelsql.services.SquirrelProperty;
 import org.squirrelsql.session.SessionManager;
@@ -9,6 +10,7 @@ import org.squirrelsql.session.action.ActionMangerImpl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppState
 {
@@ -18,7 +20,7 @@ public class AppState
    private StatusBarCtrl _statusBarCtrl = new StatusBarCtrl();
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
 
-   private ArrayList<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
+   private List<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
    private ActionMangerImpl _actionMangerImpl = new ActionMangerImpl(_sessionManager);
 

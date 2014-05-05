@@ -1,6 +1,7 @@
 package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
+
 import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -11,6 +12,7 @@ import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Utils
 {
@@ -66,9 +68,9 @@ public class Utils
       }
    }
 
-   public static <T> ArrayList<T> asArray(T ... ts)
+   public static <T> List<T> asArray(T ... ts)
    {
-      ArrayList<T> ret = new ArrayList<>();
+      List<T> ret = new ArrayList<>();
 
       for (T t : ts)
       {

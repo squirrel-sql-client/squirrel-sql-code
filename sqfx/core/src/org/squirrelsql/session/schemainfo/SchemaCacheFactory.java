@@ -7,7 +7,7 @@ import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.DBSchema;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class SchemaCacheFactory
 {
@@ -133,7 +133,7 @@ public class SchemaCacheFactory
    {
       boolean addedChildren = false;
 
-      ArrayList<String> types = sqlConnection.getTableTypes();
+      List<String> types = sqlConnection.getTableTypes();
 
       for (String type : types)
       {
@@ -156,7 +156,7 @@ public class SchemaCacheFactory
    private static boolean appendSchemas(StructItem parent, SQLConnection sqlConnection, String catalogName)
    {
       boolean addedChildren = false;
-      ArrayList<DBSchema> schemas = sqlConnection.getSchemas();
+      List<DBSchema> schemas = sqlConnection.getSchemas();
 
       for (DBSchema schema : schemas)
       {
@@ -172,7 +172,7 @@ public class SchemaCacheFactory
    private static boolean appendCatalogs(StructItem parent, SQLConnection sqlConnection)
    {
       boolean addedChildren = false;
-      ArrayList<String> catalogs = sqlConnection.getCatalogs();
+      List<String> catalogs = sqlConnection.getCatalogs();
 
       for (String catalog : catalogs)
       {

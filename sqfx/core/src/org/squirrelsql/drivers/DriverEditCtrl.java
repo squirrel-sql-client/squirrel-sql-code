@@ -175,16 +175,16 @@ public class DriverEditCtrl
 
    private void onListDrivers()
    {
-      ProgressTask<ArrayList<Class>> pt = new ProgressTask<ArrayList<Class>>()
+      ProgressTask<List<Class>> pt = new ProgressTask<List<Class>>()
       {
          @Override
-         public ArrayList<Class> call()
+         public List<Class> call()
          {
              return findDriverClassNames();
          }
 
          @Override
-         public void goOn(ArrayList<Class> driverClasses)
+         public void goOn(List<Class> driverClasses)
          {
             fillDriverList(driverClasses);
          }
@@ -193,7 +193,7 @@ public class DriverEditCtrl
       ProgressUtil.start(pt, _dialog.getStage());
    }
 
-   private ArrayList<Class> findDriverClassNames()
+   private List<Class> findDriverClassNames()
    {
       ObservableList<String> fileNames = _driverEditView.lstClasspath.getItems();
 
@@ -202,11 +202,11 @@ public class DriverEditCtrl
       return cl.getDriverClasses();
    }
 
-   private void fillDriverList(ArrayList<Class> driverClasses)
+   private void fillDriverList(List<Class> driverClasses)
    {
       _driverEditView.lstDriverClasses.getItems().clear();
 
-      ArrayList<String> driverClassNames = Conversions.toNames(driverClasses, (x) -> x.getName());
+      List<String> driverClassNames = Conversions.toNames(driverClasses, (x) -> x.getName());
 
       _driverEditView.lstDriverClasses.getItems().addAll(FXCollections.observableArrayList(driverClassNames));
    }

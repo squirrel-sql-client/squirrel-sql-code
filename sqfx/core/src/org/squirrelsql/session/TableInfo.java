@@ -4,6 +4,7 @@ import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableInfo
 {
@@ -58,14 +59,14 @@ public class TableInfo
       _columnsAsTableLoader = columnsAsTableLoader;
    }
 
-   public ArrayList<ColumnInfo> getColumns()
+   public List<ColumnInfo> getColumns()
    {
       if(null == _columnsAsTableLoader)
       {
          throw new IllegalStateException();
       }
 
-      ArrayList<ColumnInfo> ret = new ArrayList<>();
+      List<ColumnInfo> ret = new ArrayList<>();
 
       for (int i = 0; i < _columnsAsTableLoader.size(); i++)
       {

@@ -3,13 +3,14 @@ package org.squirrelsql.table;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RowObjectTableLoader<T>
 {
    private TableLoader _tableLoader = new TableLoader();
 
 
-   private ArrayList<RowObjectHandle<T>> _rowObjectHandles = new ArrayList<>();
+   private List<RowObjectHandle<T>> _rowObjectHandles = new ArrayList<>();
 
    public ColumnHandle addColumn(String header)
    {
@@ -28,7 +29,7 @@ public class RowObjectTableLoader<T>
    }
 
 
-   public  void addRowObjects(ArrayList<T> rowObjects, TableLoaderRowObjectAccess<T> cols)
+   public  void addRowObjects(List<T> rowObjects, TableLoaderRowObjectAccess<T> cols)
    {
       for (T rowObject : rowObjects)
       {
@@ -44,14 +45,14 @@ public class RowObjectTableLoader<T>
       _rowObjectHandles.add(h);
    }
 
-   public ArrayList<RowObjectHandle<T>> getRowObjectHandles()
+   public List<RowObjectHandle<T>> getRowObjectHandles()
    {
       return _rowObjectHandles;
    }
 
-   public ArrayList<T> getRowObjects()
+   public List<T> getRowObjects()
    {
-      ArrayList<T> ret = new ArrayList<>();
+      List<T> ret = new ArrayList<>();
 
       for (RowObjectHandle<T> rowObjectHandle : _rowObjectHandles)
       {

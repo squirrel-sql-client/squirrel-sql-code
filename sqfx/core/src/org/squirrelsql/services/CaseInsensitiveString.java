@@ -15,6 +15,8 @@ import java.util.HashMap;
 public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>, 
                                               Serializable
 {
+   private static final long serialVersionUID = 8532678337754007329L;
+
    private char[] value = new char[0];
    private int offset = 0;
    private int count = 0;

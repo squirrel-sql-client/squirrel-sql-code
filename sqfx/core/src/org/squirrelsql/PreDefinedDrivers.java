@@ -5,6 +5,7 @@ import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class PreDefinedDrivers
 {
@@ -74,7 +75,7 @@ public class PreDefinedDrivers
    
    
    
-   public static ArrayList<SQLDriver> get()
+   public static List<SQLDriver> get()
    {
       return new ArrayList<>(Arrays.asList(PREDEFINED_DRIVERS));
    }

@@ -1,10 +1,11 @@
 package org.squirrelsql;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DockPaneChanel
 {
-   private ArrayList<DockPaneChanelAdapter> _listeners = new ArrayList<>();
+   private List<DockPaneChanelAdapter> _listeners = new ArrayList<>();
 
    public void driversChanged(boolean selected)
    {

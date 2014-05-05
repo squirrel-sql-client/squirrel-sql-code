@@ -6,10 +6,11 @@ import org.squirrelsql.session.sql.SQLResult;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class StatementExecution
 {
-   private ArrayList<SQLResult> _sqlResults = new ArrayList<>();
+   private List<SQLResult> _sqlResults = new ArrayList<>();
    private long _executionTimeBegin;
    private long _executionTimeEnd;
    private long _processingResultsTimeBegin;
@@ -20,7 +21,7 @@ public class StatementExecution
       _sqlResults.addAll(Arrays.asList(sqlResults));
 
    }
-   public void addRes(ArrayList<SQLResult> sqlResults)
+   public void addRes(List<SQLResult> sqlResults)
    {
       _sqlResults.addAll(sqlResults);
    }
@@ -73,12 +74,12 @@ public class StatementExecution
       return null;
    }
 
-   public ArrayList<SQLResult> getQueryResults()
+   public List<SQLResult> getQueryResults()
    {
       return CollectionUtil.filter(_sqlResults, (rs) -> null != rs.getResultTableLoader());
    }
 
-   public ArrayList<SQLResult> getUpdateCounts()
+   public List<SQLResult> getUpdateCounts()
    {
       return CollectionUtil.filter(_sqlResults, (rs) -> null != rs.getUpdateCount());
    }

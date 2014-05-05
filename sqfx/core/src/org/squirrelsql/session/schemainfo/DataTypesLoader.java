@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DataTypesLoader
 {
@@ -42,13 +43,13 @@ public class DataTypesLoader
       }
    }
 
-   private static ArrayList getNextRow(ResultSet rs, int columnCount)
+   private static List getNextRow(ResultSet rs, int columnCount)
    {
       try
       {
          I18n i18n = new I18n(DataTypesLoader.class);
 
-         ArrayList row = new ArrayList();
+         List row = new ArrayList();
          for (int idx = 1; idx <= columnCount; ++idx)
          {
             switch (idx)

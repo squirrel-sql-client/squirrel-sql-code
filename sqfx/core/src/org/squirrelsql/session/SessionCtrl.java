@@ -4,6 +4,7 @@ import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.services.I18n;
@@ -17,6 +18,7 @@ import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class SessionCtrl
@@ -125,7 +127,7 @@ public class SessionCtrl
       Tab objectsTab = new Tab(_i18n.t("session.tab.objects"));
       objectsTab.setClosable(false);
 
-      TreeView<ObjectTreeNode> objectsTree = new TreeView();
+      TreeView<ObjectTreeNode> objectsTree = new TreeView<>();
 
       objectsTree.setCellFactory(cf -> new ObjectsTreeCell());
 
@@ -161,17 +163,17 @@ public class SessionCtrl
          return;
       }
 
-      ArrayList<TreeItem<ObjectTreeNode>> schemas = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY);
+      List<TreeItem<ObjectTreeNode>> schemas = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.SCHEMA_TYPE_KEY);
       removeEmptyNodes(schemas);
 
-      ArrayList<TreeItem<ObjectTreeNode>> catalogs = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY);
+      List<TreeItem<ObjectTreeNode>> catalogs = ObjectTreeUtil.findTreeItems(objectsTree, ObjectTreeNodeTypeKey.CATALOG_TYPE_KEY);
       removeEmptyNodes(catalogs);
 
    }
 
-   private void removeEmptyNodes(ArrayList<TreeItem<ObjectTreeNode>> nodes)
+   private void removeEmptyNodes(List<TreeItem<ObjectTreeNode>> nodes)
    {
-      ArrayList<TreeItem<ObjectTreeNode>> toRemove = new ArrayList<>();
+      List<TreeItem<ObjectTreeNode>> toRemove = new ArrayList<>();
 
       for (TreeItem<ObjectTreeNode> schema : nodes)
       {

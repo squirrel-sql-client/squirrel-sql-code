@@ -29,14 +29,14 @@ public class SchemaCache
    private TableLoader _timeDateFunctions;
    private TableLoader _keywords;
 
-   private HashMap<StructItemTableType, ArrayList<TableInfo>> _tableInfos = new HashMap<>();
+   private HashMap<StructItemTableType, List<TableInfo>> _tableInfos = new HashMap<>();
 
-   private HashMap<FullyQualifiedTableName, ArrayList<TableInfo>> _tableInfosByFullyQualifiedName = new HashMap<>();
-   private HashMap<SchemaQualifiedTableName, ArrayList<TableInfo>> _tableInfosBySchemaQualifiedName = new HashMap<>();
-   private HashMap<String, ArrayList<TableInfo>> _tableInfosBySimpleName = new HashMap<>();
+   private HashMap<FullyQualifiedTableName, List<TableInfo>> _tableInfosByFullyQualifiedName = new HashMap<>();
+   private HashMap<SchemaQualifiedTableName, List<TableInfo>> _tableInfosBySchemaQualifiedName = new HashMap<>();
+   private HashMap<String, List<TableInfo>> _tableInfosBySimpleName = new HashMap<>();
 
-   private HashMap<StructItemProcedureType, ArrayList<ProcedureInfo>> _procedureInfos = new HashMap<>();
-   private HashMap<StructItemUDTType, ArrayList<UDTInfo>> _udtInfos = new HashMap<>();
+   private HashMap<StructItemProcedureType, List<ProcedureInfo>> _procedureInfos = new HashMap<>();
+   private HashMap<StructItemUDTType, List<UDTInfo>> _udtInfos = new HashMap<>();
    private DbConnectorResult _dbConnectorResult;
 
 
@@ -80,7 +80,7 @@ public class SchemaCache
          _caseInsensitiveCache.addKeyword(keyWord);
       }
 
-      ArrayList<StructItem> leaves = _databaseStructure.getLeaves();
+      List<StructItem> leaves = _databaseStructure.getLeaves();
 
       for (StructItem leaf : leaves)
       {
@@ -89,13 +89,13 @@ public class SchemaCache
             StructItemTableType buf = (StructItemTableType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               ArrayList<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
+               List<TableInfo> tableInfos = _dbConnectorResult.getSQLConnection().getTableInfos(buf.getCatalog(), buf.getSchema(), buf.getType());
                _tableInfos.put(buf, tableInfos);
 
 
                for (TableInfo tableInfo : tableInfos)
                {
-                  ArrayList<TableInfo> arr;
+                  List<TableInfo> arr;
 
                   FullyQualifiedTableName fullyQualifiedTableName = new FullyQualifiedTableName(buf.getCatalog(), buf.getSchema(), tableInfo.getName());
                   arr = _tableInfosByFullyQualifiedName.get(fullyQualifiedTableName);
@@ -137,7 +137,7 @@ public class SchemaCache
             StructItemProcedureType buf = (StructItemProcedureType) leaf;
             if (buf.shouldLoad(_schemaCacheConfig))
             {
-               ArrayList<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema());
+               List<ProcedureInfo> procedureInfos = _dbConnectorResult.getSQLConnection().getProcedureInfos(buf.getCatalog(), buf.getSchema());
                _procedureInfos.put(buf, procedureInfos);
 
                for (ProcedureInfo procedureInfo : procedureInfos)
@@ -167,14 +167,14 @@ public class SchemaCache
       return _schemaCacheConfig;
    }
 
-   public ArrayList<TableInfo> getTableInfosExact(String catalog, String schema, String tableType)
+   public List<TableInfo> getTableInfosExact(String catalog, String schema, String tableType)
    {
       return convertNullToArray(_tableInfos.get(new StructItemTableType(tableType, catalog, schema)));
    }
 
-   public ArrayList<TableInfo> getTableInfosMatching(String catalog, String schema, TableTypes[] allowedTypes)
+   public List<TableInfo> getTableInfosMatching(String catalog, String schema, TableTypes[] allowedTypes)
    {
-      ArrayList<TableInfo> ret = new ArrayList<>();
+      List<TableInfo> ret = new ArrayList<>();
 
       for (StructItemTableType structItemTableType : _tableInfos.keySet())
       {
@@ -187,14 +187,14 @@ public class SchemaCache
       return ret;
    }
 
-   public ArrayList<ProcedureInfo> getProcedureInfosExact(String catalog, String schema)
+   public List<ProcedureInfo> getProcedureInfosExact(String catalog, String schema)
    {
       return convertNullToArray(_procedureInfos.get(new StructItemProcedureType(catalog, schema)));
    }
 
-   public ArrayList<ProcedureInfo> getProcedureInfosMatching(String catalog, String schema)
+   public List<ProcedureInfo> getProcedureInfosMatching(String catalog, String schema)
    {
-      ArrayList<ProcedureInfo> ret = new ArrayList<>();
+      List<ProcedureInfo> ret = new ArrayList<>();
 
       for (StructItemProcedureType structItemProcedureType : _procedureInfos.keySet())
       {
@@ -207,15 +207,15 @@ public class SchemaCache
       return ret;
    }
 
-   public ArrayList<UDTInfo> getUDTInfosExact(String catalog, String schema)
+   public List<UDTInfo> getUDTInfosExact(String catalog, String schema)
    {
       return convertNullToArray(_udtInfos.get(new StructItemUDTType(catalog, schema)));
    }
 
 
-   public ArrayList<UDTInfo> getUDTInfosMatching(String catalog, String schema)
+   public List<UDTInfo> getUDTInfosMatching(String catalog, String schema)
    {
-      ArrayList<UDTInfo> ret = new ArrayList<>();
+      List<UDTInfo> ret = new ArrayList<>();
 
       for (StructItemUDTType structItemUDTType : _udtInfos.keySet())
       {
@@ -228,7 +228,7 @@ public class SchemaCache
       return ret;
    }
 
-   private <T> ArrayList<T> convertNullToArray(ArrayList<T> arr)
+   private <T> List<T> convertNullToArray(List<T> arr)
    {
       if (null == arr)
       {
@@ -273,19 +273,19 @@ public class SchemaCache
       return _keywords;
    }
 
-   public ArrayList<StructItemCatalog> getCatalogs()
+   public List<StructItemCatalog> getCatalogs()
    {
       return _databaseStructure.getCatalogs();
    }
 
-   public ArrayList<StructItemSchema> getSchemas()
+   public List<StructItemSchema> getSchemas()
    {
       return convertNullToArray(_databaseStructure.getSchemas());
    }
 
-   public ArrayList<String> getAllFunctions()
+   public List<String> getAllFunctions()
    {
-      ArrayList<String> ret = new ArrayList<>();
+      List<String> ret = new ArrayList<>();
 
       ret.addAll(_stringFunctions.getCellsAsString(0));
       ret.addAll(_numericFunctions.getCellsAsString(0));
@@ -300,27 +300,27 @@ public class SchemaCache
       return _databaseStructure.getCatalogByName(catalogName);
    }
 
-   public ArrayList<StructItemSchema> getSchemasByName(String schemaName)
+   public List<StructItemSchema> getSchemasByName(String schemaName)
    {
       return convertNullToArray(_databaseStructure.getSchemasByName(schemaName));
    }
 
-   public ArrayList<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
+   public List<StructItemSchema> getSchemaByNameAsArray(String catalogName, String schemaName)
    {
       return convertNullToArray(_databaseStructure.getSchemaByNameAsArray(catalogName, schemaName));
    }
 
-   public ArrayList<TableInfo> getTablesByFullyQualifiedName(String catalog, String schema, String tableName)
+   public List<TableInfo> getTablesByFullyQualifiedName(String catalog, String schema, String tableName)
    {
       return convertNullToArray(_tableInfosByFullyQualifiedName.get(new FullyQualifiedTableName(catalog, schema, tableName)));
    }
 
-   public ArrayList<TableInfo> getTablesBySchemaQualifiedName(String schema, String tableName)
+   public List<TableInfo> getTablesBySchemaQualifiedName(String schema, String tableName)
    {
       return convertNullToArray(_tableInfosBySchemaQualifiedName.get(new SchemaQualifiedTableName(schema, tableName)));
    }
 
-   public ArrayList<TableInfo> getTablesBySimpleName(String tableName)
+   public List<TableInfo> getTablesBySimpleName(String tableName)
    {
       return convertNullToArray(_tableInfosBySimpleName.get(tableName));
    }
@@ -338,7 +338,7 @@ public class SchemaCache
       return table.getColumnsAsTableLoader();
    }
 
-   public ArrayList<ColumnInfo> getColumns(TableInfo table)
+   public List<ColumnInfo> getColumns(TableInfo table)
    {
       initCols(table);
       return table.getColumns();
@@ -370,7 +370,7 @@ public class SchemaCache
 
    public List<TableInfo> getTables(char[] buffer, int offset, int len)
    {
-      ArrayList<TableInfo> tables = _caseInsensitiveCache.getTables(buffer, offset, len);
+      List<TableInfo> tables = _caseInsensitiveCache.getTables(buffer, offset, len);
 
       if(null == tables)
       {

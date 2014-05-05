@@ -38,10 +38,10 @@ public class SQLDriverClassLoader extends SQLURLClassLoader
    }
 
 
-   public ArrayList<Class> getDriverClasses()
+   public List<Class> getDriverClasses()
    {
-      ArrayList<Class> classes = getAssignableClasses(Driver.class);
-      ArrayList<Class> list = new ArrayList<>();
+      List<Class> classes = getAssignableClasses(Driver.class);
+      List<Class> list = new ArrayList<>();
 
       for (Class clazz : classes)
       {
@@ -58,7 +58,7 @@ public class SQLDriverClassLoader extends SQLURLClassLoader
    {
       MessageHandler mh = new MessageHandler(SQLDriverClassLoader.class, MessageHandlerDestination.MESSAGE_PANEL);
 
-      ArrayList<URL> urls = new ArrayList<>();
+      List<URL> urls = new ArrayList<>();
 
 
       for (String fileName : fileNames)

@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Conversions
 {
-   public static ArrayList<String> toPathString(List<File> files)
+   public static List<String> toPathString(List<File> files)
    {
-      ArrayList<String> ret = new ArrayList<>();
+      List<String> ret = new ArrayList<>();
 
       for (File file : files)
       {
@@ -59,9 +59,9 @@ public class Conversions
 
    public static interface NameExtractor<T>{String getName(T t);}
 
-   public static <U> ArrayList<String> toNames(ArrayList<U> us, NameExtractor<U> nameExtractor)
+   public static <U> List<String> toNames(List<U> us, NameExtractor<U> nameExtractor)
    {
-      ArrayList<String> ret = new ArrayList<>();
+      List<String> ret = new ArrayList<>();
 
       for (U u : us)
       {

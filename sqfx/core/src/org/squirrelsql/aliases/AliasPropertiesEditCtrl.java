@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
@@ -14,6 +15,7 @@ import org.squirrelsql.table.RowObjectTableLoader;
 import org.squirrelsql.table.TableLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasPropertiesEditCtrl
 {
@@ -152,7 +154,7 @@ public class AliasPropertiesEditCtrl
 
    private void onOk()
    {
-      ArrayList<AliasPropertiesSpecifiedLoading> rows = _tableLoaderSchemas.getRowObjects();
+      List<AliasPropertiesSpecifiedLoading> rows = _tableLoaderSchemas.getRowObjects();
 
       AliasProperties aliasProperties = new AliasProperties(rows, _alias.getId(), _view.radLoadAllCacheNon.isSelected(), _view.radLoadAndCacheAll.isSelected(), _view.chkHideEmptySchemas.isSelected());
 

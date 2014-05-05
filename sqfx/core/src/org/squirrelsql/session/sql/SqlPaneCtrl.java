@@ -13,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.ActionHandle;
@@ -25,6 +26,7 @@ import org.squirrelsql.workaround.KeyMatchWA;
 import org.squirrelsql.workaround.SplitDividerWA;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SqlPaneCtrl
 {
@@ -208,7 +210,7 @@ public class SqlPaneCtrl
 
    private void removeErrorTab()
    {
-      ArrayList<ErrorTab> toRemove = new ArrayList<>();
+      List<ErrorTab> toRemove = new ArrayList<>();
       for (Tab tab : _sqlOutputTabPane.getTabs())
       {
          if(tab instanceof ErrorTab)

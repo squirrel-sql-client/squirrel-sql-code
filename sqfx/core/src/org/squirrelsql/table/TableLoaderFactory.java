@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableLoaderFactory
 {
@@ -36,7 +37,7 @@ public class TableLoaderFactory
 
          while(res.next())
          {
-            ArrayList row = new ArrayList();
+            List row = new ArrayList();
 
             for(int i=1; i <= metaData.getColumnCount(); ++i)
             {

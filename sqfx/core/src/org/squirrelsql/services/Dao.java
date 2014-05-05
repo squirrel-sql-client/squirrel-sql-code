@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
+
 import org.squirrelsql.AppState;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.AliasProperties;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dao
 {
@@ -23,12 +25,12 @@ public class Dao
    public static final String FILE_NAME_ALIASES = "aliases.json";
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
 
-   public static void writeDrivers(ArrayList<SQLDriver> sqlDrivers)
+   public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
       writeObject(sqlDrivers, FILE_NAME_DRIVERS);
    }
 
-   public static void writeAliases(ArrayList<Alias> aliases, AliasTreeStructureNode treeStructureNode)
+   public static void writeAliases(List<Alias> aliases, AliasTreeStructureNode treeStructureNode)
    {
       writeObject(aliases, FILE_NAME_ALIASES);
       writeObject(treeStructureNode, FILE_NAME_ALIAS_TREE);
@@ -45,7 +47,7 @@ public class Dao
       return "aliasProperties" + "_" + aliasId + ".json";
    }
 
-   public static ArrayList<SQLDriver> loadSquirrelDrivers()
+   public static List<SQLDriver> loadSquirrelDrivers()
    {
       return loadObjectArray(FILE_NAME_DRIVERS, SQLDriver.class);
    }
@@ -56,7 +58,7 @@ public class Dao
       return loadObject(FILE_NAME_ALIAS_TREE, new AliasTreeStructureNode());
    }
 
-   public static ArrayList<Alias> loadAliases()
+   public static List<Alias> loadAliases()
    {
       return loadObjectArray(FILE_NAME_ALIASES, Alias.class);
    }
@@ -92,7 +94,7 @@ public class Dao
    }
 
 
-   private static<T> ArrayList<T> loadObjectArray(String fileName, Class<T> objectType)
+   private static<T> List<T> loadObjectArray(String fileName, Class<T> objectType)
    {
       try
       {
@@ -104,7 +106,7 @@ public class Dao
          }
 
          ObjectMapper mapper = new ObjectMapper();
-         ArrayList<T> drivers = mapper.readValue(file, CollectionType.construct(ArrayList.class, SimpleType.construct(objectType)));
+         List<T> drivers = mapper.readValue(file, CollectionType.construct(List.class, SimpleType.construct(objectType)));
 
          return drivers;
       }

@@ -24,4 +24,5 @@ package org.squirrelsql.session.parser.kernel;
  */
 public class ExitParserThreadRequestException extends RuntimeException
 {
+   private static final long serialVersionUID = 6894353049729217155L;
 }

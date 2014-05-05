@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SQLExecutor
 {
@@ -74,11 +75,11 @@ public class SQLExecutor
       }
    }
 
-   private static ArrayList<SQLResult> processResults(Statement stat, boolean firstResultIsResultSet, DbConnectorResult dbConnectorResult, StatementChannel statementChannel, Integer maxResults) throws SQLException
+   private static List<SQLResult> processResults(Statement stat, boolean firstResultIsResultSet, DbConnectorResult dbConnectorResult, StatementChannel statementChannel, Integer maxResults) throws SQLException
    {
       ResultSet res = null;
 
-      ArrayList<SQLResult> results = new ArrayList<>();
+      List<SQLResult> results = new ArrayList<>();
 
       boolean supportsMultipleResultSets = dbConnectorResult.getSQLConnection().getDatabaseMetaData().supportsMultipleResultSets();
       boolean inFirstLoop = true;

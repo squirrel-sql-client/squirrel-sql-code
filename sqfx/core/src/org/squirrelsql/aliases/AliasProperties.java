@@ -3,10 +3,11 @@ package org.squirrelsql.aliases;
 import org.squirrelsql.services.AliasPropertiesSpecifiedLoading;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AliasProperties
 {
-   private ArrayList<AliasPropertiesSpecifiedLoading> _specifiedLoadings = new ArrayList<>();
+   private List<AliasPropertiesSpecifiedLoading> _specifiedLoadings = new ArrayList<>();
    private String _aliasId;
    private boolean _loadAllCacheNon = true;
    private boolean _loadAndCacheAll;
@@ -17,7 +18,7 @@ public class AliasProperties
    {
    }
 
-   public AliasProperties(ArrayList<AliasPropertiesSpecifiedLoading> specifiedLoadings, String aliasId, boolean loadAllCacheNon, boolean loadAndCacheAll, boolean hideEmptySchemasInObjectTree)
+   public AliasProperties(List<AliasPropertiesSpecifiedLoading> specifiedLoadings, String aliasId, boolean loadAllCacheNon, boolean loadAndCacheAll, boolean hideEmptySchemasInObjectTree)
    {
       _specifiedLoadings = specifiedLoadings;
       _aliasId = aliasId;
@@ -27,12 +28,12 @@ public class AliasProperties
    }
 
 
-   public ArrayList<AliasPropertiesSpecifiedLoading> getSpecifiedLoadings()
+   public List<AliasPropertiesSpecifiedLoading> getSpecifiedLoadings()
    {
       return _specifiedLoadings;
    }
 
-   public void setSpecifiedLoadings(ArrayList<AliasPropertiesSpecifiedLoading> specifiedLoadings)
+   public void setSpecifiedLoadings(List<AliasPropertiesSpecifiedLoading> specifiedLoadings)
    {
       _specifiedLoadings = specifiedLoadings;
    }

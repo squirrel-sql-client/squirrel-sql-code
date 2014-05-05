@@ -6,6 +6,8 @@ import java.util.UUID;
 
 public class Alias implements AliasTreeNode, Serializable
 {
+   private static final long serialVersionUID = -608685648666597869L;
+
    private String _id = UUID.randomUUID().toString();
    private String _name;
    private String _driverId;

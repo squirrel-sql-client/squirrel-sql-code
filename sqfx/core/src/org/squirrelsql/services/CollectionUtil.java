@@ -1,14 +1,12 @@
 package org.squirrelsql.services;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 
 public class CollectionUtil
@@ -20,10 +18,9 @@ public class CollectionUtil
    }
 
 
-   public static <T> ArrayList<T> filter(Collection<T> toFilter, Predicate<T> predicate)
+   public static <T> List<T> filter(Collection<T> toFilter, Predicate<T> predicate)
    {
-      Stream<T> stream = toFilter.stream().filter(predicate);
-      return new ArrayList(Arrays.asList(stream.toArray()));
+	   return toFilter.stream().filter(predicate).collect(Collectors.toList());
    }
 
    public static <T>boolean contains(T[] toFilter, Predicate<T> predicate)

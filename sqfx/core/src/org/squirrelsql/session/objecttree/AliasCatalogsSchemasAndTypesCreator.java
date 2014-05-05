@@ -2,14 +2,9 @@ package org.squirrelsql.session.objecttree;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.DBSchema;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.schemainfo.*;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class AliasCatalogsSchemasAndTypesCreator
 {

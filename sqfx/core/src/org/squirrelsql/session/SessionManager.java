@@ -5,6 +5,7 @@ import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.sql.NewSqlTabCtrl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SessionManager
 {
@@ -13,7 +14,7 @@ public class SessionManager
    private SessionTabContext _currentlyActiveOrActivatingContext;
 
    private volatile int _sessionIdSequence;
-   private ArrayList<SessionManagerListener> _sessionManagerListeners = new ArrayList<>();
+   private List<SessionManagerListener> _sessionManagerListeners = new ArrayList<>();
 
    public int getNextSessionContextId()
    {

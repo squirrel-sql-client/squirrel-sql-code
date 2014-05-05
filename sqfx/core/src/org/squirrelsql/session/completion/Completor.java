@@ -15,7 +15,7 @@ import java.util.List;
 public class Completor
 {
    private SchemaCache _schemaCache;
-   private ArrayList<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
+   private List<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
 
    public Completor(SchemaCache schemaCache, List<TableInfo> currentTableInfosNextToCursor)
    {
@@ -29,7 +29,7 @@ public class Completor
 
    public ObservableList<CompletionCandidate> getCompletions(TokenParser tokenParser)
    {
-      ArrayList<CompletionCandidate> ret = new ArrayList<>();
+      List<CompletionCandidate> ret = new ArrayList<>();
 
 
       if(0 == tokenParser.completedSplitsCount()) // everything
@@ -63,7 +63,7 @@ public class Completor
             }
          }
 
-         ArrayList<StructItemCatalog> catalogs = _schemaCache.getCatalogs();
+         List<StructItemCatalog> catalogs = _schemaCache.getCatalogs();
 
          for (StructItemCatalog catalog : catalogs)
          {
@@ -73,7 +73,7 @@ public class Completor
             }
          }
 
-         ArrayList<StructItemSchema> schemas = _schemaCache.getSchemas();
+         List<StructItemSchema> schemas = _schemaCache.getSchemas();
 
          for (StructItemSchema schema : schemas)
          {
@@ -83,7 +83,7 @@ public class Completor
             }
          }
 
-         ArrayList<String> functions = _schemaCache.getAllFunctions();
+         List<String> functions = _schemaCache.getAllFunctions();
 
          for (String function : functions)
          {
@@ -118,7 +118,7 @@ public class Completor
 
          ///////////////////////////////////////////
          // MySchema.xxx
-         ArrayList<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
+         List<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
 
          fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
          //
@@ -139,7 +139,7 @@ public class Completor
 
          if (null != catalog) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx
          {
-            ArrayList<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
 
             fillTopLevelObjectsForSchemas(ret, tokenParser, schemas);
 
@@ -150,7 +150,7 @@ public class Completor
          }
          else // MySchema.MyTable.xxx
          {
-            ArrayList<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
+            List<StructItemSchema> schemas = _schemaCache.getSchemasByName(tokenParser.getCompletedSplitAt(0));
             fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(1), tokenParser);
          }
       }
@@ -160,7 +160,7 @@ public class Completor
 
          if(null != catalog)
          {
-            ArrayList<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
+            List<StructItemSchema> schemas = _schemaCache.getSchemaByNameAsArray(catalog.getCatalog(), tokenParser.getCompletedSplitAt(1));
 
             fillColumnsForTable(ret, schemas, tokenParser.getCompletedSplitAt(2), tokenParser);
          }
@@ -169,9 +169,9 @@ public class Completor
       return FXCollections.observableArrayList(ret);
    }
 
-   private ArrayList<StructItemSchema> createFakeSchemaArrayForCatalog(StructItemCatalog catalog)
+   private List<StructItemSchema> createFakeSchemaArrayForCatalog(StructItemCatalog catalog)
    {
-      ArrayList<StructItemSchema> fakeSchemaArray = new ArrayList<>();
+      List<StructItemSchema> fakeSchemaArray = new ArrayList<>();
 
       StructItemSchema fakeSchema;
 
@@ -188,11 +188,11 @@ public class Completor
       return fakeSchemaArray;
    }
 
-   private void fillColumnsForTable(ArrayList<CompletionCandidate> ret, ArrayList<StructItemSchema> schemas, String tableName, TokenParser tokenParser)
+   private void fillColumnsForTable(List<CompletionCandidate> ret, List<StructItemSchema> schemas, String tableName, TokenParser tokenParser)
    {
       for (StructItemSchema schema : schemas)
       {
-         ArrayList<TableInfo> tables;
+         List<TableInfo> tables;
 
          tables = _schemaCache.getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
 
@@ -218,7 +218,7 @@ public class Completor
       }
    }
 
-   private void fillMatchingCols(ArrayList<CompletionCandidate> ret, TokenParser tokenParser, ArrayList<TableInfo> tables, StructItemSchema schema)
+   private void fillMatchingCols(List<CompletionCandidate> ret, TokenParser tokenParser, List<TableInfo> tables, StructItemSchema schema)
    {
       for (TableInfo table : tables)
       {
@@ -233,11 +233,11 @@ public class Completor
       }
    }
 
-   private void fillTopLevelObjectsForSchemas(ArrayList<CompletionCandidate> ret, TokenParser tokenParser, ArrayList<StructItemSchema> schemas)
+   private void fillTopLevelObjectsForSchemas(List<CompletionCandidate> ret, TokenParser tokenParser, List<StructItemSchema> schemas)
    {
       for (StructItemSchema schema : schemas)
       {
-         ArrayList<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
+         List<TableInfo> tableInfos = _schemaCache.getTableInfosMatching(schema.getCatalog(), schema.getSchema(), TableTypes.getTableAndView());
 
          DuplicateSimpleNamesCheck duplicateSimpleNamesCheck = new DuplicateSimpleNamesCheck();
 
@@ -256,7 +256,7 @@ public class Completor
             }
          }
 
-         ArrayList<ProcedureInfo> procedureInfos = _schemaCache.getProcedureInfosMatching(schema.getCatalog(), schema.getSchema());
+         List<ProcedureInfo> procedureInfos = _schemaCache.getProcedureInfosMatching(schema.getCatalog(), schema.getSchema());
 
          for (ProcedureInfo procedureInfo : procedureInfos)
          {
