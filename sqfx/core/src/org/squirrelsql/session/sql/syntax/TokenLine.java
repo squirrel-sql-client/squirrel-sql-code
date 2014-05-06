@@ -39,6 +39,6 @@ public class TokenLine
 
    public int getLineLength()
    {
-      return _line.length() + System.lineSeparator().length();
+      return _line.length() + SyntaxConstants.CODE_AREA_LINE_SEP.length();
    }
 }

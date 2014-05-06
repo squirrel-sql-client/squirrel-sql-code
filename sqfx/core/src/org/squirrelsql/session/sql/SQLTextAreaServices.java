@@ -17,6 +17,7 @@ import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlightTokenMatcher;
 import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
+import org.squirrelsql.session.sql.syntax.SyntaxConstants;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
@@ -82,7 +83,7 @@ public class SQLTextAreaServices
          int caretPosition = _sqlTextArea.getCaretPosition();
          String sqlTextAreaText = _sqlTextArea.getText();
 
-         String sep = System.lineSeparator() + System.lineSeparator();
+         String sep = SyntaxConstants.CODE_AREA_LINE_SEP + SyntaxConstants.CODE_AREA_LINE_SEP;
 
          int begin = caretPosition;
          while(0 < begin && false == sqlTextAreaText.substring(0, begin).endsWith(sep))
