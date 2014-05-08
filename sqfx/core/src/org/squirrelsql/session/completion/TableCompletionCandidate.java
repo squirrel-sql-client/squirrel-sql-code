@@ -9,6 +9,10 @@ public class TableCompletionCandidate extends CompletionCandidate
    private StructItemSchema _schema;
    private boolean _showQualifiedHint;
 
+   public TableCompletionCandidate(TableInfo tableInfo)
+   {
+      this(tableInfo, tableInfo.getStructItemSchema());
+   }
    public TableCompletionCandidate(TableInfo tableInfo, StructItemSchema schema)
    {
       _tableInfo = tableInfo;

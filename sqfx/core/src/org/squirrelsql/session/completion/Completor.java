@@ -2,24 +2,29 @@ package org.squirrelsql.session.completion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.ProcedureInfo;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 import org.squirrelsql.session.schemainfo.StructItemCatalog;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Completor
 {
    private SchemaCache _schemaCache;
+   private TableAliasInfo[] _currentAliasInfos;
    private List<TableCompletionCandidate> _currentTableCandidatesNextToCursors = new ArrayList<>();
 
-   public Completor(SchemaCache schemaCache, List<TableInfo> currentTableInfosNextToCursor)
+   public Completor(SchemaCache schemaCache, List<TableInfo> currentTableInfosNextToCursor, TableAliasInfo[] currentAliasInfos)
    {
       _schemaCache = schemaCache;
+      _currentAliasInfos = currentAliasInfos;
 
       for (TableInfo tableInfo : currentTableInfosNextToCursor)
       {
@@ -43,6 +48,20 @@ public class Completor
                {
                   ret.add(new ColumnCompletionCandidate(columnInfo, tableCompletionCandidate));
                }
+            }
+         }
+
+         for (TableAliasInfo currentAliasInfo : _currentAliasInfos)
+         {
+            if(tokenParser.uncompletedSplitMatches(currentAliasInfo.aliasName))
+            {
+               /////////////////////////////////////////////////////////////////////
+               // For now we check duplicates for tables only.
+               AliasCompletionCandidate aliasCompletionCandidate = new AliasCompletionCandidate(currentAliasInfo);
+               //
+               //////////////////////////////////////////////////////////////////////
+
+               ret.add(aliasCompletionCandidate);
             }
          }
 
@@ -130,6 +149,22 @@ public class Completor
          //
          //////////////////////////////////////////////////
 
+         ////////////////////////////////////////////////
+         // ALIAS.xxx
+         for (TableAliasInfo currentAliasInfo : _currentAliasInfos)
+         {
+            if(tokenParser.getCompletedSplitAt(0).equalsIgnoreCase(currentAliasInfo.aliasName))
+            {
+               List<TableInfo> tablesBySimpleName = _schemaCache.getTablesBySimpleName(currentAliasInfo.tableName);
+               for (TableInfo tableInfo : tablesBySimpleName)
+               {
+                  fillColumnsForTable(ret, Arrays.asList(tableInfo.getStructItemSchema()), tableInfo.getName(), tokenParser);
+               }
+            }
+         }
+         //
+         ///////////////////////////////////////////////////////
+
 
       }
       else if(2 == tokenParser.completedSplitsCount()) // MyCatalog.MySchema,xxx or MyCatalog.MyTable.xxx or MySchema.MyTable.xxx
@@ -188,7 +223,7 @@ public class Completor
       return fakeSchemaArray;
    }
 
-   private void fillColumnsForTable(List<CompletionCandidate> ret, List<StructItemSchema> schemas, String tableName, TokenParser tokenParser)
+   private void fillColumnsForTable(List<CompletionCandidate> toFill, List<StructItemSchema> schemas, String tableName, TokenParser tokenParser)
    {
       for (StructItemSchema schema : schemas)
       {
@@ -196,7 +231,7 @@ public class Completor
 
          tables = _schemaCache.getTablesByFullyQualifiedName(schema.getCatalog(), schema.getSchema(), tableName);
 
-         fillMatchingCols(ret, tokenParser, tables, schema);
+         fillMatchingCols(toFill, tokenParser, tables, schema);
 
          if(tables.size() > 0)
          {
@@ -205,7 +240,7 @@ public class Completor
 
          tables = _schemaCache.getTablesBySchemaQualifiedName(schema.getSchema(), tableName);
 
-         fillMatchingCols(ret, tokenParser, tables, schema);
+         fillMatchingCols(toFill, tokenParser, tables, schema);
 
          if(tables.size() > 0)
          {
@@ -214,7 +249,7 @@ public class Completor
 
          tables = _schemaCache.getTablesBySimpleName(tableName);
 
-         fillMatchingCols(ret, tokenParser, tables, schema);
+         fillMatchingCols(toFill, tokenParser, tables, schema);
       }
    }
 

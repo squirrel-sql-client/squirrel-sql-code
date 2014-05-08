@@ -1,10 +1,12 @@
 package org.squirrelsql.services;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,5 +39,16 @@ public class CollectionUtil
    public static <T> void removeAll(Collection<T> toRemoveFrom, Predicate<T> predicate)
    {
       toRemoveFrom.removeIf(predicate);
+   }
+
+   public static <T, R> List<T>transform(List<R> in, Function<R, T> function)
+   {
+      List<T> ret = new ArrayList<>();
+      for (R r : in)
+      {
+         ret.add(function.apply(r));
+      }
+      
+      return ret;
    }
 }

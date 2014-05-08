@@ -6,7 +6,7 @@ import java.io.File;
 
 public enum SquirrelProperty
 {
-   USER_DIR("userdir", new File(new File(System.getProperty("user.dir")), ".squirrelfx/").getAbsolutePath());
+   USER_DIR("userdir", new File(new File(System.getProperty("user.home")), ".squirrel-sql-fx/").getAbsolutePath());
 
    private final String _key;
    private final String _defaultValue;

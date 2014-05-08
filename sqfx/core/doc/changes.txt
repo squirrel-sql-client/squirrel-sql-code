@@ -1,6 +1,18 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Cursor didn't blink inside the SQL editor although the editor was focused.
+
+Bug fix: Run SQL didn't work on MS-Windows when the SQL editor contained mor than one statement
+
+Bug fix: SQL Editor hung on MS-Windows a new line was entered.
+
+Bug fix: Reasonable default for home directory: <user.home>/.squirrel-sql-fx
+
+Feature: Integration of SQL parser
+ - Highlighting of SQL syntax errors
+ - Support of table alias names in code completion
+
 Feature: Syntax highlighting based on
  - Tomas Mikula's Code Area component. See https://github.com/TomasMikula/RichTextFX
  - Fifesoft's RSyntaxTextArea for SQL token marking. See http://fifesoft.com/rsyntaxtextarea/

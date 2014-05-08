@@ -2,8 +2,6 @@ package org.squirrelsql.session.sql.syntax;
 
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.StyleSpansBuilder;
-import org.squirrelsql.session.parser.ParserEventsProcessor;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
@@ -22,7 +20,7 @@ public class SQLSyntaxHighlighting
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
    private CodeArea _sqlTextArea;
    private SchemaCache _schemaCache;
-   private TableNextToCursorListener _tableNextToCursorListener;
+   private LexAndParseResultListener _lexAndParseResultListener;
 
    private ErrorInfosHandler _errorInfosHandler = new ErrorInfosHandler();
 
@@ -59,7 +57,7 @@ public class SQLSyntaxHighlighting
          StyleSpansBuilderWrapper spansBuilder = new StyleSpansBuilderWrapper();
 
 
-         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_tableNextToCursorListener, _sqlTextArea.getCaretPosition(), _schemaCache);
+         TableNextToCursorHandler tableNextToCursorHandler = new TableNextToCursorHandler(_lexAndParseResultListener, _sqlTextArea.getCaretPosition(), _schemaCache);
 
 
          //System.out.println("----------------------------------------------------------");
@@ -153,9 +151,9 @@ public class SQLSyntaxHighlighting
       return lines;
    }
 
-   public void setTableNextToCursorListener(TableNextToCursorListener tableNextToCursorListener)
+   public void setLexAndParseResultListener(LexAndParseResultListener lexAndParseResultListener)
    {
-      _tableNextToCursorListener = tableNextToCursorListener;
+      _lexAndParseResultListener = lexAndParseResultListener;
    }
 
    public void setErrorInfos(ErrorInfo[] errorInfos)
