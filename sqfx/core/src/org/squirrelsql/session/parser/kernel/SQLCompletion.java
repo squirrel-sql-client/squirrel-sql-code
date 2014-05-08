@@ -129,8 +129,6 @@ public abstract class SQLCompletion implements Completion
     public static class ChildComparator implements Comparator<SQLCompletion>,
                                                    Serializable
     {
-        private static final long serialVersionUID = -8912522485515591605L;
-
         public int compare(SQLCompletion c1, SQLCompletion c2)
         {
             if(c1.isConcrete() == c2.isConcrete()) {

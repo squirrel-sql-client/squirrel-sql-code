@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 public class DBSchema implements Serializable
 {
-   private static final long serialVersionUID = -2545218384101456392L;
-
    private final String _schema;
    private final String _catalog;
 

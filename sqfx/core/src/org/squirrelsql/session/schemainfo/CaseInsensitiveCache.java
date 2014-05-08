@@ -11,8 +11,6 @@ import java.util.List;
 
 public class CaseInsensitiveCache implements Serializable
 {
-   private static final long serialVersionUID = -5825984073414170251L;
-
    private HashMap<CaseInsensitiveString, List<TableInfo>> _ciTableNames = new HashMap<>();
    private HashSet<CaseInsensitiveString> _ciProcedureNames = new HashSet<>();
    private HashSet<CaseInsensitiveString> _ciKeywords = new HashSet<>();

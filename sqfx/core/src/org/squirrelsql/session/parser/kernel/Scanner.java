@@ -40,15 +40,11 @@ public class Scanner
         {
             _bufLen = (int) file.length();
 
-            try (FileReader fr = new FileReader(file)) {
+            FileReader fr = new FileReader(file);
 	            buf = new char[_bufLen];
 	
 	            fr.read(buf);
 	            _pos = 0;
-            } catch (IOException e) {
-            	// FIXME: Need to figure out the best way to log this error
-            	e.printStackTrace();
-            }
         }
         protected char read() {
             if (_pos < _bufLen) return buf[_pos++];
