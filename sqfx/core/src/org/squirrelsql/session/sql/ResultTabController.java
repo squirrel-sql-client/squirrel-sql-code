@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.session.sql.makeeditable.EditableCtrl;
 import org.squirrelsql.table.TableLoader;
 
 public class ResultTabController
