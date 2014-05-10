@@ -1,11 +1,8 @@
 package org.squirrelsql.session.sql;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.table.TableLoader;
 
@@ -28,7 +25,8 @@ public class ResultTabController
    private BorderPane createContainerPane(SQLResult sqlResult, String sqlAsTabText, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
 
-      BorderPane bp = new BorderPane();
+      FxmlHelper<SQLResultHeaderView> headerFxmlHelper = new FxmlHelper(SQLResultHeaderView.class);
+
 
       String headertext;
 
@@ -42,9 +40,15 @@ public class ResultTabController
       }
 
 
-      Label label = new Label(headertext);
-      BorderPane.setMargin(label, new Insets(10,0,0,5));
-      bp.setTop(label);
+      headerFxmlHelper.getView().lblHeader.setText(headertext);
+
+      ToggleButton btnEdit = new EditableCtrl(sqlAsTabText, sqlResult).getEditButton();
+      headerFxmlHelper.getView().resultToolBar.getItems().add(btnEdit);
+
+      BorderPane bp = new BorderPane();
+
+      //headerFxmlHelper.getView().lblHeader.setStyle("-fx-border-color: blue;");
+      bp.setTop(headerFxmlHelper.getRegion());
 
       bp.setCenter(createContainerTabPane(sqlResult, sqlCancelTabCtrl));
 

@@ -19,6 +19,7 @@ import org.squirrelsql.Props;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.channel.AliasTreeNodeMoveListener;
 import org.squirrelsql.aliases.dbconnector.DBConnector;
+import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.session.schemainfo.SchemaCacheConfig;
@@ -164,11 +165,11 @@ public class AliasesController
 
       dockToolbarBuilder.addButtonLeft(_props.getImageView("database_connect.png"), _i18n.t("tooltip.connect")).setOnAction(e -> onConnect());
       dockToolbarBuilder.addSeparatorLeft();
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.ADD), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("copy.png"), _i18n.t("tooltip.copy")).setOnAction(e -> onCopy());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.EDIT), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
       dockToolbarBuilder.addButtonLeft(_props.getImageView("alias_properties.png"), _i18n.t("tooltip.alias_properties")).setOnAction(e -> onAliasProperties());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.REMOVE), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
       dockToolbarBuilder.addSeparatorLeft();
       dockToolbarBuilder.addButtonLeft(_props.getImageView("sort-ascend.png"), _i18n.t("tooltip.sort")).setOnAction(e -> onSort());
       dockToolbarBuilder.addSeparatorLeft();
@@ -180,7 +181,7 @@ public class AliasesController
       _btnPinned = dockToolbarBuilder.addToggleButtonRight(_props.getImageView("dock_win_unpinned.png"), _i18n.t("tooltip.pinned"));
       _btnPinned.setOnAction(e -> onPinnedChanged());
 
-      dockToolbarBuilder.addButtonRight(_props.getImageView("dock_win_close.png"), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeAliases());
+      dockToolbarBuilder.addButtonRight(_props.getImageView(GlobalIconNames.DOCK_WIN_CLOSE), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeAliases());
 
       return dockToolbarBuilder.getToolbarPane();
    }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane id="BorderPane" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.session.sql.SQLResultHeaderView">
+  <center>
+    <Label fx:id="lblHeader" prefWidth="-1.0" text="" BorderPane.alignment="CENTER_LEFT" />
+  </center>
+  <padding>
+    <Insets left="5.0" />
+  </padding>
+  <right>
+    <ToolBar fx:id="resultToolBar" />
+  </right>
+</BorderPane>

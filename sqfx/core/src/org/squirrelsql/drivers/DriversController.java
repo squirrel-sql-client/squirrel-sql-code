@@ -8,6 +8,7 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.PreDefinedDrivers;
 import org.squirrelsql.Props;
+import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 
 import java.util.ArrayList;
@@ -60,14 +61,14 @@ public class DriversController
    {
       DockToolbarBuilder dockToolbarBuilder = new DockToolbarBuilder();
 
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("add.png"), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("remove.png"), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
-      dockToolbarBuilder.addButtonLeft(_props.getImageView("edit.png"), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.ADD), _i18n.t("tooltip.add")).setOnAction(e -> onAdd());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.REMOVE), _i18n.t("tooltip.remove")).setOnAction(e -> onRemove());
+      dockToolbarBuilder.addButtonLeft(_props.getImageView(GlobalIconNames.EDIT), _i18n.t("tooltip.edit")).setOnAction(e -> onEdit());
 
       _btnFilter = dockToolbarBuilder.addToggleButtonLeft(_props.getImageView("driver_filter.gif"), _i18n.t("tooltip.filter"));
       _btnFilter.setOnAction(e -> onFilter());
 
-      dockToolbarBuilder.addButtonRight(_props.getImageView("dock_win_close.png"), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeDriver());
+      dockToolbarBuilder.addButtonRight(_props.getImageView(GlobalIconNames.DOCK_WIN_CLOSE), _i18n.t("tooltip.close")).setOnAction(e -> _dockPaneChanel.closeDriver());
 
       return dockToolbarBuilder.getToolbarPane();
    }
