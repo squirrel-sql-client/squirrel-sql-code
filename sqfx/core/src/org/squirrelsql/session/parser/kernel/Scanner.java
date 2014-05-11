@@ -32,27 +32,7 @@ public class Scanner
        protected abstract char read();
    }
 
-    static class FBuffer extends Buffer
-    {
-        static char[] buf;
-
-        FBuffer(File file) throws IOException
-        {
-            _bufLen = (int) file.length();
-
-            FileReader fr = new FileReader(file);
-	            buf = new char[_bufLen];
-	
-	            fr.read(buf);
-	            _pos = 0;
-        }
-        protected char read() {
-            if (_pos < _bufLen) return buf[_pos++];
-            else return eof;
-        }
-    }
-
-    static class SBuffer extends Buffer
+   static class SBuffer extends Buffer
     {
         String chars;
 
