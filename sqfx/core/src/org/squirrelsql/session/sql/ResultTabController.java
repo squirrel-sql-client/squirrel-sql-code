@@ -5,6 +5,7 @@ import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.sql.makeeditable.EditableCtrl;
+import org.squirrelsql.table.EdittableTableController;
 import org.squirrelsql.table.TableLoader;
 
 public class ResultTabController
@@ -12,6 +13,7 @@ public class ResultTabController
    private I18n _i18n = new I18n(getClass());
 
    private final Tab _containerTab;
+   private EditableCtrl _editableCtrl;
 
    public ResultTabController(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
@@ -43,8 +45,8 @@ public class ResultTabController
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      ToggleButton btnEdit = new EditableCtrl(sqlAsTabText, sqlResult).getEditButton();
-      headerFxmlHelper.getView().resultToolBar.getItems().add(btnEdit);
+      _editableCtrl = new EditableCtrl(sqlAsTabText, sqlResult);
+      headerFxmlHelper.getView().resultToolBar.getItems().add(_editableCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
 
@@ -86,7 +88,16 @@ public class ResultTabController
       Tab outputTab = new Tab(_i18n.t(tabTextI18nKey));
 
       TableView tv = new TableView();
-      tableLoader.load(tv);
+
+      if (_editableCtrl.allowsEditing())
+      {
+         new EdittableTableController(tableLoader, tv);
+      }
+      else
+      {
+
+         tableLoader.load(tv);
+      }
 
       outputTab.setContent(tv);
       outputTab.setClosable(false);

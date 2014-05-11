@@ -29,4 +29,9 @@ public class EditableCtrl
    {
       return _btnEdit;
    }
+
+   public boolean allowsEditing()
+   {
+      return _editableSqlCheck.allowsEditing();
+   }
 }
