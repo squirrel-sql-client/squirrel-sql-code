@@ -4,8 +4,8 @@ SQuirreL SQL Client Change Log
 ${squirrelsql.changelog.header}
 
 
-Not yet released, available in our GIT repository and in future snapshots and releases.
-===============================================================================================
+3.5.3 (05/11/2014)
+==================
 
 Enhancements:
 #469 Show selected row count (like result row count)
