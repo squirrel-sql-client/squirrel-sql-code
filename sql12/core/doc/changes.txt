@@ -8,9 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-Patch #66 New toolbar button to clone the current Session with a new connection.
+- Patch #66 New toolbar button to clone the current Session with a new connection.
   The button is right next to the new SQL tab button.
-
+- Patch #67 Session tab tooltip now shows the connections JDBC-URL.
 
 
 3.5.3 (05/11/2014)

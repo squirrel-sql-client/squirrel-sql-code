@@ -1,17 +1,23 @@
 package net.sourceforge.squirrel_sql.client.gui.desktopcontainer;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.FocusListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+
+import javax.swing.Icon;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.desktopcontainer.docktabdesktop.SmallTabButton;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusListener;
-import java.beans.VetoableChangeListener;
-import java.beans.PropertyVetoException;
-
 public class TabWidget implements IWidget
 {
-   private ITabDelegate _delegate;
+   private final ITabDelegate _delegate;
+   private String tip;
 
    public TabWidget(String title, boolean resizeable, boolean closeable, boolean maximizeable, boolean iconifiable, IApplication app)
    {
@@ -33,7 +39,8 @@ public class TabWidget implements IWidget
       return _delegate.isVisible();
    }
 
-   public void moveToFront()
+   @Override
+public void moveToFront()
    {
       _delegate._moveToFront();
    }
@@ -64,7 +71,8 @@ public class TabWidget implements IWidget
       _delegate.pack();
    }
 
-   public String getTitle()
+   @Override
+public String getTitle()
    {
       return _delegate.getTitle();
    }
@@ -79,12 +87,14 @@ public class TabWidget implements IWidget
       instance._delegate.centerWithinDesktop();
    }
 
-   public void dispose()
+   @Override
+public void dispose()
    {
       _delegate._dispose();
    }
 
-   public void setTitle(String title)
+   @Override
+public void setTitle(String title)
    {
       _delegate._setTitle(title);
    }
@@ -100,12 +110,14 @@ public class TabWidget implements IWidget
    }
 
 
-   public void updateUI()
+   @Override
+public void updateUI()
    {
       _delegate._updateUI();
    }
 
-   public void setVisible(boolean aFlag)
+   @Override
+public void setVisible(boolean aFlag)
    {
       _delegate._setVisible(aFlag);
    }
@@ -147,12 +159,14 @@ public class TabWidget implements IWidget
       _delegate.addVetoableChangeListener(vetoableChangeListener);
    }
 
-   public void addWidgetListener(WidgetListener widgetListener)
+   @Override
+public void addWidgetListener(WidgetListener widgetListener)
    {
       _delegate.addTabWidgetListener(widgetListener);
    }
 
-   public void removeWidgetListener(WidgetListener widgetListener)
+   @Override
+public void removeWidgetListener(WidgetListener widgetListener)
    {
       _delegate.removeTabWidgetListener(widgetListener);
    }
@@ -166,7 +180,8 @@ public class TabWidget implements IWidget
    	return _delegate.getBounds();
    }
    
-   public JInternalFrame getInternalFrame()
+   @Override
+public JInternalFrame getInternalFrame()
    {
       return _delegate.getInternalFrame();
    }
@@ -178,27 +193,32 @@ public class TabWidget implements IWidget
    }
 
 
-   public void putClientProperty(Object key, Object prop)
+   @Override
+public void putClientProperty(Object key, Object prop)
    {
       _delegate.putClientProperty(key, prop);
    }
 
-   public Object getClientProperty(Object key)
+   @Override
+public Object getClientProperty(Object key)
    {
       return _delegate.getClientProperty(key);
    }
 
-   public boolean isToolWindow()
+   @Override
+public boolean isToolWindow()
    {
       return _delegate.isClosed();
    }
 
-   public boolean isClosed()
+   @Override
+public boolean isClosed()
    {
       return _delegate.isClosed();
    }
 
-   public boolean isIcon()
+   @Override
+public boolean isIcon()
    {
       return _delegate.isIcon();
    }
@@ -224,8 +244,20 @@ public class TabWidget implements IWidget
       _delegate.setFrameIcon(icon);
    }
 
-   public void addNotify()
+   @Override
+public void addNotify()
    {
       _delegate._addNotify();
+   }
+   
+   public void setTip(String tip) {
+	this.tip = tip;
+   }
+   
+   public String getTip() {
+	   if (tip == null) {
+		   return _delegate.getTitle();
+	   }
+	   return tip;
    }
 }

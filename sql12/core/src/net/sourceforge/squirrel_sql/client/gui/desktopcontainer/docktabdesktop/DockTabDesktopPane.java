@@ -179,7 +179,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
       tabHandle.addTabHandleListener(_dockTabDesktopManager);
 
       TabPanel tabPanel = createTabPanel(tabHandle);
-      _tabbedPane.insertTab(widget.getTitle(), null, tabPanel, widget.getTitle(), index);
+      _tabbedPane.insertTab(widget.getTitle(), null, tabPanel, widget.getTip(), index);
       int tabIx = _tabbedPane.indexOfComponent(tabPanel);
 
       ButtonTabComponent btc = (ButtonTabComponent) _tabbedPane.getTabComponentAt(tabIx);
