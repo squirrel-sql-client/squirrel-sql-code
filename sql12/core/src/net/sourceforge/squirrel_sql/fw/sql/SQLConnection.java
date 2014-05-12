@@ -80,8 +80,17 @@ public class SQLConnection implements ISQLConnection
 		_conn = conn;
 		_connProps = connProps;
 		_timeOpened = Calendar.getInstance().getTime();
-		metaData = new SQLDatabaseMetaData(this);
-	}
+
+      try
+      {
+         DialectType type = DialectFactory.getDialect(_conn.getMetaData().getDatabaseProductName()).getDialectType();
+         metaData = SQLDatabaseMetaDataFactory.fetchMeta(type, this);
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#close()

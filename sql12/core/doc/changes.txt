@@ -16,6 +16,11 @@ Enhancements:
 - Patch #68 The "Copy as INSERT / UPDATE statement" functions now provide the right table name
     when copying from a content tab.
 
+Bug fixes:
+
+- Patch #69 Fixing problem with long running "getTypesInfo" on Postgres.
+
+
 
 3.5.3 (05/11/2014)
 ==================

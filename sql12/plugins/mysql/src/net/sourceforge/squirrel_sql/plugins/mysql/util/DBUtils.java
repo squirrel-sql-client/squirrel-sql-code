@@ -24,7 +24,6 @@ import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -48,7 +47,7 @@ public class DBUtils
 		LoggerController.createLogger(DBUtils.class);
 
 	/** Current session. */
-	private ISession _session;
+	private final ISession _session;
 
 	/** Current plugin. */
     @SuppressWarnings("unused")
@@ -150,9 +149,9 @@ public class DBUtils
 		{
 			final ISQLConnection conn = _session.getSQLConnection();
 			SQLDatabaseMetaData dmd = conn.getSQLMetaData();
-			DataTypeInfo[] infos = dmd.getDataTypes();
+			String[] infos = dmd.getDataTypesSimpleNames();
             for (int i = 0; i < infos.length; i++) {
-                dataTypes.add(infos[i].getSimpleName());
+                dataTypes.add(infos[i]);
             }
 		}
 		catch (SQLException ex)

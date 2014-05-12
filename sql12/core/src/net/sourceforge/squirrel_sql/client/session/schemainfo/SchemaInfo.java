@@ -897,10 +897,10 @@ public class SchemaInfo
          Hashtable<CaseInsensitiveString, String> dataTypesBuf = 
              new Hashtable<CaseInsensitiveString, String>();
 
-         DataTypeInfo[] infos = _dmd.getDataTypes();
-         for (int i = 0; i < infos.length; i++)
+         String[] names = _dmd.getDataTypesSimpleNames();
+         for (int i = 0; i < names.length; i++)
          {
-            String typeName = infos[i].getSimpleName();
+            String typeName = names[i];
             dataTypesBuf.put(new CaseInsensitiveString(typeName), typeName);
 
             if(0 == i % 100 )

@@ -10,6 +10,11 @@ package net.sourceforge.squirrel_sql.plugins.postgres;
  * Suite 330, Boston, MA 02111-1307 USA
  */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
 
@@ -31,8 +36,14 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expander
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaDataFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaDataFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -63,7 +74,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.types.PostgreSqlXmlTypeData
  * 
  * @author manningr
  */
-public class PostgresPlugin extends DefaultSessionPlugin {
+public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabaseMetaDataFactory {
 
     private IResources _resources;
 
@@ -209,6 +220,7 @@ public class PostgresPlugin extends DefaultSessionPlugin {
         CellComponentFactory.registerDataTypeFactory(new PostgreSqlXmlTypeDataTypeComponentFactory());
         CellComponentFactory.registerDataTypeFactory(new PostgreSqlOtherTypeDataTypeComponentFactory("interval"));
 
+		SQLDatabaseMetaDataFactory.registerOverride(DialectType.POSTGRES, this);
     }
 
     @Override
@@ -344,4 +356,35 @@ public class PostgresPlugin extends DefaultSessionPlugin {
         return sessionMenu;
     }
 
+   @Override
+   public SQLDatabaseMetaData fetchMeta(final ISQLConnection conn)
+   {
+      return new SQLDatabaseMetaData(conn)
+      {
+
+         @Override
+         public synchronized String[] getDataTypesSimpleNames() throws SQLException
+         {
+            String sql = "SELECT t.typname FROM pg_catalog.pg_type t" + " JOIN pg_catalog.pg_namespace n ON (t.typnamespace = n.oid) " + " WHERE n.nspname != 'pg_toast' " + " AND typelem = 0 AND typrelid = 0";
+
+            List<String> retn = new ArrayList<String>();
+            ResultSet rs = conn.createStatement().executeQuery(sql);
+            try
+            {
+               while (rs.next())
+               {
+                  retn.add(rs.getString(1));
+               }
+            }
+            finally
+            {
+               SQLUtilities.closeResultSet(rs);
+            }
+
+
+            return retn.toArray(new String[retn.size()]);
+         }
+
+      };
+   }
 }

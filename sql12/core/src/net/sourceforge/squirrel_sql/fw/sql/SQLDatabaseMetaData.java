@@ -33,8 +33,11 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.BlockMode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
@@ -117,7 +120,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @throws IllegalArgumentException
 	 *            Thrown if null SQLConnection passed.
 	 */
-	SQLDatabaseMetaData(ISQLConnection conn)
+	protected SQLDatabaseMetaData(ISQLConnection conn)
 	{
 		super();
 		if (conn == null) { throw new IllegalArgumentException("SQLDatabaseMetaData == null"); }
@@ -1960,4 +1963,25 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		*/
 	}
+
+   public synchronized String[] getDataTypesSimpleNames() throws SQLException
+   {
+      final DatabaseMetaData md = privateGetJDBCMetaData();
+      final List<String> list = new ArrayList<String>();
+      final ResultSet rs = md.getTypeInfo();
+      try
+      {
+         ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+         while (rdr.next())
+         {
+            final String typeName = rdr.getString(1);
+            list.add(typeName);
+         }
+      }
+      finally
+      {
+         SQLUtilities.closeResultSet(rs);
+      }
+      return list.toArray(new String[list.size()]);
+   }
 }
