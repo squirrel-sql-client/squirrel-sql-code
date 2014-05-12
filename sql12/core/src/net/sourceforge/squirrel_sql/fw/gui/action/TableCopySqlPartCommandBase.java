@@ -1,12 +1,16 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-
 import java.sql.Types;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 public class TableCopySqlPartCommandBase
 {
+   private static final Pattern FILL_COLUMN_NAME_PATTERN = Pattern.compile(".+:([^:]+):[^:]+$");
+
    enum StatType
    {
         IN, WHERE, UPDATE
@@ -113,5 +117,15 @@ public class TableCopySqlPartCommandBase
       }
 
       return ret;
+   }
+
+   protected String getTableName(ColumnDisplayDefinition colDef)
+   {
+      Matcher matcher = FILL_COLUMN_NAME_PATTERN.matcher(colDef.getFullTableColumnName());
+      if (matcher.matches())
+      {
+         return matcher.group(1);
+      }
+      return "PressCtrlH";
    }
 }

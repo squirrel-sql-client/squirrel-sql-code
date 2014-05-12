@@ -22,12 +22,12 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 /**
  * This command gets the current selected text from a <TT>JTable</TT>
@@ -40,7 +40,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
    /**
     * The table we are copying data from.
     */
-   private JTable _table;
+   private final JTable _table;
 
    /**
     * Ctor specifying the <TT>JTable</TT> to get the data from.
@@ -61,7 +61,8 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
    /**
     * Execute this command.
     */
-   public void execute()
+   @Override
+public void execute()
    {
       int nbrSelRows = _table.getSelectedRowCount();
       int nbrSelCols = _table.getSelectedColumnCount();
@@ -73,7 +74,6 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
          for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
          {
 
-            buf.append("UPDATE PressCtrlH SET ");
 
             boolean firstCol = true;
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
@@ -95,6 +95,7 @@ public class TableCopyUpdateStatementCommand extends TableCopySqlPartCommandBase
 
                if (firstCol)
                {
+            	  buf.append("UPDATE "+getTableName(colDef)+" SET ");
                   firstCol = false;
                }
                else
