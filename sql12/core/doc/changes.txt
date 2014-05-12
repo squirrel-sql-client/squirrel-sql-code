@@ -20,6 +20,7 @@ Bug fixes:
 
 - Patch #69 Fixing problem with long running "getTypesInfo" on Postgres.
 
+- Patch #70 Refactoring --> Dropping foreign key was generating wrong object names in SQL.
 
 
 3.5.3 (05/11/2014)

@@ -114,7 +114,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 		{
 			StringBuilder sql = new StringBuilder();
 			sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(),
-				_info[0].getQualifiedName(),
+				_info[0].getSimpleName(),
 				_qualifier,
 				_sqlPrefs)); // only
 			// gives
@@ -151,10 +151,12 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 
 		_session.getApplication().getThreadPool().addTask(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				GUIUtils.processOnSwingEventThread(new Runnable()
 				{
+					@Override
 					public void run()
 					{
 						customDialog.setVisible(false);
@@ -187,10 +189,12 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 	{
 		_session.getApplication().getThreadPool().addTask(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				GUIUtils.processOnSwingEventThread(new Runnable()
 				{
+					@Override
 					public void run()
 					{
 						customDialog =

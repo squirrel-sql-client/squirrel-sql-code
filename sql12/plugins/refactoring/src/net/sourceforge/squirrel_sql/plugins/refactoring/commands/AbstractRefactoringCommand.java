@@ -295,20 +295,35 @@ public abstract class AbstractRefactoringCommand implements ICommand
 			}
 			final String script = createExecutableScriptFromStatements(stmts, false);
 
-			GUIUtils.processOnSwingEventThread(new Runnable()
-			{
-				public void run()
-				{
-					if (_parentDialog != null)
-					{
-						_parentDialog.dispose();
-					}
-					_session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script, true);
-					_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-				}
-			});
-		}
-	}
+         GUIUtils.processOnSwingEventThread(new Runnable()
+         {
+            public void run()
+            {
+               onFinished(script);
+            }
+         });
+      }
+
+      private void onFinished(String script)
+      {
+         if (_parentDialog != null)
+         {
+            _parentDialog.dispose();
+         }
+         String current = _session.getSQLPanelAPIOfActiveSessionWindow().getEntireSQLScript();
+         String viewableScript;
+         if (current.isEmpty() || current.endsWith("\n"))
+         {
+            viewableScript = script;
+         }
+         else
+         {
+            viewableScript = "\n" + script;
+         }
+         _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(viewableScript, true);
+         _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+      }
+   }
 
 	/**
 	 * An ActionListener for the Execute button that delegates the execution of the sql statement to the
