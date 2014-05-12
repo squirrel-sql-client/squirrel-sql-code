@@ -10,19 +10,25 @@ Enhancements:
 
 - Patch #66 New toolbar button to clone the current Session with a new connection.
     The button is right next to the new SQL tab button.
+    Thanks to Jaroslaw Jarmolowicz for the patch
 
 - Patch #67 Session tab tooltip now shows the connections JDBC-URL.
+    Thanks to Jaroslaw Jarmolowicz for the patch
 
 - Patch #68 The "Copy as INSERT / UPDATE statement" functions now provide the right table name
     when copying from a content tab.
+    Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
 - Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.
+   Thanks to Jaroslaw Jarmolowicz for the patch
 
 - Patch #70 Refactoring --> Dropping foreign key was generating wrong object names in SQL.
+   Thanks to Jaroslaw Jarmolowicz for the patch
 
 - Patch #71 Postgres: When a WHERE clause with UUID type is generated data is now enclosed in ''
+   Thanks to Jaroslaw Jarmolowicz for the patch
 
 
 
