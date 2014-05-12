@@ -3,6 +3,15 @@ SQuirreL SQL Client Change Log
 
 ${squirrelsql.changelog.header}
 
+Not yet released, available in our GIT repository and in future snapshots and releases.
+===============================================================================================
+
+Enhancements:
+
+Patch #66 New toolbar button to clone the current Session with a new connection.
+  The button is right next to the new SQL tab button.
+
+
 
 3.5.3 (05/11/2014)
 ==================

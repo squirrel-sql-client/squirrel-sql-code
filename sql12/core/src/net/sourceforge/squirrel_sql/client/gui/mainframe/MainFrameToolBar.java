@@ -41,6 +41,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewAliasConnectionAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
 import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
@@ -129,6 +130,7 @@ class MainFrameToolBar extends ToolBar
 
       add(actions.get(NewSQLWorksheetAction.class));
       add(actions.get(NewObjectTreeAction.class));
+      add(actions.get(NewAliasConnectionAction.class));
    }
 
 
@@ -177,6 +179,7 @@ class MainFrameToolBar extends ToolBar
 		 *
 		 * @param	evt	 Describes the event that has just occured.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
 			try
@@ -205,7 +208,7 @@ class MainFrameToolBar extends ToolBar
         private static final long serialVersionUID = 1L;
 
         transient private IApplication _myApp;
-        private AliasesDropDown _aliasDropDown;
+        private final AliasesDropDown _aliasDropDown;
 		/**
 		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
 		 * and removals of aliases from the cache.
@@ -269,10 +272,10 @@ class MainFrameToolBar extends ToolBar
 	private static class MyAliasesListener implements IObjectCacheChangeListener
 	{
 		/** Model that is listening. */
-		private AliasesDropDownModel _model;
+		private final AliasesDropDownModel _model;
 
 		/** Control for _model. */
-		private AliasesDropDown _control;
+		private final AliasesDropDown _control;
 
 		/**
 		 * Ctor specifying the model and control that is listening.
@@ -289,6 +292,7 @@ class MainFrameToolBar extends ToolBar
 		 *
 		 * @param	evt	Describes the event in the cache.
 		 */
+		@Override
 		public void objectAdded(ObjectCacheChangeEvent evt)
 		{
 			Object obj = evt.getObject();
@@ -307,6 +311,7 @@ class MainFrameToolBar extends ToolBar
 		 *
 		 * @param	evt	Describes the event in the cache.
 		 */
+		@Override
 		public void objectRemoved(ObjectCacheChangeEvent evt)
 		{
 			Object obj = evt.getObject();
@@ -324,7 +329,7 @@ class MainFrameToolBar extends ToolBar
 										implements ActionListener
 	{
         private static final long serialVersionUID = 1L;
-        private IApplication _app;
+        private final IApplication _app;
 		private boolean _closing = false;
 
 		SessionDropDown(IApplication app)
@@ -362,6 +367,7 @@ class MainFrameToolBar extends ToolBar
 		 *
 		 * @param	evt	 Describes the event that has just occured.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
 			if (!_closing && !_dontReactToSessionDropDownAction)
@@ -452,12 +458,14 @@ class MainFrameToolBar extends ToolBar
 			_sessionDropDown = control;
 		}
 
+		@Override
 		public void sessionConnected(SessionEvent evt)
 		{
 			final ISession session = evt.getSession();
          // Needes to be done via event queque because method is not called from the event disptach thread.
 			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
+				@Override
 				public void run()
 				{
 					_model.addSession(session);
@@ -466,11 +474,13 @@ class MainFrameToolBar extends ToolBar
 			});
 		}
 
+		@Override
 		public void sessionClosing(SessionEvent evt)
 		{
 			final ISession session = evt.getSession();
 			GUIUtils.processOnSwingEventThread(new Runnable()
 			{
+				@Override
 				public void run()
 				{
 					_sessionDropDown._closing = true;
@@ -485,7 +495,8 @@ class MainFrameToolBar extends ToolBar
 
 		}
 
-      public void sessionActivated(SessionEvent evt)
+      @Override
+	public void sessionActivated(SessionEvent evt)
       {
          final ISession session = evt.getSession();
 
@@ -493,7 +504,8 @@ class MainFrameToolBar extends ToolBar
          // drop down happens via the event queue too.
          GUIUtils.processOnSwingEventThread(new Runnable()
          {
-            public void run()
+            @Override
+			public void run()
             {
                try
                {
