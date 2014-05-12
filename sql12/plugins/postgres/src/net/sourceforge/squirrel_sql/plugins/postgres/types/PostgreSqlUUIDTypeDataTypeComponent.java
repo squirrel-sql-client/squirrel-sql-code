@@ -23,6 +23,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.whereClause.P
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -176,5 +177,13 @@ public class PostgreSqlUUIDTypeDataTypeComponent extends BaseDataTypeComponent i
     public boolean areEqual(final Object obj1, final Object obj2) {
         return obj1.equals(obj2);
     }
+
+   @Override
+   protected String quoteTextConditionValue(String value)
+   {
+      return StringUtilities.singleQuote(value);
+   }
+    
+    
 
 }

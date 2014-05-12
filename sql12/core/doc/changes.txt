@@ -18,9 +18,13 @@ Enhancements:
 
 Bug fixes:
 
-- Patch #69 Fixing problem with long running "getTypesInfo" on Postgres.
+- Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.
 
 - Patch #70 Refactoring --> Dropping foreign key was generating wrong object names in SQL.
+
+- Patch #71 Postgres: When a WHERE clause with UUID type is generated data is now enclosed in ''
+
+
 
 
 3.5.3 (05/11/2014)
