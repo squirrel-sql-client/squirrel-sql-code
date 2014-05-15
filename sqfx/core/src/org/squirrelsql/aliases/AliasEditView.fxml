@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.9998558593725" prefWidth="679.0" xmlns:fx="http://javafx.com/fxml" fx:controller="org.squirrelsql.aliases.AliasEditView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="658.0" prefWidth="712.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.aliases.AliasEditView">
   <children>
     <Label fx:id="lblChangeDriver" layoutX="7.0" layoutY="8.0" prefWidth="572.0" text="%title.change.alias" />
     <TextField fx:id="txtName" layoutY="55.0" prefWidth="409.9998779296875" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="32.0" />
@@ -40,9 +40,9 @@
     <CheckBox fx:id="chkUserEmpty" layoutX="372.0" layoutY="235.0" mnemonicParsing="false" prefWidth="188.0" text="%alias.user.empty" />
     <CheckBox fx:id="chkPasswordNull" layoutX="159.0" layoutY="362.0" mnemonicParsing="false" prefWidth="201.0" text="%alias.pwd.null" />
     <CheckBox fx:id="chkPasswordEmpty" layoutX="374.0" layoutY="362.0" mnemonicParsing="false" prefWidth="238.0" text="%alias.pwd.empty" />
-    <BorderPane layoutX="193.0" layoutY="455.0" minHeight="106.0" prefHeight="106.0" prefWidth="454.0" >
+    <BorderPane layoutX="193.0" layoutY="455.0" minHeight="106.0" prefHeight="106.0" prefWidth="454.0">
       <center>
-          <fx:include source="TreePositionView.fxml" fx:id="treePositionView"/>
+          <fx:include fx:id="treePositionView" source="TreePositionView.fxml" />
       </center>
     </BorderPane>
   </children>
