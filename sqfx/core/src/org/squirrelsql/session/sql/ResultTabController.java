@@ -4,8 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
-import org.squirrelsql.session.sql.makeeditable.EditableCtrl;
-import org.squirrelsql.table.EdittableTableController;
+import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.TableLoader;
 
 public class ResultTabController
@@ -13,7 +12,7 @@ public class ResultTabController
    private I18n _i18n = new I18n(getClass());
 
    private final Tab _containerTab;
-   private EditableCtrl _editableCtrl;
+   private EditButtonCtrl _editButtonCtrl;
 
    public ResultTabController(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
@@ -45,8 +44,8 @@ public class ResultTabController
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      _editableCtrl = new EditableCtrl(sqlAsTabText, sqlResult);
-      headerFxmlHelper.getView().resultToolBar.getItems().add(_editableCtrl.getEditButton());
+      _editButtonCtrl = new EditButtonCtrl(sqlAsTabText, sqlResult);
+      headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
 
@@ -89,13 +88,12 @@ public class ResultTabController
 
       TableView tv = new TableView();
 
-      if (_editableCtrl.allowsEditing())
+      if (_editButtonCtrl.allowsEditing())
       {
-         new EdittableTableController(tableLoader, tv);
+         _editButtonCtrl.displayAndPrepareEditing(tableLoader, tv);
       }
       else
       {
-
          tableLoader.load(tv);
       }
 

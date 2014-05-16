@@ -106,10 +106,10 @@ public class AliasPropertiesDecorator
       RowObjectTableLoader<AliasPropertiesSpecifiedLoading> tl = new RowObjectTableLoader<>();
 
       tl.addColumn(_i18n.t("alias.properties.schema"));
-      tl.addColumn(AliasPropertiesObjectTypes.TABLE.toString()).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(AliasPropertiesObjectTypes.VIEW.toString()).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(AliasPropertiesObjectTypes.PROCEDURE.toString()).setSelectableValues(SchemaLoadOptions.values());
-      tl.addColumn(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.toString()).setSelectableValues(SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.TABLE.toString(), SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.VIEW.toString(), SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.PROCEDURE.toString(), SchemaLoadOptions.values());
+      tl.addColumn(AliasPropertiesObjectTypes.OTHER_TABLE_TYPES.toString(), SchemaLoadOptions.values());
       return tl;
    }
 

@@ -4,28 +4,46 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.util.Callback;
+import org.squirrelsql.services.CollectionUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TableLoader
 {
    private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
-   private List<ColumnHandle> _columns = new ArrayList<>();
+   private final CellValueReader _cellValueReader;
+   private List<ColumnHandle> _columnHandles = new ArrayList<>();
 
    private List<List<SimpleObjectProperty>> _simpleObjectPropertyRows = new ArrayList<>();
 
+   public TableLoader()
+   {
+      _cellValueReader = new CellValueReader()
+      {
+         @Override
+         public ObservableValue<Object> getCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIndex)
+         {
+            return onGetCellValue(row, columnIndex);
+         }
+      };
+   }
+
    public ColumnHandle addColumn(String header)
    {
-      ColumnHandle columnHandle = new ColumnHandle(header);
-      _columns.add(columnHandle);
+      return addColumn(header, Collections.emptyList());
+   }
+
+   public ColumnHandle addColumn(String header, List selectableValues)
+   {
+      ColumnHandle columnHandle = new ColumnHandle(header, _columnHandles.size(), _cellValueReader, selectableValues);
+      _columnHandles.add(columnHandle);
       return columnHandle;
    }
+
 
    public List<SimpleObjectProperty> addRow(List row)
    {
@@ -46,45 +64,24 @@ public class TableLoader
 
    public void load(TableView tv)
    {
-      List<TableColumn> cols = new ArrayList<>();
+      _loadColsAndData(tv, _columnHandles);
+      tv.setEditable(true);
 
-      for (int i = 0; i < _columns.size(); i++)
-      {
-         ColumnHandle columnHandle = _columns.get(i);
-         TableColumn tableColumn = new TableColumn(columnHandle.getHeader());
+   }
 
-         if(0 < columnHandle.getSelectableValues().length)
-         {
-            tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
-            {
-               @Override
-               public TableCell call(TableColumn param)
-               {
-                  return new ComboBoxTableCell(columnHandle.getSelectableValues());
-               }
-            });
+   private SimpleObjectProperty onGetCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIx)
+   {
+      return getCellValue(columnIx, row.getValue());
+   }
 
-            tableColumn.setEditable(true);
-            tv.setEditable(true);
-         }
+   private void _loadColsAndData(TableView tv, List<ColumnHandle> columnHandles)
+   {
+      List<TableColumn> tableColumns = CollectionUtil.transform(columnHandles, col -> col.getTableColumn());
 
-
-         final int finalI = i;
-         tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
-         {
-            public ObservableValue<Object> call(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row)
-            {
-               return getCellValue(finalI, row.getValue());
-            }
-         });
-         cols.add(tableColumn);
-      }
-
-      tv.getColumns().setAll(cols);
+      tv.getColumns().setAll(tableColumns);
 
       ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
       tv.setItems(items);
-
    }
 
    private SimpleObjectProperty getCellValue(int ix, List<SimpleObjectProperty> row)
@@ -140,9 +137,9 @@ public class TableLoader
    private int getColIxByName(String columnName)
    {
       int colIx = -1;
-      for (int i = 0; i < _columns.size(); i++)
+      for (int i = 0; i < _columnHandles.size(); i++)
       {
-         if(_columns.get(i).getHeader().equalsIgnoreCase(columnName))
+         if(_columnHandles.get(i).getHeader().equalsIgnoreCase(columnName))
          {
             colIx = i;
             break;
@@ -190,7 +187,7 @@ public class TableLoader
       for (int i = 0; i < size(); i++)
       {
          List row = new ArrayList();
-         for (int j = 0; j < _columns.size(); j++)
+         for (int j = 0; j < _columnHandles.size(); j++)
          {
             List<SimpleObjectProperty> sopRow = _simpleObjectPropertyRows.get(i);
             if (j < sopRow.size())
@@ -217,6 +214,38 @@ public class TableLoader
 
    public int getColumnCount()
    {
-      return _columns.size();
+      return _columnHandles.size();
+   }
+
+   public List<ColumnHandle> getColumnHandles()
+   {
+      return _columnHandles;
+   }
+
+   public List<List<SimpleObjectProperty>> getSimpleObjectPropertyRows()
+   {
+      return _simpleObjectPropertyRows;
+   }
+
+   public void makeEditable(boolean b, TableView tv)
+   {
+      _clearDataAndCols(tv);
+
+      for (ColumnHandle columnHandle : _columnHandles)
+      {
+         columnHandle.makeEditable(b);
+      }
+
+      tv.setEditable(true);
+
+      _loadColsAndData(tv, _columnHandles);
+
+
+   }
+
+   private void _clearDataAndCols(TableView tv)
+   {
+      tv.getItems().clear();
+      tv.getColumns().clear();
    }
 }

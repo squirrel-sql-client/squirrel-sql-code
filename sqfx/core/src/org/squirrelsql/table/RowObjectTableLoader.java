@@ -1,8 +1,10 @@
 package org.squirrelsql.table;
 
 import javafx.scene.control.TableView;
+import org.squirrelsql.aliases.SchemaLoadOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RowObjectTableLoader<T>
@@ -12,10 +14,12 @@ public class RowObjectTableLoader<T>
 
    private List<RowObjectHandle<T>> _rowObjectHandles = new ArrayList<>();
 
-   public ColumnHandle addColumn(String header)
+
+   public ColumnHandle addColumn(String header, Object... selectableValues)
    {
-      return _tableLoader.addColumn(header);
+      return _tableLoader.addColumn(header, Arrays.asList(selectableValues));
    }
+
 
 
    public void load(TableView tv)
