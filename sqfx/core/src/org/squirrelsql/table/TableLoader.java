@@ -65,8 +65,6 @@ public class TableLoader
    public void load(TableView tv)
    {
       _loadColsAndData(tv, _columnHandles);
-      tv.setEditable(true);
-
    }
 
    private SimpleObjectProperty onGetCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIx)
@@ -236,7 +234,7 @@ public class TableLoader
          columnHandle.makeEditable(b);
       }
 
-      tv.setEditable(true);
+      tv.setEditable(b);
 
       _loadColsAndData(tv, _columnHandles);
 

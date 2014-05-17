@@ -12,6 +12,7 @@ import java.util.List;
 
 public class ColumnHandle
 {
+   private final Callback _originalCellFactory;
    private CellValueReader _cellValueReader;
    private String _header;
    private int _columnIndex;
@@ -25,6 +26,9 @@ public class ColumnHandle
 
       TableColumn tableColumn = new TableColumn(_header);
       _tableColumn = tableColumn;
+
+      _originalCellFactory = tableColumn.getCellFactory();
+
 
       if(0 < selectableValues.size())
       {
@@ -63,16 +67,24 @@ public class ColumnHandle
 
    public void makeEditable(boolean b)
    {
-      _tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
+      if (b)
       {
-         @Override
-         public TableCell call(TableColumn param)
+         _tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
          {
-            TextFieldTableCell textFieldTableCell = new TextFieldTableCell();
-            return textFieldTableCell;
-         }
-      });
-      _tableColumn.setEditable(true);
+            @Override
+            public TableCell call(TableColumn param)
+            {
+               TextFieldTableCell textFieldTableCell = new TextFieldTableCell();
+               return textFieldTableCell;
+            }
+         });
+         _tableColumn.setEditable(true);
+      }
+      else
+      {
+         _tableColumn.setCellFactory(_originalCellFactory);
+         _tableColumn.setEditable(false);
+      }
    }
 
 }
