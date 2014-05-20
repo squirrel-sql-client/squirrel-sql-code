@@ -7,6 +7,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import java.util.List;
 
@@ -74,7 +75,20 @@ public class ColumnHandle
             @Override
             public TableCell call(TableColumn param)
             {
-               TextFieldTableCell textFieldTableCell = new TextFieldTableCell();
+               TextFieldTableCell textFieldTableCell = new TextFieldTableCell(new StringConverter()
+               {
+                  @Override
+                  public String toString(Object object)
+                  {
+                     return "" + object;
+                  }
+
+                  @Override
+                  public Object fromString(String string)
+                  {
+                     return string;
+                  }
+               });
                return textFieldTableCell;
             }
          });
