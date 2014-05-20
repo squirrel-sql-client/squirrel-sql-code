@@ -220,15 +220,4 @@ public class TableLoader
       return _simpleObjectPropertyRows;
    }
 
-   public void makeEditable(boolean b, TableView tv)
-   {
-      tv.setEditable(b);
-
-      for (ColumnHandle columnHandle : _columnHandles)
-      {
-         columnHandle.makeEditable(b);
-      }
-
-   }
-
 }

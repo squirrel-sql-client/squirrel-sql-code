@@ -5,9 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 import java.util.List;
 
@@ -66,39 +64,16 @@ public class ColumnHandle
       return _tableColumn;
    }
 
-   public void makeEditable(boolean b)
+   public void installEditableCellFactory(Callback<TableColumn, TableCell> cellFactory)
    {
-      if (b)
-      {
-         _tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
-         {
-            @Override
-            public TableCell call(TableColumn param)
-            {
-               TextFieldTableCell textFieldTableCell = new TextFieldTableCell(new StringConverter()
-               {
-                  @Override
-                  public String toString(Object object)
-                  {
-                     return "" + object;
-                  }
-
-                  @Override
-                  public Object fromString(String string)
-                  {
-                     return string;
-                  }
-               });
-               return textFieldTableCell;
-            }
-         });
+         _tableColumn.setCellFactory(cellFactory);
          _tableColumn.setEditable(true);
-      }
-      else
-      {
-         _tableColumn.setCellFactory(_originalCellFactory);
-         _tableColumn.setEditable(false);
-      }
    }
 
+
+   public void uninstallEditableCellFactory()
+   {
+      _tableColumn.setCellFactory(_originalCellFactory);
+      _tableColumn.setEditable(false);
+   }
 }
