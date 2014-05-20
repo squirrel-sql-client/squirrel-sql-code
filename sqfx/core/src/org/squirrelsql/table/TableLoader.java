@@ -64,22 +64,17 @@ public class TableLoader
 
    public void load(TableView tv)
    {
-      _loadColsAndData(tv, _columnHandles);
-   }
-
-   private SimpleObjectProperty onGetCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIx)
-   {
-      return getCellValue(columnIx, row.getValue());
-   }
-
-   private void _loadColsAndData(TableView tv, List<ColumnHandle> columnHandles)
-   {
-      List<TableColumn> tableColumns = CollectionUtil.transform(columnHandles, col -> col.getTableColumn());
+      List<TableColumn> tableColumns = CollectionUtil.transform(_columnHandles, col -> col.getTableColumn());
 
       tv.getColumns().setAll(tableColumns);
 
       ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
       tv.setItems(items);
+   }
+
+   private SimpleObjectProperty onGetCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIx)
+   {
+      return getCellValue(columnIx, row.getValue());
    }
 
    private SimpleObjectProperty getCellValue(int ix, List<SimpleObjectProperty> row)
@@ -227,23 +222,13 @@ public class TableLoader
 
    public void makeEditable(boolean b, TableView tv)
    {
-      _clearDataAndCols(tv);
+      tv.setEditable(b);
 
       for (ColumnHandle columnHandle : _columnHandles)
       {
          columnHandle.makeEditable(b);
       }
 
-      tv.setEditable(b);
-
-      _loadColsAndData(tv, _columnHandles);
-
-
    }
 
-   private void _clearDataAndCols(TableView tv)
-   {
-      tv.getItems().clear();
-      tv.getColumns().clear();
-   }
 }

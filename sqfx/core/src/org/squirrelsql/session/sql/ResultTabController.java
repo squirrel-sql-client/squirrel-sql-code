@@ -73,18 +73,23 @@ public class ResultTabController
 
    private Tab createResultMetaDataTab(SQLResult sqlResult)
    {
-      return _createResultTableTab(sqlResult.getResultMetaDateTableLoader(), "outputtab.result.metadata");
+      TableLoader tableLoader = sqlResult.getResultMetaDateTableLoader();
+      Tab outputTab = new Tab(_i18n.t("outputtab.result.metadata"));
+
+      TableView tv = new TableView();
+
+      tableLoader.load(tv);
+
+      outputTab.setContent(tv);
+      outputTab.setClosable(false);
+
+      return outputTab;
    }
 
    private Tab createResultsTab(SQLResult sqlResult)
    {
-      return _createResultTableTab(sqlResult.getResultTableLoader(), "outputtab.results");
-   }
-
-
-   private Tab _createResultTableTab(TableLoader tableLoader, String tabTextI18nKey)
-   {
-      Tab outputTab = new Tab(_i18n.t(tabTextI18nKey));
+      TableLoader tableLoader = sqlResult.getResultTableLoader();
+      Tab outputTab = new Tab(_i18n.t("outputtab.results"));
 
       TableView tv = new TableView();
 
