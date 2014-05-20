@@ -48,7 +48,6 @@ public class ColumnHandle
       {
          public ObservableValue<Object> call(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row)
          {
-            //return getCellValue(row, columnHandle1.getColumnIndex());
             return _cellValueReader.getCellValue(row, _columnIndex);
          }
       });
