@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import org.squirrelsql.services.CollectionUtil;
 
@@ -220,4 +221,8 @@ public class TableLoader
       return _simpleObjectPropertyRows;
    }
 
+   public void writeValue(Object newValue, TablePosition tablePosition)
+   {
+      _simpleObjectPropertyRows.get(tablePosition.getRow()).get(tablePosition.getColumn()).set(newValue);
+   }
 }

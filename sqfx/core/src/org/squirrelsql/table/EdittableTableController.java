@@ -33,6 +33,7 @@ public class EdittableTableController
             {
                Object newValue = event.getNewValue();
                System.out.println("Edit: New=" + newValue + ", Old=" + event.getOldValue());
+               _tableLoader.writeValue(event.getNewValue(), event.getTablePosition());
             }
          });
       }
