@@ -7,7 +7,7 @@ import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.sql.SQLResult;
-import org.squirrelsql.table.EdittableTableController;
+import org.squirrelsql.table.tableedit.EdittableTableController;
 import org.squirrelsql.table.TableLoader;
 
 public class EditButtonCtrl
@@ -18,7 +18,7 @@ public class EditButtonCtrl
    private EdittableTableController _edittableTableController;
 
 
-   public EditButtonCtrl(String sql, SQLResult sqlResult)
+   public EditButtonCtrl(String sql)
    {
       _btnEdit = new ToggleButton();
       _btnEdit.setTooltip(new Tooltip(_i18n.t("outputtab.edit.result")));
@@ -46,8 +46,8 @@ public class EditButtonCtrl
       return _editableSqlCheck.allowsEditing();
    }
 
-   public void displayAndPrepareEditing(TableLoader tableLoader, TableView tv)
+   public void displayAndPrepareEditing(SQLResult sqlResult, TableView tv)
    {
-      _edittableTableController = new EdittableTableController(tableLoader, tv);
+      _edittableTableController = new EdittableTableController(sqlResult, tv, _editableSqlCheck.getTableNameFromSQL());
    }
 }

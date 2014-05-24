@@ -44,7 +44,7 @@ public class ResultTabController
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      _editButtonCtrl = new EditButtonCtrl(sqlAsTabText, sqlResult);
+      _editButtonCtrl = new EditButtonCtrl(sqlAsTabText);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
@@ -95,7 +95,7 @@ public class ResultTabController
 
       if (_editButtonCtrl.allowsEditing())
       {
-         _editButtonCtrl.displayAndPrepareEditing(tableLoader, tv);
+         _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
       }
       else
       {
