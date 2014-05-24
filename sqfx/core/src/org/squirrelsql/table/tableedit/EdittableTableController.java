@@ -6,17 +6,20 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
 
 public class EdittableTableController
 {
+   private Session _session;
    private final SQLResult _sqlResult;
    private final TableView _tv;
    private String _tableNameFromSQL;
 
-   public EdittableTableController(SQLResult sqlResult, TableView tv, String tableNameFromSQL)
+   public EdittableTableController(Session session, SQLResult sqlResult, TableView tv, String tableNameFromSQL)
    {
+      _session = session;
       _sqlResult = sqlResult;
       _tv = tv;
       _tableNameFromSQL = tableNameFromSQL;
@@ -37,8 +40,8 @@ public class EdittableTableController
    {
       Object newValue = event.getNewValue();
       System.out.println("Edit: New=" + newValue + ", Old=" + event.getOldValue());
+      DatabaseTableUpdater.updateDatabase(_session, _sqlResult, event, _tableNameFromSQL);
       _sqlResult.getResultTableLoader().writeValue(event.getNewValue(), event.getTablePosition());
-      DatabaseTableUpdater.updateDatabase(_sqlResult, event, _tableNameFromSQL);
    }
 
    public void setEditable(boolean b)

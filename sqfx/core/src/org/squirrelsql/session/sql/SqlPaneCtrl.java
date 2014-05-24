@@ -185,11 +185,11 @@ public class SqlPaneCtrl
             if (0 == i)
             {
                sqlCancelTabCtrl.convertToInfoTab(statExec.getCompleteTime());
-               resultTabController = new ResultTabController(sqlResult, sql, sqlCancelTabCtrl);
+               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, sqlCancelTabCtrl);
             }
             else
             {
-               resultTabController = new ResultTabController(sqlResult, sql, null);
+               resultTabController = new ResultTabController(_sessionTabContext.getSession(), sqlResult, sql, null);
             }
 
             Tab outputTab = resultTabController.getTab();

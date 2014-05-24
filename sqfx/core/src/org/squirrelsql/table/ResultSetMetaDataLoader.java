@@ -15,27 +15,27 @@ public class ResultSetMetaDataLoader
 
          TableLoader tl = new TableLoader();
 
-         tl.addColumn("Column index");
-         tl.addColumn("getColumnName");
-         tl.addColumn("getColumnTypeName");
-         tl.addColumn("getColumnType");
-         tl.addColumn("getColumnClassName");
-         tl.addColumn("isNullable");
-         tl.addColumn("getColumnLabel");
-         tl.addColumn("getPrecision");
-         tl.addColumn("getScale");
-         tl.addColumn("getTableName");
-         tl.addColumn("getSchemaName");
-         tl.addColumn("getCatalogName");
-         tl.addColumn("getColumnDisplaySize");
-         tl.addColumn("isAutoIncrement");
-         tl.addColumn("isCaseSensitive");
-         tl.addColumn("isCurrency");
-         tl.addColumn("isWritable");
-         tl.addColumn("isDefinitelyWritable");
-         tl.addColumn("isReadOnly");
-         tl.addColumn("isSearchable");
-         tl.addColumn("isSigned");
+         tl.addColumn(ResultSetMetaDataLoaderConstants.COLUMN_INDEX.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_CLASS_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_NULLABLE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_LABEL.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_PRECISION.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_SCALE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_TABLE_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_SCHEMA_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_CATALOG_NAME.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.GET_COLUMN_DISPLAY_SIZE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_AUTOINCREMENT.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_CASESENSITIVE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_CURRENCY.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_WRITABLE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_DEFINITELY_WRITABLE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_READONLY.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_SEARCHABLE.getMetaDataColumnName());
+         tl.addColumn(ResultSetMetaDataLoaderConstants.IS_SIGNED.getMetaDataColumnName());
 
          ResultSetMetaData md = res.getMetaData();
          for (int i = 1; i <= md.getColumnCount(); i++)

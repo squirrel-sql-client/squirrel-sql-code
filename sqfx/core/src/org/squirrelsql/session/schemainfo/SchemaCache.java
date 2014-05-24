@@ -2,10 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
-import org.squirrelsql.session.ColumnInfo;
-import org.squirrelsql.session.ProcedureInfo;
-import org.squirrelsql.session.TableInfo;
-import org.squirrelsql.session.UDTInfo;
+import org.squirrelsql.session.*;
 import org.squirrelsql.session.completion.TableTypes;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
 import org.squirrelsql.table.TableLoader;
@@ -356,7 +353,7 @@ public class SchemaCache
 
       for (int i = 0; i < cols.getRows().size(); i++)
       {
-         _caseInsensitiveCache.addColumn(cols.getCellAsString("COLUMN_NAME", i));
+         _caseInsensitiveCache.addColumn(cols.getCellAsString(ColumnMetaProps.COLUMN_NAME.getPropName(), i));
       }
 
       table.setColumnsAsTableLoader(cols);

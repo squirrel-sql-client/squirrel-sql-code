@@ -6,6 +6,7 @@ import javafx.scene.control.Tooltip;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.tableedit.EdittableTableController;
 import org.squirrelsql.table.TableLoader;
@@ -16,10 +17,12 @@ public class EditButtonCtrl
    private I18n _i18n = new I18n(getClass());
    private ToggleButton _btnEdit;
    private EdittableTableController _edittableTableController;
+   private Session _session;
 
 
-   public EditButtonCtrl(String sql)
+   public EditButtonCtrl(Session session, String sql)
    {
+      _session = session;
       _btnEdit = new ToggleButton();
       _btnEdit.setTooltip(new Tooltip(_i18n.t("outputtab.edit.result")));
       _btnEdit.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.EDIT));
@@ -48,6 +51,6 @@ public class EditButtonCtrl
 
    public void displayAndPrepareEditing(SQLResult sqlResult, TableView tv)
    {
-      _edittableTableController = new EdittableTableController(sqlResult, tv, _editableSqlCheck.getTableNameFromSQL());
+      _edittableTableController = new EdittableTableController(_session, sqlResult, tv, _editableSqlCheck.getTableNameFromSQL());
    }
 }

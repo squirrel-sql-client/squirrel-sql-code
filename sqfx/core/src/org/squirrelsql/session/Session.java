@@ -2,6 +2,7 @@ package org.squirrelsql.session;
 
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.sqlwrap.SQLConnection;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
 public class Session
@@ -47,5 +48,10 @@ public class Session
    public SessionTabContext getMainTabContext()
    {
       return _mainTabContext;
+   }
+
+   public SQLConnection getSQLConnection()
+   {
+      return _dbConnectorResult.getSQLConnection();
    }
 }

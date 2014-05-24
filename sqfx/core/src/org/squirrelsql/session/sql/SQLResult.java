@@ -39,7 +39,7 @@ public class SQLResult
       return _resultTableLoader;
    }
 
-   public TableLoader getResultMetaDateTableLoader()
+   public TableLoader getResultMetaDataTableLoader()
    {
       return _resultMetaDateTableLoader;
    }

@@ -100,6 +100,11 @@ public class TableLoader
       return simpleObjectProperty;
    }
 
+   public List<String> getCellsAsString(String colName)
+   {
+      return getCellsAsString(getColIxByName(colName));
+   }
+
    public List<String> getCellsAsString(int col)
    {
       List<String> ret = new ArrayList<>(_simpleObjectPropertyRows.size());
@@ -125,10 +130,9 @@ public class TableLoader
    public String getCellAsString(String columnName, int rowIx)
    {
       return getCellAt(rowIx, getColIxByName(columnName));
-
    }
 
-   private int getColIxByName(String columnName)
+   public int getColIxByName(String columnName)
    {
       int colIx = -1;
       for (int i = 0; i < _columnHandles.size(); i++)

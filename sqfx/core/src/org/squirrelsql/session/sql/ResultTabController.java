@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.TableLoader;
 
@@ -13,9 +14,11 @@ public class ResultTabController
 
    private final Tab _containerTab;
    private EditButtonCtrl _editButtonCtrl;
+   private Session _session;
 
-   public ResultTabController(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
+      _session = session;
 
       String sqlAsTabText = sql.replaceAll("\n", " ");
       _containerTab = new Tab(sqlAsTabText);
@@ -44,7 +47,7 @@ public class ResultTabController
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      _editButtonCtrl = new EditButtonCtrl(sqlAsTabText);
+      _editButtonCtrl = new EditButtonCtrl(_session, sqlAsTabText);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
@@ -73,7 +76,7 @@ public class ResultTabController
 
    private Tab createResultMetaDataTab(SQLResult sqlResult)
    {
-      TableLoader tableLoader = sqlResult.getResultMetaDateTableLoader();
+      TableLoader tableLoader = sqlResult.getResultMetaDataTableLoader();
       Tab outputTab = new Tab(_i18n.t("outputtab.result.metadata"));
 
       TableView tv = new TableView();
