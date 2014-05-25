@@ -39,23 +39,12 @@ public class EdittableTableController
 
    private void onEditCommit(TableColumn.CellEditEvent event)
    {
-      Object interpretedNewValue = interpret((String) event.getNewValue());
+      String userEnteredString = (String) event.getNewValue();
 
-      System.out.println("Edit: New=" + interpretedNewValue + ", Old=" + event.getOldValue());
+      System.out.println("Edit: New=" + userEnteredString + ", Old=" + event.getOldValue());
 
-      DatabaseTableUpdater.updateDatabase(_session, _sqlResult, interpretedNewValue, event, _tableNameFromSQL);
-      _sqlResult.getResultTableLoader().writeValue(interpretedNewValue, event.getTablePosition());
-   }
-
-   private Object interpret(String value)
-   {
-      if(null == value || "".equals(value) || TableLoader.NULL_AS_STRING.equals(value))
-      {
-         return TableLoader.NULL_AS_MARKER;
-      }
-
-
-      return value;
+      DatabaseTableUpdateResult res = DatabaseTableUpdater.updateDatabase(_session, _sqlResult, userEnteredString, event, _tableNameFromSQL);
+      _sqlResult.getResultTableLoader().writeValue(res.getInterpretedNewValue(), event.getTablePosition());
    }
 
    public void setEditable(boolean b)

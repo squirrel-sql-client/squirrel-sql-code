@@ -19,8 +19,20 @@ public class SQLResultMetaDataFacade
       return getColumnNames().get(resultColIx);
    }
 
+   public String getColumnClassNameAt(int resultColIx)
+   {
+      return _getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_CLASS_NAME).get(resultColIx);
+   }
+
+
    public List<String> getColumnNames()
    {
-      return _resultMetaDataTableLoader.getCellsAsString(ResultSetMetaDataLoaderConstants.GET_COLUMN_NAME.getMetaDataColumnName());
+      return _getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_NAME);
    }
+
+   private List<String> _getMetaDataCells(ResultSetMetaDataLoaderConstants resultSetMetaDataLoaderConstant)
+   {
+      return _resultMetaDataTableLoader.getCellsAsString(resultSetMetaDataLoaderConstant.getMetaDataColumnName());
+   }
+
 }
