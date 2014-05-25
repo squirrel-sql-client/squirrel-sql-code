@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
+import org.squirrelsql.table.NullMarker;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class DatabaseTableUpdater
 {
-   public static void updateDatabase(Session session, SQLResult sqlResult, TableColumn.CellEditEvent event, String tableNameFromSQL)
+   public static void updateDatabase(Session session, SQLResult sqlResult, Object interpretedNewValue, TableColumn.CellEditEvent event, String tableNameFromSQL)
    {
       List row = (List) event.getRowValue();
 
@@ -26,12 +27,22 @@ public class DatabaseTableUpdater
             "UPDATE " + tableNameFromSQL +
             " SET " + sqlResultMetaDataFacade.getColumnNameAt(editColIx) + " = ? WHERE ";
 
-      parameters.add(event.getNewValue());
+      if (interpretedNewValue instanceof NullMarker)
+      {
+         parameters.add(null);
+      }
+      else
+      {
+         parameters.add(interpretedNewValue);
+      }
 
       List<String> colNames = sqlResultMetaDataFacade.getColumnNames();
 
       HashSet<String> addedColNames = new HashSet<>();
 
+
+
+      String catenation = "";
       for (int i = 0; i < colNames.size(); i++)
       {
          String colName = colNames.get(i);
@@ -40,28 +51,32 @@ public class DatabaseTableUpdater
          {
             continue;
          }
+         addedColNames.add(colName);
 
+
+         Object whereVal;
 
          if(i == editColIx)
          {
-            parameters.add(event.getOldValue());
+            whereVal = event.getOldValue();
          }
          else
          {
-            Object val = ((SimpleObjectProperty) row.get(i)).get();
-            parameters.add(val);
+            whereVal = ((SimpleObjectProperty) row.get(i)).get();
          }
 
-         if(i == 0)
+         if (null == whereVal || whereVal instanceof NullMarker)
          {
-            sql += colName + " = ? ";
+            sql += catenation + colName + " IS NULL ";
          }
          else
          {
-            sql += " AND " + colName + " = ? ";
+            parameters.add(whereVal);
+            sql += catenation + colName + " = ? ";
          }
 
-         addedColNames.add(colName);
+
+         catenation = " AND ";
       }
 
       try

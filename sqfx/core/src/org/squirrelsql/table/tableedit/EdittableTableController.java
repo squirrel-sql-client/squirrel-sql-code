@@ -9,6 +9,7 @@ import javafx.util.StringConverter;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
+import org.squirrelsql.table.TableLoader;
 
 public class EdittableTableController
 {
@@ -38,10 +39,23 @@ public class EdittableTableController
 
    private void onEditCommit(TableColumn.CellEditEvent event)
    {
-      Object newValue = event.getNewValue();
-      System.out.println("Edit: New=" + newValue + ", Old=" + event.getOldValue());
-      DatabaseTableUpdater.updateDatabase(_session, _sqlResult, event, _tableNameFromSQL);
-      _sqlResult.getResultTableLoader().writeValue(event.getNewValue(), event.getTablePosition());
+      Object interpretedNewValue = interpret((String) event.getNewValue());
+
+      System.out.println("Edit: New=" + interpretedNewValue + ", Old=" + event.getOldValue());
+
+      DatabaseTableUpdater.updateDatabase(_session, _sqlResult, interpretedNewValue, event, _tableNameFromSQL);
+      _sqlResult.getResultTableLoader().writeValue(interpretedNewValue, event.getTablePosition());
+   }
+
+   private Object interpret(String value)
+   {
+      if(null == value || "".equals(value) || TableLoader.NULL_AS_STRING.equals(value))
+      {
+         return TableLoader.NULL_AS_MARKER;
+      }
+
+
+      return value;
    }
 
    public void setEditable(boolean b)

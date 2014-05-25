@@ -15,7 +15,9 @@ import java.util.List;
 
 public class TableLoader
 {
-   private static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty("<null>");
+   public static final String NULL_AS_STRING = "<null>";
+   public static final NullMarker NULL_AS_MARKER = new NullMarker();
+   public static final SimpleObjectProperty NULL_PROPERTY = new SimpleObjectProperty(NULL_AS_MARKER);
    private final CellValueReader _cellValueReader;
    private List<ColumnHandle> _columnHandles = new ArrayList<>();
 
