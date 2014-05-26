@@ -8,9 +8,17 @@ import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.NullMarker;
 import org.squirrelsql.table.TableLoader;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -36,6 +44,10 @@ public class DatabaseTableUpdater
          interpretedNewValue = interpret(userEnteredString, sqlResultMetaDataFacade.getColumnClassNameAt(editColIx));
       }
       catch (ClassNotFoundException e)
+      {
+         return new DatabaseTableUpdateResult(e);
+      }
+      catch (ParseException e)
       {
          return new DatabaseTableUpdateResult(e);
       }
@@ -115,7 +127,7 @@ public class DatabaseTableUpdater
 
    }
 
-   private static Object interpret(String userEnteredString, String columnClassName) throws ClassNotFoundException
+   private static Object interpret(String userEnteredString, String columnClassName) throws ClassNotFoundException, ParseException
    {
       if(null == userEnteredString || "".equals(userEnteredString) || TableLoader.NULL_AS_STRING.equals(userEnteredString))
       {
@@ -142,6 +154,11 @@ public class DatabaseTableUpdater
       if(Long.class.equals(clazz))
       {
          return Integer.valueOf(userEnteredString);
+      }
+
+      if(BigInteger.class.equals(clazz))
+      {
+         return new BigInteger(userEnteredString);
       }
 
       if(Short.class.equals(clazz))
@@ -173,15 +190,48 @@ public class DatabaseTableUpdater
          return Character.valueOf(userEnteredString.charAt(0));
       }
 
-      if(Double.class.equals(clazz))
+      if(Timestamp.class.equals(clazz))
       {
-         return Double.valueOf(userEnteredString);
+         String pattern = "yyyy-MM-dd HH:mm:ss";
+
+         String buf = userEnteredString.trim().substring(0, pattern.length());
+
+         return new Timestamp(new SimpleDateFormat(pattern).parse(buf).getTime());
+      }
+
+      if(Time.class.equals(clazz))
+      {
+         String pattern = "HH:mm:ss";
+
+         String buf = userEnteredString.trim().substring(0, pattern.length());
+
+         return new Time(new SimpleDateFormat(pattern).parse(buf).getTime());
+      }
+
+      if(java.sql.Date.class.equals(clazz))
+      {
+         String pattern = "yyyy-MM-dd";
+
+         String buf = userEnteredString.trim().substring(0, pattern.length());
+
+         return new java.sql.Date(new SimpleDateFormat(pattern).parse(buf).getTime());
       }
 
       if(Float.class.equals(clazz))
       {
          return Float.valueOf(userEnteredString);
       }
+
+      if(Double.class.equals(clazz))
+      {
+         return Double.valueOf(userEnteredString);
+      }
+
+      if(BigDecimal.class.equals(clazz))
+      {
+         return new BigDecimal(userEnteredString);
+      }
+
 
       return userEnteredString;
    }
