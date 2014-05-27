@@ -35,4 +35,8 @@ public class SQLResultMetaDataFacade
       return _resultMetaDataTableLoader.getCellsAsString(resultSetMetaDataLoaderConstant.getMetaDataColumnName());
    }
 
+   public int getSqlTypeAt(int editColIx)
+   {
+      return Integer.parseInt(_getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE).get(editColIx));
+   }
 }

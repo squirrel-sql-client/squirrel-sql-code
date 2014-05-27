@@ -30,7 +30,7 @@ public class DatabaseTableUpdater
 
       SQLResultMetaDataFacade sqlResultMetaDataFacade = new SQLResultMetaDataFacade(sqlResult.getResultMetaDataTableLoader());
 
-      ArrayList parameters = new ArrayList();
+      ArrayList<PrepStatParam> parameters = new ArrayList();
 
       int editColIx = event.getTablePosition().getColumn();
       String sql =
@@ -54,11 +54,11 @@ public class DatabaseTableUpdater
 
       if (interpretedNewValue instanceof NullMarker)
       {
-         parameters.add(null);
+         parameters.add(new PrepStatParam(null, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
       }
       else
       {
-         parameters.add(interpretedNewValue);
+         parameters.add(new PrepStatParam(interpretedNewValue, sqlResultMetaDataFacade.getSqlTypeAt(editColIx)));
       }
 
       List<String> colNames = sqlResultMetaDataFacade.getColumnNames();
@@ -96,7 +96,7 @@ public class DatabaseTableUpdater
          }
          else
          {
-            parameters.add(whereVal);
+            parameters.add(new PrepStatParam(whereVal, sqlResultMetaDataFacade.getSqlTypeAt(i)));
             sql += catenation + colName + " = ? ";
          }
 
@@ -113,8 +113,8 @@ public class DatabaseTableUpdater
 
          for (int i = 0; i < parameters.size(); i++)
          {
-            Object param = parameters.get(i);
-            prepStat.setObject(i+1, param);
+            PrepStatParam param = parameters.get(i);
+            prepStat.setObject(i+1, param.getVal(), param.getSqlType());
          }
          updateCount = prepStat.executeUpdate();
       }
