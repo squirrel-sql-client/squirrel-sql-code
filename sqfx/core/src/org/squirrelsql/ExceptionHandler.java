@@ -34,7 +34,7 @@ public class ExceptionHandler
       Platform.runLater(() -> handle(e));
    }
 
-   private static void handle(final Throwable t)
+   public static void handle(final Throwable t)
    {
       MessageHandler mh = new MessageHandler(ExceptionHandler.class, MessageHandlerDestination.MESSAGE_LOG);
       mh.error(t);

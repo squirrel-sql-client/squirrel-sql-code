@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: SQL results can be edited when only one table was selected.
+
 Bug fix: Cursor didn't blink inside the SQL editor although the editor was focused.
 
 Bug fix: Run SQL didn't work on MS-Windows when the SQL editor contained mor than one statement

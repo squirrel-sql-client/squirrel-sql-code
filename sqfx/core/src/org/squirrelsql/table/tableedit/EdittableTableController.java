@@ -9,6 +9,7 @@ import javafx.util.StringConverter;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
+import org.squirrelsql.table.NullMarker;
 import org.squirrelsql.table.TableLoader;
 
 public class EdittableTableController
@@ -44,7 +45,22 @@ public class EdittableTableController
       System.out.println("Edit: New=" + userEnteredString + ", Old=" + event.getOldValue());
 
       DatabaseTableUpdateResult res = DatabaseTableUpdater.updateDatabase(_session, _sqlResult, userEnteredString, event, _tableNameFromSQL);
-      _sqlResult.getResultTableLoader().writeValue(res.getInterpretedNewValue(), event.getTablePosition());
+      if (res.success())
+      {
+         _sqlResult.getResultTableLoader().writeValue(res.getInterpretedNewValue(), event.getTablePosition());
+      }
+      else
+      {
+         Object oldValue = event.getOldValue();
+
+         ////////////////////////////////////////////////////////////////////////////////////////
+         // This way definitely trigger the UI update back to the old value
+         _sqlResult.getResultTableLoader().writeValue(null, event.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(new NullMarker(), event.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(oldValue, event.getTablePosition());
+         //
+         ////////////////////////////////////////////////////////////////////////////////////////
+      }
    }
 
    public void setEditable(boolean b)

@@ -2,9 +2,14 @@ package org.squirrelsql.table.tableedit;
 
 public class DatabaseTableUpdateResult
 {
+   public static enum CancelReason
+   {
+      CANCELED_BY_USER, FAILED_TO_INTERPRET_USER_EDIT, FAILED_TO_EXECUTE_UPDATE, NO_ROWS_AFFECTED
+   }
+
+   private CancelReason _cancelReason;
    private Object _interpretedNewValue = null;
    private int _updateCount = -1;
-   private Throwable _updateError;
 
    public DatabaseTableUpdateResult(Object interpretedNewValue, int updateCount)
    {
@@ -12,9 +17,10 @@ public class DatabaseTableUpdateResult
       _updateCount = updateCount;
    }
 
-   public DatabaseTableUpdateResult(Exception e)
+
+   public DatabaseTableUpdateResult(CancelReason cancelReason)
    {
-      _updateError = e;
+      _cancelReason = cancelReason;
    }
 
    public Object getInterpretedNewValue()
@@ -22,13 +28,8 @@ public class DatabaseTableUpdateResult
       return _interpretedNewValue;
    }
 
-   public int getUpdateCount()
+   public boolean success()
    {
-      return _updateCount;
-   }
-
-   public Throwable getUpdateError()
-   {
-      return _updateError;
+      return null == _cancelReason;
    }
 }
