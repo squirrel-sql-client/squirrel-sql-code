@@ -44,7 +44,7 @@
 		<td><a href="#vacuum">VACUUM</a></td>
 	</tr>
 	<tr>
-		<td><a href="#explain">EXPLAIN (Query Plan)</a></td>
+		<td><a href="#explain">EXPLAIN ANALYZE (Query Plan)</a></td>
 	</tr>
 </table>
 
@@ -439,16 +439,21 @@ FROM  &lt;schema.sequencename&gt;
 <br/><hr/>
 
 <a name="explain">
-	<h3>EXPLAIN (Query Plan)</h3>
+	<h3>EXPLAIN ANALYZE (Query Plan)</h3>
 </a>
 <p>
-	The PostgreSQL-specific EXPLAIN statement shows the execution plan (query plan) of an sql statement.
+	The PostgreSQL-specific EXPLAIN ANALYZE statement shows the execution plan (query plan) of an sql statement.
 	This plugin adds an additional executor tab to the sql panel for the display of the execution plan.
 </p>
 <p>
 	To display the execution plan of a selected statement in the sql panel, switch to the Query Plan tab.<br>
 	Executing an SQL statement while the Query Plan tab is the activ executor tab, will display the query plan of the statement.
 	(Instead of actualy executing the statement on the database.)
+</p>
+<p>
+	EXPLAIN ANALYZE can be applied to any sql statement, except for DDL related. 
+	All calls are wrapped into rolled-back transactions so investigating INSERT/DELETE/UPDATE is safe.
+	This is important as postgres actually calls query when using ANALYZE to get actual times. 
 </p>
 <p align="center">
 	<img src="images/explain/explain_executor_tab.jpg" border="1">
