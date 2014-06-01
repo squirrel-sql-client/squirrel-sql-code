@@ -119,7 +119,7 @@ public class SchemaInfoCache implements Serializable
       SQLAliasSchemaProperties schemaProps =  
           _session.getAlias().getSchemaProperties();
       SchemaLoadInfo[] schemaLoadInfos = 
-          schemaProps.getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, 
+          schemaProps.fetchSchemaLoadInfos(_schemaPropsCacheIsBasedOn, 
                                          _tabelTableTypesCacheable, 
                                          _viewTableTypesCacheable);
       SessionManager sessionMgr = _session.getApplication().getSessionManager();
@@ -390,14 +390,14 @@ public class SchemaInfoCache implements Serializable
       else if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == _schemaPropsCacheIsBasedOn.getGlobalState())
       {
          SchemaTableTypeCombination[] tableTypeCombis =
-            _schemaPropsCacheIsBasedOn.getAllSchemaTableTypeCombinationsNotToBeCached(_tabelTableTypesCacheable, _viewTableTypesCacheable);
+            _schemaPropsCacheIsBasedOn.fetchAllSchemaTableTypeCombinationsNotToBeCached(_tabelTableTypesCacheable, _viewTableTypesCacheable);
 
          for (int i = 0; i < tableTypeCombis.length; i++)
          {
             clearTables(null, tableTypeCombis[i].schemaName, null, tableTypeCombis[i].types);
          }
 
-         String[] procedureSchemas = _schemaPropsCacheIsBasedOn.getAllSchemaProceduresNotToBeCached();
+         String[] procedureSchemas = _schemaPropsCacheIsBasedOn.fetchAllSchemaProceduresNotToBeCached();
          for (int i = 0; i < procedureSchemas.length; i++)
          {
             clearStoredProcedures(null, procedureSchemas[i], null);
@@ -533,7 +533,7 @@ public class SchemaInfoCache implements Serializable
 
    SchemaNameLoadInfo getSchemaNameLoadInfo()
    {
-      return _session.getAlias().getSchemaProperties().getSchemaNameLoadInfo(_schemaPropsCacheIsBasedOn);
+      return _session.getAlias().getSchemaProperties().fetchSchemaNameLoadInfo(_schemaPropsCacheIsBasedOn);
    }
 
    void writeCatalogs(String[] catalogs)
