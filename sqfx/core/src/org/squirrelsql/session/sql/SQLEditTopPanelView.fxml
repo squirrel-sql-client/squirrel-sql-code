@@ -8,9 +8,12 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="214.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.squirrelsql.session.sql.SQLEditTopPanelView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.SQLEditTopPanelView">
   <children>
     <CheckBox fx:id="chkLimitRows" layoutY="4.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="111.0" text="%session.tab.sql.executing.limit.rows" AnchorPane.rightAnchor="94.0" />
     <TextField fx:id="txtRowLimit" layoutY="3.0" prefWidth="94.0" AnchorPane.rightAnchor="5.0" />
+      <ComboBox fx:id="cboLatestSqls" layoutX="6.0" layoutY="3.0" prefHeight="25.0" prefWidth="277.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="287.0" />
+      <Button fx:id="btnOpenHistory" layoutX="337.0" layoutY="3.0" mnemonicParsing="false" AnchorPane.rightAnchor="215.0" />
+      <Button fx:id="btnAppendToEditor" layoutX="301.0" layoutY="3.0" mnemonicParsing="false" AnchorPane.rightAnchor="251.0" />
   </children>
 </AnchorPane>

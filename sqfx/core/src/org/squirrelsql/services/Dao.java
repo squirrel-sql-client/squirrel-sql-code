@@ -11,6 +11,7 @@ import org.squirrelsql.aliases.AliasProperties;
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
+import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,6 +25,7 @@ public class Dao
    public static final String FILE_NAME_DRIVERS = "drivers.json";
    public static final String FILE_NAME_ALIASES = "aliases.json";
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
+   public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
@@ -132,6 +134,16 @@ public class Dao
       {
          throw new RuntimeException(e);
       }
+   }
+
+   public static void writeSqlHistory(List<SQLHistoryEntry> sqlHistoryEntries)
+   {
+      writeObject(sqlHistoryEntries, FILE_NAME_SQL_HISTORY);
+   }
+
+   public static List<SQLHistoryEntry> loadSqlHistory()
+   {
+      return loadObjectArray(FILE_NAME_SQL_HISTORY, SQLHistoryEntry.class);
    }
 
 }

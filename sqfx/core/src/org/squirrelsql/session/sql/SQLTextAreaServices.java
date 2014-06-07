@@ -177,4 +177,9 @@ public class SQLTextAreaServices
    {
       _parserEventsProcessor.endProcessing();
    }
+
+   public void appendToEditor(String sql)
+   {
+      _sqlTextArea.appendText(sql);
+   }
 }

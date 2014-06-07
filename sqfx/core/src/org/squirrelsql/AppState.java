@@ -23,6 +23,7 @@ public class AppState
    private List<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
    private ActionMangerImpl _actionMangerImpl = new ActionMangerImpl(_sessionManager);
+   private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
 
 
    public static AppState get()
@@ -113,5 +114,10 @@ public class AppState
    public void removeApplicationCloseListener(ApplicationCloseListener l)
    {
       _applicationCloseListeners.remove(l);
+   }
+
+   public SqlHistoryManager getSqlHistoryManager()
+   {
+      return _sqlHistoryManager;
    }
 }

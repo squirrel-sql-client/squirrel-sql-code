@@ -1,8 +1,13 @@
 package org.squirrelsql.session.sql;
 
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
+import org.squirrelsql.AppState;
+import org.squirrelsql.Props;
 import org.squirrelsql.services.FxmlHelper;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.Utils;
 
@@ -11,14 +16,19 @@ public class SQLEditTopPanelCtrl
    private static final String LIMIT_ROWS = "sql.limit.rows";
    private static final String  LIMIT_ROWS_COUNT = "sql.limit.rows.count";
    public static final int DEFAULT_ROW_LIMIT_COUNT = 100;
+   private final I18n _i18n = new I18n(getClass());
    private Pref _pref = new Pref(getClass());
 
 
    private final SQLEditTopPanelView _view;
    private final Region _region;
+   private SQLTextAreaServices _sqlTextAreaServices;
 
-   public SQLEditTopPanelCtrl()
+   private boolean _dontReactToCboChanges;
+
+   public SQLEditTopPanelCtrl(SQLTextAreaServices sqlTextAreaServices)
    {
+      _sqlTextAreaServices = sqlTextAreaServices;
       FxmlHelper<SQLEditTopPanelView> fxmlHelper = new FxmlHelper<>(SQLEditTopPanelView.class);
 
       _view = fxmlHelper.getView();
@@ -28,12 +38,47 @@ public class SQLEditTopPanelCtrl
       _view.chkLimitRows.setSelected(_pref.getBoolean(LIMIT_ROWS, true));
       _view.txtRowLimit.setText("" + _pref.getInt(LIMIT_ROWS_COUNT, DEFAULT_ROW_LIMIT_COUNT));
 
+      _view.btnOpenHistory.setGraphic(new Props(this.getClass()).getImageView("sql_history.png"));
+      _view.btnOpenHistory.setTooltip(new Tooltip(_i18n.t("sqlhistory.search")));
+
+      _view.btnAppendToEditor.setGraphic(new Props(this.getClass()).getImageView("to_editor.png"));
+      _view.btnAppendToEditor.setTooltip(new Tooltip(_i18n.t("sqlhistory.append.to.editor")));
+
+
+      _view.cboLatestSqls.getItems().addAll(AppState.get().getSqlHistoryManager().getHistory());
+      if(0 < _view.cboLatestSqls.getItems().size())
+      {
+         _view.cboLatestSqls.getSelectionModel().selectFirst();
+      }
+      _view.btnAppendToEditor.setOnAction(e -> onAppendToEditor());
+      _view.cboLatestSqls.setOnAction(e -> onAppendToEditor());
+
+
+
       Utils.makePositiveIntegerField(_view.txtRowLimit);
 
       onChkRowLimitChanged();
 
       _view.chkLimitRows.setOnAction(event -> onChkRowLimitChanged());
 
+   }
+
+   private void onAppendToEditor()
+   {
+      if(_dontReactToCboChanges)
+      {
+         return;
+      }
+
+
+      SQLHistoryEntry selectedItem = _view.cboLatestSqls.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         return;
+      }
+
+      _sqlTextAreaServices.appendToEditor("\n" + selectedItem.getSql());
    }
 
    private void onChkRowLimitChanged()
@@ -50,6 +95,10 @@ public class SQLEditTopPanelCtrl
    {
       _pref.set(LIMIT_ROWS, _view.chkLimitRows.isSelected());
       _pref.set(LIMIT_ROWS_COUNT, getRowLimit());
+
+      FilteredList<SQLHistoryEntry> newEntries = _view.cboLatestSqls.getItems().filtered(sh -> sh.isNew());
+
+      AppState.get().getSqlHistoryManager().addAll(newEntries);
    }
 
    private int _getRowLimit()
@@ -73,5 +122,23 @@ public class SQLEditTopPanelCtrl
       }
 
       return null;
+   }
+
+   public void addSqlToHistory(String sql)
+   {
+      SQLHistoryEntry buf = new SQLHistoryEntry(sql);
+
+      try
+      {
+         _dontReactToCboChanges = true;
+         _view.cboLatestSqls.getItems().remove(buf);
+
+         _view.cboLatestSqls.getItems().add(0, buf);
+         _view.cboLatestSqls.getSelectionModel().selectFirst();
+      }
+      finally
+      {
+         _dontReactToCboChanges = false;
+      }
    }
 }

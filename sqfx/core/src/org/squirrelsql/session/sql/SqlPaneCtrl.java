@@ -31,7 +31,7 @@ import java.util.List;
 public class SqlPaneCtrl
 {
    private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
-   private final SQLEditTopPanelCtrl _sqlEditTopPanelCtrl = new SQLEditTopPanelCtrl();
+   private final SQLEditTopPanelCtrl _sqlEditTopPanelCtrl;
 
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private I18n _i18n = new I18n(getClass());
@@ -94,7 +94,10 @@ public class SqlPaneCtrl
       _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
 
       _sqlPane = new BorderPane();
+
+      _sqlEditTopPanelCtrl = new SQLEditTopPanelCtrl(_sqlTextAreaServices);
       _sqlPane.setTop(_sqlEditTopPanelCtrl.getView());
+
       _sqlPane.setCenter(_sqlTabSplitPane);
 
       SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
@@ -203,8 +206,7 @@ public class SqlPaneCtrl
 
          _mh.info(_i18n.t("session.tab.sql.executing.times", statExec.getBestQueryCount(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
 
-
-
+         _sqlEditTopPanelCtrl.addSqlToHistory(sql);
       }
    }
 
