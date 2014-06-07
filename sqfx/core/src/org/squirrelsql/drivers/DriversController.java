@@ -4,14 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.squirrelsql.AppState;
-import org.squirrelsql.DockPaneChanel;
-import org.squirrelsql.PreDefinedDrivers;
-import org.squirrelsql.Props;
+import org.squirrelsql.*;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
-
-import java.util.ArrayList;
 
 public class DriversController
 {
@@ -47,7 +42,7 @@ public class DriversController
          _lstDrivers.getSelectionModel().select(0);
       }
 
-      AppState.get().addApplicationCloseListener(this::onApplicationClosing);
+      AppState.get().addApplicationCloseListener(this::onApplicationClosing, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
 
 
    }

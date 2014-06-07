@@ -64,7 +64,7 @@ public class SessionCtrl
       NewSqlTabHelper.registerSessionTabListener(sessionTabContext, _sessionTab);
 
       _applicationCloseListener = this::onClose;
-      AppState.get().addApplicationCloseListener(_applicationCloseListener);
+      AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
    }
 
    private void onSelectionChanged(Event e)

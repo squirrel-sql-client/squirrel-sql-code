@@ -20,7 +20,7 @@ public class AppState
    private StatusBarCtrl _statusBarCtrl = new StatusBarCtrl();
    private MessagePanelCtrl _messagePanelCtrl = new MessagePanelCtrl();
 
-   private List<ApplicationCloseListener> _applicationCloseListeners = new ArrayList<>();
+   private List<CloseListenerWithFireTime> _applicationCloseListeners = new ArrayList<>();
    private SessionManager _sessionManager = new SessionManager();
    private ActionMangerImpl _actionMangerImpl = new ActionMangerImpl(_sessionManager);
    private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
@@ -86,18 +86,27 @@ public class AppState
       _propertiesHandler.doAfterBootstrap();
    }
 
-   public void addApplicationCloseListener(ApplicationCloseListener l)
+   public void addApplicationCloseListener(ApplicationCloseListener l, ApplicationCloseListener.FireTime fireTime)
    {
-      _applicationCloseListeners.add(l);
+      _applicationCloseListeners.add(new CloseListenerWithFireTime(l, fireTime));
    }
 
    public void fireApplicationClosing()
    {
-      ApplicationCloseListener[] clone = _applicationCloseListeners.toArray(new ApplicationCloseListener[_applicationCloseListeners.size()]);
+      _fireApplicationClosing(ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
+      _fireApplicationClosing(ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
+   }
 
-      for (ApplicationCloseListener applicationCloseListener : clone)
+   private void _fireApplicationClosing(ApplicationCloseListener.FireTime fireTime)
+   {
+      CloseListenerWithFireTime[] clone = _applicationCloseListeners.toArray(new CloseListenerWithFireTime[_applicationCloseListeners.size()]);
+
+      for (CloseListenerWithFireTime applicationCloseListener : clone)
       {
-         applicationCloseListener.applicationClosing();
+         if (applicationCloseListener.getFireTime() == fireTime)
+         {
+            applicationCloseListener.getListener().applicationClosing();
+         }
       }
    }
 
@@ -113,7 +122,14 @@ public class AppState
 
    public void removeApplicationCloseListener(ApplicationCloseListener l)
    {
-      _applicationCloseListeners.remove(l);
+      for (CloseListenerWithFireTime applicationCloseListener : _applicationCloseListeners)
+      {
+         if(applicationCloseListener.getListener().equals(l))
+         {
+            _applicationCloseListeners.remove(applicationCloseListener);
+            break;
+         }
+      }
    }
 
    public SqlHistoryManager getSqlHistoryManager()

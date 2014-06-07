@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import org.squirrelsql.AppState;
+import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.DockPaneChanel;
 import org.squirrelsql.Props;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
@@ -95,7 +96,7 @@ public class AliasesController
       //
       //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      AppState.get().addApplicationCloseListener(this::onApplicationClosing);
+      AppState.get().addApplicationCloseListener(this::onApplicationClosing, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
 
    }
 
