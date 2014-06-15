@@ -10,6 +10,8 @@ import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.session.Session;
+import org.squirrelsql.session.SessionTabContext;
 
 public class SQLEditTopPanelCtrl
 {
@@ -26,7 +28,7 @@ public class SQLEditTopPanelCtrl
 
    private boolean _dontReactToCboChanges;
 
-   public SQLEditTopPanelCtrl(SQLTextAreaServices sqlTextAreaServices)
+   public SQLEditTopPanelCtrl(SQLTextAreaServices sqlTextAreaServices, Session session)
    {
       _sqlTextAreaServices = sqlTextAreaServices;
       FxmlHelper<SQLEditTopPanelView> fxmlHelper = new FxmlHelper<>(SQLEditTopPanelView.class);
@@ -40,6 +42,8 @@ public class SQLEditTopPanelCtrl
 
       _view.btnOpenHistory.setGraphic(new Props(this.getClass()).getImageView("sql_history.png"));
       _view.btnOpenHistory.setTooltip(new Tooltip(_i18n.t("sqlhistory.search")));
+
+      _view.btnOpenHistory.setOnAction(e -> new SQLHistorySearchCtrl(_sqlTextAreaServices, session, _view.cboLatestSqls.getItems()));
 
       _view.btnAppendToEditor.setGraphic(new Props(this.getClass()).getImageView("to_editor.png"));
       _view.btnAppendToEditor.setTooltip(new Tooltip(_i18n.t("sqlhistory.append.to.editor")));

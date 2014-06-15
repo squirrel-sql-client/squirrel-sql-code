@@ -9,13 +9,13 @@ import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
+import org.squirrelsql.services.SplitPositionSaver;
 import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.session.sql.NewSqlTabHelper;
 import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
-import org.squirrelsql.workaround.SplitDividerWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class SessionCtrl
 {
-   private static final String PREF_OBJECT_TREE_SPLIT_LOC = "objecttree.split.loc";
+   private SplitPositionSaver _objecttreeSplitPosSaver = new SplitPositionSaver(getClass(), "objecttree.split.loc");
 
    private static final String PREF_PRE_SELECT_SQL_TAB = "preselect.sql";
 
@@ -141,8 +141,8 @@ public class SessionCtrl
       _objectTabSplitPane.setOrientation(Orientation.HORIZONTAL);
       _objectTabSplitPane.getItems().add(objectsTree);
       _objectTabSplitPane.getItems().add(new TreeDetailsController(objectsTree, _sessionTabContext.getSession()).getComponent());
-      SplitDividerWA.adjustDivider(_objectTabSplitPane, 0, _pref.getDouble(PREF_OBJECT_TREE_SPLIT_LOC, 0.5d));
 
+      _objecttreeSplitPosSaver.apply(_objectTabSplitPane);
 
       TreeItem<ObjectTreeNode> aliasItem = ObjectTreeUtil.findSingleTreeItem(objectsTree, ObjectTreeNodeTypeKey.ALIAS_TYPE_KEY);
       aliasItem.setExpanded(true);
@@ -192,7 +192,9 @@ public class SessionCtrl
 
    private void onClose()
    {
-      _pref.set(PREF_OBJECT_TREE_SPLIT_LOC, _objectTabSplitPane.getDividerPositions()[0]);
+      _objecttreeSplitPosSaver.save(_objectTabSplitPane);
+
+
       _pref.set(PREF_PRE_SELECT_SQL_TAB, _objectTreeAndSqlTabPane.getSelectionModel().getSelectedItem() == _sqlTabCtrl.getSqlTab());
 
       _sqlTabCtrl.close();

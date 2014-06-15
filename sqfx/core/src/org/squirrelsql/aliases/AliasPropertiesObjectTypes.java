@@ -11,7 +11,7 @@ public enum AliasPropertiesObjectTypes
 
    private static class I18nHelper
    {
-      private static I18n i18n = new I18n(SchemaLoadOptions.class);
+      private static I18n i18n = new I18n(AliasPropertiesObjectTypes.class);
    }
 
    private String _toString;

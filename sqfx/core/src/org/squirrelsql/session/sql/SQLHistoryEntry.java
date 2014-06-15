@@ -1,5 +1,7 @@
 package org.squirrelsql.session.sql;
 
+import org.squirrelsql.table.RowObjectTableLoaderColumn;
+
 import java.util.Date;
 
 public class SQLHistoryEntry
@@ -45,6 +47,7 @@ public class SQLHistoryEntry
    }
 
 
+   @RowObjectTableLoaderColumn(columnIndex = 1, columnHeaderI18nKey = "SQLHistoryEntry.col.header.sql")
    public String getSql()
    {
       return _sql;
@@ -78,6 +81,7 @@ public class SQLHistoryEntry
       _new = aNew;
    }
 
+   @RowObjectTableLoaderColumn(columnIndex = 0, columnHeaderI18nKey = "SQLHistoryEntry.col.header.last.used")
    public Date getStamp()
    {
       return _stamp;

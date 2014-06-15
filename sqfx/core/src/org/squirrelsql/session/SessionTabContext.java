@@ -56,4 +56,9 @@ public class SessionTabContext
    {
       return _session.getMainTabContext().matches(other._session.getMainTabContext());
    }
+
+   public String getSessionTabTitle()
+   {
+      return SessionUtil.getSessionTabTitle(this);
+   }
 }

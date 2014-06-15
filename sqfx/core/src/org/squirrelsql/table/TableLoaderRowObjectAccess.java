@@ -2,7 +2,7 @@ package org.squirrelsql.table;
 
 public interface TableLoaderRowObjectAccess<T>
 {
-   Object getColumn(T o, int colIx);
+   Object getColumn(T rowObject, int colIx);
 
-   void setColumn(T o, int colIx, Object cellValue);
+   void setColumn(T rowObject, int colIx, Object cellValue);
 }

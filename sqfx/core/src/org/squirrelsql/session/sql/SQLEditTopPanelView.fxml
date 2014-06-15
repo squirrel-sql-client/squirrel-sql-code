@@ -12,7 +12,7 @@
   <children>
     <CheckBox fx:id="chkLimitRows" layoutY="4.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="111.0" text="%session.tab.sql.executing.limit.rows" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="94.0" AnchorPane.topAnchor="4.0" />
     <TextField fx:id="txtRowLimit" layoutY="3.0" prefWidth="94.0" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="3.0" />
-      <ComboBox fx:id="cboLatestSqls" layoutX="6.0" prefHeight="31.0" prefWidth="277.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="287.0" AnchorPane.topAnchor="1.0" />
+      <ComboBox fx:id="cboLatestSqls" layoutX="6.0" prefHeight="31.0" prefWidth="277.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="287.0" AnchorPane.topAnchor="1.0" />
       <Button fx:id="btnOpenHistory" layoutX="337.0" layoutY="3.0" mnemonicParsing="false" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="215.0" AnchorPane.topAnchor="3.0" />
       <Button fx:id="btnAppendToEditor" layoutX="301.0" layoutY="3.0" mnemonicParsing="false" AnchorPane.bottomAnchor="3.0" AnchorPane.rightAnchor="251.0" AnchorPane.topAnchor="3.0" />
   </children>

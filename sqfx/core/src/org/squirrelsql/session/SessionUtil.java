@@ -15,8 +15,8 @@ public class SessionUtil
 
    public static Node createSessionTabHeader(SessionTabContext tabContext, ImageView icon)
    {
-      Alias alias = tabContext.getSession().getAlias();
-      Label ret = new Label(new I18n(SessionUtil.class).t("session.tab.header", alias.getName(), alias.getUserName()));
+      String title = getSessionTabTitle(tabContext);
+      Label ret = new Label(title);
 
       if(null != icon)
       {
@@ -24,5 +24,11 @@ public class SessionUtil
       }
 
       return ret;
+   }
+
+   public static String getSessionTabTitle(SessionTabContext tabContext)
+   {
+      Alias alias = tabContext.getSession().getAlias();
+      return new I18n(SessionUtil.class).t("session.tab.header", alias.getName(), alias.getUserName());
    }
 }

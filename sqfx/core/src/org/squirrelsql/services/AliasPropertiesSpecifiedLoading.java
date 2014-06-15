@@ -86,27 +86,27 @@ public class AliasPropertiesSpecifiedLoading
    {
 
       @Override
-      public Object getColumn(AliasPropertiesSpecifiedLoading o, int colIx)
+      public Object getColumn(AliasPropertiesSpecifiedLoading rowObject, int colIx)
       {
          if(0 == colIx)
          {
-            return o._aliasPropertiesSchema;
+            return rowObject._aliasPropertiesSchema;
          }
          else if(1 == colIx)
          {
-            return o._tableOpt;
+            return rowObject._tableOpt;
          }
          else if(2 == colIx)
          {
-            return o._viewOpt;
+            return rowObject._viewOpt;
          }
          else if(3 == colIx)
          {
-            return o._procedureOpt;
+            return rowObject._procedureOpt;
          }
          else if(4 == colIx)
          {
-            return o._otherTableOpt;
+            return rowObject._otherTableOpt;
          }
          else
          {
@@ -115,27 +115,27 @@ public class AliasPropertiesSpecifiedLoading
       }
 
       @Override
-      public void setColumn(AliasPropertiesSpecifiedLoading o, int colIx, Object cellValue)
+      public void setColumn(AliasPropertiesSpecifiedLoading rowObject, int colIx, Object cellValue)
       {
          if(0 == colIx)
          {
-            o._aliasPropertiesSchema = (AliasPropertiesSchema) cellValue;
+            rowObject._aliasPropertiesSchema = (AliasPropertiesSchema) cellValue;
          }
          else if(1 == colIx)
          {
-            o._tableOpt = (SchemaLoadOptions) cellValue;
+            rowObject._tableOpt = (SchemaLoadOptions) cellValue;
          }
          else if(2 == colIx)
          {
-            o._viewOpt = (SchemaLoadOptions) cellValue;
+            rowObject._viewOpt = (SchemaLoadOptions) cellValue;
          }
          else if(3 == colIx)
          {
-            o._procedureOpt = (SchemaLoadOptions) cellValue;
+            rowObject._procedureOpt = (SchemaLoadOptions) cellValue;
          }
          else if(4 == colIx)
          {
-            o._otherTableOpt = (SchemaLoadOptions) cellValue;
+            rowObject._otherTableOpt = (SchemaLoadOptions) cellValue;
          }
          else
          {

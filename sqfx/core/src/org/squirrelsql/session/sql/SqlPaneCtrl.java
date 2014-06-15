@@ -30,14 +30,12 @@ import java.util.List;
 
 public class SqlPaneCtrl
 {
-   private static final String PREF_SQL_SPLIT_LOC = "sql.split.loc";
+   private SplitPositionSaver _sqlSplitPosSaver = new SplitPositionSaver(getClass(), "sql.split.loc");
+
    private final SQLEditTopPanelCtrl _sqlEditTopPanelCtrl;
 
    private MessageHandler _mh = new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_PANEL);
    private I18n _i18n = new I18n(getClass());
-
-   private Pref _pref = new Pref(getClass());
-
 
    private SQLTextAreaServices _sqlTextAreaServices;
    private CompletionCtrl _completionCtrl;
@@ -95,12 +93,12 @@ public class SqlPaneCtrl
 
       _sqlPane = new BorderPane();
 
-      _sqlEditTopPanelCtrl = new SQLEditTopPanelCtrl(_sqlTextAreaServices);
+      _sqlEditTopPanelCtrl = new SQLEditTopPanelCtrl(_sqlTextAreaServices, _sessionTabContext.getSession());
       _sqlPane.setTop(_sqlEditTopPanelCtrl.getView());
 
       _sqlPane.setCenter(_sqlTabSplitPane);
 
-      SplitDividerWA.adjustDivider(_sqlTabSplitPane, 0, _pref.getDouble(PREF_SQL_SPLIT_LOC, 0.5d));
+      _sqlSplitPosSaver.apply(_sqlTabSplitPane);
    }
 
    public BorderPane getSqlPane()
@@ -234,7 +232,7 @@ public class SqlPaneCtrl
    public void close()
    {
       _sqlTextAreaServices.close();
-      _pref.set(PREF_SQL_SPLIT_LOC, _sqlTabSplitPane.getDividerPositions()[0]);
+      _sqlSplitPosSaver.save(_sqlTabSplitPane);
       _sqlEditTopPanelCtrl.close();
    }
 }

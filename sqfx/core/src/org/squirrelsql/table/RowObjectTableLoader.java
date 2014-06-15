@@ -1,7 +1,9 @@
 package org.squirrelsql.table;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import org.squirrelsql.aliases.SchemaLoadOptions;
+import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,11 @@ public class RowObjectTableLoader<T>
       }
    }
 
+   public void addRowObjects(ObservableList<T> rowObjects)
+   {
+      addRowObjects(rowObjects, new AnnotationTableLoaderRowObjectAccess<T>());
+   }
+
    public void addRowObject(T rowObject, TableLoaderRowObjectAccess<T> rowObjectAccess)
    {
       RowObjectHandle h = new RowObjectHandle<T>(rowObject, rowObjectAccess, _tableLoader.getColumnCount());
@@ -75,5 +82,11 @@ public class RowObjectTableLoader<T>
    {
       _tableLoader.clearRows();
       _rowObjectHandles.clear();
+   }
+
+   public void initColsByAnnotations(Class<T> rowObjectClass)
+   {
+      AnnotationTableLoaderRowObjectAccess.initColsByAnnotations(this, rowObjectClass);
+
    }
 }

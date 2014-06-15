@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="632.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.SQLHistorySearchView">
+   <children>
+      <Label layoutX="14.0" layoutY="15.0" text="%SQLHistorySearchCtrl.sql" AnchorPane.leftAnchor="14.0" />
+      <ComboBox fx:id="cboSearchType" layoutX="46.0" layoutY="9.0" prefWidth="150.0" AnchorPane.leftAnchor="46.0" />
+      <TextField fx:id="txtSearchText" layoutX="204.0" layoutY="9.0" prefHeight="25.0" prefWidth="249.0" AnchorPane.leftAnchor="204.0" AnchorPane.rightAnchor="179.0" />
+      <Button fx:id="btnApply" layoutX="470.0" layoutY="9.0" mnemonicParsing="false" text="%SQLHistorySearchCtrl.apply" AnchorPane.rightAnchor="107.0" />
+      <CheckBox fx:id="chkFiltered" layoutX="544.0" layoutY="14.0" mnemonicParsing="false" text="%SQLHistorySearchCtrl.filtered" AnchorPane.rightAnchor="14.0" />
+      <SplitPane fx:id="split" layoutX="11.0" layoutY="45.0" orientation="VERTICAL" prefHeight="340.0" prefWidth="604.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="45.0" />
+   </children>
+</AnchorPane>
