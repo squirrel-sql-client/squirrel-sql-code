@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: SQL history combo box and history search dialog.
+
 Feature: SQL results can be edited when only one table was selected.
 
 Bug fix: Cursor didn't blink inside the SQL editor although the editor was focused.
