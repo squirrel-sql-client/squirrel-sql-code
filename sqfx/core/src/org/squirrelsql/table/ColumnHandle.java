@@ -16,12 +16,14 @@ public class ColumnHandle
    private String _header;
    private int _columnIndex;
    private TableColumn _tableColumn;
+   private List _selectableValues;
 
    public ColumnHandle(String header, int columnIndex, CellValueReader cellValueReader, List selectableValues)
    {
       _header = header;
       _columnIndex = columnIndex;
       _cellValueReader = cellValueReader;
+      _selectableValues = selectableValues;
 
       TableColumn tableColumn = new TableColumn(_header);
       _tableColumn = tableColumn;
@@ -74,5 +76,10 @@ public class ColumnHandle
    {
       _tableColumn.setCellFactory(_originalCellFactory);
       _tableColumn.setEditable(false);
+   }
+
+   public List getSelectableValues()
+   {
+      return _selectableValues;
    }
 }

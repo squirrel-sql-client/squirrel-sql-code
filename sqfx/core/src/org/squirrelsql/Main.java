@@ -21,7 +21,6 @@ public class Main extends Application
    private I18n i18n = new I18n(getClass());
    private Pref pref = new Pref(getClass());
 
-   public static final String VERSION = "4fx";
    private SplitController _splitController;
 
    @Override
@@ -31,7 +30,7 @@ public class Main extends Application
 
       AppState.init(primaryStage, getParameters());
 
-      primaryStage.setTitle(i18n.t("mainWin.title") + " " + VERSION);
+      primaryStage.setTitle(i18n.t("mainWin.title"));
 
       DockPaneChanel dockPaneChanel = new DockPaneChanel();
 

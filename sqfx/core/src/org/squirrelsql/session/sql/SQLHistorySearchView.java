@@ -5,8 +5,8 @@ import javafx.scene.control.*;
 
 public class SQLHistorySearchView
 {
-   @FXML ComboBox cboSearchType;
-   @FXML TextField txtSearchText;
+   @FXML ComboBox<SqlHistoryFilterType> cboFilterType;
+   @FXML TextField txtFilter;
    @FXML Button btnApply;
    @FXML CheckBox chkFiltered;
    @FXML SplitPane split;

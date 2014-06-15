@@ -2,7 +2,6 @@ package org.squirrelsql.table;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
-import org.squirrelsql.aliases.SchemaLoadOptions;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
 
 import java.util.ArrayList;
@@ -88,5 +87,46 @@ public class RowObjectTableLoader<T>
    {
       AnnotationTableLoaderRowObjectAccess.initColsByAnnotations(this, rowObjectClass);
 
+   }
+
+   public RowObjectTableLoader<T> cloneLoaderFor(List<T> newRows)
+   {
+      return cloneLoaderFor(newRows, new AnnotationTableLoaderRowObjectAccess<T>());
+   }
+
+   public RowObjectTableLoader<T> cloneLoaderFor(List<T> newRows, TableLoaderRowObjectAccess<T> cols)
+   {
+      RowObjectTableLoader<T> ret = new RowObjectTableLoader<>();
+
+      for (ColumnHandle columnHandle : _tableLoader.getColumnHandles())
+      {
+         ret.addColumn(columnHandle.getHeader(), columnHandle.getSelectableValues());
+      }
+
+      ret.addRowObjects(newRows, cols);
+
+      return ret;
+   }
+
+   public RowObjectTableLoader<T> cloneLoader()
+   {
+      return cloneLoader(new AnnotationTableLoaderRowObjectAccess<T>());
+   }
+
+   public RowObjectTableLoader<T> cloneLoader(TableLoaderRowObjectAccess<T> cols)
+   {
+      return cloneLoaderFor(getRowObjects());
+   }
+
+   public List<SQLHistoryEntry> getRowObjectsForIndices(List<Integer> selectedIndices)
+   {
+      List<SQLHistoryEntry> ret = new ArrayList<>();
+
+      for (Integer ix : selectedIndices)
+      {
+         ret.add((SQLHistoryEntry) _rowObjectHandles.get(ix).getRowObject());
+      }
+
+      return ret;
    }
 }
