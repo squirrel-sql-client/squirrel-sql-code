@@ -28,13 +28,9 @@ public class ErrorToolTipHandler
                   "-fx-padding: 5;");
       popup.getContent().add(popupMsg);
 
-      _sqlTextArea.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, e -> {
-         onMouseOverTextBegin(popup, popupMsg, e);
-      });
+      _sqlTextArea.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_BEGIN, e -> onMouseOverTextBegin(popup, popupMsg, e));
 
-      _sqlTextArea.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, e -> {
-         popup.hide();
-      });
+      _sqlTextArea.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END, e -> popup.hide() );
 
    }
 
