@@ -1,7 +1,11 @@
 package org.squirrelsql.session.sql.syntax;
 
+import javafx.geometry.Point2D;
+import javafx.scene.control.Label;
+import javafx.stage.Popup;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.MouseOverTextEvent;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
 import org.squirrelsql.session.schemainfo.SchemaCache;
 
@@ -10,6 +14,7 @@ import javax.swing.text.Segment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +22,7 @@ import java.util.List;
 public class SQLSyntaxHighlighting
 {
 
+   private final ErrorToolTipHandler _errorToolTipHandler;
    private ISyntaxHighlightTokenMatcher _syntaxHighlightTokenMatcher;
    private CodeArea _sqlTextArea;
    private SchemaCache _schemaCache;
@@ -33,6 +39,8 @@ public class SQLSyntaxHighlighting
 
       _sqlTextArea.textProperty().addListener((observable, oldText, newText) -> onTextPropertyChanged(newText));
       _syntaxHighlightTokenMatcher = syntaxHighlightTokenMatcher;
+
+      _errorToolTipHandler = new ErrorToolTipHandler(_sqlTextArea);
    }
 
    private void onTextPropertyChanged(String sql)
@@ -161,6 +169,7 @@ public class SQLSyntaxHighlighting
       if(_errorInfosHandler.setErrorInfos(errorInfos))
       {
          onTextPropertyChanged(_sqlTextArea.getText());
+         _errorToolTipHandler.setErrorInfos(errorInfos);
       }
    }
 }

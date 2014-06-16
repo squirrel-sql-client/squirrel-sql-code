@@ -23,12 +23,12 @@ public class CarretLocationOnScreenWA
    {
       try
       {
-         Method m = StyledTextAreaSkin.class.getDeclaredMethod("getCaretLocationOnScreen");
+         Method m = StyledTextAreaSkin.class.getDeclaredMethod("getCaretBoundsOnScreen");
 
          m.setAccessible(true);
-         Optional<Point2D> buf = (Optional<Point2D>) m.invoke((StyledTextAreaSkin) sqlTextArea.getSkin());
-         Point2D ret = buf.get();
-         return new Point2D(Math.max(0d,ret.getX()-5d), ret.getY());
+         Optional<Bounds> buf = (Optional<Bounds>) m.invoke((StyledTextAreaSkin) sqlTextArea.getSkin());
+         Bounds ret = buf.get();
+         return new Point2D(Math.max(0d,ret.getMinX()), ret.getMinY());
 
          //return ((StyledTextAreaSkin)sqlTextArea.getSkin()).getCaretLocationOnScreen();
       }
