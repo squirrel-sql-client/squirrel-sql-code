@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Alias properties --> Editing schema table didn't work.
+
 Feature: SQL errors are now displayed as tool tips: If the mouse pointer is held over an error (word marked red) the tool tip is shown.
 
 Feature: SQL history combo box and history search dialog.

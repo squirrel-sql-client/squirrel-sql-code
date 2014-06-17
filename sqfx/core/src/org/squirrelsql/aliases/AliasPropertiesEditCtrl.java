@@ -126,6 +126,8 @@ public class AliasPropertiesEditCtrl
 
       AliasPropertiesSpecifiedLoading.TableLoaderAccess tableLoaderAccess = new AliasPropertiesSpecifiedLoading.TableLoaderAccess();
       _tableLoaderSchemas.addRowObjects(aliasProperties.getSpecifiedLoadings(), tableLoaderAccess);
+
+      _view.tblSchemas.setEditable(true);
       _tableLoaderSchemas.load(_view.tblSchemas);
 
       _view.chkHideEmptySchemas.setSelected(aliasProperties.isHideEmptySchemasInObjectTree());
