@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
  */
 public class ColumnDisplayDefinition
 {
-	/** Number of characters to display. */
+   /** Number of characters to display. */
 	private int _displayWidth;
 
 	/** Full name of the column, including the table Catalog, Schema and Table names. */
@@ -115,6 +115,8 @@ public class ColumnDisplayDefinition
    private Integer _absoluteWidth;
    private String _tableName;
 
+   private ResultMetaDataTable _resultMetaDataTable;
+
    /**
     * Ctor.  The dialect type is set to GENERIC, so no plugin-overriding is 
     * possible when using this constructor.
@@ -168,11 +170,14 @@ public class ColumnDisplayDefinition
                 String columnName, String label, int sqlType, String sqlTypeName,
 				boolean isNullable, int columnSize, int precision, int scale,
 				boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
-				DialectType dialectType) {
+				DialectType dialectType,
+            ResultMetaDataTable resultMetaDataTable) {
 		super();
 		init(displayWidth, fullTableColumnName, columnName, label, sqlType, 
              sqlTypeName, isNullable, columnSize, precision, scale,
              isSigned, isCurrency, isAutoIncrement, dialectType);
+
+      _resultMetaDataTable = resultMetaDataTable;
 	}
 
 	/**
@@ -537,5 +542,10 @@ public class ColumnDisplayDefinition
    public String getTableName()
    {
       return _tableName;
+   }
+
+   public ResultMetaDataTable getResultMetaDataTable()
+   {
+      return _resultMetaDataTable;
    }
 }

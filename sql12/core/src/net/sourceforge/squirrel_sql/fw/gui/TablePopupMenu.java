@@ -55,14 +55,15 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_UPDATE_STATEMENT = 5;
 		int COPY_INSERT_STATEMENT = 6;
 		int COPY_COLUMN_HEADER = 7;
-		int EXPORT_CSV = 8;
-		int SELECT_ALL = 9;
-		int ADJUST_ALL_COL_WIDTHS_ACTION = 10;
-		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 11;
-		int SHOW_ROW_NUMBERS = 12;
-		int COPY_WIKI = 13;
-		int SELECT_ROWS = 14;
-		int LAST_ENTRY = 15;
+		int SHOW_REFERENCES = 8;
+		int EXPORT_CSV = 9;
+		int SELECT_ALL = 10;
+		int ADJUST_ALL_COL_WIDTHS_ACTION = 11;
+		int ALWAYS_ADJUST_ALL_COL_WIDTHS_ACTION = 12;
+		int SHOW_ROW_NUMBERS = 13;
+		int COPY_WIKI = 14;
+		int SELECT_ROWS = 15;
+		int LAST_ENTRY = 16;
    }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -84,6 +85,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyUpdateStatementAction _copyUpdateStatement = new CopyUpdateStatementAction();
 	private CopyInsertStatementAction _copyInsertStatement = new CopyInsertStatementAction();
 	private CopyColumnHeaderAction _copyColumnHeader = new CopyColumnHeaderAction();
+	private ShowReferencesAction _showReferences = new ShowReferencesAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
    private AdjustAllColWidthsAction _adjustAllColWidthsAction = new AdjustAllColWidthsAction();
 	private AlwaysAdjustAllColWidthsAction _alwaysAdjustAllColWidthsAction = new AlwaysAdjustAllColWidthsAction();
@@ -147,6 +149,8 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_UPDATE_STATEMENT] = add(_copyUpdateStatement);
       _menuItems[IOptionTypes.COPY_INSERT_STATEMENT] = add(_copyInsertStatement);
       _menuItems[IOptionTypes.COPY_COLUMN_HEADER] = add(_copyColumnHeader);
+      addSeparator();
+		_menuItems[IOptionTypes.SHOW_REFERENCES] = add(_showReferences);
       addSeparator();
 		_menuItems[IOptionTypes.EXPORT_CSV] = add(_exportCvs);
       addSeparator();
@@ -419,6 +423,22 @@ public class TablePopupMenu extends BasePopupMenu
 				// should never happen. Just convert it to a Runtime Exception.
 				throw new RuntimeException(e);
 			}
+         }
+      }
+   }
+
+   private class ShowReferencesAction extends BaseAction
+   {
+      ShowReferencesAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.showRefernces"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            new ShowReferencesCommand(_table, _updateableModel, (JFrame) GUIUtils.getOwningFrame(_table)).execute();
          }
       }
    }

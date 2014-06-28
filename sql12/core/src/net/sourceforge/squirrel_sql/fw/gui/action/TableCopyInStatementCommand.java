@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -63,23 +64,51 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
     */
    public void execute()
    {
+      ArrayList<InStatColumnInfo> inStatColumnInfos = getInStatColumnInfos();
+
+      if(0 == inStatColumnInfos.size())
+      {
+         return;
+      }
+
+      StringBuffer buf = new StringBuffer();
+
+      for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
+      {
+         buf.append(inStatColumnInfo.getInstat()).append("\n");
+      }
+
+      final StringSelection ss = new StringSelection(buf.toString());
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+   }
+
+
+
+   public ArrayList<InStatColumnInfo> getInStatColumnInfos()
+   {
+      ArrayList<InStatColumnInfo> ret = new ArrayList<InStatColumnInfo>();
+
       int nbrSelRows = _table.getSelectedRowCount();
       int nbrSelCols = _table.getSelectedColumnCount();
       int[] selRows = _table.getSelectedRows();
       int[] selCols = _table.getSelectedColumns();
       if (selRows.length != 0 && selCols.length != 0)
       {
-         StringBuffer buf = new StringBuffer();
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
             TableColumn col = _table.getColumnModel().getColumn(selCols[colIdx]);
+
+            InStatColumnInfo infoBuf = new InStatColumnInfo();
+            ret.add(infoBuf);
 
             ColumnDisplayDefinition colDef = null;
             if(col instanceof ExtTableColumn)
             {
                colDef = ((ExtTableColumn) col).getColumnDisplayDefinition();
+               infoBuf.setColDef(colDef);
             }
 
+            StringBuffer buf = new StringBuffer();
             int lastLength = buf.length();
             buf.append("(");
             for (int rowIdx = 0; rowIdx < nbrSelRows; ++rowIdx)
@@ -89,7 +118,7 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
                   buf.append(",");
                   if(100 < buf.length() - lastLength)
                   {
-                     lastLength = buf.length(); 
+                     lastLength = buf.length();
                      buf.append("\n");
                   }
                }
@@ -97,11 +126,12 @@ public class TableCopyInStatementCommand extends TableCopySqlPartCommandBase imp
                final Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
                buf.append(getData(colDef, cellObj, StatType.IN));
             }
-            buf.append(")\n");
+            buf.append(")");
+            infoBuf.setInstat(buf);
          }
-         final StringSelection ss = new StringSelection(buf.toString());
-         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
       }
+
+      return ret;
    }
 
 }

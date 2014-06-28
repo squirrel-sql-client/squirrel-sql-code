@@ -786,6 +786,19 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return _dataSetUpdateableTableModel.editModeIsForced();
    }
 
+
+   @Override
+   public ITableInfo getTableInfo()
+   {
+      return _dataSetUpdateableTableModel.getTableInfo();
+   }
+
+   @Override
+   public ISession getSession()
+   {
+      return _dataSetUpdateableTableModel.getSession();
+   }
+
    //
    //////////////////////////////////////////////////////////////////////////////////
 

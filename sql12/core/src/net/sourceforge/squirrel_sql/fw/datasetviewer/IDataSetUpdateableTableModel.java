@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  */
 
 
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+
 /**
  * @author gwg
  *
@@ -97,4 +99,6 @@ public interface IDataSetUpdateableTableModel extends IDataSetUpdateableModel
 
    void addListener(DataSetUpdateableTableModelListener l);
    void removeListener(DataSetUpdateableTableModelListener l);
+
+   ITableInfo getTableInfo();
 }

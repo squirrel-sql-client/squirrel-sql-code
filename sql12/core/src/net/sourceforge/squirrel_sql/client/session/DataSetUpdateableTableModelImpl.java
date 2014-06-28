@@ -968,4 +968,16 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    public void setWhereClausePartUtil(IWhereClausePartUtil whereClausePartUtil) {
 	   this.whereClausePartUtil = whereClausePartUtil;
    }
+
+   @Override
+   public ITableInfo getTableInfo()
+   {
+      return ti;
+   }
+
+   @Override
+   public ISession getSession()
+   {
+      return _session;
+   }
 }

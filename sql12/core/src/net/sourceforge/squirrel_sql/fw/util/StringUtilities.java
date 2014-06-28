@@ -327,4 +327,14 @@ public class StringUtilities
 		}
 		return value;
 	}
+
+   public static String emptyToNull(String s)
+   {
+      if(isEmpty(s))
+      {
+         return null;
+      }
+
+      return s;
+   }
 }

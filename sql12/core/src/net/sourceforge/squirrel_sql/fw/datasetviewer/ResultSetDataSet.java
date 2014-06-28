@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -433,10 +434,30 @@ public Object get(int columnIndex) {
                                                      isSigned,
                                                      isCurrency,
                                                      isAutoIncrement,
-                                                     _dialectType);
+                                                     _dialectType,
+                                                     createResultSetMetaDataTable(md, idx));
       }
       return columnDefs;
    }
+
+   private ResultMetaDataTable createResultSetMetaDataTable(ResultSetMetaData md, int idx) throws SQLException
+   {
+      try
+      {
+         if(StringUtilities.isEmpty(md.getTableName(idx)))
+         {
+            return null;
+         }
+
+         return new ResultMetaDataTable(StringUtilities.emptyToNull(md.getCatalogName(idx)), StringUtilities.emptyToNull(md.getSchemaName(idx)), md.getTableName(idx));
+      }
+      catch (Exception e)
+      {
+         s_log.error("Failed to get table info from ResultSetMetaData.", e);
+         return null;
+      }
+   }
+
 
    private String getColumnName(int i, ResultSetMetaData md, int idx) throws SQLException {
 	   if (i < tableColumnInfos.length) {
