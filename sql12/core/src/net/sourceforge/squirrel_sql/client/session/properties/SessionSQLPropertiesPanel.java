@@ -120,7 +120,7 @@ public class SessionSQLPropertiesPanel
 		_myPanel.applyChanges(_props);
 	}
 
-	private static final class SQLPropertiesPanel extends JPanel
+	private static class SQLPropertiesPanel extends JPanel
 	{
 		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
 		private JCheckBox _showSQLErrorsInTabChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.showSQLErrorsInTab"));
@@ -130,6 +130,8 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 
       private SQLResultConfigCtrl _sqlResultConfigCtrl = new SQLResultConfigCtrl();
+
+      private JumpToObjectTreeConfigCtrl _jumpToObjectTreeConfigCtrl = new JumpToObjectTreeConfigCtrl();
 
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
@@ -174,6 +176,7 @@ public class SessionSQLPropertiesPanel
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
          _sqlResultConfigCtrl.loadData(props);
+         _jumpToObjectTreeConfigCtrl.loadData(props);
 
          if(null != _session)
          {
@@ -256,6 +259,9 @@ public class SessionSQLPropertiesPanel
 
          props.setSQLUseFetchSize(_sqlResultConfigCtrl.isUseFetchSize());
 			props.setSQLFetchSize(_sqlResultConfigCtrl.getFetchSize());
+
+         props.setAllowCtrlBJumpToObjectTree(_jumpToObjectTreeConfigCtrl.isAllowCtrlBJumpToObjectTree());
+			props.setAllowCtrlMouseClickJumpToObjectTree(_jumpToObjectTreeConfigCtrl.isAllowCtrlMouseClickJumpToObjectTree());
 
 			props.setSQLStatementSeparator(_stmtSepField.getText());
 			props.setStartOfLineComment(_solCommentField.getText());
@@ -344,12 +350,23 @@ public class SessionSQLPropertiesPanel
 			gbc.gridwidth = 3;
 			pnl.add(_showResultsMetaChk, gbc);
 
+
+         Insets oldInsets;
+
          ++gbc.gridy;
          gbc.gridwidth = GridBagConstraints.REMAINDER;
-         Insets oldInsets = gbc.insets;
+         oldInsets = gbc.insets;
+         gbc.insets = new Insets(oldInsets.top + 10, oldInsets.left, oldInsets.bottom + 10, oldInsets.right);
+         pnl.add(_jumpToObjectTreeConfigCtrl.createJumpToObjectTreeConfigPanel(), gbc);
+         gbc.insets = oldInsets;
+
+         ++gbc.gridy;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         oldInsets = gbc.insets;
          gbc.insets = new Insets(oldInsets.top + 10, oldInsets.left, oldInsets.bottom + 10, oldInsets.right);
          pnl.add(_sqlResultConfigCtrl.createResultLimitAndReadOnPanel(), gbc);
          gbc.insets = oldInsets;
+
 
          ++gbc.gridy; // new line
          gbc.gridx = 0;

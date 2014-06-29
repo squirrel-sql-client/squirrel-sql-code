@@ -8,6 +8,10 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+- Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + Mouse click
+    See Menu File --> New Session Properties --> Tab SQL --> Section Jump to object tree
+    This will fix bug #982
+
 - Patch #66 New toolbar button to clone the current Session with a new connection.
     The button is right next to the new SQL tab button.
     Thanks to Jaroslaw Jarmolowicz for the patch

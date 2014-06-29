@@ -5,13 +5,10 @@ import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
-import javax.swing.text.JTextComponent;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
@@ -21,6 +18,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ToolsPopupController
 {
+   public static final String TOOLS_POPUP_SELECTED_ACTION_COMMAND = "ToolsPopupSelected";
+
    private ToolsPopupCompletorModel _toolsPopupCompletorModel;
    private ISQLEntryPanel _sqlEntryPanel;
    private ISession _session;
@@ -71,7 +70,7 @@ public class ToolsPopupController
    private void onToolsPopupActionSelected(CompletionInfo completion)
    {
       final ToolsPopupCompletionInfo toExecute = (ToolsPopupCompletionInfo) completion;
-      toExecute.getAction().actionPerformed(new ActionEvent(_sqlEntryPanel.getTextComponent(), _session.getIdentifier().hashCode(), "ToolsPopupSelected"));
+      toExecute.getAction().actionPerformed(new ActionEvent(_sqlEntryPanel.getTextComponent(), _session.getIdentifier().hashCode(), TOOLS_POPUP_SELECTED_ACTION_COMMAND));
    }
 
 
