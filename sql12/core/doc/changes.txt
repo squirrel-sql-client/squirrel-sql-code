@@ -8,7 +8,7 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-- Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + Mouse click
+- Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + mouse click.
     See Menu File --> New Session Properties --> Tab SQL --> Section Jump to object tree
     This will fix bug #982
 
