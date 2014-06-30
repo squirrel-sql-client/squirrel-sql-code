@@ -161,7 +161,7 @@ public class ImportTableDataCommand implements ICommand {
 
 	private ImportFileType determineType(File f) {
 		// TODO: Implement this better
-		if (f.getName().toLowerCase().endsWith("xls")) {
+		if (f.getName().toLowerCase().endsWith("xls") || f.getName().toLowerCase().endsWith("xlsx")) {
 			if (s_log.isInfoEnabled()) {
 				s_log.info("determineType: filename ("+f.getName()+") ends with 'xls'.  Assuming it is an " +
 						"Excel spreadsheet");
