@@ -93,6 +93,8 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
       String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
       String SQL_USE_FETCH_SIZE = "sqlUseFetchSize";
       String SQL_FETCH_SIZE = "sqlFetchSize";
+      String ALLOW_CTRL_B_JUMP_TO_OBJECT_TREE = "AllowCtrlBJumpToObjectTree";
+      String ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE = "AllowCtrlMouseClickJumpToObjectTree";
    }
 
    private static final FontInfo DEFAULT_FONT_INFO =
@@ -266,6 +268,10 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
      * Indicates that the we should use the setFetchSize() Method of an Statement. 
      */
     private boolean _sqlUseFetchSize;
+
+    private boolean _allowCtrlBJumpToObjectTree = true;
+
+    private boolean _allowCtrlMouseClickJumpToObjectTree = true;
 
    /**
     * Default ctor.
@@ -1146,4 +1152,27 @@ public class SessionProperties implements Cloneable, Serializable, ISessionPrope
     {
 	return _sqlUseFetchSize;
     }
+
+
+
+    public boolean getAllowCtrlBJumpToObjectTree()
+    {
+        return _allowCtrlBJumpToObjectTree;
+    }
+
+    public void setAllowCtrlBJumpToObjectTree(boolean allowCtrlBJumpToObjectTree)
+    {
+        _allowCtrlBJumpToObjectTree = allowCtrlBJumpToObjectTree;
+    }
+
+    public boolean getAllowCtrlMouseClickJumpToObjectTree()
+    {
+        return _allowCtrlMouseClickJumpToObjectTree;
+    }
+
+    public void setAllowCtrlMouseClickJumpToObjectTree(boolean allowCtrlMouseClickJumpToObjectTree)
+    {
+        _allowCtrlMouseClickJumpToObjectTree = allowCtrlMouseClickJumpToObjectTree;
+    }
+
 }

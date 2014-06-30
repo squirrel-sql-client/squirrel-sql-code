@@ -134,7 +134,13 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
                         "getSQLReadOn", "setSQLReadOn"),
 
                   new PropertyDescriptor(IPropNames.SQL_READ_ON_BLOCK_SIZE, SessionProperties.class,
-                        "getSQLReadOnBlockSize", "setSQLReadOnBlockSize")
+                        "getSQLReadOnBlockSize", "setSQLReadOnBlockSize"),
+
+                  new PropertyDescriptor(IPropNames.ALLOW_CTRL_B_JUMP_TO_OBJECT_TREE, SessionProperties.class,
+                        "getAllowCtrlBJumpToObjectTree", "setAllowCtrlBJumpToObjectTree"),
+
+                  new PropertyDescriptor(IPropNames.ALLOW_CTRL_MOUSE_CLICK_JUMP_TO_OBJECT_TREE, SessionProperties.class,
+                        "getAllowCtrlMouseClickJumpToObjectTree", "setAllowCtrlMouseClickJumpToObjectTree")
             };
 
 			return result;

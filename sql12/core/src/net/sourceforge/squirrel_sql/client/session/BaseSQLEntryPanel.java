@@ -400,7 +400,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
                     _app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
                 GUIUtils.processOnSwingEventThread(new Runnable() {
                     public void run() {
-                        a.actionPerformed(new ActionEvent(this, 1, "ViewObjectAtCursorInObjectTreeAction"));
+                        a.actionPerformed(new ActionEvent(this, 1, ViewObjectAtCursorInObjectTreeAction.VIEW_OBJECT_AT_CURSOR_INOBJECT_TREE_ACTION_BY_CTRL_MOUSECLICK));
                     }
                 });
             }
