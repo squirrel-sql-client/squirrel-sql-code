@@ -25,6 +25,8 @@ Enhancements:
 
 Bug fixes:
 
+- Data import Plugin / bug #1133: Now imports new Excel format *.xlsx
+
 - Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.
    Thanks to Jaroslaw Jarmolowicz for the patch
 
