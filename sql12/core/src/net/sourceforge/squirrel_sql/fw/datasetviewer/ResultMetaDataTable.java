@@ -34,4 +34,10 @@ public class ResultMetaDataTable
    {
       return SQLUtilities.getQualifiedTableName(_catalogName, _schemaName, _tableName);
    }
+
+   @Override
+   public String toString()
+   {
+      return SQLUtilities.getQualifiedTableName(_catalogName, _schemaName, _tableName);
+   }
 }

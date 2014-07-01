@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ExportedKey;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesCtrl;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 
 public class ShowReferencesCommand
 {
-   static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractExportCommand.class);
+   static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShowReferencesCommand.class);
 
 
    private final JTable _table;
@@ -119,16 +122,16 @@ public class ShowReferencesCommand
          }
 
 
-         ResultSet importedKeys = jdbcMetaData.getImportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
+         ArrayList<ExportedKey> arrExportedKey = ShowReferencesUtil.getExportedKeys(globalDbTable, inStat, session);
 
-         if(false == importedKeys.next())
+         if(0 == arrExportedKey.size())
          {
             JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences"));
             return;
          }
 
 
-
+         new ShowReferencesCtrl(session, _owningFrame, globalDbTable, colDef, arrExportedKey);
 
 
       }
