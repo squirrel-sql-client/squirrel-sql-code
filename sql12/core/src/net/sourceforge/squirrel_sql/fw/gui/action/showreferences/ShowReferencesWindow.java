@@ -1,13 +1,17 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ShowReferencesWindow extends JDialog
 {
    JTree tree;
+   SQLResultExecuterPanel resultExecuterPanel;
 
-   public ShowReferencesWindow(Frame owner, String title)
+   public ShowReferencesWindow(ISession session, Frame owner, String title)
    {
       super(owner, title);
 
@@ -16,6 +20,7 @@ public class ShowReferencesWindow extends JDialog
 
       tree = new JTree();
       split.setLeftComponent(tree);
-      split.setRightComponent(new JPanel());
+      resultExecuterPanel = new SQLResultExecuterPanel(session);
+      split.setRightComponent(resultExecuterPanel);
    }
 }

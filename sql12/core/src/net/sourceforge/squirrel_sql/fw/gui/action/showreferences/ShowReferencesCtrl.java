@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -34,7 +35,7 @@ public class ShowReferencesCtrl
 
    public ShowReferencesCtrl(final ISession session, JFrame owningFrame, ResultMetaDataTable globalDbTable, ColumnDisplayDefinition pkColDef, ArrayList<ExportedKey> exportedKeys)
    {
-      _window = new ShowReferencesWindow(owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", globalDbTable.getQualifiedName(), pkColDef.getColumnName()));
+      _window = new ShowReferencesWindow(session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", globalDbTable.getQualifiedName(), pkColDef.getColumnName()));
 
       DefaultMutableTreeNode root = new DefaultMutableTreeNode(globalDbTable);
       _treeModel = new DefaultTreeModel(root);
@@ -57,6 +58,15 @@ public class ShowReferencesCtrl
          @Override
          public void treeCollapsed(TreeExpansionEvent event)
          {
+         }
+      });
+
+      session.addSimpleSessionListener(new SimpleSessionListener()
+      {
+         @Override
+         public void sessionClosed()
+         {
+            close();
          }
       });
 
@@ -85,11 +95,18 @@ public class ShowReferencesCtrl
          @Override
          public void windowClosing(WindowEvent e)
          {
-            onClose(_window);
+            onClose();
          }
       });
 
       _window.setVisible(true);
+   }
+
+   private void close()
+   {
+      onClose();
+      _window.setVisible(false);
+      _window.dispose();
    }
 
    private void onTreeSelectionChanged(TreeSelectionEvent e)
@@ -141,7 +158,8 @@ public class ShowReferencesCtrl
          sql += ")";
       }
 
-      System.out.println(sql);
+      _window.resultExecuterPanel.executeSQL(sql);
+      //System.out.println(sql);
 
    }
 
@@ -192,9 +210,9 @@ public class ShowReferencesCtrl
 
    }
 
-   private void onClose(ShowReferencesWindow window)
+   private void onClose()
    {
-      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_WIDTH, window.getSize().width);
-      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, window.getSize().height);
+      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_WIDTH, _window.getSize().width);
+      Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, _window.getSize().height);
    }
 }
