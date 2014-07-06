@@ -25,7 +25,8 @@ public class ExportedKey
    @Override
    public String toString()
    {
-      return SQLUtilities.getQualifiedTableName(_catalog, _schema, _table) + "->" + _fkColumn;
+      // return SQLUtilities.getQualifiedTableName(_catalog, _schema, _table) + "->" + _fkColumn;
+      return _table + "->" + _fkColumn;
    }
 
    public String getInStat()
