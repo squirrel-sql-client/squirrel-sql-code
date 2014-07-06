@@ -8,6 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+- New right mouse menu entry in SQL results: "Show foreign key references".
+   Select one or more primary key values of a SQL result then choose the right mouse menu to display the foreign references for the primary key values.
+
 - SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
 
 - Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + mouse click.
