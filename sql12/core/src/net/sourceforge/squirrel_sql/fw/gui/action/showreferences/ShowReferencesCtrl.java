@@ -6,13 +6,17 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import org.apache.commons.lang.ArrayUtils;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -38,6 +42,7 @@ public class ShowReferencesCtrl
 
       createChildExportedKeyNodes(root, exportedKeys);
 
+      _window.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
       _window.tree.setModel(_treeModel);
 
@@ -50,7 +55,18 @@ public class ShowReferencesCtrl
          }
 
          @Override
-         public void treeCollapsed(TreeExpansionEvent event) {}
+         public void treeCollapsed(TreeExpansionEvent event)
+         {
+         }
+      });
+
+      _window.tree.addTreeSelectionListener(new TreeSelectionListener()
+      {
+         @Override
+         public void valueChanged(TreeSelectionEvent e)
+         {
+            onTreeSelectionChanged(e);
+         }
       });
 
       _window.tree.expandPath(new TreePath(root));
@@ -74,6 +90,59 @@ public class ShowReferencesCtrl
       });
 
       _window.setVisible(true);
+   }
+
+   private void onTreeSelectionChanged(TreeSelectionEvent e)
+   {
+
+      Object[] path = e.getPath().getPath();
+
+      if(path.length < 2)
+      {
+         return;
+      }
+
+
+      ArrayUtils.reverse(path);
+
+
+      //ExportedKey parentExportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[0]).getUserObject();
+
+      //String sql =  "SELECT * FROM " + parentExportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + parentExportedKey.getColumn() + " IN ";
+      String sql =  "";
+
+      for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
+      {
+         ExportedKey exportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
+
+
+         String selection;
+
+         if (0 == i)
+         {
+            selection = "*";
+         }
+         else
+         {
+            sql += "(";
+            selection = exportedKey.getTablesPrimaryKey();
+         }
+
+         sql +=  "SELECT " + selection + " FROM " + exportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + exportedKey.getFkColumn() + " IN ";
+
+         if(i == path.length - 2)
+         {
+            sql += exportedKey.getInStat();
+         }
+      }
+
+      for (int i = 0; i < path.length - 2; i++)
+      {
+         sql += ")";
+      }
+
+      System.out.println(sql);
+
    }
 
    private void createChildExportedKeyNodes(DefaultMutableTreeNode parent, ArrayList<ExportedKey> exportedKeys)
@@ -107,7 +176,13 @@ public class ShowReferencesCtrl
 
       ExportedKey parentExportedKey = (ExportedKey) parentNode.getUserObject();
 
-      ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), new String("TODO INSTAT"), session);
+      if(false == parentExportedKey.hasSingleColumnPk())
+      {
+         JOptionPane.showMessageDialog(_window, s_stringMgr.getString("ShowReferencesCtrl.tableHasNoSingleColumnPk", parentExportedKey.getResultMetaDataTable().getQualifiedName()));
+         return;
+      }
+
+      ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), null, session);
 
       createChildExportedKeyNodes(parentNode, exportedKeys);
 
