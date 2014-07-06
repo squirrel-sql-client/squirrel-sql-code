@@ -14,10 +14,11 @@ public class QueryInfoPanel extends JPanel
 {
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(QueryInfoPanel.class);
 
-   private MultipleLineLabel _queryLbl = new MultipleLineLabel();
+   private JTextArea _queryTxt = new JTextArea();
    private JLabel _rowCountLbl = new JLabel();
    private JLabel _executedLbl = new JLabel();
    private JLabel _elapsedLbl = new JLabel();
+   private JScrollPane _queryScrollPane;
 
    QueryInfoPanel()
    {
@@ -26,7 +27,15 @@ public class QueryInfoPanel extends JPanel
 
    void load(int rowCount, SQLExecutionInfo exInfo)
    {
-      _queryLbl.setText(StringUtilities.cleanString(exInfo.getSQL()));
+      //_queryTxt.setText(StringUtilities.cleanString(exInfo.getSQL()));
+
+      _queryTxt.setRows(6);
+      _queryTxt.setEditable(false);
+      _queryTxt.setText(exInfo.getSQL());
+
+
+      _queryScrollPane.scrollRectToVisible(new Rectangle(0,0,1,1));
+
       displayRowCount(rowCount);
       _executedLbl.setText(exInfo.getSQLExecutionStartTime().toString());
       _elapsedLbl.setText(formatElapsedTime(exInfo));
@@ -99,9 +108,12 @@ public class QueryInfoPanel extends JPanel
       add(_rowCountLbl, gbc);
 
       ++gbc.gridy;
-      add(_queryLbl, gbc);
+      gbc.weightx=1 ;
+      _queryScrollPane = new JScrollPane(_queryTxt);
+      add(_queryScrollPane, gbc);
 
       ++gbc.gridy;
+      gbc.weightx=0 ;
       add(_elapsedLbl, gbc);
    }
 }

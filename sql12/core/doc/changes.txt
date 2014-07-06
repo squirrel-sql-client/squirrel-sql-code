@@ -8,6 +8,8 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+- SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
+
 - Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + mouse click.
     See Menu File --> New Session Properties --> Tab SQL --> Section Jump to object tree
     This will fix bug #982
