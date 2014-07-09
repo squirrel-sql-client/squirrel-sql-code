@@ -20,6 +20,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -29,11 +31,13 @@ public class ShowReferencesCtrl
 {
    private static final String PREF_KEY_SHOW_REFERENCES_WIDTH = "Squirrel.showReferencesWidth";
    private static final String PREF_KEY_SHOW_REFERENCES_HEIGHT = "Squirrel.showReferencesHeight";
+   private static final String PREF_KEY_SHOW_REFERENCES_QUALIFIED = "Squirrel.showReferencesHeight.qualified";
 
 
    static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShowReferencesCtrl.class);
    private final ShowReferencesWindow _window;
    private final DefaultTreeModel _treeModel;
+   private ArrayList<ShowQualifiedListener> _showQualifiedListeners = new ArrayList<ShowQualifiedListener>();
    private ISession _session;
 
    public ShowReferencesCtrl(final ISession session, JFrame owningFrame, ResultMetaDataTable globalDbTable, ColumnDisplayDefinition pkColDef, ArrayList<ExportedKey> exportedKeys)
@@ -46,6 +50,7 @@ public class ShowReferencesCtrl
 
 
       createChildExportedKeyNodes(root, exportedKeys);
+      initShowQualifiedListeners(exportedKeys);
 
       _window.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -103,7 +108,41 @@ public class ShowReferencesCtrl
          }
       });
 
+
+      _window.chkShowQualified.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            onChkShowQualified();
+         }
+      });
+
+      _window.chkShowQualified.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, false));
+      onChkShowQualified();
+
       _window.setVisible(true);
+   }
+
+   private void initShowQualifiedListeners(ArrayList<ExportedKey> exportedKeys)
+   {
+      for (ExportedKey exportedKey : exportedKeys)
+      {
+         _showQualifiedListeners.add(exportedKey.getShowQualifiedListener());
+      }
+
+   }
+
+   private void onChkShowQualified()
+   {
+      for (ShowQualifiedListener showQualifiedListener : _showQualifiedListeners)
+      {
+         showQualifiedListener.showQualifiedChanged(_window.chkShowQualified.isSelected());
+      }
+
+      _window.tree.setModel(null);
+      _window.tree.setModel(_treeModel);
+
    }
 
    private void close()
@@ -209,6 +248,9 @@ public class ShowReferencesCtrl
 
       ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), null, _session);
 
+      initShowQualifiedListeners(exportedKeys);
+
+
       createChildExportedKeyNodes(parentNode, exportedKeys);
 
       _treeModel.nodeStructureChanged(parentNode);
@@ -221,5 +263,6 @@ public class ShowReferencesCtrl
    {
       Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_WIDTH, _window.getSize().width);
       Preferences.userRoot().putInt(PREF_KEY_SHOW_REFERENCES_HEIGHT, _window.getSize().height);
+      Preferences.userRoot().putBoolean(PREF_KEY_SHOW_REFERENCES_QUALIFIED, _window.chkShowQualified.isSelected());
    }
 }

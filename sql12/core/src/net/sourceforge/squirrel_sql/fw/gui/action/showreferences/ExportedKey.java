@@ -11,6 +11,7 @@ public class ExportedKey
    private final String _fkColumn;
    private String _pkColumn;
    private String _inStat;
+   private boolean _showQualified;
 
    public ExportedKey(String catalog, String schema, String table, String fkColumn, String pkColumn,String inStat)
    {
@@ -25,8 +26,14 @@ public class ExportedKey
    @Override
    public String toString()
    {
-      // return SQLUtilities.getQualifiedTableName(_catalog, _schema, _table) + "->" + _fkColumn;
-      return _table + "->" + _fkColumn;
+      if (_showQualified)
+      {
+         return SQLUtilities.getQualifiedTableName(_catalog, _schema, _table) + "->" + _fkColumn;
+      }
+      else
+      {
+         return _table + "->" + _fkColumn;
+      }
    }
 
    public String getInStat()
@@ -52,5 +59,17 @@ public class ExportedKey
    public boolean hasSingleColumnPk()
    {
       return null != _pkColumn;
+   }
+
+   public ShowQualifiedListener getShowQualifiedListener()
+   {
+      return new ShowQualifiedListener()
+      {
+         @Override
+         public void showQualifiedChanged(boolean showQualified)
+         {
+            _showQualified = showQualified;
+         }
+      };
    }
 }

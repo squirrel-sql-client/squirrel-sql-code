@@ -62,6 +62,7 @@ public class SQLResultExecuterPanel extends JPanel
     /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(SQLResultExecuterPanel.class);
+   private boolean _showRerun;
 
    static interface i18n {
         // i18n[SQLResultExecuterPanel.exec=Executing SQL]
@@ -99,7 +100,13 @@ public class SQLResultExecuterPanel extends JPanel
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
 	public SQLResultExecuterPanel(ISession session)
+   {
+      this(session, false);
+   }
+
+   public SQLResultExecuterPanel(ISession session, boolean showRerun)
 	{
+      _showRerun = showRerun;
       _resultTabFactory = new ResultTabFactory(session, createSQLResultExecuterPanelFacade());
 		setSession(session);
 		createGUI();

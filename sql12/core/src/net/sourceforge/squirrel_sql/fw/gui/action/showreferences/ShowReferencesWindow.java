@@ -2,12 +2,19 @@ package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ShowReferencesWindow extends JDialog
 {
+
+   static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShowReferencesCtrl.class);
+
+
+   JCheckBox chkShowQualified;
    JTree tree;
    SQLResultExecuterPanel resultExecuterPanel;
 
@@ -18,11 +25,23 @@ public class ShowReferencesWindow extends JDialog
       JSplitPane split = new JSplitPane();
       getContentPane().add(split);
 
-      tree = new JTree();
-      split.setLeftComponent(new JScrollPane(tree));
-      resultExecuterPanel = new SQLResultExecuterPanel(session);
+      split.setLeftComponent(createLeftComponent());
 
+      resultExecuterPanel = new SQLResultExecuterPanel(session);
       resultExecuterPanel.setMinimumSize(new Dimension(0,0));
       split.setRightComponent(resultExecuterPanel);
+   }
+
+   private JPanel createLeftComponent()
+   {
+      JPanel ret = new JPanel(new BorderLayout());
+
+      chkShowQualified = new JCheckBox(s_stringMgr.getString("ShowReferencesWindow.showQualified"));
+      tree = new JTree();
+
+      ret.add(chkShowQualified, BorderLayout.NORTH);
+      ret.add(new JScrollPane(tree), BorderLayout.CENTER);
+
+      return ret;
    }
 }
