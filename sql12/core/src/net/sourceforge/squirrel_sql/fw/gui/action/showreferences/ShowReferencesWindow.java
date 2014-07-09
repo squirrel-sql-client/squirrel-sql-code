@@ -19,7 +19,7 @@ public class ShowReferencesWindow extends JDialog
       getContentPane().add(split);
 
       tree = new JTree();
-      split.setLeftComponent(tree);
+      split.setLeftComponent(new JScrollPane(tree));
       resultExecuterPanel = new SQLResultExecuterPanel(session);
 
       resultExecuterPanel.setMinimumSize(new Dimension(0,0));

@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -32,10 +34,12 @@ public class ShowReferencesCtrl
    static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ShowReferencesCtrl.class);
    private final ShowReferencesWindow _window;
    private final DefaultTreeModel _treeModel;
+   private ISession _session;
 
    public ShowReferencesCtrl(final ISession session, JFrame owningFrame, ResultMetaDataTable globalDbTable, ColumnDisplayDefinition pkColDef, ArrayList<ExportedKey> exportedKeys)
    {
-      _window = new ShowReferencesWindow(session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", globalDbTable.getQualifiedName(), pkColDef.getColumnName()));
+      _session = session;
+      _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", globalDbTable.getQualifiedName(), pkColDef.getColumnName()));
 
       DefaultMutableTreeNode root = new DefaultMutableTreeNode(globalDbTable);
       _treeModel = new DefaultTreeModel(root);
@@ -52,7 +56,7 @@ public class ShowReferencesCtrl
          @Override
          public void treeExpanded(TreeExpansionEvent event)
          {
-            onExpanded(session, event);
+            onExpanded(event);
          }
 
          @Override
@@ -61,7 +65,7 @@ public class ShowReferencesCtrl
          }
       });
 
-      session.addSimpleSessionListener(new SimpleSessionListener()
+      _session.addSimpleSessionListener(new SimpleSessionListener()
       {
          @Override
          public void sessionClosed()
@@ -158,7 +162,10 @@ public class ShowReferencesCtrl
          sql += ")";
       }
 
-      _window.resultExecuterPanel.executeSQL(sql);
+
+      CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
+
+      _window.resultExecuterPanel.executeSQL(cr.reformat(sql));
       //System.out.println(sql);
 
    }
@@ -182,7 +189,7 @@ public class ShowReferencesCtrl
       }
    }
 
-   private void onExpanded(ISession session, TreeExpansionEvent event)
+   private void onExpanded(TreeExpansionEvent event)
    {
       DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
 
@@ -200,7 +207,7 @@ public class ShowReferencesCtrl
          return;
       }
 
-      ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), null, session);
+      ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), null, _session);
 
       createChildExportedKeyNodes(parentNode, exportedKeys);
 
