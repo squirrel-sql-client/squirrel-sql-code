@@ -9,7 +9,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.apache.commons.lang.ArrayUtils;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -163,49 +162,13 @@ public class ShowReferencesCtrl
       }
 
 
-      ArrayUtils.reverse(path);
-
-
-      //ExportedKey parentExportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[0]).getUserObject();
-
-      //String sql =  "SELECT * FROM " + parentExportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + parentExportedKey.getColumn() + " IN ";
-      String sql =  "";
-
-      for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
-      {
-         ExportedKey exportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
-
-
-         String selection;
-
-         if (0 == i)
-         {
-            selection = "*";
-         }
-         else
-         {
-            sql += "(";
-            selection = exportedKey.getTablesPrimaryKey();
-         }
-
-         sql +=  "SELECT " + selection + " FROM " + exportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + exportedKey.getFkColumn() + " IN ";
-
-         if(i == path.length - 2)
-         {
-            sql += exportedKey.getInStat();
-         }
-      }
-
-      for (int i = 0; i < path.length - 2; i++)
-      {
-         sql += ")";
-      }
-
+      String sql = ShowReferencesUtil.generateJoinSQL(path);
 
       CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
+//      System.out.println(cr.reformat(sql));
+//      System.out.println();
 
       _window.resultExecuterPanel.executeSQL(cr.reformat(sql));
-      //System.out.println(sql);
 
    }
 
