@@ -30,6 +30,9 @@ Enhancements:
 
 Bug fixes:
 
+- DB2 Plugin / bug #1097 DB2: don't display UDF source : SQL0206N "SCHEMA" is not valid in the context where it is used.
+   Thanks to Andy Helmer for the fix.
+
 - Data import Plugin / bug #1133: Now imports new Excel format *.xlsx
 
 - Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.

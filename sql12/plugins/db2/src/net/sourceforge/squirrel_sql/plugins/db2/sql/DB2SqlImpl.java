@@ -57,7 +57,8 @@ public class DB2SqlImpl implements DB2Sql
 				    "FROM SYSIBM.SYSFUNCTIONS " +
 				    "WHERE schema = ? " +
 				    "AND name = ? " +
-				    "AND implementation is null ";			
+				    "AND implementation is null ";
+         break;
 		case ZOS:
 			result = 
 				"select " +
@@ -70,7 +71,8 @@ public class DB2SqlImpl implements DB2Sql
 				"from SYSIBM.SYSROUTINES " +
 				"where schema = ? " +
 				"and name = ? " +
-				"and ROUTINETYPE = 'F' ";			
+				"and ROUTINETYPE = 'F' ";
+         break;
 		}
 		
 		return result;
