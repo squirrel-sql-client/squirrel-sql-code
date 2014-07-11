@@ -126,7 +126,7 @@ public class ShowReferencesCommand
 
          if(0 == arrExportedKey.size())
          {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences"));
+            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", globalDbTable.getQualifiedName()));
             return;
          }
 
@@ -143,6 +143,6 @@ public class ShowReferencesCommand
 
    private void messageNoPrimaryKeyColumn(ResultMetaDataTable globalDbTable, ColumnDisplayDefinition colDef)
    {
-      JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noPrimaryKeyColumn", globalDbTable.getTableName() + "." + colDef.getColumnName()));
+      JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noPrimaryKeyColumn", globalDbTable.getQualifiedName() + "." + colDef.getColumnName()));
    }
 }
