@@ -29,8 +29,11 @@ public class ChartConfigPanelTabController
       _chartConfigPanelTabMode = chartConfigPanelTabMode;
       _chartConfigPanelTab = new ChartConfigPanelTab(chartConfigPanelTabMode);
 
-      _chartConfigPanelTab.cboCallDepth.setModel(new DefaultComboBoxModel(CallDepthComboModel.createModels()));
-      _chartConfigPanelTab.cboCallDepth.setSelectedItem(CallDepthComboModel.getDefaultSelected());
+      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART)
+      {
+         _chartConfigPanelTab.cboCallDepth.setModel(new DefaultComboBoxModel(CallDepthComboModel.createModels()));
+         _chartConfigPanelTab.cboCallDepth.setSelectedItem(CallDepthComboModel.getDefaultSelected());
+      }
 
       if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.SINGLE_COLUMN)
       {
@@ -40,6 +43,17 @@ public class ChartConfigPanelTabController
             public void itemStateChanged(ItemEvent e)
             {
                onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboXColumns);
+            }
+         });
+      }
+      else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN)
+      {
+         _chartConfigPanelTab.cboYColumns.addItemListener(new ItemListener()
+         {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+               onColumnSelected(e, ChartConfigPanelTabController.this._chartConfigPanelTab.cboYColumns);
             }
          });
       }
@@ -75,6 +89,11 @@ public class ChartConfigPanelTabController
       {
          fillColumnCombo(_chartConfigPanelTab.cboXColumns);
       }
+      else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN)
+      {
+         fillColumnCombo(_chartConfigPanelTab.cboXColumns);
+         fillColumnCombo(_chartConfigPanelTab.cboYColumns);
+      }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
       {
          fillColumnCombo(_chartConfigPanelTab.cboXColumns);
@@ -102,6 +121,11 @@ public class ChartConfigPanelTabController
 
    private void onColumnSelected(ItemEvent e, JComboBox cboColumns)
    {
+      if(_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      {
+         return;
+      }
+
       if (null == e || ItemEvent.SELECTED == e.getStateChange())
       {
          ColumnComboModel selectedColumn = (ColumnComboModel) cboColumns.getSelectedItem();
@@ -116,15 +140,23 @@ public class ChartConfigPanelTabController
       DataScale xAxisDataScale = _dataScaleTable.getDataScaleTableModel().getDataScaleAt(selectedXAxisColumn.getColumnIndexInDataScale());
 
       DataScale yAxisDataScale = null;
-      if(_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      if(_chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN || _chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
       {
          ColumnComboModel selectedYAxisColumn = (ColumnComboModel) _chartConfigPanelTab.cboYColumns.getSelectedItem();
          yAxisDataScale = _dataScaleTable.getDataScaleTableModel().getDataScaleAt(selectedYAxisColumn.getColumnIndexInDataScale());
       }
 
-      CallDepthComboModel selItem = (CallDepthComboModel) _chartConfigPanelTab.cboCallDepth.getSelectedItem();
+      Integer callDepth = null;
+      ChartConfigMode chartConfigMode = null;
 
-      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, selItem.getCallDepth(), (ChartConfigMode) _chartConfigPanelTab.cboYAxisKind.getSelectedItem(), _app.getResources(), GUIUtils.getOwningFrame(_dataScaleTable));
+      if (_chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART)
+      {
+         CallDepthComboModel selItem = (CallDepthComboModel) _chartConfigPanelTab.cboCallDepth.getSelectedItem();
+         callDepth = selItem.getCallDepth();
+         chartConfigMode = (ChartConfigMode) _chartConfigPanelTab.cboYAxisKind.getSelectedItem();
+      }
+
+      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, callDepth, _chartConfigPanelTabMode, chartConfigMode, _app.getResources(), GUIUtils.getOwningFrame(_dataScaleTable));
    }
 
 

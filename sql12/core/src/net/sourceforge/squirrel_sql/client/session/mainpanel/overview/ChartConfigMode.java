@@ -51,7 +51,7 @@ public enum ChartConfigMode
             ret.add(SUM);
          }
       }
-      else if (ChartConfigPanelTabMode.XY_CHART == chartConfigPanelTabMode)
+      else if (ChartConfigPanelTabMode.TWO_COLUMN == chartConfigPanelTabMode)
       {
          ret.add(XY_COUNT_DISTINCT);
 

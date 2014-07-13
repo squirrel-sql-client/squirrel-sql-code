@@ -42,7 +42,7 @@ public class ChartConfigPanelTab extends JPanel
          cboYAxisKind = new JComboBox();
          add(cboYAxisKind, gbc);
       }
-      else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN)
       {
          gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
          add(new JLabel(s_stringMgr.getString("OverviewPanel.YAxis")), gbc);
@@ -54,14 +54,26 @@ public class ChartConfigPanelTab extends JPanel
          gbc = new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,0,5,5),0,0);
          add(createAsKindPanel(), gbc);
       }
+      else if(chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
+      {
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
+         add(new JLabel(s_stringMgr.getString("OverviewPanel.YAxis")), gbc);
+
+         gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,10,5,5),0,0);
+         cboYColumns = new JComboBox();
+         add(cboYColumns, gbc);
+      }
 
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("OverviewPanel.maxBarCount")), gbc);
+      if(chartConfigPanelTabMode != ChartConfigPanelTabMode.XY_CHART)
+      {
+         gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,10,5,5),0,0);
+         add(new JLabel(s_stringMgr.getString("OverviewPanel.maxBarCount")), gbc);
 
-      gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,10,5,5),0,0);
-      cboCallDepth = new JComboBox();
-      add(cboCallDepth, gbc);
+         gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0,10,5,5),0,0);
+         cboCallDepth = new JComboBox();
+         add(cboCallDepth, gbc);
+      }
 
 
 

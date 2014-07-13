@@ -13,6 +13,7 @@ import org.jfree.chart.block.*;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
 
@@ -28,62 +29,112 @@ public class ChartHandler
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, int callDepth, ChartConfigMode mode, SquirrelResources resources, Frame parent)
+   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, SquirrelResources resources, Frame parent)
    {
       try
       {
-         ArrayList<Object[]> rows = new ArrayList<Object[]>();
 
-         for (Interval xAxisInterval : xAxisDataScale.getIntervals())
+         String title;
+
+         DataScale newScale;
+         JFreeChart chart;
+         String label;
+
+
+         if (chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
          {
-            rows.addAll(xAxisInterval.getResultRows());
+            title = "Chart for x = " + xAxisDataScale.getColumnDisplayDefinition().getColumnName() + ", y = " + yAxisDataScale.getColumnDisplayDefinition().getColumnName();
+
+            String category = xAxisDataScale.getColumnDisplayDefinition().getColumnName();
+
+            DefaultXYDataset defaultXYDataset = new DefaultXYDataset();
+
+            double[][] series = new double[2][5];
+
+            for (int i = 0; i < series[0].length; i++)
+            {
+               series[0][i] = i;
+               series[1][i] = i*i;
+            }
+
+            defaultXYDataset.addSeries(title, series);
+
+
+
+            chart =  ChartFactory.createXYLineChart(
+                     title,   // chart title
+                     category,               // domain axis label
+                     yAxisDataScale.getColumnDisplayDefinition().getColumnName(),  // range axis label
+                     defaultXYDataset,                  // data
+                     PlotOrientation.VERTICAL,
+                     false,                     // include legend
+                     true,                     // tooltips?
+                     false                     // URLs?
+            );
+
+            label = "";
          }
-
-
-         ScaleFactory scaleFactory = new ScaleFactory(rows, xAxisDataScale.getColumnIx(), xAxisDataScale.getColumnDisplayDefinition(), callDepth);
-
-         DataScaleListener dumDataScaleListener = new DataScaleListener()
+         else
          {
-            @Override
-            public void intervalSelected(Interval interval, JButton intervalButtonClicked)
+            ArrayList<Object[]> rows = new ArrayList<Object[]>();
+
+            for (Interval xAxisInterval : xAxisDataScale.getIntervals())
             {
+               rows.addAll(xAxisInterval.getResultRows());
             }
 
-            @Override
-            public void showInTableWin(Interval interval)
+
+            ScaleFactory scaleFactory = new ScaleFactory(rows, xAxisDataScale.getColumnIx(), xAxisDataScale.getColumnDisplayDefinition(), callDepth);
+
+            DataScaleListener dumDataScaleListener = new DataScaleListener()
             {
+               @Override
+               public void intervalSelected(Interval interval, JButton intervalButtonClicked)
+               {
+               }
+
+               @Override
+               public void showInTableWin(Interval interval)
+               {
+               }
+
+               @Override
+               public void showInTable(Interval interval)
+               {
+               }
+            };
+
+
+
+            newScale = scaleFactory.createScale(dumDataScaleListener);
+
+
+            DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+
+            String category = xAxisDataScale.getColumnDisplayDefinition().getColumnName();
+
+            for (Interval interval : newScale.getIntervals())
+            {
+               categoryDataset.addValue(calculateValue(interval, mode, yAxisDataScale), interval.getLabel(), category);
             }
 
-            @Override
-            public void showInTable(Interval interval)
-            {
-            }
-         };
 
-         DataScale newScale = scaleFactory.createScale(dumDataScaleListener);
+            title = "Chart for column: " + xAxisDataScale.getColumnDisplayDefinition().getColumnName();
 
+            chart = ChartFactory.createBarChart(
+                  title,   // chart title
+                  category,               // domain axis label
+                  mode.getYAxisLabel(yAxisDataScale),  // range axis label
+                  categoryDataset,                  // data
+                  PlotOrientation.VERTICAL,
+                  false,                     // include legend
+                  true,                     // tooltips?
+                  false                     // URLs?
+            );
 
-         DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+            label = createLabel(newScale, rows);
 
-         String category = xAxisDataScale.getColumnDisplayDefinition().getColumnName();
-
-         for (Interval interval : newScale.getIntervals())
-         {
-            categoryDataset.addValue(calculateValue(interval, mode, yAxisDataScale), interval.getLabel(), category);
          }
-
-         String title = "Chart for column: " + xAxisDataScale.getColumnDisplayDefinition().getColumnName();
-
-         JFreeChart chart = ChartFactory.createBarChart(
-               title,   // chart title
-               category,               // domain axis label
-               mode.getYAxisLabel(yAxisDataScale),  // range axis label
-               categoryDataset,                  // data
-               PlotOrientation.VERTICAL,
-               false,                     // include legend
-               true,                     // tooltips?
-               false                     // URLs?
-         );
 
          JFrame f = new JFrame(title);
 
@@ -97,7 +148,7 @@ public class ChartHandler
          LegendTitle legendtitle = new LegendTitle(createLegendItemSource(chart));
          BlockContainer blockcontainer = new BlockContainer(new BorderArrangement());
          //blockcontainer.setBorder(new BlockBorder(1.0D, 1.0D, 1.0D, 1.0D));
-         LabelBlock labelblock = new LabelBlock(createLabel(newScale, rows), new Font("SansSerif", 1, 12));
+         LabelBlock labelblock = new LabelBlock(label, new Font("SansSerif", 1, 12));
          //labelblock.setTextAnchor(RectangleAnchor.TOP_LEFT);
          labelblock.setPadding(5D, 5D, 5D, 5D);
          blockcontainer.add(labelblock, RectangleEdge.TOP);
