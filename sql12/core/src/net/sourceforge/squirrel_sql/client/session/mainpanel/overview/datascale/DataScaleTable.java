@@ -11,6 +11,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataScaleTable extends SortableTable
@@ -141,5 +142,27 @@ public class DataScaleTable extends SortableTable
    public DataSetViewerTablePanel getKidSimpleTable()
    {
       return _kidSimpleTable;
+   }
+
+   public ArrayList<Double> getDoubleValuesForColumn(ColumnDisplayDefinition columnDisplayDefinition)
+   {
+      for (int i = 0; i < _columnDefinitions.length; i++)
+      {
+         if(_columnDefinitions[i] == columnDisplayDefinition)
+         {
+            ArrayList<Double> ret = new ArrayList<Double>();
+
+            for (Object[] row : _allRows)
+            {
+               double value = ((Number) row[i]).doubleValue();
+               ret.add(value);
+            }
+
+            return ret;
+         }
+
+      }
+
+      throw new IllegalArgumentException("Column not found " + columnDisplayDefinition.getColumnName());
    }
 }

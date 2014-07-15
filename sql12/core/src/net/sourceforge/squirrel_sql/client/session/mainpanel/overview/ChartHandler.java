@@ -2,10 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScale;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.Interval;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.ScaleFactory;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import org.jfree.chart.*;
@@ -29,7 +26,7 @@ public class ChartHandler
 
    public static final int MAX_LEGEND_ENTRIES = 10;
 
-   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, SquirrelResources resources, Frame parent)
+   public static void doChart(DataScale xAxisDataScale, DataScale yAxisDataScale, DataScaleTable dataScaleTable, Integer callDepth, ChartConfigPanelTabMode chartConfigPanelTabMode, ChartConfigMode mode, SquirrelResources resources, Frame parent)
    {
       try
       {
@@ -49,13 +46,18 @@ public class ChartHandler
 
             DefaultXYDataset defaultXYDataset = new DefaultXYDataset();
 
-            double[][] series = new double[2][5];
 
-            for (int i = 0; i < series[0].length; i++)
+            ArrayList<Double> xValues = dataScaleTable.getDoubleValuesForColumn(xAxisDataScale.getColumnDisplayDefinition());
+            ArrayList<Double> yValues = dataScaleTable.getDoubleValuesForColumn(yAxisDataScale.getColumnDisplayDefinition());
+
+            double[][] series = new double[2][xValues.size()];
+
+            for (int i = 0; i < xValues.size(); i++)
             {
-               series[0][i] = i;
-               series[1][i] = i*i;
+               series[0][i] = xValues.get(i);
+               series[1][i] = yValues.get(i);
             }
+
 
             defaultXYDataset.addSeries(title, series);
 

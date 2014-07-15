@@ -156,7 +156,7 @@ public class ChartConfigPanelTabController
          chartConfigMode = (ChartConfigMode) _chartConfigPanelTab.cboYAxisKind.getSelectedItem();
       }
 
-      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, callDepth, _chartConfigPanelTabMode, chartConfigMode, _app.getResources(), GUIUtils.getOwningFrame(_dataScaleTable));
+      ChartHandler.doChart(xAxisDataScale, yAxisDataScale, _dataScaleTable, callDepth, _chartConfigPanelTabMode, chartConfigMode, _app.getResources(), GUIUtils.getOwningFrame(_dataScaleTable));
    }
 
 
