@@ -1,7 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.DataScaleTable;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.datascale.IndexedColumnFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+
+import java.util.ArrayList;
 
 public class ColumnComboModel
 {
@@ -14,16 +17,23 @@ public class ColumnComboModel
       _columnIndexInDataScale = columnIndexInDataScale;
    }
 
-   public static ColumnComboModel[] createColumnComboModels(DataScaleTable dataScaleTable)
+   public static ColumnComboModel[] createColumnComboModels(DataScaleTable dataScaleTable, boolean numbersOnly)
    {
-      ColumnComboModel[] ret = new ColumnComboModel[dataScaleTable.getColumnDisplayDefinitions().length];
+      ArrayList<ColumnComboModel> ret = new ArrayList<ColumnComboModel>();
 
       for (int i = 0; i < dataScaleTable.getColumnDisplayDefinitions().length; i++)
       {
-         ret[i] = new ColumnComboModel(dataScaleTable.getColumnDisplayDefinitions()[i], i);
+         ColumnDisplayDefinition columnDisplayDefinition = dataScaleTable.getColumnDisplayDefinitions()[i];
+
+         if(numbersOnly && false == IndexedColumnFactory.isNumber(columnDisplayDefinition))
+         {
+            continue;
+         }
+
+         ret.add(new ColumnComboModel(columnDisplayDefinition, i));
       }
 
-      return ret;
+      return ret.toArray(new ColumnComboModel[ret.size()]);
    }
 
    @Override

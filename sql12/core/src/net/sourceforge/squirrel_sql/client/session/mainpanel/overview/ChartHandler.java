@@ -17,6 +17,8 @@ import org.jfree.ui.RectangleEdge;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 
 public class ChartHandler
@@ -50,12 +52,14 @@ public class ChartHandler
             ArrayList<Double> xValues = dataScaleTable.getDoubleValuesForColumn(xAxisDataScale.getColumnDisplayDefinition());
             ArrayList<Double> yValues = dataScaleTable.getDoubleValuesForColumn(yAxisDataScale.getColumnDisplayDefinition());
 
-            double[][] series = new double[2][xValues.size()];
+            ArrayList<XYPair> pairs = XYPair.createSortedPairs(xValues, yValues);
 
-            for (int i = 0; i < xValues.size(); i++)
+            double[][] series = new double[2][pairs.size()];
+
+            for (int i = 0; i < pairs.size(); i++)
             {
-               series[0][i] = xValues.get(i);
-               series[1][i] = yValues.get(i);
+               series[0][i] = pairs.get(i).getX();
+               series[1][i] = pairs.get(i).getY();
             }
 
 

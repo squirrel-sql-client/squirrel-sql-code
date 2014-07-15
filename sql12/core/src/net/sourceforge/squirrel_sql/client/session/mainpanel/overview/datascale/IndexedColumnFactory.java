@@ -36,7 +36,7 @@ public class IndexedColumnFactory
       }
    }
 
-   public static boolean isSumable(ColumnDisplayDefinition columnDisplayDefinition)
+   public static boolean isNumber(ColumnDisplayDefinition columnDisplayDefinition)
    {
       switch(columnDisplayDefinition.getSqlType())
       {

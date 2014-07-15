@@ -154,7 +154,13 @@ public class DataScaleTable extends SortableTable
 
             for (Object[] row : _allRows)
             {
-               double value = ((Number) row[i]).doubleValue();
+               double value = 0;
+
+               if (null != row[i])
+               {
+                  value = ((Number) row[i]).doubleValue();
+               }
+
                ret.add(value);
             }
 

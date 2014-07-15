@@ -87,27 +87,27 @@ public class ChartConfigPanelTabController
 
       if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.SINGLE_COLUMN)
       {
-         fillColumnCombo(_chartConfigPanelTab.cboXColumns);
+         fillColumnCombo(_chartConfigPanelTab.cboXColumns, false);
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.TWO_COLUMN)
       {
-         fillColumnCombo(_chartConfigPanelTab.cboXColumns);
-         fillColumnCombo(_chartConfigPanelTab.cboYColumns);
+         fillColumnCombo(_chartConfigPanelTab.cboXColumns, false);
+         fillColumnCombo(_chartConfigPanelTab.cboYColumns, false);
       }
       else if (_chartConfigPanelTabMode == ChartConfigPanelTabMode.XY_CHART)
       {
-         fillColumnCombo(_chartConfigPanelTab.cboXColumns);
-         fillColumnCombo(_chartConfigPanelTab.cboYColumns);
+         fillColumnCombo(_chartConfigPanelTab.cboXColumns, true);
+         fillColumnCombo(_chartConfigPanelTab.cboYColumns, true);
       }
 
 
       onColumnSelected(null, _chartConfigPanelTab.cboXColumns);
    }
 
-   private void fillColumnCombo(JComboBox cboColumns)
+   private void fillColumnCombo(JComboBox cboColumns, boolean numbersOnly)
    {
       ColumnComboModel formerSelectedItem = (ColumnComboModel) cboColumns.getSelectedItem();
-      DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel(ColumnComboModel.createColumnComboModels(_dataScaleTable));
+      DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel(ColumnComboModel.createColumnComboModels(_dataScaleTable, numbersOnly));
       cboColumns.setModel(defaultComboBoxModel);
       cboColumns.setSelectedItem(formerSelectedItem);
 

@@ -46,7 +46,7 @@ public enum ChartConfigMode
       {
          ret.add(COUNT);
 
-         if(IndexedColumnFactory.isSumable(columnDisplayDefinition))
+         if(IndexedColumnFactory.isNumber(columnDisplayDefinition))
          {
             ret.add(SUM);
          }
@@ -55,7 +55,7 @@ public enum ChartConfigMode
       {
          ret.add(XY_COUNT_DISTINCT);
 
-         if(IndexedColumnFactory.isSumable(columnDisplayDefinition))
+         if(IndexedColumnFactory.isNumber(columnDisplayDefinition))
          {
             ret.add(XY_SUM_COL);
          }
