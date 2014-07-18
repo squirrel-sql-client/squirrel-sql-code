@@ -30,6 +30,7 @@ import java.util.concurrent.*;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -81,10 +82,22 @@ public class SQLConnection implements ISQLConnection
 		_connProps = connProps;
 		_timeOpened = Calendar.getInstance().getTime();
 
+
       try
       {
-         DialectType type = DialectFactory.getDialect(_conn.getMetaData().getDatabaseProductName()).getDialectType();
-         metaData = SQLDatabaseMetaDataFactory.fetchMeta(type, this);
+
+         HibernateDialect dialect = DialectFactory.getDialect(_conn.getMetaData().getDatabaseProductName());
+
+         if (null == dialect)
+         {
+            metaData = new SQLDatabaseMetaData(this);
+         }
+         else
+         {
+            DialectType type = dialect.getDialectType();
+            metaData = SQLDatabaseMetaDataFactory.fetchMeta(type, this);
+         }
+
       }
       catch (SQLException e)
       {

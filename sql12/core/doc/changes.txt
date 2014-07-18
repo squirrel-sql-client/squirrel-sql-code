@@ -33,6 +33,8 @@ Enhancements:
 
 Bug fixes:
 
+- Fixed NullPointerException during Session start when no Hibernate dialect is available for the Session's database connection.
+
 - Bug #1150 Exports to excel xls format not working in version 3.5.3
 
 - DB2 Plugin / bug #1097 DB2: don't display UDF source : SQL0206N "SCHEMA" is not valid in the context where it is used.
