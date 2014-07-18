@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.ExportFormat;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
@@ -194,7 +195,7 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
    {
       if (_exportFormat == ExportFormat.EXPORT_FORMAT_XLS)
       {
-         this.workbook = new XSSFWorkbook(); // keep 100 rows in memory, exceeding rows will be flushed to disk
+         this.workbook = new HSSFWorkbook(); // See https://gist.github.com/madan712/3912272
       }
       else
       {
