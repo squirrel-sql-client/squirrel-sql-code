@@ -58,11 +58,13 @@ public class ShowReferencesUtil
       }
    }
 
-   public static String generateJoinSQL(Object[] path)
+   public static JoinSQLInfo generateJoinSQLInfo(Object[] path)
    {
       ArrayUtils.reverse(path);
 
       String sql =  "";
+
+      String tableToBeEdited = null;
 
       for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
       {
@@ -70,7 +72,8 @@ public class ShowReferencesUtil
 
          if(i == 0)
          {
-            sql += "SELECT " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + ".* FROM " + exportedKey.getFkResultMetaDataTable().getQualifiedName();
+            tableToBeEdited = exportedKey.getFkResultMetaDataTable().getQualifiedName();
+            sql += "SELECT " + tableToBeEdited + ".* FROM " + exportedKey.getFkResultMetaDataTable().getQualifiedName();
          }
 
          sql += " INNER JOIN " + exportedKey.getPkResultMetaDataTable().getQualifiedName();
@@ -110,7 +113,7 @@ public class ShowReferencesUtil
       }
 
 
-      return sql;
+      return new JoinSQLInfo(sql, tableToBeEdited);
    }
 
 }

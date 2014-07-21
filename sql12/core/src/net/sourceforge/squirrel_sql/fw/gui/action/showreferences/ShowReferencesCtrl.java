@@ -161,13 +161,13 @@ public class ShowReferencesCtrl
       }
 
 
-      String sql = ShowReferencesUtil.generateJoinSQL(path);
+      JoinSQLInfo joinSQLInfo = ShowReferencesUtil.generateJoinSQLInfo(path);
 
       CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
-//      System.out.println(cr.reformat(sql));
+//      System.out.println(cr.reformat(joinSQLInfo.getSql()));
 //      System.out.println();
 
-      _window.resultExecuterPanel.executeSQL(cr.reformat(sql));
+      _window.resultExecuterPanel.executeSQL(cr.reformat(joinSQLInfo.getSql()), joinSQLInfo.getTableToBeEdited());
 
    }
 

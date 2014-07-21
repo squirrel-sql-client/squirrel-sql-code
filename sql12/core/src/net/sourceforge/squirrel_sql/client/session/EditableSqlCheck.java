@@ -19,7 +19,12 @@ public class EditableSqlCheck
          return;
       }
 
-      _tableNameFromSQL = getTableFromSQLIntern(exInfo.getSQL());
+      _tableNameFromSQL = exInfo.getTableToBeEdited();
+
+      if (null == _tableNameFromSQL)
+      {
+         _tableNameFromSQL = getTableFromSQLIntern(exInfo.getSQL());
+      }
    }
 
    private String getTableFromSQLIntern(String sql)

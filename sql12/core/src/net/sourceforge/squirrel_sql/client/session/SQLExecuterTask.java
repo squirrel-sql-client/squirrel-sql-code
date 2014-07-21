@@ -82,6 +82,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    /** Whether or not to check if the schema should be updated */
    private boolean schemaCheck = true;
    private StatementWrapper _statementWrapper;
+   private String _tableToBeEdited;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
@@ -90,6 +91,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
    {
+      this(session, sql, handler, executionListeners, null);
+   }
+
+   public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners, String tableToBeEdited)
+   {
+      _tableToBeEdited = tableToBeEdited;
       if (sql == null) {
           if (s_log.isDebugEnabled()) {
               s_log.debug("init(): expected non-null sql");
@@ -358,7 +365,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    {
       ++_currentQueryIndex;
 
-      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, statementWrapper.getMaxRows());
+      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, statementWrapper.getMaxRows(), _tableToBeEdited);
       boolean firstResultIsResultSet = statementWrapper.execute(sql);
       exInfo.sqlExecutionComplete();
 

@@ -260,6 +260,11 @@ public class SQLResultExecuterPanel extends JPanel
 
    public void executeSQL(String sql)
 	{
+      executeSQL(sql, null);
+   }
+
+   public void executeSQL(String sql, String tableToBeEdited)
+	{
       if (sql != null && sql.trim().length() > 0)
       {
          removeErrorPanels();
@@ -283,7 +288,7 @@ public class SQLResultExecuterPanel extends JPanel
 
          ISQLExecutionHandlerListener executionHandlerListener = createSQLExecutionHandlerListener();
 
-         new SQLExecutionHandler((IResultTab)null, _session, sql, executionHandlerListener, executionListeners);
+         new SQLExecutionHandler((IResultTab)null, _session, sql, executionHandlerListener, executionListeners, tableToBeEdited);
       }
    }
 

@@ -47,22 +47,26 @@ public class SQLExecutionInfo
 	private final int _maxRows;
    private Integer _numberResultRowsRead;
 
+   private String _tableToBeEdited;
+
 
    /**
 	 * ctor specifying the SQL being executed and the query index. Defaults SQL
 	 * execution start time to the current time.
 	 *
-	 * @param	idx		Query index.
-	 * @param	sql		SQL being executed.
-	 * @param	maxRows	Number of rows query is limited to.
+	 * @param   idx      Query index.
+	 * @param   sql      SQL being executed.
+	 * @param   maxRows   Number of rows query is limited to.
 	 *
-	 * @throws	IllegalArgumentException
+	 * @param tableToBeEdited
+    * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> sql passed.
 	 */
-	public SQLExecutionInfo(int idx, String sql, int maxRows)
+	public SQLExecutionInfo(int idx, String sql, int maxRows, String tableToBeEdited)
 	{
 		super();
-		if (sql == null)
+      _tableToBeEdited = tableToBeEdited;
+      if (sql == null)
 		{
 			throw new IllegalArgumentException("SQL script == null");
 		}
@@ -160,5 +164,10 @@ public class SQLExecutionInfo
    public Integer getNumberResultRowsRead()
    {
       return _numberResultRowsRead;
+   }
+
+   public String getTableToBeEdited()
+   {
+      return _tableToBeEdited;
    }
 }

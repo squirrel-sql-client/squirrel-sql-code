@@ -66,11 +66,24 @@ class SQLExecutionHandler implements ISQLExecuterHandler
                               ISQLExecutionHandlerListener executionHandlerListener,
                               ISQLExecutionListener[] executionListeners)
    {
+      this(resultTabToReplace,
+            session,
+            sql,
+            executionHandlerListener,
+            executionListeners, null);
+   }
+   public SQLExecutionHandler(IResultTab resultTabToReplace,
+                              ISession session,
+                              String sql,
+                              ISQLExecutionHandlerListener executionHandlerListener,
+                              ISQLExecutionListener[] executionListeners,
+                              String tableToBeEdited)
+   {
       _session = session;
       _executionHandlerListener = executionHandlerListener;
 
 
-      _executer = new SQLExecuterTask(_session, sql, this, executionListeners);
+      _executer = new SQLExecuterTask(_session, sql, this, executionListeners, tableToBeEdited);
       SquirrelPreferences prefs = _session.getApplication().getSquirrelPreferences();
 
       if (prefs.getLargeScriptStmtCount() > 0

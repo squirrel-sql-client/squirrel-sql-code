@@ -12,7 +12,7 @@ Enhancements:
     Note: Charts make use of JFreeChart: http://www.jfree.org/jfreechart/)
 
 - New right mouse menu entry in SQL results: "Show foreign key references".
-   Select one or more primary key values of a SQL result then choose the right mouse menu to display the foreign references for the primary key values.
+   Select one or more cells of a SQL result then choose the right mouse menu to display the foreign references for the selected cells.
 
 - SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
 
