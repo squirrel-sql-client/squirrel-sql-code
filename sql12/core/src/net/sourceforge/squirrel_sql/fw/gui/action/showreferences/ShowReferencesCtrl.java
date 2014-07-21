@@ -4,8 +4,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SimpleSessionListener;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.client.util.codereformat.CodeReformatorConfigFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -24,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 public class ShowReferencesCtrl
@@ -39,17 +38,17 @@ public class ShowReferencesCtrl
    private ArrayList<ShowQualifiedListener> _showQualifiedListeners = new ArrayList<ShowQualifiedListener>();
    private ISession _session;
 
-   public ShowReferencesCtrl(final ISession session, JFrame owningFrame, ResultMetaDataTable globalDbTable, ColumnDisplayDefinition pkColDef, ArrayList<ExportedKey> exportedKeys)
+   public ShowReferencesCtrl(final ISession session, JFrame owningFrame, RootTable rootTable, HashMap<String, ExportedKey> fkName_exportedKeys)
    {
       _session = session;
-      _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", globalDbTable.getQualifiedName(), pkColDef.getColumnName()));
+      _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", rootTable.getGlobalDbTable().getQualifiedName()));
 
-      DefaultMutableTreeNode root = new DefaultMutableTreeNode(globalDbTable);
+      DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootTable);
       _treeModel = new DefaultTreeModel(root);
 
 
-      createChildExportedKeyNodes(root, exportedKeys);
-      initShowQualifiedListeners(exportedKeys);
+      createChildExportedKeyNodes(root, fkName_exportedKeys);
+      initShowQualifiedListeners(fkName_exportedKeys);
 
       _window.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -123,9 +122,9 @@ public class ShowReferencesCtrl
       _window.setVisible(true);
    }
 
-   private void initShowQualifiedListeners(ArrayList<ExportedKey> exportedKeys)
+   private void initShowQualifiedListeners(HashMap<String, ExportedKey> exportedKeys)
    {
-      for (ExportedKey exportedKey : exportedKeys)
+      for (ExportedKey exportedKey : exportedKeys.values())
       {
          _showQualifiedListeners.add(exportedKey.getShowQualifiedListener());
       }
@@ -172,9 +171,9 @@ public class ShowReferencesCtrl
 
    }
 
-   private void createChildExportedKeyNodes(DefaultMutableTreeNode parent, ArrayList<ExportedKey> exportedKeys)
+   private void createChildExportedKeyNodes(DefaultMutableTreeNode parent, HashMap<String, ExportedKey> fkName_exportedKeys)
    {
-      for (ExportedKey exportedKey : exportedKeys)
+      for (ExportedKey exportedKey : fkName_exportedKeys.values())
       {
          DefaultMutableTreeNode child = new DefaultMutableTreeNode(exportedKey)
          {
@@ -184,7 +183,6 @@ public class ShowReferencesCtrl
                return false;
             }
          };
-
 
          child.setAllowsChildren(true);
          parent.add(child);
@@ -203,18 +201,12 @@ public class ShowReferencesCtrl
 
       ExportedKey parentExportedKey = (ExportedKey) parentNode.getUserObject();
 
-      if(false == parentExportedKey.hasSingleColumnPk())
-      {
-         JOptionPane.showMessageDialog(_window, s_stringMgr.getString("ShowReferencesCtrl.tableHasNoSingleColumnPk", parentExportedKey.getResultMetaDataTable().getQualifiedName()));
-         return;
-      }
+      HashMap<String, ExportedKey> fkName_exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getFkResultMetaDataTable(), null, _session);
 
-      ArrayList<ExportedKey> exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getResultMetaDataTable(), null, _session);
-
-      initShowQualifiedListeners(exportedKeys);
+      initShowQualifiedListeners(fkName_exportedKeys);
 
 
-      createChildExportedKeyNodes(parentNode, exportedKeys);
+      createChildExportedKeyNodes(parentNode, fkName_exportedKeys);
 
       _treeModel.nodeStructureChanged(parentNode);
 

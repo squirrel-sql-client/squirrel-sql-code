@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action.showreferences;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultMetaDataTable;
+import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
 import org.apache.commons.lang.ArrayUtils;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -9,10 +10,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShowReferencesUtil
 {
-   public static ArrayList<ExportedKey> getExportedKeys(ResultMetaDataTable globalDbTable, String inStat, ISession session)
+   public static HashMap<String, ExportedKey> getExportedKeys(ResultMetaDataTable globalDbTable, ArrayList<InStatColumnInfo> inStatColumnInfos, ISession session)
    {
       try
       {
@@ -21,43 +24,33 @@ public class ShowReferencesUtil
 
          ResultSet exportedKeys = jdbcMetaData.getExportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
 
-         ArrayList<ExportedKey> arrExportedKey = new ArrayList<ExportedKey>();
+         HashMap<String, ExportedKey> fkName_exportedKey = new HashMap<String, ExportedKey>();
          while(exportedKeys.next())
          {
+            String fkName = exportedKeys.getString("FK_NAME");
             String fktable_cat = exportedKeys.getString("FKTABLE_CAT");
             String fktable_schem = exportedKeys.getString("FKTABLE_SCHEM");
             String fktable_name = exportedKeys.getString("FKTABLE_NAME");
+
+            String pktable_cat = exportedKeys.getString("PKTABLE_CAT");
+            String pktable_schem = exportedKeys.getString("PKTABLE_SCHEM");
+            String pktable_name = exportedKeys.getString("PKTABLE_NAME");
+
             String fkcolumn_name = exportedKeys.getString("FKCOLUMN_NAME");
+            String pkcolumn_name = exportedKeys.getString("PKCOLUMN_NAME");
 
-            String fkTablesPkColumnName = null;
-            ResultSet fkTablesPrimaryKey = jdbcMetaData.getPrimaryKeys(fktable_cat, fktable_schem, fktable_name);
+            ExportedKey exportedKey = fkName_exportedKey.get(fkName);
 
-            if (fkTablesPrimaryKey.next())
+            if(null == exportedKey)
             {
-               String buf = fkTablesPrimaryKey.getString("COLUMN_NAME");
-
-               if(false == fkTablesPrimaryKey.next())
-               {
-                  // Single column PK found
-                  fkTablesPkColumnName = buf;
-               }
-
-               fkTablesPrimaryKey.close();
+               exportedKey = new ExportedKey(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name);
+               fkName_exportedKey.put(fkName, exportedKey);
             }
-
-            ExportedKey exportedKey =
-                  new ExportedKey(fktable_cat,
-                        fktable_schem,
-                        fktable_name,
-                        fkcolumn_name,
-                        fkTablesPkColumnName,
-                        inStat);
-
-            arrExportedKey.add(exportedKey);
+            exportedKey.addColumn(fkcolumn_name, pkcolumn_name);
          }
          exportedKeys.close();
 
-         return arrExportedKey;
+         return fkName_exportedKey;
       }
       catch (SQLException e)
       {
@@ -73,65 +66,51 @@ public class ShowReferencesUtil
 
       for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
       {
-
          ExportedKey exportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
 
          if(i == 0)
          {
-            sql += "SELECT " + exportedKey.getResultMetaDataTable().getQualifiedName() + ".* FROM " + exportedKey.getResultMetaDataTable().getQualifiedName();
+            sql += "SELECT " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + ".* FROM " + exportedKey.getFkResultMetaDataTable().getQualifiedName();
+         }
+
+         sql += " INNER JOIN " + exportedKey.getPkResultMetaDataTable().getQualifiedName();
+
+         String joinFields = null;
+         for (Map.Entry<String, String> fk_pk : exportedKey.getFkColumn_pkcolumnMap().entrySet())
+         {
+            if (null == joinFields)
+            {
+               joinFields = " ON " + exportedKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+            }
+            else
+            {
+               joinFields += " AND " + exportedKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+            }
+
+         }
+
+         sql += joinFields;
+
+      }
+
+      RootTable rootTable = (RootTable) ((DefaultMutableTreeNode)path[path.length - 1]).getUserObject();
+
+      for (int j = 0; j < rootTable.getInStatColumnInfos().size(); j++)
+      {
+         InStatColumnInfo inStatColumnInfo = rootTable.getInStatColumnInfos().get(j);
+
+         if (0 == j)
+         {
+            sql += " WHERE " + rootTable.getGlobalDbTable() + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
          }
          else
          {
-            ExportedKey formerExportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i-1]).getUserObject();
-            sql += " INNER JOIN " + exportedKey.getResultMetaDataTable().getQualifiedName() +
-                  " ON " + formerExportedKey.getResultMetaDataTable().getQualifiedName() + "." + formerExportedKey.getFkColumn() + " = " + exportedKey.getResultMetaDataTable().getQualifiedName() + "." + exportedKey.getTablesPrimaryKey();
+            sql += " AND " + rootTable.getGlobalDbTable() + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
          }
-
-         if(i == path.length - 2)
-         {
-            sql += " WHERE " + exportedKey.getResultMetaDataTable() + "." + exportedKey.getFkColumn() + " IN " + exportedKey.getInStat();
-         }
-
       }
+
+
       return sql;
    }
 
-   public static String generateInStatSQL(Object[] path)
-   {
-      //ExportedKey parentExportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[0]).getUserObject();
-
-      //String sql =  "SELECT * FROM " + parentExportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + parentExportedKey.getColumn() + " IN ";
-      String sql =  "";
-
-      for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
-      {
-         ExportedKey exportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
-
-
-         String selection;
-
-         if (0 == i)
-         {
-            selection = "*";
-         }
-         else
-         {
-            sql += "(";
-            selection = exportedKey.getTablesPrimaryKey();
-         }
-
-         sql +=  "SELECT " + selection + " FROM " + exportedKey.getResultMetaDataTable().getQualifiedName() + " WHERE " + exportedKey.getFkColumn() + " IN ";
-
-         if(i == path.length - 2)
-         {
-            sql += exportedKey.getInStat();
-         }
-      }
-
-      for (int i = 0; i < path.length - 2; i++)
-      {
-         sql += ")";
-      }
-      return sql;
-   }
 }

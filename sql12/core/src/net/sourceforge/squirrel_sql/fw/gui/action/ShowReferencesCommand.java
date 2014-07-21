@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ExportedKey;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.RootTable;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesCtrl;
 import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesUtil;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -14,6 +15,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ShowReferencesCommand
 {
@@ -47,91 +49,72 @@ public class ShowReferencesCommand
 
       ArrayList<InStatColumnInfo> inStatColumnInfos = new TableCopyInStatementCommand(_table).getInStatColumnInfos();
 
-      if(1 == inStatColumnInfos.size())
+
+      if (null == globalDbTable)
       {
-         InStatColumnInfo singleInStatColumnInfo = inStatColumnInfos.get(0);
+         ResultMetaDataTable buf = findTable(inStatColumnInfos);
 
-         if(null == globalDbTable)
+         if(null != buf)
          {
-            if(null != singleInStatColumnInfo.getColDef() && null != singleInStatColumnInfo.getColDef().getResultMetaDataTable())
-            {
-               globalDbTable = singleInStatColumnInfo.getColDef().getResultMetaDataTable();
-            }
+            globalDbTable = buf;
          }
-
-         if(null == globalDbTable)
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
-            return;
-         }
-
-
-         showReferences(globalDbTable, singleInStatColumnInfo.getColDef(), singleInStatColumnInfo.getInstat().toString());
-
       }
-      else if(1 < inStatColumnInfos.size())
+
+      if (null == globalDbTable)
       {
-         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.compoundNotSupported"));
-
-//         WhereStatColumnInfo whereStatColumnInfo = new TableCopyWhereStatementCommand(_table).getWhereStatColumnInfos();
-//
-//         if(null == globalDbTable)
-//         {
-//            globalDbTable = whereStatColumnInfo.getDistinctTable();
-//         }
-//
-//         if(null == globalDbTable)
-//         {
-//            JOptionPane.showMessageDialog(_owningFrame, "ShowReferencesCommand.noTable");
-//            return;
-//         }
-//
-//         String select =
-//               "SELECT * FROM " + globalDbTable.getQualifiedName() + " " +
-//
-//         showReferences(globalDbTable, singleInStatColumnInfo.getColDef(), select);
-//
+         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noTable"));
+         return;
       }
+
+
+      showReferences(new RootTable(globalDbTable, inStatColumnInfos));
+
    }
 
-   private void showReferences(ResultMetaDataTable globalDbTable, ColumnDisplayDefinition colDef, String inStat)
+   private ResultMetaDataTable findTable(ArrayList<InStatColumnInfo> inStatColumnInfos)
+   {
+      ResultMetaDataTable ret = null;
+      for (InStatColumnInfo inStatColumnInfo : inStatColumnInfos)
+      {
+         ResultMetaDataTable buf = inStatColumnInfo.getColDef().getResultMetaDataTable();
+         if (null == ret)
+         {
+            ret = buf;
+         }
+         else if (false == ret.getQualifiedName().equalsIgnoreCase(buf.getQualifiedName()))
+         {
+            return null;
+         }
+      }
+
+      return ret;
+   }
+
+   private void showReferences(RootTable rootTable)
    {
       try
       {
          ISession session = _updateableModel.getSession();
 
          DatabaseMetaData jdbcMetaData = session.getSQLConnection().getSQLMetaData().getJDBCMetaData();
-         ResultSet primaryKeys = jdbcMetaData.getPrimaryKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
+         ResultSet primaryKeys = jdbcMetaData.getPrimaryKeys(rootTable.getGlobalDbTable().getCatalogName(), rootTable.getGlobalDbTable().getSchemaName(), rootTable.getGlobalDbTable().getTableName());
 
          if(false == primaryKeys.next())
          {
-            messageNoPrimaryKeyColumn(globalDbTable, colDef);
+            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noPrimaryKey", rootTable.getGlobalDbTable().getQualifiedName()));
             return;
          }
 
-         if(false == colDef.getColumnName().equalsIgnoreCase(primaryKeys.getString("COLUMN_NAME")))
+         HashMap<String, ExportedKey> fkName_exportedKeys = ShowReferencesUtil.getExportedKeys(rootTable.getGlobalDbTable(), rootTable.getInStatColumnInfos(), session);
+
+         if(0 == fkName_exportedKeys.size())
          {
-            messageNoPrimaryKeyColumn(globalDbTable, colDef);
-            return;
-         }
-
-         if(primaryKeys.next())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noSinglePrimaryKeyColumn"));
+            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
             return;
          }
 
 
-         ArrayList<ExportedKey> arrExportedKey = ShowReferencesUtil.getExportedKeys(globalDbTable, inStat, session);
-
-         if(0 == arrExportedKey.size())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", globalDbTable.getQualifiedName()));
-            return;
-         }
-
-
-         new ShowReferencesCtrl(session, _owningFrame, globalDbTable, colDef, arrExportedKey);
+         new ShowReferencesCtrl(session, _owningFrame, rootTable, fkName_exportedKeys);
 
 
       }
@@ -141,8 +124,4 @@ public class ShowReferencesCommand
       }
    }
 
-   private void messageNoPrimaryKeyColumn(ResultMetaDataTable globalDbTable, ColumnDisplayDefinition colDef)
-   {
-      JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noPrimaryKeyColumn", globalDbTable.getQualifiedName() + "." + colDef.getColumnName()));
-   }
 }
