@@ -2,10 +2,7 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
-import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ExportedKey;
-import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.RootTable;
-import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesCtrl;
-import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.ShowReferencesUtil;
+import net.sourceforge.squirrel_sql.fw.gui.action.showreferences.*;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -105,16 +102,16 @@ public class ShowReferencesCommand
             return;
          }
 
-         HashMap<String, ExportedKey> fkName_exportedKeys = ShowReferencesUtil.getExportedKeys(rootTable.getGlobalDbTable(), rootTable.getInStatColumnInfos(), session);
+         References references = ShowReferencesUtil.getReferences(rootTable.getGlobalDbTable(), session);
 
-         if(0 == fkName_exportedKeys.size())
+         if(references.isEmpty())
          {
             JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
             return;
          }
 
 
-         new ShowReferencesCtrl(session, _owningFrame, rootTable, fkName_exportedKeys);
+         new ShowReferencesCtrl(session, _owningFrame, rootTable, references);
 
 
       }

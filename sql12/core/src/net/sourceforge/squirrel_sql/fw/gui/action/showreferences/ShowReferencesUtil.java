@@ -15,42 +15,55 @@ import java.util.Map;
 
 public class ShowReferencesUtil
 {
-   public static HashMap<String, ExportedKey> getExportedKeys(ResultMetaDataTable globalDbTable, ArrayList<InStatColumnInfo> inStatColumnInfos, ISession session)
+   public static References getReferences(ResultMetaDataTable globalDbTable, ISession session)
+   {
+      return new References(getReferenceKeys(globalDbTable, session, ReferenceType.EXPORTED_KEY), getReferenceKeys(globalDbTable, session, ReferenceType.IMPORTED_KEY));
+   }
+
+
+   public static HashMap<String, ReferenceKey> getReferenceKeys(ResultMetaDataTable globalDbTable, ISession session, ReferenceType referenceType)
    {
       try
       {
          DatabaseMetaData jdbcMetaData = session.getSQLConnection().getSQLMetaData().getJDBCMetaData();
+         ResultSet refrenceKeys;
 
-
-         ResultSet exportedKeys = jdbcMetaData.getExportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
-
-         HashMap<String, ExportedKey> fkName_exportedKey = new HashMap<String, ExportedKey>();
-         while(exportedKeys.next())
+         if (referenceType == ReferenceType.IMPORTED_KEY)
          {
-            String fkName = exportedKeys.getString("FK_NAME");
-            String fktable_cat = exportedKeys.getString("FKTABLE_CAT");
-            String fktable_schem = exportedKeys.getString("FKTABLE_SCHEM");
-            String fktable_name = exportedKeys.getString("FKTABLE_NAME");
-
-            String pktable_cat = exportedKeys.getString("PKTABLE_CAT");
-            String pktable_schem = exportedKeys.getString("PKTABLE_SCHEM");
-            String pktable_name = exportedKeys.getString("PKTABLE_NAME");
-
-            String fkcolumn_name = exportedKeys.getString("FKCOLUMN_NAME");
-            String pkcolumn_name = exportedKeys.getString("PKCOLUMN_NAME");
-
-            ExportedKey exportedKey = fkName_exportedKey.get(fkName);
-
-            if(null == exportedKey)
-            {
-               exportedKey = new ExportedKey(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name);
-               fkName_exportedKey.put(fkName, exportedKey);
-            }
-            exportedKey.addColumn(fkcolumn_name, pkcolumn_name);
+            refrenceKeys = jdbcMetaData.getImportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
          }
-         exportedKeys.close();
+         else
+         {
+            refrenceKeys = jdbcMetaData.getExportedKeys(globalDbTable.getCatalogName(), globalDbTable.getSchemaName(), globalDbTable.getTableName());
+         }
 
-         return fkName_exportedKey;
+         HashMap<String, ReferenceKey> fkName_refrenceKey = new HashMap<String, ReferenceKey>();
+         while(refrenceKeys.next())
+         {
+            String fkName = refrenceKeys.getString("FK_NAME");
+            String fktable_cat = refrenceKeys.getString("FKTABLE_CAT");
+            String fktable_schem = refrenceKeys.getString("FKTABLE_SCHEM");
+            String fktable_name = refrenceKeys.getString("FKTABLE_NAME");
+
+            String pktable_cat = refrenceKeys.getString("PKTABLE_CAT");
+            String pktable_schem = refrenceKeys.getString("PKTABLE_SCHEM");
+            String pktable_name = refrenceKeys.getString("PKTABLE_NAME");
+
+            String fkcolumn_name = refrenceKeys.getString("FKCOLUMN_NAME");
+            String pkcolumn_name = refrenceKeys.getString("PKCOLUMN_NAME");
+
+            ReferenceKey referenceKey = fkName_refrenceKey.get(fkName);
+
+            if(null == referenceKey)
+            {
+               referenceKey = new ReferenceKey(fkName, fktable_cat, fktable_schem, fktable_name, pktable_cat, pktable_schem, pktable_name, referenceType);
+               fkName_refrenceKey.put(fkName, referenceKey);
+            }
+            referenceKey.addColumn(fkcolumn_name, pkcolumn_name);
+         }
+         refrenceKeys.close();
+
+         return fkName_refrenceKey;
       }
       catch (SQLException e)
       {
@@ -60,6 +73,8 @@ public class ShowReferencesUtil
 
    public static JoinSQLInfo generateJoinSQLInfo(Object[] path)
    {
+      path = removeReferenceTypeNodes(path);
+
       ArrayUtils.reverse(path);
 
       String sql =  "";
@@ -68,26 +83,43 @@ public class ShowReferencesUtil
 
       for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
       {
-         ExportedKey exportedKey = (ExportedKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
+         ReferenceKey referenceKey = (ReferenceKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
 
          if(i == 0)
          {
-            tableToBeEdited = exportedKey.getFkResultMetaDataTable().getQualifiedName();
-            sql += "SELECT " + tableToBeEdited + ".* FROM " + exportedKey.getFkResultMetaDataTable().getQualifiedName();
-         }
+            String distinct = "";
 
-         sql += " INNER JOIN " + exportedKey.getPkResultMetaDataTable().getQualifiedName();
-
-         String joinFields = null;
-         for (Map.Entry<String, String> fk_pk : exportedKey.getFkColumn_pkcolumnMap().entrySet())
-         {
-            if (null == joinFields)
+            if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
             {
-               joinFields = " ON " + exportedKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+               tableToBeEdited = referenceKey.getFkResultMetaDataTable().getQualifiedName();
             }
             else
             {
-               joinFields += " AND " + exportedKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + exportedKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+               distinct = " DISTINCT ";
+               tableToBeEdited = referenceKey.getPkResultMetaDataTable().getQualifiedName();
+            }
+            sql += "SELECT " + distinct + tableToBeEdited + ".* FROM " + tableToBeEdited;
+         }
+
+         if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
+         {
+            sql += " INNER JOIN " + referenceKey.getPkResultMetaDataTable().getQualifiedName();
+         }
+         else
+         {
+            sql += " INNER JOIN " + referenceKey.getFkResultMetaDataTable().getQualifiedName();
+         }
+
+         String joinFields = null;
+         for (Map.Entry<String, String> fk_pk : referenceKey.getFkColumn_pkcolumnMap().entrySet())
+         {
+            if (null == joinFields)
+            {
+               joinFields = " ON " + referenceKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + referenceKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+            }
+            else
+            {
+               joinFields += " AND " + referenceKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + referenceKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
             }
 
          }
@@ -114,6 +146,24 @@ public class ShowReferencesUtil
 
 
       return new JoinSQLInfo(sql, tableToBeEdited);
+   }
+
+   private static Object[] removeReferenceTypeNodes(Object[] path)
+   {
+      ArrayList ret = new ArrayList();
+
+      for (Object obj : path)
+      {
+         DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+
+         if(false == node.getUserObject() instanceof ReferenceType)
+         {
+            ret.add(node);
+         }
+      }
+
+      return ret.toArray(new Object[ret.size()]);
+
    }
 
 }

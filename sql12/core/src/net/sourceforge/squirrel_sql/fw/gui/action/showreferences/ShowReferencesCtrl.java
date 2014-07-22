@@ -13,16 +13,13 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.prefs.Preferences;
 
 public class ShowReferencesCtrl
@@ -38,7 +35,7 @@ public class ShowReferencesCtrl
    private ArrayList<ShowQualifiedListener> _showQualifiedListeners = new ArrayList<ShowQualifiedListener>();
    private ISession _session;
 
-   public ShowReferencesCtrl(final ISession session, JFrame owningFrame, RootTable rootTable, HashMap<String, ExportedKey> fkName_exportedKeys)
+   public ShowReferencesCtrl(final ISession session, JFrame owningFrame, RootTable rootTable, References references)
    {
       _session = session;
       _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", rootTable.getGlobalDbTable().getQualifiedName()));
@@ -47,8 +44,8 @@ public class ShowReferencesCtrl
       _treeModel = new DefaultTreeModel(root);
 
 
-      createChildExportedKeyNodes(root, fkName_exportedKeys);
-      initShowQualifiedListeners(fkName_exportedKeys);
+      createChildReferenceKeyNodes(root, references);
+      initShowQualifiedListeners(references);
 
       _window.tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -122,11 +119,11 @@ public class ShowReferencesCtrl
       _window.setVisible(true);
    }
 
-   private void initShowQualifiedListeners(HashMap<String, ExportedKey> exportedKeys)
+   private void initShowQualifiedListeners(References references)
    {
-      for (ExportedKey exportedKey : exportedKeys.values())
+      for (ReferenceKey referenceKey : references.getAll())
       {
-         _showQualifiedListeners.add(exportedKey.getShowQualifiedListener());
+         _showQualifiedListeners.add(referenceKey.getShowQualifiedListener());
       }
 
    }
@@ -160,10 +157,18 @@ public class ShowReferencesCtrl
          return;
       }
 
+      DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) path[path.length - 1];
+      if(selectedNode.getUserObject() instanceof ReferenceType)
+      {
+         return;
+      }
+
+
 
       JoinSQLInfo joinSQLInfo = ShowReferencesUtil.generateJoinSQLInfo(path);
 
       CodeReformator cr = new CodeReformator(CodeReformatorConfigFactory.createConfig(_session));
+//      System.out.println(joinSQLInfo.getTableToBeEdited());
 //      System.out.println(cr.reformat(joinSQLInfo.getSql()));
 //      System.out.println();
 
@@ -171,11 +176,28 @@ public class ShowReferencesCtrl
 
    }
 
-   private void createChildExportedKeyNodes(DefaultMutableTreeNode parent, HashMap<String, ExportedKey> fkName_exportedKeys)
+   private void createChildReferenceKeyNodes(DefaultMutableTreeNode parent, References references)
    {
-      for (ExportedKey exportedKey : fkName_exportedKeys.values())
+      if(0 < references.getFkName_exportedKeys().size())
       {
-         DefaultMutableTreeNode child = new DefaultMutableTreeNode(exportedKey)
+         DefaultMutableTreeNode refTypeNode = new DefaultMutableTreeNode(ReferenceType.EXPORTED_KEY);
+         parent.add(refTypeNode);
+         appendReferenceChilds(refTypeNode, references.getFkName_exportedKeys().values());
+      }
+
+      if(0 < references.getFkName_importedKeys().size())
+      {
+         DefaultMutableTreeNode refTypeNode = new DefaultMutableTreeNode(ReferenceType.IMPORTED_KEY);
+         parent.add(refTypeNode);
+         appendReferenceChilds(refTypeNode, references.getFkName_importedKeys().values());
+      }
+   }
+
+   private void appendReferenceChilds(DefaultMutableTreeNode refTypeNode, Collection<ReferenceKey> referenceKeys)
+   {
+      for (ReferenceKey referenceKey : referenceKeys)
+      {
+         DefaultMutableTreeNode child = new DefaultMutableTreeNode(referenceKey)
          {
             @Override
             public boolean isLeaf()
@@ -185,7 +207,7 @@ public class ShowReferencesCtrl
          };
 
          child.setAllowsChildren(true);
-         parent.add(child);
+         refTypeNode.add(child);
       }
    }
 
@@ -199,14 +221,21 @@ public class ShowReferencesCtrl
       }
 
 
-      ExportedKey parentExportedKey = (ExportedKey) parentNode.getUserObject();
+      ReferenceKey parentReferenceKey = (ReferenceKey) parentNode.getUserObject();
 
-      HashMap<String, ExportedKey> fkName_exportedKeys = ShowReferencesUtil.getExportedKeys(parentExportedKey.getFkResultMetaDataTable(), null, _session);
+      References references;
+      if (ReferenceType.EXPORTED_KEY == parentReferenceKey.getReferenceType())
+      {
+         references = ShowReferencesUtil.getReferences(parentReferenceKey.getFkResultMetaDataTable(), _session);
+      }
+      else
+      {
+         references = ShowReferencesUtil.getReferences(parentReferenceKey.getPkResultMetaDataTable(), _session);
+      }
 
-      initShowQualifiedListeners(fkName_exportedKeys);
+      initShowQualifiedListeners(references);
 
-
-      createChildExportedKeyNodes(parentNode, fkName_exportedKeys);
+      createChildReferenceKeyNodes(parentNode, references);
 
       _treeModel.nodeStructureChanged(parentNode);
 

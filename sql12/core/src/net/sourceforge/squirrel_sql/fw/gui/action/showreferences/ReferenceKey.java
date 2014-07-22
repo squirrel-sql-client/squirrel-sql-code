@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExportedKey
+public class ReferenceKey
 {
    private final String _fkName;
    private final String _fktable_cat;
@@ -17,10 +17,11 @@ public class ExportedKey
    private final String _pktable_cat;
    private final String _pktable_schem;
    private final String _pktable_name;
+   private ReferenceType _referenceType;
    private boolean _showQualified;
    private HashMap<String, String> _fkColumn_pkcolumn = new HashMap<String, String>();
 
-   public ExportedKey(String fkName, String fktable_cat, String fktable_schem, String fktable_name, String pktable_cat, String pktable_schem, String pktable_name)
+   public ReferenceKey(String fkName, String fktable_cat, String fktable_schem, String fktable_name, String pktable_cat, String pktable_schem, String pktable_name, ReferenceType referenceType)
    {
       _fkName = fkName;
       _fktable_cat = fktable_cat;
@@ -29,6 +30,7 @@ public class ExportedKey
       _pktable_cat = pktable_cat;
       _pktable_schem = pktable_schem;
       _pktable_name = pktable_name;
+      _referenceType = referenceType;
    }
 
    public void addColumn(String fkcolumn_name, String pkcolumn_name)
@@ -68,7 +70,16 @@ public class ExportedKey
       colRefsFk += ")";
 
 
-      String colRefs = colRefsFk + " -> " + colRefsPk;
+      String colRefs;
+
+      if (ReferenceType.EXPORTED_KEY == _referenceType)
+      {
+         colRefs = colRefsFk + " -> " + colRefsPk;
+      }
+      else
+      {
+         colRefs = colRefsPk + " -> " + colRefsFk;
+      }
 
       return colRefs + " [FK = " + _fkName + "]";
    }
@@ -98,5 +109,11 @@ public class ExportedKey
    public HashMap<String, String> getFkColumn_pkcolumnMap()
    {
       return _fkColumn_pkcolumn;
+   }
+
+
+   public ReferenceType getReferenceType()
+   {
+      return _referenceType;
    }
 }
