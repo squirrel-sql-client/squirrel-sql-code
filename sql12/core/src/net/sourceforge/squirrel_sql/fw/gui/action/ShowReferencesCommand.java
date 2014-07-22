@@ -89,36 +89,18 @@ public class ShowReferencesCommand
 
    private void showReferences(RootTable rootTable)
    {
-      try
+      ISession session = _updateableModel.getSession();
+
+
+      References references = ShowReferencesUtil.getReferences(rootTable.getGlobalDbTable(), session);
+
+      if(references.isEmpty())
       {
-         ISession session = _updateableModel.getSession();
-
-         DatabaseMetaData jdbcMetaData = session.getSQLConnection().getSQLMetaData().getJDBCMetaData();
-         ResultSet primaryKeys = jdbcMetaData.getPrimaryKeys(rootTable.getGlobalDbTable().getCatalogName(), rootTable.getGlobalDbTable().getSchemaName(), rootTable.getGlobalDbTable().getTableName());
-
-         if(false == primaryKeys.next())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noPrimaryKey", rootTable.getGlobalDbTable().getQualifiedName()));
-            return;
-         }
-
-         References references = ShowReferencesUtil.getReferences(rootTable.getGlobalDbTable(), session);
-
-         if(references.isEmpty())
-         {
-            JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
-            return;
-         }
-
-
-         new ShowReferencesCtrl(session, _owningFrame, rootTable, references);
-
-
+         JOptionPane.showMessageDialog(_owningFrame, s_stringMgr.getString("ShowReferencesCommand.noForeignKeyReferences", rootTable.getGlobalDbTable().getQualifiedName()));
+         return;
       }
-      catch (SQLException e)
-      {
-         throw new RuntimeException(e);
-      }
+
+      new ShowReferencesCtrl(session, _owningFrame, rootTable, references);
    }
 
 }
