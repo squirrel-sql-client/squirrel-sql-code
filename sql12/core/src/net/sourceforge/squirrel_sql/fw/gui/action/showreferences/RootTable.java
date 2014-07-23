@@ -5,9 +5,6 @@ import net.sourceforge.squirrel_sql.fw.gui.action.InStatColumnInfo;
 
 import java.util.ArrayList;
 
-/**
- * Created by gerd on 21.07.14.
- */
 public class RootTable
 {
    private final ResultMetaDataTable _globalDbTable;
