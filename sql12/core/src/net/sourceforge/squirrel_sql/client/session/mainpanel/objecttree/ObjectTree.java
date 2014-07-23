@@ -48,15 +48,7 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasColorProperties;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
-import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
-import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
-import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -168,6 +160,7 @@ class ObjectTree extends JTree
       addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));
 
       addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
+      addToPopup(DatabaseObjectType.TABLE, actions.get(ShowTableReferencesAction.class));
 
       addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 

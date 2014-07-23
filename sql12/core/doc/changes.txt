@@ -13,6 +13,7 @@ Enhancements:
 
 - New right mouse menu entry in SQL results: "Show foreign key references".
    Select one or more cells of a SQL result then choose the right mouse menu to display the foreign references for the selected cells.
+   This function is also available in the right mouse menu of tables in the object tree.
 
 - SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
 
