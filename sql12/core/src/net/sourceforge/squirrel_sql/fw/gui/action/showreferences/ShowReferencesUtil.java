@@ -81,6 +81,8 @@ public class ShowReferencesUtil
 
       String tableToBeEdited = null;
 
+      TableEpressionBuilder teb = new TableEpressionBuilder();
+
       for (int i = 0; i < path.length - 1; i++) // path.length - 1 because we exclude root
       {
          ReferenceKey referenceKey = (ReferenceKey) ((DefaultMutableTreeNode)path[i]).getUserObject();
@@ -98,16 +100,16 @@ public class ShowReferencesUtil
                distinct = " DISTINCT ";
                tableToBeEdited = referenceKey.getPkResultMetaDataTable().getQualifiedName();
             }
-            sql += "SELECT " + distinct + tableToBeEdited + ".* FROM " + tableToBeEdited;
+            sql += "SELECT " + distinct + tableToBeEdited + ".* FROM " + teb.getTableExpr(tableToBeEdited);
          }
 
          if (ReferenceType.EXPORTED_KEY == referenceKey.getReferenceType())
          {
-            sql += " INNER JOIN " + referenceKey.getPkResultMetaDataTable().getQualifiedName();
+            sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getPkResultMetaDataTable().getQualifiedName());
          }
          else
          {
-            sql += " INNER JOIN " + referenceKey.getFkResultMetaDataTable().getQualifiedName();
+            sql += " INNER JOIN " + teb.getTableExpr(referenceKey.getFkResultMetaDataTable().getQualifiedName());
          }
 
          String joinFields = null;
@@ -115,11 +117,13 @@ public class ShowReferencesUtil
          {
             if (null == joinFields)
             {
-               joinFields = " ON " + referenceKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + referenceKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+               joinFields = " ON " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
+                     " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
             }
             else
             {
-               joinFields += " AND " + referenceKey.getPkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getValue() + " = " + referenceKey.getFkResultMetaDataTable().getQualifiedName() + "." + fk_pk.getKey();
+               joinFields += " AND " + teb.getLastTableOrAlias(referenceKey.getPkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getValue() +
+                     " = " + teb.getLastTableOrAlias(referenceKey.getFkResultMetaDataTable().getQualifiedName()) + "." + fk_pk.getKey();
             }
 
          }
@@ -136,11 +140,11 @@ public class ShowReferencesUtil
 
          if (0 == j)
          {
-            sql += " WHERE " + rootTable.getGlobalDbTable() + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
+            sql += " WHERE " + teb.getLastTableOrAlias(rootTable.getGlobalDbTable().getQualifiedName()) + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
          }
          else
          {
-            sql += " AND " + rootTable.getGlobalDbTable() + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
+            sql += " AND " + teb.getLastTableOrAlias(rootTable.getGlobalDbTable().getQualifiedName()) + "." + inStatColumnInfo.getColDef().getColumnName() + " IN " + inStatColumnInfo.getInstat();
          }
       }
 
