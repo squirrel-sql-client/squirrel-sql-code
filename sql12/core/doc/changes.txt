@@ -34,6 +34,8 @@ Enhancements:
 
 Bug fixes:
 
+- Rerun did not work for result tabs outside of SQL panels.
+
 - Fixed NullPointerException during Session start when no Hibernate dialect is available for the Session's database connection.
 
 - Bug #1150 Exports to excel xls format not working in version 3.5.3

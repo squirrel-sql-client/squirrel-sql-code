@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -19,21 +20,24 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(RerunCurrentSQLResultTabAction.class);
+   private ResultTab _resultTab;
 
-	/**
+   /**
 	 * Ctor specifying Application API.
 	 *
-	 * @param	app	Application API.
-	 */
-	public RerunCurrentSQLResultTabAction(IApplication app)
+    * @param   app   Application API.
+    * @param resultTab
+    */
+	public RerunCurrentSQLResultTabAction(IApplication app, ResultTab resultTab)
 	{
 		super(app);
-	}
+      _resultTab = resultTab;
+   }
 
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-		_panel = panel;
-		setEnabled(_panel != null);
+//		_panel = panel;
+//		setEnabled(_panel != null);
 	}
 
 	/**
@@ -43,18 +47,17 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 	 */
 	public synchronized void actionPerformed(ActionEvent evt)
 	{
-		if (_panel != null)
-		{
-			ISQLResultExecuter sqlResultExecuter = _panel.getSQLResultExecuter();
-			if (sqlResultExecuter != null)
-			{
-				IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();
-				if (selectedResultTab != null)
-				{
-					selectedResultTab.reRunSQL();
-				}
-			}
-		}
+      _resultTab.reRunSQL();
+
+//			ISQLResultExecuter sqlResultExecuter = _panel.getSQLResultExecuter();
+//			if (sqlResultExecuter != null)
+//			{
+//				IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();
+//				if (selectedResultTab != null)
+//				{
+//					selectedResultTab.reRunSQL();
+//				}
+//			}
 	}
 }
 

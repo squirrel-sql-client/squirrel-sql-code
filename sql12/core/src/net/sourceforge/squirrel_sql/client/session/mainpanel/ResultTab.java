@@ -600,7 +600,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private RerunCurrentSQLResultTabAction getRerunCurrentSQLResultTabAction()
    {
-	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(_session.getApplication());
+	   RerunCurrentSQLResultTabAction rtn = new RerunCurrentSQLResultTabAction(_session.getApplication(), this);
 	   
 	   rtn.setSQLPanel( _session.getSQLPanelAPIOfActiveSessionWindow() );
  
