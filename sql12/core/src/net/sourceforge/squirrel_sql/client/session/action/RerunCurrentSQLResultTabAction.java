@@ -33,11 +33,15 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 		super(app);
       _resultTab = resultTab;
    }
+	public RerunCurrentSQLResultTabAction(IApplication app)
+	{
+      this(app, null);
+   }
 
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
-//		_panel = panel;
-//		setEnabled(_panel != null);
+		_panel = panel;
+		setEnabled(_panel != null);
 	}
 
 	/**
@@ -45,19 +49,26 @@ public class RerunCurrentSQLResultTabAction extends SquirrelAction implements IS
 	 *
 	 * @param	evt		Event being executed.
 	 */
-	public synchronized void actionPerformed(ActionEvent evt)
-	{
-      _resultTab.reRunSQL();
+   public synchronized void actionPerformed(ActionEvent evt)
+   {
+      if (null != _resultTab)
+      {
+         _resultTab.reRunSQL();
+         return;
+      }
 
-//			ISQLResultExecuter sqlResultExecuter = _panel.getSQLResultExecuter();
-//			if (sqlResultExecuter != null)
-//			{
-//				IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();
-//				if (selectedResultTab != null)
-//				{
-//					selectedResultTab.reRunSQL();
-//				}
-//			}
-	}
+      if (_panel != null)
+      {
+         ISQLResultExecuter sqlResultExecuter = _panel.getSQLResultExecuter();
+         if (sqlResultExecuter != null)
+         {
+            IResultTab selectedResultTab = sqlResultExecuter.getSelectedResultTab();
+            if (selectedResultTab != null)
+            {
+               selectedResultTab.reRunSQL();
+            }
+         }
+      }
+   }
 }
 

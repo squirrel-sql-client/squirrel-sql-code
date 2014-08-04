@@ -125,6 +125,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private boolean _tabIsClosing;
    private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
+   private OverviewInitializer _overviewInitializer;
+
    /**
     * Ctor.
     *
@@ -142,7 +144,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
                     IDataSetUpdateableTableModel creator, ResultTabListener resultTabListener)
       throws IllegalArgumentException
    {
-      super();
       _resultTabListener = resultTabListener;
       if (session == null)
       {
@@ -276,6 +277,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       _currentSqlLblCtrl.setSql(_sql);
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
+      _overviewInitializer.setCurrentResult(_rsds);
 
 		// Display the result set metadata.
 		if (mdds != null && _metaDataOutput != null)
@@ -342,7 +344,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
          _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
          _queryInfoPanel.displayRowCount(_rsds.currentRowCount());
 
-         reInitOverview();
+         _overviewInitializer.initOverview();
 
       }
       catch (DataSetException e)
@@ -570,7 +572,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 		_tabResultTabs.addTab(infoTabTitle, sp);
 
 
-      reInitOverview();
+      _overviewInitializer = new OverviewInitializer(_session, _tabResultTabs);
+      _overviewInitializer.initOverview();
 
 	}
 
@@ -607,30 +610,6 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	   return rtn;
    }
    
-   private void reInitOverview()
-   {
-      if(OverviewCtrl.isOverviewPanel(_tabResultTabs.getComponentAt(_tabResultTabs.getTabCount()-1)))
-      {
-         _tabResultTabs.removeTabAt(_tabResultTabs.getTabCount()-1);
-      }
-
-      final int overViewIx = _tabResultTabs.getTabCount();
-      final OverviewCtrl ctrl = new OverviewCtrl(_session);
-      _tabResultTabs.addTab(ctrl.getTitle(), ctrl.getPanel());
-
-      _tabResultTabs.addChangeListener(new ChangeListener()
-      {
-         @Override
-         public void stateChanged(ChangeEvent e)
-         {
-            if (overViewIx == _tabResultTabs.getSelectedIndex())
-            {
-               ctrl.init(_rsds);
-            }
-         }
-      });
-   }
-
    private class CloseAction extends SquirrelAction
 	{
 		CloseAction()
