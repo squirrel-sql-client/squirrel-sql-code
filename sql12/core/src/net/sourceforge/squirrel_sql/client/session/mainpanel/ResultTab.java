@@ -34,8 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -45,7 +43,8 @@ import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.crosstable.CrossTableInitializer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewInitializer;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ContinueReadChannel;
@@ -126,6 +125,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
    private SelectRowColLabelController _selectRowColLabelController = new SelectRowColLabelController();
 
    private OverviewInitializer _overviewInitializer;
+
+   private CrossTableInitializer _crossTableInitializer;
 
    /**
     * Ctor.
@@ -278,6 +279,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _currentSqlLblCtrl.setSql(_sql);
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
       _overviewInitializer.setCurrentResult(_rsds);
+      _crossTableInitializer.setCurrentResult(_rsds);
 
 		// Display the result set metadata.
 		if (mdds != null && _metaDataOutput != null)
@@ -346,6 +348,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
          _overviewInitializer.initOverview();
 
+         _crossTableInitializer.initCrossTable();
       }
       catch (DataSetException e)
       {
@@ -574,6 +577,9 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
       _overviewInitializer = new OverviewInitializer(_session, _tabResultTabs);
       _overviewInitializer.initOverview();
+
+      _crossTableInitializer = new CrossTableInitializer (_session, _tabResultTabs);
+      _crossTableInitializer.initCrossTable();
 
 	}
 

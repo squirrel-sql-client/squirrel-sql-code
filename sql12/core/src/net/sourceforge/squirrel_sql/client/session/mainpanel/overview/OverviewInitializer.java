@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.client.session.mainpanel;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.overview;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewCtrl;
@@ -14,11 +14,35 @@ public class OverviewInitializer
    private final JTabbedPane _tabResultTabs;
    private Integer _overviewTabIndex = null;
    private ResultSetDataSet _rsds;
+   private OverviewCtrl _overviewCtrl;
 
    public OverviewInitializer(ISession session, JTabbedPane tabResultTabs)
    {
       _session = session;
       _tabResultTabs = tabResultTabs;
+
+      _tabResultTabs.addChangeListener(new ChangeListener()
+      {
+         @Override
+         public void stateChanged(ChangeEvent e)
+         {
+            onStateChanged();
+         }
+      });
+
+   }
+
+   private void onStateChanged()
+   {
+      if(null == _overviewTabIndex || null == _tabResultTabs || null == _rsds)
+      {
+         return;
+      }
+
+      if (_overviewTabIndex == _tabResultTabs.getSelectedIndex())
+      {
+         _overviewCtrl.init(_rsds);
+      }
    }
 
    public void setCurrentResult(ResultSetDataSet rsds)
@@ -38,20 +62,10 @@ public class OverviewInitializer
       {
          _overviewTabIndex = _tabResultTabs.getTabCount();
       }
-      final OverviewCtrl ctrl = new OverviewCtrl(_session);
-      _tabResultTabs.addTab(ctrl.getTitle(), ctrl.getPanel());
+      _overviewCtrl = new OverviewCtrl(_session);
+      _tabResultTabs.addTab(_overviewCtrl.getTitle(), _overviewCtrl.getPanel());
+      _tabResultTabs.insertTab(_overviewCtrl.getTitle(), null, _overviewCtrl.getPanel(), null, _overviewTabIndex);
 
-      _tabResultTabs.addChangeListener(new ChangeListener()
-      {
-         @Override
-         public void stateChanged(ChangeEvent e)
-         {
-            if (_overviewTabIndex == _tabResultTabs.getSelectedIndex())
-            {
-               ctrl.init(_rsds);
-            }
-         }
-      });
    }
 
 }
