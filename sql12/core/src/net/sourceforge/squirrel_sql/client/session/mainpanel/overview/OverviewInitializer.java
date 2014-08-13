@@ -15,6 +15,7 @@ public class OverviewInitializer
    private Integer _overviewTabIndex = null;
    private ResultSetDataSet _rsds;
    private OverviewCtrl _overviewCtrl;
+   private boolean _isInitialized = false;
 
    public OverviewInitializer(ISession session, JTabbedPane tabResultTabs)
    {
@@ -34,7 +35,7 @@ public class OverviewInitializer
 
    private void onStateChanged()
    {
-      if(null == _overviewTabIndex || null == _tabResultTabs || null == _rsds)
+      if(_isInitialized || null == _overviewTabIndex || null == _tabResultTabs || null == _rsds)
       {
          return;
       }
@@ -42,12 +43,14 @@ public class OverviewInitializer
       if (_overviewTabIndex == _tabResultTabs.getSelectedIndex())
       {
          _overviewCtrl.init(_rsds);
+         _isInitialized = true;
       }
    }
 
    public void setCurrentResult(ResultSetDataSet rsds)
    {
       _rsds = rsds;
+      _isInitialized = false;
    }
 
 

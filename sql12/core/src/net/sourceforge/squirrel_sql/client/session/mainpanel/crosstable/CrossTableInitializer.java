@@ -15,6 +15,7 @@ public class CrossTableInitializer
 
    private Integer _crossTableTabIndex = null;
    private CrossTableCtrl _crossTableCtrl;
+   private boolean _isInitialized = false;
 
 
    public CrossTableInitializer(ISession session, JTabbedPane tabResultTabs)
@@ -35,7 +36,7 @@ public class CrossTableInitializer
 
    private void onStateChanged()
    {
-      if(null == _crossTableTabIndex || null == _tabResultTabs || null == _rsds)
+      if(_isInitialized || null == _crossTableTabIndex || null == _tabResultTabs || null == _rsds)
       {
          return;
       }
@@ -43,6 +44,7 @@ public class CrossTableInitializer
       if (_crossTableTabIndex == _tabResultTabs.getSelectedIndex())
       {
          _crossTableCtrl.init(_rsds);
+         _isInitialized = true;
       }
    }
 
@@ -59,12 +61,13 @@ public class CrossTableInitializer
       }
 
 
-      _crossTableCtrl = new CrossTableCtrl();
+      _crossTableCtrl = new CrossTableCtrl(_session);
       _tabResultTabs.insertTab(_crossTableCtrl.getTitle(), null, _crossTableCtrl.getPanel(), null, _crossTableTabIndex);
    }
 
    public void setCurrentResult(ResultSetDataSet rsds)
    {
       _rsds = rsds;
+      _isInitialized = false;
    }
 }
