@@ -8,7 +8,7 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-Feature request #443 Option to rotate grid (swap rows and columns)
+Feature request #443 SQL results have new tab "Rotated table" where rows and columns are swapped.
 
 Charts of SQL results: Plain x-y-charts of pairs of numeric columns can now be created.
   Note: Charts make use of JFreeChart: http://www.jfree.org/jfreechart/)
