@@ -8,53 +8,55 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
-- Charts of SQL results: Plain x-y-charts of pairs of numeric columns can now be created.
-    Note: Charts make use of JFreeChart: http://www.jfree.org/jfreechart/)
+Feature request #443 Option to rotate grid (swap rows and columns)
 
-- New right mouse menu entry in SQL results: "Show foreign key references".
-   Select one or more cells of a SQL result then choose the right mouse menu to display the foreign references for the selected cells.
-   This function is also available in the right mouse menu of tables in the object tree.
+Charts of SQL results: Plain x-y-charts of pairs of numeric columns can now be created.
+  Note: Charts make use of JFreeChart: http://www.jfree.org/jfreechart/)
 
-- SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
+New right mouse menu entry in SQL results: "Show foreign key references".
+ Select one or more cells of a SQL result then choose the right mouse menu to display the foreign references for the selected cells.
+ This function is also available in the right mouse menu of tables in the object tree.
 
-- Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + mouse click.
-    See Menu File --> New Session Properties --> Tab SQL --> Section Jump to object tree
-    This will fix bug #982
+SQL result --> Info tab: SQL is now displayed in text field instead of label. Formatting is preserved.
 
-- Patch #66 New toolbar button to clone the current Session with a new connection.
-    The button is right next to the new SQL tab button.
-    Thanks to Jaroslaw Jarmolowicz for the patch
+Check boxes to enable / disable navigation from the SQL editor to the object tree by Ctrl+B and Ctrl + mouse click.
+  See Menu File --> New Session Properties --> Tab SQL --> Section Jump to object tree
+  This will fix bug #982
 
-- Patch #67 Session tab tooltip now shows the connections JDBC-URL.
-    Thanks to Jaroslaw Jarmolowicz for the patch
+Patch #66 New toolbar button to clone the current Session with a new connection.
+  The button is right next to the new SQL tab button.
+  Thanks to Jaroslaw Jarmolowicz for the patch
 
-- Patch #68 The "Copy as INSERT / UPDATE statement" functions now provide the right table name
-    when copying from a content tab.
-    Thanks to Jaroslaw Jarmolowicz for the patch
+Patch #67 Session tab tooltip now shows the connections JDBC-URL.
+  Thanks to Jaroslaw Jarmolowicz for the patch
+
+Patch #68 The "Copy as INSERT / UPDATE statement" functions now provide the right table name
+  when copying from a content tab.
+  Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
-- Rerun was not loaded into Session menu
+Rerun was not loaded into Session menu
 
-- Rerun did not work for result tabs outside of SQL panels.
+Rerun did not work for result tabs outside of SQL panels.
 
-- Fixed NullPointerException during Session start when no Hibernate dialect is available for the Session's database connection.
+Fixed NullPointerException during Session start when no Hibernate dialect is available for the Session's database connection.
 
-- Bug #1150 Exports to excel xls format not working in version 3.5.3
+Bug #1150 Exports to excel xls format not working in version 3.5.3
 
-- DB2 Plugin / bug #1097 DB2: don't display UDF source : SQL0206N "SCHEMA" is not valid in the context where it is used.
-   Thanks to Andy Helmer for the fix.
+DB2 Plugin / bug #1097 DB2: don't display UDF source : SQL0206N "SCHEMA" is not valid in the context where it is used.
+ Thanks to Andy Helmer for the fix.
 
-- Data import Plugin / bug #1133: Now imports new Excel format *.xlsx
+Data import Plugin / bug #1133: Now imports new Excel format *.xlsx
 
-- Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.
-   Thanks to Jaroslaw Jarmolowicz for the patch
+Patch #69 Postgres: Fixing problem with long running "getTypesInfo" on Postgres.
+ Thanks to Jaroslaw Jarmolowicz for the patch
 
-- Patch #70 Refactoring --> Dropping foreign key was generating wrong object names in SQL.
-   Thanks to Jaroslaw Jarmolowicz for the patch
+Patch #70 Refactoring --> Dropping foreign key was generating wrong object names in SQL.
+ Thanks to Jaroslaw Jarmolowicz for the patch
 
-- Patch #71 Postgres: When a WHERE clause with UUID type is generated data is now enclosed in ''
-   Thanks to Jaroslaw Jarmolowicz for the patch
+Patch #71 Postgres: When a WHERE clause with UUID type is generated data is now enclosed in ''
+ Thanks to Jaroslaw Jarmolowicz for the patch
 
 
 
