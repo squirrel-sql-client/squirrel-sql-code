@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.RerunCurrentSQLResultTabAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.crosstable.CrossTableInitializer;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.rotatedtable.RotatedTableInitializer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.overview.OverviewInitializer;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
@@ -126,7 +126,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
    private OverviewInitializer _overviewInitializer;
 
-   private CrossTableInitializer _crossTableInitializer;
+   private RotatedTableInitializer _rotatedTableInitializer;
 
    /**
     * Ctor.
@@ -279,7 +279,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _currentSqlLblCtrl.setSql(_sql);
       _currentSqlLblCtrl.reInit(_rsds.currentRowCount(), _rsds.areAllPossibleResultsOfSQLRead());
       _overviewInitializer.setCurrentResult(_rsds);
-      _crossTableInitializer.setCurrentResult(_rsds);
+      _rotatedTableInitializer.setCurrentResult(_rsds);
 
 		// Display the result set metadata.
 		if (mdds != null && _metaDataOutput != null)
@@ -348,7 +348,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 
          _overviewInitializer.initOverview();
 
-         _crossTableInitializer.initCrossTable();
+         _rotatedTableInitializer.initRotatedTable();
       }
       catch (DataSetException e)
       {
@@ -578,8 +578,8 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
       _overviewInitializer = new OverviewInitializer(_session, _tabResultTabs);
       _overviewInitializer.initOverview();
 
-      _crossTableInitializer = new CrossTableInitializer (_session, _tabResultTabs);
-      _crossTableInitializer.initCrossTable();
+      _rotatedTableInitializer = new RotatedTableInitializer(_session, _tabResultTabs);
+      _rotatedTableInitializer.initRotatedTable();
 
 	}
 
