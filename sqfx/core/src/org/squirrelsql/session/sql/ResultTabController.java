@@ -1,6 +1,9 @@
 package org.squirrelsql.session.sql;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
@@ -96,6 +99,14 @@ public class ResultTabController
 
       TableView tv = new TableView();
 
+      tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+      SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
+
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> onCopyAsInStat(tv));
+
+
+
       if (_editButtonCtrl.allowsEditing())
       {
          _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
@@ -109,6 +120,11 @@ public class ResultTabController
       outputTab.setClosable(false);
 
       return outputTab;
+   }
+
+   private void onCopyAsInStat(TableView tv)
+   {
+      System.out.println("ResultTabController.onCopyAsInStat");
    }
 
 
