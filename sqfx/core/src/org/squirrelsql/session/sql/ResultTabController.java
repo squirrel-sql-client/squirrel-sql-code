@@ -9,7 +9,7 @@ import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
-import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.*;
 
 public class ResultTabController
 {
@@ -100,6 +100,8 @@ public class ResultTabController
       TableView tv = new TableView();
 
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      TableUtil.prepareExtendedSeletion(tv);
+
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
 
