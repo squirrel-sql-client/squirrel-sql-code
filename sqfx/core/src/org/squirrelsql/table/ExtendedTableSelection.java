@@ -2,7 +2,9 @@ package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollBar;
@@ -10,6 +12,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class ExtendedTableSelection
 {
@@ -93,22 +98,53 @@ public class ExtendedTableSelection
       double yEnd = event.getY();
 
 
-      ScrollBar scrollBarH = (ScrollBar) _tableView.lookup(".scroll-bar.horizontal");
-      ScrollBar scrollBarV = (ScrollBar) _tableView.lookup(".scroll-bar.vertical");
+      Set<Node> nodes = _tableView.lookupAll(".scroll-bar");
+
+      ScrollBar scrollBarH = null;
+      ScrollBar scrollBarV = null;
+
+      for (Node node : nodes)
+      {
+         ScrollBar buf = (ScrollBar) node;
+
+         if(buf.getOrientation() == Orientation.HORIZONTAL)
+         {
+            scrollBarH = buf;
+         }
+
+         if(buf.getOrientation() == Orientation.VERTICAL)
+         {
+            scrollBarV = buf;
+         }
+      }
+
+
+
+
+
 
       TableColumnHeader tableColumnHeader = (TableColumnHeader) _tableView.lookup(".column-header");
 
       yEnd = Math.max(tableColumnHeader.getHeight(), yEnd);
       xEnd = Math.max(lineWidth, xEnd);
 
+
       if(scrollBarV.isVisible())
       {
-         xEnd = Math.min(xEnd, _tableView.getWidth() - scrollBarV.getWidth());
+         xEnd = Math.min(xEnd, _tableView.getWidth() - scrollBarV.getWidth() - lineWidth);
+      }
+      else
+      {
+         xEnd = Math.min(xEnd, _tableView.getWidth() - lineWidth);
       }
 
       if(scrollBarH.isVisible())
       {
-         yEnd = Math.min(yEnd, _tableView.getHeight() - scrollBarH.getWidth());
+         yEnd = Math.min(yEnd, _tableView.getHeight() - scrollBarH.getHeight() - lineWidth);
+      }
+      else
+      {
+         yEnd = Math.min(yEnd, _tableView.getHeight() - lineWidth);
       }
 
 
