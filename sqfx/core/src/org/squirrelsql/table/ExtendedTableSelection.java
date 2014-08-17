@@ -118,11 +118,6 @@ public class ExtendedTableSelection
          }
       }
 
-
-
-
-
-
       TableColumnHeader tableColumnHeader = (TableColumnHeader) _tableView.lookup(".column-header");
 
       yEnd = Math.max(tableColumnHeader.getHeight(), yEnd);
@@ -165,6 +160,11 @@ public class ExtendedTableSelection
       gc.strokeLine(pBegin.getX(), yEnd, pBegin.getX() ,pBegin.getY());
 
 
+      scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
+   }
+
+   private void scrollIfBottomOrTopReached(MouseEvent event, double yEnd, TableColumnHeader tableColumnHeader)
+   {
       if(event.getY() > yEnd)
       {
          VirtualFlow virtualFlow = (VirtualFlow) _tableView.lookup(".virtual-flow");
