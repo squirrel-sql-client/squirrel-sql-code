@@ -1,14 +1,14 @@
 package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -163,6 +163,33 @@ public class ExtendedTableSelection
       gc.strokeLine(xEnd, pBegin.getY(), xEnd, yEnd);
       gc.strokeLine(xEnd, yEnd, pBegin.getX(), yEnd);
       gc.strokeLine(pBegin.getX(), yEnd, pBegin.getX() ,pBegin.getY());
+
+
+      if(event.getY() > yEnd)
+      {
+         VirtualFlow virtualFlow = (VirtualFlow) _tableView.lookup(".virtual-flow");
+
+         IndexedCell lastVisibleCell = virtualFlow.getLastVisibleCell();
+         int rowIndex = lastVisibleCell.getIndex();
+
+         if (rowIndex + 1 < _tableView.getItems().size())
+         {
+            _tableView.scrollTo(rowIndex + 1);
+         }
+      }
+
+      if(event.getY() < tableColumnHeader.getHeight())
+      {
+         VirtualFlow virtualFlow = (VirtualFlow) _tableView.lookup(".virtual-flow");
+
+         IndexedCell firstVisibleCell = virtualFlow.getFirstVisibleCell();
+         int rowIndex = firstVisibleCell.getIndex();
+
+         if (rowIndex - 1 >= 0)
+         {
+            _tableView.scrollTo(rowIndex - 1);
+         }
+      }
    }
 
    private void clearCanvas()
