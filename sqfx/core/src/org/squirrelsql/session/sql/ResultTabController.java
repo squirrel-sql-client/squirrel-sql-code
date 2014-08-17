@@ -1,10 +1,9 @@
 package org.squirrelsql.session.sql;
 
-import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
@@ -100,7 +99,7 @@ public class ResultTabController
       TableView tv = new TableView();
 
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-      TableUtil.prepareExtendedSeletion(tv);
+      StackPane stackPane = TableUtil.prepareExtendedSelection(tv);
 
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
@@ -118,7 +117,7 @@ public class ResultTabController
          tableLoader.load(tv);
       }
 
-      outputTab.setContent(tv);
+      outputTab.setContent(stackPane);
       outputTab.setClosable(false);
 
       return outputTab;
