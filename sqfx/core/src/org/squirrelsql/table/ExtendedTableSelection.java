@@ -1,5 +1,6 @@
 package org.squirrelsql.table;
 
+import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -84,29 +85,41 @@ public class ExtendedTableSelection
 
       gc.setStroke(Color.BLACK);
 
-      gc.setLineWidth(2);
+      int lineWidth = 2;
+      gc.setLineWidth(lineWidth);
 
 
       double xEnd = event.getX();
       double yEnd = event.getY();
 
 
-      ScrollBar scrollBarH = (ScrollBar) _tableView.lookup(".scroll-bar:horizontal");
-      ScrollBar scrollBarV = (ScrollBar) _tableView.lookup(".scroll-bar:vertical");
+      ScrollBar scrollBarH = (ScrollBar) _tableView.lookup(".scroll-bar.horizontal");
+      ScrollBar scrollBarV = (ScrollBar) _tableView.lookup(".scroll-bar.vertical");
+
+      TableColumnHeader tableColumnHeader = (TableColumnHeader) _tableView.lookup(".column-header");
+
+      yEnd = Math.max(tableColumnHeader.getHeight(), yEnd);
+      xEnd = Math.max(lineWidth, xEnd);
 
       if(scrollBarV.isVisible())
       {
-         xEnd = Math.min(event.getX(), _tableView.getWidth() - scrollBarV.getWidth());
+         xEnd = Math.min(xEnd, _tableView.getWidth() - scrollBarV.getWidth());
       }
 
       if(scrollBarH.isVisible())
       {
-         yEnd = Math.min(event.getY(), _tableView.getHeight() - scrollBarH.getWidth());
+         yEnd = Math.min(yEnd, _tableView.getHeight() - scrollBarH.getWidth());
       }
 
-      System.out.println("xEnd = " + xEnd);
-      System.out.println("yEnd = " + yEnd);
 
+//      System.out.println("xEnd = " + xEnd);
+//      System.out.println("yEnd = " + yEnd);
+
+//      System.out.println("VV=" + scrollBarV.getValue());
+//      System.out.println("VVA=" + scrollBarV.getVisibleAmount());
+//      System.out.println("HV=" + scrollBarH.getValue());
+//      System.out.println("HVA=" + scrollBarH.getVisibleAmount());
+//      System.out.println("Eq=" + (scrollBarH == scrollBarV));
 
 
 
