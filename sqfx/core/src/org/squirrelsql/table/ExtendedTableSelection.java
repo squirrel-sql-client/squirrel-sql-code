@@ -2,6 +2,7 @@ package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -9,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -32,34 +34,58 @@ public class ExtendedTableSelection
       _stackPane.getChildren().add(_tableView);
 
 
-      tableView.setOnMousePressed(new EventHandler<MouseEvent>()
-      {
-         @Override
-         public void handle(MouseEvent event)
-         {
-            onMousePressed(event);
-         }
-      });
+      /////////////////////////////////////////////////////////////////////////////////////
+      // We use this instead of setOnMousePressed() ... to leave these setters to others
+      tableView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> onMousePressed(event));
 
-      tableView.setOnMouseReleased(new EventHandler<MouseEvent>()
-      {
-         @Override
-         public void handle(MouseEvent event)
-         {
-            _stackPane.getChildren().remove(_canvas);
-         }
-      });
+      tableView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> onReleased());
+
+      tableView.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> onDragged(event));
+      //
+      /////////////////////////////////////////////////////////////////////////////////////
 
 
 
-      _tableView.setOnMouseDragged(new EventHandler<MouseEvent>()
-      {
-         @Override
-         public void handle(MouseEvent event)
-         {
-            onDragged(event);
-         }
-      });
+//      tableView.setOnMousePressed(new EventHandler<MouseEvent>()
+//      {
+//         @Override
+//         public void handle(MouseEvent event)
+//         {
+//            System.out.println("Second listener works!!!");
+//         }
+//      });
+
+//      tableView.setOnMousePressed(new EventHandler<MouseEvent>()
+//      {
+//         @Override
+//         public void handle(MouseEvent event)
+//         {
+//            onMousePressed(event);
+//         }
+//      });
+
+//      tableView.setOnMouseReleased(new EventHandler<MouseEvent>()
+//      {
+//         @Override
+//         public void handle(MouseEvent event)
+//         {
+//            _stackPane.getChildren().remove(_canvas);
+//         }
+//      });
+
+//      _tableView.setOnMouseDragged(new EventHandler<MouseEvent>()
+//      {
+//         @Override
+//         public void handle(MouseEvent event)
+//         {
+//            onDragged(event);
+//         }
+//      });
+   }
+
+   private boolean onReleased()
+   {
+      return _stackPane.getChildren().remove(_canvas);
    }
 
    private void onMousePressed(MouseEvent event)
