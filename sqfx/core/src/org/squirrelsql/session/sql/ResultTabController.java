@@ -99,7 +99,6 @@ public class ResultTabController
       TableView tv = new TableView();
 
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-      StackPane stackPane = TableUtil.prepareExtendedSelection(tv);
 
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
@@ -117,6 +116,7 @@ public class ResultTabController
          tableLoader.load(tv);
       }
 
+      StackPane stackPane = TableUtil.prepareExtendedSelection(tv);
       outputTab.setContent(stackPane);
       outputTab.setClosable(false);
 

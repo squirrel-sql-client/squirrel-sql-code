@@ -2,7 +2,11 @@ package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
 
-import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
@@ -114,5 +118,44 @@ public class Utils
 
       }
       return msg;
+   }
+
+   public static void findNodeForPointInTableView(Parent parent, Class clazz, double x, double y)
+   {
+      for (Node node : parent.getChildrenUnmodifiable())
+      {
+         Bounds boundsInParent = node.getBoundsInParent();
+         Bounds layoutBounds = node.getLayoutBounds();
+         Bounds boundsInLocal = node.getBoundsInLocal();
+
+         double localX;
+         double localY;
+
+//         if (parent instanceof Group)
+//         {
+//            localX = x;
+//            localY = y;
+//         }
+//         else
+//         {
+            localX = x - (boundsInParent.getMinX() /*- layoutBounds.getMinX()*/ - boundsInLocal.getMinX());
+            localY = y - (boundsInParent.getMinY() /*- layoutBounds.getMinY()*/ - boundsInLocal.getMinY());
+//         }
+
+         if(node instanceof TableCell && null != ((TableCell) node).getItem() && node.isVisible() && parent.isVisible() && node.contains(localX, localY) )
+         {
+
+
+            System.out.println(node + "X=" + localX + " Y=" + localY + "; In Parent PX=" + boundsInParent.getMinX() + " PY=" + boundsInParent.getMinY()+ " visi" + node.isVisible());
+         }
+
+         //System.out.println("   X=" + localX + " Y=" + localY + "; In Parent PX=" + boundsInParent.getMinX() + " PY=" + boundsInParent.getMinY() + " " + parent.getClass().getName() + " -> " + node.getClass().getName());
+
+
+         if(node instanceof Parent)
+         {
+            findNodeForPointInTableView((Parent) node, clazz, localX, localY);
+         }
+      }
    }
 }

@@ -2,20 +2,17 @@ package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.squirrelsql.services.Utils;
 
-import java.util.Iterator;
 import java.util.Set;
 
 public class ExtendedTableSelection
@@ -187,6 +184,11 @@ public class ExtendedTableSelection
 
 
       scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
+
+
+      //System.out.println("BEGIN Mouse: X=" + event.getX() + "; Y=" + event.getY());
+      Utils.findNodeForPointInTableView(_tableView, TableCell.class, event.getX(), event.getY());
+
    }
 
    private void scrollIfBottomOrTopReached(MouseEvent event, double yEnd, TableColumnHeader tableColumnHeader)
