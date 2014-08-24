@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.workaround.TableCellByCoordinatesWA;
 
 import java.util.Set;
 
@@ -187,7 +188,9 @@ public class ExtendedTableSelection
 
 
       //System.out.println("BEGIN Mouse: X=" + event.getX() + "; Y=" + event.getY());
-      Utils.findNodeForPointInTableView(_tableView, TableCell.class, event.getX(), event.getY());
+      TableCell tableCellForPoint = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
+
+      System.out.println("tableCellForPoint = " + tableCellForPoint);
 
    }
 
