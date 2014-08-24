@@ -10,10 +10,10 @@ public class TableCellByCoordinatesWA
 {
    public static TableCell findTableCellForPoint(TableView tablView, double x, double y)
    {
-      return _getTableCell(tablView, x, y);
+      return _findTableCellNodeForPoint(tablView, x, y);
    }
 
-   private static TableCell _getTableCell(Parent parent, double x, double y)
+   private static TableCell _findTableCellNodeForPoint(Parent parent, double x, double y)
    {
       for (Node node : parent.getChildrenUnmodifiable())
       {
@@ -47,7 +47,7 @@ public class TableCellByCoordinatesWA
 
          if(node instanceof Parent)
          {
-            TableCell tableCell = _getTableCell((Parent) node, localX, localY);
+            TableCell tableCell = _findTableCellNodeForPoint((Parent) node, localX, localY);
 
             if(null != tableCell)
             {
