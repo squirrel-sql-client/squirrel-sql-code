@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.squirrelsql.services.Utils;
 import org.squirrelsql.workaround.TableCellByCoordinatesWA;
 
 import java.util.Set;
@@ -23,7 +22,8 @@ public class ExtendedTableSelection
    private final StackPane _stackPane = new StackPane();
    private TableView _tableView;
 
-   private Point2D pBegin = new Point2D(0,0);
+   private Point2D _pBegin = new Point2D(0,0);
+   public static final int LINE_WIDTH = 2;
 
    public ExtendedTableSelection(TableView tableView)
    {
@@ -100,7 +100,7 @@ public class ExtendedTableSelection
       _canvas.setWidth(_tableView.getWidth());
       _canvas.setHeight(_tableView.getHeight());
 
-      pBegin = new Point2D(event.getX(), event.getY());
+      _pBegin = new Point2D(event.getX(), event.getY());
    }
 
 
@@ -108,19 +108,6 @@ public class ExtendedTableSelection
    {
 
       clearCanvas();
-
-      GraphicsContext gc = _canvas.getGraphicsContext2D();
-
-
-      gc.setStroke(Color.BLACK);
-
-      int lineWidth = 2;
-      gc.setLineWidth(lineWidth);
-
-
-      double xEnd = event.getX();
-      double yEnd = event.getY();
-
 
       Set<Node> nodes = _tableView.lookupAll(".scroll-bar");
 
@@ -144,27 +131,11 @@ public class ExtendedTableSelection
 
       TableColumnHeader tableColumnHeader = (TableColumnHeader) _tableView.lookup(".column-header");
 
-      yEnd = Math.max(tableColumnHeader.getHeight(), yEnd);
-      xEnd = Math.max(lineWidth, xEnd);
+      double xBeg = ensureXInGrid(scrollBarV, _pBegin.getX());
+      double yBeg = ensureYInGrid(scrollBarH, tableColumnHeader, _pBegin.getY());
 
-
-      if(scrollBarV.isVisible())
-      {
-         xEnd = Math.min(xEnd, _tableView.getWidth() - scrollBarV.getWidth() - lineWidth);
-      }
-      else
-      {
-         xEnd = Math.min(xEnd, _tableView.getWidth() - lineWidth);
-      }
-
-      if(scrollBarH.isVisible())
-      {
-         yEnd = Math.min(yEnd, _tableView.getHeight() - scrollBarH.getHeight() - lineWidth);
-      }
-      else
-      {
-         yEnd = Math.min(yEnd, _tableView.getHeight() - lineWidth);
-      }
+      double xEnd = ensureXInGrid(scrollBarV, event.getX());
+      double yEnd = ensureYInGrid(scrollBarH, tableColumnHeader, event.getY());
 
 
 //      System.out.println("xEnd = " + xEnd);
@@ -179,13 +150,17 @@ public class ExtendedTableSelection
 
       double delta = scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
 
-      pBegin = new Point2D(pBegin.getX(), pBegin.getY() - delta);
+      _pBegin = new Point2D(_pBegin.getX(), _pBegin.getY() - delta);
 
 
-      gc.strokeLine(pBegin.getX(), pBegin.getY(), xEnd, pBegin.getY());
-      gc.strokeLine(xEnd, pBegin.getY(), xEnd, yEnd);
-      gc.strokeLine(xEnd, yEnd, pBegin.getX(), yEnd);
-      gc.strokeLine(pBegin.getX(), yEnd, pBegin.getX() ,pBegin.getY());
+      GraphicsContext gc = _canvas.getGraphicsContext2D();
+      gc.setStroke(Color.BLACK);
+      gc.setLineWidth(LINE_WIDTH);
+
+      gc.strokeLine(xBeg, yBeg, xEnd, yBeg);
+      gc.strokeLine(xEnd, yBeg, xEnd, yEnd);
+      gc.strokeLine(xEnd, yEnd, xBeg, yEnd);
+      gc.strokeLine(xBeg, yEnd, xBeg, yBeg);
 
 
 
@@ -195,6 +170,36 @@ public class ExtendedTableSelection
 
       System.out.println("tableCellForPoint = " + tableCellForPoint);
 
+   }
+
+   private double ensureYInGrid(ScrollBar scrollBarH, TableColumnHeader tableColumnHeader, double y)
+   {
+      double yRet = y;
+      yRet = Math.max(tableColumnHeader.getHeight(), yRet);
+      if(scrollBarH.isVisible())
+      {
+         yRet = Math.min(yRet, _tableView.getHeight() - scrollBarH.getHeight() - LINE_WIDTH);
+      }
+      else
+      {
+         yRet = Math.min(yRet, _tableView.getHeight() - LINE_WIDTH);
+      }
+      return yRet;
+   }
+
+   private double ensureXInGrid(ScrollBar scrollBarV, double x)
+   {
+      double xRet = x;
+      xRet = Math.max(LINE_WIDTH, xRet);
+      if(scrollBarV.isVisible())
+      {
+         xRet = Math.min(xRet, _tableView.getWidth() - scrollBarV.getWidth() - LINE_WIDTH);
+      }
+      else
+      {
+         xRet = Math.min(xRet, _tableView.getWidth() - LINE_WIDTH);
+      }
+      return xRet;
    }
 
    private double scrollIfBottomOrTopReached(MouseEvent event, double yEnd, TableColumnHeader tableColumnHeader)
