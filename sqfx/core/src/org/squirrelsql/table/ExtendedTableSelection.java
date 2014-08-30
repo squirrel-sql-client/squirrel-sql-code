@@ -85,7 +85,13 @@ public class ExtendedTableSelection
 
    private boolean onReleased(MouseEvent event)
    {
-      TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
+
+
+      double xEnd = ensureXInGrid(getScrollbar(Orientation.VERTICAL), event.getX());
+      double yEnd = ensureYInGrid(getScrollbar(Orientation.HORIZONTAL), getTableColumnHeader(), event.getY());
+
+      TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, xEnd, yEnd);
+
       System.out.println("begin cell: " + _beginCell);
       System.out.println("end   cell: " + endCell);
 
@@ -114,30 +120,13 @@ public class ExtendedTableSelection
 
    private void onDragged(MouseEvent event)
    {
-
       clearCanvas();
 
-      Set<Node> nodes = _tableView.lookupAll(".scroll-bar");
+      ScrollBar scrollBarH = getScrollbar(Orientation.HORIZONTAL);
+      ScrollBar scrollBarV = getScrollbar(Orientation.VERTICAL);
 
-      ScrollBar scrollBarH = null;
-      ScrollBar scrollBarV = null;
 
-      for (Node node : nodes)
-      {
-         ScrollBar buf = (ScrollBar) node;
-
-         if(buf.getOrientation() == Orientation.HORIZONTAL)
-         {
-            scrollBarH = buf;
-         }
-
-         if(buf.getOrientation() == Orientation.VERTICAL)
-         {
-            scrollBarV = buf;
-         }
-      }
-
-      TableColumnHeader tableColumnHeader = (TableColumnHeader) _tableView.lookup(".column-header");
+      TableColumnHeader tableColumnHeader = getTableColumnHeader();
 
       double xBeg = ensureXInGrid(scrollBarV, _pBegin.getX());
       double yBeg = ensureYInGrid(scrollBarH, tableColumnHeader, _pBegin.getY());
@@ -180,13 +169,35 @@ public class ExtendedTableSelection
 
    }
 
-   private double ensureYInGrid(ScrollBar scrollBarH, TableColumnHeader tableColumnHeader, double y)
+   private TableColumnHeader getTableColumnHeader()
+   {
+      return (TableColumnHeader) _tableView.lookup(".column-header");
+   }
+
+   private ScrollBar getScrollbar(Orientation orientation)
+   {
+      Set<Node> nodes = _tableView.lookupAll(".scroll-bar");
+
+      for (Node node : nodes)
+      {
+         ScrollBar ret = (ScrollBar) node;
+
+         if(ret.getOrientation() == orientation)
+         {
+            return ret;
+         }
+      }
+
+      throw new IllegalStateException("Could not find scroll bar for orientation: " + orientation);
+   }
+
+   private double ensureYInGrid(ScrollBar horizontalScrollBar, TableColumnHeader tableColumnHeader, double y)
    {
       double yRet = y;
       yRet = Math.max(tableColumnHeader.getHeight(), yRet);
-      if(scrollBarH.isVisible())
+      if(horizontalScrollBar.isVisible())
       {
-         yRet = Math.min(yRet, _tableView.getHeight() - scrollBarH.getHeight() - LINE_WIDTH);
+         yRet = Math.min(yRet, _tableView.getHeight() - horizontalScrollBar.getHeight() - LINE_WIDTH);
       }
       else
       {
@@ -195,13 +206,13 @@ public class ExtendedTableSelection
       return yRet;
    }
 
-   private double ensureXInGrid(ScrollBar scrollBarV, double x)
+   private double ensureXInGrid(ScrollBar verticalScrollBar, double x)
    {
       double xRet = x;
       xRet = Math.max(LINE_WIDTH, xRet);
-      if(scrollBarV.isVisible())
+      if(verticalScrollBar.isVisible())
       {
-         xRet = Math.min(xRet, _tableView.getWidth() - scrollBarV.getWidth() - LINE_WIDTH);
+         xRet = Math.min(xRet, _tableView.getWidth() - verticalScrollBar.getWidth() - LINE_WIDTH);
       }
       else
       {
