@@ -425,34 +425,31 @@ public class SyntaxPlugin extends DefaultSessionPlugin
 
          SquirrelRSyntaxTextArea rsEdit = (SquirrelRSyntaxTextArea) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
 
-         Action toUpperAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE);
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaUpperSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_UPPER_CASE, s_stringMgr.getString("SyntaxPlugin.ToUpperShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE, s_stringMgr.getString("SyntaxPlugin.ToLowerShortDescription"));
 
-         toUpperAction.putValue(Action.SHORT_DESCRIPTION, s_stringMgr.getString("SyntaxPlugin.ToUpperShortDescription"));
-         toUpperAction.putValue(Action.MNEMONIC_KEY, 0);
-         toUpperAction.putValue(Action.ACCELERATOR_KEY, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE);
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineUpAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_LINE_UP, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_LINE_UP, s_stringMgr.getString("SyntaxPlugin.LineUpShortDescription"));
+         configureRichTextAction(sqlPanelAPI, rsEdit, RTextAreaEditorKit.rtaLineDownAction, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_LINE_DOWN, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_LINE_DOWN, s_stringMgr.getString("SyntaxPlugin.LineDownShortDescription"));
 
-         JMenuItem mnuToUpper = sqlPanelAPI.addToSQLEntryAreaMenu(toUpperAction);
-         mnuToUpper.setText((String) toUpperAction.getValue(Action.SHORT_DESCRIPTION));
-         _resources.configureMenuItem(toUpperAction, mnuToUpper);
-
-
-
-         Action toLowerAction = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_STRING_TO_LOWER_CASE);
-
-         toLowerAction.putValue(Action.SHORT_DESCRIPTION, s_stringMgr.getString("SyntaxPlugin.ToLowerShortDescription"));
-         toLowerAction.putValue(Action.MNEMONIC_KEY, 0);
-         toLowerAction.putValue(Action.ACCELERATOR_KEY, SquirreLRSyntaxTextAreaUI.RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE);
-
-         JMenuItem mnuToLower = sqlPanelAPI.addToSQLEntryAreaMenu(toLowerAction);
-         mnuToLower.setText((String) toLowerAction.getValue(Action.SHORT_DESCRIPTION));
-         _resources.configureMenuItem(toLowerAction, mnuToLower);
       }
    }
 
+   private void configureRichTextAction(ISQLPanelAPI sqlPanelAPI, SquirrelRSyntaxTextArea rsEdit, String rtaKey, KeyStroke acceleratorKeyStroke, String acceleratorDescription, String shortDescription)
+   {
+      Action action = SquirreLRSyntaxTextAreaUI.getActionForName(rsEdit, rtaKey);
+      action.putValue(Resources.ACCELERATOR_STRING, acceleratorDescription);
 
-	/**
+      action.putValue(Action.SHORT_DESCRIPTION, shortDescription);
+      action.putValue(Action.MNEMONIC_KEY, 0);
+      action.putValue(Action.ACCELERATOR_KEY, acceleratorKeyStroke);
+
+      JMenuItem mnu = sqlPanelAPI.addToSQLEntryAreaMenu(action);
+      mnu.setText((String) action.getValue(Action.SHORT_DESCRIPTION));
+      _resources.configureMenuItem(action, mnu);
+   }
+
+
+   /**
 	 * Called when a session shutdown.
 	 * 
 	 * @param session

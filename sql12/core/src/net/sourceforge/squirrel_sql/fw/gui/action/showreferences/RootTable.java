@@ -31,4 +31,17 @@ public class RootTable
    {
       return _globalDbTable.getQualifiedName();
    }
+
+   public String getFrameTitle()
+   {
+      String ret = getGlobalDbTable().getQualifiedName();
+
+      for (InStatColumnInfo inStatColumnInfo : _inStatColumnInfos)
+      {
+         ret += " [" + inStatColumnInfo.getDescription() + "]";
+      }
+
+
+      return ret;
+   }
 }

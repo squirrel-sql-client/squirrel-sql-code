@@ -26,4 +26,9 @@ public class InStatColumnInfo
    {
       return _instat;
    }
+
+   public String getDescription()
+   {
+      return _colDef.getColumnName() + " IN " + _instat;
+   }
 }

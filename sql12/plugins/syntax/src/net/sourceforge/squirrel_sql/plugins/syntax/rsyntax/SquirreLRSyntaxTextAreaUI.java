@@ -24,6 +24,11 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
    public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
    public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
 
+   public static final String RS_ACCELERATOR_LINE_UP = "ctrl shift up";
+   public static final String RS_ACCELERATOR_LINE_DOWN = "ctrl shift down";
+   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_LINE_UP = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+   public static final KeyStroke RS_ACCELERATOR_KEY_STROKE_LINE_DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+
    private static final EditorKit _squirrel_defaultKit =
       new RSyntaxTextAreaEditorKit()
       {
@@ -83,7 +88,10 @@ public class SquirreLRSyntaxTextAreaUI extends RSyntaxTextAreaUI
 
       shared.put(RS_ACCELERATOR_KEY_STROKE_TO_UPPER_CASE, RTextAreaEditorKit.rtaUpperSelectionCaseAction);
       shared.put(RS_ACCELERATOR_KEY_STROKE_TO_LOWER_CASE, RTextAreaEditorKit.rtaLowerSelectionCaseAction);
-      
+
+      shared.put(RS_ACCELERATOR_KEY_STROKE_LINE_UP, RTextAreaEditorKit.rtaLineUpAction);
+      shared.put(RS_ACCELERATOR_KEY_STROKE_LINE_DOWN, RTextAreaEditorKit.rtaLineDownAction);
+
       
 
       KeyStroke rsyntaxRedoStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);

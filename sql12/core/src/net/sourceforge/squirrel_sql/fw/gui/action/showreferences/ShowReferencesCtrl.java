@@ -38,7 +38,7 @@ public class ShowReferencesCtrl
    public ShowReferencesCtrl(final ISession session, JFrame owningFrame, RootTable rootTable, References references)
    {
       _session = session;
-      _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", rootTable.getGlobalDbTable().getQualifiedName()));
+      _window = new ShowReferencesWindow(_session, owningFrame, s_stringMgr.getString("ShowReferencesCtrl.window.title", rootTable.getFrameTitle()));
 
       DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootTable);
       _treeModel = new DefaultTreeModel(root);
