@@ -177,6 +177,10 @@ public class ExtendedTableSelection
 //      System.out.println("Eq=" + (scrollBarH == scrollBarV));
 
 
+      double delta = scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
+
+      pBegin = new Point2D(pBegin.getX(), pBegin.getY() - delta);
+
 
       gc.strokeLine(pBegin.getX(), pBegin.getY(), xEnd, pBegin.getY());
       gc.strokeLine(xEnd, pBegin.getY(), xEnd, yEnd);
@@ -184,7 +188,6 @@ public class ExtendedTableSelection
       gc.strokeLine(pBegin.getX(), yEnd, pBegin.getX() ,pBegin.getY());
 
 
-      scrollIfBottomOrTopReached(event, yEnd, tableColumnHeader);
 
 
       //System.out.println("BEGIN Mouse: X=" + event.getX() + "; Y=" + event.getY());
@@ -194,7 +197,7 @@ public class ExtendedTableSelection
 
    }
 
-   private void scrollIfBottomOrTopReached(MouseEvent event, double yEnd, TableColumnHeader tableColumnHeader)
+   private double scrollIfBottomOrTopReached(MouseEvent event, double yEnd, TableColumnHeader tableColumnHeader)
    {
       if(event.getY() > yEnd)
       {
@@ -206,6 +209,7 @@ public class ExtendedTableSelection
          if (rowIndex + 1 < _tableView.getItems().size())
          {
             _tableView.scrollTo(rowIndex + 1);
+            return virtualFlow.getFirstVisibleCell().getHeight();
          }
       }
 
@@ -219,8 +223,12 @@ public class ExtendedTableSelection
          if (rowIndex - 1 >= 0)
          {
             _tableView.scrollTo(rowIndex - 1);
+
+            return -virtualFlow.getFirstVisibleCell().getHeight();
          }
       }
+
+      return 0;
    }
 
    private void clearCanvas()
