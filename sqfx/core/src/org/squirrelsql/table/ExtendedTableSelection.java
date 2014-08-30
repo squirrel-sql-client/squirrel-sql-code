@@ -2,6 +2,7 @@ package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -24,6 +25,7 @@ public class ExtendedTableSelection
 
    private Point2D _pBegin = new Point2D(0,0);
    public static final int LINE_WIDTH = 2;
+   private TableCell _beginCell;
 
    public ExtendedTableSelection(TableView tableView)
    {
@@ -36,7 +38,7 @@ public class ExtendedTableSelection
       // We use this instead of setOnMousePressed() ... to leave these setters to others
       tableView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> onMousePressed(event));
 
-      tableView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> onReleased());
+      tableView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> onReleased(event));
 
       tableView.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> onDragged(event));
       //
@@ -81,8 +83,12 @@ public class ExtendedTableSelection
 //      });
    }
 
-   private boolean onReleased()
+   private boolean onReleased(MouseEvent event)
    {
+      TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
+      System.out.println("begin cell: " + _beginCell);
+      System.out.println("end   cell: " + endCell);
+
       return _stackPane.getChildren().remove(_canvas);
    }
 
@@ -101,6 +107,8 @@ public class ExtendedTableSelection
       _canvas.setHeight(_tableView.getHeight());
 
       _pBegin = new Point2D(event.getX(), event.getY());
+
+      _beginCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
    }
 
 
@@ -168,7 +176,7 @@ public class ExtendedTableSelection
       //System.out.println("BEGIN Mouse: X=" + event.getX() + "; Y=" + event.getY());
       TableCell tableCellForPoint = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
 
-      System.out.println("tableCellForPoint = " + tableCellForPoint);
+      //System.out.println("tableCellForPoint = " + tableCellForPoint);
 
    }
 
