@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import org.squirrelsql.services.PropertiesHandler;
+import org.squirrelsql.services.RunningServicesManager;
 import org.squirrelsql.services.SquirrelProperty;
 import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.action.ActionMangerImpl;
@@ -24,6 +25,8 @@ public class AppState
    private SessionManager _sessionManager = new SessionManager();
    private ActionMangerImpl _actionMangerImpl = new ActionMangerImpl(_sessionManager);
    private SqlHistoryManager _sqlHistoryManager = new SqlHistoryManager();
+
+   private RunningServicesManager _runningServicesManager = new RunningServicesManager();
 
 
    public static AppState get()
@@ -135,5 +138,10 @@ public class AppState
    public SqlHistoryManager getSqlHistoryManager()
    {
       return _sqlHistoryManager;
+   }
+
+   public RunningServicesManager getRunningServicesManager()
+   {
+      return _runningServicesManager;
    }
 }

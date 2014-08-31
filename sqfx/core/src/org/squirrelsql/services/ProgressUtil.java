@@ -2,12 +2,11 @@ package org.squirrelsql.services;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.squirrelsql.AppState;
 
 public class ProgressUtil
 {
@@ -36,11 +35,11 @@ public class ProgressUtil
          }
       };
 
-      service.setOnSucceeded(workerStateEvent -> pt.goOn(concurrentTask.getValue()));
+      service.setOnSucceeded(workerStateEvent -> onSucceeded(service, pt, concurrentTask));
 
-      service.setOnFailed(workerStateEvent -> onHandleException(concurrentTask));
+      service.setOnFailed(workerStateEvent -> onFailed(service, concurrentTask));
 
-      service.setOnCancelled(workerStateEvent -> ((CancelableProgressTask)pt).cancel());
+      service.setOnCancelled(workerStateEvent -> onCanceled(service, (CancelableProgressTask) pt));
 
       boolean isCancelableTask = pt instanceof CancelableProgressTask;
 
@@ -50,8 +49,22 @@ public class ProgressUtil
          showProgressStage(stage, service, isCancelableTask);
       }
 
+      AppState.get().getRunningServicesManager().registerService(service);
+
       service.start();
 
+   }
+
+   private static <T> void onCanceled(Service service, CancelableProgressTask pt)
+   {
+      AppState.get().getRunningServicesManager().unRegisterService(service);
+      ((CancelableProgressTask)pt).cancel();
+   }
+
+   private static <T> void onSucceeded(Service service, ProgressTask<T> pt, Task<T> concurrentTask)
+   {
+      AppState.get().getRunningServicesManager().unRegisterService(service);
+      pt.goOn(concurrentTask.getValue());
    }
 
    private static <T> void showProgressStage(Stage stage, Service<T> service, boolean isCancelableTask)
@@ -113,8 +126,9 @@ public class ProgressUtil
       progressIndicator.visibleProperty().bind(service.runningProperty());
    }
 
-   private static <T> void onHandleException(Task<T> concurrentTask)
+   private static <T> void onFailed(Service service, Task<T> concurrentTask)
    {
+      AppState.get().getRunningServicesManager().unRegisterService(service);
       Throwable t = new RuntimeException("Progress task execution failed");
 
       try
