@@ -14,11 +14,15 @@ public class ExtendedTableSelection
    private TableRow _endTableRow;
    private TableColumn _endTableColumn;
 
+   private int _beginIndex;
+   private int _endIndex;
+
    public ExtendedTableSelection(TableCell beginCell)
    {
       _beginCellItem = beginCell.getItem();
       _beginTableRow = beginCell.getTableRow();
       _beginTableColumn = beginCell.getTableColumn();
+      _beginIndex = _beginTableRow.getIndex();
    }
 
    public void setEndCell(TableCell endCell)
@@ -26,12 +30,23 @@ public class ExtendedTableSelection
       _endCellItem = endCell.getItem();
       _endTableRow = endCell.getTableRow();
       _endTableColumn = endCell.getTableColumn();
+      _endIndex = _endTableRow.getIndex();
    }
 
 
    @Override
    public String toString()
    {
-      return "Begin: [" + _beginCellItem + "] End: [" + _endCellItem + "]";
+      return "Begin: [" + _beginCellItem + "] rowIx=" + _beginIndex + ";End: [" + _endCellItem + "] rowIx=" + _endIndex;
+   }
+
+   public int getMinRowIx()
+   {
+      return Math.min(_beginIndex, _endIndex);
+   }
+
+   public int getMaxRowIx()
+   {
+      return Math.max(_beginIndex, _endIndex);
    }
 }

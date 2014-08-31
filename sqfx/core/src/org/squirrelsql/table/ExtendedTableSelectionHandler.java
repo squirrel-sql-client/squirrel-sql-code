@@ -57,6 +57,17 @@ public class ExtendedTableSelectionHandler
 
       _stackPane.getChildren().remove(_canvas);
 
+
+      int minRowIx = _extendedTableSelection.getMinRowIx();
+      int maxRowIx = _extendedTableSelection.getMaxRowIx();
+
+      _tableView.getSelectionModel().clearSelection();
+      for (int i = minRowIx; i <= maxRowIx; i++)
+      {
+         _tableView.getSelectionModel().select(i);
+      }
+
+
       System.out.println(_extendedTableSelection);
    }
 
