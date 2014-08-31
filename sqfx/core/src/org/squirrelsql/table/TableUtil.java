@@ -1,23 +1,8 @@
 package org.squirrelsql.table;
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventHandler;
-import javafx.geometry.Dimension2D;
-import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Callback;
-import org.squirrelsql.AppState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +27,7 @@ public class TableUtil
 
    public static StackPane prepareExtendedSelection(TableView tv)
    {
-      return new ExtendedTableSelection(tv).getStackPane();
+      return new ExtendedTableSelectionHandler(tv).getStackPane();
    }
 
 //   public static void __prepareExtendedSelection(TableView tv)
