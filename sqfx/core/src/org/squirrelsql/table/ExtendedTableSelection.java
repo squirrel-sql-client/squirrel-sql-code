@@ -2,7 +2,6 @@ package org.squirrelsql.table;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
-import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -25,7 +24,7 @@ public class ExtendedTableSelection
 
    private Point2D _pBegin = new Point2D(0,0);
    public static final int LINE_WIDTH = 2;
-   private TableCell _beginCell;
+   private Object _beginCellItem;
 
    public ExtendedTableSelection(TableView tableView)
    {
@@ -36,51 +35,13 @@ public class ExtendedTableSelection
 
       /////////////////////////////////////////////////////////////////////////////////////
       // We use this instead of setOnMousePressed() ... to leave these setters to others
-      tableView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> onMousePressed(event));
+      tableView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> onPressed(event));
 
       tableView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> onReleased(event));
 
       tableView.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> onDragged(event));
       //
       /////////////////////////////////////////////////////////////////////////////////////
-
-
-
-//      tableView.setOnMousePressed(new EventHandler<MouseEvent>()
-//      {
-//         @Override
-//         public void handle(MouseEvent event)
-//         {
-//            System.out.println("Second listener works!!!");
-//         }
-//      });
-
-//      tableView.setOnMousePressed(new EventHandler<MouseEvent>()
-//      {
-//         @Override
-//         public void handle(MouseEvent event)
-//         {
-//            onMousePressed(event);
-//         }
-//      });
-
-//      tableView.setOnMouseReleased(new EventHandler<MouseEvent>()
-//      {
-//         @Override
-//         public void handle(MouseEvent event)
-//         {
-//            _stackPane.getChildren().remove(_canvas);
-//         }
-//      });
-
-//      _tableView.setOnMouseDragged(new EventHandler<MouseEvent>()
-//      {
-//         @Override
-//         public void handle(MouseEvent event)
-//         {
-//            onDragged(event);
-//         }
-//      });
    }
 
    private boolean onReleased(MouseEvent event)
@@ -92,15 +53,10 @@ public class ExtendedTableSelection
 
       TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, xEnd, yEnd);
 
-      System.out.println("begin cell: " + _beginCell);
-      System.out.println("end   cell: " + endCell);
+      System.out.println("begin item: " + _beginCellItem);
+      System.out.println("end   item: " + endCell.getItem());
 
       return _stackPane.getChildren().remove(_canvas);
-   }
-
-   private void onMousePressed(MouseEvent event)
-   {
-      onPressed(event);
    }
 
    private void onPressed(MouseEvent event)
@@ -114,7 +70,8 @@ public class ExtendedTableSelection
 
       _pBegin = new Point2D(event.getX(), event.getY());
 
-      _beginCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
+      TableCell beginCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, event.getX(), event.getY());
+      _beginCellItem = beginCell.getItem();
    }
 
 
