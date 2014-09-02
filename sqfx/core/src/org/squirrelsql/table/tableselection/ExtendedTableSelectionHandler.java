@@ -1,7 +1,9 @@
-package org.squirrelsql.table;
+package org.squirrelsql.table.tableselection;
 
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -13,6 +15,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.squirrelsql.workaround.TableCellByCoordinatesWA;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class ExtendedTableSelectionHandler
@@ -62,13 +67,67 @@ public class ExtendedTableSelectionHandler
       int maxRowIx = _extendedTableSelection.getMaxRowIx();
 
       _tableView.getSelectionModel().clearSelection();
+
+
+      HashMap<TableColumn, ArrayList> selectedItemsByColumn = new HashMap<>();
+
+      ArrayList<IndexedTableColumn> selectedColumns = findSelectedColumns(_extendedTableSelection, _tableView);
+
+
       for (int i = minRowIx; i <= maxRowIx; i++)
       {
          _tableView.getSelectionModel().select(i);
+
+         List row = (List) _tableView.getItems().get(i);
+
+         for (IndexedTableColumn selectedColumn : selectedColumns)
+         {
+            ArrayList buf = selectedItemsByColumn.get(selectedColumn.getTableColumn());
+
+            if(null == buf)
+            {
+               buf = new ArrayList();
+               selectedItemsByColumn.put(selectedColumn.getTableColumn(), buf);
+            }
+
+            ObjectProperty prop = (ObjectProperty) row.get(selectedColumn.getIndex());
+            buf.add(prop.get());
+         }
       }
 
+      _extendedTableSelection.setSelectedItemsByColumn(selectedItemsByColumn);
 
       System.out.println(_extendedTableSelection);
+   }
+
+   private ArrayList<IndexedTableColumn> findSelectedColumns(ExtendedTableSelection extendedTableSelection, TableView tableView)
+   {
+      ArrayList<IndexedTableColumn> ret = new ArrayList<>();
+
+      List<TableColumn> cols = tableView.getColumns();
+
+      boolean inBetween = false;
+
+      for (int i = 0; i < cols.size(); i++)
+      {
+         TableColumn col = cols.get(i);
+         if(extendedTableSelection.isFirstAndLast(col))
+         {
+            ret.add(new IndexedTableColumn(i, col));
+            return ret;
+         }
+         else if(extendedTableSelection.isFirstOrLast(col))
+         {
+            inBetween = !inBetween;
+            ret.add(new IndexedTableColumn(i, col));
+         }
+         else if(inBetween)
+         {
+            ret.add(new IndexedTableColumn(i, col));
+         }
+      }
+
+      return ret;
    }
 
    private void onPressed(MouseEvent event)
