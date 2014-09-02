@@ -1,7 +1,8 @@
 package org.squirrelsql.session.sql;
 
-import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
@@ -9,6 +10,10 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
+import org.squirrelsql.table.tableselection.CellItemsWithColumn;
+import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
+
+import java.util.List;
 
 public class ResultTabController
 {
@@ -17,6 +22,7 @@ public class ResultTabController
    private final Tab _containerTab;
    private EditButtonCtrl _editButtonCtrl;
    private Session _session;
+   private ExtendedTableSelectionHandler _extendedTableSelectionHandler;
 
    public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
@@ -99,6 +105,7 @@ public class ResultTabController
       TableView tv = new TableView();
 
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
 
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
@@ -116,7 +123,7 @@ public class ResultTabController
          tableLoader.load(tv);
       }
 
-      StackPane stackPane = TableUtil.prepareExtendedSelection(tv);
+      StackPane stackPane = _extendedTableSelectionHandler.getStackPane();
       outputTab.setContent(stackPane);
       outputTab.setClosable(false);
 
@@ -125,7 +132,39 @@ public class ResultTabController
 
    private void onCopyAsInStat(TableView tv)
    {
-      System.out.println("ResultTabController.onCopyAsInStat");
+      List<CellItemsWithColumn> selectedCellItemsByColumn = _extendedTableSelectionHandler.getSelectedCellItemsWithColumn();
+
+      StringBuffer allInStats = new StringBuffer();
+      for (CellItemsWithColumn cellItemsWithColumn : selectedCellItemsByColumn)
+      {
+         StringBuffer inStat = new StringBuffer();
+         for (Object item : cellItemsWithColumn.getItems())
+         {
+            if (0 == inStat.length())
+            {
+               inStat.append("" + item);
+            }
+            else
+            {
+               inStat.append(",").append("" + item);
+            }
+         }
+         inStat.insert(0,"(").append(")");
+
+         if (0 == allInStats.length())
+         {
+            allInStats.append(inStat);
+         }
+         else
+         {
+            allInStats.append("\n").append(inStat);
+         }
+      }
+
+      final Clipboard clipboard = Clipboard.getSystemClipboard();
+      final ClipboardContent content = new ClipboardContent();
+      content.putString(allInStats.toString());
+      clipboard.setContent(content);
    }
 
 

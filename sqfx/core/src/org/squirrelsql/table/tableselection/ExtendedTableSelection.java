@@ -3,9 +3,11 @@ package org.squirrelsql.table.tableselection;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ExtendedTableSelection
 {
@@ -19,7 +21,8 @@ public class ExtendedTableSelection
 
    private int _beginIndex;
    private int _endIndex;
-   private HashMap<TableColumn, ArrayList> _selectedItemsByColumn;
+
+   private ArrayList<IndexedTableColumn> _selectedColumns;
 
    public ExtendedTableSelection(TableCell beginCell)
    {
@@ -54,23 +57,59 @@ public class ExtendedTableSelection
       return Math.max(_beginIndex, _endIndex);
    }
 
-   public boolean isFirstOrLast(TableColumn col)
+
+   public void initSelectedColumns(TableView tableView)
+   {
+      _selectedColumns = findSelectedColumns(tableView);
+   }
+
+   private ArrayList<IndexedTableColumn> findSelectedColumns(TableView tableView)
+   {
+      ArrayList<IndexedTableColumn> ret = new ArrayList<>();
+
+      List<TableColumn> cols = tableView.getColumns();
+
+      boolean inBetween = false;
+
+      for (int i = 0; i < cols.size(); i++)
+      {
+         TableColumn col = cols.get(i);
+         if(isFirstAndLast(col))
+         {
+            ret.add(new IndexedTableColumn(i, col));
+            return ret;
+         }
+         else if(isFirstOrLast(col))
+         {
+            inBetween = !inBetween;
+            ret.add(new IndexedTableColumn(i, col));
+         }
+         else if(inBetween)
+         {
+            ret.add(new IndexedTableColumn(i, col));
+         }
+      }
+
+      return ret;
+   }
+
+   private boolean isFirstOrLast(TableColumn col)
    {
       return _beginTableColumn == col || _endTableColumn == col;
    }
 
-   public boolean isFirstAndLast(TableColumn col)
+   private boolean isFirstAndLast(TableColumn col)
    {
       return _beginTableColumn == col && _endTableColumn == col;
    }
 
-   public void setSelectedItemsByColumn(HashMap<TableColumn, ArrayList> selectedItemsByColumn)
+   public boolean isSingleCell()
    {
-      _selectedItemsByColumn = selectedItemsByColumn;
+      return _beginIndex == _endIndex && _beginTableColumn == _endTableColumn;
    }
 
-   public HashMap<TableColumn, ArrayList> getSelectedItemsByColumn()
+   public ArrayList<IndexedTableColumn> getSelectedColumns()
    {
-      return _selectedItemsByColumn;
+      return _selectedColumns;
    }
 }

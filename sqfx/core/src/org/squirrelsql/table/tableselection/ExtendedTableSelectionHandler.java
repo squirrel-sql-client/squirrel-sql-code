@@ -3,13 +3,13 @@ package org.squirrelsql.table.tableselection;
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -49,89 +49,15 @@ public class ExtendedTableSelectionHandler
       /////////////////////////////////////////////////////////////////////////////////////
    }
 
-   private void onReleased(MouseEvent event)
-   {
-
-
-      double xEnd = ensureXInGrid(getScrollbar(Orientation.VERTICAL), event.getX());
-      double yEnd = ensureYInGrid(getScrollbar(Orientation.HORIZONTAL), getTableColumnHeader(), event.getY());
-
-      TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, xEnd, yEnd);
-
-      _extendedTableSelection.setEndCell(endCell);
-
-      _stackPane.getChildren().remove(_canvas);
-
-
-      int minRowIx = _extendedTableSelection.getMinRowIx();
-      int maxRowIx = _extendedTableSelection.getMaxRowIx();
-
-      _tableView.getSelectionModel().clearSelection();
-
-
-      HashMap<TableColumn, ArrayList> selectedItemsByColumn = new HashMap<>();
-
-      ArrayList<IndexedTableColumn> selectedColumns = findSelectedColumns(_extendedTableSelection, _tableView);
-
-
-      for (int i = minRowIx; i <= maxRowIx; i++)
-      {
-         _tableView.getSelectionModel().select(i);
-
-         List row = (List) _tableView.getItems().get(i);
-
-         for (IndexedTableColumn selectedColumn : selectedColumns)
-         {
-            ArrayList buf = selectedItemsByColumn.get(selectedColumn.getTableColumn());
-
-            if(null == buf)
-            {
-               buf = new ArrayList();
-               selectedItemsByColumn.put(selectedColumn.getTableColumn(), buf);
-            }
-
-            ObjectProperty prop = (ObjectProperty) row.get(selectedColumn.getIndex());
-            buf.add(prop.get());
-         }
-      }
-
-      _extendedTableSelection.setSelectedItemsByColumn(selectedItemsByColumn);
-
-      System.out.println(_extendedTableSelection);
-   }
-
-   private ArrayList<IndexedTableColumn> findSelectedColumns(ExtendedTableSelection extendedTableSelection, TableView tableView)
-   {
-      ArrayList<IndexedTableColumn> ret = new ArrayList<>();
-
-      List<TableColumn> cols = tableView.getColumns();
-
-      boolean inBetween = false;
-
-      for (int i = 0; i < cols.size(); i++)
-      {
-         TableColumn col = cols.get(i);
-         if(extendedTableSelection.isFirstAndLast(col))
-         {
-            ret.add(new IndexedTableColumn(i, col));
-            return ret;
-         }
-         else if(extendedTableSelection.isFirstOrLast(col))
-         {
-            inBetween = !inBetween;
-            ret.add(new IndexedTableColumn(i, col));
-         }
-         else if(inBetween)
-         {
-            ret.add(new IndexedTableColumn(i, col));
-         }
-      }
-
-      return ret;
-   }
 
    private void onPressed(MouseEvent event)
    {
+      if (event.getButton() != MouseButton.PRIMARY)
+      {
+         return;
+      }
+
+
       clearCanvas();
       _stackPane.getChildren().remove(_canvas);
       _stackPane.getChildren().add(_canvas);
@@ -149,6 +75,12 @@ public class ExtendedTableSelectionHandler
 
    private void onDragged(MouseEvent event)
    {
+      if (event.getButton() != MouseButton.PRIMARY)
+      {
+         return;
+      }
+
+
       clearCanvas();
 
       ScrollBar scrollBarH = getScrollbar(Orientation.HORIZONTAL);
@@ -196,6 +128,42 @@ public class ExtendedTableSelectionHandler
 
       //System.out.println("tableCellForPoint = " + tableCellForPoint);
 
+   }
+
+   private void onReleased(MouseEvent event)
+   {
+      if (event.getButton() != MouseButton.PRIMARY)
+      {
+         return;
+      }
+
+      double xEnd = ensureXInGrid(getScrollbar(Orientation.VERTICAL), event.getX());
+      double yEnd = ensureYInGrid(getScrollbar(Orientation.HORIZONTAL), getTableColumnHeader(), event.getY());
+
+      TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, xEnd, yEnd);
+
+      _extendedTableSelection.setEndCell(endCell);
+
+      _stackPane.getChildren().remove(_canvas);
+
+      _extendedTableSelection.initSelectedColumns(_tableView);
+
+      if(_extendedTableSelection.isSingleCell())
+      {
+         return;
+      }
+
+      int minRowIx = _extendedTableSelection.getMinRowIx();
+      int maxRowIx = _extendedTableSelection.getMaxRowIx();
+
+      _tableView.getSelectionModel().clearSelection();
+
+
+
+      for (int i = minRowIx; i <= maxRowIx; i++)
+      {
+         _tableView.getSelectionModel().select(i);
+      }
    }
 
    private TableColumnHeader getTableColumnHeader()
@@ -293,5 +261,29 @@ public class ExtendedTableSelectionHandler
    public StackPane getStackPane()
    {
       return _stackPane;
+   }
+
+   public List<CellItemsWithColumn> getSelectedCellItemsWithColumn()
+   {
+      List<CellItemsWithColumn> ret = new ArrayList<>();
+
+      ArrayList<IndexedTableColumn> selectedColumns = _extendedTableSelection.getSelectedColumns();
+
+      List<List<ObjectProperty>> rows = (List) _tableView.getSelectionModel().getSelectedItems();
+
+      for (IndexedTableColumn selectedColumn : selectedColumns)
+      {
+         CellItemsWithColumn buf = new CellItemsWithColumn(selectedColumn);
+         ret.add(buf);
+
+         for (List<ObjectProperty> row : rows)
+         {
+            ObjectProperty prop = row.get(selectedColumn.getIndex());
+            buf.addItem(prop.get());
+         }
+
+      }
+
+      return ret;
    }
 }

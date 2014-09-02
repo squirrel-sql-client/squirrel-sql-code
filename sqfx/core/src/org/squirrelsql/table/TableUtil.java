@@ -26,12 +26,7 @@ public class TableUtil
       return createSimpleObjectPropertyRow(row.toArray(new Object[row.size()]));
    }
 
-   public static StackPane prepareExtendedSelection(TableView tv)
-   {
-      return new ExtendedTableSelectionHandler(tv).getStackPane();
-   }
-
-//   public static void __prepareExtendedSelection(TableView tv)
+   //   public static void __prepareExtendedSelection(TableView tv)
 //   {
 //      tv.setRowFactory(new Callback<TableView, TableRow>()
 //      {
