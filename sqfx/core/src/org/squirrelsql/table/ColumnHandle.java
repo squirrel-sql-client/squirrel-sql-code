@@ -25,15 +25,14 @@ public class ColumnHandle
       _cellValueReader = cellValueReader;
       _selectableValues = selectableValues;
 
-      TableColumn tableColumn = new TableColumn(_header);
-      _tableColumn = tableColumn;
+      _tableColumn = new TableColumn(_header);
 
-      _originalCellFactory = tableColumn.getCellFactory();
+      _originalCellFactory = _tableColumn.getCellFactory();
 
 
       if(0 < selectableValues.size())
       {
-         tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
+         _tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
          {
             @Override
             public TableCell call(TableColumn param)
@@ -42,11 +41,11 @@ public class ColumnHandle
             }
          });
 
-         tableColumn.setEditable(true);
+         _tableColumn.setEditable(true);
       }
 
 
-      tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
+      _tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
       {
          public ObservableValue<Object> call(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row)
          {
