@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public class CellItemsWithColumn
 {
    private ArrayList _items = new ArrayList();
-   private IndexedTableColumn _column;
+   private TableColumn _column;
 
-   public CellItemsWithColumn(IndexedTableColumn column)
+   public CellItemsWithColumn(TableColumn column)
    {
       _column = column;
    }
@@ -26,6 +26,6 @@ public class CellItemsWithColumn
 
    public TableColumn getColumn()
    {
-      return _column.getTableColumn();
+      return _column;
    }
 }

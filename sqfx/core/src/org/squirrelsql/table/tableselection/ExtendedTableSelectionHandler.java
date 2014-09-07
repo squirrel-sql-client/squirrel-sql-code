@@ -267,11 +267,11 @@ public class ExtendedTableSelectionHandler
    {
       List<CellItemsWithColumn> ret = new ArrayList<>();
 
-      ArrayList<IndexedTableColumn> selectedColumns = _extendedTableSelection.getSelectedColumns();
+      ArrayList<TableColumn> selectedColumns = _extendedTableSelection.getSelectedColumns();
 
       List<List<ObjectProperty>> rows = (List) _tableView.getSelectionModel().getSelectedItems();
 
-      for (IndexedTableColumn selectedColumn : selectedColumns)
+      for (TableColumn selectedColumn : selectedColumns)
       {
          CellItemsWithColumn buf = new CellItemsWithColumn(selectedColumn);
          ret.add(buf);

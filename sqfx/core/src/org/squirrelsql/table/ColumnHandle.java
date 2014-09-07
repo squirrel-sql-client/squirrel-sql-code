@@ -6,7 +6,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.util.Callback;
-import org.squirrelsql.table.tableselection.IndexedTableColumn;
 
 import java.util.List;
 
@@ -86,9 +85,9 @@ public class ColumnHandle
    }
 
 
-   public static int extractColumnIndex(IndexedTableColumn selectedColumn)
+   public static int extractColumnIndex(TableColumn selectedColumn)
    {
-      return Integer.parseInt(selectedColumn.getTableColumn().getId());
+      return Integer.parseInt(selectedColumn.getId());
    }
 
 

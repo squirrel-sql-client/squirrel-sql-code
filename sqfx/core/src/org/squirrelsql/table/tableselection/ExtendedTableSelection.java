@@ -6,7 +6,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ExtendedTableSelection
@@ -22,7 +21,7 @@ public class ExtendedTableSelection
    private int _beginIndex;
    private int _endIndex;
 
-   private ArrayList<IndexedTableColumn> _selectedColumns;
+   private ArrayList<TableColumn> _selectedColumns;
 
    public ExtendedTableSelection(TableCell beginCell)
    {
@@ -63,9 +62,9 @@ public class ExtendedTableSelection
       _selectedColumns = findSelectedColumns(tableView);
    }
 
-   private ArrayList<IndexedTableColumn> findSelectedColumns(TableView tableView)
+   private ArrayList<TableColumn> findSelectedColumns(TableView tableView)
    {
-      ArrayList<IndexedTableColumn> ret = new ArrayList<>();
+      ArrayList<TableColumn> ret = new ArrayList<>();
 
       List<TableColumn> cols = tableView.getColumns();
 
@@ -76,17 +75,17 @@ public class ExtendedTableSelection
          TableColumn col = cols.get(i);
          if(isFirstAndLast(col))
          {
-            ret.add(new IndexedTableColumn(i, col));
+            ret.add(col);
             return ret;
          }
          else if(isFirstOrLast(col))
          {
             inBetween = !inBetween;
-            ret.add(new IndexedTableColumn(i, col));
+            ret.add(col);
          }
          else if(inBetween)
          {
-            ret.add(new IndexedTableColumn(i, col));
+            ret.add(col);
          }
       }
 
@@ -108,7 +107,7 @@ public class ExtendedTableSelection
       return _beginIndex == _endIndex && _beginTableColumn == _endTableColumn;
    }
 
-   public ArrayList<IndexedTableColumn> getSelectedColumns()
+   public ArrayList<TableColumn> getSelectedColumns()
    {
       return _selectedColumns;
    }
