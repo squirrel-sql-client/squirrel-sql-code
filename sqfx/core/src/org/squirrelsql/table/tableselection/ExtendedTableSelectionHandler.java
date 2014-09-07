@@ -13,10 +13,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.workaround.TableCellByCoordinatesWA;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -278,7 +278,7 @@ public class ExtendedTableSelectionHandler
 
          for (List<ObjectProperty> row : rows)
          {
-            ObjectProperty prop = row.get(selectedColumn.getIndex());
+            ObjectProperty prop = row.get(ColumnHandle.extractColumnIndex(selectedColumn));
             buf.addItem(prop.get());
          }
 
