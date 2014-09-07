@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Upgraded RichTextFX to version 0.4.4.
+  Fixes problem where scrolling didn't work when Pos1/End-keys were used.
+
 Bug fix: Once and again SQL results where not displayed
 
 Bug fix: Alias properties --> Editing schema table didn't work.

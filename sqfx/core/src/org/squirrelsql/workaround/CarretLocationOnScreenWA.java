@@ -9,8 +9,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.shape.Path;
 import javafx.stage.Window;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.skin.StyledTextAreaSkin;
+import org.fxmisc.richtext.skin.StyledTextAreaVisual;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -23,10 +24,16 @@ public class CarretLocationOnScreenWA
    {
       try
       {
-         Method m = StyledTextAreaSkin.class.getDeclaredMethod("getCaretBoundsOnScreen");
+
+         Field fieldVisual = sqlTextArea.getSkin().getClass().getDeclaredField("visual");
+         fieldVisual.setAccessible(true);
+
+         Object visual = fieldVisual.get(sqlTextArea.getSkin());
+
+         Method m = StyledTextAreaVisual.class.getDeclaredMethod("getCaretBoundsOnScreen");
 
          m.setAccessible(true);
-         Optional<Bounds> buf = (Optional<Bounds>) m.invoke((StyledTextAreaSkin) sqlTextArea.getSkin());
+         Optional<Bounds> buf = (Optional<Bounds>) m.invoke((StyledTextAreaVisual) visual);
          Bounds ret = buf.get();
          return new Point2D(Math.max(0d,ret.getMinX()), ret.getMinY());
 
