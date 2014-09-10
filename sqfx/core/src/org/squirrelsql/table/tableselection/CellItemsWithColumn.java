@@ -1,6 +1,7 @@
 package org.squirrelsql.table.tableselection;
 
 import javafx.scene.control.TableColumn;
+import org.squirrelsql.table.ColumnHandle;
 
 import java.util.ArrayList;
 
@@ -27,5 +28,10 @@ public class CellItemsWithColumn
    public TableColumn getColumn()
    {
       return _column;
+   }
+
+   public ColumnHandle getColumnHandle()
+   {
+      return (ColumnHandle) _column.getUserData();
    }
 }

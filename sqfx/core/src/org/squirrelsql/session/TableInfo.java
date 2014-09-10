@@ -3,7 +3,6 @@ package org.squirrelsql.session;
 import org.squirrelsql.session.schemainfo.StructItemSchema;
 import org.squirrelsql.table.TableLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableInfo
@@ -66,24 +65,7 @@ public class TableInfo
          throw new IllegalStateException();
       }
 
-      List<ColumnInfo> ret = new ArrayList<>();
-
-      for (int i = 0; i < _columnsAsTableLoader.size(); i++)
-      {
-         String colName = _columnsAsTableLoader.getCellAsString(ColumnMetaProps.COLUMN_NAME.getPropName(), i);
-         int colType = _columnsAsTableLoader.getCellAsInt(ColumnMetaProps.DATA_TYPE.getPropName(), i);
-         String colTypeName = _columnsAsTableLoader.getCellAsString(ColumnMetaProps.TYPE_NAME.getPropName(), i);
-         Integer colSize = _columnsAsTableLoader.getCellAsInteger(ColumnMetaProps.COLUMN_SIZE.getPropName(), i);
-         Integer decDigits = _columnsAsTableLoader.getCellAsInteger(ColumnMetaProps.DECIMAL_DIGITS.getPropName(), i);
-
-         String nullablePropValue = _columnsAsTableLoader.getCellAsString(ColumnMetaProps.IS_NULLABLE.getPropName(), i);
-         boolean nullable = ColumnMetaProps.isYes(nullablePropValue);
-
-         String remarks = _columnsAsTableLoader.getCellAsString(ColumnMetaProps.REMARKS.getPropName(), i);
-
-         ret.add(new ColumnInfo(colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
-
-      }
+      List<ColumnInfo> ret = ColumnInfo.createColumnInfosFromTableMetaData(_columnsAsTableLoader);
 
       return ret;
    }

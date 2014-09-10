@@ -137,6 +137,10 @@ public class ResultTabController
       StringBuffer allInStats = new StringBuffer();
       for (CellItemsWithColumn cellItemsWithColumn : selectedCellItemsByColumn)
       {
+
+         ColumnHandle columnHandle = cellItemsWithColumn.getColumnHandle();
+         System.out.println("columnHandle = " + columnHandle); // !!! Hier weiter !!!!
+
          StringBuffer inStat = new StringBuffer();
          for (Object item : cellItemsWithColumn.getItems())
          {

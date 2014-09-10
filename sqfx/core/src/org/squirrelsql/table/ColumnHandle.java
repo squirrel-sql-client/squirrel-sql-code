@@ -6,6 +6,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.util.Callback;
+import org.squirrelsql.session.ColumnInfo;
 
 import java.util.List;
 
@@ -17,6 +18,12 @@ public class ColumnHandle
    private int _columnIndex;
    private TableColumn _tableColumn;
    private List _selectableValues;
+
+   /**
+    * This attribute is set only when the columns is an SQL result column.
+    * Otherwise it is null,
+    */
+   private ColumnInfo _resultColumnInfo;
 
    public ColumnHandle(String header, int columnIndex, CellValueReader cellValueReader, List selectableValues)
    {
@@ -54,6 +61,8 @@ public class ColumnHandle
             return _cellValueReader.getCellValue(row, _columnIndex);
          }
       });
+
+      _tableColumn.setUserData(this);
    }
 
    public String getHeader()
@@ -91,4 +100,13 @@ public class ColumnHandle
    }
 
 
+   public void setResultColumnInfo(ColumnInfo resultColumnInfo)
+   {
+      _resultColumnInfo = resultColumnInfo;
+   }
+
+   public ColumnInfo getResultColumnInfo()
+   {
+      return _resultColumnInfo;
+   }
 }
