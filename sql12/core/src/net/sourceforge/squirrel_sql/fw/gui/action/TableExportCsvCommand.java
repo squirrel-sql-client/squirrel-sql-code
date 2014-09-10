@@ -55,7 +55,7 @@ protected boolean checkMissingData(String sepChar) {
                for (int rowIdx = firstSelectedRowIdx; rowIdx < lastSelectedRowIdx; rowIdx++) {
                    Object cellObj = _table.getValueAt(rowIdx, colIdx);
                    // TODO stefan why did we need the csv data?
-                   String data = DataExportCSVWriter.getDataCSV(sepChar, cellObj.toString());
+                   String data = DataExportCSVWriter.getDataCSV(sepChar, "" + cellObj);
                    if (data != null && ClobDescriptor.i18n.CLOB_LABEL.equals(data)) {
                        return true;
                    }
