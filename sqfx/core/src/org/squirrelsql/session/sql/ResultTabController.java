@@ -1,8 +1,6 @@
 package org.squirrelsql.session.sql;
 
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
@@ -10,10 +8,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
-import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
-
-import java.util.List;
 
 public class ResultTabController
 {
@@ -110,7 +105,7 @@ public class ResultTabController
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
 
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> onCopyAsInStat(tv));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InstatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
 
 
 
@@ -128,47 +123,6 @@ public class ResultTabController
       outputTab.setClosable(false);
 
       return outputTab;
-   }
-
-   private void onCopyAsInStat(TableView tv)
-   {
-      List<CellItemsWithColumn> selectedCellItemsByColumn = _extendedTableSelectionHandler.getSelectedCellItemsWithColumn();
-
-      StringBuffer allInStats = new StringBuffer();
-      for (CellItemsWithColumn cellItemsWithColumn : selectedCellItemsByColumn)
-      {
-
-         ColumnHandle columnHandle = cellItemsWithColumn.getColumnHandle();
-         System.out.println("columnHandle = " + columnHandle); // !!! Hier weiter !!!!
-
-         StringBuffer inStat = new StringBuffer();
-         for (Object item : cellItemsWithColumn.getItems())
-         {
-            if (0 == inStat.length())
-            {
-               inStat.append("" + item);
-            }
-            else
-            {
-               inStat.append(",").append("" + item);
-            }
-         }
-         inStat.insert(0,"(").append(")");
-
-         if (0 == allInStats.length())
-         {
-            allInStats.append(inStat);
-         }
-         else
-         {
-            allInStats.append("\n").append(inStat);
-         }
-      }
-
-      final Clipboard clipboard = Clipboard.getSystemClipboard();
-      final ClipboardContent content = new ClipboardContent();
-      content.putString(allInStats.toString());
-      clipboard.setContent(content);
    }
 
 
