@@ -72,13 +72,10 @@ public class DataExportExcelWriter extends AbstractDataExportFileWriter {
       }
       Cell retVal = row.createCell(colIdx);
 
-      if (null == cellObj)
+      if (null == cellObj || null == colDef)
       {
          retVal.setCellValue(getDataXLSAsString(cellObj));
-      }
-      else if (null == colDef)
-      {
-         retVal.setCellValue(getDataXLSAsString(cellObj));
+         return retVal;
       }
 
       int colType = colDef.getSqlType();

@@ -36,7 +36,7 @@ Patch #68 The "Copy as INSERT / UPDATE statement" functions now provide the righ
 
 Bug fixes:
 
-Fixed NullPointerException in table export that could occur when BLOB fields with NULL values were present.
+Fixed NullPointerException in data export that could occur when BLOB fields with NULL values were present.
 
 #1157 Move line feature didn't work in sql editor
 
