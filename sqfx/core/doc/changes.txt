@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Right mouse menu in SQL results: Copy as SQL-IN-Statement
+
 Upgraded RichTextFX to version 0.4.4.
   Fixes problem where scrolling didn't work when Pos1/End-keys were used.
 
