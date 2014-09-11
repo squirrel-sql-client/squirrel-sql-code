@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.sql.copysqlpart.InstatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;

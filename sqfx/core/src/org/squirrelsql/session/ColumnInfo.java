@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import org.squirrelsql.session.schemainfo.FullyQualifiedTableName;
 import org.squirrelsql.table.ResultSetMetaDataLoaderConstants;
 import org.squirrelsql.table.TableLoader;
 
@@ -8,6 +9,9 @@ import java.util.List;
 
 public class ColumnInfo
 {
+   private final String _tableName;
+   private final String _schemaName;
+   private final String _catalogName;
    private int _columnIndex;
    private final String _colName;
    private final int _colType;
@@ -17,8 +21,11 @@ public class ColumnInfo
    private final boolean _nullable;
    private final String _remarks;
 
-   public ColumnInfo(int columnIndex, String colName, int colType, String colTypeName, Integer colSize, Integer decDigits, boolean nullable, String remarks)
+   public ColumnInfo(String tableName, String schemaName, String catalogName, int columnIndex, String colName, int colType, String colTypeName, Integer colSize, Integer decDigits, boolean nullable, String remarks)
    {
+      _tableName = tableName;
+      _schemaName = schemaName;
+      _catalogName = catalogName;
       _columnIndex = columnIndex;
       _colName = colName;
       _colType = colType;
@@ -27,6 +34,21 @@ public class ColumnInfo
       _decDigits = decDigits;
       _nullable = nullable;
       _remarks = remarks;
+   }
+
+   public String getTableName()
+   {
+      return _tableName;
+   }
+
+   public String getSchemaName()
+   {
+      return _schemaName;
+   }
+
+   public String getCatalogName()
+   {
+      return _catalogName;
    }
 
    public int getColumnIndex()
@@ -74,6 +96,11 @@ public class ColumnInfo
       return _colName + " " + _colTypeName + getSizes() + " " + (_nullable ? "NULL" : "NOT NULL");
    }
 
+   public String getFullTableColumnName()
+   {
+      return new FullyQualifiedTableName(_catalogName, _schemaName, _tableName).toString() + "." + _colName;
+   }
+
    private String getSizes()
    {
       if(null == _colSize)
@@ -85,7 +112,7 @@ public class ColumnInfo
 
    }
 
-   public static List<ColumnInfo> createColumnInfosFromTableMetaData(TableLoader tableColumnMetaDataTableLoader)
+   public static List<ColumnInfo> createColumnInfosFromTableMetaData(TableInfo tableInfo, TableLoader tableColumnMetaDataTableLoader)
    {
       List<ColumnInfo> ret = new ArrayList<>();
 
@@ -104,7 +131,7 @@ public class ColumnInfo
 
          String remarks = tableColumnMetaDataTableLoader.getCellAsString(ColumnMetaProps.REMARKS.getPropName(), i);
 
-         ret.add(new ColumnInfo(columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
+         ret.add(new ColumnInfo(tableInfo.getName(), tableInfo.getSchema(), tableInfo.getCatalog(), columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
 
       }
       return ret;
@@ -117,6 +144,10 @@ public class ColumnInfo
 
       for (int i = 0; i < resultMetaDataTableLoader.size(); i++)
       {
+         String tableName = resultMetaDataTableLoader.getCellAsString(ResultSetMetaDataLoaderConstants.GET_TABLE_NAME.getMetaDataColumnName(), i);
+         String schemaName = resultMetaDataTableLoader.getCellAsString(ResultSetMetaDataLoaderConstants.GET_SCHEMA_NAME.getMetaDataColumnName(), i);
+         String catalogName = resultMetaDataTableLoader.getCellAsString(ResultSetMetaDataLoaderConstants.GET_CATALOG_NAME.getMetaDataColumnName(), i);
+
          int columnIndex = resultMetaDataTableLoader.getCellAsInt(ResultSetMetaDataLoaderConstants.COLUMN_INDEX.getMetaDataColumnName(), i);
          String colName = resultMetaDataTableLoader.getCellAsString(ResultSetMetaDataLoaderConstants.GET_COLUMN_NAME.getMetaDataColumnName(), i);
          int colType = resultMetaDataTableLoader.getCellAsInt(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE.getMetaDataColumnName(), i);
@@ -129,7 +160,7 @@ public class ColumnInfo
 
          String remarks = null;
 
-         ret.add(new ColumnInfo(columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
+         ret.add(new ColumnInfo(tableName, schemaName, catalogName, columnIndex, colName, colType, colTypeName, colSize, decDigits, nullable, remarks));
 
       }
       return ret;

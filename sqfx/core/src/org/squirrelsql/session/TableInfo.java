@@ -65,7 +65,7 @@ public class TableInfo
          throw new IllegalStateException();
       }
 
-      List<ColumnInfo> ret = ColumnInfo.createColumnInfosFromTableMetaData(_columnsAsTableLoader);
+      List<ColumnInfo> ret = ColumnInfo.createColumnInfosFromTableMetaData(this, _columnsAsTableLoader);
 
       return ret;
    }

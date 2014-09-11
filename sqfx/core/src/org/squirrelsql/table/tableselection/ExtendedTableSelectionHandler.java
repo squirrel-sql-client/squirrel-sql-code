@@ -3,6 +3,7 @@ package org.squirrelsql.table.tableselection;
 import com.sun.javafx.scene.control.skin.TableColumnHeader;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -266,6 +267,11 @@ public class ExtendedTableSelectionHandler
    public List<CellItemsWithColumn> getSelectedCellItemsWithColumn()
    {
       List<CellItemsWithColumn> ret = new ArrayList<>();
+
+      if(null == _extendedTableSelection)
+      {
+         return ret;
+      }
 
       ArrayList<TableColumn> selectedColumns = _extendedTableSelection.getSelectedColumns();
 
