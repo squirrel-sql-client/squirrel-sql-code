@@ -2,6 +2,7 @@ package org.squirrelsql.table;
 
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
 import org.squirrelsql.services.Utils;
+import org.squirrelsql.session.ColumnInfo;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.session.sql.StatementChannel;
 import org.squirrelsql.session.sql.StatementExecutionState;
@@ -119,6 +120,13 @@ public class SQLExecutor
 
                TableLoader resultTableLoader = TableLoaderFactory.loadDataFromResultSet(res, statementChannel);
                TableLoader resultMetaDataTableLoader = ResultSetMetaDataLoader.loadMetaData(res);
+
+               List<ColumnInfo> columnInfos = ColumnInfo.createColumnInfosFromResultMetaData(resultMetaDataTableLoader);
+
+               for (int i = 0; i < columnInfos.size(); i++)
+               {
+                  resultTableLoader.getColumnHandles().get(i).setResultColumnInfo(columnInfos.get(i));
+               }
 
 
                results.add(new SQLResult(resultTableLoader, resultMetaDataTableLoader, maxResults));

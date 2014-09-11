@@ -83,6 +83,8 @@ public class SQLEditTopPanelCtrl
       }
 
       _sqlTextAreaServices.appendToEditor("\n" + selectedItem.getSql());
+
+      _sqlTextAreaServices.requestFocus();
    }
 
    private void onChkRowLimitChanged()

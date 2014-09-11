@@ -6,6 +6,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.util.Callback;
+import org.squirrelsql.session.ColumnInfo;
 
 import java.util.List;
 
@@ -18,6 +19,12 @@ public class ColumnHandle
    private TableColumn _tableColumn;
    private List _selectableValues;
 
+   /**
+    * This attribute is set only when the columns is an SQL result column.
+    * Otherwise it is null,
+    */
+   private ColumnInfo _resultColumnInfo;
+
    public ColumnHandle(String header, int columnIndex, CellValueReader cellValueReader, List selectableValues)
    {
       _header = header;
@@ -25,15 +32,16 @@ public class ColumnHandle
       _cellValueReader = cellValueReader;
       _selectableValues = selectableValues;
 
-      TableColumn tableColumn = new TableColumn(_header);
-      _tableColumn = tableColumn;
+      _tableColumn = new TableColumn(_header);
+      _tableColumn.setId("" + columnIndex);
 
-      _originalCellFactory = tableColumn.getCellFactory();
+
+      _originalCellFactory = _tableColumn.getCellFactory();
 
 
       if(0 < selectableValues.size())
       {
-         tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
+         _tableColumn.setCellFactory(new Callback<TableColumn, TableCell>()
          {
             @Override
             public TableCell call(TableColumn param)
@@ -42,17 +50,19 @@ public class ColumnHandle
             }
          });
 
-         tableColumn.setEditable(true);
+         _tableColumn.setEditable(true);
       }
 
 
-      tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
+      _tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
       {
          public ObservableValue<Object> call(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row)
          {
             return _cellValueReader.getCellValue(row, _columnIndex);
          }
       });
+
+      _tableColumn.setUserData(this);
    }
 
    public String getHeader()
@@ -81,5 +91,22 @@ public class ColumnHandle
    public List getSelectableValues()
    {
       return _selectableValues;
+   }
+
+
+   public static int extractColumnIndex(TableColumn selectedColumn)
+   {
+      return Integer.parseInt(selectedColumn.getId());
+   }
+
+
+   public void setResultColumnInfo(ColumnInfo resultColumnInfo)
+   {
+      _resultColumnInfo = resultColumnInfo;
+   }
+
+   public ColumnInfo getResultColumnInfo()
+   {
+      return _resultColumnInfo;
    }
 }

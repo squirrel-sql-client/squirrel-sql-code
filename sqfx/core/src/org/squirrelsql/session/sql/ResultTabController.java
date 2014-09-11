@@ -2,11 +2,14 @@ package org.squirrelsql.session.sql;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.sql.copysqlpart.InstatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
-import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.*;
+import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 
 public class ResultTabController
 {
@@ -15,6 +18,7 @@ public class ResultTabController
    private final Tab _containerTab;
    private EditButtonCtrl _editButtonCtrl;
    private Session _session;
+   private ExtendedTableSelectionHandler _extendedTableSelectionHandler;
 
    public ResultTabController(Session session, SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
@@ -96,6 +100,16 @@ public class ResultTabController
 
       TableView tv = new TableView();
 
+      tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
+
+
+      SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
+
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InstatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
+
+
+
       if (_editButtonCtrl.allowsEditing())
       {
          _editButtonCtrl.displayAndPrepareEditing(sqlResult, tv);
@@ -105,7 +119,8 @@ public class ResultTabController
          tableLoader.load(tv);
       }
 
-      outputTab.setContent(tv);
+      StackPane stackPane = _extendedTableSelectionHandler.getStackPane();
+      outputTab.setContent(stackPane);
       outputTab.setClosable(false);
 
       return outputTab;

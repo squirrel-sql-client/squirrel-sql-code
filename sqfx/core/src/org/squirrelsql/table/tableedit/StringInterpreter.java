@@ -9,9 +9,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-/**
- * Created by gerd on 27.05.14.
- */
 public class StringInterpreter
 {
    public static Object interpret(String userEnteredString, String columnClassName) throws ClassNotFoundException, ParseException
