@@ -2,6 +2,7 @@ package org.squirrelsql.session.schemainfo;
 
 import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.dbconnector.DbConnectorResult;
+import org.squirrelsql.services.CaseInsensitiveString;
 import org.squirrelsql.session.*;
 import org.squirrelsql.session.completion.TableTypes;
 import org.squirrelsql.session.objecttree.TableDetailsReader;
@@ -30,7 +31,7 @@ public class SchemaCache
 
    private HashMap<FullyQualifiedTableName, List<TableInfo>> _tableInfosByFullyQualifiedName = new HashMap<>();
    private HashMap<SchemaQualifiedTableName, List<TableInfo>> _tableInfosBySchemaQualifiedName = new HashMap<>();
-   private HashMap<String, List<TableInfo>> _tableInfosBySimpleName = new HashMap<>();
+   private HashMap<CaseInsensitiveString, List<TableInfo>> _tableInfosBySimpleName = new HashMap<>();
 
    private HashMap<StructItemProcedureType, List<ProcedureInfo>> _procedureInfos = new HashMap<>();
    private HashMap<StructItemUDTType, List<UDTInfo>> _udtInfos = new HashMap<>();
@@ -119,7 +120,7 @@ public class SchemaCache
                   if(null == arr)
                   {
                      arr = new ArrayList<>();
-                     _tableInfosBySimpleName.put(tableInfo.getName(), arr);
+                     _tableInfosBySimpleName.put(new CaseInsensitiveString(tableInfo.getName()), arr);
                   }
                   arr.add(tableInfo);
 
@@ -319,7 +320,7 @@ public class SchemaCache
 
    public List<TableInfo> getTablesBySimpleName(String tableName)
    {
-      return convertNullToArray(_tableInfosBySimpleName.get(tableName));
+      return convertNullToArray(_tableInfosBySimpleName.get(new CaseInsensitiveString(tableName)));
    }
 
 

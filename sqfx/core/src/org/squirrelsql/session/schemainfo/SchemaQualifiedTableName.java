@@ -1,14 +1,16 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.CaseInsensitiveString;
+
 public class SchemaQualifiedTableName
 {
-   private final String _schema;
-   private final String _tableName;
+   private final CaseInsensitiveString _schema;
+   private final CaseInsensitiveString _tableName;
 
    public SchemaQualifiedTableName(String schema, String tableName)
    {
-      _schema = schema;
-      _tableName = tableName;
+      _schema = (null == schema ? null : new CaseInsensitiveString(schema));
+      _tableName = new CaseInsensitiveString(tableName);
    }
 
    @Override

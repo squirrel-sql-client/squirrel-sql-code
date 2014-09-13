@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: SQL editors error highlighting was case sensitive.
+
 Feature: Right mouse menu in SQL results: Copy as SQL-IN-Statement
 
 Upgraded RichTextFX to version 0.4.4.

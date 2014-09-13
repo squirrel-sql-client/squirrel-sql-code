@@ -1,16 +1,18 @@
 package org.squirrelsql.session.schemainfo;
 
+import org.squirrelsql.services.CaseInsensitiveString;
+
 public class FullyQualifiedTableName
 {
-   private final String _catalog;
-   private final String _schema;
-   private final String _name;
+   private final CaseInsensitiveString _catalog;
+   private final CaseInsensitiveString _schema;
+   private final CaseInsensitiveString _name;
 
    public FullyQualifiedTableName(String catalog, String schema, String name)
    {
-      _catalog = catalog;
-      _schema = schema;
-      _name = name;
+      _catalog = (null == catalog ? null :new CaseInsensitiveString(catalog));
+      _schema = (null == schema ? null : new CaseInsensitiveString(schema));
+      _name = new CaseInsensitiveString(name);
    }
 
    @Override
