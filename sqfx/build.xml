@@ -12,6 +12,7 @@
         <delete dir="output"/>
         <mkdir dir="output/work/bin"/>
         <mkdir dir="output/dist"/>
+        <mkdir dir="output/dist/doc"/>
         <mkdir dir="output/dist/lib"/>
         <mkdir dir="output/plainZip/work"/>
     </target>
@@ -66,6 +67,11 @@
         </copy>
         <copy todir="output/dist/">
             <fileset dir="launcher">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <copy todir="output/dist/doc">
+            <fileset dir="core/doc">
                 <include name="**/*" />
             </fileset>
         </copy>
