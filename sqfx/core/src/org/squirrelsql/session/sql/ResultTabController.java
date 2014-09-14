@@ -106,6 +106,8 @@ public class ResultTabController
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
 
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"),() -> onCopy(false));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"),() -> onCopy(true));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InstatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
 
 
@@ -124,6 +126,11 @@ public class ResultTabController
       outputTab.setClosable(false);
 
       return outputTab;
+   }
+
+   private void onCopy(boolean withHeader)
+   {
+      CopyUtil.copyCells(_extendedTableSelectionHandler, withHeader);
    }
 
 
