@@ -5,11 +5,13 @@ import javafx.scene.input.ClipboardContent;
 import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 
+import java.util.List;
+
 public class CopyUtil
 {
    public static void copyCells(ExtendedTableSelectionHandler extendedTableSelectionHandler, boolean withHeaders)
    {
-      java.util.List<CellItemsWithColumn> selectedCellItemsByColumn = extendedTableSelectionHandler.getSelectedCellItemsWithColumn();
+      List<CellItemsWithColumn> selectedCellItemsByColumn = extendedTableSelectionHandler.getSelectedCellItemsWithColumn();
 
       if(0 == selectedCellItemsByColumn.size())
       {

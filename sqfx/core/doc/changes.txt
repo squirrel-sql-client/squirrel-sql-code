@@ -1,7 +1,7 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Feature: Right mouse menu in SQL results: Copy and "Copy with header"
+Feature: Right mouse menu in SQL results: "Copy", "Copy with header" and "Copy as INSERT-VALUES statement"
 
 Bug fix: SQL editors error highlighting was case sensitive.
 

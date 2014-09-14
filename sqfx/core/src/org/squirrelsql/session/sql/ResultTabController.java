@@ -6,7 +6,8 @@ import javafx.scene.layout.StackPane;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
-import org.squirrelsql.session.sql.copysqlpart.InstatCreator;
+import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
+import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
@@ -106,9 +107,10 @@ public class ResultTabController
 
       SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
 
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"),() -> onCopy(false));
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"),() -> onCopy(true));
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InstatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, false));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, true));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InStatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInsertStat"),() -> InsertStatCreator.onCopyAsInsertStat(_extendedTableSelectionHandler));
 
 
 
@@ -126,11 +128,6 @@ public class ResultTabController
       outputTab.setClosable(false);
 
       return outputTab;
-   }
-
-   private void onCopy(boolean withHeader)
-   {
-      CopyUtil.copyCells(_extendedTableSelectionHandler, withHeader);
    }
 
 

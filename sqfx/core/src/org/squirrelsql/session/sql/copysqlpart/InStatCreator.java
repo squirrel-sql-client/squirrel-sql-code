@@ -10,7 +10,7 @@ import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstatCreator
+public class InStatCreator
 {
    public static void onCopyAsInStat(ExtendedTableSelectionHandler extendedTableSelectionHandler)
    {
