@@ -8,7 +8,8 @@ import org.squirrelsql.services.I18n;
 public enum StandardActionConfiguration
 {
    RUN_SQL(new ActionConfiguration(Help.props.getImage("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN))),
-   NEW_SQL_TAB(new ActionConfiguration(Help.props.getImage("newsqltab.png"), Help.i18n.t("sql.newsqltab"), null, new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)));
+   NEW_SQL_TAB(new ActionConfiguration(Help.props.getImage("newsqltab.png"), Help.i18n.t("sql.newsqltab"), null, new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN))),
+   BOOKMARK_ABREV_AUTOCORR(new ActionConfiguration(null, null, null, new KeyCodeCombination(KeyCode.SPACE)));
 
    public static StandardActionConfiguration[] SESSION_TOOLBAR = new StandardActionConfiguration[]
    {

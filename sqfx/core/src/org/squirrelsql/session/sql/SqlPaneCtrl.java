@@ -23,7 +23,6 @@ import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 import org.squirrelsql.workaround.KeyMatchWA;
-import org.squirrelsql.workaround.SplitDividerWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +41,20 @@ public class SqlPaneCtrl
 
    private SplitPane _sqlTabSplitPane = new SplitPane();
 
+   private BookmarkManager _bookmarkManager;
+
    private SessionTabContext _sessionTabContext;
    private final TabPane _sqlOutputTabPane;
    private final BorderPane _sqlPane;
+
 
    public SqlPaneCtrl(SessionTabContext sessionTabContext)
    {
       _sessionTabContext = sessionTabContext;
       _sqlTextAreaServices = new SQLTextAreaServices(_sessionTabContext);
+
+      _bookmarkManager = new BookmarkManager(_sqlTextAreaServices);
+
 
       _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), _sqlTextAreaServices);
 
@@ -63,6 +68,7 @@ public class SqlPaneCtrl
 
       ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
       ActionHandle hNewSqlTab = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.NEW_SQL_TAB);
+      ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.BOOKMARK_ABREV_AUTOCORR);
 
       hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
 
@@ -84,6 +90,11 @@ public class SqlPaneCtrl
                   else if (hNewSqlTab.matchesKeyEvent(keyEvent))
                   {
                      hNewSqlTab.fire();
+                     keyEvent.consume();
+                  }
+                  else if (hBookMarkAbrevAutoCorr.matchesKeyEvent(keyEvent))
+                  {
+                     _bookmarkManager.autocorrOrAbrev();
                      keyEvent.consume();
                   }
                }

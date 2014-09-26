@@ -137,6 +137,12 @@ public class SQLTextAreaServices
       return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
    }
 
+   public void replaceTokenAtCarretBy(String selItem)
+   {
+      replaceTokenAtCarretBy(0, selItem);
+   }
+
+
    public void replaceTokenAtCarretBy(int offset, String selItem)
    {
       TokenAtCarretInfo tci = _getTokenAtCarretInfo();
