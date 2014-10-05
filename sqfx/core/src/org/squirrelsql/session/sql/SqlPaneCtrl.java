@@ -1,13 +1,10 @@
 package org.squirrelsql.session.sql;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -18,11 +15,11 @@ import org.squirrelsql.services.*;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.ActionHandle;
 import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StandardActionConfiguration;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
-import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,41 +63,9 @@ public class SqlPaneCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
-      ActionHandle hNewSqlTab = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.NEW_SQL_TAB);
-      ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.BOOKMARK_ABREV_AUTOCORR);
+      initActionListeners();
 
-      hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
-
-      EventHandler<KeyEvent> keyEventHandler =
-            new EventHandler<KeyEvent>()
-            {
-               public void handle(final KeyEvent keyEvent)
-               {
-                  if (hRunSql.matchesKeyEvent(keyEvent))
-                  {
-                     onExecuteSql(_sqlTextAreaServices);
-                     keyEvent.consume();
-                  }
-                  else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN)))
-                  {
-                     _completionCtrl.completeCode();
-                     keyEvent.consume();
-                  }
-                  else if (hNewSqlTab.matchesKeyEvent(keyEvent))
-                  {
-                     hNewSqlTab.fire();
-                     keyEvent.consume();
-                  }
-                  else if (hBookMarkAbrevAutoCorr.matchesKeyEvent(keyEvent))
-                  {
-                     _bookmarkManager.autocorrOrAbrev();
-                     keyEvent.consume();
-                  }
-               }
-            };
-
-      _sqlTextAreaServices.setOnKeyTyped(keyEventHandler);
+      _sqlTextAreaServices.setOnKeyTyped(this::onHandleKeyEvent);
 
       _sqlPane = new BorderPane();
 
@@ -110,6 +75,37 @@ public class SqlPaneCtrl
       _sqlPane.setCenter(_sqlTabSplitPane);
 
       _sqlSplitPosSaver.apply(_sqlTabSplitPane);
+   }
+
+   private void initActionListeners()
+   {
+      ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
+      ActionHandle hCodeCompletion = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.SQL_CODE_CONPLETION);
+      ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.EXEC_BOOKMARK);
+
+      hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
+      hCodeCompletion.setOnAction(_completionCtrl::completeCode);
+      hBookMarkAbrevAutoCorr.setOnAction(_bookmarkManager::execBookmark);
+   }
+
+   private void onHandleKeyEvent(KeyEvent keyEvent)
+   {
+      for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.values())
+      {
+         if(   standardActionConfiguration.getActionConfiguration().getActionScope() == ActionScope.SQL_EDITOR
+            || standardActionConfiguration.getActionConfiguration().getActionScope() == ActionScope.UNSCOPED)
+         {
+            ActionHandle handle = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(standardActionConfiguration);
+            if (handle.matchesKeyEvent(keyEvent))
+            {
+               handle.fire();
+               return;
+            }
+         }
+      }
+
+      _bookmarkManager.execAbreviation();
+
    }
 
    public BorderPane getSqlPane()

@@ -116,7 +116,7 @@ public class ActionHandle
       }
 
 
-      if(null == _actionConfiguration.getActionScope())
+      if(ActionScope.UNSCOPED == _actionConfiguration.getActionScope())
       {
          updateControls(false);
          return;
