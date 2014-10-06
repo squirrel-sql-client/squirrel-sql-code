@@ -75,6 +75,8 @@
                 <include name="**/*" />
             </fileset>
         </copy>
+
+        <zip destfile="output/dist/doc/src.jar" basedir="core/src"/>
     </target>
 
 

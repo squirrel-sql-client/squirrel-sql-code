@@ -105,7 +105,7 @@ public class SQLTextAreaServices
 
    public String getTokenAtCarret()
    {
-      return _getTokenAtCarretInfo().getToken();
+      return _getTokenAtCarretInfo().getTokenTillCarret();
 
    }
 
@@ -126,10 +126,16 @@ public class SQLTextAreaServices
          begin +=1; // keep the whitespace
       }
 
+      int end = caretPosition;
+      while(sqlTextAreaText.length() - 1 >= end && false == Character.isWhitespace(sqlTextAreaText.charAt(end)))
+      {
+         ++end;
+      }
+
       begin = Math.max(begin, 0);
       String token = sqlTextAreaText.substring(begin, caretPosition).trim();
 
-      return new TokenAtCarretInfo(token, begin, caretPosition);
+      return new TokenAtCarretInfo(token, begin, end, caretPosition);
    }
 
    public Point2D getCarretLocationOnScreen()
@@ -137,17 +143,24 @@ public class SQLTextAreaServices
       return CarretLocationOnScreenWA.getCarretLocationOnScreen(_sqlTextArea);
    }
 
-   public void replaceTokenAtCarretBy(String selItem)
+   public void replaceTokenAtCarretBy(String replacement)
    {
-      replaceTokenAtCarretBy(0, selItem);
+      replaceTokenAtCarretBy(0, false, replacement);
    }
 
 
-   public void replaceTokenAtCarretBy(int offset, String selItem)
+   public void replaceTokenAtCarretBy(int offset, boolean removeSucceedingChars, String replacement)
    {
       TokenAtCarretInfo tci = _getTokenAtCarretInfo();
 
-      _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), selItem);
+      if (removeSucceedingChars)
+      {
+         _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getTokenEndPos(), replacement);
+      }
+      else
+      {
+         _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), replacement);
+      }
    }
 
    public double getFontHight()

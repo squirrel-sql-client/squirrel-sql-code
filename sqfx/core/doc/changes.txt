@@ -1,6 +1,12 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Code completion, finishing a completion list with tab instead return will remove all succeeding chars up to the next whitespace.
+
+Builds now include a doc/src.jar where the sources of the build are placed.
+
+Upgraded RichTextFX to version 0.5.
+
 Feature: Right mouse menu in SQL results: "Copy", "Copy with header" and "Copy as INSERT-VALUES statement"
 
 Bug fix: SQL editors error highlighting was case sensitive.

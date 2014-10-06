@@ -48,9 +48,22 @@ public class KeyMatchWA
       }
 
       if(
+                "\t".equals(keyEvent.getCharacter())
+            &&  keyCodeCombination.getCode().equals(KeyCode.TAB)
+        )
+      {
+         return true;
+      }
+
+      if(
                 " ".equals(keyEvent.getCharacter())
             &&  keyCodeCombination.getCode().equals(KeyCode.SPACE)
         )
+      {
+         return true;
+      }
+
+      if(27 == keyEvent.getCharacter().charAt(0) && keyCodeCombination.getCode().equals(KeyCode.ESCAPE))
       {
          return true;
       }

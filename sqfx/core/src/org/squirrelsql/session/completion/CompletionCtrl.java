@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
@@ -15,6 +17,7 @@ import org.squirrelsql.session.TableInfo;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
+import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +72,7 @@ public class CompletionCtrl
 
       if(1 == completions.size() && false == showPopupForSizeOne)
       {
-         executeCompletion(completions.get(0));
+         executeCompletion(completions.get(0), false);
          return;
       }
 
@@ -132,12 +135,15 @@ public class CompletionCtrl
 
    private void onHandleKeyOnPopupList(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView)
    {
-      // if (keyEvent.getCode() == KeyCode.ENTER) doesn't work
-      if (("\r".equals(keyEvent.getCharacter()) || "\n".equals(keyEvent.getCharacter())))
+      if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
       {
-         onCompletionSelected(keyEvent, pp, listView);
+         onCompletionSelected(keyEvent, pp, listView, false);
       }
-      else if(27 == keyEvent.getCharacter().charAt(0)) // ESCAPE Key
+      else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.TAB)))
+      {
+         onCompletionSelected(keyEvent, pp, listView, true);
+      }
+      else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
       {
          pp.hide();
          keyEvent.consume();
@@ -158,18 +164,18 @@ public class CompletionCtrl
       }
    }
 
-   private void onCompletionSelected(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView)
+   private void onCompletionSelected(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
    {
       pp.hide();
       CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
-      executeCompletion(selItem);
+      executeCompletion(selItem, removeSucceedingChars);
       keyEvent.consume();
    }
 
-   private void executeCompletion(CompletionCandidate completionCandidate)
+   private void executeCompletion(CompletionCandidate completionCandidate, boolean removeSucceedingChars)
    {
       TokenParser tokenParser = new TokenParser(_sqlTextAreaServices.getTokenAtCarret());
-      _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), completionCandidate.getReplacement());
+      _sqlTextAreaServices.replaceTokenAtCarretBy(tokenParser.getCompletedSplitsStringLength(), removeSucceedingChars, completionCandidate.getReplacement());
    }
 
 }
