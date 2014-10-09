@@ -1,11 +1,8 @@
 package org.squirrelsql.session.completion;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -88,17 +85,7 @@ public class CompletionCtrl
 
       pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
 
-      listView.setPrefHeight(Math.min(listView.getItems().size(), 15) * 24 + 3);
-
-//      Font font = listView.cellFactoryProperty().get().call(listView).getFont();
-      FontMetrics fontMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(new Label().getFont());
-
-      double maxItemWidth = 0;
-      for (CompletionCandidate completionCandidate : listView.getItems())
-      {
-         maxItemWidth = Math.max(fontMetrics.computeStringWidth(completionCandidate.toString()), maxItemWidth);
-      }
-      listView.setPrefWidth(maxItemWidth + 35);
+      CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
 
       pp.getContent().add(listView);
       Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();

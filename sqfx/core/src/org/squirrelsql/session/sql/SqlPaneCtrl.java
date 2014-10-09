@@ -18,6 +18,7 @@ import org.squirrelsql.session.action.ActionManager;
 import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.action.StandardActionConfiguration;
 import org.squirrelsql.session.completion.CompletionCtrl;
+import org.squirrelsql.session.sql.bookmark.BookmarkManager;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 

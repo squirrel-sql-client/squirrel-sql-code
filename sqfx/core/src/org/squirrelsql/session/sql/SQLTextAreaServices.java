@@ -201,4 +201,9 @@ public class SQLTextAreaServices
    {
       _sqlTextArea.appendText(sql);
    }
+
+   public javafx.scene.text.Font getFont()
+   {
+      return _sqlTextArea.getFont();
+   }
 }
