@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;
 
 import java.sql.SQLException;
@@ -15,6 +16,8 @@ public class MessagePanelCtrl
    private static final String STYLE_YELLOW = "-fx-border-color: yellow; -fx-border-width: 3;";
    private static final String STYLE_GREEN = "-fx-border-color: green; -fx-border-width: 3;";
    private static final String STYLE_LIGHT_RED = "-fx-border-color: indianred; -fx-border-width: 3";
+   
+   private I18n _i18n = new I18n(getClass());
 
 
    private VBox _messages;
@@ -29,6 +32,9 @@ public class MessagePanelCtrl
       _sp.setContent(_messages);
 
       _messages.heightProperty().addListener((observableValue, oldNumber, newNumber) -> _sp.setVvalue(newNumber.doubleValue()));
+      
+      RightMouseMenuHandler messagePanelRightMouseMenuHandler = new RightMouseMenuHandler(_sp);
+      messagePanelRightMouseMenuHandler.addMenu(new I18n(getClass()).t("msg.clear"), () -> _messages.getChildren().clear());
    }
 
    public void error(String s)
