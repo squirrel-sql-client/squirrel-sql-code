@@ -3,6 +3,7 @@ package org.squirrelsql.session.sql;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import org.squirrelsql.RightMouseMenuHandler;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.Session;
@@ -105,7 +106,7 @@ public class ResultTabController
       _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
 
 
-      SQLResultRightMouseMenuHandler sqlResultRightMouseMenuHandler = new SQLResultRightMouseMenuHandler(tv);
+      RightMouseMenuHandler sqlResultRightMouseMenuHandler = new RightMouseMenuHandler(tv);
 
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, false));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, true));

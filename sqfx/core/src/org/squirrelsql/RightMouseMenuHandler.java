@@ -9,7 +9,6 @@ import javafx.scene.input.MouseEvent;
 
 public class RightMouseMenuHandler
 {
-   //TODO Test this class in ResultTabController in place of SQLResultRightMouseMenuHandler. If no issues use this for any control where a right click should be implemented
    private ContextMenu _contextMenu;
 
    public RightMouseMenuHandler(Control control)

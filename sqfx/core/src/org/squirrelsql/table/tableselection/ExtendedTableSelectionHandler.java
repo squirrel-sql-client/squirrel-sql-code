@@ -144,9 +144,11 @@ public class ExtendedTableSelectionHandler
       double yEnd = ensureYInGrid(getScrollbar(Orientation.HORIZONTAL), getTableColumnHeader(), event.getY());
 
       TableCell endCell = TableCellByCoordinatesWA.findTableCellForPoint(_tableView, xEnd, yEnd);
-      
-      if(null == endCell) {
-    	  return;
+
+      if (null == endCell)
+      {
+         _stackPane.getChildren().remove(_canvas);
+         return;
       }
 
       _extendedTableSelection.setEndCell(endCell);

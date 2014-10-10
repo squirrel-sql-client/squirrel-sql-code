@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Added a right click menu with a clear option to clear messages from it.
+
+Bug fix: Fix for null pointers when clicking/releasing the mouse on an area that is not a result row.
+
 Feature: Code completion, finishing a completion list with tab instead return will remove all succeeding chars up to the next whitespace.
 
 Builds now include a doc/src.jar where the sources of the build are placed.
