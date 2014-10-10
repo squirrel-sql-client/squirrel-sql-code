@@ -1,13 +1,18 @@
 package org.squirrelsql.session.sql.bookmark;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Popup;
 import org.squirrelsql.session.completion.CompletionUtil;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
+import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
 
@@ -66,7 +71,29 @@ public class BookmarkManager
       pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
 
 
+      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopup((KeyEvent) keyEvent, pp, listView));
+
+
+
       pp.show(_sqlTextAreaServices.getTextArea(), cl.getX(), cl.getY());
+   }
+
+   private void onHandleKeyOnPopup(KeyEvent keyEvent, Popup pp, ListView<Bookmark> listView)
+   {
+      if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
+      {
+         System.out.println("####### bookmark selected");
+      }
+      else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
+      {
+         pp.hide();
+         keyEvent.consume();
+      }
+      else
+      {
+
+      }
+
    }
 
    private void hideIfNotFocused(Boolean newValue, Popup pp)
