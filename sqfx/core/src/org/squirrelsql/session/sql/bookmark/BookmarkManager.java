@@ -132,10 +132,10 @@ public class BookmarkManager
          {
             txt.appendText(keyEvent.getCharacter());
          }
+         keyEvent.consume();
 
          filterPopupList(txt.getText(), listView);
 
-         keyEvent.consume();
       }
 
    }

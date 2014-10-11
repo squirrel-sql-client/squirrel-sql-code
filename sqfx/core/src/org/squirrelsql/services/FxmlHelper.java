@@ -18,7 +18,7 @@ public class FxmlHelper<T>
       try
       {
          _fxmlLoader = new FXMLLoader(getClass().getResource("/" + fxmlViewClass.getName().replaceAll("\\.", "/") + ".fxml"), ResourceBundle.getBundle(fxmlViewClass.getPackage().getName() + ".i18n"));
-         _region = (Region) _fxmlLoader.load();
+         _region = _fxmlLoader.load();
       }
       catch (IOException e)
       {

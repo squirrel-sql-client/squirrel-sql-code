@@ -15,6 +15,7 @@ import org.squirrelsql.session.action.ActionScope;
 import org.squirrelsql.session.objecttree.*;
 import org.squirrelsql.session.sql.NewSqlTabHelper;
 import org.squirrelsql.session.sql.SqlTabCtrl;
+import org.squirrelsql.session.sql.bookmark.BookmarkEditCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class SessionCtrl
       _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
 
       NewSqlTabHelper.registerSessionTabListener(sessionTabContext, _sessionTab);
+      BookmarkEditCtrl.registerListener(sessionTabContext);
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);

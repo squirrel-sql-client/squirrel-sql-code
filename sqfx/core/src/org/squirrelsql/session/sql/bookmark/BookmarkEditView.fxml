@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.bookmark.BookmarkEditView">
+   <children>
+      <TextField fx:id="txtKey" layoutX="109.0" layoutY="20.0" prefHeight="25.0" prefWidth="151.0" />
+      <Label layoutX="14.0" layoutY="25.0" prefHeight="15.0" prefWidth="95.0" text="%bookmarkedit.key" />
+      <Label layoutX="14.0" layoutY="64.0" text="%bookmarkedit.description" />
+      <TextField fx:id="txtDescription" layoutX="109.0" layoutY="59.0" prefHeight="25.0" prefWidth="480.0" AnchorPane.leftAnchor="109.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="14.0" layoutY="105.0" text="%bookmarkedit.sql" />
+      <TextArea fx:id="txtSQL" layoutX="14.0" layoutY="120.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="120.0" />
+      <Button fx:id="btnSave" layoutX="15.0" layoutY="359.0" mnemonicParsing="false" text="%bookmarkedit.save" AnchorPane.bottomAnchor="8.0" />
+   </children>
+</AnchorPane>
