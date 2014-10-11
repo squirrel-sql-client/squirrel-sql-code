@@ -1,27 +1,34 @@
 package org.squirrelsql.session.sql.bookmark;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Popup;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
 import org.squirrelsql.session.completion.CompletionUtil;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.workaround.KeyMatchWA;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookmarkManager
 {
    private SQLTextAreaServices _sqlTextAreaServices;
 
+   private I18n _i18n = new I18n(getClass());
 
    private ArrayList<Bookmark> _bookmarks = new ArrayList<>();
+   private Popup _popup = new Popup();
 
    public BookmarkManager(SQLTextAreaServices sqlTextAreaServices)
    {
@@ -30,20 +37,22 @@ public class BookmarkManager
       _bookmarks.add(new Bookmark("SELECT * FROM articles", "art", "articles"));
       _bookmarks.add(new Bookmark("SELECT * FROM receipts", "recs", "receipts"));
       _bookmarks.add(new Bookmark("SELECT * FROM receipts\nINNER JOIN receipt_lines ON receipts.id = receipt_lines.receipt_id", "reclines", "receipt_lines"));
-
-      initDisplaySpaces();
-
    }
 
    private void initDisplaySpaces()
    {
+      if(0 == _bookmarks.size())
+      {
+         return;
+      }
+
       Bookmark max = _bookmarks.stream().max((b1, b2) -> b1.getSelShortcut().length() - b2.getSelShortcut().length()).get();
       _bookmarks.forEach(b -> b.setDisplaySpace(max.getSelShortcut().length() - b.getSelShortcut().length() + 3));
    }
 
-   public void execBookmark()
+   public void showBookmarkPopup()
    {
-      Popup pp = new Popup();
+      _popup.hide();
 
       BorderPane bp = new BorderPane();
 
@@ -57,7 +66,18 @@ public class BookmarkManager
 
       initDisplaySpaces();
 
-      listView.setItems(FXCollections.observableList(_bookmarks));
+      if(0 == _bookmarks.size())
+      {
+         new MessageHandler(this.getClass(), MessageHandlerDestination.MESSAGE_PANEL).info(_i18n.t("no.bookmarks.defined"));
+         return;
+      }
+      else if( 1 == _bookmarks.size())
+      {
+         runBookmark(_bookmarks.get(0));
+         return;
+      }
+
+      filterPopupList("", listView);
 
       CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
 
@@ -65,42 +85,121 @@ public class BookmarkManager
 
       bp.setStyle("-fx-border-color: lightblue; -fx-border-width: 2;");
 
-      pp.getContent().add(bp);
+      _popup.getContent().add(bp);
       Point2D cl = _sqlTextAreaServices.getCarretLocationOnScreen();
 
-      pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
+      _popup.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue));
 
+      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopup((KeyEvent) keyEvent, txt, listView));
 
-      listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopup((KeyEvent) keyEvent, pp, listView));
+      listView.setOnMouseClicked(event -> onMouseClickedList(event, listView));
 
+      _popup.show(_sqlTextAreaServices.getTextArea(), cl.getX(), cl.getY());
 
-
-      pp.show(_sqlTextAreaServices.getTextArea(), cl.getX(), cl.getY());
+      txt.setEditable(false);
+      txt.focusedProperty().addListener((observable, oldValue, newValue) -> listView.requestFocus());
+      txt.setFocusTraversable(false);
+      listView.requestFocus();
    }
 
-   private void onHandleKeyOnPopup(KeyEvent keyEvent, Popup pp, ListView<Bookmark> listView)
+   private void onMouseClickedList(MouseEvent event, ListView<Bookmark> listView)
+   {
+      if(event.getClickCount() >= 2)
+      {
+         runSelectedListItem(listView);
+      }
+   }
+
+   private void runBookmark(Bookmark bookmark)
+   {
+      _sqlTextAreaServices.insertAtCarret("\n" + bookmark.getSql());
+   }
+
+   private void onHandleKeyOnPopup(KeyEvent keyEvent, TextField txt, ListView<Bookmark> listView)
+   {
+      if(false == checkPopupFinish(keyEvent, listView))
+      {
+         if ("\b".equals(keyEvent.getCharacter()))
+         {
+            String text = txt.getText();
+            if(0 < text.length())
+            {
+               text = text.substring(0, text.length() -1);
+               txt.setText(text);
+            }
+         }
+         else
+         {
+            txt.appendText(keyEvent.getCharacter());
+         }
+
+         filterPopupList(txt.getText(), listView);
+
+         keyEvent.consume();
+      }
+
+   }
+
+   private void filterPopupList(String selShortcutStart, ListView<Bookmark> listView)
+   {
+      ArrayList<Bookmark> toRemove = new ArrayList<>();
+
+      for (Bookmark bookmark : _bookmarks)
+      {
+         if(false == bookmark.getSelShortcut().toLowerCase().startsWith(selShortcutStart.toLowerCase()))
+         {
+            toRemove.add(bookmark);
+         }
+      }
+
+      ObservableList<Bookmark> observableList = FXCollections.observableList((List<Bookmark>) _bookmarks.clone());
+
+      observableList.removeAll(toRemove);
+
+      listView.setItems(observableList);
+
+      if (0 < observableList.size())
+      {
+         listView.getSelectionModel().select(0);
+      }
+   }
+
+   private boolean checkPopupFinish(KeyEvent keyEvent, ListView<Bookmark> listView)
    {
       if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ENTER)))
       {
-         System.out.println("####### bookmark selected");
-      }
-      else if(KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
-      {
-         pp.hide();
+         boolean b = runSelectedListItem(listView);
          keyEvent.consume();
+         return b;
       }
-      else
+      else if (KeyMatchWA.matches(keyEvent, new KeyCodeCombination(KeyCode.ESCAPE)))
       {
-
+         _popup.hide();
+         keyEvent.consume();
+         return true;
       }
 
+      return false;
    }
 
-   private void hideIfNotFocused(Boolean newValue, Popup pp)
+   private boolean runSelectedListItem(ListView<Bookmark> listView)
+   {
+      Bookmark selectedItem = listView.getSelectionModel().getSelectedItem();
+
+      if(null == selectedItem)
+      {
+         return false;
+      }
+      _popup.hide();
+      runBookmark(selectedItem);
+      return true;
+   }
+
+   private void hideIfNotFocused(Boolean newValue)
    {
       if(false == newValue)
       {
-         pp.hide();
+         _popup.hide();
       }
    }
 

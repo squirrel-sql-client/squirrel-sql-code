@@ -19,6 +19,7 @@ import org.squirrelsql.session.sql.syntax.SQLSyntaxHighlighting;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
 import org.squirrelsql.session.sql.syntax.SyntaxConstants;
 import org.squirrelsql.workaround.CarretLocationOnScreenWA;
+import org.squirrelsql.workaround.CodeAreaRepaintWA;
 import org.squirrelsql.workaround.FocusSqlTextAreaWA;
 
 public class SQLTextAreaServices
@@ -161,6 +162,7 @@ public class SQLTextAreaServices
       {
          _sqlTextArea.replaceText(tci.getTokenBeginPos() + offset, tci.getCaretPosition(), replacement);
       }
+      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
    }
 
    public double getFontHight()
@@ -200,10 +202,19 @@ public class SQLTextAreaServices
    public void appendToEditor(String sql)
    {
       _sqlTextArea.appendText(sql);
+      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
+
    }
 
    public javafx.scene.text.Font getFont()
    {
       return _sqlTextArea.getFont();
+   }
+
+   public void insertAtCarret(String s)
+   {
+      int caretPosition = _sqlTextArea.getCaretPosition();
+      _sqlTextArea.replaceText(caretPosition,caretPosition,s);
+      CodeAreaRepaintWA.avoidRepaintProblemsAfterTextModification(_sqlTextArea);
    }
 }

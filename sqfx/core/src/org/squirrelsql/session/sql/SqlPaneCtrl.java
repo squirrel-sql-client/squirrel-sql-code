@@ -86,7 +86,7 @@ public class SqlPaneCtrl
 
       hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
       hCodeCompletion.setOnAction(_completionCtrl::completeCode);
-      hBookMarkAbrevAutoCorr.setOnAction(_bookmarkManager::execBookmark);
+      hBookMarkAbrevAutoCorr.setOnAction(_bookmarkManager::showBookmarkPopup);
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)
