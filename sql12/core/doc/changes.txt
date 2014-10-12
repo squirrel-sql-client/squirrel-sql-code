@@ -6,6 +6,10 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+
+3.6.0 (10/12/2014)
+==================
+
 Enhancements:
 
 Feature request #443 SQL results have new tab "Rotated table" where rows and columns are swapped.
