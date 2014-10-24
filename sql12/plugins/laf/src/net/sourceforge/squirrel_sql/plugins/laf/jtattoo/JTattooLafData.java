@@ -52,7 +52,7 @@ public class JTattooLafData
 	private void initLafMap()
 	{
 		putClass("Acryl", "com.jtattoo.plaf.acryl.AcrylLookAndFeel");
-		putClass("Aluminium", "com.jtattoo.plaf.aluminum.AluminiumLookAndFeel");
+		putClass("Aluminium", "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
 		putClass("Bernstein", "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel");
 		putClass("Fast", "com.jtattoo.plaf.fast.FastLookAndFeel");
 		putClass("Graphite", "com.jtattoo.plaf.graphite.GraphiteLookAndFeel");

@@ -7,6 +7,13 @@ Not yet released, available in our GIT repository and in future snapshots and re
 ===============================================================================================
 
 
+Bug fixes:
+
+Look-and-Feel Plugin: JTattoo-AluminiumLookAndFeel was not available and logged an exception stack trace during start up.
+
+SQuirreL used log an exception stack trace when 'Keep-Alive' was enabled in Alias properties but no SQL statement was entered. Now SQuirreL issues an understandable message.
+  This concerns one discussion entry of bug #1162
+
 3.6.0 (10/12/2014)
 ==================
 

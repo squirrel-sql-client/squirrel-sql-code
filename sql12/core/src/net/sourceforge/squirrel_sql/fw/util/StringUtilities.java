@@ -316,11 +316,31 @@ public class StringUtilities
       return ret;
    }
 
-   public static boolean isEmpty(String currentSearchString)
+
+
+   public static boolean isEmpty(String s)
    {
-      return null == currentSearchString || 0 == currentSearchString.length();
+      return isEmpty(s, false);
    }
-   
+
+   public static boolean isEmpty(String s, boolean checkTrimmed)
+   {
+      if(null == s)
+      {
+         return true;
+      }
+
+      if (checkTrimmed)
+      {
+         return 0 == s.trim().length();
+      }
+      else
+      {
+         return 0 == s.length();
+      }
+   }
+
+
    public static String singleQuote(String value) {
 		if (!value.trim().startsWith("'")) {
 			return "'" + value + "'";
@@ -337,4 +357,5 @@ public class StringUtilities
 
       return s;
    }
+
 }

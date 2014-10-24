@@ -62,13 +62,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -242,14 +236,25 @@ class Session implements ISession
 
    private void startKeepAliveTaskIfNecessary() {
       SQLAliasConnectionProperties connProps = _alias.getConnectionProperties();
-      
-      if (connProps.isEnableConnectionKeepAlive()) {
-      	String keepAliveSql = connProps.getKeepAliveSqlStatement();
-      	long sleepMillis = connProps.getKeepAliveSleepTimeSeconds() * 1000;
-      	_sessionConnectionKeepAlive = new SessionConnectionKeepAlive(_conn, sleepMillis, keepAliveSql, 
-      		_alias.getName());
-			_app.getThreadPool().addTask(_sessionConnectionKeepAlive,
-				"Session Connection Keep-Alive (" + _alias.getName() + ")");
+
+      if (connProps.isEnableConnectionKeepAlive())
+      {
+         String keepAliveSql = connProps.getKeepAliveSqlStatement();
+
+         long sleepMillis = connProps.getKeepAliveSleepTimeSeconds() * 1000;
+
+         if(StringUtilities.isEmpty(keepAliveSql, true))
+         {
+            String msg = s_stringMgr.getString("alias.properties.no.keepAliveSql");
+            getApplication().getMessageHandler().showErrorMessage(msg);
+            s_log.error(msg);
+            return;
+         }
+
+
+         _sessionConnectionKeepAlive = new SessionConnectionKeepAlive(_conn, sleepMillis, keepAliveSql, _alias.getName());
+
+         _app.getThreadPool().addTask(_sessionConnectionKeepAlive, "Session Connection Keep-Alive (" + _alias.getName() + ")");
       }         	
    }
    
