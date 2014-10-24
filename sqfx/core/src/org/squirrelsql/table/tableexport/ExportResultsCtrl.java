@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
@@ -32,7 +33,7 @@ public class ExportResultsCtrl {
 	private final Stage _dialog;
 	private I18n _i18n = new I18n(this.getClass());
 	private FileOutputStream _outputFile = null;
-	private Workbook _wb;
+	private Workbook _workbook;
 	private String _fileType;
 
 	public ExportResultsCtrl(TableLoader tableLoader) {
@@ -47,7 +48,6 @@ public class ExportResultsCtrl {
 		GuiUtils.makeEscapeClosable(region);
 		_exportResultsView.browseFile.setOnAction(e -> onBrowseFile());
 		_exportResultsView.exportOK.setOnAction(e -> onExportResults(tableLoader));
-				
 	}
 	public void showWindow(){
 		_dialog.showAndWait();
@@ -60,41 +60,57 @@ public class ExportResultsCtrl {
 			_exportResultsView.exportTo.setText(selectedDirectory.getAbsolutePath());
 		}
 	}
+	//TODO move this into the ExcelWriterService
 	private void onExportResults(TableLoader tableLoader){
-		List<ColumnHandle> columns = tableLoader.getColumnHandles();
-		List<List<SimpleObjectProperty>> rows = tableLoader.getSimpleObjectPropertyRows();
-		if(_exportResultsView.excelXLSX.isSelected()){
-			_wb = new SXSSFWorkbook(100);
-			_fileType = ".xlsx";
-		}
-		else {
-			_wb = new HSSFWorkbook();
-			_fileType = ".xls";
-		}
-		Sheet sh = _wb.createSheet();
-		Row columnRow = sh.createRow(0);
-		for(int cellnum = 0; cellnum < columns.size(); cellnum++){
-			Cell cell = columnRow.createCell(cellnum);
-			cell.setCellValue(columns.get(cellnum).getHeader());
-		}
-		for(int rownum = 1; rownum < rows.size(); rownum++){
-            Row row = sh.createRow(rownum);
-            for(int cellnum = 0; cellnum < columns.size(); cellnum++){
-                Cell cell = row.createCell(cellnum);
-                //cell.setCellValue(tableLoader.getCellValue(cellnum,tableLoader.getSimpleObjectPropertyRows().get(rownum)).getValue().toString());
-            }
-        }		
-		try {
-			_outputFile = new FileOutputStream(_exportResultsView.exportTo.getText() + "\\" + _exportResultsView.fileName.getText() + _fileType);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-        try {
-        	_wb.write(_outputFile);
-			_outputFile.close();			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        ((SXSSFWorkbook) _wb).dispose();
+		_exportResultsView.exportProgressIndicator.setProgress(-1.0);
+		//TODO figure out how to use ProgressTask/ProgressUtil, they need to support updateProgress for a task 
+		Task<Void> task = new Task<Void>() {
+			@Override public Void call() {
+				List<ColumnHandle> columns = tableLoader.getColumnHandles();
+				List<List<SimpleObjectProperty>> rows = tableLoader.getSimpleObjectPropertyRows();
+				Long totalCells = (long) (columns.size() * rows.size());
+				if(_exportResultsView.excelXLSX.isSelected()){
+					_workbook = new SXSSFWorkbook(100);
+					_fileType = ExportFormatEnum.EXPORT_FORMAT_XLSX.getFileExtension();
+				}
+				else {
+					_workbook = new HSSFWorkbook();
+					_fileType = ExportFormatEnum.EXPORT_FORMAT_XLS.getFileExtension();
+				}
+				Sheet sh = _workbook.createSheet();
+				Row columnRow = sh.createRow(0);
+				for(int cellNum = 0; cellNum < columns.size(); cellNum++){
+					Cell cell = columnRow.createCell(cellNum);
+					cell.setCellValue(columns.get(cellNum).getHeader());
+				}
+				for(int rowNum = 1; rowNum < rows.size(); rowNum++){
+		            Row row = sh.createRow(rowNum);
+		            for(int cellNum = 0; cellNum < columns.size(); cellNum++){
+		            	updateProgress(((cellNum+1) * rowNum) / totalCells, totalCells);
+		                Cell cell = row.createCell(cellNum);
+		                cell.setCellValue(rows.get(rowNum).get(cellNum).getValue().toString());
+		            }
+		        }		
+				try {
+					_outputFile = new FileOutputStream(_exportResultsView.exportTo.getText() + "\\" + _exportResultsView.fileName.getText() + _fileType);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+		        try {
+		        	_workbook.write(_outputFile);
+					_outputFile.close();
+					updateProgress(Long.MAX_VALUE,Long.MAX_VALUE);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		        if(_exportResultsView.excelXLSX.isSelected()){
+		        	((SXSSFWorkbook) _workbook).dispose();
+		        }
+				return null;
+			}
+		};
+		_exportResultsView.exportProgressIndicator.progressProperty().bind(task.progressProperty());
+		Thread th = new Thread(task);
+		th.start();
 	}
 }
