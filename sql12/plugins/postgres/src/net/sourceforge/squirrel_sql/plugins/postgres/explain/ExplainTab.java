@@ -60,14 +60,13 @@ public class ExplainTab extends JPanel
 	{
 		String CAN_NOT_EDIT = s_stringMgr.getString("ExplainTab.cannotedit");
 
-		String EXPLAIN_SQL_PREFIX = s_stringMgr.getString("Explain.sqlPrefix") + " ";
 	}
 
 	/** Current session. */
-	private ISession _session;
+	private final ISession _session;
 
 	/** Parent Explain Executer Panel */
-	private ExplainExecuterPanel _parent;
+	private final ExplainExecuterPanel _parent;
 
 	private SQLExecutionInfo _info;
 
@@ -79,7 +78,7 @@ public class ExplainTab extends JPanel
 	private String _query;
 
 	/** Scroll pane for the SQL results. */
-	private JScrollPane _resultSetSp = new JScrollPane();
+	private final JScrollPane _resultSetSp = new JScrollPane();
 
 	private boolean _allowsEditing;
 
@@ -98,10 +97,11 @@ public class ExplainTab extends JPanel
 
 	private void init()
 	{
-		_query = _info.getSQL().substring(i18n.EXPLAIN_SQL_PREFIX.length());
+		_query = _info.getSQL().substring(ExplainExecuterPanel.EXPLAIN_PREFIX.length());
 
 		_model.addListener(new DataSetUpdateableTableModelListener()
 		{
+			@Override
 			public void forceEditMode(boolean mode)
 			{
 				onForceEditMode(mode);
@@ -128,6 +128,7 @@ public class ExplainTab extends JPanel
 
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				remove(old_resultSetSp);
@@ -187,6 +188,7 @@ public class ExplainTab extends JPanel
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				final IDataSetViewer resultSetOutput =
@@ -230,6 +232,7 @@ public class ExplainTab extends JPanel
 				PostgresPlugin.class.getClassLoader()));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
 			_parent.closeTab(ExplainTab.this);
@@ -246,6 +249,7 @@ public class ExplainTab extends JPanel
 				PostgresPlugin.class.getClassLoader()));
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent evt)
 		{
 			_parent.reRunTab(ExplainTab.this);

@@ -63,6 +63,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 {
+	static final String EXPLAIN_PREFIX = "EXPLAIN ANALYZE ";
+
 	private static final long serialVersionUID = 9155604319585792834L;
 
 	/** Logger for this class. */
@@ -141,7 +143,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		{
 			String query = tokenizer.nextQuery();
 				result.append("BEGIN").append(tokenizer.getSQLStatementSeparator());
-				result.append("EXPLAIN ANALYZE ").append(query).append(tokenizer.getSQLStatementSeparator());
+				result.append(EXPLAIN_PREFIX).append(query).append(tokenizer.getSQLStatementSeparator());
 				result.append("ROLLBACK").append(tokenizer.getSQLStatementSeparator());
 		}
 		if (s_log.isDebugEnabled())
