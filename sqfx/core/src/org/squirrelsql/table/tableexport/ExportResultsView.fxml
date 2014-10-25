@@ -12,10 +12,13 @@
       <Label id="lblFileName" fx:id="lblFileName" layoutX="37.0" layoutY="55.0" text="%export.label.filename" />
       <TextField id="fileName" fx:id="fileName" layoutX="114.0" layoutY="51.0" prefHeight="25.0" prefWidth="317.0" />
       <Label id="lblExportAs" fx:id="lblExportAs" layoutX="39.0" layoutY="111.0" text="%export.label.exportas" />
-      <RadioButton id="excelXLSX" fx:id="excelXLSX" layoutX="114.0" layoutY="94.0" text="%export.option.excelxlsx" toggleGroup="$exportAs" />
+      <RadioButton id="excelXLSX" fx:id="excelXLSX" layoutX="114.0" layoutY="94.0" text="%export.option.excelxlsx">
+         <toggleGroup>
+            <ToggleGroup fx:id="exportAs" />
+         </toggleGroup></RadioButton>
       <RadioButton id="excelXLS" fx:id="excelXLS" layoutX="114.0" layoutY="128.0" text="%export.option.excelxls" toggleGroup="$exportAs" />
       <Button id="exportOK" fx:id="exportOK" layoutX="114.0" layoutY="165.0" text="%export.button.ok" />
       <Button id="exportCancel" fx:id="exportCancel" cancelButton="true" layoutX="152.0" layoutY="165.0" text="%export.button.cancel" />
-      <ProgressIndicator id="exportProgressIndicator" fx:id="exportProgressIndicator" layoutX="303.0" layoutY="158.0" progress="0.0" />      
+      <ProgressIndicator id="exportProgressIndicator" fx:id="exportProgressIndicator" layoutX="234.0" layoutY="158.0" progress="0.0" />      
    </children>
 </AnchorPane>

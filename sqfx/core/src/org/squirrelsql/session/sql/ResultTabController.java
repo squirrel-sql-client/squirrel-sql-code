@@ -106,8 +106,6 @@ public class ResultTabController
 
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
       _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
-      
-      _exportResultsCtrl = new ExportResultsCtrl(tableLoader);
 
       RightMouseMenuHandler sqlResultRightMouseMenuHandler = new RightMouseMenuHandler(tv);
 
@@ -116,7 +114,7 @@ public class ResultTabController
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InStatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInsertStat"),() -> InsertStatCreator.onCopyAsInsertStat(_extendedTableSelectionHandler));
       sqlResultRightMouseMenuHandler.addSeparator();
-      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.ExportResults"),() -> _exportResultsCtrl.showWindow());
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.ExportResults"),() -> new ExportResultsCtrl(tableLoader));
 
       if (_editButtonCtrl.allowsEditing())
       {
