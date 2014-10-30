@@ -6,6 +6,20 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Enhancements:
+
+Speeded up reading and writing Alias properties. As result opening and closing a connections will be much faster for big, complicated databases.
+  Thanks to Jaroslaw Jarmolowicz for the patch
+
+Starting and stopping Squirell is much faster for big, complicated databases
+  Thanks to Jaroslaw Jarmolowicz for the patch
+
+Postgres Plugin:
+- For postgres query plans explain was used which is less accurate than explain analyze so it was changed to use it instead.
+- Previous implementation had limitation of producing query plans only for SELECT queries. It was changed so query plan can work for every type of query.
+- Query plan executions are wrapped in transaction so they don't change database state.
+Thanks to Jaroslaw Jarmolowicz for the patch
+
 
 Bug fixes:
 
