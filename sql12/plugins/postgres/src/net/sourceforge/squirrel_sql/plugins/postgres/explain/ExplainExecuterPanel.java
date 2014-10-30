@@ -19,8 +19,32 @@ package net.sourceforge.squirrel_sql.plugins.postgres.explain;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -37,21 +61,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLWarning;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-
 public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 {
+	static final String EXPLAIN_PREFIX = "EXPLAIN ANALYZE ";
+
 	private static final long serialVersionUID = 9155604319585792834L;
 
 	/** Logger for this class. */
@@ -65,22 +78,18 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	{
 		String TITLE = s_stringMgr.getString("ExplainExecuterPanel.title");
 
-		String ONLY_SELECT_ALLOWED = s_stringMgr.getString("ExplainExecuterPanel.onlySelectAllowed");
-
 		String CLOSE = s_stringMgr.getString("ExplainExecuterPanel.close");
 
 		String CLOSE_ALL_BUT_THIS = s_stringMgr.getString("ExplainExecuterPanel.closeAllButThis");
 
 		String CLOSE_ALL = s_stringMgr.getString("ExplainExecuterPanel.closeAll");
-
-		String EXPLAIN_SQL_PREFIX = s_stringMgr.getString("Explain.sqlPrefix") + " ";
 	}
 
 	/** Current session. */
-	private ISession _session;
+	private final ISession _session;
 
 	/** Current session's dialect type */
-	private DialectType _dialectType;
+	private final DialectType _dialectType;
 
 	/** Each tab is an <TT>ExplainTab</TT> showing the explain result of a query. */
 	private JTabbedPane _tabbedExecutionsPanel;
@@ -91,6 +100,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		_dialectType = DialectFactory.getDialectType(_session.getMetaData());
 		_session.getProperties().addPropertyChangeListener(new PropertyChangeListener()
 		{
+			@Override
 			public void propertyChange(PropertyChangeEvent evt)
 			{
 				onPropertyChange(evt.getPropertyName());
@@ -112,24 +122,19 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		add(_tabbedExecutionsPanel, BorderLayout.CENTER);
 	}
 
+	@Override
 	public void execute(ISQLEntryPanel parent)
 	{
 		String sql = parent.getSQLToBeExecuted();
 		if (sql == null || sql.length() == 0)
 			return;
 
-		try
-		{
 			SQLExecuterTask executer =
 				new SQLExecuterTask(_session, getExplainSql(sql), new SQLExecutionHandler());
 			_session.getApplication().getThreadPool().addTask(executer);
-		} catch (UnsupportedStatementException e)
-		{
-			_session.showErrorMessage(i18n.ONLY_SELECT_ALLOWED);
-		}
 	}
 
-	private String getExplainSql(String sql) throws UnsupportedStatementException
+	private String getExplainSql(String sql) 
 	{
 		StringBuilder result = new StringBuilder();
 		IQueryTokenizer tokenizer = _session.getQueryTokenizer();
@@ -137,13 +142,9 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		while (tokenizer.hasQuery())
 		{
 			String query = tokenizer.nextQuery();
-			if (query.toLowerCase().startsWith("select"))
-			{
-				result.append(i18n.EXPLAIN_SQL_PREFIX).append(query).append(tokenizer.getSQLStatementSeparator());
-			} else
-			{
-				throw new UnsupportedStatementException();
-			}
+				result.append("BEGIN").append(tokenizer.getSQLStatementSeparator());
+				result.append(EXPLAIN_PREFIX).append(query).append(tokenizer.getSQLStatementSeparator());
+				result.append("ROLLBACK").append(tokenizer.getSQLStatementSeparator());
 		}
 		if (s_log.isDebugEnabled())
 		{
@@ -154,16 +155,12 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		return result.toString();
 	}
 
-	private class UnsupportedStatementException extends Exception
-	{
-		private static final long serialVersionUID = 1L;
-	}
-
 	private void addExplainTab(ResultSetDataSet rsds, SQLExecutionInfo info, IDataSetUpdateableTableModel model)
 	{
 		final ExplainTab tab = new ExplainTab(_session, this, rsds, info, model);
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				secureAddTab(tab);
@@ -175,6 +172,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				_tabbedExecutionsPanel.removeTabAt(_tabbedExecutionsPanel.indexOfComponent(tab));
@@ -186,6 +184,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 	{
 		SwingUtilities.invokeLater(new Runnable()
 		{
+			@Override
 			public void run()
 			{
 				_tabbedExecutionsPanel.removeTabAt(index);
@@ -228,6 +227,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		JMenuItem close = new JMenuItem(i18n.CLOSE);
 		close.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				_tabbedExecutionsPanel.remove(_tabbedExecutionsPanel.getSelectedIndex());
@@ -238,6 +238,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		JMenuItem closeAllButThis = new JMenuItem(i18n.CLOSE_ALL_BUT_THIS);
 		closeAllButThis.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				for (Component c : _tabbedExecutionsPanel.getComponents())
@@ -252,6 +253,7 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		JMenuItem closeAll = new JMenuItem(i18n.CLOSE_ALL);
 		closeAll.addActionListener(new ActionListener()
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				_tabbedExecutionsPanel.removeAll();
@@ -261,11 +263,13 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 
 		_tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
 		{
+			@Override
 			public void mousePressed(MouseEvent e)
 			{
 				showPopup(e, popup);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e)
 			{
 				showPopup(e, popup);
@@ -288,15 +292,9 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 
 	public void reRunTab(ExplainTab tab)
 	{
-		try
-		{
 			SQLExecuterTask executer =
 				new SQLExecuterTask(_session, getExplainSql(tab.getQuery()), new SQLExecutionHandler(tab));
 			_session.getApplication().getThreadPool().addTask(executer);
-		} catch (UnsupportedStatementException e)
-		{
-			throw new IllegalStateException("It should be impossible that an UnsupportedStatementException is thrown on a re-run.");
-		}
 	}
 
 	/** This class is the handler for the execution of sql against the ExplainPanel */
@@ -313,10 +311,12 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 			_tabToReplace = tabToReplace;
 		}
 
+		@Override
 		public void sqlToBeExecuted(final String sql)
 		{
 		}
 
+		@Override
 		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount,
 			int statementCount)
 		{
@@ -333,14 +333,17 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 			_session.showMessage(s_stringMgr.getString("ExplainExecuterPanel.queryStatistics", args));
 		}
 
+		@Override
 		public void sqlExecutionCancelled()
 		{
 		}
 
+		@Override
 		public void sqlDataUpdated(int updateCount)
 		{
 		}
 
+		@Override
 		public void sqlResultSetAvailable(ResultSetWrapper rs, SQLExecutionInfo info,
 			IDataSetUpdateableTableModel model) throws DataSetException
 		{
@@ -357,18 +360,27 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 			}
       }
 
+		@Override
 		public void sqlExecutionWarning(SQLWarning warn)
 		{
 			_session.showMessage(warn);
 		}
 
+		@Override
 		public void sqlStatementCount(int statementCount)
 		{
 		}
 
+		@Override
 		public String sqlExecutionException(Throwable th, String postErrorString)
 		{
 			String message = _session.formatException(new SQLExecutionException(th, postErrorString));
+			try {
+				_session.getSQLConnection().createStatement().executeQuery("ROLLBACK;");
+			} catch (SQLException rollbackException) {
+				message +=  rollbackException.getMessage();
+			}
+			
 			_session.showErrorMessage(message);
 
 			if (_session.getProperties().getWriteSQLErrorsToLog())
@@ -386,16 +398,19 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
       }
    }
 
+	@Override
 	public String getTitle()
 	{
 		return i18n.TITLE;
 	}
 
+	@Override
 	public JComponent getComponent()
 	{
 		return this;
 	}
 
+	@Override
 	public IResultTab getSelectedResultTab()
 	{
 		throw new UnsupportedOperationException("ExplainExecuter has no ResultTabs");
