@@ -45,7 +45,7 @@ public class SchemaInfoCacheSerializer
    {
       File schemaCacheFile = getSchemaCacheFile(session.getAlias());
 
-      if(false == session.getAlias().getSchemaProperties().getExpectsSomeCachedData())
+      if(false == session.getAlias().getSchemaProperties().fetchExpectsSomeCachedData())
       {
          // Current Alias Schema properties dont want cache.
          // so we don't cache.
@@ -114,7 +114,7 @@ public class SchemaInfoCacheSerializer
    {
       try
       {
-         if(false == session.getAlias().getSchemaProperties().getExpectsSomeCachedData())
+         if(false == session.getAlias().getSchemaProperties().fetchExpectsSomeCachedData())
          {
             return;
          }

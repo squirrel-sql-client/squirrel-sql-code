@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("serial")
 public class SQLAliasSchemaProperties implements Serializable
 {
-   private static final long serialVersionUID = 1L;
-
    SQLAliasSchemaDetailProperties[] _schemaDetails = 
        new SQLAliasSchemaDetailProperties[0];
 
@@ -65,13 +64,13 @@ public class SQLAliasSchemaProperties implements Serializable
    /**
     * @param schemaPropsCacheIsBasedOn null means that cache is not considered
     */
-   public SchemaLoadInfo[] getSchemaLoadInfos(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn,
+   public SchemaLoadInfo[] fetchSchemaLoadInfos(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn,
                                               String[] tableTypes,
                                               String[] viewTypes)
    {
       if(null == schemaPropsCacheIsBasedOn)
       {
-         return getSchemasToLoadDefault(tableTypes, viewTypes);
+         return fetchSchemasToLoadDefault(tableTypes, viewTypes);
       }
 
       if(GLOBAL_STATE_LOAD_AND_CACHE_ALL == _globalState &&
@@ -89,7 +88,7 @@ public class SQLAliasSchemaProperties implements Serializable
          for (int i = 0; i < _schemaDetails.length; i++)
          {
             SQLAliasSchemaDetailProperties cachedDetailProp =
-               getMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
+               fetchMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
 
             SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
             buf.schemaName = _schemaDetails[i].getSchemaName();
@@ -119,13 +118,13 @@ public class SQLAliasSchemaProperties implements Serializable
          return ret.toArray(new SchemaLoadInfo[ret.size()]);
       }
 
-      return getSchemasToLoadDefault(tableTypes, viewTypes);
+      return fetchSchemasToLoadDefault(tableTypes, viewTypes);
    }
 
    /**
     * Returns SchemaLoadInfos as if there was no cache.
     */
-   private SchemaLoadInfo[] getSchemasToLoadDefault(String[] tableTypes, String[] viewTypes)
+   private SchemaLoadInfo[] fetchSchemasToLoadDefault(String[] tableTypes, String[] viewTypes)
    {
       if(GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _globalState ||
          GLOBAL_STATE_LOAD_AND_CACHE_ALL== _globalState)
@@ -210,7 +209,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return true;
    }
 
-   private SQLAliasSchemaDetailProperties getMatchingDetail(String schemaName, SQLAliasSchemaDetailProperties[] schemaDetails)
+   private SQLAliasSchemaDetailProperties fetchMatchingDetail(String schemaName, SQLAliasSchemaDetailProperties[] schemaDetails)
    {
       for (int i = 0; i < schemaDetails.length; i++)
       {
@@ -224,7 +223,7 @@ public class SQLAliasSchemaProperties implements Serializable
 
    }
 
-   public SchemaTableTypeCombination[] getAllSchemaTableTypeCombinationsNotToBeCached(String[] tableTypes, String[] viewTypes)
+   public SchemaTableTypeCombination[] fetchAllSchemaTableTypeCombinationsNotToBeCached(String[] tableTypes, String[] viewTypes)
    {
       ArrayList<SchemaTableTypeCombination> ret = 
           new ArrayList<SchemaTableTypeCombination>();
@@ -251,7 +250,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return ret.toArray(new SchemaTableTypeCombination[ret.size()]);
    }
 
-   public String[] getAllSchemaProceduresNotToBeCached()
+   public String[] fetchAllSchemaProceduresNotToBeCached()
    {
       ArrayList<String> ret = new ArrayList<String>();
 
@@ -267,7 +266,7 @@ public class SQLAliasSchemaProperties implements Serializable
       return ret.toArray(new String[ret.size()]);
    }
 
-   public boolean getExpectsSomeCachedData()
+   public boolean fetchExpectsSomeCachedData()
    {
       if(_cacheSchemaIndependentMetaData || GLOBAL_STATE_LOAD_AND_CACHE_ALL == _globalState)
       {
@@ -306,7 +305,7 @@ public class SQLAliasSchemaProperties implements Serializable
    }
 
 
-   public SchemaNameLoadInfo getSchemaNameLoadInfo(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn)
+   public SchemaNameLoadInfo fetchSchemaNameLoadInfo(SQLAliasSchemaProperties schemaPropsCacheIsBasedOn)
    {
       SchemaNameLoadInfo ret = new SchemaNameLoadInfo();
 
