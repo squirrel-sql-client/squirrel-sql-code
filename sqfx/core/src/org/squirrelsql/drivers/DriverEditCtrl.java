@@ -316,7 +316,11 @@ public class DriverEditCtrl
 
       String lastClasspathDir = _pref.getString(PREF_LAST_CLASSPATH_DIR, System.getProperty("user.home"));
 
-      fc.setInitialDirectory(new File(lastClasspathDir));
+      File initialDir = new File(lastClasspathDir);
+      if (initialDir.exists() && initialDir.isDirectory())
+      {
+         fc.setInitialDirectory(initialDir);
+      }
 
       List<File> files = fc.showOpenMultipleDialog(_dialog.getStage());
 

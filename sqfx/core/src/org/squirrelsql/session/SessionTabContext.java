@@ -1,5 +1,6 @@
 package org.squirrelsql.session;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Tab;
 import org.squirrelsql.AppState;
 
@@ -9,6 +10,8 @@ public class SessionTabContext
    private Session _session;
    private boolean _sessionMainTab;
    private Tab _tab;
+
+   private SimpleBooleanProperty _bookmarksChanged = new SimpleBooleanProperty();
 
    public SessionTabContext(Session session, boolean sessionMainTab)
    {
@@ -60,5 +63,10 @@ public class SessionTabContext
    public String getSessionTabTitle()
    {
       return SessionUtil.getSessionTabTitle(this);
+   }
+
+   public SimpleBooleanProperty bookmarksChangedProperty()
+   {
+      return _bookmarksChanged;
    }
 }

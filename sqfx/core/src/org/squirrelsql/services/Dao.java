@@ -12,6 +12,8 @@ import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
+import org.squirrelsql.session.sql.bookmark.Bookmark;
+import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,6 +28,7 @@ public class Dao
    public static final String FILE_NAME_ALIASES = "aliases.json";
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
    public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
+   public static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
@@ -40,7 +43,6 @@ public class Dao
 
    public static void writeAliasProperties(AliasProperties aliasProperties)
    {
-
       writeObject(aliasProperties, getAliasPropertiesFileName(aliasProperties.getAliasId()));
    }
 
@@ -118,7 +120,7 @@ public class Dao
       }
    }
 
-   private static void writeObject(Object aliasProperties, String unqualifiedFileName)
+   private static void writeObject(Object toWrite, String unqualifiedFileName)
    {
       try
       {
@@ -128,7 +130,7 @@ public class Dao
 
          File file = new File(AppState.get().getUserDir(), unqualifiedFileName);
          FileWriter fileWriter = new FileWriter(file);
-         objectWriter.writeValue(fileWriter, aliasProperties);
+         objectWriter.writeValue(fileWriter, toWrite);
       }
       catch (IOException e)
       {
@@ -146,4 +148,13 @@ public class Dao
       return loadObjectArray(FILE_NAME_SQL_HISTORY, SQLHistoryEntry.class);
    }
 
+   public static BookmarkPersistence loadBookmarkPersistence()
+   {
+      return loadObject(FILE_NAME_BOOKMARKS, new BookmarkPersistence());
+   }
+
+   public static void writeBookmarkPersistence(BookmarkPersistence bookmarkPersistence)
+   {
+      writeObject(bookmarkPersistence, FILE_NAME_BOOKMARKS);
+   }
 }

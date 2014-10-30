@@ -34,6 +34,17 @@ public class KeyMatchWA
          return false;
       }
 
+      if(keyEvent.getCode().equals(KeyCode.UP) && keyCodeCombination.getCode().equals(KeyCode.UP))
+      {
+         return true;
+      }
+
+      if(keyEvent.getCode().equals(KeyCode.DOWN) && keyCodeCombination.getCode().equals(KeyCode.DOWN))
+      {
+         return true;
+      }
+
+
       if(keyEvent.getCharacter().equalsIgnoreCase(keyCodeCombination.getCode().getName()))
       {
          return true;
@@ -48,9 +59,22 @@ public class KeyMatchWA
       }
 
       if(
+                "\t".equals(keyEvent.getCharacter())
+            &&  keyCodeCombination.getCode().equals(KeyCode.TAB)
+        )
+      {
+         return true;
+      }
+
+      if(
                 " ".equals(keyEvent.getCharacter())
             &&  keyCodeCombination.getCode().equals(KeyCode.SPACE)
         )
+      {
+         return true;
+      }
+
+      if(27 == keyEvent.getCharacter().charAt(0) && keyCodeCombination.getCode().equals(KeyCode.ESCAPE))
       {
          return true;
       }

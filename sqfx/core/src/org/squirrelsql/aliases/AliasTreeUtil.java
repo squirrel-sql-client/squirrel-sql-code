@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.SerializationUtils;
 import org.squirrelsql.Props;
+import org.squirrelsql.globalicons.GlobalIconNames;
 
 public class AliasTreeUtil
 {
@@ -40,7 +41,7 @@ public class AliasTreeUtil
 
    public static TreeItem<AliasTreeNode> createFolderNode(String newFolderName)
    {
-      return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), new Props(AliasTreeUtil.class).getImageView("folder.png"));
+      return new TreeItem<AliasTreeNode>(new AliasFolder(newFolderName), new Props(AliasTreeUtil.class).getImageView(GlobalIconNames.FOLDER));
    }
 
    public static TreeItem<AliasTreeNode> createAliasNode(Alias alias)

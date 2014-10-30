@@ -1,6 +1,20 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Bookmarks and abbreviations. To open the bookmarks popup use the ctrl+k shortcut. (Note: As soon as certain shortcut problems are solved we will return to the usual ctrl+j)
+
+Bug fix: Adding a driver jar led to an exception if the former directory looked at didn't exist anymore.
+
+Feature: Added a right click menu with a clear option to clear messages from it.
+
+Bug fix: Fix for null pointers when clicking/releasing the mouse on an area that is not a result row.
+
+Feature: Code completion, finishing a completion list with tab instead return will remove all succeeding chars up to the next whitespace.
+
+Builds now include a doc/src.jar where the sources of the build are placed.
+
+Upgraded RichTextFX to version 0.5.
+
 Feature: Right mouse menu in SQL results: "Copy", "Copy with header" and "Copy as INSERT-VALUES statement"
 
 Bug fix: SQL editors error highlighting was case sensitive.
