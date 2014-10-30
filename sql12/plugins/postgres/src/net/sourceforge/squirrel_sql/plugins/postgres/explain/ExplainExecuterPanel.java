@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetWrapper;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -344,23 +345,35 @@ public class ExplainExecuterPanel extends JPanel implements ISQLResultExecuter
 		}
 
 		@Override
-		public void sqlResultSetAvailable(ResultSetWrapper rs, SQLExecutionInfo info,
-			IDataSetUpdateableTableModel model) throws DataSetException
+		public void sqlResultSetAvailable(ResultSetWrapper rs, final SQLExecutionInfo info,
+			final IDataSetUpdateableTableModel model) throws DataSetException
 		{
 
-			ResultSetDataSet rsds = new ResultSetDataSet();
+			final ResultSetDataSet rsds = new ResultSetDataSet();
 			rsds.setResultSet(rs.getResultSet(), _dialectType);
 
-			if (_tabToReplace != null)
-			{
-				_tabToReplace.reInit(rsds, info, model);
-			} else
-			{
-				addExplainTab(rsds, info, model);
-			}
+         GUIUtils.processOnSwingEventThread(
+            new Runnable()
+            {
+               public void run()
+               {
+                  updateExplainTab(info, model, rsds);
+               }
+            });
       }
 
-		@Override
+      private void updateExplainTab(SQLExecutionInfo info, IDataSetUpdateableTableModel model, ResultSetDataSet rsds)
+      {
+         if (_tabToReplace != null)
+         {
+            _tabToReplace.reInit(rsds, info, model);
+         } else
+         {
+            addExplainTab(rsds, info, model);
+         }
+      }
+
+      @Override
 		public void sqlExecutionWarning(SQLWarning warn)
 		{
 			_session.showMessage(warn);
