@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresSequenceInodeEx
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.explain.ExplainExecuterPanel;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.ActiveConnections;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.LockTab;
@@ -158,7 +159,7 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
      */
     @Override
     public String getContributors() {
-        return "Daniel Regli, Yannick Winiger";
+        return "Daniel Regli, Yannick Winiger, Jarosław Jarmołowicz";
     }
 
     /**
@@ -335,6 +336,9 @@ public class PostgresPlugin extends DefaultSessionPlugin implements ISQLDatabase
 
         // Lock tab
         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
+        
+        // Active connections
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ActiveConnections());
 
         // ////// Popup Menus ////////
         final JMenu tableMenu = _resources.createMenu(IMenuResourceKeys.POSTGRES);

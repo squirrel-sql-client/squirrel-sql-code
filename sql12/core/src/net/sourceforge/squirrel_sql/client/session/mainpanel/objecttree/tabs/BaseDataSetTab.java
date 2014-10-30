@@ -17,17 +17,14 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-
 import net.sourceforge.squirrel_sql.client.session.DefaultDataModelImplementationDetails;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableModel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public abstract class BaseDataSetTab extends BaseObjectTab
 {
@@ -48,7 +45,8 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	 *
 	 * @return	The component to be displayed in the panel.
 	 */
-	public synchronized Component getComponent()
+	@Override
+	public synchronized DataSetScrollingPanel getComponent()
 	{
 		if (_comp == null)
 		{
@@ -94,6 +92,7 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	 * Rebuild the tab. This usually means that some kind of configuration
 	 * data has changed (I.E. the output type has changed from text to table).
 	 */
+	@Override
 	public void rebuild()
 	{
 		super.rebuild();
@@ -103,14 +102,16 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 	/**
 	 * @see BaseObjectPanelTab#clear()
 	 */
+	@Override
 	public void clear()
 	{
-		((DataSetScrollingPanel)getComponent()).clear();
+		getComponent().clear();
 	}
 
 	/**
 	 * Refresh the component displaying the database object.
 	 */
+	@Override
 	public synchronized void refreshComponent() throws DataSetException
 	{
 		final ISession session = getSession();
@@ -121,11 +122,12 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 
       super._app.getThreadPool().addTask(new Runnable()
       {
-         public void run()
+         @Override
+		public void run()
          {
             try
             {
-               ((DataSetScrollingPanel) getComponent()).load(createDataSet(), new DefaultDataModelImplementationDetails(session));
+               getComponent().load(createDataSet(), new DefaultDataModelImplementationDetails(session));
             }
             catch (DataSetException e)
             {
