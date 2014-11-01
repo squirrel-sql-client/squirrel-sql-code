@@ -73,4 +73,10 @@ public class PropertiesHandler
          AppState.get().getMessagePanelCtrl().info(_message);
       }
    }
+
+   public boolean getBooleanProperty(SquirrelProperty squirrelProperty)
+   {
+      String property = getProperty(squirrelProperty);
+      return Boolean.parseBoolean(property);
+   }
 }

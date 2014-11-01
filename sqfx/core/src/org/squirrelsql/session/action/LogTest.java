@@ -1,0 +1,48 @@
+package org.squirrelsql.session.action;
+
+import javafx.scene.control.ToolBar;
+import org.squirrelsql.AppState;
+import org.squirrelsql.Props;
+import org.squirrelsql.globalicons.GlobalIconNames;
+import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.MessageHandler;
+import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.SquirrelProperty;
+
+public class LogTest
+{
+   public static void checkAndAddTestToolbarButtons(ToolBar toolBar)
+   {
+      if (false == AppState.get().getPropertiesHandler().getBooleanProperty(SquirrelProperty.LOG_TEST_TOOLBAR_BUTTONS))
+      {
+         return;
+      }
+
+      Props props = new Props(LogTest.class);
+      I18n i18n = new I18n(LogTest.class);
+
+      ActionConfiguration actError = new ActionConfiguration(props.getImage(GlobalIconNames.ERROR), i18n.t("log.test.error"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actError).setOnAction(LogTest::logError);
+
+      ActionConfiguration actWarn = new ActionConfiguration(props.getImage(GlobalIconNames.WARNING), i18n.t("log.test.warning"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actWarn).setOnAction(LogTest::logWarning);
+
+      ActionConfiguration actInfo = new ActionConfiguration(props.getImage(GlobalIconNames.INFORMATION), i18n.t("log.test.info"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actInfo).setOnAction(LogTest::logInfo);
+   }
+
+   private static void logInfo()
+   {
+      new MessageHandler(LogTest.class, MessageHandlerDestination.MESSAGE_LOG).info("Log test: INFO");
+   }
+
+   private static void logWarning()
+   {
+      new MessageHandler(LogTest.class, MessageHandlerDestination.MESSAGE_LOG).warning("Log test: WARNING", new Throwable("Test warning throwable"));
+   }
+
+   private static void logError()
+   {
+      new MessageHandler(LogTest.class, MessageHandlerDestination.MESSAGE_LOG).error("Log test: ERROR", new Throwable("Test error throwable"));
+   }
+}

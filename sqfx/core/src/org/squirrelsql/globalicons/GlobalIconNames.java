@@ -7,4 +7,7 @@ public interface GlobalIconNames
    public static final String REMOVE = "remove.png";
    public static final String DOCK_WIN_CLOSE = "dock_win_close.png";
    public static final String FOLDER = "folder.png";
+   public static final String ERROR = "error.png";
+   public static final String WARNING = "warning.png";
+   public static final String INFORMATION = "information.png";
 }

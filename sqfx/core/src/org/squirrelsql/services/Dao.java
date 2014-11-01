@@ -12,13 +12,13 @@ import org.squirrelsql.aliases.AliasPropertiesDecorator;
 import org.squirrelsql.aliases.AliasTreeStructureNode;
 import org.squirrelsql.drivers.SQLDriver;
 import org.squirrelsql.session.sql.SQLHistoryEntry;
-import org.squirrelsql.session.sql.bookmark.Bookmark;
 import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class Dao
@@ -156,5 +156,94 @@ public class Dao
    public static void writeBookmarkPersistence(BookmarkPersistence bookmarkPersistence)
    {
       writeObject(bookmarkPersistence, FILE_NAME_BOOKMARKS);
+   }
+
+   public static void log(String logType, String s, Throwable t)
+   {
+      try
+      {
+         long logTime = System.currentTimeMillis();
+
+         String filePrefix = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss-SSS").format(new Date(logTime));
+
+         File file = new File(AppState.get().getLogDir(), createFileName(filePrefix, logType));
+
+         for (int i = 2; file.exists() ; i++)
+         {
+            file = new File(createFileName(filePrefix, logType + "__" + i));
+         }
+
+         PrintWriter pw = new PrintWriter(file);
+
+         pw.println("LOG TIME: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(new Date(logTime)));
+         pw.println("LOG TYPE: " + logType);
+         pw.println();
+
+         if(null != s)
+         {
+            pw.println(s);
+         }
+         if(null != t)
+         {
+            t.printStackTrace(pw);
+         }
+
+         //pw.flush(); is done by pw.checkError()
+
+         if(pw.checkError())
+         {
+            System.err.println("ERRORS OCCURRED WHEN WRITING LOG FILE " + file.getName());
+         }
+
+         pw.close();
+
+         cleanUpLogs();
+      }
+      catch (Throwable e)
+      {
+         System.out.println("FAILED TO WRITE LOG FILE");
+         e.printStackTrace();
+      }
+      finally
+      {
+         if(null != s)
+         {
+            System.err.println(s);
+         }
+         if(null != t)
+         {
+            t.printStackTrace(System.err);
+         }
+      }
+   }
+
+   private static void cleanUpLogs()
+   {
+      try
+      {
+         File logDir = AppState.get().getLogDir();
+
+         File[] files = logDir.listFiles();
+
+         if(110 < files.length)
+         {
+            Arrays.sort(files);
+
+            for (int i = 0; i < 10; i++)
+            {
+               files[i].delete();
+            }
+         }
+      }
+      catch (Throwable e)
+      {
+         System.out.println("FAILED TO CLEAN LOG DIRECTORY");
+         e.printStackTrace();
+      }
+   }
+
+   private static String createFileName(String filePrefix, String fileNamePostfix)
+   {
+      return filePrefix + "_" + fileNamePostfix + ".log";
    }
 }

@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import org.squirrelsql.globalicons.GlobalIconNames;
+import org.squirrelsql.services.Dao;
 import org.squirrelsql.services.I18n;
 
 import java.util.Timer;
@@ -22,9 +24,9 @@ public class StatusBarCtrl
 
 
    private final ImageView _iconMessage = new ImageView(_props.getImage("message.png"));
-   private final ImageView _iconInfo = new ImageView(_props.getImage("information.png"));
-   private final ImageView _iconWarning = new ImageView(_props.getImage("warning.png"));
-   private final ImageView _iconError = new ImageView(_props.getImage("error.png"));
+   private final ImageView _iconInfo = new ImageView(_props.getImage(GlobalIconNames.INFORMATION));
+   private final ImageView _iconWarning = new ImageView(_props.getImage(GlobalIconNames.WARNING));
+   private final ImageView _iconError = new ImageView(_props.getImage(GlobalIconNames.ERROR));
 
    private final TextField _txtMessages = new TextField();
 
@@ -106,14 +108,19 @@ public class StatusBarCtrl
       Platform.runLater(() -> refreshMessage(_iconMessage));
    }
 
-   public void warning(String s)
+   public void warning(String s, Throwable t)
    {
+      Dao.log("warning", s, t);
+
       ++_countWarning;
       refreshMessage(_iconWarning);
    }
 
    public void info(String s)
    {
+      Dao.log("info", s, null);
+
+
       ++_countInfo;
       refreshMessage(_iconInfo);
    }
@@ -130,15 +137,8 @@ public class StatusBarCtrl
 
    public void error(String s, Throwable t)
    {
-      if(null != s)
-      {
-         System.err.println(s);
-      }
-      if(null != t)
-      {
-         t.printStackTrace(System.err);
-      }
 
+      Dao.log("error", s, t);
 
       ++_countError;
       refreshMessage(_iconError);

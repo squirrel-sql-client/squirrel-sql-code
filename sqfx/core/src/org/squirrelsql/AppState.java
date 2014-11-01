@@ -84,6 +84,14 @@ public class AppState
       return file;
    }
 
+   public File getLogDir()
+   {
+      File file = new File(getUserDir(), "logs");
+      file.mkdirs();
+      return file;
+   }
+
+
    public void doAfterBootstrap()
    {
       _propertiesHandler.doAfterBootstrap();

@@ -24,7 +24,7 @@ public class MessageHandler
    {
       if (MessageHandlerDestination.MESSAGE_LOG == _dest)
       {
-         AppState.get().getStatusBarCtrl().warning(s);
+         AppState.get().getStatusBarCtrl().warning(s, t);
       }
       else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
       {
