@@ -50,33 +50,22 @@ public class StatusBarCtrl
       hBox.getChildren().add(_msgButton);
 
 
-      _msgButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
-            new EventHandler<MouseEvent>()
-            {
-               @Override
-               public void handle(MouseEvent e)
-               {
-                  if (null != _lastCountedIcon)
-                  {
-                     _msgButton.setGraphic(_lastCountedIcon);
-                  }
-               }
-            });
+      _msgButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> onMouseEntered());
 
-      _msgButton.addEventHandler(MouseEvent.MOUSE_EXITED,
-            new EventHandler<MouseEvent>()
-            {
-               @Override
-               public void handle(MouseEvent e)
-               {
-                  _msgButton.setGraphic(_iconMessage);
-               }
-            });
+      _msgButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> _msgButton.setGraphic(_iconMessage));
 
 
       refreshMessage(_iconMessage);
 
       return hBox;
+   }
+
+   private void onMouseEntered()
+   {
+      if (null != _lastCountedIcon)
+      {
+         _msgButton.setGraphic(_lastCountedIcon);
+      }
    }
 
    private void refreshMessage(ImageView icon)
@@ -114,15 +103,7 @@ public class StatusBarCtrl
       timer.cancel();
       timer.purge();
 
-      Runnable runnable = new Runnable()
-      {
-         public void run()
-         {
-            refreshMessage(_iconMessage);
-         }
-      };
-
-      Platform.runLater(runnable);
+      Platform.runLater(() -> refreshMessage(_iconMessage));
    }
 
    public void warning(String s)
