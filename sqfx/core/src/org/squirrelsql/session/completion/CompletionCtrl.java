@@ -2,11 +2,13 @@ package org.squirrelsql.session.completion;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
@@ -83,6 +85,8 @@ public class CompletionCtrl
 
       listView.setOnKeyTyped(keyEvent -> onHandleKeyOnPopupList((KeyEvent)keyEvent, pp, listView));
 
+      listView.setOnMouseClicked(event -> onMouseClickedList(event, pp, listView));
+
       pp.focusedProperty().addListener((observable, oldValue, newValue) -> hideIfNotFocused(newValue, pp));
 
       CompletionUtil.prepareCompletionList(listView, _sqlTextAreaServices);
@@ -153,11 +157,25 @@ public class CompletionCtrl
 
    private void onCompletionSelected(KeyEvent keyEvent, Popup pp, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
    {
+      finishCompletion(pp, listView, removeSucceedingChars);
+      keyEvent.consume();
+   }
+
+   private void finishCompletion(Popup pp, ListView<CompletionCandidate> listView, boolean removeSucceedingChars)
+   {
       pp.hide();
       CompletionCandidate selItem = listView.getSelectionModel().getSelectedItems().get(0);
       executeCompletion(selItem, removeSucceedingChars);
-      keyEvent.consume();
    }
+
+   private void onMouseClickedList(MouseEvent event, Popup pp, ListView<CompletionCandidate> listView)
+   {
+      if(event.getClickCount() >= 2)
+      {
+         finishCompletion(pp, listView, false);
+      }
+   }
+
 
    private void executeCompletion(CompletionCandidate completionCandidate, boolean removeSucceedingChars)
    {
