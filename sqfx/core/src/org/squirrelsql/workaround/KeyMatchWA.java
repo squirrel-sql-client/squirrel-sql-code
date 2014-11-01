@@ -8,12 +8,28 @@ public class KeyMatchWA
 {
    public static boolean matches(KeyEvent keyEvent, KeyCodeCombination keyCodeCombination)
    {
-      // return keyCodeCombination.match(keyEvent) does not work
-
       if(null == keyCodeCombination)
       {
          return false;
       }
+
+      if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED)
+      {
+         // This does not work for KEY_TYPED,
+         // see http://docs.oracle.com/javafx/2/api/javafx/scene/input/KeyCodeCombination.html#match%28javafx.scene.input.KeyEvent%29
+
+         // On the difference between KEY_TYPED and KEY_PRESSED,
+         // see http://docs.oracle.com/javafx/2/api/javafx/scene/input/KeyEvent.html
+
+         return keyCodeCombination.match(keyEvent);
+      }
+
+
+
+      // Key typed is almost everywhere replaced by key pressed because of the nicer matching.
+      // One place where key typed is still used is for the code completion list listener.
+      // The code below is more than is needed for that. It results from times when key typed
+      // was used more and thus much matching needed to be done manually.
 
 
       boolean ctrlDown = "DOWN".equals(keyCodeCombination.getControl().name());

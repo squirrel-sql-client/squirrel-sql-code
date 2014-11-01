@@ -1,7 +1,7 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Feature: Bookmarks and abbreviations. To open the bookmarks popup use the ctrl+k shortcut. (Note: As soon as certain shortcut problems are solved we will return to the usual ctrl+j)
+Feature: Bookmarks and abbreviations. To open the bookmarks popup use the ctrl+j shortcut.
 
 Bug fix: Adding a driver jar led to an exception if the former directory looked at didn't exist anymore.
 

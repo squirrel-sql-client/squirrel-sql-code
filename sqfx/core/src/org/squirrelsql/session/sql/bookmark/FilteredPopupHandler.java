@@ -57,7 +57,7 @@ public class FilteredPopupHandler
       _listView.setFocusTraversable(false);
       _listView.focusedProperty().addListener((observable, oldValue, newValue) -> _txtFilter.requestFocus());
 
-      _txtFilter.setOnKeyTyped(keyEvent -> onHandleKeyOnTxt((KeyEvent) keyEvent));
+      _txtFilter.setOnKeyPressed(keyEvent -> onHandleKeyOnTxt((KeyEvent) keyEvent));
 
       _txtFilter.removeEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> onEventFilterHandler(keyEvent));
       _txtFilter.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> onEventFilterHandler(keyEvent));

@@ -66,7 +66,7 @@ public class SqlPaneCtrl
 
       initActionListeners();
 
-      _sqlTextAreaServices.setOnKeyTyped(this::onHandleKeyEvent);
+      _sqlTextAreaServices.setOnKeyPressed(this::onHandleKeyEvent);
 
       _sqlPane = new BorderPane();
 

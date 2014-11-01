@@ -69,9 +69,9 @@ public class SQLTextAreaServices
       return _sqlTextArea;
    }
 
-   public void setOnKeyTyped(EventHandler<KeyEvent> keyEventHandler)
+   public void setOnKeyPressed(EventHandler<KeyEvent> keyEventHandler)
    {
-      _sqlTextArea.setOnKeyTyped(keyEventHandler);
+      _sqlTextArea.setOnKeyPressed(keyEventHandler);
 
    }
 

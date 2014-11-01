@@ -26,16 +26,6 @@ public class NewSqlTabHelper
    {
       ActionHandle actionHandle = new ActionManager().getActionHandle(StandardActionConfiguration.NEW_SQL_TAB, sessionTabContext);
       actionHandle.setOnAction(() -> openNewSqlTab(sessionTabContext));
-      sessionTab.getContent().setOnKeyTyped(e -> onKeyTyped((KeyEvent) e, sessionTabContext));
-   }
-
-   private static void onKeyTyped(KeyEvent event, SessionTabContext sessionTabContext)
-   {
-      if(KeyMatchWA.matches(event, StandardActionConfiguration.NEW_SQL_TAB.getActionConfiguration().getKeyCodeCombination()))
-      {
-         openNewSqlTab(sessionTabContext);
-         event.consume();
-      }
    }
 
    private static void openNewSqlTab(SessionTabContext sessionTabContext)
