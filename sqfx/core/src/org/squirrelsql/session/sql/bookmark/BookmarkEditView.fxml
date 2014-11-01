@@ -23,6 +23,6 @@
             <Button fx:id="btnDelete" layoutX="154.0" layoutY="289.0" mnemonicParsing="false" text="%bookmarkedit.delete" AnchorPane.bottomAnchor="5.0" />
          </children>
       </HBox>
-      <Label layoutX="14.0" layoutY="323.0" prefHeight="46.0" prefWidth="575.0" text="%bookmarkedit.note" AnchorPane.bottomAnchor="13.0" />
+      <Label fx:id="lblNote" layoutX="14.0" layoutY="323.0" prefHeight="46.0" prefWidth="575.0" text="%bookmarkedit.note" AnchorPane.bottomAnchor="13.0" />
    </children>
 </AnchorPane>

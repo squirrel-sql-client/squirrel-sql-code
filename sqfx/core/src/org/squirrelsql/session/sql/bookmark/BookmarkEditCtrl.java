@@ -43,6 +43,8 @@ public class BookmarkEditCtrl
       _region = fxmlHelper.getRegion();
       _view = fxmlHelper.getView();
 
+      _view.lblNote.setText(_i18n.t("bookmarkedit.note", StandardActionConfiguration.EXEC_BOOKMARK.getActionConfiguration().getKeyCodeCombination()));
+
       SplitPane splitPane = new SplitPane();
       splitPane.setOrientation(Orientation.VERTICAL);
 
