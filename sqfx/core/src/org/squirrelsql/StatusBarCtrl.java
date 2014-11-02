@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -50,6 +51,8 @@ public class StatusBarCtrl
       hBox.getChildren().add(_txtMessages);
 
       _msgButton.setGraphic(_iconMessage);
+      _msgButton.setTooltip(new Tooltip(_i18n.t("statusbar.button.tooltip")));
+
       hBox.getChildren().add(_msgButton);
 
 

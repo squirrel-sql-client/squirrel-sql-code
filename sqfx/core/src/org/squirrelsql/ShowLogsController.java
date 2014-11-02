@@ -1,25 +1,22 @@
 package org.squirrelsql;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class ShowLogsController
 {
@@ -28,6 +25,7 @@ public class ShowLogsController
 
    private I18n _i18n = new I18n(getClass());
    private final ListView<LogFileWrapper> _lstLogs = new ListView<>();
+   private final ShowLogsNorthView _view;
 
    public ShowLogsController()
    {
@@ -60,30 +58,30 @@ public class ShowLogsController
       new StageDimensionSaver("showLogsController", _dialog, new Pref(getClass()), 300, 500, _dialog.getOwner());
 
 
-      ShowLogsNorthView view = fxmlHelper.getView();
-      view.chkFilterErrors.setSelected(true);
-      view.chkFilterWarnings.setSelected(true);
-      view.chkFilterInfo.setSelected(true);
+      _view = fxmlHelper.getView();
 
-      view.txtLogDir.setText(Dao.getLogDir().getPath());
+      _view.chkFilterErrors.setSelected(true);
+      _view.chkFilterErrors.setOnAction(e -> showLogFiles());
 
-      view.btnOpenLogDir.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.FOLDER));
-      view.btnOpenLogDir.setTooltip(new Tooltip(_i18n.t("showLogsController.btnOpenLogDir.tooltip")));
-      view.btnOpenLogDir.setOnAction(e -> Utils.runOnSwingEDT(this::onOpenLogDir));
+      _view.chkFilterWarnings.setSelected(true);
+      _view.chkFilterWarnings.setOnAction(e -> showLogFiles());
+
+      _view.chkFilterInfo.setSelected(true);
+      _view.chkFilterInfo.setOnAction(e -> showLogFiles());
+
+      _view.txtLogDir.setText(Dao.getLogDir().getPath());
+
+      _view.btnOpenLogDir.setGraphic(new Props(getClass()).getImageView(GlobalIconNames.FOLDER));
+      _view.btnOpenLogDir.setTooltip(new Tooltip(_i18n.t("showLogsController.btnOpenLogDir.tooltip")));
+      _view.btnOpenLogDir.setOnAction(e -> Utils.runOnSwingEDT(this::onOpenLogDir));
 
 
       _txtLog.setEditable(false);
 
-      File[] logFiles = Dao.getLogFiles();
-
 
       _lstLogs.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> onListSelectionChanged());
 
-      if(0 < logFiles.length)
-      {
-         _lstLogs.getItems().addAll(LogFileWrapper.wrap(logFiles));
-         _lstLogs.getSelectionModel().selectFirst();
-      }
+      showLogFiles();
 
 
 
@@ -91,6 +89,40 @@ public class ShowLogsController
 
       _dialog.showAndWait();
 
+   }
+
+   private void showLogFiles()
+   {
+      java.util.List<LogFileWrapper> wrap = LogFileWrapper.wrap(Dao.getLogFiles());
+
+      List<LogFileWrapper> filtered = CollectionUtil.filter(wrap, this::matchesFilter);
+
+      _lstLogs.getItems().clear();
+      if(0 < filtered.size())
+      {
+         _lstLogs.getItems().addAll(filtered);
+         _lstLogs.getSelectionModel().selectFirst();
+      }
+   }
+
+   private boolean matchesFilter(LogFileWrapper w)
+   {
+      if(false == _view.chkFilterErrors.isSelected() && -1 < w.getLogFile().getName().toLowerCase().indexOf("error"))
+      {
+         return false;
+      }
+
+      if(false == _view.chkFilterWarnings.isSelected() && -1 < w.getLogFile().getName().toLowerCase().indexOf("warning"))
+      {
+         return false;
+      }
+
+      if(false == _view.chkFilterInfo.isSelected() && -1 < w.getLogFile().getName().toLowerCase().indexOf("info"))
+      {
+         return false;
+      }
+
+      return true;
    }
 
    private void onListSelectionChanged()

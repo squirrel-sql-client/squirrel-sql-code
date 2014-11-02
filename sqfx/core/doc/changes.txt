@@ -1,6 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Log messages are now written to the file system and can be viewed
+  either through the file menu or by clicking the messages button of the status bar.
+
 Feature: Bookmarks and abbreviations. To open the bookmarks popup use the ctrl+j shortcut.
 
 Bug fix: Adding a driver jar led to an exception if the former directory looked at didn't exist anymore.

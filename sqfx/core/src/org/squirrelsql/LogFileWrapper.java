@@ -1,6 +1,8 @@
 package org.squirrelsql;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogFileWrapper
 {
@@ -22,15 +24,13 @@ public class LogFileWrapper
       return _logFile;
    }
 
-   public static LogFileWrapper[] wrap(File[] logFiles)
+   public static List<LogFileWrapper> wrap(File[] logFiles)
    {
-      LogFileWrapper[] ret = new LogFileWrapper[logFiles.length];
+      ArrayList<LogFileWrapper> ret = new ArrayList<>();
 
-      for (int i = 0; i < logFiles.length; i++)
+      for (File logFile : logFiles)
       {
-         File logFile = logFiles[i];
-
-         ret[i] = new LogFileWrapper(logFile);
+         ret.add(new LogFileWrapper(logFile));
       }
 
       return ret;

@@ -78,10 +78,12 @@ public class Main extends Application
       Menu file = new Menu(i18n.t("main.menu.file"));
       ret.getMenus().add(file);
 
+      MenuItem showLogs = new MenuItem(i18n.t("main.menu.show.logs"));
+      file.getItems().add(showLogs);
+      showLogs.setOnAction(e -> new ShowLogsController());
+
       MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
       file.getItems().add(exit);
-
-
       exit.setOnAction(e -> onExit(primaryStage));
 
       ret.getMenus().add(new ActionManager().getSessionMenu());
