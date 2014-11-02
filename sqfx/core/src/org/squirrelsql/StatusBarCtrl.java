@@ -1,6 +1,7 @@
 package org.squirrelsql;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -56,10 +57,24 @@ public class StatusBarCtrl
 
       _msgButton.addEventHandler(MouseEvent.MOUSE_EXITED, e -> _msgButton.setGraphic(_iconMessage));
 
+      _msgButton.setOnAction(new EventHandler<ActionEvent>()
+      {
+         @Override
+         public void handle(ActionEvent event)
+         {
+            onShowLogs();
+         }
+      });
+
 
       refreshMessage(_iconMessage);
 
       return hBox;
+   }
+
+   private void onShowLogs()
+   {
+      new ShowLogsController();
    }
 
    private void onMouseEntered()

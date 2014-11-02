@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-preview-i18n-resource i18n.properties?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="0.0" prefHeight="165.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.ShowLogsNorthView">
+   <children>
+      <CheckBox fx:id="chkFilterErrors" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="%show.logs.errors" />
+      <CheckBox fx:id="chkFilterWarnings" layoutX="14.0" layoutY="41.0" mnemonicParsing="false" text="%show.logs.warnings" />
+      <CheckBox fx:id="chkFilterInfo" layoutX="14.0" layoutY="68.0" mnemonicParsing="false" text="%show.logs.infos" />
+      <Label layoutX="15.0" layoutY="104.0" prefHeight="15.0" prefWidth="267.0" text="%show.logs.dir" />
+      <TextField fx:id="txtLogDir" editable="false" layoutX="15.0" layoutY="126.0" prefHeight="25.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="44.0" />
+      <Button fx:id="btnOpenLogDir" layoutX="356.0" layoutY="126.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" AnchorPane.rightAnchor="5.0" />
+   </children>
+</AnchorPane>

@@ -57,14 +57,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
    private void onParserExitedOnException(final Throwable e)
 	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				throw new RuntimeException(e);
-			}
-		});
-
+		Platform.runLater(() -> { throw new RuntimeException(e); });
 	}
 
 	public void addParserEventsListener(ParserEventsListener l) {

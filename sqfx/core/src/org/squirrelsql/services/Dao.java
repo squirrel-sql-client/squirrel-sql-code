@@ -164,7 +164,7 @@ public class Dao
       {
          long logTime = System.currentTimeMillis();
 
-         String filePrefix = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss-SSS").format(new Date(logTime));
+         String filePrefix = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss--SSS").format(new Date(logTime));
 
          File file = new File(AppState.get().getLogDir(), createFileName(filePrefix, logType));
 
@@ -175,7 +175,7 @@ public class Dao
 
          PrintWriter pw = new PrintWriter(file);
 
-         pw.println("LOG TIME: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").format(new Date(logTime)));
+         pw.println("LOG TIME: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss : SSS").format(new Date(logTime)));
          pw.println("LOG TYPE: " + logType);
          pw.println();
 
@@ -245,5 +245,17 @@ public class Dao
    private static String createFileName(String filePrefix, String fileNamePostfix)
    {
       return filePrefix + "_" + fileNamePostfix + ".log";
+   }
+
+   public static File[] getLogFiles()
+   {
+      File[] files = AppState.get().getLogDir().listFiles();
+      Arrays.sort(files, (f1,f2) -> -f1.compareTo(f2));
+      return files;
+   }
+
+   public static File getLogDir()
+   {
+      return AppState.get().getLogDir();
    }
 }

@@ -2,6 +2,7 @@ package org.squirrelsql.services;
 
 import com.google.common.base.Strings;
 
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -10,6 +11,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -118,5 +120,28 @@ public class Utils
 
       }
       return msg;
+   }
+
+   public static void runOnSwingEDT(Runnable runnable)
+   {
+
+      Runnable wrapper = new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            try
+            {
+               runnable.run();
+            }
+            catch(Throwable t)
+            {
+               Platform.runLater(() -> new MessageHandler(Utils.class, MessageHandlerDestination.MESSAGE_LOG).error(t));
+            }
+         }
+      };
+
+      SwingUtilities.invokeLater(wrapper);
+
    }
 }
