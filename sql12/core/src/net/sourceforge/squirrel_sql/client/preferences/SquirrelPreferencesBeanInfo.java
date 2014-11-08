@@ -127,7 +127,12 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo implements Squir
 						new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, SquirrelPreferences.class,
 							"getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),
 						new PropertyDescriptor(PREFERRED_LOCALE, SquirrelPreferences.class, "getPreferredLocale",
-							"setPreferredLocale"), };
+							"setPreferredLocale"),
+
+						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH_DEFINED, SquirrelPreferences.class, "getMaxColumnAdjustLengthDefined",
+							"setMaxColumnAdjustLengthDefined"),
+						new PropertyDescriptor(MAX_COLUMN_ADJUST_LENGTH, SquirrelPreferences.class, "getMaxColumnAdjustLength",
+							"setMaxColumnAdjustLength"), };
 
 			return result;
 		}

@@ -31,6 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import net.sourceforge.squirrel_sql.client.Main;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -353,6 +354,13 @@ public class ButtonTableHeader extends JTableHeader
       FontMetrics cellFontMetrics = cellComp.getFontMetrics(cellComp.getFont());
 
 
+      int maxColumnAdjustLength = Integer.MAX_VALUE;
+
+      if(Main.getApplication().getSquirrelPreferences().getMaxColumnAdjustLengthDefined())
+      {
+         maxColumnAdjustLength = Main.getApplication().getSquirrelPreferences().getMaxColumnAdjustLength();
+      }
+
       for (int i = 0; i < rowCount; i++)
       {
          Object value = getTable().getModel().getValueAt(i, modelIx);
@@ -366,6 +374,13 @@ public class ButtonTableHeader extends JTableHeader
          {
             stringVal += value;
          }
+
+
+         if( maxColumnAdjustLength < stringVal.length())
+         {
+            stringVal = stringVal.substring(0, maxColumnAdjustLength);
+         }
+
 
          Rectangle2D bounds = cellFontMetrics.getStringBounds(stringVal, cellComp.getGraphics());
 

@@ -148,4 +148,8 @@ public class Main
       }
    }
 
+   public static IApplication getApplication()
+   {
+      return application;
+   }
 }

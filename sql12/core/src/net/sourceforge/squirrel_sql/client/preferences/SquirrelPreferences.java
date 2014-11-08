@@ -93,6 +93,8 @@ public class SquirrelPreferences implements Serializable
       String SELECT_ON_RIGHT_MOUSE_CLICK = "selectOnRightMouseClick";
       String SHOW_PLEASE_WAIT_DIALOG = "showPleaseWaitDialog";
       String PREFERRED_LOCALE = "preferredLocale";
+      String MAX_COLUMN_ADJUST_LENGTH_DEFINED = "maxColumnAdjustLengthDefined";
+      String MAX_COLUMN_ADJUST_LENGTH = "maxColumnAdjustLength";
    }
 
    public interface IJdbcDebugTypes
@@ -234,8 +236,13 @@ public class SquirrelPreferences implements Serializable
 	private boolean _showPleaseWaitDialog;
 
 	private String _preferredLocale;
-	
-	/**
+
+   private boolean _maxColumnAdjustLengthDefined = false;
+
+   private int _maxColumnAdjustLength = -1;
+
+
+   /**
 	 * Default ctor.
 	 */
 	public SquirrelPreferences()
@@ -1146,6 +1153,25 @@ public class SquirrelPreferences implements Serializable
 	{
 		_preferredLocale = locale;
 	}
-	
-   
+
+   public void setMaxColumnAdjustLengthDefined(boolean maxColumnAdjustLengthDefined)
+   {
+      _maxColumnAdjustLengthDefined = maxColumnAdjustLengthDefined;
+   }
+
+   public void setMaxColumnAdjustLength(int maxColumnAdjustLength)
+   {
+      _maxColumnAdjustLength = maxColumnAdjustLength;
+   }
+
+
+   public boolean getMaxColumnAdjustLengthDefined()
+   {
+      return _maxColumnAdjustLengthDefined;
+   }
+
+   public int getMaxColumnAdjustLength()
+   {
+      return _maxColumnAdjustLength;
+   }
 }

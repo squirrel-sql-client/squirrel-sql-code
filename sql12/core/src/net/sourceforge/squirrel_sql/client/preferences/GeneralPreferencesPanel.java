@@ -33,11 +33,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.multi.MultiComboBoxUI;
 
 import com.jidesoft.swing.MultilineLabel;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.LocaleUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -146,9 +148,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       ArrayList<String> localeDisplayStrings = new ArrayList<String>();
             
       private JComboBox _localeChooser = new JComboBox(LocaleUtils.getAvailableLocaleStrings());
-	
-      
-      
+      private MaxColumnAdjustLengthCtrl _maxColumnAdjustLengthCtrl = new MaxColumnAdjustLengthCtrl();
+
+
       MyPanel()
 		{
 			super(new GridBagLayout());
@@ -184,6 +186,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
          _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
          _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
+         _maxColumnAdjustLengthCtrl.init(prefs.getMaxColumnAdjustLengthDefined(), prefs.getMaxColumnAdjustLength());
          String preferredLocalString = prefs.getPreferredLocale();
          if (StringUtils.isEmpty(preferredLocalString))
          {
@@ -241,6 +244,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
          prefs.setShowPleaseWaitDialog(_showPleaseWaitDialog.isSelected());
          prefs.setPreferredLocale(_localeChooser.getSelectedItem().toString());
+         prefs.setMaxColumnAdjustLengthDefined(_maxColumnAdjustLengthCtrl.isMaxColumnAdjustLengthDefined());
+         prefs.setMaxColumnAdjustLength(_maxColumnAdjustLengthCtrl.getMaxColumnAdjustLength());
       }
 
 		private void createUserInterface()
@@ -366,20 +371,29 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridy = 7;
          pnl.add(_showPleaseWaitDialog, gbc);
 
+         gbc.gridx = 0;
+         gbc.gridy = 8;
+         pnl.add(createLocalePanel(), gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 9;
+         pnl.add(_maxColumnAdjustLengthCtrl.getPanel(), gbc);
+
+         
+         return pnl;
+		}
+
+
+      private JPanel createLocalePanel()
+      {
          _localeChooser.setBorder(new EmptyBorder(5, 20, 5, 30));
          JPanel localePanel = new JPanel();
          BoxLayout layout = new BoxLayout(localePanel, BoxLayout.X_AXIS);
          localePanel.setLayout(layout);
          localePanel.add(_localeChooserLabel);
          localePanel.add(_localeChooser);
-         
-         gbc.gridx = 0;
-         gbc.gridy = 8;
-         pnl.add(localePanel, gbc);
-         
-         
-         return pnl;
-		}
+         return localePanel;
+      }
 
       private JPanel getSavePreferencesImmediatelyPanel()
       {

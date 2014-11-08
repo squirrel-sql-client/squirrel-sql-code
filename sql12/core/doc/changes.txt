@@ -8,6 +8,9 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+When adjusting table column widths a maximum width may now be defined.
+  See menu File --> Global Preferences --> Tab General --> right column
+
 Speeded up reading and writing Alias properties. As result opening and closing a connections will be much faster for big, complicated databases.
   Thanks to Jaroslaw Jarmolowicz for the patch
 
