@@ -35,7 +35,6 @@ public class LockTab extends BaseDataSetTab {
     private static final String QUERY = "SELECT "
         + "    pgl.relation::regclass AS \"Class\", "
         + "    pg_get_userbyid(pg_stat_get_backend_userid(svrid)) AS \"User\", "
-        + "    pgl.transaction AS \"Transaction\", "
         + "    pg_stat_get_backend_pid(svrid) AS \"Pid\", "
         + "    pgl.mode AS \"Mode\", "
         + "    pgl.granted AS \"Granted\", "
@@ -75,14 +74,16 @@ public class LockTab extends BaseDataSetTab {
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab#getHint()
      */
-    public String getHint() {
+    @Override
+	public String getHint() {
         return i18n.HINT;
     }
 
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab#getTitle()
      */
-    public String getTitle() {
+    @Override
+	public String getTitle() {
         return i18n.TITLE;
     }
 
