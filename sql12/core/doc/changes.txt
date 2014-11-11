@@ -26,6 +26,10 @@ Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
+Postgres Plugin:
+- Postgres locks table was not displayed.
+Thanks to Jaroslaw Jarmolowicz for the patch
+
 Look-and-Feel Plugin: JTattoo-AluminiumLookAndFeel was not available and logged an exception stack trace during start up.
 
 SQuirreL used log an exception stack trace when 'Keep-Alive' was enabled in Alias properties but no SQL statement was entered. Now SQuirreL issues an understandable message.
