@@ -117,7 +117,6 @@ public class Main extends Application
       dimesionSaver.save(); // Needed because we are going to exit
       AppState.get().getPrefImpl().flush();
 
-      System.out.println("LAST CLOSE CALL");
       Platform.exit();
       System.exit(0);
    }

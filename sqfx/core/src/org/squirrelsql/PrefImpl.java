@@ -36,7 +36,6 @@ public class PrefImpl
       checkInit();
       _timeline.stop();
       Dao.writePreferences(_preferences);
-      System.out.println("PrefImpl.doWrite");
    }
 
    public Double getDouble(String key, double def)
