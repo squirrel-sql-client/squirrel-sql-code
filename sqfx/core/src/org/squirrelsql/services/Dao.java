@@ -16,10 +16,7 @@ import org.squirrelsql.session.sql.bookmark.BookmarkPersistence;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Dao
 {
@@ -29,6 +26,7 @@ public class Dao
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
    public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
    public static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
+   public static final String FILE_NAME_PREFERENCES = "preferences.properties";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
    {
@@ -257,5 +255,38 @@ public class Dao
    public static File getLogDir()
    {
       return AppState.get().getLogDir();
+   }
+
+   public static Properties loadPreferences()
+   {
+      try
+      {
+         File file = new File(AppState.get().getUserDir(), FILE_NAME_PREFERENCES);
+
+         Properties ret = new Properties();
+         if (file.exists())
+         {
+            ret.load(new FileInputStream(file));
+         }
+
+         return ret;
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static void writePreferences(Properties preferences)
+   {
+      try
+      {
+         File file = new File(AppState.get().getUserDir(), FILE_NAME_PREFERENCES);
+         preferences.store(new FileWriter(file), "SQuirreL SQL FX preferences");
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 }

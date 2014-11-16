@@ -1,5 +1,6 @@
 package org.squirrelsql.table.tableedit;
 
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.TableLoader;
 
 import java.math.BigDecimal;
@@ -13,12 +14,35 @@ public class StringInterpreter
 {
    public static Object interpret(String userEnteredString, String columnClassName) throws ClassNotFoundException, ParseException
    {
-      if(null == userEnteredString || "".equals(userEnteredString) || TableLoader.NULL_AS_STRING.equals(userEnteredString))
+      if(Utils.isEmptyString(userEnteredString) || TableLoader.NULL_AS_STRING.equals(userEnteredString))
       {
          return TableLoader.NULL_AS_MARKER;
       }
 
       Class clazz = Class.forName(columnClassName);
+
+      return _interpret(userEnteredString, clazz);
+   }
+
+   public static Object interpret(String userEnteredString, Class clazz)
+   {
+      try
+      {
+         return _interpret(userEnteredString, clazz);
+      }
+      catch (ParseException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
+   private static Object _interpret(String userEnteredString, Class clazz) throws ParseException
+   {
+      if(Utils.isEmptyString(userEnteredString))
+      {
+         return null;
+      }
 
       if(String.class.equals(clazz))
       {

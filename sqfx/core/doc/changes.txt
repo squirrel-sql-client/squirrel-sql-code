@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Preferences are now written to SQuirreL's user folder instead of to system dependent places like the registry on MS Windows.
+
 Feature: Log messages are now written to the file system and can be viewed
   either through the file menu or by clicking the messages button of the status bar.
 

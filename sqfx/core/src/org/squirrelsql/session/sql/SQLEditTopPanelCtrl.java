@@ -100,7 +100,7 @@ public class SQLEditTopPanelCtrl
    public void close()
    {
       _pref.set(LIMIT_ROWS, _view.chkLimitRows.isSelected());
-      _pref.set(LIMIT_ROWS_COUNT, getRowLimit());
+      _pref.set(LIMIT_ROWS_COUNT, _getRowLimit());
 
       FilteredList<SQLHistoryEntry> newEntries = _view.cboLatestSqls.getItems().filtered(sh -> sh.isNew());
 
