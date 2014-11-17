@@ -22,33 +22,47 @@ public class MessageHandler
 
    public void warning(String s, Throwable t)
    {
-      if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+      try
       {
-         AppState.get().getStatusBarCtrl().warning(s, t);
+         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         {
+            AppState.get().getStatusBarCtrl().warning(s, t);
+         }
+         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+         {
+            AppState.get().getMessagePanelCtrl().warning(s, t);
+         }
+         else
+         {
+            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         }
       }
-      else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+      catch (Throwable tmh)
       {
-         AppState.get().getMessagePanelCtrl().warning(s, t);
-      }
-      else
-      {
-         throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         handlErrorInMessaging(s, t, tmh);
       }
    }
 
    public void info(String s)
    {
-      if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+      try
       {
-         AppState.get().getStatusBarCtrl().info(s);
+         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         {
+            AppState.get().getStatusBarCtrl().info(s);
+         }
+         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+         {
+            AppState.get().getMessagePanelCtrl().info(s);
+         }
+         else
+         {
+            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         }
       }
-      else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+      catch (Throwable tmh)
       {
-         AppState.get().getMessagePanelCtrl().info(s);
-      }
-      else
-      {
-         throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         handlErrorInMessaging(s, null, tmh);
       }
    }
 
@@ -65,18 +79,64 @@ public class MessageHandler
 
    public void error(String s, Throwable t)
    {
-      if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+      try
       {
-         AppState.get().getStatusBarCtrl().error(s, t);
+         if (MessageHandlerDestination.MESSAGE_LOG == _dest)
+         {
+            AppState.get().getStatusBarCtrl().error(s, t);
+         }
+         else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+         {
+            AppState.get().getMessagePanelCtrl().error(s, t);
+         }
+         else
+         {
+            throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         }
       }
-      else if (MessageHandlerDestination.MESSAGE_PANEL == _dest)
+      catch (Throwable tmh)
       {
-         AppState.get().getMessagePanelCtrl().error(s, t);
+         handlErrorInMessaging(s, t, tmh);
+      }
+   }
+
+   private void handlErrorInMessaging(String msg, Throwable originalError, Throwable errorFromMessageHandler)
+   {
+      System.err.println("### Error occurred in message/error handling. We provide the following information in the following order:");
+      System.err.println("### 1. The original message that failed to be handled");
+      System.err.println("### 2. The original error that failed to be handled");
+      System.err.println("### 3. The error that occured during message/error handling");
+      System.err.println("### Here we go:");
+      System.err.println("### ");
+      System.err.println("### 1. The original message that failed to be handled:");
+
+      if(Utils.isEmptyString(msg))
+      {
+         System.err.println("### <MESSAGE WAS NULL>");
       }
       else
       {
-         throw new UnsupportedOperationException("Unkonwn destination: " + _dest);
+         System.err.println(msg);
       }
+
+      System.err.println("### ");
+      System.err.println("### 2. The original error that failed to be handled:");
+
+      if(null == originalError)
+      {
+         System.err.println("### <ERROR WAS NULL>");
+      }
+      else
+      {
+         originalError.printStackTrace(System.err);
+      }
+
+      System.err.println("### ");
+      System.err.println("### 3. The error that occured during message/error handling");
+
+      errorFromMessageHandler.printStackTrace(System.err);
+
+
    }
 
    public String errorSQLNoStack(SQLException e)

@@ -14,6 +14,7 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
 import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.splash.SquirrelSplashScreen;
 
 public class Main extends Application
 {
@@ -26,7 +27,12 @@ public class Main extends Application
    @Override
    public void start(Stage primaryStage) throws Exception
    {
+
+      SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(7);
+
+      squirrelSplashScreen.indicateNewTask("Initializing exception handling ...");
       ExceptionHandler.initHandling();
+
 
       AppState.init(primaryStage, getParameters());
 
@@ -38,6 +44,7 @@ public class Main extends Application
 
 
 
+      squirrelSplashScreen.indicateNewTask("Creating application window ...");
       BorderPane borderPane = new BorderPane();
       primaryStage.setScene(new Scene(borderPane));
 
@@ -45,14 +52,18 @@ public class Main extends Application
 
 
 
+      squirrelSplashScreen.indicateNewTask("Loading drivers and aliases ...");
       DockButtonsCtrl dockButtonsCtrl = new DockButtonsCtrl(dockPaneChanel);
       Node dockButtons = dockButtonsCtrl.getNode();
+
 
       borderPane.setLeft(dockButtons);
 
       borderPane.setBottom(AppState.get().getStatusBarCtrl().getNode());
 
       borderPane.setTop(createMenuBar(primaryStage));
+
+      squirrelSplashScreen.indicateNewTask("Configuring application window ...");
 
 
       final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
@@ -66,9 +77,17 @@ public class Main extends Application
 
       primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
 
+      squirrelSplashScreen.indicateNewTask("Task 5");
+
+
+      squirrelSplashScreen.indicateNewTask("Opening application window ...");
+
       primaryStage.show();
 
       Platform.runLater(() -> AppState.get().doAfterBootstrap());
+      Platform.runLater(() -> primaryStage.toFront());
+      squirrelSplashScreen.close();
+
    }
 
    private MenuBar createMenuBar(Stage primaryStage)

@@ -57,7 +57,7 @@ public class BookmarkEditCtrl
 
       GuiUtils.makeEscapeClosable(splitPane);
 
-      new StageDimensionSaver("bookmarkedit", _dialog, _pref, splitPane.getPrefWidth(), splitPane.getPrefHeight(), _dialog.getOwner());
+      new StageDimensionSaver("bookmarkedit", _dialog, _pref, 945.0, 715.0, _dialog.getOwner());
 
       loadData();
 

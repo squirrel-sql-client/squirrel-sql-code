@@ -58,6 +58,8 @@
             </fileset>
         </copy>
 
+        <replace file="output/work/bin/org/squirrelsql/splash/Version.properties" token="squirrelsql.version.value" value="${squirrelsqlfx.version}"/>
+
 
         <jar jarfile="output/dist/squirrel-sql-fx.jar" basedir="output/work/bin"/>
         <copy todir="output/dist/lib">
@@ -75,6 +77,8 @@
                 <include name="**/*" />
             </fileset>
         </copy>
+
+        <copy todir="output/dist/icons" file="output/work/bin/org/squirrelsql/globalicons/splash.jpg" />
 
         <zip destfile="output/dist/doc/src.jar" basedir="core/src"/>
     </target>

@@ -79,4 +79,4 @@ fi
 SCRIPT_ARGS="$1 $2 $3 $4 $5 $6 $7 $8 $9"
 
 # Launch SQuirreL application
-$JAVACMD -cp "$TMP_CP" org.squirrelsql.Main "$UNIX_STYLE_HOME" $SCRIPT_ARGS
+$JAVACMD -cp "$TMP_CP" -splash:"$SQUIRREL_SQL_HOME/icons/splash.jpg" org.squirrelsql.Main  "$UNIX_STYLE_HOME" $SCRIPT_ARGS
