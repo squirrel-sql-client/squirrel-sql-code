@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: About dialog
+
 Feature: Splash screen at start up
 
 Feature: Preferences are now written to SQuirreL's user folder instead of to system dependent places like the registry on MS Windows.

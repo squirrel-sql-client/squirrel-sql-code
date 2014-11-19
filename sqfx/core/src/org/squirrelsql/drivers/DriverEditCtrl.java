@@ -64,7 +64,7 @@ public class DriverEditCtrl
 
       GuiUtils.makeEscapeClosable(parent);
 
-      new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, parent.getPrefWidth(), parent.getPrefHeight(), _dialog.getStage().getOwner());
+      new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, 800, 650, _dialog.getStage().getOwner());
 
       _dialog.getStage().showAndWait();
    }

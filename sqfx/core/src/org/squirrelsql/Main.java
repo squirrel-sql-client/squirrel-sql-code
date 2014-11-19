@@ -105,8 +105,16 @@ public class Main extends Application
       file.getItems().add(exit);
       exit.setOnAction(e -> onExit(primaryStage));
 
+
       ret.getMenus().add(new ActionManager().getSessionMenu());
 
+
+      Menu help = new Menu(i18n.t("main.menu.help"));
+      ret.getMenus().add(help);
+
+      MenuItem about = new MenuItem(i18n.t("main.menu.about"));
+      help.getItems().add(about);
+      about.setOnAction(e -> new AboutController());
 
       return ret;
    }
