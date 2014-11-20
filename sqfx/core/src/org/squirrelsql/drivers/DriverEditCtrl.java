@@ -1,5 +1,6 @@
 package org.squirrelsql.drivers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
@@ -65,6 +66,8 @@ public class DriverEditCtrl
       GuiUtils.makeEscapeClosable(parent);
 
       new StageDimensionSaver("driveredit", _dialog.getStage(), _pref, 800, 650, _dialog.getStage().getOwner());
+
+      Platform.runLater(_driverEditView.txtName::requestFocus);
 
       _dialog.getStage().showAndWait();
    }

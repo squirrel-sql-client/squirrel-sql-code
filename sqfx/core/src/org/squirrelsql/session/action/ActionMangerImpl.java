@@ -66,6 +66,9 @@ public class ActionMangerImpl
       for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.SESSION_MENU)
       {
          MenuItem menuItem = new MenuItem(standardActionConfiguration.getActionConfiguration().getText());
+
+         menuItem.setGraphic(standardActionConfiguration.getActionConfiguration().getIcon());
+
          ActionHandle actionHandle = getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
          actionHandle.setMenuItem(menuItem);
          actionHandle.refreshActionUI();
