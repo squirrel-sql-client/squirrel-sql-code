@@ -26,6 +26,10 @@ Thanks to Jaroslaw Jarmolowicz for the patch
 
 Bug fixes:
 
+#618 SQLParam plugin asks for commented variable.
+ Thanks to Michal Stekrt for the patch.
+
+
 Postgres Plugin:
 - Postgres locks table was not displayed.
 Thanks to Jaroslaw Jarmolowicz for the patch
