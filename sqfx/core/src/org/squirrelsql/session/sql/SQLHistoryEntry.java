@@ -66,7 +66,7 @@ public class SQLHistoryEntry
    {
       _sql = sql.trim();
 
-      String buf = _sql.replaceAll("\n", " ");
+      String buf = Utils.removeNewLines(_sql);
 
       int bufLen = buf.length();
       buf = buf.replaceAll("  ", " ");
