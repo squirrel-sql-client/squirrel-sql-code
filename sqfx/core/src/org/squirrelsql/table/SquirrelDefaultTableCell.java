@@ -33,7 +33,7 @@ class SquirrelDefaultTableCell extends TableCell<Object, Object>
       {
          Object item = getItem();
 
-         new CellPopupController(item, event);
+         new CellPopupController(item, event, getTableColumn(), getTableRow());
       }
    }
 

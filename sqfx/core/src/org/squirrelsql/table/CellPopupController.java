@@ -1,6 +1,8 @@
 package org.squirrelsql.table;
 
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
@@ -16,10 +18,10 @@ public class CellPopupController
    private I18n _i18n = new I18n(getClass());
 
 
-   public CellPopupController(Object item, MouseEvent event)
+   public CellPopupController(Object item, MouseEvent event, TableColumn<Object, Object> tableColumn, TableRow tableRow)
    {
       Stage dialog = new Stage();
-      dialog.setTitle(_i18n.t("cellPopupController.title"));
+      dialog.setTitle(_i18n.t("cellPopupController.title", tableColumn.getText(), tableRow.getIndex() + 1));
       dialog.initModality(Modality.NONE);
       dialog.initOwner(AppState.get().getPrimaryStage());
 
