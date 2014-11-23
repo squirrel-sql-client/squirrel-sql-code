@@ -154,7 +154,7 @@ public class Utils
 
    public static String createSqlShortText(String sql, int len)
    {
-      String buf = sql.trim().replaceAll("\n", " ");
+      String buf = removeNewLines(sql.trim());
       String tabText = buf.substring(0, Math.min(len, buf.length()));
 
       if(tabText.length() < buf.length())
@@ -162,5 +162,10 @@ public class Utils
          tabText += " ...";
       }
       return tabText;
+   }
+
+   public static String removeNewLines(String s)
+   {
+      return s.replaceAll("\r\n", " ").replaceAll("\n", " ");
    }
 }
