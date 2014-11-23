@@ -1,7 +1,7 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Bug fix: To long SQLs in result tab and header texts
+Bug fix: Too long SQLs in result tab and header texts
 
 Feature: Cell data popup
 
