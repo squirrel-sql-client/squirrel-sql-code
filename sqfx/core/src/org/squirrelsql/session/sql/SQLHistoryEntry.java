@@ -1,5 +1,7 @@
 package org.squirrelsql.session.sql;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.table.RowObjectTableLoaderColumn;
 
 import java.util.Date;
@@ -10,6 +12,7 @@ public class SQLHistoryEntry
    private String _sql;
    private boolean _new = true;
    private Date _stamp = new Date();
+   private String _displaySql;
 
    public SQLHistoryEntry()
    {
@@ -24,7 +27,7 @@ public class SQLHistoryEntry
    @Override
    public String toString()
    {
-      return _normalizedSql;
+      return _displaySql;
    }
 
    @Override
@@ -47,7 +50,13 @@ public class SQLHistoryEntry
    }
 
 
+   @JsonIgnore
    @RowObjectTableLoaderColumn(columnIndex = 1, columnHeaderI18nKey = "SQLHistoryEntry.col.header.sql")
+   public String getNormalizedSql()
+   {
+      return _normalizedSql;
+   }
+
    public String getSql()
    {
       return _sql;
@@ -57,7 +66,7 @@ public class SQLHistoryEntry
    {
       _sql = sql.trim();
 
-      String buf = _sql.replaceAll("\\n", " ");
+      String buf = _sql.replaceAll("\n", " ");
 
       int bufLen = buf.length();
       buf = buf.replaceAll("  ", " ");
@@ -69,6 +78,8 @@ public class SQLHistoryEntry
       }
 
       _normalizedSql = buf;
+
+      _displaySql = Utils.createSqlShortText(_normalizedSql, 300);
    }
 
    public boolean isNew()

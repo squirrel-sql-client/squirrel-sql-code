@@ -9,16 +9,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.ApplicationCloseListener;
+import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
 
-public class CellPopupController
+public class CellDataPopupController
 {
    private I18n _i18n = new I18n(getClass());
 
 
-   public CellPopupController(Object item, MouseEvent event, TableColumn<Object, Object> tableColumn, TableRow tableRow)
+   public CellDataPopupController(Object item, MouseEvent event, TableColumn<Object, Object> tableColumn, TableRow tableRow)
    {
       Stage dialog = new Stage();
       dialog.setTitle(_i18n.t("cellPopupController.title", tableColumn.getText(), tableRow.getIndex() + 1));
@@ -38,6 +39,9 @@ public class CellPopupController
       event.consume();
 
       AppState.get().addApplicationCloseListener(dialog::close, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME );
+
+      textArea.requestFocus();
+      GuiUtils.makeEscapeClosable(textArea);
 
       dialog.show();
    }

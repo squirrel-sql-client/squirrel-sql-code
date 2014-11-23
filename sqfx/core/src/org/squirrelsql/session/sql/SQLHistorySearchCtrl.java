@@ -80,6 +80,7 @@ public class SQLHistorySearchCtrl
       _dialog.setOnCloseRequest(e -> close());
 
 
+      _view.txtFilter.requestFocus();
 
       _splitPositionSaver.apply(_view.split);
       _dialog.showAndWait();

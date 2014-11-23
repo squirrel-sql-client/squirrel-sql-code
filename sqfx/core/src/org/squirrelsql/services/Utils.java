@@ -151,4 +151,16 @@ public class Utils
    {
       return mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() >= 2;
    }
+
+   public static String createSqlShortText(String sql, int len)
+   {
+      String buf = sql.trim().replaceAll("\n", " ");
+      String tabText = buf.substring(0, Math.min(len, buf.length()));
+
+      if(tabText.length() < buf.length())
+      {
+         tabText += " ...";
+      }
+      return tabText;
+   }
 }

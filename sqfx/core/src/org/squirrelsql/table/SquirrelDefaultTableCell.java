@@ -5,9 +5,6 @@ import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.Utils;
-import org.squirrelsql.table.tableselection.CellItemsWithColumn;
-
-import java.util.List;
 
 
 /**
@@ -33,7 +30,7 @@ class SquirrelDefaultTableCell extends TableCell<Object, Object>
       {
          Object item = getItem();
 
-         new CellPopupController(item, event, getTableColumn(), getTableRow());
+         new CellDataPopupController(item, event, getTableColumn(), getTableRow());
       }
    }
 

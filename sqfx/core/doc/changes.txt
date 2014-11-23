@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: To long SQLs in result tab and header texts
+
+Feature: Cell data popup
+
 Bug fix: Session menu: Fixed missresource for menu item.
 
 Bug fix: Bookmarkedit dialog: Explanation text was partly hidden.

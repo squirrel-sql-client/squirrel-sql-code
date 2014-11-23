@@ -1,8 +1,6 @@
 package org.squirrelsql.session.sql;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.RightMouseMenuHandler;
@@ -14,10 +12,7 @@ import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
-import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
-
-import java.util.List;
 
 public class ResultTabController
 {
@@ -32,14 +27,15 @@ public class ResultTabController
    {
       _session = session;
 
-      String sqlAsTabText = sql.replaceAll("\n", " ");
-      _containerTab = new Tab(sqlAsTabText);
+      String tabText = Utils.createSqlShortText(sql, 50);
 
-      _containerTab.setContent(createContainerPane(sqlResult, sqlAsTabText, sqlCancelTabCtrl));
+      _containerTab = new Tab(tabText);
+
+      _containerTab.setContent(createContainerPane(sqlResult, sql, sqlCancelTabCtrl));
 
    }
 
-   private BorderPane createContainerPane(SQLResult sqlResult, String sqlAsTabText, SQLCancelTabCtrl sqlCancelTabCtrl)
+   private BorderPane createContainerPane(SQLResult sqlResult, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
    {
 
       FxmlHelper<SQLResultHeaderView> headerFxmlHelper = new FxmlHelper(SQLResultHeaderView.class);
@@ -49,17 +45,17 @@ public class ResultTabController
 
       if(sqlResult.isMaxResultsReached())
       {
-         headertext = _i18n.t("outputtab.max.results.reached", sqlResult.getMaxResults(), sqlAsTabText);
+         headertext = _i18n.t("outputtab.max.results.reached", sqlResult.getMaxResults(), Utils.createSqlShortText(sql, 200));
       }
       else
       {
-         headertext = _i18n.t("outputtab.max.results.below", sqlResult.getResultTableLoader().size(), sqlAsTabText);
+         headertext = _i18n.t("outputtab.max.results.below", sqlResult.getResultTableLoader().size(), Utils.createSqlShortText(sql, 200));
       }
 
 
       headerFxmlHelper.getView().lblHeader.setText(headertext);
 
-      _editButtonCtrl = new EditButtonCtrl(_session, sqlAsTabText);
+      _editButtonCtrl = new EditButtonCtrl(_session, sql);
       headerFxmlHelper.getView().resultToolBar.getItems().add(_editButtonCtrl.getEditButton());
 
       BorderPane bp = new BorderPane();
