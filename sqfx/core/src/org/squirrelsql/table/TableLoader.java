@@ -30,7 +30,7 @@ public class TableLoader
          @Override
          public ObservableValue<Object> getCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIndex)
          {
-            return onGetCellValue(row, columnIndex);
+            return interpretValue(row.getValue().get(columnIndex));
          }
       };
    }
@@ -73,23 +73,6 @@ public class TableLoader
 
       ObservableList<List<SimpleObjectProperty>> items = FXCollections.observableList(_simpleObjectPropertyRows);
       tv.setItems(items);
-   }
-
-   private SimpleObjectProperty onGetCellValue(TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object> row, int columnIx)
-   {
-      return getCellValue(columnIx, row.getValue());
-   }
-
-   private SimpleObjectProperty getCellValue(int ix, List<SimpleObjectProperty> row)
-   {
-      if (row.size() > ix)
-      {
-         return interpretValue(row.get(ix));
-      }
-      else
-      {
-         return NULL_PROPERTY;
-      }
    }
 
    private SimpleObjectProperty interpretValue(SimpleObjectProperty simpleObjectProperty)

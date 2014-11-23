@@ -92,15 +92,12 @@ public class DriverEditCtrl
 
    private void onMouseClickedDriverList(MouseEvent mouseEvent)
    {
-      if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
+      if (Utils.isDoubleClick(mouseEvent))
       {
-         if (mouseEvent.getClickCount() == 2)
+         ObservableList selectedItems = _driverEditView.lstDriverClasses.getSelectionModel().getSelectedItems();
+         if (1 == selectedItems.size())
          {
-            ObservableList selectedItems = _driverEditView.lstDriverClasses.getSelectionModel().getSelectedItems();
-            if (1 == selectedItems.size())
-            {
-               onDriverClassSelected((String) selectedItems.get(0));
-            }
+            onDriverClassSelected((String) selectedItems.get(0));
          }
       }
    }

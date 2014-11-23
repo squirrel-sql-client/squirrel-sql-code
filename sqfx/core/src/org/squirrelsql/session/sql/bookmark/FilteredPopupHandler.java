@@ -15,6 +15,7 @@ import javafx.stage.Popup;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.completion.CompletionUtil;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.workaround.KeyMatchWA;
@@ -141,7 +142,7 @@ public class FilteredPopupHandler
 
    private  void onMouseClickedList(MouseEvent event, ListView<Bookmark> listView, Popup popup, SQLTextAreaServices sqlTextAreaServices)
    {
-      if(event.getClickCount() >= 2)
+      if(Utils.isDoubleClick(event))
       {
          runSelectedListItem(listView, popup, sqlTextAreaServices);
       }

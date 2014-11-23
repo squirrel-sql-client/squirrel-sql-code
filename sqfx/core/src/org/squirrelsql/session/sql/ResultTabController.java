@@ -1,17 +1,23 @@
 package org.squirrelsql.session.sql;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.squirrelsql.RightMouseMenuHandler;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.copysqlpart.InStatCreator;
 import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
+import org.squirrelsql.table.tableselection.CellItemsWithColumn;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
+
+import java.util.List;
 
 public class ResultTabController
 {
@@ -112,8 +118,6 @@ public class ResultTabController
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, true));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InStatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInsertStat"),() -> InsertStatCreator.onCopyAsInsertStat(_extendedTableSelectionHandler));
-
-
 
       if (_editButtonCtrl.allowsEditing())
       {

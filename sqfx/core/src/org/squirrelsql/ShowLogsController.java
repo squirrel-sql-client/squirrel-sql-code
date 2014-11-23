@@ -87,7 +87,7 @@ public class ShowLogsController
 
       AppState.get().addApplicationCloseListener(_dialog::close, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME );
 
-      _dialog.showAndWait();
+      _dialog.show();
 
    }
 

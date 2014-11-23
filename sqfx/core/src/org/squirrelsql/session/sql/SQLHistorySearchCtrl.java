@@ -87,7 +87,7 @@ public class SQLHistorySearchCtrl
 
    private void onTblHistoryClicked(MouseEvent e)
    {
-      if( 1 < e.getClickCount())
+      if(Utils.isDoubleClick(e))
       {
          for (SQLHistoryEntry sqlHistoryEntry : getSelectedRowObjects())
          {

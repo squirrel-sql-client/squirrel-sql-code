@@ -36,7 +36,6 @@ public class ColumnHandle
       _tableColumn.setId("" + columnIndex);
 
 
-      _originalCellFactory = _tableColumn.getCellFactory();
 
 
       if(0 < selectableValues.size())
@@ -52,6 +51,13 @@ public class ColumnHandle
 
          _tableColumn.setEditable(true);
       }
+      else
+      {
+         _tableColumn.setCellFactory(param -> new SquirrelDefaultTableCell());
+      }
+
+      _originalCellFactory = _tableColumn.getCellFactory();
+
 
 
       _tableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<SimpleObjectProperty>, Object>, ObservableValue<Object>>()
@@ -109,4 +115,5 @@ public class ColumnHandle
    {
       return _resultColumnInfo;
    }
+
 }

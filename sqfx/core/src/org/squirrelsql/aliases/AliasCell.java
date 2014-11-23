@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.squirrelsql.aliases.channel.AliasTreeNodeChannel;
 import org.squirrelsql.aliases.dnd.DndDragPositionMarker;
+import org.squirrelsql.services.Utils;
 
 public class AliasCell extends TreeCell<AliasTreeNode>
 {
@@ -44,7 +45,7 @@ public class AliasCell extends TreeCell<AliasTreeNode>
 
    private void onMouseClicked(MouseEvent mouseEvent)
    {
-      if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2)
+      if (Utils.isDoubleClick(mouseEvent))
       {
          TreeItem<AliasTreeNode> selectedItem = getTreeItem();
 

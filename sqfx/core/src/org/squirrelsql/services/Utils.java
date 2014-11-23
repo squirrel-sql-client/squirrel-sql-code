@@ -10,6 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -143,5 +145,10 @@ public class Utils
 
       SwingUtilities.invokeLater(wrapper);
 
+   }
+
+   public static boolean isDoubleClick(MouseEvent mouseEvent)
+   {
+      return mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() >= 2;
    }
 }

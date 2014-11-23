@@ -170,7 +170,7 @@ public class CompletionCtrl
 
    private void onMouseClickedList(MouseEvent event, Popup pp, ListView<CompletionCandidate> listView)
    {
-      if(event.getClickCount() >= 2)
+      if(Utils.isDoubleClick(event))
       {
          finishCompletion(pp, listView, false);
       }
