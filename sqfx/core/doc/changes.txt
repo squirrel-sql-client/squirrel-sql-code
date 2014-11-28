@@ -1,5 +1,6 @@
 SQuirreL SQL FX Change Log
 ==============================
+Feature: Right click menu in SQL results displays an export option. Ability to export SQL results as xls or xlsx file. 
 
 Bug fix: Too long SQLs in result tab and header texts
 
