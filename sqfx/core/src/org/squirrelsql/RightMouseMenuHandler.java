@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -52,4 +53,8 @@ public class RightMouseMenuHandler
 
       _contextMenu.getItems().add(menuItem);
    }
+   
+   public void addSeparator(){
+	   _contextMenu.getItems().add(new SeparatorMenuItem());
+   }   
 }

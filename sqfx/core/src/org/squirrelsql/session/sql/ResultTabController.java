@@ -13,6 +13,7 @@ import org.squirrelsql.session.sql.copysqlpart.InsertStatCreator;
 import org.squirrelsql.session.sql.makeeditable.EditButtonCtrl;
 import org.squirrelsql.table.*;
 import org.squirrelsql.table.tableselection.ExtendedTableSelectionHandler;
+import org.squirrelsql.table.tableexport.*;
 
 public class ResultTabController
 {
@@ -107,13 +108,14 @@ public class ResultTabController
       tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
       _extendedTableSelectionHandler = new ExtendedTableSelectionHandler(tv);
 
-
       RightMouseMenuHandler sqlResultRightMouseMenuHandler = new RightMouseMenuHandler(tv);
 
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.Copy"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, false));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyWithHeader"), () -> CopyUtil.copyCells(_extendedTableSelectionHandler, true));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInStat"),() -> InStatCreator.onCopyAsInStat(_extendedTableSelectionHandler));
       sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.CopyAsInsertStat"),() -> InsertStatCreator.onCopyAsInsertStat(_extendedTableSelectionHandler));
+      sqlResultRightMouseMenuHandler.addSeparator();
+      sqlResultRightMouseMenuHandler.addMenu(new I18n(getClass()).t("sqlresult.popup.ExportResults"),() -> new ExportResultsCtrl(tableLoader));
 
       if (_editButtonCtrl.allowsEditing())
       {
