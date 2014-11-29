@@ -1,8 +1,12 @@
 package org.squirrelsql.table.tableexport;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Types;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,10 +14,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.TableLoader;
@@ -23,40 +24,14 @@ public class ExcelService extends Service<Void> {
 	private Workbook _workbook;
 	private FileOutputStream _outputFile;
 	private FileTypeEnum _fileTypeEnum;
-	private String _outputPath;
-	private String _fileName;
 	private TableLoader _tableLoader;
+	private File _file;
 
-	public FileTypeEnum get_fileTypeEnum() {
-		return _fileTypeEnum;
-	}
-
-	public void set_fileTypeEnum(FileTypeEnum _fileTypeEnum) {
-		this._fileTypeEnum = _fileTypeEnum;
-	}
-
-	public String get_outputPath() {
-		return _outputPath;
-	}
-
-	public void set_outputPath(String _outputPath) {
-		this._outputPath = _outputPath;
-	}
-
-	public String get_fileName() {
-		return _fileName;
-	}
-
-	public void set_fileName(String _fileName) {
-		this._fileName = _fileName;
-	}
-
-	public TableLoader get_tableLoader() {
-		return _tableLoader;
-	}
-
-	public void set_tableLoader(TableLoader _tableLoader) {
-		this._tableLoader = _tableLoader;
+	public ExcelService(File file, FileTypeEnum fileTypeEnum, TableLoader tableLoader)
+	{
+		_file = file;
+		_fileTypeEnum = fileTypeEnum;
+		_tableLoader = tableLoader;
 	}
 
 	@Override
@@ -64,6 +39,11 @@ public class ExcelService extends Service<Void> {
 		return new Task<Void>() {
 			@Override
 			protected Void call() {
+				return executeTask();
+			}
+
+			private Void executeTask()
+			{
 				if (_fileTypeEnum == FileTypeEnum.EXPORT_FORMAT_XLSX) {
 					_workbook = new SXSSFWorkbook(100);
 				} else if (_fileTypeEnum == FileTypeEnum.EXPORT_FORMAT_XLS) {
@@ -78,24 +58,27 @@ public class ExcelService extends Service<Void> {
 					Cell cell = columnRow.createCell(cellNum);
 					cell.setCellValue(columns.get(cellNum).getHeader());
 				}
+
+				int cellsDone = 0;
 				for (int rowNum = 0; rowNum < rows.size(); rowNum++) {
 					Row row = sh.createRow(rowNum + 1);
 					for (int cellNum = 0; cellNum < rows.get(rowNum).size(); cellNum++) {
-						updateProgress(((cellNum + 1) * rowNum) / totalCells,totalCells);
-						Cell cell = row.createCell(cellNum);
-						cell.setCellValue(rows.get(rowNum).get(cellNum).getValue().toString());
+						//System.out.println("############# " + (((cellNum + 1) * rowNum) ) + " #### "  + totalCells);
+						updateProgress(++cellsDone, totalCells);
+						createCell(rows, rowNum, row, cellNum);
 					}
 				}
+
 				try {
-					_outputFile = new FileOutputStream(_outputPath + "\\" + _fileName + _fileTypeEnum.getFileExtension());
+					_outputFile = new FileOutputStream(_file);
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 				try {
 					_workbook.write(_outputFile);
 					_outputFile.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 				if (_fileTypeEnum == FileTypeEnum.EXPORT_FORMAT_XLSX) {
 					((SXSSFWorkbook) _workbook).dispose();
@@ -105,53 +88,122 @@ public class ExcelService extends Service<Void> {
 		};
 	}
 
-	@Deprecated
-	public Task<Void> excelWriteTask(TableLoader tableLoader,
-			FileTypeEnum fileType, String outputPath, String fileName) {
-		return new Task<Void>() {
-			public Void call() {
-				if (fileType == FileTypeEnum.EXPORT_FORMAT_XLSX) {
-					_workbook = new SXSSFWorkbook(100);
-				} else if (fileType == FileTypeEnum.EXPORT_FORMAT_XLS) {
-					_workbook = new HSSFWorkbook();
+	private void createCell(List<List<SimpleObjectProperty>> rows, int rowNum, Row row, int colNum)
+	{
+		Cell retVal = row.createCell(colNum);
+		Object cellObj = rows.get(rowNum).get(colNum).getValue();
+		//retVal.setCellValue("" + cellObj);
+
+
+		if (null == cellObj || null == _tableLoader.getColumnHandles().get(colNum).getResultColumnInfo())
+		{
+			retVal.setCellValue(getDataXLSAsString(cellObj));
+		}
+
+		int colType = _tableLoader.getColumnHandles().get(colNum).getResultColumnInfo().getColType();
+
+		switch (colType)
+		{
+			case Types.BIT:
+			case Types.BOOLEAN:
+				if (null == cellObj)
+				{
+					//retVal.setCellValue((Boolean)null);
 				}
-				List<ColumnHandle> columns = tableLoader.getColumnHandles();
-				List<List<SimpleObjectProperty>> rows = tableLoader
-						.getSimpleObjectPropertyRows();
-				Long totalCells = (long) (columns.size() * rows.size());
-				Sheet sh = _workbook.createSheet();
-				Row columnRow = sh.createRow(0);
-				for (int cellNum = 0; cellNum < columns.size(); cellNum++) {
-					Cell cell = columnRow.createCell(cellNum);
-					cell.setCellValue(columns.get(cellNum).getHeader());
+				else
+				{
+					retVal.setCellValue((Boolean) cellObj);
 				}
-				for (int rowNum = 0; rowNum < rows.size(); rowNum++) {
-					Row row = sh.createRow(rowNum + 1);
-					for (int cellNum = 0; cellNum < rows.get(rowNum).size(); cellNum++) {
-						updateProgress(((cellNum + 1) * rowNum) / totalCells,
-								totalCells);
-						Cell cell = row.createCell(cellNum);
-						cell.setCellValue(rows.get(rowNum).get(cellNum)
-								.getValue().toString());
-					}
+				break;
+			case Types.INTEGER:
+				if (null == cellObj)
+				{
+					//retVal.setCellValue((Integer)null);
 				}
-				try {
-					_outputFile = new FileOutputStream(outputPath + "\\"
-							+ fileName + fileType.getFileExtension());
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+				else
+				{
+					retVal.setCellValue(((Number) cellObj).intValue());
 				}
-				try {
-					_workbook.write(_outputFile);
-					_outputFile.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+				break;
+			case Types.SMALLINT:
+			case Types.TINYINT:
+				if (null == cellObj)
+				{
+					//retVal.setCellValue(((Short) null));
 				}
-				if (fileType == FileTypeEnum.EXPORT_FORMAT_XLSX) {
-					((SXSSFWorkbook) _workbook).dispose();
+				else
+				{
+					retVal.setCellValue(((Number) cellObj).shortValue());
 				}
-				return null;
-			}
-		};
+				break;
+			case Types.NUMERIC:
+			case Types.DECIMAL:
+			case Types.FLOAT:
+			case Types.DOUBLE:
+			case Types.REAL:
+				if (null == cellObj)
+				{
+					//retVal.setCellValue((Double) null);
+				}
+				else
+				{
+					retVal.setCellValue(((Number) cellObj).doubleValue());
+				}
+				break;
+			case Types.BIGINT:
+				if (null == cellObj)
+				{
+					//retVal.setCellValue((Long)null);
+				}
+				else
+				{
+					retVal.setCellValue(Long.parseLong(cellObj.toString()));
+				}
+				break;
+			case Types.DATE:
+				makeTemporalCell(retVal, (Date) cellObj, "m/d/yy");
+				break;
+			case Types.TIMESTAMP:
+				makeTemporalCell(retVal, (Date) cellObj, "m/d/yy h:mm");
+				break;
+			case Types.TIME:
+				makeTemporalCell(retVal, (Date) cellObj, "h:mm");
+				break;
+			case Types.CHAR:
+			case Types.VARCHAR:
+			case Types.LONGVARCHAR:
+				//cellObj = CellComponentFactory.renderObject(cellObj, colDef);
+				retVal.setCellValue(getDataXLSAsString(cellObj));
+				break;
+			default:
+				//cellObj = CellComponentFactory.renderObject(cellObj, colDef);
+				retVal.setCellValue(getDataXLSAsString(cellObj));
+		}
 	}
+
+	private void makeTemporalCell(Cell retVal, Date cellObj, String format)
+	{
+		CreationHelper creationHelper = _workbook.getCreationHelper();
+		CellStyle cellStyle = _workbook.createCellStyle();
+		cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat(format));
+		retVal.setCellStyle(cellStyle);
+
+		if (null != cellObj)
+		{
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(cellObj);
+			retVal.setCellValue(calendar);
+		}
+	}
+
+
+	private String getDataXLSAsString(Object cellObj) {
+		if (cellObj == null) {
+			return "";
+		} else {
+			return cellObj.toString().trim();
+		}
+	}
+
+
 }

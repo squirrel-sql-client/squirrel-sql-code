@@ -13,7 +13,7 @@ public class ExportResultsView
 	@FXML Label lblExportTo;
 	@FXML TextField exportTo;
 	@FXML Button browseFile;
-	@FXML Button exportOK;
+	@FXML Button export;
 	@FXML Button exportCancel;
 	@FXML Label lblFileName;
 	@FXML TextField fileName;
