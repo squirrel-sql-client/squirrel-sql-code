@@ -89,6 +89,8 @@ public class ExportResultsCtrl {
 		String lastExportFileName = _pref.getString(PREF_LAST_EXPORT_FILE_NAME, null);
 		_exportResultsView.fileName.setText(lastExportFileName);
 
+		new StageDimensionSaver("resultExport", _dialog, _pref, 500, 350, AppState.get().getPrimaryStage());
+
 		_dialog.showAndWait();
 	}
 
