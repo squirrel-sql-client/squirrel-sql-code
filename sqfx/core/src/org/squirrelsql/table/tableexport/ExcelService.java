@@ -63,9 +63,15 @@ public class ExcelService extends Service<Void> {
 				for (int rowNum = 0; rowNum < rows.size(); rowNum++) {
 					Row row = sh.createRow(rowNum + 1);
 					for (int cellNum = 0; cellNum < rows.get(rowNum).size(); cellNum++) {
-						//System.out.println("############# " + (((cellNum + 1) * rowNum) ) + " #### "  + totalCells);
 						updateProgress(++cellsDone, totalCells);
 						createCell(rows, rowNum, row, cellNum);
+
+						if(isCancelled())
+						{
+							//System.out.println("ExcelService.executeTask CANCELED");
+							return null;
+						}
+
 					}
 				}
 

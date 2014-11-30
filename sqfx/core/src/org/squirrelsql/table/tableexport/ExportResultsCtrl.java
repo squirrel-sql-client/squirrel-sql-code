@@ -1,8 +1,5 @@
 package org.squirrelsql.table.tableexport;
 
-import java.io.File;
-import java.io.IOException;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,16 +12,16 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.poi.util.StringUtil;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 import org.squirrelsql.table.TableLoader;
 
-import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class ExportResultsCtrl {
 
@@ -37,6 +34,7 @@ public class ExportResultsCtrl {
 	private final Stage _dialog;
 	private I18n _i18n = new I18n(this.getClass());
 	private Pref _pref = new Pref(getClass());
+	private ExcelService _currentExcelService;
 
 	public ExportResultsCtrl(TableLoader tableLoader) {
 		FxmlHelper<ExportResultsView> fxmlHelper = new FxmlHelper<>(ExportResultsView.class);
@@ -58,7 +56,7 @@ public class ExportResultsCtrl {
 		_exportResultsView.browseCommand.setOnAction(e -> onFindExecuteCommand());
 
 		_exportResultsView.export.setOnAction(e -> onExportResults(tableLoader));
-		_exportResultsView.exportCancel.setOnAction((e) -> _dialog.close());
+		_exportResultsView.exportCancel.setOnAction((e) -> onCancelOrClose());
 
 		_exportResultsView.commandToExecute.setText(_pref.getString(PREF_EXECUTE_COMMAND_STRING, null));
 
@@ -92,6 +90,16 @@ public class ExportResultsCtrl {
 		_exportResultsView.fileName.setText(lastExportFileName);
 
 		_dialog.showAndWait();
+	}
+
+	private void onCancelOrClose()
+	{
+		if(null != _currentExcelService)
+		{
+			_currentExcelService.cancel();
+		}
+
+		_dialog.close();
 	}
 
 	private void onExecuteCommandChanged()
@@ -194,17 +202,17 @@ public class ExportResultsCtrl {
 			fileTypeEnum = FileTypeEnum.EXPORT_FORMAT_XLS;
 		}
 
-		ExcelService es = new ExcelService(file, fileTypeEnum, tableLoader);
-		es.stateProperty().addListener(new ChangeListener<Worker.State>() {
+		_currentExcelService = new ExcelService(file, fileTypeEnum, tableLoader);
+		_currentExcelService.stateProperty().addListener(new ChangeListener<Worker.State>() {
 			@Override
 			public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State oldState, Worker.State newState){
-				onServiceStateChanged(newState, es);
+				onServiceStateChanged(newState, _currentExcelService);
 			}
 		});
 
 		_exportResultsView.exportCancel.setText(_i18n.t("export.button.cancel"));
 
-		es.start();
+		_currentExcelService.start();
 		
 //		Task<Void> task = es.excelWriteTask(tableLoader, _fileTypeEnum, _exportResultsView.exportTo.getText(), _exportResultsView.fileName.getText());
 //		_exportResultsView.exportProgressIndicator.progressProperty().bind(task.progressProperty());
@@ -244,21 +252,41 @@ public class ExportResultsCtrl {
 
 		if (null != command)
 		{
-			executeCommand(command);
+			try
+         {
+            Runtime.getRuntime().exec(command);
+            //FXMessageBox.showInfoOk(_dialog, _i18n.t("commandExecutedSuccesfully", command));
+				_dialog.close();
+         }
+         catch (IOException e)
+         {
+            FXMessageBox.showInfoError(_dialog, _i18n.t("failedToExecCommand", command, e.getMessage()));
+            new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).error("Failed to execute command: " + command, e);
+         }
+		}
+		else
+		{
+			String s = FXMessageBox.showYesNo(_dialog, _i18n.t("successCreatingExport", exportFile.getAbsolutePath()));
+
+			if(FXMessageBox.YES.equals(s))
+			{
+				Utils.runOnSwingEDT(() -> onOpenExportDir(exportFile));
+			}
+			_dialog.close();
 		}
 	}
 
-	private void executeCommand(String command)
+	private void onOpenExportDir(File exportFile)
 	{
 		try
 		{
-			Runtime.getRuntime().exec(command);
-			FXMessageBox.showInfoOk(_dialog, _i18n.t("commandExecutedSuccesfully", command));
+			Desktop desktop = Desktop.getDesktop();
+			desktop.open(new File(exportFile.getParent()));
 		}
 		catch (IOException e)
 		{
-			FXMessageBox.showInfoError(_dialog, _i18n.t("failedToExecCommand", command, e.getMessage()));
-			new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).error("Failed to execute command: " + command, e);
+			throw new RuntimeException(e);
+
 		}
 	}
 
