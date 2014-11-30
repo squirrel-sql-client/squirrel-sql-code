@@ -4,21 +4,24 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="271.0" prefWidth="526.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.table.tableexport.ExportResultsView">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="323.0" prefWidth="582.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.table.tableexport.ExportResultsView">
    <children>
-      <Label id="lblExportTo" fx:id="lblExportTo" layoutX="38.0" layoutY="15.0" text="%export.label.exportto" AnchorPane.leftAnchor="38.0" />
-      <TextField id="exportTo" fx:id="exportTo" layoutX="114.0" layoutY="11.0" prefHeight="25.0" prefWidth="317.0" />
-      <Button id="browseFile" fx:id="browseFile" layoutX="446.0" layoutY="11.0" text="%export.button.browse" />
-      <Label id="lblFileName" fx:id="lblFileName" layoutX="37.0" layoutY="55.0" text="%export.label.filename" />
-      <TextField id="fileName" fx:id="fileName" layoutX="114.0" layoutY="51.0" prefHeight="25.0" prefWidth="317.0" />
-      <Label id="lblExportAs" fx:id="lblExportAs" layoutX="39.0" layoutY="111.0" text="%export.label.exportas" />
-      <RadioButton id="excelXLSX" fx:id="excelXLSX" layoutX="114.0" layoutY="94.0" text="%export.option.excelxlsx">
+      <Label id="lblExportTo" fx:id="lblExportTo" layoutX="15.0" layoutY="14.0" text="%export.label.exportto" AnchorPane.leftAnchor="15.0" />
+      <TextField id="exportTo" fx:id="exportTo" layoutX="87.0" layoutY="11.0" prefHeight="25.0" prefWidth="344.0" AnchorPane.leftAnchor="87.0" AnchorPane.rightAnchor="49.0" />
+      <Button id="browseFile" fx:id="browseExportDir" layoutX="446.0" layoutY="11.0" prefHeight="25.0" prefWidth="27.0" AnchorPane.rightAnchor="14.0" />
+      <Label id="lblFileName" fx:id="lblFileName" layoutX="14.0" layoutY="54.0" text="%export.label.filename" />
+      <TextField id="fileName" fx:id="fileName" layoutX="87.0" layoutY="51.0" prefHeight="25.0" prefWidth="344.0" AnchorPane.leftAnchor="87.0" AnchorPane.rightAnchor="49.0" />
+      <Label id="lblExportAs" fx:id="lblExportAs" layoutX="16.0" layoutY="110.0" text="%export.label.exportas" />
+      <RadioButton id="excelXLSX" fx:id="excelXLSX" layoutX="87.0" layoutY="92.0" text="%export.option.excelxlsx">
          <toggleGroup>
             <ToggleGroup fx:id="exportAs" />
          </toggleGroup></RadioButton>
-      <RadioButton id="excelXLS" fx:id="excelXLS" layoutX="114.0" layoutY="128.0" text="%export.option.excelxls" toggleGroup="$exportAs" />
-      <Button id="exportOK" fx:id="export" layoutX="114.0" layoutY="165.0" text="%export.button.export" />
-      <Button id="exportCancel" fx:id="exportCancel" cancelButton="true" layoutX="195.0" layoutY="165.0" text="%export.button.cancel" />
-      <ProgressIndicator id="exportProgressIndicator" fx:id="exportProgressIndicator" layoutX="273.0" layoutY="167.0" progress="0.0" />      
+      <RadioButton id="excelXLS" fx:id="excelXLS" layoutX="87.0" layoutY="126.0" text="%export.option.excelxls" toggleGroup="$exportAs" />
+      <Button id="exportOK" fx:id="export" layoutX="87.0" layoutY="263.0" text="%export.button.export" />
+      <Button id="exportCancel" fx:id="exportCancel" cancelButton="true" layoutX="168.0" layoutY="263.0" text="%close" />
+      <ProgressIndicator id="exportProgressIndicator" fx:id="exportProgressIndicator" layoutX="246.0" layoutY="265.0" progress="0.0" />
+      <CheckBox fx:id="checkExecuteCommand" layoutX="87.0" layoutY="183.0" mnemonicParsing="false" text="%checkExecuteCommand" />
+      <TextField fx:id="commandToExecute" layoutX="83.0" layoutY="210.0" prefHeight="25.0" AnchorPane.leftAnchor="87.0" AnchorPane.rightAnchor="49.0" />
+      <Button fx:id="browseCommand" layoutX="439.0" layoutY="210.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="27.0" AnchorPane.rightAnchor="14.0" />
    </children>
 </AnchorPane>

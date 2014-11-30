@@ -206,4 +206,8 @@ public class ExcelService extends Service<Void> {
 	}
 
 
+	public File getExportFile()
+	{
+		return _file;
+	}
 }

@@ -46,6 +46,11 @@ public class FXMessageBox
       showMessageBox(parent, Icon.ICON_INFORMATION, TITLE_TEXT_INFORMATION, msg, 0, Option.createStringOnly(OK));
    }
 
+   public static void showInfoError(Window parent, String msg)
+   {
+      showMessageBox(parent, Icon.ICON_ERROR, TITLE_TEXT_INFORMATION, msg, 0, Option.createStringOnly(OK));
+   }
+
    public static String showYesNo(Window parent, String msg)
    {
       return showMessageBox(parent, Icon.ICON_QUESTION, new I18n(FXMessageBox.class).t("FXMessageBox.Question"), msg, 0, Option.createStringOnly(YES, NO));
