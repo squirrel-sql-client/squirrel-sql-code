@@ -1,6 +1,11 @@
 SQuirreL SQL FX Change Log
 ==============================
-Feature: Right click menu in SQL results displays an export option. Ability to export SQL results as xls or xlsx file. 
+
+Bug fix: Two fixes concerning Excel export of SQL results:
+         1. Excel export did break at first run when no command was edited.
+         2. On Windows when using a command the path to the exported file was not well formed.
+
+Feature: Right click menu in SQL results displays an export option. Ability to export SQL results as xls or xlsx file.
 
 Bug fix: Too long SQLs in result tab and header texts
 

@@ -194,7 +194,10 @@ public class ExportResultsCtrl {
 			_pref.set(PREF_LAST_EXPORT_TYPE, FileTypeEnum.EXPORT_FORMAT_XLS.name());
 		}
 
-		_pref.set(PREF_EXECUTE_COMMAND_STRING, _exportResultsView.commandToExecute.getText());
+		if (false == Utils.isEmptyString(_exportResultsView.commandToExecute.getText()))
+		{
+			_pref.set(PREF_EXECUTE_COMMAND_STRING, _exportResultsView.commandToExecute.getText());
+		}
 
 		_exportResultsView.export.setDisable(true);
 
@@ -305,7 +308,15 @@ public class ExportResultsCtrl {
 				return null;
 			}
 
-			return commandPattern.replaceAll("%file", exportFile.getAbsolutePath());
+			// Copied from Java Doc Matcher.replaceAll:
+			//
+			// Note that backslashes (\) and dollar signs ($) in the replacement string
+			// may cause the results to be different than if it
+			// were being treated as a literal replacement string.
+			// Dollar signs may be treated as references to
+			// captured subsequences as described above, and
+			// backslashes are used to escape literal characters in the replacement string.
+			return commandPattern.replaceAll("%file", exportFile.getAbsolutePath().replaceAll("\\\\", "\\\\\\\\"));
 		}
 		else
 		{
