@@ -20,6 +20,8 @@ public class EditableSqlCheck
    private String getTableFromSQLIntern(String sql)
    {
 
+      String sqlInOriginalCase = sql.trim();
+
       Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s]*\\s+FROM\\s+([A-Z0-9_\\.]+)");
       sql = sql.toUpperCase().trim();
       // Bug 1371587 - remove useless accent characters if they exist
@@ -31,7 +33,19 @@ public class EditableSqlCheck
       {
          return null;
       }
-      String table = matcher.group(1);
+
+      String table;
+      if(sqlInOriginalCase.length() == sql.length())
+      {
+         // If possible we keep the original case for datadase systems that are case sensitive like MySQL in some situations.
+         table = sqlInOriginalCase.substring(matcher.start(1), matcher.end(1));
+      }
+      else
+      {
+         table = matcher.group(1);
+      }
+
+
       String behindTable = sql.substring(matcher.end(1)).trim();
 
       int ret = behindTableAllowsEditing(behindTable);

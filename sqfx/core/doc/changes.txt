@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Bug fix: Editing SQL results didn't work for case sensitive database systems, e.g. MySQL in some cases.
+
 Bug fix: Two fixes concerning Excel export of SQL results:
          1. Excel export did break at first run when no command was edited.
          2. On Windows when using a command the path to the exported file was not well formed.
