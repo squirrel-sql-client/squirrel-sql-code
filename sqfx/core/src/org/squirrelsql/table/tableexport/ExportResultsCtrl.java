@@ -58,7 +58,7 @@ public class ExportResultsCtrl {
 		_exportResultsView.export.setOnAction(e -> onExportResults(tableLoader));
 		_exportResultsView.exportCancel.setOnAction((e) -> onCancelOrClose());
 
-		_exportResultsView.commandToExecute.setText(_pref.getString(PREF_EXECUTE_COMMAND_STRING, null));
+		_exportResultsView.commandToExecute.setText(_pref.getString(PREF_EXECUTE_COMMAND_STRING, ""));
 
 		_exportResultsView.checkExecuteCommand.setSelected(_pref.getBoolean(PREF_SHOULD_EXECUTE_COMMAND, false));
 
@@ -194,10 +194,10 @@ public class ExportResultsCtrl {
 			_pref.set(PREF_LAST_EXPORT_TYPE, FileTypeEnum.EXPORT_FORMAT_XLS.name());
 		}
 
-		if (false == Utils.isEmptyString(_exportResultsView.commandToExecute.getText()))
-		{
-			_pref.set(PREF_EXECUTE_COMMAND_STRING, _exportResultsView.commandToExecute.getText());
-		}
+		//if (false == Utils.isEmptyString(_exportResultsView.commandToExecute.getText()))
+		//{
+		_pref.set(PREF_EXECUTE_COMMAND_STRING, _exportResultsView.commandToExecute.getText());
+		//}
 
 		_exportResultsView.export.setDisable(true);
 
