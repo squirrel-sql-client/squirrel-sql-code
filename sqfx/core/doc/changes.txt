@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Editable cell data popup when SQL result ist being edited.
+
 Bug fix: Editing SQL results didn't work for case sensitive database systems, e.g. MySQL in some cases.
 
 Bug fix: Two fixes concerning Excel export of SQL results:

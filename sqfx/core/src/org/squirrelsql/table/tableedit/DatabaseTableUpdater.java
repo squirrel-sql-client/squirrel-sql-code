@@ -1,7 +1,6 @@
 package org.squirrelsql.table.tableedit;
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.TableColumn;
 import org.squirrelsql.AppState;
 import org.squirrelsql.ExceptionHandler;
 import org.squirrelsql.services.FXMessageBox;
@@ -14,25 +13,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 public class DatabaseTableUpdater
 {
-   public static DatabaseTableUpdateResult updateDatabase(Session session, SQLResult sqlResult, String userEnteredString, TableColumn.CellEditEvent event, String tableNameFromSQL)
+   public static DatabaseTableUpdateResult updateDatabase(Session session, SQLResult sqlResult, String userEnteredString, SquirrelTableEditData tableEditData, String tableNameFromSQL)
    {
       I18n i18n = new I18n(DatabaseTableUpdater.class);
 
-      List row = (List) event.getRowValue();
+      List row = tableEditData.getRowValue();
 
       SQLResultMetaDataFacade sqlResultMetaDataFacade = new SQLResultMetaDataFacade(sqlResult.getResultMetaDataTableLoader());
 
       ArrayList<PrepStatParam> updSqlParams = new ArrayList();
       ArrayList<PrepStatParam> selSqlParams = new ArrayList();
 
-      int editColIx = event.getTablePosition().getColumn();
+      int editColIx = tableEditData.getTablePosition().getColumn();
       String updateSql =
             "UPDATE " + tableNameFromSQL +
             " SET " + sqlResultMetaDataFacade.getColumnNameAt(editColIx) + " = ? ";
@@ -85,7 +83,7 @@ public class DatabaseTableUpdater
 
          if(i == editColIx)
          {
-            whereVal = event.getOldValue();
+            whereVal = tableEditData.getOldValue();
          }
          else
          {

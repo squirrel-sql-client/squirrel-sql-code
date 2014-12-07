@@ -3,14 +3,11 @@ package org.squirrelsql.table.tableedit;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLResult;
 import org.squirrelsql.table.ColumnHandle;
 import org.squirrelsql.table.NullMarker;
-import org.squirrelsql.table.TableLoader;
 
 public class EdittableTableController
 {
@@ -34,33 +31,35 @@ public class EdittableTableController
    {
       for (ColumnHandle columnHandle : _sqlResult.getResultTableLoader().getColumnHandles())
       {
-         columnHandle.getTableColumn().setOnEditCommit( e-> onEditCommit((TableColumn.CellEditEvent)e));
+         columnHandle.getTableColumn().setOnEditCommit( e-> onEditCommit(new SquirrelTableEditData((TableColumn.CellEditEvent)e)));
       }
    }
 
-   private void onEditCommit(TableColumn.CellEditEvent event)
+   private DatabaseTableUpdateResult onEditCommit(SquirrelTableEditData tableEditData)
    {
-      String userEnteredString = (String) event.getNewValue();
+      String userEnteredString = tableEditData.getNewValue();
 
-      System.out.println("Edit: New=" + userEnteredString + ", Old=" + event.getOldValue());
+      System.out.println("Edit: New=" + userEnteredString + ", Old=" + tableEditData.getOldValue());
 
-      DatabaseTableUpdateResult res = DatabaseTableUpdater.updateDatabase(_session, _sqlResult, userEnteredString, event, _tableNameFromSQL);
+      DatabaseTableUpdateResult res = DatabaseTableUpdater.updateDatabase(_session, _sqlResult, userEnteredString, tableEditData, _tableNameFromSQL);
       if (res.success())
       {
-         _sqlResult.getResultTableLoader().writeValue(res.getInterpretedNewValue(), event.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(res.getInterpretedNewValue(), tableEditData.getTablePosition());
       }
       else
       {
-         Object oldValue = event.getOldValue();
+         Object oldValue = tableEditData.getOldValue();
 
          ////////////////////////////////////////////////////////////////////////////////////////
          // This way definitely trigger the UI update back to the old value
-         _sqlResult.getResultTableLoader().writeValue(null, event.getTablePosition());
-         _sqlResult.getResultTableLoader().writeValue(new NullMarker(), event.getTablePosition());
-         _sqlResult.getResultTableLoader().writeValue(oldValue, event.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(null, tableEditData.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(new NullMarker(), tableEditData.getTablePosition());
+         _sqlResult.getResultTableLoader().writeValue(oldValue, tableEditData.getTablePosition());
          //
          ////////////////////////////////////////////////////////////////////////////////////////
       }
+
+      return res;
    }
 
    public void setEditable(boolean b)
@@ -84,20 +83,7 @@ public class EdittableTableController
                @Override
                public TableCell call(TableColumn param)
                {
-                  return new TextFieldTableCell(new StringConverter()
-                  {
-                     @Override
-                     public String toString(Object object)
-                     {
-                        return "" + object;
-                     }
-
-                     @Override
-                     public Object fromString(String string)
-                     {
-                        return string;
-                     }
-                  });
+                  return new SquirrelTextFieldTableCell(squirrelTableEditData -> onEditCommit(squirrelTableEditData));
                }
             };
    }

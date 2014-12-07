@@ -3,6 +3,7 @@ package org.squirrelsql.table;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.TablePosition;
 import javafx.scene.input.MouseEvent;
 import org.squirrelsql.services.Utils;
 
@@ -30,7 +31,9 @@ class SquirrelDefaultTableCell extends TableCell<Object, Object>
       {
          Object item = getItem();
 
-         new CellDataPopupController(item, event, getTableColumn(), getTableRow());
+         TablePosition tp = new TablePosition(getTableView(), getTableRow().getIndex(), getTableColumn() );
+
+         new CellDataPopupController(item, event, getTableRow(), tp);
       }
    }
 
@@ -53,31 +56,10 @@ class SquirrelDefaultTableCell extends TableCell<Object, Object>
       }
       else
       {
-         String value = item.toString();
+         CellProperties cellProperties = TableCellUtil.getCellProperties(item);
+         super.setText(cellProperties.getValue());
+         super.setStyle(cellProperties.getStyle());
 
-         int nlPos = value.indexOf("\n");
-         int crnlPos = value.indexOf("\r\n");
-
-         if(-1 < nlPos || -1 < crnlPos)
-         {
-            int cutPos = nlPos;
-
-            if(-1 == cutPos || cutPos < crnlPos)
-            {
-               cutPos = crnlPos;
-            }
-
-            value = value.substring(0, Math.max(cutPos-1, 1));
-
-            setStyle("-fx-background-color: cyan;");
-         }
-         else
-         {
-            setStyle(null);
-         }
-
-
-         super.setText(value);
          super.setGraphic(null);
       }
    }
