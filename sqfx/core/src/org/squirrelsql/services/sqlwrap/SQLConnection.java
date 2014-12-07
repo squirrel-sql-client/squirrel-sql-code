@@ -92,10 +92,15 @@ public class SQLConnection
          List<DBSchema> ret = new ArrayList<>();
 
          ResultSet schemas = _con.getMetaData().getSchemas();
+         String schemaCatalog = null;
 
          while (schemas.next())
          {
-            DBSchema dbSchema = new DBSchema(schemas.getString("TABLE_SCHEM"), schemas.getString("TABLE_CATALOG"));
+        	//Some Oracle versions error out since Oracle doesn't support catalogs, thus can't connect to DB
+        	if(supportsCatalogs()){
+        		schemaCatalog = schemas.getString("TABLE_CATALOG");
+        	}
+            DBSchema dbSchema = new DBSchema(schemas.getString("TABLE_SCHEM"), schemaCatalog);
             ret.add(dbSchema);
 
             if (isMSSQLorSYBASE && "guest".equals(dbSchema.getSchema()))

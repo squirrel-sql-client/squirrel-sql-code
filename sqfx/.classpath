@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="core/lib/jackson-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="core/lib/jackson-databind-2.2.0.jar"/>
 	<classpathentry kind="lib" path="core/lib/versioncheck.jar"/>
-	<classpathentry kind="lib" path="core/lib/richtextfx-fat-0.5.jar"/>
+	<classpathentry kind="lib" path="core/lib/richtextfx-fat-0.5.1.jar"/>
 	<classpathentry kind="lib" path="core/lib/rsyntaxtextarea.jar"/>
 	<classpathentry kind="lib" path="core/lib/poi-3.10.1-20140818.jar"/>
 	<classpathentry kind="lib" path="core/lib/poi-ooxml-3.10.1-20140818.jar"/>
