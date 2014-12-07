@@ -9,6 +9,8 @@ import javafx.stage.Window;
 
 public class GuiUtils
 {
+   public static final String STYLE_GROUP_BORDER = "-fx-border-width: 2; -fx-border-color: darkgray lightgray lightgray darkgray;";
+
    public static void makeEscapeClosable(Node sceneRoot)
    {
       sceneRoot.setOnKeyPressed(new EventHandler<KeyEvent>()

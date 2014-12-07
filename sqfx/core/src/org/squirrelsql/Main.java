@@ -13,7 +13,10 @@ import javafx.stage.WindowEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
+import org.squirrelsql.session.action.ActionConfiguration;
 import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.settings.SettingsController;
 import org.squirrelsql.splash.SquirrelSplashScreen;
 
 public class Main extends Application
@@ -100,6 +103,10 @@ public class Main extends Application
       MenuItem showLogs = new MenuItem(i18n.t("main.menu.show.logs"));
       file.getItems().add(showLogs);
       showLogs.setOnAction(e -> new ShowLogsController());
+
+      MenuItem showSettings = new MenuItem(i18n.t("main.menu.show.settings"));
+      file.getItems().add(showSettings);
+      showSettings.setOnAction(e -> new SettingsController());
 
       MenuItem exit = new MenuItem(i18n.t("main.menu.exit"));
       file.getItems().add(exit);
