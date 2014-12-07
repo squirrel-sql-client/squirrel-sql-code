@@ -15,10 +15,10 @@
     <Label layoutX="358.0" layoutY="49.0" text="%limit.result.rows.default.to.rows" />
     <AnchorPane fx:id="apProperties" layoutY="80.0" prefHeight="180.0" prefWidth="572.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
       <children>
-        <Label layoutX="14.0" layoutY="14.0" text="%squirrel.uses.standard.properties" />
-        <Button fx:id="btnSaveStandardProperties" layoutX="441.0" layoutY="25.0" mnemonicParsing="false" prefWidth="27.0" text="" />
-        <Label layoutX="14.0" layoutY="59.0" prefWidth="406.0" text="%squirrel.uses.properties.file.at" />
-        <TextField fx:id="txtPropertiesFileLocation" layoutY="75.0" prefWidth="544.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+        <RadioButton fx:id="radStandardProps" layoutX="14.0" layoutY="14.0" text="%squirrel.uses.standard.properties" />
+        <Button fx:id="btnSaveStandardProperties" layoutX="464.0" layoutY="19.0" mnemonicParsing="false" prefWidth="27.0" text="" />
+        <RadioButton fx:id="radUserDefinedProps" layoutX="14.0" layoutY="59.0" prefWidth="406.0" text="%squirrel.uses.properties.file.at" />
+        <TextField fx:id="txtPropertiesFileLocation" layoutX="14.0" layoutY="79.0" prefWidth="544.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
         <Label layoutX="14.0" layoutY="116.0" text="%how.to.use.squirrel.properties" />
       </children>
     </AnchorPane>
