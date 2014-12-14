@@ -5,14 +5,13 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import org.fife.ui.rtextarea.SearchContext;
-import org.fife.ui.rtextarea.SearchEngine;
-import org.fife.rsta.ui.search.SearchDialogSearchContext;
+import org.fife.ui.rtextarea.*;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.Method;
 import java.util.Vector;
 import java.util.regex.PatternSyntaxException;
 
@@ -62,11 +61,11 @@ public class SquirrelRSyntaxSearchEngine
 
       if (replace)
       {
-         _dialog = new SquirrelReplaceDialog(owningFrame);
+         _dialog = new SquirrelReplaceDialog(owningFrame, _squirrelRSyntaxTextArea);
       }
       else
       {
-         _dialog = new SquirrelFindDialog(owningFrame);
+         _dialog = new SquirrelFindDialog(owningFrame, _squirrelRSyntaxTextArea);
       }
 
       _dialog.addFindActionListener(new ActionListener()
@@ -141,7 +140,8 @@ public class SquirrelRSyntaxSearchEngine
       sc.setRegularExpression(_dialog.isRegExp());
       sc.setReplaceWith(_dialog.getReplaceString());
 
-      int count = SearchEngine.replaceAll(_squirrelRSyntaxTextArea, sc);
+      SearchResult searchResult = SearchEngine.replaceAll(_squirrelRSyntaxTextArea, sc);
+      int count = searchResult.getCount();
 
 //      int count = SearchEngine.replaceAll(
 //            _squirrelRSyntaxTextArea,
@@ -173,7 +173,7 @@ public class SquirrelRSyntaxSearchEngine
          sc.setRegularExpression(_dialog.isRegExp());
          sc.setReplaceWith(_dialog.getReplaceString());
 
-         boolean found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc);
+         boolean found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc).wasFound();
 
 
 //         boolean found = SearchEngine.replace(
@@ -206,7 +206,7 @@ public class SquirrelRSyntaxSearchEngine
                }
 
 
-               found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc);
+               found = SearchEngine.replace(_squirrelRSyntaxTextArea, sc).wasFound();
 
 
 //               found = SearchEngine.replace(
@@ -251,16 +251,23 @@ public class SquirrelRSyntaxSearchEngine
 
    private void invokeMarkAllForReplaceLater()
    {
-      _squirrelRSyntaxTextArea.clearMarkAllHighlights();
+      //_squirrelRSyntaxTextArea.clearMarkAllHighlights();
+      _squirrelRSyntaxTextArea.getHighlighter().removeAllHighlights();
+
+
+
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-            _squirrelRSyntaxTextArea.markAll(
-               _dialog.getReplaceString(),
-               _dialog.isMatchCase(),
-               _dialog.isWholeWord(),
-               _dialog.isRegExp());
+            SearchContext sc = new SearchContext(_lastSearchString);
+            sc.setWholeWord(_dialog.isWholeWord());
+            sc.setMatchCase(_dialog.isMatchCase());
+            sc.setRegularExpression(_dialog.isRegExp());
+            sc.setReplaceWith(_dialog.getReplaceString());
+
+//            _squirrelRSyntaxTextArea.markAll(
+            SearchEngine.markAll(_squirrelRSyntaxTextArea, sc);
          }
       });
    }
@@ -291,11 +298,16 @@ public class SquirrelRSyntaxSearchEngine
          _lastSearchString = _dialog.getSearchString();
          if (_dialog.isMarkAll())
          {
-            _squirrelRSyntaxTextArea.markAll(
-               _lastSearchString,
-               _dialog.isMatchCase(),
-               _dialog.isWholeWord(),
-               _dialog.isRegExp());
+
+            SearchContext sc = new SearchContext(_lastSearchString);
+            sc.setWholeWord(_dialog.isWholeWord());
+            sc.setMatchCase(_dialog.isMatchCase());
+            sc.setRegularExpression(_dialog.isRegExp());
+            sc.setReplaceWith(_dialog.getReplaceString());
+
+//            _squirrelRSyntaxTextArea.markAll(
+            SearchEngine.markAll(_squirrelRSyntaxTextArea, sc);
+
          }
 
          SearchContext sc = new SearchContext(_lastSearchString);
@@ -303,7 +315,7 @@ public class SquirrelRSyntaxSearchEngine
          sc.setMatchCase(_dialog.isMatchCase());
          sc.setRegularExpression(_dialog.isRegExp());
 
-         boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+         boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc).wasFound();
 
 
 //         boolean found = SearchEngine.find(
@@ -328,7 +340,7 @@ public class SquirrelRSyntaxSearchEngine
                   _squirrelRSyntaxTextArea.setCaretPosition(0);
                }
 
-               found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+               found = SearchEngine.find(_squirrelRSyntaxTextArea, sc).wasFound();
 
 
 //               found = SearchEngine.find(
@@ -389,7 +401,7 @@ public class SquirrelRSyntaxSearchEngine
       sc.setWholeWord(searchDialogState.isWholeWord());
       sc.setRegularExpression(searchDialogState.isRegExp());
 
-      boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+      boolean found = SearchEngine.find(_squirrelRSyntaxTextArea, sc).wasFound();
 
 
 //      boolean found =
@@ -413,7 +425,7 @@ public class SquirrelRSyntaxSearchEngine
             _squirrelRSyntaxTextArea.setCaretPosition(0);
          }
 
-         found = SearchEngine.find(_squirrelRSyntaxTextArea, sc);
+         found = SearchEngine.find(_squirrelRSyntaxTextArea, sc).wasFound();
 
          if(false == found)
          {
@@ -444,16 +456,29 @@ public class SquirrelRSyntaxSearchEngine
       _lastSearchString = selectedText;
       _storedSearchDialogState = SearchDialogState.createForLastFind();
 
-      _squirrelRSyntaxTextArea.markAll(
-         _lastSearchString,
-         _storedSearchDialogState.isMatchCase(),
-         _storedSearchDialogState.isWholeWord(),
-         _storedSearchDialogState.isRegExp());
+
+      SearchContext sc = new SearchContext(_lastSearchString);
+      sc.setWholeWord(_storedSearchDialogState.isWholeWord());
+      sc.setMatchCase(_storedSearchDialogState.isMatchCase());
+      sc.setRegularExpression(_storedSearchDialogState.isRegExp());
+
+//            _squirrelRSyntaxTextArea.markAll(
+      SearchEngine.markAll(_squirrelRSyntaxTextArea, sc);
+
    }
 
    public void unmarkAll()
    {
-      _squirrelRSyntaxTextArea.clearMarkAllHighlights();
+      try
+      {
+         Method method = RTextArea.class.getDeclaredMethod("clearMarkAllHighlights");
+         method.setAccessible(true);
+         method.invoke(_squirrelRSyntaxTextArea);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    public void goToLine()

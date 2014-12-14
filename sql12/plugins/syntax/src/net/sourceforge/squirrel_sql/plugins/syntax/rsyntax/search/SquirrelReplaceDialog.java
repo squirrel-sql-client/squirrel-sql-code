@@ -1,7 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 
 
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import org.fife.rsta.ui.search.ReplaceDialog;
+import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.SearchListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,9 +20,32 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    private ArrayList<SearchDialogClosingListener> _closingListeners = new ArrayList<SearchDialogClosingListener>();
    private HashMap<ActionListener, ActionListener> _listener_listenerProxy = new HashMap<ActionListener, ActionListener>();
 
-   public SquirrelReplaceDialog(Frame owner)
+   public SquirrelReplaceDialog(Frame owner, final SquirrelRSyntaxTextArea squirrelRSyntaxTextArea)
    {
-      super(owner, null /* This ActionListener is not used, propably a bug in RText*/);
+      super(owner, new SearchListener()
+      {
+         @Override
+         public void searchEvent(SearchEvent searchEvent)
+         {
+            if(SearchEvent.Type.REPLACE == searchEvent.getType())
+            {
+               //onReplace();
+            }
+            else if(SearchEvent.Type.REPLACE_ALL == searchEvent.getType())
+            {
+               //onReplaceAll();
+            }
+            System.out.println("SquirrelReplaceDialog.searchEvent");
+         }
+
+         @Override
+         public String getSelectedText()
+         {
+            return squirrelRSyntaxTextArea.getSelectedText();
+         }
+      });
+
+
 
       cancelButton.addActionListener(new ActionListener()
       {
@@ -81,7 +107,7 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    @Override
    public boolean isRegExp()
    {
-      return regExpCheckBox.isSelected();
+      return getSearchContext().isRegularExpression();
    }
 
    @Override
@@ -136,10 +162,11 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
          public void actionPerformed(ActionEvent e)
          {
             onReplace(e, actionListener);
-         }
+      }
       };
 
-      addActionListener(actionListenerProxy);
+      // TODO
+      //super.addReplaceActionListener(actionListenerProxy);
       _listener_listenerProxy.put(actionListener, actionListenerProxy);
    }
 
@@ -147,7 +174,7 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    // Only the action command decides if the replace odr replace all button was hit.
    // The design in RText is an bit funny at this point
    private void onReplace(ActionEvent e, ActionListener actionListener)
-   {
+      {
       if("Replace".equals(e.getActionCommand()))
       {
          actionListener.actionPerformed(e);
@@ -178,7 +205,8 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
 
       if(null != actionListenerProxy)
       {
-         removeActionListener(actionListenerProxy);
+         // TODO
+         //removeActionListener(actionListenerProxy);
       }
    }
 
@@ -191,10 +219,11 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
          public void actionPerformed(ActionEvent e)
          {
             onReplaceAll(e, actionListener);
-         }
+   }
       };
 
-      addActionListener(actionListenerProxy);
+      //TODO
+      // addActionListener(actionListenerProxy);
       _listener_listenerProxy.put(actionListener, actionListenerProxy);
    }
 

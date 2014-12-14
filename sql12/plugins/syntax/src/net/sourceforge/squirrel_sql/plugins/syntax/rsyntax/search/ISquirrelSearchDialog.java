@@ -6,7 +6,7 @@ import java.awt.event.WindowListener;
 import java.awt.*;
 import java.util.Vector;
 
-public interface ISquirrelSearchDialog
+public interface ISquirrelSearchDialog extends ISquirrelReplaceListener
 {
    //void setSearchParameters(Vector findComboBoxStrings, boolean matchCase, boolean wholeWord, boolean regExp, boolean searchUp, boolean markAll);
    //public void setSearchContext(org.fife.rsta.ui.search.SearchDialogSearchContext context);
@@ -38,12 +38,6 @@ public interface ISquirrelSearchDialog
 
    void addFindActionListener(ActionListener actionListener);
    void removeFindActionListener(ActionListener actionListener);
-
-   void addReplaceActionListener(ActionListener actionListener);
-   void removeReplaceActionListener(ActionListener actionListener);
-
-   void addReplaceAllActionListener(ActionListener actionListener);
-   void removeReplaceAllActionListener(ActionListener actionListener);
 
    String getReplaceString();
 }

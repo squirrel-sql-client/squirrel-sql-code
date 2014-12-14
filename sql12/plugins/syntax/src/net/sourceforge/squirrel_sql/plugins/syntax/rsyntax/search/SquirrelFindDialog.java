@@ -1,7 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.search;
 
 
+import net.sourceforge.squirrel_sql.plugins.syntax.rsyntax.SquirrelRSyntaxTextArea;
 import org.fife.rsta.ui.search.FindDialog;
+import org.fife.rsta.ui.search.SearchEvent;
+import org.fife.rsta.ui.search.SearchListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,9 +15,22 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
 {
    private ArrayList<SearchDialogClosingListener> _closingListeners = new ArrayList<SearchDialogClosingListener>();
 
-   public SquirrelFindDialog(Frame owner)
+   public SquirrelFindDialog(Frame owner, final SquirrelRSyntaxTextArea squirrelRSyntaxTextArea)
    {
-      super(owner, null /* This ActionListener is not used, propably a bug in RText*/);
+      super(owner, new SearchListener()
+      {
+         @Override
+         public void searchEvent(SearchEvent searchEvent)
+         {
+            //System.out.println("SquirrelFindDialog.searchEvent " + searchEvent);
+         }
+
+         @Override
+         public String getSelectedText()
+         {
+            return squirrelRSyntaxTextArea.getSelectedText();
+         }
+      });
 
       super.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       
@@ -79,7 +95,7 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
    @Override
    public boolean isRegExp()
    {
-      return regExpCheckBox.isSelected();
+      return getSearchContext().isRegularExpression();
    }
 
    @Override
@@ -147,6 +163,6 @@ public class SquirrelFindDialog extends FindDialog implements ISquirrelSearchDia
    @Override
    public String getReplaceString()
    {
-      throw new UnsupportedOperationException("Only available in SquirrelReplaceDialog");
+      return null;
    }
 }
