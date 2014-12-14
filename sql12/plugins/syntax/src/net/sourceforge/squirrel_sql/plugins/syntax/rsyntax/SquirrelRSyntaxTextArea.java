@@ -209,9 +209,9 @@ protected RTextAreaUI createRTextAreaUI()
       _currentErrorInfos = errorInfos;
    }
 
-   public void showFindDialog(ActionEvent evt)
+   public void showFindDialog()
    {
-      _squirrelRSyntaxSearchEngine.find(evt);
+      _squirrelRSyntaxSearchEngine.find();
    }
 
    public void findSelected(ActionEvent evt)
@@ -236,7 +236,7 @@ protected RTextAreaUI createRTextAreaUI()
 
    public void showReplaceDialog(ActionEvent evt)
    {
-      _squirrelRSyntaxSearchEngine.replace(evt);
+      _squirrelRSyntaxSearchEngine.replace();
    }
 
    public void showGoToLineDialog(ActionEvent evt)

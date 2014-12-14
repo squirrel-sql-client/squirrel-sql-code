@@ -55,7 +55,7 @@ public class FindAction extends SquirrelAction implements ISQLPanelAction
       if(sqlEntryPanel instanceof RSyntaxSQLEntryPanel)
       {
          SquirrelRSyntaxTextArea rsep = (SquirrelRSyntaxTextArea) sqlEntryPanel.getTextComponent();
-         rsep.showFindDialog(evt);
+         rsep.showFindDialog();
       }
       else
       {

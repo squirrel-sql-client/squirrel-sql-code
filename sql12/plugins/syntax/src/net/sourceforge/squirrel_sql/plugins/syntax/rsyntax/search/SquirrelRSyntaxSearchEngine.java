@@ -35,20 +35,20 @@ public class SquirrelRSyntaxSearchEngine
       _squirrelRSyntaxTextArea = squirrelRSyntaxTextArea;
    }
 
-   public void find(ActionEvent squirrelEvt)
+   public void find()
    {
       _session.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SquirrelRSyntaxSearchEngine.findUsageHint"));
-      search(squirrelEvt, false);
+      search(false);
    }
 
-   public void replace(ActionEvent squirrelEvt)
+   public void replace()
    {
-      search(squirrelEvt, true);
+      search(true);
    }
 
 
 
-   public void search(ActionEvent squirrelEvt, boolean replace)
+   public void search(boolean replace)
    {
       if(null != _dialog)
       {
