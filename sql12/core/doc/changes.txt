@@ -6,6 +6,7 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Upgraded to the latest RSyntax version (2.5.3).
 
 3.6.0 (10/12/2014)
 ==================
