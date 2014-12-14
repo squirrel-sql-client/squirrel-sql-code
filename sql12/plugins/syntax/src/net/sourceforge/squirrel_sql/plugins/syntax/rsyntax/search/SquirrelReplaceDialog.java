@@ -13,39 +13,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSearchDialog
 {
    private ArrayList<SearchDialogClosingListener> _closingListeners = new ArrayList<SearchDialogClosingListener>();
-   private HashMap<ActionListener, ActionListener> _listener_listenerProxy = new HashMap<ActionListener, ActionListener>();
+   private ArrayList<ActionListener> _replaceListeners = new ArrayList<ActionListener>();
+   private ArrayList<ActionListener> _replaceAllListeners = new ArrayList<ActionListener>();
+   private SquirrelRSyntaxTextArea _squirrelRSyntaxTextArea;
 
    public SquirrelReplaceDialog(Frame owner, final SquirrelRSyntaxTextArea squirrelRSyntaxTextArea)
    {
-      super(owner, new SearchListener()
-      {
-         @Override
-         public void searchEvent(SearchEvent searchEvent)
-         {
-            if(SearchEvent.Type.REPLACE == searchEvent.getType())
-            {
-               //onReplace();
-            }
-            else if(SearchEvent.Type.REPLACE_ALL == searchEvent.getType())
-            {
-               //onReplaceAll();
-            }
-            System.out.println("SquirrelReplaceDialog.searchEvent");
-         }
+      ////////////////////////////////////////////////////////////////////////////////////////////////////
+      // SearchListenerProxy is only needed because the listener has to be passed to constructor.
+      super(owner, new SearchListenerProxy());
+      SearchListenerProxy proxy = (SearchListenerProxy) this.searchListener;
+      proxy.setDelegate(this);
+      //
+      ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-         @Override
-         public String getSelectedText()
-         {
-            return squirrelRSyntaxTextArea.getSelectedText();
-         }
-      });
-
-
+      _squirrelRSyntaxTextArea = squirrelRSyntaxTextArea;
 
       cancelButton.addActionListener(new ActionListener()
       {
@@ -156,75 +142,46 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    @Override
    public void addReplaceActionListener(final ActionListener actionListener)
    {
-      ActionListener actionListenerProxy = new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onReplace(e, actionListener);
-      }
-      };
-
-      // TODO
-      //super.addReplaceActionListener(actionListenerProxy);
-      _listener_listenerProxy.put(actionListener, actionListenerProxy);
+      _replaceListeners.remove(actionListener);
+      _replaceListeners.add(actionListener);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////
-   // Only the action command decides if the replace odr replace all button was hit.
-   // The design in RText is an bit funny at this point
-   private void onReplace(ActionEvent e, ActionListener actionListener)
-      {
-      if("Replace".equals(e.getActionCommand()))
-      {
-         actionListener.actionPerformed(e);
-         findNextButton.doClick(10);
-      }
-   }
-
-   private void onReplaceAll(ActionEvent e, ActionListener actionListener)
+   private void onReplace()
    {
-      if("ReplaceAll".equals(e.getActionCommand()))
+      fireActionListeners(_replaceListeners);
+   }
+
+   private void onReplaceAll()
+   {
+      fireActionListeners(_replaceAllListeners);
+   }
+
+   private void fireActionListeners(ArrayList<ActionListener> replacelisteners)
+   {
+      ActionListener[] listeners = replacelisteners.toArray(new ActionListener[replacelisteners.size()]);
+      for (ActionListener listener : listeners)
       {
-         actionListener.actionPerformed(e);
+         listener.actionPerformed(null);
       }
    }
-   //
-   ///////////////////////////////////////////////////////////////////////////////////
 
 
    @Override
    public void removeReplaceActionListener(ActionListener actionListener)
    {
-      removeReplaceListener(actionListener);
+      _replaceListeners.remove(actionListener);
    }
 
    private void removeReplaceListener(ActionListener actionListener)
    {
-      ActionListener actionListenerProxy = _listener_listenerProxy.remove(actionListener);
-
-      if(null != actionListenerProxy)
-      {
-         // TODO
-         //removeActionListener(actionListenerProxy);
-      }
+      _replaceAllListeners.remove(actionListener);
    }
 
    @Override
    public void addReplaceAllActionListener(final ActionListener actionListener)
    {
-      ActionListener actionListenerProxy = new ActionListener()
-      {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-            onReplaceAll(e, actionListener);
-   }
-      };
-
-      //TODO
-      // addActionListener(actionListenerProxy);
-      _listener_listenerProxy.put(actionListener, actionListenerProxy);
+      _replaceAllListeners.remove(actionListener);
+      _replaceAllListeners.add(actionListener);
    }
 
 
@@ -232,5 +189,38 @@ public class SquirrelReplaceDialog extends ReplaceDialog implements ISquirrelSea
    public void removeReplaceAllActionListener(ActionListener actionListener)
    {
       removeReplaceListener(actionListener);
+   }
+
+   /**
+    * This class is only needed because the listener has to be passed to constructor.
+    */
+   private static class SearchListenerProxy implements SearchListener
+   {
+      private SquirrelReplaceDialog _delegate;
+
+      @Override
+      public void searchEvent(SearchEvent searchEvent)
+      {
+         if(SearchEvent.Type.REPLACE == searchEvent.getType())
+         {
+            _delegate.onReplace();
+         }
+         else if(SearchEvent.Type.REPLACE_ALL == searchEvent.getType())
+         {
+            _delegate.onReplaceAll();
+         }
+      }
+
+      @Override
+      public String getSelectedText()
+      {
+         return _delegate._squirrelRSyntaxTextArea.getSelectedText();
+      }
+
+      public void setDelegate(SquirrelReplaceDialog squirrelReplaceDialog)
+      {
+
+         _delegate = squirrelReplaceDialog;
+      }
    }
 }
