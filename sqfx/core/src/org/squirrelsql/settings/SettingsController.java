@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
 import org.squirrelsql.services.*;
+import org.squirrelsql.table.tableedit.StringInterpreter;
 
 public class SettingsController
 {
@@ -14,7 +15,7 @@ public class SettingsController
    private I18n _i18n = new I18n(getClass());
 
    private Props _props = new Props(this.getClass());
-
+   private final SettingsView _settingsView;
 
 
    public SettingsController()
@@ -22,10 +23,10 @@ public class SettingsController
 
       FxmlHelper<SettingsView> fxmlHelper = new FxmlHelper<>(SettingsView.class);
 
-      SettingsView view = fxmlHelper.getView();
+      _settingsView = fxmlHelper.getView();
 
 
-      view.apProperties.setStyle(GuiUtils.STYLE_GROUP_BORDER);
+      _settingsView.apProperties.setStyle(GuiUtils.STYLE_GROUP_BORDER);
 
 
       _dialog = new Stage();
@@ -36,13 +37,56 @@ public class SettingsController
       _dialog.setScene(new Scene(fxmlHelper.getRegion()));
 
 
-      view.btnSaveStandardProperties.setGraphic(_props.getImageView("save.png"));
+      _settingsView.btnSaveStandardProperties.setGraphic(_props.getImageView("save.png"));
 
       new StageDimensionSaver("showSettingsController", _dialog, new Pref(getClass()), 500, 600, _dialog.getOwner());
 
       GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
 
-      _dialog.show();
+      loadSettingsToUi();
 
+      _settingsView.chkLimitRowsByDefault.setOnAction((e) -> updateUi());
+
+      _settingsView.btnOk.setOnAction((e) -> onOk());
+      _settingsView.btnCancel.setOnAction((e) -> onCancel());
+
+      _dialog.show();
+   }
+
+   private void onCancel()
+   {
+      _dialog.close();
+   }
+
+   private void onOk()
+   {
+      Settings settings = AppState.get().getSettingsManager().getSettings();
+      settings.setMultibleLinesInCells(_settingsView.chkMultibleLinesInCells.isSelected());
+      settings.setLimitRowsByDefault(_settingsView.chkLimitRowsByDefault.isSelected());
+
+      String buf = _settingsView.txtLimitRowsDefault.getText();
+      settings.setLimitRowsDefault(StringInterpreter.interpret(buf, Integer.class, settings.getLimitRowsDefault()));
+      _settingsView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
+
+
+      AppState.get().getSettingsManager().writeSettings();
+
+      _dialog.close();
+   }
+
+   private void loadSettingsToUi()
+   {
+      Settings settings = AppState.get().getSettingsManager().getSettings();
+
+      _settingsView.chkMultibleLinesInCells.setSelected(settings.isMultibleLinesInCells());
+      _settingsView.chkLimitRowsByDefault.setSelected(settings.isLimitRowsByDefault());
+      _settingsView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
+
+      updateUi();
+   }
+
+   private void updateUi()
+   {
+      _settingsView.txtLimitRowsDefault.setDisable(false == _settingsView.chkLimitRowsByDefault.isSelected());
    }
 }

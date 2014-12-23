@@ -26,6 +26,8 @@ public class Dao
    public static final String FILE_NAME_ALIAS_TREE = "aliasTree.json";
    public static final String FILE_NAME_SQL_HISTORY = "sqlHistory.json";
    public static final String FILE_NAME_BOOKMARKS = "bookmarks.json";
+   public static final String FILE_NAME_SETTINGS = "settings.json";
+
    public static final String FILE_NAME_PREFERENCES = "preferences.properties";
 
    public static void writeDrivers(List<SQLDriver> sqlDrivers)
@@ -118,7 +120,7 @@ public class Dao
       }
    }
 
-   private static void writeObject(Object toWrite, String unqualifiedFileName)
+   private static void writeObject(Object toWrite, String fileName)
    {
       try
       {
@@ -126,7 +128,7 @@ public class Dao
          ObjectMapper mapper = new ObjectMapper();
          ObjectWriter objectWriter = mapper.writerWithDefaultPrettyPrinter();
 
-         File file = new File(AppState.get().getUserDir(), unqualifiedFileName);
+         File file = new File(AppState.get().getUserDir(), fileName);
          FileWriter fileWriter = new FileWriter(file);
          objectWriter.writeValue(fileWriter, toWrite);
       }
@@ -289,4 +291,16 @@ public class Dao
          throw new RuntimeException(e);
       }
    }
+
+   public static void writeSettings(Settings settings)
+   {
+      writeObject(settings, FILE_NAME_SETTINGS);
+   }
+
+   public static Settings loadSettings()
+   {
+      return loadObject(FILE_NAME_SETTINGS, new Settings());
+   }
+
+
 }

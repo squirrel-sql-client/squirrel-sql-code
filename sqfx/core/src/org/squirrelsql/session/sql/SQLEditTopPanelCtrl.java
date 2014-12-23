@@ -6,10 +6,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.Utils;
+import org.squirrelsql.services.*;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.SessionTabContext;
 
@@ -37,8 +34,9 @@ public class SQLEditTopPanelCtrl
 
       _region = fxmlHelper.getRegion();
 
-      _view.chkLimitRows.setSelected(_pref.getBoolean(LIMIT_ROWS, true));
-      _view.txtRowLimit.setText("" + _pref.getInt(LIMIT_ROWS_COUNT, DEFAULT_ROW_LIMIT_COUNT));
+      Settings settings = AppState.get().getSettingsManager().getSettings();
+      _view.chkLimitRows.setSelected(settings.isLimitRowsByDefault());
+      _view.txtRowLimit.setText("" + settings.getLimitRowsDefault());
 
       _view.btnOpenHistory.setGraphic(new Props(this.getClass()).getImageView("sql_history.png"));
       _view.btnOpenHistory.setTooltip(new Tooltip(_i18n.t("sqlhistory.search")));

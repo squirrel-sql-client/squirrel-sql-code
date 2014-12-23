@@ -17,4 +17,8 @@ public class SettingsView
    @FXML CheckBox chkLimitRowsByDefault;
    @FXML TextField txtLimitRowsDefault;
    @FXML Button btnSaveStandardProperties;
+
+   @FXML Button btnOk;
+   @FXML Button btnCancel;
+
 }

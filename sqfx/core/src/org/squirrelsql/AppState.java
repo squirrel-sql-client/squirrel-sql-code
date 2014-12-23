@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 
 import org.squirrelsql.services.PropertiesHandler;
 import org.squirrelsql.services.RunningServicesManager;
+import org.squirrelsql.services.SettingsManager;
 import org.squirrelsql.services.SquirrelProperty;
 import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.action.ActionMangerImpl;
@@ -28,13 +29,16 @@ public class AppState
 
    private RunningServicesManager _runningServicesManager = new RunningServicesManager();
 
+   private PrefImpl _prefImpl = new PrefImpl();
+   private SettingsManager _settingsManager = new SettingsManager();
+
+
 
    public static AppState get()
    {
       return _appState;
    }
 
-   private PrefImpl _prefImpl = new PrefImpl();
 
    private Stage _primaryStage;
 
@@ -151,5 +155,11 @@ public class AppState
    public RunningServicesManager getRunningServicesManager()
    {
       return _runningServicesManager;
+   }
+
+
+   public SettingsManager getSettingsManager()
+   {
+      return _settingsManager;
    }
 }

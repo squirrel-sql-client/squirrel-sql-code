@@ -8,6 +8,7 @@ import java.awt.*;
 public class SplashStringWriter
 {
 
+   public static final int MAGIC_NUMBER_TO_POSITION_PROGRESSBAR_RIGHT = 6;
    private SplashScreen _splashScreen;
    private int _maxNumberOffCallsToWriteUpperLine;
    private static final Font FONT = new Font(Font.DIALOG, Font.BOLD, 14);
@@ -51,7 +52,7 @@ public class SplashStringWriter
 
       _yProgressbar = _yUpper - fontMetrics.getHeight() - 2;
 
-      _maxWidhtProgressbar = _splashScreen.getSize().width - 2 * X_DIST;
+      _maxWidhtProgressbar = _splashScreen.getSize().width + MAGIC_NUMBER_TO_POSITION_PROGRESSBAR_RIGHT - 2 * X_DIST;
 
       _heightProgressbar = fontMetrics.getHeight() + 10;
 
@@ -110,7 +111,7 @@ public class SplashStringWriter
 
    private void paintProgress()
    {
-      if(_maxNumberOffCallsToWriteUpperLine < _numberOffCallsToWriteUpperLine + 1)
+      if(_maxNumberOffCallsToWriteUpperLine + 1 < _numberOffCallsToWriteUpperLine)
       {
          String msg = "Programmer: Please increase _maxNumberOffCallsToWriteUpperLine to make the Progressbar work right";
          new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).error(new IllegalStateException(msg));
@@ -120,7 +121,7 @@ public class SplashStringWriter
 
       int width = (int)
             (
-                  (double)(_maxWidhtProgressbar) * ((double)(_numberOffCallsToWriteUpperLine)) / ((double)(_maxNumberOffCallsToWriteUpperLine))
+                  (double)((_maxWidhtProgressbar) * ((double)(_numberOffCallsToWriteUpperLine)) / ((double)(_maxNumberOffCallsToWriteUpperLine)) + 0.5d)
             );
 
       _graphics.setColor(FG_PROGRESS);

@@ -143,4 +143,16 @@ public class StringInterpreter
 
       return userEnteredString;
    }
+
+   public static <T>  T interpret(String buf, Class<T> clazz, T defaultValue)
+   {
+      try
+      {
+         return (T)_interpret(buf, clazz);
+      }
+      catch (ParseException| NumberFormatException e)
+      {
+         return defaultValue;
+      }
+   }
 }

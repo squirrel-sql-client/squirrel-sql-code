@@ -1,10 +1,18 @@
 package org.squirrelsql.table;
 
+import org.squirrelsql.AppState;
+
 public class TableCellUtil
 {
    public static CellProperties getCellProperties(Object cellItem)
    {
       String value = cellItem.toString();
+      CellProperties ret = new CellProperties(value, null, false);
+
+      if(AppState.get().getSettingsManager().getSettings().isMultibleLinesInCells())
+      {
+         return ret;
+      }
 
       int nlPos = value.indexOf("\n");
       int crnlPos = value.indexOf("\r\n");
@@ -20,12 +28,10 @@ public class TableCellUtil
 
          value = value.substring(0, Math.max(cutPos, 0));
 
-         return new CellProperties(value, "-fx-background-color: cyan;", true);
+         ret = new CellProperties(value, "-fx-background-color: cyan;", true);
       }
-      else
-      {
-         return new CellProperties(value, null, false);
-      }
+
+      return ret;
    }
 
 

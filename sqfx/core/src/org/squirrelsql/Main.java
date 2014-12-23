@@ -31,7 +31,7 @@ public class Main extends Application
    public void start(Stage primaryStage) throws Exception
    {
 
-      SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(7);
+      SquirrelSplashScreen squirrelSplashScreen = new SquirrelSplashScreen(5);
 
       squirrelSplashScreen.indicateNewTask("Initializing exception handling ...");
       ExceptionHandler.initHandling();
@@ -79,8 +79,6 @@ public class Main extends Application
 
 
       primaryStage.getIcons().add(new Props(getClass()).getImage("acorn.png"));
-
-      squirrelSplashScreen.indicateNewTask("Task 5");
 
 
       squirrelSplashScreen.indicateNewTask("Opening application window ...");
