@@ -24,6 +24,7 @@ public class CellDataPopupController
    private Object _oldValue;
    private I18n _i18n = new I18n(getClass());
    private TextArea _textArea;
+   private Stage _dialog;
 
 
    public CellDataPopupController(Object item, MouseEvent event, TableRow tableRow, TablePosition tablePosition)
@@ -33,12 +34,12 @@ public class CellDataPopupController
 
    public CellDataPopupController(Object item, MouseEvent event, TableRow tableRow, TablePosition tablePosition, CellDataPopupEditListener cellDataPopupEditListener)
    {
-      Stage dialog = new Stage();
-      dialog.setTitle(_i18n.t("cellPopupController.title", tablePosition.getTableColumn().getText(), tableRow.getIndex() + 1));
-      dialog.initModality(Modality.NONE);
-      dialog.initOwner(AppState.get().getPrimaryStage());
+      _dialog = new Stage();
+      _dialog.setTitle(_i18n.t("cellPopupController.title", tablePosition.getTableColumn().getText(), tableRow.getIndex() + 1));
+      _dialog.initModality(Modality.NONE);
+      _dialog.initOwner(AppState.get().getPrimaryStage());
 
-      new StageDimensionSaver("cellPopupController", dialog, new Pref(getClass()), 300, 200, dialog.getOwner());
+      new StageDimensionSaver("cellPopupController", _dialog, new Pref(getClass()), 300, 200, _dialog.getOwner());
 
       _oldValue = item;
 
@@ -47,7 +48,7 @@ public class CellDataPopupController
       if (null == cellDataPopupEditListener)
       {
          _textArea.setEditable(false);
-         dialog.setScene(new Scene(_textArea));
+         _dialog.setScene(new Scene(_textArea));
       }
       else
       {
@@ -66,21 +67,21 @@ public class CellDataPopupController
 
          btnUpdate.setOnAction(e -> onUpdateData(_oldValue, tableRow, tablePosition, cellDataPopupEditListener, _textArea));
 
-         dialog.setScene(new Scene(bp));
+         _dialog.setScene(new Scene(bp));
       }
 
 
-      dialog.setX(Math.max(event.getScreenX() - 50, 0));
-      dialog.setY(Math.max(event.getScreenY() - 50, 0));
+      _dialog.setX(Math.max(event.getScreenX() - 50, 0));
+      _dialog.setY(Math.max(event.getScreenY() - 50, 0));
 
       event.consume();
 
-      AppState.get().addApplicationCloseListener(dialog::close, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME );
+      AppState.get().addApplicationCloseListener(_dialog::close, ApplicationCloseListener.FireTime.AFTER_SESSION_FIRE_TIME);
 
       _textArea.requestFocus();
       GuiUtils.makeEscapeClosable(_textArea);
 
-      dialog.show();
+      _dialog.show();
    }
 
    private String interpretCellContentAsSting(Object item)
@@ -92,9 +93,13 @@ public class CellDataPopupController
    {
       DatabaseTableUpdateResult databaseTableUpdateResult = cellDataPopupEditListener.updateData(new SquirrelTableEditData(textArea.getText(), item, tablePosition, (List) tableRow.getItem()));
 
-      if(databaseTableUpdateResult.success())
-      {
-         _oldValue = databaseTableUpdateResult.getInterpretedNewValue();
-      }
+//      if(databaseTableUpdateResult.success())
+//      {
+//         _oldValue = databaseTableUpdateResult.getInterpretedNewValue();
+//      }
+
+      _dialog.close();
+
+
    }
 }

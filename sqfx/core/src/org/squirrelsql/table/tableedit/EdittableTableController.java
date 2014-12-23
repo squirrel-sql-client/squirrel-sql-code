@@ -39,7 +39,7 @@ public class EdittableTableController
    {
       String userEnteredString = tableEditData.getNewValue();
 
-      System.out.println("Edit: New=" + userEnteredString + ", Old=" + tableEditData.getOldValue());
+      //System.out.println("Edit: New=" + userEnteredString + ", Old=" + tableEditData.getOldValue());
 
       DatabaseTableUpdateResult res = DatabaseTableUpdater.updateDatabase(_session, _sqlResult, userEnteredString, tableEditData, _tableNameFromSQL);
       if (res.success())
