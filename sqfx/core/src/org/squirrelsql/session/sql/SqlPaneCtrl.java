@@ -81,7 +81,7 @@ public class SqlPaneCtrl
    private void initActionListeners()
    {
       ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
-      ActionHandle hCodeCompletion = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.SQL_CODE_CONPLETION);
+      ActionHandle hCodeCompletion = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.SQL_CODE_COMPLETION);
       ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.EXEC_BOOKMARK);
 
       hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
