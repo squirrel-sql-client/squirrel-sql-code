@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Settings dialog for user defined settings. See menu File --> Settings.
+
 Bug fix: NullPointerException occurred when connecting to some versions Oracle.
 
 Feature: Editable cell data popup when SQL result ist being edited.
