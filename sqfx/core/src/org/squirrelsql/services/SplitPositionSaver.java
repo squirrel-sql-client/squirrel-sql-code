@@ -5,6 +5,7 @@ import org.squirrelsql.workaround.SplitDividerWA;
 
 public class SplitPositionSaver
 {
+   public static final double DEFAULT_POS = 0.2d;
    private String _prefKey;
    private Pref _pref;
 
@@ -16,11 +17,21 @@ public class SplitPositionSaver
 
    public void apply(SplitPane split)
    {
-      SplitDividerWA.adjustDivider(split, 0, _pref.getDouble(_prefKey, 0.2d));
+      _apply(split, DEFAULT_POS);
+   }
+
+   private void _apply(SplitPane split, double defaultPos)
+   {
+      SplitDividerWA.adjustDivider(split, 0, _pref.getDouble(_prefKey, defaultPos));
    }
 
    public void save(SplitPane split)
    {
       _pref.set(_prefKey, split.getDividerPositions()[0]);
+   }
+
+   public void applyInvertedDefault(SplitPane split)
+   {
+      _apply(split, 1d - DEFAULT_POS);
    }
 }

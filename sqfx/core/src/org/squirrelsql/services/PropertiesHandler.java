@@ -6,12 +6,14 @@ import org.squirrelsql.AppState;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
 public class PropertiesHandler
 {
    private final Properties _properties = new Properties();
+   private File _propertiesFile = null;
    private String _message;
 
    public PropertiesHandler(Application.Parameters parameters)
@@ -39,7 +41,8 @@ public class PropertiesHandler
 
       try
       {
-         _properties.load(new FileInputStream(new File(propertiesPath)));
+         _propertiesFile = new File(propertiesPath);
+         _properties.load(new FileInputStream(_propertiesFile));
       }
       catch (IOException e)
       {
@@ -78,5 +81,10 @@ public class PropertiesHandler
    {
       String property = getProperty(squirrelProperty);
       return Boolean.parseBoolean(property);
+   }
+
+   public File getPropertiesFile()
+   {
+      return _propertiesFile;
    }
 }

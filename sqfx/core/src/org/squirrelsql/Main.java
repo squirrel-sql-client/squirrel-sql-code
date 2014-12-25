@@ -69,7 +69,7 @@ public class Main extends Application
       squirrelSplashScreen.indicateNewTask("Configuring application window ...");
 
 
-      final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 500d, 500d, null);
+      final StageDimensionSaver dimensionSaver = new StageDimensionSaver("main", primaryStage, pref, 1000d, 800d, null);
 
       adjustMessageSplit();
 

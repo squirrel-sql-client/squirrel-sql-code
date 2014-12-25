@@ -100,6 +100,6 @@ public class SplitController
 
    public void adjustMessageSplit()
    {
-      messageSplitPosSaver.apply(_spltVert);
+      messageSplitPosSaver.applyInvertedDefault(_spltVert);
    }
 }

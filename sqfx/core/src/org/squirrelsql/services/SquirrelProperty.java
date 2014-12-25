@@ -3,6 +3,9 @@ package org.squirrelsql.services;
 import com.google.common.base.Strings;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
 
 public enum SquirrelProperty
 {
@@ -44,4 +47,24 @@ public enum SquirrelProperty
       return ret;
 
    }
+
+   public static void writeStandardPropertiesToFile(File file)
+   {
+      try
+      {
+         Properties props = new Properties();
+
+         for (SquirrelProperty squirrelProperty : SquirrelProperty.values())
+         {
+            props.put(squirrelProperty._key, squirrelProperty._defaultValue);
+         }
+
+         props.store(new FileWriter(file), "SQuirreL SQL FX properties");
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
 }
