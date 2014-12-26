@@ -3,7 +3,7 @@ package org.squirrelsql.session.sql;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import org.squirrelsql.RightMouseMenuHandler;
+import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Utils;

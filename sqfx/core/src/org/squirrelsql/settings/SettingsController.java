@@ -47,7 +47,11 @@ public class SettingsController
 
       GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
 
+
+      Utils.makePositiveIntegerField(_settingsView.txtLimitRowsDefault);
+
       loadSettingsToUi();
+
 
       _settingsView.chkLimitRowsByDefault.setOnAction((e) -> updateUi());
 

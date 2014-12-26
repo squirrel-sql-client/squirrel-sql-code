@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.squirrelsql.services.I18n;
+import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.Utils;
 
 import java.sql.SQLException;

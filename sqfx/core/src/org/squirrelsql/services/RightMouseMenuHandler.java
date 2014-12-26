@@ -1,4 +1,4 @@
-package org.squirrelsql;
+package org.squirrelsql.services;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
@@ -7,6 +7,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.squirrelsql.RightMouseMenuHandlerListener;
 
 public class RightMouseMenuHandler
 {

@@ -6,9 +6,15 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
+import org.squirrelsql.AppState;
+import org.squirrelsql.services.RightMouseMenuHandler;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.TokenAtCarretInfo;
+import org.squirrelsql.session.action.ActionHandle;
+import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.EscapeDateCtrl;
+import org.squirrelsql.session.action.StandardActionConfiguration;
 import org.squirrelsql.session.parser.ParserEventsListener;
 import org.squirrelsql.session.parser.ParserEventsProcessor;
 import org.squirrelsql.session.parser.kernel.ErrorInfo;
@@ -54,6 +60,19 @@ public class SQLTextAreaServices
       });
 
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
+
+      createStandardRightMouseMenu();
+   }
+
+   private void createStandardRightMouseMenu()
+   {
+      RightMouseMenuHandler textAreaContextMenu = new RightMouseMenuHandler(_sqlTextArea);
+
+      for (StandardActionConfiguration sac : StandardActionConfiguration.SQL_EDITOR_CONTEXT_MENU)
+      {
+         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> new EscapeDateCtrl(SQLTextAreaServices.this));
+      }
+
    }
 
    private void onAliasesFound(TableAliasInfo[] aliasInfos)

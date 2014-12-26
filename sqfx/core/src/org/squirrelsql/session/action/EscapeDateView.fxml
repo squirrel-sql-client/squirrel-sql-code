@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="190.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.action.EscapeDateView">
+   <children>
+      <Label layoutX="9.0" layoutY="12.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.year" />
+      <TextField fx:id="txtYear" layoutX="98.0" layoutY="7.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <TextField fx:id="txtMonth" layoutX="98.0" layoutY="38.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <Label layoutX="9.0" layoutY="43.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.month" />
+      <Label layoutX="9.0" layoutY="75.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.day" />
+      <TextField fx:id="txtDay" layoutX="98.0" layoutY="70.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <Label layoutX="9.0" layoutY="183.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.second" />
+      <Label layoutX="9.0" layoutY="151.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.minute" />
+      <TextField fx:id="txtHour" layoutX="98.0" layoutY="115.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <TextField fx:id="txtMinute" layoutX="98.0" layoutY="146.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <TextField fx:id="txtSecond" layoutX="98.0" layoutY="178.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />
+      <Label layoutX="9.0" layoutY="120.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.hour" />
+      <Button fx:id="btnTimestamp" defaultButton="true" layoutX="9.0" layoutY="224.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="172.0" text="%escape.date.timestamp" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" />
+      <Button fx:id="btnDate" layoutX="9.0" layoutY="257.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="172.0" text="%escape.date.date" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" />
+      <Button fx:id="btnTime" layoutX="9.0" layoutY="290.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="172.0" text="%escape.date.time" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" />
+   </children>
+</AnchorPane>
