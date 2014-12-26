@@ -70,7 +70,7 @@ public class SQLTextAreaServices
 
       for (StandardActionConfiguration sac : StandardActionConfiguration.SQL_EDITOR_CONTEXT_MENU)
       {
-         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> new EscapeDateCtrl(SQLTextAreaServices.this));
+         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> new EscapeDateCtrl(s -> insertAtCarret(s)));
       }
 
    }
