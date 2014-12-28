@@ -61,18 +61,6 @@ public class SQLTextAreaServices
 
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
 
-      createStandardRightMouseMenu();
-   }
-
-   private void createStandardRightMouseMenu()
-   {
-      RightMouseMenuHandler textAreaContextMenu = new RightMouseMenuHandler(_sqlTextArea);
-
-      for (StandardActionConfiguration sac : StandardActionConfiguration.SQL_EDITOR_CONTEXT_MENU)
-      {
-         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> new EscapeDateCtrl(s -> insertAtCarret(s)));
-      }
-
    }
 
    private void onAliasesFound(TableAliasInfo[] aliasInfos)

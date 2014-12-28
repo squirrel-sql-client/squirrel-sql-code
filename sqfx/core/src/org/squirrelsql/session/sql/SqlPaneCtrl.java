@@ -13,10 +13,7 @@ import javafx.scene.text.FontWeight;
 
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.SessionTabContext;
-import org.squirrelsql.session.action.ActionHandle;
-import org.squirrelsql.session.action.ActionManager;
-import org.squirrelsql.session.action.ActionScope;
-import org.squirrelsql.session.action.StandardActionConfiguration;
+import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkManager;
 import org.squirrelsql.table.SQLExecutor;
@@ -67,6 +64,8 @@ public class SqlPaneCtrl
       initActionListeners();
 
       _sqlTextAreaServices.setOnKeyPressed(this::onHandleKeyEvent);
+      createStandardRightMouseMenu();
+
 
       _sqlPane = new BorderPane();
 
@@ -78,15 +77,31 @@ public class SqlPaneCtrl
       _sqlSplitPosSaver.apply(_sqlTabSplitPane);
    }
 
+   private void createStandardRightMouseMenu()
+   {
+      RightMouseMenuHandler textAreaContextMenu = new RightMouseMenuHandler(_sqlTextAreaServices.getTextArea());
+
+      for (StandardActionConfiguration sac : StandardActionConfiguration.SQL_EDITOR_CONTEXT_MENU)
+      {
+         ActionHandle handle = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(sac);
+         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> handle.fire());
+      }
+
+   }
+
+
+
    private void initActionListeners()
    {
       ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
       ActionHandle hCodeCompletion = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.SQL_CODE_COMPLETION);
       ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.EXEC_BOOKMARK);
+      ActionHandle escapeDate = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.ESCAPE_DATE);
 
       hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
       hCodeCompletion.setOnAction(_completionCtrl::completeCode);
       hBookMarkAbrevAutoCorr.setOnAction(_bookmarkManager::showBookmarkPopup);
+      escapeDate.setOnAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)
