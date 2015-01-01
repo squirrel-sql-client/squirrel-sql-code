@@ -15,8 +15,8 @@ import org.squirrelsql.globalicons.GlobalIconNames;
 import org.squirrelsql.services.*;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.ActionHandle;
-import org.squirrelsql.session.action.ActionManager;
-import org.squirrelsql.session.action.StandardActionConfiguration;
+import org.squirrelsql.session.action.ActionUtil;
+import org.squirrelsql.session.action.StdActionCfg;
 
 public class BookmarkEditCtrl
 {
@@ -43,7 +43,7 @@ public class BookmarkEditCtrl
       _region = fxmlHelper.getRegion();
       _view = fxmlHelper.getView();
 
-      _view.lblNote.setText(_i18n.t("bookmarkedit.note", StandardActionConfiguration.EXEC_BOOKMARK.getActionConfiguration().getKeyCodeCombination()));
+      _view.lblNote.setText(_i18n.t("bookmarkedit.note", StdActionCfg.EXEC_BOOKMARK.getActionCfg().getKeyCodeCombination()));
 
       SplitPane splitPane = new SplitPane();
       splitPane.setOrientation(Orientation.VERTICAL);
@@ -212,9 +212,4 @@ public class BookmarkEditCtrl
       _view.btnDelete.setDisable(b);
    }
 
-   public static void registerListener(SessionTabContext sessionTabContext)
-   {
-      ActionHandle hEditBookmark = new ActionManager().getActionHandle(StandardActionConfiguration.EDIT_BOOKMARK, sessionTabContext);
-      hEditBookmark.setOnAction(() -> new BookmarkEditCtrl(sessionTabContext));
-   }
 }

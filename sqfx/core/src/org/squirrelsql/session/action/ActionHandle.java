@@ -10,7 +10,7 @@ import org.squirrelsql.workaround.KeyMatchWA;
 
 public class ActionHandle
 {
-   private ActionConfiguration _actionConfiguration;
+   private ActionCfg _actionCfg;
    private SessionTabContext _sessionTabContext;
 
    private SqFxActionListener _sqFxActionListener;
@@ -19,13 +19,13 @@ public class ActionHandle
    private ActionScope _currentActionScope;
    private boolean _disabledByExtern = false;
 
-   public ActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
+   public ActionHandle(ActionCfg actionCfg, SessionTabContext sessionTabContext)
    {
-      _actionConfiguration = actionConfiguration;
+      _actionCfg = actionCfg;
       _sessionTabContext = sessionTabContext;
    }
 
-   public void setOnAction(SqFxActionListener sqFxActionListener)
+   public void setAction(SqFxActionListener sqFxActionListener)
    {
       _sqFxActionListener = sqFxActionListener;
       refreshActionUI();
@@ -44,14 +44,26 @@ public class ActionHandle
    {
       _toolbarButton = toolbarButton;
       _toolbarButton.setOnAction((e) -> actionPerformed());
-      _toolbarButton.setGraphic(_actionConfiguration.getIcon());
-      _toolbarButton.setTooltip(new Tooltip(_actionConfiguration.getText() + "\t" + _actionConfiguration.getKeyCodeCombination()));
+      _toolbarButton.setGraphic(_actionCfg.getIcon());
+
+
+      Tooltip tooltip;
+      if (null != _actionCfg.getKeyCodeCombination())
+      {
+         tooltip = new Tooltip(_actionCfg.getText() + "\t" + _actionCfg.getKeyCodeCombination());
+      }
+      else
+      {
+         tooltip = new Tooltip(_actionCfg.getText());
+      }
+      _toolbarButton.setTooltip(tooltip);
+
       refreshActionUI();
    }
 
-   public ActionConfiguration getActionConfiguration()
+   public ActionCfg getActionCfg()
    {
-      return _actionConfiguration;
+      return _actionCfg;
    }
 
    public void setDisable(boolean b)
@@ -70,7 +82,7 @@ public class ActionHandle
    {
       _menuItem = menuItem;
       _menuItem.setOnAction((e) -> actionPerformed());
-      _menuItem.setAccelerator(_actionConfiguration.getKeyCodeCombination());
+      _menuItem.setAccelerator(_actionCfg.getKeyCodeCombination());
       refreshActionUI();
    }
 
@@ -84,9 +96,9 @@ public class ActionHandle
       return _sessionTabContext.matches(sessionTabContext);
    }
 
-   public boolean matchesPrimaryKey(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
+   public boolean matchesPrimaryKey(ActionCfg actionCfg, SessionTabContext sessionTabContext)
    {
-      return matchesSessionContext(sessionTabContext) && _actionConfiguration.matches(actionConfiguration);
+      return matchesSessionContext(sessionTabContext) && _actionCfg.matches(actionCfg);
    }
 
    public void setActionScope(ActionScope actionScope)
@@ -97,8 +109,7 @@ public class ActionHandle
 
    public boolean matchesKeyEvent(KeyEvent keyEvent)
    {
-      KeyCodeCombination keyCodeCombination = _actionConfiguration.getKeyCodeCombination();
-      return KeyMatchWA.matches(keyEvent, keyCodeCombination);
+      return _actionCfg.matchesKeyEvent(keyEvent);
    }
 
    public void refreshActionUI()
@@ -116,7 +127,7 @@ public class ActionHandle
       }
 
 
-      if(ActionScope.UNSCOPED == _actionConfiguration.getActionScope())
+      if(ActionScope.UNSCOPED == _actionCfg.getActionScope())
       {
          updateControls(false);
          return;
@@ -129,7 +140,7 @@ public class ActionHandle
       }
 
 
-      updateControls(false == _actionConfiguration.getActionScope().equals(_currentActionScope));
+      updateControls(false == _actionCfg.getActionScope().equals(_currentActionScope));
    }
 
    private void updateControls(boolean disable)

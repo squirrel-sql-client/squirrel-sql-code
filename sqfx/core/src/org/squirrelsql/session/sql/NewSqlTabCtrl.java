@@ -4,13 +4,12 @@ import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.squirrelsql.AppState;
-import org.squirrelsql.services.Pref;
 import org.squirrelsql.session.SessionManagerListener;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.SessionUtil;
-import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
-import org.squirrelsql.session.action.StandardActionConfiguration;
+import org.squirrelsql.session.action.StdActionCfg;
 
 public class NewSqlTabCtrl
 {
@@ -34,27 +33,32 @@ public class NewSqlTabCtrl
          }
       };
 
-      new ActionManager().setActionScope(ActionScope.SQL_EDITOR);
+      ActionUtil.setActionScope(ActionScope.SQL_EDITOR);
 
 
       AppState.get().getSessionManager().addSessionManagerListener(_sessionManagerListener);
 
       _newSqlTab = new Tab();
-      _newSqlTab.setGraphic(SessionUtil.createSessionTabHeader(newSqlTabContext, StandardActionConfiguration.NEW_SQL_TAB.getActionConfiguration().getIcon()));
+      _newSqlTab.setGraphic(SessionUtil.createSessionTabHeader(newSqlTabContext, StdActionCfg.NEW_SQL_TAB.getActionCfg().getIcon()));
 
       _sqlPaneCtrl = new SqlPaneCtrl(newSqlTabContext);
       _sqlPaneCtrl.requestFocus();
 
       BorderPane bp = new BorderPane();
-      bp.setTop(new ActionManager().createToolbar());
+      bp.setTop(ActionUtil.createToolbar());
       bp.setCenter(_sqlPaneCtrl.getSqlPane());
 
       _newSqlTab.setContent(bp);
 
-      NewSqlTabHelper.registerNewSqlTabListener(_newSqlTabContext, _newSqlTab);
+      initStandardActions();
 
       _newSqlTab.setOnSelectionChanged(this::onSelectionChanged);
       _newSqlTab.setOnClosed(e -> close(_newSqlTabContext));
+   }
+
+   private void initStandardActions()
+   {
+      StdActionCfg.NEW_SQL_TAB.setAction(() -> AppState.get().getSessionManager().createSqlTab(_newSqlTabContext));
    }
 
    private void onSelectionChanged(Event e)

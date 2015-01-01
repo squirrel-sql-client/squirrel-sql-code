@@ -9,9 +9,10 @@ import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.SessionManagerListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ActionMangerImpl
+public class ActionManger
 {
    private Menu _sessionMenu;
    private ActionScope _currentActionScope;
@@ -27,7 +28,7 @@ public class ActionMangerImpl
    }
 
 
-   public ActionMangerImpl(SessionManager sessionManager)
+   public ActionManger(SessionManager sessionManager)
    {
       _sessionManager = sessionManager;
       sessionManager.addSessionManagerListener(new SessionManagerListener()
@@ -45,7 +46,7 @@ public class ActionMangerImpl
          }
       });
 
-      _sessionMenu = new Menu(new I18n(ActionMangerImpl.class).t("main.menu.session"));
+      _sessionMenu = new Menu(new I18n(ActionManger.class).t("main.menu.session"));
       _sessionMenu.setDisable(true);
    }
 
@@ -63,13 +64,13 @@ public class ActionMangerImpl
       }
 
       _sessionMenu.setDisable(false);
-      for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.SESSION_MENU)
+      for (StdActionCfg stdActionCfg : StdActionCfg.SESSION_MENU)
       {
-         MenuItem menuItem = new MenuItem(standardActionConfiguration.getActionConfiguration().getText());
+         MenuItem menuItem = new MenuItem(stdActionCfg.getActionCfg().getText());
 
-         menuItem.setGraphic(standardActionConfiguration.getActionConfiguration().getIcon());
+         menuItem.setGraphic(stdActionCfg.getActionCfg().getIcon());
 
-         ActionHandle actionHandle = getActionHandle(standardActionConfiguration.getActionConfiguration(), sessionTabContext);
+         ActionHandle actionHandle = getActionHandle(stdActionCfg.getActionCfg(), sessionTabContext);
          actionHandle.setMenuItem(menuItem);
          actionHandle.refreshActionUI();
 
@@ -88,9 +89,9 @@ public class ActionMangerImpl
    {
       ToolBar ret = new ToolBar();
 
-      for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.SESSION_TOOLBAR)
+      for (StdActionCfg stdActionCfg : StdActionCfg.SESSION_TOOLBAR)
       {
-         addActionToToolbar(ret, standardActionConfiguration.getActionConfiguration());
+         addActionToToolbar(ret, stdActionCfg.getActionCfg());
       }
 
       LogTest.checkAndAddTestToolbarButtons(ret);
@@ -98,9 +99,9 @@ public class ActionMangerImpl
       return ret;
    }
 
-   public ActionHandle addActionToToolbar(ToolBar toolBar, ActionConfiguration actionConfiguration)
+   public ActionHandle addActionToToolbar(ToolBar toolBar, ActionCfg actionCfg)
    {
-      ActionHandle actionHandle = getActionHandleForActiveOrActivatingSessionTabContext(actionConfiguration);
+      ActionHandle actionHandle = getActionHandleForActiveOrActivatingSessionTabContext(actionCfg);
 
       Button b = new Button();
       actionHandle.setToolbarButton(b);
@@ -119,20 +120,20 @@ public class ActionMangerImpl
       CollectionUtil.forEachFiltered(_actionHandles, ah -> ah.matchesSessionContext(_activeOrActivatingSessionTabContext), ah -> ah.refreshActionUI());
    }
 
-   public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(ActionConfiguration actionConfiguration)
+   public ActionHandle getActionHandleForActiveOrActivatingSessionTabContext(ActionCfg actionCfg)
    {
-      return getActionHandle(actionConfiguration, _activeOrActivatingSessionTabContext);
+      return getActionHandle(actionCfg, _activeOrActivatingSessionTabContext);
    }
 
-   public ActionHandle getActionHandle(ActionConfiguration actionConfiguration, SessionTabContext sessionTabContext)
+   public ActionHandle getActionHandle(ActionCfg actionCfg, SessionTabContext sessionTabContext)
    {
       ActionHandle ret;
 
-      List<ActionHandle> handles = CollectionUtil.filter(_actionHandles, ah -> ah.matchesPrimaryKey(actionConfiguration, sessionTabContext));
+      List<ActionHandle> handles = CollectionUtil.filter(_actionHandles, ah -> ah.matchesPrimaryKey(actionCfg, sessionTabContext));
 
       if(0 == handles.size())
       {
-         ret = new ActionHandle(actionConfiguration, sessionTabContext);
+         ret = new ActionHandle(actionCfg, sessionTabContext);
          ret.setActionScope(_currentActionScope);
          _actionHandles.add(ret);
       }
@@ -147,5 +148,29 @@ public class ActionMangerImpl
    private void onContextClosing(SessionTabContext sessionTabContext)
    {
       _actionHandles.removeIf(ah -> ah.getSessionTabContext().matches(sessionTabContext));
+   }
+
+   public List<ActionCfg> getSQLEditRightMouseActionCfgs()
+   {
+      ArrayList<ActionCfg> ret = new ArrayList<>();
+
+      for (StdActionCfg stdActionCfg : StdActionCfg.SQL_EDITOR_CONTEXT_MENU)
+      {
+         ret.add(stdActionCfg.getActionCfg());
+      }
+
+      return ret;
+   }
+
+   public List<ActionCfg> getAllActionCfgs()
+   {
+      ArrayList<ActionCfg> ret = new ArrayList<>();
+
+      for (StdActionCfg stdActionCfg : StdActionCfg.values())
+      {
+         ret.add(stdActionCfg.getActionCfg());
+      }
+
+      return ret;
    }
 }

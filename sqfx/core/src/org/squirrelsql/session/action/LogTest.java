@@ -21,14 +21,14 @@ public class LogTest
       Props props = new Props(LogTest.class);
       I18n i18n = new I18n(LogTest.class);
 
-      ActionConfiguration actError = new ActionConfiguration(props.getImage(GlobalIconNames.ERROR), i18n.t("log.test.error"), ActionScope.UNSCOPED, null);
-      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actError).setOnAction(LogTest::logError);
+      ActionCfg actError = new ActionCfg(props.getImage(GlobalIconNames.ERROR), i18n.t("log.test.error"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionManger().addActionToToolbar(toolBar, actError).setAction(LogTest::logError);
 
-      ActionConfiguration actWarn = new ActionConfiguration(props.getImage(GlobalIconNames.WARNING), i18n.t("log.test.warning"), ActionScope.UNSCOPED, null);
-      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actWarn).setOnAction(LogTest::logWarning);
+      ActionCfg actWarn = new ActionCfg(props.getImage(GlobalIconNames.WARNING), i18n.t("log.test.warning"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionManger().addActionToToolbar(toolBar, actWarn).setAction(LogTest::logWarning);
 
-      ActionConfiguration actInfo = new ActionConfiguration(props.getImage(GlobalIconNames.INFORMATION), i18n.t("log.test.info"), ActionScope.UNSCOPED, null);
-      AppState.get().getActionMangerImpl().addActionToToolbar(toolBar, actInfo).setOnAction(LogTest::logInfo);
+      ActionCfg actInfo = new ActionCfg(props.getImage(GlobalIconNames.INFORMATION), i18n.t("log.test.info"), ActionScope.UNSCOPED, null);
+      AppState.get().getActionManger().addActionToToolbar(toolBar, actInfo).setAction(LogTest::logInfo);
    }
 
    private static void logInfo()

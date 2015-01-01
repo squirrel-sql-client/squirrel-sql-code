@@ -61,10 +61,10 @@ public class SqlPaneCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      initActionListeners();
+      initStandardActions();
 
       _sqlTextAreaServices.setOnKeyPressed(this::onHandleKeyEvent);
-      createStandardRightMouseMenu();
+      createRightMouseMenu();
 
 
       _sqlPane = new BorderPane();
@@ -77,44 +77,35 @@ public class SqlPaneCtrl
       _sqlSplitPosSaver.apply(_sqlTabSplitPane);
    }
 
-   private void createStandardRightMouseMenu()
+   private void createRightMouseMenu()
    {
       RightMouseMenuHandler textAreaContextMenu = new RightMouseMenuHandler(_sqlTextAreaServices.getTextArea());
 
-      for (StandardActionConfiguration sac : StandardActionConfiguration.SQL_EDITOR_CONTEXT_MENU)
+      for (ActionCfg ac : ActionUtil.getSQLEditRightMouseActionCfgs())
       {
-         ActionHandle handle = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(sac);
-         textAreaContextMenu.addMenu(sac.getActionConfiguration().getText(), () -> handle.fire());
+         textAreaContextMenu.addMenu(ac.getText(), ac::fire);
       }
-
    }
 
 
 
-   private void initActionListeners()
+   private void initStandardActions()
    {
-      ActionHandle hRunSql = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.RUN_SQL);
-      ActionHandle hCodeCompletion = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.SQL_CODE_COMPLETION);
-      ActionHandle hBookMarkAbrevAutoCorr = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.EXEC_BOOKMARK);
-      ActionHandle escapeDate = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(StandardActionConfiguration.ESCAPE_DATE);
-
-      hRunSql.setOnAction(() -> onExecuteSql(_sqlTextAreaServices));
-      hCodeCompletion.setOnAction(_completionCtrl::completeCode);
-      hBookMarkAbrevAutoCorr.setOnAction(_bookmarkManager::showBookmarkPopup);
-      escapeDate.setOnAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
+      StdActionCfg.RUN_SQL.setAction(() -> onExecuteSql(_sqlTextAreaServices));
+      StdActionCfg.SQL_CODE_COMPLETION.setAction(_completionCtrl::completeCode);
+      StdActionCfg.EXEC_BOOKMARK.setAction(_bookmarkManager::showBookmarkPopup);
+      StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)
    {
-      for (StandardActionConfiguration standardActionConfiguration : StandardActionConfiguration.values())
+      for (ActionCfg actionCfg : ActionUtil.getAllActionCfgs())
       {
-         if(   standardActionConfiguration.getActionConfiguration().getActionScope() == ActionScope.SQL_EDITOR
-            || standardActionConfiguration.getActionConfiguration().getActionScope() == ActionScope.UNSCOPED)
+         if( actionCfg.getActionScope() == ActionScope.SQL_EDITOR  || actionCfg.getActionScope() == ActionScope.UNSCOPED)
          {
-            ActionHandle handle = new ActionManager().getActionHandleForActiveOrActivatingSessionTabContext(standardActionConfiguration);
-            if (handle.matchesKeyEvent(keyEvent))
+            if (actionCfg.matchesKeyEvent(keyEvent))
             {
-               handle.fire();
+               actionCfg.fire();
                return;
             }
          }

@@ -13,9 +13,7 @@ import javafx.stage.WindowEvent;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.StageDimensionSaver;
-import org.squirrelsql.session.action.ActionConfiguration;
-import org.squirrelsql.session.action.ActionManager;
-import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.settings.SettingsController;
 import org.squirrelsql.splash.SquirrelSplashScreen;
 
@@ -111,7 +109,7 @@ public class Main extends Application
       exit.setOnAction(e -> onExit(primaryStage));
 
 
-      ret.getMenus().add(new ActionManager().getSessionMenu());
+      ret.getMenus().add(ActionUtil.getSessionMenu());
 
 
       Menu help = new Menu(i18n.t("main.menu.help"));

@@ -10,10 +10,10 @@ import org.squirrelsql.ApplicationCloseListener;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.Pref;
 import org.squirrelsql.services.SplitPositionSaver;
-import org.squirrelsql.session.action.ActionManager;
+import org.squirrelsql.session.action.ActionUtil;
 import org.squirrelsql.session.action.ActionScope;
+import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.objecttree.*;
-import org.squirrelsql.session.sql.NewSqlTabHelper;
 import org.squirrelsql.session.sql.SqlTabCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkEditCtrl;
 import org.squirrelsql.workaround.SessionTabSelectionRepaintWA;
@@ -48,7 +48,7 @@ public class SessionCtrl
 
       _sessionPane = new BorderPane();
 
-      _sessionPane.setTop(new ActionManager().createToolbar());
+      _sessionPane.setTop(ActionUtil.createToolbar());
 
       _objectTreeAndSqlTabPane = createObjectTreeAndSqlTabPane();
 
@@ -62,11 +62,16 @@ public class SessionCtrl
       _sessionTab.setOnClosed(e -> onClose());
       _sessionTab.setOnSelectionChanged(this::onSelectionChanged);
 
-      NewSqlTabHelper.registerSessionTabListener(sessionTabContext, _sessionTab);
-      BookmarkEditCtrl.registerListener(sessionTabContext);
+      initStandardActions(sessionTabContext);
 
       _applicationCloseListener = this::onClose;
       AppState.get().addApplicationCloseListener(_applicationCloseListener, ApplicationCloseListener.FireTime.WITHIN_SESSION_FIRE_TIME);
+   }
+
+   private void initStandardActions(SessionTabContext sessionTabContext)
+   {
+      StdActionCfg.NEW_SQL_TAB.setAction(() -> AppState.get().getSessionManager().createSqlTab(sessionTabContext));
+      StdActionCfg.EDIT_BOOKMARK.setAction(() -> new BookmarkEditCtrl(sessionTabContext));
    }
 
    private void onSelectionChanged(Event e)
@@ -84,7 +89,7 @@ public class SessionCtrl
 
       Tab objectsTab = createObjectsTab();
       ret.getTabs().add(objectsTab);
-      new ActionManager().setActionScope(ActionScope.OBJECT_TREE);
+      ActionUtil.setActionScope(ActionScope.OBJECT_TREE);
 
 
       _sqlTabCtrl = new SqlTabCtrl(_sessionTabContext);
@@ -109,7 +114,7 @@ public class SessionCtrl
    private void onSwitchedToSqlTab()
    {
       _sqlTabCtrl.requestFocus();
-      new ActionManager().setActionScope(ActionScope.SQL_EDITOR);
+      ActionUtil.setActionScope(ActionScope.SQL_EDITOR);
    }
 
    private void onTabChanged(Tab newSelectedTab)
@@ -120,7 +125,7 @@ public class SessionCtrl
       }
       else
       {
-         new ActionManager().setActionScope(ActionScope.OBJECT_TREE);
+         ActionUtil.setActionScope(ActionScope.OBJECT_TREE);
       }
    }
 

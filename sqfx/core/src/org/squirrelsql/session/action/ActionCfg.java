@@ -4,9 +4,11 @@ package org.squirrelsql.session.action;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import org.squirrelsql.AppState;
+import org.squirrelsql.workaround.KeyMatchWA;
 
-public class ActionConfiguration
+public class ActionCfg
 {
    private ActionScope _actionScope;
    private final Image _icon;
@@ -15,12 +17,12 @@ public class ActionConfiguration
    private final int _actionConfigurationId;
 
 
-   public ActionConfiguration(Image icon, String text, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
+   public ActionCfg(Image icon, String text, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: ActionConfigurations are supposed to be an application wide state like in the StandardActionConfiguration enum.
       // If though two ActionConfiguration objects for the same action-function would be created this would result in two different ActionHandles with different listeners
-      _actionConfigurationId = AppState.get().getActionMangerImpl().getNextActionConfigurationId();
+      _actionConfigurationId = AppState.get().getActionManger().getNextActionConfigurationId();
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,8 +54,32 @@ public class ActionConfiguration
    }
 
 
-   public boolean matches(ActionConfiguration actionConfiguration)
+   public boolean matches(ActionCfg actionCfg)
    {
-      return _actionConfigurationId == actionConfiguration._actionConfigurationId;
+      return _actionConfigurationId == actionCfg._actionConfigurationId;
+   }
+
+
+   public boolean matchesKeyEvent(KeyEvent keyEvent)
+   {
+      return KeyMatchWA.matches(keyEvent, _keyCodeCombination);
+   }
+
+   /**
+    * Shortcut method to set an action for the current SessionTabContext
+    * @param sqFxActionListener
+    */
+   public void setAction(SqFxActionListener sqFxActionListener)
+   {
+      ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this).setAction(sqFxActionListener);
+   }
+
+   /**
+    * Shortcut method to fire an action for the current SessionTabContext
+    */
+   public void fire()
+   {
+      ActionHandle handle = ActionUtil.getActionHandleForActiveOrActivatingSessionTabContext(this);
+      handle.fire();
    }
 }
