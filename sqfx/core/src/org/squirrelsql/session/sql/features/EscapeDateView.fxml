@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="190.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.action.EscapeDateView">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="190.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.features.EscapeDateView">
    <children>
       <Label layoutX="9.0" layoutY="12.0" prefHeight="15.0" prefWidth="83.0" text="%escape.date.year" />
       <TextField fx:id="txtYear" layoutX="98.0" layoutY="7.0" prefHeight="25.0" prefWidth="83.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="9.0" />

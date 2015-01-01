@@ -16,6 +16,8 @@ import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
 import org.squirrelsql.session.sql.bookmark.BookmarkManager;
+import org.squirrelsql.session.sql.features.EscapeDateCtrl;
+import org.squirrelsql.session.sql.features.SqlToTableCtrl;
 import org.squirrelsql.table.SQLExecutor;
 import org.squirrelsql.table.StatementExecution;
 
@@ -95,6 +97,8 @@ public class SqlPaneCtrl
       StdActionCfg.SQL_CODE_COMPLETION.setAction(_completionCtrl::completeCode);
       StdActionCfg.EXEC_BOOKMARK.setAction(_bookmarkManager::showBookmarkPopup);
       StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
+
+      StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession()));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)

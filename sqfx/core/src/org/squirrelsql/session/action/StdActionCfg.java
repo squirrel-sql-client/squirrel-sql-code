@@ -12,7 +12,8 @@ public enum StdActionCfg
    SQL_CODE_COMPLETION(new ActionCfg(null, null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN))),
    EXEC_BOOKMARK(new ActionCfg(Help.props.getImage("bookmark-exec.png"), Help.i18n.t("bookmark.execute"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.J, KeyCodeCombination.CONTROL_DOWN))),
    EDIT_BOOKMARK(new ActionCfg(Help.props.getImage("bookmark-edit.png"), Help.i18n.t("bookmark.edit"), ActionScope.UNSCOPED, null)),
-   ESCAPE_DATE(new ActionCfg(null, Help.i18n.t("escape.date"), ActionScope.SQL_EDITOR, null));
+   ESCAPE_DATE(new ActionCfg(null, Help.i18n.t("escape.date"), ActionScope.SQL_EDITOR, null)),
+   SQL_TO_TABLE(new ActionCfg(null, Help.i18n.t("sql.to.table"), ActionScope.SQL_EDITOR, null));
 
 
 
@@ -34,9 +35,10 @@ public enum StdActionCfg
    };
 
 
-   public static StdActionCfg[] SQL_EDITOR_CONTEXT_MENU = new StdActionCfg[]
+   public static StdActionCfg[] SQL_EDITOR_RIGHT_MOUSE_MENU = new StdActionCfg[]
    {
-      ESCAPE_DATE
+      ESCAPE_DATE,
+      SQL_TO_TABLE
    };
 
    private static class Help

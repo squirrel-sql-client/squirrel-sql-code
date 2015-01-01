@@ -1,13 +1,9 @@
-package org.squirrelsql.session.action;
+package org.squirrelsql.session.sql.features;
 
-import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.squirrelsql.AppState;
 import org.squirrelsql.services.FxmlHelper;
 import org.squirrelsql.services.GuiUtils;
 import org.squirrelsql.services.Pref;
-import org.squirrelsql.services.StageDimensionSaver;
 
 import java.util.Calendar;
 
@@ -19,19 +15,10 @@ public class EscapeDateCtrl
 
    public EscapeDateCtrl(EscapeDateListener escapeDateListener)
    {
-      _dialog = new Stage();
 
       FxmlHelper<EscapeDateView> fxmlHelper = new FxmlHelper<>(EscapeDateView.class);
 
-      _dialog.setScene(new Scene(fxmlHelper.getRegion()));
-
-      _dialog.initModality(Modality.WINDOW_MODAL);
-
-      _dialog.initOwner(AppState.get().getPrimaryStage());
-
-      GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
-
-      new StageDimensionSaver("EscapeDateView", _dialog, new Pref(getClass()), 190, 350, AppState.get().getPrimaryStage());
+      _dialog = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 190, 350, "EscapeDateView");
 
       _view = fxmlHelper.getView();
 

@@ -2,10 +2,14 @@ package org.squirrelsql.services;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.squirrelsql.AppState;
 
 public class GuiUtils
 {
@@ -44,5 +48,22 @@ public class GuiUtils
       stage.show();
 
 
+   }
+
+   public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
+   {
+      Stage ret = new Stage();
+
+      ret.setScene(new Scene(region));
+
+      ret.initModality(Modality.WINDOW_MODAL);
+
+      ret.initOwner(AppState.get().getPrimaryStage());
+
+      makeEscapeClosable(region);
+
+      new StageDimensionSaver(prefPrefix, ret, pref, initialWidth, initialHeight, AppState.get().getPrimaryStage());
+
+      return ret;
    }
 }

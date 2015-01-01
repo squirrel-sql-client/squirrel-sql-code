@@ -9,7 +9,6 @@ import org.squirrelsql.session.SessionManager;
 import org.squirrelsql.session.SessionManagerListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ActionManger
@@ -154,7 +153,7 @@ public class ActionManger
    {
       ArrayList<ActionCfg> ret = new ArrayList<>();
 
-      for (StdActionCfg stdActionCfg : StdActionCfg.SQL_EDITOR_CONTEXT_MENU)
+      for (StdActionCfg stdActionCfg : StdActionCfg.SQL_EDITOR_RIGHT_MOUSE_MENU)
       {
          ret.add(stdActionCfg.getActionCfg());
       }

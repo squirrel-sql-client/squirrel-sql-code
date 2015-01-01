@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.session.sql.features.SqlToTableView">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="15.0" prefWidth="282.0" text="%sql.to.table.enter.table.name" />
+      <TextField fx:id="txtTableName" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="282.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <RadioButton fx:id="radDrop" layoutX="14.0" layoutY="61.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="332.0" text="%sql.to.table.drop.if.exists" />
+      <RadioButton fx:id="radAppend" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" text="%sql.to.table.append.if.exists" />
+      <CheckBox fx:id="chkScriptOnly" layoutX="14.0" layoutY="126.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="332.0" text="%sql.to.table.script.only" />
+      <Button fx:id="btnOk" defaultButton="true" layoutX="14.0" layoutY="161.0" mnemonicParsing="false" text="%sql.to.table.ok" />
+      <Button fx:id="btnCancel" layoutX="60.0" layoutY="161.0" mnemonicParsing="false" text="%sql.to.table.cancel" />
+   </children>
+</AnchorPane>

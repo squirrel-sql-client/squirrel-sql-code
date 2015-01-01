@@ -1,4 +1,4 @@
-package org.squirrelsql.session.action;
+package org.squirrelsql.session.sql.features;
 
 public interface EscapeDateListener
 {
