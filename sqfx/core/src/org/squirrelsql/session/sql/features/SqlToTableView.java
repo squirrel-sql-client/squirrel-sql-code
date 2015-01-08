@@ -11,6 +11,7 @@ public class SqlToTableView
    @FXML TextField txtTableName;
    @FXML RadioButton radDrop;
    @FXML RadioButton radAppend;
+   @FXML RadioButton radDoNothing;
    @FXML CheckBox chkScriptOnly;
    @FXML Button btnOk;
    @FXML Button btnCancel;
