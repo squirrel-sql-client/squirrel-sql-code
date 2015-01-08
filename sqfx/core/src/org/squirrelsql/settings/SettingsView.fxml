@@ -7,13 +7,13 @@
 <?import javafx.scene.paint.*?>
 <?scenebuilder-preview-i18n-resource i18n.properties?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="314.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.SettingsView">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="366.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.squirrelsql.settings.SettingsView">
   <children>
     <CheckBox fx:id="chkMultibleLinesInCells" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" text="%multiline.display.explanation" />
     <CheckBox fx:id="chkLimitRowsByDefault" layoutX="14.0" layoutY="49.0" mnemonicParsing="false" prefWidth="246.0" text="%limit.result.rows.default" />
-    <TextField fx:id="txtLimitRowsDefault" layoutX="267.0" layoutY="46.0" prefWidth="82.0" />
+    <TextField fx:id="txtLimitRowsDefault" layoutX="255.0" layoutY="46.0" prefHeight="25.0" prefWidth="91.0" />
     <Label layoutX="358.0" layoutY="49.0" text="%limit.result.rows.default.to.rows" />
-    <AnchorPane fx:id="apProperties" layoutY="80.0" prefHeight="180.0" prefWidth="572.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+    <AnchorPane fx:id="apProperties" layoutX="14.0" layoutY="123.0" prefHeight="180.0" prefWidth="572.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
       <children>
         <RadioButton fx:id="radStandardProps" layoutX="14.0" layoutY="14.0" text="%squirrel.uses.standard.properties" />
         <Button fx:id="btnSaveStandardProperties" layoutX="464.0" layoutY="19.0" mnemonicParsing="false" prefWidth="27.0" text="" />
@@ -22,7 +22,9 @@
         <Label layoutX="14.0" layoutY="116.0" text="%how.to.use.squirrel.properties" />
       </children>
     </AnchorPane>
-      <Button fx:id="btnOk" layoutX="14.0" layoutY="271.0" mnemonicParsing="false" text="%showSettings.ok" />
-      <Button fx:id="btnCancel" layoutX="62.0" layoutY="271.0" mnemonicParsing="false" text="%showSettings.cancel" />
+      <Button fx:id="btnOk" layoutX="14.0" layoutY="314.0" mnemonicParsing="false" text="%showSettings.ok" />
+      <Button fx:id="btnCancel" layoutX="62.0" layoutY="314.0" mnemonicParsing="false" text="%showSettings.cancel" />
+      <Label layoutX="15.0" layoutY="84.0" prefHeight="15.0" prefWidth="158.0" text="%showSettings.statement.separator" />
+      <TextField fx:id="txtStatementSeparator" layoutX="173.0" layoutY="79.0" prefHeight="25.0" prefWidth="81.0" />
   </children>
 </AnchorPane>

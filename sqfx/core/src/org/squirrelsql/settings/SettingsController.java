@@ -1,9 +1,7 @@
 package org.squirrelsql.settings;
 
-import javafx.scene.Scene;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.Props;
@@ -15,6 +13,7 @@ import java.io.File;
 public class SettingsController
 {
    private final Stage _dialog;
+   private final Pref _pref;
 
    private I18n _i18n = new I18n(getClass());
 
@@ -24,6 +23,7 @@ public class SettingsController
 
    public SettingsController()
    {
+      _pref = new Pref(getClass());
 
       FxmlHelper<SettingsView> fxmlHelper = new FxmlHelper<>(SettingsView.class);
 
@@ -33,17 +33,13 @@ public class SettingsController
       _settingsView.apProperties.setStyle(GuiUtils.STYLE_GROUP_BORDER);
 
 
-      _dialog = new Stage();
-      _dialog.setTitle(_i18n.t("showSettings.title"));
-      _dialog.initModality(Modality.NONE);
-      _dialog.initOwner(AppState.get().getPrimaryStage());
+      _dialog = GuiUtils.createNonModalDialog(fxmlHelper.getRegion(), _pref, 600, 400, "showSettingsController");
 
-      _dialog.setScene(new Scene(fxmlHelper.getRegion()));
+      _dialog.setTitle(_i18n.t("showSettings.title"));
 
 
       _settingsView.btnSaveStandardProperties.setGraphic(_props.getImageView("save.png"));
 
-      new StageDimensionSaver("showSettingsController", _dialog, new Pref(getClass()), 600, 400, _dialog.getOwner());
 
       GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
 
@@ -155,6 +151,11 @@ public class SettingsController
       settings.setLimitRowsDefault(StringInterpreter.interpret(buf, Integer.class, settings.getLimitRowsDefault()));
       _settingsView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
 
+      if (false == Utils.isEmptyString(_settingsView.txtStatementSeparator.getText()))
+      {
+         settings.setStatementSeparator(_settingsView.txtStatementSeparator.getText().trim());
+      }
+
 
       AppState.get().getSettingsManager().writeSettings();
 
@@ -168,6 +169,8 @@ public class SettingsController
       _settingsView.chkMultibleLinesInCells.setSelected(settings.isMultibleLinesInCells());
       _settingsView.chkLimitRowsByDefault.setSelected(settings.isLimitRowsByDefault());
       _settingsView.txtLimitRowsDefault.setText("" + settings.getLimitRowsDefault());
+
+      _settingsView.txtStatementSeparator.setText("" + settings.getStatementSeparator());
 
       updateUi();
    }

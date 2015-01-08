@@ -52,11 +52,21 @@ public class GuiUtils
 
    public static Stage createModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
    {
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.WINDOW_MODAL);
+   }
+
+   public static Stage createNonModalDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix)
+   {
+      return _createDialog(region, pref, initialWidth, initialHeight, prefPrefix, Modality.NONE);
+   }
+
+   private static Stage _createDialog(Region region, Pref pref, double initialWidth, double initialHeight, String prefPrefix, Modality modality)
+   {
       Stage ret = new Stage();
 
       ret.setScene(new Scene(region));
 
-      ret.initModality(Modality.WINDOW_MODAL);
+      ret.initModality(modality);
 
       ret.initOwner(AppState.get().getPrimaryStage());
 
@@ -66,4 +76,6 @@ public class GuiUtils
 
       return ret;
    }
+
+
 }

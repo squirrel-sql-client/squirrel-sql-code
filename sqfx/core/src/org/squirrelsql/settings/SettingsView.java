@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 
 public class SettingsView
 {
+   @FXML TextField txtStatementSeparator;
    @FXML RadioButton radStandardProps;
    @FXML RadioButton radUserDefinedProps;
    @FXML AnchorPane apProperties;
