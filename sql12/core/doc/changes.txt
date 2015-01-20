@@ -8,6 +8,11 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Upgraded to the latest RSyntax version (2.5.3).
 
+
+Bug fixes:
+
+#1174 PostgreSQL: create table script: wrong data type numeric
+
 3.6.0 (10/12/2014)
 ==================
 
