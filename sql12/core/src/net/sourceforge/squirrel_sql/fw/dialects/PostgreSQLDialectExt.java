@@ -94,7 +94,14 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	@Override
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
-		return _dialect.getTypeName(code, length, precision, scale);
+		if (Types.NUMERIC == code && 0 < length)
+		{
+			return "numeric(" + length + ((0 < scale) ? "," + scale:"" ) + ")";
+		}
+		else
+		{
+			return _dialect.getTypeName(code, length, precision, scale);
+		}
 	}
 	
 	/**
