@@ -1,6 +1,5 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.progress;
 
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressIndicator;

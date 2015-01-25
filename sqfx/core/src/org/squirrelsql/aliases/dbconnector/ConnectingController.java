@@ -6,6 +6,9 @@ import javafx.stage.Window;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.squirrelsql.aliases.Alias;
 import org.squirrelsql.services.*;
+import org.squirrelsql.services.progress.ProgressTask;
+import org.squirrelsql.services.progress.ProgressUtil;
+import org.squirrelsql.services.progress.ProgressibleStage;
 
 import java.sql.SQLException;
 

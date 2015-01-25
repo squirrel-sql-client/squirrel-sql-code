@@ -1,4 +1,4 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.progress;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -7,6 +7,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
+import org.squirrelsql.services.CancelableProgressTask;
 
 public class ProgressUtil
 {

@@ -1,4 +1,4 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.progress;
 
 public interface ProgressTask<T>
 {

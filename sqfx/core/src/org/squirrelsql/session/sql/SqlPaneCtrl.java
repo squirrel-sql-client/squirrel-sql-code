@@ -12,6 +12,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import org.squirrelsql.services.*;
+import org.squirrelsql.services.progress.ProgressTask;
+import org.squirrelsql.services.progress.ProgressUtil;
 import org.squirrelsql.session.SessionTabContext;
 import org.squirrelsql.session.action.*;
 import org.squirrelsql.session.completion.CompletionCtrl;
@@ -97,8 +99,7 @@ public class SqlPaneCtrl
       StdActionCfg.SQL_CODE_COMPLETION.setAction(_completionCtrl::completeCode);
       StdActionCfg.EXEC_BOOKMARK.setAction(_bookmarkManager::showBookmarkPopup);
       StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
-
-      StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession()));
+      StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession(), _sqlTextAreaServices));
    }
 
    private void onHandleKeyEvent(KeyEvent keyEvent)

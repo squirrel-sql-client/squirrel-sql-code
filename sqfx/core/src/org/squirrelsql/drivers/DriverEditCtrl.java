@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
@@ -12,6 +11,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
+import org.squirrelsql.services.progress.ProgressTask;
+import org.squirrelsql.services.progress.ProgressUtil;
+import org.squirrelsql.services.progress.ProgressibleStage;
 import org.squirrelsql.services.sqlwrap.SQLDriverClassLoader;
 
 import java.io.File;

@@ -5,8 +5,6 @@ import org.squirrelsql.services.I18n;
 import org.squirrelsql.services.MessageHandler;
 import org.squirrelsql.services.MessageHandlerDestination;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.*;
 
@@ -17,13 +15,21 @@ public class StatementChannel
    private Statement _cancelCandidate;
 
    private I18n _i18n = new I18n(getClass());
+   private boolean _fireStateChangesToEventQueue = true;
+   private StatementExecutionState _statementExecutionState;
 
    public void cancelStatement()
    {
       try
       {
+         if(_isCanceled || _statementExecutionState == StatementExecutionState.FINSHED || _statementExecutionState == StatementExecutionState.ERROR)
+         {
+            return;
+         }
+
+
          _isCanceled = true;
-         Platform.runLater(() -> _stateChannelListener.stateChanged(StatementExecutionState.CANCELED));
+         setStatementExecutionState(StatementExecutionState.CANCELED);
 
          Statement cancelCandidateBuf = _cancelCandidate;
 
@@ -52,14 +58,35 @@ public class StatementChannel
       }
    }
 
+   private void fireStateChange(StatementExecutionState executionState)
+   {
+      if (null != _stateChannelListener)
+      {
+         if (_fireStateChangesToEventQueue)
+         {
+            Platform.runLater(() -> _stateChannelListener.stateChanged(executionState));
+         }
+         else
+         {
+            _stateChannelListener.stateChanged(executionState);
+         }
+      }
+   }
+
    public void setStateChannelListener(StateChannelListener stateChannelListener)
    {
       _stateChannelListener = stateChannelListener;
    }
 
-   public void setStatementExecutionState(StatementExecutionState executing)
+   public void setStatementExecutionState(StatementExecutionState executionState)
    {
-      Platform.runLater(() -> _stateChannelListener.stateChanged(executing));
+      _statementExecutionState = executionState;
+      fireStateChange(executionState);
+   }
+
+   public StatementExecutionState getStatementExecutionState()
+   {
+      return _statementExecutionState;
    }
 
    public boolean isCanceled()
@@ -70,5 +97,10 @@ public class StatementChannel
    public void setCancelCandidate(Statement cancelCandidate)
    {
       _cancelCandidate = cancelCandidate;
+   }
+
+   public void setFireStateChangesToEventQueue(boolean fireStateChangesToEventQueue)
+   {
+      _fireStateChangesToEventQueue = fireStateChangesToEventQueue;
    }
 }

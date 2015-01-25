@@ -1,19 +1,16 @@
 package org.squirrelsql.session.sql.features;
 
+import javafx.application.Platform;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
-import org.squirrelsql.services.FxmlHelper;
-import org.squirrelsql.services.GuiUtils;
-import org.squirrelsql.services.I18n;
-import org.squirrelsql.services.Pref;
+import org.squirrelsql.AppState;
+import org.squirrelsql.services.*;
+import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.Session;
+import org.squirrelsql.session.sql.SQLTextAreaServices;
 
 public class SqlToTableCtrl
 {
-   private final Stage _dialog;
-
-   private Pref _pref = new Pref(getClass());
-
    public static final String PREF_RAD_DROP = "radDrop";
    public static final String PREF_RAD_APPEND = "radAppend";
    public static final String PREF_RAD_DO_NOTHING = "radDoNothing";
@@ -22,16 +19,36 @@ public class SqlToTableCtrl
 
    public static final String PREF_LAST_TABLE_NAME = "lastTableName";
 
+   private Stage _dialog;
+   private Session _session;
+   private I18n _i18n = new I18n(getClass());
+   private SQLTextAreaServices _sqlTextAreaServices;
 
-   private final SqlToTableView _view;
+   private Pref _pref = new Pref(getClass());
 
-   public SqlToTableCtrl(Session session)
+   private SqlToTableView _view;
+
+   public SqlToTableCtrl(Session session, SQLTextAreaServices sqlTextAreaServices)
    {
+
+
+      _session = session;
+      _sqlTextAreaServices = sqlTextAreaServices;
       FxmlHelper<SqlToTableView> fxmlHelper = new FxmlHelper<>(SqlToTableView.class);
+
+      String sql = _sqlTextAreaServices.getCurrentSql();
+
+      if (Utils.isEmptyString(sql))
+      {
+         FXMessageBox.showInfoOk(AppState.get().getPrimaryStage(), _i18n.t("sql.to.table.no.sql.selected"));
+         return;
+      }
+
+
 
       _dialog = GuiUtils.createModalDialog(fxmlHelper.getRegion(), new Pref(getClass()), 420, 260, "SqlToTableView");
 
-      _dialog.setTitle(new I18n(getClass()).t("sql.to.table"));
+      _dialog.setTitle(_i18n.t("sql.to.table"));
 
 
       ToggleGroup bg = new ToggleGroup();
@@ -60,9 +77,18 @@ public class SqlToTableCtrl
 
    private void onOk()
    {
-      System.out.println("SqlToTableCtrl.onOk");
+      String sql = _sqlTextAreaServices.getCurrentSql();
 
       close();
+
+      Platform.runLater(() -> startProgress(sql));
+
+   }
+
+   private void startProgress(String sql)
+   {
+      SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl();
+      simpleProgressCtrl.start(() -> SqlToTableHelper.exportToTable(simpleProgressCtrl.getProgressible(), _session.getDbConnectorResult(), sql, _view.txtTableName.getText()));
    }
 
    private void close()

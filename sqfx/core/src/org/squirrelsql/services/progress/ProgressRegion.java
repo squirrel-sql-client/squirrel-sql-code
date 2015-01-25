@@ -1,4 +1,4 @@
-package org.squirrelsql.services;
+package org.squirrelsql.services.progress;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
