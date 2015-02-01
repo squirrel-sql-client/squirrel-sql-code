@@ -16,10 +16,11 @@ import org.squirrelsql.services.*;
 public class SimpleProgressCtrl
 {
    private final FxmlHelper<SimpleProgressView> _fxmlHelper;
-   private final Progressible _progressible;
+   private final Progressable _progressable;
    private Stage _dialog;
    private boolean _closeOnFinishOrCancel;
    private I18n _i18n = new I18n(getClass());
+   private boolean _hasShouldReadMessage;
 
    public SimpleProgressCtrl()
    {
@@ -29,7 +30,16 @@ public class SimpleProgressCtrl
    {
       _closeOnFinishOrCancel = closeOnFinishOrCancel;
       _fxmlHelper = new FxmlHelper<>(SimpleProgressView.class);
-      _progressible = new Progressible();
+
+      _progressable = new Progressable(new FXThreadUncheckedCallback()
+      {
+         @Override
+         public void shouldReadMessagePosted()
+         {
+            _hasShouldReadMessage = true;
+         }
+      });
+
 
       _fxmlHelper.getView().btnCancelClose.setOnAction(e -> cancelInBackground());
 
@@ -40,20 +50,20 @@ public class SimpleProgressCtrl
 
    }
 
-   public Progressible getProgressible()
+   public Progressable getProgressable()
    {
-      return _progressible;
+      return _progressable;
    }
 
    public void start(ProgressTask progressTask)
    {
-      _progressible.setProgressTask(progressTask);
+      _progressable.setProgressTask(progressTask);
       showDialogAndStartService();
    }
 
    public void start(Runnable runnable)
    {
-      _progressible.setRunnable(runnable);
+      _progressable.setRunnable(runnable);
       showDialogAndStartService();
    }
 
@@ -74,8 +84,8 @@ public class SimpleProgressCtrl
 
    private void doCancelInBackground()
    {
-      _progressible.cancel();
-      _progressible.update(_i18n.t("simpleProgressView.RequestedCancel"));
+      _progressable.cancel();
+      _progressable.update(_i18n.t("simpleProgressView.RequestedCancel"));
    }
 
 
@@ -86,7 +96,7 @@ public class SimpleProgressCtrl
          @Override
          protected Task createTask()
          {
-            return _progressible;
+            return _progressable;
          }
       };
 
@@ -95,6 +105,15 @@ public class SimpleProgressCtrl
          @Override
          public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State oldState, Worker.State newState){
             onServiceStateChanged(service, newState);
+         }
+      });
+
+      service.messageProperty().addListener(new ChangeListener<String>()
+      {
+         @Override
+         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+         {
+            onSetProgressMessage(newValue);
          }
       });
 
@@ -109,16 +128,6 @@ public class SimpleProgressCtrl
             break;
          case RUNNING:
             _fxmlHelper.getView().progressIndicator.progressProperty().bind(service.progressProperty());
-
-            service.messageProperty().addListener(new ChangeListener<String>()
-            {
-               @Override
-               public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
-               {
-                  onSetProgressMessage(newValue);
-               }
-            });
-
             break;
          case SCHEDULED:
             _fxmlHelper.getView().progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
@@ -148,16 +157,15 @@ public class SimpleProgressCtrl
 
    private void onFailed()
    {
-      Throwable exception = _progressible.getException();
-      _progressible.update(_i18n.t("simpleProgressView.Failed", exception.getMessage()));
-      _progressible.update(_i18n.t("simpleProgressView.seeLogs"));
+      Throwable exception = _progressable.getException();
+      _progressable.update(_i18n.t("simpleProgressView.Failed", exception.getMessage()));
+      _progressable.update(_i18n.t("simpleProgressView.seeLogs"));
       new MessageHandler(getClass(), MessageHandlerDestination.MESSAGE_LOG).error(exception);
       updateControlsAfterFinish();
    }
 
    private void onSucceded()
    {
-      _progressible.update("Finished");
       updateControlsAfterFinish();
    }
 
@@ -168,7 +176,7 @@ public class SimpleProgressCtrl
       _fxmlHelper.getView().btnCancelClose.setDisable(false);
 
 
-      if(_closeOnFinishOrCancel)
+      if(_closeOnFinishOrCancel && false == _hasShouldReadMessage)
       {
          Timeline tl = new Timeline(new KeyFrame(new Duration(500), (e) -> _dialog.close()));
          tl.play();

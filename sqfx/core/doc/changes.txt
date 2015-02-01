@@ -1,6 +1,8 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Store result of SQL in table function available in right mouse menu of SQL editor.
+
 Feature: Escape date dialog available in right mouse menu of SQL editor.
 
 Feature: Settings dialog for user defined settings. See menu File --> Settings.

@@ -19,9 +19,9 @@ public class SQLResultMetaDataFacade
       return getColumnNames().get(resultColIx);
    }
 
-   public String getColumnClassNameAt(int resultColIx)
+   public String getColumnClassNameAt(int colIx)
    {
-      return _getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_CLASS_NAME).get(resultColIx);
+      return _getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_CLASS_NAME).get(colIx);
    }
 
 
@@ -35,8 +35,28 @@ public class SQLResultMetaDataFacade
       return _resultMetaDataTableLoader.getCellsAsString(resultSetMetaDataLoaderConstant.getMetaDataColumnName());
    }
 
-   public int getSqlTypeAt(int editColIx)
+   public int getSqlTypeAt(int colIx)
    {
-      return Integer.parseInt(_getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE).get(editColIx));
+      return Integer.parseInt(_getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE).get(colIx));
+   }
+
+   public String getSqlTypeNameAt(int colIx)
+   {
+      return _getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_TYPE_NAME).get(colIx);
+   }
+
+   public int getColumnDisplaySizeAt(int colIx)
+   {
+      return Integer.parseInt(_getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_COLUMN_DISPLAY_SIZE).get(colIx));
+   }
+
+   public int getColumnScaleAt(int colIx)
+   {
+      return Integer.parseInt(_getMetaDataCells(ResultSetMetaDataLoaderConstants.GET_SCALE).get(colIx));
+   }
+
+   public int getColumnCount()
+   {
+      return _resultMetaDataTableLoader.size();
    }
 }

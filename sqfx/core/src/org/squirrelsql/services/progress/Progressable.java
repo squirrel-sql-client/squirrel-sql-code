@@ -2,13 +2,19 @@ package org.squirrelsql.services.progress;
 
 import javafx.concurrent.Task;
 
-public class Progressible extends Task
+public class Progressable extends Task
 {
    private ProgressTask _progressTask;
    private Runnable _runnable;
 
    private StringBuffer _msg = new StringBuffer();
    private Runnable _cancelCallback;
+   private FXThreadUncheckedCallback _fxThreadUncheckedCallback;
+
+   Progressable(FXThreadUncheckedCallback fxThreadUncheckedCallback)
+   {
+      _fxThreadUncheckedCallback = fxThreadUncheckedCallback;
+   }
 
    public void update(String msg, long workDone, long max)
    {
@@ -98,4 +104,10 @@ public class Progressible extends Task
       _runnable = runnable;
    }
 
+   public void postShouldReadMessage(String msg)
+   {
+      _fxThreadUncheckedCallback.shouldReadMessagePosted();
+
+      update(msg);
+   }
 }

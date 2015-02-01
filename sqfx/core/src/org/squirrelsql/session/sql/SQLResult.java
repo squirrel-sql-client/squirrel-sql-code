@@ -1,6 +1,7 @@
 package org.squirrelsql.session.sql;
 
 import org.squirrelsql.table.TableLoader;
+import org.squirrelsql.table.tableedit.SQLResultMetaDataFacade;
 
 import java.sql.SQLException;
 
@@ -57,5 +58,10 @@ public class SQLResult
    public boolean isMaxResultsReached()
    {
       return null != _maxResults && _maxResults <= _resultTableLoader.size();
+   }
+
+   public SQLResultMetaDataFacade getResultMetaDataTableLoaderFacade()
+   {
+      return new SQLResultMetaDataFacade(_resultMetaDateTableLoader);
    }
 }

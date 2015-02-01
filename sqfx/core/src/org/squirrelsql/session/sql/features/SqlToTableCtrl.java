@@ -5,6 +5,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import org.squirrelsql.AppState;
 import org.squirrelsql.services.*;
+import org.squirrelsql.services.progress.Progressable;
 import org.squirrelsql.services.progress.SimpleProgressCtrl;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
@@ -79,16 +80,45 @@ public class SqlToTableCtrl
    {
       String sql = _sqlTextAreaServices.getCurrentSql();
 
+      SqlToTable.TableExistsOption opt = getTableExistsOption();
+
       close();
 
-      Platform.runLater(() -> startProgress(sql));
+      Platform.runLater(() -> startProgress(sql, opt, _view.chkScriptOnly.isSelected()));
 
    }
 
-   private void startProgress(String sql)
+   private void startProgress(String sql, SqlToTable.TableExistsOption opt, boolean scriptOnly)
    {
       SimpleProgressCtrl simpleProgressCtrl = new SimpleProgressCtrl();
-      simpleProgressCtrl.start(() -> SqlToTableHelper.exportToTable(simpleProgressCtrl.getProgressible(), _session.getDbConnectorResult(), sql, _view.txtTableName.getText()));
+      simpleProgressCtrl.start(() -> exportToTable(simpleProgressCtrl.getProgressable(), sql, opt, scriptOnly));
+   }
+
+   private void exportToTable(Progressable progressable, String sql, SqlToTable.TableExistsOption opt, boolean scriptOnly)
+   {
+      SqlToTable sqlToTable = new SqlToTable(progressable, _session.getDbConnectorResult());
+
+      sqlToTable.exportToTable(sql, _view.txtTableName.getText(), opt, scriptOnly);
+
+      if(scriptOnly && null != sqlToTable.getScript())
+      {
+         Platform.runLater(() -> _sqlTextAreaServices.appendToEditor("\n\n" + sqlToTable.getScript()));
+      }
+   }
+
+   private SqlToTable.TableExistsOption getTableExistsOption()
+   {
+      SqlToTable.TableExistsOption opt = SqlToTable.TableExistsOption.DO_NOTHING;
+
+      if(_view.radDrop.isSelected())
+      {
+         opt = SqlToTable.TableExistsOption.DROP;
+      }
+      else if(_view.radAppend.isSelected())
+      {
+         opt = SqlToTable.TableExistsOption.APPEND;
+      }
+      return opt;
    }
 
    private void close()
