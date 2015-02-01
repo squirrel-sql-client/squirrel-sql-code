@@ -23,7 +23,7 @@ Bug fix: Too long SQLs in result tab and header texts
 
 Feature: Cell data popup
 
-Bug fix: Session menu: Fixed missresource for menu item.
+Bug fix: Session menu: Fixed missing resource for menu item.
 
 Bug fix: Bookmarkedit dialog: Explanation text was partly hidden.
 
