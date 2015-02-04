@@ -11,11 +11,11 @@ public interface DockTabDesktopPaneHolder
 
    void tabDragedAndDroped();
 
-   void addTabWidgetAt(TabWidget widget, int tabIndex, ArrayList<SmallTabButton> externalButtons);
+   void addTabWidgetAt(TabWidget widget, int tabIndex, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated);
 
    RemoveTabHandelResult removeTabHandel(int tabIndex);
 
    boolean isMyTabbedPane(JTabbedPane tabbedPane);
 
-   void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons);
+   void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated);
 }

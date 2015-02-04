@@ -176,7 +176,7 @@ public class TabWindowController implements DockTabDesktopPaneHolder
    }
 
    @Override
-   public void addTabWidgetAt(final TabWidget widget, int tabIndex, final ArrayList<SmallTabButton> externalButtons)
+   public void addTabWidgetAt(final TabWidget widget, int tabIndex, final ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated)
    {
 
       SmallTabButton btnMoveTabBackToMainWin = null;
@@ -200,7 +200,7 @@ public class TabWindowController implements DockTabDesktopPaneHolder
          buf.addAll(externalButtons);
       }
 
-      final TabHandle tabHandle = _dockTabDesktopPane.addTabWidgetAt(widget, tabIndex, buf);
+      final TabHandle tabHandle = _dockTabDesktopPane.addTabWidgetAt(widget, tabIndex, buf, widgetMovedButNotCreated);
 
       btnMoveTabBackToMainWin.addActionListener(new ActionListener()
       {
@@ -225,7 +225,7 @@ public class TabWindowController implements DockTabDesktopPaneHolder
       if (null != removedButtonTabComponent)
       {
          ArrayList<SmallTabButton> externalButtons = removedButtonTabComponent.getExternalButtons();
-         mainDockTabDesktopHolder.addTabWidget(tabHandle.getWidget(), externalButtons);
+         mainDockTabDesktopHolder.addTabWidget(tabHandle.getWidget(), externalButtons, true);
       }
    }
 
@@ -280,8 +280,8 @@ public class TabWindowController implements DockTabDesktopPaneHolder
    }
 
    @Override
-   public void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons)
+   public void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated)
    {
-      _dockTabDesktopPane.addTabWidgetAt(widget, _dockTabDesktopPane.getTabCount(), externalButtons);
+      _dockTabDesktopPane.addTabWidgetAt(widget, _dockTabDesktopPane.getTabCount(), externalButtons, widgetMovedButNotCreated);
    }
 }

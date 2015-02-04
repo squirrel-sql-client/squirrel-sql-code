@@ -69,7 +69,11 @@ public class TabDelegate implements ITabDelegate
       _tabHandle.setTitle(_title);
       _tabHandle.setIcon(_frameIcon);
       _widget.setVisible(true);
-      _eventCaster.fireWidgetOpened(new WidgetEvent(tabHandleEvent, _widget));
+
+      if (false == tabHandleEvent.isWidgetMovedButNotCreated())
+      {
+         _eventCaster.fireWidgetOpened(new WidgetEvent(tabHandleEvent, _widget));
+      }
    }
 
    private void onTabClosed(TabHandleEvent tabHandleEvent)

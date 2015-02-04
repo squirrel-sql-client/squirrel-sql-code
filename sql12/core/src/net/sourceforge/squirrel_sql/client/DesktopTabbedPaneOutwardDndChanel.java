@@ -72,7 +72,7 @@ class DesktopTabbedPaneOutwardDndChanel implements OutwardDndTabbedPaneChanel
 
       DockTabDesktopPaneHolder targetDesktopPaneHolder = _app.getMultipleWindowsHandler().getDockTabDesktopPaneOfTabbedPane(targetTabbedPane);
 
-      targetDesktopPaneHolder.addTabWidgetAt(moveTabHandelResult.getTabHandle().getWidget(), targetTabIndex, moveTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+      targetDesktopPaneHolder.addTabWidgetAt(moveTabHandelResult.getTabHandle().getWidget(), targetTabIndex, moveTabHandelResult.getRemovedButtonTabComponent().getExternalButtons(), true);
 
       sourceDesktopPaneHolder.tabDragedAndDroped();
       targetDesktopPaneHolder.tabDragedAndDroped();

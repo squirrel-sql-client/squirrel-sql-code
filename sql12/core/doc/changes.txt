@@ -6,10 +6,14 @@ ${squirrelsql.changelog.header}
 Not yet released, available in our GIT repository and in future snapshots and releases.
 ===============================================================================================
 
+Enhancements:
+
 Upgraded to the latest RSyntax version (2.5.3).
 
 
 Bug fixes:
+
+Tool bar of SQL Worksheet was doubled any time it was moved from between different frames.
 
 #1174 PostgreSQL: create table script: wrong data type numeric
 

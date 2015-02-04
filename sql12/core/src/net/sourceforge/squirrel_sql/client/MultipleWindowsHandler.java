@@ -66,9 +66,9 @@ public class MultipleWindowsHandler
          }
 
          @Override
-         public void addTabWidgetAt(TabWidget widget, int tabIndex, ArrayList<SmallTabButton> externalButtons)
+         public void addTabWidgetAt(TabWidget widget, int tabIndex, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated)
          {
-            mainDesktop.addTabWidgetAt(widget, tabIndex, externalButtons);
+            mainDesktop.addTabWidgetAt(widget, tabIndex, externalButtons, widgetMovedButNotCreated);
          }
 
          @Override
@@ -84,9 +84,9 @@ public class MultipleWindowsHandler
          }
 
          @Override
-         public void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons)
+         public void addTabWidget(TabWidget widget, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated)
          {
-            mainDesktop.addTabWidgetAt(widget, mainDesktop.getTabCount() , externalButtons);
+            mainDesktop.addTabWidgetAt(widget, mainDesktop.getTabCount() , externalButtons, widgetMovedButNotCreated);
          }
       };
 

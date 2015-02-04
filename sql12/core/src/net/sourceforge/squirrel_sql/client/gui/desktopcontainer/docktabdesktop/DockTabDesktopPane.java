@@ -173,6 +173,11 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
    public TabHandle addTabWidgetAt(TabWidget widget, int index, ArrayList<SmallTabButton> externalButtons)
    {
+      return addTabWidgetAt(widget, index, externalButtons, false);
+   }
+
+   public TabHandle addTabWidgetAt(TabWidget widget, int index, ArrayList<SmallTabButton> externalButtons, boolean widgetMovedButNotCreated)
+   {
       final TabHandle tabHandle = new TabHandle(widget, this);
       ((TabDelegate) widget.getDelegate()).setTabHandle(tabHandle);
 
@@ -208,7 +213,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
 
       _tabHandles.add(tabHandle);
-      tabHandle.fireAdded(_belongsToMainApplicationWindow);
+      tabHandle.fireAdded(_belongsToMainApplicationWindow, widgetMovedButNotCreated);
       _tabbedPane.setSelectedIndex(tabIx);
       _scrollableTabHandler.tabAdded();
 
@@ -235,7 +240,7 @@ public class DockTabDesktopPane extends JComponent implements IDesktopContainer
 
       RemoveTabHandelResult removeTabHandelResult = removeTabHandel(tabHandle);
 
-      tabWindowController.addTabWidgetAt(tabHandle.getWidget(), 0, removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons());
+      tabWindowController.addTabWidgetAt(tabHandle.getWidget(), 0, removeTabHandelResult.getRemovedButtonTabComponent().getExternalButtons(), true);
 
       if (null != _dockTabDesktopPaneListener)
       {

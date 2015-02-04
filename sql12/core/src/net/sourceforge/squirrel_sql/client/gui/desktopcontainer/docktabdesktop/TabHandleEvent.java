@@ -7,17 +7,19 @@ public class TabHandleEvent
    private TabHandle _tabHandle;
    private ActionEvent _e;
    private boolean _wasAddedToToMainApplicationWindow;
+   private boolean _widgetMovedButNotCreated;
 
    public TabHandleEvent(TabHandle tabHandle, ActionEvent e)
    {
-      this(tabHandle, e, false);
+      this(tabHandle, e, false, false);
    }
 
-   public TabHandleEvent(TabHandle tabHandle, ActionEvent e, boolean wasAddedToToMainApplicationWindow)
+   public TabHandleEvent(TabHandle tabHandle, ActionEvent e, boolean wasAddedToToMainApplicationWindow, boolean widgetMovedButNotCreated)
    {
       _tabHandle = tabHandle;
       _e = e;
       _wasAddedToToMainApplicationWindow = wasAddedToToMainApplicationWindow;
+      _widgetMovedButNotCreated = widgetMovedButNotCreated;
    }
 
    public TabHandle getTabHandle()
@@ -28,5 +30,10 @@ public class TabHandleEvent
    public boolean isWasAddedToToMainApplicationWindow()
    {
       return _wasAddedToToMainApplicationWindow;
+   }
+
+   public boolean isWidgetMovedButNotCreated()
+   {
+      return _widgetMovedButNotCreated;
    }
 }

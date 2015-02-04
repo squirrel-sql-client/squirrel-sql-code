@@ -61,13 +61,13 @@ public class TabHandle
       }
    }
 
-   public void fireAdded(boolean wasAddedToToMainApplicationWindow)
+   public void fireAdded(boolean wasAddedToToMainApplicationWindow, boolean widgetMovedButNotCreated)
    {
       TabHandleListener[] clone = _tabHandleListeners.toArray(new TabHandleListener[_tabHandleListeners.size()]);
 
       for (TabHandleListener listener : clone)
       {
-         listener.tabAdded(new TabHandleEvent(this, null, wasAddedToToMainApplicationWindow));
+         listener.tabAdded(new TabHandleEvent(this, null, wasAddedToToMainApplicationWindow, widgetMovedButNotCreated));
       }
    }
 
