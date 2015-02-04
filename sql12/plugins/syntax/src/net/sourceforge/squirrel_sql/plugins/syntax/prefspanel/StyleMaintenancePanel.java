@@ -175,7 +175,9 @@ public class StyleMaintenancePanel extends JToolBar
 			if (color != null)
 			{
 				style.setTextRGB(color.getRGB());
-			}
+            _list.repaint();
+
+         }
 		}
 	}
 
@@ -204,6 +206,7 @@ public class StyleMaintenancePanel extends JToolBar
 			if (color != null)
 			{
 				style.setBackgroundRGB(color.getRGB());
+            _list.repaint();
 			}
 
 		}

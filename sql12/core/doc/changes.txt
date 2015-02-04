@@ -10,6 +10,10 @@ Enhancements:
 
 Upgraded to the latest RSyntax version (2.5.3).
 
+Syntax Plugin: Made background color for white spaces affect the whole SQL editors background, see menu File --> New Session Properties --> tab Syntax
+   Note: If you combine this feature with the Metal-Charcoal Look and Feel you can make SQuirreL appear in "fashionable" black.
+   Thanks to Duane Redfern for the patch.
+
 
 Bug fixes:
 

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.rsyntax;
 
+import java.awt.Color;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -60,18 +62,23 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 
       _rSyntaxHighlightTokenMatcherProxy.setDelegate(_propertiesWrapper.getSyntaxHighlightTokenMatcher(session, this, sqlEntryPanelIdentifier));
 
-      
+
       modifiyKeystrokesFromPreferences(prefs);
-      
-      
+
+
       updateFromPreferences();
-      
+
 
       new KeyManager(this);
 
       _squirrelRSyntaxSearchEngine = new SquirrelRSyntaxSearchEngine(_session, this);
 
       setToolTipText("Just to make getToolTiptext() to be called");
+
+
+      // DAR001
+      Color bg = new Color(prefs.getWhiteSpaceStyle().getBackgroundRGB());
+      setBackground(bg);
 
       setMarginLineEnabled(prefs.isTextLimitLineVisible());
       setMarginLinePosition(prefs.getTextLimitLineWidth());
@@ -81,7 +88,7 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
       {
          if(null == System.getProperty("sun.java2d.noddraw") || false == "true".equals(System.getProperty("sun.java2d.noddraw")))
          {
-            session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("syntax.useNoDDrawOnWIn32"));            
+            session.getApplication().getMessageHandler().showWarningMessage(s_stringMgr.getString("syntax.useNoDDrawOnWIn32"));
          }
       }
    }
@@ -105,9 +112,9 @@ public class SquirrelRSyntaxTextArea extends RSyntaxTextArea
 			   }
 		   }
 	   }
-   }	
+   }
 
-protected RTextAreaUI createRTextAreaUI()
+   protected RTextAreaUI createRTextAreaUI()
    {
       // Will be called from the super class constructor
       SquirreLRSyntaxTextAreaUI ret = new SquirreLRSyntaxTextAreaUI(this);
