@@ -30,15 +30,10 @@ import java.io.*;
 import java.sql.DriverManager;
 import java.util.*;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.PopupFactory;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import net.sourceforge.squirrel_sql.client.edtwatcher.EventDispatchThreadWatcher;
 import net.sourceforge.squirrel_sql.client.gui.recentfiles.RecentFilesManager;
 import org.apache.commons.lang.StringUtils;
 
@@ -216,7 +211,12 @@ class Application implements IApplication
 		}
 
       executeStartupTasks(splash, args);
-	}
+
+      if( args.detectLongRunningSwingEDTEvents() )
+      {
+         new EventDispatchThreadWatcher();
+      }
+   }
 
 	/**
 	 * Application is shutting down.

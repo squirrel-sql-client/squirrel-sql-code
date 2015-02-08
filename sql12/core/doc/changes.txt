@@ -8,6 +8,13 @@ Not yet released, available in our GIT repository and in future snapshots and re
 
 Enhancements:
 
+New command line parameter:
+ Short form: -detectEDT
+ Long form: --detect-long-running-swing-edt-events
+ The parameter has no arguments.
+ The parameter enables SQuirreL to detect long running Swing Event Dispatch Thread events.
+ When the dispatch thread is blocked for longer than two seconds a warning containing a thread dump is written to the logs.
+
 Upgraded to the latest RSyntax version (2.5.3).
 
 Syntax Plugin: Made background color for white spaces affect the whole SQL editors background, see menu File --> New Session Properties --> tab Syntax

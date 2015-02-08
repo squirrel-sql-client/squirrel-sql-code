@@ -48,7 +48,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class ApplicationArguments implements IApplicationArguments
 {
-	/**
+   /**
 	 * Option descriptions.
 	 *
 	 * <UL>
@@ -78,6 +78,9 @@ public class ApplicationArguments implements IApplicationArguments
 			"Specify a comma-delimited list of plugins to load from the CLASSPATH" };
 		String[] SHUTDOWN_TIMEOUT_SECONDS = { "s", "shutdown-timeout-seconds", 
 			"Specify the number of seconds to allow the application to run before exiting the VM" };
+
+		String[] DETECT_LONG_RUNNING_SWING_EDT_EVENTS = { "detectEDT", "detect-long-running-swing-edt-events",
+			"Detect long running Swing Event Dispatch Thread events" };
 
 	}
 
@@ -110,8 +113,10 @@ public class ApplicationArguments implements IApplicationArguments
 	
 	/** Time in seconds to allow the application to run prior to exiting the VM */
 	private Integer _shutdownTimerSeconds = null;
-	
-	/**
+
+   private boolean _detectLongRunningSwingEDTEvents;
+
+   /**
 	 * Ctor specifying arguments from command line.
 	 *
 	 * @param	args	Arguments passed on command line.
@@ -290,7 +295,13 @@ public class ApplicationArguments implements IApplicationArguments
 		return _cmdLine.hasOption(IOptions.HELP[0]);
 	}
 
-	/**
+   public boolean detectLongRunningSwingEDTEvents()
+   {
+      return _cmdLine.hasOption(IOptions.DETECT_LONG_RUNNING_SWING_EDT_EVENTS[0]);
+   }
+
+
+   /**
 	 * @see net.sourceforge.squirrel_sql.client.IApplicationArguments#getLoggingConfigFileName()
 	 */
 	public String getLoggingConfigFileName()
@@ -347,8 +358,8 @@ public class ApplicationArguments implements IApplicationArguments
 	public Integer getShutdownTimerSeconds() {
 		return _shutdownTimerSeconds;
 	}
-	
-	void printHelp()
+
+   void printHelp()
 	{
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("squirrel-sql", _options);
@@ -392,6 +403,9 @@ public class ApplicationArguments implements IApplicationArguments
 		_options.addOption(opt);
 		
 		opt = createAnOptionWithArgument(IOptions.SHUTDOWN_TIMEOUT_SECONDS);
+		_options.addOption(opt);
+
+		opt = createAnOption(IOptions.DETECT_LONG_RUNNING_SWING_EDT_EVENTS);
 		_options.addOption(opt);
 	}
 
