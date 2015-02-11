@@ -20,7 +20,7 @@ public class SimpleProgressCtrl
    private Stage _dialog;
    private boolean _closeOnFinishOrCancel;
    private I18n _i18n = new I18n(getClass());
-   private boolean _hasShouldReadMessage;
+   private volatile boolean _hasShouldReadMessage;
 
    public SimpleProgressCtrl()
    {
