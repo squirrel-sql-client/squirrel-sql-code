@@ -55,6 +55,8 @@ public class SQLTextAreaServices
 
       _sqlSyntaxHighlighting = new SQLSyntaxHighlighting(_sqlTextArea, new SQLSyntaxHighlightTokenMatcher(schemaCache), schemaCache);
 
+      new CtrlLeftRightHandler(_sqlTextArea);
+
    }
 
    private void onAliasesFound(TableAliasInfo[] aliasInfos)

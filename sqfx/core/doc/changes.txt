@@ -1,6 +1,10 @@
 SQuirreL SQL FX Change Log
 ==============================
 
+Feature: Made ctrl+left/right caret movement and ctrl+shift+left/right selection work like in Swing-SQuirreL
+
+Feature: Upgraded RichTextFX to version 0.6. This version eliminates some previous layout and rendering problems.
+
 Feature: Store result of SQL in table function available in right mouse menu of SQL editor.
 
 Feature: Escape date dialog available in right mouse menu of SQL editor.
