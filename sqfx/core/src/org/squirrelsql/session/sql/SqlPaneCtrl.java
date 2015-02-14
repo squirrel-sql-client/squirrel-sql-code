@@ -134,14 +134,34 @@ public class SqlPaneCtrl
    private void onExecuteSql(SQLTextAreaServices sqlTextAreaServices)
    {
 
-      String sql = sqlTextAreaServices.getCurrentSql();
+      String script = sqlTextAreaServices.getCurrentSql();
 
-      if(0 == sql.trim().length())
+      if(0 == script.trim().length())
       {
          _mh.error(_i18n.t("session.tab.sql.no.sql"));
          return;
       }
 
+      SQLTokenizer sqlTokenizer = new SQLTokenizer(script);
+
+      SqlExecutionFinishedListener sqlExecutionFinishedListener = new SqlExecutionFinishedListener()
+      {
+         @Override
+         public void finished(boolean success)
+         {
+            if (success && sqlTokenizer.hasMoreSqls())
+            {
+               _execSingleStatement(sqlTokenizer.nextSql(), this);
+            }
+         }
+      };
+
+      _execSingleStatement(sqlTokenizer.getFirstSql(), sqlExecutionFinishedListener);
+
+   }
+
+   private void _execSingleStatement(final String sql, SqlExecutionFinishedListener sqlExecutionFinishedListener)
+   {
       StatementChannel statementChannel = new StatementChannel();
 
       SQLCancelTabCtrl sqlCancelTabCtrl = new SQLCancelTabCtrl(sql, statementChannel);
@@ -162,14 +182,14 @@ public class SqlPaneCtrl
          @Override
          public void goOn(StatementExecution  statementExecution)
          {
-            onGoOn(statementExecution, sql, sqlCancelTabCtrl);
+            onGoOn(statementExecution, sql, sqlCancelTabCtrl, sqlExecutionFinishedListener);
          }
       };
 
       ProgressUtil.start(pt);
    }
 
-   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl)
+   private void onGoOn(StatementExecution statExec, String sql, SQLCancelTabCtrl sqlCancelTabCtrl, SqlExecutionFinishedListener sqlExecutionFinishedListener)
    {
       removeErrorTab();
 
@@ -192,6 +212,7 @@ public class SqlPaneCtrl
          errorTab.setContent(errorLabel);
 
          addAndSelectTab(errorTab);
+         sqlExecutionFinishedListener.finished(false);
 
       }
       else
@@ -224,6 +245,9 @@ public class SqlPaneCtrl
          _mh.info(_i18n.t("session.tab.sql.executing.times", statExec.getBestQueryCount(), statExec.getCompleteTime(), statExec.getExecutionTime(), statExec.getProcessinngResultsTime()));
 
          _sqlEditTopPanelCtrl.addSqlToHistory(sql);
+
+         sqlExecutionFinishedListener.finished(true);
+
       }
    }
 

@@ -1,7 +1,9 @@
 SQuirreL SQL FX Change Log
 ==============================
 
-Feature: Made ctrl+left/right caret movement and ctrl+shift+left/right selection work like in Swing-SQuirreL
+Feature: Multiple SQLs can be executed at once when separated by the statement separator defined in settings (see menu File --> Settings).
+
+Feature: Made ctrl+left/right caret movement and ctrl+shift+left/right selection work like in Swing-SQuirreL.
 
 Feature: Upgraded RichTextFX to version 0.6. This version eliminates some previous layout and rendering problems.
 
