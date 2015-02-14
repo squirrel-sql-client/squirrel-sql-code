@@ -33,12 +33,14 @@ public class SettingsController
       _settingsView.apProperties.setStyle(GuiUtils.STYLE_GROUP_BORDER);
 
 
-      _dialog = GuiUtils.createNonModalDialog(fxmlHelper.getRegion(), _pref, 600, 400, "showSettingsController");
+      _dialog = GuiUtils.createNonModalDialog(fxmlHelper.getRegion(), _pref, 600, 420, "showSettingsController");
 
       _dialog.setTitle(_i18n.t("showSettings.title"));
 
 
       _settingsView.btnSaveStandardProperties.setGraphic(_props.getImageView("save.png"));
+      _settingsView.btnSaveStandardProperties.setOnAction(e -> onSaveStandardProperties());
+
 
 
       GuiUtils.makeEscapeClosable(fxmlHelper.getRegion());
@@ -80,11 +82,8 @@ public class SettingsController
          _settingsView.radUserDefinedProps.setDisable(true);
          _settingsView.radStandardProps.setSelected(true);
          _settingsView.radUserDefinedProps.setSelected(false);
-         _settingsView.btnSaveStandardProperties.setDisable(false);
          _settingsView.txtPropertiesFileLocation.setText(null);
          _settingsView.txtPropertiesFileLocation.setDisable(true);
-
-         _settingsView.btnSaveStandardProperties.setOnAction(e -> onSaveStandardProperties());
       }
       else
       {
@@ -92,7 +91,6 @@ public class SettingsController
          _settingsView.radUserDefinedProps.setDisable(false);
          _settingsView.radStandardProps.setSelected(false);
          _settingsView.radUserDefinedProps.setSelected(true);
-         _settingsView.btnSaveStandardProperties.setDisable(true);
          _settingsView.txtPropertiesFileLocation.setText(propFile.getAbsolutePath());
       }
    }
