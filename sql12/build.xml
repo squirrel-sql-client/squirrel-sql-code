@@ -25,20 +25,18 @@
         </fileset>
     </path>
 
+    <target name="buildAll" description="buildAll" depends="buildExInstaller">
+        <antcall target="createIZPackInstallJars"/>
+    </target>
 
-    <target name="buildAll" description="buildAll" depends="cleanAllAndInit">
-
+    <target name="buildExInstaller" description="buildExInstaller" depends="cleanAllAndInit">
         <antcall target="compileCore"/>
         <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="base"/></antcall>
-
         <antcall target="compileStandardPlugins"/>
         <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="standard"/></antcall>
-
         <antcall target="compileOptionalPlugins"/>
         <antcall target="createPlainZip"><param name="plainZipNamePostfix" value="optional"/></antcall>
-
         <antcall target="compileMacPlugin"/>
-        <antcall target="createIZPackInstallJars"/>
     </target>
 
     <target name="createPlainZip" description="createPlainZip">
@@ -87,7 +85,12 @@
 
 
     <target name="compileCore" description="compileCore">
-        <javac srcdir="core/src" destdir="output/work/bin" classpathref="build.classpath" debug="true"/>
+        <javac
+            includeantruntime="false"
+            srcdir="core/src"
+            destdir="output/work/bin"
+            classpathref="build.classpath"
+            debug="true"/>
         <copy todir="output/work/bin">
             <fileset dir="core/src">
                 <exclude name="**/*.java" />
@@ -183,7 +186,11 @@
 
         <echo message="###Compiling Plugin ${pluginName}"/>
 
-        <javac srcdir="plugins/${pluginName}/src" destdir="output/work/${pluginName}/bin" debug="true" >
+        <javac
+            includeantruntime="false"
+            srcdir="plugins/${pluginName}/src"
+            destdir="output/work/${pluginName}/bin"
+            debug="true" >
             <classpath refid="build.classpath"/>
             <classpath>
                 <path id="plugin.classpath.core">
