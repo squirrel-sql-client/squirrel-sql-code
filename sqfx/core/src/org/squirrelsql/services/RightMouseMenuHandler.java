@@ -5,6 +5,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.squirrelsql.RightMouseMenuHandlerListener;
@@ -48,7 +49,13 @@ public class RightMouseMenuHandler
 
    public void addMenu(String menuTitle, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
    {
+      addMenu(menuTitle, null, rightMouseMenuHandlerListener);
+   }
+
+   public void addMenu(String menuTitle, KeyCodeCombination keyCodeCombination, RightMouseMenuHandlerListener rightMouseMenuHandlerListener)
+   {
       MenuItem menuItem = new MenuItem(menuTitle);
+      menuItem.setAccelerator(keyCodeCombination);
 
       menuItem.setOnAction(e -> rightMouseMenuHandlerListener.menuSelected());
 

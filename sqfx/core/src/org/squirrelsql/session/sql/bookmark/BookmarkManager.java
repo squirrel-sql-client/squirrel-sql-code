@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.squirrelsql.services.I18n;
 import org.squirrelsql.session.SessionTabContext;
+import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class BookmarkManager
       sessionTabContext.bookmarksChangedProperty().addListener((observable, oldValue, newValue) -> reInitBookmarks());
 
       reInitBookmarks();
+
+      StdActionCfg.EXEC_BOOKMARK.setAction(this::showBookmarkPopup);
+
    }
 
    private void reInitBookmarks()
@@ -53,7 +57,7 @@ public class BookmarkManager
       }
    }
 
-   public void showBookmarkPopup()
+   private void showBookmarkPopup()
    {
       new FilteredPopupHandler(_sqlTextAreaServices, _bookmarks).showPopup();
    }

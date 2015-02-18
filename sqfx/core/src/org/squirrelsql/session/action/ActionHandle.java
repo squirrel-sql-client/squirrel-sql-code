@@ -157,6 +157,12 @@ public class ActionHandle
 
    public void fire()
    {
+      if (null == _sqFxActionListener)
+      {
+         throw new UnsupportedOperationException("No action listener was provided for action: " + _actionCfg.getText());
+      }
+
       _sqFxActionListener.actionPerformed();
+
    }
 }

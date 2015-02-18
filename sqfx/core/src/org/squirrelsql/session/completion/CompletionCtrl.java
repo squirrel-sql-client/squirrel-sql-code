@@ -13,6 +13,7 @@ import javafx.stage.Popup;
 import org.squirrelsql.services.Utils;
 import org.squirrelsql.session.Session;
 import org.squirrelsql.session.TableInfo;
+import org.squirrelsql.session.action.StdActionCfg;
 import org.squirrelsql.session.parser.kernel.TableAliasInfo;
 import org.squirrelsql.session.sql.SQLTextAreaServices;
 import org.squirrelsql.session.sql.syntax.LexAndParseResultListener;
@@ -47,9 +48,12 @@ public class CompletionCtrl
             _currentAliasInfos = aliasInfos;
          }
       });
+
+      StdActionCfg.SQL_CODE_COMPLETION.setAction(this::completeCode);
+
    }
 
-   public void completeCode()
+   private void completeCode()
    {
       _completeCode(false, null);
 

@@ -1,5 +1,6 @@
 package org.squirrelsql.session.action;
 
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import org.squirrelsql.Props;
@@ -7,23 +8,23 @@ import org.squirrelsql.services.I18n;
 
 public enum StdActionCfg
 {
-   RUN_SQL(new ActionCfg(Help.props.getImage("run.png"), Help.i18n.t("sql.run"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN))),
-   NEW_SQL_TAB(new ActionCfg(Help.props.getImage("newsqltab.png"), Help.i18n.t("sql.newsqltab"), ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN))),
-   SQL_CODE_COMPLETION(new ActionCfg(null, null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN))),
-   EXEC_BOOKMARK(new ActionCfg(Help.props.getImage("bookmark-exec.png"), Help.i18n.t("bookmark.execute"), ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.J, KeyCodeCombination.CONTROL_DOWN))),
-   EDIT_BOOKMARK(new ActionCfg(Help.props.getImage("bookmark-edit.png"), Help.i18n.t("bookmark.edit"), ActionScope.UNSCOPED, null)),
-   ESCAPE_DATE(new ActionCfg(null, Help.i18n.t("escape.date"), ActionScope.SQL_EDITOR, null)),
-   SQL_TO_TABLE(new ActionCfg(null, Help.i18n.t("sql.to.table"), ActionScope.SQL_EDITOR, null));
+   RUN_SQL("run.png", "sql.run", "runsql", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.ENTER, KeyCodeCombination.CONTROL_DOWN)),
+   NEW_SQL_TAB("newsqltab.png", "sql.newsqltab", null, ActionScope.UNSCOPED, new KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)),
+   SQL_CODE_COMPLETION(null, "complete.code", "completecode", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.SPACE, KeyCodeCombination.CONTROL_DOWN)),
+   EXEC_BOOKMARK("bookmark-exec.png", "bookmark.execute", "bookmarkexecute", ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.J, KeyCodeCombination.CONTROL_DOWN)),
+   EDIT_BOOKMARK("bookmark-edit.png", "bookmark.edit", "bookmarkedit", ActionScope.UNSCOPED, null),
+   ESCAPE_DATE(null, "escape.date", "date", ActionScope.SQL_EDITOR, null),
+   SQL_TO_TABLE(null, "sql.to.table", "sql2table", ActionScope.SQL_EDITOR, null),
+   SHOW_TOOLS_POPUP(null, "show.tools.popup", null, ActionScope.SQL_EDITOR, new KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN));
 
 
 
    public static StdActionCfg[] SESSION_TOOLBAR = new StdActionCfg[]
    {
-      RUN_SQL,
-      NEW_SQL_TAB,
-      EXEC_BOOKMARK,
-      EDIT_BOOKMARK
-
+         RUN_SQL,
+         NEW_SQL_TAB,
+         EXEC_BOOKMARK,
+         EDIT_BOOKMARK
    };
 
    public static StdActionCfg[] SESSION_MENU = new StdActionCfg[]
@@ -37,17 +38,30 @@ public enum StdActionCfg
 
    public static StdActionCfg[] SQL_EDITOR_RIGHT_MOUSE_MENU = new StdActionCfg[]
    {
-      ESCAPE_DATE,
-      SQL_TO_TABLE
+         ESCAPE_DATE,
+         SQL_TO_TABLE,
+         EXEC_BOOKMARK,
+         SHOW_TOOLS_POPUP
    };
 
-   private static class Help
+   private ActionCfg _actionCfg;
+
+   StdActionCfg(String iconName, String textNonI18n, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
-      private static final I18n i18n = new I18n(StdActionCfg.class);
-      private static final Props props = new Props(StdActionCfg.class);
+      this(new ActionCfg(getImageOrNull(iconName), new I18n(StdActionCfg.class).t(textNonI18n), toolsPopUpSelector, actionScope, keyCodeCombination));
    }
 
-   private ActionCfg _actionCfg;
+   private static Image getImageOrNull(String iconName)
+   {
+      if (null == iconName)
+      {
+         return null;
+      }
+      else
+      {
+         return new Props(StdActionCfg.class).getImage(iconName);
+      }
+   }
 
    StdActionCfg(ActionCfg actionCfg)
    {

@@ -21,13 +21,13 @@ public class LogTest
       Props props = new Props(LogTest.class);
       I18n i18n = new I18n(LogTest.class);
 
-      ActionCfg actError = new ActionCfg(props.getImage(GlobalIconNames.ERROR), i18n.t("log.test.error"), ActionScope.UNSCOPED, null);
+      ActionCfg actError = new ActionCfg(props.getImage(GlobalIconNames.ERROR), i18n.t("log.test.error"), null, ActionScope.UNSCOPED, null);
       AppState.get().getActionManger().addActionToToolbar(toolBar, actError).setAction(LogTest::logError);
 
-      ActionCfg actWarn = new ActionCfg(props.getImage(GlobalIconNames.WARNING), i18n.t("log.test.warning"), ActionScope.UNSCOPED, null);
+      ActionCfg actWarn = new ActionCfg(props.getImage(GlobalIconNames.WARNING), i18n.t("log.test.warning"), null, ActionScope.UNSCOPED, null);
       AppState.get().getActionManger().addActionToToolbar(toolBar, actWarn).setAction(LogTest::logWarning);
 
-      ActionCfg actInfo = new ActionCfg(props.getImage(GlobalIconNames.INFORMATION), i18n.t("log.test.info"), ActionScope.UNSCOPED, null);
+      ActionCfg actInfo = new ActionCfg(props.getImage(GlobalIconNames.INFORMATION), i18n.t("log.test.info"), null, ActionScope.UNSCOPED, null);
       AppState.get().getActionManger().addActionToToolbar(toolBar, actInfo).setAction(LogTest::logInfo);
    }
 

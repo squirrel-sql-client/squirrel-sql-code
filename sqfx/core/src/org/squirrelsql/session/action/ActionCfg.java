@@ -15,9 +15,10 @@ public class ActionCfg
    private final String _text;
    private KeyCodeCombination _keyCodeCombination;
    private final int _actionConfigurationId;
+   private String _toolsPopUpSelector;
 
 
-   public ActionCfg(Image icon, String text, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
+   public ActionCfg(Image icon, String text, String toolsPopUpSelector, ActionScope actionScope, KeyCodeCombination keyCodeCombination)
    {
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Note: ActionConfigurations are supposed to be an application wide state like in the StandardActionConfiguration enum.
@@ -27,6 +28,7 @@ public class ActionCfg
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+      _toolsPopUpSelector = toolsPopUpSelector;
       _actionScope = actionScope;
       _icon = icon;
       _text = text;

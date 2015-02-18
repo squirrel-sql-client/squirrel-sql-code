@@ -41,6 +41,7 @@ public class SqlPaneCtrl
    private SplitPane _sqlTabSplitPane = new SplitPane();
 
    private BookmarkManager _bookmarkManager;
+   private final ToolsPopupManager _toolsPopupManager;
 
    private SessionTabContext _sessionTabContext;
    private final TabPane _sqlOutputTabPane;
@@ -53,6 +54,7 @@ public class SqlPaneCtrl
       _sqlTextAreaServices = new SQLTextAreaServices(_sessionTabContext);
 
       _bookmarkManager = new BookmarkManager(_sqlTextAreaServices, _sessionTabContext);
+      _toolsPopupManager = new ToolsPopupManager(_sqlTextAreaServices, _sessionTabContext);
 
 
       _completionCtrl = new CompletionCtrl(sessionTabContext.getSession(), _sqlTextAreaServices);
@@ -65,7 +67,7 @@ public class SqlPaneCtrl
       _sqlTabSplitPane.getItems().add(_sqlOutputTabPane);
 
 
-      initStandardActions();
+      initActions();
 
       _sqlTextAreaServices.setOnKeyPressed(this::onHandleKeyEvent);
       createRightMouseMenu();
@@ -87,17 +89,15 @@ public class SqlPaneCtrl
 
       for (ActionCfg ac : ActionUtil.getSQLEditRightMouseActionCfgs())
       {
-         textAreaContextMenu.addMenu(ac.getText(), ac::fire);
+         textAreaContextMenu.addMenu(ac.getText(), ac.getKeyCodeCombination(), ac::fire);
       }
    }
 
 
 
-   private void initStandardActions()
+   private void initActions()
    {
       StdActionCfg.RUN_SQL.setAction(() -> onExecuteSql(_sqlTextAreaServices));
-      StdActionCfg.SQL_CODE_COMPLETION.setAction(_completionCtrl::completeCode);
-      StdActionCfg.EXEC_BOOKMARK.setAction(_bookmarkManager::showBookmarkPopup);
       StdActionCfg.ESCAPE_DATE.setAction(() -> new EscapeDateCtrl(s -> _sqlTextAreaServices.insertAtCarret(s)));
       StdActionCfg.SQL_TO_TABLE.setAction(() -> new SqlToTableCtrl(_sessionTabContext.getSession(), _sqlTextAreaServices));
    }
