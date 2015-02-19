@@ -83,6 +83,15 @@
 
     </target>
 
+    <pathconvert property="manifest.classpath" pathsep=" ">
+        <path refid="build.classpath"/>
+        <mapper>
+            <chainedmapper>
+                <flattenmapper/>
+                <globmapper from="*.jar" to="lib/*.jar"/>
+            </chainedmapper>
+        </mapper>
+    </pathconvert>
 
     <target name="compileCore" description="compileCore">
         <javac
@@ -90,16 +99,24 @@
             srcdir="core/src"
             destdir="output/work/bin"
             classpathref="build.classpath"
-            debug="true"/>
+            debug="true">
+            <compilerarg value="-Xlint:deprecation"/>
+<!--            <compilerarg value="-Xlint:unchecked"/> -->
+        </javac>
         <copy todir="output/work/bin">
             <fileset dir="core/src">
                 <exclude name="**/*.java" />
             </fileset>
         </copy>
-
         <replace file="output/work/bin/net/sourceforge/squirrel_sql/client/Version.properties" token="squirrelsql.version.value" value="${squirrelsql.version}"/>
-
-        <jar jarfile="output/dist/squirrel-sql.jar" basedir="output/work/bin" manifest="core/src/META-INF/MANIFEST.MF"/>
+        <jar jarfile="output/dist/squirrel-sql.jar" basedir="output/work/bin">
+            <manifest>
+              <attribute name="Built-By" value="${user.name}"/>
+              <attribute name="Main-Class" value="net.sourceforge.squirrel_sql.client.Main"/>
+              <attribute name="Class-Path" value="${manifest.classpath}"/>
+              <attribute name="SplashScreen-Image" value="icons/splash.jpg"/>
+            </manifest>
+        </jar>
         <copy todir="output/dist/lib">
             <fileset dir="core/lib">
                 <include name="**/*" />
@@ -204,6 +221,8 @@
                     </fileset>
                 </path>
             </classpath>
+            <compilerarg value="-Xlint:deprecation"/>
+<!--            <compilerarg value="-Xlint:unchecked"/> -->
         </javac>
         <copy todir="output/work/${pluginName}/bin">
             <fileset dir="plugins/${pluginName}/src">
@@ -222,5 +241,10 @@
 
     </target>
 
+    <target name="runApp" description="Run SquirrelSQL">
+        <java jar="output/dist/squirrel-sql.jar" fork="true">
+            <jvmarg value="-splash:output/dist/icons/splash.jpg" />
+        </java>
+    </target>
 
 </project> 
